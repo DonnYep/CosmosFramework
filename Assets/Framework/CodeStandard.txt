@@ -1,0 +1,6 @@
+//Author    :Don
+//State       :Temporary
+//CreationDate	: 20200801
+// 代码规范，注明作者与当前代码状态
+
+//xml文件规范：参照FileExtensionList，所有根节点为ResourceRoot，在ApplicationConst中

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceRoot>
+  <Cosmos>
+    <path>Assets\Cosmos\AudioModule.unity</path>
+    <path>Assets\Cosmos\EventCenterDispatch.unity</path>
+    <path>Assets\Cosmos\FrameworkScriptList.xml</path>
+    <path>Assets\Cosmos\FrameworkTestLevel.unity</path>
+    <path>Assets\Cosmos\InputVirtualAxes.unity</path>
+    <path>Assets\Cosmos\PrintMessage.unity</path>
+    <path>Assets\Cosmos\RuntimeEvent.xml</path>
+    <path>Assets\Cosmos\SceneModuleConner.unity</path>
+    <path>Assets\Cosmos\TextTool.unity</path>
+  </Cosmos>
+  <assetCount>9</assetCount>
+</ResourceRoot>
