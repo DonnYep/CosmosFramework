@@ -396,7 +396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aca3789afef70614aa583721af799bfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioEventArgs: {fileID: 0}
+  audioEventObject: {fileID: 0}
 --- !u!4 &389217581
 Transform:
   m_ObjectHideFlags: 0
@@ -552,7 +552,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aca3789afef70614aa583721af799bfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioEventArgs: {fileID: 0}
+  audioEventObject: {fileID: 0}
 --- !u!4 &599367179
 Transform:
   m_ObjectHideFlags: 0
@@ -596,7 +596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aca3789afef70614aa583721af799bfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioEventArgs: {fileID: 11400000, guid: c103fe3002e503d4590965307fe93eec, type: 2}
+  audioEventObject: {fileID: 0}
 --- !u!114 &684375778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -752,7 +752,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1907793267}
+      - m_Target: {fileID: 1006789513}
         m_MethodName: UnPauseWorldAudio
         m_Mode: 2
         m_Arguments:
@@ -1007,7 +1007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aca3789afef70614aa583721af799bfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioEventArgs: {fileID: 0}
+  audioEventObject: {fileID: 0}
 --- !u!4 &807908155
 Transform:
   m_ObjectHideFlags: 0
@@ -1160,6 +1160,47 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1006789512
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1006789514}
+  - component: {fileID: 1006789513}
+  m_Layer: 0
+  m_Name: AudioPlayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1006789513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1006789512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aca3789afef70614aa583721af799bfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioEventObject: {fileID: 11400000, guid: 23f085948343c0641b050a2441ad498e, type: 2}
+--- !u!4 &1006789514
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1006789512}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1023335781
 GameObject:
   m_ObjectHideFlags: 0
@@ -1236,7 +1277,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1907793267}
+      - m_Target: {fileID: 1006789513}
         m_MethodName: StopWorldAudio
         m_Mode: 2
         m_Arguments:
@@ -1343,7 +1384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aca3789afef70614aa583721af799bfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioEventArgs: {fileID: 0}
+  audioEventObject: {fileID: 0}
 --- !u!4 &1059387002
 Transform:
   m_ObjectHideFlags: 0
@@ -1555,7 +1596,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1907793267}
+      - m_Target: {fileID: 1006789513}
         m_MethodName: PauseWorldAudio
         m_Mode: 2
         m_Arguments:
@@ -1813,7 +1854,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1907793267}
+      - m_Target: {fileID: 1006789513}
         m_MethodName: PlayWorldAudio
         m_Mode: 2
         m_Arguments:
@@ -2094,7 +2135,6 @@ GameObject:
   - component: {fileID: 1907793270}
   - component: {fileID: 1907793269}
   - component: {fileID: 1907793268}
-  - component: {fileID: 1907793267}
   m_Layer: 5
   m_Name: CanvasWorld
   m_TagString: Untagged
@@ -2102,18 +2142,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1907793267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1907793266}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aca3789afef70614aa583721af799bfe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioEventArgs: {fileID: 11400000, guid: c103fe3002e503d4590965307fe93eec, type: 2}
 --- !u!114 &1907793268
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ namespace Cosmos.Editor
 {
     public class DebugTool :EditorWindow
     {
-        [MenuItem("Cosmos/DebugTool")]
+        //[MenuItem("Cosmos/DebugTool")]
         public static void CosmosDevToolWindow()
         {
             OpenCosmosDevWindow();
