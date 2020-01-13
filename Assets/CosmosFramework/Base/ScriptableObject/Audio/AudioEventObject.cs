@@ -32,13 +32,6 @@ namespace Cosmos
         [Range(-3, 3)]
         protected float speed = 1;
         public float Speed { get { return speed; } }
-
         public virtual AudioClip AudioClip { get; }
-
-        public abstract void StopAudio();
-        public abstract void PauseAudio();
-        public abstract void UnPauseAudio();
-        public abstract void PlayAudio();
-        public abstract void MuteAudio();
     }
 }
