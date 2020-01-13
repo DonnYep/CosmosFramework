@@ -9,7 +9,7 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
-
+/[Uu]nityPackageManager/
 
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
