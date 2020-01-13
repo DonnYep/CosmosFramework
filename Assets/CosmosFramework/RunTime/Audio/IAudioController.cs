@@ -5,6 +5,9 @@ using Cosmos;
 namespace Cosmos.Audio{
     public interface IAudioController
     {
-
+        void PlayAudio();
+        void StopAudio();
+        void PauseAudio();
+        void UnpauseAudio();
     }
 }

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cosmos.Audio{
+namespace Cosmos{
     public class AudioPlayer: MonoBehaviour {
 
-        AudioEventArgs args=new AudioEventArgs();
+       Audio. AudioEventArgs args=new Audio.AudioEventArgs();
         [SerializeField] AudioEventObject audioEventObject;
-        public void PlayBackgroundAudio()
+        public  void PlayBackgroundAudio()
         {
            args.AudioEventObject= audioEventObject;
             Facade.Instance.PlayBackgroundAudio(args);

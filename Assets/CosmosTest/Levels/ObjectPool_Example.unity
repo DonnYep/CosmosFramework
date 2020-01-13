@@ -792,8 +792,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoStart: 1
-  startDelay: 0.5
-  interval: 3
+  startDelay: 1
+  interval: 1
   loop: 1
   randomInterval: 0
   randomRange: 0

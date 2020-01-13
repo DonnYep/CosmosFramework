@@ -43,6 +43,7 @@ namespace Cosmos
         /// 每次产生都会进行一个概率检测
         /// </summary>
         public abstract void Spawn();
+        public virtual void SpawnWithoutPool() { }
         protected abstract void RegisterSpawner();
         /// <summary>
         /// 注销并销毁
