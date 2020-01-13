@@ -23,7 +23,6 @@ namespace Cosmos.Test
         Text text;
         private void Start()
         {
-            //EventManager.Instance.AddListener(ApplicationConst._InputEventKey, InputHandler);
             Facade.Instance.AddEventListener(ApplicationConst._InputEventKey, InputHandler);
             slider = GetComponentInChildren<Slider>();
             text = GetComponentsInChildren<Text>()[1];
@@ -42,24 +41,28 @@ namespace Cosmos.Test
             }
             float textValue = slider.value-SliderOffset;
             text.text = Utility.Int(textValue).ToString();
-            if (inputHandler.MouseButtonLeft==InputButtonState.Down)
-                Utility.DebugLog("mouseLeftDown",this);
-            if (inputHandler.MouseButtonRight==InputButtonState.Down)
-                Utility.DebugLog("mouseRightDown",this);
-            if (inputHandler.Jump==InputButtonState.Down)
+            InputKeyDebugInfo();
+        }
+        private void OnDestroy()
+        {
+            Facade.Instance.RemoveEventListener(ApplicationConst._InputEventKey, InputHandler);
+        }
+        void InputKeyDebugInfo()
+        {
+            if (inputHandler.MouseButtonLeft == InputButtonState.Down)
+                Utility.DebugLog("mouseLeftDown", this);
+            if (inputHandler.MouseButtonRight == InputButtonState.Down)
+                Utility.DebugLog("mouseRightDown", this);
+            if (inputHandler.Jump == InputButtonState.Down)
                 Utility.DebugLog("jumpDown", this);
-            if (inputHandler.MouseButtonMiddle==InputButtonState.Down)
+            if (inputHandler.MouseButtonMiddle == InputButtonState.Down)
                 Utility.DebugLog("mouseMiddle", this);
-            if (inputHandler.LeftShift==InputButtonState.Down)
+            if (inputHandler.LeftShift == InputButtonState.Down)
                 Utility.DebugLog("leftShiftDown", this);
             if (inputHandler.LeftShift == InputButtonState.Up)
                 Utility.DebugLog("leftShiftUp", this);
             if (inputHandler.LeftShift == InputButtonState.Hold)
                 Utility.DebugLog("leftShiftHold", this);
-        }
-        private void OnDestroy()
-        {
-            Facade.Instance.RemoveEventListener(ApplicationConst._InputEventKey, InputHandler);
         }
     }
 }

@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ResourceRoot>
-  <Framework>
-    <path>Assets\Framework\CodeStandard.txt</path>
-    <path>Assets\Framework\Update.xml</path>
-  </Framework>
-  <assetCount>2</assetCount>
-</ResourceRoot>
