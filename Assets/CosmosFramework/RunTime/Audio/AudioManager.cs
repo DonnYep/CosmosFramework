@@ -66,7 +66,6 @@ namespace Cosmos.Audio
                 SetAudioProperties(ref backgroundAduio, arg);
                 backgroundAduio.Play();
             }
-            Utility.DebugLog("audioPlaying");
         }
         public void PauseBackgroundAudio()
         {
