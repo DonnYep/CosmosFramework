@@ -132,7 +132,6 @@ namespace Cosmos
         Event,
         Entity,
         Input,
-        Utility,
         FSM,
         Network,
         Scene,

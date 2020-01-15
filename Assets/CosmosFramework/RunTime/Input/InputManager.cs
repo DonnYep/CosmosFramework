@@ -17,7 +17,7 @@ namespace Cosmos.Input {
     [DisallowMultipleComponent]
     public sealed class InputManager :Module<InputManager>
     {
-        List<int> monoIDList = new List<int>();
+        short updateID;
         InputEventArgs inputHandler = new InputEventArgs();
         protected override void InitModule()
         {
@@ -25,13 +25,12 @@ namespace Cosmos.Input {
         }
         public InputManager()
         {
-            MonoManager.Instance.AddListener(InputUpdate, UpdateType.Update, (id) => { if (!monoIDList.Contains(id)) monoIDList.Add(id); });
+            Facade.Instance.AddMonoListener(InputUpdate, UpdateType.Update, (id) => updateID = id);
         }
         void InputUpdate()
         {
             //当前包含鼠标在屏幕的左右坐标，wasd输入、鼠标左中右按下，space空格 leftShift
-            Vector2 axes = new Vector2(UnityEngine.Input.GetAxis("Horizontal"), UnityEngine.Input.GetAxis("Vertical"));
-            inputHandler.HorizVertAxis = axes;
+            inputHandler.HorizVertAxis = new Vector2(UnityEngine.Input.GetAxis("Horizontal"), UnityEngine.Input.GetAxis("Vertical"));
             inputHandler.MouseButtonLeft = ButtonPressState(KeyCode.Mouse0);
             inputHandler.MouseButtonRight = ButtonPressState(KeyCode.Mouse1);
             inputHandler.MouseButtonMiddle = ButtonPressState(KeyCode.Mouse2);
@@ -40,7 +39,7 @@ namespace Cosmos.Input {
             float mouseY = UnityEngine.Input.GetAxis("Mouse Y");
             inputHandler.MouseAxis = new Vector2(mouseX, mouseY);
             inputHandler.MouseButtonWheel = UnityEngine.Input.GetAxis("Mouse ScrollWheel");
-            inputHandler.LeftShift = ButtonPressState(KeyCode.LeftShift);
+            inputHandler.LeftShift = UnityEngine.Input.GetKey(KeyCode.LeftShift);
             if(EventManager.Instance.IsEventRegistered(ApplicationConst._InputEventKey))
                 EventManager.Instance.DispatchEvent(ApplicationConst._InputEventKey, this, inputHandler);
         }
@@ -60,5 +59,6 @@ namespace Cosmos.Input {
             else
                 return InputButtonState.None;
         }
+        public void InitInputManager() { }
     }
 }

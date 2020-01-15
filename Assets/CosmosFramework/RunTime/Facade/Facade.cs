@@ -33,15 +33,19 @@ namespace Cosmos{
             Cosmos.Controller.ControllerManager.Instance.OnInitialization();
             Utility.DebugLog("Module Count:\t" + GameManager.Instance.ModuleCount);
         }
-        public void InitModule(CFModule module)
-        {
-            //string fullName = "Cosmos." + module.ToString() + "." + module.ToString() + "Manager";
-            //IModule moduleObject = Utility.GetTypeInstance(fullName);
-        }
         public IModule GetModule(CFModule module)
         {
             return GameManager.Instance.GetModule(module);
         }
+        #region InputManager
+        /// <summary>
+        /// 临时
+        /// </summary>
+        public void InitInputManager()
+        {
+            InputManager.Instance.InitInputManager();
+        }
+        #endregion
         #region EventManager
         public void AddEventListener(object eventKey, CFAction<object, GameEventArgs> handler)
         {

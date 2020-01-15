@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-namespace Cosmos.Event
+namespace Cosmos
 {
     /// <summary>
     /// 数据基类

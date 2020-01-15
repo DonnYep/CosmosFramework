@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cosmos.Input;
-using Cosmos.Event;
 
 namespace Cosmos
 {
@@ -14,6 +13,7 @@ namespace Cosmos
         float currentYaw;
         short updateID;
         short lateUpdateID;
+        [SerializeField]
         CameraTarget cameraTarget;
         InputEventArgs inputHandler;
         private void OnEnable()
@@ -35,7 +35,7 @@ namespace Cosmos
             inputHandler = arg as InputEventArgs;
 
         }
-            void DeRegister()
+        void DeRegister()
         {
             Facade.Instance.RemoveMonoListener(UpdateCamera, Mono.UpdateType.LateUpdate, updateID);
             Facade.Instance.RemoveMonoListener(LateUpdateCamera, Mono.UpdateType.Update, lateUpdateID);

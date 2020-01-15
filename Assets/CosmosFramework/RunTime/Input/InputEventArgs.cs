@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cosmos.Event;
 namespace Cosmos.Input {
     /// <summary>
     /// 输入控制事件数据类
@@ -16,6 +15,6 @@ namespace Cosmos.Input {
         public InputButtonState MouseButtonRight { get; set; }
         public InputButtonState MouseButtonMiddle { get; set; }
         public InputButtonState MouseButtonLeft { get; set; }
-        public InputButtonState LeftShift { get; set; }
+        public bool LeftShift { get; set; }
     }
 }

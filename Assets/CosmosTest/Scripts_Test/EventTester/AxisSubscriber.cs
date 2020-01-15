@@ -57,12 +57,8 @@ namespace Cosmos.Test
                 Utility.DebugLog("jumpDown", this);
             if (inputHandler.MouseButtonMiddle == InputButtonState.Down)
                 Utility.DebugLog("mouseMiddle", this);
-            if (inputHandler.LeftShift == InputButtonState.Down)
+            if (inputHandler.LeftShift )
                 Utility.DebugLog("leftShiftDown", this);
-            if (inputHandler.LeftShift == InputButtonState.Up)
-                Utility.DebugLog("leftShiftUp", this);
-            if (inputHandler.LeftShift == InputButtonState.Hold)
-                Utility.DebugLog("leftShiftHold", this);
         }
     }
 }

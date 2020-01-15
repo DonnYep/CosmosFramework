@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Cosmos.Event;
 namespace Cosmos.UI{
     /// <summary>
     /// UI事件 处理数据

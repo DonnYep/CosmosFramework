@@ -1,20 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Cosmos.Event;
-
 namespace Cosmos
 {
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(CapsuleCollider))]
     public class PlayerController : CharacterInputController
     {
+        short updateID;
         int moveSpeed = Animator.StringToHash("MoveSpeed");
+        [SerializeField]
+        [Range(0, 1)]
+        float dampTime = 0.1f;
+        Animator animator;
+        float moveForword = 0;
 
-        private void OnEnable()
+        protected override void OnInitialization()
         {
-            Facade.Instance.AddEventListener(ApplicationConst._InputEventKey, Handler);
+            animator = GetComponentInChildren<Animator>();
         }
         protected override void Handler(object sender, GameEventArgs arg)
         {
-            throw new System.NotImplementedException();
+            inputEventArg = arg as Input.InputEventArgs;
+             moveForword= inputEventArg.HorizVertAxis.y;
+            if (inputEventArg.LeftShift)
+                moveForword *=2;
+            animator.SetFloat(moveSpeed, moveForword,dampTime,Time.deltaTime);
         }
     }
 }
