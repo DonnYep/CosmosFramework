@@ -31,6 +31,10 @@ namespace Cosmos
     /// CosmosFramework
     /// </summary>
     public delegate Result CFResultAction<in T, out Result>(T arg);
+
+
+
+    public delegate Result CFFunction<in T, out Result>(T arg);
     /// <summary>
     /// 判断委托，系统默认自带Predicate
     ///CosmosFramework
