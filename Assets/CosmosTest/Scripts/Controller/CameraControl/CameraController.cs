@@ -5,48 +5,45 @@ using Cosmos.Input;
 
 namespace Cosmos
 {
-    public class CameraController : MonoBehaviour
+    public class CameraController : CharacterInputController
     {
         [SerializeField] Vector3 offset;
-        [SerializeField]float cameraZoom=10;
-        [SerializeField] float pitch = 2;
-        float currentYaw;
-        short updateID;
-        short lateUpdateID;
-        [SerializeField]
+        [SerializeField]float distanceFromTarget=10;
+        [SerializeField] bool lockCursor=false;
+        [SerializeField] Vector2 pitchMinMax = new Vector2(-60, 85);
         CameraTarget cameraTarget;
-        InputEventArgs inputHandler;
-        private void OnEnable()
+        CameraTarget CameraTarget { get { if (cameraTarget == null)
+                    cameraTarget = GameObject.FindGameObjectWithTag("Player").
+                        GetComponentInChildren<CameraTarget>();return cameraTarget;} }
+        float yaw;
+        float pitch;
+        short lateUpdateID;
+        Vector3 currentRotation;
+        protected override void OnInitialization()
         {
-            Register();
+            Facade.Instance.AddMonoListener(LateUpdateCamera, Mono.UpdateType.Update, (id) => lateUpdateID = id);
+            if (lockCursor)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
         }
-        private void OnDestroy()
+        protected override void OnTermination()
         {
-            DeRegister();
-        }
-        void Register()
-        {
-            Facade.Instance.AddMonoListener(UpdateCamera, Mono.UpdateType.LateUpdate,(id)=> updateID = id);
-            Facade.Instance.AddMonoListener(LateUpdateCamera, Mono.UpdateType.Update,(id)=> lateUpdateID = id);
-            Facade.Instance.AddEventListener(ApplicationConst._InputEventKey, InputHandler);
-        }
-        void InputHandler(object sender, GameEventArgs arg)
-        {
-            inputHandler = arg as InputEventArgs;
-
-        }
-        void DeRegister()
-        {
-            Facade.Instance.RemoveMonoListener(UpdateCamera, Mono.UpdateType.LateUpdate, updateID);
             Facade.Instance.RemoveMonoListener(LateUpdateCamera, Mono.UpdateType.Update, lateUpdateID);
         }
-        void UpdateCamera()
+        protected override void Handler(object sender, GameEventArgs arg)
         {
+            inputEventArg = arg as Input.InputEventArgs;
+            yaw += inputEventArg.MouseAxis.x;
+            pitch -= inputEventArg.MouseAxis.y;
+            pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
         }
         void LateUpdateCamera()
         {
-            transform.position = cameraTarget.transform.position - offset * cameraZoom;
-            transform.LookAt(cameraTarget.transform.position + Vector3.up * pitch);
+            Quaternion camPosRotation = Quaternion.Euler(pitch,yaw, 0);
+            transform.position = camPosRotation * offset*distanceFromTarget + CameraTarget.transform.position;
+            transform.LookAt(CameraTarget.transform.position);
         }
     }
 }

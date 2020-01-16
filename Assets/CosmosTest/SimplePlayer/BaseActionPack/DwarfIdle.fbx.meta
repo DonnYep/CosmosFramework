@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 419dc739eb4bff743ab54a67ad545d96
+guid: 3a699252650255d4c908e28063b17a72
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -139,7 +139,7 @@ ModelImporter:
     400130: mixamorig:Spine
     400132: mixamorig:Spine1
     400134: mixamorig:Spine2
-    7400000: Idle
+    7400000: DwarfIdle
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -169,10 +169,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Idle
+      name: DwarfIdle
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 250
+      lastFrame: 210
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -184,7 +184,7 @@ ModelImporter:
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
-      keepOriginalOrientation: 1
+      keepOriginalOrientation: 0
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 0
       heightFromFeet: 0
