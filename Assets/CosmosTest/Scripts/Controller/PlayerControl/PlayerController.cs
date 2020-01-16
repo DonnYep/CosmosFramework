@@ -7,13 +7,17 @@ namespace Cosmos
     public class PlayerController : CharacterInputController
     {
         short updateID;
-        int moveSpeed = Animator.StringToHash("MoveSpeed");
+        int forwardID = Animator.StringToHash("Forward");
+        int turnID = Animator.StringToHash("Turn");
         [SerializeField]
         [Range(0, 1)]
-        float dampTime = 0.1f;
+        float forwardDampTime = 0.1f;
+        [SerializeField]
+        [Range(0, 1)]
+        float turnDampTime = 0.1f;
         Animator animator;
         float moveForword = 0;
-
+        float moveTurn = 0;
         protected override void OnInitialization()
         {
             animator = GetComponentInChildren<Animator>();
@@ -21,10 +25,14 @@ namespace Cosmos
         protected override void Handler(object sender, GameEventArgs arg)
         {
             inputEventArg = arg as Input.InputEventArgs;
-             moveForword= inputEventArg.HorizVertAxis.y;
+            moveForword= inputEventArg.HorizVertAxis.y;
+            moveTurn= inputEventArg.HorizVertAxis.x;
             if (inputEventArg.LeftShift)
-                moveForword *=2;
-            animator.SetFloat(moveSpeed, moveForword,dampTime,Time.deltaTime);
+            {
+                moveForword *= 2;
+            }
+            animator.SetFloat(forwardID, moveForword, forwardDampTime, Time.deltaTime);
+            animator.SetFloat(turnID, moveTurn, turnDampTime, Time.deltaTime);
         }
     }
 }
