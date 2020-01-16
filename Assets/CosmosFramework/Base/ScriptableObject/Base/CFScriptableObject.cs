@@ -9,6 +9,9 @@ namespace Cosmos{
     /// </summary>
     public abstract class CFScriptableObject : ScriptableObject
     {
+        [SerializeField]
+        protected string objectName = "Newobject";
+        public string ObjectName { get { return objectName; } }
         /// <summary>
         /// 重置清空内容
         /// </summary>

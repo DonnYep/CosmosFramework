@@ -8,9 +8,6 @@ namespace Cosmos{
     public abstract class ObjectPoolEventObject : CFScriptableObject
     {
         [SerializeField]
-        protected string objectName = "NewObject";
-        public string ObjectName { get { return objectName; } }
-        [SerializeField]
         protected GameObject spawnObject;
         public virtual GameObject  SpawnObject { get { return spawnObject; } }
         [SerializeField]

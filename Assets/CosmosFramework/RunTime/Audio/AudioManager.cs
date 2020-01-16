@@ -149,7 +149,7 @@ namespace Cosmos.Audio
         #endregion
         AudioSource CreateAudioSource(AudioEventArgs arg)
         {
-            GameObject go = new GameObject(arg.AudioEventObject .AudioName);
+            GameObject go = new GameObject(arg.AudioEventObject .ObjectName);
             go.transform.SetParent(ModuleMountObject.transform);
             go.transform.RestLocalTransform();
             //AudioSource audio = go.AddComponent<AudioSource>();

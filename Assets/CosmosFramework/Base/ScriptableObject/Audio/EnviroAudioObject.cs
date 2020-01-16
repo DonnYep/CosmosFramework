@@ -11,7 +11,7 @@ namespace Cosmos
         public override AudioClip AudioClip { get { return audioClips[ Utility.Random(0,audioClips.Length)]; } }
         public override void Reset()
         {
-            audioName = "NewEnviroAudio";
+            objectName= "NewEnviroAudio";
             mute = false;
             playOnAwake = false;
             loop = false;

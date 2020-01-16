@@ -10,7 +10,7 @@ namespace Cosmos
         public override AudioClip AudioClip { get { return aduioCilp; } }
         public override void Reset()
         {
-            audioName = "NewCreatureAduio";
+           objectName = "NewCreatureAduio";
             mute = false;
             playOnAwake = false;
             loop = false;

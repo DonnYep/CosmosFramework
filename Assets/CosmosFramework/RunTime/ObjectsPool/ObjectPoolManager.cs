@@ -167,5 +167,12 @@ namespace Cosmos.ObjectPool
                 pool.Value.Clear();
             }
         }
+        /// <summary>
+        /// 生成对象，不经过池。用于一次性的对象产生
+        /// </summary>
+        public GameObject SpawnNotUsePool(GameObject go, Transform spawnTransform)
+        {
+            return GameObject.Instantiate(go, spawnTransform);
+        }
     }
 }

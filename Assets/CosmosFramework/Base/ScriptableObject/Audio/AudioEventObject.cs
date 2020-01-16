@@ -9,9 +9,6 @@ namespace Cosmos
     public abstract class AudioEventObject : CFScriptableObject
     {
         [SerializeField]
-        protected string audioName = "NewAudio";
-        public string AudioName { get { return audioName; } }
-        [SerializeField]
         protected bool mute = false;
         public bool Mute { get { return mute; } }
         [SerializeField]

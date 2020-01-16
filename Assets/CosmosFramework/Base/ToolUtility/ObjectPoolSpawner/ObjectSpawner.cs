@@ -72,10 +72,8 @@ namespace Cosmos
         }
         protected  IEnumerator EnumCollect(float delay,CFAction action=null)
         {
-            Utility.DebugLog("BeforeEnumCollectYield");
             yield return new WaitForSeconds(delay);
             action?.Invoke();
-            Utility.DebugLog("AfterEnumCollectYield");
         }
     }
 }

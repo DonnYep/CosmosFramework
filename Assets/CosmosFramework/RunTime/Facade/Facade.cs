@@ -97,6 +97,20 @@ namespace Cosmos{
         {
             MonoManager.Instance.StopCoroutine(routine);
         }
+        /// <summary>
+        /// 嵌套协程
+        /// </summary>
+        /// <param name="routine">执行条件</param>
+        /// <param name="callBack">执行条件结束后自动执行回调函数</param>
+        /// <returns>Coroutine</returns>
+        public Coroutine StartCoroutine(Coroutine routine, CFAction callBack)
+        {
+            return MonoManager.Instance.StartCoroutine(routine, callBack);
+        }
+        public Coroutine DelayCoroutine(float delay)
+        {
+            return MonoManager.Instance.DelayCoroutine(delay);
+        }
         #endregion
         #region AudioManager
         public void PlayBackgroundAudio( GameEventArgs arg)
@@ -178,7 +192,7 @@ namespace Cosmos{
             SceneManager.Instance.LoadSceneAsync(sceneIndex, action);
         }
         #endregion
-        #region GameObjecrPool
+        #region GameObjectPool
         public void RegisterObjcetSpawnPool(object objKey, GameObject spawnItem, CFAction<GameObject> onSpawn, CFAction<GameObject> onDespawn)
         {
             ObjectPoolManager.Instance.RegisterSpawnPool(objKey, spawnItem, onSpawn,onDespawn);
@@ -222,6 +236,13 @@ namespace Cosmos{
         public GameObject GetObjectSpawnPoolActiveMount()
         {
             return ObjectPoolManager.Instance.ActiveObjectMount;
+        }
+        /// <summary>
+        /// 生成对象但不经过池，通常用在一次性对象的产生上
+        /// </summary>
+        public GameObject SpawnObjectNotUsePool(GameObject go,Transform spawnTransform)
+        {
+            return ObjectPoolManager.Instance.SpawnNotUsePool(go, spawnTransform);
         }
         #endregion
         #region ControllerManager

@@ -173,5 +173,23 @@ namespace Cosmos.Mono
             }
             return id;
         }
+        /// <summary>
+        /// 嵌套协程
+        /// </summary>
+        /// <param name="routine">执行条件</param>
+        /// <param name="callBack">执行条件结束后自动执行回调函数</param>
+        /// <returns>Coroutine</returns>
+        public Coroutine StartCoroutine(Coroutine routine, CFAction callBack)
+        {
+            if (monoControllerCount == 0)
+                CreateMonoController();
+            return (monoMap[monoControllerCount] as MonoController).StartCoroutine(routine, callBack);
+        }
+        public Coroutine DelayCoroutine(float delay)
+        {
+            if (monoControllerCount == 0)
+                CreateMonoController();
+            return (monoMap[monoControllerCount] as MonoController).DelayCoroutine(delay);
+        }
     }
 }
