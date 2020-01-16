@@ -9,6 +9,9 @@ namespace Cosmos{
     /// </summary>
     public abstract class CFScriptableObject : ScriptableObject
     {
+        /// <summary>
+        /// 所有对象共有的名称
+        /// </summary>
         [SerializeField]
         protected string objectName = "Newobject";
         public string ObjectName { get { return objectName; } }
