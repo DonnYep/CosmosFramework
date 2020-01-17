@@ -5,14 +5,16 @@ using UnityEngine.UI;
 using Cosmos.UI;
 using System;
 using Cosmos.Event;
-namespace Cosmos.Test{
-    public class EventRegister: MonoBehaviour {
+namespace Cosmos.Test
+{
+    public class SliderEventSubscriber : MonoBehaviour
+    {
         [SerializeField]
-        string key = "Unit";
+        string eventKey = "defaultEventKey";
+        public string EventKey { get { return eventKey; } }
         public void RegisterEvent()
         {
-            //EventManager.Instance.AddListener(key, EventCenterTest);
-            Facade.Instance.AddEventListener(key, EventCenterTest);
+            Facade.Instance.AddEventListener(eventKey, EventCenterTest);
         }
         Slider slider;
         Text text;
@@ -26,20 +28,19 @@ namespace Cosmos.Test{
         string startText;
         public void Deregister()
         {
-            //EventManager.Instance.RemoveListener(key, EventCenterTest);
-            Facade.Instance.RemoveEventListener(key, EventCenterTest);
+            Facade.Instance.RemoveEventListener(eventKey, EventCenterTest);
         }
         public void DeregisterEventManager()
         {
             GameManager.Instance.DeregisterModule(CFModule.Event);
         }
-        void EventCenterTest(object sender,GameEventArgs arg)
+        void EventCenterTest(object sender, GameEventArgs arg)
         {
             UIEventArgs uch = arg as UIEventArgs;
             slider.maxValue = uch.SliderMaxValue;
             slider.value = uch.SliderValue;
             var dispatcher = Utility.ConvertToObject<IEventDispatcher>(sender);
-            text.text = startText + "\n-" +dispatcher.DispatcherName;
+            text.text = startText + "\n-" + dispatcher.DispatcherName;
         }
     }
 }

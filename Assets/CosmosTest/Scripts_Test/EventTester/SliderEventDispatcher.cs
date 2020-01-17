@@ -6,7 +6,7 @@ using Cosmos.UI;
 using UnityEngine.UI;
 namespace Cosmos
 {
-    public class EventDispatcher : MonoBehaviour, IEventDispatcher
+    public class SliderEventDispatcher : MonoBehaviour, IEventDispatcher
     {
         [SerializeField]
         string eventKey = "defaultEventKey";

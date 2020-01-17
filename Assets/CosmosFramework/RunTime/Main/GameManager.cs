@@ -137,6 +137,7 @@ namespace Cosmos
         Scene,
         Config,
         Data,
-        Controller
+        Controller,
+        Reference
     }
 }
