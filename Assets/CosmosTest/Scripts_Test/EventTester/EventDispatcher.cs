@@ -9,7 +9,12 @@ namespace Cosmos
     public class EventDispatcher : MonoBehaviour, IEventDispatcher
     {
         [SerializeField]
-        string key = "Unit";
+        string eventKey = "defaultEventKey";
+        public string EventKey { get { return eventKey; } }
+        public string DispatcherName { get { return gameObject.name; } }
+        UIEventArgs uch;
+
+
         [SerializeField]
         string message;
         private void Start()
@@ -23,16 +28,14 @@ namespace Cosmos
             uch.SliderMaxValue = slider.maxValue;
             uch.Message = message;
             uch.SliderValue = slider.value;
-            Facade.Instance.DispatchEvent(key, this, uch);
+            Facade.Instance.DispatchEvent(eventKey, this, uch);
         }
-        UIEventArgs uch;
 
 
-        public string DispatcherName { get { return gameObject.name; } }
 
         public void DeregisterEvent()
         {
-            EventManager.Instance.DeregisterEvent(key);
+            Facade.Instance.DeregisterEvent(eventKey);
         }
     }
 }
