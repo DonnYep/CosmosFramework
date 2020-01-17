@@ -3,7 +3,6 @@ using System.Collections.Generic;
 //using Cosmos.Event;
 namespace Cosmos.ObjectPool
 {
-    [DisallowMultipleComponent]
     public sealed class ObjectPoolManager: Module<ObjectPoolManager>
     {
        public const  short _ObjectPoolCapacity = 50;

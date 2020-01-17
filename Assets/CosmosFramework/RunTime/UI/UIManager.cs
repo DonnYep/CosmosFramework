@@ -2,7 +2,6 @@
 using System.Collections;
 namespace Cosmos.UI
 {
-    [DisallowMultipleComponent]
     public sealed class UIManager : Module<UIManager>
     {
         public static string MainUICanvasName { get; set; }

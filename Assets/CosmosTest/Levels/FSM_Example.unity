@@ -268,6 +268,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1283498296}
   - component: {fileID: 1283498295}
+  - component: {fileID: 1283498297}
   m_Layer: 0
   m_Name: FSM
   m_TagString: Untagged
@@ -286,6 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92388123da58f5d4a82d5809f1217ea7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  delay: 2.28
 --- !u!4 &1283498296
 Transform:
   m_ObjectHideFlags: 0
@@ -299,3 +301,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1283498297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1283498294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3279841e0b1755d419ca0cb10feddab7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoStart: 1
+  startDelay: 1
+  interval: 1
+  loop: 1
+  randomInterval: 0
+  randomRange: 0
+  action:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1283498295}
+        m_MethodName: PrintFrameCount
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null

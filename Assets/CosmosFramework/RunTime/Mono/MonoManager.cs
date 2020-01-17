@@ -17,7 +17,6 @@ namespace Cosmos.Mono
     /// 不继承自mono的对象通过这个管理器来实现update等需要mono才能做到的功能
     /// 当前只生成一个mc
     /// </summary>
-    [DisallowMultipleComponent]
     public sealed class MonoManager:Module<MonoManager>
     {
         protected override void InitModule()

@@ -4,7 +4,6 @@ using System;
 using Object = UnityEngine.Object;
 namespace Cosmos.Event
 {
-    [DisallowMultipleComponent]
     public sealed class EventManager : Module<EventManager>
     {
         protected override void InitModule()

@@ -4,13 +4,12 @@ using UnityEngine;
 
 namespace Cosmos.Test{
     public class FSMTester: MonoBehaviour {
-        private void Start()
+        [SerializeField]
+        int lastFrame = -5;
+        public void PrintFrameCount()
         {
-            PrintEnun();
-        }
-        public void PrintEnun()
-        {
-            Utility.DebugLog(ContainerState.Empty.ToString());
+            lastFrame = Time.frameCount;
+            Utility.DebugLog("framecount:" + lastFrame);
         }
     }
 }

@@ -14,15 +14,17 @@ namespace Cosmos.Input {
     /// <summary>
     /// 输入管理器，继承自单例后，则全局管理输入，优化性能
     /// </summary>
-    [DisallowMultipleComponent]
     public sealed class InputManager :Module<InputManager>
     {
         short updateID;
         InputEventArgs inputHandler = new InputEventArgs();
+        VirtualInput inputModule;
+        InputDevice inputDevice;
         protected override void InitModule()
         {
             RegisterModule(CFModule.Input);
         }
+       
         public InputManager()
         {
             Facade.Instance.AddMonoListener(InputUpdate, UpdateType.Update, (id) => updateID = id);

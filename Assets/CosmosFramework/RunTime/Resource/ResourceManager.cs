@@ -17,7 +17,6 @@ namespace Cosmos.Resource
         Resource = 0,
         AssetBundle = 1
     }
-    [DisallowMultipleComponent]
     public sealed class ResourceManager:Module<ResourceManager>
     {
         protected override void InitModule()
