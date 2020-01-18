@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cosmos{
     public abstract class AudioPlayer: MonoBehaviour
     {
-        protected Audio.AudioEventArgs audioArgs = new Audio.AudioEventArgs();
+        protected AudioEventArgs audioArgs = new AudioEventArgs();
 
         [SerializeField] AudioEventObject audioEventObject;
         public  AudioEventObject AudioEventObject { get { return audioEventObject; }  }

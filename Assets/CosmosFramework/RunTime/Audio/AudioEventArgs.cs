@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cosmos.Event;
 using System;
 
-namespace Cosmos.Audio
+namespace Cosmos
 {
     public class AudioEventArgs : GameEventArgs
     {

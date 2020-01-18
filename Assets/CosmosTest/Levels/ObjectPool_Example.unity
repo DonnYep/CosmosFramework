@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 201609284}
   - component: {fileID: 201609285}
   m_Layer: 0
-  m_Name: ObjectSpawnerMuti
+  m_Name: ObjectSpawnerGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

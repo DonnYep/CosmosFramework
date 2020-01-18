@@ -9,10 +9,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 480f4bd78864c9a458a5ecf9b89452b4, type: 3}
-  m_Name: SphereObject
+  m_Name: Arg_CubeObject
   m_EditorClassIdentifier: 
-  objectName: SphereObject
-  spawnObject: {fileID: 1002502963443486, guid: 3376b1f58ee2c9f4e91fccef586213ac,
+  objectName: CubeObject
+  spawnObject: {fileID: 1836443238213990, guid: 8a8417a066faaf54681fd6b50528d39c,
     type: 2}
   objectAdds: 100
   groupSpawn: 1

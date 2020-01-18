@@ -9,14 +9,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf51ba46403d7244a8b083fd54cf8757, type: 3}
-  m_Name: BackgroundMusic
+  m_Name: Arg_EnviroAudioEffect
   m_EditorClassIdentifier: 
-  audioName: ToBecontinue
+  objectName: Newobject
   mute: 0
   playOnAwake: 0
-  loop: 1
+  loop: 0
   volume: 1
   spatialBlend: 0
   speed: 1
   audioClips:
-  - {fileID: 8300000, guid: 1c93f8d66ed5c644ea9301c1cbbdec08, type: 3}
+  - {fileID: 8300000, guid: 2be5f9ca51075ff40bf2ad039eafc66e, type: 3}
+  - {fileID: 8300000, guid: a174e0a33c2bcb349bf316bb10ac5317, type: 3}
