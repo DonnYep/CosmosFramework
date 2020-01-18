@@ -25,7 +25,7 @@ namespace Cosmos
         }
         protected override void Handler(object sender, GameEventArgs arg)
         {
-            inputEventArg = arg as Input.InputEventArgs;
+            inputEventArg = arg as InputEventArgs;
             if (inputEventArg.HorizVertAxis.magnitude != 0)
                 animator.SetBool(inputHash, true);
             else

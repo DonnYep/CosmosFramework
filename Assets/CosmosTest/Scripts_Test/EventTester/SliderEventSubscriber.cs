@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Cosmos.UI;
 using System;
-using Cosmos.Event;
 namespace Cosmos.Test
 {
     public class SliderEventSubscriber : MonoBehaviour
@@ -39,8 +37,8 @@ namespace Cosmos.Test
             UIEventArgs uch = arg as UIEventArgs;
             slider.maxValue = uch.SliderMaxValue;
             slider.value = uch.SliderValue;
-            var dispatcher = Utility.ConvertToObject<IEventDispatcher>(sender);
-            text.text = startText + "\n-" + dispatcher.DispatcherName;
+            var dispatcher = Utility.ConvertToObject<GameObject>(sender);
+            text.text = startText + "\n-" + dispatcher.name;
         }
     }
 }

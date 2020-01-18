@@ -34,7 +34,7 @@ namespace Cosmos
         }
         protected override void Handler(object sender, GameEventArgs arg)
         {
-            inputEventArg = arg as Input.InputEventArgs;
+            inputEventArg = arg as InputEventArgs;
             yaw += inputEventArg.MouseAxis.x;
             pitch -= inputEventArg.MouseAxis.y;
             pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);

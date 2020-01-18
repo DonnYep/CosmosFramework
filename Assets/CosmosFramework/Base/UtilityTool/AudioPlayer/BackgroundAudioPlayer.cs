@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Cosmos.Audio;
-//using Cosmos.Audio;
 namespace Cosmos {
     public class BackgroundAudioPlayer :AudioPlayer
     {

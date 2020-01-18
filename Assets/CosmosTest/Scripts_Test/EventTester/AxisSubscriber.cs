@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cosmos.Event;
 using Cosmos.Input;
-using Cosmos.UI;
 using UnityEngine.UI;
 namespace Cosmos.Test
 {

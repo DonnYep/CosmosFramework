@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-namespace Cosmos.UI{
+namespace Cosmos{
     /// <summary>
     /// UI事件 处理数据
     /// </summary>

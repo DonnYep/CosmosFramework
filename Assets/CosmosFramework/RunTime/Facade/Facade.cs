@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using Cosmos.Event;
 using Cosmos.UI;
@@ -33,18 +34,35 @@ namespace Cosmos{
             Cosmos.Controller.ControllerManager.Instance.OnInitialization();
             Utility.DebugLog("Module Count:\t" + GameManager.Instance.ModuleCount);
         }
+        IModule InitModule(CFModule module)
+        {
+            string moduleFullName = "Cosmos." + module.ToString() + "." + module.ToString() + "Manager";
+            return Utility.GetTypeInstance<IModule>(this. GetType().Assembly, moduleFullName);
+        }
+        IModule InitModule(string module)
+        {
+            string moduleFullName = "Cosmos." + module.ToString() + "." + module.ToString() + "Manager";
+            return Utility.GetTypeInstance<IModule>(this.GetType().Assembly, moduleFullName);
+        }
         public IModule GetModule(CFModule module)
         {
-            return GameManager.Instance.GetModule(module);
+            var moduleResult = GameManager.Instance.GetModule(module);
+            if (moduleResult == null)
+            {
+               moduleResult= InitModule(module);
+            }
+            return moduleResult;
+        }
+        public IModule GetModule(string module)
+        {
+            var moduleResult = GameManager.Instance.GetModule(module);
+            if (moduleResult == null)
+            {
+                moduleResult = InitModule(module);
+            }
+            return moduleResult;
         }
         #region InputManager
-        /// <summary>
-        /// 临时
-        /// </summary>
-        public void InitInputManager()
-        {
-            InputManager.Instance.InitInputManager();
-        }
         #endregion
         #region EventManager
         public void AddEventListener(object eventKey, CFAction<object, GameEventArgs> handler)

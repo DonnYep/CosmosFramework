@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Cosmos.Audio;
-
 namespace Cosmos
 {
     public class WorldAudioPlayer : AudioPlayer

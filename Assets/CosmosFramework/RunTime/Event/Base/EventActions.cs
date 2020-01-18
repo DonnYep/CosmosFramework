@@ -40,4 +40,8 @@ namespace Cosmos
     ///CosmosFramework
     /// </summary>
     public delegate bool CFPredicateAction<T>(T arg);
+
+    public delegate IEnumerator CoroutineHandler();
+    public delegate IEnumerator CoroutineHandler<in T>(T arg);
+    public delegate IEnumerator CoroutineHandler<in T1,in T2>(T1 arg1,T2 arg2);
 }

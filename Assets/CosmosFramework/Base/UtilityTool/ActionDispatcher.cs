@@ -7,7 +7,7 @@ using UnityEditor;
 namespace Cosmos
 {
     [DisallowMultipleComponent]
-    public class  ActionDispatcher: MonoBehaviour,IEventDispatcher
+    public class  ActionDispatcher: MonoBehaviour
     {
         [Header("简易事件分发器，复杂逻辑请使用EventCenter")]
         [SerializeField] UnityEvent action;

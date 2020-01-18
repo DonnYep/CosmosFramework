@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cosmos.Event;
-using Cosmos.UI;
 using UnityEngine.UI;
 namespace Cosmos
 {
-    public class SliderEventDispatcher : MonoBehaviour, IEventDispatcher
+    public class SliderEventDispatcher : MonoBehaviour
     {
         [SerializeField]
         string eventKey = "defaultEventKey";

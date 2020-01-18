@@ -59,7 +59,16 @@ namespace Cosmos
                 return moduleMap[moduleName];
             else
             {
-                Utility.DebugError("Can't get module: \t" + moduleName);
+                return null;
+            }
+        }
+        public IModule GetModule(string moduleType)
+        {
+            string moduleName = moduleType.ToString();
+            if (moduleMap.ContainsKey(moduleName))
+                return moduleMap[moduleName];
+            else
+            {
                 return null;
             }
         }

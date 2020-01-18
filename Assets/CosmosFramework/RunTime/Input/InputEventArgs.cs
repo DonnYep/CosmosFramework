@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace Cosmos.Input {
+using Cosmos.Input;
+namespace Cosmos {
     /// <summary>
     /// 输入控制事件数据类
     /// </summary>
