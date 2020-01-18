@@ -17,6 +17,7 @@ namespace Cosmos{
     /// </summary>
     public class Facade : Singleton<Facade>
     {
+        #region FacadeMethods
         public void InitAllModule()
         {
             Cosmos.Audio.AudioManager.Instance.OnInitialization();
@@ -62,6 +63,7 @@ namespace Cosmos{
             }
             return moduleResult;
         }
+        #endregion
         #region InputManager
         #endregion
         #region EventManager

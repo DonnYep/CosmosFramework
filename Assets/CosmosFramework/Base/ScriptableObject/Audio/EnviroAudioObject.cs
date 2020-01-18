@@ -18,7 +18,7 @@ namespace Cosmos
             volume = 1;
             spatialBlend = 0;
             speed = 1;
-            audioClips = null;
+            audioClips = new AudioClip[0];
         }
     }
 }
