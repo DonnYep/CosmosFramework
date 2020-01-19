@@ -31,16 +31,16 @@ namespace Cosmos
         {
             get
             {
-                //List<AudioEventObject> argObject = new List<AudioEventObject>();
-                //for (short i = 0; i < audioEventObjects.Length; i++)
-                //{
-                //    if (audioEventObjects[i] != null)
-                //    {
-                //        argObject.Add(audioEventObjects[i]);
-                //    }
-                //}
-                //return argObject.ToArray();
-                return audioEventObjects;
+                List<AudioEventObject> argObject = new List<AudioEventObject>();
+                for (short i = 0; i < audioEventObjects.Length; i++)
+                {
+                    if (audioEventObjects[i] != null)
+                    {
+                        argObject.Add(audioEventObjects[i]);
+                    }
+                }
+                return argObject.ToArray();
+                //return audioEventObjects;
             }
         }
         public override void PlayAudio()

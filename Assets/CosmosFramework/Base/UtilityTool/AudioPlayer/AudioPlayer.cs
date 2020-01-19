@@ -10,6 +10,5 @@ namespace Cosmos{
         public abstract void PauseAudio();
         public abstract void UnpauseAudio();
         public abstract void StopAudio();
-        public virtual void TerminateAudio() { }
     }
 }

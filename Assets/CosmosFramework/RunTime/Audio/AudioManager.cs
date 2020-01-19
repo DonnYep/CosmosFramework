@@ -112,7 +112,6 @@ namespace Cosmos.Audio
             {
                 AudioSource audio = AttachAudioSource(attachTarget, args);
                 worldAudios.Add(attachTarget, audio);
-                //SetAudioProperties(ref audio, args);
                 audio.clip = args.AudioEventObject .AudioClip;
                 audio.Play();
             }
@@ -308,7 +307,6 @@ namespace Cosmos.Audio
                 {
                     if (!audioList.Value[i].isPlaying)
                     {
-                        Utility.DebugLog("Check audio\n" + audioList.Value[i].clip.name);
                         GameManager.KillObject(audioList.Value[i]);
                         clips.Add(audioList.Value[i]);
                     }
@@ -317,11 +315,13 @@ namespace Cosmos.Audio
                 {
                     audioList.Value.Remove(item);
                 }
+                clips.Clear();
             }
             foreach (var item in removeSet)
             {
                 multipleAudio.Remove(item);
             }
+            removeSet.Clear();
         }
     }
 }
