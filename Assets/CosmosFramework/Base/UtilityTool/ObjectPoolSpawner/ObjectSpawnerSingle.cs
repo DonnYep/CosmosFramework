@@ -29,7 +29,8 @@ namespace Cosmos{
         }
         protected override void RegisterSpawner()
         {
-            Facade.Instance.RegisterObjcetSpawnPool(this, PoolObject.SpawnObject, SpawnHandler, DespawnHandler);
+            if(poolObject!=null)
+                Facade.Instance.RegisterObjcetSpawnPool(this, PoolObject.SpawnObject, SpawnHandler, DespawnHandler);
         }
     }
 }

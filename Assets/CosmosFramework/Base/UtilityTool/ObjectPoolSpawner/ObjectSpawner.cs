@@ -31,7 +31,7 @@ namespace Cosmos
                 return Facade.Instance.GetObjectSpawnPoolActiveMount().transform;
             }
         }
-        protected virtual void Start()
+        protected virtual void Awake()
         {
             RegisterSpawner();
         }

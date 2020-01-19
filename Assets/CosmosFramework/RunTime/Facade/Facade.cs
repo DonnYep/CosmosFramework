@@ -141,9 +141,9 @@ namespace Cosmos{
         {
             AudioManager.Instance.PauseBackgroundAudio();
         }
-        public void UnPauseBackgroundAudio()
+        public void UnpauseBackgroundAudio()
         {
-            AudioManager.Instance.UnPauseBackgroundAudio();
+            AudioManager.Instance.UnpauseBackgroundAudio();
         }
         public void StopBackgroundAudio()
         {
@@ -157,15 +157,31 @@ namespace Cosmos{
         {
             AudioManager.Instance.PauseWorldAudio(attachTarget);
         }
-        public void UnPauseWorldAudio(GameObject attachTarget)
+        public void UnpauseWorldAudio(GameObject attachTarget)
         {
-            AudioManager.Instance.UnPauseWorldAudio(attachTarget);
+            AudioManager.Instance.UnpauseWorldAudio(attachTarget);
         }
         public void StopWorldAudio(GameObject attachTarget)
         {
             AudioManager.Instance.StopWorldAudio(attachTarget);
         }
-        public void StopAllAudio()
+        public void PlayMultipleAudio(GameObject attachTarget, AudioEventArgs[] args)
+        {
+            AudioManager.Instance.PlayMultipleAudio(attachTarget, args);
+        }
+        public void PauseMultipleAudio(GameObject attachTarget)
+        {
+            AudioManager.Instance.PauseMultipleAudio(attachTarget);
+        }
+        public void UnpauseMultipleAudio(GameObject attachTarget)
+        {
+            AudioManager.Instance.UnpauseMultipleAudio(attachTarget);
+        }
+        public void StopMultipleAudio(GameObject attachTarget)
+        {
+            AudioManager.Instance.StopMultipleAudio(attachTarget);
+        }
+        public void StopAllWorldAudio()
         {
             AudioManager.Instance.StopAllWorldAudio();
         }

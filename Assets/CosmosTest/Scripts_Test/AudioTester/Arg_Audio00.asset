@@ -9,9 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf51ba46403d7244a8b083fd54cf8757, type: 3}
-  m_Name: Arg_BackgroundMusic
+  m_Name: Arg_Audio00
   m_EditorClassIdentifier: 
-  objectName: Newobject
+  objectName: NewEnviroAudio
   mute: 0
   playOnAwake: 0
   loop: 0
@@ -19,4 +19,4 @@ MonoBehaviour:
   spatialBlend: 0
   speed: 1
   audioClips:
-  - {fileID: 8300000, guid: 1c93f8d66ed5c644ea9301c1cbbdec08, type: 3}
+  - {fileID: 8300000, guid: 4089f11cd299e1b48b3e0d7b5c70a58a, type: 3}

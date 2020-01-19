@@ -4,8 +4,12 @@ namespace Cosmos
 {
     public class WorldAudioPlayer : AudioPlayer
     {
+        
         [SerializeField] GameObject audioAttachTarget;
         public GameObject AudioAttachTarget { get { return audioAttachTarget; } set { audioAttachTarget = value; }  }
+        [SerializeField] AudioEventObject audioEventObject;
+        public override AudioEventObject AudioEventObject { get { return audioEventObject; } }
+        AudioEventArgs audioArgs = new AudioEventArgs();
         public override void PlayAudio()
         {
             audioArgs.AudioEventObject = AudioEventObject;
@@ -21,7 +25,7 @@ namespace Cosmos
         }
       public override void UnpauseAudio()
         {
-            Facade.Instance.UnPauseWorldAudio(AudioAttachTarget);
+            Facade.Instance.UnpauseWorldAudio(AudioAttachTarget);
         }
     }
 }

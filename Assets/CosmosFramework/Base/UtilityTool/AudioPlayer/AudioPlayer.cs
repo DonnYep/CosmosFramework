@@ -5,13 +5,11 @@ using UnityEngine;
 namespace Cosmos{
     public abstract class AudioPlayer: MonoBehaviour
     {
-        protected AudioEventArgs audioArgs = new AudioEventArgs();
-
-        [SerializeField] AudioEventObject audioEventObject;
-        public  AudioEventObject AudioEventObject { get { return audioEventObject; }  }
+        public virtual AudioEventObject AudioEventObject { get; }
         public abstract void PlayAudio();
         public abstract void PauseAudio();
         public abstract void UnpauseAudio();
         public abstract void StopAudio();
+        public virtual void TerminateAudio() { }
     }
 }

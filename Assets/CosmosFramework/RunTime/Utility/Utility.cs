@@ -124,6 +124,10 @@ namespace Cosmos
         {
             return comp.transform.Find(subNode).GetComponent<T>();
         }
+        /// <summary>
+        /// 如果旧的对象没有目标组件，则删除旧对象。
+        /// 返回新创建添加组件后的对象
+        /// </summary>
         public static T Add<T>(GameObject go) where T : Component
         {
             if (go != null)
@@ -138,6 +142,10 @@ namespace Cosmos
             }
             return null;
         }
+        /// <summary>
+        /// 如果旧的对象没有目标组件，则删除旧对象。
+        /// 返回新创建添加组件后的对象
+        /// </summary>
         public static T Add<T>(Transform go) where T : Component
         {
             return Add<T>(go.transform);

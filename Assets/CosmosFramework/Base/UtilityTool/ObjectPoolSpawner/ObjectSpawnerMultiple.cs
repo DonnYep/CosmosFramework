@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cosmos{
-    public class ObjectSpawnerMuti : ObjectSpawner
+    public class ObjectSpawnerMultiple : ObjectSpawner
     {
         [ContextMenuItem("Reset","ResetSpanwer")]
         [SerializeField] List<Transform> spawnTransforms = new List<Transform>();
@@ -31,7 +31,8 @@ namespace Cosmos{
         }
         protected override void RegisterSpawner()
         {
-            Facade.Instance.RegisterObjcetSpawnPool(this, PoolObject.SpawnObject, SpawnHandler, DespawnHandler);
+            if(poolObject!=null)
+                Facade.Instance.RegisterObjcetSpawnPool(this, PoolObject.SpawnObject, SpawnHandler, DespawnHandler);
         }
     }
 }
