@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
-namespace Cosmos.FSM
+namespace Cosmos
 {
     /// <summary>
     /// 有限状态机时间响应函数
