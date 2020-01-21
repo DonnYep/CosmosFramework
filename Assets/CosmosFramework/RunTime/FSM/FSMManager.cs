@@ -14,5 +14,24 @@ namespace Cosmos.FSM{
         {
 
         }
+        public bool HasFsm<T>()
+            where T:class
+        {
+            return false;
+        }
+        public bool HasFsm(string name)
+        {
+            return false;
+        }
+        public IFSM<T> GetFsm<T>()
+            where T:class
+        {
+            return null;
+        }
+        public IFSM<T> CreateFsm<T>(T owner,List<FSMState<T>> states)
+            where T:class
+        {
+            return null;
+        }
     }
 }

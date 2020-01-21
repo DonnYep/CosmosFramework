@@ -2,9 +2,9 @@
 using System.Collections;
 namespace Cosmos
 {
+    [DisallowMultipleComponent]
     public class WorldAudioPlayer : AudioPlayer
     {
-        
         [SerializeField] GameObject audioAttachTarget;
         public GameObject AudioAttachTarget { get { return audioAttachTarget; } set { audioAttachTarget = value; }  }
         [SerializeField] AudioEventObject audioEventObject;

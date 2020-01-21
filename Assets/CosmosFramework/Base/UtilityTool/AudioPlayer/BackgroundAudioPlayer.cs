@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 namespace Cosmos {
+    [DisallowMultipleComponent]
     public class BackgroundAudioPlayer :AudioPlayer
     {
         AudioEventArgs audioArgs = new AudioEventArgs();

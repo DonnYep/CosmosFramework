@@ -26,7 +26,7 @@ public class Timer : MonoBehaviour {
         [SerializeField] UnityEvent action;
         public UnityEvent Action { get { return action; } set { action = value; } }
         Coroutine  tempRoutine;
-        private void Start()
+        private void Awake()
         {
             if (autoStart)
                 tempRoutine = Facade.Instance.StartCoroutine(EnumAction(StartDelay, () => action.Invoke()));

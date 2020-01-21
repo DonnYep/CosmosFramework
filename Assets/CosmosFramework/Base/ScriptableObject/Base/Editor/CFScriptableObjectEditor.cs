@@ -7,7 +7,7 @@ namespace Cosmos{
     /// 子类也继承按钮
     /// </summary>
     [CustomEditor(typeof(CFScriptableObject),true)]
-    public class CFScriptableObjectEditor: UnityEditor.Editor
+    public class CFScriptableObjectEditor: Editor
     {
         CFScriptableObject cfScriptableObject;
         private void OnEnable()

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-namespace Cosmos.Editor
+namespace Cosmos.CosmosEditor
 {
 public class DebugLogBuilder : EditorWindow
     {

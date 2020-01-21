@@ -78,15 +78,24 @@ namespace Cosmos.Audio
         }
         public void PauseBackgroundAudio()
         {
-            backgroundAduio.Pause();
+            if (backgroundAduio != null)
+                backgroundAduio.Pause();
+            else
+                Utility.DebugError("BackgroundAudio  not exist!");
         }
         public void UnpauseBackgroundAudio()
         {
-            backgroundAduio.UnPause();
+            if (backgroundAduio != null)
+                backgroundAduio.UnPause();
+            else
+                Utility.DebugError("BackgroundAudio  not exist!");
         }
         public void StopBackgroundAudio()
         {
-            backgroundAduio.Stop();
+            if (backgroundAduio != null)
+                backgroundAduio.Stop();
+            else
+                Utility.DebugError("BackgroundAudio  not exist!");
         }
         #endregion
         #region worldAudio
@@ -124,7 +133,7 @@ namespace Cosmos.Audio
                 audio.Pause();
             }
             else
-                Utility.DebugError("World"+attachTarget.name + "not register in audio manager", attachTarget);
+                Utility.DebugError("World"+attachTarget.name + "\n not register in audio manager", attachTarget);
         }
         public void UnpauseWorldAudio(GameObject attachTarget)
         {
@@ -133,7 +142,7 @@ namespace Cosmos.Audio
                 AudioSource audio = worldAudios[attachTarget];
                 audio.UnPause();
             }else
-                Utility.DebugError("World"+attachTarget.name + "not register in audio manager", attachTarget);
+                Utility.DebugError("World"+attachTarget.name + "\n not register in audio manager", attachTarget);
         }
         public void StopWorldAudio(GameObject attachTarget)
         {
@@ -142,7 +151,7 @@ namespace Cosmos.Audio
                 AudioSource audio = worldAudios[attachTarget];
                 audio.UnPause();
             }else
-                Utility.DebugError("World"+attachTarget.name + "not register in audio manager", attachTarget);
+                Utility.DebugError("World"+attachTarget.name + "\n not register in audio manager", attachTarget);
         }
         public void StopAllWorldAudio()
         {
@@ -201,7 +210,7 @@ namespace Cosmos.Audio
                     multipleAudio[attachTarget][i].Pause();
                 }
             }else
-                Utility.DebugError("Multiple"+attachTarget.name + "not register in audio manager", attachTarget);
+                Utility.DebugError("Multiple"+attachTarget.name + "\n not register in audio manager", attachTarget);
         }
         public void UnpauseMultipleAudio(GameObject attachTarget)
         {
@@ -213,7 +222,7 @@ namespace Cosmos.Audio
                 }
             }
             else
-                Utility.DebugError("Multiple" + attachTarget.name + "not register in audio manager", attachTarget);
+                Utility.DebugError("Multiple" + attachTarget.name + "\n not register in audio manager", attachTarget);
         }
         public void StopMultipleAudio(GameObject attachTarget)
         {
@@ -225,7 +234,7 @@ namespace Cosmos.Audio
                 }
             }
             else
-                Utility.DebugError("Multiple" + attachTarget.name + "not register in audio manager", attachTarget);
+                Utility.DebugError("Multiple" + attachTarget.name + "\n not register in audio manager", attachTarget);
         }
         #endregion
         AudioSource CreateAudioSource(AudioEventArgs arg)

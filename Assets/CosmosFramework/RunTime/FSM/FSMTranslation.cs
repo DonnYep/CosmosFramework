@@ -4,6 +4,8 @@ namespace Cosmos
 {
     public abstract  class FSMTranslation
     {
+        protected string translationName;
+        public string TranslationName { get { return translationName; } }
         public FSMTranslation()
         {
             OnInit();

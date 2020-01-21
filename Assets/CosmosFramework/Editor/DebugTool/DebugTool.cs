@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cosmos.Resource;
 # if UNITY_EDITOR
 using UnityEditor;
 #endif
-namespace Cosmos.Editor
+namespace Cosmos.CosmosEditor
 {
     public class DebugTool :EditorWindow
     {

@@ -1,16 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
-using System.Xml;
-using System.IO;
 using System.Collections.Generic;
-using Cosmos.Resource;
-using Cosmos.Config;
 # if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace Cosmos.Editor
+namespace Cosmos.CosmosEditor
 {
     /// <summary>
     /// 创建一个XML文件，将 Resources文件夹中的文件进行记录

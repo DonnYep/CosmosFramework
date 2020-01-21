@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Cosmos
 {
+    [DisallowMultipleComponent]
     public class WorldAudioPlayerMultiple : AudioPlayer
     {
         [SerializeField] GameObject audioAttachTarget;
