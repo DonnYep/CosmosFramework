@@ -14,7 +14,6 @@ namespace Cosmos.FSM
         /// 状态机中的状态数量
         /// </summary>
         int FSMStateCount { get; }
-
-
+        bool IsRunning { get; }
     }
 }
