@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
-using Cosmos.FSM;
-
 namespace Cosmos
 {
     /// <summary>
