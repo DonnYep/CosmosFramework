@@ -10,6 +10,7 @@ using Cosmos.Scene;
 using Cosmos.ObjectPool;
 using Cosmos.Audio;
 using Cosmos.Resource;
+using Cosmos.Reference;
 namespace Cosmos{
     /// <summary>
     /// CosmosFramework外观类，封装模块的功能，进行解耦
@@ -284,6 +285,44 @@ namespace Cosmos{
         #region ControllerManager
         #endregion
         #region DataManager
+        #endregion
+        #region ReferenceManager
+        public int GetReferencePoolCount<T>()
+            where T : class, IReference, new()
+        {
+            return  ReferencePoolManager.Instance.GetPoolCount<T>();
+        }
+        public T SpawnReference<T>()
+            where T : class, IReference, new()
+        {
+            return ReferencePoolManager.Instance.Spawn<T>();
+        }
+        public IReference SpawnReference(Type type)
+        {
+            return ReferencePoolManager.Instance.Spawn(type);
+        }
+        public void DespawnReference(IReference refer)
+        {
+            ReferencePoolManager.Instance.Despawn(refer);
+        }
+        public void DespawnsReference<T>(List<T> refers)
+            where T : class, IReference, new()
+        {
+            ReferencePoolManager.Instance.Despawns<T>(refers);
+        }
+        public void DespawnsReference<T>(T[] refers)
+            where T : class, IReference, new()
+        {
+            ReferencePoolManager.Instance.Despawns<T>(refers);
+        }
+        public void ClearReferencePool(Type type)
+        {
+            ReferencePoolManager.Instance.Clear(type);
+        }
+        public void ClearAllReferencePool()
+        {
+            ReferencePoolManager.Instance.Clear();
+        }
         #endregion
     }
 }

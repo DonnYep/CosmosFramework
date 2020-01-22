@@ -16,7 +16,7 @@ namespace Cosmos.FSM
         {
             FSM<T> fsmObject = (FSM <T>) fsm;
         }
-        HashSet<FSMTranslation> hashTranslation = new HashSet<FSMTranslation>();
+        HashSet<FSMTranslation<T>> hashTranslation = new HashSet<FSMTranslation<T>>();
         Dictionary<string, string> stateMap = new Dictionary<string, string>();
         public void AddTranslation(string translationName,string stateName)
         {
@@ -42,7 +42,7 @@ namespace Cosmos.FSM
         }
         void AddTranslationObject( string translationName)
         {
-            var result= Utility.GetTypeInstance<FSMTranslation>(this.GetType().Assembly, translationName);
+            var result= Utility.GetTypeInstance<FSMTranslation<T>>(this.GetType().Assembly, translationName);
             hashTranslation.Add(result);
         }
 

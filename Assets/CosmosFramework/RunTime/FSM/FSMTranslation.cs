@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
-namespace Cosmos
+namespace Cosmos.FSM
 {
-    public abstract  class FSMTranslation
+    public abstract  class FSMTranslation<T>
+        where T:class
     {
         protected string translationName;
         public string TranslationName { get { return translationName; } }
@@ -11,6 +12,6 @@ namespace Cosmos
             OnInit();
         }
         public abstract void OnInit();
-        public abstract bool Handler();
+        public abstract bool Handler(IFSM<T> fsm);
     }
 }
