@@ -19,7 +19,7 @@ namespace Cosmos
                 {
                     deactiveObjectMount = new GameObject(this.gameObject.name + "->>DeactiveObjectMount");
                     deactiveObjectMount.transform.SetParent(Facade.Instance.GetModule(CFModule.ObjectPool).ModuleMountObject.transform);
-                    deactiveObjectMount.transform.RestLocalTransform();
+                    deactiveObjectMount.transform.ResetLocalTransform();
                 }
                 return deactiveObjectMount.transform;
             }
@@ -64,7 +64,7 @@ namespace Cosmos
             if (go == null)
                 return;
             go.transform.SetParent(DeactiveObjectMount);
-            go.transform.RestLocalTransform();
+            go.transform.ResetLocalTransform();
         }
         public virtual void ClearAll()
         {

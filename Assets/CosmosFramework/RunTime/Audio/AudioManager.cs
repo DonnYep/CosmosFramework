@@ -241,7 +241,7 @@ namespace Cosmos.Audio
         {
             GameObject go = new GameObject(arg.AudioEventObject .ObjectName);
             go.transform.SetParent(ModuleMountObject.transform);
-            go.transform.RestLocalTransform();
+            go.transform.ResetLocalTransform();
             AudioSource audio = go.AddComponent<AudioSource>();
             SetAudioProperties(ref audio, arg);
             return audio;
