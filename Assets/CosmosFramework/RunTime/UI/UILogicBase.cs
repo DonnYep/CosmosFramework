@@ -2,12 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 namespace Cosmos.UI{
     public abstract  class UILogicBase:MonoBehaviour{
         /// <summary>
         /// UI的映射表，名字作为主键，具有一个list容器
         /// </summary>
         Dictionary<string, List<UIBehaviour>> uiMap = new Dictionary<string, List<UIBehaviour>>();
+        protected virtual void Awake()
+        {
+            GetUIPanel<Button>();
+            GetUIPanel<Text>();
+            GetUIPanel<Slider>();
+            GetUIPanel<ScrollRect>();
+            GetUIPanel<Image>();
+        }
         protected T GetUIPanel<T>(string name)
             where T:UIBehaviour
         {
@@ -41,13 +50,8 @@ namespace Cosmos.UI{
                 }
             }
         }
-        public virtual void ShowPanel()
-        {
-
-        }
-        public virtual void HidePanel()
-        {
-
-        }
+        public virtual void ShowPanel() { }
+        public virtual void HidePanel() { }
+    
     }
 }
