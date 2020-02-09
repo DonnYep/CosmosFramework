@@ -324,5 +324,24 @@ namespace Cosmos{
             ReferencePoolManager.Instance.Clear();
         }
         #endregion
+        #region UIManager
+        public void ShowPanel<T>(string panelName,CFAction<T> callBack=null)
+            where T:UILogicBase
+        {
+            UIManager.Instance.ShowPanel<T>(panelName, callBack);
+        }
+        public void HidePanel(string panelName)
+        {
+            UIManager.Instance.HidePanel(panelName);
+        }
+        public void RemovePanel(string panelName)
+        {
+            UIManager.Instance.RemovePanel(panelName);
+        }
+        public void HasPanel(string panelName)
+        {
+            UIManager.Instance.HasPanel(panelName);
+        }
+        #endregion
     }
 }

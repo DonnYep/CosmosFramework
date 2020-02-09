@@ -7,6 +7,5 @@ namespace Cosmos.UI
     /// </summary>
     public class UILogicTemporary :UILogicBase
     {
-
     }
 }

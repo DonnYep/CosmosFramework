@@ -5,7 +5,7 @@ using Cosmos.UI;
 using UnityEngine.UI;
 namespace Cosmos.Test
 {
-    public class WelcomeMenu : UILogicBase
+    public class WelcomeMenuPanel : UILogicResident
     {
         Text info;
         private void Start()
@@ -14,7 +14,6 @@ namespace Cosmos.Test
             GetUIPanel<Button>("Btn_HideInfo").onClick.AddListener(HideInfo);
             GetUIPanel<Button>("Btn_Quit").onClick.AddListener(Quit);
             info = GetUIPanel<Image>("Text_Info").transform.Find("Info").GetComponent<Text>();
-
         }
         void ShowInfo()
         {

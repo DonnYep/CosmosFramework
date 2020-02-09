@@ -6,11 +6,12 @@ namespace Cosmos.UI
     public sealed class UIManager : Module<UIManager>
     {
         public static string MainUICanvasName { get; set; }
-        static GameObject mainUICanvas;
-        public static GameObject MainUICanvas { get { if (mainUICanvas == null) Facade.Instance.LoadAysnc<GameObject>(ApplicationConst._MainUICanvansPath, go =>
+         GameObject mainUICanvas;
+        public  GameObject MainUICanvas { get { if (mainUICanvas == null) Facade.Instance.LoadAysnc<GameObject>(ApplicationConst._MainUICanvansPath, go =>
            {
                mainUICanvas = GameObject.Instantiate(go);
-               mainUICanvas.name = ApplicationConst._MainUICanvansPath;
+               mainUICanvas.name = "MainUICanvans";
+               mainUICanvas.transform.SetParent(ModuleMountObject.transform);
                GameObject.DontDestroyOnLoad(mainUICanvas);
            });
                 return mainUICanvas;
@@ -20,7 +21,7 @@ namespace Cosmos.UI
         {
             RegisterModule(CFModule.UI);
         }
-        public void ShowPanel<T>(string panelName,CFAction<T> callBack)
+        public void ShowPanel<T>(string panelName,CFAction<T> callBack=null)
             where T:UILogicBase
         {
             if (uiPanelMap.ContainsKey(panelName))
@@ -30,20 +31,33 @@ namespace Cosmos.UI
             }
             Facade.Instance.LoadAysnc<GameObject>("UI/" + panelName, go => 
             {
-                var result= GameObject.Instantiate(go);
+                GameObject result= GameObject.Instantiate(go);
                 result.gameObject.name = panelName;
                 result.transform.SetParent(MainUICanvas.transform);
-                (result.transform as RectTransform).ResetRectTransform();
+                (result.transform as RectTransform).ResetLocalTransform();
                 T panel = result.GetComponent<T>();
                 uiPanelMap.Add(panelName, panel);
             });
         }
-        public void HidePanel<T>(string panelName)
+        public void HidePanel(string panelName)
+        {
+            if (uiPanelMap.ContainsKey(panelName))
+                uiPanelMap[panelName].HidePanel();
+        }
+        public void RemovePanel(string panelName)
         {
             if (uiPanelMap.ContainsKey(panelName))
             {
-
+                var result = uiPanelMap[panelName].gameObject;
+                GameManager.KillObject(result);
+                uiPanelMap.Remove(panelName);
             }
+            else
+                Utility.DebugError("Panel :" + panelName + "  not register !");
+        }
+        public bool HasPanel(string panelName)
+        {
+            return uiPanelMap.ContainsKey(panelName);
         }
     }
 }

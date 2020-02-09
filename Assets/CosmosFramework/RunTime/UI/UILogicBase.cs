@@ -52,6 +52,5 @@ namespace Cosmos.UI{
         }
         public virtual void ShowPanel() { }
         public virtual void HidePanel() { }
-    
     }
 }

@@ -8,6 +8,5 @@ namespace Cosmos.UI
     /// </summary>
     public class UILogicResident : UILogicBase
     {
-
     }
 }
