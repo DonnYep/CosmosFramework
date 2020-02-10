@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 9490478}
   - component: {fileID: 9490477}
   m_Layer: 0
-  m_Name: UIEntrance
+  m_Name: UIEntry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -137,7 +137,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9490476}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b7e39b452104d7479cd061ac3f3e661, type: 3}
+  m_Script: {fileID: 11500000, guid: e84a381cf54cbff4d909f36c2335a555, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &9490478

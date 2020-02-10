@@ -10,6 +10,7 @@ namespace Cosmos.Data
     /// 数据处理类;
     /// 解析、输出、编辑;
     ///处理类型： XML、 JSON、UnityPlayerPrefs
+    ///XMLOperator
     /// </summary>
     public class DataProcess
     {
@@ -72,6 +73,10 @@ namespace Cosmos.Data
         {
 
         }
+        public void SaveJson()
+        {
+
+        }
         #endregion
         #region Xml
         public void ParseXml(TextAsset ta, CFAction<XmlDocument> callBack)
@@ -101,6 +106,7 @@ namespace Cosmos.Data
         {
 
         }
+        public void SaveXml() { }
         #endregion
     }
 }

@@ -34,9 +34,23 @@ namespace Cosmos.Data {
             TextAsset ta = Facade.Instance.Load<TextAsset>(XmlFullPath);
             dataProcess.ParseXml(ta, callBack);
         }
-        public void CreateEmptyJson(string xmlFullPath)
+        public void CreateEmptyJson(string jsonFullPath)
         {
-            dataProcess.CreateEmptyJson(xmlFullPath);
+            dataProcess.CreateEmptyJson(jsonFullPath);
+        }
+        public void CreateEmptyXml(string xmlFullPath)
+        {
+            dataProcess.CreateEmptyXml(xmlFullPath);
+        }
+        public void SaveJson( )
+        {
+            //runtime预留
+            dataProcess.SaveJson();
+        }
+        public void SaveXml( )
+        {
+            //runtime预留
+            dataProcess.SaveXml();
         }
     }
 }

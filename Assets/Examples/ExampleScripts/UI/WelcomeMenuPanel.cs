@@ -13,7 +13,7 @@ namespace Cosmos.Test
             GetUIPanel<Button>("Btn_ShowInfo").onClick.AddListener(ShowInfo);
             GetUIPanel<Button>("Btn_HideInfo").onClick.AddListener(HideInfo);
             GetUIPanel<Button>("Btn_Quit").onClick.AddListener(Quit);
-            info = GetUIPanel<Image>("Text_Info").transform.Find("Info").GetComponent<Text>();
+            info = GetUIPanel<Image>("Txt_Info").transform.Find("Info").GetComponent<Text>();
         }
         void ShowInfo()
         {
