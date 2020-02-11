@@ -113,41 +113,40 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &292687604
+--- !u!1 &1319710233
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 292687606}
-  - component: {fileID: 292687605}
+  - component: {fileID: 1319710235}
+  - component: {fileID: 1319710234}
   m_Layer: 0
-  m_Name: MonoTester
+  m_Name: ModuleInitalizer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &292687605
+--- !u!114 &1319710234
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 292687604}
+  m_GameObject: {fileID: 1319710233}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e52f78dff2688e4995854e6197a4a49, type: 3}
+  m_Script: {fileID: 11500000, guid: c3241b497d1239b42bf4241aa69749be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugMonoMudule: 1
-  maxCount: 1500
---- !u!4 &292687606
+  module: 1
+--- !u!4 &1319710235
 Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 292687604}
+  m_GameObject: {fileID: 1319710233}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -196,7 +195,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.15686275, g: 0.19607843, b: 0.23529412, a: 0}
+  m_BackGroundColor: {r: 0.21950692, g: 0.240489, b: 0.25735295, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0

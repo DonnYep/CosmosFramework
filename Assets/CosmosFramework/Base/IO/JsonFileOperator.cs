@@ -11,7 +11,7 @@ namespace Cosmos.IO{
     /// 之所以不使用JsonUtility，是因为JU必须有一个类完全对应，不能根据键值对进行取值。
     /// LitJson能够存储字典，解析复杂Json上远超于JU
     /// </summary>
-    public class JsonOperator
+    public class JsonFileOperator
     {
         /// <summary>
         /// 解析Json

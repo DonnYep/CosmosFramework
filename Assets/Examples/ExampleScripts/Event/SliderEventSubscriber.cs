@@ -18,13 +18,13 @@ namespace Cosmos.Test
         Text text;
         private void Start()
         {
-            RegisterEvent();
+            //RegisterEvent();
             slider = GetComponentInChildren<Slider>();
             text = GetComponentInChildren<Text>();
             startText = text.text;
         }
         string startText;
-        public void Deregister()
+        public void DeregisterEvent()
         {
             Facade.Instance.RemoveEventListener(eventKey, EventCenterTest);
         }
@@ -38,7 +38,7 @@ namespace Cosmos.Test
             slider.maxValue = uch.SliderMaxValue;
             slider.value = uch.SliderValue;
             var dispatcher = Utility.ConvertToObject<GameObject>(sender);
-            text.text = startText + "\n-" + dispatcher.name;
         }
+     
     }
 }

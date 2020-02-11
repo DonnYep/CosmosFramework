@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -277,8 +277,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92c3f71b12a0dc048b99a6fa02f92de3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugMonoMudule: 0
-  maxCount: 50
 --- !u!4 &188437283
 Transform:
   m_ObjectHideFlags: 0
@@ -1192,7 +1190,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.21950692, g: 0.240489, b: 0.25735295, a: 0}
+  m_BackGroundColor: {r: 0.15686275, g: 0.19607843, b: 0.23529412, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0

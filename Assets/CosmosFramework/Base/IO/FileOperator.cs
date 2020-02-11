@@ -121,7 +121,7 @@ namespace Cosmos.IO
             return false;
         }
         #region XmlFileOperate
-       XMLOperator xo = new XMLOperator();
+       XMLFileOperator xo = new XMLFileOperator();
         public void ParseDefaultFileExtentionsList()
         {
             xo.ParseDefaultFileExtentionsList(ref fileExtensions);
@@ -136,7 +136,7 @@ namespace Cosmos.IO
             dirs.Clear();
         }
         /// <summary>
-        ///留着，也是获取子物体鱼孙物体的方法 
+        ///留着，也是获取子物体、孙物体的方法 
         /// </summary>
         public void GetDir(string dirPath, ref List<string> dirs)
         {
@@ -160,7 +160,7 @@ namespace Cosmos.IO
         }
         #endregion
         #region JsonFileOperate
-        JsonOperator jo = new JsonOperator();
+        JsonFileOperator jo = new JsonFileOperator();
         public void CreateEmptyJsonFile(string filePath,string fileName)
         {
             string fullPath = filePath + fileName;

@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Xml;
 using System.IO;
 namespace Cosmos.IO{
-    public class XMLOperator
+    public class XMLFileOperator
     {
         public void ParseDefaultFileExtentionsList(ref string[] extention)
         {

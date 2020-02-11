@@ -149,7 +149,7 @@ namespace Cosmos.Audio
             if (worldAudios.ContainsKey(attachTarget))
             {
                 AudioSource audio = worldAudios[attachTarget];
-                audio.UnPause();
+                audio.Stop();
             }else
                 Utility.DebugError("World"+attachTarget.name + "\n not register in audio manager", attachTarget);
         }
