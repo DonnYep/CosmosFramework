@@ -11,6 +11,7 @@ using Cosmos.ObjectPool;
 using Cosmos.Audio;
 using Cosmos.Resource;
 using Cosmos.Reference;
+using Cosmos.Controller;
 namespace Cosmos{
     /// <summary>
     /// CosmosFramework外观类，封装模块的功能，进行解耦
@@ -283,8 +284,28 @@ namespace Cosmos{
         }
         #endregion
         #region ControllerManager
+        public void RegisterController<T>(T controller)
+            where T : CFController
+        {
+            ControllerManager.Instance.RegisterController<T>(controller);
+        }
+        public void DeregisterController<T>(T controller)
+            where T : CFController
+        {
+            ControllerManager.Instance.DeregisterController<T>(controller);
+        }
+        public bool  HasController<T>(T controller)
+            where T : CFController
+        {
+            return ControllerManager.Instance.HasController<T>(controller);
+        }
+        public void ClearAllController()
+        {
+            ControllerManager.Instance.ClearAllController();
+        }
         #endregion
         #region DataManager
+
         #endregion
         #region ReferenceManager
         public int GetReferencePoolCount<T>()

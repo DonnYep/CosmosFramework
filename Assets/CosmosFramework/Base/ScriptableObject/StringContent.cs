@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Cosmos{
     [CreateAssetMenu(fileName ="NewStringContent",menuName ="CosmosFramework/StringContent")]
-    public class StringContent:CFScriptableObject
+    public class StringContent: CFDataSet
     {
         [SerializeField]
         string[] content;

@@ -18,26 +18,26 @@ namespace Cosmos
             get
             {
                 audioArgs.Clear();
-                for (int i = 0; i < AudioEventObjects.Length; i++)
+                for (int i = 0; i < AudioDataSets.Length; i++)
                 {
                     AudioEventArgs arg = new AudioEventArgs();
-                    arg.AudioEventObject = AudioEventObjects[i];
+                    arg.AudioDataSet = AudioDataSets[i];
                     audioArgs.Add(arg);
                 }
                 return audioArgs.ToArray();
             }
         }
-        [SerializeField] AudioEventObject[] audioEventObjects;
-        public AudioEventObject[] AudioEventObjects
+        [SerializeField] AudioDataSet[] audioDataSets;
+        public AudioDataSet[] AudioDataSets
         {
             get
             {
-                List<AudioEventObject> argObject = new List<AudioEventObject>();
-                for (short i = 0; i < audioEventObjects.Length; i++)
+                List<AudioDataSet> argObject = new List<AudioDataSet>();
+                for (short i = 0; i < audioDataSets.Length; i++)
                 {
-                    if (audioEventObjects[i] != null)
+                    if (audioDataSets[i] != null)
                     {
-                        argObject.Add(audioEventObjects[i]);
+                        argObject.Add(audioDataSets[i]);
                     }
                 }
                 return argObject.ToArray();

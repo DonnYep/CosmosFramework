@@ -62,7 +62,7 @@ namespace Cosmos.Audio
             if (backgroundAduio == null)
             {
                 backgroundAduio = CreateAudioSource(arg);
-                backgroundAduio.clip = arg.AudioEventObject.AudioClip;
+                backgroundAduio.clip = arg.AudioDataSet.AudioClip;
                 backgroundAduio.Play();
             }
             else
@@ -71,7 +71,7 @@ namespace Cosmos.Audio
                 {
                     backgroundAduio.Stop();
                 }
-                backgroundAduio.clip = arg.AudioEventObject. AudioClip;
+                backgroundAduio.clip = arg.AudioDataSet. AudioClip;
                 SetAudioProperties(ref backgroundAduio, arg);
                 backgroundAduio.Play();
             }
@@ -114,14 +114,14 @@ namespace Cosmos.Audio
                 if (audio.isPlaying)
                     audio.Stop();
                 SetAudioProperties(ref audio, args);
-                audio.clip = args.AudioEventObject.AudioClip;
+                audio.clip = args.AudioDataSet.AudioClip;
                 audio.Play();
             }
             else
             {
                 AudioSource audio = AttachAudioSource(attachTarget, args);
                 worldAudios.Add(attachTarget, audio);
-                audio.clip = args.AudioEventObject .AudioClip;
+                audio.clip = args.AudioDataSet.AudioClip;
                 audio.Play();
             }
         }
@@ -185,7 +185,7 @@ namespace Cosmos.Audio
                     if (audio.isPlaying)
                         audio.Stop();
                     SetAudioProperties(ref audio, args[i]);
-                    audio.clip = args[i].AudioEventObject.AudioClip;
+                    audio.clip = args[i].AudioDataSet.AudioClip;
                     audio.Play();
                 }
             }
@@ -195,7 +195,7 @@ namespace Cosmos.Audio
                 for (int i = 0; i < args.Length; i++)
                 {
                     AudioSource audio = AttachAudioSource(attachTarget, args[i]);
-                    audio.clip = args[i].AudioEventObject.AudioClip;
+                    audio.clip = args[i].AudioDataSet.AudioClip;
                     audio.Play();
                     multipleAudio[attachTarget].Add(audio);
                 }
@@ -239,7 +239,7 @@ namespace Cosmos.Audio
         #endregion
         AudioSource CreateAudioSource(AudioEventArgs arg)
         {
-            GameObject go = new GameObject(arg.AudioEventObject .ObjectName);
+            GameObject go = new GameObject(arg.AudioDataSet.ObjectName);
             go.transform.SetParent(ModuleMountObject.transform);
             go.transform.ResetLocalTransform();
             AudioSource audio = go.AddComponent<AudioSource>();
@@ -259,12 +259,12 @@ namespace Cosmos.Audio
         }
         void SetAudioProperties(ref AudioSource audio, AudioEventArgs arg)
         {
-            audio.playOnAwake = arg. AudioEventObject .PlayOnAwake;
-            audio.volume = arg.AudioEventObject .Volume;
-            audio.pitch = arg.AudioEventObject .Speed;
-            audio.spatialBlend = arg.AudioEventObject .SpatialBlend;
-            audio.mute = arg.AudioEventObject .Mute;
-            audio.loop = arg.AudioEventObject .Loop;
+            audio.playOnAwake = arg.AudioDataSet.PlayOnAwake;
+            audio.volume = arg.AudioDataSet.Volume;
+            audio.pitch = arg.AudioDataSet.Speed;
+            audio.spatialBlend = arg.AudioDataSet.SpatialBlend;
+            audio.mute = arg.AudioDataSet.Mute;
+            audio.loop = arg.AudioDataSet.Loop;
         }
         //轮询间距，按照update渲染的5秒计算，不使用真实时间
         public const short _Interval = 5;

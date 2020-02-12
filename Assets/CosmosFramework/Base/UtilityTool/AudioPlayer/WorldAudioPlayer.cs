@@ -7,12 +7,12 @@ namespace Cosmos
     {
         [SerializeField] GameObject audioAttachTarget;
         public GameObject AudioAttachTarget { get { return audioAttachTarget; } set { audioAttachTarget = value; }  }
-        [SerializeField] AudioEventObject audioEventObject;
-        public override AudioEventObject AudioEventObject { get { return audioEventObject; } }
+        [SerializeField] AudioDataSet audioDataSet;
+        public override AudioDataSet AudioDataSet { get { return audioDataSet; } }
         AudioEventArgs audioArgs = new AudioEventArgs();
         public override void PlayAudio()
         {
-            audioArgs.AudioEventObject = AudioEventObject;
+            audioArgs.AudioDataSet = AudioDataSet;
             Facade.Instance.PlayWorldAudio(AudioAttachTarget, audioArgs);
         }
        public override void StopAudio()

@@ -5,27 +5,26 @@ using UnityEngine;
 namespace Cosmos.IO {
     public class JsonDocOperator : DocumentOperator<JsonData>
     {
-        public override JsonData CreateEmptyDocument(string fullPath, CFAction<JsonData> callBack = null)
+        public override JsonData CreateEmptyDocument(string fullPath)
+        {
+            throw new System.NotImplementedException();
+        }
+        public override void DeleteDocument(string fullPath)
         {
             throw new System.NotImplementedException();
         }
 
-        public override void DeleteDocument(string fullPath, CFAction<JsonData> callBack = null)
+        public override JsonData EditDocument(JsonData doc)
         {
             throw new System.NotImplementedException();
         }
 
-        public override JsonData EditDocument(JsonData doc, CFAction<JsonData> callBack = null)
+        public override void ParseDocument(TextAsset ta)
         {
             throw new System.NotImplementedException();
         }
 
-        public override void ParseDocument(TextAsset ta, CFAction<JsonData> callBack = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void SaveDocument(JsonData doc, string savePath, CFAction<JsonData> callBack = null)
+        public override void SaveDocument(JsonData doc, string savePath)
         {
             throw new System.NotImplementedException();
         }

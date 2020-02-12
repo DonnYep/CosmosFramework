@@ -1,17 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Cosmos
 {
-    [CreateAssetMenu(fileName = "NewEnviroAudioDataSet", menuName = "CosmosFramework/AudioDataSet/EnviroAudio")]
-    public class EnviroAudioDataSet : AudioDataSet
+    [CreateAssetMenu(fileName = "NewMultipleAuidoDataSet", menuName = "CosmosFramework/AudioDataSet/ MultipleAuido")]
+    public class MultipleAuidoDataSet : AudioDataSet
     {
         [SerializeField]
-         AudioClip[] audioClips;
-        public override AudioClip AudioClip { get { return audioClips[ Utility.Random(0,audioClips.Length)]; } }
+        AudioClip[] audioClips;
+        public AudioClip[] AudioClips { get { return audioClips; } }
         public override void Reset()
         {
-            objectName= "NewEnviroAudio";
+            objectName = "New MultipleAudio";
             mute = false;
             playOnAwake = false;
             loop = false;

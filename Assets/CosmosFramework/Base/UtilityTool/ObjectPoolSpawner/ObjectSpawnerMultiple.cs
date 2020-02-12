@@ -9,19 +9,19 @@ namespace Cosmos{
         [SerializeField] List<Transform> spawnTransforms = new List<Transform>();
         public List<Transform> SpawnTransforms { get { return spawnTransforms; } }
         [SerializeField]
-        ObjectPoolEventObject poolObject;
-        public ObjectPoolEventObject PoolObject { get { return poolObject; } }
+        ObjectPoolDataSet poolDataSet;
+        public ObjectPoolDataSet PoolDataSet { get { return poolDataSet; } }
         [SerializeField] protected float collectDelay = 3;
         public override float CollectDelay { get { if (collectDelay <= 0.1) collectDelay = 0.1f; return collectDelay; } }
         public override void Spawn()
         {
             for (int i = 0; i < SpawnTransforms.Count; i++)
             {
-                if (!poolObject.ObjectAddsResult)
+                if (!poolDataSet.ObjectAddsResult)
                     return;
-                for (int j = 0; j < poolObject.SpawnCount; j++)
+                for (int j = 0; j < poolDataSet.SpawnCount; j++)
                 {
-                    Facade.Instance.SetObjectSpawnItem(this, PoolObject.SpawnObject);
+                    Facade.Instance.SetObjectSpawnItem(this, PoolDataSet.SpawnObject);
                     var go = Facade.Instance.SpawnObject(this);
                     if (SpawnTransforms[i] != null)
                         go.transform.position = SpawnTransforms[i].position;
@@ -31,8 +31,8 @@ namespace Cosmos{
         }
         protected override void RegisterSpawner()
         {
-            if(poolObject!=null)
-                Facade.Instance.RegisterObjcetSpawnPool(this, PoolObject.SpawnObject, SpawnHandler, DespawnHandler);
+            if(poolDataSet != null)
+                Facade.Instance.RegisterObjcetSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
         }
     }
 }

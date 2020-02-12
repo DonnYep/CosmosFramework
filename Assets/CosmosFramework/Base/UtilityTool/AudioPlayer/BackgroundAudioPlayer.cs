@@ -5,11 +5,11 @@ namespace Cosmos {
     public class BackgroundAudioPlayer :AudioPlayer
     {
         AudioEventArgs audioArgs = new AudioEventArgs();
-        [SerializeField] AudioEventObject audioEventObject;
-        public override AudioEventObject AudioEventObject { get { return audioEventObject; } }
+        [SerializeField] AudioDataSet audioDataSet;
+        public override AudioDataSet AudioDataSet { get { return audioDataSet; } }
         public override void PlayAudio()
         {
-            audioArgs.AudioEventObject = AudioEventObject;
+            audioArgs.AudioDataSet = AudioDataSet;
             Facade.Instance.PlayBackgroundAudio(audioArgs);
         }
          public override void StopAudio()

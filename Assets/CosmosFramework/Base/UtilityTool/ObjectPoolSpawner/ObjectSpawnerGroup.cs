@@ -75,8 +75,8 @@ namespace Cosmos{
             Transform spawnTransform;
             public Transform SpawnTransform { get { return spawnTransform; } }
             [SerializeField]
-            ObjectPoolEventObject poolObject;
-            public ObjectPoolEventObject PoolObject { get { return poolObject; } }
+            ObjectPoolDataSet poolDataSet;
+            public ObjectPoolDataSet PoolObject { get { return poolDataSet; } }
             [SerializeField] protected float collectDelay = 3;
             public float CollectDelay { get { if (collectDelay <= 0.1) collectDelay = 0.1f; return collectDelay; } }
         }

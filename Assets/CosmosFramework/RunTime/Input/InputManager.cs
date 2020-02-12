@@ -12,7 +12,7 @@ namespace Cosmos.Input {
         Up=2
     }
     /// <summary>
-    /// 输入管理器，继承自单例后，则全局管理输入，优化性能
+    /// 输入管理器，主要为不同平台设备类型做适配，与之对应的有ControllerManager。
     /// </summary>
     public sealed class InputManager :Module<InputManager>
     {
@@ -24,10 +24,13 @@ namespace Cosmos.Input {
         {
             RegisterModule(CFModule.Input);
         }
-       
         public InputManager()
         {
             Facade.Instance.AddMonoListener(InputUpdate, UpdateType.Update, (id) => updateID = id);
+        }
+         ~InputManager()
+        {
+            Facade.Instance.RemoveMonoListener(InputUpdate, UpdateType.Update,updateID);
         }
         void InputUpdate()
         {
@@ -42,6 +45,7 @@ namespace Cosmos.Input {
             inputHandler.MouseAxis = new Vector2(mouseX, mouseY);
             inputHandler.MouseButtonWheel = UnityEngine.Input.GetAxis("Mouse ScrollWheel");
             inputHandler.LeftShift = UnityEngine.Input.GetKey(KeyCode.LeftShift);
+            inputHandler.Escape = UnityEngine.Input.GetKeyDown(KeyCode.Escape);
             if(EventManager.Instance.IsEventRegistered(ApplicationConst._InputEventKey))
                 EventManager.Instance.DispatchEvent(ApplicationConst._InputEventKey, this, inputHandler);
         }
