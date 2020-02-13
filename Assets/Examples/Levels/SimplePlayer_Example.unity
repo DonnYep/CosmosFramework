@@ -253,47 +253,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioDataSet: {fileID: 0}
---- !u!1 &1427003719
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1427003721}
-  - component: {fileID: 1427003720}
-  m_Layer: 0
-  m_Name: ModuleInitializer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1427003720
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1427003719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3241b497d1239b42bf4241aa69749be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  module: 9
---- !u!4 &1427003721
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1427003719}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1661611821
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,15 +304,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4468111104526532, guid: 112928adb8bdb78439bc23c2eaefcddb, type: 2}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4468111104526532, guid: 112928adb8bdb78439bc23c2eaefcddb, type: 2}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4468111104526532, guid: 112928adb8bdb78439bc23c2eaefcddb, type: 2}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4468111104526532, guid: 112928adb8bdb78439bc23c2eaefcddb, type: 2}
       propertyPath: m_LocalRotation.w
@@ -361,7 +320,16 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4468111104526532, guid: 112928adb8bdb78439bc23c2eaefcddb, type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114161359043190118, guid: 112928adb8bdb78439bc23c2eaefcddb,
+        type: 2}
+      propertyPath: cameraViewDamp
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4468111104526532, guid: 112928adb8bdb78439bc23c2eaefcddb, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 112928adb8bdb78439bc23c2eaefcddb, type: 2}
@@ -409,6 +377,15 @@ Prefab:
     - target: {fileID: 4348233701332768, guid: debced2d6d789a546b7ae9de72ba871c, type: 2}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523309890909670, guid: debced2d6d789a546b7ae9de72ba871c, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114613530147517750, guid: debced2d6d789a546b7ae9de72ba871c,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: debced2d6d789a546b7ae9de72ba871c, type: 2}

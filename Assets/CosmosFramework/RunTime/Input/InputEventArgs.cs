@@ -18,21 +18,22 @@ namespace Cosmos {
         public InputButtonState MouseButtonLeft { get; set; }
         public bool LeftShift { get; set; }
         public bool Escape { get; set; }
-        public void SetMouseLock(bool state)
+        public void LockMouse()
         {
-            if (state)
-            {
-                Cursor.lockState = CursorLockMode.Confined;
-                Cursor.visible = true;
-                IsMouseLocked = true;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-                IsMouseLocked = false;
-            }
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
-        public bool IsMouseLocked { get; private set; }
+        public void UnlockMouse()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = true;
+        }
+        public void HideMouse()
+        {
+            if (MouseButtonLeft == 0 || MouseButtonMiddle == 0 || MouseButtonRight == 0)
+                LockMouse();
+            if (Escape)
+                UnlockMouse();
+        }
     }
 }

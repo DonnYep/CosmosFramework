@@ -172,6 +172,11 @@ namespace Cosmos.Mono
         {
             yield return new WaitForSeconds(delay);
         }
+        IEnumerator EnumDelay(float delay,CFAction callBack)
+        {
+            yield return new WaitForSeconds(delay);
+            callBack?.Invoke();
+        }
         IEnumerator EnumCoroutine(Coroutine routine, CFAction callBack)
         {
             yield return routine;
@@ -180,6 +185,10 @@ namespace Cosmos.Mono
         public Coroutine DelayCoroutine(float delay)
         {
             return StartCoroutine(EnumDelay(delay));
+        }
+        public Coroutine DelayCoroutine(float delay,CFAction callBack)
+        {
+            return StartCoroutine(EnumDelay(delay,callBack));
         }
         /// <summary>
         /// 嵌套协程

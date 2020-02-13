@@ -22,8 +22,10 @@ namespace Cosmos
         public static string DefaultConfigXmlPath { get { return Application.dataPath + "/Resources/"; } }
         //完整路径
         public static string DefualtConfigXmlFullPath { get { return DefaultConfigXmlPath + "/" + DefaultConfigXmlName; } }
-        //默认的InputEventKey5后面的字符我也不知道什么意思，但是能确保乱码不会让事件重复
+        //默认的InputEventKey。 后面的字符我也不知道什么意思，但是能确保乱码不会让事件重复
         public const string _InputEventKey = "CF_InputEventKey_5%csfijok";
+        //默认的ControllerEventKey。使用设备，例如Vehicle、Device时所使用的Key
+        public const string _ControllerEventKey = "CF_UseingDevice_%418asdf";
         //Unity的路径
         public static string ApplicationDataPath { get { return Application.dataPath; } }
     }

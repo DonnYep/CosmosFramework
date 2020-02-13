@@ -190,5 +190,11 @@ namespace Cosmos.Mono
                 CreateMonoController();
             return (monoMap[monoControllerCount] as MonoController).DelayCoroutine(delay);
         }
+        public Coroutine DelayCoroutine(float delay,CFAction callBack)
+        {
+            if (monoControllerCount == 0)
+                CreateMonoController();
+            return (monoMap[monoControllerCount] as MonoController).DelayCoroutine(delay,callBack);
+        }
     }
 }

@@ -131,6 +131,7 @@ MonoBehaviour:
   pitchMinMax: {x: -70, y: 85}
   yawSpeed: 15
   pitchSpeed: 10
+  cameraViewDamp: 10
 --- !u!124 &124510954523056042
 Behaviour:
   m_ObjectHideFlags: 1

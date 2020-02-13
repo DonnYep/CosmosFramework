@@ -37,15 +37,27 @@ namespace Cosmos{
             Cosmos.Controller.ControllerManager.Instance.OnInitialization();
             Utility.DebugLog("Module Count:\t" + GameManager.Instance.ModuleCount);
         }
+        public void RegisterModule(CFModule module)
+        {
+            InitModule(module);
+        }
+        public void RegisterModule(string module)
+        {
+            InitModule(module);
+        }
         IModule InitModule(CFModule module)
         {
-            string moduleFullName = "Cosmos." + module.ToString() + "." + module.ToString() + "Manager";
-            return Utility.GetTypeInstance<IModule>(this. GetType().Assembly, moduleFullName);
+            return InitModule(module.ToString());
         }
         IModule InitModule(string module)
         {
-            string moduleFullName = "Cosmos." + module.ToString() + "." + module.ToString() + "Manager";
-            return Utility.GetTypeInstance<IModule>(this.GetType().Assembly, moduleFullName);
+            var result = GameManager.Instance.GetModule(module);
+            if (result == null)
+            {
+                string moduleFullName = "Cosmos." + module.ToString() + "." + module.ToString() + "Manager";
+                return Utility.GetTypeInstance<IModule>(this.GetType().Assembly, moduleFullName);
+            }
+            else return result;
         }
         public IModule GetModule(CFModule module)
         {
@@ -132,6 +144,10 @@ namespace Cosmos{
         public Coroutine DelayCoroutine(float delay)
         {
             return MonoManager.Instance.DelayCoroutine(delay);
+        }
+        public Coroutine DelayCoroutine(float delay,CFAction callBack)
+        {
+            return MonoManager.Instance.DelayCoroutine(delay,callBack);
         }
         #endregion
         #region AudioManager
@@ -293,6 +309,11 @@ namespace Cosmos{
             where T : CFController
         {
             ControllerManager.Instance.DeregisterController<T>(controller);
+        }
+        public T GetController<T>()
+            where T:CFController
+        {
+            return ControllerManager.Instance.GetController<T>();
         }
         public bool  HasController<T>(T controller)
             where T : CFController

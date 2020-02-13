@@ -18,25 +18,57 @@ namespace Cosmos
         int inputHash = Animator.StringToHash("Input");
         float moveForword = 0;
         float moveTurn = 0;
+
+        //点积
+        float dot = 0;
+
         protected override void OnInitialization()
         {
             animator = GetComponentInChildren<Animator>();
+            controllerEventArgs = new ControllerEventArgs();
+            controllerEventArgs.CameraTarget = GetComponentInChildren<CameraTarget>();
+        }
+        private void Start()
+        {
+            Facade.Instance.DispatchEvent(ApplicationConst._ControllerEventKey, this, controllerEventArgs);
         }
         protected override void Handler(object sender, GameEventArgs arg)
         {
-            inputEventArg = arg as InputEventArgs;
-            if (inputEventArg.HorizVertAxis.magnitude != 0)
+            inputEventArgs = arg as InputEventArgs;
+            if (inputEventArgs.HorizVertAxis.magnitude != 0)
                 animator.SetBool(inputHash, true);
             else
                 animator.SetBool(inputHash, false);
-            moveForword = inputEventArg.HorizVertAxis.y;
-            moveTurn= inputEventArg.HorizVertAxis.x;
-            if (inputEventArg.LeftShift)
-            {
+            moveForword = inputEventArgs.HorizVertAxis.y;
+            moveTurn= inputEventArgs.HorizVertAxis.x;
+            if (inputEventArgs.LeftShift)
                 moveForword *= 2;
+
+            //合并旋转
+            MatchRotation();
+            {
+                if (dot >= 0)
+                {
+                    moveTurn += (1-dot);
+                }
+                else
+                {
+                    //?????
+                }
             }
+
             animator.SetFloat(forwardHash, moveForword, forwardDampTime, Time.deltaTime);
             animator.SetFloat(turnHash, moveTurn, turnDampTime, Time.deltaTime);
+        }
+
+        void MatchRotation()
+        {
+            var cameraController = Facade.Instance.GetController<CameraController>();
+            Vector3 cameraForward= cameraController.transform.forward;
+            cameraForward.y = 0;
+            cameraForward.Normalize();
+            dot = Vector3.Dot( transform.forward,cameraForward);
+            Debug.DrawLine(transform.position, transform.position + cameraForward, Color.red, 0.2f);
         }
     }
 }

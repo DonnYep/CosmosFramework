@@ -12,7 +12,7 @@ namespace Cosmos.Test
         public string EventKey { get { return eventKey; } }
         public void RegisterEvent()
         {
-            Facade.Instance.AddEventListener(eventKey, EventCenterTest);
+            Facade.Instance.AddEventListener(eventKey, Handler);
         }
         Slider slider;
         Text text;
@@ -26,13 +26,13 @@ namespace Cosmos.Test
         string startText;
         public void DeregisterEvent()
         {
-            Facade.Instance.RemoveEventListener(eventKey, EventCenterTest);
+            Facade.Instance.RemoveEventListener(eventKey, Handler);
         }
         public void DeregisterEventManager()
         {
             GameManager.Instance.DeregisterModule(CFModule.Event);
         }
-        void EventCenterTest(object sender, GameEventArgs arg)
+        void Handler(object sender, GameEventArgs arg)
         {
             UIEventArgs uch = arg as UIEventArgs;
             slider.maxValue = uch.SliderMaxValue;

@@ -10,6 +10,7 @@ namespace Cosmos
     {
         protected virtual void Awake()
         {
+            Facade.Instance.RegisterModule(CFModule.Input);
             Facade.Instance.AddEventListener(ApplicationConst._InputEventKey, Handler);
             OnInitialization();
         }
@@ -26,7 +27,11 @@ namespace Cosmos
         /// 终止组件
         /// </summary>
         protected virtual void OnTermination() { }
+        /// <summary>
+        /// 事件处理者
+        /// </summary>
         protected abstract void Handler(object sender, GameEventArgs arg);
-        protected InputEventArgs inputEventArg;
+        protected InputEventArgs inputEventArgs;
+        protected ControllerEventArgs controllerEventArgs;
     }
 }
