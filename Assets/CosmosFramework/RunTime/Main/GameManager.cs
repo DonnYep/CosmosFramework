@@ -128,25 +128,4 @@ namespace Cosmos
         Hold = 0,
         Full = 1
     }
-    /// <summary>
-    /// CosmosFrameworkModule
-    /// </summary>
-    public enum CFModule : int
-    {
-        Audio,
-        Mono,
-        ObjectPool,
-        Resource,
-        UI,
-        Event,
-        Entity,
-        Input,
-        FSM,
-        Network,
-        Scene,
-        Config,
-        Data,
-        Controller,
-        Reference
-    }
 }

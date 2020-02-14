@@ -331,6 +331,11 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114161359043190118, guid: 112928adb8bdb78439bc23c2eaefcddb,
+        type: 2}
+      propertyPath: distanceFromTarget
+      value: 1.98
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 112928adb8bdb78439bc23c2eaefcddb, type: 2}
   m_IsPrefabParent: 0

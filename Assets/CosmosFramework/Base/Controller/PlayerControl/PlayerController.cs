@@ -12,6 +12,9 @@ namespace Cosmos
         [SerializeField]
         [Range(0, 1)]
         float turnDampTime = 0.1f;
+        [Header("相机控制器所挂载的对象名")]
+        [SerializeField]
+        string cameraControllerName = "PlayerCamera";
         Animator animator;
         int forwardHash = Animator.StringToHash("Forward");
         int turnHash = Animator.StringToHash("Turn");
@@ -60,10 +63,9 @@ namespace Cosmos
             animator.SetFloat(forwardHash, moveForword, forwardDampTime, Time.deltaTime);
             animator.SetFloat(turnHash, moveTurn, turnDampTime, Time.deltaTime);
         }
-
         void MatchRotation()
         {
-            var cameraController = Facade.Instance.GetController<CameraController>();
+            var cameraController = Facade.Instance.GetController<CameraController>(c=>c.ControllerName==cameraControllerName);
             Vector3 cameraForward= cameraController.transform.forward;
             cameraForward.y = 0;
             cameraForward.Normalize();

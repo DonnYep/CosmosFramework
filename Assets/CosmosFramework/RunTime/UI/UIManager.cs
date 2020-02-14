@@ -53,7 +53,7 @@ namespace Cosmos.UI
                 uiPanelMap.Remove(panelName);
             }
             else
-                Utility.DebugError("Panel :" + panelName + "  not register !");
+                Utility.DebugError("UIManager\n"+"Panel :" + panelName + "  not register !");
         }
         public bool HasPanel(string panelName)
         {

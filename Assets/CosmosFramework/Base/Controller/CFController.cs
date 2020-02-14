@@ -8,8 +8,12 @@ namespace Cosmos
     /// </summary>
     public abstract class CFController:MonoBehaviour
     {
+        string controllerName;
+        //返回controller所挂载的对象名称
+        public string ControllerName { get { return controllerName; } }
         protected virtual void Awake()
         {
+            controllerName = gameObject.name;
             Facade.Instance.RegisterModule(CFModule.Input);
             Facade.Instance.AddEventListener(ApplicationConst._InputEventKey, Handler);
             OnInitialization();

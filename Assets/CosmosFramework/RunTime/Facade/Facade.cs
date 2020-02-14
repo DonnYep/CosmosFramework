@@ -305,24 +305,58 @@ namespace Cosmos{
         {
             ControllerManager.Instance.RegisterController<T>(controller);
         }
+        /// <summary>
+        /// 注销控制器，如果当前控制器是最后一个，则注销后，这个类别也会自动注销
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="controller"></param>
         public void DeregisterController<T>(T controller)
             where T : CFController
         {
             ControllerManager.Instance.DeregisterController<T>(controller);
         }
-        public T GetController<T>()
+        public T GetController<T>(CFPredicateAction<T> predicate)
             where T:CFController
         {
-            return ControllerManager.Instance.GetController<T>();
+            return ControllerManager.Instance.GetController<T>(predicate);
         }
-        public bool  HasController<T>(T controller)
+        public T[] GetControllers<T>(CFPredicateAction<T> predicate)
             where T : CFController
         {
-            return ControllerManager.Instance.HasController<T>(controller);
+            return ControllerManager.Instance.GetControllers(predicate);
+        }
+        /// <summary>
+        /// 获取当前注册的T类型重，controller所包含的数量
+        /// </summary>
+        public short GetControllerItemCount<T>()
+        {
+            return ControllerManager.Instance.GetControllerItemCount<T>();
+        }
+        /// <summary>
+        /// 获取当前注册的所有类型controller总数
+        /// </summary>
+        public short GetControllerTypeCount()
+        {
+            return ControllerManager.Instance.GetControllerTypeCount();
+        }
+        public bool  HasController<T>()
+            where T : CFController
+        {
+            return ControllerManager.Instance.HasController<T>();
+        }
+        public bool HasControllerItem<T>(T controller)
+            where T : CFController
+        {
+            return ControllerManager.Instance.HasControllerItem(controller);
         }
         public void ClearAllController()
         {
             ControllerManager.Instance.ClearAllController();
+        }
+        public void ClearControllerItem<T>()
+            where T : CFController
+        {
+            ControllerManager.Instance.ClearControllerItem<T>();
         }
         #endregion
         #region DataManager

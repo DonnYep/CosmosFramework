@@ -133,7 +133,7 @@ namespace Cosmos.Audio
                 audio.Pause();
             }
             else
-                Utility.DebugError("World"+attachTarget.name + "\n not register in audio manager", attachTarget);
+                Utility.DebugError("AudioManager\n" + "World"+attachTarget.name + "\n is unregistered", attachTarget);
         }
         public void UnpauseWorldAudio(GameObject attachTarget)
         {
@@ -142,7 +142,7 @@ namespace Cosmos.Audio
                 AudioSource audio = worldAudios[attachTarget];
                 audio.UnPause();
             }else
-                Utility.DebugError("World"+attachTarget.name + "\n not register in audio manager", attachTarget);
+                Utility.DebugError("AudioManager\n"+"World" +attachTarget.name + "\n is unregistered", attachTarget);
         }
         public void StopWorldAudio(GameObject attachTarget)
         {
@@ -151,7 +151,7 @@ namespace Cosmos.Audio
                 AudioSource audio = worldAudios[attachTarget];
                 audio.Stop();
             }else
-                Utility.DebugError("World"+attachTarget.name + "\n not register in audio manager", attachTarget);
+                Utility.DebugError("AudioManager\n"+"World" +attachTarget.name + "\n is unregistered", attachTarget);
         }
         public void StopAllWorldAudio()
         {
@@ -210,7 +210,7 @@ namespace Cosmos.Audio
                     multipleAudio[attachTarget][i].Pause();
                 }
             }else
-                Utility.DebugError("Multiple"+attachTarget.name + "\n not register in audio manager", attachTarget);
+                Utility.DebugError("AudioManager\n"+"Multiple"+attachTarget.name + "\n is unregistered", attachTarget);
         }
         public void UnpauseMultipleAudio(GameObject attachTarget)
         {
@@ -222,7 +222,7 @@ namespace Cosmos.Audio
                 }
             }
             else
-                Utility.DebugError("Multiple" + attachTarget.name + "\n not register in audio manager", attachTarget);
+                Utility.DebugError("AudioManager\n"+"Multiple" + attachTarget.name + "\n is unregistered", attachTarget);
         }
         public void StopMultipleAudio(GameObject attachTarget)
         {
@@ -234,7 +234,7 @@ namespace Cosmos.Audio
                 }
             }
             else
-                Utility.DebugError("Multiple" + attachTarget.name + "\n not register in audio manager", attachTarget);
+                Utility.DebugError("AudioManager\n"+"Multiple" + attachTarget.name + "\n is unregistered", attachTarget);
         }
         #endregion
         AudioSource CreateAudioSource(AudioEventArgs arg)

@@ -35,7 +35,7 @@ namespace Cosmos.Resource
             return res;
             else
             {
-                Utility.DebugError("Assets: " + path + "\n not exist,check your path!");
+                Utility.DebugError("ResourceManager\n"+"Assets: " + path + "\n not exist,check your path!");
                 return null;
             }
         }

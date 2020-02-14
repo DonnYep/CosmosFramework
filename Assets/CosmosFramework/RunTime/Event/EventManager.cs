@@ -56,7 +56,7 @@ namespace Cosmos.Event
                 }
             }
             else
-                Utility.DebugError("Event:"+eventKey+"\n does not exist!");
+                Utility.DebugError("EventManager\n"+"Event:" +eventKey+ "\n is unregistered");
         }
         /// <summary>
         /// 注销并移除事件

@@ -19,14 +19,14 @@ namespace Cosmos.FSM{
             if (!fsms.ContainsKey(fsm.Name))
                 fsms.Add(fsm.Name, fsm);
             else
-                Utility.DebugError("Fsm " + fsm.Name + " has registered !");
+                Utility.DebugError("FSMManager\n"+"Fsm " + fsm.Name + " is already registered !");
         }
         public void DeregisterFSM(FSMBase fsm)
         {
             if (fsms.ContainsKey(fsm.Name))
                 fsms.Remove(fsm.Name);
             else
-                Utility.DebugError("Fsm " + fsm.Name + "not registered !");
+                Utility.DebugError("FSMManager\n" + "Fsm " + fsm.Name + "not registered !");
         }
         public FSMBase GetFsm( string name)
         {
