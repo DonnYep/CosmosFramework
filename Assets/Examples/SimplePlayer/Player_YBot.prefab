@@ -2133,7 +2133,7 @@ Animator:
   m_GameObject: {fileID: 1523309890909670}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: dbf36f4c162d09747aec5c225db441de, type: 3}
-  m_Controller: {fileID: 9100000, guid: 66f57543b2fd94041af68046c6c12ffc, type: 2}
+  m_Controller: {fileID: 22100000, guid: 3b70642a886ea3441a65fc20a29b6feb, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -2158,13 +2158,14 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1523309890909670}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2ef185ae0d87d24793e315d77e1bbe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   forwardDampTime: 0.1
   turnDampTime: 0.05
+  cameraControllerName: PlayerCamera
 --- !u!136 &136071230879998714
 CapsuleCollider:
   m_ObjectHideFlags: 1

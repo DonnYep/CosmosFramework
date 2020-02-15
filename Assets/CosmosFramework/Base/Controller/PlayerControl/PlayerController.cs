@@ -49,16 +49,16 @@ namespace Cosmos
 
             //合并旋转
             MatchRotation();
-            {
-                if (dot >= 0)
-                {
-                    moveTurn += (1-dot);
-                }
-                else
-                {
-                    //?????
-                }
-            }
+            //{
+            //    if (dot >= 0)
+            //    {
+            //        moveTurn += (1-dot);
+            //    }
+            //    else
+            //    {
+            //        //?????
+            //    }
+            //}
 
             animator.SetFloat(forwardHash, moveForword, forwardDampTime, Time.deltaTime);
             animator.SetFloat(turnHash, moveTurn, turnDampTime, Time.deltaTime);

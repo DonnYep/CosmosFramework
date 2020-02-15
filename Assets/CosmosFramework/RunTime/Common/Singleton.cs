@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 namespace Cosmos
 {
     /// <summary>
     /// 非mono单例的基类new()约束
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class Singleton<T>
+    public abstract class Singleton<T>:IDisposable
         where T : new()
     {
         static T instance;
@@ -19,6 +20,10 @@ namespace Cosmos
                     instance = new T();
                 return instance;
             }
+        }
+
+        public void Dispose()
+        {
         }
         protected virtual void ClearSingleton()
         {

@@ -322,20 +322,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 114161359043190118, guid: 112928adb8bdb78439bc23c2eaefcddb,
-        type: 2}
-      propertyPath: cameraViewDamp
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4468111104526532, guid: 112928adb8bdb78439bc23c2eaefcddb, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114161359043190118, guid: 112928adb8bdb78439bc23c2eaefcddb,
-        type: 2}
-      propertyPath: distanceFromTarget
-      value: 1.98
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 112928adb8bdb78439bc23c2eaefcddb, type: 2}
   m_IsPrefabParent: 0
@@ -382,15 +368,6 @@ Prefab:
     - target: {fileID: 4348233701332768, guid: debced2d6d789a546b7ae9de72ba871c, type: 2}
       propertyPath: m_RootOrder
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1523309890909670, guid: debced2d6d789a546b7ae9de72ba871c, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114613530147517750, guid: debced2d6d789a546b7ae9de72ba871c,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: debced2d6d789a546b7ae9de72ba871c, type: 2}
