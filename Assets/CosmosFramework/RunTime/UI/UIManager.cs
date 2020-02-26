@@ -7,7 +7,7 @@ namespace Cosmos.UI
     {
         public static string MainUICanvasName { get; set; }
          GameObject mainUICanvas;
-        public  GameObject MainUICanvas { get { if (mainUICanvas == null) Facade.Instance.LoadAysnc<GameObject>(ApplicationConst._MainUICanvansPath, go =>
+        public  GameObject MainUICanvas { get { if (mainUICanvas == null) Facade.Instance.LoadAysnc<GameObject>(ApplicationConst.MAIN_UICANVANS_PATH, go =>
            {
                mainUICanvas = GameObject.Instantiate(go);
                mainUICanvas.name = "MainUICanvans";

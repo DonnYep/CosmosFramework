@@ -15,12 +15,12 @@ namespace Cosmos
         {
             controllerName = gameObject.name;
             Facade.Instance.RegisterModule(CFModule.Input);
-            Facade.Instance.AddEventListener(ApplicationConst._InputEventKey, Handler);
+            Facade.Instance.AddEventListener(InputEventParam.INPUTEVENT_INPUT, Handler);
             OnInitialization();
         }
         protected virtual  void OnDestroy()
         {
-            Facade.Instance.RemoveEventListener(ApplicationConst._InputEventKey, Handler);
+            Facade.Instance.RemoveEventListener(InputEventParam.INPUTEVENT_INPUT, Handler);
             OnTermination();
         }
         /// <summary>

@@ -81,27 +81,27 @@ namespace Cosmos{
         #region InputManager
         #endregion
         #region EventManager
-        public void AddEventListener(object eventKey, CFAction<object, GameEventArgs> handler)
+        public void AddEventListener(string eventKey, CFAction<object, GameEventArgs> handler)
         {
             EventManager.Instance.AddListener(eventKey, handler);
         }
-        public void RemoveEventListener(object eventKey, CFAction<object, GameEventArgs> hander)
+        public void RemoveEventListener(string eventKey, CFAction<object, GameEventArgs> hander)
         {
             EventManager.Instance.RemoveListener(eventKey, hander);
         }
-        public void DispatchEvent(object eventKey, object sender, GameEventArgs arg)
+        public void DispatchEvent(string eventKey, object sender, GameEventArgs arg)
         {
             EventManager.Instance.DispatchEvent(eventKey, sender, arg);
         }
-        public void RegisterEvent(object eventKey)
+        public void RegisterEvent(string eventKey)
         {
             EventManager.Instance.RegisterEvent(eventKey);
         }
-        public void DeregisterEvent(object eventKey)
+        public void DeregisterEvent(string eventKey)
         {
             EventManager.Instance.DeregisterEvent(eventKey);
         }
-        public void ClearEvent(object eventKey)
+        public void ClearEvent(string eventKey)
         {
             EventManager.Instance.ClearEvent(eventKey);
         }

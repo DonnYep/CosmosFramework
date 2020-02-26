@@ -24,13 +24,13 @@ namespace Cosmos
         protected override void OnInitialization()
         {
             Facade.Instance.AddMonoListener(LateUpdateCamera, Mono.UpdateType.LateUpdate, (id) => lateUpdateID = id);
-            Facade.Instance.AddEventListener(ApplicationConst._ControllerEventKey, CameraHandler);
+            Facade.Instance.AddEventListener(ControllerEventParam.CONTROLLEREVENT_INPUT, CameraHandler);
             Facade.Instance.RegisterController(this);
         }
         protected override void OnTermination()
         {
             Facade.Instance.RemoveMonoListener(LateUpdateCamera, Mono.UpdateType.LateUpdate, lateUpdateID);
-            Facade.Instance.RemoveEventListener(ApplicationConst._ControllerEventKey, CameraHandler);
+            Facade.Instance.RemoveEventListener(ControllerEventParam.CONTROLLEREVENT_INPUT, CameraHandler);
             Facade.Instance.DeregisterController(this);
         }
         protected override void Handler(object sender, GameEventArgs arg)

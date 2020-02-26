@@ -20,13 +20,13 @@ namespace Cosmos.IO{
         {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(ta.text);
-            XmlNodeList node = xmlDoc.SelectSingleNode(ApplicationConst._AllXmlRootName).ChildNodes;
+            XmlNodeList node = xmlDoc.SelectSingleNode(ApplicationConst.ALL_XMLROOT_NAME).ChildNodes;
             List<string> list = new List<string>();
             foreach (XmlElement ele in node)
             {
                 foreach (XmlElement subEle in ele.ChildNodes)
                 {
-                    if (subEle.Name == ApplicationConst._XmlItemName)
+                    if (subEle.Name == ApplicationConst.XML_ITEM_NAME)
                     {
                         list.Add(subEle.InnerText);
                     }
@@ -45,7 +45,7 @@ namespace Cosmos.IO{
             XmlDocument xml = new XmlDocument();
             XmlDeclaration xmldel = xml.CreateXmlDeclaration("1.0", "UTF-8", "");
             xml.AppendChild(xmldel);
-            XmlElement root = xml.CreateElement(ApplicationConst._AllXmlRootName);
+            XmlElement root = xml.CreateElement(ApplicationConst.ALL_XMLROOT_NAME);
             xml.AppendChild(root);
             string fullFilePath = Utility.CombineRelativeFilePath(fileName, fullPath);
             xml.Save(fullFilePath);
@@ -57,7 +57,7 @@ namespace Cosmos.IO{
             XmlDocument xml = new XmlDocument();
             XmlDeclaration xmldel = xml.CreateXmlDeclaration("1.0", "UTF-8", "");
             xml.AppendChild(xmldel);
-            XmlElement root = xml.CreateElement(ApplicationConst._AllXmlRootName);
+            XmlElement root = xml.CreateElement(ApplicationConst.ALL_XMLROOT_NAME);
             xml.AppendChild(root);
             xml.Save(absolutePath);
             Utility.DebugLog("Config file is created, Check your path!");
@@ -72,7 +72,7 @@ namespace Cosmos.IO{
             int subRootCount = -1;
             List<XmlElement> eleList = new List<XmlElement>();
             List<string> subRootName = new List<string>();
-            XmlNode node = doc.SelectSingleNode(ApplicationConst._AllXmlRootName);
+            XmlNode node = doc.SelectSingleNode(ApplicationConst.ALL_XMLROOT_NAME);
             for (int i = 0; i < filePaths.Length; i++)
             {
                 //截取第N个包含“/”字符的作为一个xml的标签
@@ -88,7 +88,7 @@ namespace Cosmos.IO{
                         eleList.Add(subRoot);
                         node.AppendChild(subRoot);
                     }
-                    XmlElement inner = doc.CreateElement(ApplicationConst._XmlPathName);
+                    XmlElement inner = doc.CreateElement(ApplicationConst.XML_PATH_NAME);
                     if (filePaths[i].Contains("Assets\\"))
                     {
                         inner.InnerText = filePaths[i];
@@ -102,7 +102,7 @@ namespace Cosmos.IO{
                 }
             }
             //创建资源总数的标签
-            XmlElement count = doc.CreateElement(ApplicationConst._XmlCountName);
+            XmlElement count = doc.CreateElement(ApplicationConst.XML_COUNT_NAME);
             count.InnerText = assetCount.ToString();
             node.AppendChild(count);
             if (string.IsNullOrEmpty(fullPath))

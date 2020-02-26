@@ -21,7 +21,7 @@ namespace Cosmos.Test
         Text text;
         private void Start()
         {
-            Facade.Instance.AddEventListener(ApplicationConst._InputEventKey, InputHandler);
+            Facade.Instance.AddEventListener(InputEventParam.INPUTEVENT_INPUT, InputHandler);
             slider = GetComponentInChildren<Slider>();
             text = GetComponentsInChildren<Text>()[1];
         }
@@ -43,7 +43,7 @@ namespace Cosmos.Test
         }
         private void OnDestroy()
         {
-            Facade.Instance.RemoveEventListener(ApplicationConst._InputEventKey, InputHandler);
+            Facade.Instance.RemoveEventListener(InputEventParam.INPUTEVENT_INPUT, InputHandler);
         }
         void InputKeyDebugInfo()
         {
