@@ -7,16 +7,28 @@ namespace Cosmos.UI
     {
         public static string MainUICanvasName { get; set; }
          GameObject mainUICanvas;
-        public  GameObject MainUICanvas { get { if (mainUICanvas == null) Facade.Instance.LoadAysnc<GameObject>(ApplicationConst.MAIN_UICANVANS_PATH, go =>
-           {
-               mainUICanvas = GameObject.Instantiate(go);
-               mainUICanvas.name = "MainUICanvans";
-               mainUICanvas.transform.SetParent(ModuleMountObject.transform);
-               GameObject.DontDestroyOnLoad(mainUICanvas);
-           });
-                return mainUICanvas;
-            } }
+        public  GameObject MainUICanvas { get { return mainUICanvas; } }
         Dictionary<string, UILogicBase> uiPanelMap = new Dictionary<string, UILogicBase>();
+        /// <summary>
+        /// Resource文件夹相对路径
+        /// 返回实例化的对象
+        /// </summary>
+        /// <param name="path">如UI\Canvas</param>
+        public GameObject InitMainCanvas(string path)
+        {
+            if (mainUICanvas != null)
+                return mainUICanvas;
+            else
+            {
+                Facade.Instance.LoadAysnc<GameObject>(path, go =>
+                {
+                    mainUICanvas = GameObject.Instantiate(go);
+                    mainUICanvas.name = "MainUICanvas";
+                    mainUICanvas.transform.SetParent(ModuleMountObject.transform);
+                });
+                return mainUICanvas;
+            }
+        }
         protected override void InitModule()
         {
             RegisterModule(CFModules.UI);

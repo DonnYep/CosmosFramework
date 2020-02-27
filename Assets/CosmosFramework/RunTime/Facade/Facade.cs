@@ -401,6 +401,15 @@ namespace Cosmos{
         {
             UIManager.Instance.HasPanel(panelName);
         }
+        /// <summary>
+        /// Resource文件夹相对路径
+        /// 返回实例化的对象
+        /// </summary>
+        /// <param name="path">如UI\Canvas</param>
+        public GameObject InitMainCanvas(string path)
+        {
+            return UIManager.Instance.InitMainCanvas(path);
+        }
         #endregion
     }
 }

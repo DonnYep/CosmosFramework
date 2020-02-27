@@ -16,7 +16,7 @@ namespace Cosmos
         public const string XML_PATH_NAME= "path";
         public const string XML_ITEM_NAME= "item";
         public const string XML_COUNT_NAME= "assetCount";
-        public const string MAIN_UICANVANS_PATH= "UI/MainUICanvans";
+        //public const string MAIN_UICANVANS_PATH= "UI/MainUICanvas";
         public static string DefaultConfigXmlName { get { return "ResourcesConfig.xml"; } }
         //完整路径
         public static string DefaultConfigXmlPath { get { return Application.dataPath + "/Resources/"; } }
