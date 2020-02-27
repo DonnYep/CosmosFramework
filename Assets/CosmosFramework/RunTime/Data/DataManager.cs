@@ -12,7 +12,7 @@ namespace Cosmos.Data {
         DataProcess dataProcess = new DataProcess();
         protected override void InitModule()
         {
-            RegisterModule(CFModule.Data);
+            RegisterModule(CFModules.DATA);
         }
         public void ParseData(string jsonFullPath,CFAction<JsonData>callBack=null)
         {

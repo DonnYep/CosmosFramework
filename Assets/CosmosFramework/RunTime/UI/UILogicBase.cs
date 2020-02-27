@@ -16,17 +16,21 @@ namespace Cosmos.UI{
             GetUIPanel<Slider>();
             GetUIPanel<ScrollRect>();
             GetUIPanel<Image>();
+            GetUIPanel<InputField>();
+            OnInitialization();
         }
+        protected abstract void OnInitialization();
         protected T GetUIPanel<T>(string name)
             where T:UIBehaviour
         {
-            if (uiMap.ContainsKey(name))
+            if (HasPanel(name))
             {
                 short listCount = (short)uiMap[name].Count;
                 for (short i = 0; i <listCount ; i++)
                 {
-                    if (uiMap[name][i].gameObject.name == name)
-                        return uiMap[name][i] as T;
+                    var result = uiMap[name][i] as T;
+                    if (result != null)
+                        return result;
                 }
             }
             return null;
@@ -50,6 +54,16 @@ namespace Cosmos.UI{
                 }
             }
         }
+        public bool HasPanel(string name)
+        {
+            return uiMap.ContainsKey(name);
+        }
+        protected virtual void OnDestroy()
+        {
+            OnTermination();
+            uiMap.Clear();
+        }
+        protected virtual void OnTermination() { }
         public virtual void ShowPanel() { }
         public virtual void HidePanel() { }
     }

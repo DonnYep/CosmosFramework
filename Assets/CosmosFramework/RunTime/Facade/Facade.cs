@@ -17,7 +17,7 @@ namespace Cosmos{
     /// CosmosFramework外观类，封装模块的功能，进行解耦
     /// 所有调用功能都通过这个外观类与模块进行沟通
     /// </summary>
-    public class Facade : Singleton<Facade>
+    public sealed partial  class Facade : Singleton<Facade>
     {
         #region FacadeMethods
         public void InitAllModule()
@@ -37,43 +37,26 @@ namespace Cosmos{
             Cosmos.Controller.ControllerManager.Instance.OnInitialization();
             Utility.DebugLog("Module Count:\t" + GameManager.Instance.ModuleCount);
         }
-        public void RegisterModule(CFModule module)
+        public void RegisterModule(string  moduleName)
         {
-            InitModule(module);
+            InitModule(moduleName);
         }
-        public void RegisterModule(string module)
+        IModule InitModule(string moduleName)
         {
-            InitModule(module);
-        }
-        IModule InitModule(CFModule module)
-        {
-            return InitModule(module.ToString());
-        }
-        IModule InitModule(string module)
-        {
-            var result = GameManager.Instance.GetModule(module);
+            var result = GameManager.Instance.GetModule(moduleName);
             if (result == null)
             {
-                string moduleFullName = "Cosmos." + module.ToString() + "." + module.ToString() + "Manager";
+                string moduleFullName = "Cosmos." + moduleName + "." + moduleName + "Manager";
                 return Utility.GetTypeInstance<IModule>(this.GetType().Assembly, moduleFullName);
             }
             else return result;
         }
-        public IModule GetModule(CFModule module)
+        public IModule GetModule(string  moduleName)
         {
-            var moduleResult = GameManager.Instance.GetModule(module);
+            var moduleResult = GameManager.Instance.GetModule(moduleName);
             if (moduleResult == null)
             {
-               moduleResult= InitModule(module);
-            }
-            return moduleResult;
-        }
-        public IModule GetModule(string module)
-        {
-            var moduleResult = GameManager.Instance.GetModule(module);
-            if (moduleResult == null)
-            {
-                moduleResult = InitModule(module);
+               moduleResult= InitModule(moduleName);
             }
             return moduleResult;
         }

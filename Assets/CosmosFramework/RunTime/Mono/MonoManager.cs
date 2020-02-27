@@ -21,7 +21,7 @@ namespace Cosmos.Mono
     {
         protected override void InitModule()
         {
-            RegisterModule(CFModule.Mono);
+            RegisterModule(CFModules.MONO);
         }
         Dictionary<short, IMonoController> monoMap=new Dictionary<short, IMonoController>();
         // 单个monoController update委托的容量

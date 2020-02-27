@@ -23,12 +23,11 @@ namespace Cosmos
         /// <summary>
         /// 注册模块
         /// </summary>
-        /// <param name="moduleType"></param>
+        /// <param name="moduleName"></param>
         /// <param name="module"></param>
-        public void RegisterModule(CFModule moduleType, IModule module )
+        public void RegisterModule(string  moduleName, IModule module )
         {
-            string moduleName = moduleType.ToString();
-            if (!moduleMap.ContainsKey(moduleName))
+            if (!HasModule(moduleName))
             {
                 moduleMap.Add(moduleName, module);
                 moduleCount++;
@@ -39,11 +38,10 @@ namespace Cosmos
         /// <summary>
         /// 注销模块
         /// </summary>
-        /// <param name="moduleType"></param>
-        public void DeregisterModule(CFModule moduleType)
+        /// <param name="moduleName"></param>
+        public void DeregisterModule(string  moduleName)
         {
-            string moduleName = moduleType.ToString();
-            if (moduleMap.ContainsKey(moduleName))
+            if (HasModule(moduleName))
             {
                 moduleMap[moduleName].DeregisterModule();
                 moduleMap.Remove(moduleName);
@@ -52,20 +50,13 @@ namespace Cosmos
             else
                 Utility.DebugError("module \t" + moduleName + " is  not exist!");
         }
-        public IModule GetModule(CFModule moduleType)
+        public bool HasModule(string moduleName)
         {
-            string moduleName = moduleType.ToString();
-            if (moduleMap.ContainsKey(moduleName))
-                return moduleMap[moduleName];
-            else
-            {
-                return null;
-            }
+            return moduleMap.ContainsKey(moduleName);
         }
-        public IModule GetModule(string moduleType)
+        public IModule GetModule(string moduleName)
         {
-            string moduleName = moduleType.ToString();
-            if (moduleMap.ContainsKey(moduleName))
+            if (HasModule(moduleName))
                 return moduleMap[moduleName];
             else
             {

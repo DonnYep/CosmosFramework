@@ -30,7 +30,7 @@ namespace Cosmos {
             {
                 if (moduleMountObject == null)
                 {
-                    moduleMountObject = new GameObject(moduleID.ToString() + "Module-->>Container");
+                    moduleMountObject = new GameObject(moduleName + "Module-->>Container");
                     moduleMountObject.transform.SetParent(GameManager.Instance.InstanceObject.transform);
                 }
                 return moduleMountObject;
@@ -39,20 +39,20 @@ namespace Cosmos {
         /// <summary>
         ///模块的枚举
         /// </summary>
-        protected CFModule moduleID;
+        protected string moduleName="";
         protected abstract void InitModule();
         /// <summary>
         /// 注册模块
         /// </summary>
-        protected virtual void RegisterModule(CFModule moduleType)
+        protected virtual void RegisterModule(string moduleName)
         {
-            moduleID = moduleType;
+            this.moduleName = moduleName;
             RegisterModule();
         }
          void RegisterModule()
         {
-            GameManager.Instance.RegisterModule(moduleID, this);
-            Utility.DebugLog("Module:\"" + moduleID.ToString() + "Manager\"" + " is registered !" + "\n based on Module register function");
+            GameManager.Instance.RegisterModule(moduleName, this);
+            Utility.DebugLog("Module:\"" + moduleName + "Manager\"" + " is registered !" + "\n based on Module register function");
         }
         /// <summary>
         /// 注销模块
@@ -72,7 +72,7 @@ namespace Cosmos {
         public virtual  void OnInitialization()
         {
             //这部分当前为测试，可删
-            Utility.DebugLog("Module:\"" + moduleID.ToString() + "Manager\"" + "is OnInitialization" + "\n based on Module register function");
+            Utility.DebugLog("Module:\"" + moduleName + "Manager\"" + "is OnInitialization" + "\n based on Module register function");
             Utility.DebugLog(ModuleMountObject.name);
         }
         /// <summary>
@@ -88,26 +88,5 @@ namespace Cosmos {
         /// </summary>
         public virtual void OnUnPause() { }
         #endregion
-    }
-    /// <summary>
-    /// CosmosFrameworkModule
-    /// </summary>
-    public enum CFModule : int
-    {
-        Audio,
-        Mono,
-        ObjectPool,
-        Resource,
-        UI,
-        Event,
-        Entity,
-        Input,
-        FSM,
-        Network,
-        Scene,
-        Config,
-        Data,
-        Controller,
-        Reference
     }
 }

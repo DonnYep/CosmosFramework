@@ -22,7 +22,7 @@ namespace Cosmos.Input {
         InputDevice inputDevice;
         protected override void InitModule()
         {
-            RegisterModule(CFModule.Input);
+            RegisterModule(CFModules.INPUT);
         }
         public InputManager()
         {

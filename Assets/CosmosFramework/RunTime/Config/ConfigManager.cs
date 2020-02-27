@@ -13,7 +13,7 @@ namespace Cosmos.Config
     {
         protected override void InitModule()
         {
-            RegisterModule(CFModule.Config);
+            RegisterModule(CFModules.CONFIG);
         }
     }
 }

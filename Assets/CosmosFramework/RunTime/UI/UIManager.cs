@@ -19,7 +19,7 @@ namespace Cosmos.UI
         Dictionary<string, UILogicBase> uiPanelMap = new Dictionary<string, UILogicBase>();
         protected override void InitModule()
         {
-            RegisterModule(CFModule.UI);
+            RegisterModule(CFModules.UI);
         }
         public void ShowPanel<T>(string panelName,CFAction<T> callBack=null)
             where T:UILogicBase

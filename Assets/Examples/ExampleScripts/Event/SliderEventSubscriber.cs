@@ -30,7 +30,7 @@ namespace Cosmos.Test
         }
         public void DeregisterEventManager()
         {
-            GameManager.Instance.DeregisterModule(CFModule.Event);
+            GameManager.Instance.DeregisterModule(CFModules.EVENT);
         }
         void Handler(object sender, GameEventArgs arg)
         {

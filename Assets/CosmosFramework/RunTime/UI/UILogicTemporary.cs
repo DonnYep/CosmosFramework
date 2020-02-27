@@ -5,7 +5,7 @@ namespace Cosmos.UI
     /// <summary>
     /// 非常驻UI
     /// </summary>
-    public class UILogicTemporary :UILogicBase
+    public abstract class UILogicTemporary :UILogicBase
     {
     }
 }

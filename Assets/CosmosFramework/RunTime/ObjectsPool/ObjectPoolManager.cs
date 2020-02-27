@@ -25,7 +25,7 @@ namespace Cosmos.ObjectPool
         }
         protected override void InitModule()
         {
-            RegisterModule(CFModule.ObjectPool);
+            RegisterModule(CFModules.OBJECTPOOL);
         }
         /// <summary>
         /// 注册对象池

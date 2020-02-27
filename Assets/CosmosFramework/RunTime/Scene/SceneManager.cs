@@ -8,7 +8,7 @@ namespace Cosmos.Scene{
     {
         protected override void InitModule()
         {
-            RegisterModule(CFModule.Scene);
+            RegisterModule(CFModules.SCENE);
         }
         /// <summary>
         /// 同步加载 name

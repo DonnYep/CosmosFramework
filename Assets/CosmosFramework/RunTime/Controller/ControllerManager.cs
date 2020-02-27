@@ -38,7 +38,7 @@ namespace Cosmos.Controller{
         short controllerTypeCount = 0;
         protected override void InitModule()
         {
-            RegisterModule(CFModule.Controller);
+            RegisterModule(CFModules.CONTROLLER);
         }
         public void RegisterController<T>(T controller)
             where T : CFController

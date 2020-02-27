@@ -21,7 +21,7 @@ namespace Cosmos.Resource
     {
         protected override void InitModule()
         {
-            RegisterModule(CFModule.Resource);
+            RegisterModule(CFModules.RESOURCE);
         }
         #region 基于Resources
         /// <summary>

@@ -13,7 +13,7 @@ namespace Cosmos.Reference
         Dictionary<Type, ReferenceSpawnPool> referencePool = new Dictionary<Type, ReferenceSpawnPool>();
         protected override void InitModule()
         {
-            RegisterModule(CFModule.Reference);
+            RegisterModule(CFModules.REFERENCE);
         }
 
         public int GetPoolCount<T>() 

@@ -8,7 +8,7 @@ namespace Cosmos.Event
     {
         protected override void InitModule()
         {
-            RegisterModule(CFModule.Event);
+            RegisterModule(CFModules.EVENT);
         }
         Dictionary<string, CFAction<object, GameEventArgs>> eventMap = new Dictionary<string, CFAction<object, GameEventArgs>>();
         /// <summary>

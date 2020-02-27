@@ -12,7 +12,7 @@ namespace Cosmos.FSM{
         public int FsmCount { get { return fsms.Count; } }
         protected override void InitModule()
         {
-            RegisterModule(CFModule.FSM);
+            RegisterModule(CFModules.FSM);
         }
         public void RegisterFSM(FSMBase fsm)
         {

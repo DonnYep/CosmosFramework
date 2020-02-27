@@ -8,12 +8,20 @@ namespace Cosmos.Test
     public class WelcomeMenuPanel : UILogicResident
     {
         Text info;
-        private void Start()
+        InputField inputMsg;
+        protected override void OnInitialization()
         {
             GetUIPanel<Button>("Btn_ShowInfo").onClick.AddListener(ShowInfo);
             GetUIPanel<Button>("Btn_HideInfo").onClick.AddListener(HideInfo);
             GetUIPanel<Button>("Btn_Quit").onClick.AddListener(Quit);
             info = GetUIPanel<Image>("Txt_Info").transform.Find("Info").GetComponent<Text>();
+            inputMsg = GetUIPanel<InputField>("Input_Msg");
+        }
+        protected override void OnTermination()
+        {
+            GetUIPanel<Button>("Btn_ShowInfo").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("Btn_HideInfo").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("Btn_Quit").onClick.RemoveAllListeners();
         }
         void ShowInfo()
         {
@@ -27,5 +35,7 @@ namespace Cosmos.Test
         {
             this.gameObject.SetActive(false);
         }
+
+      
     }
 }

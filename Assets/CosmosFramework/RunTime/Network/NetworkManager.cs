@@ -7,7 +7,7 @@ namespace Cosmos.Network
     {
         protected override void InitModule()
         {
-            RegisterModule(CFModule.Network);
+            RegisterModule(CFModules.NETWORK);
         }
     }
 }

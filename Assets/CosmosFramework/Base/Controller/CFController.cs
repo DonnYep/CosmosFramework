@@ -14,7 +14,7 @@ namespace Cosmos
         protected virtual void Awake()
         {
             controllerName = gameObject.name;
-            Facade.Instance.RegisterModule(CFModule.Input);
+            Facade.Instance.RegisterModule(CFModules.INPUT);
             Facade.Instance.AddEventListener(InputEventParam.INPUTEVENT_INPUT, Handler);
             OnInitialization();
         }

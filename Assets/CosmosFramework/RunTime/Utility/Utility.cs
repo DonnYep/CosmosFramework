@@ -30,7 +30,7 @@ namespace Cosmos
     /// 数组工具，反射工具，文字工具，加密工具，
     /// 数学工具，持久化数据工具，Debug工具……
     /// </summary>
-    public sealed class Utility
+    public sealed partial class Utility
     {
         //Log打印是否开启，默认开启
         static bool enableDebugLog = true;
