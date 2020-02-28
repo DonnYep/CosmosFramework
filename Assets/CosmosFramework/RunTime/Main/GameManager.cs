@@ -43,7 +43,7 @@ namespace Cosmos
         {
             if (HasModule(moduleName))
             {
-                moduleMap[moduleName].DeregisterModule();
+                moduleMap[moduleName].OnTermination();
                 moduleMap.Remove(moduleName);
                 moduleCount--;
             }

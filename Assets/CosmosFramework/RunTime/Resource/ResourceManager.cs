@@ -19,10 +19,6 @@ namespace Cosmos.Resource
     }
     public sealed class ResourceManager:Module<ResourceManager>
     {
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.RESOURCE);
-        }
         #region 基于Resources
         /// <summary>
         /// 同步加载资源

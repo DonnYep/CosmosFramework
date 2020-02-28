@@ -26,7 +26,7 @@ namespace Cosmos.Controller{
     /// 控制器模块，客户端本地玩家的主要控制器。
     /// 从InputManager获取值后，由此控制输入值
     /// </summary>
-    public class ControllerManager : Module<ControllerManager>
+    public sealed class ControllerManager : Module<ControllerManager>
     {
         Dictionary<Type, HashSet<CFController>> controllerMap = new Dictionary<Type, HashSet<CFController>>();
         /// <summary>
@@ -36,10 +36,6 @@ namespace Cosmos.Controller{
         ControlMode currentControlMode = ControlMode.ThirdPerson;
         //Controller类型的数量，根据type计算
         short controllerTypeCount = 0;
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.CONTROLLER);
-        }
         public void RegisterController<T>(T controller)
             where T : CFController
         {

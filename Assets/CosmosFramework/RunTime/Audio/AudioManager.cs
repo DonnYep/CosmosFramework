@@ -18,7 +18,6 @@ namespace Cosmos.Audio
         Dictionary<GameObject, AudioSource> worldAudios = new Dictionary<GameObject, AudioSource>();
         protected override void InitModule()
         {
-            RegisterModule(CFModules.AUDIO);
             Facade.Instance.AddMonoListener(CheckAudioSources, Mono.UpdateType.Update);
         }
         bool mute=false;

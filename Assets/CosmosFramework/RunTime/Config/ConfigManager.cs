@@ -11,9 +11,6 @@ namespace Cosmos.Config
     /// </summary>
     public sealed class ConfigManager : Module<ConfigManager>
     {
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.CONFIG);
-        }
+       
     }
 }

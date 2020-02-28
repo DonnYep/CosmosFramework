@@ -6,10 +6,6 @@ namespace Cosmos.Event
 {
     public sealed class EventManager : Module<EventManager>
     {
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.EVENT);
-        }
         Dictionary<string, CFAction<object, GameEventArgs>> eventMap = new Dictionary<string, CFAction<object, GameEventArgs>>();
         /// <summary>
         /// 添加事件

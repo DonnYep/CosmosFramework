@@ -10,10 +10,6 @@ namespace Cosmos.FSM{
     {
         Dictionary<string, FSMBase> fsms = new Dictionary<string, FSMBase>();
         public int FsmCount { get { return fsms.Count; } }
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.FSM);
-        }
         public void RegisterFSM(FSMBase fsm)
         {
             if (!fsms.ContainsKey(fsm.Name))

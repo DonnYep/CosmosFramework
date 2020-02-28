@@ -5,15 +5,11 @@ using System;
 using LitJson;
 using System.Xml;
 namespace Cosmos.Data {
-    public class DataManager : Module<DataManager>
+    public sealed class DataManager : Module<DataManager>
     {
         //Dictionary<Type, CFScriptableObject> dataSet = new Dictionary<Type, CFScriptableObject>();
         //数据处理
         DataProcess dataProcess = new DataProcess();
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.DATA);
-        }
         public void ParseData(string jsonFullPath,CFAction<JsonData>callBack=null)
         {
             TextAsset ta =Facade.Instance.Load<TextAsset>(jsonFullPath);

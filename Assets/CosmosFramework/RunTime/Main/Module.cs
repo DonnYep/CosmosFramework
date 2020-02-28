@@ -17,6 +17,7 @@ namespace Cosmos {
                 if (instance == null)
                 {
                     instance = new T();
+                    instance.RegisterModule();
                     instance.InitModule();
                 }
                 instance.OnModuleInstanceCalled();
@@ -30,7 +31,7 @@ namespace Cosmos {
             {
                 if (moduleMountObject == null)
                 {
-                    moduleMountObject = new GameObject(moduleName + "Module-->>Container");
+                    moduleMountObject = new GameObject(ModuleName + "Module-->>Container");
                     moduleMountObject.transform.SetParent(GameManager.Instance.InstanceObject.transform);
                 }
                 return moduleMountObject;
@@ -39,27 +40,31 @@ namespace Cosmos {
         /// <summary>
         ///模块的枚举
         /// </summary>
-        protected string moduleName="";
-        protected abstract void InitModule();
+        public string moduleName = null;
+        public string ModuleName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(moduleName) || moduleName == typeof(T).ToString())
+                    moduleName = typeof(T).ToString();
+                return moduleName;
+            }
+        }
+        protected virtual void InitModule() { }
         /// <summary>
         /// 注册模块
         /// </summary>
-        protected virtual void RegisterModule(string moduleName)
-        {
-            this.moduleName = moduleName;
-            RegisterModule();
-        }
          void RegisterModule()
         {
-            GameManager.Instance.RegisterModule(moduleName, this);
-            Utility.DebugLog("Module:\"" + moduleName + "Manager\"" + " is registered !" + "\n based on Module register function");
+            GameManager.Instance.RegisterModule(ModuleName, this);
+            Utility.DebugLog("Module:\"" + ModuleName + "Manager\"" + " is registered !" + "\n based on Module register function");
         }
         /// <summary>
-        /// 注销模块
+        /// 注销模块，调用这个API后会在 GameManager注销，并调用自身OnTermination函数
         /// </summary>
         public virtual void DeregisterModule()
         {
-            instance = null;
+            GameManager.Instance.DeregisterModule(ModuleName);
         }
         /// <summary>
         /// 当模块对象被调用时执行，每次调用都会执行
@@ -72,7 +77,7 @@ namespace Cosmos {
         public virtual  void OnInitialization()
         {
             //这部分当前为测试，可删
-            Utility.DebugLog("Module:\"" + moduleName + "Manager\"" + "is OnInitialization" + "\n based on Module register function");
+            Utility.DebugLog("Module:\"" + ModuleName + "Manager\"" + "is OnInitialization" + "\n based on Module register function");
             Utility.DebugLog(ModuleMountObject.name);
         }
         /// <summary>
@@ -82,7 +87,12 @@ namespace Cosmos {
         /// <summary>
         /// 停止
         /// </summary>
-        public virtual  void OnTermination() { }
+        public virtual  void OnTermination()
+        {
+            instance = null;
+            moduleMountObject = null;
+            moduleName = null;
+        }
         /// <summary>
         /// 恢复暂停
         /// </summary>

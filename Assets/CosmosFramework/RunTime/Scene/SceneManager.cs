@@ -6,10 +6,6 @@ using Cosmos.Event;
 namespace Cosmos.Scene{
     public sealed class SceneManager : Module<SceneManager>
     {
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.SCENE);
-        }
         /// <summary>
         /// 同步加载 name
         /// </summary>

@@ -4,18 +4,13 @@ using UnityEngine;
 using System;
 namespace Cosmos.Reference
 {
-    public class ReferencePoolManager : Module<ReferencePoolManager>
+    public sealed class ReferencePoolManager : Module<ReferencePoolManager>
     {
         /// <summary>
         /// 单个引用池上线
         /// </summary>
         public const short _ReferencePoolCapcity= 100;
         Dictionary<Type, ReferenceSpawnPool> referencePool = new Dictionary<Type, ReferenceSpawnPool>();
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.REFERENCE);
-        }
-
         public int GetPoolCount<T>() 
             where T : class, IReference, new()
         {

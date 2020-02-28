@@ -29,10 +29,6 @@ namespace Cosmos.UI
                 return mainUICanvas;
             }
         }
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.UI);
-        }
         public void ShowPanel<T>(string panelName,CFAction<T> callBack=null)
             where T:UILogicBase
         {

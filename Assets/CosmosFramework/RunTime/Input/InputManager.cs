@@ -20,10 +20,6 @@ namespace Cosmos.Input {
         InputEventArgs inputHandler = new InputEventArgs();
         VirtualInput inputModule;
         InputDevice inputDevice;
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.INPUT);
-        }
         public InputManager()
         {
             Facade.Instance.AddMonoListener(InputUpdate, UpdateType.Update, (id) => updateID = id);

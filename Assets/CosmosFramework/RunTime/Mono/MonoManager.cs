@@ -19,10 +19,6 @@ namespace Cosmos.Mono
     /// </summary>
     public sealed class MonoManager:Module<MonoManager>
     {
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.MONO);
-        }
         Dictionary<short, IMonoController> monoMap=new Dictionary<short, IMonoController>();
         // 单个monoController update委托的容量
        public  const short _UpdateCapacity= 100;

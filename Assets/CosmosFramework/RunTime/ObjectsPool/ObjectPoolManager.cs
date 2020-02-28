@@ -23,10 +23,6 @@ namespace Cosmos.ObjectPool
                 return activeObjectMount;
             }
         }
-        protected override void InitModule()
-        {
-            RegisterModule(CFModules.OBJECTPOOL);
-        }
         /// <summary>
         /// 注册对象池
         /// </summary>
