@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 namespace Cosmos.FSM{
+    //TODO FSM 
+    //type.ToString()输出一个完全限定名，尝试使用反射机制获得对象
     public sealed class FSM<T> : FSMBase,IFSM<T>,IReference
         where T : class
     {
@@ -143,13 +145,27 @@ namespace Cosmos.FSM{
             return fsmStates.ContainsKey(stateType);
 
         }
-        internal void ChangeState<TState>()
+        public void ChangeState<TState>()
             where TState:FSMState<T>
         {
-            if(currentState==null)
+            ChangeState(typeof(TState));
+        }
+        public void ChangeState(Type stateType)
+        {
+            if (currentState == null)
             {
                 Utility.DebugError("Current state is invalid");
             }
+            FSMState<T> state = null;
+            state = GetState(state.GetType());
+            if (state == null)
+            {
+                Utility.DebugError("FSM"+currentState.ToString()+ " can not change state to "+state.ToString()+" which is not exist");
+            }
+            currentState.OnExit(this);
+            currentState = state;
+            currentState.OnEnter(this);
+
         }
         public void Clear()
         {
@@ -157,13 +173,6 @@ namespace Cosmos.FSM{
             {
                 currentState.OnExit(this);
             }
-        }
-        public void ChangeState<TState>(TState state) where TState : FSMState<T>
-        {
-            currentState.OnExit(this);
-            //TODO FSM
-            currentState = state;
-            currentState.OnEnter(this);
         }
     }
 }

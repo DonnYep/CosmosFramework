@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 namespace Cosmos.Test{
     public class FSMTester: MonoBehaviour {
         [SerializeField]
@@ -10,6 +10,12 @@ namespace Cosmos.Test{
         {
             lastFrame = Time.frameCount;
             Utility.DebugLog("framecount:" + lastFrame);
+        }
+        private void Start()
+        {
+            Type type = this.GetType();
+            Utility.DebugLog( type.ToString());
+
         }
     }
 }

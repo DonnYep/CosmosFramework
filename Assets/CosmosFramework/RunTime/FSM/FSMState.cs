@@ -18,7 +18,7 @@ namespace Cosmos.FSM
             {
                 if (triggerList[i].Handler(fsm))
                 {
-                    fsm.ChangeState(GetOutputState(triggerList[i]));
+                    //fsm.ChangeState(GetOutputState(triggerList[i].GetType()));
                     return;
                 }
             }

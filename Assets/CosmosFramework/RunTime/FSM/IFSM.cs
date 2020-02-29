@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 namespace Cosmos.FSM
 {
     /// <summary>
@@ -19,6 +20,7 @@ namespace Cosmos.FSM
         /// </summary>
         int FSMStateCount { get; }
         bool IsRunning { get; }
-        void ChangeState<TState>(TState state)where TState :FSMState<T>;
+        void ChangeState<TState>()where TState :FSMState<T>;
+        void ChangeState(Type stateType);
     }
 }
