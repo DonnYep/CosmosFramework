@@ -494,6 +494,10 @@ namespace Cosmos
             }
             set { stringBuilderCache = value; }
         }
+        public static string GetTypeFullName<T>()
+        {
+            return typeof(T).ToString();
+        }
         public static string GetTypeFullName<T>(T arg)
         {
             return typeof(T).ToString();
@@ -532,20 +536,28 @@ namespace Cosmos
         /// <summary>
         /// 分割字符串
         /// </summary>
-        /// <param name="fullString">完整的字符串</param>
-        /// <param name="separator">分割符</param>
-        /// <param name="options">分割操作</param>
-        /// <param name="subStringIndex">分割后的字段角标</param>
+        /// <param name="fullString">完整字段</param>
+        /// <param name="separator">new string[]{"."}</param>
+        /// <param name="removeEmptyEntries">是否返回分割后数组中的空元素</param>
+        /// <param name="subStringIndex">分割后数组的序号</param>
         /// <returns></returns>
-        public static string StringSplit(string fullString, String[] separator, StringSplitOptions options,int subStringIndex)
+        public static string StringSplit(string fullString, String[] separator, bool removeEmptyEntries,int subStringIndex)
         {
-            string[] stringArray = fullString.Split(separator,options);
+            string[] stringArray = null;
+            if (removeEmptyEntries)
+                stringArray= fullString.Split(separator,StringSplitOptions.RemoveEmptyEntries);
+            else
+                stringArray=fullString.Split(separator, StringSplitOptions.None);
             string subString = stringArray[subStringIndex];
             return subString;
         }
-        public static string StringSplit(string fullString, String[] separator, int count,StringSplitOptions options)
+        public static string StringSplit(string fullString, String[] separator, int count, bool removeEmptyEntries)
         {
-            string[] stringArray = fullString.Split(separator,count, options);
+            string[] stringArray = null;
+            if (removeEmptyEntries)
+                stringArray= fullString.Split(separator, count, StringSplitOptions.RemoveEmptyEntries);
+            else
+                stringArray= fullString.Split(separator, count, StringSplitOptions.None);
             return stringArray.ToString();
         }
         public static int CharCount(string fullString,char separator)

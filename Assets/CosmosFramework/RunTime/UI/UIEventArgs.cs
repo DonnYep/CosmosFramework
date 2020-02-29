@@ -11,7 +11,7 @@ namespace Cosmos{
         public string Message { get; set; }
         public float SliderValue { get; set; }
         public float SliderMaxValue { get; set; }
-        public override void Reset()
+        public override void Clear()
         {
             Message = null;
             SliderMaxValue = 1;

@@ -37,8 +37,8 @@ namespace Cosmos.Test{
                     break;
                 default:
                     var moduleResult= Facade.Instance.GetModule(module.ToString());
-                    if(moduleResult!=null)
-                        moduleResult.OnInitialization();
+                    if (moduleResult != null)
+                        Utility.DebugLog(moduleResult.ModuleMountObject.name);
                     break;
             }
         }

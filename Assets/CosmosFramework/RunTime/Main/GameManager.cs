@@ -30,6 +30,7 @@ namespace Cosmos
             if (!HasModule(moduleName))
             {
                 moduleMap.Add(moduleName, module);
+                module.OnInitialization();
                 moduleCount++;
             }
             else

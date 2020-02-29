@@ -8,7 +8,7 @@ namespace Cosmos {
     /// </summary>
     public class InputEventArgs : GameEventArgs
     {
-        public override void Reset() { }
+        public override void Clear() { }
         public Vector2 HorizVertAxis { get; set; }
         public Vector2 MouseAxis { get;set; }
         public float MouseButtonWheel { get; set; }

@@ -38,26 +38,39 @@ namespace Cosmos {
             }
         }
         /// <summary>
-        ///模块的枚举
+        /// 模块的非完全限定名 
         /// </summary>
-        public string moduleName = null;
+        string moduleName = null;
         public string ModuleName
         {
             get
             {
-                if (string.IsNullOrEmpty(moduleName) || moduleName == typeof(T).ToString())
-                    moduleName = typeof(T).ToString();
+                if (string.IsNullOrEmpty(moduleName))
+                    moduleName = Utility.StringSplit(Utility.GetTypeFullName<T>(), new string[] { "." }, true, 2);
                 return moduleName;
             }
         }
+        /// <summary>
+        /// 模块的完全限定名
+        /// </summary>
+        string moduleFullName = null;
+        public string ModuleFullName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(moduleFullName))
+                    moduleFullName = Utility.GetTypeFullName<T>();
+                return moduleFullName;
+            }
+        }
         protected virtual void InitModule() { }
+        public void DebugModule() { }
         /// <summary>
         /// 注册模块
         /// </summary>
          void RegisterModule()
         {
             GameManager.Instance.RegisterModule(ModuleName, this);
-            Utility.DebugLog("Module:\"" + ModuleName + "Manager\"" + " is registered !" + "\n based on Module register function");
         }
         /// <summary>
         /// 注销模块，调用这个API后会在 GameManager注销，并调用自身OnTermination函数
@@ -77,8 +90,8 @@ namespace Cosmos {
         public virtual  void OnInitialization()
         {
             //这部分当前为测试，可删
-            Utility.DebugLog("Module:\"" + ModuleName + "Manager\"" + "is OnInitialization" + "\n based on Module register function");
-            Utility.DebugLog(ModuleMountObject.name);
+            Utility.DebugLog("Module:\"" + ModuleName  + "  is OnInitialization" + "\n based on Module register function");
+            //Utility.DebugLog(ModuleMountObject.name);
         }
         /// <summary>
         /// 暂停
@@ -92,6 +105,7 @@ namespace Cosmos {
             instance = null;
             moduleMountObject = null;
             moduleName = null;
+            moduleFullName = null;
         }
         /// <summary>
         /// 恢复暂停

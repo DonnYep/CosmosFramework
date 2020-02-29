@@ -4,7 +4,7 @@ using Cosmos.FSM;
 namespace Cosmos
 {
     /// <summary>
-    /// 有限状态机数据基类，三个生命周期，类似鱼ScriptableObject
+    /// 有限状态机数据基类，三个生命周期，类似ScriptableObject
     /// </summary>
     public abstract class FSMData
     {

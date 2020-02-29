@@ -11,6 +11,6 @@ namespace Cosmos{
         /// <summary>
         /// 清空引用
         /// </summary>
-        public abstract void Reset();
+        public abstract void Clear();
     }
 }

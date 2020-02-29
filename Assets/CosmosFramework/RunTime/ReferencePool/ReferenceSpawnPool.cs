@@ -23,7 +23,7 @@ namespace Cosmos.Reference
                 refer = null;
             else
             {
-                refer.Reset();
+                refer.Clear();
                 referenceQueue.Enqueue(refer);
             }
         }

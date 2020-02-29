@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Cosmos.FSM
 {
+    /// <summary>
+    /// 有限状态机接口
+    /// </summary>
+    /// <typeparam name="T">持有者类型</typeparam>
     public interface IFSM<T>
         where T:class
     {
@@ -15,5 +19,6 @@ namespace Cosmos.FSM
         /// </summary>
         int FSMStateCount { get; }
         bool IsRunning { get; }
+        void ChangeState<TState>(TState state)where TState :FSMState<T>;
     }
 }

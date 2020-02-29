@@ -22,19 +22,19 @@ namespace Cosmos{
         #region FacadeMethods
         public void InitAllModule()
         {
-            Cosmos.Audio.AudioManager.Instance.OnInitialization();
-            Cosmos.Resource.ResourceManager.Instance.OnInitialization();
-            Cosmos.ObjectPool.ObjectPoolManager.Instance.OnInitialization();
-            Cosmos.Network.NetworkManager.Instance.OnInitialization();
-            Cosmos.Mono.MonoManager.Instance.OnInitialization();
-            Cosmos.Input.InputManager.Instance.OnInitialization();
-            Cosmos.UI.UIManager.Instance.OnInitialization();
-            Cosmos.Event.EventManager.Instance.OnInitialization();
-            Cosmos.Scene.SceneManager.Instance.OnInitialization();
-            Cosmos.FSM.FSMManager.Instance.OnInitialization();
-            Cosmos.Config.ConfigManager.Instance.OnInitialization();
-            Cosmos.Data.DataManager.Instance.OnInitialization();
-            Cosmos.Controller.ControllerManager.Instance.OnInitialization();
+            Cosmos.Audio.AudioManager.Instance.DebugModule();
+            Cosmos.Resource.ResourceManager.Instance.DebugModule();
+            Cosmos.ObjectPool.ObjectPoolManager.Instance.DebugModule();
+            Cosmos.Network.NetworkManager.Instance.DebugModule();
+            Cosmos.Mono.MonoManager.Instance.DebugModule();
+            Cosmos.Input.InputManager.Instance.DebugModule();
+            Cosmos.UI.UIManager.Instance.DebugModule();
+            Cosmos.Event.EventManager.Instance.DebugModule();
+            Cosmos.Scene.SceneManager.Instance.DebugModule();
+            Cosmos.FSM.FSMManager.Instance.DebugModule();
+            Cosmos.Config.ConfigManager.Instance.DebugModule();
+            Cosmos.Data.DataManager.Instance.DebugModule();
+            Cosmos.Controller.ControllerManager.Instance.DebugModule();
             Utility.DebugLog("Module Count:\t" + GameManager.Instance.ModuleCount);
         }
         public void RegisterModule(string  moduleName)

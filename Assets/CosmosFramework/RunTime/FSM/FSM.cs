@@ -3,30 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 namespace Cosmos.FSM{
-    public sealed class FSM<T> : FSMBase,IFSM<T>
+    public sealed class FSM<T> : FSMBase,IFSM<T>,IReference
         where T : class
     {
         T owner;
         public T Owner { get { return owner; } protected set { owner = value; } }
         public Type OwnerType { get { return typeof(T); } }
+        /// <summary>
+        /// state存储的类型为派生类
+        /// </summary>
         Dictionary<Type, FSMState<T>> fsmStates = new Dictionary<Type, FSMState<T>>();
         Dictionary<string, FSMData> fsmDatas = new Dictionary<string, FSMData>();
-        FSMState<T> currentState;
-        FSMState<T> previousState;
-        FSMData data;
+        FSMState<T> defaultState;
         public override int FSMStateCount { get { return fsmStates.Count; } }
         public override bool IsRunning { get { return currentState != null; } }
+        FSMState<T> currentState;
         public FSMState<T> CurrentState { get { return currentState; } }
+        FSMData data;
         public FSMData CurrentData { get { return data; } }
         public string CurrentStateName{get{return currentState != null ? currentState.GetType().FullName : string.Empty;}}
         /// <summary>
-        /// 事件
+        /// FSM轮询，由拥有者轮询调用
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="arg"></param>
-        public void UpdateHandler(object sender,GameEventArgs arg)
+        public void Update()
         {
-
+            currentState.Reason(this);
+            currentState.Action(this);
         }
         public void SetData(string dataName, FSMData data)
         {
@@ -151,7 +153,17 @@ namespace Cosmos.FSM{
         }
         public void Clear()
         {
-
+            if (currentState != null)
+            {
+                currentState.OnExit(this);
+            }
+        }
+        public void ChangeState<TState>(TState state) where TState : FSMState<T>
+        {
+            currentState.OnExit(this);
+            //TODO FSM
+            currentState = state;
+            currentState.OnEnter(this);
         }
     }
 }

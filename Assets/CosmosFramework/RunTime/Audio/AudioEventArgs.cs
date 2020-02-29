@@ -8,7 +8,7 @@ namespace Cosmos
     public class AudioEventArgs : GameEventArgs
     {
         public AudioDataSet AudioDataSet { get; set; }
-        public override void Reset()
+        public override void Clear()
         {
             AudioDataSet.Reset();
         }

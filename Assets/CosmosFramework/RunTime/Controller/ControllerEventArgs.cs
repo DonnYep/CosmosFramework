@@ -6,7 +6,7 @@ namespace Cosmos
     public class ControllerEventArgs : GameEventArgs
     {
         public CameraTarget CameraTarget { get; set; }
-        public override void Reset()
+        public override void Clear()
         {
             CameraTarget = null;
         }
