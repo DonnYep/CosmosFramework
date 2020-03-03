@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cosmos.UI;
 using UnityEngine.UI;
-namespace Cosmos.Test
-{
+using Cosmos;
     public class WelcomeMenuPanel : UILogicResident
     {
         Text info;
@@ -38,4 +37,3 @@ namespace Cosmos.Test
 
       
     }
-}

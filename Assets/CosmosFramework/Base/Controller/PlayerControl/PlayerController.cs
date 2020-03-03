@@ -33,7 +33,7 @@ namespace Cosmos
         }
         private void Start()
         {
-            Facade.Instance.DispatchEvent(ControllerEventParam.CONTROLLEREVENT_INPUT, this, controllerEventArgs);
+            Facade.Instance.DispatchEvent(ControllerEventParam.CONTROLLER_INPUT, this, controllerEventArgs);
         }
         protected override void Handler(object sender, GameEventArgs arg)
         {

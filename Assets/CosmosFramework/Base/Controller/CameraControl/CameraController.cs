@@ -23,14 +23,14 @@ namespace Cosmos
         Vector3 cameraOffset = Vector3.zero;
         protected override void OnInitialization()
         {
-            Facade.Instance.AddMonoListener(LateUpdateCamera, Mono.UpdateType.LateUpdate, (id) => lateUpdateID = id);
-            Facade.Instance.AddEventListener(ControllerEventParam.CONTROLLEREVENT_INPUT, CameraHandler);
+            Facade.Instance.AddMonoListener(LateUpdateCamera, UpdateType.LateUpdate, (id) => lateUpdateID = id);
+            Facade.Instance.AddEventListener(ControllerEventParam.CONTROLLER_INPUT, CameraHandler);
             Facade.Instance.RegisterController(this);
         }
         protected override void OnTermination()
         {
-            Facade.Instance.RemoveMonoListener(LateUpdateCamera, Mono.UpdateType.LateUpdate, lateUpdateID);
-            Facade.Instance.RemoveEventListener(ControllerEventParam.CONTROLLEREVENT_INPUT, CameraHandler);
+            Facade.Instance.RemoveMonoListener(LateUpdateCamera, UpdateType.LateUpdate, lateUpdateID);
+            Facade.Instance.RemoveEventListener(ControllerEventParam.CONTROLLER_INPUT, CameraHandler);
             Facade.Instance.DeregisterController(this);
         }
         protected override void Handler(object sender, GameEventArgs arg)

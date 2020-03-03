@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-namespace Cosmos.Test{
+using Cosmos;
     public class FSMTester: MonoBehaviour {
         [SerializeField]
         int lastFrame = -5;
@@ -18,4 +18,3 @@ namespace Cosmos.Test{
 
         }
     }
-}

@@ -4,15 +4,17 @@ using UnityEngine;
 using System;
 using System.Reflection;
 using System.ComponentModel;
-namespace Cosmos.Mono
+namespace Cosmos
 {
-
-    public enum UpdateType:int
+    public enum UpdateType : int
     {
         Update = 0,
         FixedUpdate = 1,
-        LateUpdate=2
+        LateUpdate = 2
     }
+}
+namespace Cosmos.Mono
+{
     /// <summary>
     /// 不继承自mono的对象通过这个管理器来实现update等需要mono才能做到的功能
     /// 当前只生成一个mc

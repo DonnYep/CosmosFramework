@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-namespace Cosmos
-{
+using Cosmos;
     public class SliderEventDispatcher : MonoBehaviour
     {
         [SerializeField]
@@ -31,4 +30,3 @@ namespace Cosmos
             Facade.Instance.DeregisterEvent(eventKey);
         }
     }
-}

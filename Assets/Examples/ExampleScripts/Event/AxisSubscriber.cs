@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cosmos.Input;
 using UnityEngine.UI;
-namespace Cosmos.Test
-{
+using Cosmos;
     public enum InputKey
     {
         Vertical,
@@ -21,7 +20,7 @@ namespace Cosmos.Test
         Text text;
         private void Start()
         {
-            Facade.Instance.AddEventListener(InputEventParam.INPUTEVENT_INPUT, InputHandler);
+            Facade.Instance.AddEventListener(InputEventParam.INPUT_INPUT, InputHandler);
             slider = GetComponentInChildren<Slider>();
             text = GetComponentsInChildren<Text>()[1];
         }
@@ -43,7 +42,7 @@ namespace Cosmos.Test
         }
         private void OnDestroy()
         {
-            Facade.Instance.RemoveEventListener(InputEventParam.INPUTEVENT_INPUT, InputHandler);
+            Facade.Instance.RemoveEventListener(InputEventParam.INPUT_INPUT, InputHandler);
         }
         void InputKeyDebugInfo()
         {
@@ -59,4 +58,3 @@ namespace Cosmos.Test
                 Utility.DebugLog("leftShiftDown", this);
         }
     }
-}

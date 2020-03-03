@@ -18,7 +18,7 @@ namespace Cosmos.Audio
         Dictionary<GameObject, AudioSource> worldAudios = new Dictionary<GameObject, AudioSource>();
         protected override void InitModule()
         {
-            Facade.Instance.AddMonoListener(CheckAudioSources, Mono.UpdateType.Update);
+            Facade.Instance.AddMonoListener(CheckAudioSources,UpdateType.Update);
         }
         bool mute=false;
         //整个AudioManager下的所有声音都设置位静音

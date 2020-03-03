@@ -66,5 +66,14 @@ namespace Cosmos.UI{
         protected virtual void OnTermination() { }
         public virtual void ShowPanel() { }
         public virtual void HidePanel() { }
+        protected void DispatchUIEvent(string eventKey,object sender,GameEventArgs arg)
+        {
+            Facade.Instance.DispatchEvent(eventKey, sender, arg);
+        }
+        protected void RegisterUIEvent(string eventKey,CFAction<object,GameEventArgs> handler)
+        {
+            Facade.Instance.AddEventListener(eventKey, handler);
+        }
+        public virtual void SetPanelActive(bool state) { gameObject.SetActive(state); }
     }
 }

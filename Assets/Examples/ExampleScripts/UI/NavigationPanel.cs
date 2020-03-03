@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Cosmos;
 using Cosmos.UI;
-namespace Cosmos.Test
-{
     public class NavigationPanel :UILogicTemporary
     {
         protected override void OnInitialization()
@@ -27,4 +26,3 @@ namespace Cosmos.Test
             Facade.Instance.RemovePanel("WelcomeMenu");
         }
     }
-}

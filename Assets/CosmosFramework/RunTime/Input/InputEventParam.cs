@@ -8,8 +8,8 @@ namespace Cosmos
     /// 分部类，可以进行后期拓展
     /// 常量名等于内容string
     /// </summary>
-    public sealed partial class InputEventParam
+    public sealed  class InputEventParam
     {
-        public const string INPUTEVENT_INPUT = "INPUTEVENT_INPUT";
+        public const string INPUT_INPUT = "INPUT_INPUT";
     }
 }

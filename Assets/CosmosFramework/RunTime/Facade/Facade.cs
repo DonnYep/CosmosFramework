@@ -18,7 +18,7 @@ namespace Cosmos{
     /// CosmosFramework外观类，封装模块的功能，进行解耦
     /// 所有调用功能都通过这个外观类与模块进行沟通
     /// </summary>
-    public sealed partial  class Facade : Singleton<Facade>
+    public sealed  class Facade : Singleton<Facade>
     {
         #region FacadeMethods
         public void InitAllModule()

@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cosmos.IO;
 using LitJson;
-namespace Cosmos.Test
+public class DocumentTester : MonoBehaviour
 {
-    public class DocumentTester : MonoBehaviour
-    {
-        DocumentOperator<JsonData> ido;
+    DocumentOperator<JsonData> ido;
 
-        private void Start()
-        {
-        }
+    private void Start()
+    {
     }
 }

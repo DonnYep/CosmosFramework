@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace Cosmos.Test{
+using Cosmos;
+using Cosmos.Mono;
 public class MonoTester: MonoBehaviour {
         int id=-1;
         List<int> monoIDList = new List<int>();
@@ -15,7 +16,7 @@ public class MonoTester: MonoBehaviour {
         {
             if (debugMonoMudule)
             {
-                Facade.Instance.AddMonoListener(UpdateTest, Mono.UpdateType.Update,
+                Facade.Instance.AddMonoListener(UpdateTest, UpdateType.Update,
                     (id) => { if (!monoIDList.Contains(id)) monoIDList.Add(id); });
                 ++count;
                 Utility.DebugLog("updateTest :->>" + count);
@@ -25,7 +26,7 @@ public class MonoTester: MonoBehaviour {
         {
             if (count >= maxCount)
                 return;
-            Facade.Instance.AddMonoListener(AddListenerTest, Mono.UpdateType.Update,
+            Facade.Instance.AddMonoListener(AddListenerTest, UpdateType.Update,
                  (id) => { if (!monoIDList.Contains(id)) monoIDList.Add(id); });
             ++count;
             Utility.DebugLog("updateTest :->>" + count);
@@ -34,10 +35,9 @@ public class MonoTester: MonoBehaviour {
         {
             if (count >= maxCount)
                 return;
-            Facade.Instance.AddMonoListener(UpdateTest, Mono.UpdateType.Update,
+            Facade.Instance.AddMonoListener(UpdateTest,UpdateType.Update,
                  (id) => { if (!monoIDList.Contains(id)) monoIDList.Add(id); });
             ++count;
             Utility.DebugLog("AddListenerTestupdateTest :->>" + count);
         }
     }
-}

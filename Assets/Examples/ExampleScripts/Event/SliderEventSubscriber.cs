@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-namespace Cosmos.Test
-{
+using Cosmos;
     public class SliderEventSubscriber : MonoBehaviour
     {
         [SerializeField]
@@ -41,4 +40,3 @@ namespace Cosmos.Test
         }
      
     }
-}
