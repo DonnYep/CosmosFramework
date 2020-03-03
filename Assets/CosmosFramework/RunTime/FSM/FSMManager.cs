@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using Cosmos;
 namespace Cosmos.FSM{
     /// <summary>
@@ -8,55 +9,99 @@ namespace Cosmos.FSM{
     /// </summary>
     public sealed class FSMManager : Module<FSMManager>
     {
-        Dictionary<string, FSMBase> fsms = new Dictionary<string, FSMBase>();
-        public int FsmCount { get { return fsms.Count; } }
-        public void RegisterFSM(FSMBase fsm)
+        Dictionary<Type, FSMBase> fsmDict = new Dictionary<Type, FSMBase>();
+        public int FsmCount { get { return fsmDict.Count; } }
+        public FSMBase GetFSM<T>()
+            where T:FSMBase
         {
-            if (!fsms.ContainsKey(fsm.Name))
-                fsms.Add(fsm.Name, fsm);
-            else
-                Utility.DebugError("FSMManager\n"+"Fsm " + fsm.Name + " is already registered !");
+            Type type = typeof(T).GetType();
+            return GetFSM(type);
         }
-        public void DeregisterFSM(FSMBase fsm)
+        public FSMBase GetFSM(Type type)
         {
-            if (fsms.ContainsKey(fsm.Name))
-                fsms.Remove(fsm.Name);
-            else
-                Utility.DebugError("FSMManager\n" + "Fsm " + fsm.Name + "not registered !");
-        }
-        public FSMBase GetFsm( string name)
-        {
-            if (fsms.ContainsKey(name))
-                return fsms[name];
+            if (fsmDict.ContainsKey(type))
+            {
+                return fsmDict[type];
+            }
             else return null;
         }
-        public FSMBase[] GetAllFsm()
+        public FSMBase[] GetAllFSM<T>()
+            where T:FSMBase
         {
-            List<FSMBase> fsmList = new List<FSMBase>();
-            foreach (var fsm in fsms)
+            return GetAllFSM(typeof(T));
+        }
+        public FSMBase[] GetAllFSM(Type type)
+        {
+            List<FSMBase> fsms = new List<FSMBase>();
+            if (fsmDict.ContainsKey(type))
             {
-                fsmList.Add(fsm.Value);
+                foreach (var fsm in fsmDict)
+                {
+                    fsms.Add(fsm.Value);
+                }
             }
-            return fsmList.ToArray();
+            return fsms.ToArray();
         }
-        public bool HasFsm(string name)
+        public bool HasFSM<T>()
+            where T : FSMBase
         {
-            return fsms.ContainsKey(name);
+            return HasFSM(typeof(T));
         }
-        //public bool HasFsm<T>()
-        //    where T:class
-        //{
-        //    return false;
-        //}
-        //public IFSM<T> GetFsm<T>()
-        //    where T:class
-        //{
-        //    return null;
-        //}
-        //public IFSM<T> CreateFsm<T>(T owner,List<FSMState<T>> states)
-        //    where T:class
-        //{
-        //    return null;
-        //}
+        public bool HasFSM(Type type)
+        {
+            return fsmDict.ContainsKey(type);
+        }
+        public IFSM<T> CreateFSM<T>(T owner,params FSMState<T>[] states)
+            where T :class
+        {
+           return CreateFSM(string.Empty, owner, states);
+        }
+        public IFSM<T>CreateFSM<T>(string name,T owner,params FSMState<T>[] states)
+            where T : class
+        {
+            if (!HasFSM(typeof(T)))
+                return null;
+            Type type = typeof(T).GetType();
+            FSM<T> fsm = FSM<T>.Create(name, owner, states);
+            fsmDict.Add(type, fsm);
+            return fsm;
+        }
+        public IFSM<T> CreateFSM<T>(T owner,List<FSMState<T>> states)
+            where T:class
+        {
+            return CreateFSM(string.Empty, owner, states);
+        }
+        public IFSM<T> CreateFSM<T>(string name,T owner, List<FSMState<T>> states)
+            where T : class
+        {
+            if(!HasFSM(typeof(T)))
+                return null;
+            Type type = typeof(T).GetType();
+            FSM<T> fsm = FSM<T>.Create(name, owner, states);
+            fsmDict.Add(type, fsm);
+            return fsm;
+        }
+        public void DestoryFSM<T>()
+            where T:class
+        {
+            DestoryFSM(typeof(T));
+        }
+        public void DestoryFSM(Type type)
+        {
+            FSMBase fsm = null;
+            if (fsmDict.TryGetValue(type, out fsm))
+            {
+                fsm.Shutdown();
+                fsmDict.Remove(type);
+            }
+        }
+        public void ShutdownAllFSM()
+        {
+            foreach (var fsm in fsmDict)
+            {
+                fsm.Value.Shutdown();
+            }
+            fsmDict.Clear();
+        }
     }
 }

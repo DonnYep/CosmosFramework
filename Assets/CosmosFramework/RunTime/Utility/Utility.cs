@@ -500,7 +500,7 @@ namespace Cosmos
         }
         public static string GetTypeFullName<T>(T arg)
         {
-            return typeof(T).ToString();
+            return arg.ToString();
         }
         public static string GetTypeFullName<T>(string name)
             where T:class

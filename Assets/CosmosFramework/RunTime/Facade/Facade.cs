@@ -12,6 +12,7 @@ using Cosmos.Audio;
 using Cosmos.Resource;
 using Cosmos.Reference;
 using Cosmos.Controller;
+using Cosmos.FSM;
 namespace Cosmos{
     /// <summary>
     /// CosmosFramework外观类，封装模块的功能，进行解耦
@@ -411,5 +412,67 @@ namespace Cosmos{
             return UIManager.Instance.InitMainCanvas(path);
         }
         #endregion
+        #region FSMManager
+        public FSMBase GetFSM<T>()
+            where T:FSMBase
+        {
+            return FSMManager.Instance.GetFSM<T>();
+        }
+        public FSMBase GetFSM(Type type)
+        {
+            return GetFSM(type);
+        }
+        public FSMBase[] GetAllFSM<T>()
+            where T:FSMBase
+        {
+            return FSMManager.Instance.GetAllFSM<T>();
+        }
+        public FSMBase[] GetAllFSM(Type type)
+        {
+            return FSMManager.Instance.GetAllFSM(type);
+        }
+        public bool HasFSM<T>()
+            where T:FSMBase
+        {
+            return FSMManager.Instance.HasFSM<T>();
+        }
+        public bool HasFSM(Type type)
+        {
+            return FSMManager.Instance.HasFSM(type);
+        }
+        public IFSM<T> CreateFSM<T>(T owner, params FSMState<T>[] states)
+            where T : class
+        {
+            return FSMManager.Instance.CreateFSM(owner, states);
+        }
+        public IFSM<T> CreateFSM<T>(string name,T owner, params FSMState<T>[] states)
+            where T : class
+        {
+            return FSMManager.Instance.CreateFSM<T>(name, owner, states);
+        }
+        public IFSM<T> CreateFSM<T>(T owner, List<FSMState<T>> states)
+            where T:FSMBase
+        {
+            return FSMManager.Instance.CreateFSM(owner, states);
+        }
+        public IFSM<T> CreateFSM<T>(string name, T owner, List<FSMState<T>> states)
+         where T : class
+        {
+            return FSMManager.Instance.CreateFSM(name, owner, states);
+        }
+        public void DestoryFSM<T>()
+         where T : class
+        {
+            FSMManager.Instance.DestoryFSM<T>();
+        }
+        public void DestoryFSM(Type type)
+        {
+            FSMManager.Instance.DestoryFSM(type);
+        }
+        public void ShutdownAllFSM()
+        {
+            FSMManager.Instance.ShutdownAllFSM();
+        }
+            #endregion
     }
 }
