@@ -401,19 +401,19 @@ namespace Cosmos
         {
             string fullKey = GetPrefsKey(key);
             PlayerPrefs.DeleteKey(fullKey);
-            PlayerPrefs.SetString(key, value);
+            PlayerPrefs.SetString(fullKey, value);
         }
         public static void SetPrefsInt(string key, int value)
         {
             string fullKey = GetPrefsKey(key);
             PlayerPrefs.DeleteKey(fullKey);
-            PlayerPrefs.SetInt(key, value);
+            PlayerPrefs.SetInt(fullKey, value);
         }
         public static void SetPrefsFloat(string key, int value)
         {
             string fullKey = GetPrefsKey(key);
             PlayerPrefs.DeleteKey(fullKey);
-            PlayerPrefs.SetFloat(key, value);
+            PlayerPrefs.SetFloat(fullKey, value);
         }
         public static void RemovePrefsData(string key)
         {

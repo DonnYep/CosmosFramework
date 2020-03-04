@@ -63,6 +63,22 @@ namespace Cosmos.Resource
             }
             return list;
         }
+        public T[] LoadAll<T>(string path)
+            where T:UnityEngine.Object
+        {
+            T[] res = Resources.LoadAll<T>(path);
+            if (res == null)
+            {
+                Utility.DebugError("ResourceManager\n" + "Assets: " + path + "\n not exist,check your path!");
+                return null;
+            }
+            if (res is GameObject)
+            {
+                for (int i = 0; i < res.Length; i++)
+                    GameObject.Instantiate(res[i]);
+            }
+            return res;
+        }
     }
     #endregion
 }

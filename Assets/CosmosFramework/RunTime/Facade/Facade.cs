@@ -211,6 +211,11 @@ namespace Cosmos{
         {
             return ResourceManager.Instance.LoadFolderAssets<T>(path);
         }
+        public T[] LoadAll<T>(string path)
+            where T:UnityEngine.Object
+        {
+            return ResourceManager.Instance.LoadAll<T>(path);
+        }
         #endregion
         #region ScenesManager
         public void LoadScene(string sceneName, CFAction action=null)
