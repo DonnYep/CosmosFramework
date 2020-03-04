@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 114543175788538900}
   - component: {fileID: 114916862559106054}
   m_Layer: 5
-  m_Name: Input_Msg
+  m_Name: InputMsg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 114499631117365462}
   - component: {fileID: 114451622641574280}
   m_Layer: 5
-  m_Name: Btn_HideInfo
+  m_Name: BtnHideInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 114962931512670272}
   - component: {fileID: 114193966040989526}
   m_Layer: 5
-  m_Name: Btn_ShowInfo
+  m_Name: BtnShowInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -162,7 +162,7 @@ GameObject:
   - component: {fileID: 222063466149412034}
   - component: {fileID: 114877008613712032}
   m_Layer: 5
-  m_Name: Txt_Info
+  m_Name: TxtInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -197,7 +197,7 @@ GameObject:
   - component: {fileID: 114563947625052238}
   - component: {fileID: 114292120901712392}
   m_Layer: 5
-  m_Name: Btn_Quit
+  m_Name: BtnQuit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

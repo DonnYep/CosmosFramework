@@ -22,7 +22,7 @@ namespace Cosmos.UI
             {
                 Facade.Instance.LoadAysnc<GameObject>(path, go =>
                 {
-                    mainUICanvas = GameObject.Instantiate(go);
+                    mainUICanvas = go;
                     mainUICanvas.name = "MainUICanvas";
                     mainUICanvas.transform.SetParent(ModuleMountObject.transform);
                 });
@@ -37,13 +37,13 @@ namespace Cosmos.UI
                 callBack?.Invoke(uiPanelMap[panelName] as T);
                 return;
             }
-            Facade.Instance.LoadAysnc<GameObject>("UI/" + panelName, go => 
+            Facade.Instance.LoadAysnc<GameObject>(panelName, go => 
             {
-                GameObject result= GameObject.Instantiate(go);
-                result.gameObject.name = panelName;
+                GameObject result = go;
                 result.transform.SetParent(MainUICanvas.transform);
                 (result.transform as RectTransform).ResetLocalTransform();
                 T panel = result.GetComponent<T>();
+                callBack?.Invoke(panel);
                 uiPanelMap.Add(panelName, panel);
             });
         }

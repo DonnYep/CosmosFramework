@@ -10,17 +10,17 @@ using Cosmos;
         InputField inputMsg;
         protected override void OnInitialization()
         {
-            GetUIPanel<Button>("Btn_ShowInfo").onClick.AddListener(ShowInfo);
-            GetUIPanel<Button>("Btn_HideInfo").onClick.AddListener(HideInfo);
-            GetUIPanel<Button>("Btn_Quit").onClick.AddListener(Quit);
-            info = GetUIPanel<Image>("Txt_Info").transform.Find("Info").GetComponent<Text>();
-            inputMsg = GetUIPanel<InputField>("Input_Msg");
+            GetUIPanel<Button>("BtnShowInfo").onClick.AddListener(ShowInfo);
+            GetUIPanel<Button>("BtnHideInfo").onClick.AddListener(HideInfo);
+            GetUIPanel<Button>("BtnQuit").onClick.AddListener(Quit);
+            info = GetUIPanel<Image>("TxtInfo").transform.Find("Info").GetComponent<Text>();
+            inputMsg = GetUIPanel<InputField>("InputMsg");
         }
         protected override void OnTermination()
         {
-            GetUIPanel<Button>("Btn_ShowInfo").onClick.RemoveAllListeners();
-            GetUIPanel<Button>("Btn_HideInfo").onClick.RemoveAllListeners();
-            GetUIPanel<Button>("Btn_Quit").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("BtnShowInfo").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("BtnHideInfo").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
         }
         void ShowInfo()
         {

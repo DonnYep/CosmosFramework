@@ -8,21 +8,22 @@ using Cosmos.UI;
     {
         protected override void OnInitialization()
         {
-            GetUIPanel<Button>("Btn_ShowWelcomeMenu").onClick.AddListener(ShowWelcomeMenu);
-            GetUIPanel<Button>("Btn_RemoveWelcomeMenu").onClick.AddListener(RemoveWelcomeMenu);
+            GetUIPanel<Button>("BtnShowWelcomeMenu").onClick.AddListener(ShowWelcomeMenu);
+            GetUIPanel<Button>("BtnRemoveWelcomeMenu").onClick.AddListener(RemoveWelcomeMenu);
         }
         protected override void OnTermination()
         {
             base.OnTermination();
-            GetUIPanel<Button>("Btn_ShowWelcomeMenu").onClick.RemoveAllListeners();
-            GetUIPanel<Button>("Btn_RemoveWelcomeMenu").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("BtnShowWelcomeMenu").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("BtnRemoveWelcomeMenu").onClick.RemoveAllListeners();
         }
         void ShowWelcomeMenu()
         {
-            Facade.Instance.ShowPanel<WelcomeMenuPanel>("WelcomeMenu",panel=>panel.gameObject.SetActive(true));
+            Facade.Instance.ShowPanel<WelcomeMenuPanel>("UI/WelcomeMenu"
+                ,panel=> { panel.gameObject.name = "WelcomeMenu"; panel.gameObject.SetActive(true);});
         }
         void RemoveWelcomeMenu()
         {
-            Facade.Instance.RemovePanel("WelcomeMenu");
+            Facade.Instance.RemovePanel("UI/WelcomeMenu");
         }
     }

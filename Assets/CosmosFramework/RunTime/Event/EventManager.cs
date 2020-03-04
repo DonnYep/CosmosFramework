@@ -15,7 +15,12 @@ namespace Cosmos.Event
         /// <param name="callBack">只有事件注册成功才执行回调函数</param>
         public void AddListener(string eventKey,CFAction<object,GameEventArgs> handler)
         {
-            if(eventMap.ContainsKey(eventKey))
+            if (string.IsNullOrEmpty(eventKey))
+            {
+                Utility.DebugError("Event key is  empty");
+                return;
+            }
+            if (eventMap.ContainsKey(eventKey))
             {
                 eventMap[eventKey] += handler;
             }
@@ -32,6 +37,11 @@ namespace Cosmos.Event
         /// <param name="hander">事件处理者</param>
         public void RemoveListener(string eventKey,CFAction<object,GameEventArgs> hander)
         {
+            if (string.IsNullOrEmpty(eventKey))
+            {
+                Utility.DebugError("Event key is  empty");
+                return;
+            }
             if (eventMap.ContainsKey(eventKey))
             {
                 eventMap[eventKey] -= hander;
@@ -44,6 +54,11 @@ namespace Cosmos.Event
         /// <param name="arg">事件处理类</param>
         public void DispatchEvent(string eventKey,object sender, GameEventArgs arg)
         {
+            if (string.IsNullOrEmpty(eventKey))
+            {
+                Utility.DebugError("Event key is  empty");
+                return;
+            }
             if (eventMap.ContainsKey(eventKey))
             {
                 if (eventMap[eventKey] != null)
@@ -59,6 +74,11 @@ namespace Cosmos.Event
         /// </summary>
         public void DeregisterEvent(string eventKey)
         {
+            if (string.IsNullOrEmpty(eventKey))
+            {
+                Utility.DebugError("Event key is  empty");
+                return;
+            }
             if (eventMap.ContainsKey(eventKey))
             {
                 eventMap[eventKey] = null;
@@ -71,6 +91,11 @@ namespace Cosmos.Event
         /// </summary>
         public void RegisterEvent(string eventKey)
         {
+            if (string.IsNullOrEmpty(eventKey))
+            {
+                Utility.DebugError("Event key is  empty");
+                return;
+            }
             if (!eventMap.ContainsKey(eventKey))
             {
                 eventMap.Add(eventKey, null);
@@ -81,6 +106,11 @@ namespace Cosmos.Event
         /// </summary>
         public void ClearEvent(string eventKey)
         {
+            if (string.IsNullOrEmpty(eventKey))
+            {
+                Utility.DebugError("Event key is  empty");
+                return;
+            }
             if (eventMap.ContainsKey(eventKey))
             {
                 eventMap[eventKey] = null;
@@ -109,6 +139,11 @@ namespace Cosmos.Event
         /// </summary>
         public bool IsEventRegistered(string eventKey)
         {
+            if (string.IsNullOrEmpty(eventKey))
+            {
+                Utility.DebugError("Event key is  empty");
+                return false;
+            }
             if (eventMap.ContainsKey(eventKey))
                 return true;
             else

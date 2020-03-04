@@ -27,13 +27,14 @@ namespace Cosmos.Resource
             where T:UnityEngine.Object
         {
             T res = Resources.Load<T>(path);
-            if(res!=null)
-            return res;
-            else
+            if (res == null)
             {
-                Utility.DebugError("ResourceManager\n"+"Assets: " + path + "\n not exist,check your path!");
+                Utility.DebugError("ResourceManager\n" + "Assets: " + path + "\n not exist,check your path!");
                 return null;
             }
+            if (res is GameObject)
+                GameObject.Instantiate(res);
+            return res;
         }
         /// <summary>
         /// 异步加载资源
@@ -48,8 +49,8 @@ namespace Cosmos.Resource
         {
             ResourceRequest req = Resources.LoadAsync<T>(path);
             yield return req;
-            if (callBack != null)
-                callBack(req.asset as T);
+            if (req.asset is GameObject)
+                callBack(GameObject.Instantiate( req.asset) as T);
         }
         public  List<T> LoadFolderAssets<T>(string path)//通过路径载入资源
        where T : class

@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114825546659227876}
   - component: {fileID: 114145221909002422}
   m_Layer: 5
-  m_Name: Btn_ShowWelcomeMenu
+  m_Name: BtnShowWelcomeMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 114574563946181768}
   - component: {fileID: 114014918917925736}
   m_Layer: 5
-  m_Name: Btn_RemoveWelcomeMenu
+  m_Name: BtnRemoveWelcomeMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 222547329308577198}
   - component: {fileID: 114030309002505260}
   m_Layer: 5
-  m_Name: Img_BG
+  m_Name: ImgBG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -143,7 +143,7 @@ GameObject:
   - component: {fileID: 224200480135354648}
   - component: {fileID: 114695701668561364}
   m_Layer: 5
-  m_Name: Panel_PanelNavigation(Temp)
+  m_Name: RectNavigation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
