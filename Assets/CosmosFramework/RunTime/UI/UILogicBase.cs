@@ -75,10 +75,14 @@ namespace Cosmos.UI{
         {
             Facade.Instance.DeregisterEvent(eventKey);
         }
-        protected void RegisterUIEvent(string eventKey,CFAction<object,GameEventArgs> handler)
+        protected void AddUIEventListener(string eventKey,CFAction<object,GameEventArgs> handler)
         {
             Facade.Instance.AddEventListener(eventKey, handler);
         }
-        public virtual void SetPanelActive(bool state) { gameObject.SetActive(state); }
+        protected void RemoveUIEventListener(string eventKey, CFAction<object, GameEventArgs> handler)
+        {
+            Facade.Instance.RemoveEventListener(eventKey, handler);
+        }
+        protected virtual void SetPanelActive(bool state) { gameObject.SetActive(state); }
     }
 }

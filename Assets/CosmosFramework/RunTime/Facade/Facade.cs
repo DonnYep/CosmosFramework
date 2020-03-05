@@ -218,21 +218,21 @@ namespace Cosmos{
         }
         #endregion
         #region ScenesManager
-        public void LoadScene(string sceneName, CFAction action=null)
+        public void LoadScene(string sceneName, CFAction callBack=null)
         {
-            SceneManager.Instance.LoadScene(sceneName, action);
+            SceneManager.Instance.LoadScene(sceneName, callBack);
         }
-        public void LoadScene(int sceneIndex, CFAction action=null)
+        public void LoadScene(int sceneIndex, CFAction callBack=null)
         {
-            SceneManager.Instance.LoadScene(sceneIndex, action);
+            SceneManager.Instance.LoadScene(sceneIndex, callBack);
         }
-        public void LoadSceneAsync(string sceneName, CFAction action=null)
+        public void LoadSceneAsync(string sceneName, CFAction callBack=null)
         {
-            SceneManager.Instance.LoadSceneAsync(sceneName, action);
+            SceneManager.Instance.LoadSceneAsync(sceneName, callBack);
         }
-        public void LoadSceneAsync(int sceneIndex, CFAction action = null)
+        public void LoadSceneAsync(int sceneIndex, CFAction callBack= null)
         {
-            SceneManager.Instance.LoadSceneAsync(sceneIndex, action);
+            SceneManager.Instance.LoadSceneAsync(sceneIndex, callBack);
         }
         #endregion
         #region GameObjectPool
