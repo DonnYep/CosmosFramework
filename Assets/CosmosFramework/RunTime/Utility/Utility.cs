@@ -110,6 +110,12 @@ namespace Cosmos
             value.z = Mathf.Clamp(value.z, min.z, max.z);
             return value;
         }
+        public static Vector2 Clamp(Vector2 value,Vector2 min,Vector2 max)
+        {
+            value.x = Mathf.Clamp(value.x, min.x, max.x);
+            value.y = Mathf.Clamp(value.y, min.y, max.y);
+            return value;
+        }
         /// <summary>
         /// 限制一个向量在最大值与最小值之间
         /// </summary>
@@ -118,6 +124,12 @@ namespace Cosmos
             value.x = Mathf.Clamp(value.x, minX, maxX);
             value.y = Mathf.Clamp(value.y, minY, maxY);
             value.z = Mathf.Clamp(value.z, minZ, maxZ);
+            return value;
+        }
+        public static Vector2 Clamp(Vector3 value, float minX, float minY, float maxX, float maxY)
+        {
+            value.x = Mathf.Clamp(value.x, minX, maxX);
+            value.y = Mathf.Clamp(value.y, minY, maxY);
             return value;
         }
         public static T Get<T>(Component comp, string subNode) where T : Component

@@ -18,6 +18,11 @@ namespace Cosmos
             Facade.Instance.AddEventListener(InputEventParam.INPUT_INPUT, Handler);
             OnInitialization();
         }
+        /// <summary>
+        /// 这个函数中写公共属性的区间，可以防止溢出值
+        /// 虚函数为空
+        /// </summary>
+        protected virtual void OnValidate() { }
         protected virtual  void OnDestroy()
         {
             Facade.Instance.RemoveEventListener(InputEventParam.INPUT_INPUT, Handler);

@@ -7,7 +7,7 @@ namespace Cosmos
 {
     public class CameraController : CFController
     {
-        [Range(0.5f,10)]
+        [Range(0.5f,15)]
         [SerializeField]float distanceFromTarget=10;
         [SerializeField] Vector2 pitchMinMax = new Vector2(-60, 85);
         [SerializeField] float yawSpeed=15;
@@ -45,7 +45,8 @@ namespace Cosmos
         }
         void LateUpdateCamera()
         {
-            cameraOffset.z = -currentDistance;
+            //cameraOffset.z = -currentDistance;
+            cameraOffset.z = -distanceFromTarget;
             cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, 
                 cameraOffset, Time.deltaTime * cameraViewDamp);
             float yawResult = yaw * Time.deltaTime*yawSpeed;
@@ -68,6 +69,13 @@ namespace Cosmos
             currentDistance = distanceFromTarget;
             cameraOffset.z = -currentDistance;
             cam.transform.localPosition = cameraOffset;
+        }
+        protected override void OnValidate()
+        {
+            yawSpeed = Mathf.Clamp(yawSpeed, 0, 1000);
+            pitchSpeed = Mathf.Clamp(pitchSpeed, 0, 1000);
+            cameraViewDamp = Mathf.Clamp(cameraViewDamp, 0, 1000);
+            pitchMinMax = Utility.Clamp(pitchMinMax, new Vector2(-90, 0), new Vector2(0, 90));
         }
     }
 }

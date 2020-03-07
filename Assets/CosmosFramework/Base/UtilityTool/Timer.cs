@@ -31,6 +31,12 @@ public class Timer : MonoBehaviour {
             if (autoStart)
                 tempRoutine = Facade.Instance.StartCoroutine(EnumAction(StartDelay, () => action.Invoke()));
         }
+        private void OnValidate()
+        {
+            startDelay = Mathf.Clamp(startDelay,0.1f, 1000);
+            interval = Mathf.Clamp(interval, 0.1f, 1000);
+            randomRange = Mathf.Clamp(randomRange, 0.1f, 1000);
+        }
         /// <summary>
         /// 执行的时候可以有延迟
         /// </summary>
