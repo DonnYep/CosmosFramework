@@ -35,12 +35,28 @@ namespace Cosmos.Scene{
         {
             Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
         }
+        public void LoadSceneAsync(string sceneName, CFAction<float> callBack = null)
+        {
+            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
+        }
+        public void LoadSceneAsync(string sceneName, CFAction<AsyncOperation> callBack = null)
+        {
+            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
+        }
         /// <summary>
         /// 异步加载 index
         /// </summary>
         /// <param name="sceneIndex"></param>
         /// <param name="callBack"></param>
         public void LoadSceneAsync(int sceneIndex, CFAction callBack=null)
+        {
+            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneIndex, callBack));
+        }
+        public void LoadSceneAsync(int sceneIndex, CFAction<float> callBack = null)
+        {
+            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneIndex, callBack));
+        }
+        public void LoadSceneAsync(int sceneIndex, CFAction<AsyncOperation> callBack = null)
         {
             Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneIndex, callBack));
         }
@@ -55,11 +71,30 @@ namespace Cosmos.Scene{
             AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
             while (!ao.isDone)
             {
-                ////EventManager.Instance.Fire();
                 yield return ao.progress;
             }
             yield return ao.progress;
             callBack?.Invoke();
+        }
+        IEnumerator EnumLoadSceneAsync(string sceneName, CFAction<float> callBack = null)
+        {
+            AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
+            while (!ao.isDone)
+            {
+                callBack?.Invoke(ao.progress);
+                yield return ao.progress;
+            }
+            yield return null;
+        }
+        IEnumerator EnumLoadSceneAsync(string sceneName, CFAction<AsyncOperation> callBack = null)
+        {
+            AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
+            while (!ao.isDone)
+            {
+                callBack?.Invoke(ao);
+                yield return ao.progress;
+            }
+            yield return null;
         }
         /// <summary>
         /// 异步加载迭代器 index
@@ -72,11 +107,30 @@ namespace Cosmos.Scene{
             AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
             while (!ao.isDone)
             {
-                ////EventManager.Instance.Fire();
                 yield return ao.progress;
             }
             yield return ao.progress;
             callBack?.Invoke();
+        }
+        IEnumerator EnumLoadSceneAsync(int sceneIndex, CFAction<float> callBack = null)
+        {
+            AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
+            while (!ao.isDone)
+            {
+                callBack?.Invoke(ao.progress);
+                yield return ao.progress;
+            }
+            yield return null;
+        }
+        IEnumerator EnumLoadSceneAsync(int sceneIndex, CFAction<AsyncOperation> callBack = null)
+        {
+            AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
+            while (!ao.isDone)
+            {
+                callBack?.Invoke(ao);
+                yield return ao.progress;
+            }
+            yield return null;
         }
     }
 }

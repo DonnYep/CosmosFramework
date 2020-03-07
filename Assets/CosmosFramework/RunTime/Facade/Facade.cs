@@ -226,11 +226,49 @@ namespace Cosmos{
         {
             SceneManager.Instance.LoadScene(sceneIndex, callBack);
         }
+        /// <summary>
+        /// 回调函数只在完成后进行一次回调
+        /// </summary>
         public void LoadSceneAsync(string sceneName, CFAction callBack=null)
         {
             SceneManager.Instance.LoadSceneAsync(sceneName, callBack);
         }
+        /// <summary>
+        /// 回调函数每次yield更新都会调用
+        /// ，不会进行完成后的调用
+        /// </summary>
+        public void LoadSceneAsync(string sceneName, CFAction<float> callBack )
+        {
+            SceneManager.Instance.LoadSceneAsync(sceneName, callBack);
+        }
+        /// <summary>
+        /// 回调函数每次yield更新都会调用
+        /// ，不会进行完成后的调用
+        /// </summary>
+        public void LoadSceneAsync(string sceneName, CFAction<AsyncOperation> callBack)
+        {
+            SceneManager.Instance.LoadSceneAsync(sceneName, callBack);
+        }
+        /// <summary>
+        /// 回调函数只在完成后进行一次回调
+        /// </summary>
         public void LoadSceneAsync(int sceneIndex, CFAction callBack= null)
+        {
+            SceneManager.Instance.LoadSceneAsync(sceneIndex, callBack);
+        }
+        /// <summary>
+        /// 回调函数每次yield更新都会调用
+        /// ，不会进行完成后的调用
+        /// </summary>
+        public void LoadSceneAsync(int sceneIndex, CFAction<float> callBack = null)
+        {
+            SceneManager.Instance.LoadSceneAsync(sceneIndex, callBack);
+        }
+        /// <summary>
+        /// 回调函数每次yield更新都会调用
+        /// ，不会进行完成后的调用
+        /// </summary>
+        public void LoadSceneAsync(int sceneIndex, CFAction<AsyncOperation> callBack = null)
         {
             SceneManager.Instance.LoadSceneAsync(sceneIndex, callBack);
         }
