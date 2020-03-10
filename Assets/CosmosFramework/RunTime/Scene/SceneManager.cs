@@ -92,9 +92,9 @@ namespace Cosmos.Scene{
             while (!ao.isDone)
             {
                 callBack?.Invoke(ao);
-                yield return ao.progress;
+                yield return null;
+                //yield return ao.progress;
             }
-            yield return null;
         }
         /// <summary>
         /// 异步加载迭代器 index
@@ -118,9 +118,10 @@ namespace Cosmos.Scene{
             while (!ao.isDone)
             {
                 callBack?.Invoke(ao.progress);
-                yield return ao.progress;
+                yield return null;
+                //yield return ao.progress;
             }
-            yield return null;
+            //yield return null;
         }
         IEnumerator EnumLoadSceneAsync(int sceneIndex, CFAction<AsyncOperation> callBack = null)
         {
@@ -128,9 +129,10 @@ namespace Cosmos.Scene{
             while (!ao.isDone)
             {
                 callBack?.Invoke(ao);
-                yield return ao.progress;
+                yield return null;
+                //yield return ao.progress;
             }
-            yield return null;
+            //yield return null;
         }
     }
 }

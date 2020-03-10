@@ -103,14 +103,22 @@ namespace Cosmos
         /// 清除一组实例
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="objList"></param>
-        public static void KillObjectList<T>(List<T> objList)where T : Object
+        /// <param name="objs"></param>
+        public static void KillObjects<T>(List<T> objs)where T : Object
         {
-            for (int i = 0; i < objList.Count; i++)
+            for (int i = 0; i < objs.Count; i++)
             {
-                GameObject.Destroy(objList[i]);
+                GameObject.Destroy(objs[i]);
             }
-            objList.Clear();
+            objs.Clear();
+        }
+        public static void KillObjects<T>(HashSet<T> objs) where T : Object
+        {
+            foreach (var obj in objs)
+            {
+                GameObject.Destroy(obj);
+            }
+            objs.Clear();
         }
         #endregion
     }

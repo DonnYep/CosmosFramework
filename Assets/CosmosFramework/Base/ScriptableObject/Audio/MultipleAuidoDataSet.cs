@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Cosmos
 {
-    [CreateAssetMenu(fileName = "NewMultipleAuidoDataSet", menuName = "CosmosFramework/AudioDataSet/ MultipleAuido")]
+    [CreateAssetMenu(fileName = "NewMultipleAuidoDataSet", menuName = "CosmosFramework/AudioDataSet/MultipleAuido")]
     public class MultipleAuidoDataSet : AudioDataSet
     {
         [SerializeField]
@@ -12,7 +12,7 @@ namespace Cosmos
         public AudioClip[] AudioClips { get { return audioClips; } }
         public override void Reset()
         {
-            objectName = "New MultipleAudio";
+            objectName = "NewMultipleAudio";
             mute = false;
             playOnAwake = false;
             loop = false;

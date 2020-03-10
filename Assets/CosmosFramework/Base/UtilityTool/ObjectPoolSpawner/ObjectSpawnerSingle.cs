@@ -12,8 +12,9 @@ namespace Cosmos{
         [SerializeField]
         ObjectPoolDataSet poolDataSet;
         public ObjectPoolDataSet PoolDataSet { get { return poolDataSet; } }
-        [SerializeField] protected float collectDelay = 3;
-        public override float CollectDelay { get { if (collectDelay <= 0.1) collectDelay = 0.1f; return collectDelay; } }
+        public override float CollectDelay { get { return poolDataSet.CollectDelay; } }
+        HashSet<GameObject> uncollectableHashSet = new HashSet<GameObject>();
+        public override HashSet<GameObject> UncollectableHashSet { get { return uncollectableHashSet; } protected set { uncollectableHashSet = value; } }
         public override void Spawn()
         {
             if (!poolDataSet.ObjectAddsResult)
@@ -22,15 +23,24 @@ namespace Cosmos{
             {
                 Facade.Instance.SetObjectSpawnItem(this, PoolDataSet.SpawnObject);
                 var go = Facade.Instance.SpawnObject(this);
-                if (SpawnTransform != null)
-                    go.transform.position = SpawnTransform.position;
-                go.transform.SetParent(ActiveObjectMount);
+                AlignObject(PoolDataSet.AlignType, go, SpawnTransform);
             }
         }
         protected override void RegisterSpawner()
         {
             if(poolDataSet != null)
                 Facade.Instance.RegisterObjcetSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
+        }
+        public override void SpawnUncollectable()
+        {
+            if (!poolDataSet.ObjectAddsResult)
+                return;
+            for (int i = 0; i < poolDataSet.SpawnCount; i++)
+            {
+                var go = GameObject.Instantiate(PoolDataSet.SpawnObject);
+                AlignObject(PoolDataSet.AlignType, go, SpawnTransform);
+                uncollectableHashSet.Add(go);
+            }
         }
     }
 }

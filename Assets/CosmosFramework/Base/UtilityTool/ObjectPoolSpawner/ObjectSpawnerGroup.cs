@@ -7,10 +7,12 @@ namespace Cosmos{
     {
         [Header("能用，慎用")]
         [SerializeField] List<ObjectGroup> spawnObjectGroup = new List<ObjectGroup>();
+        HashSet<GameObject> uncollectableHashSet = new HashSet<GameObject>();
+        public override HashSet<GameObject> UncollectableHashSet { get { return uncollectableHashSet; } protected set { uncollectableHashSet = value; } }
         /// <summary>
         /// 只读类型
         /// </summary>
-         List<ObjectGroup> SpawnObjectGroup { get { return spawnObjectGroup; } }
+        List<ObjectGroup> SpawnObjectGroup { get { return spawnObjectGroup; } }
         //标志位，存储当前group中的
         int flag = 0;
         public override void Spawn()
@@ -26,9 +28,7 @@ namespace Cosmos{
                     {
                         Facade.Instance.SetObjectSpawnItem(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject);
                         var go = Facade.Instance.SpawnObject(SpawnObjectGroup[i].SpawnTransform);
-                        if (SpawnObjectGroup[i].SpawnTransform != null)
-                            go.transform.position = SpawnObjectGroup[i].SpawnTransform.position;
-                        go.transform.SetParent(ActiveObjectMount);
+                        AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
                     }
                 }
             }
@@ -68,6 +68,24 @@ namespace Cosmos{
             yield return new WaitForSeconds(delay);
             action?.Invoke(tempFlag);
         }
+        public override void SpawnUncollectable()
+        {
+            for (int i = 0; i < SpawnObjectGroup.Count; i++)
+            {
+                if (SpawnObjectGroup[i].SpawnTransform != null && SpawnObjectGroup[i].PoolObject != null)
+                {
+                    if (!SpawnObjectGroup[i].PoolObject.ObjectAddsResult)
+                        return;
+                    flag = i;
+                    for (int j = 0; j < SpawnObjectGroup[i].PoolObject.SpawnCount; j++)
+                    {
+                        var go = GameObject.Instantiate(SpawnObjectGroup[i].PoolObject.SpawnObject);
+                        AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
+                        uncollectableHashSet.Add(go);
+                    }
+                }
+            }
+        }
         [System.Serializable]
         class ObjectGroup
         {
@@ -77,8 +95,7 @@ namespace Cosmos{
             [SerializeField]
             ObjectPoolDataSet poolDataSet;
             public ObjectPoolDataSet PoolObject { get { return poolDataSet; } }
-            [SerializeField] protected float collectDelay = 3;
-            public float CollectDelay { get { if (collectDelay <= 0.1) collectDelay = 0.1f; return collectDelay; } }
+            public float CollectDelay { get { return poolDataSet.CollectDelay; } }
         }
     }
 }

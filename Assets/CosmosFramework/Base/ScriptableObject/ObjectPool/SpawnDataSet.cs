@@ -6,15 +6,21 @@ namespace Cosmos{
     [CreateAssetMenu(fileName = "NewSpawnDataSet", menuName = "CosmosFramework/ObjectPoolDataSet/SpawnObject")]
     public class SpawnDataSet : ObjectPoolDataSet
     {
+        [SerializeField]
+        protected GameObject spawnObject;
+        public override GameObject SpawnObject { get { return spawnObject; } }
         public override void Reset()
         {
             objectName = "NewObject";
             spawnObject = null;
             objectAdds = 25;
             groupSpawn = false;
-            MinSpawnCount = 0;
-            MaxSpawnCount = 1;
+            minSpawnCount = 0;
+            maxSpawnCount = 1;
             randomRotationOnSpawn = false;
+            maxCollectDelay = 3;
+            minCollectDelay = 3;
+            AlignType = ObjectSpawnAlignType.AlignTransform;
         }
     }
 }
