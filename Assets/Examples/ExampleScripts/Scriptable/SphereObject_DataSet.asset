@@ -13,10 +13,14 @@ MonoBehaviour:
   m_Name: SphereObject_DataSet
   m_EditorClassIdentifier: 
   objectName: Sphere
-  objectAdds: 25
+  objectOdds: 25
   groupSpawn: 1
-  MinSpawnCount: 5
-  MaxSpawnCount: 15
+  minSpawnCount: 0
+  maxSpawnCount: 1
+  rangeCollectDelay: 0
+  minCollectDelay: 3
+  maxCollectDelay: 3
   randomRotationOnSpawn: 0
+  alignType: 0
   spawnObject: {fileID: 1002502963443486, guid: 3376b1f58ee2c9f4e91fccef586213ac,
     type: 3}

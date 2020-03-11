@@ -11,7 +11,7 @@ namespace Cosmos{
         public string[] Content { get { return content; } }
         public override void Reset()
         {
-            content = null;
+            content = new string[]{ };
         }
     }
 }

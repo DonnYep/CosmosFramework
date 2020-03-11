@@ -1,0 +1,908 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Cosmos.ApplicationConst" Collapsed="true">
+    <Position X="0.5" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAggAAAoCEACAAgAAAAAAABAAABAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\ApplicationConst\ApplicationConst.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.AudioEventArgs" Collapsed="true">
+    <Position X="0.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Audio\AudioEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.AudioEventParam" Collapsed="true">
+    <Position X="2.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Audio\AudioEventParam.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Singleton&lt;T&gt;" Collapsed="true">
+    <Position X="5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAABAAAAASAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Common\Singleton.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Cosmos.MultiThreadSingleton&lt;T&gt;" Collapsed="true">
+    <Position X="4" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAABAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Common\Singleton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.MonoSingleton&lt;T&gt;" Collapsed="true">
+    <Position X="2.25" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAAAAAAAAAAAAABAAAAAQAACAAAAAkA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Common\Singleton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ControllerEventArgs" Collapsed="true">
+    <Position X="5.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Controller\ControllerEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ControllerEventParam" Collapsed="true">
+    <Position X="5.75" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Controller\ControllerEventParam.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.DataEventParam" Collapsed="true">
+    <Position X="9.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Data\DataEventParam.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Facade" Collapsed="true">
+    <Position X="4.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wgJmhASIwQiIklAFUQYKK4OKACANgQEICGDCCgTRAAs=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Facade\Facade.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.FSMData" Collapsed="true">
+    <Position X="2.25" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAACAAAAAABAAAAAAAAAAAAQAAEAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\FSM\FSMData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.CFModules" Collapsed="true">
+    <Position X="4" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAABAAAAAACAwAQAAAAAAAAABAgAASAEwI=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Main\CFModules.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.CosmosEntry" Collapsed="true">
+    <Position X="7.5" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Main\CosmosEntry.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.GameManager" Collapsed="true">
+    <Position X="6" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAASAAIBgAAAAAAAAAAAAGAAAAAAAQAAAgAAAQAgAgg=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Main\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Module&lt;T&gt;" Collapsed="true">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAgBAAAAAQAQBAAAAAABAIABAQQAiQEAAABAAAAg=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Main\Module.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Cosmos.MonoEventParam" Collapsed="true">
+    <Position X="0.5" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Mono\MonoEventParam.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ProtocolChannel" Collapsed="true">
+    <Position X="0.5" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAADAAAAAAkAAAAAIBIACAAAgAAAABIAAAAAAQ=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Network\ProtocolChannel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ObjectPoolEventParam" Collapsed="true">
+    <Position X="5.75" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\ObjectsPool\ObjectPoolEventParam.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.UIEventArgs" Collapsed="true">
+    <Position X="2.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAIABAgAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\UI\UIEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.UIEventParam" Collapsed="true">
+    <Position X="7.5" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\UI\UIEventParam.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Utility" Collapsed="true">
+    <Position X="0.5" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgKAgEGRABJIGIDCsAYSRQQABGgIBIEEgAARYAAgICg=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Utility\Utility.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.InputEventArgs" Collapsed="true">
+    <Position X="7.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAgAAAAAAoAAAAAAAAAAgAAAAAAACAAACABgAABAgCE=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Input\InputEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.InputEventParam" Collapsed="true">
+    <Position X="7.5" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Input\InputEventParam.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.GameEventArgs" Collapsed="true">
+    <Position X="3.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\GameEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Audio.AudioManager" Collapsed="true">
+    <Position X="9.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BABAAgAIAQAIAhCBGAIAAAAAAEAAgQAIAkBBBAUQAIg=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Audio\AudioManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Config.ConfigManager" Collapsed="true">
+    <Position X="3.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Config\ConfigManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Controller.ControllerManager" Collapsed="true">
+    <Position X="5.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIgBABAAAAIAEAAAAAIIIEIgAABAAAAgACAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Controller\ControllerManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Data.DataManager" Collapsed="true">
+    <Position X="2.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAEAAAAQAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Data\DataManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Data.DataProcess" Collapsed="true">
+    <Position X="0.5" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAEAAAAAAAAAQMAgIIAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Data\DataProcess.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Event.EventManager" Collapsed="true">
+    <Position X="1.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIBABBAAAAAAAAAAIIAEAICAACAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\EventManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.FSM.FSM&lt;T&gt;" Collapsed="true">
+    <Position X="16.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAEEKBEaAAhAAGIAIAQSAgAAAAAEAAAAEQQABAIEA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\FSM\FSM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Cosmos.FSM.FSMBase" Collapsed="true">
+    <Position X="16.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAGAAIAQQQAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\FSM\FSMBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.FSM.FSMManager" Collapsed="true">
+    <Position X="1.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAGAAQAAAAAAAAAAIAAAQAAACABAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\FSM\FSMManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.FSM.FSMState&lt;T&gt;" Collapsed="true">
+    <Position X="4" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAIAAAIAAABAAAAQAAQAAMAAgAAAIAQ=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\FSM\FSMState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.FSM.FSMTranslation&lt;T&gt;" Collapsed="true">
+    <Position X="5.75" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAACAAAAIAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\FSM\FSMTranslation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Mono.MonoController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AARgAAQQAgAAIhAAAAUEIQAgAAIAIAAAAIAACABAQAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Mono\MonoController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Cosmos.Mono.MonoManager" Collapsed="true">
+    <Position X="8.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAEEAAAAABABAAAAQAAAACICQBIAAAAAAAgiBAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Mono\MonoManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Network.NetworkManager" Collapsed="true">
+    <Position X="3.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAIAAIAEAAAAAAAAAAAAAAQAAAAEAgAAAABAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Network\NetworkManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ObjectPool.ObjectPoolManager" Collapsed="true">
+    <Position X="10.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAIAJCBAAAEAEAAAQAAARAAAAAAAAABAAUA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\ObjectsPool\ObjectPoolManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ObjectPool.ObjectSpawnPool" Collapsed="true">
+    <Position X="7.5" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAEBEAAAAAAAACACAAAAgQhAAAQ=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\ObjectsPool\ObjectSpawnPool.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ObjectPool.ObjectSpawnPoolMemebr" Collapsed="true">
+    <Position X="9.25" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\ObjectsPool\ObjectSpawnPoolMemebr.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Reference.ReferencePoolManager" Collapsed="true">
+    <Position X="7.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAIAACAAAAEAEAAAAAAAAAAAAAACAABAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\ReferencePool\ReferencePoolManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Reference.ReferenceSpawnPool" Collapsed="true">
+    <Position X="2.25" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAgAAEAEAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\ReferencePool\ReferenceSpawnPool.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Resource.ResourceManager" Collapsed="true">
+    <Position X="4.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAgAAAAAAABAAAAAAAAAAAAAAAAAAAAACAAAE=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Resource\ResourceManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Resource.ResourceUnit" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAACAAAAAAAAACAAAAAAAAAAAgA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Resource\ResourceUnit.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Cosmos.Scene.SceneManager" Collapsed="true">
+    <Position X="5.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAQAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Scene\SceneManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.UI.UILogicBase" Collapsed="true">
+    <Position X="1.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABYAAAAEgAAAAAAAAAAEAAAAAIQAAACEgAEgQAAEA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\UI\UILogicBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.UI.UILogicResident" Collapsed="true">
+    <Position X="0.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\UI\UILogicResident.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.UI.UILogicTemporary" Collapsed="true">
+    <Position X="2.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\UI\UILogicTemporary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.UI.UIManager" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <InheritanceLine Type="Cosmos.Module&lt;T&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="5.75" Y="1.048" />
+        <Point X="5.75" Y="1.375" />
+        <Point X="1.25" Y="1.375" />
+        <Point X="1.25" Y="2.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAEAAEAAEAAAAAAAAAAAABCAAAAwAAAAE=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\UI\UIManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.UI.UIPanelInfo" Collapsed="true">
+    <Position X="9.25" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAABAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\UI\UIPanelInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Input.InputManager" Collapsed="true">
+    <Position X="6.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAIAgCAAAAAAAAAAAAEAEBAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Input\InputManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Input.StandardInputDevice" Collapsed="true">
+    <Position X="5.75" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgEAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Input\StandardInputDevice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Input.VirtualInput" Collapsed="true">
+    <Position X="5.75" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oAAGAAAAABKAAwAgAAAAAAAAAEIAAAgAAIAAIAFCSAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Input\VirtualInput.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Input.VirtualButton" Collapsed="true">
+    <Position X="4" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAQAAAAAAAAAAAAAAAAAAAQAEAAAAAkAAAAQAAAEQAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Input\VirtualInput.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Input.VirtualAxis" Collapsed="true">
+    <Position X="2.25" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAIAAAAAAAAAAAAAYAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Input\VirtualInput.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.PlayerController" Collapsed="true">
+    <Position X="7.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAECAIAQQAQIAIAQAAACAAQAAQAAAAAAAACAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\Controller\PlayerControl\PlayerController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.CameraTarget" Collapsed="true">
+    <Position X="14.5" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\Controller\CameraControl\CameraTarget.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.CameraController" Collapsed="true">
+    <Position X="9.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABABICAAQAIBAARQAEAAAAAAAgAQEAAAEAABAAAAAE=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\Controller\CameraControl\CameraController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.AudioDataSet" Collapsed="true">
+    <Position X="14.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAIQAAICAAACAAAAAABAAAAAQAAAIJAAAACAAg=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\Audio\AudioDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.CreatureAduioDataSet" Collapsed="true">
+    <Position X="13.25" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\Audio\CreatureAduioDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.EnviroAudioDataSet" Collapsed="true">
+    <Position X="15" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABBAAAAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\Audio\EnviroAudioDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.MultipleAuidoDataSet" Collapsed="true">
+    <Position X="16.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABBAAAAQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\Audio\MultipleAuidoDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.CFDataSet" Collapsed="true">
+    <Position X="14.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAQAAAAAIAAAAAAAAAAAAAQAIAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\Base\CFDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.CharacterStatusDataSet" Collapsed="true">
+    <Position X="10" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAEAAAABAABgAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\Character\CharacterStatusDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.PlayerStatusDataSet" Collapsed="true">
+    <Position X="10" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\Character\PlayerStatusDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.EventDispatchDataSet" Collapsed="true">
+    <Position X="16.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\Event\EventDispatchDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.MutiSpawnDataSet" Collapsed="true">
+    <Position X="21" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAACgBASAAAAAAAAAAIACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\ObjectPool\MutiSpawnDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ObjectPoolDataSet" Collapsed="true">
+    <Position X="19.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAgAACMAAAABAAEQoAAAABAAEAQAQBAAAAgAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\ObjectPool\ObjectPoolDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.SpawnDataSet" Collapsed="true">
+    <Position X="18.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAACABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\ObjectPool\SpawnDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.StringContent" Collapsed="true">
+    <Position X="12" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAgAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\StringContent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.AudioPlayer" Collapsed="true">
+    <Position X="13" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAgAAAAAAAAAAIAAAAAAAAAAAAAAAQAIAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\AudioPlayer\AudioPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.BackgroundAudioPlayer" Collapsed="true">
+    <Position X="11.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAgAAAAAAIAAAIAAAAgAAAAAAAAAAQAIAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\AudioPlayer\BackgroundAudioPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.WorldAudioPlayer" Collapsed="true">
+    <Position X="13" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAgAIAAAAIAAAICAAAgAAAAAAAAAAQAIAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\AudioPlayer\WorldAudioPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.WorldAudioPlayerMultiple" Collapsed="true">
+    <Position X="14.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAQoAAAAIAAAICAAAAQAAAAAAAAAQAIAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\AudioPlayer\WorldAudioPlayerMultiple.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.EventDispatcher" Collapsed="true">
+    <Position X="12.75" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAACIAABAAAAEAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\EventDispatcher\EventDispatcher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.EventListener" Collapsed="true">
+    <Position X="14.5" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABFAIAAAAKAAAAAAAAAAAAAAABAAAAAAAAAAAAAEQ=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\EventDispatcher\EventListener.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ObjectSpawner" Collapsed="true">
+    <Position X="6" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAABAAAAAAAABABAAAFAQAQAAQAAAAUUBAAAgACAAEA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\ObjectPoolSpawner\ObjectSpawner.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ObjectSpawnerGroup" Collapsed="true">
+    <Position X="4.25" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAQAAAAEAAAAIEAQAQAAAAEAAQEBAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\ObjectPoolSpawner\ObjectSpawnerGroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ObjectSpawnerMultiple" Collapsed="true">
+    <Position X="6" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgCAAAIAgAEAQAQAAAAEAAAQBAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\ObjectPoolSpawner\ObjectSpawnerMultiple.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ObjectSpawnerSingle" Collapsed="true">
+    <Position X="7.75" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgCAAAIAgAEAQAQAAAAEAAAQBAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\ObjectPoolSpawner\ObjectSpawnerSingle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.ActionDispatcher" Collapsed="true">
+    <Position X="11" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAIAAAAAAAAAAAAAAAAAEAAAAAAAAAAAQ=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\ActionDispatcher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.SceneLoader" Collapsed="true">
+    <Position X="16.25" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\SceneLoader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Timer" Collapsed="true">
+    <Position X="11" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>YAAABCAIAAAACAAIAIEACACAgIAAAAAAAoAQAAKAAEQ=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\Timer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Variable" Collapsed="true">
+    <Position X="12.75" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\Variable\Variable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.CFMemoryStream" Collapsed="true">
+    <Position X="11" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAQAAghAECAACAAQgAAAAIBAAAIABGACwAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\MemoryStream\CFMemoryStream.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.CFExtensions" Collapsed="true">
+    <Position X="16.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\Extension\CFExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.CFEventArgs" Collapsed="true">
+    <Position X="4" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\EventArg\CFEventArgs.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Cosmos.CFController" Collapsed="true">
+    <Position X="8.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAIAAAAAAEAAAAAABAAQAAQAEAAEAAAAEA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\Controller\CFController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Actor" Collapsed="true">
+    <Position X="12.75" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\Actor\Actor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Test.MessagePrinter" Collapsed="true">
+    <Position X="12.75" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQACAAAAAAAAAAgA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\MessagePrinter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.Test.ModuleInitializer" Collapsed="true">
+    <Position X="14.5" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\UtilityTool\ModuleInitializer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.IO.XMLFileOperator" Collapsed="true">
+    <Position X="14.5" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgEAABAAEAAACCAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\IO\XMLFileOperator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.IO.JsonFileOperator" Collapsed="true">
+    <Position X="11" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\IO\JsonFileOperator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.IO.FileOperator" Collapsed="true">
+    <Position X="16.25" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CEAAAgggIAAgAAABAAAAQAKAgAAAAAAEAAECAAAgAQA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\IO\FileOperator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.IO.XmlOperator" Collapsed="true">
+    <Position X="0.75" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAwAAAAAAAAAAAIAAAAAAABACAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\DocumentOperator\XmlOperator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.IO.JsonDocOperator" Collapsed="true">
+    <Position X="2.5" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAwAAAAAAAAAAAIAAAAAAABACAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\DocumentOperator\JsonOperator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cosmos.IO.DocumentOperator&lt;T&gt;" Collapsed="true">
+    <Position X="1.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAwAAAAAAAAAAAIAAAAAAABACAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\DocumentOperator\DocumentOperator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Cosmos.IModule" Collapsed="true">
+    <Position X="19.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAEAAABAAAAg=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Main\IModule.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Cosmos.INetworkMessage" Collapsed="true">
+    <Position X="12.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Network\INetworkMessage.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Cosmos.IReference" Collapsed="true">
+    <Position X="16.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\ReferencePool\IReference.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Cosmos.Audio.IAudioController" Collapsed="true">
+    <Position X="12.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAQAIAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Audio\IAudioController.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Cosmos.Entity.IEntity" Collapsed="true">
+    <Position X="14.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAACAAAAEAgAAAAAAABAAAEABAAAAAIBAAAAAAEEAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Entity\IEntity.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Cosmos.Entity.IEntityGroup" Collapsed="true">
+    <Position X="16.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Entity\IEntityGroup.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Cosmos.FSM.IFSM&lt;T&gt;" Collapsed="true">
+    <Position X="18" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAABAACAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\FSM\IFSM.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Cosmos.Mono.IMonoController" Collapsed="true">
+    <Position X="19.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIBAAAAEAAQAAAAAAIAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Mono\IMonoController.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Cosmos.ObjectPool.IObjectSpawnPool" Collapsed="true">
+    <Position X="14.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\ObjectsPool\IObjectSpawnPool.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Cosmos.IO.IDocumentOperator" Collapsed="true">
+    <Position X="18" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\DocumentOperator\IDocumentOperator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Cosmos.ControlMode" Collapsed="true">
+    <Position X="14.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAhAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Controller\ControllerManager.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Cosmos.ContainerState" Collapsed="true">
+    <Position X="12.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAgAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Main\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Cosmos.UpdateType" Collapsed="true">
+    <Position X="12.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAgAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Mono\MonoManager.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Cosmos.MessageColor" Collapsed="true">
+    <Position X="18" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAEAAgAAAgAAQAAAACIQAAAABEBIAAAAIAAAAAAABgA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Utility\Utility.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Cosmos.Resource.ResourceLoadMode" Collapsed="true">
+    <Position X="19.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Resource\ResourceManager.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Cosmos.Resource.ResourceType" Collapsed="true">
+    <Position X="16.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Resource\ResourceUnit.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Cosmos.Input.InputButtonState" Collapsed="true">
+    <Position X="16.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAEAAAI=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Input\InputManager.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Cosmos.ObjectSpawnAlignType" Collapsed="true">
+    <Position X="14.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAQAAAAAAgAAAAAAAAYAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\Base\ScriptableObject\ObjectPool\ObjectPoolDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="Cosmos.FSMEventHandler&lt;T&gt;" Collapsed="true">
+    <Position X="19.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\FSM\FSMEventHandler.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Cosmos.CFAction" Collapsed="true">
+    <Position X="12.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\EventActions.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Cosmos.CFAction&lt;T&gt;" Collapsed="true">
+    <Position X="14.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\EventActions.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Cosmos.CFAction&lt;T1, T2&gt;" Collapsed="true">
+    <Position X="16.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\EventActions.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Cosmos.CFResultAction&lt;Result&gt;" Collapsed="true">
+    <Position X="12.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\EventActions.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Cosmos.CFResultAction&lt;T, Result&gt;" Collapsed="true">
+    <Position X="12.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\EventActions.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Cosmos.CFFunction&lt;T, Result&gt;" Collapsed="true">
+    <Position X="18" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\EventActions.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Cosmos.CFPredicateAction&lt;T&gt;" Collapsed="true">
+    <Position X="19.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\EventActions.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Cosmos.CoroutineHandler" Collapsed="true">
+    <Position X="14.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\EventActions.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Cosmos.CoroutineHandler&lt;T&gt;" Collapsed="true">
+    <Position X="16.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\EventActions.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="Cosmos.CoroutineHandler&lt;T1, T2&gt;" Collapsed="true">
+    <Position X="18" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\CosmosFramework\RunTime\Event\Base\EventActions.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>

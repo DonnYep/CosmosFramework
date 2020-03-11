@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: MutiSpawn_DataSet
   m_EditorClassIdentifier: 
   objectName: MutiObject
-  objectAdds: 100
+  objectOdds: 25
   groupSpawn: 0
-  MinSpawnCount: 1
-  MaxSpawnCount: 20
+  minSpawnCount: 0
+  maxSpawnCount: 1
+  rangeCollectDelay: 1
+  minCollectDelay: 7
+  maxCollectDelay: 11
   randomRotationOnSpawn: 0
+  alignType: 0
   severalTime: 2
   spawnObjects:
   - {fileID: 1836443238213990, guid: 8a8417a066faaf54681fd6b50528d39c, type: 3}

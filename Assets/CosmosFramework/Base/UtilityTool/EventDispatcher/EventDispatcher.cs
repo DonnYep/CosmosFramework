@@ -6,20 +6,24 @@ namespace Cosmos
     [DisallowMultipleComponent]
     public class EventDispatcher : MonoBehaviour
     {
-        [SerializeField] string eventKey="eventKey";
-        public string EventKey { get { return eventKey; } }
+        /// <summary>
+        /// for editor
+        /// </summary>
+        public StringContent keyContentDataSet;
+        public string selectedKeyContent;
+
+        public string EventKey { get { return selectedKeyContent; } }
         public string DispatcherName { get { return this.gameObject.name; } }
-        public GameEventArgs EventArg { get; set; }
         public void DispatchEvent()
         {
-            Facade.Instance.DispatchEvent(eventKey, this, EventArg);
+            Facade.Instance.DispatchEvent(EventKey, this, null);
         }
         /// <summary>
-        /// 注销事件，这里由事件分发者注销
+        /// 注销事件，事件派发者注销这个Key所持有的所有事件
         /// </summary>
         public void DeregisterEvent()
         {
-            Facade.Instance.DeregisterEvent(eventKey);
+            Facade.Instance.DeregisterEvent(EventKey);
         }
     }
 }

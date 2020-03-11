@@ -13,10 +13,14 @@ MonoBehaviour:
   m_Name: CapsuleObject_DataSet
   m_EditorClassIdentifier: 
   objectName: Capslue
+  objectOdds: 25
+  groupSpawn: 0
+  minSpawnCount: 0
+  maxSpawnCount: 1
+  rangeCollectDelay: 0
+  minCollectDelay: 3
+  maxCollectDelay: 3
+  randomRotationOnSpawn: 0
+  alignType: 0
   spawnObject: {fileID: 1710601175091384, guid: 829bf2b842b96a149a21723a68947d87,
     type: 3}
-  objectAdds: 25
-  groupSpawn: 0
-  MinSpawnCount: 0
-  MaxSpawnCount: 1
-  randomRotationOnSpawn: 0

@@ -10,15 +10,15 @@ namespace Cosmos{
         public virtual GameObject  SpawnObject { get; }
         [SerializeField]
         [Range(0,100,order =1)]
-        protected short objectAdds = 25;
+        protected short objectOdds = 25;
         public bool ObjectAddsResult
         {
             get
             {
-                if (objectAdds == 0)
+                if (objectOdds == 0)
                     return false;
                 var result = Utility.Random(1, 100);
-                if (result <=objectAdds)
+                if (result <=objectOdds)
                     return true;
                 else
                     return false;
@@ -76,6 +76,7 @@ namespace Cosmos{
                 else return 1;
             }
         }
+        [Header("是否在生成完毕后再进行相对父物体的随机旋转")]
         [SerializeField]
         protected bool randomRotationOnSpawn = false;
         public bool RandomRotationOnSpawn { get { return randomRotationOnSpawn; } }

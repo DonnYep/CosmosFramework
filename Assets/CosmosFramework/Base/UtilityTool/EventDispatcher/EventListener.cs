@@ -6,11 +6,15 @@ using System;
 namespace Cosmos{
     public class EventListener : MonoBehaviour
     {
-        [SerializeField] string eventKey = "eventKey";
-        public string EventKey { get { return eventKey; } }
+        /// <summary>
+        /// for editor
+        /// </summary>
+        public StringContent keyContentDataSet;
+        public string selectedKeyContent;
+
+        public string EventKey { get { return selectedKeyContent; } }
         [Header("通过事件中心分发事件，这里使用unityAction注册事件")]
-        [SerializeField] UnityEvent action;
-        public UnityEvent Action { get { return action; } }
+        public UnityEvent actions;
         private void Awake()
         {
             Register();
@@ -23,15 +27,18 @@ namespace Cosmos{
         }
         void Handler(object sender,GameEventArgs arg)
         {
-            action?.Invoke();
+            actions?.Invoke();
         }
+        /// <summary>
+        /// 注销事件，当事件中心的此类Key事件为空时，自动注销这个key。
+        /// </summary>
         public void Deregister()
         {
-            Facade.Instance.RemoveEventListener(eventKey, Handler);
+            Facade.Instance.RemoveEventListener(EventKey, Handler);
         }
         public void Register()
         {
-            Facade.Instance.AddEventListener(eventKey, Handler);
+            Facade.Instance.AddEventListener(EventKey, Handler);
         }
     }
 }

@@ -13,10 +13,14 @@ MonoBehaviour:
   m_Name: CubeObject_DataSet
   m_EditorClassIdentifier: 
   objectName: Cube
-  objectAdds: 25
+  objectOdds: 25
   groupSpawn: 0
-  MinSpawnCount: 0
-  MaxSpawnCount: 1
+  minSpawnCount: 0
+  maxSpawnCount: 1
+  rangeCollectDelay: 0
+  minCollectDelay: 3
+  maxCollectDelay: 3
   randomRotationOnSpawn: 0
+  alignType: 0
   spawnObject: {fileID: 1836443238213990, guid: 8a8417a066faaf54681fd6b50528d39c,
     type: 3}

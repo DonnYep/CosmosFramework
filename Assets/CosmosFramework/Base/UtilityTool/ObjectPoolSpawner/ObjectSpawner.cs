@@ -93,7 +93,8 @@ namespace Cosmos
         /// <summary>
         /// 默认判断是否有对齐对象,
         /// 执行的时候默认会将生成对象作为对齐目标的子物体。
-        /// 执行结束自动作为ActiveObjectMount的子对象
+        /// 执行结束自动作为ActiveObjectMount的子对象。
+        /// 默认将active false的对象变成true
         /// </summary>
         /// <param name="go">生成的对象</param>
         /// <param name="trans">对齐对象</param>
@@ -102,6 +103,38 @@ namespace Cosmos
             if (trans == null)
                 return;
             go.transform.SetParent(trans);
+            go.SetActive(true);
+            switch (alignType)
+            {
+                case ObjectSpawnAlignType.AlignTransform:
+                    go.transform.ResetLocalTransform();
+                    break;
+                case ObjectSpawnAlignType.AlignPosition:
+                    go.transform.position = trans.position;
+                    break;
+                case ObjectSpawnAlignType.AlignPositionRotation:
+                    go.transform.position = trans.position;
+                    go.transform.rotation = trans.rotation;
+                    break;
+                case ObjectSpawnAlignType.AlignPositionScale:
+                    go.transform.position = trans.position;
+                    go.transform.localScale = trans.localScale;
+                    break;
+                case ObjectSpawnAlignType.AlignRotationScale:
+                    go.transform.rotation = trans.rotation;
+                    go.transform.localScale = trans.localScale;
+                    break;
+            }
+            go.transform.SetParent(ActiveObjectMount);
+        }
+        //TODO Spawn后随机旋转
+        protected void AlignObject(ObjectPoolDataSet poolDataSet, GameObject go, Transform trans)
+        {
+            ObjectSpawnAlignType alignType = poolDataSet.AlignType;
+            if (trans == null)
+                return;
+            go.transform.SetParent(trans);
+            go.SetActive(true);
             switch (alignType)
             {
                 case ObjectSpawnAlignType.AlignTransform:
@@ -126,4 +159,6 @@ namespace Cosmos
             go.transform.SetParent(ActiveObjectMount);
         }
     }
+  
 }
+

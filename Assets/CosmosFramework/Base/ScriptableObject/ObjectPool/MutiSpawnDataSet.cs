@@ -16,7 +16,7 @@ namespace Cosmos
         {
             objectName = "NewObject";
             spawnObjects = null;
-            objectAdds = 25;
+            objectOdds = 25;
             groupSpawn = false;
             minSpawnCount = 0;
             maxSpawnCount = 1;
