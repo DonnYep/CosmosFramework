@@ -13,9 +13,9 @@ namespace Cosmos.CosmosEditor
         /// keyContent表示StringContent类型，
         /// selectedKeyContent表示被选中后得到的字段
         /// </summary>
-        SerializedProperty keyContentDataSet, selectedKeyContent;
+        SerializedProperty keyContentDataSet, selectedKeyContent, previousSelectedIndex;
         StringContent stringContentResult;
-        int selectedIndex = 0;
+        int selectedIndex=0 ;
         int contentSize = -1;
 
         int[] OptionValues { get { return optionValues.ToArray(); } }
@@ -27,9 +27,26 @@ namespace Cosmos.CosmosEditor
         private void OnEnable()
         {
             eventDispatcher = target as EventDispatcher;
-            targetObject = new SerializedObject(eventDispatcher);
+            targetObject = new SerializedObject(this);
             keyContentDataSet = targetObject.FindProperty("keyContentDataSet");
             selectedKeyContent = targetObject.FindProperty("selectedKeyContent");
+            previousSelectedIndex = targetObject.FindProperty("previousSelectedIndex");
+            Init();
+        }
+        void Init()
+        {
+            stringContentResult = keyContentDataSet.objectReferenceValue as StringContent;
+            if (stringContentResult == null || !CanDraw())
+            {
+                previousSelectedIndex.intValue = 0;
+                return;
+            }
+            if (!IsEqual())
+                Refresh();
+            if (previousSelectedIndex.intValue < displayedOptions.Count)
+                selectedIndex = previousSelectedIndex.intValue;
+            else
+                previousSelectedIndex.intValue = 0;
         }
         public override void OnInspectorGUI()
         {
@@ -43,7 +60,7 @@ namespace Cosmos.CosmosEditor
             stringContentResult = keyContentDataSet.objectReferenceValue as StringContent;
             if (stringContentResult == null || !CanDraw())
             {
-                EditorGUILayout.HelpBox("KeyContentDataSet  is empty!", MessageType.Error);
+                EditorGUILayout.HelpBox("KeyContentDataSet or content is empty!", MessageType.Error);
                 return;
             }
             if (!IsEqual())
@@ -51,8 +68,10 @@ namespace Cosmos.CosmosEditor
                 Refresh();
             }
             selectedIndex = EditorGUILayout.IntPopup("EventKey", selectedIndex, DisplayedOptions, OptionValues);
+            previousSelectedIndex.intValue = selectedIndex;
             selectedKeyContent.stringValue = displayedOptions[selectedIndex];
         }
+
         void Refresh()
         {
             optionValues.Clear();

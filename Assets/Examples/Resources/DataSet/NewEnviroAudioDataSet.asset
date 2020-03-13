@@ -9,10 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e41b405768896145a5b4682e2c7fadf, type: 3}
-  m_Name: EventUtilityToolDataSet
+  m_Script: {fileID: 11500000, guid: e6a6e9c95c6fb494181fccdfe64411aa, type: 3}
+  m_Name: NewEnviroAudioDataSet
   m_EditorClassIdentifier: 
-  objectName: EventUtilityToolDataSet
-  content:
-  - EventUtilityToolDataSet_00
-  - EventUtilityToolDataSet_01
+  objectName: NewEnviroAudio
+  mute: 0
+  playOnAwake: 0
+  loop: 0
+  volume: 1
+  spatialBlend: 0
+  speed: 1
+  audioClips: []

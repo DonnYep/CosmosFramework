@@ -9,10 +9,10 @@ namespace Cosmos{
     [CustomEditor(typeof(CFDataSet),true)]
     public class CFDataSetEditor : Editor
     {
-        CFDataSet cfScriptableObject;
+        CFDataSet cfDataSet;
         private void OnEnable()
         {
-            cfScriptableObject = (CFDataSet)target;
+            cfDataSet = target as CFDataSet;
         }
         public override void OnInspectorGUI()
         {
@@ -31,13 +31,13 @@ namespace Cosmos{
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Preview", GUILayout.Height(20)))
             {
-                cfScriptableObject.Preview();
+                cfDataSet.Preview();
             }
             if (GUILayout.Button("Reset",GUILayout.Height(20)))
             {
                var canReset= EditorUtility.DisplayDialog("Reset ScriptableObject", "You will reset ScriptableObject Properties", "Reset", "Cancel");
                 if (canReset)
-                    cfScriptableObject.Reset();
+                    cfDataSet.Reset();
             }
             GUILayout.EndHorizontal();
         }

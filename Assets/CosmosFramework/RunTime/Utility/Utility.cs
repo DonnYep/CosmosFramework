@@ -46,8 +46,6 @@ namespace Cosmos
         }
         public static void DebugLog(object o, MessageColor messageColor,Object context = null)
         {
-            //Debug.Log("<b>-->><size=16><color=" + messageColor.ToString() + ">" + o + "</color></size></b>");
-
             if (!EnableDebugLog)
                 return;
             if (context == null)
@@ -328,16 +326,17 @@ namespace Cosmos
             return Peer(go.transform, subNode);
         }
         /// <summary>
-        /// 编码
+        /// 编码到标准UTF-8格式
         /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        public static string Encode(string message)
+        public static string EncodeString(string message)
         {
             byte[] bytes = Encoding.GetEncoding("utf-8").GetBytes(message);
             return Convert.ToBase64String(bytes);
         }
-        public static string Decode(string message)
+        /// <summary>
+        /// 解码到标准UTF-8格式
+        /// </summary>
+        public static string DecodeString(string message)
         {
             byte[] bytes = Convert.FromBase64String(message);
             return Encoding.GetEncoding("utf-8").GetString(bytes);

@@ -321,7 +321,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyContentDataSet: {fileID: 11400000, guid: 1994089a2ad51f34fb4dcced63cc30ea, type: 2}
-  selectedKeyContent: EventUtilityToolDataSet
+  selectedKeyContent: EventUtilityToolDataSet_01
+  previousSelectedIndex: 1
   actions:
     m_PersistentCalls:
       m_Calls:
@@ -494,7 +495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -584,7 +585,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyContentDataSet: {fileID: 11400000, guid: 1994089a2ad51f34fb4dcced63cc30ea, type: 2}
-  selectedKeyContent: EventUtilityToolDataSet
+  selectedKeyContent: EventUtilityToolDataSet_00
+  previousSelectedIndex: 0
 --- !u!1 &1126790777
 GameObject:
   m_ObjectHideFlags: 0
@@ -717,7 +719,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -807,7 +809,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyContentDataSet: {fileID: 11400000, guid: 1994089a2ad51f34fb4dcced63cc30ea, type: 2}
-  selectedKeyContent: EventUtilityToolDataSet
+  selectedKeyContent: EventUtilityToolDataSet_01
+  previousSelectedIndex: 1
 --- !u!1 &1448003879
 GameObject:
   m_ObjectHideFlags: 0
@@ -942,7 +945,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyContentDataSet: {fileID: 11400000, guid: 1994089a2ad51f34fb4dcced63cc30ea, type: 2}
-  selectedKeyContent: EventUtilityToolDataSet
+  selectedKeyContent: EventUtilityToolDataSet_00
+  previousSelectedIndex: 0
   actions:
     m_PersistentCalls:
       m_Calls:

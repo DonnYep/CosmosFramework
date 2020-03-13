@@ -11,6 +11,7 @@ namespace Cosmos{
         /// </summary>
         public StringContent keyContentDataSet;
         public string selectedKeyContent;
+        public int previousSelectedIndex;
 
         public string EventKey { get { return selectedKeyContent; } }
         [Header("通过事件中心分发事件，这里使用unityAction注册事件")]
