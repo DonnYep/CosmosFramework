@@ -428,10 +428,26 @@ namespace Cosmos{
         }
         #endregion
         #region UIManager
+        /// <summary>
+        /// 载入面板，若字典中已存在，则返回且不使用回调。若不存在，则异步加载且使用回调。
+        /// 基于Resources
+        /// </summary>
+        /// <typeparam name="T"> UILogicBase</typeparam>
+        /// <param name="panelName">相对完整路径</param>
+        /// <param name="callBack">仅在载入时回调</param>
+        public void LoadPanel<T>(string panelName, CFAction<T> callBack = null)
+                   where T : UILogicBase
+        {
+            UIManager.Instance.LoadPanel(panelName, callBack);
+        }
+        /// <summary>
+        /// 载入面板，若字典中已存在，则使用回调，并返回。若不存在，则异步加载且使用回调。
+        /// 基于Resources
+        /// </summary>
         public void ShowPanel<T>(string panelName,CFAction<T> callBack=null)
             where T:UILogicBase
         {
-            UIManager.Instance.ShowPanel<T>(panelName, callBack);
+            UIManager.Instance.ShowPanel(panelName, callBack);
         }
         public void HidePanel(string panelName)
         {

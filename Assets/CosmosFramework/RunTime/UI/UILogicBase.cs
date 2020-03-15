@@ -63,8 +63,17 @@ namespace Cosmos.UI{
             OnTermination();
             uiMap.Clear();
         }
+        /// <summary>
+        /// 空虚函数
+        /// </summary>
         protected virtual void OnTermination() { }
+        /// <summary>
+        /// 空虚函数
+        /// </summary>
         public virtual void ShowPanel() { }
+        /// <summary>
+        /// 空虚函数
+        /// </summary>
         public virtual void HidePanel() { }
         protected virtual void ShowPanelHandler(object sender,GameEventArgs args) { SetPanelActive(true); }
         protected void DispatchUIEvent(string eventKey,object sender,GameEventArgs arg)
