@@ -15,4 +15,4 @@ MonoBehaviour:
   objectName: Item02
   itemImage: {fileID: 21300004, guid: 59f366023da131c419982492bf8eb05e, type: 3}
   itemNumber: 2
-  description: Item02
+  description: "\u8FD9\u662F\u666E\u901A\u7269\u54C1\uFF1AItem02"
