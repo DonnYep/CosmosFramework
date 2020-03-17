@@ -10,13 +10,10 @@ namespace Cosmos
     {
         StringContent stringContent;
         SerializedObject targetObject;
-        SerializedProperty content;
-        string[] tempContent;
         private void OnEnable()
         {
             stringContent = target as StringContent;
             targetObject = new SerializedObject(stringContent);
-            content = targetObject.FindProperty("content");
        }
         /// <summary>
         /// 限制数组长度

@@ -590,27 +590,34 @@ namespace Cosmos
         }
         #endregion
         /// <summary>
-        /// 合并地址,返回绝对路径
-        /// UnityEditor环境下使用
+        /// 合并地址,返回绝对路径，
+        /// 当前环境为：UNITY_STANDALONE_WIN
+        /// 跨平台地址未编写
         /// </summary>
         /// <param name="relativePath">相对路径</param>
         /// <returns>返回绝对路径</returns>
         public static string CombineAbsolutePath(params string[] relativePath)
         {
-            string fullPath = null;
+            //string fullPath = null;
+            StringBuilderCache.Clear();
+
             for (int i = 0; i < relativePath.Length; i++)
             {
-                fullPath += (relativePath[i] + "\\");
+                //fullPath += (relativePath[i] + "\\");
+                stringBuilderCache.Append(relativePath[i] + "\\");
             }
-            return ApplicationConst.ApplicationDataPath + "\\" + fullPath;
+            //return ApplicationConst.ApplicationDataPath + "\\" + fullPath;
+            return ApplicationConst.ApplicationDataPath + "\\" + StringBuilderCache.ToString();
         }
         /// <summary>
-        /// 合并地址,返回绝对路径
-        /// UnityEditor环境下使用
+        /// 合并地址,返回绝对路径，
+        /// 当前环境为：UNITY_STANDALONE_WIN。
+        /// 跨平台地址未编写
         /// </summary>
         /// <param name="fileFullName">文件的完整名称（包括文件扩展名）</param>
         /// <param name="relativePath">相对路径</param>
         /// <returns></returns>
+        // TODO 跨平台地址未编写
         public static string CombineAbsoluteFilePath(string fileFullName, params string[] relativePath)
         {
             return CombineAbsolutePath(relativePath) + fileFullName;
@@ -623,12 +630,15 @@ namespace Cosmos
         /// <returns></returns>
         public static string CombineRelativePath(params string[] relativePath)
         {
-            string fullPath = null;
+            //string fullPath = null;
+            StringBuilderCache.Clear();
             for (int i = 0; i < relativePath.Length; i++)
             {
-                fullPath += (relativePath[i]+"\\");
+                //fullPath += (relativePath[i]+"\\");
+                stringBuilderCache.Append(relativePath[i] + "\\");
             }
-            return fullPath;
+            //return fullPath;
+            return StringBuilderCache.ToString();
         }
         /// <summary>
         /// 合并地址,返回相对路径
@@ -653,7 +663,7 @@ namespace Cosmos
         /// <summary>
         /// 刷新unity编辑器
         /// </summary>
-        public static void Refresh()
+        public static void RefreshEditor()
         {
             UnityEditor.AssetDatabase.Refresh();
         }

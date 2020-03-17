@@ -35,7 +35,7 @@ namespace Cosmos
         {
             Facade.Instance.DispatchEvent(ControllerEventParam.CONTROLLER_INPUT, this, controllerEventArgs);
         }
-        protected override void Handler(object sender, GameEventArgs arg)
+        protected override void EventHandler(object sender, GameEventArgs arg)
         {
             inputEventArgs = arg as InputEventArgs;
             if (inputEventArgs.HorizVertAxis.magnitude != 0)

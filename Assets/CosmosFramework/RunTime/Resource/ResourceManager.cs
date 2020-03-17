@@ -21,7 +21,7 @@ namespace Cosmos.Resource
     {
         #region 基于Resources
         /// <summary>
-        /// 同步加载资源
+        /// 同步加载资源，如果是GameObject类型，则实例化
         /// </summary>
         public T Load<T>(string path)
             where T:UnityEngine.Object
@@ -37,7 +37,21 @@ namespace Cosmos.Resource
             return res;
         }
         /// <summary>
-        /// 异步加载资源
+        /// 同步加载资源，不实例化任何类型
+        /// </summary>
+        public T LoadAsset<T>(string path)
+            where T : UnityEngine.Object
+        {
+            T res = Resources.Load<T>(path);
+            if (res == null)
+            {
+                Utility.DebugError("ResourceManager\n" + "Assets: " + path + "\n not exist,check your path!");
+                return null;
+            }
+            return res;
+        }
+        /// <summary>
+        /// 异步加载资源,如果目标是Gameobject，则实例化
         /// </summary>
         public void LoadAysnc<T>(string path,CFAction<T> callBack=null)
             where T:UnityEngine.Object
@@ -50,7 +64,22 @@ namespace Cosmos.Resource
             ResourceRequest req = Resources.LoadAsync<T>(path);
             yield return req;
             if (req.asset is GameObject)
-                callBack(GameObject.Instantiate( req.asset) as T);
+                callBack?.Invoke(GameObject.Instantiate( req.asset) as T);
+        }
+        /// <summary>
+        /// 异步加载资源,不实例化任何类型
+        /// </summary>
+        public void LoadAssetAysnc<T>(string path, CFAction<T> callBack = null)
+            where T : UnityEngine.Object
+        {
+            Facade.Instance.StartCoroutine(EnumLoadAssetAsync(path, callBack));
+        }
+        IEnumerator EnumLoadAssetAsync<T>(string path, CFAction<T> callBack = null)
+   where T : UnityEngine.Object
+        {
+            ResourceRequest req = Resources.LoadAsync<T>(path);
+            yield return req;
+                callBack?.Invoke(req.asset as T);
         }
         public  List<T> LoadFolderAssets<T>(string path)//通过路径载入资源
        where T : class

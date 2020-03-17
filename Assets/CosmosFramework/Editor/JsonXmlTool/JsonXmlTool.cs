@@ -126,12 +126,12 @@ namespace Cosmos.CosmosEditor
             //执行的时候会默认删除原有的默认名称的xml文件
             fo.LoadRelativePathAsset(xmlResourcePath);
             fo.OutputXmlFile(xmlOutputPath, xmlName);
-            Utility.Refresh();
+            Utility.RefreshEditor();
         }
         void ClearXML()
         {
             fo.DeleteXmlFile(xmlOutputPath, xmlName);
-            Utility.Refresh();
+            Utility.RefreshEditor();
         }
         #endregion
         void BuildJson()
@@ -139,14 +139,14 @@ namespace Cosmos.CosmosEditor
             string fullJsonFileName = jsonFileName + ".json";
             fo.CreateEmptyJsonFile(Utility.CombineAbsoluteFilePath(fullJsonFileName, jsonOutputPath));
             Utility.DebugLog("JsonFile is created !");
-            Utility.Refresh();
+            Utility.RefreshEditor();
         }
         void ClearJson()
         {
             string fullJsonFileName = jsonFileName + ".json";
             IO.FileOperator.DeleteFile(Utility.CombineAbsoluteFilePath(fullJsonFileName, jsonOutputPath));
             Utility.DebugLog("JsonFile is deleted !");
-            Utility.Refresh();
+            Utility.RefreshEditor();
         }
     }
 }

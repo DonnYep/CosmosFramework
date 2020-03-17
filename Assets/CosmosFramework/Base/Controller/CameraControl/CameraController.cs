@@ -33,7 +33,7 @@ namespace Cosmos
             Facade.Instance.RemoveEventListener(ControllerEventParam.CONTROLLER_INPUT, CameraHandler);
             Facade.Instance.DeregisterController(this);
         }
-        protected override void Handler(object sender, GameEventArgs arg)
+        protected override void EventHandler(object sender, GameEventArgs arg)
         {
             inputEventArgs = arg as InputEventArgs;
             yaw = -inputEventArgs.MouseAxis.x;

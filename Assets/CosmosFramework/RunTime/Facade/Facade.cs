@@ -13,6 +13,7 @@ using Cosmos.Resource;
 using Cosmos.Reference;
 using Cosmos.Controller;
 using Cosmos.FSM;
+using Cosmos.Data;
 namespace Cosmos{
     /// <summary>
     /// CosmosFramework外观类，封装模块的功能，进行解耦
@@ -193,15 +194,37 @@ namespace Cosmos{
         }
         #endregion
         #region ResourceManager
-        public  T Load<T>(string path)
+        /// <summary>
+        /// 同步加载资源，如果是GameObject类型，则实例化
+        /// </summary>
+        public T Load<T>(string path)
             where T : UnityEngine.Object
         {
             return ResourceManager.Instance.Load<T>(path);
         }
+        /// <summary>
+        /// 同步加载资源，不实例化任何类型
+        /// </summary>
+        public T LoadAsset<T>(string path)
+            where T : UnityEngine.Object
+        {
+            return ResourceManager.Instance.LoadAsset<T>(path);
+        }
+        /// <summary>
+        /// 异步加载资源,如果目标是Gameobject，则实例化
+        /// </summary>
         public void LoadAysnc<T>(string path, CFAction<T> callBack = null)
             where T:UnityEngine.Object
         {
             ResourceManager.Instance.LoadAysnc<T>(path, callBack);
+        }
+        /// <summary>
+        /// 异步加载资源,不实例化任何类型
+        /// </summary>
+        public void LoadAssetAysnc<T>(string path, CFAction<T> callBack = null)
+            where T : UnityEngine.Object
+        {
+            ResourceManager.Instance.LoadAssetAysnc(path, callBack);
         }
         /// <summary>
         /// 使用unityEngine.Resources方法
@@ -387,7 +410,33 @@ namespace Cosmos{
         }
         #endregion
         #region DataManager
-
+        /// <summary>
+        /// 保存Json数据到本地的绝对路径
+        /// </summary>
+        /// <param name="relativePath">相对路径</param>
+        /// <param name="fileName">文件名称</param>
+        /// <param name="dataSet">装箱后的数据</param>
+        /// <param name="callBack">回调函数，当写入成功后调用</param>
+        public void SaveJsonDataToLocal(string relativePath, string fileName, object dataSet, CFAction callBack)
+        {
+            DataManager.Instance.SaveJsonDataToLocal(relativePath, fileName, dataSet, callBack);
+        }
+        /// <summary>
+        /// 从本地的绝对路径读取Json数据
+        /// </summary>
+        /// <typeparam name="T">反序列化的目标类型</typeparam>
+        /// <param name="relativePath">相对路径</param>
+        /// <param name="fileName">文件名称</param>
+        /// <param name="dataSet">装箱后的数据</param>
+        /// <param name="callBack">回调函数，当读取成功后调用</param>
+        public void LoadJsonDataFromLocal<T>(string relativePath, string fileName, out T dataSet, CFAction<T> callBack = null)
+        {
+            DataManager.Instance.LoadJsonDataFromLocal(relativePath, fileName, out dataSet, callBack);
+        }
+        public void LoadJsonDataFromLocal<T>(string fullRelativeFilePath, out T dataSet, CFAction<T> callBack = null)
+        {
+            DataManager.Instance.LoadJsonDataFromLocal(fullRelativeFilePath, out dataSet, callBack);
+        }
         #endregion
         #region ReferenceManager
         public int GetReferencePoolCount<T>()

@@ -9,14 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6a6e9c95c6fb494181fccdfe64411aa, type: 3}
-  m_Name: NewEnviroAudioDataSet
+  m_Script: {fileID: 11500000, guid: dbd49cd0571faa149961b98b363c3496, type: 3}
+  m_Name: Item02_DataSet
   m_EditorClassIdentifier: 
-  objectName: NewEnviroAudio
-  mute: 0
-  playOnAwake: 0
-  loop: 0
-  volume: 1
-  spatialBlend: 0
-  speed: 1
-  audioClips: []
+  objectName: Item02
+  itemImage: {fileID: 21300004, guid: 59f366023da131c419982492bf8eb05e, type: 3}
+  itemNumber: 2
+  description: Item02

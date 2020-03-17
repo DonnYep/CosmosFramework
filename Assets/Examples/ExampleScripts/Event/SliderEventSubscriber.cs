@@ -4,39 +4,39 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using Cosmos;
-    public class SliderEventSubscriber : MonoBehaviour
+public class SliderEventSubscriber : MonoBehaviour
+{
+    [SerializeField]
+    string eventKey = "defaultEventKey";
+    public string EventKey { get { return eventKey; } }
+    UIImplementArgs<Slider> uch;
+    public void RegisterEvent()
     {
-        [SerializeField]
-        string eventKey = "defaultEventKey";
-        public string EventKey { get { return eventKey; } }
-        public void RegisterEvent()
-        {
-            Facade.Instance.AddEventListener(eventKey, Handler);
-        }
-        Slider slider;
-        Text text;
-        private void Start()
-        {
-            //RegisterEvent();
-            slider = GetComponentInChildren<Slider>();
-            text = GetComponentInChildren<Text>();
-            startText = text.text;
-        }
-        string startText;
-        public void DeregisterEvent()
-        {
-            Facade.Instance.RemoveEventListener(eventKey, Handler);
-        }
-        public void DeregisterEventManager()
-        {
-            GameManager.Instance.DeregisterModule(CFModules.EVENT);
-        }
-        void Handler(object sender, GameEventArgs arg)
-        {
-            UIEventArgs uch = arg as UIEventArgs;
-            slider.maxValue = uch.SliderMaxValue;
-            slider.value = uch.SliderValue;
-            var dispatcher = Utility.ConvertToObject<GameObject>(sender);
-        }
-     
+        Facade.Instance.AddEventListener(eventKey, Handler);
     }
+    Slider slider;
+    Text text;
+    private void Start()
+    {
+        slider = GetComponentInChildren<Slider>();
+        text = GetComponentInChildren<Text>();
+        startText = text.text;
+    }
+    string startText;
+    public void DeregisterEvent()
+    {
+        Facade.Instance.RemoveEventListener(eventKey, Handler);
+    }
+    public void DeregisterEventManager()
+    {
+        GameManager.Instance.DeregisterModule(CFModules.EVENT);
+    }
+    void Handler(object sender, GameEventArgs arg)
+    {
+        uch = arg as UIImplementArgs<Slider>;
+        slider.maxValue = uch.Data.maxValue;
+        slider.value = uch.Data.value;
+        var dispatcher = Utility.ConvertToObject<GameObject>(sender);
+    }
+
+}
