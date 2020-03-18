@@ -38,7 +38,7 @@ namespace Cosmos.CosmosEditor
             EditorGUILayout.HelpBox("这是一个轻量级的游戏框架。Utiity脚本提供了常用的功能函数。" +
                 "Facade脚本作为中间类，已封装了所有模块的公共函数，只需调用Facade.Instance，即可出现当前大部分模块的公共方法。", MessageType.Info);
             EditorGUILayout.HelpBox("类的继承关系，请查看Assets/CosmosFramework/CosmosFrameworkUML文件。 ", MessageType.Info);
-            EditorGUILayout.HelpBox("框架已集成Litjson。 ", MessageType.Info);
+            EditorGUILayout.HelpBox("Josn序列化使用了JosnUtility。 ", MessageType.Info);
             GUILayout.EndVertical();
         }
     }

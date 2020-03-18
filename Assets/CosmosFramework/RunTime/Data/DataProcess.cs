@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using LitJson;
 using System.Xml;
 using System.IO;
 namespace Cosmos.Data
@@ -17,36 +16,12 @@ namespace Cosmos.Data
         #region Josn
         /// <summary>
         /// 解析Json
-        /// 通过回调函数获取对象
-        /// </summary>
-        /// <param name="callBack">回调函数，直接映射</param>
-        public void ParseJson<T>(TextAsset ta, CFAction<T> callBack)
-            where T : new()
-        {
-            string jsonStr = ta.text;
-            JsonData jsonObj = JsonMapper.ToObject(jsonStr);
-            if (callBack != null)
-                callBack(JsonMapper.ToObject<T>(jsonObj.ToJson()));
-        }
-        /// <summary>
-        /// 解析Json
-        /// </summary>
-        /// <returns>返回映射</returns>
-        public T ParseJson<T>(TextAsset ta)
-            where T : new()
-        {
-            string jsonStr = ta.text;
-            JsonData jsonObj = JsonMapper.ToObject(jsonStr);
-            return JsonMapper.ToObject<T>(jsonObj.ToJson());
-        }
-        /// <summary>
-        /// 解析Json
         /// </summary>
         /// <param name="callBack">回调函数，自定义解析Json</param>
-        public void ParseJosn(TextAsset ta, CFAction<JsonData> callBack)
+        public void ParseJosn<T>(TextAsset ta, CFAction<T> callBack)
         {
             string jsonStr = ta.text;
-            JsonData jsonObj = JsonMapper.ToObject(jsonStr);
+            T jsonObj =JsonUtility.FromJson<T>(jsonStr);
             if (callBack != null)
                 callBack(jsonObj);
         }
