@@ -417,7 +417,7 @@ namespace Cosmos{
         /// <param name="fileName">文件名称</param>
         /// <param name="dataSet">装箱后的数据</param>
         /// <param name="callBack">回调函数，当写入成功后调用</param>
-        public void SaveJsonDataToLocal(string relativePath, string fileName, object dataSet, CFAction callBack)
+        public void SaveJsonDataToLocal<T>(string relativePath, string fileName, T dataSet, CFAction callBack=null)
         {
             DataManager.Instance.SaveJsonDataToLocal(relativePath, fileName, dataSet, callBack);
         }
@@ -429,16 +429,21 @@ namespace Cosmos{
         /// <param name="fileName">文件名称</param>
         /// <param name="dataSet">装箱后的数据</param>
         /// <param name="callBack">回调函数，当读取成功后调用</param>
-        public void LoadJsonDataFromLocal<T>(string relativePath, string fileName, out T dataSet, CFAction<T> callBack = null)
+        public void LoadJsonDataFromLocal<T>(string relativePath, string fileName, ref T dataSet, CFAction<T> callBack = null)
         {
-            DataManager.Instance.LoadJsonDataFromLocal(relativePath, fileName, out dataSet, callBack);
+            DataManager.Instance.LoadJsonDataFromLocal(relativePath, fileName, ref dataSet, callBack);
         }
-        public void LoadJsonDataFromLocal<T>(string fullRelativeFilePath, out T dataSet, CFAction<T> callBack = null)
+        public void LoadJsonDataFromLocal<T>(string fullRelativeFilePath, ref T dataSet, CFAction<T> callBack = null)
         {
-            DataManager.Instance.LoadJsonDataFromLocal(fullRelativeFilePath, out dataSet, callBack);
+            DataManager.Instance.LoadJsonDataFromLocal(fullRelativeFilePath, ref dataSet, callBack);
+        }
+        public void ParseDataFromResource<T>(string relativePath, string fileName, ref T dataSet, CFAction<T> callBack = null)
+          where T : class, new()
+        {
+            DataManager.Instance.ParseDataFromResource(relativePath, fileName, ref dataSet, callBack);
         }
         #endregion
-        #region ReferenceManager
+            #region ReferenceManager
         public int GetReferencePoolCount<T>()
             where T : class, IReference, new()
         {

@@ -598,16 +598,28 @@ namespace Cosmos
         /// <returns>返回绝对路径</returns>
         public static string CombineAbsolutePath(params string[] relativePath)
         {
-            //string fullPath = null;
             StringBuilderCache.Clear();
 
             for (int i = 0; i < relativePath.Length; i++)
             {
-                //fullPath += (relativePath[i] + "\\");
-                stringBuilderCache.Append(relativePath[i] + "\\");
+                stringBuilderCache.Append(relativePath[i] + "/");
             }
-            //return ApplicationConst.ApplicationDataPath + "\\" + fullPath;
-            return ApplicationConst.ApplicationDataPath + "\\" + StringBuilderCache.ToString();
+            return ApplicationConst.ApplicationDataPath + "/" + StringBuilderCache.ToString();
+        }
+        /// <summary>
+        ///  /// 合并地址,返回持久化数据的绝对路径，
+        /// 跨平台地址未编写
+        /// </summary>
+        /// <param name="relativePath">相对路径</param>
+        /// <returns>返回绝对路径</returns>
+        public static string CombinePersistentPath(params string[] relativePath)
+        {
+            StringBuilderCache.Clear();
+            for (int i = 0; i < relativePath.Length; i++)
+            {
+                stringBuilderCache.Append(relativePath[i] + "/");
+            }
+            return Application.persistentDataPath + "/" + StringBuilderCache.ToString();
         }
         /// <summary>
         /// 合并地址,返回绝对路径，
@@ -630,14 +642,11 @@ namespace Cosmos
         /// <returns></returns>
         public static string CombineRelativePath(params string[] relativePath)
         {
-            //string fullPath = null;
             StringBuilderCache.Clear();
             for (int i = 0; i < relativePath.Length; i++)
             {
-                //fullPath += (relativePath[i]+"\\");
-                stringBuilderCache.Append(relativePath[i] + "\\");
+                stringBuilderCache.Append(relativePath[i] + "/");
             }
-            //return fullPath;
             return StringBuilderCache.ToString();
         }
         /// <summary>

@@ -22,7 +22,9 @@ namespace Cosmos
         public static string DefaultConfigXmlPath { get { return Application.dataPath + "/Resources/"; } }
         //完整路径
         public static string DefualtConfigXmlFullPath { get { return DefaultConfigXmlPath + "/" + DefaultConfigXmlName; } }
-        //Unity的路径
+        /// <summary>
+        /// Unity的路径
+        /// </summary>
         public static string ApplicationDataPath { get { return Application.dataPath; } }
     }
 }

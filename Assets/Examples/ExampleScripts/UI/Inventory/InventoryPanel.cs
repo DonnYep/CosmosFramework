@@ -20,7 +20,6 @@ namespace Cosmos
             {
                 if (uip == null)
                     uip = new UIImplementArgs<InventoryDataSet>(InventoryDataSet);
-                //uip.SetData(InventoryDataSet);
                 return uip;
             }
         }
@@ -48,11 +47,15 @@ namespace Cosmos
         }
         void LoadClick()
         {
-            Utility.DebugLog("InventoryLoad>>" + this.GetType().Name);
+
+            Facade.Instance.LoadJsonDataFromLocal("Inventory", "InventoryCache.json", ref inventoryDataSet);
+            Utility.DebugLog("LoadJsonDataFromLocal");
+            UpdateClick();
         }
         void SaveClick()
         {
-            Utility.DebugLog("InventorySave>>" + this.GetType().FullName);
+            Facade.Instance.SaveJsonDataToLocal("Inventory", "InventoryCache.json", inventoryDataSet);
+            Utility.DebugLog("SaveJsonDataToLocal");
         }
         void QuitClick()
         {
