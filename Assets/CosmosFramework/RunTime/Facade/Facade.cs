@@ -194,52 +194,53 @@ namespace Cosmos{
         }
         #endregion
         #region ResourceManager
+        #region 基于Resources
         /// <summary>
-        /// 同步加载资源，如果是GameObject类型，则实例化
+        /// 同步加载资源，若可选参数为true，则返回实例化后的对象，否则只返回资源对象
         /// </summary>
-        public T Load<T>(string path)
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="path">相对Resource路径</param>
+        /// <param name="instantiateGameObject">是否实例化GameObject类型</param>
+        /// <returns></returns>
+        public T LoadResAsset<T>(string path, bool instantiateGameObject = false)
             where T : UnityEngine.Object
         {
-            return ResourceManager.Instance.Load<T>(path);
-        }
-        /// <summary>
-        /// 同步加载资源，不实例化任何类型
-        /// </summary>
-        public T LoadAsset<T>(string path)
-            where T : UnityEngine.Object
-        {
-            return ResourceManager.Instance.LoadAsset<T>(path);
+            return ResourceManager.Instance.LoadResAsset<T>(path,instantiateGameObject);
         }
         /// <summary>
         /// 异步加载资源,如果目标是Gameobject，则实例化
         /// </summary>
-        public void LoadAysnc<T>(string path, CFAction<T> callBack = null)
+        public void LoadResAysnc<T>(string path, CFAction<T> callBack = null)
             where T:UnityEngine.Object
         {
-            ResourceManager.Instance.LoadAysnc<T>(path, callBack);
+            ResourceManager.Instance.LoadResAysnc<T>(path, callBack);
         }
         /// <summary>
         /// 异步加载资源,不实例化任何类型
         /// </summary>
-        public void LoadAssetAysnc<T>(string path, CFAction<T> callBack = null)
+        public void LoadResAssetAysnc<T>(string path, CFAction<T> callBack = null)
             where T : UnityEngine.Object
         {
-            ResourceManager.Instance.LoadAssetAysnc(path, callBack);
+            ResourceManager.Instance.LoadResAssetAysnc(path, callBack);
         }
         /// <summary>
         /// 使用unityEngine.Resources方法
         /// </summary>
-        public List<T> LoadFolderAssets<T>(string path)
+        public List<T> LoadResFolderAssets<T>(string path)
             where T:UnityEngine.Object
         {
-            return ResourceManager.Instance.LoadFolderAssets<T>(path);
+            return ResourceManager.Instance.LoadResFolderAssets<T>(path);
         }
-        public T[] LoadAll<T>(string path)
+        public T[] LoadResAll<T>(string path)
             where T:UnityEngine.Object
         {
-            return ResourceManager.Instance.LoadAll<T>(path);
+            return ResourceManager.Instance.LoadResAll<T>(path);
         }
         #endregion
+        # region 基于AssetBundle
+
+        #endregion
+#endregion
         #region ScenesManager
         public void LoadScene(string sceneName, CFAction callBack=null)
         {

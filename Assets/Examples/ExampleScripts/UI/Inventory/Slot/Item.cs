@@ -66,7 +66,7 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
         {
             itemDataSet =null;
             imgItem.sprite = null;
-            imgItem.color = new Color(1, 1, 1, 0);
+            imgItem.color = Color.clear;
             txtNumber.text = null;
             txtNumber.enabled = false;
             itemDescription = null;
@@ -75,7 +75,7 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
         {
             itemDataSet = item;
             imgItem.sprite = item.ItemImage;
-            imgItem.color = new Color(1, 1, 1, 1);
+            imgItem.color = Color.white;
             txtNumber.text = item.ItemNumber.ToString();
             txtNumber.enabled = true;
             itemDescription = item.Description;

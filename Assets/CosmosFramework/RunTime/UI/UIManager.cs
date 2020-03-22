@@ -20,7 +20,7 @@ namespace Cosmos.UI
                 return mainUICanvas;
             else
             {
-                Facade.Instance.LoadAysnc<GameObject>(path, go =>
+                Facade.Instance.LoadResAysnc<GameObject>(path, go =>
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = "MainUICanvas";
@@ -41,7 +41,7 @@ namespace Cosmos.UI
         {
             if (HasPanel(panelName))
                 return;
-            Facade.Instance.LoadAysnc<GameObject>(panelName, go =>
+            Facade.Instance.LoadResAysnc<GameObject>(panelName, go =>
             {
                 GameObject result = go;
                 result.transform.SetParent(MainUICanvas.transform);
@@ -66,7 +66,7 @@ namespace Cosmos.UI
                 callBack?.Invoke(uiPanelMap[panelName] as T);
                 return;
             }
-            Facade.Instance.LoadAysnc<GameObject>(panelName, go =>
+            Facade.Instance.LoadResAysnc<GameObject>(panelName, go =>
             {
                 GameObject result = go;
                 result.transform.SetParent(MainUICanvas.transform);

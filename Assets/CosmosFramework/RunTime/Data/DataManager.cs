@@ -15,7 +15,7 @@ namespace Cosmos.Data {
             where T:class, new()
         {
             string relativeFullPath = Utility.CombineRelativeFilePath(fileName, relativePath);
-            TextAsset ta = Facade.Instance.Load<TextAsset>(relativeFullPath);
+            TextAsset ta = Facade.Instance.LoadResAsset<TextAsset>(relativeFullPath);
             JsonUtility.FromJsonOverwrite(ta.text, dataSet);
             callBack?.Invoke(dataSet);
         }
