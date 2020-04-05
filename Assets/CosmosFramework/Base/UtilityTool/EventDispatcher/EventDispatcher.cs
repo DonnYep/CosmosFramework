@@ -17,7 +17,7 @@ namespace Cosmos
         public string DispatcherName { get { return this.gameObject.name; } }
         public void DispatchEvent()
         {
-            Facade.Instance.DispatchEvent(EventKey, this, null);
+            Facade.Instance.DispatchEvent(EventKey, null, null);
         }
         /// <summary>
         /// 注销事件，事件派发者注销这个Key所持有的所有事件

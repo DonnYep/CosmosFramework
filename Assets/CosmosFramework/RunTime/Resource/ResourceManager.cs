@@ -1,6 +1,4 @@
-﻿//------------------------------------------------------------------------------
-//      当前算一个早期版本，持续更新中。后期会做分类处理
-//      当前资源管理需要精简，拆分功能
+﻿//***************************************************************************
 //在移动平台下，Application.streamingAssetsPath是只读的，不能写入数据。
 //Application.persistentDataPath 可以读取和写入数据。
 
@@ -12,7 +10,7 @@
 
 //在IOS和Android下，还能用AssetBundle.LoadFromFile来同步读取数据。
 
-//----
+//***************************************************************************
 using UnityEngine;
 using System.Collections.Generic;
 using System;
@@ -29,6 +27,7 @@ namespace Cosmos.Resource
         Resource = 0,
         AssetBundle = 1
     }
+    //TODO AB加载模块未完成
     public sealed class ResourceManager : Module<ResourceManager>
     {
         //缓存的所有AssetBundle包 <AB包名称、AB包>
@@ -41,9 +40,7 @@ namespace Cosmos.Resource
         string assetBundleRootPath;
 
 
-
-
-        #region 基于Resources
+        #region 基于Resources  注意，官方不建议使用这个加载模式
         /// <summary>
         /// 同步加载资源，若可选参数为true，则返回实例化后的对象，否则只返回资源对象
         /// </summary>
@@ -137,21 +134,29 @@ namespace Cosmos.Resource
             this.assetBundleManifestName = name;
         }
         /// <summary>
-        /// 从一个AB包中获得资源
+        /// 同步加载AB资源，这部假设已经获得
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="path"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public T LoadABAsset<T>(string path, string name)
+        public T LoadABAsset<T>(ResourceUnit resUnit)
             where T : UnityEngine.Object
         {
-            var ab = AssetBundle.LoadFromFile(path);
-            var asset = ab.LoadAsset<T>(name);
-            return asset;
+            //TODO 同步加载AB资源包
+            //var ab = AssetBundle.LoadFromFile(resUnit.AssetPath);
+            //var asset = ab.LoadAsset<T>(resUnit.);
+            //return asset;
+            return default(T);
         }
-
-
+        /// <summary>
+        /// 设置AssetBundle资源根路径（仅当使用AssetBundle加载时有效）
+        /// </summary>
+        /// <param name="path">AssetBundle资源根路径</param>
+        public void SetAssetBundlePath(string path)
+        {
+            assetBundleRootPath = path;
+        }
         /// <summary>
         /// 异步加载AB资源
         /// </summary>

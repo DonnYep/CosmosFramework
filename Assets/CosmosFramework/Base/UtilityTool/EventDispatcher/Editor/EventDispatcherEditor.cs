@@ -27,7 +27,7 @@ namespace Cosmos.CosmosEditor
         private void OnEnable()
         {
             eventDispatcher = target as EventDispatcher;
-            targetObject = new SerializedObject(this);
+            targetObject = new SerializedObject(eventDispatcher);
             keyContentDataSet = targetObject.FindProperty("keyContentDataSet");
             selectedKeyContent = targetObject.FindProperty("selectedKeyContent");
             previousSelectedIndex = targetObject.FindProperty("previousSelectedIndex");
