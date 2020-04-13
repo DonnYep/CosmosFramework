@@ -5,7 +5,7 @@ using Cosmos;
 public class SlotController : MonoEventHandler
 {
     string slotItemName = "Slot";
-    UIImplementArgs<InventoryDataSet> uip;
+    LogicEventArgs<InventoryDataSet> uip;
     GameObject slot;
     string fullPath;
     List<Slot> slotList = new List<Slot>();
@@ -24,7 +24,7 @@ public class SlotController : MonoEventHandler
     }
     protected override void EventHandler(object sender, GameEventArgs args)
     {
-        uip = args as UIImplementArgs<InventoryDataSet>;
+        uip = args as LogicEventArgs<InventoryDataSet>;
         UpdateSlot(uip.Data);
         UpdateItem(uip.Data);
     }

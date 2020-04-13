@@ -9,7 +9,7 @@ public class SliderEventSubscriber : MonoBehaviour
     [SerializeField]
     string eventKey = "defaultEventKey";
     public string EventKey { get { return eventKey; } }
-    UIImplementArgs<Slider> uch;
+    LogicEventArgs<Slider> uch;
     public void RegisterEvent()
     {
         Facade.Instance.AddEventListener(eventKey, Handler);
@@ -33,7 +33,7 @@ public class SliderEventSubscriber : MonoBehaviour
     }
     void Handler(object sender, GameEventArgs arg)
     {
-        uch = arg as UIImplementArgs<Slider>;
+        uch = arg as LogicEventArgs<Slider>;
         slider.maxValue = uch.Data.maxValue;
         slider.value = uch.Data.value;
         var dispatcher = Utility.ConvertToObject<GameObject>(sender);

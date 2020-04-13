@@ -23,6 +23,7 @@ namespace Cosmos
         Vector3 cameraOffset = Vector3.zero;
         protected override void OnInitialization()
         {
+            base.OnInitialization();
             Facade.Instance.AddMonoListener(LateUpdateCamera, UpdateType.LateUpdate, (id) => lateUpdateID = id);
             Facade.Instance.AddEventListener(ControllerEventParam.CONTROLLER_INPUT, CameraHandler);
             Facade.Instance.RegisterController(this);

@@ -9,13 +9,13 @@ public class SliderEventDispatcher : MonoBehaviour
     string eventKey = "defaultEventKey";
     public string EventKey { get { return eventKey; } }
     public string DispatcherName { get { return gameObject.name; } }
-    UIImplementArgs<Slider> uch;
+    LogicEventArgs<Slider> uch;
     [SerializeField]
     string message;
     private void Start()
     {
         slider = GetComponentInChildren<Slider>();
-        uch = new UIImplementArgs<Slider>(slider);
+        uch = new LogicEventArgs<Slider>(slider);
     }
     Slider slider;
     public void DispatchEvent()

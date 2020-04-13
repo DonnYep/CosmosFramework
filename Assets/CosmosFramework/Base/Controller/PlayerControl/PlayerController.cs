@@ -27,6 +27,7 @@ namespace Cosmos
 
         protected override void OnInitialization()
         {
+            base.OnInitialization();
             animator = GetComponentInChildren<Animator>();
             controllerEventArgs = new ControllerEventArgs();
             controllerEventArgs.CameraTarget = GetComponentInChildren<CameraTarget>();

@@ -13,13 +13,13 @@ namespace Cosmos
     {
         [SerializeField] InventoryDataSet inventoryDataSet;
         public InventoryDataSet InventoryDataSet { get { return inventoryDataSet; } set { inventoryDataSet = value; } }
-        UIImplementArgs<InventoryDataSet> uip;
-        public UIImplementArgs<InventoryDataSet> Uip
+        LogicEventArgs<InventoryDataSet> uip;
+        public LogicEventArgs<InventoryDataSet> Uip
         {
             get
             {
                 if (uip == null)
-                    uip = new UIImplementArgs<InventoryDataSet>(InventoryDataSet);
+                    uip = new LogicEventArgs<InventoryDataSet>(InventoryDataSet);
                 return uip;
             }
         }
@@ -67,7 +67,7 @@ namespace Cosmos
         }
         void UpdateItemHandler(object sender,GameEventArgs args)
         {
-            var stringUip=args as UIImplementArgs<string>;
+            var stringUip=args as LogicEventArgs<string>;
             txtDescription.text = stringUip.Data;
         }
     }

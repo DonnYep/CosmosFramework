@@ -11,7 +11,7 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
     Text txtNumber;
     ItemDataSet itemDataSet;
     public ItemDataSet ItemDataSet { get { return itemDataSet; } }
-    UIImplementArgs<string> uip = new UIImplementArgs<string>();
+    LogicEventArgs<string> uip = new LogicEventArgs<string>();
     Transform previouseParent;
     Transform dragParent;
     public Transform DragParent { get { return dragParent; } set { dragParent = value; } }
