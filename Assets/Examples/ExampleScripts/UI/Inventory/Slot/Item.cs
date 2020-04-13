@@ -91,6 +91,6 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
     void IItemClick()
     {
         uip.SetData(itemDescription);
-        DispatchUIEvent(UIImplementParam.UIIMPLEMENT_ITEMDESCRIPTION, this, uip);
+        DispatchUIEvent(UIImplementParam.UIIMPLEMENT_ITEMDESCRIPTION,null, uip);
     }
 }

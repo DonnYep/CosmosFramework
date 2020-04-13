@@ -43,7 +43,7 @@ namespace Cosmos
         }
         private void Start()
         {
-            DispatchUIEvent(UIImplementParam.UIIMPLEMENT_UPDATESLOT, this, Uip);
+            DispatchUIEvent(UIImplementParam.UIIMPLEMENT_UPDATESLOT, null, Uip);
         }
         void LoadClick()
         {
@@ -63,7 +63,7 @@ namespace Cosmos
         }
         void UpdateClick()
         {
-            DispatchUIEvent(UIImplementParam.UIIMPLEMENT_UPDATESLOT, this, Uip);
+            DispatchUIEvent(UIImplementParam.UIIMPLEMENT_UPDATESLOT, null, Uip);
         }
         void UpdateItemHandler(object sender,GameEventArgs args)
         {

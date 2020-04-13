@@ -9,19 +9,19 @@ namespace Cosmos
     {
         [SerializeField] GameObject audioAttachTarget;
         public GameObject AudioAttachTarget { get { return audioAttachTarget; } set { audioAttachTarget = value; } }
-
-        //AudioEventArgs[] audioArgs;
-
-        List<AudioEventArgs> audioArgs=new List<AudioEventArgs>();
-        public AudioEventArgs[] AudioArgs
+        AudioVariable audioVariable = new AudioVariable();
+        public override AudioVariable AudioVariable { get { return audioVariable; } }
+        List<LogicEventArgs<AudioVariable>> audioArgs=new List<LogicEventArgs<AudioVariable>>();
+        public LogicEventArgs<AudioVariable>[] AudioArgs
         {
             get
             {
                 audioArgs.Clear();
                 for (int i = 0; i < AudioDataSets.Length; i++)
                 {
-                    AudioEventArgs arg = new AudioEventArgs();
-                    arg.AudioDataSet = AudioDataSets[i];
+                    AudioVariable audioVar = new AudioVariable();
+                    LogicEventArgs<AudioVariable> arg = new LogicEventArgs<AudioVariable>(audioVar);
+                    arg.Data.AudioDataSet= AudioDataSets[i];
                     audioArgs.Add(arg);
                 }
                 return audioArgs.ToArray();

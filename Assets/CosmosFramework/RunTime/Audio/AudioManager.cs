@@ -56,12 +56,13 @@ namespace Cosmos.Audio
         /// </summary>
         /// <param name="clip"></param>
         /// <param name="arg"></param>
-        public void PlayBackgroundAudio(AudioEventArgs arg)
+        public void PlayBackgroundAudio(GameEventArgs arg)
         {
+            var tempArgs = arg as LogicEventArgs<AudioVariable>;
             if (backgroundAduio == null)
             {
-                backgroundAduio = CreateAudioSource(arg);
-                backgroundAduio.clip = arg.AudioDataSet.AudioClip;
+                backgroundAduio = CreateAudioSource(tempArgs.Data);
+                backgroundAduio.clip = tempArgs.Data.AudioDataSet.AudioClip;
                 backgroundAduio.Play();
             }
             else
@@ -70,8 +71,8 @@ namespace Cosmos.Audio
                 {
                     backgroundAduio.Stop();
                 }
-                backgroundAduio.clip = arg.AudioDataSet. AudioClip;
-                SetAudioProperties(ref backgroundAduio, arg);
+                backgroundAduio.clip = tempArgs.Data.AudioDataSet. AudioClip;
+                SetAudioProperties(ref backgroundAduio, tempArgs.Data);
                 backgroundAduio.Play();
             }
         }
@@ -105,22 +106,23 @@ namespace Cosmos.Audio
         /// <param name="attachTarget">audioSource挂载的对象</param>
         /// <param name="clip">音频</param>
         /// <param name="arg">具体参数</param>
-        public void PlayWorldAudio(GameObject attachTarget, AudioEventArgs args)
+        public void PlayWorldAudio(GameObject attachTarget, GameEventArgs args)
         {
+            var tempArgs = args as LogicEventArgs<AudioVariable>;
             if (worldAudios.ContainsKey(attachTarget))
             {
                 AudioSource audio = worldAudios[attachTarget];
                 if (audio.isPlaying)
                     audio.Stop();
-                SetAudioProperties(ref audio, args);
-                audio.clip = args.AudioDataSet.AudioClip;
+                SetAudioProperties(ref audio, tempArgs.Data);
+                audio.clip =tempArgs.Data.AudioDataSet.AudioClip;
                 audio.Play();
             }
             else
             {
-                AudioSource audio = AttachAudioSource(attachTarget, args);
+                AudioSource audio = AttachAudioSource(attachTarget, tempArgs.Data);
                 worldAudios.Add(attachTarget, audio);
-                audio.clip = args.AudioDataSet.AudioClip;
+                audio.clip = tempArgs.Data.AudioDataSet.AudioClip;
                 audio.Play();
             }
         }
@@ -164,7 +166,7 @@ namespace Cosmos.Audio
         }
         #endregion
         #region MultipleAudio
-        public void PlayMultipleAudio(GameObject attachTarget,AudioEventArgs[] args) 
+        public void PlayMultipleAudio(GameObject attachTarget,GameEventArgs[] args) 
         {
             if (multipleAudio.ContainsKey(attachTarget))
             {
@@ -183,8 +185,9 @@ namespace Cosmos.Audio
                     var audio= multipleAudio[attachTarget][i];
                     if (audio.isPlaying)
                         audio.Stop();
-                    SetAudioProperties(ref audio, args[i]);
-                    audio.clip = args[i].AudioDataSet.AudioClip;
+                    var tempArgs = args[i] as LogicEventArgs<AudioVariable>;
+                    SetAudioProperties(ref audio, tempArgs.Data);
+                    audio.clip =tempArgs.Data.AudioDataSet.AudioClip;
                     audio.Play();
                 }
             }
@@ -193,8 +196,9 @@ namespace Cosmos.Audio
                 multipleAudio.Add(attachTarget, new List<AudioSource>());
                 for (int i = 0; i < args.Length; i++)
                 {
-                    AudioSource audio = AttachAudioSource(attachTarget, args[i]);
-                    audio.clip = args[i].AudioDataSet.AudioClip;
+                    var tempArgs = args[i] as LogicEventArgs<AudioVariable>;
+                    AudioSource audio = AttachAudioSource(attachTarget, tempArgs.Data);
+                    audio.clip = tempArgs.Data.AudioDataSet.AudioClip;
                     audio.Play();
                     multipleAudio[attachTarget].Add(audio);
                 }
@@ -236,7 +240,7 @@ namespace Cosmos.Audio
                 Utility.DebugError("AudioManager\n"+"Multiple" + attachTarget.name + "\n is unregistered", attachTarget);
         }
         #endregion
-        AudioSource CreateAudioSource(AudioEventArgs arg)
+        AudioSource CreateAudioSource( AudioVariable arg)
         {
             GameObject go = new GameObject(arg.AudioDataSet.ObjectName);
             go.transform.SetParent(ModuleMountObject.transform);
@@ -245,7 +249,7 @@ namespace Cosmos.Audio
             SetAudioProperties(ref audio, arg);
             return audio;
         }
-        AudioSource AttachAudioSource(GameObject target, AudioEventArgs arg)
+        AudioSource AttachAudioSource(GameObject target, AudioVariable arg)
         {
             AudioSource audio = target.AddComponent<AudioSource>();
             SetAudioProperties(ref audio, arg);
@@ -256,7 +260,7 @@ namespace Cosmos.Audio
             AudioSource audio = target.AddComponent<AudioSource>();
             return audio;
         }
-        void SetAudioProperties(ref AudioSource audio, AudioEventArgs arg)
+        void SetAudioProperties(ref AudioSource audio, AudioVariable arg)
         {
             audio.playOnAwake = arg.AudioDataSet.PlayOnAwake;
             audio.volume = arg.AudioDataSet.Volume;

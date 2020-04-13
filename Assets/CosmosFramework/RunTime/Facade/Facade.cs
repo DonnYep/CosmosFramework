@@ -138,7 +138,7 @@ namespace Cosmos{
         #region AudioManager
         public void PlayBackgroundAudio( GameEventArgs arg)
         {
-            AudioManager.Instance.PlayBackgroundAudio(arg as AudioEventArgs);
+            AudioManager.Instance.PlayBackgroundAudio(arg);
         }
         public void PauseBackgroundAudio()
         {
@@ -154,7 +154,7 @@ namespace Cosmos{
         }
         public void PlayWorldAudio(GameObject attachTarget,GameEventArgs arg)
         {
-            AudioManager.Instance.PlayWorldAudio(attachTarget,  arg as AudioEventArgs);
+            AudioManager.Instance.PlayWorldAudio(attachTarget,  arg );
         }
         public void PauseWorldAudio(GameObject attachTarget)
         {
@@ -168,7 +168,7 @@ namespace Cosmos{
         {
             AudioManager.Instance.StopWorldAudio(attachTarget);
         }
-        public void PlayMultipleAudio(GameObject attachTarget, AudioEventArgs[] args)
+        public void PlayMultipleAudio(GameObject attachTarget, GameEventArgs[] args)
         {
             AudioManager.Instance.PlayMultipleAudio(attachTarget, args);
         }

@@ -29,8 +29,8 @@ namespace Cosmos
         {
             base.OnInitialization();
             animator = GetComponentInChildren<Animator>();
-            controllerEventArgs = new ControllerEventArgs();
-            controllerEventArgs.CameraTarget = GetComponentInChildren<CameraTarget>();
+            controllerEventArgs = new LogicEventArgs<CameraTarget>();
+            controllerEventArgs.SetData( GetComponentInChildren<CameraTarget>());
         }
         private void Start()
         {
@@ -38,14 +38,14 @@ namespace Cosmos
         }
         protected override void EventHandler(object sender, GameEventArgs arg)
         {
-            inputEventArgs = arg as InputEventArgs;
-            if (inputEventArgs.HorizVertAxis.magnitude != 0)
+            inputEventArgs = arg as LogicEventArgs<InputVariable>;
+            if (inputEventArgs.Data.HorizVertAxis.magnitude != 0)
                 animator.SetBool(inputHash, true);
             else
                 animator.SetBool(inputHash, false);
-            moveForword = inputEventArgs.HorizVertAxis.y;
-            moveTurn= inputEventArgs.HorizVertAxis.x;
-            if (inputEventArgs.LeftShift)
+            moveForword = inputEventArgs.Data.HorizVertAxis.y;
+            moveTurn= inputEventArgs.Data.HorizVertAxis.x;
+            if (inputEventArgs.Data.LeftShift)
                 moveForword *= 2;
 
             //合并旋转

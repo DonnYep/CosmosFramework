@@ -30,7 +30,8 @@ namespace Cosmos
         /// <summary>
         /// 事件处理者
         /// </summary>
-        protected InputEventArgs inputEventArgs;
-        protected ControllerEventArgs controllerEventArgs;
+        //protected InputEventArgs inputEventArgs;
+        protected LogicEventArgs<InputVariable> inputEventArgs;
+        protected LogicEventArgs<CameraTarget> controllerEventArgs;
     }
 }

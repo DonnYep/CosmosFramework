@@ -36,13 +36,13 @@ namespace Cosmos
         }
         protected override void EventHandler(object sender, GameEventArgs arg)
         {
-            inputEventArgs = arg as InputEventArgs;
-            yaw = -inputEventArgs.MouseAxis.x;
-            pitch = inputEventArgs.MouseAxis.y;
+            inputEventArgs = arg as LogicEventArgs<InputVariable>;
+            yaw = -inputEventArgs.Data.MouseAxis.x;
+            pitch = inputEventArgs.Data.MouseAxis.y;
             pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
-            currentDistance -= inputEventArgs.MouseButtonWheel;
+            currentDistance -= inputEventArgs.Data.MouseButtonWheel;
             currentDistance = Mathf.Clamp(currentDistance, 0.5f, 10);
-            inputEventArgs.HideMouse();
+            inputEventArgs.Data.HideMouse();
         }
         void LateUpdateCamera()
         {
@@ -62,8 +62,8 @@ namespace Cosmos
         /// </summary>
         void CameraHandler(object sender, GameEventArgs args)
         {
-            controllerEventArgs = args as ControllerEventArgs;
-            CameraTarget = controllerEventArgs.CameraTarget;
+            controllerEventArgs = args as LogicEventArgs<CameraTarget>;
+            CameraTarget = controllerEventArgs.Data;
             cam = GetComponentInChildren<Camera>();
             cam.transform.ResetLocalTransform();
             transform.rotation = CameraTarget.transform.rotation;

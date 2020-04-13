@@ -17,11 +17,13 @@ namespace Cosmos.Input {
     public sealed class InputManager :Module<InputManager>
     {
         short updateID;
-        InputEventArgs inputHandler = new InputEventArgs();
+        LogicEventArgs<InputVariable> inputHandler = new LogicEventArgs<InputVariable>();
+        InputVariable inputVariable = new InputVariable();
         VirtualInput inputModule;
         InputDevice inputDevice;
         public InputManager()
         {
+            inputHandler.SetData(inputVariable);
             Facade.Instance.AddMonoListener(InputUpdate, UpdateType.Update, (id) => updateID = id);
         }
          ~InputManager()
@@ -31,17 +33,17 @@ namespace Cosmos.Input {
         void InputUpdate()
         {
             //当前包含鼠标在屏幕的左右坐标，wasd输入、鼠标左中右按下，space空格 leftShift
-            inputHandler.HorizVertAxis = new Vector2(UnityEngine.Input.GetAxis("Horizontal"), UnityEngine.Input.GetAxis("Vertical"));
-            inputHandler.MouseButtonLeft = ButtonPressState(KeyCode.Mouse0);
-            inputHandler.MouseButtonRight = ButtonPressState(KeyCode.Mouse1);
-            inputHandler.MouseButtonMiddle = ButtonPressState(KeyCode.Mouse2);
-            inputHandler.Jump = ButtonPressState(KeyCode.Space);
+            inputHandler.Data.HorizVertAxis = new Vector2(UnityEngine.Input.GetAxis("Horizontal"), UnityEngine.Input.GetAxis("Vertical"));
+            inputHandler.Data.MouseButtonLeft = ButtonPressState(KeyCode.Mouse0);
+            inputHandler.Data.MouseButtonRight = ButtonPressState(KeyCode.Mouse1);
+            inputHandler.Data.MouseButtonMiddle = ButtonPressState(KeyCode.Mouse2);
+            inputHandler.Data.Jump = ButtonPressState(KeyCode.Space);
             float mouseX = UnityEngine.Input.GetAxis("Mouse X");
             float mouseY = UnityEngine.Input.GetAxis("Mouse Y");
-            inputHandler.MouseAxis = new Vector2(mouseX, mouseY);
-            inputHandler.MouseButtonWheel = UnityEngine.Input.GetAxis("Mouse ScrollWheel");
-            inputHandler.LeftShift = UnityEngine.Input.GetKey(KeyCode.LeftShift);
-            inputHandler.Escape = UnityEngine.Input.GetKeyDown(KeyCode.Escape);
+            inputHandler.Data.MouseAxis = new Vector2(mouseX, mouseY);
+            inputHandler.Data.MouseButtonWheel = UnityEngine.Input.GetAxis("Mouse ScrollWheel");
+            inputHandler.Data.LeftShift = UnityEngine.Input.GetKey(KeyCode.LeftShift);
+            inputHandler.Data.Escape = UnityEngine.Input.GetKeyDown(KeyCode.Escape);
             if(EventManager.Instance.IsEventRegistered(InputEventParam.INPUT_INPUT))
                 EventManager.Instance.DispatchEvent(InputEventParam.INPUT_INPUT, this, inputHandler);
         }

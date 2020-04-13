@@ -6,7 +6,7 @@ namespace Cosmos{
     public abstract class AudioPlayer: MonoBehaviour
     {
         public virtual AudioDataSet AudioDataSet { get; }
-        //public virtual LogicEventArgs<AudioDataSet> AudioDataSet { get; }
+        public virtual AudioVariable AudioVariable { get; }
         public abstract void PlayAudio();
         public abstract void PauseAudio();
         public abstract void UnpauseAudio();

@@ -4,12 +4,15 @@ namespace Cosmos {
     [DisallowMultipleComponent]
     public class BackgroundAudioPlayer :AudioPlayer
     {
-        AudioEventArgs audioArgs = new AudioEventArgs();
+        LogicEventArgs<AudioVariable> audioArgs = new LogicEventArgs<AudioVariable>();
         [SerializeField] AudioDataSet audioDataSet;
         public override AudioDataSet AudioDataSet { get { return audioDataSet; } }
+        AudioVariable audioVariable = new AudioVariable();
+        public override AudioVariable AudioVariable { get { return audioVariable; } }
         public override void PlayAudio()
         {
-            audioArgs.AudioDataSet = AudioDataSet;
+            audioVariable.AudioDataSet = AudioDataSet;
+            audioArgs.SetData(audioVariable);
             Facade.Instance.PlayBackgroundAudio(audioArgs);
         }
          public override void StopAudio()
