@@ -13,8 +13,8 @@ public class LoadingScenePanel : UILogicResident
     Slider sldProgress;
     protected override void OnInitialization()
     {
-        txtProgress = GetUIPanel<Text>("TxtProgress");
-        sldProgress = GetUIPanel<Slider>("SldProgress");
+        txtProgress = GetUIComp<Text>("TxtProgress");
+        sldProgress = GetUIComp<Slider>("SldProgress");
         LoadLevel();
     }
     void LoadLevel()

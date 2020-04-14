@@ -83,9 +83,9 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
     }
     protected override void OnInitialization()
     {
-        GetUIPanel<Button>("Item").onClick.AddListener(IItemClick);
-        imgItem = GetUIPanel<Image>("Item");
-        txtNumber= GetUIPanel<Text>("TxtNumber");
+        GetUIComp<Button>("Item").onClick.AddListener(IItemClick);
+        imgItem = GetUIComp<Image>("Item");
+        txtNumber= GetUIComp<Text>("TxtNumber");
         PreviouseParent = transform.parent;
     }
     void IItemClick()

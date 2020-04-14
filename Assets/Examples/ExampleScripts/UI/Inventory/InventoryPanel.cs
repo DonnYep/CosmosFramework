@@ -26,19 +26,19 @@ namespace Cosmos
         Text txtDescription;
         protected override void OnInitialization()
         {
-            GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
-            GetUIPanel<Button>("BtnQuit").onClick.AddListener(QuitClick);
-            GetUIPanel<Button>("BtnSave").onClick.AddListener(SaveClick);
-            GetUIPanel<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
-            txtDescription = GetUIPanel<Text>("TxtDescription");
+            GetUIComp<Button>("BtnLoad").onClick.AddListener(LoadClick);
+            GetUIComp<Button>("BtnQuit").onClick.AddListener(QuitClick);
+            GetUIComp<Button>("BtnSave").onClick.AddListener(SaveClick);
+            GetUIComp<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
+            txtDescription = GetUIComp<Text>("TxtDescription");
             AddUIEventListener(UIImplementParam.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
         }
         protected override void OnTermination()
         {
-            GetUIPanel<Button>("BtnLoad").onClick.RemoveAllListeners();
-            GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
-            GetUIPanel<Button>("BtnSave").onClick.RemoveAllListeners();
-            GetUIPanel<Button>("BtnUpdate").onClick.RemoveAllListeners();
+            GetUIComp<Button>("BtnLoad").onClick.RemoveAllListeners();
+            GetUIComp<Button>("BtnQuit").onClick.RemoveAllListeners();
+            GetUIComp<Button>("BtnSave").onClick.RemoveAllListeners();
+            GetUIComp<Button>("BtnUpdate").onClick.RemoveAllListeners();
             RemoveUIEventListener(UIImplementParam.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
         }
         private void Start()

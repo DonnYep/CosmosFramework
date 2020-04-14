@@ -14,13 +14,13 @@ public class LoadPanel : UILogicResident
     InputField inputLoadLevel;
     protected override void OnInitialization()
     {
-        GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
-        inputLoadLevel = GetUIPanel<InputField>("InputLoadLevel");
-        inputTargetLevel = GetUIPanel<InputField>("InputTargetLevel");
+        GetUIComp<Button>("BtnLoad").onClick.AddListener(LoadClick);
+        inputLoadLevel = GetUIComp<InputField>("InputLoadLevel");
+        inputTargetLevel = GetUIComp<InputField>("InputTargetLevel");
     }
     protected override void OnTermination()
     {
-        GetUIPanel<Button>("BtnLoad").onClick.RemoveAllListeners();
+        GetUIComp<Button>("BtnLoad").onClick.RemoveAllListeners();
     }
     void LoadClick()
     {
