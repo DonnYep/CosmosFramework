@@ -6,7 +6,7 @@ namespace Cosmos.Event
 {
     public sealed class EventManager : Module<EventManager>
     {
-        Dictionary<string, CFAction<object, GameEventArgs>> eventMap = new Dictionary<string, CFAction<object, GameEventArgs>>();
+        Dictionary<string, CFAction<object, GameEventArgs>> eventDict = new Dictionary<string, CFAction<object, GameEventArgs>>();
         /// <summary>
         /// 添加事件
         /// </summary>
@@ -20,14 +20,14 @@ namespace Cosmos.Event
                 Utility.DebugError("Event key is  empty");
                 return;
             }
-            if (eventMap.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
             {
-                eventMap[eventKey] += handler;
+                eventDict[eventKey] += handler;
             }
             else
             {
-                eventMap.Add(eventKey,null);
-                eventMap[eventKey] += handler;
+                eventDict.Add(eventKey,null);
+                eventDict[eventKey] += handler;
             }
         }
         /// <summary>
@@ -42,11 +42,11 @@ namespace Cosmos.Event
                 Utility.DebugError("Event key is  empty");
                 return;
             }
-            if (eventMap.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
             {
-                eventMap[eventKey] -= hander;
-                if (eventMap[eventKey] == null)
-                    eventMap.Remove(eventKey);
+                eventDict[eventKey] -= hander;
+                if (eventDict[eventKey] == null)
+                    eventDict.Remove(eventKey);
             }
         }
         /// <summary>
@@ -61,11 +61,11 @@ namespace Cosmos.Event
                 Utility.DebugError("Event key is  empty");
                 return;
             }
-            if (eventMap.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
             {
-                if (eventMap[eventKey] != null)
+                if (eventDict[eventKey] != null)
                 {
-                    eventMap[eventKey](sender,arg);
+                    eventDict[eventKey](sender,arg);
                 }
             }
             else
@@ -81,10 +81,10 @@ namespace Cosmos.Event
                 Utility.DebugError("Event key is  empty");
                 return;
             }
-            if (eventMap.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
             {
-                eventMap[eventKey] = null;
-                eventMap.Remove(eventKey);
+                eventDict[eventKey] = null;
+                eventDict.Remove(eventKey);
             }
         }
         /// <summary>
@@ -98,9 +98,9 @@ namespace Cosmos.Event
                 Utility.DebugError("Event key is  empty");
                 return;
             }
-            if (!eventMap.ContainsKey(eventKey))
+            if (!eventDict.ContainsKey(eventKey))
             {
-                eventMap.Add(eventKey, null);
+                eventDict.Add(eventKey, null);
             }
         }
         /// <summary>
@@ -113,9 +113,9 @@ namespace Cosmos.Event
                 Utility.DebugError("Event key is  empty");
                 return;
             }
-            if (eventMap.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
             {
-                eventMap[eventKey] = null;
+                eventDict[eventKey] = null;
             }
         }
         /// <summary>
@@ -123,7 +123,7 @@ namespace Cosmos.Event
         /// </summary>
         public void ClearAllEvent()
         {
-            foreach (var key in eventMap.Keys)
+            foreach (var key in eventDict.Keys)
             {
                 if (IsSystemEvent(key))
                 {
@@ -146,7 +146,7 @@ namespace Cosmos.Event
                 Utility.DebugError("Event key is  empty");
                 return false;
             }
-            if (eventMap.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
                 return true;
             else
                 return false;
