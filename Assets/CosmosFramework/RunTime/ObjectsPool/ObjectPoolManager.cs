@@ -5,7 +5,7 @@ namespace Cosmos.ObjectPool
 {
     public sealed class ObjectPoolManager: Module<ObjectPoolManager>
     {
-       public const  short _ObjectPoolCapacity = 50;
+       public static readonly  short _ObjectPoolCapacity = 50;
         Dictionary<object, ObjectSpawnPool> spawnPool = new Dictionary<object, ObjectSpawnPool>();
         GameObject activeObjectMount;
         /// <summary>

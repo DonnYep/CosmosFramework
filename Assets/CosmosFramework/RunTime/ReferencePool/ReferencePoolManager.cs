@@ -9,7 +9,7 @@ namespace Cosmos.Reference
         /// <summary>
         /// 单个引用池上线
         /// </summary>
-        public const short _ReferencePoolCapcity= 100;
+        public static readonly short _ReferencePoolCapcity= 100;
         Dictionary<Type, ReferenceSpawnPool> referencePool = new Dictionary<Type, ReferenceSpawnPool>();
         public int GetPoolCount<T>() 
             where T : class, IReference, new()

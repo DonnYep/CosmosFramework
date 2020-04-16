@@ -21,13 +21,13 @@ namespace Cosmos.Mono
     /// </summary>
     public sealed class MonoManager:Module<MonoManager>
     {
-        Dictionary<short, IMonoController> monoMap=new Dictionary<short, IMonoController>();
+        Dictionary<short, IMonoController> monoDict=new Dictionary<short, IMonoController>();
         // 单个monoController update委托的容量
-       public  const short _UpdateCapacity= 100;
+       public  static readonly short _UpdateCapacity= 100;
         // 单个monoController fixedUpdate委托的容量
-        public const short _FixedUpdateCapacity = 100;
+        public static  readonly short _FixedUpdateCapacity = 100;
         // 单个monoController lateUpdate委托的容量
-        public const short _LateUpdateCapacity = 100;
+        public static readonly short _LateUpdateCapacity = 100;
         // monoController的总数量
         short monoControllerCount = 0;
         /// 创建新的monoController
@@ -55,12 +55,12 @@ namespace Cosmos.Mono
             if (monoId == -1)
             {
                monoId= CreateMonoController().MonoID;
-                monoMap[monoControllerCount].AddListener(act, type);
+                monoDict[monoControllerCount].AddListener(act, type);
                 if (callBack != null)
                     callBack(monoId);
                 return;
             }
-            monoMap[monoId].AddListener(act, type);
+            monoDict[monoId].AddListener(act, type);
             if (callBack != null)
                 callBack(monoId);
         }
@@ -72,12 +72,12 @@ namespace Cosmos.Mono
         /// <param name="key'">委托所在的序号</param>
         public void RemoveListener(CFAction act, UpdateType type,short monoID)
         {
-            if(!monoMap.ContainsKey(monoID))
+            if(!monoDict.ContainsKey(monoID))
             {
                 Utility.DebugError("MonoManager\n"+"MonoController ID"+monoID+" does not exist!");
                 return;
             }
-            monoMap[monoID].RemoveListener(act, type);
+            monoDict[monoID].RemoveListener(act, type);
         }
         /// <summary>
         /// 开启协程
@@ -89,7 +89,7 @@ namespace Cosmos.Mono
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
-            return (monoMap[monoControllerCount] as MonoController).StartCoroutine(routine);
+            return (monoDict[monoControllerCount] as MonoController).StartCoroutine(routine);
         }
         /// <summary>
         /// 关闭一个monoController上的所有迭代器
@@ -99,7 +99,7 @@ namespace Cosmos.Mono
         {
             if (monoControllerCount == 0)
                 return;
-                foreach (var mc in monoMap.Values)
+                foreach (var mc in monoDict.Values)
             {
                 (mc as MonoController).StopAllCoroutines();
             }
@@ -112,13 +112,13 @@ namespace Cosmos.Mono
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
-            (monoMap[monoControllerCount] as MonoController).StopCoroutine(routine);
+            (monoDict[monoControllerCount] as MonoController).StopCoroutine(routine);
         }
         public void StopCoroutine(Coroutine routine)
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
-            (monoMap[monoControllerCount] as MonoController).StopCoroutine(routine);
+            (monoDict[monoControllerCount] as MonoController).StopCoroutine(routine);
         }
         /// <summary>
         /// 根据输入的key判断是否全空，是则注销
@@ -126,9 +126,9 @@ namespace Cosmos.Mono
         /// <param name="index"></param>
         void DestoryMonoController(short index)
         {
-            if (!monoMap.ContainsKey(index))
+            if (!monoDict.ContainsKey(index))
                 return;
-            if (monoMap[index].IsAllActionEmpty)
+            if (monoDict[index].IsAllActionEmpty)
                 Deregister(index);
         }
         /// <summary>
@@ -138,8 +138,8 @@ namespace Cosmos.Mono
         /// <param name="mc"></param>
         void Register(short index,IMonoController mc)
         {
-            if(!monoMap.ContainsKey(index))
-                monoMap.Add(monoControllerCount, mc);
+            if(!monoDict.ContainsKey(index))
+                monoDict.Add(monoControllerCount, mc);
         }
         /// <summary>
         /// 注销到monoMap
@@ -147,10 +147,10 @@ namespace Cosmos.Mono
         /// <param name="index"></param>
         void Deregister(short index)
         {
-            if (monoMap.ContainsKey(index))
+            if (monoDict.ContainsKey(index))
             {
-                GameManager.KillObject((monoMap[index] as MonoController).gameObject);
-                monoMap.Remove(index);
+                GameManager.KillObject((monoDict[index] as MonoController).gameObject);
+                monoDict.Remove(index);
             }
         }
         /// <summary>
@@ -161,7 +161,7 @@ namespace Cosmos.Mono
         short  FindUseable(UpdateType type)
         {
             short id = -1;
-            foreach (var mc in monoMap.Values)
+            foreach (var mc in monoDict.Values)
             {
                 MonoController monoc = mc as MonoController;
               id=monoc.UseableMono(type);
@@ -180,19 +180,19 @@ namespace Cosmos.Mono
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
-            return (monoMap[monoControllerCount] as MonoController).StartCoroutine(routine, callBack);
+            return (monoDict[monoControllerCount] as MonoController).StartCoroutine(routine, callBack);
         }
         public Coroutine DelayCoroutine(float delay)
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
-            return (monoMap[monoControllerCount] as MonoController).DelayCoroutine(delay);
+            return (monoDict[monoControllerCount] as MonoController).DelayCoroutine(delay);
         }
         public Coroutine DelayCoroutine(float delay,CFAction callBack)
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
-            return (monoMap[monoControllerCount] as MonoController).DelayCoroutine(delay,callBack);
+            return (monoDict[monoControllerCount] as MonoController).DelayCoroutine(delay,callBack);
         }
     }
 }
