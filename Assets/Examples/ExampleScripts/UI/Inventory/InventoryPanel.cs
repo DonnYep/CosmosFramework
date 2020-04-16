@@ -31,7 +31,7 @@ namespace Cosmos
             GetUIComp<Button>("BtnSave").onClick.AddListener(SaveClick);
             GetUIComp<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
             txtDescription = GetUIComp<Text>("TxtDescription");
-            AddUIEventListener(UIImplementParam.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
+            AddUIEventListener(UIImplementCodeParams.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
         }
         protected override void OnTermination()
         {
@@ -39,11 +39,11 @@ namespace Cosmos
             GetUIComp<Button>("BtnQuit").onClick.RemoveAllListeners();
             GetUIComp<Button>("BtnSave").onClick.RemoveAllListeners();
             GetUIComp<Button>("BtnUpdate").onClick.RemoveAllListeners();
-            RemoveUIEventListener(UIImplementParam.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
+            RemoveUIEventListener(UIImplementCodeParams.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
         }
         private void Start()
         {
-            DispatchUIEvent(UIImplementParam.UIIMPLEMENT_UPDATESLOT, null, Uip);
+            DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, null, Uip);
         }
         void LoadClick()
         {
@@ -63,7 +63,7 @@ namespace Cosmos
         }
         void UpdateClick()
         {
-            DispatchUIEvent(UIImplementParam.UIIMPLEMENT_UPDATESLOT, null, Uip);
+            DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, null, Uip);
         }
         void UpdateItemHandler(object sender,GameEventArgs args)
         {

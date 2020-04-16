@@ -13,14 +13,14 @@ public class SlotController : MonoEventHandler
     protected override void OnInitialization()
     {
         fullPath = Utility.UI.GetUIFullRelativePath(slotItemName);
-        AddDefaultEventListener(UIImplementParam.UIIMPLEMENT_UPDATESLOT);
-        AddEventListener(UIImplementParam.UIIMPLEMENT_UPDATEITEM, UpdateItemHandler);
+        AddDefaultEventListener(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT);
+        AddEventListener(UIImplementCodeParams.UIIMPLEMENT_UPDATEITEM, UpdateItemHandler);
         slot = Facade.Instance.LoadResAsset<GameObject>(fullPath);
     }
     protected override void OnTermination()
     {
-        RemoveDefaultEventListener(UIImplementParam.UIIMPLEMENT_UPDATESLOT);
-        RemoveEventListener(UIImplementParam.UIIMPLEMENT_UPDATEITEM, UpdateItemHandler);
+        RemoveDefaultEventListener(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT);
+        RemoveEventListener(UIImplementCodeParams.UIIMPLEMENT_UPDATEITEM, UpdateItemHandler);
     }
     protected override void EventHandler(object sender, GameEventArgs args)
     {

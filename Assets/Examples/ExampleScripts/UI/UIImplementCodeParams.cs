@@ -4,7 +4,7 @@ using Cosmos;
 /// <summary>
 /// UI implement事件工具类，记录了具体事件的Key
 /// </summary>
-public sealed class UIImplementParam
+public sealed class UIImplementCodeParams
 {
     /// <summary>
     /// UI implement 事件，保存inventory数据

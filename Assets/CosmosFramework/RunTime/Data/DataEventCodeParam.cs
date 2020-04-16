@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 namespace Cosmos
 {
     /// <summary>
@@ -8,8 +10,7 @@ namespace Cosmos
     /// 分部类，可以进行后期拓展
     /// 常量名等于内容string
     /// </summary>
-    public sealed  class MonoEventParam
+    public sealed  class DataEventCodeParams
     {
-
     }
 }

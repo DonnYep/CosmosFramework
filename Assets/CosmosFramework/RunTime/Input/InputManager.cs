@@ -44,8 +44,8 @@ namespace Cosmos.Input {
             inputHandler.Data.MouseButtonWheel = UnityEngine.Input.GetAxis("Mouse ScrollWheel");
             inputHandler.Data.LeftShift = UnityEngine.Input.GetKey(KeyCode.LeftShift);
             inputHandler.Data.Escape = UnityEngine.Input.GetKeyDown(KeyCode.Escape);
-            if(EventManager.Instance.IsEventRegistered(InputEventParam.INPUT_INPUT))
-                EventManager.Instance.DispatchEvent(InputEventParam.INPUT_INPUT, this, inputHandler);
+            if(EventManager.Instance.IsEventRegistered(InputEventCodeParams.INPUT_INPUT))
+                EventManager.Instance.DispatchEvent(InputEventCodeParams.INPUT_INPUT, this, inputHandler);
         }
         /// <summary>
         /// 这段输入，当前PC有效，其他平台需要额外适配

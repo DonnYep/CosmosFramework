@@ -20,7 +20,7 @@ using Cosmos;
         Text text;
         private void Start()
         {
-            Facade.Instance.AddEventListener(InputEventParam.INPUT_INPUT, InputHandler);
+            Facade.Instance.AddEventListener(InputEventCodeParams.INPUT_INPUT, InputHandler);
             slider = GetComponentInChildren<Slider>();
             text = GetComponentsInChildren<Text>()[1];
         }
@@ -42,7 +42,7 @@ using Cosmos;
         }
         private void OnDestroy()
         {
-            Facade.Instance.RemoveEventListener(InputEventParam.INPUT_INPUT, InputHandler);
+            Facade.Instance.RemoveEventListener(InputEventCodeParams.INPUT_INPUT, InputHandler);
         }
         void InputKeyDebugInfo()
         {

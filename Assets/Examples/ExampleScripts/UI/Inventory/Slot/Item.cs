@@ -58,7 +58,7 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
             transform.ResetLocalTransform();
             GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
-        DispatchUIEvent(UIImplementParam.UIIMPLEMENT_UPDATEITEM, null, null);
+        DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATEITEM, null, null);
     }
     public void SetItem(ItemDataSet item)
     {
@@ -91,6 +91,6 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
     void IItemClick()
     {
         uip.SetData(itemDescription);
-        DispatchUIEvent(UIImplementParam.UIIMPLEMENT_ITEMDESCRIPTION,null, uip);
+        DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_ITEMDESCRIPTION,null, uip);
     }
 }

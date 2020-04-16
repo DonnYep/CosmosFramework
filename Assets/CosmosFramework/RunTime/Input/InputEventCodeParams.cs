@@ -1,9 +1,6 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using UnityEngine;
 namespace Cosmos
 {
     /// <summary>
@@ -11,7 +8,8 @@ namespace Cosmos
     /// 分部类，可以进行后期拓展
     /// 常量名等于内容string
     /// </summary>
-    public sealed  class ObjectPoolEventParam
+    public sealed  class InputEventCodeParams
     {
+        public const string INPUT_INPUT = "INPUT_INPUT";
     }
 }
