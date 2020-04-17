@@ -32,9 +32,10 @@ namespace Cosmos
                 moduleMap.Add(moduleName, module);
                 module.OnInitialization();
                 moduleCount++;
+                Utility.DebugLog("Module:\"" + moduleName +"\" "+ "  is OnInitialization" + "\n based on GameManager");
             }
             else
-                Utility.DebugError("module \t" + moduleName + "is already exist!");
+                Utility.DebugError("Module:\"" + moduleName + "\" "+ " is already exist!");
         }
         /// <summary>
         /// 注销模块
@@ -49,7 +50,7 @@ namespace Cosmos
                 moduleCount--;
             }
             else
-                Utility.DebugError("module \t" + moduleName + " is  not exist!");
+                Utility.DebugError("Module:\"" + moduleName + "\" " + " is  not exist!");
         }
         public bool HasModule(string moduleName)
         {

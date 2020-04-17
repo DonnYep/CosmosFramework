@@ -85,14 +85,10 @@ namespace Cosmos {
         protected virtual void OnModuleInstanceCalled() { }
         #region interface IModule
         /// <summary>
-        /// 初始化
+        /// 空虚函数 初始化
         /// </summary>
-        public virtual  void OnInitialization()
-        {
-            //这部分当前为测试，可删
-            Utility.DebugLog("Module:\"" + ModuleName  + "  is OnInitialization" + "\n based on Module register function");
-            //Utility.DebugLog(ModuleMountObject.name);
-        }
+        public virtual void OnInitialization() { }
+     
         /// <summary>
         /// 暂停
         /// </summary>
