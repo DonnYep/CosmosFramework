@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
-namespace Cosmos{
+#endif
+namespace Cosmos
+{
     /// <summary>
     /// 子类也继承按钮
     /// </summary>

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 namespace Cosmos.CosmosEditor
 {
     [CustomEditor(typeof(EventListener))]

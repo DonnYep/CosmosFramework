@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using System;
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 [CustomEditor(typeof(InventoryDataSet))]
 public class InventoryDataSetEditor : Editor
 {

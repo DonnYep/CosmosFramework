@@ -94,6 +94,9 @@ namespace Cosmos
         {
             instance = null;
         }
-        virtual public void Init() { }//抽象初始化
+        /// <summary>
+        /// 空虚的函数，用于初始化mono单例
+        /// </summary>
+        virtual public void Init() { }
     }
 }

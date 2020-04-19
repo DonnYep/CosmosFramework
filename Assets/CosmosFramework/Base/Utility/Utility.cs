@@ -44,12 +44,12 @@ namespace Cosmos
             else
                 Debug.Log("<b>-->><color=#254FDB>" + o + "</color></b>", context);
         }
-        public static void DebugLog(object o, MessageColor messageColor,Object context = null)
+        public static void DebugLog(object o, MessageColor messageColor, Object context = null)
         {
             if (!EnableDebugLog)
                 return;
             if (context == null)
-                Debug.Log("<b>-->><color="+messageColor.ToString()+">" + o + "</color></b>");
+                Debug.Log("<b>-->><color=" + messageColor.ToString() + ">" + o + "</color></b>");
             else
                 Debug.Log("<b>-->><color=" + messageColor.ToString() + ">" + o + "</color></b>", context);
         }
@@ -108,7 +108,7 @@ namespace Cosmos
             value.z = Mathf.Clamp(value.z, min.z, max.z);
             return value;
         }
-        public static Vector2 Clamp(Vector2 value,Vector2 min,Vector2 max)
+        public static Vector2 Clamp(Vector2 value, Vector2 min, Vector2 max)
         {
             value.x = Mathf.Clamp(value.x, min.x, max.x);
             value.y = Mathf.Clamp(value.y, min.y, max.y);
@@ -281,7 +281,7 @@ namespace Cosmos
             where T : UnityEngine.Object
         {
             T res = Resources.Load<T>(path);
-            if(res!=null)
+            if (res != null)
                 return res;
             else
             {
@@ -453,7 +453,7 @@ namespace Cosmos
         /// <param name="assembly">目标程序集</param>
         /// <param name="typeFullName">完全限定名</param>
         /// <returns>返回T类型的目标类型对象</returns>
-        public static T GetTypeInstance<T>(Assembly assembly,string typeFullName)
+        public static T GetTypeInstance<T>(Assembly assembly, string typeFullName)
             where T : class
         {
             Type type = assembly.GetType(typeFullName);
@@ -477,7 +477,7 @@ namespace Cosmos
         /// <param name="typeFullName">完全限定名</param>
         /// <returns>返回T类型的目标类型对象</returns>
         public static T GetTypeInstance<T>(Type type, string typeFullName)
-            where T:class
+            where T : class
         {
             return GetTypeInstance<T>(type.Assembly, typeFullName);
         }
@@ -488,8 +488,8 @@ namespace Cosmos
         /// <param name="arg">目标类型的对象</param>
         /// <param name="typeFullName">完全限定名</param>
         /// <returns>返回T类型的目标类型对象</returns>
-        public static T GetTypeInstance<T>(T arg,string typeFullName)
-            where T:class
+        public static T GetTypeInstance<T>(T arg, string typeFullName)
+            where T : class
         {
             return GetTypeInstance<T>(typeof(T).Assembly, typeFullName);
         }
@@ -514,11 +514,11 @@ namespace Cosmos
             return arg.ToString();
         }
         public static string GetTypeFullName<T>(string name)
-            where T:class
+            where T : class
         {
             return GetTypeFullName(typeof(T), name);
         }
-        public static string GetTypeFullName(Type type,string name)
+        public static string GetTypeFullName(Type type, string name)
         {
             if (type == null)
             {
@@ -528,7 +528,7 @@ namespace Cosmos
             string typeName = type.FullName;
             return string.IsNullOrEmpty(name) ? typeName : Format(typeName, name);
         }
-        public static string Format(string format,params object[] args)
+        public static string Format(string format, params object[] args)
         {
             if (string.IsNullOrEmpty(format))
             {
@@ -552,13 +552,13 @@ namespace Cosmos
         /// <param name="removeEmptyEntries">是否返回分割后数组中的空元素</param>
         /// <param name="subStringIndex">分割后数组的序号</param>
         /// <returns></returns>
-        public static string StringSplit(string fullString, String[] separator, bool removeEmptyEntries,int subStringIndex)
+        public static string StringSplit(string fullString, String[] separator, bool removeEmptyEntries, int subStringIndex)
         {
             string[] stringArray = null;
             if (removeEmptyEntries)
-                stringArray= fullString.Split(separator,StringSplitOptions.RemoveEmptyEntries);
+                stringArray = fullString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             else
-                stringArray=fullString.Split(separator, StringSplitOptions.None);
+                stringArray = fullString.Split(separator, StringSplitOptions.None);
             string subString = stringArray[subStringIndex];
             return subString;
         }
@@ -566,14 +566,14 @@ namespace Cosmos
         {
             string[] stringArray = null;
             if (removeEmptyEntries)
-                stringArray= fullString.Split(separator, count, StringSplitOptions.RemoveEmptyEntries);
+                stringArray = fullString.Split(separator, count, StringSplitOptions.RemoveEmptyEntries);
             else
-                stringArray= fullString.Split(separator, count, StringSplitOptions.None);
+                stringArray = fullString.Split(separator, count, StringSplitOptions.None);
             return stringArray.ToString();
         }
-        public static int CharCount(string fullString,char separator)
+        public static int CharCount(string fullString, char separator)
         {
-            if (string.IsNullOrEmpty(fullString)||string.IsNullOrEmpty(separator.ToString()))
+            if (string.IsNullOrEmpty(fullString) || string.IsNullOrEmpty(separator.ToString()))
             {
                 DebugError("charCount \n string invaild!");
                 return 0;
@@ -667,14 +667,16 @@ namespace Cosmos
         /// <returns>相对路径</returns>
         public static string DecomposeAbsolutePath(string absolutePath)
         {
-            return  absolutePath.Remove(0,ApplicationConst.ApplicationDataPath.Length);
+            return absolutePath.Remove(0, ApplicationConst.ApplicationDataPath.Length);
         }
         /// <summary>
         /// 刷新unity编辑器
         /// </summary>
         public static void RefreshEditor()
         {
+#if UNITY_EDITOR
             UnityEditor.AssetDatabase.Refresh();
+#endif
         }
     }
 }

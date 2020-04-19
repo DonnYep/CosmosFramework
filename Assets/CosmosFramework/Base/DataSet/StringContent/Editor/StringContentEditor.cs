@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using System;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 namespace Cosmos
 {
     [CustomEditor(typeof(StringContent))]
