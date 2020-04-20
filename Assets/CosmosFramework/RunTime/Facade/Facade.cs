@@ -16,12 +16,14 @@ using Cosmos.FSM;
 using Cosmos.Data;
 using Cosmos.Config;
 using Cosmos.Network;
-namespace Cosmos{
+using Cosmos.Controller;
+namespace Cosmos
+{
     /// <summary>
     /// CosmosFramework外观类，封装模块的功能，进行解耦
     /// 所有调用功能都通过这个外观类与模块进行沟通
     /// </summary>
-    public sealed  class Facade : Singleton<Facade>
+    public sealed class Facade : Singleton<Facade>
     {
         #region FacadeMethods
         public void InitAllModule()
@@ -41,28 +43,88 @@ namespace Cosmos{
             Cosmos.Controller.ControllerManager.Instance.DebugModule();
             Utility.DebugLog("Module Count:\t" + GameManager.Instance.ModuleCount);
         }
-        public void RegisterModule(string  moduleName)
+        public void RegisterModule(string moduleName)
         {
             InitModule(moduleName);
         }
         //TODO 反射初始化需要为AOT做出预留，专门设计为IOS系统的symbol
         IModule InitModule(string moduleName)
         {
+#if UNITY_EDITOR||UNITY_EDITOR_WIN||UNITY_STANDALONE_WIN||UNITY_ANDROID
             var result = GameManager.Instance.GetModule(moduleName);
             if (result == null)
             {
-                 var moduleResult= Utility.GetTypeInstance<IModule>(this.GetType().Assembly, Utility.Framework.GetModuleTypeFullName(moduleName));
+                var moduleResult = Utility.GetTypeInstance<IModule>(this.GetType().Assembly, Utility.Framework.GetModuleTypeFullName(moduleName));
                 GameManager.Instance.RegisterModule(moduleName, moduleResult);
                 return moduleResult;
             }
             else return result;
+#elif UNITY_IOS
+            return InitModuleForIOS(moduleName);
+#endif
         }
-        public IModule GetModule(string  moduleName)
+        /// <summary>
+        ///这个是为了避免IOS环境下的AOT编译无法通过反射初始化模块的方法
+        /// </summary>
+        IModule InitModuleForIOS(string moduleName)
+        {
+            switch (moduleName)
+            {
+                case CFModules.AUDIO:
+                    AudioManager.Instance.DebugModule();
+                    break;
+                case CFModules.CONFIG:
+                    ConfigManager.Instance.DebugModule();
+                    break;
+                case CFModules.CONTROLLER:
+                    ControllerManager.Instance.DebugModule();
+                    break;
+                case CFModules.DATA:
+                    DataManager.Instance.DebugModule();
+                    break;
+                case CFModules.ENTITY:
+                    break;
+                case CFModules.EVENT:
+                    EventManager.Instance.DebugModule();
+                    break;
+                case CFModules.FSM:
+                    FSMManager.Instance.DebugModule();
+                    break;
+                case CFModules.INPUT:
+                    InputManager.Instance.DebugModule();
+                    break;
+                case CFModules.MONO:
+                    MonoManager.Instance.DebugModule();
+                    break;
+                case CFModules.NETWORK:
+                    NetworkManager.Instance.DebugModule();
+                    break;
+                case CFModules.OBJECTPOOL:
+                    ObjectPoolManager.Instance.DebugModule();
+                    break;
+                case CFModules.REFERENCE:
+                    ReferencePoolManager.Instance.DebugModule();
+                    break;
+                case CFModules.RESOURCE:
+                    ResourceManager.Instance.DebugModule();
+                    break;
+                case CFModules.SCENE:
+                    SceneManager.Instance.DebugModule();
+                    break;
+                case CFModules.UI:
+                    UIManager.Instance.DebugModule();
+                    break;
+            }
+            var result = GameManager.Instance.GetModule(moduleName);
+            return result;
+        }
+
+        public IModule GetModule(string moduleName)
         {
             var moduleResult = GameManager.Instance.GetModule(moduleName);
             if (moduleResult == null)
             {
-               moduleResult= InitModule(moduleName);
+                moduleResult = InitModule(moduleName);
             }
             return moduleResult;
         }
@@ -138,13 +200,13 @@ namespace Cosmos{
         {
             return MonoManager.Instance.DelayCoroutine(delay);
         }
-        public Coroutine DelayCoroutine(float delay,CFAction callBack)
+        public Coroutine DelayCoroutine(float delay, CFAction callBack)
         {
-            return MonoManager.Instance.DelayCoroutine(delay,callBack);
+            return MonoManager.Instance.DelayCoroutine(delay, callBack);
         }
         #endregion
         #region AudioManager
-        public void PlayBackgroundAudio( GameEventArgs arg)
+        public void PlayBackgroundAudio(GameEventArgs arg)
         {
             AudioManager.Instance.PlayBackgroundAudio(arg);
         }
@@ -160,9 +222,9 @@ namespace Cosmos{
         {
             AudioManager.Instance.StopBackgroundAudio();
         }
-        public void PlayWorldAudio(GameObject attachTarget,GameEventArgs arg)
+        public void PlayWorldAudio(GameObject attachTarget, GameEventArgs arg)
         {
-            AudioManager.Instance.PlayWorldAudio(attachTarget,  arg );
+            AudioManager.Instance.PlayWorldAudio(attachTarget, arg);
         }
         public void PauseWorldAudio(GameObject attachTarget)
         {
@@ -213,13 +275,13 @@ namespace Cosmos{
         public T LoadResAsset<T>(string path, bool instantiateGameObject = false)
             where T : UnityEngine.Object
         {
-            return ResourceManager.Instance.LoadResAsset<T>(path,instantiateGameObject);
+            return ResourceManager.Instance.LoadResAsset<T>(path, instantiateGameObject);
         }
         /// <summary>
         /// 异步加载资源,如果目标是Gameobject，则实例化
         /// </summary>
         public void LoadResAysnc<T>(string path, CFAction<T> callBack = null)
-            where T:UnityEngine.Object
+            where T : UnityEngine.Object
         {
             ResourceManager.Instance.LoadResAysnc<T>(path, callBack);
         }
@@ -235,33 +297,33 @@ namespace Cosmos{
         /// 使用unityEngine.Resources方法
         /// </summary>
         public List<T> LoadResFolderAssets<T>(string path)
-            where T:UnityEngine.Object
+            where T : UnityEngine.Object
         {
             return ResourceManager.Instance.LoadResFolderAssets<T>(path);
         }
         public T[] LoadResAll<T>(string path)
-            where T:UnityEngine.Object
+            where T : UnityEngine.Object
         {
             return ResourceManager.Instance.LoadResAll<T>(path);
         }
         #endregion
-        # region 基于AssetBundle
+        #region 基于AssetBundle
 
         #endregion
-#endregion
+        #endregion
         #region ScenesManager
-        public void LoadScene(string sceneName, CFAction callBack=null)
+        public void LoadScene(string sceneName, CFAction callBack = null)
         {
             SceneManager.Instance.LoadScene(sceneName, callBack);
         }
-        public void LoadScene(int sceneIndex, CFAction callBack=null)
+        public void LoadScene(int sceneIndex, CFAction callBack = null)
         {
             SceneManager.Instance.LoadScene(sceneIndex, callBack);
         }
         /// <summary>
         /// 回调函数只在完成后进行一次回调
         /// </summary>
-        public void LoadSceneAsync(string sceneName, CFAction callBack=null)
+        public void LoadSceneAsync(string sceneName, CFAction callBack = null)
         {
             SceneManager.Instance.LoadSceneAsync(sceneName, callBack);
         }
@@ -269,7 +331,7 @@ namespace Cosmos{
         /// 回调函数每次yield更新都会调用
         /// ，不会进行完成后的调用
         /// </summary>
-        public void LoadSceneAsync(string sceneName, CFAction<float> callBack )
+        public void LoadSceneAsync(string sceneName, CFAction<float> callBack)
         {
             SceneManager.Instance.LoadSceneAsync(sceneName, callBack);
         }
@@ -284,7 +346,7 @@ namespace Cosmos{
         /// <summary>
         /// 回调函数只在完成后进行一次回调
         /// </summary>
-        public void LoadSceneAsync(int sceneIndex, CFAction callBack= null)
+        public void LoadSceneAsync(int sceneIndex, CFAction callBack = null)
         {
             SceneManager.Instance.LoadSceneAsync(sceneIndex, callBack);
         }
@@ -308,7 +370,7 @@ namespace Cosmos{
         #region GameObjectPool
         public void RegisterObjcetSpawnPool(object objKey, GameObject spawnItem, CFAction<GameObject> onSpawn, CFAction<GameObject> onDespawn)
         {
-            ObjectPoolManager.Instance.RegisterSpawnPool(objKey, spawnItem, onSpawn,onDespawn);
+            ObjectPoolManager.Instance.RegisterSpawnPool(objKey, spawnItem, onSpawn, onDespawn);
         }
         public void DeregisterObjectSapwnPool(object objKey)
         {
@@ -326,7 +388,7 @@ namespace Cosmos{
         {
             ObjectPoolManager.Instance.Despawn(objKey, go);
         }
-        public void DespawnObjects(object objKey,GameObject[] gos)
+        public void DespawnObjects(object objKey, GameObject[] gos)
         {
             ObjectPoolManager.Instance.Despawns(objKey, gos);
         }
@@ -338,7 +400,7 @@ namespace Cosmos{
         {
             ObjectPoolManager.Instance.ClearAll();
         }
-        public void SetObjectSpawnItem(object objKey,GameObject go)
+        public void SetObjectSpawnItem(object objKey, GameObject go)
         {
             ObjectPoolManager.Instance.SetSpawnItem(objKey, go);
         }
@@ -353,7 +415,7 @@ namespace Cosmos{
         /// <summary>
         /// 生成对象但不经过池，通常用在一次性对象的产生上
         /// </summary>
-        public GameObject SpawnObjectNotUsePool(GameObject go,Transform spawnTransform)
+        public GameObject SpawnObjectNotUsePool(GameObject go, Transform spawnTransform)
         {
             return ObjectPoolManager.Instance.SpawnNotUsePool(go, spawnTransform);
         }
@@ -375,7 +437,7 @@ namespace Cosmos{
             ControllerManager.Instance.DeregisterController<T>(controller);
         }
         public T GetController<T>(CFPredicateAction<T> predicate)
-            where T:CFController
+            where T : CFController
         {
             return ControllerManager.Instance.GetController<T>(predicate);
         }
@@ -398,7 +460,7 @@ namespace Cosmos{
         {
             return ControllerManager.Instance.GetControllerTypeCount();
         }
-        public bool  HasController<T>()
+        public bool HasController<T>()
             where T : CFController
         {
             return ControllerManager.Instance.HasController<T>();
@@ -426,7 +488,7 @@ namespace Cosmos{
         /// <param name="fileName">文件名称</param>
         /// <param name="dataSet">装箱后的数据</param>
         /// <param name="callBack">回调函数，当写入成功后调用</param>
-        public void SaveJsonDataToLocal<T>(string relativePath, string fileName, T dataSet, CFAction callBack=null)
+        public void SaveJsonDataToLocal<T>(string relativePath, string fileName, T dataSet, CFAction callBack = null)
         {
             DataManager.Instance.SaveJsonDataToLocal(relativePath, fileName, dataSet, callBack);
         }
@@ -456,7 +518,7 @@ namespace Cosmos{
         public int GetReferencePoolCount<T>()
             where T : class, IReference, new()
         {
-            return  ReferencePoolManager.Instance.GetPoolCount<T>();
+            return ReferencePoolManager.Instance.GetPoolCount<T>();
         }
         public T SpawnReference<T>()
             where T : class, IReference, new()
@@ -507,8 +569,8 @@ namespace Cosmos{
         /// 载入面板，若字典中已存在，则使用回调，并返回。若不存在，则异步加载且使用回调。
         /// 基于Resources
         /// </summary>
-        public void ShowPanel<T>(string panelName,CFAction<T> callBack=null)
-            where T:UILogicBase
+        public void ShowPanel<T>(string panelName, CFAction<T> callBack = null)
+            where T : UILogicBase
         {
             UIManager.Instance.ShowPanel(panelName, callBack);
         }
@@ -536,7 +598,7 @@ namespace Cosmos{
         #endregion
         #region FSMManager
         public FSMBase GetFSM<T>()
-            where T:FSMBase
+            where T : FSMBase
         {
             return FSMManager.Instance.GetFSM<T>();
         }
@@ -545,7 +607,7 @@ namespace Cosmos{
             return GetFSM(type);
         }
         public FSMBase[] GetAllFSM<T>()
-            where T:FSMBase
+            where T : FSMBase
         {
             return FSMManager.Instance.GetAllFSM<T>();
         }
@@ -554,7 +616,7 @@ namespace Cosmos{
             return FSMManager.Instance.GetAllFSM(type);
         }
         public bool HasFSM<T>()
-            where T:FSMBase
+            where T : FSMBase
         {
             return FSMManager.Instance.HasFSM<T>();
         }
@@ -567,13 +629,13 @@ namespace Cosmos{
         {
             return FSMManager.Instance.CreateFSM(owner, states);
         }
-        public IFSM<T> CreateFSM<T>(string name,T owner, params FSMState<T>[] states)
+        public IFSM<T> CreateFSM<T>(string name, T owner, params FSMState<T>[] states)
             where T : class
         {
             return FSMManager.Instance.CreateFSM<T>(name, owner, states);
         }
         public IFSM<T> CreateFSM<T>(T owner, List<FSMState<T>> states)
-            where T:FSMBase
+            where T : FSMBase
         {
             return FSMManager.Instance.CreateFSM(owner, states);
         }
@@ -595,6 +657,6 @@ namespace Cosmos{
         {
             FSMManager.Instance.ShutdownAllFSM();
         }
-            #endregion
+        #endregion
     }
 }
