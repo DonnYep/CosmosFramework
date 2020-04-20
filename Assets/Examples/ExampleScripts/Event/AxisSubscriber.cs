@@ -15,7 +15,7 @@ using Cosmos;
         InputKey key;
         int sliderOffset;
         int SliderOffset { get { return Utility.Int(slider.maxValue / 2); } }
-        LogicEventArgs<InputVariable> inputHandler;
+    LogicEventArgs<InputVariable> inputHandler;
         Slider slider;
         Text text;
         private void Start()

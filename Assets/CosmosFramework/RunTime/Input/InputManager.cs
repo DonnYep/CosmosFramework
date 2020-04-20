@@ -3,18 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using Cosmos.Mono;
 using Cosmos.Event;
-namespace Cosmos.Input { 
-    public enum InputButtonState:int
+namespace Cosmos.Input
+{
+    public enum InputButtonState : int
     {
-        None=-1,
-        Down=0,
-        Hold=1,
-        Up=2
+        None = -1,
+        Down = 0,
+        Hold = 1,
+        Up = 2
     }
     /// <summary>
     /// 输入管理器，主要为不同平台设备类型做适配，与之对应的有ControllerManager。
     /// </summary>
-    public sealed class InputManager :Module<InputManager>
+    public sealed class InputManager : Module<InputManager>
     {
         short updateID;
         LogicEventArgs<InputVariable> inputHandler = new LogicEventArgs<InputVariable>();
@@ -26,9 +27,9 @@ namespace Cosmos.Input {
             inputHandler.SetData(inputVariable);
             Facade.Instance.AddMonoListener(InputUpdate, UpdateType.Update, (id) => updateID = id);
         }
-         ~InputManager()
+        ~InputManager()
         {
-            Facade.Instance.RemoveMonoListener(InputUpdate, UpdateType.Update,updateID);
+            Facade.Instance.RemoveMonoListener(InputUpdate, UpdateType.Update, updateID);
         }
         void InputUpdate()
         {
@@ -44,7 +45,7 @@ namespace Cosmos.Input {
             inputHandler.Data.MouseButtonWheel = UnityEngine.Input.GetAxis("Mouse ScrollWheel");
             inputHandler.Data.LeftShift = UnityEngine.Input.GetKey(KeyCode.LeftShift);
             inputHandler.Data.Escape = UnityEngine.Input.GetKeyDown(KeyCode.Escape);
-            if(EventManager.Instance.IsEventRegistered(InputEventCodeParams.INPUT_INPUT))
+            if (EventManager.Instance.IsEventRegistered(InputEventCodeParams.INPUT_INPUT))
                 EventManager.Instance.DispatchEvent(InputEventCodeParams.INPUT_INPUT, this, inputHandler);
         }
         /// <summary>
@@ -52,7 +53,7 @@ namespace Cosmos.Input {
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        InputButtonState ButtonPressState( KeyCode key)
+        InputButtonState ButtonPressState(KeyCode key)
         {
             if (UnityEngine.Input.GetKeyDown(key))
                 return InputButtonState.Down;

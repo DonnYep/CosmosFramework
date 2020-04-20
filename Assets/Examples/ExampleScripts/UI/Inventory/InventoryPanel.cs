@@ -26,24 +26,24 @@ namespace Cosmos
         Text txtDescription;
         protected override void OnInitialization()
         {
-            GetUIComp<Button>("BtnLoad").onClick.AddListener(LoadClick);
-            GetUIComp<Button>("BtnQuit").onClick.AddListener(QuitClick);
-            GetUIComp<Button>("BtnSave").onClick.AddListener(SaveClick);
-            GetUIComp<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
-            txtDescription = GetUIComp<Text>("TxtDescription");
+            GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
+            GetUIPanel<Button>("BtnQuit").onClick.AddListener(QuitClick);
+            GetUIPanel<Button>("BtnSave").onClick.AddListener(SaveClick);
+            GetUIPanel<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
+            txtDescription = GetUIPanel<Text>("TxtDescription");
             AddUIEventListener(UIImplementCodeParams.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
         }
         protected override void OnTermination()
         {
-            GetUIComp<Button>("BtnLoad").onClick.RemoveAllListeners();
-            GetUIComp<Button>("BtnQuit").onClick.RemoveAllListeners();
-            GetUIComp<Button>("BtnSave").onClick.RemoveAllListeners();
-            GetUIComp<Button>("BtnUpdate").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("BtnLoad").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("BtnSave").onClick.RemoveAllListeners();
+            GetUIPanel<Button>("BtnUpdate").onClick.RemoveAllListeners();
             RemoveUIEventListener(UIImplementCodeParams.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
         }
         private void Start()
         {
-            DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, null, Uip);
+            DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, this, Uip);
         }
         void LoadClick()
         {
@@ -63,7 +63,7 @@ namespace Cosmos
         }
         void UpdateClick()
         {
-            DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, null, Uip);
+            DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, this, Uip);
         }
         void UpdateItemHandler(object sender,GameEventArgs args)
         {

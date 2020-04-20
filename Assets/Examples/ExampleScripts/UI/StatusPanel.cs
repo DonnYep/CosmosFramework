@@ -8,11 +8,11 @@ public class StatusPanel : UILogicResident
 {
     protected override void OnInitialization()
     {
-        GetUIComp<Button>("BtnQuit").onClick.AddListener(QuitClick);
+        GetUIPanel<Button>("BtnQuit").onClick.AddListener(QuitClick);
     }
     protected override void OnTermination()
     {
-        GetUIComp<Button>("BtnQuit").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
     }
     void QuitClick()
     {

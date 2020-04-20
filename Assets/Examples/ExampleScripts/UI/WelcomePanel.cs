@@ -10,17 +10,17 @@ public class WelcomePanel : UILogicTemporary
     InputField inputMsg;
     protected override void OnInitialization()
     {
-        GetUIComp<Button>("BtnShowInfo").onClick.AddListener(ShowInfo);
-        GetUIComp<Button>("BtnHideInfo").onClick.AddListener(HideInfo);
-        GetUIComp<Button>("BtnQuit").onClick.AddListener(Quit);
-        info = GetUIComp<Image>("TxtInfo").transform.Find("Info").GetComponent<Text>();
-        inputMsg = GetUIComp<InputField>("InputMsg");
+        GetUIPanel<Button>("BtnShowInfo").onClick.AddListener(ShowInfo);
+        GetUIPanel<Button>("BtnHideInfo").onClick.AddListener(HideInfo);
+        GetUIPanel<Button>("BtnQuit").onClick.AddListener(Quit);
+        info = GetUIPanel<Image>("TxtInfo").transform.Find("Info").GetComponent<Text>();
+        inputMsg = GetUIPanel<InputField>("InputMsg");
     }
     protected override void OnTermination()
     {
-        GetUIComp<Button>("BtnShowInfo").onClick.RemoveAllListeners();
-        GetUIComp<Button>("BtnHideInfo").onClick.RemoveAllListeners();
-        GetUIComp<Button>("BtnQuit").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnShowInfo").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnHideInfo").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
     }
     void ShowInfo()
     {

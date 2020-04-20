@@ -4,8 +4,7 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-namespace Cosmos
-{
+namespace Cosmos{
     /// <summary>
     /// 子类也继承按钮
     /// </summary>

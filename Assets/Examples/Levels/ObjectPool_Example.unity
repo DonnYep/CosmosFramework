@@ -243,7 +243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoStart: 1
   startDelay: 1
-  interval: 1
+  interval: 0.1
   loop: 1
   randomInterval: 0
   randomRange: 0.1
@@ -261,8 +261,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!1 &225758069
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,7 +541,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoStart: 1
   startDelay: 0.5
-  interval: 1
+  interval: 0.1
   loop: 1
   randomInterval: 0
   randomRange: 0.1
@@ -561,8 +559,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!1 &938495229
 GameObject:
   m_ObjectHideFlags: 0
@@ -834,7 +830,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoStart: 1
   startDelay: 0.5
-  interval: 1
+  interval: 0.1
   loop: 1
   randomInterval: 0
   randomRange: 0.1
@@ -852,8 +848,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!1 &1861258379
 GameObject:
   m_ObjectHideFlags: 0

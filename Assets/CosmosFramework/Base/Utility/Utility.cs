@@ -32,44 +32,49 @@ namespace Cosmos
     /// </summary>
     public sealed partial class Utility
     {
-        //Log打印是否开启，默认开启
-        static bool enableDebugLog = true;
-        public static bool EnableDebugLog { get { return enableDebugLog; } set { enableDebugLog = value; } }
         public static void DebugLog(object o, Object context = null)
         {
-            if (!EnableDebugLog)
+#if UNITY_EDITOR
+            if (!ApplicationConst.Editor.EnableDebugLog)
                 return;
             if (context == null)
                 Debug.Log("<b>-->><color=#254FDB>" + o + "</color></b>");
             else
                 Debug.Log("<b>-->><color=#254FDB>" + o + "</color></b>", context);
+#endif
         }
         public static void DebugLog(object o, MessageColor messageColor, Object context = null)
         {
-            if (!EnableDebugLog)
+#if UNITY_EDITOR
+            if (!ApplicationConst.Editor.EnableDebugLog)
                 return;
             if (context == null)
                 Debug.Log("<b>-->><color=" + messageColor.ToString() + ">" + o + "</color></b>");
             else
                 Debug.Log("<b>-->><color=" + messageColor.ToString() + ">" + o + "</color></b>", context);
+#endif
         }
         public static void DebugWarning(object o, Object context = null)
         {
-            if (!EnableDebugLog)
+#if UNITY_EDITOR
+            if (!ApplicationConst.Editor.EnableDebugLog)
                 return;
             if (context == null)
                 Debug.LogWarning("<b>-->><color=#FF5E00>" + o + "</color></b>");
             else
                 Debug.LogWarning("<b>-->><color=#FF5E00>" + o + "</color></b>", context);
+#endif
         }
         public static void DebugError(object o, Object context = null)
         {
-            if (!EnableDebugLog)
+#if UNITY_EDITOR
+            if (!ApplicationConst.Editor.EnableDebugLog)
                 return;
             if (context == null)
                 Debug.LogError("<b>-->><color=#FF0000>" + o + "</color></b>");
             else
                 Debug.LogError("<b>-->><color=#FF0000>" + o + "</color></b>", context);
+#endif
         }
         public static int Int(object arg)
         {
@@ -364,6 +369,9 @@ namespace Cosmos
                     GameManager.KillObject(go.GetChild(i).gameObject);
                 }
         }
+        /// <summary>
+        ///谨慎使用这个方法
+        /// </summary>
         public static void ClearMemory()
         {
             GC.Collect(); Resources.UnloadUnusedAssets();
@@ -375,8 +383,7 @@ namespace Cosmos
         /// <returns></returns>
         public static bool HasPrefsKey(string key)
         {
-            string fullKey = GetPrefsKey(key);
-            if (PlayerPrefs.HasKey(fullKey))
+            if (PlayerPrefs.HasKey(GetPrefsKey(key)))
                 return true;
             else
             {
@@ -391,22 +398,21 @@ namespace Cosmos
         /// <returns></returns>
         public static string GetPrefsKey(string key)
         {
-            return ApplicationConst._AppPerfix + "_" + key;
+            Utility.Text.ClearStringBuilder();
+            return Utility.Text.AppendFormat(ApplicationConst.APPPERFIX + "_" + key);
+            //return ApplicationConst.APPPERFIX + "_" + key;
         }
         public static int GetPrefsInt(string key)
         {
-            string fullKey = GetPrefsKey(key);
-            return PlayerPrefs.GetInt(fullKey);
+            return PlayerPrefs.GetInt(GetPrefsKey(key));
         }
         public static string GetString(string key)
         {
-            string fullKey = GetPrefsKey(key);
-            return PlayerPrefs.GetString(fullKey);
+            return PlayerPrefs.GetString(GetPrefsKey(key));
         }
         public static float GetPrefsFloat(string key)
         {
-            string fullKey = GetPrefsKey(key);
-            return PlayerPrefs.GetFloat(fullKey);
+            return PlayerPrefs.GetFloat(GetPrefsKey(key));
         }
         public static void SetPrefsString(string key, string value)
         {
@@ -448,6 +454,7 @@ namespace Cosmos
         /// <summary>
         ///   /// 反射工具，得到反射类的对象；
         /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
+        /// 在IOS上受限，发布IOS是需要谨慎
         /// </summary>
         /// <typeparam name="T">类型目标</typeparam>
         /// <param name="assembly">目标程序集</param>
@@ -471,6 +478,7 @@ namespace Cosmos
         /// <summary>
         ///   /// 反射工具，得到反射类的对象；
         /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
+        /// 在IOS上受限，发布IOS是需要谨慎
         /// </summary>
         /// <typeparam name="T">类型目标</typeparam>
         /// <param name="type">目标对象程序集中的某个对象类型:GetType()</param>
@@ -484,6 +492,7 @@ namespace Cosmos
         /// <summary>
         /// 反射工具，得到反射类的对象；
         /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
+        /// 在IOS上受限，发布IOS是需要谨慎
         /// <typeparam name="T">目标类型</typeparam>
         /// <param name="arg">目标类型的对象</param>
         /// <param name="typeFullName">完全限定名</param>
@@ -494,6 +503,7 @@ namespace Cosmos
             return GetTypeInstance<T>(typeof(T).Assembly, typeFullName);
         }
         #region Text Tool
+        //TODO 利用已经封装好的Utility.Text类替换
         static StringBuilder stringBuilderCache;
         static StringBuilder StringBuilderCache
         {
@@ -668,15 +678,6 @@ namespace Cosmos
         public static string DecomposeAbsolutePath(string absolutePath)
         {
             return absolutePath.Remove(0, ApplicationConst.ApplicationDataPath.Length);
-        }
-        /// <summary>
-        /// 刷新unity编辑器
-        /// </summary>
-        public static void RefreshEditor()
-        {
-#if UNITY_EDITOR
-            UnityEditor.AssetDatabase.Refresh();
-#endif
         }
     }
 }

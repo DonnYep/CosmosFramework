@@ -33,7 +33,7 @@ namespace Cosmos.CosmosEditor
             EditorGUILayout.Space();
             if (GUILayout.Button("访问源码", GUILayout.Height(32)))
             {
-                Application.OpenURL("https://github.com/DonHitYep/CosmosFramework");
+                Application.OpenURL("https://github.com/DonCFramework/DonCFramework");
             }
             EditorGUILayout.HelpBox("这是一个轻量级的游戏框架。Utiity脚本提供了常用的功能函数。" +
                 "Facade脚本作为中间类，已封装了所有模块的公共函数，只需调用Facade.Instance，即可出现当前大部分模块的公共方法。", MessageType.Info);

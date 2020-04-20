@@ -1,33 +1,34 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-namespace Cosmos {
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Cosmos;
+
+/// <summary>
+/// UI模块具体实现的参数类，仅做示例
+/// </summary>
+public class LogicEventArgs<T> : GameEventArgs
+{
     /// <summary>
-    /// 框架中整体业务逻辑的事件参数
+    /// 泛型构造
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class LogicEventArgs<T> : GameEventArgs
+    /// <param name="data"></param>
+    public LogicEventArgs(T data)
     {
-        /// <summary>
-        /// 泛型构造
-        /// </summary>
-        /// <param name="data"></param>
-        public LogicEventArgs(T data)
-        {
-            SetData(data);
-        }
-        public LogicEventArgs() { }
-        /// <summary>
-        /// 泛型数据类型
-        /// </summary>
-        public T Data { get; private set; }
-        public void SetData(T data)
-        {
-            Data = data;
-        }
-        public override void Clear()
-        {
-            Data = default(T);
-        }
+        SetData(data);
+    }
+    public LogicEventArgs() { }
+    /// <summary>
+    /// 泛型数据类型
+    /// </summary>
+    public T Data { get;private set; }
+    public void SetData(T data)
+    {
+        Data = data;
+    }
+    public override void Clear()
+    {
+        Data = default(T);
     }
 }

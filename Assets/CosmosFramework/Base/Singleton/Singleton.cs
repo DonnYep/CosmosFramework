@@ -51,7 +51,6 @@ namespace Cosmos
                         if(instance==null)
                             instance = new T();
                     }
-
                 }
                 return instance;
             }
@@ -59,6 +58,7 @@ namespace Cosmos
     }
     /// <summary>
     /// 继承mono的单例基类
+    ///默认情况下, Awake自动适配，应用退出时释放。
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class MonoSingleton<T> : MonoBehaviour
@@ -89,13 +89,12 @@ namespace Cosmos
         {
             instance = this as T;
         }
-
         private void OnApplicationQuit()
         {
             instance = null;
         }
         /// <summary>
-        /// 空虚的函数，用于初始化mono单例
+        //空的虚方法，在当前单例对象为空初始化时执行一次
         /// </summary>
         virtual public void Init() { }
     }

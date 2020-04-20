@@ -13,19 +13,19 @@ public class NavigatePanel : UILogicBase
     StatusPanel status;
     protected override void OnInitialization()
     {
-        GetUIComp<Button>("BtnWelcome").onClick.AddListener(WelcomeClick);
-        GetUIComp<Button>("BtnInventory").onClick.AddListener(InventoryClick);
-        GetUIComp<Button>("BtnStore").onClick.AddListener(StoreClick);
-        GetUIComp<Button>("BtnStatus").onClick.AddListener(StatusClick);
-        GetUIComp<Button>("BtnSetting").onClick.AddListener(SettingClick);
+        GetUIPanel<Button>("BtnWelcome").onClick.AddListener(WelcomeClick);
+        GetUIPanel<Button>("BtnInventory").onClick.AddListener(InventoryClick);
+        GetUIPanel<Button>("BtnStore").onClick.AddListener(StoreClick);
+        GetUIPanel<Button>("BtnStatus").onClick.AddListener(StatusClick);
+        GetUIPanel<Button>("BtnSetting").onClick.AddListener(SettingClick);
     }
     protected override void OnTermination()
     {
-        GetUIComp<Button>("BtnWelcome").onClick.RemoveAllListeners();
-        GetUIComp<Button>("BtnInventory").onClick.RemoveAllListeners();
-        GetUIComp<Button>("BtnStore").onClick.RemoveAllListeners();
-        GetUIComp<Button>("BtnStatus").onClick.RemoveAllListeners();
-        GetUIComp<Button>("BtnSetting").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnWelcome").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnInventory").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnStore").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnStatus").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnSetting").onClick.RemoveAllListeners();
     }
     void WelcomeClick()
     {

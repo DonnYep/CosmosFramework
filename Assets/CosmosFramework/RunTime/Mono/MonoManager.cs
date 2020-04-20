@@ -25,7 +25,7 @@ namespace Cosmos.Mono
         // 单个monoController update委托的容量
        public  static readonly short _UpdateCapacity= 100;
         // 单个monoController fixedUpdate委托的容量
-        public static  readonly short _FixedUpdateCapacity = 100;
+        public static readonly short _FixedUpdateCapacity = 100;
         // 单个monoController lateUpdate委托的容量
         public static readonly short _LateUpdateCapacity = 100;
         // monoController的总数量

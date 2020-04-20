@@ -11,22 +11,19 @@ namespace Cosmos.UI{
         Dictionary<string, List<UIBehaviour>> uiDict = new Dictionary<string, List<UIBehaviour>>();
         protected virtual void Awake()
         {
-            RegisterUIComp<Button>();
-            RegisterUIComp<Text>();
-            RegisterUIComp<Slider>();
-            RegisterUIComp<ScrollRect>();
-            RegisterUIComp<Image>();
-            RegisterUIComp<InputField>();
+            RegisterUIPanel<Button>();
+            RegisterUIPanel<Text>();
+            RegisterUIPanel<Slider>();
+            RegisterUIPanel<ScrollRect>();
+            RegisterUIPanel<Image>();
+            RegisterUIPanel<InputField>();
             OnInitialization();
         }
         protected abstract void OnInitialization();
-        /// <summary>
-        /// 获取UI组件
-        /// </summary>
-        protected T GetUIComp<T>(string name)
+        protected T GetUIPanel<T>(string name)
             where T:UIBehaviour
         {
-            if (HasUIComp(name))
+            if (HasPanel(name))
             {
                 short listCount = (short)uiDict[name].Count;
                 for (short i = 0; i <listCount ; i++)
@@ -38,11 +35,7 @@ namespace Cosmos.UI{
             }
             return null;
         }
-        /// <summary>
-        /// 在Awake阶段注册UI组件到当前的字典中
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-       protected void RegisterUIComp<T>()
+        protected void RegisterUIPanel<T>()
             where T : UIBehaviour
         {
             T[] uiPanels = GetComponentsInChildren<T>();
@@ -61,45 +54,7 @@ namespace Cosmos.UI{
                 }
             }
         }
-        /// <summary>
-        /// 注销或移除某个panel下的T类型UI组件
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="panelName"></param>
-        protected void DeregisterUIComp<T>(string panelName)
-            where T:UIBehaviour
-        {
-            if (HasUIComp(panelName))
-            {
-                HashSet<T> removeSet = new HashSet<T>();
-                for (int i = 0; i < uiDict[panelName].Count; i++)
-                {
-                    if(uiDict[panelName][i] is T)
-                    {
-                        removeSet.Add(uiDict[panelName][i] as T);
-                    }
-                }
-                foreach (var rs in removeSet)
-                {
-                    uiDict[panelName].Remove(rs);
-                }
-                removeSet.Clear();
-            }
-            else
-            {
-                Utility.DebugLog("UIComp not registed>>" + panelName, MessageColor.fuchsia);
-            }
-        }
-        /// <summary>
-        /// 注销整个对应名称的panel
-        /// </summary>
-        /// <param name="panelName"></param>
-        protected void DeregisterUIComp(string panelName)
-        {
-            if (HasUIComp(panelName))
-                uiDict.Remove(panelName);
-        }
-        public bool HasUIComp(string name)
+        public bool HasPanel(string name)
         {
             return uiDict.ContainsKey(name);
         }

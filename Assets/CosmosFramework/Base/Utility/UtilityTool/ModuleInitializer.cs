@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace Cosmos.Test
-{
+namespace Cosmos.Test{
     public class ModuleInitializer : MonoBehaviour
     {
         enum ModuleType : int
@@ -37,7 +36,7 @@ namespace Cosmos.Test
                     Facade.Instance.InitAllModule();
                     break;
                 default:
-                    var moduleResult = Facade.Instance.GetModule(module.ToString());
+                    var moduleResult= Facade.Instance.GetModule(module.ToString());
                     if (moduleResult != null)
                         Utility.DebugLog(moduleResult.ModuleMountObject.name);
                     break;

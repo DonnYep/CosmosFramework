@@ -7,7 +7,6 @@ namespace Cosmos
     public class InputVariable : Variable
     {
         public override void Clear() { }
-
         public Vector2 HorizVertAxis { get; set; }
         public Vector2 MouseAxis { get; set; }
         public float MouseButtonWheel { get; set; }
