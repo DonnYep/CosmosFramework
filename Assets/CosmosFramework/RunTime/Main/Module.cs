@@ -46,7 +46,7 @@ namespace Cosmos {
             get
             {
                 if (string.IsNullOrEmpty(moduleName))
-                    moduleName = Utility.StringSplit(Utility.GetTypeFullName<T>(), new string[] { "." }, true, 2);
+                    moduleName = Utility.Text.StringSplit(Utility.Assembly.GetTypeFullName<T>(), new string[] { "." }, true, 2);
                 return moduleName;
             }
         }
@@ -59,7 +59,7 @@ namespace Cosmos {
             get
             {
                 if (string.IsNullOrEmpty(moduleFullName))
-                    moduleFullName = Utility.GetTypeFullName<T>();
+                    moduleFullName = Utility.Assembly.GetTypeFullName<T>();
                 return moduleFullName;
             }
         }
@@ -85,16 +85,20 @@ namespace Cosmos {
         protected virtual void OnModuleInstanceCalled() { }
         #region interface IModule
         /// <summary>
-        /// 空虚函数 初始化
+        /// 空虚函数 初始化，相当于Awake
         /// </summary>
         public virtual void OnInitialization() { }
-     
+        /// <summary>
+        /// 模块准备工作，在OnInitialization()函数之后执行
+        /// </summary>
+        public virtual void OnPreparatory() { }
         /// <summary>
         /// 暂停
         /// </summary>
         public virtual  void OnPause() { }
         /// <summary>
-        /// 停止
+        /// 非空虚函数，停止模块
+        /// 在子类调用时，建议保留执行父类函数
         /// </summary>
         public virtual  void OnTermination()
         {
@@ -107,6 +111,8 @@ namespace Cosmos {
         /// 恢复暂停
         /// </summary>
         public virtual void OnUnPause() { }
+
+       
         #endregion
     }
 }

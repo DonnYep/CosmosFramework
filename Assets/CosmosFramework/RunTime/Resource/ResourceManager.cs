@@ -101,7 +101,10 @@ namespace Cosmos.Resource
             yield return req;
             callBack?.Invoke(req.asset as T);
         }
-        public List<T> LoadResFolderAssets<T>(string path)//通过路径载入资源
+        /// <summary>
+        /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
+        /// </summary>
+        public List<T> LoadResFolderAssets<T>(string path)
        where T : class
         {
             List<T> list = new List<T>();
@@ -112,6 +115,9 @@ namespace Cosmos.Resource
             }
             return list;
         }
+        /// <summary>
+        /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
+        /// </summary>
         public T[] LoadResAll<T>(string path)
             where T : UnityEngine.Object
         {

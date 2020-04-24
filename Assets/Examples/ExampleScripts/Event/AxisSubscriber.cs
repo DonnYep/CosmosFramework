@@ -14,7 +14,7 @@ using Cosmos;
         [SerializeField]
         InputKey key;
         int sliderOffset;
-        int SliderOffset { get { return Utility.Int(slider.maxValue / 2); } }
+        int SliderOffset { get { return Utility.Converter.Int(slider.maxValue / 2); } }
     LogicEventArgs<InputVariable> inputHandler;
         Slider slider;
         Text text;
@@ -37,7 +37,7 @@ using Cosmos;
                     break;
             }
             float textValue = slider.value-SliderOffset;
-            text.text = Utility.Int(textValue).ToString();
+            text.text = Utility.Converter.Int(textValue).ToString();
             InputKeyDebugInfo();
         }
         private void OnDestroy()

@@ -8,7 +8,7 @@ namespace Cosmos
     {
         [SerializeField]
          AudioClip[] audioClips;
-        public override AudioClip AudioClip { get { return audioClips[ Utility.Random(0,audioClips.Length)]; } }
+        public override AudioClip AudioClip { get { return audioClips[ Utility.Unity.Random(0,audioClips.Length)]; } }
         public override void Reset()
         {
             objectName= "NewEnviroAudio";

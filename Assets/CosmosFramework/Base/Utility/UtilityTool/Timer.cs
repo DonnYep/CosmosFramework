@@ -45,7 +45,7 @@ public class Timer : MonoBehaviour {
             if(!RandomInterval)
             tempRoutine = Facade.Instance.StartCoroutine(EnumAction(Interval, ()=>action.Invoke()));
             else
-                tempRoutine = Facade.Instance.StartCoroutine(EnumAction(Interval+ Utility.Random(-RandomRange, RandomRange), () => action.Invoke()));
+                tempRoutine = Facade.Instance.StartCoroutine(EnumAction(Interval+ Utility.Unity.Random(-RandomRange, RandomRange), () => action.Invoke()));
         }
         /// <summary>
         /// 立即停止
@@ -56,7 +56,7 @@ public class Timer : MonoBehaviour {
         }
         IEnumerator EnumAction(object arg,CFAction handler)
         {
-            yield return new WaitForSeconds(Utility.Float(arg));
+            yield return new WaitForSeconds(Utility.Converter.Float(arg));
             handler?.Invoke();
             if(loop)
                 tempRoutine = Facade.Instance.StartCoroutine(EnumAction(Interval, () => action.Invoke()));

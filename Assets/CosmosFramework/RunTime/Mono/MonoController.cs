@@ -60,7 +60,6 @@ namespace Cosmos.Mono
             {
                 if (currentSize <= 0)
                 {
-                    //Utility.DebugLog( " MonoID     "+monoID+" action empty! ");
                     return ContainerState.Empty;
                 }
                 else

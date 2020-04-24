@@ -8,7 +8,7 @@ namespace Cosmos.IO{
     {
         public void ParseDefaultFileExtentionsList(ref string[] extention)
         {
-            TextAsset ta = Utility.Load<TextAsset>(ApplicationConst.FileExtensionList);
+            TextAsset ta = Utility.Unity.Load<TextAsset>(ApplicationConst.FileExtensionList);
             if (ta == null)
             {
                 Utility.DebugError("load text asset fail ,file :" + ApplicationConst.FileExtensionList + " does not exist!\nconfigManager");
@@ -47,7 +47,7 @@ namespace Cosmos.IO{
             xml.AppendChild(xmldel);
             XmlElement root = xml.CreateElement(ApplicationConst.ALL_XMLROOT_NAME);
             xml.AppendChild(root);
-            string fullFilePath = Utility.CombineRelativeFilePath(fileName, fullPath);
+            string fullFilePath = Utility.IO.CombineRelativeFilePath(fileName, fullPath);
             xml.Save(fullFilePath);
             Utility.DebugLog("Config file is created, Check your path!");
             return xml;
@@ -130,12 +130,12 @@ namespace Cosmos.IO{
             }
             else
             {
-                string outPath = Utility.CombineAbsolutePath(outputPath);//绝对路径
+                string outPath = Utility.Unity.CombineAppAbsolutePath(outputPath);//绝对路径
                 if (Directory.Exists(outPath))
                 {
                     if (string.IsNullOrEmpty(fileName))
                     {
-                        string fullFilePath = Utility.CombineRelativeFilePath(ApplicationConst.DefaultConfigXmlName,outPath);
+                        string fullFilePath = Utility.IO.CombineRelativeFilePath(ApplicationConst.DefaultConfigXmlName,outPath);
                         File.Delete(fullFilePath);
                         XmlDocument doc = CreateEmptyXmlFile(outPath, ApplicationConst.DefaultConfigXmlName);
                         EditXmlFile(ref doc, dirs.ToArray(), fullFilePath);
@@ -143,7 +143,7 @@ namespace Cosmos.IO{
                     else
                     {
                         string fullFileName = fileName + ".xml";
-                        string fullFilePath = Utility.CombineRelativeFilePath(fullFileName, outPath);
+                        string fullFilePath = Utility.IO.CombineRelativeFilePath(fullFileName, outPath);
                         XmlDocument doc = CreateEmptyXmlFile(outPath, fullFileName);
                         EditXmlFile(ref doc, dirs.ToArray(), fullFilePath);
                     }
@@ -154,7 +154,7 @@ namespace Cosmos.IO{
                   Directory.CreateDirectory(outPath);
                     if (string.IsNullOrEmpty(fileName))
                     {
-                        string fullFilePath = Utility.CombineRelativeFilePath( outPath,ApplicationConst.DefaultConfigXmlName);
+                        string fullFilePath = Utility.IO.CombineRelativeFilePath( outPath,ApplicationConst.DefaultConfigXmlName);
                         File.Delete(fullFilePath);
                         XmlDocument doc = CreateEmptyXmlFile(outPath, ApplicationConst.DefaultConfigXmlName);
                         EditXmlFile(ref doc, dirs.ToArray(), fullFilePath);
@@ -163,7 +163,7 @@ namespace Cosmos.IO{
                     {
                         string fullFileName = fileName + ".xml";
                         //string fullPath = outPath + fullFileName;
-                         string fullFilePath= Utility.CombineRelativeFilePath( fullFileName,outPath);
+                         string fullFilePath= Utility.IO.CombineRelativeFilePath( fullFileName,outPath);
                         XmlDocument doc = CreateEmptyXmlFile(outPath, fullFileName);
                         EditXmlFile(ref doc, dirs.ToArray(), fullFilePath);
                     }
@@ -184,10 +184,10 @@ namespace Cosmos.IO{
             }
             else
             {
-                string fullAbsolutePath = Utility.CombineAbsolutePath(relativePath);
+                string fullAbsolutePath = Utility.Unity.CombineAppAbsolutePath(relativePath);
                 if (string.IsNullOrEmpty(fileName))
                 {
-                    string fullAbsoluteFilePath = Utility.CombineRelativeFilePath(ApplicationConst.DefaultConfigXmlName, fullAbsolutePath);
+                    string fullAbsoluteFilePath = Utility.IO.CombineRelativeFilePath(ApplicationConst.DefaultConfigXmlName, fullAbsolutePath);
                     if (File.Exists(fullAbsoluteFilePath))
                         File.Delete(fullAbsoluteFilePath);
                     else
@@ -195,11 +195,11 @@ namespace Cosmos.IO{
                 }
                 else
                 {
-                    string fullFilePath = Utility.CombineRelativeFilePath(fileName + ".xml", fullAbsolutePath);
+                    string fullFilePath = Utility.IO.CombineRelativeFilePath(fileName + ".xml", fullAbsolutePath);
                     if (File.Exists(fullFilePath))
                         File.Delete(fullFilePath);
                     else
-                        Utility.DebugError("file:   " + Utility.CombineRelativeFilePath(fileName+".xml")+ "\t dose not exist, check your path!");
+                        Utility.DebugError("file:   " + Utility.IO.CombineRelativeFilePath(fileName+".xml")+ "\t dose not exist, check your path!");
                 }
             }
         }

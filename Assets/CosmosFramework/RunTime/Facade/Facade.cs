@@ -16,7 +16,7 @@ using Cosmos.FSM;
 using Cosmos.Data;
 using Cosmos.Config;
 using Cosmos.Network;
-using Cosmos.Controller;
+using Cosmos.Entity;
 namespace Cosmos
 {
     /// <summary>
@@ -41,6 +41,7 @@ namespace Cosmos
             Cosmos.Config.ConfigManager.Instance.DebugModule();
             Cosmos.Data.DataManager.Instance.DebugModule();
             Cosmos.Controller.ControllerManager.Instance.DebugModule();
+            Cosmos.Entity.EntityManager.Instance.DebugModule();
             Utility.DebugLog("Module Count:\t" + GameManager.Instance.ModuleCount);
         }
         public void RegisterModule(string moduleName)
@@ -54,7 +55,7 @@ namespace Cosmos
             var result = GameManager.Instance.GetModule(moduleName);
             if (result == null)
             {
-                var moduleResult = Utility.GetTypeInstance<IModule>(this.GetType().Assembly, Utility.Framework.GetModuleTypeFullName(moduleName));
+                var moduleResult = Utility.Assembly.GetTypeInstance<IModule>(this.GetType().Assembly, Utility.Framework.GetModuleTypeFullName(moduleName));
                 GameManager.Instance.RegisterModule(moduleName, moduleResult);
                 return moduleResult;
             }
@@ -83,6 +84,7 @@ namespace Cosmos
                     DataManager.Instance.DebugModule();
                     break;
                 case CFModules.ENTITY:
+                    EntityManager.Instance.DebugModule();
                     break;
                 case CFModules.EVENT:
                     EventManager.Instance.DebugModule();
@@ -118,7 +120,6 @@ namespace Cosmos
             var result = GameManager.Instance.GetModule(moduleName);
             return result;
         }
-
         public IModule GetModule(string moduleName)
         {
             var moduleResult = GameManager.Instance.GetModule(moduleName);
@@ -295,12 +296,17 @@ namespace Cosmos
         }
         /// <summary>
         /// 使用unityEngine.Resources方法
+        /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
         /// </summary>
         public List<T> LoadResFolderAssets<T>(string path)
             where T : UnityEngine.Object
         {
             return ResourceManager.Instance.LoadResFolderAssets<T>(path);
         }
+        /// <summary>
+        /// 使用unityEngine.Resources方法
+        /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
+        /// </summary>
         public T[] LoadResAll<T>(string path)
             where T : UnityEngine.Object
         {
@@ -319,6 +325,10 @@ namespace Cosmos
         public void LoadScene(int sceneIndex, CFAction callBack = null)
         {
             SceneManager.Instance.LoadScene(sceneIndex, callBack);
+        }
+        public void LoadSceneAsync(string sceneName)
+        {
+            SceneManager.Instance.LoadSceneAsync(sceneName);
         }
         /// <summary>
         /// 回调函数只在完成后进行一次回调
@@ -342,6 +352,10 @@ namespace Cosmos
         public void LoadSceneAsync(string sceneName, CFAction<AsyncOperation> callBack)
         {
             SceneManager.Instance.LoadSceneAsync(sceneName, callBack);
+        }
+        public void LoadSceneAsync(int sceneIndex)
+        {
+            SceneManager.Instance.LoadSceneAsync(sceneIndex);
         }
         /// <summary>
         /// 回调函数只在完成后进行一次回调

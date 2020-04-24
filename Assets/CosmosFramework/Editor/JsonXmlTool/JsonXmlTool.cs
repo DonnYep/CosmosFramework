@@ -137,14 +137,14 @@ namespace Cosmos.CosmosEditor
         void BuildJson()
         {
             string fullJsonFileName = jsonFileName + ".json";
-            fo.CreateEmptyJsonFile(Utility.CombineAbsoluteFilePath(fullJsonFileName, jsonOutputPath));
+            fo.CreateEmptyJsonFile(Utility.Unity.CombineAppAbsoluteFilePath(fullJsonFileName, jsonOutputPath));
             Utility.DebugLog("JsonFile is created !");
             Utility.Editor.RefreshEditor();
         }
         void ClearJson()
         {
             string fullJsonFileName = jsonFileName + ".json";
-            IO.FileOperator.DeleteFile(Utility.CombineAbsoluteFilePath(fullJsonFileName, jsonOutputPath));
+            IO.FileOperator.DeleteFile(Utility.Unity.CombineAppAbsoluteFilePath(fullJsonFileName, jsonOutputPath));
             Utility.DebugLog("JsonFile is deleted !");
             Utility.Editor.RefreshEditor();
         }

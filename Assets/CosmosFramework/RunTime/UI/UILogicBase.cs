@@ -75,6 +75,9 @@ namespace Cosmos.UI{
         /// 空虚函数
         /// </summary>
         public virtual void HidePanel() { }
+        /// <summary>
+        /// 非空虚函数，此虚方法内部已实现SetPanelActive(true)
+        /// </summary>
         protected virtual void ShowPanelHandler(object sender,GameEventArgs args) { SetPanelActive(true); }
         protected void DispatchUIEvent(string eventKey,object sender,GameEventArgs arg)
         {

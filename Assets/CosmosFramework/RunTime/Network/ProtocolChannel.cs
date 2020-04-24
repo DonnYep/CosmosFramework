@@ -33,15 +33,15 @@ namespace Cosmos
                 {
                     return Client != null && Client.Connected;
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
-                    return false;
+                    throw new CFrameworkException("Client is invalid.");
                 }
             }
         }
         public override string ToString()
         {
-            return Protocol.ToString() + "协议通道";
+            return  Utility.Text.Format(Protocol.ToString() , "协议通道");
         }
         public void ConnectServer()
         {

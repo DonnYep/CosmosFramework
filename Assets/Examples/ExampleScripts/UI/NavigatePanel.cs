@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
-public class NavigatePanel : UILogicBase
+public class NavigatePanel : UILogicResident
 {
     WelcomePanel welcome;
     InventoryPanel inventory;
@@ -27,6 +27,9 @@ public class NavigatePanel : UILogicBase
         GetUIPanel<Button>("BtnStatus").onClick.RemoveAllListeners();
         GetUIPanel<Button>("BtnSetting").onClick.RemoveAllListeners();
     }
+    /// <summary>
+    /// welcome panel 是临时类型，因此当panel存在时，点击移除，不存在时则载入
+    /// </summary>
     void WelcomeClick()
     {
         if (welcome == null)
@@ -35,6 +38,9 @@ public class NavigatePanel : UILogicBase
         else
             Facade.Instance.RemovePanel(Utility.UI.GetUIFullRelativePath("WelcomePanel"));
     }
+    /// <summary>
+    /// Invenmtory panel是常驻类型，若不存在，则载入；开启与关闭只进行显示与隐藏操作
+    /// </summary>
     void InventoryClick()
     {
         if (inventory == null)

@@ -47,7 +47,8 @@ namespace Cosmos.ObjectPool
             if (spawnPool.ContainsKey(objKey))
                 spawnPool[objKey].SetSpawnItem(spawnItem);
             else
-                Utility.DebugError("ObjectPoolManager\n"+objKey.ToString() + "\n objKey not exist");
+                //Utility.DebugError("ObjectPoolManager\n"+objKey.ToString() + "\n objKey not exist");
+            throw new CFrameworkException("ObjectPoolManager\n" + objKey.ToString() + "\n objKey not exist");
         }
         /// <summary>
         /// 注销对象池

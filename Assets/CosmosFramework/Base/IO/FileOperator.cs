@@ -22,7 +22,7 @@ namespace Cosmos.IO
             if (File.Exists(path))
                 File.Delete(path);
             else
-                Utility.DebugError(Utility.DecomposeAbsolutePath(path) + "\t" + "does not exist!");
+                Utility.DebugError(Utility.Unity.DecomposeAppAbsolutePath(path) + "\t" + "does not exist!");
         }
         /// <summary>
         ///文件是否存在 
@@ -97,7 +97,7 @@ namespace Cosmos.IO
             }
             else
             {
-                string filePath = Utility.CombineAbsolutePath(sourcePath);
+                string filePath = Utility.Unity.CombineAppAbsolutePath(sourcePath);
                 //不区分地址大小写
                 if (Directory.Exists(filePath))
                 {

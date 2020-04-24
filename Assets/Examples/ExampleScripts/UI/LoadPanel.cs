@@ -26,12 +26,12 @@ public class LoadPanel : UILogicResident
     {
        Utility.Globle.TargetLevel = inputTargetLevel.text;
         string loadingLevel = inputLoadLevel.text;
-        if (Utility.IsNumeric(loadingLevel))
+        if (Utility.Text.IsNumeric(loadingLevel))
         {
             int index = int.Parse(loadingLevel);
-            Facade.Instance.LoadSceneAsync(index, () => { });
+            Facade.Instance.LoadSceneAsync(index);
         }
         else
-            Facade.Instance.LoadSceneAsync(loadingLevel, () => { });
+            Facade.Instance.LoadSceneAsync(loadingLevel);
     }
 }

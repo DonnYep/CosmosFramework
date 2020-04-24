@@ -17,7 +17,7 @@ namespace Cosmos{
             {
                 if (objectOdds == 0)
                     return false;
-                var result = Utility.Random(1, 100);
+                var result = Utility.Unity.Random(1, 100);
                 if (result <=objectOdds)
                     return true;
                 else
@@ -52,7 +52,7 @@ namespace Cosmos{
                         minCollectDelay = maxCollectDelay;
                         return maxCollectDelay;
                     }
-                    else return Utility.Random(minCollectDelay, maxCollectDelay);
+                    else return Utility.Unity.Random(minCollectDelay, maxCollectDelay);
                 }
                 else return minCollectDelay;
             }
@@ -71,7 +71,7 @@ namespace Cosmos{
                         minSpawnCount = maxSpawnCount;
                         return maxSpawnCount;
                     }
-                    else return  Utility.Random(minSpawnCount, maxSpawnCount);
+                    else return  Utility.Unity.Random(minSpawnCount, maxSpawnCount);
                 }
                 else return 1;
             }

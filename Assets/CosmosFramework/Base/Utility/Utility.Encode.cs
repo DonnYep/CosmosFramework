@@ -1,17 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System;
 namespace Cosmos
 {
-    public sealed partial class  Utility
+    public static partial class Utility
     {
         //TODO  编码类扩充
-        public sealed class Encode
+        public static class Encode
         {
+            /// <summary>
+            /// 解码到标准UTF-8格式
+            /// </summary>
+            public static string DecodeString(string message)
+            {
+                byte[] bytes = Convert.FromBase64String(message);
+                return Encoding.GetEncoding("utf-8").GetString(bytes);
+            }
+            /// <summary>
+            /// 编码到标准UTF-8格式
+            /// </summary>
+            public static string EncodeString(string message)
+            {
+                byte[] bytes = Encoding.GetEncoding("utf-8").GetBytes(message);
+                return Convert.ToBase64String(bytes);
+            }
             public static byte[] ConvertToByte(string value)
             {
                 byte[] byteArray = Encoding.Default.GetBytes(value);
@@ -22,7 +37,7 @@ namespace Cosmos
                 byte[] byteArray = BitConverter.GetBytes(value);
                 return byteArray;
             }
-            public static byte[] ConvertToByte(float  value)
+            public static byte[] ConvertToByte(float value)
             {
                 byte[] byteArray = BitConverter.GetBytes(value);
                 return byteArray;
@@ -42,22 +57,12 @@ namespace Cosmos
                 byte[] byteArray = BitConverter.GetBytes(value);
                 return byteArray;
             }
-            static StringBuilder stringBuilderCache;
-            static StringBuilder StringBuilderCache
-            {
-                get
-                {
-                    if (stringBuilderCache == null)
-                        stringBuilderCache = new StringBuilder(1024);
-                    return stringBuilderCache;
-                }
-                set { stringBuilderCache = value; }
-            }
             public static string ConvertToBinary(int value)
             {
-                StringBuilderCache.Clear();
-                StringBuilderCache.Append(Convert.ToString(value, 2));
-                return StringBuilderCache.ToString();
+                return Utility.Text.Format(Convert.ToString(value, 2));
+                //StringBuilderCache.Clear();
+                //StringBuilderCache.Append(Convert.ToString(value, 2));
+                //return StringBuilderCache.ToString();
             }
             //TODO添加其他进制的封装函数
             //public static string ConvertToOctal(int value)

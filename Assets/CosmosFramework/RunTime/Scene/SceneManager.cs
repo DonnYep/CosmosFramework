@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cosmos.Event;
-namespace Cosmos.Scene{
+namespace Cosmos.Scene
+{
     public sealed class SceneManager : Module<SceneManager>
     {
         /// <summary>
@@ -11,7 +12,7 @@ namespace Cosmos.Scene{
         /// </summary>
         /// <param name="sceneName"></param>
         /// <param name="callBack"></param>
-        public void LoadScene(string sceneName,CFAction callBack=null)
+        public void LoadScene(string sceneName, CFAction callBack = null)
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
             callBack?.Invoke();
@@ -21,7 +22,7 @@ namespace Cosmos.Scene{
         /// </summary>
         /// <param name="sceneIndex"></param>
         /// <param name="callBack"></param>
-        public void LoadScene(int sceneIndex,CFAction callBack=null)
+        public void LoadScene(int sceneIndex, CFAction callBack = null)
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
             callBack?.Invoke();
@@ -31,7 +32,11 @@ namespace Cosmos.Scene{
         /// </summary>
         /// <param name="sceneName"></param>
         /// <param name="callBack"></param>
-        public void LoadSceneAsync(string sceneName, CFAction callBack=null)
+        public void LoadSceneAsync(string sceneName)
+        {
+            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneName));
+        }
+        public void LoadSceneAsync(string sceneName, CFAction callBack = null)
         {
             Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
         }
@@ -43,12 +48,16 @@ namespace Cosmos.Scene{
         {
             Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
         }
+        public void LoadSceneAsync(int sceneIndex)
+        {
+            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneIndex));
+        }
         /// <summary>
         /// 异步加载 index
         /// </summary>
         /// <param name="sceneIndex"></param>
         /// <param name="callBack"></param>
-        public void LoadSceneAsync(int sceneIndex, CFAction callBack=null)
+        public void LoadSceneAsync(int sceneIndex, CFAction callBack = null)
         {
             Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneIndex, callBack));
         }
@@ -66,7 +75,7 @@ namespace Cosmos.Scene{
         /// <param name="sceneName"></param>
         /// <param name="callBack"></param>
         /// <returns></returns>
-        IEnumerator EnumLoadSceneAsync(string sceneName, CFAction callBack=null)
+        IEnumerator EnumLoadSceneAsync(string sceneName, CFAction callBack = null)
         {
             AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
             while (!ao.isDone)
@@ -75,6 +84,15 @@ namespace Cosmos.Scene{
             }
             yield return ao.progress;
             callBack?.Invoke();
+        }
+        IEnumerator EnumLoadSceneAsync(string sceneName)
+        {
+            AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
+            while (!ao.isDone)
+            {
+                yield return ao.progress;
+            }
+            yield return ao.progress;
         }
         IEnumerator EnumLoadSceneAsync(string sceneName, CFAction<float> callBack = null)
         {
@@ -102,7 +120,7 @@ namespace Cosmos.Scene{
         /// <param name="sceneIndex"></param>
         /// <param name="callBack"></param>
         /// <returns></returns>
-        IEnumerator EnumLoadSceneAsync(int sceneIndex, CFAction callBack=null)
+        IEnumerator EnumLoadSceneAsync(int sceneIndex, CFAction callBack = null)
         {
             AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
             while (!ao.isDone)
@@ -111,6 +129,15 @@ namespace Cosmos.Scene{
             }
             yield return ao.progress;
             callBack?.Invoke();
+        }
+        IEnumerator EnumLoadSceneAsync(int sceneIndex)
+        {
+            AsyncOperation ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
+            while (!ao.isDone)
+            {
+                yield return ao.progress;
+            }
+            yield return ao.progress;
         }
         IEnumerator EnumLoadSceneAsync(int sceneIndex, CFAction<float> callBack = null)
         {

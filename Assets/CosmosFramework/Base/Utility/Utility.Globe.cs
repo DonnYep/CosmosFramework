@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Cosmos { 
-    public sealed partial class Utility
+    public static partial class Utility
     {
-        public sealed class Globle
+        public static class Globle
         {
             public static string TargetLevel { get; set; }
         }

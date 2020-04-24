@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using UnityEditor;
 #endif
 namespace Cosmos { 
-   public sealed  partial class Utility
+   public static  partial class Utility
     {
-        public class Editor
+        public static class Editor
         {
             public static void SetEditorPrefsBool(string key,bool value)
             {
@@ -62,8 +62,7 @@ namespace Cosmos {
             public static string GetEditorKey(string key)
             {
                 Utility.Text.ClearStringBuilder();
-               return Utility.Text.AppendFormat(ApplicationConst.Editor.APPEDITORPERFIX + "_" + key);
-                //return ApplicationConst.APPEDITORPERFIX + "_" + key;
+               return Utility.Text.Format(ApplicationConst.Editor.APPEDITORPERFIX + "_" + key);
             }
             /// <summary>
             /// 刷新unity编辑器，只在Editor环境下可用

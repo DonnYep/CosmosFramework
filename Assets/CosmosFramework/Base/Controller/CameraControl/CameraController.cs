@@ -76,7 +76,7 @@ namespace Cosmos
             yawSpeed = Mathf.Clamp(yawSpeed, 0, 1000);
             pitchSpeed = Mathf.Clamp(pitchSpeed, 0, 1000);
             cameraViewDamp = Mathf.Clamp(cameraViewDamp, 0, 1000);
-            pitchMinMax = Utility.Clamp(pitchMinMax, new Vector2(-90, 0), new Vector2(0, 90));
+            pitchMinMax = Utility.Unity.Clamp(pitchMinMax, new Vector2(-90, 0), new Vector2(0, 90));
         }
     }
 }

@@ -35,7 +35,8 @@ namespace Cosmos
                 Utility.DebugLog("Module:\"" + moduleName +"\" "+ "  is OnInitialization" + "\n based on GameManager");
             }
             else
-                Utility.DebugError("Module:\"" + moduleName + "\" "+ " is already exist!");
+                //Utility.DebugError("Module:\"" + moduleName + "\" "+ " is already exist!");
+            throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is already exist!");
         }
         /// <summary>
         /// 注销模块
@@ -50,7 +51,8 @@ namespace Cosmos
                 moduleCount--;
             }
             else
-                Utility.DebugError("Module:\"" + moduleName + "\" " + " is  not exist!");
+                //Utility.DebugError("Module:\"" + moduleName + "\" " + " is  not exist!");
+            throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is  not exist!");
         }
         public bool HasModule(string moduleName)
         {

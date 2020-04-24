@@ -36,8 +36,6 @@ namespace Cosmos.CosmosEditor
             EditorGUILayout.Space();
             EditorGUILayout.HelpBox("是否启用DebugLog。若开启，则显示debuglog信息，且内容都为富文本格式", MessageType.Info);
             ApplicationConst.Editor.EnableDebugLog = EditorGUILayout.Toggle("EnableDebugLog", ApplicationConst.Editor.EnableDebugLog);
-            EditorGUILayout.HelpBox("是否为离线模式。若开启，则服务器请求都将关闭", MessageType.Info);
-            ApplicationConst.Editor.OffLineMode = EditorGUILayout.Toggle("OffLineMode", ApplicationConst.Editor.OffLineMode);
             GUI.color = Color.white;
             EditorGUILayout.Space();
             GUILayout.EndVertical();
@@ -50,7 +48,6 @@ namespace Cosmos.CosmosEditor
             if (GUILayout.Button("Reset", GUILayout.Height(32)))
             {
                 ResetEditorPrefs();
-                //SaveEditorPrefs();
             }
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
@@ -58,12 +55,10 @@ namespace Cosmos.CosmosEditor
         void SaveEditorPrefs()
         {
             Utility.Editor.SetEditorPrefsBool(ApplicationConst.Editor.ENABLEDEBUGLOG_KEY, ApplicationConst.Editor.EnableDebugLog);
-            Utility.Editor.SetEditorPrefsBool(ApplicationConst.Editor.OFFLINEMODE_KEY, ApplicationConst.Editor.OffLineMode);
         }
         void ResetEditorPrefs()
         {
             ApplicationConst.Editor.EnableDebugLog = Utility.Editor.GetEditorPrefsBool(ApplicationConst.Editor.ENABLEDEBUGLOG_KEY);
-            ApplicationConst.Editor.OffLineMode = Utility.Editor.GetEditorPrefsBool(ApplicationConst.Editor.OFFLINEMODE_KEY);
         }
     }
 }

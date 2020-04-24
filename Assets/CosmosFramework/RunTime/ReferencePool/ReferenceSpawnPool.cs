@@ -14,7 +14,7 @@ namespace Cosmos.Reference
             if (referenceQueue.Count > 0)
                refer= referenceQueue.Dequeue();
             else
-                refer= Utility.GetTypeInstance(type, type.GetType().FullName) as IReference;
+                refer= Utility.Assembly.GetTypeInstance(type, type.GetType().FullName) as IReference;
             return refer;
         }
         public void Despawn(IReference refer)

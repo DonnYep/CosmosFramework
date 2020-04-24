@@ -8,6 +8,11 @@ namespace Cosmos.Test {
         private void Start()
         {
             var result = Facade.Instance.InitMainCanvas("UI/MainUICanvas");
+            InitUtility();
+        }
+        void InitUtility()
+        {
+            Utility.Json.SetJsonWarpper(new JsonUtilityWarpper());
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Cosmos.Mono
             GameObject go = new GameObject("MonoController" + "_Num_" + monoControllerCount);
             go.transform.SetParent(ModuleMountObject.transform);
             //MonoController mc = go.AddComponent<MonoController>();
-            MonoController mc = Utility.Add<MonoController>(go);
+            MonoController mc = Utility.Unity.Add<MonoController>(go);
             mc.MonoID = monoControllerCount;
             Register(monoControllerCount, mc);
             return mc;
@@ -74,8 +74,9 @@ namespace Cosmos.Mono
         {
             if(!monoDict.ContainsKey(monoID))
             {
-                Utility.DebugError("MonoManager\n"+"MonoController ID"+monoID+" does not exist!");
-                return;
+                //Utility.DebugError("MonoManager\n"+"MonoController ID"+monoID+" does not exist!");
+                //return;
+                throw new CFrameworkException("MonoManager\n" + "MonoController ID" + monoID + " does not exist!");
             }
             monoDict[monoID].RemoveListener(act, type);
         }

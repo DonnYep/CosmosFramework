@@ -52,7 +52,7 @@ namespace Cosmos.FSM{
                 Type type = states[i].GetType();
                 if (fsm.HasState(type))
                 {
-                    Utility.DebugError("FSM state is is already exist\n" + Utility.GetTypeFullName(states[i]));
+                    Utility.DebugError("FSM state is is already exist\n" + Utility.Assembly.GetTypeFullName(states[i]));
                 }
                 else
                 {
@@ -84,7 +84,7 @@ namespace Cosmos.FSM{
                 Type type = states[i].GetType();
                 if (fsm.HasState(type))
                 {
-                    Utility.DebugError("FSM state  is already exist\n" + Utility.GetTypeFullName(states[i]));
+                    Utility.DebugError("FSM state  is already exist\n" + Utility.Assembly.GetTypeFullName(states[i]));
                 }
                 else
                 {

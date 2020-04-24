@@ -20,10 +20,7 @@ namespace Cosmos.CosmosEditor
         {
             if (!Utility.Editor.HasEditorPrefsKey(ApplicationConst.Editor.ENABLEDEBUGLOG_KEY))
                 Utility.Editor.SetEditorPrefsBool(ApplicationConst.Editor.ENABLEDEBUGLOG_KEY, true);
-            if (!Utility.Editor.HasEditorPrefsKey(ApplicationConst.Editor.OFFLINEMODE_KEY))
-                Utility.Editor.SetEditorPrefsBool(ApplicationConst.Editor.OFFLINEMODE_KEY, false);
             ApplicationConst.Editor.EnableDebugLog = Utility.Editor.GetEditorPrefsBool(ApplicationConst.Editor.ENABLEDEBUGLOG_KEY);
-            ApplicationConst.Editor.OffLineMode = Utility.Editor.GetEditorPrefsBool(ApplicationConst.Editor.OFFLINEMODE_KEY);
         }
     }
 }

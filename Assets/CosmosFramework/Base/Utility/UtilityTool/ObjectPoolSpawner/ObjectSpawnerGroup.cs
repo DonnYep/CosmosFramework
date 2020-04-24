@@ -60,11 +60,11 @@ namespace Cosmos{
             if (go == null)
                 return;
             Facade.Instance.StartCoroutine(EnumCollect(SpawnObjectGroup[flag].CollectDelay,
-                (tempFlag) => { Facade.Instance.DespawnObject(SpawnObjectGroup[Utility.Int( tempFlag)].SpawnTransform, go); },flag));
+                (tempFlag) => { Facade.Instance.DespawnObject(SpawnObjectGroup[Utility.Converter.Int( tempFlag)].SpawnTransform, go); },flag));
         }
         protected IEnumerator EnumCollect(float delay, CFAction<object> action ,object arg)
         {
-            int tempFlag = Utility.Int(arg);
+            int tempFlag = Utility.Converter.Int(arg);
             yield return new WaitForSeconds(delay);
             action?.Invoke(tempFlag);
         }
