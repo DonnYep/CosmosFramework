@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
 using System.Text;
 using System.Reflection;
+#if UNITY_EDITOR
 using Object = UnityEngine.Object;
+using UnityEngine;
+#endif
 namespace Cosmos
 {
     public enum MessageColor
@@ -81,7 +83,9 @@ namespace Cosmos
         /// </summary>
         public static void ClearMemory()
         {
+#if UNITY_EDITOR
             GC.Collect(); Resources.UnloadUnusedAssets();
+#endif
         }
     }
 }

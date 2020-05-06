@@ -6,24 +6,32 @@ namespace Cosmos {
     /// 模块的抽象基类
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class  Module<T> : IModule
+    public abstract class  Module<T>  : Singleton<T>, IModule
         where T:Module<T>,new()
     {
-        static T instance;
-        public static T Instance
+        #region interface IModule
+        /// 非空虚函数，停止模块
+        /// 在子类调用时，建议保留执行父类函数
+        /// </summary>
+        public override void OnTermination()
         {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new T();
-                    instance.RegisterModule();
-                    instance.InitModule();
-                }
-                instance.OnModuleInstanceCalled();
-                return instance;
-            }
+            moduleMountObject = null;
+            moduleName = null;
+            moduleFullName = null;
         }
+        /// <summary>
+        /// 非空虚函数;
+        /// 可覆写初始化方法，覆写时需要执行父类方法
+        /// </summary>
+        public override void OnInitialization()
+        {
+            GameManager.Instance.RegisterModule(ModuleName, this);
+        }
+        public virtual void OnRefresh() { }
+        public virtual void OnPreparatory() { }
+        public virtual void OnPause() { }
+        public virtual void OnUnPause() { }
+        #endregion
         GameObject moduleMountObject;
         public GameObject ModuleMountObject
         {
@@ -63,56 +71,7 @@ namespace Cosmos {
                 return moduleFullName;
             }
         }
-        protected virtual void InitModule() { }
         public void DebugModule() { }
-        /// <summary>
-        /// 注册模块
-        /// </summary>
-         void RegisterModule()
-        {
-            GameManager.Instance.RegisterModule(ModuleName, this);
-        }
-        /// <summary>
-        /// 注销模块，调用这个API后会在 GameManager注销，并调用自身OnTermination函数
-        /// </summary>
-        public virtual void DeregisterModule()
-        {
-            GameManager.Instance.DeregisterModule(ModuleName);
-        }
-        /// <summary>
-        /// 当模块对象被调用时执行，每次调用都会执行
-        /// </summary>
-        protected virtual void OnModuleInstanceCalled() { }
-        #region interface IModule
-        /// <summary>
-        /// 空虚函数 初始化，相当于Awake
-        /// </summary>
-        public virtual void OnInitialization() { }
-        /// <summary>
-        /// 模块准备工作，在OnInitialization()函数之后执行
-        /// </summary>
-        public virtual void OnPreparatory() { }
-        /// <summary>
-        /// 暂停
-        /// </summary>
-        public virtual  void OnPause() { }
-        /// <summary>
-        /// 非空虚函数，停止模块
-        /// 在子类调用时，建议保留执行父类函数
-        /// </summary>
-        public virtual  void OnTermination()
-        {
-            instance = null;
-            moduleMountObject = null;
-            moduleName = null;
-            moduleFullName = null;
-        }
-        /// <summary>
-        /// 恢复暂停
-        /// </summary>
-        public virtual void OnUnPause() { }
 
-       
-        #endregion
     }
 }

@@ -16,9 +16,10 @@ namespace Cosmos.Audio
 
         //世界音效，为3D背景音乐、3D技能音效对白等设计
         Dictionary<GameObject, AudioSource> worldAudios = new Dictionary<GameObject, AudioSource>();
-        protected override void InitModule()
+        public override void OnInitialization()
         {
-            Facade.Instance.AddMonoListener(CheckAudioSources,UpdateType.Update);
+            base.OnInitialization();
+            Facade.Instance.AddMonoListener(CheckAudioSources, UpdateType.Update);
         }
         bool mute=false;
         //整个AudioManager下的所有声音都设置位静音
@@ -134,7 +135,6 @@ namespace Cosmos.Audio
                 audio.Pause();
             }
             else
-                //Utility.DebugError("AudioManager\n" + "World"+attachTarget.name + "\n is unregistered", attachTarget);
             throw new CFrameworkException("AudioManager\n" + "World" + attachTarget.name + "\n is unregistered");
         }
         public void UnpauseWorldAudio(GameObject attachTarget)
@@ -144,7 +144,6 @@ namespace Cosmos.Audio
                 AudioSource audio = worldAudios[attachTarget];
                 audio.UnPause();
             }else
-                //Utility.DebugError("AudioManager\n"+"World" +attachTarget.name + "\n is unregistered", attachTarget);
             throw new CFrameworkException("AudioManager\n" + "World" + attachTarget.name + "\n is unregistered");
         }
         public void StopWorldAudio(GameObject attachTarget)
@@ -154,7 +153,6 @@ namespace Cosmos.Audio
                 AudioSource audio = worldAudios[attachTarget];
                 audio.Stop();
             }else
-                //Utility.DebugError("AudioManager\n"+"World" +attachTarget.name + "\n is unregistered", attachTarget);
             throw new CFrameworkException("AudioManager\n" + "World" + attachTarget.name + "\n is unregistered");
         }
         public void StopAllWorldAudio()
@@ -216,7 +214,6 @@ namespace Cosmos.Audio
                     multipleAudio[attachTarget][i].Pause();
                 }
             }else
-                //Utility.DebugError("AudioManager\n"+"Multiple"+attachTarget.name + "\n is unregistered", attachTarget);
             throw new CFrameworkException("AudioManager\n" + "Multiple" + attachTarget.name + "\n is unregistered");
         }
         public void UnpauseMultipleAudio(GameObject attachTarget)
@@ -229,7 +226,6 @@ namespace Cosmos.Audio
                 }
             }
             else
-                //Utility.DebugError("AudioManager\n"+"Multiple" + attachTarget.name + "\n is unregistered", attachTarget);
             throw new CFrameworkException("AudioManager\n" + "Multiple" + attachTarget.name + "\n is unregistered");
 
         }
@@ -243,7 +239,6 @@ namespace Cosmos.Audio
                 }
             }
             else
-                //Utility.DebugError("AudioManager\n"+"Multiple" + attachTarget.name + "\n is unregistered", attachTarget);
             throw new CFrameworkException("AudioManager\n" + "Multiple" + attachTarget.name + "\n is unregistered");
 
         }

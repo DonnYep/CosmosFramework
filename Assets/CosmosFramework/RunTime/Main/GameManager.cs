@@ -30,12 +30,10 @@ namespace Cosmos
             if (!HasModule(moduleName))
             {
                 moduleMap.Add(moduleName, module);
-                module.OnInitialization();
                 moduleCount++;
                 Utility.DebugLog("Module:\"" + moduleName +"\" "+ "  is OnInitialization" + "\n based on GameManager");
             }
             else
-                //Utility.DebugError("Module:\"" + moduleName + "\" "+ " is already exist!");
             throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is already exist!");
         }
         /// <summary>
@@ -51,7 +49,6 @@ namespace Cosmos
                 moduleCount--;
             }
             else
-                //Utility.DebugError("Module:\"" + moduleName + "\" " + " is  not exist!");
             throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is  not exist!");
         }
         public bool HasModule(string moduleName)
@@ -80,7 +77,7 @@ namespace Cosmos
         /// </summary>
         static public void ClearGameManager()
         {
-            Instance.ClearSingleton();
+            Instance.Dispose();
         }
         /// <summary>
         /// 清除单个实例，有一个默认参数。

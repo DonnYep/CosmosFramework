@@ -8,37 +8,37 @@ namespace Cosmos
     /// 非mono单例的基类new()约束
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class Singleton<T>:IDisposable
-        where T : new()
+    public abstract class Singleton<T>:IDisposable,IBehaviour
+        where T : Singleton<T>,new()
     {
-        static T instance;
+       protected static T instance;
         public static T Instance
         {
             get
             {
                 if (instance == null)
+                {
                     instance = new T();
+                    instance.OnInitialization();
+                }
                 return instance;
             }
         }
-
-        public void Dispose()
-        {
-        }
-        protected virtual void ClearSingleton()
-        {
-            instance= default(T);
-        }
+        /// <summary>
+        /// 空虚方法，IDispose接口
+        /// </summary>
+        public virtual void Dispose() { instance.OnTermination(); instance = default(T); }//TODO IDispose与OnTermination优先级
+        public virtual void OnInitialization() { }
+        public virtual void OnTermination() { }
     }
     /// <summary>
     /// 多线程单例基类，内部包含线程锁
-    /// 慎用!!!
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class MultiThreadSingleton<T>
+    public abstract class MultiThreadSingleton<T>: IDisposable
        where T : new()
     {
-        static T instance;
+        protected static T instance;
         static readonly object locker = new object();
         public static T Instance
         {
@@ -55,13 +55,18 @@ namespace Cosmos
                 return instance;
             }
         }
+        /// <summary>
+        /// 空虚方法，IDispose接口
+        /// </summary>
+        public virtual void Dispose() { }
+
     }
     /// <summary>
     /// 继承mono的单例基类
     ///默认情况下, Awake自动适配，应用退出时释放。
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class MonoSingleton<T> : MonoBehaviour
+    public abstract class MonoSingleton<T> : MonoBehaviour,IBehaviour
     where T : MonoSingleton<T>
     {
         /// <summary>
@@ -80,6 +85,7 @@ namespace Cosmos
                     {
                         instance = new GameObject( typeof(T).ToString(), typeof(T)).GetComponent<T>();
                         instance.Init();
+                        instance.OnInitialization();
                     }
                 }
                 return instance;
@@ -89,13 +95,19 @@ namespace Cosmos
         {
             instance = this as T;
         }
-        private void OnApplicationQuit()
+        protected virtual void OnDestroy()
         {
-            instance = null;
+            OnTermination();
         }
+        [Obsolete("即将弃用，请移步至OnInitialization()")]
+        virtual public void Init() { }
         /// <summary>
         //空的虚方法，在当前单例对象为空初始化时执行一次
         /// </summary>
-        virtual public void Init() { }
+        public virtual void OnInitialization() { }
+        /// <summary>
+        //空的虚方法，在当前单例对象被销毁时执行一次
+        /// </summary>
+        public virtual void OnTermination() { }
     }
 }

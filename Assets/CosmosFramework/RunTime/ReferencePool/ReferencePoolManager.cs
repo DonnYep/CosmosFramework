@@ -14,12 +14,14 @@ namespace Cosmos.Reference
         public int GetPoolCount<T>() 
             where T : class, IReference, new()
         {
-            if (referencePool.ContainsKey(typeof(T)))
-                return referencePool[typeof(T)].ReferenceCount;
-            else
+            try
             {
-                Utility.DebugError("Type :" + typeof(T).FullName + " not register in reference pool");
-                return -1;
+                //if (referencePool.ContainsKey(typeof(T)))
+                    return referencePool[typeof(T)].ReferenceCount;
+            }
+            catch (Exception)
+            {
+                throw new CFrameworkException("Type :" + typeof(T).FullName + " not register in reference pool");
             }
         }
         public T Spawn<T>() 

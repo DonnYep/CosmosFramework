@@ -17,6 +17,17 @@ namespace Cosmos.Reference
                 refer= Utility.Assembly.GetTypeInstance(type, type.GetType().FullName) as IReference;
             return refer;
         }
+        public IReference Spawn<T>(T type)
+            where T:IReference, new()
+        {
+            IReference refer;
+            if (referenceQueue.Count > 0)
+                refer = referenceQueue.Dequeue();
+            else
+                //refer = Utility.Assembly.GetTypeInstance(type, type.GetType().FullName) as IReference;
+                refer = new T() as IReference;
+            return refer;
+        }
         public void Despawn(IReference refer)
         {
             if (referenceQueue.Count >= ReferencePoolManager._ReferencePoolCapcity)
