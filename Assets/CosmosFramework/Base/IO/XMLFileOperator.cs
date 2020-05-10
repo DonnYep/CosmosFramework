@@ -11,7 +11,7 @@ namespace Cosmos.IO{
             TextAsset ta = Utility.Unity.Load<TextAsset>(ApplicationConst.FileExtensionList);
             if (ta == null)
             {
-                Utility.DebugError("load text asset fail ,file :" + ApplicationConst.FileExtensionList + " does not exist!\nconfigManager");
+                Utility.DebugError("configManager-->> load text asset fail ,file :" + ApplicationConst.FileExtensionList + " does not exist!");
                 return;
             }
           extention= ParseFileExtentionsList(ta);
@@ -199,7 +199,7 @@ namespace Cosmos.IO{
                     if (File.Exists(fullFilePath))
                         File.Delete(fullFilePath);
                     else
-                        Utility.DebugError("file:   " + Utility.IO.CombineRelativeFilePath(fileName+".xml")+ "\t dose not exist, check your path!");
+                        Utility.DebugError("file:   " + Utility.IO.CombineRelativeFilePath(fileName+".xml")+ "  dose not exist, check your path!");
                 }
             }
         }

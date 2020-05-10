@@ -21,13 +21,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 312ff02c16fcbde498aa8c08a123825c, type: 2}
   - {fileID: 11400000, guid: b4d88a6833c11c74d8c9e231b327023e, type: 2}
   - {fileID: 11400000, guid: fdfb05da0a285e04a9c9430d7945d997, type: 2}
-  - {fileID: 11400000, guid: b0ece9b13cb40fb4aac4f281c234a09d, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 11400000, guid: a3f643b0f4820484d910b3ffb52687cd, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: b0ece9b13cb40fb4aac4f281c234a09d, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
+using System;
 /// <summary>
 /// 暂时不抽象，这个可能是背包，也可能是仓库，具体遇到再实现
 /// </summary>
 [CreateAssetMenu(fileName = "NewInventory", menuName = "CosmosFramework/Implement/InventoryDataSet/Inventory")]
+[Serializable]
 public class InventoryDataSet : CFDataSet
 {
     [SerializeField]

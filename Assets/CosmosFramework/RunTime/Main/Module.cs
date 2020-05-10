@@ -1,31 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
-namespace Cosmos {
+namespace Cosmos
+{
 
     /// <summary>
     /// 模块的抽象基类
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class  Module<T>  : Singleton<T>, IModule
-        where T:Module<T>,new()
+    public abstract class Module<T> : Singleton<T>, IModule
+        where T : Module<T>, new()
     {
         #region interface IModule
-        /// 非空虚函数，停止模块
-        /// 在子类调用时，建议保留执行父类函数
-        /// </summary>
-        public override void OnTermination()
-        {
-            moduleMountObject = null;
-            moduleName = null;
-            moduleFullName = null;
-        }
         /// <summary>
         /// 非空虚函数;
         /// 可覆写初始化方法，覆写时需要执行父类方法
         /// </summary>
-        public override void OnInitialization()
+        protected override void OnInitialization()
         {
             GameManager.Instance.RegisterModule(ModuleName, this);
+        }
+        public override void Dispose()
+        {
+            OnTermination();
+        }
+        /// 非空虚函数，停止模块
+        /// 在子类调用时，建议保留执行父类函数
+        /// </summary>
+        protected override void OnTermination()
+        {
+            moduleMountObject = null;
+            moduleName = null;
+            moduleFullName = null;
         }
         public virtual void OnRefresh() { }
         public virtual void OnPreparatory() { }
@@ -72,6 +77,10 @@ namespace Cosmos {
             }
         }
         public void DebugModule() { }
+        public void Deregister()
+        {
+            Dispose();
+        }
 
     }
 }

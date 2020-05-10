@@ -44,6 +44,7 @@ namespace Cosmos.FSM{
             fsm.IsDestoryed = false;
             for (int i = 0; i < states.Length; i++)
             {
+                // TODO 异常抛出
                 if (states[i] == null)
                 {
                     Utility.DebugError("FSM owner is invalid");
@@ -52,7 +53,7 @@ namespace Cosmos.FSM{
                 Type type = states[i].GetType();
                 if (fsm.HasState(type))
                 {
-                    Utility.DebugError("FSM state is is already exist\n" + Utility.Assembly.GetTypeFullName(states[i]));
+                    Utility.DebugError("FSM state is is already exist " + Utility.Assembly.GetTypeFullName(states[i]));
                 }
                 else
                 {
@@ -84,7 +85,7 @@ namespace Cosmos.FSM{
                 Type type = states[i].GetType();
                 if (fsm.HasState(type))
                 {
-                    Utility.DebugError("FSM state  is already exist\n" + Utility.Assembly.GetTypeFullName(states[i]));
+                    Utility.DebugError("FSM state  is already exist " + Utility.Assembly.GetTypeFullName(states[i]));
                 }
                 else
                 {
@@ -164,7 +165,7 @@ namespace Cosmos.FSM{
             }
             if (!typeof(FSMState<T>).IsAssignableFrom(stateType))
             {
-                Utility.DebugError("State type is invalid !" + "\n" + stateType.FullName);
+                Utility.DebugError("State type is invalid !"  + stateType.FullName);
                 return false;
             }
             return fsmStateDict.ContainsKey(stateType);
@@ -216,7 +217,7 @@ namespace Cosmos.FSM{
             }
             if (!typeof(FSM<T>).IsAssignableFrom(stateType))
             {
-                Utility.DebugError("State type is invaild !" + "\n" + stateType.FullName);
+                Utility.DebugError("State type is invaild !"  + stateType.FullName);
                 return null;
             }
             FSMState<T> state = null;

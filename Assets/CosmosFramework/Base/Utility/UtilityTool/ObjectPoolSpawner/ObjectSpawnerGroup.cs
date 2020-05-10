@@ -7,8 +7,8 @@ namespace Cosmos{
     {
         [Header("能用，慎用")]
         [SerializeField] List<ObjectGroup> spawnObjectGroup = new List<ObjectGroup>();
-        HashSet<GameObject> uncollectableHashSet = new HashSet<GameObject>();
-        public override HashSet<GameObject> UncollectableHashSet { get { return uncollectableHashSet; } protected set { uncollectableHashSet = value; } }
+        HashSet<GameObject> uncollectibleHashSet = new HashSet<GameObject>();
+        public override HashSet<GameObject> UncollectibleHashSet { get { return uncollectibleHashSet; } protected set { uncollectibleHashSet = value; } }
         /// <summary>
         /// 只读类型
         /// </summary>
@@ -68,7 +68,7 @@ namespace Cosmos{
             yield return new WaitForSeconds(delay);
             action?.Invoke(tempFlag);
         }
-        public override void SpawnUncollectable()
+        public override void SpawnUncollectible()
         {
             for (int i = 0; i < SpawnObjectGroup.Count; i++)
             {
@@ -81,7 +81,7 @@ namespace Cosmos{
                     {
                         var go = GameObject.Instantiate(SpawnObjectGroup[i].PoolObject.SpawnObject);
                         AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
-                        uncollectableHashSet.Add(go);
+                        uncollectibleHashSet.Add(go);
                     }
                 }
             }

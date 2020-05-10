@@ -9,7 +9,7 @@ namespace Cosmos
     /// <summary>
     /// Json辅助类接口，用于适配各类JSON解决方案
     /// </summary>
-    public  interface IJsonWarpper
+    public  interface IJsonWrapper
     {
         /// <summary>
         /// 将对象序列化为JSON字段

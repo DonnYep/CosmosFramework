@@ -9,23 +9,28 @@ using UnityEngine;
 #endif
 namespace Cosmos
 {
-    public enum MessageColor
+    public static class MessageColor
     {
-        black,
-        blue,
-        brown,
-        darkblue,
-        green,//原谅色
-        lime,//力量色
-        grey,
-        fuchsia,//洋红色
-        navy,//海军蓝
-        orange,
-        red,
-        teal,//蓝绿色
-        yellow,
-        maroon,//褐红色
-        purple
+        public const string BLACK = "#000000";
+        public const string WHITE = "#FFFFFF";
+        public const string BLUE = "#254FDB";
+        public const string BROWN = "#A52A2A"; //棕色
+        public const string DARKBLUE = "#0000A0";
+        public const string GREEN = "#008000";
+        public const string LIME = "#00FF00"; //青橙绿
+        public const string CYAN = "#00FFFF";
+        public const string DARKCYAN = "#008B8B";
+        public const string GREY = "#808080";
+        public const string FUCHSIA = "#FF00FF";//洋红
+        public const string NAVY = "#000080"; //海军蓝
+        public const string ORANGE = "#FFA500";
+        public const string RED = "#FF0000";
+        public const string TEAL = "#008080";//蓝绿
+        public const string YELLOW = "#FF0000";
+        public const string MAROON = "#800000";  //褐红
+        public const string PURPLE = "#800080";
+        public const string BLUEVIOLET = "#8A2BE2"; //蓝紫罗兰
+        public const string INDIGO = "#4B0082"; //紫兰
     }
     /// <summary>
     /// 通用工具类：
@@ -40,20 +45,20 @@ namespace Cosmos
             if (!ApplicationConst.Editor.EnableDebugLog)
                 return;
             if (context == null)
-                Debug.Log("<b>-->><color=#254FDB>" + o + "</color></b>");
+                Debug.Log("<b>-->><color="+MessageColor.BLUE+">" + o + "</color></b>");
             else
-                Debug.Log("<b>-->><color=#254FDB>" + o + "</color></b>", context);
+                Debug.Log("<b>-->><color=" + MessageColor.BLUE + ">" + o + "</color></b>", context);
 #endif
         }
-        public static void DebugLog(object o, MessageColor messageColor, Object context = null)
+        public static void DebugLog(object o, string messageColor, Object context = null)
         {
 #if UNITY_EDITOR
             if (!ApplicationConst.Editor.EnableDebugLog)
                 return;
             if (context == null)
-                Debug.Log("<b>-->><color=" + messageColor.ToString() + ">" + o + "</color></b>");
+                Debug.Log("<b>-->><color=" + messageColor + ">"+ o + "</color></b>");
             else
-                Debug.Log("<b>-->><color=" + messageColor.ToString() + ">" + o + "</color></b>", context);
+                Debug.Log("<b>-->><color=" + messageColor+ ">" + o + "</color></b>", context);
 #endif
         }
         public static void DebugWarning(object o, Object context = null)
@@ -86,6 +91,17 @@ namespace Cosmos
 #if UNITY_EDITOR
             GC.Collect(); Resources.UnloadUnusedAssets();
 #endif
+        }
+        /// <summary>
+        ///字典工具 
+        /// </summary>
+        public static K GetValue<T, K>(Dictionary<T, K> dict, T key)
+        {
+            K value =default(K);
+            bool isSuccess = dict.TryGetValue(key, out value);
+            if (isSuccess)
+                return value;
+            return value;
         }
     }
 }

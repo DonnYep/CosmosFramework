@@ -24,7 +24,7 @@ using UnityEngine.Networking;
 namespace Cosmos.Resource
 {
 
-    public enum ResourceLoadMode : int
+    public enum ResourceLoadMode : byte
     {
         Resource = 0,
         AssetBundle = 1
@@ -57,7 +57,7 @@ namespace Cosmos.Resource
             T res = Resources.Load<T>(path);
             if (res == null)
             {
-                Utility.DebugError("ResourceManager\n" + "Assets: " + path + "\n not exist,check your path!");
+                Utility.DebugError("ResourceManager-->>" + "Assets: " + path + " not exist,check your path!");
                 return null;
             }
             if (instantiateGameObject)
@@ -124,7 +124,7 @@ namespace Cosmos.Resource
             T[] res = Resources.LoadAll<T>(path);
             if (res == null)
             {
-                Utility.DebugError("ResourceManager\n" + "Assets: " + path + "\n not exist,check your path!");
+                Utility.DebugError("ResourceManager-->>" + "Assets: " + path + "  not exist,check your path!");
                 return null;
             }
             if (res is GameObject)

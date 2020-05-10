@@ -10,7 +10,7 @@ namespace Cosmos
     public abstract class ObjectSpawner : MonoBehaviour
     {
         public  virtual float CollectDelay { get; }
-        public virtual HashSet<GameObject> UncollectableHashSet { get;protected set; }
+        public virtual HashSet<GameObject> UncollectibleHashSet { get;protected set; }
         protected GameObject deactiveObjectMount;
         public Transform DeactiveObjectMount
         {
@@ -47,13 +47,13 @@ namespace Cosmos
         /// <summary>
         /// SpawnUncollectable的对象，直接实例化，挂载在对象池中，空函数
         /// </summary>
-        public virtual void SpawnUncollectable() { }
+        public virtual void SpawnUncollectible() { }
         /// <summary>
         /// 回收Uncollectable的对象，直接被销毁
         /// </summary>
-        public virtual void DespawnUncollectable()
+        public virtual void DespawnUncollectible()
         {
-            Cosmos.GameManager.KillObjects(UncollectableHashSet);
+            Cosmos.GameManager.KillObjects(UncollectibleHashSet);
         }
         protected abstract void RegisterSpawner();
         /// <summary>

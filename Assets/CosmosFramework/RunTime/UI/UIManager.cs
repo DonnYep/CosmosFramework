@@ -30,6 +30,27 @@ namespace Cosmos.UI
             }
         }
         /// <summary>
+        /// Resource文件夹相对路径
+        /// 返回实例化的对象
+        /// </summary>
+        /// <param name="path">如UI\Canvas</param>
+        /// <param name="name">生成后重命名的名称</param>
+        public GameObject InitMainCanvas(string path,string name)
+        {
+            if (mainUICanvas != null)
+                return mainUICanvas;
+            else
+            {
+                Facade.Instance.LoadResAysnc<GameObject>(path, go =>
+                {
+                    mainUICanvas = go;
+                    mainUICanvas.name = name;
+                    mainUICanvas.transform.SetParent(ModuleMountObject.transform);
+                });
+                return mainUICanvas;
+            }
+        }
+        /// <summary>
         /// 载入面板，若字典中已存在，则返回且不使用回调。若不存在，则异步加载且使用回调。
         /// 基于Resources
         /// </summary>
@@ -90,7 +111,7 @@ namespace Cosmos.UI
                 uiPanelMap.Remove(panelName);
             }
             else
-                Utility.DebugError("UIManager\n" + "Panel :" + panelName + "  not register !");
+                Utility.DebugError("UIManager-->>" + "Panel :" + panelName + "  not register !");
         }
         public bool HasPanel(string panelName)
         {

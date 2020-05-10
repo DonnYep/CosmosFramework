@@ -16,7 +16,7 @@ namespace Cosmos.Audio
 
         //世界音效，为3D背景音乐、3D技能音效对白等设计
         Dictionary<GameObject, AudioSource> worldAudios = new Dictionary<GameObject, AudioSource>();
-        public override void OnInitialization()
+       protected override void OnInitialization()
         {
             base.OnInitialization();
             Facade.Instance.AddMonoListener(CheckAudioSources, UpdateType.Update);

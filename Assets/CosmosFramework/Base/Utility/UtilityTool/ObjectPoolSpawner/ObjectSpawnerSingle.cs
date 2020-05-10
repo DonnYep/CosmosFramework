@@ -13,8 +13,8 @@ namespace Cosmos{
         ObjectPoolDataSet poolDataSet;
         public ObjectPoolDataSet PoolDataSet { get { return poolDataSet; } }
         public override float CollectDelay { get { return poolDataSet.CollectDelay; } }
-        HashSet<GameObject> uncollectableHashSet = new HashSet<GameObject>();
-        public override HashSet<GameObject> UncollectableHashSet { get { return uncollectableHashSet; } protected set { uncollectableHashSet = value; } }
+        HashSet<GameObject> uncollectibleHashSet = new HashSet<GameObject>();
+        public override HashSet<GameObject> UncollectibleHashSet { get { return uncollectibleHashSet; } protected set { uncollectibleHashSet = value; } }
         public override void Spawn()
         {
             if (!poolDataSet.ObjectAddsResult)
@@ -31,7 +31,7 @@ namespace Cosmos{
             if(poolDataSet != null)
                 Facade.Instance.RegisterObjcetSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
         }
-        public override void SpawnUncollectable()
+        public override void SpawnUncollectible()
         {
             if (!poolDataSet.ObjectAddsResult)
                 return;
@@ -39,7 +39,7 @@ namespace Cosmos{
             {
                 var go = GameObject.Instantiate(PoolDataSet.SpawnObject);
                 AlignObject(PoolDataSet.AlignType, go, SpawnTransform);
-                uncollectableHashSet.Add(go);
+                uncollectibleHashSet.Add(go);
             }
         }
     }

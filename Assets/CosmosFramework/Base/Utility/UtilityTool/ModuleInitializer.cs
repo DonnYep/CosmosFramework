@@ -42,13 +42,5 @@ namespace Cosmos.Test{
                     break;
             }
         }
-        public void PrintModuleMountObject()
-        {
-            Utility.DebugLog("////////////////", MessageColor.brown);
-            Utility.DebugLog(module.ToString());
-            Utility.DebugLog(module.ToString() + "<<" + Facade.Instance.HasModule(module.ToString()));
-            Utility.DebugLog(Facade.Instance.GetModule(module.ToString()).ModuleMountObject.name);
-            Utility.DebugLog("////////////////", MessageColor.brown);
-        }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 namespace Cosmos.Reference
 {
-    public sealed class ReferenceSpawnPool : MonoBehaviour
+    public sealed class ReferenceSpawnPool 
     {
         Queue<IReference> referenceQueue = new Queue<IReference>();
         public int ReferenceCount { get { return referenceQueue.Count; } }

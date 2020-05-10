@@ -165,6 +165,10 @@ namespace Cosmos
         {
             EventManager.Instance.ClearAllEvent();
         }
+        public bool HasEvent(string eventKey)
+        {
+            return EventManager.Instance.HasEvent(eventKey);
+        }
         #endregion
         #region MonoManager
         public void AddMonoListener(CFAction act, UpdateType type, CFAction<short> callBack = null)
@@ -502,26 +506,42 @@ namespace Cosmos
         /// <param name="fileName">文件名称</param>
         /// <param name="dataSet">装箱后的数据</param>
         /// <param name="callBack">回调函数，当写入成功后调用</param>
-        public void SaveJsonDataToLocal<T>(string relativePath, string fileName, T dataSet, CFAction callBack = null)
+        public void SaveJsonDataToLocal<T>(string relativePath, string fileName, T dataSet,bool binary=false, CFAction callBack = null)
+            where T : class, new()
         {
-            DataManager.Instance.SaveJsonDataToLocal(relativePath, fileName, dataSet, callBack);
+            DataManager.Instance.SaveJsonDataToLocal(relativePath, fileName, dataSet,binary ,callBack);
         }
         /// <summary>
         /// 从本地的绝对路径读取Json数据
         /// </summary>
-        /// <typeparam name="T">反序列化的目标类型</typeparam>
         /// <param name="relativePath">相对路径</param>
         /// <param name="fileName">文件名称</param>
-        /// <param name="dataSet">装箱后的数据</param>
+        /// <param name="binary">是否为二进制文件</param>
         /// <param name="callBack">回调函数，当读取成功后调用</param>
-        public void LoadJsonDataFromLocal<T>(string relativePath, string fileName, ref T dataSet, CFAction<T> callBack = null)
+        /// <returns>返回一个Json</returns>
+        public string LoadJsonDataFromLocal(string relativePath, string fileName,bool binary=false, CFAction callBack = null)
         {
-            DataManager.Instance.LoadJsonDataFromLocal(relativePath, fileName, ref dataSet, callBack);
+            return DataManager.Instance.LoadJsonDataFromLocal(relativePath, fileName, binary,callBack);
         }
-        public void LoadJsonDataFromLocal<T>(string fullRelativeFilePath, ref T dataSet, CFAction<T> callBack = null)
+        /// <summary>
+        /// 从本地的绝对路径读取Json数据
+        /// </summary>
+        /// <param name="fullRelativeFilePath">相对路径完整路径，包含到文件名后缀</param>
+        /// <param name="binary">是否为二进制文件</param>
+        /// <param name="callBack">回调函数，当读取成功后调用</param>
+        /// <returns>返回一个Json</returns>
+        public string LoadJsonDataFromLocal(string fullRelativeFilePath,  bool binary=false, CFAction  callBack = null)
         {
-            DataManager.Instance.LoadJsonDataFromLocal(fullRelativeFilePath, ref dataSet, callBack);
+          return  DataManager.Instance.LoadJsonDataFromLocal(fullRelativeFilePath,  binary,callBack);
         }
+        /// <summary>
+        /// 从Resource文件夹下读取Json
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="relativePath">相对路径</param>
+        /// <param name="fileName">文件名</param>
+        /// <param name="dataSet">存储json的类模型</param>
+        /// <param name="callBack">回调函数</param>
         public void ParseDataFromResource<T>(string relativePath, string fileName, ref T dataSet, CFAction<T> callBack = null)
           where T : class, new()
         {
@@ -561,9 +581,14 @@ namespace Cosmos
         {
             ReferencePoolManager.Instance.Clear(type);
         }
+        public void ClearReferencePool<T>()
+            where T : class, IReference, new()
+        {
+            ReferencePoolManager.Instance.Clear<T>();
+        }
         public void ClearAllReferencePool()
         {
-            ReferencePoolManager.Instance.Clear();
+            ReferencePoolManager.Instance.ClearAll();
         }
         #endregion
         #region UIManager
@@ -608,6 +633,16 @@ namespace Cosmos
         public GameObject InitMainCanvas(string path)
         {
             return UIManager.Instance.InitMainCanvas(path);
+        }
+        /// <summary>
+        /// Resource文件夹相对路径
+        /// 返回实例化的对象
+        /// </summary>
+        /// <param name="path">如UI\Canvas</param>
+        /// <param name="name">生成后重命名的名称</param>
+        public GameObject InitMainCanvas(string path,string name)
+        {
+            return UIManager.Instance.InitMainCanvas(path,name);
         }
         #endregion
         #region FSMManager

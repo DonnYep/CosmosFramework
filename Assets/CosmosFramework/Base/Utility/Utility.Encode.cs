@@ -57,12 +57,9 @@ namespace Cosmos
                 byte[] byteArray = BitConverter.GetBytes(value);
                 return byteArray;
             }
-            public static string ConvertToBinary(int value)
+            public static string ConvertToString(int value)
             {
                 return Utility.Text.Format(Convert.ToString(value, 2));
-                //StringBuilderCache.Clear();
-                //StringBuilderCache.Append(Convert.ToString(value, 2));
-                //return StringBuilderCache.ToString();
             }
             //TODO添加其他进制的封装函数
             //public static string ConvertToOctal(int value)

@@ -6,8 +6,8 @@ namespace Cosmos
     {
         public static class Json
         {
-            static IJsonWarpper jsonWarpper = null;
-            public static void SetJsonWarpper(IJsonWarpper warpper)
+            static IJsonWrapper jsonWarpper = null;
+            public static void SetJsonWarpper(IJsonWrapper warpper)
             {
                 jsonWarpper = warpper;
             }

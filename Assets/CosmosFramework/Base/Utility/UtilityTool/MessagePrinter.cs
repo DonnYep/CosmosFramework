@@ -6,7 +6,7 @@ namespace Cosmos.Test{
     public class MessagePrinter: MonoBehaviour {
         public void PrintMessage(string message)
         {
-            Utility.DebugLog(message, MessageColor.maroon,this);
+            Utility.DebugLog(message, MessageColor.MAROON,this);
         }
         public void PrintWarningMessage(string message)
         {

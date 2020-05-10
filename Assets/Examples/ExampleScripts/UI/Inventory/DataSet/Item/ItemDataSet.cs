@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
+using System;
+[Serializable]
 public abstract class ItemDataSet : CFDataSet
 {
     [SerializeField]protected Sprite itemImage;

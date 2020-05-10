@@ -12,7 +12,7 @@ namespace Cosmos.Test {
         }
         void InitUtility()
         {
-            Utility.Json.SetJsonWarpper(new JsonUtilityWarpper());
+            Utility.Json.SetJsonWarpper(new JsonUtilityWrapper());
         }
     }
 }

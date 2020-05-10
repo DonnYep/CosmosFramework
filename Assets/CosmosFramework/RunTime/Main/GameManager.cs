@@ -44,7 +44,8 @@ namespace Cosmos
         {
             if (HasModule(moduleName))
             {
-                moduleMap[moduleName].OnTermination();
+                //TODO IModule模块释放函数
+                moduleMap[moduleName].Deregister();
                 moduleMap.Remove(moduleName);
                 moduleCount--;
             }

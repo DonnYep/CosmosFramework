@@ -51,7 +51,7 @@ namespace Cosmos.Controller{
                 if( HasControllerItem(controller))
                     controllerMap[key].Add(controller);
                 else
-                    Utility.DebugError("ControllerManager\n" + "Controller : " + controller.ControllerName + "is  already registered");
+                    Utility.DebugError("ControllerManager-->>" + "Controller : " + controller.ControllerName + "is  already registered");
             }
         }
         public void DeregisterController<T>(T controller)
@@ -71,7 +71,7 @@ namespace Cosmos.Controller{
                 }
             }
             else
-                Utility.DebugError("ControllerManager\n"+"Controller : " + controller.ControllerName + "is  unregistered");
+                Utility.DebugError("ControllerManager-->>"+"Controller : " + controller.ControllerName + "is  unregistered");
         }
         public bool HasController<T>()
             where T : CFController
@@ -154,7 +154,7 @@ namespace Cosmos.Controller{
             if (HasController<T>())
                 controllerMap[typeof(T)].Clear();
             else
-                Utility.DebugError("ControllerManager\n"+"Controller : " + typeof(T).FullName + "is  unregistered");
+                Utility.DebugError("ControllerManager-->>" + "Controller : " + typeof(T).FullName + "is  unregistered");
         }
         /// <summary>
         /// 更改控制状态

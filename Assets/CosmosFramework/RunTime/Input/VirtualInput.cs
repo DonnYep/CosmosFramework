@@ -19,14 +19,14 @@ namespace Cosmos.Input{
         public void RegisterVirtualAxis(string name)
         {
             if (virtualAxes.ContainsKey(name))
-                Utility.DebugError("virtual Aixs is allready register, axis name:\n" + name);
+                Utility.DebugError("virtual Aixs is allready register, axis name: " + name);
             else
                 virtualAxes.Add(name, new VirtualAxis(name));
         }
         public void RegisterVirtualButton(string name)
         {
             if (virtualButtons.ContainsKey(name))
-                Utility.DebugError("virtual Button is allready register, button name:\n" + name);
+                Utility.DebugError("virtual Button is allready register, button name: " + name);
             else
                 virtualButtons.Add(name, new VirtualButton(name));
         }

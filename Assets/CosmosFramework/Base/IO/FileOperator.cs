@@ -22,7 +22,7 @@ namespace Cosmos.IO
             if (File.Exists(path))
                 File.Delete(path);
             else
-                Utility.DebugError(Utility.Unity.DecomposeAppAbsolutePath(path) + "\t" + "does not exist!");
+                Utility.DebugError(Utility.Unity.DecomposeAppAbsolutePath(path) +   "does not exist!");
         }
         /// <summary>
         ///文件是否存在 
@@ -59,7 +59,7 @@ namespace Cosmos.IO
             if (Directory.Exists(path))
                 Directory.Delete(path);
             else
-                Utility.DebugError("floder does not exist!\t" + path);
+                Utility.DebugError("floder does not exist! >>" + path);
         }
         #endregion
         /// <summary>

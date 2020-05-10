@@ -53,7 +53,7 @@ namespace Cosmos
                 }
                 else
                 {
-                    DebugError("Type :" + typeFullName + "\n not exist,check your fullName !");
+                    DebugError("Type :" + typeFullName + "  not exist,check your fullName !");
                     return null;
                 }
             }

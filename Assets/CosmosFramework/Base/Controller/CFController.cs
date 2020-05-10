@@ -18,14 +18,14 @@ namespace Cosmos
         {
             controllerName = gameObject.name;
             Facade.Instance.RegisterModule(CFModules.INPUT);
-            AddDefaultEventListener(InputEventCodeParams.INPUT_INPUT);
+            AddDefaultEventListener(InputEventCodeParams.INPUT_INPUTMODULE);
         }
         /// <summary>
         /// 非空虚函数，覆写时建议保留父类方法
         /// </summary>
         protected override void OnTermination()
         {
-            RemoveDefaultEventListener(InputEventCodeParams.INPUT_INPUT);
+            RemoveDefaultEventListener(InputEventCodeParams.INPUT_INPUTMODULE);
         }
         /// <summary>
         /// 事件处理者

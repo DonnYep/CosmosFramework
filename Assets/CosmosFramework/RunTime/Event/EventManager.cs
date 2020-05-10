@@ -17,7 +17,7 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.DebugError("Event key is  empty");
+                Utility.DebugLog("Event key is  empty",MessageColor.RED);
                 return;
             }
             if (eventDict.ContainsKey(eventKey))
@@ -39,7 +39,7 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.DebugError("Event key is  empty");
+                Utility.DebugLog("Event key is  empty", MessageColor.RED);
                 return;
             }
             if (eventDict.ContainsKey(eventKey))
@@ -58,7 +58,7 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.DebugError("Event key is  empty");
+                Utility.DebugLog("Event key is  empty", MessageColor.MAROON);
                 return;
             }
             if (eventDict.ContainsKey(eventKey))
@@ -69,7 +69,7 @@ namespace Cosmos.Event
                 }
             }
             else
-                Utility.DebugError("EventManager\n"+"Event:" +eventKey+ "\n is unregistered");
+                Utility.DebugLog( "EventManager  "+"Event:" +eventKey+ " has not  registered",MessageColor.RED);
         }
         /// <summary>
         /// 注销并移除事件
@@ -78,7 +78,7 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.DebugError("Event key is  empty");
+                Utility.DebugLog("Event key is  empty", MessageColor.RED);
                 return;
             }
             if (eventDict.ContainsKey(eventKey))
@@ -95,7 +95,7 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.DebugError("Event key is  empty");
+                Utility.DebugLog("Event key is  empty", MessageColor.RED);
                 return;
             }
             if (!eventDict.ContainsKey(eventKey))
@@ -110,7 +110,7 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.DebugError("Event key is  empty");
+                Utility.DebugLog("Event key is  empty", MessageColor.RED);
                 return;
             }
             if (eventDict.ContainsKey(eventKey))
@@ -137,13 +137,13 @@ namespace Cosmos.Event
             return false;
         }
         /// <summary>
-        /// 判断时间是否注册
+        /// 判断事件是否注册
         /// </summary>
-        public bool IsEventRegistered(string eventKey)
+        public bool HasEvent(string eventKey)
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.DebugError("Event key is  empty");
+                Utility.DebugLog("Event key is  empty", MessageColor.RED);
                 return false;
             }
             if (eventDict.ContainsKey(eventKey))

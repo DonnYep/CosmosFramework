@@ -10,6 +10,6 @@ namespace Cosmos
     /// </summary>
     public sealed  class InputEventCodeParams
     {
-        public const string INPUT_INPUT = "INPUT_INPUT";
+        public const string INPUT_INPUTMODULE = "Input_InputModule";
     }
 }

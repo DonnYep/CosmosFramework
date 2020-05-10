@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos
 {
-    public class JsonUtilityWarpper : IJsonWarpper
+    public class JsonUtilityWrapper : IJsonWrapper
     {
         public  string ToJson(object obj)
         {

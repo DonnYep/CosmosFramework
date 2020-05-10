@@ -101,7 +101,7 @@ namespace Cosmos {
                     return res;
                 else
                 {
-                    DebugError("Path:" + path + "\n not exist, check your path");
+                    DebugError("Path:" + path + "  not exist, check your path");
                     return null;
                 }
             }
@@ -162,7 +162,7 @@ namespace Cosmos {
                     return true;
                 else
                 {
-                    DebugError("PlayerPrefs key\t" + key + "\t not exist!");
+                    DebugError("PlayerPrefs key " + key + "  not exist!");
                     return false;
                 }
             }

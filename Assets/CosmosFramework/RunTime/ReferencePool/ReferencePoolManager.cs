@@ -16,7 +16,6 @@ namespace Cosmos.Reference
         {
             try
             {
-                //if (referencePool.ContainsKey(typeof(T)))
                     return referencePool[typeof(T)].ReferenceCount;
             }
             catch (Exception)
@@ -78,7 +77,13 @@ namespace Cosmos.Reference
                 referencePool[type].Clear();
             }
         }
-        public void Clear()
+        public void Clear<T>()
+            where T : class, IReference, new()
+        {
+            Type type = typeof(T);
+            Clear(type);
+        }
+        public void ClearAll()
         {
             foreach (var referPool in referencePool)
             {
