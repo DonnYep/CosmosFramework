@@ -7,7 +7,7 @@ namespace Cosmos
     /// 模块的抽象基类
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class Module<T> : Singleton<T>, IModule
+    internal abstract class Module<T> : IModule
         where T : Module<T>, new()
     {
         #region interface IModule
@@ -15,22 +15,22 @@ namespace Cosmos
         /// 非空虚函数;
         /// 可覆写初始化方法，覆写时需要执行父类方法
         /// </summary>
-        protected override void OnInitialization()
+        public virtual void OnInitialization()
         {
-            GameManager.Instance.RegisterModule(ModuleName, this);
+            //TODO 生命周期初始化问题 ，module
+            //GameManager.Instance.RegisterModule(ModuleName, this);
         }
-        public override void Dispose()
-        {
-            OnTermination();
-        }
+        /// <summary>
         /// 非空虚函数，停止模块
         /// 在子类调用时，建议保留执行父类函数
         /// </summary>
-        protected override void OnTermination()
+        public virtual void OnTermination()
         {
+            //TODO 生命周期销毁问题 ，module
+            //GameManager.Instance.DeregisterModule(ModuleFullName);
             moduleMountObject = null;
             moduleName = null;
-            moduleFullName = null;
+            moduleFullyQualifiedName = null;
         }
         public virtual void OnRefresh() { }
         public virtual void OnPreparatory() { }
@@ -66,21 +66,16 @@ namespace Cosmos
         /// <summary>
         /// 模块的完全限定名
         /// </summary>
-        string moduleFullName = null;
-        public string ModuleFullName
+        string moduleFullyQualifiedName = null;
+        public string ModuleFullyQualifiedName
         {
             get
             {
-                if (string.IsNullOrEmpty(moduleFullName))
-                    moduleFullName = Utility.Assembly.GetTypeFullName<T>();
-                return moduleFullName;
+                if (string.IsNullOrEmpty(moduleFullyQualifiedName))
+                    moduleFullyQualifiedName = Utility.Assembly.GetTypeFullName<T>();
+                return moduleFullyQualifiedName;
             }
         }
         public void DebugModule() { }
-        public void Deregister()
-        {
-            Dispose();
-        }
-
     }
 }

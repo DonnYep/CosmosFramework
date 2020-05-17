@@ -38,7 +38,7 @@ namespace Cosmos.FSM{
                 return null;
             }
             //从引用池获得同类
-            FSM<T> fsm = Facade.Instance.SpawnReference<FSM<T>>();
+            FSM<T> fsm = Facade.SpawnReference<FSM<T>>();
             fsm.Name = name;
             fsm.Owner = owner;
             fsm.IsDestoryed = false;
@@ -71,7 +71,7 @@ namespace Cosmos.FSM{
                 return null;
             }
             //从引用池获得同类
-            FSM<T> fsm = Facade.Instance.SpawnReference<FSM<T>>();
+            FSM<T> fsm = Facade.SpawnReference<FSM<T>>();
             fsm.Name = name;
             fsm.Owner = owner;
             fsm.IsDestoryed = false;
@@ -152,7 +152,7 @@ namespace Cosmos.FSM{
         }
         public override void Shutdown()
         {
-            Facade.Instance.DespawnReference(this);
+            Facade.DespawnReference(this);
         }
         #endregion
         #region State

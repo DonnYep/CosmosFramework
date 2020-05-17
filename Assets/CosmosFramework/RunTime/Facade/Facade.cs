@@ -2,61 +2,50 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using Cosmos.Event;
 using Cosmos.UI;
-using Cosmos.Mono;
-using Cosmos.Input;
-using Cosmos.Scene;
-using Cosmos.ObjectPool;
-using Cosmos.Audio;
-using Cosmos.Resource;
-using Cosmos.Reference;
-using Cosmos.Controller;
 using Cosmos.FSM;
-using Cosmos.Data;
-using Cosmos.Config;
-using Cosmos.Network;
-using Cosmos.Entity;
+using System.Reflection;
 namespace Cosmos
 {
     /// <summary>
     /// CosmosFramework外观类，封装模块的功能，进行解耦
     /// 所有调用功能都通过这个外观类与模块进行沟通
     /// </summary>
-    public sealed class Facade : Singleton<Facade>
+    public sealed partial class Facade
     {
         #region FacadeMethods
-        public void InitAllModule()
+        public static void InitAllModule()
         {
-            Cosmos.Audio.AudioManager.Instance.DebugModule();
-            Cosmos.Resource.ResourceManager.Instance.DebugModule();
-            Cosmos.ObjectPool.ObjectPoolManager.Instance.DebugModule();
-            Cosmos.Network.NetworkManager.Instance.DebugModule();
-            Cosmos.Mono.MonoManager.Instance.DebugModule();
-            Cosmos.Input.InputManager.Instance.DebugModule();
-            Cosmos.UI.UIManager.Instance.DebugModule();
-            Cosmos.Event.EventManager.Instance.DebugModule();
-            Cosmos.Scene.SceneManager.Instance.DebugModule();
-            Cosmos.FSM.FSMManager.Instance.DebugModule();
-            Cosmos.Config.ConfigManager.Instance.DebugModule();
-            Cosmos.Data.DataManager.Instance.DebugModule();
-            Cosmos.Controller.ControllerManager.Instance.DebugModule();
-            Cosmos.Entity.EntityManager.Instance.DebugModule();
+            GameManager.AudioManager.DebugModule();
+            GameManager.ResourceManager.DebugModule();
+            GameManager.ObjectPoolManager.DebugModule();
+            GameManager.NetworkManager.DebugModule();
+            GameManager.MonoManager.DebugModule();
+            GameManager.InputManager.DebugModule();
+            GameManager.UIManager.DebugModule();
+            GameManager.EventManager.DebugModule();
+            GameManager.SceneManager.DebugModule();
+            GameManager.FSMManager.DebugModule();
+            GameManager.ConfigManager.DebugModule();
+            GameManager.DataManager.DebugModule();
+            GameManager.ControllerManager.DebugModule();
+            GameManager.EntityManager.DebugModule();
+            GameManager.HotfixManager.DebugModule();
             Utility.DebugLog("Module Count:\t" + GameManager.Instance.ModuleCount);
         }
-        public void RegisterModule(string moduleName)
+        public static void RegisterModule(string moduleName)
         {
             InitModule(moduleName);
         }
         //TODO 反射初始化需要为AOT做出预留，专门设计为IOS系统的symbol
-        IModule InitModule(string moduleName)
+        static IModule InitModule(string moduleName)
         {
 #if UNITY_EDITOR||UNITY_EDITOR_WIN||UNITY_STANDALONE_WIN||UNITY_ANDROID
             var result = GameManager.Instance.GetModule(moduleName);
             if (result == null)
             {
-                var moduleResult = Utility.Assembly.GetTypeInstance<IModule>(this.GetType().Assembly, Utility.Framework.GetModuleTypeFullName(moduleName));
-                GameManager.Instance.RegisterModule(moduleName, moduleResult);
+                var moduleResult = Utility.Assembly.GetTypeInstance<IModule>(Assembly.GetAssembly(typeof(Facade)), Utility.Framework.GetModuleTypeFullName(moduleName));
+                GameManager.Instance.ModuleInitialization(moduleResult);
                 return moduleResult;
             }
             else return result;
@@ -67,60 +56,60 @@ namespace Cosmos
         /// <summary>
         ///这个是为了避免IOS环境下的AOT编译无法通过反射初始化模块的方法
         /// </summary>
-        IModule InitModuleForIOS(string moduleName)
+        static IModule InitModuleForIOS(string moduleName)
         {
             switch (moduleName)
             {
                 case CFModules.AUDIO:
-                    AudioManager.Instance.DebugModule();
+                    GameManager.AudioManager.DebugModule();
                     break;
                 case CFModules.CONFIG:
-                    ConfigManager.Instance.DebugModule();
+                    GameManager.ConfigManager.DebugModule();
                     break;
                 case CFModules.CONTROLLER:
-                    ControllerManager.Instance.DebugModule();
+                    GameManager.ControllerManager.DebugModule();
                     break;
                 case CFModules.DATA:
-                    DataManager.Instance.DebugModule();
+                    GameManager.DataManager.DebugModule();
                     break;
                 case CFModules.ENTITY:
-                    EntityManager.Instance.DebugModule();
+                    GameManager.EntityManager.DebugModule();
                     break;
                 case CFModules.EVENT:
-                    EventManager.Instance.DebugModule();
+                    GameManager.EventManager.DebugModule();
                     break;
                 case CFModules.FSM:
-                    FSMManager.Instance.DebugModule();
+                    GameManager.FSMManager.DebugModule();
                     break;
                 case CFModules.INPUT:
-                    InputManager.Instance.DebugModule();
+                    GameManager.InputManager.DebugModule();
                     break;
                 case CFModules.MONO:
-                    MonoManager.Instance.DebugModule();
+                    GameManager.MonoManager.DebugModule();
                     break;
                 case CFModules.NETWORK:
-                    NetworkManager.Instance.DebugModule();
+                    GameManager.NetworkManager.DebugModule();
                     break;
                 case CFModules.OBJECTPOOL:
-                    ObjectPoolManager.Instance.DebugModule();
+                    GameManager.ObjectPoolManager.DebugModule();
                     break;
                 case CFModules.REFERENCE:
-                    ReferencePoolManager.Instance.DebugModule();
+                    GameManager.ReferencePoolManager.DebugModule();
                     break;
                 case CFModules.RESOURCE:
-                    ResourceManager.Instance.DebugModule();
+                    GameManager.ResourceManager.DebugModule();
                     break;
                 case CFModules.SCENE:
-                    SceneManager.Instance.DebugModule();
+                    GameManager.SceneManager.DebugModule();
                     break;
                 case CFModules.UI:
-                    UIManager.Instance.DebugModule();
+                    GameManager.UIManager.DebugModule();
                     break;
             }
             var result = GameManager.Instance.GetModule(moduleName);
             return result;
         }
-        public IModule GetModule(string moduleName)
+        public static IModule GetModule(string moduleName)
         {
             var moduleResult = GameManager.Instance.GetModule(moduleName);
             if (moduleResult == null)
@@ -129,67 +118,177 @@ namespace Cosmos
             }
             return moduleResult;
         }
-        public bool HasModule(string moduleName)
+        public static bool HasModule(string moduleName)
         {
             return GameManager.Instance.HasModule(moduleName);
         }
         #endregion
         #region InputManager
+        /// <summary>
+        /// 虚拟轴线是否存在
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        /// <returns>是否存在</returns>
+        public bool IsExistVirtualAxis(string name){return GameManager.InputManager.IsExistVirtualAxis(name);}
+        /// <summary>
+        /// 虚拟按键是否存在
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        /// <returns>是否存在</returns>
+        public bool IsExistVirtualButton(string name){return GameManager.InputManager.IsExistVirtualButton(name);}
+        /// <summary>
+        /// 注册虚拟按键
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        public void RegisterVirtualButton(string name){GameManager.InputManager.RegisterVirtualButton(name);}
+        /// <summary>
+        /// 注销虚拟按键
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        public void DeregisterVirtualButton(string name){GameManager.InputManager.DeregisterVirtualButton(name);}
+        /// <summary>
+        /// 注册虚拟按键
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        public void RegisterVirtualAxis(string name){GameManager.InputManager.RegisterVirtualAxis(name);}
+        /// <summary>
+        /// 注销虚拟轴线
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        public void DeregisterVirtualAxis(string name){GameManager.InputManager.DeregisterVirtualAxis(name);}
+        /// <summary>
+        /// 鼠标位置
+        /// </summary>
+        public Vector3 MousePosition() { return GameManager.InputManager.MousePosition; }
+        /// <summary>
+        /// 获得轴线
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        /// <returns></returns>
+        public float GetAxis(string name){ return GameManager.InputManager.GetAxis(name);}
+        /// <summary>
+        /// 未插值的输入 -1，0 ，1
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        /// <returns></returns>
+        public float GetAxisRaw(string name){return GameManager.InputManager.GetAxisRaw(name); }
+        /// <summary>
+        /// 按钮按下
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        /// <returns>是否按下</returns>
+        public bool GetButtonDown(string name){ return GameManager.InputManager.GetButtonDown(name); }
+        /// <summary>
+        /// 按钮按住
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        /// <returns>是否按下</returns>
+        public bool GetButton(string name){return GameManager.InputManager.GetButton(name);}
+        /// <summary>
+        /// 按钮抬起
+        /// </summary>
+        /// <param name="name">按键名称</param>
+        /// <returns>是否按下</returns>
+        public bool GetButtonUp(string name){return GameManager.InputManager.GetButtonUp(name);}
+        /// <summary>
+        /// 设置按钮按下
+        /// </summary>
+        /// <param name="name">按钮名称</param>
+        public void SetButtonDown(string name){GameManager.InputManager.SetButtonDown(name);}
+        /// <summary>
+        /// 设置按钮抬起
+        /// </summary>
+        /// <param name="name">按钮名称</param>
+        public void SetButtonUp(string name){GameManager.InputManager.SetButtonUp(name);}
+        /// <summary>
+        /// 设置虚拟鼠标位置
+        /// </summary>
+        /// <param name="value">鼠标位置</param>
+        public void SetVirtualMousePosition(Vector3 value){GameManager.InputManager.SetVirtualMousePosition(value);}
+        /// <summary>
+        /// 设置虚拟鼠标位置
+        /// </summary>
+        /// <param name="x">x值</param>
+        /// <param name="y">y值</param>
+        /// <param name="z">z值</param>
+        public void SetVirtualMousePosition(float x, float y, float z){GameManager.InputManager.SetVirtualMousePosition(x, y, z);}
+        /// <summary>
+        /// 设置轴线值为正方向1
+        /// </summary>
+        /// <param name="name">轴线名称</param>
+        public void SetAxisPositive(string name){GameManager.InputManager.SetAxisPositive(name);}
+        /// <summary>
+        /// 设置轴线值为负方向-1
+        /// </summary>
+        /// <param name="name">轴线名称</param>
+        public void SetAxisNegative(string name){GameManager.InputManager.SetAxisNegative(name);}
+        /// <summary>
+        /// 设置轴线值为0
+        /// </summary>
+        /// <param name="name">轴线名称</param>
+        public void SetAxisZero(string name){GameManager.InputManager.SetAxisZero(name);}
+        /// <summary>
+        /// 设置轴线值
+        /// </summary>
+        /// <param name="name">轴线名称</param>
+        /// <param name="value">值</param>
+        public void SetAxis(string name, float value){GameManager.InputManager.SetAxis(name, value);}
+
         #endregion
         #region EventManager
-        public void AddEventListener(string eventKey, CFAction<object, GameEventArgs> handler)
+        public static void AddEventListener(string eventKey, CFAction<object, GameEventArgs> handler)
         {
-            EventManager.Instance.AddListener(eventKey, handler);
+            GameManager.EventManager.AddListener(eventKey, handler);
         }
-        public void RemoveEventListener(string eventKey, CFAction<object, GameEventArgs> hander)
+        public static void RemoveEventListener(string eventKey, CFAction<object, GameEventArgs> hander)
         {
-            EventManager.Instance.RemoveListener(eventKey, hander);
+            GameManager.EventManager.RemoveListener(eventKey, hander);
         }
-        public void DispatchEvent(string eventKey, object sender, GameEventArgs arg)
+        public static void DispatchEvent(string eventKey, object sender, GameEventArgs arg)
         {
-            EventManager.Instance.DispatchEvent(eventKey, sender, arg);
+            GameManager.EventManager.DispatchEvent(eventKey, sender, arg);
         }
-        public void RegisterEvent(string eventKey)
+        public static void RegisterEvent(string eventKey)
         {
-            EventManager.Instance.RegisterEvent(eventKey);
+            GameManager.EventManager.RegisterEvent(eventKey);
         }
-        public void DeregisterEvent(string eventKey)
+        public static void DeregisterEvent(string eventKey)
         {
-            EventManager.Instance.DeregisterEvent(eventKey);
+            GameManager.EventManager.DeregisterEvent(eventKey);
         }
-        public void ClearEvent(string eventKey)
+        public static void ClearEvent(string eventKey)
         {
-            EventManager.Instance.ClearEvent(eventKey);
+            GameManager.EventManager.ClearEvent(eventKey);
         }
-        public void ClearAllEvent()
+        public static void ClearAllEvent()
         {
-            EventManager.Instance.ClearAllEvent();
+            GameManager.EventManager.ClearAllEvent();
         }
-        public bool HasEvent(string eventKey)
+        public static bool HasEvent(string eventKey)
         {
-            return EventManager.Instance.HasEvent(eventKey);
+            return GameManager.EventManager.HasEvent(eventKey);
         }
         #endregion
         #region MonoManager
-        public void AddMonoListener(CFAction act, UpdateType type, CFAction<short> callBack = null)
+        public static void AddMonoListener(CFAction act, UpdateType type, CFAction<short> callBack = null)
         {
-            MonoManager.Instance.AddListener(act, type, callBack);
+            GameManager.MonoManager.AddListener(act, type, callBack);
         }
-        public void RemoveMonoListener(CFAction act, UpdateType type, short monoID)
+        public static void RemoveMonoListener(CFAction act, UpdateType type, short monoID)
         {
-            MonoManager.Instance.RemoveListener(act, type, monoID);
+            GameManager.MonoManager.RemoveListener(act, type, monoID);
         }
-        public Coroutine StartCoroutine(IEnumerator routine)
+        public static Coroutine StartCoroutine(IEnumerator routine)
         {
-            return MonoManager.Instance.StartCoroutine(routine);
+            return GameManager.MonoManager.StartCoroutine(routine);
         }
-        public void StopCoroutine(IEnumerator routine)
+        public static void StopCoroutine(IEnumerator routine)
         {
-            MonoManager.Instance.StopCoroutine(routine);
+            GameManager.MonoManager.StopCoroutine(routine);
         }
-        public void StopCoroutine(Coroutine routine)
+        public static void StopCoroutine(Coroutine routine)
         {
-            MonoManager.Instance.StopCoroutine(routine);
+            GameManager.MonoManager.StopCoroutine(routine);
         }
         /// <summary>
         /// 嵌套协程
@@ -197,75 +296,86 @@ namespace Cosmos
         /// <param name="routine">执行条件</param>
         /// <param name="callBack">执行条件结束后自动执行回调函数</param>
         /// <returns>Coroutine</returns>
-        public Coroutine StartCoroutine(Coroutine routine, CFAction callBack)
+        public static Coroutine StartCoroutine(Coroutine routine, CFAction callBack)
         {
-            return MonoManager.Instance.StartCoroutine(routine, callBack);
+            return GameManager.MonoManager.StartCoroutine(routine, callBack);
         }
-        public Coroutine DelayCoroutine(float delay)
+        public static Coroutine DelayCoroutine(float delay)
         {
-            return MonoManager.Instance.DelayCoroutine(delay);
+            return GameManager.MonoManager.DelayCoroutine(delay);
         }
-        public Coroutine DelayCoroutine(float delay, CFAction callBack)
+        public static Coroutine DelayCoroutine(float delay, CFAction callBack)
         {
-            return MonoManager.Instance.DelayCoroutine(delay, callBack);
+            return GameManager.MonoManager.DelayCoroutine(delay, callBack);
+        }
+        /// <summary>
+        /// 条件函数；
+        /// 当handler为true时，才执行callBack函数，期间协程挂起。
+        /// </summary>
+        /// <param name="handler">条件处理者</param>
+        /// <param name="callBack">回调函数</param>
+        /// <returns></returns>
+        public static Coroutine PredicateCoroutine(Func<bool> handler, CFAction callBack)
+        {
+            return GameManager.MonoManager.PredicateCoroutine(handler, callBack);
         }
         #endregion
         #region AudioManager
-        public void PlayBackgroundAudio(GameEventArgs arg)
+        public static void PlayBackgroundAudio(GameEventArgs arg)
         {
-            AudioManager.Instance.PlayBackgroundAudio(arg);
+            GameManager.AudioManager.PlayBackgroundAudio(arg);
         }
-        public void PauseBackgroundAudio()
+        public static void PauseBackgroundAudio()
         {
-            AudioManager.Instance.PauseBackgroundAudio();
+            GameManager.AudioManager.PauseBackgroundAudio();
         }
-        public void UnpauseBackgroundAudio()
+        public static void UnpauseBackgroundAudio()
         {
-            AudioManager.Instance.UnpauseBackgroundAudio();
+            GameManager.AudioManager.UnpauseBackgroundAudio();
         }
-        public void StopBackgroundAudio()
+        public static void StopBackgroundAudio()
         {
-            AudioManager.Instance.StopBackgroundAudio();
+            GameManager.AudioManager.StopBackgroundAudio();
         }
-        public void PlayWorldAudio(GameObject attachTarget, GameEventArgs arg)
+        public static void PlayWorldAudio(GameObject attachTarget, GameEventArgs arg)
         {
-            AudioManager.Instance.PlayWorldAudio(attachTarget, arg);
+            GameManager.AudioManager.PlayWorldAudio(attachTarget, arg);
         }
-        public void PauseWorldAudio(GameObject attachTarget)
+        public static void PauseWorldAudio(GameObject attachTarget)
         {
-            AudioManager.Instance.PauseWorldAudio(attachTarget);
+            GameManager.AudioManager.PauseWorldAudio(attachTarget);
         }
-        public void UnpauseWorldAudio(GameObject attachTarget)
+        public static void UnpauseWorldAudio(GameObject attachTarget)
         {
-            AudioManager.Instance.UnpauseWorldAudio(attachTarget);
+            GameManager.AudioManager.UnpauseWorldAudio(attachTarget);
         }
-        public void StopWorldAudio(GameObject attachTarget)
+        public static void StopWorldAudio(GameObject attachTarget)
         {
-            AudioManager.Instance.StopWorldAudio(attachTarget);
+            GameManager.AudioManager.StopWorldAudio(attachTarget);
         }
-        public void PlayMultipleAudio(GameObject attachTarget, GameEventArgs[] args)
+        public static void PlayMultipleAudio(GameObject attachTarget, GameEventArgs[] args)
         {
-            AudioManager.Instance.PlayMultipleAudio(attachTarget, args);
+            GameManager.AudioManager.PlayMultipleAudio(attachTarget, args);
         }
-        public void PauseMultipleAudio(GameObject attachTarget)
+        public static void PauseMultipleAudio(GameObject attachTarget)
         {
-            AudioManager.Instance.PauseMultipleAudio(attachTarget);
+            GameManager.AudioManager.PauseMultipleAudio(attachTarget);
         }
-        public void UnpauseMultipleAudio(GameObject attachTarget)
+        public static void UnpauseMultipleAudio(GameObject attachTarget)
         {
-            AudioManager.Instance.UnpauseMultipleAudio(attachTarget);
+            GameManager.AudioManager.UnpauseMultipleAudio(attachTarget);
         }
-        public void StopMultipleAudio(GameObject attachTarget)
+        public static void StopMultipleAudio(GameObject attachTarget)
         {
-            AudioManager.Instance.StopMultipleAudio(attachTarget);
+            GameManager.AudioManager.StopMultipleAudio(attachTarget);
         }
-        public void StopAllWorldAudio()
+        public static void StopAllWorldAudio()
         {
-            AudioManager.Instance.StopAllWorldAudio();
+            GameManager.AudioManager.StopAllWorldAudio();
         }
-        public void SetAudioMuteState(bool state)
+        public static void SetAudioMuteState(bool state)
         {
-            AudioManager.Instance.Mute = state;
+            GameManager.AudioManager.Mute = state;
         }
         #endregion
         #region ResourceManager
@@ -277,225 +387,260 @@ namespace Cosmos
         /// <param name="path">相对Resource路径</param>
         /// <param name="instantiateGameObject">是否实例化GameObject类型</param>
         /// <returns></returns>
-        public T LoadResAsset<T>(string path, bool instantiateGameObject = false)
+        public static T LoadResAsset<T>(string path, bool instantiateGameObject = false)
             where T : UnityEngine.Object
         {
-            return ResourceManager.Instance.LoadResAsset<T>(path, instantiateGameObject);
+            return GameManager.ResourceManager.LoadResAsset<T>(path, instantiateGameObject);
         }
         /// <summary>
         /// 异步加载资源,如果目标是Gameobject，则实例化
         /// </summary>
-        public void LoadResAysnc<T>(string path, CFAction<T> callBack = null)
+        public static void LoadResAysnc<T>(string path, CFAction<T> callBack = null)
             where T : UnityEngine.Object
         {
-            ResourceManager.Instance.LoadResAysnc<T>(path, callBack);
+            GameManager.ResourceManager.LoadResAysnc<T>(path, callBack);
         }
         /// <summary>
         /// 异步加载资源,不实例化任何类型
         /// </summary>
-        public void LoadResAssetAysnc<T>(string path, CFAction<T> callBack = null)
+        public static void LoadResAssetAysnc<T>(string path, CFAction<T> callBack = null)
             where T : UnityEngine.Object
         {
-            ResourceManager.Instance.LoadResAssetAysnc(path, callBack);
+            GameManager.ResourceManager.LoadResAssetAysnc(path, callBack);
         }
         /// <summary>
         /// 使用unityEngine.Resources方法
         /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
         /// </summary>
-        public List<T> LoadResFolderAssets<T>(string path)
+        public static List<T> LoadResFolderAssets<T>(string path)
             where T : UnityEngine.Object
         {
-            return ResourceManager.Instance.LoadResFolderAssets<T>(path);
+            return GameManager.ResourceManager.LoadResFolderAssets<T>(path);
         }
         /// <summary>
         /// 使用unityEngine.Resources方法
         /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
         /// </summary>
-        public T[] LoadResAll<T>(string path)
+        public static T[] LoadResAll<T>(string path)
             where T : UnityEngine.Object
         {
-            return ResourceManager.Instance.LoadResAll<T>(path);
+            return GameManager.ResourceManager.LoadResAll<T>(path);
         }
         #endregion
         #region 基于AssetBundle
-
+        /// <summary>
+        /// 异步加载AB 依赖包
+        /// </summary>
+        /// <param name="abName">ab包名称</param>
+        public static void LoadDependenciesABAsync(string abName)
+        {
+            GameManager.ResourceManager.LoadDependenciesABAsync(abName);
+        }
+        /// <summary>
+        /// 异步加载AB包，若不存在，则从web端加载
+        /// </summary>
+        /// <param name="abName">AssetBundle Name</param>
+        /// <param name="isManifest">是否为AB清单</param>
+        public static void LoadABAsync(string abName, bool isManifest = false)
+        {
+            GameManager.ResourceManager.LoadABAsync(abName, isManifest);
+        }
+        /// <summary>
+        /// 异步加载AB包清单
+        /// </summary>
+        public static void LoadABManifestAsync()
+        {
+            GameManager.ResourceManager.LoadABManifestAsync();
+        }
+        public static void UnloadAsset(string abName, bool unloadAllAssets = false)
+        {
+            GameManager.ResourceManager.UnloadAsset(abName, unloadAllAssets);
+        }
+        /// <summary>
+        /// 卸载所有资源
+        /// </summary>
+        /// <param name="unloadAllAssets">是否卸所有实体对象</param>
+        public static void UnloadAllAsset(bool unloadAllAssets = false)
+        {
+            GameManager.ResourceManager.UnloadAllAsset(unloadAllAssets);
+        }
         #endregion
         #endregion
         #region ScenesManager
-        public void LoadScene(string sceneName, CFAction callBack = null)
+        public static void LoadScene(string sceneName, CFAction callBack = null)
         {
-            SceneManager.Instance.LoadScene(sceneName, callBack);
+            GameManager.SceneManager.LoadScene(sceneName, callBack);
         }
-        public void LoadScene(int sceneIndex, CFAction callBack = null)
+        public static void LoadScene(int sceneIndex, CFAction callBack = null)
         {
-            SceneManager.Instance.LoadScene(sceneIndex, callBack);
+            GameManager.SceneManager.LoadScene(sceneIndex, callBack);
         }
-        public void LoadSceneAsync(string sceneName)
+        public static void LoadSceneAsync(string sceneName)
         {
-            SceneManager.Instance.LoadSceneAsync(sceneName);
-        }
-        /// <summary>
-        /// 回调函数只在完成后进行一次回调
-        /// </summary>
-        public void LoadSceneAsync(string sceneName, CFAction callBack = null)
-        {
-            SceneManager.Instance.LoadSceneAsync(sceneName, callBack);
-        }
-        /// <summary>
-        /// 回调函数每次yield更新都会调用
-        /// ，不会进行完成后的调用
-        /// </summary>
-        public void LoadSceneAsync(string sceneName, CFAction<float> callBack)
-        {
-            SceneManager.Instance.LoadSceneAsync(sceneName, callBack);
-        }
-        /// <summary>
-        /// 回调函数每次yield更新都会调用
-        /// ，不会进行完成后的调用
-        /// </summary>
-        public void LoadSceneAsync(string sceneName, CFAction<AsyncOperation> callBack)
-        {
-            SceneManager.Instance.LoadSceneAsync(sceneName, callBack);
-        }
-        public void LoadSceneAsync(int sceneIndex)
-        {
-            SceneManager.Instance.LoadSceneAsync(sceneIndex);
+            GameManager.SceneManager.LoadSceneAsync(sceneName);
         }
         /// <summary>
         /// 回调函数只在完成后进行一次回调
         /// </summary>
-        public void LoadSceneAsync(int sceneIndex, CFAction callBack = null)
+        public static void LoadSceneAsync(string sceneName, CFAction callBack = null)
         {
-            SceneManager.Instance.LoadSceneAsync(sceneIndex, callBack);
+            GameManager.SceneManager.LoadSceneAsync(sceneName, callBack);
         }
         /// <summary>
         /// 回调函数每次yield更新都会调用
         /// ，不会进行完成后的调用
         /// </summary>
-        public void LoadSceneAsync(int sceneIndex, CFAction<float> callBack = null)
+        public static void LoadSceneAsync(string sceneName, CFAction<float> callBack)
         {
-            SceneManager.Instance.LoadSceneAsync(sceneIndex, callBack);
+            GameManager.SceneManager.LoadSceneAsync(sceneName, callBack);
         }
         /// <summary>
         /// 回调函数每次yield更新都会调用
         /// ，不会进行完成后的调用
         /// </summary>
-        public void LoadSceneAsync(int sceneIndex, CFAction<AsyncOperation> callBack = null)
+        public static void LoadSceneAsync(string sceneName, CFAction<AsyncOperation> callBack)
         {
-            SceneManager.Instance.LoadSceneAsync(sceneIndex, callBack);
+            GameManager.SceneManager.LoadSceneAsync(sceneName, callBack);
+        }
+        public static void LoadSceneAsync(int sceneIndex)
+        {
+            GameManager.SceneManager.LoadSceneAsync(sceneIndex);
+        }
+        /// <summary>
+        /// 回调函数只在完成后进行一次回调
+        /// </summary>
+        public static void LoadSceneAsync(int sceneIndex, CFAction callBack = null)
+        {
+            GameManager.SceneManager.LoadSceneAsync(sceneIndex, callBack);
+        }
+        /// <summary>
+        /// 回调函数每次yield更新都会调用
+        /// ，不会进行完成后的调用
+        /// </summary>
+        public static void LoadSceneAsync(int sceneIndex, CFAction<float> callBack = null)
+        {
+            GameManager.SceneManager.LoadSceneAsync(sceneIndex, callBack);
+        }
+        /// <summary>
+        /// 回调函数每次yield更新都会调用
+        /// ，不会进行完成后的调用
+        /// </summary>
+        public static void LoadSceneAsync(int sceneIndex, CFAction<AsyncOperation> callBack = null)
+        {
+            GameManager.SceneManager.LoadSceneAsync(sceneIndex, callBack);
         }
         #endregion
         #region GameObjectPool
-        public void RegisterObjcetSpawnPool(object objKey, GameObject spawnItem, CFAction<GameObject> onSpawn, CFAction<GameObject> onDespawn)
+        public static void RegisterObjcetSpawnPool(object objKey, GameObject spawnItem, CFAction<GameObject> onSpawn, CFAction<GameObject> onDespawn)
         {
-            ObjectPoolManager.Instance.RegisterSpawnPool(objKey, spawnItem, onSpawn, onDespawn);
+            GameManager.ObjectPoolManager.RegisterSpawnPool(objKey, spawnItem, onSpawn, onDespawn);
         }
-        public void DeregisterObjectSapwnPool(object objKey)
+        public static void DeregisterObjectSapwnPool(object objKey)
         {
-            ObjectPoolManager.Instance.DeregisterSpawnPool(objKey);
+            GameManager.ObjectPoolManager.DeregisterSpawnPool(objKey);
         }
-        public int GetObjectSpawnPoolItemCount(object objKey)
+        public static int GetObjectSpawnPoolItemCount(object objKey)
         {
-            return ObjectPoolManager.Instance.GetPoolCount(objKey);
+            return GameManager.ObjectPoolManager.GetPoolCount(objKey);
         }
-        public GameObject SpawnObject(object objKey)
+        public static GameObject SpawnObject(object objKey)
         {
-            return ObjectPoolManager.Instance.Spawn(objKey);
+            return GameManager.ObjectPoolManager.Spawn(objKey);
         }
-        public void DespawnObject(object objKey, GameObject go)
+        public static void DespawnObject(object objKey, GameObject go)
         {
-            ObjectPoolManager.Instance.Despawn(objKey, go);
+            GameManager.ObjectPoolManager.Despawn(objKey, go);
         }
-        public void DespawnObjects(object objKey, GameObject[] gos)
+        public static void DespawnObjects(object objKey, GameObject[] gos)
         {
-            ObjectPoolManager.Instance.Despawns(objKey, gos);
+            GameManager.ObjectPoolManager.Despawns(objKey, gos);
         }
-        public void ClearObjectSpawnPool(object objKey)
+        public static void ClearObjectSpawnPool(object objKey)
         {
-            ObjectPoolManager.Instance.Clear(objKey);
+            GameManager.ObjectPoolManager.Clear(objKey);
         }
-        public void ClearAllObjectSpawnPool()
+        public static void ClearAllObjectSpawnPool()
         {
-            ObjectPoolManager.Instance.ClearAll();
+            GameManager.ObjectPoolManager.ClearAll();
         }
-        public void SetObjectSpawnItem(object objKey, GameObject go)
+        public static void SetObjectSpawnItem(object objKey, GameObject go)
         {
-            ObjectPoolManager.Instance.SetSpawnItem(objKey, go);
+            GameManager.ObjectPoolManager.SetSpawnItem(objKey, go);
         }
         /// <summary>
         /// 对象池生成对象在激活状态时所在的容器，场景中唯一，被销毁后依旧会创建
         /// </summary>
         /// <returns></returns>
-        public GameObject GetObjectSpawnPoolActiveMount()
+        public static GameObject GetObjectSpawnPoolActiveMount()
         {
-            return ObjectPoolManager.Instance.ActiveObjectMount;
+            return GameManager.ObjectPoolManager.ActiveObjectMount;
         }
         /// <summary>
         /// 生成对象但不经过池，通常用在一次性对象的产生上
         /// </summary>
-        public GameObject SpawnObjectNotUsePool(GameObject go, Transform spawnTransform)
+        public static GameObject SpawnObjectNotUsePool(GameObject go, Transform spawnTransform)
         {
-            return ObjectPoolManager.Instance.SpawnNotUsePool(go, spawnTransform);
+            return GameManager.ObjectPoolManager.SpawnNotUsePool(go, spawnTransform);
         }
         #endregion
         #region ControllerManager
-        public void RegisterController<T>(T controller)
+        public static void RegisterController<T>(T controller)
             where T : CFController
         {
-            ControllerManager.Instance.RegisterController<T>(controller);
+            GameManager.ControllerManager.RegisterController<T>(controller);
         }
         /// <summary>
         /// 注销控制器，如果当前控制器是最后一个，则注销后，这个类别也会自动注销
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="controller"></param>
-        public void DeregisterController<T>(T controller)
+        public static void DeregisterController<T>(T controller)
             where T : CFController
         {
-            ControllerManager.Instance.DeregisterController<T>(controller);
+            GameManager.ControllerManager.DeregisterController<T>(controller);
         }
-        public T GetController<T>(CFPredicateAction<T> predicate)
+        public static T GetController<T>(CFPredicateAction<T> predicate)
             where T : CFController
         {
-            return ControllerManager.Instance.GetController<T>(predicate);
+            return GameManager.ControllerManager.GetController<T>(predicate);
         }
-        public T[] GetControllers<T>(CFPredicateAction<T> predicate)
+        public static T[] GetControllers<T>(CFPredicateAction<T> predicate)
             where T : CFController
         {
-            return ControllerManager.Instance.GetControllers(predicate);
+            return GameManager.ControllerManager.GetControllers(predicate);
         }
         /// <summary>
         /// 获取当前注册的T类型重，controller所包含的数量
         /// </summary>
-        public short GetControllerItemCount<T>()
+        public static short GetControllerItemCount<T>()
         {
-            return ControllerManager.Instance.GetControllerItemCount<T>();
+            return GameManager.ControllerManager.GetControllerItemCount<T>();
         }
         /// <summary>
         /// 获取当前注册的所有类型controller总数
         /// </summary>
-        public short GetControllerTypeCount()
+        public static short GetControllerTypeCount()
         {
-            return ControllerManager.Instance.GetControllerTypeCount();
+            return GameManager.ControllerManager.GetControllerTypeCount();
         }
-        public bool HasController<T>()
+        public static bool HasController<T>()
             where T : CFController
         {
-            return ControllerManager.Instance.HasController<T>();
+            return GameManager.ControllerManager.HasController<T>();
         }
-        public bool HasControllerItem<T>(T controller)
+        public static bool HasControllerItem<T>(T controller)
             where T : CFController
         {
-            return ControllerManager.Instance.HasControllerItem(controller);
+            return GameManager.ControllerManager.HasControllerItem(controller);
         }
-        public void ClearAllController()
+        public static void ClearAllController()
         {
-            ControllerManager.Instance.ClearAllController();
+            GameManager.ControllerManager.ClearAllController();
         }
-        public void ClearControllerItem<T>()
+        public static void ClearControllerItem<T>()
             where T : CFController
         {
-            ControllerManager.Instance.ClearControllerItem<T>();
+            GameManager.ControllerManager.ClearControllerItem<T>();
         }
         #endregion
         #region DataManager
@@ -506,10 +651,10 @@ namespace Cosmos
         /// <param name="fileName">文件名称</param>
         /// <param name="dataSet">装箱后的数据</param>
         /// <param name="callBack">回调函数，当写入成功后调用</param>
-        public void SaveJsonDataToLocal<T>(string relativePath, string fileName, T dataSet,bool binary=false, CFAction callBack = null)
+        public static void SaveJsonDataToLocal<T>(string relativePath, string fileName, T dataSet, bool binary = false, CFAction callBack = null)
             where T : class, new()
         {
-            DataManager.Instance.SaveJsonDataToLocal(relativePath, fileName, dataSet,binary ,callBack);
+            GameManager.DataManager.SaveJsonDataToLocal(relativePath, fileName, dataSet, binary, callBack);
         }
         /// <summary>
         /// 从本地的绝对路径读取Json数据
@@ -519,9 +664,9 @@ namespace Cosmos
         /// <param name="binary">是否为二进制文件</param>
         /// <param name="callBack">回调函数，当读取成功后调用</param>
         /// <returns>返回一个Json</returns>
-        public string LoadJsonDataFromLocal(string relativePath, string fileName,bool binary=false, CFAction callBack = null)
+        public static string LoadJsonDataFromLocal(string relativePath, string fileName, bool binary = false, CFAction callBack = null)
         {
-            return DataManager.Instance.LoadJsonDataFromLocal(relativePath, fileName, binary,callBack);
+            return GameManager.DataManager.LoadJsonDataFromLocal(relativePath, fileName, binary, callBack);
         }
         /// <summary>
         /// 从本地的绝对路径读取Json数据
@@ -530,9 +675,9 @@ namespace Cosmos
         /// <param name="binary">是否为二进制文件</param>
         /// <param name="callBack">回调函数，当读取成功后调用</param>
         /// <returns>返回一个Json</returns>
-        public string LoadJsonDataFromLocal(string fullRelativeFilePath,  bool binary=false, CFAction  callBack = null)
+        public static string LoadJsonDataFromLocal(string fullRelativeFilePath, bool binary = false, CFAction callBack = null)
         {
-          return  DataManager.Instance.LoadJsonDataFromLocal(fullRelativeFilePath,  binary,callBack);
+            return GameManager.DataManager.LoadJsonDataFromLocal(fullRelativeFilePath, binary, callBack);
         }
         /// <summary>
         /// 从Resource文件夹下读取Json
@@ -542,53 +687,67 @@ namespace Cosmos
         /// <param name="fileName">文件名</param>
         /// <param name="dataSet">存储json的类模型</param>
         /// <param name="callBack">回调函数</param>
-        public void ParseDataFromResource<T>(string relativePath, string fileName, ref T dataSet, CFAction<T> callBack = null)
+        public static void ParseDataFromResource<T>(string relativePath, string fileName, ref T dataSet, CFAction<T> callBack = null)
           where T : class, new()
         {
-            DataManager.Instance.ParseDataFromResource(relativePath, fileName, ref dataSet, callBack);
+            GameManager.DataManager.ParseDataFromResource(relativePath, fileName, ref dataSet, callBack);
         }
         #endregion
         #region ReferenceManager
-        public int GetReferencePoolCount<T>()
+        public static int GetReferencePoolCount<T>()
             where T : class, IReference, new()
         {
-            return ReferencePoolManager.Instance.GetPoolCount<T>();
+            return GameManager.ReferencePoolManager.GetPoolCount<T>();
         }
-        public T SpawnReference<T>()
+        public static T SpawnReference<T>()
             where T : class, IReference, new()
         {
-            return ReferencePoolManager.Instance.Spawn<T>();
+            return GameManager.ReferencePoolManager.Spawn<T>();
         }
-        public IReference SpawnReference(Type type)
+        public static IReference SpawnReference(Type type)
         {
-            return ReferencePoolManager.Instance.Spawn(type);
+            return GameManager.ReferencePoolManager.Spawn(type);
         }
-        public void DespawnReference(IReference refer)
-        {
-            ReferencePoolManager.Instance.Despawn(refer);
-        }
-        public void DespawnsReference<T>(List<T> refers)
+        /// <summary>
+        /// 生成引用接口
+        /// </summary>
+        /// <typeparam name="T">生成类型</typeparam>
+        /// <returns> 返回生成后的接口类型对象</returns>
+        public static IReference SpawnReferenceInterface<T>()
             where T : class, IReference, new()
         {
-            ReferencePoolManager.Instance.Despawns<T>(refers);
+            return GameManager.ReferencePoolManager.SpawnInterface<T>();
         }
-        public void DespawnsReference<T>(T[] refers)
+        public static void DespawnReference(IReference refer)
+        {
+            GameManager.ReferencePoolManager.Despawn(refer);
+        }
+        public static void DespawnsReference(params IReference[] refer)
+        {
+            GameManager.ReferencePoolManager.Despawns(refer);
+        }
+        public static void DespawnsReference<T>(List<T> refers)
             where T : class, IReference, new()
         {
-            ReferencePoolManager.Instance.Despawns<T>(refers);
+            GameManager.ReferencePoolManager.Despawns<T>(refers);
         }
-        public void ClearReferencePool(Type type)
-        {
-            ReferencePoolManager.Instance.Clear(type);
-        }
-        public void ClearReferencePool<T>()
+        public static void DespawnsReference<T>(T[] refers)
             where T : class, IReference, new()
         {
-            ReferencePoolManager.Instance.Clear<T>();
+            GameManager.ReferencePoolManager.Despawns<T>(refers);
         }
-        public void ClearAllReferencePool()
+        public static void ClearReferencePool(Type type)
         {
-            ReferencePoolManager.Instance.ClearAll();
+            GameManager.ReferencePoolManager.Clear(type);
+        }
+        public static void ClearReferencePool<T>()
+            where T : class, IReference, new()
+        {
+            GameManager.ReferencePoolManager.Clear<T>();
+        }
+        public static void ClearAllReferencePool()
+        {
+            GameManager.ReferencePoolManager.ClearAll();
         }
         #endregion
         #region UIManager
@@ -599,40 +758,40 @@ namespace Cosmos
         /// <typeparam name="T"> UILogicBase</typeparam>
         /// <param name="panelName">相对完整路径</param>
         /// <param name="callBack">仅在载入时回调</param>
-        public void LoadPanel<T>(string panelName, CFAction<T> callBack = null)
+        public static void LoadPanel<T>(string panelName, CFAction<T> callBack = null)
                    where T : UILogicBase
         {
-            UIManager.Instance.LoadPanel(panelName, callBack);
+            GameManager.UIManager.LoadPanel(panelName, callBack);
         }
         /// <summary>
         /// 载入面板，若字典中已存在，则使用回调，并返回。若不存在，则异步加载且使用回调。
         /// 基于Resources
         /// </summary>
-        public void ShowPanel<T>(string panelName, CFAction<T> callBack = null)
+        public static void ShowPanel<T>(string panelName, CFAction<T> callBack = null)
             where T : UILogicBase
         {
-            UIManager.Instance.ShowPanel(panelName, callBack);
+            GameManager.UIManager.ShowPanel(panelName, callBack);
         }
-        public void HidePanel(string panelName)
+        public static void HidePanel(string panelName)
         {
-            UIManager.Instance.HidePanel(panelName);
+            GameManager.UIManager.HidePanel(panelName);
         }
-        public void RemovePanel(string panelName)
+        public static void RemovePanel(string panelName)
         {
-            UIManager.Instance.RemovePanel(panelName);
+            GameManager.UIManager.RemovePanel(panelName);
         }
-        public void HasPanel(string panelName)
+        public static void HasPanel(string panelName)
         {
-            UIManager.Instance.HasPanel(panelName);
+            GameManager.UIManager.HasPanel(panelName);
         }
         /// <summary>
         /// Resource文件夹相对路径
         /// 返回实例化的对象
         /// </summary>
         /// <param name="path">如UI\Canvas</param>
-        public GameObject InitMainCanvas(string path)
+        public static GameObject InitMainCanvas(string path)
         {
-            return UIManager.Instance.InitMainCanvas(path);
+            return GameManager.UIManager.InitMainCanvas(path);
         }
         /// <summary>
         /// Resource文件夹相对路径
@@ -640,71 +799,71 @@ namespace Cosmos
         /// </summary>
         /// <param name="path">如UI\Canvas</param>
         /// <param name="name">生成后重命名的名称</param>
-        public GameObject InitMainCanvas(string path,string name)
+        public static GameObject InitMainCanvas(string path, string name)
         {
-            return UIManager.Instance.InitMainCanvas(path,name);
+            return GameManager.UIManager.InitMainCanvas(path, name);
         }
         #endregion
         #region FSMManager
-        public FSMBase GetFSM<T>()
+        public static FSMBase GetFSM<T>()
             where T : FSMBase
         {
-            return FSMManager.Instance.GetFSM<T>();
+            return GameManager.FSMManager.GetFSM<T>();
         }
-        public FSMBase GetFSM(Type type)
+        public static FSMBase GetFSM(Type type)
         {
-            return GetFSM(type);
+            return GameManager.FSMManager.GetFSM(type);
         }
-        public FSMBase[] GetAllFSM<T>()
+        public static FSMBase[] GetAllFSM<T>()
             where T : FSMBase
         {
-            return FSMManager.Instance.GetAllFSM<T>();
+            return GameManager.FSMManager.GetAllFSM<T>();
         }
-        public FSMBase[] GetAllFSM(Type type)
+        public static FSMBase[] GetAllFSM(Type type)
         {
-            return FSMManager.Instance.GetAllFSM(type);
+            return GameManager.FSMManager.GetAllFSM(type);
         }
-        public bool HasFSM<T>()
+        public static bool HasFSM<T>()
             where T : FSMBase
         {
-            return FSMManager.Instance.HasFSM<T>();
+            return GameManager.FSMManager.HasFSM<T>();
         }
-        public bool HasFSM(Type type)
+        public static bool HasFSM(Type type)
         {
-            return FSMManager.Instance.HasFSM(type);
+            return GameManager.FSMManager.HasFSM(type);
         }
-        public IFSM<T> CreateFSM<T>(T owner, params FSMState<T>[] states)
+        public static IFSM<T> CreateFSM<T>(T owner, params FSMState<T>[] states)
             where T : class
         {
-            return FSMManager.Instance.CreateFSM(owner, states);
+            return GameManager.FSMManager.CreateFSM(owner, states);
         }
-        public IFSM<T> CreateFSM<T>(string name, T owner, params FSMState<T>[] states)
+        public static IFSM<T> CreateFSM<T>(string name, T owner, params FSMState<T>[] states)
             where T : class
         {
-            return FSMManager.Instance.CreateFSM<T>(name, owner, states);
+            return GameManager.FSMManager.CreateFSM<T>(name, owner, states);
         }
-        public IFSM<T> CreateFSM<T>(T owner, List<FSMState<T>> states)
+        public static IFSM<T> CreateFSM<T>(T owner, List<FSMState<T>> states)
             where T : FSMBase
         {
-            return FSMManager.Instance.CreateFSM(owner, states);
+            return GameManager.FSMManager.CreateFSM(owner, states);
         }
-        public IFSM<T> CreateFSM<T>(string name, T owner, List<FSMState<T>> states)
+        public static IFSM<T> CreateFSM<T>(string name, T owner, List<FSMState<T>> states)
          where T : class
         {
-            return FSMManager.Instance.CreateFSM(name, owner, states);
+            return GameManager.FSMManager.CreateFSM(name, owner, states);
         }
-        public void DestoryFSM<T>()
+        public static void DestoryFSM<T>()
          where T : class
         {
-            FSMManager.Instance.DestoryFSM<T>();
+            GameManager.FSMManager.DestoryFSM<T>();
         }
-        public void DestoryFSM(Type type)
+        public static void DestoryFSM(Type type)
         {
-            FSMManager.Instance.DestoryFSM(type);
+            GameManager.FSMManager.DestoryFSM(type);
         }
-        public void ShutdownAllFSM()
+        public static void ShutdownAllFSM()
         {
-            FSMManager.Instance.ShutdownAllFSM();
+            GameManager.FSMManager.ShutdownAllFSM();
         }
         #endregion
     }

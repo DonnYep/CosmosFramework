@@ -127,19 +127,19 @@ namespace Cosmos.Mono
             switch (type)
             {
                 case UpdateType.FixedUpdate:
-                    if (((short)CheckActionsState(fixedUpdateCount, MonoManager._FixedUpdateCapacity)) != -1)
+                    if (((short)CheckActionsState(fixedUpdateCount, MonoManager._FixedUpdateCapacity)) ==- 1)
                         return;
                     fixedUpdateActions -= act;
                     --fixedUpdateCount;
                     break;
                 case UpdateType.Update:
-                    if (((short)CheckActionsState(updateCount, MonoManager._UpdateCapacity)) != -1)
+                    if (((short)CheckActionsState(updateCount, MonoManager._UpdateCapacity)) ==- 1)
                         return;
                     updateActions -= act;
                     --updateCount;
                     break;
                 case UpdateType.LateUpdate:
-                    if (((short)CheckActionsState(lateUpdateCount, MonoManager._LateUpdateCapacity)) != -1)
+                    if (((short)CheckActionsState(lateUpdateCount, MonoManager._LateUpdateCapacity)) ==- 1)
                         return;
                     lateUpdateActions -= act;
                    -- lateUpdateCount;
@@ -180,6 +180,15 @@ namespace Cosmos.Mono
         {
             yield return routine;
             callBack?.Invoke();
+        }
+        IEnumerator EnumPredicateCoroutine(Func<bool> handler,CFAction callBack)
+        {
+            yield return new WaitUntil(handler);
+            callBack();
+        }
+        public Coroutine PredicateCoroutine(Func<bool>handler,CFAction callBack)
+        {
+            return StartCoroutine(EnumPredicateCoroutine(handler,callBack));
         }
         public Coroutine DelayCoroutine(float delay)
         {

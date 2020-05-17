@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 namespace Cosmos.UI
 {
-    public sealed class UIManager : Module<UIManager>
+    internal sealed class UIManager : Module<UIManager>
     {
         public static string MainUICanvasName { get; set; }
         GameObject mainUICanvas;
@@ -20,7 +20,7 @@ namespace Cosmos.UI
                 return mainUICanvas;
             else
             {
-                Facade.Instance.LoadResAysnc<GameObject>(path, go =>
+                Facade.LoadResAysnc<GameObject>(path, go =>
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = "MainUICanvas";
@@ -41,7 +41,7 @@ namespace Cosmos.UI
                 return mainUICanvas;
             else
             {
-                Facade.Instance.LoadResAysnc<GameObject>(path, go =>
+                Facade.LoadResAysnc<GameObject>(path, go =>
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = name;
@@ -62,7 +62,7 @@ namespace Cosmos.UI
         {
             if (HasPanel(panelName))
                 return;
-            Facade.Instance.LoadResAysnc<GameObject>(panelName, go =>
+            Facade.LoadResAysnc<GameObject>(panelName, go =>
             {
                 GameObject result = go;
                 result.transform.SetParent(MainUICanvas.transform);
@@ -87,7 +87,7 @@ namespace Cosmos.UI
                 callBack?.Invoke(uiPanelMap[panelName] as T);
                 return;
             }
-            Facade.Instance.LoadResAysnc<GameObject>(panelName, go =>
+            Facade.LoadResAysnc<GameObject>(panelName, go =>
             {
                 GameObject result = go;
                 result.transform.SetParent(MainUICanvas.transform);

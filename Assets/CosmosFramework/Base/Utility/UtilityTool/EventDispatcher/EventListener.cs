@@ -35,11 +35,11 @@ namespace Cosmos{
         /// </summary>
         public void Deregister()
         {
-            Facade.Instance.RemoveEventListener(EventKey, Handler);
+            Facade.RemoveEventListener(EventKey, Handler);
         }
         public void Register()
         {
-            Facade.Instance.AddEventListener(EventKey, Handler);
+            Facade.AddEventListener(EventKey, Handler);
         }
     }
 }

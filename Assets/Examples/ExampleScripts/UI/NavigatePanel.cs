@@ -33,10 +33,10 @@ public class NavigatePanel : UILogicResident
     void WelcomeClick()
     {
         if (welcome == null)
-            Facade.Instance.ShowPanel<WelcomePanel>(Utility.UI.GetUIFullRelativePath( "WelcomePanel")
+            Facade.ShowPanel<WelcomePanel>(Utility.UI.GetUIFullRelativePath( "WelcomePanel")
                 , panel => { panel.gameObject.name = "WelcomePanel"; panel.gameObject.SetActive(true); welcome = panel; });
         else
-            Facade.Instance.RemovePanel(Utility.UI.GetUIFullRelativePath("WelcomePanel"));
+            Facade.RemovePanel(Utility.UI.GetUIFullRelativePath("WelcomePanel"));
     }
     /// <summary>
     /// Invenmtory panel是常驻类型，若不存在，则载入；开启与关闭只进行显示与隐藏操作
@@ -45,7 +45,7 @@ public class NavigatePanel : UILogicResident
     {
         if (inventory == null)
         {
-            Facade.Instance.ShowPanel<InventoryPanel>(Utility.UI.GetUIFullRelativePath("InventoryPanel"), panel =>
+            Facade.ShowPanel<InventoryPanel>(Utility.UI.GetUIFullRelativePath("InventoryPanel"), panel =>
             { panel.gameObject.name = "InventoryPanel"; panel.gameObject.SetActive(true); inventory = panel; });
             return;
         }
@@ -58,7 +58,7 @@ public class NavigatePanel : UILogicResident
     {
         if (store == null)
         {
-            Facade.Instance.ShowPanel<StorePanel>(Utility.UI.GetUIFullRelativePath("StorePanel"), panel =>
+            Facade.ShowPanel<StorePanel>(Utility.UI.GetUIFullRelativePath("StorePanel"), panel =>
             { panel.gameObject.name = "StorePanel"; panel.gameObject.SetActive(true); store = panel; });
             return;
         }
@@ -71,7 +71,7 @@ public class NavigatePanel : UILogicResident
     {
         if (setting == null)
         {
-            Facade.Instance.ShowPanel<SettingPanel>(Utility.UI.GetUIFullRelativePath("SettingPanel"), panel => 
+            Facade.ShowPanel<SettingPanel>(Utility.UI.GetUIFullRelativePath("SettingPanel"), panel => 
             { panel.gameObject.name = "SettingPanel";panel.gameObject.SetActive(true);setting = panel; });
             return;
         }
@@ -84,7 +84,7 @@ public class NavigatePanel : UILogicResident
     {
         if (status == null)
         {
-            Facade.Instance.ShowPanel<StatusPanel>(Utility.UI.GetUIFullRelativePath("StatusPanel"), panel => 
+            Facade.ShowPanel<StatusPanel>(Utility.UI.GetUIFullRelativePath("StatusPanel"), panel => 
             { panel.gameObject.name = "StatusPanel";panel.gameObject.SetActive(true);status = panel; });
             return;
         }

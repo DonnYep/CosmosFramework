@@ -7,7 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 namespace Cosmos.Data
 {
-    public sealed class DataManager : Module<DataManager>
+    internal sealed class DataManager : Module<DataManager>
     {
         //TODO 更换为Utility.Json
         #region Json
@@ -23,7 +23,7 @@ namespace Cosmos.Data
             where T : class, new()
         {
             string relativeFullPath = Utility.IO.CombineRelativeFilePath(fileName, relativePath);
-            TextAsset ta = Facade.Instance.LoadResAsset<TextAsset>(relativeFullPath);
+            TextAsset ta = Facade.LoadResAsset<TextAsset>(relativeFullPath);
             dataSet = Utility.Json.ToObject<T>(ta.text);
             callBack?.Invoke(dataSet);
         }

@@ -34,7 +34,7 @@ namespace Cosmos
         }
         private void Start()
         {
-            Facade.Instance.DispatchEvent(ControllerEventCodeParams.CONTROLLER_INPUT, this, controllerEventArgs);
+            Facade.DispatchEvent(ControllerEventCodeParams.CONTROLLER_INPUT, this, controllerEventArgs);
         }
         protected override void EventHandler(object sender, GameEventArgs arg)
         {
@@ -66,7 +66,7 @@ namespace Cosmos
         }
         void MatchRotation()
         {
-            var cameraController = Facade.Instance.GetController<CameraController>(c=>c.ControllerName==cameraControllerName);
+            var cameraController = Facade.GetController<CameraController>(c=>c.ControllerName==cameraControllerName);
             Vector3 cameraForward= cameraController.transform.forward;
             cameraForward.y = 0;
             cameraForward.Normalize();

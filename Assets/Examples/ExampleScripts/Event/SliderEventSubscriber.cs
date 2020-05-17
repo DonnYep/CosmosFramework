@@ -12,7 +12,7 @@ public class SliderEventSubscriber : MonoBehaviour
     LogicEventArgs<Slider> uch;
     public void RegisterEvent()
     {
-        Facade.Instance.AddEventListener(eventKey, Handler);
+        Facade.AddEventListener(eventKey, Handler);
     }
     Slider slider;
     Text text;
@@ -25,7 +25,7 @@ public class SliderEventSubscriber : MonoBehaviour
     string startText;
     public void DeregisterEvent()
     {
-        Facade.Instance.RemoveEventListener(eventKey, Handler);
+        Facade.RemoveEventListener(eventKey, Handler);
     }
     public void DeregisterEventManager()
     {

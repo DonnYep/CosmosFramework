@@ -19,7 +19,7 @@ namespace Cosmos.Mono
     /// 不继承自mono的对象通过这个管理器来实现update等需要mono才能做到的功能
     /// 当前只生成一个mc
     /// </summary>
-    public sealed class MonoManager:Module<MonoManager>
+    internal sealed class MonoManager:Module<MonoManager>
     {
         Dictionary<short, IMonoController> monoDict=new Dictionary<short, IMonoController>();
         // 单个monoController update委托的容量
@@ -77,7 +77,7 @@ namespace Cosmos.Mono
                 //Utility.DebugError("MonoManager\n"+"MonoController ID"+monoID+" does not exist!");
                 //return;
                 throw new CFrameworkException("MonoManager\n" + "MonoController ID" + monoID + " does not exist!");
-            }
+            }else
             monoDict[monoID].RemoveListener(act, type);
         }
         /// <summary>
@@ -133,7 +133,7 @@ namespace Cosmos.Mono
                 Deregister(index);
         }
         /// <summary>
-        /// 注册到monoMap
+        /// 注册到monoDict
         /// </summary>
         /// <param name="index"></param>
         /// <param name="mc"></param>
@@ -143,7 +143,7 @@ namespace Cosmos.Mono
                 monoDict.Add(monoControllerCount, mc);
         }
         /// <summary>
-        /// 注销到monoMap
+        /// 注销到monoDict
         /// </summary>
         /// <param name="index"></param>
         void Deregister(short index)
@@ -194,6 +194,12 @@ namespace Cosmos.Mono
             if (monoControllerCount == 0)
                 CreateMonoController();
             return (monoDict[monoControllerCount] as MonoController).DelayCoroutine(delay,callBack);
+        }
+        public Coroutine PredicateCoroutine(Func<bool>handler,CFAction callBack)
+        {
+            if (monoControllerCount == 0)
+                CreateMonoController();
+            return (monoDict[monoControllerCount] as MonoController).PredicateCoroutine(handler, callBack);
         }
     }
 }

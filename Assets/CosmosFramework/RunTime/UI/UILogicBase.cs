@@ -81,19 +81,19 @@ namespace Cosmos.UI{
         protected virtual void ShowPanelHandler(object sender,GameEventArgs args) { SetPanelActive(true); }
         protected void DispatchUIEvent(string eventKey,object sender,GameEventArgs arg)
         {
-            Facade.Instance.DispatchEvent(eventKey, sender, arg);
+            Facade.DispatchEvent(eventKey, sender, arg);
         }
         protected void DeregisterUIEvent(string eventKey)
         {
-            Facade.Instance.DeregisterEvent(eventKey);
+            Facade.DeregisterEvent(eventKey);
         }
         protected void AddUIEventListener(string eventKey,CFAction<object,GameEventArgs> handler)
         {
-            Facade.Instance.AddEventListener(eventKey, handler);
+            Facade.AddEventListener(eventKey, handler);
         }
         protected void RemoveUIEventListener(string eventKey, CFAction<object, GameEventArgs> handler)
         {
-            Facade.Instance.RemoveEventListener(eventKey, handler);
+            Facade.RemoveEventListener(eventKey, handler);
         }
         protected virtual void SetPanelActive(bool state) { gameObject.SetActive(state); }
     }

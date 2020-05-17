@@ -22,8 +22,8 @@ namespace Cosmos{
                     return;
                 for (int j = 0; j < poolDataSet.SpawnCount; j++)
                 {
-                    Facade.Instance.SetObjectSpawnItem(this, PoolDataSet.SpawnObject);
-                    var go = Facade.Instance.SpawnObject(this);
+                    Facade.SetObjectSpawnItem(this, PoolDataSet.SpawnObject);
+                    var go = Facade.SpawnObject(this);
                     AlignObject(PoolDataSet.AlignType, go, SpawnTransforms[i]);
                 }
             }
@@ -31,7 +31,7 @@ namespace Cosmos{
         protected override void RegisterSpawner()
         {
             if(poolDataSet != null)
-                Facade.Instance.RegisterObjcetSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
+                Facade.RegisterObjcetSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
         }
         //TODO不可回收的对象
         public override void SpawnUncollectible()

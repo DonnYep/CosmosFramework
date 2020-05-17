@@ -6,7 +6,7 @@ namespace Cosmos.Hotfix
     /// <summary>
     /// 热修复管理器，推荐使用Xlua
     /// </summary>
-    public class HotfixManager : Module<HotfixManager>
+    internal class HotfixManager : Module<HotfixManager>
     {
 
     }

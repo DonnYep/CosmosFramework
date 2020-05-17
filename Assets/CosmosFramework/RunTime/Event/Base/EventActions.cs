@@ -39,7 +39,7 @@ namespace Cosmos
     /// 判断委托，系统默认自带Predicate
     ///CosmosFramework
     /// </summary>
-    public delegate bool CFPredicateAction<T>(T arg);
+    public delegate bool CFPredicateAction< T>(T arg);
 
     public delegate IEnumerator CoroutineHandler();
     public delegate IEnumerator CoroutineHandler<in T>(T arg);

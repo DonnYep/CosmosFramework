@@ -46,19 +46,19 @@ namespace Cosmos
         }
         public override void PlayAudio()
         {
-            Facade.Instance.PlayMultipleAudio(AudioAttachTarget, AudioArgs);
+            Facade.PlayMultipleAudio(AudioAttachTarget, AudioArgs);
         }
         public override void StopAudio()
         {
-            Facade.Instance.StopMultipleAudio(AudioAttachTarget);
+            Facade.StopMultipleAudio(AudioAttachTarget);
         }
         public override void PauseAudio()
         {
-            Facade.Instance.PauseMultipleAudio(AudioAttachTarget);
+            Facade.PauseMultipleAudio(AudioAttachTarget);
         }
         public override void UnpauseAudio()
         {
-            Facade.Instance.UnpauseMultipleAudio(AudioAttachTarget);
+            Facade.UnpauseMultipleAudio(AudioAttachTarget);
         }
     }
 }

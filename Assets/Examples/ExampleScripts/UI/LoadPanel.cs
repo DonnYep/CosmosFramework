@@ -29,9 +29,9 @@ public class LoadPanel : UILogicResident
         if (Utility.Text.IsNumeric(loadingLevel))
         {
             int index = int.Parse(loadingLevel);
-            Facade.Instance.LoadSceneAsync(index);
+            Facade.LoadSceneAsync(index);
         }
         else
-            Facade.Instance.LoadSceneAsync(loadingLevel);
+            Facade.LoadSceneAsync(loadingLevel);
     }
 }

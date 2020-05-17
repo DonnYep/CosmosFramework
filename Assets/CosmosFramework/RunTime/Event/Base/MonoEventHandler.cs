@@ -34,7 +34,7 @@ namespace Cosmos
         protected virtual void EventHandler(object sender, GameEventArgs args) { }
         protected void DispatchEvent(string eventKey,GameEventArgs args)
         {
-            Facade.Instance.DispatchEvent(eventKey, this, args);
+            Facade.DispatchEvent(eventKey, this, args);
         }
         /// <summary>
         /// 注册事件，默认将EventHandler注册到事件中心
@@ -42,11 +42,11 @@ namespace Cosmos
         /// </summary>
         protected void AddDefaultEventListener(string eventKey)
         {
-            Facade.Instance.AddEventListener(eventKey, EventHandler);
+            Facade.AddEventListener(eventKey, EventHandler);
         }
         protected void AddEventListener(string eventKey,CFAction<object,GameEventArgs> handler)
         {
-            Facade.Instance.AddEventListener(eventKey, handler);
+            Facade.AddEventListener(eventKey, handler);
         }
         /// <summary>
         /// 注销事件，默认将EventHandler从事件中心注销
@@ -54,11 +54,11 @@ namespace Cosmos
         /// </summary>
         protected void RemoveDefaultEventListener(string eventKey)
         {
-            Facade.Instance.RemoveEventListener(eventKey, EventHandler);
+            Facade.RemoveEventListener(eventKey, EventHandler);
         }
         protected void RemoveEventListener(string eventKey,CFAction<object ,GameEventArgs>handler)
         {
-            Facade.Instance.RemoveEventListener(eventKey, handler);
+            Facade.RemoveEventListener(eventKey, handler);
         }
     }
 }

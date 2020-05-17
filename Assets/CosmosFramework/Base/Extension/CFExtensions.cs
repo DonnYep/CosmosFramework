@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 namespace Cosmos
 {
     /// <summary>
@@ -28,6 +28,15 @@ namespace Cosmos
             trans.localScale = Vector3.one;
             trans.offsetMax = Vector2.zero;
             trans.offsetMin = Vector2.zero;
+        }
+        /// <summary>
+        /// 转换为标准时间字符串（yyyy/MM/dd HH:mm:ss）
+        /// </summary>
+        /// <param name="time">时间对象</param>
+        /// <returns>字符串</returns>
+        public static string ToDefaultDateString(this DateTime time)
+        {
+            return time.ToString("yyyy/MM/dd HH:mm:ss");
         }
     }
 }

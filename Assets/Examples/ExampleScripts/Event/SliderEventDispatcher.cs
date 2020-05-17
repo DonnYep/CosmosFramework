@@ -15,17 +15,21 @@ public class SliderEventDispatcher : MonoBehaviour
     private void Start()
     {
         slider = GetComponentInChildren<Slider>();
-        uch = new LogicEventArgs<Slider>(slider);
+        uch = Facade.SpawnReference<LogicEventArgs<Slider>>();
     }
     Slider slider;
     public void DispatchEvent()
     {
         uch.Data.maxValue = slider.maxValue;
         uch.Data.value = slider.value;
-        Facade.Instance.DispatchEvent(eventKey, this, uch);
+        Facade.DispatchEvent(eventKey, null, uch);
     }
     public void DeregisterEvent()
     {
-        Facade.Instance.DeregisterEvent(eventKey);
+        Facade.DeregisterEvent(eventKey);
+    }
+    private void OnDestroy()
+    {
+        Facade.DespawnReference(uch);
     }
 }

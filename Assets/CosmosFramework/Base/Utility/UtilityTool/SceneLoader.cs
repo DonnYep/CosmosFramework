@@ -6,11 +6,11 @@ namespace Cosmos {
     {
         public void LoadScene(string sceneName)
         {
-            Facade.Instance.LoadScene(sceneName);
+            Facade.LoadScene(sceneName);
         }
         public void LoadScene(int sceneIndex)
         {
-            Facade.Instance.LoadScene(sceneIndex);
+            Facade.LoadScene(sceneIndex);
         }
     }
 }

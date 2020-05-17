@@ -1,7 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Object = UnityEngine.Object;
-using UnityEngine.Internal;
+using Cosmos.Event;
+using Cosmos.UI;
+using Cosmos.Mono;
+using Cosmos.Input;
+using Cosmos.Scene;
+using Cosmos.ObjectPool;
+using Cosmos.Audio;
+using Cosmos.Resource;
+using Cosmos.Reference;
+using Cosmos.Controller;
+using Cosmos.FSM;
+using Cosmos.Data;
+using Cosmos.Config;
+using Cosmos.Network;
+using Cosmos.Entity;
+using Cosmos.Hotfix;
+using System.Reflection;
 namespace Cosmos
 {
     /// <summary>
@@ -9,57 +25,63 @@ namespace Cosmos
     /// 管理器对象都会通过这个对象的实例来调用，避免复杂化
     /// 可以理解为是一个Facade
     /// </summary>
-    public sealed partial class GameManager : Singleton<GameManager>
+    internal sealed partial class GameManager : Singleton<GameManager>
     {
         // 模块表
-        static Dictionary<string, IModule> moduleMap;
+        static Dictionary<string, IModule> moduleDict;
+        internal static Dictionary<string, IModule> ModuleDict { get { return moduleDict; } }
         //当前注册的模块总数
         int moduleCount = 0;
-        public  int ModuleCount { get { return moduleCount; } }
-        public GameObject InstanceObject { get { if (instanceObject == null)
-                { instanceObject = new GameObject(this.GetType().ToString());Object.DontDestroyOnLoad(instanceObject); }
-                return instanceObject; } }
+        public int ModuleCount { get { return moduleCount; } }
+        public GameObject InstanceObject
+        {
+            get
+            {
+                if (instanceObject == null)
+                { instanceObject = new GameObject(this.GetType().ToString()); Object.DontDestroyOnLoad(instanceObject); }
+                return instanceObject;
+            }
+        }
         GameObject instanceObject;
         /// <summary>
         /// 注册模块
         /// </summary>
         /// <param name="moduleName"></param>
         /// <param name="module"></param>
-        public void RegisterModule(string  moduleName, IModule module )
+        internal void RegisterModule(string moduleName, IModule module)
         {
             if (!HasModule(moduleName))
             {
-                moduleMap.Add(moduleName, module);
+                moduleDict.Add(moduleName, module);
                 moduleCount++;
-                Utility.DebugLog("Module:\"" + moduleName +"\" "+ "  is OnInitialization" + "\n based on GameManager");
+                Utility.DebugLog("Module:\"" + moduleName + "\" " + "  is OnInitialization" + "\n based on GameManager");
             }
             else
-            throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is already exist!");
+                throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is already exist!");
         }
         /// <summary>
         /// 注销模块
         /// </summary>
         /// <param name="moduleName"></param>
-        public void DeregisterModule(string  moduleName)
+        internal void DeregisterModule(string moduleName)
         {
             if (HasModule(moduleName))
             {
-                //TODO IModule模块释放函数
-                moduleMap[moduleName].Deregister();
-                moduleMap.Remove(moduleName);
+                moduleDict.Remove(moduleName);
                 moduleCount--;
+                Utility.DebugLog("Module:\"" + moduleName + "\" " + "  is OnTermination" + "\n based on GameManager", MessageColor.DARKBLUE);
             }
             else
-            throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is  not exist!");
+                throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is  not exist!");
         }
         public bool HasModule(string moduleName)
         {
-            return moduleMap.ContainsKey(moduleName);
+            return moduleDict.ContainsKey(moduleName);
         }
-        public IModule GetModule(string moduleName)
+        internal IModule GetModule(string moduleName)
         {
             if (HasModule(moduleName))
-                return moduleMap[moduleName];
+                return moduleDict[moduleName];
             else
             {
                 return null;
@@ -70,13 +92,18 @@ namespace Cosmos
         /// </summary>
         public GameManager()
         {
-            if (moduleMap == null){moduleMap = new Dictionary<string, IModule>();}
+            if (moduleDict == null)
+            {
+                moduleDict = new Dictionary<string, IModule>();
+                //GameManagerAgent.Instance.LaunchAgent();
+                InstanceObject.gameObject.AddComponent<GameManagerAgent>();
+            }
         }
         #region Methods
         /// <summary>
         /// 清理静态成员的对象，内存未释放完全
         /// </summary>
-        static public void ClearGameManager()
+        public static void ClearGameManager()
         {
             Instance.Dispose();
         }
@@ -87,9 +114,9 @@ namespace Cosmos
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="t">默认参数，表示延迟</param>
-        public static void KillObject(Object obj, float delay=0)
+        public static void KillObject(Object obj, float delay = 0)
         {
-           GameObject.Destroy(obj,delay);
+            GameObject.Destroy(obj, delay);
         }
         /// <summary>
         /// 立刻清理实例对象
@@ -105,7 +132,7 @@ namespace Cosmos
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="objs"></param>
-        public static void KillObjects<T>(List<T> objs)where T : Object
+        public static void KillObjects<T>(List<T> objs) where T : Object
         {
             for (int i = 0; i < objs.Count; i++)
             {
@@ -122,8 +149,228 @@ namespace Cosmos
             objs.Clear();
         }
         #endregion
+        #region Module
+        static AudioManager audioManager;
+        internal static AudioManager AudioManager
+        {
+            get
+            {
+                if (audioManager == null)
+                {
+                    audioManager = new AudioManager();
+                    Instance.ModuleInitialization(audioManager);
+                }
+                return audioManager;
+            }
+        }
+        static ResourceManager resourceManager;
+        internal static ResourceManager ResourceManager
+        {
+            get
+            {
+                if (resourceManager == null)
+                {
+                    resourceManager = new ResourceManager();
+                    Instance.ModuleInitialization(resourceManager);
+                }
+                return resourceManager;
+            }
+        }
+        static ObjectPoolManager objectPoolManager;
+        internal static ObjectPoolManager ObjectPoolManager
+        {
+            get
+            {
+                if (objectPoolManager == null)
+                {
+                    objectPoolManager = new ObjectPoolManager();
+                    Instance.ModuleInitialization(objectPoolManager);
+                }
+                return objectPoolManager;
+            }
+        }
+        static NetworkManager networkManager;
+        internal static NetworkManager NetworkManager
+        {
+            get
+            {
+                if (networkManager == null)
+                {
+                    networkManager = new NetworkManager();
+                    Instance.ModuleInitialization(networkManager);
+                }
+                return networkManager;
+            }
+        }
+        static MonoManager monoManager;
+        internal static MonoManager MonoManager
+        {
+            get
+            {
+                if (monoManager == null)
+                {
+                    monoManager = new MonoManager();
+                    Instance.ModuleInitialization(monoManager);
+                }
+                return monoManager;
+            }
+        }
+        static InputManager inputManager;
+        internal static InputManager InputManager
+        {
+            get
+            {
+                if (inputManager == null)
+                {
+                    inputManager = new InputManager();
+                    Instance.ModuleInitialization(inputManager);
+                }
+                return inputManager;
+            }
+        }
+        static UIManager uiManager;
+        internal static UIManager UIManager
+        {
+            get
+            {
+                if (uiManager == null)
+                {
+                    uiManager = new UIManager();
+                    Instance.ModuleInitialization(uiManager);
+                }
+                return uiManager;
+            }
+        }
+        static EventManager eventManager;
+        internal static EventManager EventManager
+        {
+            get
+            {
+                if (eventManager == null)
+                {
+                    eventManager = new EventManager();
+                    Instance.ModuleInitialization(eventManager);
+                }
+                return eventManager;
+            }
+        }
+        static SceneManager sceneManager;
+        internal static SceneManager SceneManager
+        {
+            get
+            {
+                if (sceneManager == null)
+                {
+                    sceneManager = new SceneManager();
+                    Instance.ModuleInitialization(sceneManager);
+                }
+                return sceneManager;
+            }
+        }
+        static FSMManager fsmManager;
+        internal static FSMManager FSMManager
+        {
+            get
+            {
+                if (fsmManager == null)
+                {
+                    fsmManager = new FSMManager();
+                    Instance.ModuleInitialization(fsmManager);
+                }
+                return fsmManager;
+            }
+        }
+        static ConfigManager configManager;
+        internal static ConfigManager ConfigManager
+        {
+            get
+            {
+                if (configManager == null)
+                {
+                    configManager = new ConfigManager();
+                    Instance.ModuleInitialization(configManager);
+                }
+                return configManager;
+            }
+        }
+        static DataManager dataManager;
+        internal static DataManager DataManager
+        {
+            get
+            {
+                if (dataManager == null)
+                {
+                    dataManager = new DataManager();
+                    Instance.ModuleInitialization(dataManager);
+                }
+                return dataManager;
+            }
+        }
+        static ControllerManager controllerManager;
+        internal static ControllerManager ControllerManager
+        {
+            get
+            {
+                if (controllerManager == null)
+                {
+                    controllerManager = new ControllerManager();
+                    Instance.ModuleInitialization(controllerManager);
+                }
+                return controllerManager;
+            }
+        }
+        static EntityManager entityManager;
+        internal static EntityManager EntityManager
+        {
+            get
+            {
+                if (entityManager == null)
+                {
+                    entityManager = new EntityManager();
+                    Instance.ModuleInitialization(entityManager);
+                }
+                return entityManager;
+            }
+        }
+        static ReferencePoolManager referencePoolManager;
+        internal static ReferencePoolManager ReferencePoolManager
+        {
+            get
+            {
+                if (referencePoolManager == null)
+                {
+                    referencePoolManager = new ReferencePoolManager();
+                    Instance.ModuleInitialization(referencePoolManager);
+                }
+                return referencePoolManager;
+            }
+        }
+        static HotfixManager hotfixManager;
+        internal static HotfixManager HotfixManager
+        {
+            get
+            {
+                if (hotfixManager == null)
+                {
+                    hotfixManager = new HotfixManager();
+                    Instance.ModuleInitialization(hotfixManager);
+                }
+                return hotfixManager;
+            }
+        }
+        internal void ModuleInitialization(IModule module)
+        {
+            module.OnInitialization();
+            Instance.RegisterModule(module.ModuleFullyQualifiedName, module);
+        }
+        internal void ModuleTermination(IModule module)
+        {
+            module.OnTermination();
+            Instance.DeregisterModule(module.ModuleFullyQualifiedName);
+        }
+        #endregion
     }
-    public enum ContainerState : int
+    internal enum ContainerState : short
     {
         Empty = -1,
         Hold = 0,

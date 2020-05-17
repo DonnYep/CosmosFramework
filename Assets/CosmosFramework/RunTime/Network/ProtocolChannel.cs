@@ -48,7 +48,7 @@ namespace Cosmos
             if (Client == null)
             {
                 Client = new Socket(AddressFamily.InterNetwork, MsgMode, Protocol);
-                Client.Connect(NetworkManager.Instance.ServerEndPoint);
+                Client.Connect(GameManager.NetworkManager.ServerEndPoint);
             }
         }
         public void DisconnectServer()

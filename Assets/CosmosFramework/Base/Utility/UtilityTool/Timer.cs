@@ -29,7 +29,7 @@ public class Timer : MonoBehaviour {
         private void Awake()
         {
             if (autoStart)
-                tempRoutine = Facade.Instance.StartCoroutine(EnumAction(StartDelay, () => action.Invoke()));
+                tempRoutine = Facade.StartCoroutine(EnumAction(StartDelay, () => action.Invoke()));
         }
         private void OnValidate()
         {
@@ -43,23 +43,23 @@ public class Timer : MonoBehaviour {
         public virtual void ExecuteTimerAction()
         {
             if(!RandomInterval)
-            tempRoutine = Facade.Instance.StartCoroutine(EnumAction(Interval, ()=>action.Invoke()));
+            tempRoutine = Facade.StartCoroutine(EnumAction(Interval, ()=>action.Invoke()));
             else
-                tempRoutine = Facade.Instance.StartCoroutine(EnumAction(Interval+ Utility.Unity.Random(-RandomRange, RandomRange), () => action.Invoke()));
+                tempRoutine = Facade.StartCoroutine(EnumAction(Interval+ Utility.Unity.Random(-RandomRange, RandomRange), () => action.Invoke()));
         }
         /// <summary>
         /// 立即停止
         /// </summary>
         public virtual void StopTimerAction()
         {
-            Facade.Instance.StopCoroutine(tempRoutine);
+            Facade.StopCoroutine(tempRoutine);
         }
         IEnumerator EnumAction(object arg,CFAction handler)
         {
             yield return new WaitForSeconds(Utility.Converter.Float(arg));
             handler?.Invoke();
             if(loop)
-                tempRoutine = Facade.Instance.StartCoroutine(EnumAction(Interval, () => action.Invoke()));
+                tempRoutine = Facade.StartCoroutine(EnumAction(Interval, () => action.Invoke()));
         }
     }
 }

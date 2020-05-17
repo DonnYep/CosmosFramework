@@ -13,19 +13,19 @@ namespace Cosmos {
         {
             audioVariable.AudioDataSet = AudioDataSet;
             audioArgs.SetData(audioVariable);
-            Facade.Instance.PlayBackgroundAudio(audioArgs);
+            Facade.PlayBackgroundAudio(audioArgs);
         }
          public override void StopAudio()
         {
-            Facade.Instance.StopBackgroundAudio();
+            Facade.StopBackgroundAudio();
         }
          public override void PauseAudio()
         {
-            Facade.Instance.PauseBackgroundAudio();
+            Facade.PauseBackgroundAudio();
         }
          public override void UnpauseAudio()
         {
-            Facade.Instance.UnpauseBackgroundAudio();
+            Facade.UnpauseBackgroundAudio();
         }
     }
 }

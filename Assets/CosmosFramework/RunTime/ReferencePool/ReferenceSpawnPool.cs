@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
 namespace Cosmos.Reference
 {
@@ -12,19 +11,18 @@ namespace Cosmos.Reference
         {
             IReference refer;
             if (referenceQueue.Count > 0)
-               refer= referenceQueue.Dequeue();
+                refer = referenceQueue.Dequeue();
             else
-                refer= Utility.Assembly.GetTypeInstance(type, type.GetType().FullName) as IReference;
+                refer = Utility.Assembly.GetTypeInstance<object>(type.Assembly, type.GetType().FullName) as IReference;
             return refer;
         }
-        public IReference Spawn<T>(T type)
-            where T:IReference, new()
+        public IReference Spawn<T>()
+            where T:class, IReference, new()
         {
             IReference refer;
             if (referenceQueue.Count > 0)
                 refer = referenceQueue.Dequeue();
             else
-                //refer = Utility.Assembly.GetTypeInstance(type, type.GetType().FullName) as IReference;
                 refer = new T() as IReference;
             return refer;
         }

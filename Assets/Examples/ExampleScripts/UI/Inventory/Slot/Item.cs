@@ -11,7 +11,7 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
     Text txtNumber;
     ItemDataSet itemDataSet;
     public ItemDataSet ItemDataSet { get { return itemDataSet; } }
-    LogicEventArgs<string> uip = new LogicEventArgs<string>();
+    LogicEventArgs<string> uip;
     Transform previouseParent;
     Transform dragParent;
     public Transform DragParent { get { return dragParent; } set { dragParent = value; } }
@@ -83,6 +83,7 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
     }
     protected override void OnInitialization()
     {
+        uip = Facade.SpawnReference<LogicEventArgs<string>>();
         GetUIPanel<Button>("Item").onClick.AddListener(IItemClick);
         imgItem = GetUIPanel<Image>("Item");
         txtNumber= GetUIPanel<Text>("TxtNumber");

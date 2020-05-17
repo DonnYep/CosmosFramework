@@ -4,7 +4,7 @@ using System;
 using Object = UnityEngine.Object;
 namespace Cosmos.Event
 {
-    public sealed class EventManager : Module<EventManager>
+    internal sealed class EventManager : Module<EventManager>
     {
         Dictionary<string, CFAction<object, GameEventArgs>> eventDict = new Dictionary<string, CFAction<object, GameEventArgs>>();
         /// <summary>

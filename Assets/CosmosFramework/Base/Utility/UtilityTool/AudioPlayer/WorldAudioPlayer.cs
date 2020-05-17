@@ -16,19 +16,19 @@ namespace Cosmos
         {
             audioVariable.AudioDataSet = AudioDataSet;
             audioArgs.SetData(audioVariable);
-            Facade.Instance.PlayWorldAudio(AudioAttachTarget, audioArgs);
+            Facade.PlayWorldAudio(AudioAttachTarget, audioArgs);
         }
        public override void StopAudio()
         {
-            Facade.Instance.StopWorldAudio(AudioAttachTarget);
+            Facade.StopWorldAudio(AudioAttachTarget);
         }
        public override void PauseAudio()
         {
-            Facade.Instance.PauseWorldAudio(AudioAttachTarget);
+            Facade.PauseWorldAudio(AudioAttachTarget);
         }
       public override void UnpauseAudio()
         {
-            Facade.Instance.UnpauseWorldAudio(AudioAttachTarget);
+            Facade.UnpauseWorldAudio(AudioAttachTarget);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Cosmos.Resource
         Resource = 0,
         AssetBundle = 1
     }
-    public sealed class ResourceManager : Module<ResourceManager>
+    internal sealed class ResourceManager : Module<ResourceManager>
     {
         //缓存的所有AssetBundle包 <AB包名称、AB包>
         Dictionary<string, AssetBundle> assetBundleDict = new Dictionary<string, AssetBundle>();
@@ -38,10 +38,9 @@ namespace Cosmos.Resource
         //所有AssetBundle资源包清单
         AssetBundleManifest assetBundleManifest;
         string assetBundleManifestName;
+        //AssetBundle资源加载根路径
         string assetBundleRootPath;
-
-
-
+        bool isLoading = false;
 
         #region 基于Resources
         /// <summary>
@@ -76,7 +75,7 @@ namespace Cosmos.Resource
         public void LoadResAysnc<T>(string path, CFAction<T> callBack = null)
             where T : UnityEngine.Object
         {
-            Facade.Instance.StartCoroutine(EnumLoadResAsync(path, callBack));
+            Facade.StartCoroutine(EnumLoadResAsync(path, callBack));
         }
         IEnumerator EnumLoadResAsync<T>(string path, CFAction<T> callBack = null)
            where T : UnityEngine.Object
@@ -92,7 +91,7 @@ namespace Cosmos.Resource
         public void LoadResAssetAysnc<T>(string path, CFAction<T> callBack = null)
             where T : UnityEngine.Object
         {
-            Facade.Instance.StartCoroutine(EnumLoadResAssetAsync(path, callBack));
+            Facade.StartCoroutine(EnumLoadResAssetAsync(path, callBack));
         }
         IEnumerator EnumLoadResAssetAsync<T>(string path, CFAction<T> callBack = null)
    where T : UnityEngine.Object
@@ -136,7 +135,6 @@ namespace Cosmos.Resource
         }
         #endregion
 
-
         #region 基于AssetBundles
         public void SetManifestName(string name)
         {
@@ -168,13 +166,13 @@ namespace Cosmos.Resource
         public void LoadABAssetAsync<T>(ResourceUnit resUnit, CFAction<float> loadingCallBack, CFAction<T> loadDoneCallBack)
             where T : UnityEngine.Object
         {
-            Facade.Instance.StartCoroutine(EnumLoadABAssetAsync(resUnit, loadingCallBack, loadDoneCallBack));
+            Facade.StartCoroutine(EnumLoadABAssetAsync(resUnit, loadingCallBack, loadDoneCallBack));
         }
         IEnumerator EnumLoadABAssetAsync<T>(ResourceUnit resUnit, CFAction<float> loadingCallBack, CFAction<T> loadDoneCallBack)
             where T : UnityEngine.Object
         {
             //先加载依赖资源
-            yield return Facade.Instance.StartCoroutine(EnumLoadDependenciesABAsyn(resUnit.AssetBundleName));
+            yield return Facade.StartCoroutine(EnumLoadDependenciesABAsyn(resUnit.AssetBundleName));
 
             var ab = QueryAssetBundle(resUnit.AssetBundleName);
             if (ab != null)
@@ -191,11 +189,11 @@ namespace Cosmos.Resource
         /// <param name="abName"></param>
         public void LoadDependenciesABAsync(string abName)
         {
-            Facade.Instance.StartCoroutine(EnumLoadDependenciesABAsyn(abName));
+            Facade.StartCoroutine(EnumLoadDependenciesABAsyn(abName));
         }
         IEnumerator EnumLoadDependenciesABAsyn(string abName)
         {
-            yield return Facade.Instance.StartCoroutine(EnumLoadABManifestAsync());
+            yield return Facade.StartCoroutine(EnumLoadABManifestAsync());
             if (assetBundleManifest)
             {
                 string[] dependencies = assetBundleManifest.GetAllDependencies(abName);
@@ -203,7 +201,7 @@ namespace Cosmos.Resource
                 {
                     if (HasAssetBundle(dep))
                         continue;
-                    yield return Facade.Instance.StartCoroutine(EnumLoadABAsync(dep));
+                    yield return Facade.StartCoroutine(EnumLoadABAsync(dep));
                 }
             }
         }
@@ -214,7 +212,7 @@ namespace Cosmos.Resource
         /// <param name="isManifest">是否为AB清单</param>
         public void LoadABAsync(string abName, bool isManifest = false)
         {
-            Facade.Instance.StartCoroutine(EnumLoadABAsync(abName, isManifest));
+            Facade.StartCoroutine(EnumLoadABAsync(abName, isManifest));
         }
         IEnumerator EnumLoadABAsync(string abName, bool isManifest = false)
         {
@@ -235,12 +233,13 @@ namespace Cosmos.Resource
                         else
                         {
                             //TODO  resMgr异常
+                            throw new CFrameworkException("Requet :" + request.url + "have not assetBundle");
                         }
                     }
                     else
                     {
                         //TODO resMgr异常
-
+                        throw new CFrameworkException("Requet :" + request.url + " net work error ,check your netWork");
                     }
                 }
             }
@@ -266,19 +265,20 @@ namespace Cosmos.Resource
         /// </summary>
         public void LoadABManifestAsync()
         {
-            Facade.Instance.StartCoroutine(EnumLoadABManifestAsync());
+            Facade.StartCoroutine(EnumLoadABManifestAsync());
         }
         IEnumerator EnumLoadABManifestAsync()
         {
             if (string.IsNullOrEmpty(assetBundleManifestName))
             {
                 //TODO 协程异常 resMgr
+                throw new CFrameworkException("AssetBundle Manifest name empty , please reset abManifest !");
             }
             else
             {
                 if (assetBundleManifest == null)
                 {
-                    yield return Facade.Instance.StartCoroutine(EnumLoadABAsync(assetBundleManifestName, true));
+                    yield return Facade.StartCoroutine(EnumLoadABAsync(assetBundleManifestName, true));
                     if (HasAssetBundle(assetBundleManifestName))
                     {
                         assetBundleManifest = assetBundleDict[assetBundleManifestName].LoadAsset<AssetBundleManifest>("AssetBundleManifest");

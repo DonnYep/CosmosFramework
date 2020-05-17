@@ -2,9 +2,8 @@
 {
     /// <summary>
     /// 完整可控的生命周期
-    /// OnInitialization>>OnPreparatory>>OnPause==OnUnPause>>OnTermination
     /// </summary>
-    public interface IWholeBehaviour : IBehaviour,IControllable
+    public interface IControllableBehaviour : IBehaviour,IControllable
     {
         /// <summary>
         /// 刷新模块

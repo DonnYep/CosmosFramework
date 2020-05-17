@@ -16,7 +16,8 @@ namespace Cosmos
                 if (instance == null)
                 {
                     instance = new T();
-                    instance.OnInitialization();
+                    if (instance is IBehaviour)
+                        (instance as IBehaviour).OnInitialization();
                 }
                 return instance;
             }
@@ -24,15 +25,12 @@ namespace Cosmos
         /// <summary>
         /// 非空虚方法，IDispose接口
         /// </summary>
-        public virtual void Dispose() {instance.OnTermination() ; instance = default(T); }
-        /// <summary>
-        //空的虚方法，在当前单例对象为空初始化时执行一次
-        /// </summary>
-        protected virtual void OnInitialization() { }
-        /// <summary>
-        //空的虚方法，在当前单例对象被销毁时执行一次
-        /// </summary>
-        protected virtual void OnTermination() { }
+        public virtual void Dispose()
+        {
+            if (instance is IBehaviour)
+                (instance as IBehaviour).OnTermination();
+            instance = default(T);
+        }
     }
 
 }

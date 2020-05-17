@@ -15,7 +15,7 @@ public class SlotController : MonoEventHandler
         fullPath = Utility.UI.GetUIFullRelativePath(slotItemName);
         AddDefaultEventListener(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT);
         AddEventListener(UIImplementCodeParams.UIIMPLEMENT_UPDATEITEM, UpdateItemHandler);
-        slot = Facade.Instance.LoadResAsset<GameObject>(fullPath);
+        slot = Facade.LoadResAsset<GameObject>(fullPath);
     }
     protected override void OnTermination()
     {

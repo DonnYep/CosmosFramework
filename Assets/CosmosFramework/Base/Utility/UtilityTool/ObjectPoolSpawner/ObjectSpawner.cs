@@ -19,7 +19,7 @@ namespace Cosmos
                 if (deactiveObjectMount == null)
                 {
                     deactiveObjectMount = new GameObject(this.gameObject.name + "->>DeactiveObjectMount");
-                    deactiveObjectMount.transform.SetParent(Facade.Instance.GetModule(CFModules.OBJECTPOOL).ModuleMountObject.transform);
+                    deactiveObjectMount.transform.SetParent(Facade.GetModule(CFModules.OBJECTPOOL).ModuleMountObject.transform);
                     deactiveObjectMount.transform.ResetLocalTransform();
                 }
                 return deactiveObjectMount.transform;
@@ -29,7 +29,7 @@ namespace Cosmos
         {
             get
             {
-                return Facade.Instance.GetObjectSpawnPoolActiveMount().transform;
+                return Facade.GetObjectSpawnPoolActiveMount().transform;
             }
         }
         protected virtual void Awake()
@@ -61,14 +61,14 @@ namespace Cosmos
         /// </summary>
         protected virtual void DeregisterSpawner()
         {
-            Facade.Instance.DeregisterObjectSapwnPool(this);
+            Facade.DeregisterObjectSapwnPool(this);
             GameManager.KillObject(deactiveObjectMount);
         }
         protected virtual void SpawnHandler(GameObject go)
         {
             if (go == null)
                 return;
-            Facade.Instance.StartCoroutine(EnumCollect(CollectDelay,()=> Facade.Instance.DespawnObject(this, go)));
+            Facade.StartCoroutine(EnumCollect(CollectDelay,()=> Facade.DespawnObject(this, go)));
         }
         protected virtual  void DespawnHandler(GameObject go)
         {
@@ -79,7 +79,7 @@ namespace Cosmos
         }
         public virtual void ClearAll()
         {
-            Facade.Instance.ClearObjectSpawnPool(this);
+            Facade.ClearObjectSpawnPool(this);
         }
         protected  IEnumerator EnumCollect(float delay,CFAction action=null)
         {

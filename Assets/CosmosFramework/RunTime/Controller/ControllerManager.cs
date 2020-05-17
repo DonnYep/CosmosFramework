@@ -26,7 +26,7 @@ namespace Cosmos.Controller{
     /// 控制器模块，客户端本地玩家的主要控制器。
     /// 从InputManager获取值后，由此控制输入值
     /// </summary>
-    public sealed class ControllerManager : Module<ControllerManager>
+    internal sealed class ControllerManager : Module<ControllerManager>
     {
         Dictionary<Type, HashSet<CFController>> controllerMap = new Dictionary<Type, HashSet<CFController>>();
         /// <summary>

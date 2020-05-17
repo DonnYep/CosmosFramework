@@ -9,12 +9,12 @@ namespace Cosmos.ObjectPool
     {
         public void Despawn()
         {
-            Facade.Instance.DespawnObject(null, this.gameObject);
+            Facade.DespawnObject(null, this.gameObject);
         }
         public void Despawn(float delay)
         {
-            var delayRoutine = Facade.Instance.DelayCoroutine(delay);
-            Facade.Instance.StartCoroutine(delayRoutine, Despawn);
+            var delayRoutine = Facade.DelayCoroutine(delay);
+            Facade.StartCoroutine(delayRoutine, Despawn);
         }
     }
 }

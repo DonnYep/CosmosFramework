@@ -26,8 +26,8 @@ namespace Cosmos{
                     flag = i;
                     for (int j = 0; j < SpawnObjectGroup[i].PoolObject.SpawnCount; j++)
                     {
-                        Facade.Instance.SetObjectSpawnItem(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject);
-                        var go = Facade.Instance.SpawnObject(SpawnObjectGroup[i].SpawnTransform);
+                        Facade.SetObjectSpawnItem(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject);
+                        var go = Facade.SpawnObject(SpawnObjectGroup[i].SpawnTransform);
                         AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
                     }
                 }
@@ -39,7 +39,7 @@ namespace Cosmos{
             {
                 if(SpawnObjectGroup[i].SpawnTransform!=null&&SpawnObjectGroup[i].PoolObject!=null)
                 {
-                    Facade.Instance.RegisterObjcetSpawnPool(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject,
+                    Facade.RegisterObjcetSpawnPool(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject,
                       SpawnHandler, DespawnHandler);
                 }
             }
@@ -50,7 +50,7 @@ namespace Cosmos{
             {
                 if (SpawnObjectGroup[i].SpawnTransform != null && SpawnObjectGroup[i].PoolObject != null)
                 {
-                    Facade.Instance.DeregisterObjectSapwnPool(SpawnObjectGroup[i].SpawnTransform);
+                    Facade.DeregisterObjectSapwnPool(SpawnObjectGroup[i].SpawnTransform);
                 }
             }
             GameManager.KillObject(deactiveObjectMount);
@@ -59,8 +59,8 @@ namespace Cosmos{
         {
             if (go == null)
                 return;
-            Facade.Instance.StartCoroutine(EnumCollect(SpawnObjectGroup[flag].CollectDelay,
-                (tempFlag) => { Facade.Instance.DespawnObject(SpawnObjectGroup[Utility.Converter.Int( tempFlag)].SpawnTransform, go); },flag));
+            Facade.StartCoroutine(EnumCollect(SpawnObjectGroup[flag].CollectDelay,
+                (tempFlag) => { Facade.DespawnObject(SpawnObjectGroup[Utility.Converter.Int( tempFlag)].SpawnTransform, go); },flag));
         }
         protected IEnumerator EnumCollect(float delay, CFAction<object> action ,object arg)
         {

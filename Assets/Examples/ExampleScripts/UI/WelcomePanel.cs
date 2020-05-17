@@ -36,6 +36,6 @@ public class WelcomePanel : UILogicTemporary
     }
     public override void HidePanel()
     {
-        Facade.Instance.RemovePanel(Utility.UI.GetUIFullRelativePath("WelcomePanel"));
+        Facade.RemovePanel(Utility.UI.GetUIFullRelativePath("WelcomePanel"));
     }
 }

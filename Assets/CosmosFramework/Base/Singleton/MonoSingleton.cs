@@ -12,6 +12,7 @@ namespace Cosmos
     ///Awake与OnDestory是可覆写函数
     /// </summary>
     /// <typeparam name="T"></typeparam>
+  //  [DefaultExecutionOrder(-1000)]
     public abstract class MonoSingleton<T> : MonoBehaviour
     where T : MonoSingleton<T>
     {
@@ -30,27 +31,21 @@ namespace Cosmos
                     if (instance == null)//假如还是空，则生成一个
                     {
                         instance = new GameObject(typeof(T).ToString(), typeof(T)).GetComponent<T>();
-                        instance.OnInitialization();
                     }
                 }
                 return instance;
             }
         }
+        /// <summary>
+        /// 非空，可覆写Awake函数
+        /// </summary>
         protected virtual void Awake()
         {
             instance = this as T;
         }
-        protected virtual void OnDestroy()
-        {
-            OnTermination();
-        }
         /// <summary>
-        //空的虚方法，在当前单例对象为空初始化时执行一次
+        /// 空虚函数
         /// </summary>
-        protected virtual void OnInitialization() { }
-        /// <summary>
-        //空的虚方法，在当前单例对象被销毁时执行一次
-        /// </summary>
-        protected virtual void OnTermination() { }
+        protected virtual void OnDestroy() { }
     }
 }

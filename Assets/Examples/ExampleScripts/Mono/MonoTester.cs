@@ -16,7 +16,7 @@ public class MonoTester: MonoBehaviour {
         {
             if (debugMonoMudule)
             {
-                Facade.Instance.AddMonoListener(UpdateTest, UpdateType.Update,
+                Facade.AddMonoListener(UpdateTest, UpdateType.Update,
                     (id) => { if (!monoIDList.Contains(id)) monoIDList.Add(id); });
                 ++count;
                 Utility.DebugLog("updateTest :->>" + count);
@@ -26,7 +26,7 @@ public class MonoTester: MonoBehaviour {
         {
             if (count >= maxCount)
                 return;
-            Facade.Instance.AddMonoListener(AddListenerTest, UpdateType.Update,
+            Facade.AddMonoListener(AddListenerTest, UpdateType.Update,
                  (id) => { if (!monoIDList.Contains(id)) monoIDList.Add(id); });
             ++count;
             Utility.DebugLog("updateTest :->>" + count);
@@ -35,7 +35,7 @@ public class MonoTester: MonoBehaviour {
         {
             if (count >= maxCount)
                 return;
-            Facade.Instance.AddMonoListener(UpdateTest,UpdateType.Update,
+            Facade.AddMonoListener(UpdateTest,UpdateType.Update,
                  (id) => { if (!monoIDList.Contains(id)) monoIDList.Add(id); });
             ++count;
             Utility.DebugLog("AddListenerTestupdateTest :->>" + count);

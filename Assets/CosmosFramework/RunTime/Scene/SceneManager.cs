@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 using Cosmos.Event;
 namespace Cosmos.Scene
 {
-    public sealed class SceneManager : Module<SceneManager>
+    internal sealed class SceneManager : Module<SceneManager>
     {
         /// <summary>
         /// 同步加载 name
@@ -34,23 +34,23 @@ namespace Cosmos.Scene
         /// <param name="callBack"></param>
         public void LoadSceneAsync(string sceneName)
         {
-            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneName));
+            Facade.StartCoroutine(EnumLoadSceneAsync(sceneName));
         }
         public void LoadSceneAsync(string sceneName, CFAction callBack = null)
         {
-            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
+            Facade.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
         }
         public void LoadSceneAsync(string sceneName, CFAction<float> callBack = null)
         {
-            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
+            Facade.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
         }
         public void LoadSceneAsync(string sceneName, CFAction<AsyncOperation> callBack = null)
         {
-            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
+            Facade.StartCoroutine(EnumLoadSceneAsync(sceneName, callBack));
         }
         public void LoadSceneAsync(int sceneIndex)
         {
-            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneIndex));
+            Facade.StartCoroutine(EnumLoadSceneAsync(sceneIndex));
         }
         /// <summary>
         /// 异步加载 index
@@ -59,15 +59,15 @@ namespace Cosmos.Scene
         /// <param name="callBack"></param>
         public void LoadSceneAsync(int sceneIndex, CFAction callBack = null)
         {
-            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneIndex, callBack));
+            Facade.StartCoroutine(EnumLoadSceneAsync(sceneIndex, callBack));
         }
         public void LoadSceneAsync(int sceneIndex, CFAction<float> callBack = null)
         {
-            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneIndex, callBack));
+            Facade.StartCoroutine(EnumLoadSceneAsync(sceneIndex, callBack));
         }
         public void LoadSceneAsync(int sceneIndex, CFAction<AsyncOperation> callBack = null)
         {
-            Facade.Instance.StartCoroutine(EnumLoadSceneAsync(sceneIndex, callBack));
+            Facade.StartCoroutine(EnumLoadSceneAsync(sceneIndex, callBack));
         }
         /// <summary>
         /// 异步加载迭代器 name

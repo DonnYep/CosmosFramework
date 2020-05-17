@@ -5,7 +5,7 @@ using System.Net;
 namespace Cosmos.Network
 {
     //TODONetworkManager
-    public sealed class NetworkManager : Module<NetworkManager>
+    internal sealed class NetworkManager : Module<NetworkManager>
     {
         string serverIP;
         int serverPort;

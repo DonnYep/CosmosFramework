@@ -6,7 +6,7 @@ namespace Cosmos.Entity
     /// <summary>
     /// manager of entity
     /// </summary>
-    public class EntityManager : Module<EntityManager>
+    internal class EntityManager : Module<EntityManager>
     {
     }
 }

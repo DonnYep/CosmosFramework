@@ -9,7 +9,7 @@ namespace Cosmos.Config
     /// <summary>
     /// 载入时候读取配置，例如声音大小，角色等
     /// </summary>
-    public sealed class ConfigManager : Module<ConfigManager>
+    internal sealed class ConfigManager : Module<ConfigManager>
     {
        
     }

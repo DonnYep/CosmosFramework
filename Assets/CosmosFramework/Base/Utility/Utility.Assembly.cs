@@ -42,19 +42,20 @@ namespace Cosmos
             /// <param name="assembly">目标程序集</param>
             /// <param name="typeFullName">完全限定名</param>
             /// <returns>返回T类型的目标类型对象</returns>
-            public static T GetTypeInstance<T>(System.Reflection. Assembly assembly, string typeFullName)
-                where T : class
+            public static T GetTypeInstance<T>(System.Reflection.Assembly assembly, string typeFullName)
+     where T : class
             {
                 Type type = assembly.GetType(typeFullName);
                 if (type != null)
                 {
-                    var obj = Activator.CreateInstance(type) as T;
+                    //        var obj = Activator.CreateInstance(type) as T;
+                    //TODO反射失败，需要解决
+                    var obj = assembly.CreateInstance(typeFullName) as T;
                     return obj;
                 }
                 else
                 {
-                    DebugError("Type :" + typeFullName + "  not exist,check your fullName !");
-                    return null;
+                    throw new CFrameworkException("Type : Assembly" + type.AssemblyQualifiedName + "Not exist!");
                 }
             }
             /// <summary>

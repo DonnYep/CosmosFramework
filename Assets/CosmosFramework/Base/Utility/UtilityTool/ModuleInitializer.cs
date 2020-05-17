@@ -33,10 +33,10 @@ namespace Cosmos.Test{
                 case ModuleType.None:
                     break;
                 case ModuleType.All:
-                    Facade.Instance.InitAllModule();
+                    Facade.InitAllModule();
                     break;
                 default:
-                    var moduleResult= Facade.Instance.GetModule(module.ToString());
+                    var moduleResult= Facade.GetModule(module.ToString());
                     if (moduleResult != null)
                         Utility.DebugLog(moduleResult.ModuleMountObject.name);
                     break;

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 namespace Cosmos.Audio
 {
-    public sealed class AudioManager : Module<AudioManager>
+    internal sealed class AudioManager : Module<AudioManager>
     {
         //背景音乐，新BGM覆盖旧的
         AudioSource backgroundAduio;
@@ -16,10 +16,13 @@ namespace Cosmos.Audio
 
         //世界音效，为3D背景音乐、3D技能音效对白等设计
         Dictionary<GameObject, AudioSource> worldAudios = new Dictionary<GameObject, AudioSource>();
-       protected override void OnInitialization()
+       public override void OnInitialization()
         {
             base.OnInitialization();
-            Facade.Instance.AddMonoListener(CheckAudioSources, UpdateType.Update);
+        }
+        public override void OnRefresh()
+        {
+            CheckAudioSources();
         }
         bool mute=false;
         //整个AudioManager下的所有声音都设置位静音

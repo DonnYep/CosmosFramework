@@ -3,7 +3,7 @@ using System.Collections.Generic;
 //using Cosmos.Event;
 namespace Cosmos.ObjectPool
 {
-    public sealed class ObjectPoolManager: Module<ObjectPoolManager>
+    internal sealed class ObjectPoolManager: Module<ObjectPoolManager>
     {
         public static readonly short _ObjectPoolCapacity = 50;
         Dictionary<object, ObjectSpawnPool> spawnPool = new Dictionary<object, ObjectSpawnPool>();

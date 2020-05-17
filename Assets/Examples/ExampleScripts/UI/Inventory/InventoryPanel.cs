@@ -43,21 +43,21 @@ namespace Cosmos
         }
         private void Start()
         {
-            DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, this, Uip);
+            DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, null, Uip);
         }
         void LoadClick()
         {
             //这里需要注意，Unity提供的JsonUtility.FromJsonOverwrite方法，官方对这一方法的文档为：
             //it must be a MonoBehaviour, ScriptableObject, or plain class/struct with the Serializable attribute applied
 
-            string json = Facade.Instance.LoadJsonDataFromLocal("Inventory", "InventoryCache.json");
+            string json = Facade.LoadJsonDataFromLocal("Inventory", "InventoryCache.json");
             JsonUtility.FromJsonOverwrite(json, inventoryDataSet);
             Utility.DebugLog("LoadJsonDataFromLocal");
             UpdateClick();
         }
         void SaveClick()
         {
-            Facade.Instance.SaveJsonDataToLocal("Inventory", "InventoryCache.json", inventoryDataSet);
+            Facade.SaveJsonDataToLocal("Inventory", "InventoryCache.json", inventoryDataSet);
             Utility.DebugLog("SaveJsonDataToLocal");
         }
         void QuitClick()

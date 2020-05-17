@@ -7,7 +7,7 @@ namespace Cosmos.FSM{
     /// <summary>
     /// fsmMgr设计成，轮询是在具体对象山给轮询的，fsmMgr作为一个Fsm的事件中心
     /// </summary>
-    public sealed class FSMManager : Module<FSMManager>
+    internal sealed class FSMManager : Module<FSMManager>
     {
         Dictionary<Type, FSMBase> fsmDict = new Dictionary<Type, FSMBase>();
         public int FsmCount { get { return fsmDict.Count; } }
