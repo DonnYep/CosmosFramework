@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Cosmos
 {
     public  static partial class Utility
@@ -48,8 +47,6 @@ namespace Cosmos
                 Type type = assembly.GetType(typeFullName);
                 if (type != null)
                 {
-                    //        var obj = Activator.CreateInstance(type) as T;
-                    //TODO反射失败，需要解决
                     var obj = assembly.CreateInstance(typeFullName) as T;
                     return obj;
                 }
@@ -84,6 +81,29 @@ namespace Cosmos
                 where T : class
             {
                 return GetTypeInstance<T>(typeof(T).Assembly, typeFullName);
+            }
+            /// <summary>
+            /// 反射工具，得到反射类的对象；
+            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
+            /// 在IOS上受限，发布IOS需要谨慎
+            /// </summary>
+            /// <param name="type">类型</param>
+            /// <returns>装箱后的对象</returns>
+            public static object GetTypeInstance(Type type)
+            {
+                return type.Assembly.CreateInstance(type.FullName);
+            }
+            /// <summary>
+            /// 反射工具，得到反射类的对象；
+            /// T传入一个对象，获取这个对象的程序集，再由完全限定名获取具体对象
+            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
+            /// </summary>
+            /// <typeparam name="T">泛型对象，需要此对象的程序集</typeparam>
+            /// <param name="fullName">完全限定名</param>
+            /// <returns>装箱后的对象</returns>
+            public static object GetTypeInstance<T>(string fullName)
+            {
+                return typeof(T).Assembly.CreateInstance(fullName);
             }
         }
     }

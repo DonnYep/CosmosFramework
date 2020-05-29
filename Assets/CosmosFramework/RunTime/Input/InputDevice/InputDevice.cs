@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cosmos.Input{
-    public abstract class InputDevice : IInputDevice
+namespace Cosmos{
+    public abstract class InputDevice : Input. IInputDevice
     {
+        public abstract void OnStart();
         public abstract void OnRun();
         public abstract void OnShutdown();
-        public abstract void OnStart();
     }
 }

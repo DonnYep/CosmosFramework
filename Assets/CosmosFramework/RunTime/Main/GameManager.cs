@@ -32,8 +32,8 @@ namespace Cosmos
         internal static Dictionary<string, IModule> ModuleDict { get { return moduleDict; } }
         //当前注册的模块总数
         int moduleCount = 0;
-        public int ModuleCount { get { return moduleCount; } }
-        public GameObject InstanceObject
+        internal int ModuleCount { get { return moduleCount; } }
+        internal GameObject InstanceObject
         {
             get
             {
@@ -74,7 +74,7 @@ namespace Cosmos
             else
                 throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is  not exist!");
         }
-        public bool HasModule(string moduleName)
+        internal bool HasModule(string moduleName)
         {
             return moduleDict.ContainsKey(moduleName);
         }
@@ -95,7 +95,6 @@ namespace Cosmos
             if (moduleDict == null)
             {
                 moduleDict = new Dictionary<string, IModule>();
-                //GameManagerAgent.Instance.LaunchAgent();
                 InstanceObject.gameObject.AddComponent<GameManagerAgent>();
             }
         }
@@ -103,7 +102,7 @@ namespace Cosmos
         /// <summary>
         /// 清理静态成员的对象，内存未释放完全
         /// </summary>
-        public static void ClearGameManager()
+        internal static void ClearGameManager()
         {
             Instance.Dispose();
         }
@@ -114,7 +113,7 @@ namespace Cosmos
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="t">默认参数，表示延迟</param>
-        public static void KillObject(Object obj, float delay = 0)
+        internal static void KillObject(Object obj, float delay = 0)
         {
             GameObject.Destroy(obj, delay);
         }
@@ -123,7 +122,7 @@ namespace Cosmos
         /// 会在内存中清理实例
         /// </summary>
         /// <param name="obj"></param>
-        public static void KillObjectImmediate(Object obj)
+        internal static void KillObjectImmediate(Object obj)
         {
             GameObject.DestroyImmediate(obj);
         }
@@ -132,7 +131,7 @@ namespace Cosmos
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="objs"></param>
-        public static void KillObjects<T>(List<T> objs) where T : Object
+        internal static void KillObjects<T>(List<T> objs) where T : Object
         {
             for (int i = 0; i < objs.Count; i++)
             {
@@ -140,7 +139,7 @@ namespace Cosmos
             }
             objs.Clear();
         }
-        public static void KillObjects<T>(HashSet<T> objs) where T : Object
+        internal static void KillObjects<T>(HashSet<T> objs) where T : Object
         {
             foreach (var obj in objs)
             {

@@ -7,7 +7,7 @@ namespace Cosmos
     /// </summary>
     /// <typeparam name="T">须为继承自 IBehaviour的可构造类对象</typeparam>
     public class WrapperSingleton<T> : IDisposable
-        where T : class, IBehaviour, new()
+        where T : class,  new()
     {
         protected static T instance;
         public static T Instance
@@ -17,7 +17,8 @@ namespace Cosmos
                 if (instance == null)
                 {
                     instance = new T();
-                    instance.OnInitialization();
+                    if (instance is IBehaviour)
+                        (instance as IBehaviour).OnInitialization();
                 }
                 return instance;
             }
@@ -25,14 +26,11 @@ namespace Cosmos
         /// <summary>
         /// 非空虚方法，IDispose接口
         /// </summary>
-        public virtual void Dispose() { instance.OnTermination(); instance = default(T); }
-    }
-    public class WrapperSingleton
-    {
-        public static T Inject< T>( T type)
-             where T : class, IBehaviour, new()
+        public virtual void Dispose()
         {
-            return WrapperSingleton<T>.Instance;
+            if (instance is IBehaviour)
+                (instance as IBehaviour).OnTermination();
+            instance = default(T);
         }
     }
 }

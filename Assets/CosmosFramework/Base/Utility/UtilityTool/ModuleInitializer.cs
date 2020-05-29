@@ -22,7 +22,8 @@ namespace Cosmos.Test{
             Config,
             Data,
             Controller,
-            Reference
+            Reference,
+            Exception
         }
         [Tooltip("模块初始化器，用于测试或者游戏中使用")]
         [SerializeField] ModuleType module;

@@ -13,8 +13,7 @@ namespace Cosmos.ObjectPool
         }
         public void Despawn(float delay)
         {
-            var delayRoutine = Facade.DelayCoroutine(delay);
-            Facade.StartCoroutine(delayRoutine, Despawn);
+            Facade.DelayCoroutine(delay, Despawn);
         }
     }
 }

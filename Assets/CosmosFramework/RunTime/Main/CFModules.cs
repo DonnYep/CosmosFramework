@@ -25,5 +25,6 @@ namespace Cosmos
         public const string DATA= "Data";
         public const string CONTROLLER = "Controller";
         public const string REFERENCE= "Reference";
+        public const string Exception= "Exception";
     }
 }

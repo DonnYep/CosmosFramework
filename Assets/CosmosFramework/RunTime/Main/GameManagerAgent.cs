@@ -28,10 +28,6 @@ namespace Cosmos {
                 }
             }
         }
-        public void LaunchAgent()
-        {
-            Utility.DebugLog("Inited GameManagerAgent");
-        }
         Dictionary<string, IModule> moduleDict=GameManager.ModuleDict;
         event CFAction CFrameworkUpdateHandler;
         event CFAction CFrameworkFixedUpdateHandler;
@@ -89,5 +85,53 @@ namespace Cosmos {
         {
             CFrameworkApplicationQuitHandler?.Invoke();
         }
+
+
+
+        #region GameManager
+
+        public int ModuleCount { get { return GameManager.Instance.ModuleCount; } }
+        /// <summary>
+        /// 清除单个实例，有一个默认参数。
+        /// 默认延迟为0，表示立刻删除、
+        /// 仅在场景中删除对应对象
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="t">默认参数，表示延迟</param>
+        public static void KillObject(Object obj, float delay = 0)
+        {
+           GameManager .KillObject(obj, delay);
+        }
+        /// <summary>
+        /// 立刻清理实例对象
+        /// 会在内存中清理实例
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void KillObjectImmediate(Object obj)
+        {
+            GameManager.KillObjectImmediate(obj);
+        }
+        /// <summary>
+        /// 清除一组实例
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="objs"></param>
+        public static void KillObjects<T>(List<T> objs) where T : Object
+        {
+            for (int i = 0; i < objs.Count; i++)
+            {
+              GameManager.KillObject (objs[i]);
+            }
+            objs.Clear();
+        }
+        public static void KillObjects<T>(HashSet<T> objs) where T : Object
+        {
+            foreach (var obj in objs)
+            {
+                GameManager.KillObject(obj);
+            }
+            objs.Clear();
+        }
+        #endregion
     }
 }

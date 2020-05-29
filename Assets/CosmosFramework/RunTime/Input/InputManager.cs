@@ -28,18 +28,18 @@ namespace Cosmos.Input
             base.OnInitialization();
             inputHandler = Facade.SpawnReference<LogicEventArgs<InputVariable>>();
             inputHandler.SetData(inputVariable);
-            inputDevice.OnStart();
+            _inputDevice.OnStart();
         }
         public override void OnTermination()
         {
             base.OnTermination();
             Facade.DespawnReference(inputHandler);
-            inputDevice.OnShutdown();
+            _inputDevice.OnShutdown();
         }
         public override void OnRefresh()
         {
             if (IsEnableInputDevice)
-                inputDevice.OnRun();
+                _inputDevice.OnRun();
             Run();
         }
         /// <summary>
@@ -82,8 +82,12 @@ namespace Cosmos.Input
         public bool IsEnableInputDevice { get; set; } = true;
         InputVariable inputVariable = new InputVariable();
         VirtualInput inputModule;
-        InputDevice inputDevice;
+       static InputDevice _inputDevice;
 
+        public static  void SetInputDevice(InputDevice inputDevice)
+        {
+            _inputDevice = inputDevice;
+        }
 
         /// <summary>
         /// 虚拟轴线是否存在

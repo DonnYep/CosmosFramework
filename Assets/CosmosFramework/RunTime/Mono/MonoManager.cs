@@ -183,12 +183,6 @@ namespace Cosmos.Mono
                 CreateMonoController();
             return (monoDict[monoControllerCount] as MonoController).StartCoroutine(routine, callBack);
         }
-        public Coroutine DelayCoroutine(float delay)
-        {
-            if (monoControllerCount == 0)
-                CreateMonoController();
-            return (monoDict[monoControllerCount] as MonoController).DelayCoroutine(delay);
-        }
         public Coroutine DelayCoroutine(float delay,CFAction callBack)
         {
             if (monoControllerCount == 0)

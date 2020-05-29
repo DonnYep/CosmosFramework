@@ -190,10 +190,6 @@ namespace Cosmos.Mono
         {
             return StartCoroutine(EnumPredicateCoroutine(handler,callBack));
         }
-        public Coroutine DelayCoroutine(float delay)
-        {
-            return StartCoroutine(EnumDelay(delay));
-        }
         public Coroutine DelayCoroutine(float delay,CFAction callBack)
         {
             return StartCoroutine(EnumDelay(delay,callBack));

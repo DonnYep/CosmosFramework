@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 namespace Cosmos
 {
     public static partial class Utility
@@ -9,7 +10,14 @@ namespace Cosmos
         /// </summary>
         public static class Encryption
         {
-
+            public  enum GUIDFormat
+            {
+                N,D,B,P,X
+            }
+            public static string GUID(GUIDFormat format)
+            {
+                return Guid.NewGuid().ToString(format.ToString());
+            }
         }
     }
 }
