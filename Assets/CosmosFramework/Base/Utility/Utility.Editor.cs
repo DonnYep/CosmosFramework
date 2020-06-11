@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnityEditor;
 #endif
 namespace Cosmos { 
-   public static  partial class Utility
+   public sealed  partial class Utility
     {
         public static class Editor
         {

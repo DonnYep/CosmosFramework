@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Cosmos { 
-    public static partial class Utility
+    public sealed partial class Utility
     {
         public static class Globle
         {

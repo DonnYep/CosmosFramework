@@ -25,14 +25,12 @@ namespace Cosmos.Reference
         public T Spawn<T>() 
             where T: class, IReference ,new()
         {
-            //TODO 生成引用有BUG
             Type type = typeof(T);
             if (!referenceDict.ContainsKey(type))
             {
                 referenceDict.Add(type, new ReferenceSpawnPool());
             }
             return referenceDict[type].Spawn<T>() as T;
-            //return Spawn(typeof(T)) as T;
         }
         public IReference SpawnInterface<T>()
             where T : class, IReference, new()

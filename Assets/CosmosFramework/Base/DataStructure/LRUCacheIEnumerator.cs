@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System;
 namespace Cosmos {
-    public class LRUCacheIEnumerator <T>:  IReference, IEnumerator<T>
+    public struct LRUCacheIEnumerator <T>:  IReference, IEnumerator<T>
     {
-        T current=default(T);
-        int index=-1;
+        T current;
+        int index;
         T[] list;
         public LRUCacheIEnumerator(ICollection<T> collection)
         {
+            current = default(T);
+            index = -1;
             // TODO 并不优化的数据结构，LRU
             list = new T[collection.Count];
             int tmpIndex = -1;

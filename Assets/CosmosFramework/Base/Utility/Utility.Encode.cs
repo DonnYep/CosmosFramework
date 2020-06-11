@@ -6,7 +6,7 @@ using System.IO;
 using System;
 namespace Cosmos
 {
-    public static partial class Utility
+    public sealed partial class Utility
     {
         //TODO  编码类扩充
         public static class Encode

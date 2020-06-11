@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-   public static partial class Utility
+    public sealed partial class Utility
     {
         /// <summary>
         /// 通用算法工具类，封装了常用算法。

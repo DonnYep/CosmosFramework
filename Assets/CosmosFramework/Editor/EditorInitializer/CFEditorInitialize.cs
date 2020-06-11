@@ -18,9 +18,12 @@ namespace Cosmos.CosmosEditor
         /// </summary>
         static void OnInitialization()
         {
-            if (!Utility.Editor.HasEditorPrefsKey(ApplicationConst.Editor.ENABLEDEBUGLOG_KEY))
-                Utility.Editor.SetEditorPrefsBool(ApplicationConst.Editor.ENABLEDEBUGLOG_KEY, true);
-            ApplicationConst.Editor.EnableDebugLog = Utility.Editor.GetEditorPrefsBool(ApplicationConst.Editor.ENABLEDEBUGLOG_KEY);
+            if (!Utility.Editor.HasEditorPrefsKey(ApplicationConst.Editor.ENABLE_DEBUGLOG_KEY))
+                Utility.Editor.SetEditorPrefsBool(ApplicationConst.Editor.ENABLE_DEBUGLOG_KEY, true);
+            if (!Utility.Editor.HasEditorPrefsKey(ApplicationConst.Editor.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY))
+                Utility.Editor.SetEditorPrefsBool(ApplicationConst.Editor.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY, false);
+            ApplicationConst.Editor.EnableDebugLog = Utility.Editor.GetEditorPrefsBool(ApplicationConst.Editor.ENABLE_DEBUGLOG_KEY);
+            ApplicationConst.Editor.EnableScriptTemplateAnnotation = Utility.Editor.GetEditorPrefsBool(ApplicationConst.Editor.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY);
         }
     }
 }

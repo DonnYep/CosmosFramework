@@ -6,7 +6,7 @@ using System.Text;
 namespace Cosmos
 {
     
-    public static partial class Utility
+    public sealed partial class Utility
     {
         /// <summary>
         /// 这是一个临时UI工具类，正式项目不建议使用。

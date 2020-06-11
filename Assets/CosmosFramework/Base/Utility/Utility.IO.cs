@@ -1,26 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.IO;
 namespace Cosmos
 {
-    public static partial class Utility
+    public sealed partial class Utility
     {
         public static class IO
         {
-            /// <summary>
-            /// 持久化数据层路径，可写入
-            /// </summary>
-            public static readonly string PathURL =
-#if UNITY_ANDROID
-        "jar:file://" + Application.dataPath + "!/assets/";
-#elif UNITY_IPHONE
-        Application.dataPath + "/Raw/";  
-#elif UNITY_STANDALONE_WIN || UNITY_EDITOR
-        "file://" + Application.dataPath + "/StreamingAssets/";
-#else
-        string.Empty;  
-#endif
+
             public static void CreateFolder(string path)
             {
                 var dir = new DirectoryInfo(path);
@@ -57,6 +44,28 @@ namespace Cosmos
             public static string CombineRelativeFilePath(string fileFullName, params string[] relativePath)
             {
                 return Utility.IO. CombineRelativePath(relativePath) + fileFullName;
+            }
+            /// <summary>
+            /// 删除文件夹下的所有文件以及文件夹
+            /// </summary>
+            /// <param name="folderPath">文件夹路径</param>
+            public static void DeleteFolder(string folderPath)
+            {
+                if (Directory.Exists(folderPath))
+                {
+                    DirectoryInfo directory = Directory.CreateDirectory(folderPath);
+                    FileInfo[] files = directory.GetFiles();
+                    foreach (var file in files)
+                    {
+                        file.Delete();
+                    }
+                    DirectoryInfo[] folders = directory.GetDirectories();
+                    foreach (var folder in folders)
+                    {
+                        DeleteFolder(folder.FullName);
+                    }
+                    directory.Delete();
+                }
             }
         }
     }

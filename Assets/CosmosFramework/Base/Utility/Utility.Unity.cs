@@ -5,13 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos { 
-     public static partial class Utility
+     public sealed partial class Utility
     {
         /// <summary>
         /// 这个类封装了所有跟Unity相关的工具函数，是所有Utiltiy中需要引入UnityEngine的类
         /// </summary>
         public static class Unity
         {
+            /// <summary>
+            /// 持久化数据层路径，可写入
+            /// </summary>
+            public static readonly string PathURL =
+#if UNITY_ANDROID
+        "jar:file://" + Application.dataPath + "!/assets/";
+#elif UNITY_IPHONE
+        Application.dataPath + "/Raw/";  
+#elif UNITY_STANDALONE_WIN || UNITY_EDITOR
+        "file://" + Application.dataPath + "/StreamingAssets/";
+#else
+        string.Empty;  
+#endif
             public static int Random(int min, int max)
             {
                 return UnityEngine.Random.Range(min, max);

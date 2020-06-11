@@ -61,7 +61,7 @@ namespace Cosmos
     /// 数组工具，反射工具，文字工具，加密工具，
     /// 数学工具，持久化数据工具，Debug工具，Editor工具等等
     /// </summary>
-    public static partial class Utility
+    public sealed partial class Utility
     {
         public static void DebugLog(object o, Object context = null)
         {

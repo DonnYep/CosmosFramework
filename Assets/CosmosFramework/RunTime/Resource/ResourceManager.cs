@@ -272,7 +272,8 @@ namespace Cosmos.Resource
             if (string.IsNullOrEmpty(assetBundleManifestName))
             {
                 //TODO 协程异常 resMgr
-                throw new CFrameworkException("AssetBundle Manifest name empty , please reset abManifest !");
+                //throw new CFrameworkException("AssetBundle Manifest name empty , please reset abManifest !");
+                Utility.Assert.NotNull(assetBundleManifestName);
             }
             else
             {

@@ -1,4 +1,10 @@
-﻿using UnityEngine;
+
+/*====================================
+* Author :
+* CreateTime :2020-06-07 14:39
+* Description :
+====================================*/ 
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
@@ -11,7 +17,7 @@ namespace Cosmos.Data
     ///处理类型： XML、 JSON、UnityPlayerPrefs
     ///XMLOperator
     /// </summary>
-    public class DataProcess
+    public class DataProcessor
     {
         #region Josn
         /// <summary>

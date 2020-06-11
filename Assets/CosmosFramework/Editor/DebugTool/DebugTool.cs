@@ -19,8 +19,10 @@ namespace Cosmos.CosmosEditor
             ((EditorWindow)window).maxSize = CosmosDevWinSize;
             ((EditorWindow)window).minSize = CosmosDevWinSize;
         }
-        static readonly Vector2 cosmosDevWinSize = new Vector2(512f, 768f);
+        static readonly Vector2 cosmosDevWinSize = new Vector2(512f, 384f);
+        static readonly Vector2 cosmosMaxWinSize = new Vector2(512f, 768f);
        public static Vector2 CosmosDevWinSize { get { return cosmosDevWinSize; } }
+       public static Vector2 CosmosMaxWinSize { get { return cosmosMaxWinSize; } }
         DebugTool()
         {
             this.titleContent = new GUIContent("DebugTool");
@@ -32,10 +34,6 @@ namespace Cosmos.CosmosEditor
             if (GUILayout.Button("DebugLog", GUILayout.Height(24),GUILayout.Width(92)))
             {
                 DebugLogBuilder.OpenWindow();
-            }
-            if (GUILayout.Button("ResourceBuild", GUILayout.Height(24), GUILayout.Width(92)))
-            {
-                JsonXmlTool.OpenWindow();
             }
             if (GUILayout.Button("RefereceTool", GUILayout.Height(24), GUILayout.Width(92)))
             {

@@ -58,7 +58,7 @@ namespace Cosmos.FSM{
                 else
                 {
                     fsm.fsmStateDict.Add(type, states[i]);
-                    states[i].OnInit(fsm);
+                    states[i].OnInitialization(fsm);
                 }
             }
             return fsm;
@@ -90,7 +90,7 @@ namespace Cosmos.FSM{
                 else
                 {
                     fsm.fsmStateDict.Add(type, states[i]);
-                    states[i].OnInit(fsm);
+                    states[i].OnInitialization(fsm);
                 }
             }
             return fsm;

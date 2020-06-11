@@ -1,8 +1,7 @@
 this floder is CosmosFramework core.
 CosmosFramework depend on LitJson.dll,don't delete LitJson .
-LitJson path:Assets\CosmosFramework\Plugins\LitJson.dll.
 
-"FileExtensionList.xml" in Assets\CosmosFramework\Resources\FileExtensionList.xml. don't change it.
-here is a  file that is used when IO Sth.
 
-¿ª·¢½×¶Î¿É´ò°ü³ÉDLLÎÄ¼ş·ÅÈëÕıÔÚ¿ª·¢ÏîÄ¿µÄPluginsÄ¿Â¼ÏÂ¡£ÈôĞèÒª´ò°ü·¢²¼£¬Ôò¸´ÖÆCosmosFrameworkÕû¸öÎÄ¼ş¼Ğµ½Assets¸ùÄ¿Â¼ÏÂ¼´¿É¡£Dll×´Ì¬ÏÂ´ò°ü»áÔì³ÉÊ§°Ü¡£
+
+
+å¼€å‘é˜¶æ®µå¯æ‰“åŒ…æˆDLLæ–‡ä»¶æ”¾å…¥æ­£åœ¨å¼€å‘é¡¹ç›®çš„Pluginsç›®å½•ä¸‹ã€‚è‹¥éœ€è¦æ‰“åŒ…å‘å¸ƒï¼Œåˆ™å¤åˆ¶CosmosFrameworkæ•´ä¸ªæ–‡ä»¶å¤¹åˆ°Assetsæ ¹ç›®å½•ä¸‹å³å¯ã€‚DllçŠ¶æ€ä¸‹æ‰“åŒ…ä¼šé€ æˆå¤±è´¥ã€‚

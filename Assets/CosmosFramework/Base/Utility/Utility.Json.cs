@@ -2,7 +2,7 @@
 using System;
 namespace Cosmos
 {
-    public static partial class Utility
+    public sealed partial class Utility
     {
         public static class Json
         {

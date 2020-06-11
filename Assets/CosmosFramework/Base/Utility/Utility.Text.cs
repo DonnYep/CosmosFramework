@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 namespace Cosmos { 
-    public static partial class Utility
+    public sealed partial class Utility
     {
         public static class Text
         {
