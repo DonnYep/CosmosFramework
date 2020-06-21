@@ -50,7 +50,7 @@ namespace Cosmos.Resource
         /// <param name="path">相对Resource路径</param>
         /// <param name="instantiateGameObject">是否实例化GameObject类型</param>
         /// <returns></returns>
-        public T LoadResAsset<T>(string path, bool instantiateGameObject = false)
+       internal T LoadResAsset<T>(string path, bool instantiateGameObject = false)
             where T : UnityEngine.Object
         {
             T res = Resources.Load<T>(path);
@@ -72,7 +72,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 异步加载资源,如果目标是Gameobject，则实例化
         /// </summary>
-        public void LoadResAysnc<T>(string path, CFAction<T> callBack = null)
+       internal void LoadResAysnc<T>(string path, CFAction<T> callBack = null)
             where T : UnityEngine.Object
         {
             Facade.StartCoroutine(EnumLoadResAsync(path, callBack));
@@ -88,7 +88,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 异步加载资源,不实例化任何类型
         /// </summary>
-        public void LoadResAssetAysnc<T>(string path, CFAction<T> callBack = null)
+       internal void LoadResAssetAysnc<T>(string path, CFAction<T> callBack = null)
             where T : UnityEngine.Object
         {
             Facade.StartCoroutine(EnumLoadResAssetAsync(path, callBack));
@@ -103,7 +103,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
         /// </summary>
-        public List<T> LoadResFolderAssets<T>(string path)
+       internal List<T> LoadResFolderAssets<T>(string path)
        where T : class
         {
             List<T> list = new List<T>();
@@ -117,7 +117,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
         /// </summary>
-        public T[] LoadResAll<T>(string path)
+       internal T[] LoadResAll<T>(string path)
             where T : UnityEngine.Object
         {
             T[] res = Resources.LoadAll<T>(path);
@@ -136,7 +136,7 @@ namespace Cosmos.Resource
         #endregion
 
         #region 基于AssetBundles
-        public void SetManifestName(string name)
+       internal void SetManifestName(string name)
         {
             this.assetBundleManifestName = name;
         }
@@ -147,7 +147,7 @@ namespace Cosmos.Resource
         /// <param name="path"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public T LoadABAsset<T>(string path, string name)
+       internal T LoadABAsset<T>(string path, string name)
             where T : UnityEngine.Object
         {
             var ab = AssetBundle.LoadFromFile(path);
@@ -163,7 +163,7 @@ namespace Cosmos.Resource
         /// <param name="resUnit"></param>
         /// <param name="loadingCallBack"></param>
         /// <param name="loadDoneCallBack"></param>
-        public void LoadABAssetAsync<T>(ResourceUnit resUnit, CFAction<float> loadingCallBack, CFAction<T> loadDoneCallBack)
+       internal void LoadABAssetAsync<T>(ResourceUnit resUnit, CFAction<float> loadingCallBack, CFAction<T> loadDoneCallBack)
             where T : UnityEngine.Object
         {
             Facade.StartCoroutine(EnumLoadABAssetAsync(resUnit, loadingCallBack, loadDoneCallBack));
@@ -187,7 +187,7 @@ namespace Cosmos.Resource
         /// 异步加载AB依赖包
         /// </summary>
         /// <param name="abName"></param>
-        public void LoadDependenciesABAsync(string abName)
+       internal void LoadDependenciesABAsync(string abName)
         {
             Facade.StartCoroutine(EnumLoadDependenciesABAsyn(abName));
         }
@@ -210,7 +210,7 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="abName">AssetBundle Name</param>
         /// <param name="isManifest">是否为AB清单</param>
-        public void LoadABAsync(string abName, bool isManifest = false)
+       internal void LoadABAsync(string abName, bool isManifest = false)
         {
             Facade.StartCoroutine(EnumLoadABAsync(abName, isManifest));
         }
@@ -233,13 +233,13 @@ namespace Cosmos.Resource
                         else
                         {
                             //TODO  resMgr异常
-                            throw new CFrameworkException("Requet :" + request.url + "have not assetBundle");
+                            throw new ArgumentNullException("Requet :" + request.url + "have not assetBundle");
                         }
                     }
                     else
                     {
                         //TODO resMgr异常
-                        throw new CFrameworkException("Requet :" + request.url + " net work error ,check your netWork");
+                        throw new ArgumentException("Requet :" + request.url + " net work error ,check your netWork");
                     }
                 }
             }
@@ -263,7 +263,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 异步加载AB包清单
         /// </summary>
-        public void LoadABManifestAsync()
+       internal void LoadABManifestAsync()
         {
             Facade.StartCoroutine(EnumLoadABManifestAsync());
         }
@@ -289,7 +289,7 @@ namespace Cosmos.Resource
             }
             yield return null;
         }
-        public void UnloadAsset(string abName, bool unloadAllAssets = false)
+        internal void UnloadAsset(string abName, bool unloadAllAssets = false)
         {
             var ab = QueryAssetBundle(abName);
             if (ab != null)
@@ -324,7 +324,7 @@ namespace Cosmos.Resource
         /// 卸载所有资源
         /// </summary>
         /// <param name="unloadAllAssets">是否卸所有实体对象</param>
-        public void UnloadAllAsset(bool unloadAllAssets = false)
+       internal void UnloadAllAsset(bool unloadAllAssets = false)
         {
             foreach (var ab in assetBundleDict)
             {

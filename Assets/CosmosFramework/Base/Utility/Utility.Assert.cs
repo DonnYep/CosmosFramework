@@ -6,11 +6,14 @@ namespace Cosmos
     public sealed partial class Utility
     {
         /// <summary>
-        /// 断言处理工具
+        /// 断言处理工具;
+        /// Assert断言仅用于测试环境调试，无需在生产环境时进行的校验。
         /// </summary>
         public static class Assert
         {
+#if UNITY_EDITOR||COSMOS_FRAMEWORK_UNIT_TEST
             /// <summary>
+            /// Assert断言仅用于测试环境调试
             /// 判断不为空
             /// </summary>
             /// <typeparam name="T">泛型类型</typeparam>
@@ -21,6 +24,7 @@ namespace Cosmos
                     throw new ArgumentNullException("object" + obj.ToString() + "isEmpty !");
             }
             /// <summary>
+            /// Assert断言仅用于测试环境调试
             /// 判断不为空
             /// </summary>
             /// <typeparam name="T">泛型类型</typeparam>
@@ -32,6 +36,7 @@ namespace Cosmos
                     throw new ArgumentNullException(message.ToString());
             }
             /// <summary>
+            /// Assert断言仅用于测试环境调试
             /// 判断不为空
             /// 若不为空，则执行回调
             /// </summary>
@@ -45,6 +50,13 @@ namespace Cosmos
                 else
                     notNullCallBack?.Invoke();
             }
+            /// <summary>
+            /// Assert断言仅用于测试环境调试
+            /// 判断不为空
+            /// </summary>
+            /// <param name="obj"></param>
+            /// <param name="notNullCallBack">不为空的回调</param>
+            /// <param name="nullCallBack">为空时候的回调</param>
             public static void NotNull(object obj, CFAction notNullCallBack, CFAction nullCallBack)
             {
                 if (obj == null)
@@ -52,6 +64,11 @@ namespace Cosmos
                 else
                     notNullCallBack?.Invoke();
             }
+            /// <summary>
+            /// Assert断言仅用于测试环境调试
+            /// 是否为空
+            /// </summary>
+            /// <param name="obj">判断是否为空的对象</param>
             public static void IsNull(object obj)
             {
                 if (obj != null)
@@ -62,6 +79,13 @@ namespace Cosmos
                 if (obj == null)
                     nullCallBack?.Invoke();
             }
+            /// <summary>
+            /// Assert断言仅用于测试环境调试
+            /// 是否为空
+            /// </summary>
+            /// <param name="obj">判断是否为空的对象</param>
+            /// <param name="nullCallBack">为空时候的回调</param>
+            /// <param name="notNullCallBack">不为空的回调</param>
             public static void IsNull(object obj, CFAction nullCallBack, CFAction notNullCallBack)
             {
                 if (obj == null)
@@ -69,6 +93,13 @@ namespace Cosmos
                 else
                     notNullCallBack?.Invoke();
             }
+            /// <summary>
+            /// Assert断言仅用于测试环境调试
+            /// 判断是否为继承关系
+            /// </summary>
+            /// <typeparam name="T1">父类</typeparam>
+            /// <typeparam name="T2">子类</typeparam>
+            /// <param name="callBack">符合继承时候的回调</param>
             public static void IsAssignable<T1, T2>(T1 super, T2 sub, CFAction<T1, T2> callBack)
             {
                 Type superType = typeof(T1);
@@ -79,6 +110,7 @@ namespace Cosmos
                     throw new InvalidCastException("SuperType : " + subType.FullName + "unssignable from subType : " + subType.FullName);
             }
             /// <summary>
+            /// Assert断言仅用于测试环境调试
             /// 是否为继承
             /// </summary>
             /// <typeparam name="T1">super</typeparam>
@@ -90,6 +122,7 @@ namespace Cosmos
                     callBack?.Invoke();
             }
             /// <summary>
+            /// Assert断言仅用于测试环境调试
             /// if assaignable ,run callBack method
             /// </summary>
             /// <typeparam name="T1">superType</typeparam>
@@ -106,6 +139,7 @@ namespace Cosmos
                     throw new InvalidCastException("SuperType : " + subType.FullName + "unssignable from subType : " + subType.FullName);
             }
             /// <summary>
+            /// Assert断言仅用于测试环境调试
             /// 状态检测
             /// </summary>
             /// <param name="expression">表达式</param>
@@ -114,6 +148,7 @@ namespace Cosmos
                 State(expression, "this state must be true");
             }
             /// <summary>
+            /// Assert断言仅用于测试环境调试
             /// 状态检测
             /// </summary>
             /// <param name="expression">表达式</param>
@@ -134,6 +169,7 @@ namespace Cosmos
                     callBack?.Invoke();
             }
             /// <summary>
+            /// Assert断言仅用于测试环境调试
             /// 状态检测
             /// </summary>
             /// <param name="expression">表达式</param>
@@ -147,6 +183,7 @@ namespace Cosmos
                     callBack?.Invoke();
             }
             /// <summary>
+            /// Assert断言仅用于测试环境调试
             /// 条件委托，
             /// 若handler返回true，则run callBack
             /// </summary>
@@ -161,11 +198,24 @@ namespace Cosmos
                 if (handler.Invoke(arg))
                     callBack?.Invoke(arg);
             }
-            public static void Predicate(CFPredicateAction handler, CFAction callBack)
+            /// <summary>
+            /// Assert断言仅用于测试环境调试
+            /// 条件委托是否为true
+            /// </summary>
+            /// <param name="handler">条件委托</param>
+            /// <param name="trueCallBack">true时候的回调</param>
+            public static void Predicate(CFPredicateAction handler, CFAction trueCallBack)
             {
                 if (handler.Invoke())
-                    callBack?.Invoke();
+                    trueCallBack?.Invoke();
             }
+            /// <summary>
+            /// Assert断言仅用于测试环境调试
+            /// 条件委托是否为true
+            /// </summary>
+            /// <param name="handler">条件委托</param>
+            /// <param name="trueCallBack">true时候的回调</param>
+            /// <param name="falseCallBack">false时候的回调</param>
             public static void Predicate(CFPredicateAction handler, CFAction trueCallBack, CFAction falseCallBack)
             {
                 if (handler.Invoke())
@@ -174,6 +224,7 @@ namespace Cosmos
                     falseCallBack?.Invoke();
             }
             /// <summary>
+            /// Assert断言仅用于测试环境调试
             /// 普通异常处理捕捉者
             /// </summary>
             /// <param name="handler">处理者函数</param>
@@ -189,6 +240,7 @@ namespace Cosmos
                     exceptionHandler?.Invoke();
                 }
             }
+#endif
         }
     }
 }

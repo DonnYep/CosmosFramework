@@ -10,14 +10,14 @@ namespace Cosmos.FSM{
     internal sealed class FSMManager : Module<FSMManager>
     {
         Dictionary<Type, FSMBase> fsmDict = new Dictionary<Type, FSMBase>();
-        public int FsmCount { get { return fsmDict.Count; } }
-        public FSMBase GetFSM<T>()
+        internal int FsmCount { get { return fsmDict.Count; } }
+        internal FSMBase GetFSM<T>()
             where T:FSMBase
         {
             Type type = typeof(T).GetType();
             return GetFSM(type);
         }
-        public FSMBase GetFSM(Type type)
+        internal FSMBase GetFSM(Type type)
         {
             if (fsmDict.ContainsKey(type))
             {
@@ -25,12 +25,12 @@ namespace Cosmos.FSM{
             }
             else return null;
         }
-        public FSMBase[] GetAllFSM<T>()
+        internal FSMBase[] GetAllFSM<T>()
             where T:FSMBase
         {
             return GetAllFSM(typeof(T));
         }
-        public FSMBase[] GetAllFSM(Type type)
+        internal FSMBase[] GetAllFSM(Type type)
         {
             List<FSMBase> fsms = new List<FSMBase>();
             if (fsmDict.ContainsKey(type))
@@ -42,21 +42,21 @@ namespace Cosmos.FSM{
             }
             return fsms.ToArray();
         }
-        public bool HasFSM<T>()
+        internal bool HasFSM<T>()
             where T : FSMBase
         {
             return HasFSM(typeof(T));
         }
-        public bool HasFSM(Type type)
+        internal bool HasFSM(Type type)
         {
             return fsmDict.ContainsKey(type);
         }
-        public IFSM<T> CreateFSM<T>(T owner,params FSMState<T>[] states)
+        internal IFSM<T> CreateFSM<T>(T owner,params FSMState<T>[] states)
             where T :class
         {
            return CreateFSM(string.Empty, owner, states);
         }
-        public IFSM<T>CreateFSM<T>(string name,T owner,params FSMState<T>[] states)
+        internal IFSM<T>CreateFSM<T>(string name,T owner,params FSMState<T>[] states)
             where T : class
         {
             if (!HasFSM(typeof(T)))
@@ -66,12 +66,12 @@ namespace Cosmos.FSM{
             fsmDict.Add(type, fsm);
             return fsm;
         }
-        public IFSM<T> CreateFSM<T>(T owner,List<FSMState<T>> states)
+        internal IFSM<T> CreateFSM<T>(T owner,List<FSMState<T>> states)
             where T:class
         {
             return CreateFSM(string.Empty, owner, states);
         }
-        public IFSM<T> CreateFSM<T>(string name,T owner, List<FSMState<T>> states)
+        internal IFSM<T> CreateFSM<T>(string name,T owner, List<FSMState<T>> states)
             where T : class
         {
             if(!HasFSM(typeof(T)))
@@ -81,12 +81,12 @@ namespace Cosmos.FSM{
             fsmDict.Add(type, fsm);
             return fsm;
         }
-        public void DestoryFSM<T>()
+        internal void DestoryFSM<T>()
             where T:class
         {
             DestoryFSM(typeof(T));
         }
-        public void DestoryFSM(Type type)
+        internal void DestoryFSM(Type type)
         {
             FSMBase fsm = null;
             if (fsmDict.TryGetValue(type, out fsm))
@@ -95,7 +95,7 @@ namespace Cosmos.FSM{
                 fsmDict.Remove(type);
             }
         }
-        public void ShutdownAllFSM()
+       internal void ShutdownAllFSM()
         {
             foreach (var fsm in fsmDict)
             {

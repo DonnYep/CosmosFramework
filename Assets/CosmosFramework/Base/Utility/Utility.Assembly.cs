@@ -25,10 +25,7 @@ namespace Cosmos
             public static string GetTypeFullName(Type type, string name)
             {
                 if (type == null)
-                {
-                    DebugError("Type is invalid.无效类");
-                    return null;
-                }
+                    throw new ArgumentNullException("Type is invalid.无效类");
                 string typeName = type.FullName;
                 return string.IsNullOrEmpty(name) ? typeName : Utility.Text.Format(typeName, name);
             }
@@ -52,7 +49,7 @@ namespace Cosmos
                 }
                 else
                 {
-                    throw new CFrameworkException("Type : Assembly" + type.AssemblyQualifiedName + "Not exist!");
+                    throw new ArgumentNullException("Type : Assembly" + type.AssemblyQualifiedName + "Not exist!");
                 }
             }
             /// <summary>

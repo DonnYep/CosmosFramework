@@ -22,5 +22,5 @@ MonoBehaviour:
   maxCollectDelay: 3
   randomRotationOnSpawn: 0
   alignType: 0
-  spawnObject: {fileID: 1002502963443486, guid: 3376b1f58ee2c9f4e91fccef586213ac,
+  spawnObject: {fileID: -4179113542320558689, guid: 3376b1f58ee2c9f4e91fccef586213ac,
     type: 3}

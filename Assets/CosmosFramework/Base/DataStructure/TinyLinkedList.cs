@@ -46,7 +46,7 @@ namespace Cosmos
         public void Add(T node,int index)
         {
             if (index < 0 || index > count)
-                throw new CFrameworkException("非法索引");
+                throw new ArgumentOutOfRangeException("TinyLinkedList : 非法索引");
             if (index == 0)
                 head = new Node(node, head);
             else
@@ -80,7 +80,7 @@ namespace Cosmos
         public T Get(int index)
         {
             if (index < 0 || index > count)
-                throw new CFrameworkException("非法索引");
+                throw new ArgumentOutOfRangeException("TinyLinkedList : 非法索引");
             Node current = head;
             for (int i = 0; i < index - 1; i++)
                 current = current.Next;
@@ -97,7 +97,7 @@ namespace Cosmos
         public void Set(T node,int index)
         {
             if (index < 0 || index > count)
-                throw new CFrameworkException("非法索引");
+                throw new ArgumentOutOfRangeException("TinyLinkedList : 非法索引");
             Node current = head;
             for (int i = 0; i < index; i++)
                 current = current.Next;
@@ -106,7 +106,7 @@ namespace Cosmos
         public T RemoveAt(int index)
         {
             if (index < 0 || index > count)
-                throw new CFrameworkException("非法索引");
+                throw new ArgumentOutOfRangeException("TinyLinkedList : 非法索引");
             if (index == 0)
             {
                 Node delNode = head;

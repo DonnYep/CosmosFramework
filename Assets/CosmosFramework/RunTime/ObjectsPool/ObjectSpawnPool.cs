@@ -1,87 +1,113 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections.Generic;
-using Cosmos.Event;
 namespace Cosmos.ObjectPool
 {
     public sealed class ObjectSpawnPool
     {
-        /// <summary>
-        /// 生成的对象
-        /// </summary>
-        GameObject spawnItem;
-        CFAction<GameObject> onSpawn;
-        CFAction<GameObject> onDespawn;
-        List<GameObject> objectList = new List<GameObject>();
-        public ObjectSpawnPool(GameObject spawnItem, CFAction<GameObject> onSpawn, CFAction<GameObject>onDespawn)
+        ObjectPoolVariable poolData;
+         Queue<IObject> objectList = new Queue<IObject>();
+        public ObjectSpawnPool(ObjectPoolVariable poolData)
         {
-            this.spawnItem = spawnItem;
-            this.onSpawn = onSpawn;
-            this.onDespawn = onDespawn;
+            this.poolData = poolData;
         }
-        public void SetSpawnItem(GameObject spawnItem)
+        public void SetSpawnItem(IObject spawnItem)
         {
-            if (this.spawnItem != spawnItem)
+            if (poolData == null)
+                poolData = new ObjectPoolVariable();
+            if (poolData. SpawnItem != spawnItem)
             {
-                this.spawnItem = spawnItem;
+                this.poolData.SpawnItem=spawnItem;
                 Clear();
             }
         }
         public void ClearAction()
         {
-            this.onDespawn = null;
-            this.onSpawn = null;
+            poolData.Clear();
         }
         /// <summary>
         /// 当前池对象中的数量
         /// </summary>
         public int ObjectCount { get { return objectList.Count; } }
-        public GameObject Spawn()
+        public IObject  Spawn()
         {
-            GameObject go;
+            IObject go=default;
             if (objectList.Count > 0)
             {
-                go = FindUseable();
-                if(go!=null)
-                    objectList.Remove(go);//从数组中移除
+                go =objectList.Dequeue();
             }
             else
             {
-                go = GameObject.Instantiate(spawnItem) as GameObject;//实例化产生
+                go =poolData.CreateHandler?.Invoke();
             }
-            go.SetActive(true);
-            onSpawn?.Invoke(go);//表示一个可空类型，空内容依旧可以执行
+            if (go == null)
+                throw new ArgumentNullException("ObjectSpawnPool : can't create IObjectItem !");
+           poolData.OnSpawnHandler?.Invoke(go);//表示一个可空类型，空内容依旧可以执行
+            go.OnSpawn();
             return go;
         }
-        /// <summary>
-        /// 查找到不活跃的对象返回
-        /// </summary>
-        /// <returns></returns>
-        GameObject FindUseable()
+        public void Despawn( IObject go)
         {
-            return objectList.Find(g => !g.activeSelf);
-        }
-        public void Despawn(GameObject go)
-        {
-            if (ObjectCount >= ObjectPoolManager._ObjectPoolCapacity)
+            if (ObjectCount >= ObjectPoolManager.OBJECT_POOL_CAPACITY)
             {
-                GameManager.KillObject(go);//超出部分被销毁
+                go.OnTermination();
             }
             else
             {
-                onDespawn?.Invoke(go);
+              poolData. OnDespawnHandler?.Invoke(go);
                 if (go == null)
                     return;
-                go.SetActive(false);
-                objectList.Add(go);//只有回收的时候会被加入列表
+                go.OnDespawn();
+                objectList.Enqueue(go);//只有回收的时候会被加入列表
+            }
+        }
+        public void Despawns(IObject[] gos)
+        {
+            int length = gos.Length;
+            if (ObjectCount >= ObjectPoolManager.OBJECT_POOL_CAPACITY)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    gos[i].OnTermination();
+                }
+            }
+            else
+            {
+                int overflowCount = ObjectCount + length - ObjectPoolManager.OBJECT_POOL_CAPACITY;
+                int residualCount = ObjectPoolManager.OBJECT_POOL_CAPACITY - ObjectCount;
+                if (overflowCount>0)
+                {
+                    for (int i = 0; i < residualCount; i++)
+                    {
+                        poolData.OnDespawnHandler?.Invoke(gos[i]);
+                        if (gos[i] == null)
+                            return;
+                        gos[i].OnDespawn();
+                        objectList.Enqueue(gos[i]);//只有回收的时候会被加入列表
+                    }
+                    for (int i = 0; i < length; i++)
+                    {
+                        gos[i].OnTermination();
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < length; i++)
+                    {
+                        poolData.OnDespawnHandler?.Invoke(gos[i]);
+                        if (gos[i] == null)
+                            return;
+                        gos[i].OnDespawn();
+                        objectList.Enqueue(gos[i]);//只有回收的时候会被加入列表
+                    }
+                }
             }
         }
         public void Clear()
         {
             while (objectList.Count > 0)
             {
-                GameObject go = objectList[0];
-                objectList.RemoveAt(0);
-                GameManager.KillObject(go);
+                var go = objectList.Dequeue();
+                go.OnTermination();
             }
         }
     }

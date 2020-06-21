@@ -540,57 +540,67 @@ namespace Cosmos
         }
         #endregion
         #region GameObjectPool
-        public static void RegisterObjcetSpawnPool(object objKey, GameObject spawnItem, CFAction<GameObject> onSpawn, CFAction<GameObject> onDespawn)
-        {
-            GameManager.ObjectPoolManager.RegisterSpawnPool(objKey, spawnItem, onSpawn, onDespawn);
+        /// <summary>
+        /// 注册对象池
+        /// </summary>
+        /// <param name="objKey">池中的key</param>
+        /// <param name="spawnItem">需要生成的对象</param>
+        /// <param name="onSpawn">生成时触发的事件，默认会将对象激活</param>
+        /// <param name="onDespawn">回收时触发的事件，默认会将对象失活</param>
+        public static void RegisterObjcetSpawnPool<T>(ObjectKey<T> objectKey, ObjectPoolVariable poolData)
+            where T:IObject
+        { 
+            GameManager.ObjectPoolManager.RegisterSpawnPool(objectKey,poolData);
         }
-        public static void DeregisterObjectSapwnPool(object objKey)
+        public static void DeregisterObjectSpawnPool<T>(ObjectKey<T> objectKey)
+            where T : IObject
         {
-            GameManager.ObjectPoolManager.DeregisterSpawnPool(objKey);
+            GameManager.ObjectPoolManager.DeregisterSpawnPool(objectKey);
         }
-        public static int GetObjectSpawnPoolItemCount(object objKey)
+        public static int GetObjectSpawnPoolItemCount<T>(ObjectKey<T> objectKey)
+            where T :IObject
         {
-            return GameManager.ObjectPoolManager.GetPoolCount(objKey);
+            return GameManager.ObjectPoolManager.GetPoolObjectCount(objectKey);
         }
-        public static GameObject SpawnObject(object objKey)
+        public static T  SpawnObject<T>(ObjectKey<T> objectKey)
+            where T : class,IObject
         {
-            return GameManager.ObjectPoolManager.Spawn(objKey);
+            return GameManager.ObjectPoolManager.Spawn(objectKey);
         }
-        public static void DespawnObject(object objKey, GameObject go)
+        public static void DespawnObject<T>(ObjectKey<T> objectKey,IObject obj)
+            where T : IObject
         {
-            GameManager.ObjectPoolManager.Despawn(objKey, go);
+            GameManager.ObjectPoolManager.Despawn(objectKey, obj);
         }
-        public static void DespawnObjects(object objKey, GameObject[] gos)
+        public static void DespawnObjects<T>(ObjectKey<T> objectKey, IObject[] objs)
+            where T : IObject
         {
-            GameManager.ObjectPoolManager.Despawns(objKey, gos);
+            GameManager.ObjectPoolManager.Despawns(objectKey, objs);
         }
-        public static void ClearObjectSpawnPool(object objKey)
+        public static void ClearObjectSpawnPool<T>(ObjectKey<T> objectKey)
+            where T : IObject
         {
-            GameManager.ObjectPoolManager.Clear(objKey);
+            GameManager.ObjectPoolManager.ClearPool(objectKey);
         }
         public static void ClearAllObjectSpawnPool()
         {
-            GameManager.ObjectPoolManager.ClearAll();
-        }
-        public static void SetObjectSpawnItem(object objKey, GameObject go)
-        {
-            GameManager.ObjectPoolManager.SetSpawnItem(objKey, go);
+            GameManager.ObjectPoolManager.ClearAllPool();
         }
         /// <summary>
         /// 对象池生成对象在激活状态时所在的容器，场景中唯一，被销毁后依旧会创建
         /// </summary>
         /// <returns></returns>
-        public static GameObject GetObjectSpawnPoolActiveMount()
-        {
-            return GameManager.ObjectPoolManager.ActiveObjectMount;
-        }
+        //public static GameObject GetObjectSpawnPoolActiveMount()
+        //{
+        //    return GameManager.ObjectPoolManager.ActiveObjectMount;
+        //}
         /// <summary>
         /// 生成对象但不经过池，通常用在一次性对象的产生上
         /// </summary>
-        public static GameObject SpawnObjectNotUsePool(GameObject go, Transform spawnTransform)
-        {
-            return GameManager.ObjectPoolManager.SpawnNotUsePool(go, spawnTransform);
-        }
+        //public static GameObject SpawnObjectNotUsePool(GameObject go, Transform spawnTransform)
+        //{
+        //    return GameManager.ObjectPoolManager.SpawnNotUsePool(go, spawnTransform);
+        //}
         #endregion
         #region ControllerManager
         public static void RegisterController<T>(T controller)
@@ -811,6 +821,10 @@ namespace Cosmos
         public static GameObject InitMainCanvas(string path, string name)
         {
             return GameManager.UIManager.InitMainCanvas(path, name);
+        }
+        public static GameObject GetMainCanvas()
+        {
+            return GameManager.UIManager.MainUICanvas;
         }
         #endregion
         #region FSMManager

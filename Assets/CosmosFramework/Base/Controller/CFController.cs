@@ -14,7 +14,7 @@ namespace Cosmos
         /// <summary>
         /// 非空虚函数，覆写时建议保留父类方法
         /// </summary>
-        protected override void OnInitialization()
+        protected override void Awake()
         {
             controllerName = gameObject.name;
             //Facade.RegisterModule(CFModules.INPUT);
@@ -23,7 +23,7 @@ namespace Cosmos
         /// <summary>
         /// 非空虚函数，覆写时建议保留父类方法
         /// </summary>
-        protected override void OnTermination()
+        protected override void OnDestroy()
         {
             RemoveDefaultEventListener(InputEventCodeParams.INPUT_INPUTMODULE);
         }

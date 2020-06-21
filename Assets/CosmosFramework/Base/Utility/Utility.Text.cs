@@ -27,11 +27,11 @@ namespace Cosmos {
             {
                 if (format == null)
                 {
-                    throw new CFrameworkException("Format is invalid.");
+                    throw new ArgumentNullException("Format is invalid.");
                 }
                 if (args == null)
                 {
-                    throw new CFrameworkException("Args is invalid.");
+                    throw new ArgumentNullException("Args is invalid.");
                 }
                 StringBuilderCache.Length = 0;
                 StringBuilderCache.AppendFormat(format, args);
@@ -45,14 +45,8 @@ namespace Cosmos {
             /// <returns></returns>
             public static string Format(string format,object arg)
             {
-                if (string.IsNullOrEmpty(format))
-                {
-                    throw new CFrameworkException("Format is invalid.");
-                }
-                if (arg==null)
-                {
-                    throw new CFrameworkException("Arg is invalid.");
-                }
+                if (string.IsNullOrEmpty(format)|| arg == null)
+                    throw new ArgumentNullException ("Format is invalid.");
                 StringBuilderCache.Length = 0;
                 StringBuilderCache.AppendFormat(format, arg);
                 return StringBuilderCache.ToString();
@@ -106,11 +100,7 @@ namespace Cosmos {
             public static int CharCount(string fullString, char separator)
             {
                 if (string.IsNullOrEmpty(fullString) || string.IsNullOrEmpty(separator.ToString()))
-                {
-                    //DebugError("charCount \n string invaild!");
-                    throw new CFrameworkException("charCount \n string invaild!");
-                    //return 0;
-                }
+                    throw new ArgumentNullException("charCount \n string invaild!");
                 int count = 0;
                 for (int i = 0; i < fullString.Length; i++)
                 {

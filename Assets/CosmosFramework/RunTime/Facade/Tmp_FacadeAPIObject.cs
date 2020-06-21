@@ -531,57 +531,60 @@ namespace Cosmos
         }
         #endregion
         #region GameObjectPool
-        public void RegisterObjcetSpawnPool(object objKey, GameObject spawnItem, CFAction<GameObject> onSpawn, CFAction<GameObject> onDespawn)
+        public static void RegisterObjcetSpawnPool<T>(ObjectKey<T> objectKey, ObjectPoolVariable poolData)
+     where T : IObject
         {
-            GameManager.ObjectPoolManager.RegisterSpawnPool(objKey, spawnItem, onSpawn, onDespawn);
+            GameManager.ObjectPoolManager.RegisterSpawnPool(objectKey, poolData);
         }
-        public void DeregisterObjectSapwnPool(object objKey)
+        public static void DeregisterObjectSpawnPool<T>(ObjectKey<T> objectKey)
+            where T : IObject
         {
-            GameManager.ObjectPoolManager.DeregisterSpawnPool(objKey);
+            GameManager.ObjectPoolManager.DeregisterSpawnPool(objectKey);
         }
-        public int GetObjectSpawnPoolItemCount(object objKey)
+        public static int GetObjectSpawnPoolItemCount<T>(ObjectKey<T> objectKey)
+            where T : IObject
         {
-            return GameManager.ObjectPoolManager.GetPoolCount(objKey);
+            return GameManager.ObjectPoolManager.GetPoolObjectCount(objectKey);
         }
-        public GameObject SpawnObject(object objKey)
+        public static T SpawnObject<T>(ObjectKey<T> objectKey)
+            where T : class,IObject
         {
-            return GameManager.ObjectPoolManager.Spawn(objKey);
+            return GameManager.ObjectPoolManager.Spawn(objectKey);
         }
-        public void DespawnObject(object objKey, GameObject go)
+        public static void DespawnObject<T>(ObjectKey<T> objectKey, IObject obj)
+            where T : IObject
         {
-            GameManager.ObjectPoolManager.Despawn(objKey, go);
+            GameManager.ObjectPoolManager.Despawn(objectKey, obj);
         }
-        public void DespawnObjects(object objKey, GameObject[] gos)
+        public static void DespawnObjects<T>(ObjectKey<T> objectKey, IObject[] objs)
+            where T : IObject
         {
-            GameManager.ObjectPoolManager.Despawns(objKey, gos);
+            GameManager.ObjectPoolManager.Despawns(objectKey, objs);
         }
-        public void ClearObjectSpawnPool(object objKey)
+        public static void ClearObjectSpawnPool<T>(ObjectKey<T> objectKey)
+            where T : IObject
         {
-            GameManager.ObjectPoolManager.Clear(objKey);
+            GameManager.ObjectPoolManager.ClearPool(objectKey);
         }
-        public void ClearAllObjectSpawnPool()
+        public static void ClearAllObjectSpawnPool()
         {
-            GameManager.ObjectPoolManager.ClearAll();
+            GameManager.ObjectPoolManager.ClearAllPool();
         }
-        public void SetObjectSpawnItem(object objKey, GameObject go)
-        {
-            GameManager.ObjectPoolManager.SetSpawnItem(objKey, go);
-        }
-        /// <summary>
-        /// 对象池生成对象在激活状态时所在的容器，场景中唯一，被销毁后依旧会创建
-        /// </summary>
-        /// <returns></returns>
-        public GameObject GetObjectSpawnPoolActiveMount()
-        {
-            return GameManager.ObjectPoolManager.ActiveObjectMount;
-        }
-        /// <summary>
-        /// 生成对象但不经过池，通常用在一次性对象的产生上
-        /// </summary>
-        public GameObject SpawnObjectNotUsePool(GameObject go, Transform spawnTransform)
-        {
-            return GameManager.ObjectPoolManager.SpawnNotUsePool(go, spawnTransform);
-        }
+        ///// <summary>
+        ///// 对象池生成对象在激活状态时所在的容器，场景中唯一，被销毁后依旧会创建
+        ///// </summary>
+        ///// <returns></returns>
+        //public GameObject GetObjectSpawnPoolActiveMount()
+        //{
+        //    return GameManager.ObjectPoolManager.ActiveObjectMount;
+        //}
+        ///// <summary>
+        ///// 生成对象但不经过池，通常用在一次性对象的产生上
+        ///// </summary>
+        //public GameObject SpawnObjectNotUsePool(GameObject go, Transform spawnTransform)
+        //{
+        //    return GameManager.ObjectPoolManager.SpawnNotUsePool(go, spawnTransform);
+        //}
         #endregion
         #region ControllerManager
         public void RegisterController<T>(T controller)

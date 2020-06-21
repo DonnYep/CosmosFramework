@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+
 namespace Cosmos.Audio
 {
     internal sealed class AudioManager : Module<AudioManager>
@@ -60,7 +62,7 @@ namespace Cosmos.Audio
         /// </summary>
         /// <param name="clip"></param>
         /// <param name="arg"></param>
-        public void PlayBackgroundAudio(GameEventArgs arg)
+        internal  void PlayBackgroundAudio(GameEventArgs arg)
         {
             var tempArgs = arg as LogicEventArgs<AudioVariable>;
             if (backgroundAduio == null)
@@ -80,21 +82,21 @@ namespace Cosmos.Audio
                 backgroundAduio.Play();
             }
         }
-        public void PauseBackgroundAudio()
+        internal void PauseBackgroundAudio()
         {
             if (backgroundAduio != null)
                 backgroundAduio.Pause();
             else
                 Utility.DebugError("BackgroundAudio  not exist!");
         }
-        public void UnpauseBackgroundAudio()
+        internal void UnpauseBackgroundAudio()
         {
             if (backgroundAduio != null)
                 backgroundAduio.UnPause();
             else
                 Utility.DebugError("BackgroundAudio  not exist!");
         }
-        public void StopBackgroundAudio()
+       internal void StopBackgroundAudio()
         {
             if (backgroundAduio != null)
                 backgroundAduio.Stop();
@@ -110,7 +112,7 @@ namespace Cosmos.Audio
         /// <param name="attachTarget">audioSource挂载的对象</param>
         /// <param name="clip">音频</param>
         /// <param name="arg">具体参数</param>
-        public void PlayWorldAudio(GameObject attachTarget, GameEventArgs args)
+       internal void PlayWorldAudio(GameObject attachTarget, GameEventArgs args)
         {
             var tempArgs = args as LogicEventArgs<AudioVariable>;
             if (worldAudios.ContainsKey(attachTarget))
@@ -130,7 +132,7 @@ namespace Cosmos.Audio
                 audio.Play();
             }
         }
-        public void PauseWorldAudio(GameObject attachTarget)
+        internal void PauseWorldAudio(GameObject attachTarget)
         {
             if (worldAudios.ContainsKey(attachTarget))
             {
@@ -138,27 +140,27 @@ namespace Cosmos.Audio
                 audio.Pause();
             }
             else
-            throw new CFrameworkException("AudioManager\n" + "World" + attachTarget.name + "\n is unregistered");
+            throw new ArgumentException("AudioManager\n" + "World" + attachTarget.name + "\n is unregistered");
         }
-        public void UnpauseWorldAudio(GameObject attachTarget)
+       internal void UnpauseWorldAudio(GameObject attachTarget)
         {
             if (worldAudios.ContainsKey(attachTarget))
             {
                 AudioSource audio = worldAudios[attachTarget];
                 audio.UnPause();
             }else
-            throw new CFrameworkException("AudioManager\n" + "World" + attachTarget.name + "\n is unregistered");
+            throw new ArgumentException("AudioManager\n" + "World" + attachTarget.name + "\n is unregistered");
         }
-        public void StopWorldAudio(GameObject attachTarget)
+        internal void StopWorldAudio(GameObject attachTarget)
         {
             if (worldAudios.ContainsKey(attachTarget))
             {
                 AudioSource audio = worldAudios[attachTarget];
                 audio.Stop();
             }else
-            throw new CFrameworkException("AudioManager\n" + "World" + attachTarget.name + "\n is unregistered");
+            throw new ArgumentException("AudioManager\n" + "World" + attachTarget.name + "\n is unregistered");
         }
-        public void StopAllWorldAudio()
+       internal void StopAllWorldAudio()
         {
             foreach (var audio in worldAudios)
             {
@@ -170,7 +172,7 @@ namespace Cosmos.Audio
         }
         #endregion
         #region MultipleAudio
-        public void PlayMultipleAudio(GameObject attachTarget,GameEventArgs[] args) 
+       internal void PlayMultipleAudio(GameObject attachTarget,GameEventArgs[] args) 
         {
             if (multipleAudio.ContainsKey(attachTarget))
             {
@@ -208,7 +210,7 @@ namespace Cosmos.Audio
                 }
             }
         }
-        public void PauseMultipleAudio(GameObject attachTarget)
+        internal  void PauseMultipleAudio(GameObject attachTarget)
         {
             if (multipleAudio.ContainsKey(attachTarget))
             {
@@ -217,9 +219,9 @@ namespace Cosmos.Audio
                     multipleAudio[attachTarget][i].Pause();
                 }
             }else
-            throw new CFrameworkException("AudioManager\n" + "Multiple" + attachTarget.name + "\n is unregistered");
+            throw new ArgumentException("AudioManager\n" + "Multiple" + attachTarget.name + "\n is unregistered");
         }
-        public void UnpauseMultipleAudio(GameObject attachTarget)
+        internal  void UnpauseMultipleAudio(GameObject attachTarget)
         {
             if (multipleAudio.ContainsKey(attachTarget))
             {
@@ -229,10 +231,10 @@ namespace Cosmos.Audio
                 }
             }
             else
-            throw new CFrameworkException("AudioManager\n" + "Multiple" + attachTarget.name + "\n is unregistered");
+            throw new ArgumentException("AudioManager\n" + "Multiple" + attachTarget.name + "\n is unregistered");
 
         }
-        public void StopMultipleAudio(GameObject attachTarget)
+        internal void StopMultipleAudio(GameObject attachTarget)
         {
             if (multipleAudio.ContainsKey(attachTarget))
             {
@@ -242,7 +244,7 @@ namespace Cosmos.Audio
                 }
             }
             else
-            throw new CFrameworkException("AudioManager\n" + "Multiple" + attachTarget.name + "\n is unregistered");
+            throw new ArgumentException("AudioManager\n" + "Multiple" + attachTarget.name + "\n is unregistered");
 
         }
         #endregion

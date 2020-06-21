@@ -7,14 +7,14 @@ namespace Cosmos.UI
     {
         public static string MainUICanvasName { get; set; }
         GameObject mainUICanvas;
-        public GameObject MainUICanvas { get { return mainUICanvas; } }
+        public GameObject MainUICanvas { get { return mainUICanvas; } set { mainUICanvas = value; } }
         Dictionary<string, UILogicBase> uiPanelDict = new Dictionary<string, UILogicBase>();
         /// <summary>
         /// Resource文件夹相对路径
         /// 返回实例化的对象
         /// </summary>
         /// <param name="path">如UI\Canvas</param>
-        public GameObject InitMainCanvas(string path)
+        internal GameObject InitMainCanvas(string path)
         {
             if (mainUICanvas != null)
                 return mainUICanvas;
@@ -35,7 +35,7 @@ namespace Cosmos.UI
         /// </summary>
         /// <param name="path">如UI\Canvas</param>
         /// <param name="name">生成后重命名的名称</param>
-        public GameObject InitMainCanvas(string path,string name)
+       internal GameObject InitMainCanvas(string path,string name)
         {
             if (mainUICanvas != null)
                 return mainUICanvas;
@@ -57,7 +57,7 @@ namespace Cosmos.UI
         /// <typeparam name="T"> UILogicBase</typeparam>
         /// <param name="panelName">相对完整路径</param>
         /// <param name="callBack">仅在载入时回调</param>
-        public void LoadPanel<T>(string panelName, CFAction<T> callBack = null)
+        internal void LoadPanel<T>(string panelName, CFAction<T> callBack = null)
             where T : UILogicBase
         {
             if (HasPanel(panelName))
@@ -79,7 +79,7 @@ namespace Cosmos.UI
         /// <typeparam name="T"> UILogicBase</typeparam>
         /// <param name="panelName">相对完整路径</param>
         /// <param name="callBack">仅在载入时回调</param>
-        public void ShowPanel<T>(string panelName, CFAction<T> callBack = null)
+        internal void ShowPanel<T>(string panelName, CFAction<T> callBack = null)
             where T : UILogicBase
         {
             if (HasPanel(panelName))
@@ -97,12 +97,12 @@ namespace Cosmos.UI
                 uiPanelDict.Add(panelName, panel);
             });
         }
-        public void HidePanel(string panelName)
+       internal void HidePanel(string panelName)
         {
             if (uiPanelDict.ContainsKey(panelName))
                 uiPanelDict[panelName].HidePanel();
         }
-        public void RemovePanel(string panelName)
+       internal void RemovePanel(string panelName)
         {
             if (uiPanelDict.ContainsKey(panelName))
             {
@@ -113,7 +113,7 @@ namespace Cosmos.UI
             else
                 Utility.DebugError("UIManager-->>" + "Panel :" + panelName + "  not register !");
         }
-        public bool HasPanel(string panelName)
+       internal bool HasPanel(string panelName)
         {
             return uiPanelDict.ContainsKey(panelName);
         }

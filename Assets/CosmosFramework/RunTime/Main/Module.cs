@@ -12,22 +12,16 @@ namespace Cosmos
     {
         #region interface IModule
         /// <summary>
-        /// 非空虚函数;
+        /// 空虚函数;
         /// 可覆写初始化方法，覆写时需要执行父类方法
         /// </summary>
-        public virtual void OnInitialization()
-        {
-            //TODO 生命周期初始化问题 ，module
-            //GameManager.Instance.RegisterModule(ModuleName, this);
-        }
+        public virtual void OnInitialization(){}
         /// <summary>
         /// 非空虚函数，停止模块
         /// 在子类调用时，建议保留执行父类函数
         /// </summary>
         public virtual void OnTermination()
         {
-            //TODO 生命周期销毁问题 ，module
-            //GameManager.Instance.DeregisterModule(ModuleFullName);
             moduleMountObject = null;
             moduleName = null;
             moduleFullyQualifiedName = null;

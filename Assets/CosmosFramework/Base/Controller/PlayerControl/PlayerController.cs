@@ -25,9 +25,9 @@ namespace Cosmos
         //点积
         float dot = 0;
 
-        protected override void OnInitialization()
+        protected override void Awake()
         {
-            base.OnInitialization();
+            base.Awake();
             animator = GetComponentInChildren<Animator>();
             controllerEventArgs = new LogicEventArgs<CameraTarget>();
             controllerEventArgs.SetData( GetComponentInChildren<CameraTarget>());

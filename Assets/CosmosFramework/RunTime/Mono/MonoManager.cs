@@ -48,7 +48,7 @@ namespace Cosmos.Mono
         /// 使用回调函数操作对应命令
         /// 尽量不要使用匿名函数，否则释放会出现问题。匿名函数本质实现都是创建对象添加到委托，因此释放需要注意
         /// </summary>
-        public void AddListener(CFAction act, UpdateType type,CFAction<short>callBack=null)
+        internal void AddListener(CFAction act, UpdateType type,CFAction<short>callBack=null)
         {
             short monoId = -1;
             monoId = FindUseable(type);
@@ -70,13 +70,11 @@ namespace Cosmos.Mono
         /// <param name="act"></param>
         /// <param name="type"></param>
         /// <param name="key'">委托所在的序号</param>
-        public void RemoveListener(CFAction act, UpdateType type,short monoID)
+        internal void RemoveListener(CFAction act, UpdateType type,short monoID)
         {
             if(!monoDict.ContainsKey(monoID))
             {
-                //Utility.DebugError("MonoManager\n"+"MonoController ID"+monoID+" does not exist!");
-                //return;
-                throw new CFrameworkException("MonoManager\n" + "MonoController ID" + monoID + " does not exist!");
+                throw new ArgumentException("MonoManager\n" + "MonoController ID" + monoID + " does not exist!");
             }else
             monoDict[monoID].RemoveListener(act, type);
         }
@@ -86,7 +84,7 @@ namespace Cosmos.Mono
         /// </summary>
         /// <param name="routine"></param>
         /// <returns></returns>
-        public Coroutine StartCoroutine(IEnumerator routine)
+        internal Coroutine StartCoroutine(IEnumerator routine)
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
@@ -96,7 +94,7 @@ namespace Cosmos.Mono
         /// 关闭一个monoController上的所有迭代器
         /// 慎用
         /// </summary>
-        public void StopAllCoroutines()
+        internal void StopAllCoroutines()
         {
             if (monoControllerCount == 0)
                 return;
@@ -109,13 +107,13 @@ namespace Cosmos.Mono
         /// 关闭协程
         /// </summary>
         /// <param name="methodName"></param>
-        public void StopCoroutine(IEnumerator routine)
+        internal void StopCoroutine(IEnumerator routine)
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
             (monoDict[monoControllerCount] as MonoController).StopCoroutine(routine);
         }
-        public void StopCoroutine(Coroutine routine)
+       internal void StopCoroutine(Coroutine routine)
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
@@ -177,19 +175,19 @@ namespace Cosmos.Mono
         /// <param name="routine">执行条件</param>
         /// <param name="callBack">执行条件结束后自动执行回调函数</param>
         /// <returns>Coroutine</returns>
-        public Coroutine StartCoroutine(Coroutine routine, CFAction callBack)
+        internal Coroutine StartCoroutine(Coroutine routine, CFAction callBack)
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
             return (monoDict[monoControllerCount] as MonoController).StartCoroutine(routine, callBack);
         }
-        public Coroutine DelayCoroutine(float delay,CFAction callBack)
+        internal Coroutine DelayCoroutine(float delay,CFAction callBack)
         {
             if (monoControllerCount == 0)
                 CreateMonoController();
             return (monoDict[monoControllerCount] as MonoController).DelayCoroutine(delay,callBack);
         }
-        public Coroutine PredicateCoroutine(Func<bool>handler,CFAction callBack)
+        internal Coroutine PredicateCoroutine(Func<bool>handler,CFAction callBack)
         {
             if (monoControllerCount == 0)
                 CreateMonoController();

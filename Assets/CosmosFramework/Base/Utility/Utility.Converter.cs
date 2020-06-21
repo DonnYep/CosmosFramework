@@ -13,37 +13,25 @@ namespace Cosmos
             public static string GetString(byte[] value)
             {
                 if (value == null)
-                {
-                    throw new CFrameworkException("Value is invalid");
-                }
+                    throw new ArgumentNullException(" Utility.Converter : Value is invalid");
                 return Encoding.UTF8.GetString(value);
             }
             public static byte[] GetBytes(string value)
             {
                 return Encoding.UTF8.GetBytes(value);
             }
-            //public static byte[] GetBytes(bool value)
-            //{
-
-            //}
             public static void GetBytes(bool value,byte[] buffer,int startIndex)
             {
                 if (buffer == null)
-                {
-                    throw new CFrameworkException("Buffer is invalid.");
-                }
+                    throw new ArgumentNullException(" Utility.Converter : Buffer is invalid.");
                 if(startIndex < 0 || startIndex + 1 > buffer.Length)
-                {
-                    throw new CFrameworkException("Start index is invalid.");
-                }
+                    throw new ArgumentOutOfRangeException("Start index is invalid.");
                 buffer[startIndex] = value ? (byte)1 : (byte)0;
             }
             public static string GetString(byte[] value,int startIndex,int length)
             {
                 if (value == null)
-                {
-                    throw new CFrameworkException("Value is invalid.");
-                }
+                    throw new ArgumentNullException("Value is invalid.");
                 return Encoding.UTF8.GetString(value, startIndex, length);
             }
             /// <summary>

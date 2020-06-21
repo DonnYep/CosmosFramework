@@ -33,9 +33,9 @@ namespace Cosmos
                 {
                     return Client != null && Client.Connected;
                 }
-                catch (Exception exception)
+                catch 
                 {
-                    throw new CFrameworkException("Client is invalid.");
+                    throw new ArgumentNullException("Client is invalid.");
                 }
             }
         }

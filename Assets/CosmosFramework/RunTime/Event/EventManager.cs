@@ -13,7 +13,7 @@ namespace Cosmos.Event
         /// <param name="eventKey">事件的key，可以是对象，字符</param>
         /// <param name="handler">事件处理者</param>
         /// <param name="callBack">只有事件注册成功才执行回调函数</param>
-        public void AddListener(string eventKey,CFAction<object,GameEventArgs> handler)
+        internal void AddListener(string eventKey,CFAction<object,GameEventArgs> handler)
         {
             if (string.IsNullOrEmpty(eventKey))
             {
@@ -35,7 +35,7 @@ namespace Cosmos.Event
         /// </summary>
         /// <param name="eventKey">事件的key，可以是对象，字符</param>
         /// <param name="hander">事件处理者</param>
-        public void RemoveListener(string eventKey,CFAction<object,GameEventArgs> hander)
+        internal void RemoveListener(string eventKey,CFAction<object,GameEventArgs> hander)
         {
             if (string.IsNullOrEmpty(eventKey))
             {
@@ -54,7 +54,7 @@ namespace Cosmos.Event
         /// </summary>
         /// <param name="sender">事件的触发者</param>
         /// <param name="arg">事件处理类</param>
-        public void DispatchEvent(string eventKey,object sender, GameEventArgs arg)
+        internal void DispatchEvent(string eventKey,object sender, GameEventArgs arg)
         {
             if (string.IsNullOrEmpty(eventKey))
             {
@@ -74,7 +74,7 @@ namespace Cosmos.Event
         /// <summary>
         /// 注销并移除事件
         /// </summary>
-        public void DeregisterEvent(string eventKey)
+        internal void DeregisterEvent(string eventKey)
         {
             if (string.IsNullOrEmpty(eventKey))
             {
@@ -91,7 +91,7 @@ namespace Cosmos.Event
         /// 在事件中心注册一个空的事件
         /// 当前设计是为事件的触发者设计，空事件可以使其他订阅者订阅
         /// </summary>
-        public void RegisterEvent(string eventKey)
+        internal void RegisterEvent(string eventKey)
         {
             if (string.IsNullOrEmpty(eventKey))
             {
@@ -106,7 +106,7 @@ namespace Cosmos.Event
         /// <summary>
         /// 清空已经注册的事件
         /// </summary>
-        public void ClearEvent(string eventKey)
+        internal void ClearEvent(string eventKey)
         {
             if (string.IsNullOrEmpty(eventKey))
             {
@@ -121,7 +121,7 @@ namespace Cosmos.Event
         /// <summary>
         /// 注销所有除框架以外的事件
         /// </summary>
-        public void ClearAllEvent()
+        internal void ClearAllEvent()
         {
             foreach (var key in eventDict.Keys)
             {
@@ -139,7 +139,7 @@ namespace Cosmos.Event
         /// <summary>
         /// 判断事件是否注册
         /// </summary>
-        public bool HasEvent(string eventKey)
+        internal bool HasEvent(string eventKey)
         {
             if (string.IsNullOrEmpty(eventKey))
             {

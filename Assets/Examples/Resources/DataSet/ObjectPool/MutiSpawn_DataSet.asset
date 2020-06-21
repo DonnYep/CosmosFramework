@@ -24,6 +24,6 @@ MonoBehaviour:
   alignType: 0
   severalTime: 2
   spawnObjects:
-  - {fileID: 1836443238213990, guid: 8a8417a066faaf54681fd6b50528d39c, type: 3}
-  - {fileID: 1710601175091384, guid: 829bf2b842b96a149a21723a68947d87, type: 3}
-  - {fileID: 1002502963443486, guid: 3376b1f58ee2c9f4e91fccef586213ac, type: 3}
+  - {fileID: -4179113542320558689, guid: 3376b1f58ee2c9f4e91fccef586213ac, type: 3}
+  - {fileID: -500833240528382542, guid: 8a8417a066faaf54681fd6b50528d39c, type: 3}
+  - {fileID: -5986063151182201271, guid: 829bf2b842b96a149a21723a68947d87, type: 3}

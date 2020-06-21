@@ -11,10 +11,11 @@ namespace Cosmos {
     {
         public static class Editor
         {
+# if UNITY_EDITOR
+
             public static void SetEditorPrefsBool(string key,bool value)
             {
 # if UNITY_EDITOR
-
                 string fullKey = GetEditorKey(key);
                 EditorPrefs.DeleteKey(fullKey);
                 EditorPrefs.SetBool(fullKey, value);
@@ -93,8 +94,13 @@ namespace Cosmos {
             }
             public static string GetEditorKey(string key)
             {
+# if UNITY_EDITOR
+
                 Utility.Text.ClearStringBuilder();
                return Utility.Text.Format(ApplicationConst.Editor.APPEDITORPERFIX + "_" + key);
+#else
+                return "";
+#endif
             }
             /// <summary>
             /// 刷新unity编辑器，只在Editor环境下可用
@@ -105,6 +111,7 @@ namespace Cosmos {
                 UnityEditor.AssetDatabase.Refresh();
 #endif
             }
+#endif
         }
     }
 }

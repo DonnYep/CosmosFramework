@@ -18,6 +18,8 @@ using Cosmos.Network;
 using Cosmos.Entity;
 using Cosmos.Hotfix;
 using System.Reflection;
+using System;
+
 namespace Cosmos
 {
     /// <summary>
@@ -57,7 +59,7 @@ namespace Cosmos
                 Utility.DebugLog("Module:\"" + moduleName + "\" " + "  is OnInitialization" + "\n based on GameManager");
             }
             else
-                throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is already exist!");
+                throw new ArgumentException("Module:\"" + moduleName + "\" " + " is already exist!");
         }
         /// <summary>
         /// 注销模块
@@ -72,7 +74,7 @@ namespace Cosmos
                 Utility.DebugLog("Module:\"" + moduleName + "\" " + "  is OnTermination" + "\n based on GameManager", MessageColor.DARKBLUE);
             }
             else
-                throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is  not exist!");
+                throw new ArgumentException("Module:\"" + moduleName + "\" " + " is  not exist!");
         }
         internal bool HasModule(string moduleName)
         {

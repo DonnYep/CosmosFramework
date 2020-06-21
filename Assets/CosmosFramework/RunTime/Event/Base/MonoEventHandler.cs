@@ -9,23 +9,17 @@ namespace Cosmos
     /// </summary>
     public abstract class MonoEventHandler : MonoBehaviour
     {
-        private void Awake()
-        {
-            OnInitialization();
-        }
-        private void OnDestroy()
-        {
-            OnTermination();
-        }
         /// <summary>
-        /// Awake时候被调用，在此注册事件
+        /// 空虚函数
         /// </summary>
-        protected abstract void OnInitialization();
+        protected virtual void Awake() { }
         /// <summary>
-        /// Desotry时候被调用，
-        /// 空的虚函数,在此注销事件
+        /// 空虚函数
         /// </summary>
-        protected virtual void OnTermination() { }
+        protected virtual void OnDestroy() { }
+        /// <summary>
+        /// 空虚函数
+        /// </summary>
         protected virtual void OnValidate() { }
         /// <summary>
         /// 默认的标准事件处理者，
