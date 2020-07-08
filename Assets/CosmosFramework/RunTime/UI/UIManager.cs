@@ -14,7 +14,7 @@ namespace Cosmos.UI
         /// 返回实例化的对象
         /// </summary>
         /// <param name="path">如UI\Canvas</param>
-        internal GameObject InitMainCanvas(string path)
+        public GameObject InitMainCanvas(string path)
         {
             if (mainUICanvas != null)
                 return mainUICanvas;
@@ -35,7 +35,7 @@ namespace Cosmos.UI
         /// </summary>
         /// <param name="path">如UI\Canvas</param>
         /// <param name="name">生成后重命名的名称</param>
-       internal GameObject InitMainCanvas(string path,string name)
+        public GameObject InitMainCanvas(string path,string name)
         {
             if (mainUICanvas != null)
                 return mainUICanvas;
@@ -57,7 +57,7 @@ namespace Cosmos.UI
         /// <typeparam name="T"> UILogicBase</typeparam>
         /// <param name="panelName">相对完整路径</param>
         /// <param name="callBack">仅在载入时回调</param>
-        internal void LoadPanel<T>(string panelName, CFAction<T> callBack = null)
+        public void LoadPanel<T>(string panelName, CFAction<T> callBack = null)
             where T : UILogicBase
         {
             if (HasPanel(panelName))
@@ -79,7 +79,7 @@ namespace Cosmos.UI
         /// <typeparam name="T"> UILogicBase</typeparam>
         /// <param name="panelName">相对完整路径</param>
         /// <param name="callBack">仅在载入时回调</param>
-        internal void ShowPanel<T>(string panelName, CFAction<T> callBack = null)
+        public void ShowPanel<T>(string panelName, CFAction<T> callBack = null)
             where T : UILogicBase
         {
             if (HasPanel(panelName))
@@ -97,12 +97,12 @@ namespace Cosmos.UI
                 uiPanelDict.Add(panelName, panel);
             });
         }
-       internal void HidePanel(string panelName)
+        public void HidePanel(string panelName)
         {
             if (uiPanelDict.ContainsKey(panelName))
                 uiPanelDict[panelName].HidePanel();
         }
-       internal void RemovePanel(string panelName)
+        public void RemovePanel(string panelName)
         {
             if (uiPanelDict.ContainsKey(panelName))
             {
@@ -113,7 +113,7 @@ namespace Cosmos.UI
             else
                 Utility.DebugError("UIManager-->>" + "Panel :" + panelName + "  not register !");
         }
-       internal bool HasPanel(string panelName)
+        public bool HasPanel(string panelName)
         {
             return uiPanelDict.ContainsKey(panelName);
         }

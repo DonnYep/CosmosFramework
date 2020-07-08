@@ -19,7 +19,7 @@ namespace Cosmos.Data
         /// <param name="fileName">文件名</param>
         /// <param name="dataSet">存储json的类模型</param>
         /// <param name="callBack">回调函数</param>
-        internal void ParseDataFromResource<T>(string relativePath, string fileName, ref T dataSet, CFAction<T> callBack = null)
+        public void ParseDataFromResource<T>(string relativePath, string fileName, ref T dataSet, CFAction<T> callBack = null)
             where T : class, new()
         {
             string relativeFullPath = Utility.IO.CombineRelativeFilePath(fileName, relativePath);
@@ -35,7 +35,7 @@ namespace Cosmos.Data
         /// <param name="dataSet">装箱后的数据</param>
         /// <param name="binary">文件是否为二进制</param>
         /// <param name="callBack">回调函数，当写入成功后调用</param>
-        internal void SaveJsonDataToLocal<T>(string relativePath, string fileName, T dataSet, bool binary = false, CFAction callBack = null)
+        public void SaveJsonDataToLocal<T>(string relativePath, string fileName, T dataSet, bool binary = false, CFAction callBack = null)
             where T : class, new()
         {
             string absoluteFullpath = Utility.Unity.CombineAppPersistentPath(relativePath);
@@ -71,11 +71,11 @@ namespace Cosmos.Data
         /// <param name="fileName">文件名称</param>
         /// <param name="binary">文件是否为二进制</param>
         /// <param name="callBack">回调函数，当读取成功后调用</param>
-        internal string LoadJsonDataFromLocal(string relativePath, string fileName, bool binary=false, CFAction callBack = null)
+        public string LoadJsonDataFromLocal(string relativePath, string fileName, bool binary=false, CFAction callBack = null)
         {
             string absoluteFullpath = Utility.Unity.CombineAppPersistentPath(relativePath);
             if (!Directory.Exists(absoluteFullpath))
-                throw new FileLoadException("DataManager-->> Json floder not exist!");
+                throw new CFrameworkException("DataManager-->> Json floder not exist!");
             string json = "";
             using (FileStream stream = File.Open(Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), FileMode.Open))
             {
@@ -106,11 +106,11 @@ namespace Cosmos.Data
         /// <param name="dataSet">装箱后的数据</param>
         /// <param name="binary">文件是否为二进制</param>
         /// <param name="callBack">回调函数，读取成功后调用</param>
-        internal string LoadJsonDataFromLocal(string fullRelativeFilePath,  bool binary=false, CFAction callBack = null)
+        public string LoadJsonDataFromLocal(string fullRelativeFilePath,  bool binary=false, CFAction callBack = null)
         {
             string absoluteFullpath = Utility.Unity.CombineAppPersistentPath(fullRelativeFilePath);
             if (!File.Exists(absoluteFullpath))
-                throw new FileLoadException("DataManager-->> Json file not exist!");
+                throw new CFrameworkException("DataManager-->> Json file not exist!");
             string json = "";
             using (FileStream stream = File.Open(Utility.Unity.CombineAppPersistentPath(absoluteFullpath), FileMode.Open))
             {

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cosmos{
-    public abstract class InputDevice : Input. IInputDevice
+namespace Cosmos.Input{
+    public abstract class InputDevice : IInputDevice
     {
         public abstract void OnStart();
         public abstract void OnRun();

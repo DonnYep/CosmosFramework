@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cosmos{
-    public class MonoObjectSpawnerSingle : MonoObjectSpawner
-    {
+    public class MonoObjectSpawnerSingle : MonoObjectSpawner {
+
+      
         [SerializeField]
         Transform spawnTransform;
         public Transform SpawnTransform { get { return spawnTransform; } }
@@ -12,30 +13,23 @@ namespace Cosmos{
         ObjectPoolDataSet poolDataSet;
         public ObjectPoolDataSet PoolDataSet { get { return poolDataSet; } }
         public override float CollectDelay { get { return poolDataSet.CollectDelay; } }
-        HashSet<MonoObjectBase> uncollectibleHashSet = new HashSet<MonoObjectBase>();
-        public override HashSet<MonoObjectBase> UncollectibleHashSet { get { return uncollectibleHashSet; } protected set { uncollectibleHashSet = value; } }
+        HashSet<GameObject> uncollectibleHashSet = new HashSet<GameObject>();
+        public override HashSet<GameObject> UncollectibleHashSet { get { return uncollectibleHashSet; } protected set { uncollectibleHashSet = value; } }
         public override void Spawn()
         {
             if (!poolDataSet.ObjectAddsResult)
                 return;
             for (int i = 0; i < poolDataSet.SpawnCount; i++)
             {
-                var go = Facade.SpawnObject(objectKey);
+                Facade.SetObjectSpawnItem(this, PoolDataSet.SpawnObject);
+                var go = Facade.SpawnObject(this);
                 AlignObject(PoolDataSet.AlignType, go, SpawnTransform);
             }
         }
-        protected override void Awake()
-        {
-            base.Awake();
-        }
         protected override void RegisterSpawner()
         {
-            if (poolDataSet != null)
-            {
-                objectKey = new ObjectKey<MonoObjectItem>(this.GetType().FullName);
-                poolVariable = new ObjectPoolVariable(PoolDataSet.SpawnObject,SpawnHandler, DespawnHandler, Create);
-                Facade.RegisterObjcetSpawnPool(objectKey, poolVariable);
-            }
+            if(poolDataSet != null)
+                Facade.RegisterObjcetSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
         }
         public override void SpawnUncollectible()
         {
@@ -47,11 +41,6 @@ namespace Cosmos{
                 AlignObject(PoolDataSet.AlignType, go, SpawnTransform);
                 uncollectibleHashSet.Add(go);
             }
-        }
-        protected override MonoObjectBase Create()
-        {
-            var go = Instantiate(PoolDataSet.SpawnObject);
-            return go;
         }
     }
 }

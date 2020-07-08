@@ -10,8 +10,8 @@ namespace Cosmos
         [Range(0,50)]
         [SerializeField] int severalTime;
         [SerializeField]
-        protected MonoObjectBase[] spawnObjects;
-        public override MonoObjectBase SpawnObject { get { return spawnObjects[SpawnIndex()]; } }
+        protected GameObject[] spawnObjects;
+        public override GameObject SpawnObject { get { return spawnObjects[SpawnIndex()]; } }
         public override void Reset()
         {
             objectName = "NewObject";

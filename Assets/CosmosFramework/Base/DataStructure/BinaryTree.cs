@@ -144,7 +144,7 @@ namespace Cosmos
         public T MaxData()
         {
             if (IsEmpty)
-                throw new ArgumentNullException("BinaryTree : Empty tree!");
+                throw new CFrameworkException("Empty tree!");
             return MaxNode(root).Data;
         }
         Node MaxNode(Node node)
@@ -156,7 +156,7 @@ namespace Cosmos
         public T MinData()
         {
             if (IsEmpty)
-                throw new ArgumentNullException("BinaryTree : Empty tree!");
+                throw new CFrameworkException("Empty tree!");
             return MinNode(root).Data;
         }
         Node MinNode(Node node)

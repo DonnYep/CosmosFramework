@@ -24,5 +24,13 @@ namespace Cosmos.Input
         /// 鼠标左键双击
         /// </summary>
         public static string MouseLeftDoubleClick = "MouseLeftDoubleClick";
+        /// <summary>
+        /// 左侧shift按键
+        /// </summary>
+        public static string LeftShift = "LeftShift";
+        /// <summary>
+        /// Escape按键
+        /// </summary>
+        public static string Escape = "Escape";
     }
 }

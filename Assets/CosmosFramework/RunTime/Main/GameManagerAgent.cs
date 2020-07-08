@@ -28,7 +28,7 @@ namespace Cosmos {
                 }
             }
         }
-        Dictionary<string, IModule> moduleDict=GameManager.ModuleDict;
+        Dictionary<ModuleEnum, IModule> moduleDict=GameManager.ModuleDict;
         event CFAction CFrameworkUpdateHandler;
         event CFAction CFrameworkFixedUpdateHandler;
         event CFAction CFrameworkLateUpdateHandler;
@@ -51,7 +51,7 @@ namespace Cosmos {
             CFrameworkUpdateHandler?.Invoke();
             if (isPause)
                 return;
-            foreach ( KeyValuePair<string,IModule> module in moduleDict)
+            foreach ( KeyValuePair<ModuleEnum,IModule> module in moduleDict)
             {
                 module.Value.OnRefresh();
             }
@@ -62,21 +62,21 @@ namespace Cosmos {
         }
         protected override void OnDestroy()
         {
-            foreach (KeyValuePair<string, IModule> module in moduleDict)
+            foreach (KeyValuePair<ModuleEnum, IModule> module in moduleDict)
             {
-                module.Value.OnTermination();
+                module.Value?.OnTermination();
             }
         }
         void OnPause()
         {
-            foreach (KeyValuePair<string, IModule> module in moduleDict)
+            foreach (KeyValuePair<ModuleEnum, IModule> module in moduleDict)
             {
                 module.Value.OnPause();
             }
         }
         void OnUnPause()
         {
-            foreach (KeyValuePair<string, IModule> module in moduleDict)
+            foreach (KeyValuePair<ModuleEnum, IModule> module in moduleDict)
             {
                 module.Value.OnUnPause();
             }
@@ -85,9 +85,6 @@ namespace Cosmos {
         {
             CFrameworkApplicationQuitHandler?.Invoke();
         }
-
-
-
         #region GameManager
 
         public int ModuleCount { get { return GameManager.Instance.ModuleCount; } }

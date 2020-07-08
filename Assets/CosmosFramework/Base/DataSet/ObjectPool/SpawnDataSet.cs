@@ -7,8 +7,8 @@ namespace Cosmos{
     public class SpawnDataSet : ObjectPoolDataSet
     {
         [SerializeField]
-        protected MonoObjectBase spawnObject;
-        public override MonoObjectBase SpawnObject { get { return spawnObject; } }
+        protected GameObject spawnObject;
+        public override GameObject SpawnObject { get { return spawnObject; } }
         public override void Reset()
         {
             objectName = "NewObject";

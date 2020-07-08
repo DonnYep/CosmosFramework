@@ -7,8 +7,8 @@ namespace Cosmos{
     {
         [Header("能用，慎用")]
         [SerializeField] List<ObjectGroup> spawnObjectGroup = new List<ObjectGroup>();
-        HashSet<MonoObjectBase> uncollectibleHashSet = new HashSet<MonoObjectBase>();
-        public override HashSet<MonoObjectBase> UncollectibleHashSet { get { return uncollectibleHashSet; } protected set { uncollectibleHashSet = value; } }
+        HashSet<GameObject> uncollectibleHashSet = new HashSet<GameObject>();
+        public override HashSet<GameObject> UncollectibleHashSet { get { return uncollectibleHashSet; } protected set { uncollectibleHashSet = value; } }
         /// <summary>
         /// 只读类型
         /// </summary>
@@ -26,20 +26,12 @@ namespace Cosmos{
                     flag = i;
                     for (int j = 0; j < SpawnObjectGroup[i].PoolObject.SpawnCount; j++)
                     {
-                            //Facade.SetObjectSpawnItem(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject);
-                            //var go = Facade.SpawnObject(SpawnObjectGroup[i].SpawnTransform);
-                            //AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
+                        Facade.SetObjectSpawnItem(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject);
+                        var go = Facade.SpawnObject(SpawnObjectGroup[i].SpawnTransform);
+                        AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
                     }
                 }
             }
-        }
-        protected override void Awake()
-        {
-            Utility.DebugLog(" 初始化 MonoObjectSpawnerGroup；当前此工具不可用，需要修改多对象生成的数据结构",MessageColor.RED);
-        }
-        protected override void OnDestroy()
-        {
-            Utility.DebugLog(" 销毁 MonoObjectSpawnerGroup；当前此工具不可用，需要修改多对象生成的数据结构", MessageColor.RED);
         }
         protected override void RegisterSpawner()
         {
@@ -47,8 +39,8 @@ namespace Cosmos{
             {
                 if(SpawnObjectGroup[i].SpawnTransform!=null&&SpawnObjectGroup[i].PoolObject!=null)
                 {
-                    //Facade.RegisterObjcetSpawnPool(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject,
-                    //  SpawnHandler, DespawnHandler);
+                    Facade.RegisterObjcetSpawnPool(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject,
+                      SpawnHandler, DespawnHandler);
                 }
             }
         }
@@ -58,17 +50,17 @@ namespace Cosmos{
             {
                 if (SpawnObjectGroup[i].SpawnTransform != null && SpawnObjectGroup[i].PoolObject != null)
                 {
-                    //Facade.DeregisterObjectSpawnPool(SpawnObjectGroup[i].SpawnTransform);
+                    Facade.DeregisterObjectSpawnPool(SpawnObjectGroup[i].SpawnTransform);
                 }
             }
             GameManager.KillObject(deactiveObjectMount);
         }
-        protected override void SpawnHandler(IObject go)
+        protected override void SpawnHandler(GameObject go)
         {
             if (go == null)
                 return;
-            //Facade.StartCoroutine(EnumCollect(SpawnObjectGroup[flag].CollectDelay,
-            //    (tempFlag) => { Facade.DespawnObject(SpawnObjectGroup[Utility.Converter.Int( tempFlag)].SpawnTransform, go); },flag));
+            Facade.StartCoroutine(EnumCollect(SpawnObjectGroup[flag].CollectDelay,
+                (tempFlag) => { Facade.DespawnObject(SpawnObjectGroup[Utility.Converter.Int( tempFlag)].SpawnTransform, go); },flag));
         }
         protected IEnumerator EnumCollect(float delay, CFAction<object> action ,object arg)
         {
@@ -87,19 +79,13 @@ namespace Cosmos{
                     flag = i;
                     for (int j = 0; j < SpawnObjectGroup[i].PoolObject.SpawnCount; j++)
                     {
-                        //var go = GameObject.Instantiate(SpawnObjectGroup[i].PoolObject.SpawnObject);
-                        //AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
-                        //uncollectibleHashSet.Add(go);
+                        var go = GameObject.Instantiate(SpawnObjectGroup[i].PoolObject.SpawnObject);
+                        AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
+                        uncollectibleHashSet.Add(go);
                     }
                 }
             }
         }
-
-        protected override MonoObjectBase Create()
-        {
-            throw new System.NotImplementedException();
-        }
-
         [System.Serializable]
         class ObjectGroup
         {

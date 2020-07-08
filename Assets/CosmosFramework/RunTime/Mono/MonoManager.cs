@@ -48,21 +48,17 @@ namespace Cosmos.Mono
         /// 使用回调函数操作对应命令
         /// 尽量不要使用匿名函数，否则释放会出现问题。匿名函数本质实现都是创建对象添加到委托，因此释放需要注意
         /// </summary>
-        internal void AddListener(CFAction act, UpdateType type,CFAction<short>callBack=null)
+        internal void AddListener(CFAction act, UpdateType type,out short monoPoolID)
         {
-            short monoId = -1;
-            monoId = FindUseable(type);
-            if (monoId == -1)
+            short poolID = -1;
+            poolID = FindUseable(type);
+            if (poolID == -1)
             {
-               monoId= CreateMonoController().MonoID;
+               poolID= CreateMonoController().MonoID;
                 monoDict[monoControllerCount].AddListener(act, type);
-                if (callBack != null)
-                    callBack(monoId);
-                return;
             }
-            monoDict[monoId].AddListener(act, type);
-            if (callBack != null)
-                callBack(monoId);
+            monoDict[poolID].AddListener(act, type);
+            monoPoolID= poolID;
         }
         /// <summary>
         /// 移除监听者
@@ -70,13 +66,13 @@ namespace Cosmos.Mono
         /// <param name="act"></param>
         /// <param name="type"></param>
         /// <param name="key'">委托所在的序号</param>
-        internal void RemoveListener(CFAction act, UpdateType type,short monoID)
+        internal void RemoveListener(CFAction act, UpdateType type,short monoPoolID)
         {
-            if(!monoDict.ContainsKey(monoID))
+            if(!monoDict.ContainsKey(monoPoolID))
             {
-                throw new ArgumentException("MonoManager\n" + "MonoController ID" + monoID + " does not exist!");
+                throw new ArgumentException("MonoManager\n" + "MonoController ID" + monoPoolID + " does not exist!");
             }else
-            monoDict[monoID].RemoveListener(act, type);
+            monoDict[monoPoolID].RemoveListener(act, type);
         }
         /// <summary>
         /// 开启协程

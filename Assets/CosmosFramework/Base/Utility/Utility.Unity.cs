@@ -58,6 +58,16 @@ namespace Cosmos {
                 return value;
             }
             /// <summary>
+            /// 获得固定位数小数的向量
+            /// </summary>
+            public static Vector3 Round(Vector3 value, int decimals )
+            {
+                value.x = (float)Math.Round(value.x, decimals);
+                value.y = (float)Math.Round(value.y, decimals);
+                value.z = (float)Math.Round(value.z, decimals);
+                return value;
+            }
+            /// <summary>
             /// 限制一个向量在最大值与最小值之间
             /// </summary>
             public static Vector3 Clamp(Vector3 value, float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
@@ -67,10 +77,19 @@ namespace Cosmos {
                 value.z = Mathf.Clamp(value.z, minZ, maxZ);
                 return value;
             }
-            public static Vector2 Clamp(Vector3 value, float minX, float minY, float maxX, float maxY)
+            public static Vector2 Clamp(Vector2 value, float minX, float minY, float maxX, float maxY)
             {
                 value.x = Mathf.Clamp(value.x, minX, maxX);
                 value.y = Mathf.Clamp(value.y, minY, maxY);
+                return value;
+            }
+            /// <summary>
+            /// 获得固定位数小数的向量
+            /// </summary>
+            public static Vector2 Round(Vector2 value, int decimals)
+            {
+                value.x = (float)Math.Round(value.x, decimals);
+                value.y = (float)Math.Round(value.y, decimals);
                 return value;
             }
             public static T Get<T>(Component comp, string subNode) where T : Component

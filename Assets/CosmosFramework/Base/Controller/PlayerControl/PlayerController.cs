@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Cosmos.Input;
 namespace Cosmos
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CapsuleCollider))]
-    public class PlayerController : CFController
+    public class PlayerController : ControllerBase
     {
         [SerializeField]
         [Range(0, 1)]
@@ -21,7 +22,7 @@ namespace Cosmos
         int inputHash = Animator.StringToHash("Input");
         float moveForword = 0;
         float moveTurn = 0;
-
+        LogicEventArgs<CameraTarget> controllerEventArgs;
         //点积
         float dot = 0;
 
@@ -29,25 +30,24 @@ namespace Cosmos
         {
             base.Awake();
             animator = GetComponentInChildren<Animator>();
-            controllerEventArgs = new LogicEventArgs<CameraTarget>();
-            controllerEventArgs.SetData( GetComponentInChildren<CameraTarget>());
+            controllerEventArgs = new LogicEventArgs<CameraTarget>().SetData(GetComponentInChildren<CameraTarget>());
+            Facade.SetInputDevice(new StandardInputDevice());
         }
         private void Start()
         {
             Facade.DispatchEvent(ControllerEventCodeParams.CONTROLLER_INPUT, this, controllerEventArgs);
         }
-        protected override void EventHandler(object sender, GameEventArgs arg)
+        protected override void UpdateHandler()
         {
-            inputEventArgs = arg as LogicEventArgs<InputVariable>;
-            if (inputEventArgs.Data.HorizVertAxis.magnitude != 0)
+            //if (inputEventArgs.Data.HorizVertAxis.magnitude != 0)
+            if (Facade.GetAxis(InputAxisType.Vertical) != 0|| Facade.GetAxis(InputAxisType.Horizontal)!=0)
                 animator.SetBool(inputHash, true);
             else
                 animator.SetBool(inputHash, false);
-            moveForword = inputEventArgs.Data.HorizVertAxis.y;
-            moveTurn= inputEventArgs.Data.HorizVertAxis.x;
-            if (inputEventArgs.Data.LeftShift)
+            moveForword =Facade.GetAxis(InputAxisType.Vertical);
+            moveTurn = Facade.GetAxis(InputAxisType.Horizontal);
+            if (Facade.GetButton(InputButtonType.LeftShift))
                 moveForword *= 2;
-
             //合并旋转
             MatchRotation();
             //{
@@ -60,7 +60,6 @@ namespace Cosmos
             //        //?????
             //    }
             //}
-
             animator.SetFloat(forwardHash, moveForword, forwardDampTime, Time.deltaTime);
             animator.SetFloat(turnHash, moveTurn, turnDampTime, Time.deltaTime);
         }

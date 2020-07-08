@@ -18,8 +18,6 @@ using Cosmos.Network;
 using Cosmos.Entity;
 using Cosmos.Hotfix;
 using System.Reflection;
-using System;
-
 namespace Cosmos
 {
     /// <summary>
@@ -30,8 +28,8 @@ namespace Cosmos
     internal sealed partial class GameManager : Singleton<GameManager>
     {
         // 模块表
-        static Dictionary<string, IModule> moduleDict;
-        internal static Dictionary<string, IModule> ModuleDict { get { return moduleDict; } }
+        static Dictionary<ModuleEnum, IModule> moduleDict;
+        internal static Dictionary<ModuleEnum, IModule> ModuleDict { get { return moduleDict; } }
         //当前注册的模块总数
         int moduleCount = 0;
         internal int ModuleCount { get { return moduleCount; } }
@@ -48,42 +46,50 @@ namespace Cosmos
         /// <summary>
         /// 注册模块
         /// </summary>
-        /// <param name="moduleName"></param>
-        /// <param name="module"></param>
-        internal void RegisterModule(string moduleName, IModule module)
+        internal void RegisterModule(ModuleEnum moduleEnum, IModule module)
         {
-            if (!HasModule(moduleName))
+            if (!HasModule(moduleEnum))
             {
-                moduleDict.Add(moduleName, module);
+                moduleDict.Add(moduleEnum, module);
                 moduleCount++;
-                Utility.DebugLog("Module:\"" + moduleName + "\" " + "  is OnInitialization" + "\n based on GameManager");
+                Utility.DebugLog("Module:\"" + moduleEnum.ToString() + "\" " + "  is OnInitialization" + "\n based on GameManager");
             }
             else
-                throw new ArgumentException("Module:\"" + moduleName + "\" " + " is already exist!");
+                throw new CFrameworkException("Module:\"" + moduleEnum.ToString() + "\" " + " is already exist!");
         }
         /// <summary>
         /// 注销模块
         /// </summary>
-        /// <param name="moduleName"></param>
-        internal void DeregisterModule(string moduleName)
+        internal void DeregisterModule(ModuleEnum module)
         {
-            if (HasModule(moduleName))
+            if (HasModule(module))
             {
-                moduleDict.Remove(moduleName);
+                moduleDict.Remove(module);
                 moduleCount--;
-                Utility.DebugLog("Module:\"" + moduleName + "\" " + "  is OnTermination" + "\n based on GameManager", MessageColor.DARKBLUE);
+                Utility.DebugLog("Module:\"" + module.ToString() + "\" " + "  is OnTermination" + "\n based on GameManager", MessageColor.DARKBLUE);
             }
             else
-                throw new ArgumentException("Module:\"" + moduleName + "\" " + " is  not exist!");
+                throw new CFrameworkException("Module:\"" + module.ToString()+ "\" " + " is  not exist!");
         }
-        internal bool HasModule(string moduleName)
+            // void DeregisterModule(Module module)
+            //{
+            //    if (HasModule(module))
+            //    {
+            //        moduleDict.Remove(module);
+            //        moduleCount--;
+            //        Utility.DebugLog("Module:\"" + module.ToString()+ "\" " + "  is OnTermination" + "\n based on GameManager", MessageColor.DARKBLUE);
+            //    }
+            //    else
+            //        throw new CFrameworkException("Module:\"" + moduleName + "\" " + " is  not exist!");
+            //}
+        internal bool HasModule(ModuleEnum module)
         {
-            return moduleDict.ContainsKey(moduleName);
+            return moduleDict.ContainsKey(module);
         }
-        internal IModule GetModule(string moduleName)
+        internal IModule GetModule(ModuleEnum module)
         {
-            if (HasModule(moduleName))
-                return moduleDict[moduleName];
+            if (HasModule(module))
+                return moduleDict[module];
             else
             {
                 return null;
@@ -96,7 +102,7 @@ namespace Cosmos
         {
             if (moduleDict == null)
             {
-                moduleDict = new Dictionary<string, IModule>();
+                moduleDict = new Dictionary<ModuleEnum, IModule>();
                 InstanceObject.gameObject.AddComponent<GameManagerAgent>();
             }
         }
@@ -362,12 +368,12 @@ namespace Cosmos
         internal void ModuleInitialization(IModule module)
         {
             module.OnInitialization();
-            Instance.RegisterModule(module.ModuleFullyQualifiedName, module);
+            Instance.RegisterModule(module.ModuleEnum, module);
         }
         internal void ModuleTermination(IModule module)
         {
             module.OnTermination();
-            Instance.DeregisterModule(module.ModuleFullyQualifiedName);
+            Instance.DeregisterModule(module.ModuleEnum);
         }
         #endregion
     }

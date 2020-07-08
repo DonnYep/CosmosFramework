@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace Cosmos.Input
+using Cosmos.Input;
+namespace Cosmos
 {
     public class MobileInputDevice : InputDevice
     {

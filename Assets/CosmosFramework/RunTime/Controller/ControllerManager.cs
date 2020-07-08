@@ -28,7 +28,7 @@ namespace Cosmos.Controller{
     /// </summary>
     internal sealed class ControllerManager : Module<ControllerManager>
     {
-        Dictionary<Type, HashSet<CFController>> controllerMap = new Dictionary<Type, HashSet<CFController>>();
+        Dictionary<Type, HashSet<ControllerBase>> controllerMap = new Dictionary<Type, HashSet<ControllerBase>>();
         /// <summary>
         /// 相机跟随对象
         /// 当操纵Vehicle，Deveice时，通过事件中心由使用者切换跟随对象
@@ -36,13 +36,13 @@ namespace Cosmos.Controller{
         ControlMode currentControlMode = ControlMode.ThirdPerson;
         //Controller类型的数量，根据type计算
         short controllerTypeCount = 0;
-        internal void RegisterController<T>(T controller)
-            where T : CFController
+        public void RegisterController<T>(T controller)
+            where T : ControllerBase
         {
             var key = typeof(T);
             if (!controllerMap.ContainsKey(key))
             {
-                controllerMap.Add(key, new HashSet<CFController>());
+                controllerMap.Add(key, new HashSet<ControllerBase>());
                 controllerMap[key].Add(controller);
                 controllerTypeCount++;
             }
@@ -54,8 +54,8 @@ namespace Cosmos.Controller{
                     Utility.DebugError("ControllerManager-->>" + "Controller : " + controller.ControllerName + "is  already registered");
             }
         }
-        internal void DeregisterController<T>(T controller)
-            where T : CFController
+        public void DeregisterController<T>(T controller)
+            where T : ControllerBase
         {
             var key = typeof(T);
             if (controllerMap.ContainsKey(key))
@@ -73,21 +73,21 @@ namespace Cosmos.Controller{
             else
                 Utility.DebugError("ControllerManager-->>"+"Controller : " + controller.ControllerName + "is  unregistered");
         }
-        internal  bool HasController<T>()
-            where T : CFController
+        public bool HasController<T>()
+            where T : ControllerBase
         {
             return controllerMap.ContainsKey(typeof(T));
         }
-        internal  bool HasControllerItem<T>(T controller)
-            where T : CFController
+        public bool HasControllerItem<T>(T controller)
+            where T : ControllerBase
         {
             if (!HasController<T>())
                 return false;
             else
                 return  controllerMap[typeof(T)].Contains(controller);
         }
-        internal T GetController<T>(CFPredicateAction<T> predicate)
-            where T:CFController
+        public T GetController<T>(CFPredicateAction<T> predicate)
+            where T:ControllerBase
         {
             var key = typeof(T);
             T temp = default(T);
@@ -106,8 +106,8 @@ namespace Cosmos.Controller{
                 return temp;
             }
         }
-        internal T[] GetControllers<T>(CFPredicateAction<T> predicate)
-            where T : CFController
+        public T[] GetControllers<T>(CFPredicateAction<T> predicate)
+            where T : ControllerBase
         {
             var key = typeof(T);
             if (controllerMap.ContainsKey(key))
@@ -128,7 +128,7 @@ namespace Cosmos.Controller{
                 return default(T[]);
             } 
         }
-        internal short GetControllerItemCount<T>()
+        public short GetControllerItemCount<T>()
         {
             var key = typeof(T);
             if (controllerMap.ContainsKey(key))
@@ -139,17 +139,17 @@ namespace Cosmos.Controller{
                 return -1;
             }
         }
-        internal short GetControllerTypeCount()
+        public short GetControllerTypeCount()
         {
             return controllerTypeCount;
         }
-        internal void ClearAllController()
+        public void ClearAllController()
         {
             controllerMap.Clear();
             controllerTypeCount = 0;
         }
-        internal void ClearControllerItem<T>()
-            where T : CFController
+        public void ClearControllerItem<T>()
+            where T : ControllerBase
         {
             if (HasController<T>())
                 controllerMap[typeof(T)].Clear();
@@ -161,7 +161,7 @@ namespace Cosmos.Controller{
         /// </summary>
         /// <param name="mode"></param>
         /// <param name="callBack">回调函数，与具体mode无关</param>
-        internal void SetControlMode(ControlMode mode, CFAction callBack = null)
+        public void SetControlMode(ControlMode mode, CFAction callBack = null)
         {
             switch (mode)
             {
@@ -175,7 +175,7 @@ namespace Cosmos.Controller{
             currentControlMode = mode;
             callBack?.Invoke();
         }
-        internal ControlMode GetControlMode()
+        public ControlMode GetControlMode()
         {
             return currentControlMode;
         }

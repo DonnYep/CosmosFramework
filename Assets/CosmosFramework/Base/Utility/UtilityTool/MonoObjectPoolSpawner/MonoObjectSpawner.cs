@@ -9,13 +9,9 @@ namespace Cosmos
     /// </summary>
     public abstract class MonoObjectSpawner : MonoBehaviour
     {
-        // TODO 多对象生成需要定义新的数据结构，例如链表。由此可实现单Key的多对象生成。
         public  virtual float CollectDelay { get; }
-        public virtual HashSet<MonoObjectBase> UncollectibleHashSet { get;protected set; }
+        public virtual HashSet<GameObject> UncollectibleHashSet { get;protected set; }
         protected GameObject deactiveObjectMount;
-        protected GameObject activeObjectMount;
-        protected ObjectKey<MonoObjectItem> objectKey;
-        protected ObjectPoolVariable poolVariable;
         public Transform DeactiveObjectMount
         {
             get
@@ -23,7 +19,7 @@ namespace Cosmos
                 if (deactiveObjectMount == null)
                 {
                     deactiveObjectMount = new GameObject(this.gameObject.name + "->>DeactiveObjectMount");
-                    deactiveObjectMount.transform.SetParent(Facade.GetModule(CFModules.OBJECTPOOL).ModuleMountObject.transform);
+                    deactiveObjectMount.transform.SetParent(Facade.GetModule(ModuleEnum.ObjectPool).ModuleMountObject.transform);
                     deactiveObjectMount.transform.ResetLocalTransform();
                 }
                 return deactiveObjectMount.transform;
@@ -33,20 +29,14 @@ namespace Cosmos
         {
             get
             {
-                if (activeObjectMount == null)
-                {
-                    activeObjectMount = new GameObject(this.gameObject.name + "->>ActiveObjectMount");
-                    activeObjectMount.transform.SetParent(Facade.GetModule(CFModules.OBJECTPOOL).ModuleMountObject.transform);
-                    activeObjectMount.transform.ResetLocalTransform();
-                }
-                return activeObjectMount.transform;
+                return Facade.GetObjectSpawnPoolActiveMount().transform;
             }
         }
         protected virtual void Awake()
         {
             RegisterSpawner();
         }
-        protected virtual void OnDestroy()
+        private void OnDestroy()
         {
             DeregisterSpawner();
         }
@@ -65,37 +55,31 @@ namespace Cosmos
         {
             Cosmos.GameManager.KillObjects(UncollectibleHashSet);
         }
-        protected abstract MonoObjectBase Create();
         protected abstract void RegisterSpawner();
         /// <summary>
         /// 注销并销毁
         /// </summary>
         protected virtual void DeregisterSpawner()
         {
-            Facade.DeregisterObjectSpawnPool(objectKey);
+            Facade.DeregisterObjectSpawnPool(this);
             GameManager.KillObject(deactiveObjectMount);
         }
-        protected virtual void SpawnHandler(IObject obj)
+        protected virtual void SpawnHandler(GameObject go)
         {
-            var go = obj as MonoObjectItem;
             if (go == null)
                 return;
-            Facade.StartCoroutine(EnumCollect(CollectDelay, () => Facade.DespawnObject(objectKey, go)));
-            Utility.DebugLog("MonoObjectSpawner SpawnHandler");
+            Facade.StartCoroutine(EnumCollect(CollectDelay,()=> Facade.DespawnObject(this, go)));
         }
-        protected virtual  void DespawnHandler(IObject obj)
+        protected virtual  void DespawnHandler(GameObject go)
         {
-            var go = obj as MonoObjectItem;
             if (go == null)
                 return;
             go.transform.SetParent(DeactiveObjectMount);
             go.transform.ResetLocalTransform();
-            Utility.DebugLog("MonoObjectSpawner  DespawnHandler");
-
         }
         public virtual void ClearAll()
         {
-            Facade.ClearObjectSpawnPool(objectKey);
+            Facade.ClearObjectSpawnPool(this);
         }
         protected  IEnumerator EnumCollect(float delay,CFAction action=null)
         {
@@ -114,12 +98,12 @@ namespace Cosmos
         /// </summary>
         /// <param name="go">生成的对象</param>
         /// <param name="trans">对齐对象</param>
-        protected void AlignObject(ObjectSpawnAlignType alignType,MonoObjectBase go,Transform trans)
+        protected void AlignObject(ObjectSpawnAlignType alignType,GameObject go,Transform trans)
         {
-            if (trans == null)
+            if (trans == null||go==null)
                 return;
             go.transform.SetParent(trans);
-            go.gameObject.SetActive(true);
+            go.SetActive(true);
             switch (alignType)
             {
                 case ObjectSpawnAlignType.AlignTransform:
@@ -144,13 +128,13 @@ namespace Cosmos
             go.transform.SetParent(ActiveObjectMount);
         }
         //TODO Spawn后随机旋转
-        protected void AlignObject(ObjectPoolDataSet poolDataSet, MonoObjectBase go, Transform trans)
+        protected void AlignObject(ObjectPoolDataSet poolDataSet, GameObject go, Transform trans)
         {
             ObjectSpawnAlignType alignType = poolDataSet.AlignType;
             if (trans == null)
                 return;
             go.transform.SetParent(trans);
-            go.gameObject.SetActive(true);
+            go.SetActive(true);
             switch (alignType)
             {
                 case ObjectSpawnAlignType.AlignTransform:

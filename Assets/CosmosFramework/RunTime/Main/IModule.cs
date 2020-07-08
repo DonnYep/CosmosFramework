@@ -10,5 +10,6 @@ namespace Cosmos
         /// </summary>
         GameObject ModuleMountObject { get; }
         string ModuleFullyQualifiedName { get; }
+        ModuleEnum ModuleEnum { get; }
     }
 }

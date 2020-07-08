@@ -8,6 +8,7 @@ namespace Cosmos
     /// </summary>
     public abstract class Actor : MonoBehaviour, IControllable
     {
+        public bool IsPause { get; set; }
         public abstract void OnPause();
         public abstract void OnUnPause();
     }

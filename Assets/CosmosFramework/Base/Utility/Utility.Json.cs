@@ -20,15 +20,17 @@ namespace Cosmos
             {
                 if (jsonWarpper == null)
                 {
-                    throw new ArgumentNullException("Utility.Json :JSON  warpper is invalid");
+                    throw new CFrameworkException("JSON  warpper is invalid");
                 }
                 try
                 {
                     return jsonWarpper.ToJson(obj);
                 }
-                catch
+                catch (System.Exception exception)
                 {
-                    throw new InvalidOperationException(Utility.Text.Format("Utility.Json : Can not convert to JSON with exception"));
+                    if (exception is CFrameworkException)
+                        throw;
+                    throw new CFrameworkException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
                 }
             }
             /// <summary>
@@ -50,15 +52,17 @@ namespace Cosmos
             {
                 if (jsonWarpper == null)
                 {
-                    throw new ArgumentNullException(" Utility.Json : JSON warpper is invalid");
+                    throw new CFrameworkException("JSON warpper is invalid");
                 }
                 try
                 {
                     return jsonWarpper.ToObject<T>(json);
                 }
-                catch 
+                catch (System.Exception exception)
                 {
-                    throw new InvalidOperationException(Utility.Text.Format(" Utility.Json : Can not convert to JSON "));
+                    if (exception is CFrameworkException)
+                        throw;
+                    throw new CFrameworkException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
                 }
             }
             /// <summary>
@@ -71,19 +75,21 @@ namespace Cosmos
             {
                 if (jsonWarpper == null)
                 {
-                    throw new ArgumentNullException("Utility.Json : JSON warpper is invalid");
+                    throw new CFrameworkException("JSON warpper is invalid");
                 }
                 if (objectType == null)
                 {
-                    throw new ArgumentNullException("Utility.Json : Object type is invalid");
+                    throw new CFrameworkException("Object type is invalid");
                 }
                 try
                 {
                     return jsonWarpper.ToObject(json, objectType);
                 }
-                catch
+                catch (Exception exception)
                 {
-                    throw new InvalidOperationException(Utility.Text.Format("Utility.Json : Can not convert to JSON"));
+                    if (exception is CFrameworkException)
+                        throw;
+                    throw new CFrameworkException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
                 }
             }
             /// <summary>

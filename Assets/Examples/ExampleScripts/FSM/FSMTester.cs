@@ -3,18 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Cosmos;
-    public class FSMTester: MonoBehaviour {
-        [SerializeField]
-        int lastFrame = -5;
-        public void PrintFrameCount()
-        {
-            lastFrame = Time.frameCount;
-            Utility.DebugLog("framecount:" + lastFrame);
-        }
-        private void Start()
-        {
-            Type type = this.GetType();
-            Utility.DebugLog( type.ToString());
-
-        }
+using Cosmos.FSM;
+public class FSMTester : MonoBehaviour
+{
+    [SerializeField] Transform target;
+    public Transform Target { get { return target; } }
+    [SerializeField] int range = 10;
+    [SerializeField] int pauseDelay=10;
+    public int Range { get { return range; } }
+    FSM<FSMTester> fsm;
+    List<FSMState<FSMTester>> stateList;
+    private void OnValidate()
+    {
+        if (range <= 0)
+            range = 0;
+        if (pauseDelay < 0)
+            pauseDelay = 0;
     }
+    private void Start()
+    {
+        stateList = new List<FSMState<FSMTester>>();
+        var enterState = new EnterRangeState();
+        var enterTrigger = new EnterTestTrigger();
+        var exitState = new ExitRangeState();
+        var exitTrigger = new ExitTestTrigger();
+        exitState.AddTrigger(enterTrigger, enterState);
+        enterState.AddTrigger(exitTrigger, exitState);
+        stateList.Add(exitState);
+        stateList.Add(enterState);
+        fsm = Facade.CreateFSM("FSMTester",this,false, stateList.ToArray()) as FSM<FSMTester>;
+        fsm.DefaultState = exitState;
+        fsm.StartDefault();
+        Facade.DelayCoroutine(pauseDelay, () => { fsm.OnPause(); });
+    }
+}

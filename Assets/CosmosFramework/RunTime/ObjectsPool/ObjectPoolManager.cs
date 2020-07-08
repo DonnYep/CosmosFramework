@@ -1,128 +1,174 @@
-﻿using System;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+//using Cosmos.Event;
 namespace Cosmos.ObjectPool
 {
-    internal sealed partial class ObjectPoolManager : Module<ObjectPoolManager>
+    internal sealed class ObjectPoolManager: Module<ObjectPoolManager>
     {
-        #region Properties
-        Dictionary<TypeNamePair, ObjectSpawnPool> objectPoolDict;
-        List<ObjectSpawnPool> objectSpawnPoolCache;
-        public const int OBJECT_POOL_CAPACITY=100;
-        #endregion
-        public override void OnInitialization()
+        public static readonly short _ObjectPoolCapacity = 50;
+        Dictionary<object, ObjectSpawnPool> spawnPool = new Dictionary<object, ObjectSpawnPool>();
+        GameObject activeObjectMount;
+        /// <summary>
+        /// 激活对象在场景中的容器，唯一
+        /// </summary>
+        public GameObject ActiveObjectMount
         {
-            objectPoolDict = new Dictionary<TypeNamePair, ObjectSpawnPool>();
-            objectSpawnPoolCache = new List<ObjectSpawnPool>();
-        }
-        #region Internal Methods
-        internal bool DeregisterSpawnPool<T>(ObjectKey<T> objectKey)
-            where T : IObject
-        {
-            return DeregisterSpawnPool(objectKey.GetValue());
-        }
-        internal void RegisterSpawnPool<T>(ObjectKey<T> objectKey, ObjectPoolVariable poolData)
-            where T : IObject
-        {
-            RegisterSpawnPool(objectKey.GetValue(), poolData);
-        }
-        internal bool HasObjectPool<T>(ObjectKey<T> objectKey)
-     where T : IObject
-        {
-            return objectPoolDict.ContainsKey(objectKey.GetValue());
-        }
-        internal T Spawn<T>(ObjectKey<T> objectKey)
-            where T : class,IObject 
-        {
-            T obj = default;
-            var key = objectKey.GetValue();
-            if (objectPoolDict.ContainsKey(key))
+            get
             {
-                obj = objectPoolDict[key].Spawn() as T;
+                if (activeObjectMount == null)
+                {
+                    activeObjectMount = new GameObject("ObjectPoolModule->>ActiveObjectMount");
+                    activeObjectMount.transform.ResetWorldTransform();
+                }
+                return activeObjectMount;
+            }
+        }
+        /// <summary>
+        /// 注册对象池
+        /// </summary>
+        /// <param name="objKey"></param>
+        /// <param name="spawnItem"></param>
+        /// <param name="onSpawn"></param>
+        /// <param name="onDespawn"></param>
+        public void RegisterSpawnPool(object objKey,GameObject spawnItem,CFAction<GameObject> onSpawn,CFAction<GameObject> onDespawn)
+        {
+            if (!spawnPool.ContainsKey(objKey))
+            {
+                spawnPool.Add(objKey, new ObjectSpawnPool(spawnItem,onSpawn,onDespawn));
+            }
+        }
+        /// <summary>
+        /// 设置与更新生成的对象，测试时候使用
+        /// </summary>
+        /// <param name="objKey"></param>
+        /// <param name="spawnItem"></param>
+        public void SetSpawnItem(object objKey,GameObject spawnItem)
+        {
+            if (spawnPool.ContainsKey(objKey))
+                spawnPool[objKey].SetSpawnItem(spawnItem);
+            else
+                //Utility.DebugError("ObjectPoolManager\n"+objKey.ToString() + "\n objKey not exist");
+            throw new CFrameworkException("ObjectPoolManager\n" + objKey.ToString() + "\n objKey not exist");
+        }
+        /// <summary>
+        /// 注销对象池
+        /// </summary>
+        /// <param name="objKey"></param>
+        public void DeregisterSpawnPool(object objKey)
+        {
+            if (spawnPool.ContainsKey(objKey))
+            {
+                spawnPool[objKey].Clear();
+                spawnPool[objKey].ClearAction();
+                spawnPool.Remove(objKey);
+            }
+        }
+        /// <summary>
+        /// 获取池中对象的个数
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public int GetPoolCount(object key)
+        {
+            if (spawnPool.ContainsKey(key))
+            {
+                return spawnPool[key].ObjectCount;
             }
             else
-                throw new ArgumentNullException("ObjectPoolManager.Spawn : " + key.ToString() + "key not exist");
-            return obj;
-        }
-        internal void Despawn<T>(ObjectKey<T> objectKey, IObject obj)
-            where T : IObject
-        {
-            var key = objectKey.GetValue();
-            if (objectPoolDict.ContainsKey(key))
             {
-                objectPoolDict[key].Despawn(obj);
+                Utility.DebugError("ObjectPoolManager-->>" + "Pool no register, null count", key as UnityEngine.Object);
+                return -1;//未注册对象池则返回-1
+            }
+        }
+        /// <summary>
+        /// 产生对象
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public GameObject Spawn(object key)
+        {
+            if (spawnPool.ContainsKey(key))
+            {
+                return spawnPool[key].Spawn();
             }
             else
-                throw new ArgumentNullException("ObjectPoolManager.Spawn : " + key.ToString() + "key not exist");
-        }
-        internal void Despawns<T>(ObjectKey<T> objectKey, IObject[] objs)
-    where T : IObject
-        {
-            var key = objectKey.GetValue();
-            if (objectPoolDict.ContainsKey(key))
             {
-                objectPoolDict[key].Despawns(objs);
+                Utility.DebugError("ObjectPoolManager-->>" + "Pool not be registered", key as UnityEngine.Object);
+                return null;
+            }
+        }
+        /// <summary>
+        /// 回收单个对象
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="go"></param>
+        public void Despawn(object key,GameObject go)
+        {
+            if (spawnPool.ContainsKey(key))
+            {
+                spawnPool[key].Despawn(go);
             }
             else
-                throw new ArgumentNullException("ObjectPoolManager.Spawn : " + key.ToString() + "key not exist");
-        }
-        internal void ClearAllPool()
-        {
-            objectPoolDict.Clear();
-            objectSpawnPoolCache.Clear();
-        }
-        internal void ClearPool<T>(ObjectKey<T> objectKey)
-            where T : IObject
-        {
-            var key = objectKey.GetValue();
-            if (objectPoolDict.ContainsKey(key))
             {
-                objectPoolDict[key].Clear();
+                //如果对象没有key，则直接销毁
+                Utility.DebugLog("ObjectPoolManager\n"+"Despawn fail ,pool not exist,Destroying it instead.!",MessageColor.PURPLE, key as UnityEngine.Object);
+                GameManager.KillObject(go);
+            }
+        }
+        /// <summary>
+        /// 批量回收对象，若有key，则失活，否则销毁
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="gos"></param>
+        public void Despawns(object key,GameObject[] gos)
+        {
+            if (spawnPool.ContainsKey(key))
+            {
+                for (int i = 0; i < gos.Length; i++)
+                {
+                    spawnPool[key].Despawn(gos[i]);
+                }
             }
             else
-                throw new ArgumentNullException("ObjectPoolManager.Spawn : " + key.ToString() + "key not exist");
-        }
-        internal int GetPoolObjectCount<T>(ObjectKey<T> objectKey)
-            where T : IObject
-        {
-            var key = objectKey.GetValue();
-            if (objectPoolDict.ContainsKey(key))
             {
-                return objectPoolDict[key].ObjectCount;
+                Utility.DebugLog("ObjectPoolManager\n"+"Despawn fail ,pool not exist,Destroying it instead.!",MessageColor.PURPLE, key as UnityEngine.Object);
+                for (int i = 0; i < gos.Length; i++)
+                {
+                    GameManager.KillObject(gos[i]);
+                }
+            }
+        }
+        /// <summary>
+        /// 清空指定对象池
+        /// </summary>
+        /// <param name="key"></param>
+        public void Clear(object key)
+        {
+            if (spawnPool.ContainsKey(key))
+            {
+                spawnPool[key].Clear();
             }
             else
-                throw new ArgumentNullException("ObjectPoolManager.Spawn : " + key.ToString() + "key not exist");
-        }
-        internal int GetObjectPoolCount()
-        {
-            return objectPoolDict.Count;
-        }
-        #endregion
-        #region Private Methoda
-        bool HasObjectPool(TypeNamePair typeNamePair)
-        {
-            return objectPoolDict.ContainsKey(typeNamePair);
-        }
-        bool DeregisterSpawnPool(TypeNamePair typeNamePair)
-        {
-            ObjectSpawnPool objectPool = default;
-            if (objectPoolDict.TryGetValue(typeNamePair, out objectPool))
             {
-                objectPool.Clear();
-                return objectPoolDict.Remove(typeNamePair);
+                Utility.DebugError("ObjectPoolManager-->>" + "clear fail , pool not exist!", key as UnityEngine.Object);
             }
-            return false;
         }
-        void RegisterSpawnPool(TypeNamePair typeNamePair, ObjectPoolVariable poolData)
+        /// <summary>
+        /// 清除所有池对象
+        /// </summary>
+        public void ClearAll()
         {
-            if (!objectPoolDict.ContainsKey(typeNamePair))
-                objectPoolDict.Add(typeNamePair, new ObjectSpawnPool(poolData));
-            else
-                throw new ArgumentException("ObjectPoolManager.RegisterSpawnPool : " + typeNamePair.ToString() + "key already exist");
+            foreach (var pool in spawnPool)
+            {
+                pool.Value.Clear();
+            }
         }
-        #endregion
+        /// <summary>
+        /// 生成对象，不经过池。用于一次性的对象产生
+        /// </summary>
+        public GameObject SpawnNotUsePool(GameObject go, Transform spawnTransform)
+        {
+            return GameObject.Instantiate(go, spawnTransform);
+        }
     }
 }

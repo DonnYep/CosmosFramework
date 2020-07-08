@@ -8,7 +8,7 @@ namespace Cosmos
     /// CFramework下的简易单向链表
     /// 复杂链表建议使用.NET的LinkedList
     /// </summary>
-    public class TinyLinkedList<T> 
+    public class TinyLinkedList<T> : IEnumerable<T>
     {
         /// <summary>
         /// 链表节点
@@ -16,15 +16,15 @@ namespace Cosmos
         class Node
         {
             T data;
-            public T Data { get { return data; }set { data = value; } }
-             Node next;
+            public T Data { get { return data; } set { data = value; } }
+            Node next;
             public Node Next { get { return next; } set { next = value; } }
             public Node(T nodeData)
             {
                 this.data = nodeData;
                 this.next = null;
             }
-            public Node(T nodeData,Node next)
+            public Node(T nodeData, Node next)
             {
                 this.data = nodeData;
                 this.next = next;
@@ -43,7 +43,7 @@ namespace Cosmos
             count = 0;
         }
         public bool IsEmpty { get { return count == 0; } }
-        public void Add(T node,int index)
+        public void Add(T node, int index)
         {
             if (index < 0 || index > count)
                 throw new ArgumentOutOfRangeException("TinyLinkedList : 非法索引");
@@ -60,7 +60,7 @@ namespace Cosmos
         }
         public void AddFirst(T node)
         {
-            Add(node,0);
+            Add(node, 0);
         }
         public void AddLast(T node)
         {
@@ -69,7 +69,7 @@ namespace Cosmos
         public bool Contains(T node)
         {
             Node current = head;
-            while (current!=null)
+            while (current != null)
             {
                 if (current.Data.Equals(node))
                     return true;
@@ -92,9 +92,9 @@ namespace Cosmos
         }
         public T GetLast()
         {
-            return Get(count-1);
+            return Get(count - 1);
         }
-        public void Set(T node,int index)
+        public void Set(T node, int index)
         {
             if (index < 0 || index > count)
                 throw new ArgumentOutOfRangeException("TinyLinkedList : 非法索引");
@@ -147,7 +147,7 @@ namespace Cosmos
             {
                 Node current = head;
                 Node preview = null;
-                while (current!=null)
+                while (current != null)
                 {
                     if (current.Data.Equals(node))
                         break;
@@ -159,6 +159,57 @@ namespace Cosmos
                     preview.Next = preview.Next.Next;
                     count--;
                 }
+            }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new Enumerator(head, count);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        struct Enumerator : IEnumerator<T>
+        {
+            T current;
+            public T Current { get { return current; } }
+            object IEnumerator.Current { get { return Current; } }
+            T[] list;
+            int count;
+            int index;
+            public Enumerator(Node head, int count)
+            {
+                current = default(T);
+                list = new T[count];
+                this.count = count;
+                index = -1;
+                int tmpIndex = -1;
+                Node currentNode = head;
+                while (currentNode != null)
+                {
+                    list[++tmpIndex] = currentNode.Data;
+                    currentNode = currentNode.Next;
+                }
+            }
+            public void Dispose()
+            {
+                index = -1;
+                current = default(T);
+                list = null;
+            }
+            public bool MoveNext()
+            {
+                if (++index >= count)
+                    return false;
+                else
+                    current = list[index];
+                return true;
+            }
+            public void Reset()
+            {
+                index = -1;
             }
         }
     }

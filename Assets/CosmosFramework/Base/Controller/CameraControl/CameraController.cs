@@ -5,13 +5,13 @@ using Cosmos.Input;
 
 namespace Cosmos
 {
-    public class CameraController : CFController
+    public class CameraController : ControllerBase
     {
         [Range(0.5f,15)]
         [SerializeField]float distanceFromTarget=10;
         [SerializeField] Vector2 pitchMinMax = new Vector2(-60, 85);
-        [SerializeField] float yawSpeed=15;
-        [SerializeField] float pitchSpeed=10;
+        [SerializeField] float yawSpeed=30;
+        [SerializeField] float pitchSpeed=30;
         [SerializeField] float cameraViewDamp=10;
         Camera cam;
         public CameraTarget CameraTarget { get; private set; }
@@ -21,10 +21,32 @@ namespace Cosmos
         //当前与相机目标的距离
         float currentDistance;
         Vector3 cameraOffset = Vector3.zero;
+        LogicEventArgs<CameraTarget> controllerEventArgs;
+
+
+        public void LockMouse()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        public void UnlockMouse()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = true;
+        }
+        public void HideMouse()
+        {
+            if (Facade.GetButtonDown(InputButtonType.MouseLeft) ||
+                Facade.GetButtonDown(InputButtonType.MouseRight) ||
+                Facade.GetButtonDown(InputButtonType.MouseMiddle))
+                LockMouse();
+            if (Facade.GetButtonDown(InputButtonType.Escape))
+                UnlockMouse();
+        }
         protected override void Awake()
         {
             base.Awake();
-            Facade.AddMonoListener(LateUpdateCamera, UpdateType.LateUpdate, (id) => lateUpdateID = id);
+            Facade.AddMonoListener(LateUpdateCamera, UpdateType.LateUpdate,out lateUpdateID );
             Facade.AddEventListener(ControllerEventCodeParams.CONTROLLER_INPUT, CameraHandler);
             Facade.RegisterController(this);
         }
@@ -36,19 +58,26 @@ namespace Cosmos
             Facade.DeregisterController(this);
             Utility.DebugLog("CameraController destory");
         }
-        protected override void EventHandler(object sender, GameEventArgs arg)
+        protected override void OnValidate()
         {
-            inputEventArgs = arg as LogicEventArgs<InputVariable>;
-            yaw = -inputEventArgs.Data.MouseAxis.x;
-            pitch = inputEventArgs.Data.MouseAxis.y;
+            yawSpeed = Mathf.Clamp(yawSpeed, 0, 1000);
+            pitchSpeed = Mathf.Clamp(pitchSpeed, 0, 1000);
+            cameraViewDamp = Mathf.Clamp(cameraViewDamp, 0, 1000);
+            pitchMinMax = Utility.Unity.Clamp(pitchMinMax, new Vector2(-90, 0), new Vector2(0, 90));
+        }
+        protected override void UpdateHandler()
+        {
+            yaw = -Facade.GetAxis(InputAxisType.MouseX);
+            pitch = Facade.GetAxis(InputAxisType.MouseY);
             pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
-            currentDistance -= inputEventArgs.Data.MouseButtonWheel;
-            currentDistance = Mathf.Clamp(currentDistance, 0.5f, 10);
-            inputEventArgs.Data.HideMouse();
+            if (Facade.GetAxis(InputAxisType.MouseScrollWheel) != 0)
+                Utility.DebugLog("MouseScrollWheel " ,MessageColor.INDIGO);
+            distanceFromTarget -= Facade.GetAxis(InputAxisType.MouseScrollWheel);
+            distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
+            HideMouse();
         }
         void LateUpdateCamera()
         {
-            //cameraOffset.z = -currentDistance;
             cameraOffset.z = -distanceFromTarget;
             cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, 
                 cameraOffset, Time.deltaTime * cameraViewDamp);
@@ -73,12 +102,7 @@ namespace Cosmos
             cameraOffset.z = -currentDistance;
             cam.transform.localPosition = cameraOffset;
         }
-        protected override void OnValidate()
-        {
-            yawSpeed = Mathf.Clamp(yawSpeed, 0, 1000);
-            pitchSpeed = Mathf.Clamp(pitchSpeed, 0, 1000);
-            cameraViewDamp = Mathf.Clamp(cameraViewDamp, 0, 1000);
-            pitchMinMax = Utility.Unity.Clamp(pitchMinMax, new Vector2(-90, 0), new Vector2(0, 90));
-        }
+
+
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-namespace Cosmos.Input{
+using Cosmos.Input;
+namespace Cosmos{
     /// <summary>
     /// 标准输入设备，这里是PC
     /// </summary>
@@ -26,6 +26,8 @@ namespace Cosmos.Input{
             Facade.RegisterVirtualButton(InputButtonType.MouseRight);
             Facade.RegisterVirtualButton(InputButtonType.MouseMiddle);
             Facade.RegisterVirtualButton(InputButtonType.MouseLeftDoubleClick);
+            Facade.RegisterVirtualButton(InputButtonType.LeftShift);
+            Facade.RegisterVirtualButton(InputButtonType.Escape);
             Facade.RegisterVirtualAxis(InputAxisType.MouseX);
             Facade.RegisterVirtualAxis(InputAxisType.MouseY);
             Facade.RegisterVirtualAxis(InputAxisType.MouseScrollWheel);
@@ -35,6 +37,10 @@ namespace Cosmos.Input{
         }
         public override void OnRun()
         {
+            if (UnityEngine.Input.GetKeyDown(KeyCode.LeftShift)) Facade.SetButtonDown(InputButtonType.LeftShift);
+            else if(UnityEngine.Input.GetKeyUp(KeyCode.LeftShift)) Facade.SetButtonUp(InputButtonType.LeftShift);
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape)) Facade.SetButtonDown(InputButtonType.Escape);
+            else if (UnityEngine.Input.GetKeyUp(KeyCode.Escape)) Facade.SetButtonUp(InputButtonType.Escape);
             if (UnityEngine.Input.GetMouseButtonDown(0)) Facade.SetButtonDown(InputButtonType.MouseLeft);
             else if (UnityEngine.Input.GetMouseButtonUp(0)) Facade.SetButtonUp(InputButtonType.MouseLeft);
             if (UnityEngine.Input.GetMouseButtonDown(1)) Facade.SetButtonDown(InputButtonType.MouseRight);
@@ -59,7 +65,7 @@ namespace Cosmos.Input{
                 mouseLeftClickTimer -= Time.deltaTime;
             }
             Facade.SetAxis(InputAxisType.MouseX, UnityEngine.Input.GetAxis("Mouse X"));
-            Facade.SetAxis(InputAxisType.MouseX, UnityEngine.Input.GetAxis("Mouse Y"));
+            Facade.SetAxis(InputAxisType.MouseY, UnityEngine.Input.GetAxis("Mouse Y"));
             Facade.SetAxis(InputAxisType.MouseScrollWheel, UnityEngine.Input.GetAxis("Mouse ScrollWheel"));
             Facade.SetAxis(InputAxisType.Horizontal, UnityEngine.Input.GetAxis("Horizontal"));
             Facade.SetAxis(InputAxisType.Vertical, UnityEngine.Input.GetAxis("Vertical"));
@@ -74,6 +80,8 @@ namespace Cosmos.Input{
             Facade.DeregisterVirtualButton(InputButtonType.MouseRight);
             Facade.DeregisterVirtualButton(InputButtonType.MouseMiddle);
             Facade.DeregisterVirtualButton(InputButtonType.MouseLeftDoubleClick);
+            Facade.DeregisterVirtualButton(InputButtonType.LeftShift);
+            Facade.DeregisterVirtualButton(InputButtonType.Escape);
             Facade.DeregisterVirtualAxis(InputAxisType.MouseX);
             Facade.DeregisterVirtualAxis(InputAxisType.MouseY);
             Facade.DeregisterVirtualAxis(InputAxisType.MouseScrollWheel);

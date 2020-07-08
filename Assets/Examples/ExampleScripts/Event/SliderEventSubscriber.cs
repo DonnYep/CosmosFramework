@@ -29,7 +29,7 @@ public class SliderEventSubscriber : MonoBehaviour
     }
     public void DeregisterEventManager()
     {
-        GameManager.Instance.DeregisterModule(CFModules.EVENT);
+        GameManager.Instance.DeregisterModule(ModuleEnum.Event);
     }
     void Handler(object sender, GameEventArgs arg)
     {

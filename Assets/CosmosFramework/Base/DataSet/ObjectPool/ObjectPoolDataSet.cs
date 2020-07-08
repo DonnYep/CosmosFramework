@@ -7,7 +7,7 @@ namespace Cosmos{
     /// </summary>
     public abstract class ObjectPoolDataSet : CFDataSet
     {
-        public virtual MonoObjectBase  SpawnObject { get; }
+        public virtual GameObject  SpawnObject { get; }
         [SerializeField]
         [Range(0,100,order =1)]
         protected short objectOdds = 25;

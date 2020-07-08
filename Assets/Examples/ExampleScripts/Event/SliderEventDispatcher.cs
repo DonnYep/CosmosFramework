@@ -15,7 +15,7 @@ public class SliderEventDispatcher : MonoBehaviour
     private void Start()
     {
         slider = GetComponentInChildren<Slider>();
-        uch = Facade.SpawnReference<LogicEventArgs<Slider>>();
+        uch = Facade.SpawnReference<LogicEventArgs<Slider>>().SetData(slider);
     }
     Slider slider;
     public void DispatchEvent()

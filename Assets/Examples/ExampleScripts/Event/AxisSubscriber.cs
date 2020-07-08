@@ -9,52 +9,32 @@ public enum InputKey
     Vertical,
     Horizontal
 }
-public class AxisSubscriber : MonoBehaviour
+public class AxisSubscriber : ControllerBase
 {
     [SerializeField]
     InputKey key;
     int sliderOffset;
     int SliderOffset { get { return Utility.Converter.Int(slider.maxValue / 2); } }
-    LogicEventArgs<InputVariable> inputHandler;
     Slider slider;
     Text text;
     private void Start()
     {
-        Facade.AddEventListener(InputEventCodeParams.INPUT_INPUTMODULE, InputHandler);
         slider = GetComponentInChildren<Slider>();
         text = GetComponentsInChildren<Text>()[1];
+        Facade.SetInputDevice(new StandardInputDevice());
     }
-    void InputHandler(object sender, GameEventArgs arg)
+    protected override void UpdateHandler()
     {
-        inputHandler = arg as LogicEventArgs<InputVariable>;
         switch (key)
         {
             case InputKey.Vertical:
-                slider.value = inputHandler.Data.HorizVertAxis.y * slider.maxValue + SliderOffset;
+                slider.value = Facade.GetAxis(InputAxisType.Vertical) * slider.maxValue + SliderOffset;
                 break;
             case InputKey.Horizontal:
-                slider.value = inputHandler.Data.HorizVertAxis.x * slider.maxValue + SliderOffset;
+                slider.value = Facade.GetAxis(InputAxisType.Horizontal)* slider.maxValue + SliderOffset;
                 break;
         }
         float textValue = slider.value - SliderOffset;
         text.text = Utility.Converter.Int(textValue).ToString();
-        InputKeyDebugInfo();
-    }
-    private void OnDestroy()
-    {
-        Facade.RemoveEventListener(InputEventCodeParams.INPUT_INPUTMODULE, InputHandler);
-    }
-    void InputKeyDebugInfo()
-    {
-        if (inputHandler.Data.MouseButtonLeft == InputButtonState.Down)
-            Utility.DebugLog("mouseLeftDown", this);
-        if (inputHandler.Data.MouseButtonRight == InputButtonState.Down)
-            Utility.DebugLog("mouseRightDown", this);
-        if (inputHandler.Data.Jump == InputButtonState.Down)
-            Utility.DebugLog("jumpDown", this);
-        if (inputHandler.Data.MouseButtonMiddle == InputButtonState.Down)
-            Utility.DebugLog("mouseMiddle", this);
-        if (inputHandler.Data.LeftShift)
-            Utility.DebugLog("leftShiftDown", this);
     }
 }

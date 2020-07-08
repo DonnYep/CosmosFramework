@@ -26,9 +26,9 @@ namespace Cosmos
             {
                 overflow -= handler;
             }
-            catch 
+            catch (Exception)
             {
-                throw new ArgumentException("Overflow handler not exist !" + handler.ToString());
+                throw new CFrameworkException("Overflow handler not exist !" + handler.ToString());
             }
         }
         const uint DEFAULT_CAPACITY = 255;
@@ -237,7 +237,7 @@ namespace Cosmos
         #region IEnumerable
         public IEnumerator<Value> GetEnumerator()
         {
-            return new Enumerator<Value>(dictionary.Values);
+            return new LRUCacheIEnumerator<Value>(dictionary.Values);
         }
         IEnumerator IEnumerable.GetEnumerator()
         {
@@ -252,50 +252,6 @@ namespace Cosmos
         public void ResetCapacity(uint capacity )
         {
             this.capacity = capacity >this.capacity  ? capacity : this.capacity;
-        }
-        internal struct Enumerator<T> : IReference, IEnumerator<T>
-        {
-            T current;
-            int index;
-            T[] list;
-            public Enumerator(ICollection<T> collection)
-            {
-                current = default(T);
-                index = -1;
-                // TODO 并不优化的数据结构，LRU
-                list = new T[collection.Count];
-                int tmpIndex = -1;
-                foreach (var v in collection)
-                {
-                    list[++tmpIndex] = v;
-                }
-            }
-            public T Current { get { return current; } }
-            object IEnumerator.Current { get { return Current; } }
-            public void Clear()
-            {
-                index = -1;
-                current = default(T);
-                list = null;
-            }
-            public void Dispose()
-            {
-                index = -1;
-                current = default(T);
-                list = null;
-            }
-            public bool MoveNext()
-            {
-                if (++index >= list.Length)
-                    return false;
-                else
-                    current = list[index];
-                return true;
-            }
-            public void Reset()
-            {
-                index = -1;
-            }
         }
     }
 }
