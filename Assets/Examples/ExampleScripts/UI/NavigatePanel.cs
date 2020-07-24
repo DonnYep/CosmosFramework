@@ -33,10 +33,10 @@ public class NavigatePanel : UILogicResident
     void WelcomeClick()
     {
         if (welcome == null)
-            Facade.ShowPanel<WelcomePanel>(Utility.UI.GetUIFullRelativePath( "WelcomePanel")
-                , panel => { panel.gameObject.name = "WelcomePanel"; panel.gameObject.SetActive(true); welcome = panel; });
+            Facade.ShowPanel<WelcomePanel>(panel =>
+            { panel.gameObject.SetActive(true); welcome = panel; });
         else
-            Facade.RemovePanel(Utility.UI.GetUIFullRelativePath("WelcomePanel"));
+            Facade.RemovePanel<WelcomePanel>();
     }
     /// <summary>
     /// Invenmtory panel是常驻类型，若不存在，则载入；开启与关闭只进行显示与隐藏操作
@@ -58,8 +58,8 @@ public class NavigatePanel : UILogicResident
     {
         if (store == null)
         {
-            Facade.ShowPanel<StorePanel>(Utility.UI.GetUIFullRelativePath("StorePanel"), panel =>
-            { panel.gameObject.name = "StorePanel"; panel.gameObject.SetActive(true); store = panel; });
+            Facade.ShowPanel<StorePanel>(panel =>
+            { panel.gameObject.SetActive(true); store = panel; });
             return;
         }
         if (store.gameObject.activeSelf)
@@ -71,8 +71,8 @@ public class NavigatePanel : UILogicResident
     {
         if (setting == null)
         {
-            Facade.ShowPanel<SettingPanel>(Utility.UI.GetUIFullRelativePath("SettingPanel"), panel => 
-            { panel.gameObject.name = "SettingPanel";panel.gameObject.SetActive(true);setting = panel; });
+            Facade.ShowPanel<SettingPanel>(panel => 
+            { panel.gameObject.SetActive(true);setting = panel; });
             return;
         }
         if (setting.gameObject.activeSelf)
@@ -84,8 +84,8 @@ public class NavigatePanel : UILogicResident
     {
         if (status == null)
         {
-            Facade.ShowPanel<StatusPanel>(Utility.UI.GetUIFullRelativePath("StatusPanel"), panel => 
-            { panel.gameObject.name = "StatusPanel";panel.gameObject.SetActive(true);status = panel; });
+            Facade.ShowPanel<StatusPanel>(panel => 
+            { panel.gameObject.SetActive(true);status = panel; });
             return;
         }
         if (status.gameObject.activeSelf)

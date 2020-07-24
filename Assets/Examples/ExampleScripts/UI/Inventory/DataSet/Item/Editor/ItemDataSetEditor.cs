@@ -4,6 +4,7 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+#if UNITY_EDITOR
 [CustomEditor(typeof(ItemDataSet),true)]
 public class ItemDataSetEditor : Editor
 {
@@ -47,3 +48,4 @@ public class ItemDataSetEditor : Editor
         GUILayout.EndHorizontal();
     }
 }
+#endif

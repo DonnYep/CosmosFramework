@@ -635,8 +635,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 7683948}
+  refreshInterval: 0.5
   range: 10
-  pauseDelay: 30
+  pauseDelay: 6
 --- !u!4 &1283498296
 Transform:
   m_ObjectHideFlags: 0
@@ -697,8 +698,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 7683948}
+  refreshInterval: 0.5
   range: 10
-  pauseDelay: 30
+  pauseDelay: 5
 --- !u!1 &1516128596
 GameObject:
   m_ObjectHideFlags: 0

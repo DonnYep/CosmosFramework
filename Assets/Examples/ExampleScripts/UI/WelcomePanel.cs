@@ -4,6 +4,7 @@ using UnityEngine;
 using Cosmos.UI;
 using UnityEngine.UI;
 using Cosmos;
+[PrefabUnit("UI/WelcomePanel",PrefabName = "WelcomePanel")]
 public class WelcomePanel : UILogicTemporary
 {
     Text info;
@@ -36,6 +37,6 @@ public class WelcomePanel : UILogicTemporary
     }
     public override void HidePanel()
     {
-        Facade.RemovePanel(Utility.UI.GetUIFullRelativePath("WelcomePanel"));
+        Facade.RemovePanel<WelcomePanel>();
     }
 }

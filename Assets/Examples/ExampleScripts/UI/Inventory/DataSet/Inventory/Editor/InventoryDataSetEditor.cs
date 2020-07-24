@@ -5,6 +5,8 @@ using System;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+#if UNITY_EDITOR
+
 [CustomEditor(typeof(InventoryDataSet))]
 public class InventoryDataSetEditor : Editor
 {
@@ -66,3 +68,5 @@ public class InventoryDataSetEditor : Editor
         GUILayout.EndHorizontal();
     }
 }
+#endif
+

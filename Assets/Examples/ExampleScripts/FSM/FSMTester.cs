@@ -8,6 +8,7 @@ public class FSMTester : MonoBehaviour
 {
     [SerializeField] Transform target;
     public Transform Target { get { return target; } }
+    [SerializeField] float refreshInterval = 1;
     [SerializeField] int range = 10;
     [SerializeField] int pauseDelay=10;
     public int Range { get { return range; } }
@@ -32,8 +33,10 @@ public class FSMTester : MonoBehaviour
         stateList.Add(exitState);
         stateList.Add(enterState);
         fsm = Facade.CreateFSM("FSMTester",this,false, stateList.ToArray()) as FSM<FSMTester>;
+        Facade.SetFSMSetRefreshInterval<FSMTester>(refreshInterval);
         fsm.DefaultState = exitState;
         fsm.StartDefault();
-        Facade.DelayCoroutine(pauseDelay, () => { fsm.OnPause(); });
+        //Facade.DelayCoroutine(pauseDelay, () => { fsm.OnPause(); });
+        Facade.DelayCoroutine(pauseDelay, () => { Facade.PauseFSMSet<FSMTester>(); });
     }
 }

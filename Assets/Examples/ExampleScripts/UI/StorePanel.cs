@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
+[PrefabUnit("UI/StorePanel", PrefabName = "StorePanel")]
 public class StorePanel : UILogicResident
 {
     protected override void OnInitialization()
