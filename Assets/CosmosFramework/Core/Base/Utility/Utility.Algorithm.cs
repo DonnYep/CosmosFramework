@@ -16,7 +16,7 @@ namespace Cosmos
             /// <summary>
             /// 升序排序
             /// </summary>
-            public static void SortByAscending<T, K>(  T[] array, CFResultAction<T, K> handler)
+            public static void SortByAscending<T, K>(  T[] array, Func<T, K> handler)
                 where K : IComparable<K>
             {
                 for (int i = 0; i < array.Length; i++)
@@ -35,7 +35,7 @@ namespace Cosmos
             /// <summary>
             /// 降序排序
             /// </summary>
-            public static void SortByDescending<T, K>(T[] array, CFResultAction<T, K> handler)
+            public static void SortByDescending<T, K>(T[] array, Func<T, K> handler)
                 where K : IComparable<K>
             {
                 for (int i = 0; i < array.Length; i++)
@@ -54,7 +54,7 @@ namespace Cosmos
             /// <summary>
             ///  获取最小
             /// </summary>
-            public static T Min<T, K>(T[] array, CFResultAction<T, K> handler)
+            public static T Min<T, K>(T[] array, Func<T, K> handler)
             where K : IComparable<K>
             {
                 T temp = default(T);
@@ -71,7 +71,7 @@ namespace Cosmos
             /// <summary>
             /// 获取最大值
             /// </summary>
-            public static T Max<T, K>(T[] array, CFResultAction<T, K> handler)
+            public static T Max<T, K>(T[] array, Func<T, K> handler)
             where K : IComparable<K>
             {
                 T temp = default(T);
@@ -88,7 +88,7 @@ namespace Cosmos
             /// <summary>
             /// 获得传入元素某个符合条件的所有对象
             /// </summary>
-            public static T Find<T>(T[] array, CFPredicateAction<T> handler)
+            public static T Find<T>(T[] array, Predicate<T> handler)
             {
                 T temp = default(T);
                 for (int i = 0; i < array.Length; i++)
@@ -103,7 +103,7 @@ namespace Cosmos
             /// <summary>
             /// 获得传入元素某个符合条件的所有对象
             /// </summary>
-            public static T[] FindAll<T, K>(T[] array, CFPredicateAction<T> handler)
+            public static T[] FindAll<T, K>(T[] array, Predicate<T> handler)
             {
                 List<T> list = new List<T>();
                 for (int i = 0; i < array.Length; i++)
@@ -117,7 +117,7 @@ namespace Cosmos
             /// 泛型二分查找，需要传入升序数组
             /// </summary>
             /// <returns>返回对象在数组中的序号，若不存在，则返回-1</returns>
-            public static int BinarySearch<T,K>(T[] array, K target,CFResultAction<T,K> handler)
+            public static int BinarySearch<T,K>(T[] array, K target,Func<T,K> handler)
                 where K:IComparable<K>
             {
                 int first = 0;

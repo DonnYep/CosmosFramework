@@ -205,7 +205,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="handler">条件委托</param>
             /// <param name="trueCallBack">true时候的回调</param>
-            public static void Predicate(CFPredicateAction handler, Action trueCallBack)
+            public static void Predicate(Func<bool> handler, Action trueCallBack)
             {
                 if (handler.Invoke())
                     trueCallBack?.Invoke();
@@ -217,7 +217,7 @@ namespace Cosmos
             /// <param name="handler">条件委托</param>
             /// <param name="trueCallBack">true时候的回调</param>
             /// <param name="falseCallBack">false时候的回调</param>
-            public static void Predicate(CFPredicateAction handler, Action trueCallBack, Action falseCallBack)
+            public static void Predicate(Func<bool> handler, Action trueCallBack, Action falseCallBack)
             {
                 if (handler.Invoke())
                     trueCallBack?.Invoke();
