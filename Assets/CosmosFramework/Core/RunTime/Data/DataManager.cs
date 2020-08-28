@@ -42,7 +42,7 @@ namespace Cosmos.Data
                 Directory.CreateDirectory(absoluteFullpath);
             using (FileStream stream = File.Create(Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath)))
             {
-                Utility.DebugLog("Save local path：\n" + Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), MessageColor.GREEN);
+                Utility.Debug.LogInfo("Save local path：\n" + Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), MessageColor.GREEN);
                 if (binary)
                 {
                     BinaryFormatter bf = new BinaryFormatter();//二进制
@@ -74,11 +74,11 @@ namespace Cosmos.Data
         {
             string absoluteFullpath = Utility.Unity.CombineAppPersistentPath(relativePath);
             if (!Directory.Exists(absoluteFullpath))
-                throw new CFrameworkException("DataManager-->> Json floder not exist!");
+                throw new ArgumentNullException("DataManager-->> Json floder not exist!");
             string json = "";
             using (FileStream stream = File.Open(Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), FileMode.Open))
             {
-                Utility.DebugLog("Load local path : \n" + Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), MessageColor.GREEN);
+                Utility.Debug.LogInfo("Load local path : \n" + Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), MessageColor.GREEN);
                 if (binary)
                 {
                     BinaryFormatter bf = new BinaryFormatter();
@@ -109,11 +109,11 @@ namespace Cosmos.Data
         {
             string absoluteFullpath = Utility.Unity.CombineAppPersistentPath(fullRelativeFilePath);
             if (!File.Exists(absoluteFullpath))
-                throw new CFrameworkException("DataManager-->> Json file not exist!");
+                throw new ArgumentNullException("DataManager-->> Json file not exist!");
             string json = "";
             using (FileStream stream = File.Open(Utility.Unity.CombineAppPersistentPath(absoluteFullpath), FileMode.Open))
             {
-                Utility.DebugLog("Load local path：\n" + Utility.IO.CombineRelativeFilePath(absoluteFullpath), MessageColor.GREEN);
+                Utility.Debug.LogInfo("Load local path：\n" + Utility.IO.CombineRelativeFilePath(absoluteFullpath), MessageColor.GREEN);
                 if (binary)
                 {
                     BinaryFormatter bf = new BinaryFormatter();

@@ -12,7 +12,7 @@ namespace Cosmos.Entity
     public abstract class EntityObject : IEntityObject
     {
         public GameObject Entity { get; protected set; }
-        public bool IsPause { get; set; }
+        public bool IsPause { get; protected set; }
         /// <summary>
         /// 空虚函数
         /// </summary>

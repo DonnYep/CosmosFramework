@@ -61,6 +61,30 @@ namespace Cosmos
             {
                 return Utility.Text.Format(Convert.ToString(value, 2));
             }
+            public static string ConvertToString(byte[] value)
+            {
+                string str = BitConverter.ToString(value);
+                return str;
+            }
+            /// <summary>
+            /// 转换成16进制的字符串
+            /// </summary>
+            /// <param name="bytes">byte数据</param>
+            /// <returns>转换后的16进制string</returns>
+            public static string ConvertToHexString(byte[] bytes)
+            {
+                string hexString = string.Empty;
+                if (bytes != null)
+                {
+                    Utility.Text.ClearStringBuilder();
+                    foreach (byte b in bytes)
+                    {
+                        Utility.Text.StringBuilderCache.AppendFormat("{0:x2}", b);
+                    }
+                    hexString = Utility.Text.StringBuilderCache.ToString();
+                }
+                return hexString;
+            }
             //TODO添加其他进制的封装函数
             //public static string ConvertToOctal(int value)
             //{

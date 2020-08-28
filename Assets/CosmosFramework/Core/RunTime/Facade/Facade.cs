@@ -9,6 +9,8 @@ using System.Reflection;
 using Cosmos.Entity;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using System.Net.Sockets;
+using System.Net;
 
 namespace Cosmos
 {
@@ -19,31 +21,73 @@ namespace Cosmos
     public static partial class Facade
     {
 
-        #region TempAPI
-        static FacadeObject instance;
-        [Obsolete("Instance调用即将弃用，且不再更新新功能；新API请直接Facade.MethodName()调用")]
-        public static FacadeObject Instance { get { if (instance == null) instance = new FacadeObject(); return instance; } }
+        #region ExtensionsModule
+        /// <summary>
+        /// 外源模块容器；
+        /// </summary>
+        static Dictionary<Type, IModule> extensionsModuleDict = new Dictionary<Type, IModule>();
+        /// <summary>
+        /// 获取外源模块；
+        /// 此类模块不由CF框架生成，由用户自定义
+        /// 需要从Module类派生;
+        /// 线程安全；
+        /// </summary>
+        /// <typeparam name="TModule">实现模块功能的类对象</typeparam>
+        /// <returns>获取的模块</returns>
+        public static TModule GetExtensionsModule<TModule>()
+            where TModule : Module<TModule>, new()
+        {
+            Type type = typeof(TModule);
+            IModule module = default;
+            var result = extensionsModuleDict.TryGetValue(type, out module);
+            if (!result)
+            {
+                module = new TModule();
+                extensionsModuleDict.Add(type, module);
+                module.OnInitialization();
+                Utility.Debug.LogInfo($"生成新模块 , Module :{module.ToString()} ");
+            }
+            return module as TModule;
+        }
+        /// <summary>
+        /// 清理外源模块；
+        /// 此类模块不由CF框架生成，由用户自定义
+        /// 需要从Module类派生;
+        /// </summary>
+        /// <typeparam name="TModule"></typeparam>
+        public static void ClearExtensionsModule<TModule>()
+    where TModule : Module<TModule>, new()
+        {
+            Type type = typeof(TModule);
+            if (extensionsModuleDict.ContainsKey(type))
+            {
+                var module = extensionsModuleDict[type];
+                module.OnTermination();
+                extensionsModuleDict.Remove(type);
+            }
+        }
         #endregion
+
 
         #region FacadeMethods
         public static void InitAllModule()
         {
-            GameManager.AudioManager.DebugModule();
-            GameManager.ResourceManager.DebugModule();
-            GameManager.ObjectPoolManager.DebugModule();
-            GameManager.NetworkManager.DebugModule();
-            GameManager.MonoManager.DebugModule();
-            GameManager.InputManager.DebugModule();
-            GameManager.UIManager.DebugModule();
-            GameManager.EventManager.DebugModule();
-            GameManager.SceneManager.DebugModule();
-            GameManager.FSMManager.DebugModule();
-            GameManager.ConfigManager.DebugModule();
-            GameManager.DataManager.DebugModule();
-            GameManager.ControllerManager.DebugModule();
-            GameManager.EntityManager.DebugModule();
-            GameManager.HotfixManager.DebugModule();
-            Utility.DebugLog("Module Count:\t" + GameManager.Instance.ModuleCount);
+            GameManager.AudioManager.OnInitialization();
+            GameManager.ResourceManager.OnInitialization();
+            GameManager.ObjectPoolManager.OnInitialization();
+            GameManager.NetworkManager.OnInitialization();
+            GameManager.MonoManager.OnInitialization();
+            GameManager.InputManager.OnInitialization();
+            GameManager.UIManager.OnInitialization();
+            GameManager.EventManager.OnInitialization();
+            GameManager.SceneManager.OnInitialization();
+            GameManager.FSMManager.OnInitialization();
+            GameManager.ConfigManager.OnInitialization();
+            GameManager.DataManager.OnInitialization();
+            GameManager.ControllerManager.OnInitialization();
+            GameManager.EntityManager.OnInitialization();
+            GameManager.HotfixManager.OnInitialization();
+            Utility.Debug.LogInfo("Module Count:\t" + GameManager.Instance.ModuleCount);
         }
         public static void RegisterModule(ModuleEnum module)
         {
@@ -73,49 +117,49 @@ namespace Cosmos
             switch (module)
             {
                 case ModuleEnum.Audio:
-                    GameManager.AudioManager.DebugModule();
+                    GameManager.AudioManager.OnInitialization();
                     break;
                 case ModuleEnum.Config:
-                    GameManager.ConfigManager.DebugModule();
+                    GameManager.ConfigManager.OnInitialization();
                     break;
                 case ModuleEnum.Controller:
-                    GameManager.ControllerManager.DebugModule();
+                    GameManager.ControllerManager.OnInitialization();
                     break;
                 case ModuleEnum.Data:
-                    GameManager.DataManager.DebugModule();
+                    GameManager.DataManager.OnInitialization();
                     break;
                 case ModuleEnum.Entity:
-                    GameManager.EntityManager.DebugModule();
+                    GameManager.EntityManager.OnInitialization();
                     break;
                 case ModuleEnum.Event:
-                    GameManager.EventManager.DebugModule();
+                    GameManager.EventManager.OnInitialization();
                     break;
                 case ModuleEnum.FSM:
-                    GameManager.FSMManager.DebugModule();
+                    GameManager.FSMManager.OnInitialization();
                     break;
                 case ModuleEnum.Input:
-                    GameManager.InputManager.DebugModule();
+                    GameManager.InputManager.OnInitialization();
                     break;
                 case ModuleEnum.Mono:
-                    GameManager.MonoManager.DebugModule();
+                    GameManager.MonoManager.OnInitialization();
                     break;
                 case ModuleEnum.Network:
-                    GameManager.NetworkManager.DebugModule();
+                    GameManager.NetworkManager.OnInitialization();
                     break;
                 case ModuleEnum.ObjectPool:
-                    GameManager.ObjectPoolManager.DebugModule();
+                    GameManager.ObjectPoolManager.OnInitialization();
                     break;
                 case ModuleEnum.ReferencePool:
-                    GameManager.ReferencePoolManager.DebugModule();
+                    GameManager.ReferencePoolManager.OnInitialization();
                     break;
                 case ModuleEnum.Resource:
-                    GameManager.ResourceManager.DebugModule();
+                    GameManager.ResourceManager.OnInitialization();
                     break;
                 case ModuleEnum.Scene:
-                    GameManager.SceneManager.DebugModule();
+                    GameManager.SceneManager.OnInitialization();
                     break;
                 case ModuleEnum.UI:
-                    GameManager.UIManager.DebugModule();
+                    GameManager.UIManager.OnInitialization();
                     break;
             }
             var result = GameManager.Instance.GetModule(module);
@@ -582,19 +626,19 @@ namespace Cosmos
         /// <param name="sceneName">场景名</param>
         /// <param name="progressCallback">加载场景进度回调</param>
         /// <param name="loadedCallback">场景加载完毕回调</param>
-        public static void LoadSceneAsync(string sceneName, Action<float> progressCallback , Action loadedCallback = null)
+        public static void LoadSceneAsync(string sceneName, Action<float> progressCallback, Action loadedCallback = null)
         {
             GameManager.SceneManager.LoadSceneAsync(sceneName, progressCallback, loadedCallback);
         }
-        public static void LoadSceneAsync(string sceneName, bool additive, Action<float> progressCallback , Action loadedCallback = null)
+        public static void LoadSceneAsync(string sceneName, bool additive, Action<float> progressCallback, Action loadedCallback = null)
         {
             GameManager.SceneManager.LoadSceneAsync(sceneName, additive, progressCallback, loadedCallback);
         }
-        public static void LoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallback , Action loadedCallback = null)
+        public static void LoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
         {
             GameManager.SceneManager.LoadSceneAsync(sceneName, progressCallback, loadedCallback);
         }
-        public static void LoadSceneAsync(string sceneName, bool additive, Action<AsyncOperation> progressCallback , Action loadedCallback = null)
+        public static void LoadSceneAsync(string sceneName, bool additive, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
         {
             GameManager.SceneManager.LoadSceneAsync(sceneName, additive, progressCallback, loadedCallback);
         }
@@ -609,7 +653,7 @@ namespace Cosmos
         /// <param name="additive">是否叠加场景</param>
         /// <param name="progressCallback">进度更新回调</param>
         /// <param name="loadedCallback">加载完毕回调</param>
-        public static void LoadSceneAsync(int sceneIndex, bool additive, Action<float> progressCallback , Action loadedCallback = null)
+        public static void LoadSceneAsync(int sceneIndex, bool additive, Action<float> progressCallback, Action loadedCallback = null)
         {
             GameManager.SceneManager.LoadSceneAsync(sceneIndex, additive, progressCallback, loadedCallback);
         }
@@ -619,15 +663,15 @@ namespace Cosmos
         /// <param name="sceneIndex">场景序号</param>
         /// <param name="progressCallback">进度更新回调</param>
         /// <param name="loadDoneCallback">加载完毕回调</param>
-        public static void LoadSceneAsync(int sceneIndex, Action<float> progressCallback , Action loadDoneCallback = null)
+        public static void LoadSceneAsync(int sceneIndex, Action<float> progressCallback, Action loadDoneCallback = null)
         {
             GameManager.SceneManager.LoadSceneAsync(sceneIndex, progressCallback, loadDoneCallback);
         }
-        public  static void LoadSceneAsync(int sceneIndex, bool additive, Action loadedCallback = null)
+        public static void LoadSceneAsync(int sceneIndex, bool additive, Action loadedCallback = null)
         {
             GameManager.SceneManager.LoadSceneAsync(sceneIndex, additive, loadedCallback);
         }
-        public static void LoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallback , Action loadedCallback = null)
+        public static void LoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
         {
             GameManager.SceneManager.LoadSceneAsync(sceneIndex, progressCallback, loadedCallback);
         }
@@ -638,7 +682,7 @@ namespace Cosmos
         /// <param name="additive">是否叠加场景</param>
         /// <param name="progressCallback">进度更新回调</param>
         /// <param name="loadedCallback">加载完毕回调</param>
-        public static void LoadSceneAsync(int sceneIndex, bool additive, Action<AsyncOperation> progressCallback , Action loadedCallback = null)
+        public static void LoadSceneAsync(int sceneIndex, bool additive, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
         {
             GameManager.SceneManager.LoadSceneAsync(sceneIndex, additive, progressCallback, loadedCallback);
         }
@@ -709,9 +753,9 @@ namespace Cosmos
         {
             return GameManager.ControllerManager.RegisterController<T>(controller);
         }
-        public static bool RegisterController( Type type,IController controller)
+        public static bool RegisterController(Type type, IController controller)
         {
-            return GameManager.ControllerManager.RegisterController(type ,controller);
+            return GameManager.ControllerManager.RegisterController(type, controller);
         }
         /// <summary>
         /// 注销控制器，如果当前控制器是最后一个，则注销后，这个类别也会自动注销
@@ -719,16 +763,16 @@ namespace Cosmos
         /// <typeparam name="T"></typeparam>
         /// <param name="controller"></param>
         public static bool DeregisterController<T>(T controller)
-            where T :class, IController
+            where T : class, IController
         {
             return GameManager.ControllerManager.DeregisterController<T>(controller);
         }
-        public static bool DeregisterController(Type type,IController controller)
+        public static bool DeregisterController(Type type, IController controller)
         {
-            return GameManager.ControllerManager.DeregisterController(type,controller);
+            return GameManager.ControllerManager.DeregisterController(type, controller);
         }
         public static T GetController<T>(Predicate<T> predicate)
-            where T :class, IController
+            where T : class, IController
         {
             return GameManager.ControllerManager.GetController<T>(predicate);
         }
@@ -769,9 +813,9 @@ namespace Cosmos
         {
             return GameManager.ControllerManager.HasControllerItem(controller);
         }
-        public static bool HasControllerItem(  Type type,IController controller)
+        public static bool HasControllerItem(Type type, IController controller)
         {
-            return GameManager.ControllerManager.HasControllerItem(type,controller);
+            return GameManager.ControllerManager.HasControllerItem(type, controller);
         }
         public static void ClearAllController()
         {
@@ -990,7 +1034,7 @@ namespace Cosmos
         /// <typeparam name="T">类型目标</typeparam>
         /// <param name="interval">轮询间隔</param>
         public static void SetFSMSetRefreshInterval<T>(float interval)
-            where T:class
+            where T : class
         {
             GameManager.FSMManager.SetFSMSetRefreshInterval<T>(interval);
         }
@@ -999,7 +1043,7 @@ namespace Cosmos
         /// </summary>
         /// <typeparam name="T">目标类型</typeparam>
         public static void PauseFSMSet<T>()
-            where T:class
+            where T : class
         {
             GameManager.FSMManager.PauseFSMSet<T>();
         }
@@ -1016,7 +1060,7 @@ namespace Cosmos
         /// </summary>
         /// <typeparam name="T">目标类型</typeparam>
         public static void UnPauseFSMSet<T>()
-            where T:class
+            where T : class
         {
             GameManager.FSMManager.UnPauseFSMSet<T>();
         }
@@ -1246,7 +1290,7 @@ where T : class
         /// 若实体对象存在于缓存中，则移除。若不存在，则不做操作；
         /// </summary>
         /// <param name="entity">实体对象</param>
-        public static void RecoveryEntity<T>(T  entity)
+        public static void RecoveryEntity<T>(T entity)
               where T : class, IEntityObject, new()
         {
             GameManager.EntityManager.RecoveryEntity(entity);
@@ -1262,30 +1306,30 @@ where T : class
         /// <summary>
         /// 获得某一类型的实体数量
         /// </summary>
-     public static int GetEntityCount<T>()
-            where T : class, IEntityObject, new()
+        public static int GetEntityCount<T>()
+               where T : class, IEntityObject, new()
         {
             return GameManager.EntityManager.GetEntityCount<T>();
         }
-        public static  int GetEntityCount(Type type)
+        public static int GetEntityCount(Type type)
         {
             return GameManager.EntityManager.GetEntityCount(type);
         }
-       public static T GetEntity<T>(Predicate<T> predicate)
-            where T : class, IEntityObject, new()
+        public static T GetEntity<T>(Predicate<T> predicate)
+             where T : class, IEntityObject, new()
         {
             return GameManager.EntityManager.GetEntity(predicate);
         }
-        public static  IEntityObject GetEntity(Type type, Predicate<IEntityObject> predicate)
+        public static IEntityObject GetEntity(Type type, Predicate<IEntityObject> predicate)
         {
             return GameManager.EntityManager.GetEntity(type, predicate);
         }
-       public static ICollection<IEntityObject> GetEntityCollection<T>()
-            where T : IEntityObject, new()
+        public static ICollection<IEntityObject> GetEntityCollection<T>()
+             where T : IEntityObject, new()
         {
             return GameManager.EntityManager.GetEntityCollection<T>();
         }
-      public static ICollection<IEntityObject> GetEntityCollection(Type type)
+        public static ICollection<IEntityObject> GetEntityCollection(Type type)
         {
             return GameManager.EntityManager.GetEntityCollection(type);
         }
@@ -1308,12 +1352,12 @@ where T : class
         {
             return GameManager.EntityManager.GetEntityList(type);
         }
-       public static void RegisterEntityType<T>()
-            where T : class, IEntityObject, new()
+        public static void RegisterEntityType<T>()
+             where T : class, IEntityObject, new()
         {
             GameManager.EntityManager.RegisterEntityType<T>();
         }
-       public static void RegisterEntityType(Type type)
+        public static void RegisterEntityType(Type type)
         {
             GameManager.EntityManager.RegisterEntityType(type);
         }
@@ -1322,7 +1366,7 @@ where T : class
         {
             return GameManager.EntityManager.DeregisterEntityType<T>();
         }
-       public static bool DeregisterEntityType(Type type)
+        public static bool DeregisterEntityType(Type type)
         {
             return GameManager.EntityManager.DeregisterEntityType(type);
         }
@@ -1331,8 +1375,8 @@ where T : class
         {
             return GameManager.EntityManager.ActiveEntity(entity);
         }
-     public static void ActiveEntity<T>(Predicate<T> predicate)
-            where T : class, IEntityObject, new()
+        public static void ActiveEntity<T>(Predicate<T> predicate)
+               where T : class, IEntityObject, new()
         {
             GameManager.EntityManager.ActiveEntity(predicate);
         }
@@ -1349,21 +1393,21 @@ where T : class
         {
             GameManager.EntityManager.ActiveEntities<T>();
         }
-       public static void ActiveEntities(Type type)
+        public static void ActiveEntities(Type type)
         {
             GameManager.EntityManager.ActiveEntities(type);
         }
-         public static void DeactiveEntities<T>()
-            where T : class, IEntityObject, new()
+        public static void DeactiveEntities<T>()
+           where T : class, IEntityObject, new()
         {
             GameManager.EntityManager.DeactiveEntities<T>();
         }
-       public static void DeactiveEntities(Type type)
+        public static void DeactiveEntities(Type type)
         {
             GameManager.EntityManager.DeactiveEntities(type);
         }
-       public static bool HasEntity<T>(Predicate<T> predicate)
-            where T : class, IEntityObject, new()
+        public static bool HasEntity<T>(Predicate<T> predicate)
+             where T : class, IEntityObject, new()
         {
             return GameManager.EntityManager.HasEntity(predicate);
         }
@@ -1371,14 +1415,59 @@ where T : class
         {
             return GameManager.EntityManager.HasEntity(type, predicate);
         }
-       public static bool HasEntityType<T>()
-            where T : class, IEntityObject, new()
+        public static bool HasEntityType<T>()
+             where T : class, IEntityObject, new()
         {
             return GameManager.EntityManager.HasEntityType<T>();
         }
-       public static bool HasEntityType(Type type)
+        public static bool HasEntityType(Type type)
         {
             return GameManager.EntityManager.HasEntityType(type);
+        }
+        #endregion
+        #region Network
+        /// <summary>
+        /// 连接指定地址的网络
+        /// 初始化建立连接;
+        /// 当前只有UDP协议
+        /// </summary>
+        /// <param name="ip">ip地址</param>
+        /// <param name="port">端口</param>
+        /// <param name="protocolType">协议类型</param>
+        public static void NetworkConnect(string ip, int port, ProtocolType protocolType)
+        {
+            GameManager.NetworkManager.Connect(ip, port, protocolType);
+        }
+        /// <summary>
+        /// 与远程建立连接；
+        /// </summary>
+        /// <param name="service">自定义实现的服务</param>
+        public static void Connect(INetworkService service)
+        {
+            GameManager.NetworkManager.Connect(service);
+        }
+        /// <summary>
+        /// 发送报文信息；
+        /// 发送给特定的endpoint对象，可不局限于一个服务器点；
+        /// </summary>
+        /// <param name="netMsg">消息体</param>
+        /// <param name="endPoint">远程对象</param>
+        public static void SendNetworkMessage(INetworkMessage netMsg, IPEndPoint endPoint)
+        {
+            GameManager.NetworkManager.SendNetworkMessage(netMsg, endPoint);
+        }
+        /// <summary>
+        /// 发送报文信息；
+        /// 发送给默认的endpoint对象，目标为默认远程点；
+        /// </summary>
+        /// <param name="netMsg">消息体</param>
+        public static void SendNetworkMessage(INetworkMessage netMsg)
+        {
+            GameManager.NetworkManager.SendNetworkMessage(netMsg);
+        }
+        public static void NetworkDisconnect()
+        {
+            GameManager.NetworkManager.Disconnect();
         }
         #endregion
     }

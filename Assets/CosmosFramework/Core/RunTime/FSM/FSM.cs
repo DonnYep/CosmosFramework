@@ -228,20 +228,20 @@ namespace Cosmos.FSM{
         public void SetData(string dataName, FSMVariable data)
         {
             if (string.IsNullOrEmpty(dataName))
-                Utility.DebugError("Data name is invalid !");
+                Utility.Debug.LogError("Data name is invalid !");
             fsmDataDict[dataName] = data;
         }
         public void SetData<TData>(string dataName, TData data)
             where TData : FSMVariable
         {
             if (string.IsNullOrEmpty(dataName))
-                Utility.DebugError("Data name is invalid !");
+                Utility.Debug.LogError("Data name is invalid !");
             fsmDataDict[dataName] = data;
         }
         public FSMVariable GetData(string dataName)
         {
             if (string.IsNullOrEmpty(dataName))
-                Utility.DebugError("Data name is invalid !");
+                Utility.Debug.LogError("Data name is invalid !");
             FSMVariable data = null;
             if (fsmDataDict.TryGetValue(dataName, out data))
             {
@@ -257,20 +257,20 @@ namespace Cosmos.FSM{
         public bool HasData(string dataName)
         {
             if (string.IsNullOrEmpty(dataName))
-                Utility.DebugError("Data name is invalid !");
+                Utility.Debug.LogError("Data name is invalid !");
             return fsmDataDict.ContainsKey(dataName);
         }
         public void RemoveData(string dataName)
         {
             if (string.IsNullOrEmpty(dataName))
             {
-                Utility.DebugError("Data name is invalid !");
+                Utility.Debug.LogError("Data name is invalid !");
                 return;
             }
             if (fsmDataDict.ContainsKey(dataName))
                 fsmDataDict.Remove(dataName);
             else
-                Utility.DebugError("Fsm data :" + dataName + " not set !");
+                Utility.Debug.LogError("Fsm data :" + dataName + " not set !");
         }
         /// <summary>
         /// 数据重启

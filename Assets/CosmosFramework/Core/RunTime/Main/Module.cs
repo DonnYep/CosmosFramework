@@ -1,31 +1,35 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 namespace Cosmos
 {
 
     /// <summary>
-    /// 模块的抽象基类
+    /// 模块的抽象基类；
+    /// 外部可扩展；
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal abstract class Module<T> : IModule
+    public abstract class Module<T> : IModule
         where T : Module<T>, new()
     {
         #region Properties
-        GameObject moduleMountObject;
-        public bool IsPause { get; set; }
-
-        public GameObject ModuleMountObject
+        #region IMountPoint
+        public Type MountType { get { return typeof(T); } }
+        GameObject mountPoint;
+        public GameObject MountPoint
         {
             get
             {
-                if (moduleMountObject == null)
+                if (mountPoint == null)
                 {
-                    moduleMountObject = new GameObject(ModuleName + "Module-->>Container");
-                    moduleMountObject.transform.SetParent(GameManager.Instance.InstanceObject.transform);
+                    mountPoint = new GameObject(ModuleName + "Module-->>Container");
+                    mountPoint.transform.SetParent(GameManager.Instance.InstanceObject.transform);
                 }
-                return moduleMountObject;
+                return mountPoint;
             }
         }
+        #endregion
+        public bool IsPause { get; protected set; }
         /// <summary>
         /// 模块的非完全限定名 
         /// </summary>
@@ -61,6 +65,7 @@ namespace Cosmos
             }
         }
 
+
         #endregion
 
         #region Methods
@@ -76,7 +81,7 @@ namespace Cosmos
         public virtual void OnTermination()
         {
             //TODO 生命周期销毁问题 ，module
-            moduleMountObject = null;
+            mountPoint = null;
             moduleName = null;
             moduleFullyQualifiedName = null;
         }
@@ -89,7 +94,6 @@ namespace Cosmos
         public virtual void OnPause() { IsPause = true; }
         public virtual void OnUnPause() { IsPause = false; }
         #endregion
-        public void DebugModule() { }
         #endregion
     }
 }

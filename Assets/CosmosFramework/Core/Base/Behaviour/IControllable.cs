@@ -6,7 +6,7 @@
     /// </summary>
     public interface IControllable
     {
-        bool IsPause { get; set; }
+        bool IsPause { get; }
         /// <summary>
         /// 暂停
         /// </summary>

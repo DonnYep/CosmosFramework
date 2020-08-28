@@ -28,7 +28,7 @@ namespace Cosmos
             }
             catch (Exception)
             {
-                throw new CFrameworkException("Overflow handler not exist !" + handler.ToString());
+                throw new ArgumentNullException("Overflow handler not exist !" + handler.ToString());
             }
         }
         const uint DEFAULT_CAPACITY = 255;

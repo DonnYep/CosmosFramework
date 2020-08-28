@@ -18,6 +18,8 @@ using Cosmos.Network;
 using Cosmos.Entity;
 using Cosmos.Hotfix;
 using System.Reflection;
+using System;
+
 namespace Cosmos
 {
     /// <summary>
@@ -25,11 +27,17 @@ namespace Cosmos
     /// 管理器对象都会通过这个对象的实例来调用，避免复杂化
     /// 可以理解为是一个Facade
     /// </summary>
-    internal sealed partial class GameManager : Singleton<GameManager>
+    internal sealed partial class GameManager : Singleton<GameManager>,IControllable,IRefreshable
     {
+        #region Properties
         // 模块表
         static Dictionary<ModuleEnum, IModule> moduleDict;
         internal static Dictionary<ModuleEnum, IModule> ModuleDict { get { return moduleDict; } }
+        /// <summary>
+        /// 轮询更新委托
+        /// </summary>
+        Action refreshHandler;
+        public bool IsPause { get; private set; }
         //当前注册的模块总数
         int moduleCount = 0;
         internal int ModuleCount { get { return moduleCount; } }
@@ -43,109 +51,6 @@ namespace Cosmos
             }
         }
         GameObject instanceObject;
-        /// <summary>
-        /// 注册模块
-        /// </summary>
-        internal void RegisterModule(ModuleEnum moduleEnum, IModule module)
-        {
-            if (!HasModule(moduleEnum))
-            {
-                moduleDict.Add(moduleEnum, module);
-                moduleCount++;
-                Utility.DebugLog("Module:\"" + moduleEnum.ToString() + "\" " + "  is OnInitialization" + "\n based on GameManager");
-            }
-            else
-                throw new CFrameworkException("Module:\"" + moduleEnum.ToString() + "\" " + " is already exist!");
-        }
-        /// <summary>
-        /// 注销模块
-        /// </summary>
-        internal void DeregisterModule(ModuleEnum module)
-        {
-            if (HasModule(module))
-            {
-                moduleDict.Remove(module);
-                moduleCount--;
-                Utility.DebugLog("Module:\"" + module.ToString() + "\" " + "  is OnTermination" + "\n based on GameManager", MessageColor.DARKBLUE);
-            }
-            else
-                throw new CFrameworkException("Module:\"" + module.ToString()+ "\" " + " is  not exist!");
-        }
-        internal bool HasModule(ModuleEnum module)
-        {
-            return moduleDict.ContainsKey(module);
-        }
-        internal IModule GetModule(ModuleEnum module)
-        {
-            if (HasModule(module))
-                return moduleDict[module];
-            else
-            {
-                return null;
-            }
-        }
-        /// <summary>
-        /// 构造函数，只有使用到时候才产生
-        /// </summary>
-        public GameManager()
-        {
-            if (moduleDict == null)
-            {
-                moduleDict = new Dictionary<ModuleEnum, IModule>();
-                InstanceObject.gameObject.AddComponent<GameManagerAgent>();
-            }
-        }
-        #region Methods
-        /// <summary>
-        /// 清理静态成员的对象，内存未释放完全
-        /// </summary>
-        internal static void ClearGameManager()
-        {
-            Instance.Dispose();
-        }
-        /// <summary>
-        /// 清除单个实例，有一个默认参数。
-        /// 默认延迟为0，表示立刻删除、
-        /// 仅在场景中删除对应对象
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="t">默认参数，表示延迟</param>
-        internal static void KillObject(Object obj, float delay = 0)
-        {
-            GameObject.Destroy(obj, delay);
-        }
-        /// <summary>
-        /// 立刻清理实例对象
-        /// 会在内存中清理实例
-        /// </summary>
-        /// <param name="obj"></param>
-        internal static void KillObjectImmediate(Object obj)
-        {
-            GameObject.DestroyImmediate(obj);
-        }
-        /// <summary>
-        /// 清除一组实例
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="objs"></param>
-        internal static void KillObjects<T>(List<T> objs) where T : Object
-        {
-            for (int i = 0; i < objs.Count; i++)
-            {
-                GameObject.Destroy(objs[i]);
-            }
-            objs.Clear();
-        }
-        internal static void KillObjects<T>(HashSet<T> objs) where T : Object
-        {
-            foreach (var obj in objs)
-            {
-                GameObject.Destroy(obj);
-            }
-            objs.Clear();
-        }
-        #endregion
-        #region Module
         static AudioManager audioManager;
         internal static AudioManager AudioManager
         {
@@ -354,6 +259,24 @@ namespace Cosmos
                 return hotfixManager;
             }
         }
+        #endregion
+
+
+        #region Methods
+        public void OnPause()
+        {
+            IsPause = true;
+        }
+        public void OnUnPause()
+        {
+            IsPause = false;
+        }
+        public void OnRefresh()
+        {
+            if (IsPause)
+                return;
+            refreshHandler?.Invoke();
+        }
         internal void ModuleInitialization(IModule module)
         {
             module.OnInitialization();
@@ -363,6 +286,110 @@ namespace Cosmos
         {
             module.OnTermination();
             Instance.DeregisterModule(module.ModuleEnum);
+        }
+        /// <summary>
+        /// 注册模块
+        /// </summary>
+        internal void RegisterModule(ModuleEnum moduleEnum, IModule module)
+        {
+            if (!HasModule(moduleEnum))
+            {
+                moduleDict.Add(moduleEnum, module);
+                moduleCount++;
+                refreshHandler += module.OnRefresh;
+                Utility.Debug.LogInfo("Module:\"" + moduleEnum.ToString() + "\" " + "  is OnInitialization" + "\n based on GameManager");
+            }
+            else
+                throw new ArgumentException("Module:\"" + moduleEnum.ToString() + "\" " + " is already exist!");
+        }
+        /// <summary>
+        /// 注销模块
+        /// </summary>
+        internal void DeregisterModule(ModuleEnum module)
+        {
+            if (HasModule(module))
+            {
+                var m = moduleDict[module];
+                refreshHandler -= m.OnRefresh;
+                moduleDict.Remove(module);
+                moduleCount--;
+                Utility.Debug.LogInfo("Module:\"" + module.ToString() + "\" " + "  is OnTermination" + " based on GameManager", MessageColor.DARKBLUE);
+            }
+            else
+                throw new ArgumentNullException("Module:\"" + module.ToString()+ "\" " + " is  not exist!");
+        }
+        internal bool HasModule(ModuleEnum module)
+        {
+            return moduleDict.ContainsKey(module);
+        }
+        internal IModule GetModule(ModuleEnum module)
+        {
+            if (HasModule(module))
+                return moduleDict[module];
+            else
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// 构造函数，只有使用到时候才产生
+        /// </summary>
+        public GameManager()
+        {
+            if (moduleDict == null)
+            {
+                moduleDict = new Dictionary<ModuleEnum, IModule>();
+                InstanceObject.gameObject.AddComponent<GameManagerAgent>();
+            }
+        }
+  
+        /// <summary>
+        /// 清理静态成员的对象，内存未释放完全
+        /// </summary>
+        internal static void ClearGameManager()
+        {
+            Instance.Dispose();
+        }
+        /// <summary>
+        /// 清除单个实例，有一个默认参数。
+        /// 默认延迟为0，表示立刻删除、
+        /// 仅在场景中删除对应对象
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="t">默认参数，表示延迟</param>
+        internal static void KillObject(Object obj, float delay = 0)
+        {
+            GameObject.Destroy(obj, delay);
+        }
+        /// <summary>
+        /// 立刻清理实例对象
+        /// 会在内存中清理实例
+        /// </summary>
+        /// <param name="obj"></param>
+        internal static void KillObjectImmediate(Object obj)
+        {
+            GameObject.DestroyImmediate(obj);
+        }
+        /// <summary>
+        /// 清除一组实例
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="objs"></param>
+        internal static void KillObjects<T>(List<T> objs) where T : Object
+        {
+            for (int i = 0; i < objs.Count; i++)
+            {
+                GameObject.Destroy(objs[i]);
+            }
+            objs.Clear();
+        }
+        internal static void KillObjects<T>(HashSet<T> objs) where T : Object
+        {
+            foreach (var obj in objs)
+            {
+                GameObject.Destroy(obj);
+            }
+            objs.Clear();
         }
         #endregion
     }

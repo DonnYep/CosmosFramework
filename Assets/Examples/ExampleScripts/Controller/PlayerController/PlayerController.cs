@@ -73,7 +73,7 @@ namespace Cosmos
             var cameraController = Facade.GetController<CameraController>(c=>c.ControllerName==cameraControllerName);
             if (cameraController == null)
             {
-                Utility.DebugLog("cameraController empty", MessageColor.RED);
+                Utility.Debug.LogInfo("cameraController empty", MessageColor.RED);
                 return;
             }
             Vector3 cameraForward= cameraController.transform.forward;

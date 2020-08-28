@@ -11,6 +11,6 @@ public class ResourceMonoUnitTester : MonoBehaviour
 {
     private void Start()
     {
-        Utility.DebugLog("ResourceMonoUnitTester Start!");
+        Utility.Debug.LogInfo("ResourceMonoUnitTester Start!");
     }
 }

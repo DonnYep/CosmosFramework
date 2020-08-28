@@ -14,7 +14,7 @@ namespace Cosmos
             {
                 if (value == null)
                 {
-                    throw new CFrameworkException("Value is invalid");
+                    throw new ArgumentNullException("Value is invalid");
                 }
                 return Encoding.UTF8.GetString(value);
             }
@@ -30,11 +30,11 @@ namespace Cosmos
             {
                 if (buffer == null)
                 {
-                    throw new CFrameworkException("Buffer is invalid.");
+                    throw new ArgumentNullException("Buffer is invalid.");
                 }
                 if(startIndex < 0 || startIndex + 1 > buffer.Length)
                 {
-                    throw new CFrameworkException("Start index is invalid.");
+                    throw new ArgumentNullException("Start index is invalid.");
                 }
                 buffer[startIndex] = value ? (byte)1 : (byte)0;
             }
@@ -42,7 +42,7 @@ namespace Cosmos
             {
                 if (value == null)
                 {
-                    throw new CFrameworkException("Value is invalid.");
+                    throw new ArgumentNullException("Value is invalid.");
                 }
                 return Encoding.UTF8.GetString(value, startIndex, length);
             }

@@ -31,15 +31,15 @@ public class ResourceUnitCube : IBehaviour, IReference
 
     public void Clear()
     {
-        Utility.DebugLog("ResoureceUnitCube IReference Clear ! ", MessageColor.INDIGO);
+        Utility.Debug.LogInfo("ResoureceUnitCube IReference Clear ! ", MessageColor.INDIGO);
     }
     public void OnInitialization()
     {
-        Utility.DebugLog("ResoureceUnitCube OnInitialization! ", MessageColor.INDIGO);
+        Utility.Debug.LogInfo("ResoureceUnitCube OnInitialization! ", MessageColor.INDIGO);
     }
     public void OnTermination()
     {
-        Utility.DebugLog("ResoureceUnitCube OnTermination! ", MessageColor.INDIGO);
+        Utility.Debug.LogInfo("ResoureceUnitCube OnTermination! ", MessageColor.INDIGO);
     }
 }
 [PrefabUnit("ResPrefab/ResPrefab_Sphere")]
@@ -49,14 +49,14 @@ public class ResourceUnitSphere : IBehaviour, IReference
 
     public void Clear()
     {
-        Utility.DebugLog(" ResoureceUnitSphere IReference Clear ! ", MessageColor.INDIGO);
+        Utility.Debug.LogInfo(" ResoureceUnitSphere IReference Clear ! ", MessageColor.INDIGO);
     }
     public void OnInitialization()
     {
-        Utility.DebugLog("ResoureceUnitSphere OnInitialization! ", MessageColor.INDIGO);
+        Utility.Debug.LogInfo("ResoureceUnitSphere OnInitialization! ", MessageColor.INDIGO);
     }
     public void OnTermination()
     {
-        Utility.DebugLog("ResoureceUnitSphere OnTermination! ", MessageColor.INDIGO);
+        Utility.Debug.LogInfo("ResoureceUnitSphere OnTermination! ", MessageColor.INDIGO);
     }
 }

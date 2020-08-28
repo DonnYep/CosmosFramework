@@ -24,14 +24,14 @@ public class LoadPanel : UILogicResident
     }
     void LoadClick()
     {
-       Utility.Globle.TargetLevel = inputTargetLevel.text;
+       Utility.Global.TargetLevel = inputTargetLevel.text;
         string loadingLevel = inputLoadLevel.text;
         if (Utility.Text.IsNumeric(loadingLevel))
         {
             int index = int.Parse(loadingLevel);
-            Facade.LoadSceneAsync(index,()=>Utility.DebugLog("Scene load Done"));
+            Facade.LoadSceneAsync(index,()=>Utility.Debug.LogInfo("Scene load Done"));
         }
         else
-            Facade.LoadSceneAsync(loadingLevel, () => Utility.DebugLog("Scene load Done"));
+            Facade.LoadSceneAsync(loadingLevel, () => Utility.Debug.LogInfo("Scene load Done"));
     }
 }

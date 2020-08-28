@@ -20,6 +20,7 @@ namespace Cosmos.FSM
         /// </summary>
         int FSMStateCount { get; }
         bool IsRunning { get; }
+        bool IsDestoryed { get; }
         void ChangeState<TState>()where TState :FSMState<T>;
         void ChangeState(Type stateType);
     }

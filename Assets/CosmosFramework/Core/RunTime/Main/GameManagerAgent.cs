@@ -9,18 +9,18 @@ namespace Cosmos {
     /// </summary>
     [DisallowMultipleComponent]
     [DefaultExecutionOrder(-1000)]
-    public sealed class GameManagerAgent :MonoSingleton<GameManagerAgent>
+    public sealed class GameManagerAgent :MonoSingleton<GameManagerAgent>,IControllable
     {
-        bool isPause = false;
+        public bool IsPause { get; private set; }
         public bool Pause
         {
-            get { return isPause; }
+            get { return IsPause; }
             set
             {
-                if (isPause == value)
+                if (IsPause == value)
                     return;
-                isPause = value;
-                if (isPause)
+                IsPause = value;
+                if (IsPause)
                 {
                     OnPause();
                 }
@@ -30,66 +30,27 @@ namespace Cosmos {
                 }
             }
         }
-        Dictionary<ModuleEnum, IModule> moduleDict;
-        event Action CFrameworkUpdateHandler;
-        event Action CFrameworkFixedUpdateHandler;
-        event Action CFrameworkLateUpdateHandler;
-        event Action CFrameworkApplicationQuitHandler;
+        event Action UpdateHandler;
+        event Action FixedUpdateHandler;
+        event Action LateUpdateHandler;
+        event Action ApplicationQuitHandler;
+        public void OnPause()
+        {
+            GameManager.Instance.OnPause();
+        }
+        public void OnUnPause()
+        {
+            GameManager.Instance.OnUnPause();
+        }
         protected override void Awake()
         {
             base.Awake();
             DontDestroyOnLoad(this.gameObject);
-            moduleDict = GameManager.ModuleDict;
         }
         public void AddFixedUpdateListener(Action handler)
         {
-            CFrameworkFixedUpdateHandler += handler;
+            FixedUpdateHandler += handler;
         }
-        private void FixedUpdate()
-        {
-            CFrameworkFixedUpdateHandler?.Invoke();
-        }
-        private void Update()
-        {
-            CFrameworkUpdateHandler?.Invoke();
-            if (isPause)
-                return;
-            foreach ( KeyValuePair<ModuleEnum,IModule> module in moduleDict)
-            {
-                module.Value?.OnRefresh();
-            }
-        }
-        private void LateUpdate()
-        {
-            CFrameworkLateUpdateHandler?.Invoke();
-        }
-        protected override void OnDestroy()
-        {
-            foreach (KeyValuePair<ModuleEnum, IModule> module in moduleDict)
-            {
-                module.Value?.OnTermination();
-            }
-        }
-        void OnPause()
-        {
-            foreach (KeyValuePair<ModuleEnum, IModule> module in moduleDict)
-            {
-                module.Value.OnPause();
-            }
-        }
-        void OnUnPause()
-        {
-            foreach (KeyValuePair<ModuleEnum, IModule> module in moduleDict)
-            {
-                module.Value.OnUnPause();
-            }
-        }
-        private void OnApplicationQuit()
-        {
-            CFrameworkApplicationQuitHandler?.Invoke();
-        }
-        #region GameManager
-
         public int ModuleCount { get { return GameManager.Instance.ModuleCount; } }
         /// <summary>
         /// 清除单个实例，有一个默认参数。
@@ -132,6 +93,32 @@ namespace Cosmos {
             }
             objs.Clear();
         }
-        #endregion
+        protected override void OnDestroy()
+        {
+            GameManager.Instance.Dispose();
+        }
+        private void FixedUpdate()
+        {
+            FixedUpdateHandler?.Invoke();
+        }
+        private void Update()
+        {
+            if (IsPause)
+                return;
+            UpdateHandler?.Invoke();
+            GameManager.Instance.OnRefresh();
+            //foreach ( KeyValuePair<ModuleEnum,IModule> module in moduleDict)
+            //{
+            //    module.Value?.OnRefresh();
+            //}
+        }
+        private void LateUpdate()
+        {
+            LateUpdateHandler?.Invoke();
+        }
+        private void OnApplicationQuit()
+        {
+            ApplicationQuitHandler?.Invoke();
+        }
     }
 }

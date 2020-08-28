@@ -235,7 +235,7 @@ namespace Cosmos
                     return true;
                 else
                 {
-                    DebugError("PlayerPrefs key " + key + "  not exist!");
+                    Debug.LogError("PlayerPrefs key " + key + "  not exist!");
                     return false;
                 }
             }
