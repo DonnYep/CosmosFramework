@@ -6,10 +6,14 @@ namespace Cosmos
     {
         public static class Json
         {
-            static IJsonWrapper jsonWarpper = null;
-            public static void SetJsonWarpper(IJsonWrapper warpper)
+            static IJsonHelper jsonHelper = null;
+            public static void SetHelper(IJsonHelper helper)
             {
-                jsonWarpper = warpper;
+                jsonHelper = helper;
+            }
+            public static void ClearHelper()
+            {
+                jsonHelper = null;
             }
             /// <summary>
             /// 将对象序列化为JSON字段
@@ -18,19 +22,17 @@ namespace Cosmos
             /// <returns>序列化后的JSON字符串</returns>xxxx
             public static string ToJson(object obj)
             {
-                if (jsonWarpper == null)
+                if (jsonHelper == null)
                 {
-                    throw new CFrameworkException("JSON  warpper is invalid");
+                    throw new ArgumentNullException("JSON  warpper is invalid");
                 }
                 try
                 {
-                    return jsonWarpper.ToJson(obj);
+                    return jsonHelper.ToJson(obj);
                 }
-                catch (System.Exception exception)
+                catch (Exception exception)
                 {
-                    if (exception is CFrameworkException)
-                        throw;
-                    throw new CFrameworkException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
+                    throw new ArgumentNullException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
                 }
             }
             /// <summary>
@@ -50,19 +52,15 @@ namespace Cosmos
             /// <returns>反序列化后的泛型对象</returns>
             public static T ToObject<T>(string json)
             {
-                if (jsonWarpper == null)
-                {
-                    throw new CFrameworkException("JSON warpper is invalid");
-                }
+                if (jsonHelper == null)
+                    throw new ArgumentNullException("JSON warpper is invalid");
                 try
                 {
-                    return jsonWarpper.ToObject<T>(json);
+                    return jsonHelper.ToObject<T>(json);
                 }
                 catch (System.Exception exception)
                 {
-                    if (exception is CFrameworkException)
-                        throw;
-                    throw new CFrameworkException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
+                    throw new ArgumentException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
                 }
             }
             /// <summary>
@@ -73,23 +71,17 @@ namespace Cosmos
             /// <returns>反序列化后的对象</returns>
             public static object ToObject( string json,Type objectType)
             {
-                if (jsonWarpper == null)
-                {
-                    throw new CFrameworkException("JSON warpper is invalid");
-                }
+                if (jsonHelper == null)
+                    throw new ArgumentNullException("JSON warpper is invalid");
                 if (objectType == null)
-                {
-                    throw new CFrameworkException("Object type is invalid");
-                }
+                    throw new ArgumentNullException("Object type is invalid");
                 try
                 {
-                    return jsonWarpper.ToObject(json, objectType);
+                    return jsonHelper.ToObject(json, objectType);
                 }
                 catch (Exception exception)
                 {
-                    if (exception is CFrameworkException)
-                        throw;
-                    throw new CFrameworkException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
+                    throw new ArgumentException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
                 }
             }
             /// <summary>

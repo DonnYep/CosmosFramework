@@ -52,8 +52,7 @@ namespace Cosmos.ObjectPool
             if (spawnPoolDict.ContainsKey(objKey))
                 spawnPoolDict[objKey].SetSpawnItem(spawnItem);
             else
-                //Utility.DebugError("ObjectPoolManager\n"+objKey.ToString() + "\n objKey not exist");
-            throw new CFrameworkException("ObjectPoolManager\n" + objKey.ToString() + "\n objKey not exist");
+            throw new ArgumentNullException("ObjectPoolManager\n" + objKey.ToString() + "\n objKey not exist");
         }
         /// <summary>
         /// 注销对象池
@@ -81,7 +80,7 @@ namespace Cosmos.ObjectPool
             }
             else
             {
-                Utility.DebugError("ObjectPoolManager-->>" + "Pool no register, null count", key as UnityEngine.Object);
+                Utility.Debug.LogError("ObjectPoolManager-->>" + "Pool no register, null count", key as UnityEngine.Object);
                 return -1;//未注册对象池则返回-1
             }
         }
@@ -98,7 +97,7 @@ namespace Cosmos.ObjectPool
             }
             else
             {
-                Utility.DebugError("ObjectPoolManager-->>" + "Pool not be registered", key as UnityEngine.Object);
+                Utility.Debug.LogError("ObjectPoolManager-->>" + "Pool not be registered", key as UnityEngine.Object);
                 return null;
             }
         }
@@ -116,7 +115,7 @@ namespace Cosmos.ObjectPool
             else
             {
                 //如果对象没有key，则直接销毁
-                Utility.DebugLog("ObjectPoolManager\n"+"Despawn fail ,pool not exist,Destroying it instead.!",MessageColor.PURPLE, key as UnityEngine.Object);
+                Utility.Debug.LogInfo("ObjectPoolManager\n"+"Despawn fail ,pool not exist,Destroying it instead.!",MessageColor.PURPLE, key as UnityEngine.Object);
                 GameManager.KillObject(go);
             }
         }
@@ -136,7 +135,7 @@ namespace Cosmos.ObjectPool
             }
             else
             {
-                Utility.DebugLog("ObjectPoolManager\n"+"Despawn fail ,pool not exist,Destroying it instead.!",MessageColor.PURPLE, key as UnityEngine.Object);
+                Utility.Debug.LogInfo("ObjectPoolManager\n"+"Despawn fail ,pool not exist,Destroying it instead.!",MessageColor.PURPLE, key as UnityEngine.Object);
                 for (int i = 0; i < gos.Length; i++)
                 {
                     GameManager.KillObject(gos[i]);
@@ -155,7 +154,7 @@ namespace Cosmos.ObjectPool
             }
             else
             {
-                Utility.DebugError("ObjectPoolManager-->>" + "clear fail , pool not exist!", key as UnityEngine.Object);
+                Utility.Debug.LogError("ObjectPoolManager-->>" + "clear fail , pool not exist!", key as UnityEngine.Object);
             }
         }
         /// <summary>

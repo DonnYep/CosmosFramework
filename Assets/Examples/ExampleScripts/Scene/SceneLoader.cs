@@ -19,21 +19,21 @@ public class SceneLoader : UILogicResident
     }
     void LoadClick()
     {
-        Utility.Globle.TargetLevel = inputTargetLevel.text;
+        Utility.Global.TargetLevel = inputTargetLevel.text;
         if (Utility.Text.IsNumeric(inputTargetLevel.text))
         {
             int index = int.Parse(inputTargetLevel.text);
-            Facade.LoadSceneAsync(index, () => Utility.DebugLog("Scene load Done"));
+            Facade.LoadSceneAsync(index, () => Utility.Debug.LogInfo("Scene load Done"));
         }
         else
             Facade.LoadSceneAsync(inputTargetLevel.text,()=>{
-                Utility.DebugLog("LoadDoneCallBack Done");
+                Utility.Debug.LogInfo ("LoadDoneCallBack Done");
                 GameObject go = new GameObject("Done Go");
             });
     }
     void LoadDoneCallBack(Scene scene,LoadSceneMode loadMode)
     {
-        Utility.DebugLog("LoadDoneCallBack Done");
+        Utility.Debug.LogInfo("LoadDoneCallBack Done");
         GameObject go = new GameObject("Done Go");
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 namespace Cosmos
 {
-    public  sealed partial class Utility
+    public sealed partial class Utility
     {
         public static class Assembly
         {
@@ -26,14 +27,13 @@ namespace Cosmos
             {
                 if (type == null)
                 {
-                    DebugError("Type is invalid.无效类");
-                    return null;
+                    throw new ArgumentNullException("Type is invalid");
                 }
                 string typeName = type.FullName;
                 return string.IsNullOrEmpty(name) ? typeName : Utility.Text.Format(typeName, name);
             }
             /// <summary>
-            ///   /// 反射工具，得到反射类的对象；
+            /// 反射工具，得到反射类的对象；
             /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
             /// 在IOS上受限，发布IOS需要谨慎
             /// </summary>
@@ -42,7 +42,7 @@ namespace Cosmos
             /// <param name="typeFullName">完全限定名</param>
             /// <returns>返回T类型的目标类型对象</returns>
             public static T GetTypeInstance<T>(System.Reflection.Assembly assembly, string typeFullName)
-     where T : class
+                where T : class
             {
                 Type type = assembly.GetType(typeFullName);
                 if (type != null)
@@ -52,11 +52,11 @@ namespace Cosmos
                 }
                 else
                 {
-                    throw new CFrameworkException("Type : Assembly" + type.AssemblyQualifiedName + "Not exist!");
+                    throw new ArgumentNullException("Type : Assembly" + type.AssemblyQualifiedName + "Not exist!");
                 }
             }
             /// <summary>
-            ///   /// 反射工具，得到反射类的对象；
+            /// 反射工具，得到反射类的对象；
             /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
             /// 在IOS上受限，发布IOS需要谨慎
             /// </summary>
@@ -65,7 +65,7 @@ namespace Cosmos
             /// <param name="typeFullName">完全限定名</param>
             /// <returns>返回T类型的目标类型对象</returns>
             public static T GetTypeInstance<T>(Type type, string typeFullName)
-                where T : class
+                where T : class, new()
             {
                 return GetTypeInstance<T>(type.Assembly, typeFullName);
             }
@@ -78,7 +78,7 @@ namespace Cosmos
             /// <param name="typeFullName">完全限定名</param>
             /// <returns>返回T类型的目标类型对象</returns>
             public static T GetTypeInstance<T>(T arg, string typeFullName)
-                where T : class
+                where T : class, new()
             {
                 return GetTypeInstance<T>(typeof(T).Assembly, typeFullName);
             }
@@ -95,6 +95,18 @@ namespace Cosmos
             }
             /// <summary>
             /// 反射工具，得到反射类的对象；
+            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
+            /// 在IOS上受限，发布IOS需要谨慎
+            /// </summary>
+            /// <param name="type">类型</param>
+            /// <returns>装箱后的对象</returns>
+            public static T GetTypeInstance<T>(Type type)
+                where T : class, new()
+            {
+                return type.Assembly.CreateInstance(type.FullName) as T;
+            }
+            /// <summary>
+            /// 反射工具，得到反射类的对象；
             /// T传入一个对象，获取这个对象的程序集，再由完全限定名获取具体对象
             /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
             /// </summary>
@@ -102,8 +114,24 @@ namespace Cosmos
             /// <param name="fullName">完全限定名</param>
             /// <returns>装箱后的对象</returns>
             public static object GetTypeInstance<T>(string fullName)
+                where T : class, new()
             {
                 return typeof(T).Assembly.CreateInstance(fullName);
+            }
+            /// <summary>
+            /// 获取变量的名称；
+            /// 参考：
+            /// object dotNet=new object();
+            /// Utility.Assembly.GetValueTypeName(() =>dotNet);
+            /// 输出得 dotNet
+            /// </summary>
+            /// <typeparam name="T">任意类型的变量</typeparam>
+            /// <param name="memberExperssion">变量的表达式</param>
+            /// <returns>传入变量的名称</returns>
+            public static string GetGetPropertyNameName<T>(Expression<Func<T>> memberExperssion)
+            {
+                MemberExpression me = (MemberExpression)memberExperssion.Body;
+                return me.Member.Name;
             }
         }
     }

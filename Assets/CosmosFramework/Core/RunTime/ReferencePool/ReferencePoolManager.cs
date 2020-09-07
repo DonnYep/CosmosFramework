@@ -23,7 +23,7 @@ namespace Cosmos.Reference
             }
             catch (Exception)
             {
-                throw new CFrameworkException("Type :" + typeof(T).FullName + " not register in reference pool");
+                throw new ArgumentNullException("Type :" + typeof(T).FullName + " not register in reference pool");
             }
         }
         internal T Spawn<T>() 

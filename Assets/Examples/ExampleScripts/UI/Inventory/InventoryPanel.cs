@@ -52,13 +52,13 @@ namespace Cosmos
 
             string json = Facade.LoadJsonDataFromLocal("Inventory", "InventoryCache.json");
             JsonUtility.FromJsonOverwrite(json, inventoryDataSet);
-            Utility.DebugLog("LoadJsonDataFromLocal");
+            Utility.Debug.LogInfo("LoadJsonDataFromLocal");
             UpdateClick();
         }
         void SaveClick()
         {
             Facade.SaveJsonDataToLocal("Inventory", "InventoryCache.json", inventoryDataSet);
-            Utility.DebugLog("SaveJsonDataToLocal");
+            Utility.Debug.LogInfo("SaveJsonDataToLocal");
         }
         void QuitClick()
         {

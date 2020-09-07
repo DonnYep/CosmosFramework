@@ -14,7 +14,7 @@ namespace Cosmos.FSM
         #region Properties
         List<FSMBase> fsmSet = new List<FSMBase>();
         public List<FSMBase> FSMSet { get { return fsmSet; } }
-        public bool IsPause { get; set; }
+        public bool IsPause { get;private set; }
         public float RefreshInterval { get; private set; }
         float coolTime = 0;
         #endregion
@@ -46,7 +46,7 @@ namespace Cosmos.FSM
         {
             if (interval <= 0)
             {
-                Utility.DebugError("FSM Refresh interval less than Zero, use Zero instead");
+                Utility.Debug.LogError("FSM Refresh interval less than Zero, use Zero instead");
                 this.RefreshInterval = 0;
                 return;
             }

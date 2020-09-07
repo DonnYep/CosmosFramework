@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-namespace Cosmos
+﻿namespace Cosmos
 {
     /// <summary>
     /// 此接口为对象提供了开启与关闭的功能

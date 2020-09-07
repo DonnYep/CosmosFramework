@@ -12,7 +12,6 @@ namespace Cosmos
         [Obsolete("Assert断言仅用于测试环境调试，请勿在生产环境使用")]
         public static class Assert
         {
-//#if UNITY_EDITOR||COSMOS_FRAMEWORK_UNIT_TEST
             /// <summary>
             /// Assert断言仅用于测试环境调试
             /// 判断不为空
@@ -21,8 +20,10 @@ namespace Cosmos
             /// <param name="arg">泛型对象</param>
             public static void NotNull(object obj)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
                 if (obj == null)
                     throw new ArgumentNullException("object" + obj.ToString() + "isEmpty !");
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -33,8 +34,10 @@ namespace Cosmos
             /// <param name="message">自定义需要打印的信息</param>
             public static void NotNull(object obj, object message)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
                 if (obj == null)
                     throw new ArgumentNullException(message.ToString());
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -46,10 +49,13 @@ namespace Cosmos
             /// <param name="callBack">若不为空，则执行回调</param>
             public static void NotNull(object obj, Action notNullCallBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 if (obj == null)
                     throw new ArgumentNullException("object" + obj.ToString() + "is null !");
                 else
                     notNullCallBack?.Invoke();
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -60,10 +66,13 @@ namespace Cosmos
             /// <param name="nullCallBack">为空时候的回调</param>
             public static void NotNull(object obj, Action notNullCallBack, Action nullCallBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 if (obj == null)
                     nullCallBack?.Invoke();
                 else
                     notNullCallBack?.Invoke();
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -72,13 +81,18 @@ namespace Cosmos
             /// <param name="obj">判断是否为空的对象</param>
             public static void IsNull(object obj)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
                 if (obj != null)
                     throw new ArgumentException("Object" + obj.ToString() + "must be null !");
+#endif
             }
             public static void IsNull(object obj, Action nullCallBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 if (obj == null)
                     nullCallBack?.Invoke();
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -89,10 +103,13 @@ namespace Cosmos
             /// <param name="notNullCallBack">不为空的回调</param>
             public static void IsNull(object obj, Action nullCallBack, Action notNullCallBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 if (obj == null)
                     nullCallBack?.Invoke();
                 else
                     notNullCallBack?.Invoke();
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -103,12 +120,15 @@ namespace Cosmos
             /// <param name="callBack">符合继承时候的回调</param>
             public static void IsAssignable<T1, T2>(T1 super, T2 sub, Action<T1, T2> callBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 Type superType = typeof(T1);
                 Type subType = typeof(T2);
                 if (superType.IsAssignableFrom(superType))
                     callBack?.Invoke(super, sub);
                 else
                     throw new InvalidCastException("SuperType : " + subType.FullName + "unssignable from subType : " + subType.FullName);
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -119,8 +139,11 @@ namespace Cosmos
             /// <param name="callBack">若不为继承，则启用回调</param>
             public static void IsAssignable<T1, T2>(Action callBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 if (!typeof(T1).IsAssignableFrom(typeof(T2)))
                     callBack?.Invoke();
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -132,12 +155,15 @@ namespace Cosmos
             /// <param name="callBack">若可执行，则回调，传入参数为sub对象</param>
             public static void IsAssignable<T1, T2>(T2 sub, Action<T2> callBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 Type superType = typeof(T1);
                 Type subType = typeof(T2);
                 if (superType.IsAssignableFrom(superType))
                     callBack?.Invoke(sub);
                 else
                     throw new InvalidCastException("SuperType : " + subType.FullName + "unssignable from subType : " + subType.FullName);
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -146,7 +172,9 @@ namespace Cosmos
             /// <param name="expression">表达式</param>
             public static void State(bool expression)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
                 State(expression, "this state must be true");
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -154,20 +182,25 @@ namespace Cosmos
             /// </summary>
             /// <param name="expression">表达式</param>
             /// <param name="message">当表达式为false时，需要输出的信息</param>
-            public static void State(bool expression,string message)
+            public static void State(bool expression, string message)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
                 if (!expression)
                     throw new Exception(message);
+#endif
             }
             /// <summary>
             /// 状态检测
             /// </summary>
             /// <param name="expression">表达式</param>
             /// <param name="callBack">当表达式为true时，调用回调</param>
-            public static void State(bool expression,Action callBack)
+            public static void State(bool expression, Action callBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 if (expression)
                     callBack?.Invoke();
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -176,12 +209,15 @@ namespace Cosmos
             /// <param name="expression">表达式</param>
             /// <param name="message">当表达式为false时，需要输出的信息</param>
             /// <param name="callBack">当表达式为true时，调用回调</param>
-            public static void State(bool expression, string message,Action callBack)
+            public static void State(bool expression, string message, Action callBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 if (!expression)
                     throw new Exception(message);
                 else
                     callBack?.Invoke();
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -194,10 +230,13 @@ namespace Cosmos
             /// <param name="callBack">回调</param>
             public static void Predicate<T>(T arg, Predicate<T> handler, Action<T> callBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 if (handler == null)
                     return;
                 if (handler.Invoke(arg))
                     callBack?.Invoke(arg);
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -205,10 +244,13 @@ namespace Cosmos
             /// </summary>
             /// <param name="handler">条件委托</param>
             /// <param name="trueCallBack">true时候的回调</param>
-            public static void Predicate(CFPredicateAction handler, Action trueCallBack)
+            public static void Predicate(Func<bool> handler, Action trueCallBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 if (handler.Invoke())
                     trueCallBack?.Invoke();
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -217,12 +259,15 @@ namespace Cosmos
             /// <param name="handler">条件委托</param>
             /// <param name="trueCallBack">true时候的回调</param>
             /// <param name="falseCallBack">false时候的回调</param>
-            public static void Predicate(CFPredicateAction handler, Action trueCallBack, Action falseCallBack)
+            public static void Predicate(Func<bool> handler, Action trueCallBack, Action falseCallBack)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
+
                 if (handler.Invoke())
                     trueCallBack?.Invoke();
                 else
                     falseCallBack?.Invoke();
+#endif
             }
             /// <summary>
             /// Assert断言仅用于测试环境调试
@@ -232,6 +277,7 @@ namespace Cosmos
             /// <param name="exceptionHandler">异常处理函数</param>
             public static void ExceptionCatcher(Action handler, Action exceptionHandler)
             {
+#if UNITY_EDITOR || CF_UNIT_TEST
                 try
                 {
                     handler?.Invoke();
@@ -240,8 +286,8 @@ namespace Cosmos
                 {
                     exceptionHandler?.Invoke();
                 }
+#endif
             }
-//#endif
         }
     }
 }

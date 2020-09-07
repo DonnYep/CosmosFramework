@@ -12,11 +12,11 @@ namespace Cosmos.Entity
     /// </summary>
     public interface IEntityObject: IReference, IRefreshable, IOperable,IControllable
     {
-        void SetEntity(GameObject entity);
-        GameObject GetEntity();
-        void OnAttach(Transform parent);
-        void OnAttachChild(Transform child);
+        void SetEntity(object entity);
+       object GetEntity();
+        void OnAttach(object parent);
+        void OnAttachChild(object child);
         void OnDetach();
-        void OnDetachChild(Transform child);
+        void OnDetachChild(object child);
     }
 }

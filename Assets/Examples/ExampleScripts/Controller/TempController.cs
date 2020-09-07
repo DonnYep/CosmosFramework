@@ -6,7 +6,7 @@ public class TempController : ControllerBase
 {
     public override void OnRefresh()
     {
-        Utility.DebugLog("IController OnRefresh",MessageColor.INDIGO);
+        Utility.Debug.LogInfo("IController OnRefresh",MessageColor.INDIGO);
     }
 
 }

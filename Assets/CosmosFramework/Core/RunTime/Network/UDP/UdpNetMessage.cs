@@ -1,0 +1,261 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+namespace Cosmos
+{
+    public class UdpNetMessage : INetworkMessage, IReference
+    {
+        /// <summary>
+        /// 消息包体大小；
+        /// 取值范围0~65535；
+        /// 约64K一个包
+        /// </summary>
+        public ushort Length { get; private set; }
+        /// <summary>
+        /// 会话ID;
+        /// 为一个表示会话编号的整数，
+        /// 和TCP的 conv一样，通信双方需保证 conv相同，
+        /// 相互的数据包才能够被接受。conv唯一标识一个会话，但通信双方可以同时存在多个会话。
+        /// </summary>
+        public uint Conv { get; set; }
+        /// <summary>
+        /// Kcp协议类型:
+        /// 用来区分分片的作用。
+        /// IKCP_CMD_PUSH：数据分片；
+        /// IKCP_CMD_ACK：ack分片； 
+        /// IKCP_CMD_WASK：请求告知窗口大小；
+        /// IKCP_CMD_WINS：告知窗口大小。
+        /// </summary>
+        public ushort Cmd { get; set; }
+        /// <summary>
+        /// 时间戳TimeStamp
+        /// </summary>
+        public long TS { get; set; }
+        /// <summary>
+        /// serial number
+        ///当前 message序号，按1累次递增。
+        /// </summary>
+        public uint SN { get; set; }
+        /// <summary>
+        /// 第一个未确认的包
+        /// </summary>
+        public uint Snd_una { get; set; }
+        /// <summary>
+        ///下一个需要发送的msg序号
+        /// </summary>
+        public uint Snd_nxt { get; set; }
+        /// <summary>
+        /// 待接收消息序号；
+        /// </summary>
+        public uint Rcv_nxt { get; set; }
+        /// <summary>
+        /// 前后端通讯的操作码；
+        /// </summary>
+        public ushort OperationCode { get; set; }
+        /// <summary>
+        /// 业务报文
+        /// </summary>
+        public byte[] ServiceMsg { get; set; }
+        /// <summary>
+        /// 消息重传次数；
+        /// 标准KCP库中（C版）重传上线是20；
+        /// </summary>
+        public ushort RecurCount { get; set; }
+        /// <summary>
+        /// 是否是完整报文
+        /// </summary>
+        public bool IsFull { get; private set; }
+        /// <summary>
+        /// 存储消息字节流的内存
+        /// </summary>
+        byte[] Buffer { get; set; }
+        /// <summary>
+        /// 默认构造
+        /// </summary>
+        public UdpNetMessage() { }
+        /// <summary>
+        /// 用于验证的消息构造
+        /// </summary>
+        /// <param name="conv">会话ID</param>
+        /// <param name="cmd">协议ID</param>
+        public UdpNetMessage(uint conv, byte cmd)
+        {
+            Length = 0;
+            Conv = conv;
+            Cmd = cmd;
+        }
+        /// <summary>
+        /// MSG报文构造
+        /// </summary>
+        /// <param name="conv">会话ID</param>
+        /// <param name="sn">msg序号</param>
+        /// <param name="cmd">协议ID</param>
+        /// <param name="opCode">操作码</param>
+        /// <param name="message">消息内容</param>
+        public UdpNetMessage(uint conv, uint sn, byte cmd, ushort opCode, byte[] message)
+        {
+            if (message == null)
+                Length = 0;
+            else
+                Length = (ushort)message.Length;
+            Conv = conv;
+            SN = sn;
+            Cmd = cmd;
+            ServiceMsg = message;
+            Rcv_nxt = sn;
+            Snd_nxt = SN + 1;
+            OperationCode = opCode;
+        }
+        /// <summary>
+        /// ACK报文构造
+        /// </summary>
+        /// <param name="conv">会话ID</param>
+        /// <param name="snd_una">未确认的报文</param>
+        /// <param name="sn">msgID</param>
+        /// <param name="cmd">协议</param>
+        /// <param name="opCode">前后端消息ID</param>
+        public UdpNetMessage(uint conv, uint snd_una, uint sn, ushort cmd, ushort opCode)
+        {
+            Conv = conv;
+            Snd_una = snd_una;
+            SN = sn;
+            Rcv_nxt = SN;
+            Snd_nxt = SN + 1;
+            Cmd = cmd;
+            OperationCode = opCode;
+        }
+        public UdpNetMessage(byte[] buffer)
+        {
+            Buffer = buffer;
+            DecodeMessage(Buffer);
+        }
+        public void CacheDecodeBuffer(byte[] buffer)
+        {
+            Buffer = buffer;
+            DecodeMessage(Buffer);
+        }
+        /// <summary>
+        /// 解析UDP数据报文
+        /// </summary>
+        /// <param name="buffer"></param>
+        public void DecodeMessage(byte[] buffer)
+        {
+            if (buffer == null)
+            {
+                IsFull = false;
+                return;
+            }
+            if (buffer.Length >= 2)
+            {
+                Length = BitConverter.ToUInt16(buffer, 0);
+                if (buffer.Length == Length + 34)
+                {
+                    IsFull = true;
+                }
+            }
+            else
+            {
+                IsFull = false;
+                return;
+            }
+            Conv = BitConverter.ToUInt32(buffer, 2);
+            Cmd = BitConverter.ToUInt16(buffer, 6);
+            TS = BitConverter.ToInt64(buffer, 8);
+            SN = BitConverter.ToUInt32(buffer, 16);
+            Snd_una = BitConverter.ToUInt32(buffer, 20);
+            Snd_nxt = BitConverter.ToUInt32(buffer, 24);
+            Rcv_nxt = BitConverter.ToUInt32(buffer, 28);
+            OperationCode = BitConverter.ToUInt16(buffer, 32);
+            if (Cmd == KcpProtocol.MSG)
+            {
+                ServiceMsg = new byte[Length];
+                Array.Copy(buffer, 34, ServiceMsg, 0, Length);
+                Utility.Debug.LogInfo($" Conv : {Conv} ,Msg : {Utility.Converter.GetString(ServiceMsg)}");
+            }
+        }
+        /// <summary>
+        /// 编码UDP报文消息
+        /// </summary>
+        /// <returns>编码后的消息字节流</returns>
+        public byte[] EncodeMessage()
+        {
+            if (Cmd == KcpProtocol.ACK)
+                Length = 0;
+            byte[] data = new byte[34 + Length];
+            byte[] len = BitConverter.GetBytes(Length);
+            byte[] conv = BitConverter.GetBytes(Conv);
+            byte[] cmd = BitConverter.GetBytes(Cmd);
+            byte[] ts = BitConverter.GetBytes(TS);
+            byte[] sn = BitConverter.GetBytes(SN);
+            byte[] snd_una = BitConverter.GetBytes(Snd_una);
+            byte[] snd_nxt = BitConverter.GetBytes(Snd_nxt);
+            byte[] rcv_nxt = BitConverter.GetBytes(Rcv_nxt);
+            byte[] opCode = BitConverter.GetBytes(OperationCode);
+            Array.Copy(len, 0, data, 0, 2);
+            Array.Copy(conv, 0, data, 2, 4);
+            Array.Copy(cmd, 0, data, 6, 2);
+            Array.Copy(ts, 0, data, 10, 8);
+            Array.Copy(sn, 0, data, 16, 4);
+            Array.Copy(snd_una, 0, data, 20, 4);
+            Array.Copy(snd_nxt, 0, data, 24, 4);
+            Array.Copy(rcv_nxt, 0, data, 28, 4);
+            Array.Copy(opCode, 0, data, 32, 2);
+            //如果不是ACK报文，则追加数据
+            if (Cmd == KcpProtocol.MSG)
+                if (ServiceMsg != null)//空包保护
+                    Array.Copy(ServiceMsg, 0, data, 34, ServiceMsg.Length);
+            Buffer = data;
+            return data;
+        }
+        public byte[] GetBuffer()
+        {
+            return EncodeMessage();
+        }
+        public void Clear()
+        {
+            Length = 0;
+            Conv = 0;
+            Snd_una = 0;
+            Rcv_nxt = 0;
+            SN = 0;
+            TS = 0;
+            Cmd = KcpProtocol.NIL;
+            OperationCode = 0;
+            ServiceMsg = null;
+            IsFull = false;
+        }
+        public override string ToString()
+        {
+            string str = $"Length:{Length} ; Conv:{Conv} ;Cmd:{Cmd};TS :{TS } ;  SN:{SN} ; Snd_una:{Snd_una} ; Rcv_nxt:{Rcv_nxt} ; OperationCode : {OperationCode} ; RecurCount:{RecurCount} ";
+            return str;
+        }
+        public static UdpNetMessage ConvertToACK(UdpNetMessage srcMsg)
+        {
+            UdpNetMessage ack = GameManager.ReferencePoolManager.Spawn<UdpNetMessage>();
+            ack.Conv = srcMsg.Conv;
+            ack.Snd_una = srcMsg.Snd_una;
+            ack.SN = srcMsg.SN;
+            ack.Cmd = KcpProtocol.ACK;
+            ack.OperationCode = srcMsg.OperationCode;
+            ack.EncodeMessage();
+            return ack;
+        }
+        /// <summary>
+        /// 生成心跳数据
+        /// </summary>
+        /// <param name="conv">会话ID</param>
+        /// <returns></returns>
+        public static UdpNetMessage HeartbeatMessage(uint conv)
+        {
+            var udpNetMsg = GameManager.ReferencePoolManager.Spawn<UdpNetMessage>();
+            udpNetMsg.Conv = conv;
+            udpNetMsg.Cmd = KcpProtocol.MSG;
+            udpNetMsg.Length = 0;
+            udpNetMsg.OperationCode = NetworkOpCode._Heartbeat;
+            return udpNetMsg;
+        }
+    }
+}

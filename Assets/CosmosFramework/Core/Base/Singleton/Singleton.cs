@@ -3,22 +3,23 @@ namespace Cosmos
 {
     /// <summary>
     /// 通用继承形单例；
-    /// 可选实现IBehaviour接口。若实现IBehaviour，则可此接口的内部方法会被初始化与销毁时自动被调用；
+    /// 可选实现IConstruction接口;
+    /// 若实现IConstruction，则对象被new完成后，自动调用OnConstruction方法；
     /// </summary>
-    /// <typeparam name="T">继承自此单例的可构造类型</typeparam>
-    public abstract class Singleton<T> : IDisposable
-        where T : Singleton<T>, new()
+    /// <typeparam name="TDerived">继承自此单例的可构造类型</typeparam>
+    public abstract class Singleton<TDerived> : IDisposable
+        where TDerived : class, new()
     {
-        protected static T instance;
-        public  static T Instance
+        protected static TDerived instance;
+        public  static TDerived Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new T();
-                    if (instance is IBehaviour)
-                        (instance as IBehaviour).OnInitialization();
+                    instance = new TDerived();
+                    if (instance is IConstruction)
+                        (instance as IConstruction).OnConstruction();
                 }
                 return instance;
             }
@@ -28,9 +29,7 @@ namespace Cosmos
         /// </summary>
         public virtual void Dispose()
         {
-            if (instance is IBehaviour)
-                (instance as IBehaviour).OnTermination();
-            instance = default(T);
+            instance = default(TDerived);
         }
     }
 

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-namespace Cosmos
+﻿namespace Cosmos
 {
     /// <summary>
     /// 实现此接口的对象，可以被托管的管理器轮询更新

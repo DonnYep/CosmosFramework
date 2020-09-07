@@ -22,7 +22,7 @@ public class MonoTester : MonoBehaviour
             if (!monoIDList.Contains(id))
                 monoIDList.Add(id);
             ++count;
-            Utility.DebugLog("updateTest :->>" + count);
+            Utility.Debug.LogInfo("updateTest :->>" + count);
         }
     }
     private void UpdateTest()
@@ -34,7 +34,7 @@ public class MonoTester : MonoBehaviour
         if (!monoIDList.Contains(id))
             monoIDList.Add(id);
         ++count;
-        Utility.DebugLog("updateTest :->>" + count);
+        Utility.Debug.LogInfo("updateTest :->>" + count);
     }
     void AddListenerTest()
     {
@@ -45,6 +45,6 @@ public class MonoTester : MonoBehaviour
         if (!monoIDList.Contains(id))
             monoIDList.Add(id);
         ++count;
-        Utility.DebugLog("AddListenerTestupdateTest :->>" + count);
+        Utility.Debug.LogInfo("AddListenerTestupdateTest :->>" + count);
     }
 }

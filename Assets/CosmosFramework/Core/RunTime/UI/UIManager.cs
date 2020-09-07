@@ -31,7 +31,7 @@ namespace Cosmos.UI
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = "MainUICanvas";
-                    mainUICanvas.transform.SetParent(ModuleMountObject.transform);
+                    mainUICanvas.transform.SetParent(MountPoint.transform);
                 });
                 return mainUICanvas;
             }
@@ -52,7 +52,7 @@ namespace Cosmos.UI
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = name;
-                    mainUICanvas.transform.SetParent(ModuleMountObject.transform);
+                    mainUICanvas.transform.SetParent(MountPoint.transform);
                 });
                 return mainUICanvas;
             }
@@ -167,7 +167,7 @@ namespace Cosmos.UI
                 uiPanelDict.Remove(panelName);
             }
             else
-                Utility.DebugError("UIManager-->>" + "Panel :" + panelName + "  not register !");
+                Utility.Debug.LogError("UIManager-->>" + "Panel :" + panelName + "  not register !");
         }
         internal void RemovePanel<T>()
             where T:UILogicBase
@@ -183,7 +183,7 @@ namespace Cosmos.UI
                 uiPanelDict.Remove(attribute.PrefabName);
             }
             else
-                Utility.DebugError("UIManager-->>" + "Panel :" + attribute.PrefabName + "  not register !");
+                Utility.Debug.LogError("UIManager-->>" + "Panel :" + attribute.PrefabName + "  not register !");
         }
         internal bool HasPanel(string panelName)
         {

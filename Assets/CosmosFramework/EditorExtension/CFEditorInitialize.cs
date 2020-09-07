@@ -19,12 +19,17 @@ namespace Cosmos.CosmosEditor
         /// </summary>
         static void OnInitialization()
         {
-            if (!CFEditorUtility.HasEditorPrefsKey(EditorConst.ENABLE_DEBUGLOG_KEY))
-                CFEditorUtility.SetEditorPrefsBool(EditorConst.ENABLE_DEBUGLOG_KEY, true);
+            if (!CFEditorUtility.HasEditorPrefsKey(EditorConst.CONSOLE_DEBUGLOG_KEY))
+                CFEditorUtility.SetEditorPrefsBool(EditorConst.CONSOLE_DEBUGLOG_KEY, true);
             if (!CFEditorUtility.HasEditorPrefsKey(EditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY))
                 CFEditorUtility.SetEditorPrefsBool(EditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY, false);
-            EditorConst.EnableDebugLog = CFEditorUtility.GetEditorPrefsBool(EditorConst.ENABLE_DEBUGLOG_KEY);
+            if (!CFEditorUtility.HasEditorPrefsKey(EditorConst.OUTPUT_DEBUGLOG_KEY))
+                CFEditorUtility.SetEditorPrefsBool(EditorConst.OUTPUT_DEBUGLOG_KEY, false);
+            if (!CFEditorUtility.HasEditorPrefsKey(EditorConst.LOGOUTPUT_DIRECTORY_KEY))
+                CFEditorUtility.SetEditorPresString(EditorConst.LOGOUTPUT_DIRECTORY_KEY, EditorConst.GetDefaultLogOutputDirectory());
+            EditorConst.ConsoleDebugLog= CFEditorUtility.GetEditorPrefsBool(EditorConst.CONSOLE_DEBUGLOG_KEY);
             EditorConst.EnableScriptTemplateAnnotation = CFEditorUtility.GetEditorPrefsBool(EditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY);
+            EditorConst.LogOutputDirectory = CFEditorUtility.GetEditorPrefsString(EditorConst.LOGOUTPUT_DIRECTORY_KEY);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+
 namespace Cosmos.Audio
 {
     internal sealed class AudioManager : Module<AudioManager>
@@ -89,21 +91,21 @@ namespace Cosmos.Audio
             if (backgroundAduio != null)
                 backgroundAduio.Pause();
             else
-                Utility.DebugError("BackgroundAudio  not exist!");
+                Utility.Debug.LogError("BackgroundAudio  not exist!");
         }
         internal void UnpauseBackgroundAudio()
         {
             if (backgroundAduio != null)
                 backgroundAduio.UnPause();
             else
-                Utility.DebugError("BackgroundAudio  not exist!");
+                Utility.Debug.LogError("BackgroundAudio  not exist!");
         }
         internal void StopBackgroundAudio()
         {
             if (backgroundAduio != null)
                 backgroundAduio.Stop();
             else
-                Utility.DebugError("BackgroundAudio  not exist!");
+                Utility.Debug.LogError("BackgroundAudio  not exist!");
         }
         #endregion
         #region worldAudio
@@ -142,7 +144,7 @@ namespace Cosmos.Audio
                 audio.Pause();
             }
             else
-            throw new CFrameworkException("AudioManager\n" + "World" + attachTargset.name + "\n is unregistered");
+            throw new ArgumentNullException("AudioManager\n" + "World" + attachTargset.name + "\n is unregistered");
         }
         internal void UnpauseWorldAudio(GameObject attachTargset)
         {
@@ -151,7 +153,7 @@ namespace Cosmos.Audio
                 AudioSource audio = worldAudios[attachTargset];
                 audio.UnPause();
             }else
-            throw new CFrameworkException("AudioManager\n" + "World" + attachTargset.name + "\n is unregistered");
+            throw new ArgumentNullException("AudioManager\n" + "World" + attachTargset.name + "\n is unregistered");
         }
         internal void StopWorldAudio(GameObject attachTargset)
         {
@@ -160,7 +162,7 @@ namespace Cosmos.Audio
                 AudioSource audio = worldAudios[attachTargset];
                 audio.Stop();
             }else
-            throw new CFrameworkException("AudioManager\n" + "World" + attachTargset.name + "\n is unregistered");
+            throw new ArgumentNullException("AudioManager\n" + "World" + attachTargset.name + "\n is unregistered");
         }
         internal void StopAllWorldAudio()
         {
@@ -221,7 +223,7 @@ namespace Cosmos.Audio
                     multipleAudio[attachTargset][i].Pause();
                 }
             }else
-            throw new CFrameworkException("AudioManager\n" + "Multiple" + attachTargset.name + "\n is unregistered");
+            throw new ArgumentNullException("AudioManager\n" + "Multiple" + attachTargset.name + "\n is unregistered");
         }
         internal void UnpauseMultipleAudio(GameObject attachTargset)
         {
@@ -233,7 +235,7 @@ namespace Cosmos.Audio
                 }
             }
             else
-            throw new CFrameworkException("AudioManager\n" + "Multiple" + attachTargset.name + "\n is unregistered");
+            throw new ArgumentNullException("AudioManager\n" + "Multiple" + attachTargset.name + "\n is unregistered");
 
         }
         internal void StopMultipleAudio(GameObject attachTargset)
@@ -246,14 +248,14 @@ namespace Cosmos.Audio
                 }
             }
             else
-            throw new CFrameworkException("AudioManager\n" + "Multiple" + attachTargset.name + "\n is unregistered");
+            throw new ArgumentNullException("AudioManager\n" + "Multiple" + attachTargset.name + "\n is unregistered");
 
         }
         #endregion
         AudioSource CreateBGMAudioSource( IAudio args)
         {
             GameObject go = new GameObject(args.AudioClip.name);
-            go.transform.SetParent(ModuleMountObject.transform);
+            go.transform.SetParent(MountPoint.transform);
             go.transform.ResetLocalTransform();
             AudioSource audio = go.AddComponent<AudioSource>();
             SetAudioProperties(ref audio, args);

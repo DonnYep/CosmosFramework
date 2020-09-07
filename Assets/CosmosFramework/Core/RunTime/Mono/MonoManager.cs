@@ -189,7 +189,7 @@ namespace Cosmos.Mono
         {
             ++monoControllerCount;
             GameObject go = new GameObject("MonoPool" + "_Num_" + monoControllerCount);
-            go.transform.SetParent(ModuleMountObject.transform);
+            go.transform.SetParent(MountPoint.transform);
             MonoPool mc =go.AddComponent<MonoPool>();
             mc.MonoID = monoControllerCount;
             Register(monoControllerCount, mc);

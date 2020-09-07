@@ -11,26 +11,26 @@ namespace Cosmos
     ///默认情况下, Awake自动适配，应用退出时释放。
     ///Awake与OnDestory是可覆写函数
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TDerived"></typeparam>
   //  [DefaultExecutionOrder(-1000)]
-    public abstract class MonoSingleton<T> : MonoBehaviour
-    where T : MonoSingleton<T>
+    public abstract class MonoSingleton<TDerived> : MonoBehaviour
+    where TDerived : MonoSingleton<TDerived>
     {
         /// <summary>
         /// 实例所挂载的对象Mountobject
         /// </summary>
         public GameObject InstanceObject { get { return Instance.gameObject; } }
-        protected static T instance = null;
-        public static T Instance
+        protected static TDerived instance = null;
+        public static TDerived Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = GameObject.FindObjectOfType(typeof(T)) as T;//先从环境中查找类型
+                    instance = GameObject.FindObjectOfType(typeof(TDerived)) as TDerived;//先从环境中查找类型
                     if (instance == null)//假如还是空，则生成一个
                     {
-                        instance = new GameObject(typeof(T).ToString(), typeof(T)).GetComponent<T>();
+                        instance = new GameObject(typeof(TDerived).ToString(), typeof(TDerived)).GetComponent<TDerived>();
                     }
                 }
                 return instance;
@@ -41,7 +41,7 @@ namespace Cosmos
         /// </summary>
         protected virtual void Awake()
         {
-            instance = this as T;
+            instance = this as TDerived;
         }
         /// <summary>
         /// 空虚函数

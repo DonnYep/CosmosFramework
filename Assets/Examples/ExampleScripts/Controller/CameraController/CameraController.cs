@@ -54,7 +54,7 @@ namespace Cosmos
             Facade.RemoveMonoListener(LateUpdateCamera, UpdateType.LateUpdate, lateUpdateID);
             Facade.RemoveEventListener(ControllerEventCodeParams.CONTROLLER_INPUT, CameraHandler);
             Facade.DeregisterController(this);
-            Utility.DebugLog("CameraController destory");
+            Utility.Debug.LogInfo("CameraController destory");
         }
         protected override void OnValidate()
         {
@@ -69,7 +69,7 @@ namespace Cosmos
             pitch = Facade.GetAxis(InputAxisType.MouseY);
             pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
             if (Facade.GetAxis(InputAxisType.MouseScrollWheel) != 0)
-                Utility.DebugLog("MouseScrollWheel " ,MessageColor.INDIGO);
+                Utility.Debug.LogInfo("MouseScrollWheel " ,MessageColor.INDIGO);
             distanceFromTarget -= Facade.GetAxis(InputAxisType.MouseScrollWheel);
             distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
             HideMouse();

@@ -240,13 +240,13 @@ namespace Cosmos.CosmosEditor
         {
             if(scriptObj == null||root==null)
             {
-                Utility.DebugError("Reference script or root empty");
+                Utility.Debug.LogError("Reference script or root empty");
                 return;
             }
             MonoScript ms = scriptObj as MonoScript;
             if(ms==null)
             {
-                Utility.DebugError("source scripts is not derives form mono");
+                Utility.Debug.LogError("source scripts is not derives form mono");
                 return;
             }
             if (root.GetComponent(scriptObj.GetClass()) != null)
@@ -263,7 +263,7 @@ namespace Cosmos.CosmosEditor
         {
             if (scriptObj == null)
             {
-                Utility.DebugError("Reference script or root empty");
+                Utility.Debug.LogError("Reference script or root empty");
                 return;
             }
             var res =(Transform[]) FindObjectsOfType(scriptObj.GetClass());
@@ -281,7 +281,7 @@ namespace Cosmos.CosmosEditor
         {
             if (root == null)
             {
-                Utility.DebugError("root is empty!");
+                Utility.Debug.LogError("root is empty!");
                 return;
             }
             foreach (Transform subTrans in root)
@@ -313,7 +313,7 @@ namespace Cosmos.CosmosEditor
         {
             if (root == null)
             {
-                Utility.DebugError("root is empty!");
+                Utility.Debug.LogError("root is empty!");
                 return;
             }
             List<MonoBehaviour> temp = new List<MonoBehaviour>();
@@ -357,7 +357,7 @@ namespace Cosmos.CosmosEditor
         {
             if (root == null || string.IsNullOrEmpty(name))
             {
-                Utility.DebugError("root or name empty!");
+                Utility.Debug.LogError("root or name empty!");
                 return;
             }
             GetNameMathchingSubTrans(root);

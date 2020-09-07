@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Cosmos
+﻿namespace Cosmos
 {
     /// <summary>
     /// 可控生命周期接口，
@@ -12,7 +6,7 @@ namespace Cosmos
     /// </summary>
     public interface IControllable
     {
-        bool IsPause { get; set; }
+        bool IsPause { get; }
         /// <summary>
         /// 暂停
         /// </summary>

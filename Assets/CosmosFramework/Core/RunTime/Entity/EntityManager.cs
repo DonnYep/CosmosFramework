@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 namespace Cosmos.Entity
 {
     /// <summary>
@@ -15,7 +14,6 @@ namespace Cosmos.Entity
         internal int EntityTypeCount { get { return entityTypeObjectDict.Count; } }
         Dictionary<Type, List<IEntityObject>> entityTypeObjectDict = new Dictionary<Type, List<IEntityObject>>();
         Type entityObjectType = typeof(IEntityObject);
-        //List<IEntityObject> entityObjectCacheSet = new List<IEntityObject>();
         #endregion
 
         #region Methods

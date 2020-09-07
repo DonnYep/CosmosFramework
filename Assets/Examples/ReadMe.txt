@@ -1,2 +1,1 @@
-this folder  for the cosmos framework test.
-you can Delete  or not .
+这部分是案例，可参考如何使用框架API，并附带了一些美术资源；

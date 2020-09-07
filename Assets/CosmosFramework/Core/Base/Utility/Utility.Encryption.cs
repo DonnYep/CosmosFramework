@@ -75,6 +75,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="strData">数据</param>
             /// <param name="strKey">密钥</param>
+            /// <param name="iv">初向量</param>
             /// <returns>DES加密后的数据</returns>
             public static string DESEncrypt(string strData,string strKey,byte[] iv)
             {
@@ -141,7 +142,7 @@ namespace Cosmos
             /// Data Encryption Standard
             /// </summary>
             /// <param name="encrpytedStr">被加密的数据</param>
-            /// <param name="strKey"></param>
+            /// <param name="strKey">密钥</param>
             /// <returns></returns>
             public static string DESDecrypt(string encrpytedStr,string strKey,byte[] iv)
             {
@@ -167,6 +168,22 @@ namespace Cosmos
                 {
                     return strResut;
                 }
+            }
+            /// <summary>
+            /// 加密算法HmacSHA256  
+            /// </summary>
+            /// <param name="encrpytedStr">被加密的数据</param>
+            /// <param name="strKey">加密密码</param>
+            /// <returns>加密后的字段</returns>
+            public static string HmacSHA256(string encrpytedStr, string strKey)
+            {
+                string encrpytedResult = string.Empty;
+                using (HMACSHA256 mac = new HMACSHA256(Encoding.UTF8.GetBytes(strKey)))
+                {
+                    byte[] hashMsg = mac.ComputeHash(Encoding.UTF8.GetBytes(encrpytedStr));
+                    encrpytedResult = Convert.ToBase64String(hashMsg);
+                }
+                return encrpytedResult;
             }
         }
     }

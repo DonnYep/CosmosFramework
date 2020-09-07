@@ -20,13 +20,13 @@ public class LoadingScenePanel : UILogicResident
     void LoadLevel()
     {
         sldProgress.value = 0;
-        if (Utility.Text.IsNumeric(Utility.Globle.TargetLevel))
+        if (Utility.Text.IsNumeric(Utility.Global.TargetLevel))
         {
-            int index = int.Parse(Utility.Globle.TargetLevel);
+            int index = int.Parse(Utility.Global.TargetLevel);
             Facade.LoadSceneAsync(index, UpdateSlider);
         }
         else
-            Facade.LoadSceneAsync(Utility.Globle.TargetLevel, UpdateSlider);
+            Facade.LoadSceneAsync(Utility.Global.TargetLevel, UpdateSlider);
     }
     void UpdateSlider(float value)
     {

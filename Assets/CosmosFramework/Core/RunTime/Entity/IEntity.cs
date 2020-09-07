@@ -9,8 +9,17 @@ namespace Cosmos.Entity
     /// </summary>
     public interface IEntity:IBehaviour,IControllable,IOperable,IRefreshable
     {
+        /// <summary>
+        /// 获取实体编号。
+        /// </summary>
         int Id { get; }
+        /// <summary>
+        /// 获取实体资源名称。
+        /// </summary>
         string EnitityAssetName { get; }
+        /// <summary>
+        /// 获取实体实例。
+        /// </summary>
         object Handle { get; }
         /// <summary>
         /// 实体附加子实体。

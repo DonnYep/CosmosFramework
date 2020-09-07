@@ -157,7 +157,7 @@ namespace Cosmos.Resource
                 var go = Resources.Load<GameObject>(attribute.ResourcePath);
                 if (go == null)
                 {
-                    Utility.DebugError("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
+                    Utility.Debug.LogError("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
                     return null;
                 }
                 if (instantiateGameObject)
@@ -211,7 +211,7 @@ namespace Cosmos.Resource
             T[] res = Resources.LoadAll<T>(path);
             if (res == null)
             {
-                Utility.DebugError("ResourceManager-->>" + "Assets: " + path + "  not exist,check your path!");
+                Utility.Debug.LogError("ResourceManager-->>" + "Assets: " + path + "  not exist,check your path!");
                 return null;
             }
             if (res is GameObject)
@@ -383,13 +383,13 @@ namespace Cosmos.Resource
                         else
                         {
                             //TODO  resMgr异常
-                            throw new CFrameworkException("Requet :" + request.url + "have not assetBundle");
+                            throw new ArgumentNullException("Requet :" + request.url + "have not assetBundle");
                         }
                     }
                     else
                     {
                         //TODO resMgr异常
-                        throw new CFrameworkException("Requet :" + request.url + " net work error ,check your netWork");
+                        throw new ArgumentNullException("Requet :" + request.url + " net work error ,check your netWork");
                     }
                 }
             }

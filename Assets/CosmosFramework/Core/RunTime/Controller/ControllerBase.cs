@@ -11,7 +11,7 @@ namespace Cosmos
         protected string controllerName;
         //返回controller所挂载的对象名称
         public virtual string ControllerName { get { return controllerName; } protected set { controllerName = value; } }
-        public bool IsPause { get; set; }
+        public bool IsPause { get; protected set; }
         protected short monoPoolID;
         /// <summary>
         /// 空虚函数

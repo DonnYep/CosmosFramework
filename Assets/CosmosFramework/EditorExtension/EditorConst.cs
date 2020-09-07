@@ -1,4 +1,6 @@
-﻿#if UNITY_EDITOR
+﻿using System.IO;
+#if UNITY_EDITOR
+using UnityEngine;
 namespace Cosmos
 {
     /// <summary>
@@ -12,9 +14,17 @@ namespace Cosmos
         /// </summary>
         public const string APPEDITORPERFIX = "CosmosEditor";
         /// <summary>
-        /// enableDebugLog的EditorPrefs key
+        ///是否打印控制台debug信息
         /// </summary>
-        public const string ENABLE_DEBUGLOG_KEY = "EnableDebugLog_Key";
+        public const string CONSOLE_DEBUGLOG_KEY = "EnableDebugLog_Key";
+        /// <summary>
+        /// 是否输出log日志的key
+        /// </summary>
+        public const string OUTPUT_DEBUGLOG_KEY = "OutputDebugLog_Key";
+        /// <summary>
+        /// 日志输出目录
+        /// </summary>
+        public const string LOGOUTPUT_DIRECTORY_KEY = "LogOutput_Directory_Key";
         /// <summary>
         /// 是否启用脚本模块注释的Key
         /// </summary>
@@ -22,13 +32,29 @@ namespace Cosmos
         /// <summary>
         ///Log打印是否开启，默认开启
         /// </summary>
-        static bool enableDebugLog = CFEditorUtility.GetEditorPrefsBool(EditorConst.ENABLE_DEBUGLOG_KEY);
-        public static bool EnableDebugLog { get { return enableDebugLog; } set { enableDebugLog = value; } }
+        public static bool ConsoleDebugLog { get { return consoleDebugLog; } set { consoleDebugLog = value; } }
+        /// <summary>
+        /// 是否输出log日志到具体的文件
+        /// </summary>
+        public static bool OutputDebugLog { get { return outputDebugLog; } set { outputDebugLog = value; } }
+        /// <summary>
+        /// 日志输出目录路径
+        /// </summary>
+        public static string LogOutputDirectory { get { return logOutputDirectory; } set { logOutputDirectory = value; } }
         /// <summary>
         /// 是否开启脚本注释，默认关闭
         /// </summary>
-        static bool enableScriptTemplateAnnotation = CFEditorUtility.GetEditorPrefsBool(EditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY);
         public static bool EnableScriptTemplateAnnotation { get { return enableScriptTemplateAnnotation; } set { enableScriptTemplateAnnotation = value; } }
+        static string logOutputDirectory = CFEditorUtility.GetEditorPrefsString(LOGOUTPUT_DIRECTORY_KEY);
+        static bool outputDebugLog = CFEditorUtility.GetEditorPrefsBool(EditorConst.OUTPUT_DEBUGLOG_KEY);
+        static bool enableScriptTemplateAnnotation = CFEditorUtility.GetEditorPrefsBool(EditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY);
+        static bool consoleDebugLog = CFEditorUtility.GetEditorPrefsBool(EditorConst.CONSOLE_DEBUGLOG_KEY);
+        public static string GetDefaultLogOutputDirectory()
+        {
+            DirectoryInfo info = new DirectoryInfo(Application.dataPath);
+            string path = info.Parent.FullName;
+            return path;
+        }
     }
 }
 #endif

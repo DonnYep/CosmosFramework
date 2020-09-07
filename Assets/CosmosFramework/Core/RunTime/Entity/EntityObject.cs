@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Cosmos;
 using System;
@@ -11,8 +10,8 @@ namespace Cosmos.Entity
     /// </summary>
     public abstract class EntityObject : IEntityObject
     {
-        public GameObject Entity { get; protected set; }
-        public bool IsPause { get; set; }
+        public object Entity { get; protected set; }
+        public bool IsPause { get; protected set; }
         /// <summary>
         /// 空虚函数
         /// </summary>
@@ -28,11 +27,11 @@ namespace Cosmos.Entity
         /// 挂载到一个父类对象
         /// </summary>
         /// <param name="parent">父类对象</param>
-        public abstract void OnAttach(Transform parent);
+        public abstract void OnAttach(object parent);
         /// <summary>
         /// 空虚函数
         /// </summary>
-        public virtual void OnAttachChild(Transform child) { }
+        public virtual void OnAttachChild(object child) { }
         /// <summary>
         /// 从父类对象移除
         /// </summary>
@@ -41,10 +40,10 @@ namespace Cosmos.Entity
         /// 空虚函数
         /// 移除子对象
         /// </summary>
-        public virtual void OnDetachChild(Transform child) { }
+        public virtual void OnDetachChild(object child) { }
         public void OnPause(){IsPause = true;}
         public void OnUnPause(){IsPause = false;}
-        public void SetEntity(GameObject entity){Entity = entity;}
-        public GameObject GetEntity(){return Entity;}
+        public void SetEntity(object entity){Entity = entity;}
+        public object GetEntity(){return Entity;}
     }
 }
