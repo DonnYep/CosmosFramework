@@ -40,7 +40,7 @@ public class NetworkPanel : UILogicResident
     {
         string str = inputMsg.text;
         var data= Utility.Encode.ConvertToByte(str);
-        UdpNetMessage msg = new UdpNetMessage(0,0,KcpProtocol.MSG,0,data);
+        UdpNetMessage msg = new UdpNetMessage(0,0,KcpProtocol.MSG,10,data);
         Facade.SendNetworkMessage(msg);
     }
 }

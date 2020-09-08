@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos.Log
+namespace Cosmos
 {
-    public interface ILogHelper
+    public interface ILoggerHelper
     {
         void Info(string msg);
         void Warring(string msg);

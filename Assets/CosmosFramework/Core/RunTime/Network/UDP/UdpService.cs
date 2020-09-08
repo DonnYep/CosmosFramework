@@ -105,7 +105,7 @@ namespace Cosmos.Network
                 return;
             UdpNetMessage udpNetMsg = netMsg as UdpNetMessage;
             udpNetMsg.Conv = Conv;
-            Utility.Debug.LogInfo($"Send net message : Conv : {udpNetMsg.Conv} ; Cmd {udpNetMsg.Cmd} ; OperationCode:{udpNetMsg.OperationCode}");
+            Utility.Debug.LogInfo($"Send net message : {udpNetMsg} ");
             if (udpSocket != null)
             {
                 try

@@ -173,7 +173,6 @@ namespace Cosmos
             {
                 ServiceMsg = new byte[Length];
                 Array.Copy(buffer, 34, ServiceMsg, 0, Length);
-                Utility.Debug.LogInfo($" Conv : {Conv} ,Msg : {Utility.Converter.GetString(ServiceMsg)}");
             }
         }
         /// <summary>
@@ -197,7 +196,7 @@ namespace Cosmos
             Array.Copy(len, 0, data, 0, 2);
             Array.Copy(conv, 0, data, 2, 4);
             Array.Copy(cmd, 0, data, 6, 2);
-            Array.Copy(ts, 0, data, 10, 8);
+            Array.Copy(ts, 0, data, 8, 8);
             Array.Copy(sn, 0, data, 16, 4);
             Array.Copy(snd_una, 0, data, 20, 4);
             Array.Copy(snd_nxt, 0, data, 24, 4);
@@ -229,7 +228,7 @@ namespace Cosmos
         }
         public override string ToString()
         {
-            string str = $"Length:{Length} ; Conv:{Conv} ;Cmd:{Cmd};TS :{TS } ;  SN:{SN} ; Snd_una:{Snd_una} ; Rcv_nxt:{Rcv_nxt} ; OperationCode : {OperationCode} ; RecurCount:{RecurCount} ";
+            string str = $"Length:{Length} ; Conv:{Conv} ;Cmd:{Cmd};TS :{TS } ;  SN:{SN} ; Snd_una:{Snd_una} ; Snd_nxt :{Snd_nxt} ;Rcv_nxt:{Rcv_nxt} ; OperationCode : {OperationCode} ; RecurCount:{RecurCount} ";
             return str;
         }
         public static UdpNetMessage ConvertToACK(UdpNetMessage srcMsg)

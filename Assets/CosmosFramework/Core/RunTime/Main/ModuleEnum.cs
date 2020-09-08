@@ -22,7 +22,6 @@
         Data=12,
         Controller=13,
         ReferencePool=14,
-        Log=15,
-        Hotfix=16
+        Hotfix=15
     }
 }
