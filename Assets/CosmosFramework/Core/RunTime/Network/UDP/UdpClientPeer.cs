@@ -144,7 +144,7 @@ namespace Cosmos.Network
                         else
                         {
                             if (netMsg.Conv != 0)
-                                Utility.Debug.LogError($"Receive ACK Message Exception；SN : {netMsg.SN} ; TS :{netMsg.TS}");
+                                Utility.Debug.LogError($"Receive ACK Message Exception；SN : {netMsg.SN} ");
                         }
                     }
                     break;
@@ -199,6 +199,7 @@ namespace Cosmos.Network
                 if (msg.RecurCount >= 20)
                 {
                     Available = false;
+                    Facade.NetworkDisconnect();
                     return;
                 }
                 if (Utility.Time.MillisecondTimeStamp() - msg.TS >= (msg.RecurCount + 1) * interval)

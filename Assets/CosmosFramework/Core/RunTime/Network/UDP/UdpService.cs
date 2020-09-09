@@ -88,7 +88,8 @@ namespace Cosmos.Network
                 }
                 catch (Exception e)
                 {
-                    Utility.Debug.LogError($"Receive net message exception ：{e}");
+                    Utility.Debug.LogError($"Receive net  KCP_ACK exception ：{e}");
+                    //Facade.NetworkDisconnect();
                 }
             }
         }
@@ -105,7 +106,7 @@ namespace Cosmos.Network
                 return;
             UdpNetMessage udpNetMsg = netMsg as UdpNetMessage;
             udpNetMsg.Conv = Conv;
-            Utility.Debug.LogInfo($"Send net message : {udpNetMsg} ");
+            Utility.Debug.LogInfo($"Send net  KCP_MSG : {udpNetMsg} ");
             if (udpSocket != null)
             {
                 try
@@ -120,7 +121,8 @@ namespace Cosmos.Network
                 }
                 catch (Exception e)
                 {
-                    Utility.Debug.LogError($"Send net message Exception:{e.Message}");
+                    Utility.Debug.LogError($"Send net   KCP_MSG Exception:{e.Message}");
+                    //Facade.NetworkDisconnect();
                 }
             }
         }
