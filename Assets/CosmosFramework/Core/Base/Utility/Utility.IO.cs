@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+
 namespace Cosmos
 {
     public sealed partial class Utility
@@ -9,7 +11,6 @@ namespace Cosmos
         {
             public static void CreateFolder(string path)
             {
-
                 var dir = new DirectoryInfo(path);
                 if (!dir.Exists)
                 {
@@ -19,7 +20,6 @@ namespace Cosmos
             }
             public static void CreateFolder(string path, string folderName)
             {
-
                 var fullPath = CombineRelativePath(path, folderName);
                 var dir = new DirectoryInfo(fullPath);
                 if (!dir.Exists)
@@ -113,6 +113,7 @@ namespace Cosmos
                 return ReadTextFileContent(Utility.IO.CombineRelativeFilePath(fileName, folderPath));
             }
             /// <summary>
+            /// 使用UTF8编码；
             /// 追加写入文件信息；
             /// 若文件为空，则自动创建；
             /// 此方法为text类型文件写入；
@@ -128,7 +129,7 @@ namespace Cosmos
                 using (FileStream stream = new FileStream(Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     stream.Position = stream.Length;
-                    using (StreamWriter writer = new StreamWriter(stream))
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
                     {
                         writer.WriteLine(info);
                         writer.Close();
