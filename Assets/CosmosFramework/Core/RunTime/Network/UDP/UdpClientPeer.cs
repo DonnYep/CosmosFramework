@@ -17,7 +17,7 @@ namespace Cosmos.Network
         /// <summary>
         /// 服务器分配的会话ID
         /// </summary>
-        public uint Conv { get; set; }
+        public long Conv { get; set; }
         /// <summary>
         /// 分配的endPoint
         /// </summary>
@@ -105,7 +105,7 @@ namespace Cosmos.Network
         /// 为这个Peer分配会话ID；
         /// </summary>
         /// <param name="conv">会话ID</param>
-        public void AllocateConv(uint conv)
+        public void AllocateConv(long conv)
         {
             Conv = conv;
             Heartbeat.Conv = conv;
@@ -134,12 +134,13 @@ namespace Cosmos.Network
                 //ACK报文
                 case KcpProtocol.ACK:
                     {
-                        if (netMsg.OperationCode == NetworkOpCode._Heartbeat)
+                        if (netMsg.OperationCode == InnerOpCode._Heartbeat)
                             Heartbeat.OnRenewal();
                         UdpNetMessage tmpMsg;
                         if (sndMsgDict.TryRemove(netMsg.SN, out tmpMsg))
                         {
-                            Utility.Debug.LogInfo($" Conv :{Conv}，Receive ACK Message");
+                            //Utility.Debug.LogInfo($" Conv :{Conv}，Receive ACK Message");
+                            Facade.DespawnReference(tmpMsg);
                         }
                         else
                         {
@@ -150,7 +151,6 @@ namespace Cosmos.Network
                     break;
                 case KcpProtocol.MSG:
                     {
-                        Utility.Debug.LogInfo($"Conv : {Conv} ,Receive MSG Message");
                         //生成一个ACK报文，并返回发送
                         var ack = UdpNetMessage.ConvertToACK(netMsg);
                         //这里需要发送ACK报文
@@ -158,7 +158,6 @@ namespace Cosmos.Network
                         //发送后进行原始报文数据的处理
                         HandleMsgSN(netMsg);
                     }
-                    Utility.Debug.LogInfo($" Current Message cache count  :{sndMsgDict.Count} ; Peer conv : {Conv}");
                     break;
                 case KcpProtocol.SYN:
                     {
@@ -180,7 +179,7 @@ namespace Cosmos.Network
                     }
                     break;
             }
-            Facade.DespawnReference(netMsg);
+            //Facade.DespawnReference(netMsg);
         }
         /// <summary>
         /// 轮询更新，创建Peer对象时候将此方法加入监听；
@@ -272,11 +271,11 @@ namespace Cosmos.Network
             }
             HandleSN = netMsg.SN;
             NetworkMsgEventCore.Instance.Dispatch(netMsg.OperationCode, netMsg);
-            Utility.Debug.LogWarning($"Peer Conv:{Conv}， HandleMsgSN : {netMsg.ToString()}");
+            //Utility.Debug.LogWarning($"Peer Conv:{Conv}， HandleMsgSN : {netMsg.ToString()}");
             UdpNetMessage nxtNetMsg;
             if (rcvMsgDict.TryRemove(HandleSN + 1, out nxtNetMsg))
             {
-                Utility.Debug.LogInfo($"HandleMsgSN Next KCP_MSG : {netMsg.ToString()}");
+                //Utility.Debug.LogInfo($"HandleMsgSN Next KCP_MSG : {netMsg.ToString()}");
                 HandleMsgSN(nxtNetMsg);
             }
         }

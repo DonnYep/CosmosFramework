@@ -26,6 +26,7 @@ public class NetworkPanel : UILogicResident
         btnSend.onClick.AddListener(SendClick);
         info = GetUIPanel<Text>("Info");
         inputMsg = GetUIPanel<InputField>("InputMsg");
+        NetworkMsgEventCore.Instance.AddEventListener(10, ServerMsg);
     }
     void ConnectClick()
     {
@@ -42,5 +43,11 @@ public class NetworkPanel : UILogicResident
         var data= Utility.Encode.ConvertToByte(str);
         UdpNetMessage msg = new UdpNetMessage(0,0,KcpProtocol.MSG,10,data);
         Facade.SendNetworkMessage(msg);
+    }
+    void ServerMsg(INetworkMessage netMsg)
+    {
+        var data = (netMsg as UdpNetMessage).ServiceMsg;
+        if(data!=null)
+        Utility.Debug.LogInfo($"{ Utility.Converter.GetString(data)}");
     }
 }

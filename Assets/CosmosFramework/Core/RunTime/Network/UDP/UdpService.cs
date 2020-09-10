@@ -30,7 +30,7 @@ namespace Cosmos.Network
         /// <summary>
         /// 由服务器分配的会话ID
         /// </summary>
-        public uint Conv { get; protected set; } = 0;
+        public long Conv { get; protected set; } = 0;
         /// <summary>
         /// 是否可用
         /// </summary>
@@ -89,7 +89,7 @@ namespace Cosmos.Network
                 catch (Exception e)
                 {
                     Utility.Debug.LogError($"Receive net  KCP_ACK exception ：{e}");
-                    //Facade.NetworkDisconnect();
+                    Facade.NetworkDisconnect();
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace Cosmos.Network
                 catch (Exception e)
                 {
                     Utility.Debug.LogError($"Send net   KCP_MSG Exception:{e.Message}");
-                    //Facade.NetworkDisconnect();
+                    Facade.NetworkDisconnect();
                 }
             }
         }

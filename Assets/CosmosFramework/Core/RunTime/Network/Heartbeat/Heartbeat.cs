@@ -8,7 +8,7 @@ namespace Cosmos
 {
     public class Heartbeat : IHeartbeat
     {
-        public uint Conv { get; set; }
+        public long Conv { get; set; }
         /// <summary>
         /// 秒级别；
         /// 1代表1秒；

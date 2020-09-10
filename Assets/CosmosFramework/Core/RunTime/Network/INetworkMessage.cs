@@ -7,9 +7,9 @@ namespace Cosmos
     /// </summary>
     public interface INetworkMessage
     {
-        uint Conv { get; }
+        long Conv { get; }
         byte[] EncodeMessage();
-        void DecodeMessage(byte[] buffer);
+        bool DecodeMessage(byte[] buffer);
         byte[] GetBuffer();
     }
 }

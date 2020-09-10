@@ -16,6 +16,15 @@ namespace Cosmos.Network
         int clientPort;
         INetworkService service;
         IPEndPoint serverEndPoint;
+        public bool IsConnected
+        {
+            get
+            {
+                if (service != null)
+                    return service.Available;
+                else return false;
+            }
+        }
         public IPEndPoint ServerEndPoint
         {
             get
@@ -46,7 +55,7 @@ namespace Cosmos.Network
             if (service != null)
             {
                 if (service.Available)
-                    service.SendMessageAsync(netMsg,endPoint);
+                    service.SendMessageAsync(netMsg, endPoint);
                 else
                     Utility.Debug.LogError("Can not send net message, no service");
             }
@@ -72,9 +81,14 @@ namespace Cosmos.Network
         /// <param name="ip">ip地址</param>
         /// <param name="port">端口号</param>
         /// <param name="protocolType">协议类型</param>
-        internal void Connect(string ip,int port,ProtocolType protocolType)
+        internal void Connect(string ip, int port, ProtocolType protocolType)
         {
             OnUnPause();
+            if (IsConnected)
+            {
+                Utility.Debug.LogError("Network is connected !");
+                return;
+            }
             switch (protocolType)
             {
                 case ProtocolType.Tcp:
@@ -102,7 +116,7 @@ namespace Cosmos.Network
         /// <param name="service">自定义实现的服务</param>
         internal void Connect(INetworkService service)
         {
-            if (service == null) 
+            if (service == null)
             {
                 Utility.Debug.LogError("No Service ");
                 return;
@@ -128,7 +142,7 @@ namespace Cosmos.Network
             service.OnDeactive();
             Utility.Debug.LogError("Disconnect network, stop service");
         }
-        internal void RunHeartbeat(uint intervalSec,byte maxRecur)
+        internal void RunHeartbeat(uint intervalSec, byte maxRecur)
         {
             var hb = new Heartbeat();
             hb.MaxRecurCount = maxRecur;
