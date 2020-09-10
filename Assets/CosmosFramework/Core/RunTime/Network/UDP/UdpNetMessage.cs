@@ -154,10 +154,6 @@ namespace Cosmos
             Snd_nxt = SN + 1;
             OperationCode = udpNetMsg.OperationCode;
         }
-        public bool CacheDecodeBuffer(byte[] buffer)
-        {
-            return DecodeMessage(buffer);
-        }
         /// <summary>
         /// 解析UDP数据报文
         /// </summary>
@@ -205,6 +201,12 @@ namespace Cosmos
         {
             if (Cmd == KcpProtocol.ACK)
                 ServiceMsgLength = 0;
+            int srvMsgLen = 0;
+            if (ServiceMsg != null)
+            {
+                srvMsgLen = ServiceMsg.Length;
+                ServiceMsgLength = Convert.ToUInt16(srvMsgLen);
+            }
             byte[] data = new byte[38 + ServiceMsgLength];
             byte[] len = BitConverter.GetBytes(ServiceMsgLength);
             byte[] conv = BitConverter.GetBytes(Conv);
@@ -281,21 +283,36 @@ namespace Cosmos
             udpNetMsg.OperationCode = InnerOpCode._Heartbeat;
             return udpNetMsg;
         }
-        public static UdpNetMessage DefaultMessageAsync(long conv)
+        public static UdpNetMessage EncodeMessage(long conv)
         {
-            var reuslut = DefaultMessage(conv);
-            return reuslut.Result;
+            var udpNetMsg = GameManager.ReferencePoolManager.Spawn<UdpNetMessage>();
+            udpNetMsg.Conv = conv;
+            udpNetMsg.Cmd = KcpProtocol.MSG;
+            udpNetMsg.ServiceMsgLength = 0;
+            udpNetMsg.OperationCode = 0;
+            return udpNetMsg;
         }
-        static async Task<UdpNetMessage> DefaultMessage(long conv)
+        /// <summary>
+        /// 编码默认消息
+        /// </summary>
+        /// <param name="opCode">操作码</param>
+        /// <param name="message">二进制业务报文</param>
+        /// <returns>编码成功后的数据</returns>
+        public static UdpNetMessage EncodeMessage(ushort opCode, byte[] message)
         {
-            return await Task.Run(() =>
+            var udpNetMsg = GameManager.ReferencePoolManager.Spawn<UdpNetMessage>();
+            udpNetMsg.Cmd = KcpProtocol.MSG;
+            udpNetMsg.ServiceMsgLength = 0;
+            udpNetMsg.OperationCode = opCode;
+            udpNetMsg.ServiceMsg = message;
+            udpNetMsg.EncodeMessage();
+            return udpNetMsg;
+        }
+        public static async Task<UdpNetMessage> EncodeMessageAsync(long conv)
+        {
+            return await Task.Run<UdpNetMessage>(() =>
             {
-                var udpNetMsg = GameManager.ReferencePoolManager.Spawn<UdpNetMessage>();
-                udpNetMsg.Conv = conv;
-                udpNetMsg.Cmd = KcpProtocol.MSG;
-                udpNetMsg.ServiceMsgLength = 0;
-                udpNetMsg.OperationCode = 0;
-                return udpNetMsg;
+                return EncodeMessage(conv);
             });
         }
     }

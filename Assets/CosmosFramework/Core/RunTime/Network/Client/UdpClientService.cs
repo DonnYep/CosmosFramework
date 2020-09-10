@@ -64,7 +64,7 @@ namespace Cosmos
                 if (awaitHandle.TryDequeue(out data))
                 {
                     UdpNetMessage netMsg = Facade.SpawnReference<UdpNetMessage>();
-                    netMsg.CacheDecodeBuffer(data.Buffer);
+                    netMsg.DecodeMessage(data.Buffer);
                     if (Conv == 0)
                     {
                         Conv = netMsg.Conv;

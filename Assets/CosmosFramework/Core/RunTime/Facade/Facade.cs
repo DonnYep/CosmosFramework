@@ -1447,6 +1447,15 @@ where T : class
             GameManager.NetworkManager.SendNetworkMessage(netMsg, endPoint);
         }
         /// <summary>
+        /// 发送网络消息
+        /// </summary>
+        /// <param name="opCode">操作码</param>
+        /// <param name="message">序列化后的数据</param>
+        public static void SendNetworkMessage(ushort opCode, byte[] message)
+        {
+            GameManager.NetworkManager.SendNetworkMessage(opCode, message);
+        }
+        /// <summary>
         /// 发送报文信息；
         /// 发送给默认的endpoint对象，目标为默认远程点；
         /// </summary>

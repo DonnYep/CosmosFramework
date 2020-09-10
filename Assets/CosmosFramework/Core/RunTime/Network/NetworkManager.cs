@@ -16,6 +16,7 @@ namespace Cosmos.Network
         int clientPort;
         INetworkService service;
         IPEndPoint serverEndPoint;
+        INetMessageHelper netMessageHelper;
         public bool IsConnected
         {
             get
@@ -52,24 +53,33 @@ namespace Cosmos.Network
         }
         internal void SendNetworkMessage(INetworkMessage netMsg, IPEndPoint endPoint)
         {
-            if (service != null)
+            if (IsConnected)
             {
-                if (service.Available)
-                    service.SendMessageAsync(netMsg, endPoint);
-                else
-                    Utility.Debug.LogError("Can not send net message, no service");
+                service.SendMessageAsync(netMsg, endPoint);
+            }
+            else
+                Utility.Debug.LogError("Can not send net message, no service");
+        }
+        /// <summary>
+        /// 发送网络消息
+        /// </summary>
+        /// <param name="opCode">操作码</param>
+        /// <param name="message">序列化后的数据</param>
+        internal void SendNetworkMessage(ushort opCode, byte[] message)
+        {
+            if (IsConnected)
+            {
+                var netMsg = netMessageHelper.EncodeMessage(opCode, message);
+                service.SendMessageAsync(netMsg);
             }
             else
                 Utility.Debug.LogError("Can not send net message, no service");
         }
         internal void SendNetworkMessage(INetworkMessage netMsg)
         {
-            if (service != null)
+            if (IsConnected)
             {
-                if (service.Available)
-                    service.SendMessageAsync(netMsg);
-                else
-                    Utility.Debug.LogError("Can not send net message, no service");
+                service.SendMessageAsync(netMsg);
             }
             else
                 Utility.Debug.LogError("Can not send net message, no service");
@@ -105,6 +115,8 @@ namespace Cosmos.Network
                             udp.Port = port;
                         }
                         service.OnActive();
+                        if (netMessageHelper == null)
+                            netMessageHelper = new UdpNetMessageHelper();
                         Utility.Debug.LogInfo("Start connect to server");
                     }
                     break;
