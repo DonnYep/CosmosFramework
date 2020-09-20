@@ -117,7 +117,7 @@ namespace Cosmos.Network
                         service.OnActive();
                         if (netMessageHelper == null)
                             netMessageHelper = new UdpNetMessageHelper();
-                        Utility.Debug.LogInfo("Start connect to server");
+                        Utility.Debug.LogInfo("Try to connect to the server");
                     }
                     break;
             }

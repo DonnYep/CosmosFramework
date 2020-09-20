@@ -58,9 +58,9 @@ namespace Cosmos
                 StringBuilderCache.AppendFormat(format, arg);
                 return StringBuilderCache.ToString();
             }
-            public static string Append(params object[] args )
+            public static string Append(params object[] args)
             {
-                if (args==null)
+                if (args == null)
                 {
                     throw new ArgumentNullException("Append is invalid.");
                 }
@@ -98,7 +98,7 @@ namespace Cosmos
             /// <param name="separator">new string[]{"."}</param>
             /// <param name="removeEmptyEntries">是否返回分割后数组中的空元素</param>
             /// <param name="subStringIndex">分割后数组的序号</param>
-            /// <returns></returns>
+            /// <returns>分割后的字段</returns>
             public static string StringSplit(string fullString, String[] separator, bool removeEmptyEntries, int subStringIndex)
             {
                 string[] stringArray = null;
@@ -109,6 +109,14 @@ namespace Cosmos
                 string subString = stringArray[subStringIndex];
                 return subString;
             }
+            /// <summary>
+            /// 分割字符串
+            /// </summary>
+            /// <param name="fullString">完整字段</param>
+            /// <param name="separator">new string[]{"."}</param>
+            /// <param name="count">要返回的子字符串的最大数量</param>
+            /// <param name="removeEmptyEntries">是否移除空实体</param>
+            /// <returns>分割后的字段</returns>
             public static string StringSplit(string fullString, String[] separator, int count, bool removeEmptyEntries)
             {
                 string[] stringArray = null;
@@ -117,6 +125,18 @@ namespace Cosmos
                 else
                     stringArray = fullString.Split(separator, count, StringSplitOptions.None);
                 return stringArray.ToString();
+            }
+            /// <summary>
+            /// 分割字符串
+            /// </summary>
+            /// <param name="fullString">分割字符串</param>
+            /// <param name="separator">new string[]{"."}</param>
+            /// <returns>分割后的字段数组</returns>
+            public static string[] StringSplit(string fullString, String[] separator)
+            {
+                string[] stringArray = null;
+                stringArray = fullString.Split(separator, StringSplitOptions.None);
+                return stringArray;
             }
             public static int CharCount(string fullString, char separator)
             {

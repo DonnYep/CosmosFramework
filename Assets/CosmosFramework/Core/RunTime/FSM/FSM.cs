@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
 namespace Cosmos.FSM{
     //type.ToString()输出一个完全限定名，尝试使用反射机制获得对象

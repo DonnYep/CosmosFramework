@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using Cosmos.FSM;
 namespace Cosmos
 {

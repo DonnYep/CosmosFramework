@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 namespace Cosmos.FSM
 {
     public abstract  class FSMTrigger<T>
