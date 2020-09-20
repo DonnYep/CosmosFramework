@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace Cosmos
@@ -136,6 +137,50 @@ namespace Cosmos
                         stream.Close();
                     }
                 }
+            }
+            /// <summary>
+            /// 写入二进制
+            /// </summary>
+            /// <param name="fileFullPath">完整文件路径</param>
+            /// <param name="context">内容</param>
+            /// <returns>是否写入成功</returns>
+            public static bool WriterFormattedBinary(string fileFullPath, object context)
+            {
+                if (!File.Exists(fileFullPath))
+                    return false;
+                using (FileStream stream = new FileStream(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, context);
+                    return true;
+                }
+            }
+            /// <summary>
+            /// 读取二进制
+            /// </summary>
+            /// <param name="fileFullPath">完整文件路径</param>
+            /// <returns>内容</returns>
+            public static object ReadFormattedBinary(string fileFullPath)
+            {
+                if (!File.Exists(fileFullPath))
+                    return null;
+                using (FileStream stream = new FileStream(fileFullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    return formatter.Deserialize(stream);
+                }
+            }
+            /// <summary>
+            /// 清空text类型的文本
+            /// </summary>
+            /// <param name="fileFullPath">完整文件路径</param>
+            /// <returns>是否写入成功</returns>
+            public static bool ClearTextContext(string fileFullPath)
+            {
+                if (!File.Exists(fileFullPath))
+                    return false;
+                File.WriteAllText(fileFullPath, string.Empty);
+                return true;
             }
         }
     }

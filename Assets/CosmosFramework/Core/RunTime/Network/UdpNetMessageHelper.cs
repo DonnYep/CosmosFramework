@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public class UdpNetMessageHelper : INetMessageHelper
+    public class UdpNetMessageHelper : INetworkMessageHelper
     {
         public INetworkMessage EncodeMessage(ushort opCode, byte[] dataBuffer)
         {

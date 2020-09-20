@@ -17,27 +17,42 @@ namespace Cosmos.Network
     /// UDP socket服务；
     /// 这里管理其他接入的远程对象；
     /// </summary>
-    public class UdpService : INetworkService
+    public abstract class UdpService : INetworkService
     {
-        /// <summary>
-        /// 对象IP
-        /// </summary>
-        public string IP { get; set; }
-        /// <summary>
-        /// 对象端口
-        /// </summary>
-        public int Port { get; set; }
         /// <summary>
         /// 由服务器分配的会话ID
         /// </summary>
         public long Conv { get; protected set; } = 0;
-        /// <summary>
-        /// 是否可用
-        /// </summary>
-        public bool Available { get; protected set; } = false;
-        public Action OnConnect { get ; set; }
-        public Action OnDisconnect { get ; set ; }
-
+        public event Action OnConnect
+        {
+            add { onConnect += value;}
+            remove
+            {
+                try
+                {
+                    onConnect -= value;
+                }
+                catch (Exception e)
+                {
+                    Utility.Debug.LogError(e);
+                }
+            }
+        }
+        public event Action OnDisconnect
+        {
+            add { onDisconnect += value; }
+            remove
+            {
+                try
+                {
+                    onDisconnect -= value;
+                }
+                catch (Exception e)
+                {
+                    Utility.Debug.LogError(e);
+                }
+            }
+        }
         /// <summary>
         /// udpSocket对象
         /// </summary>
@@ -47,38 +62,19 @@ namespace Cosmos.Network
         /// </summary>
         protected IPEndPoint serverEndPoint;
         protected ConcurrentQueue<UdpReceiveResult> awaitHandle = new ConcurrentQueue<UdpReceiveResult>();
+        protected Action onConnect;
+        protected Action onDisconnect;
         public UdpService()
         {
             //构造传入0表示接收任意端口收发的数据
             udpSocket = new UdpClient(0);
         }
-        /// <summary>
-        /// 非空虚函数；
-        /// 开启这个服务；
-        /// </summary>
-        public virtual void OnActive()
-        {
-            Available = true;
-            OnConnect?.Invoke();
-        }
-        public virtual void SetHeartbeat(IHeartbeat heartbeat){}
-        /// <summary>
-        /// 非空虚函数；
-        /// 关闭这个服务；
-        /// </summary>
-        public virtual void OnDeactive()
-        {
-            Available = false;
-            Conv = 0;
-            OnDisconnect?.Invoke();
-        }
+        public virtual void SetHeartbeat(IHeartbeat heartbeat) { }
         /// <summary>
         /// 异步接收网络消息接口
         /// </summary>
         public virtual async void OnReceive()
         {
-            if (!Available)
-                return;
             if (udpSocket != null)
             {
                 try
@@ -88,8 +84,7 @@ namespace Cosmos.Network
                 }
                 catch (Exception e)
                 {
-                    Utility.Debug.LogError($"Receive net  KCP_ACK exception ：{e}");
-                    Facade.NetworkDisconnect();
+                    Utility.Debug.LogError($"Receive net KCP_MSG exception ：{e}");
                 }
             }
         }
@@ -102,11 +97,8 @@ namespace Cosmos.Network
         /// <param name="endPoint">远程对象</param>
         public virtual async void SendMessageAsync(INetworkMessage netMsg, IPEndPoint endPoint)
         {
-            if (!Available)
-                return;
             UdpNetMessage udpNetMsg = netMsg as UdpNetMessage;
             udpNetMsg.Conv = Conv;
-            Utility.Debug.LogInfo($"Send net  KCP_MSG : {udpNetMsg} ");
             if (udpSocket != null)
             {
                 try
@@ -121,8 +113,7 @@ namespace Cosmos.Network
                 }
                 catch (Exception e)
                 {
-                    Utility.Debug.LogError($"Send net   KCP_MSG Exception:{e.Message}");
-                    Facade.NetworkDisconnect();
+                    Utility.Debug.LogError($"Send netKCP_MSG Exception:{e.Message}");
                 }
             }
         }
@@ -135,11 +126,16 @@ namespace Cosmos.Network
             SendMessageAsync(netMsg, serverEndPoint);
         }
         /// <summary>
-        /// 空虚函数；
         /// 轮询更新;
         /// </summary>
-        public virtual void OnRefresh(){}
-
-
+        public abstract void OnRefresh();
+        /// <summary>
+        /// 建立网络连接；
+        /// </summary>
+        public abstract void Connect(string ip, int port);
+        /// <summary>
+        /// 断开网络连接
+        /// </summary>
+        public abstract void Disconnect();
     }
 }

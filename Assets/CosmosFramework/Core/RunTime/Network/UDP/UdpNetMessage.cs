@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -201,14 +202,14 @@ namespace Cosmos
         {
             if (Cmd == KcpProtocol.ACK)
                 ServiceMsgLength = 0;
-            int srvMsgLen = 0;
+            int srvMsgLen=0;
             if (ServiceMsg != null)
             {
                 srvMsgLen = ServiceMsg.Length;
                 ServiceMsgLength = Convert.ToUInt16(srvMsgLen);
             }
-            byte[] data = new byte[38 + ServiceMsgLength];
-            byte[] len = BitConverter.GetBytes(ServiceMsgLength);
+            byte[] data = new byte[38 + srvMsgLen];
+            byte[] len = BitConverter.GetBytes(srvMsgLen);
             byte[] conv = BitConverter.GetBytes(Conv);
             byte[] cmd = BitConverter.GetBytes(Cmd);
             byte[] ts = BitConverter.GetBytes(TS);
@@ -229,7 +230,7 @@ namespace Cosmos
             //如果不是ACK报文，则追加数据
             if (Cmd == KcpProtocol.MSG)
                 if (ServiceMsg != null)//空包保护
-                    Array.Copy(ServiceMsg, 0, data, 38, ServiceMsg.Length);
+                    Array.Copy(ServiceMsg, 0, data, 38, srvMsgLen);
             Buffer = data;
             return data;
         }
@@ -278,7 +279,7 @@ namespace Cosmos
         {
             var udpNetMsg = GameManager.ReferencePoolManager.Spawn<UdpNetMessage>();
             udpNetMsg.Conv = conv;
-            udpNetMsg.Cmd = KcpProtocol.ACK;
+            udpNetMsg.Cmd = KcpProtocol.MSG;
             udpNetMsg.ServiceMsgLength = 0;
             udpNetMsg.OperationCode = InnerOpCode._Heartbeat;
             return udpNetMsg;

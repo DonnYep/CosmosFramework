@@ -66,11 +66,18 @@ namespace Cosmos.Network
         /// 这里函数指针指向service的sendMessage
         /// </summary>
         Action<INetworkMessage> sendMessageHandler;
+        Action onConnectHandler;
+        Action onDisconnectHandler;
         public UdpClientPeer()
         {
-            Available = true;
+            //Available = true;
             sndMsgDict = new ConcurrentDictionary<uint, UdpNetMessage>();
             rcvMsgDict = new ConcurrentDictionary<uint, UdpNetMessage>();
+        }
+        public UdpClientPeer(Action onConnect, Action onDisconnect) : this()
+        {
+            this.onConnectHandler += onConnect;
+            this.onDisconnectHandler += onDisconnect;
         }
         public UdpClientPeer(uint conv) : this()
         {
@@ -78,6 +85,10 @@ namespace Cosmos.Network
         }
         public void OnActive()
         {
+            sndMsgDict.Clear();
+            rcvMsgDict.Clear();
+            //HandleSN = 0;
+            //SendSN = 0;
             Available = true;
             latestPollingTime = Utility.Time.MillisecondNow() + interval;
         }
@@ -94,6 +105,7 @@ namespace Cosmos.Network
                 Heartbeat.OnDeactive();
             }
             sndMsgDict.Clear();
+            rcvMsgDict.Clear();
         }
         public void SetValue(Action<INetworkMessage> sendMsgCallback, Action abortPeerCallback, uint conv, IPEndPoint endPoint)
         {
@@ -134,9 +146,20 @@ namespace Cosmos.Network
                 //ACK报文
                 case KcpProtocol.ACK:
                     {
+                        UdpNetMessage tmpMsg;
+                        //Utility.DebugLog($" Receive ACK Message:{netMsg}");
                         if (netMsg.OperationCode == InnerOpCode._Heartbeat)
                             Heartbeat.OnRenewal();
-                        UdpNetMessage tmpMsg;
+                        if (netMsg.OperationCode == InnerOpCode._Connect)
+                        {
+                            OnActive();
+                            onConnectHandler?.Invoke();
+                        }
+                        if (netMsg.OperationCode == InnerOpCode._Disconnect)
+                        {
+                            onDisconnectHandler?.Invoke();
+                            OnDeactive();
+                        }
                         if (sndMsgDict.TryRemove(netMsg.SN, out tmpMsg))
                         {
                             //Utility.Debug.LogInfo($" Conv :{Conv}，Receive ACK Message");
@@ -144,13 +167,17 @@ namespace Cosmos.Network
                         }
                         else
                         {
-                            if (netMsg.Conv != 0)
-                                Utility.Debug.LogError($"Receive ACK Message Exception；SN : {netMsg.SN} ");
+                            //if (netMsg.Conv != 0)
+                            //    Utility.DebugError($"Receive ACK Message Exception；SN : {netMsg.SN} ");
+
+                            //常见false主要是收到非MSG类型的ACK，譬如FIN、SYN等；
+                            //网络较差时也会出现错序报文，这里也需要进行算法优化；
                         }
                     }
                     break;
                 case KcpProtocol.MSG:
                     {
+                        //Utility.DebugError($"Conv : {Conv} ,Receive MSG Message");
                         //生成一个ACK报文，并返回发送
                         var ack = UdpNetMessage.ConvertToACK(netMsg);
                         //这里需要发送ACK报文
@@ -173,13 +200,11 @@ namespace Cosmos.Network
                     {
                         //结束建立连接Cmd，这里需要谨慎考虑；
                         Utility.Debug.LogError($"Conv : {Conv} ,Receive FIN Message");
-                        //OnDeactive();
                         //TODO  KcpProtocol.FIN 内部耦合
-                        Facade.NetworkDisconnect(false);
+                        onDisconnectHandler?.Invoke();
                     }
                     break;
             }
-            //Facade.DespawnReference(netMsg);
         }
         /// <summary>
         /// 轮询更新，创建Peer对象时候将此方法加入监听；
@@ -198,7 +223,7 @@ namespace Cosmos.Network
                 if (msg.RecurCount >= 20)
                 {
                     Available = false;
-                    Facade.NetworkDisconnect();
+                    onDisconnectHandler?.Invoke();
                     return;
                 }
                 if (Utility.Time.MillisecondTimeStamp() - msg.TS >= (msg.RecurCount + 1) * interval)
@@ -270,7 +295,7 @@ namespace Cosmos.Network
                 rcvMsgDict.TryAdd(netMsg.SN, netMsg);
             }
             HandleSN = netMsg.SN;
-            NetworkMsgEventCore.Instance.Dispatch(netMsg.OperationCode, netMsg);
+            NetworkMessageEventCore.Instance.Dispatch(netMsg.OperationCode, netMsg);
             //Utility.Debug.LogWarning($"Peer Conv:{Conv}， HandleMsgSN : {netMsg.ToString()}");
             UdpNetMessage nxtNetMsg;
             if (rcvMsgDict.TryRemove(HandleSN + 1, out nxtNetMsg))
@@ -279,5 +304,7 @@ namespace Cosmos.Network
                 HandleMsgSN(nxtNetMsg);
             }
         }
+
+
     }
 }

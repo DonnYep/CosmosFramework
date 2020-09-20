@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,73 +10,58 @@ namespace Cosmos
     internal sealed partial class GameManager
     {
         /// <summary>
-        /// 外源模块；
-        /// 凡是实现Module的非框架拥有的管理类。享有同等的轮询、初始化等级；
+        /// 自定义模块容器；
         /// </summary>
-        public sealed class External
+        static Dictionary<Type, IModule> customeModuleDict = new Dictionary<Type, IModule>();
+        /// <summary>
+        /// 线程安全；
+        /// 获取自定义模块；
+        /// 需要从Module类派生;
+        /// 此类模块不由CF框架生成，由用户自定义
+        /// </summary>
+        /// <typeparam name="TModule">实现模块功能的类对象</typeparam>
+        /// <returns>获取的模块</returns>
+        public static TModule CustomeModule<TModule>()
+            where TModule : Module<TModule>, new()
         {
-            /// <summary>
-            /// 外源模块容器；
-            /// </summary>
-          static   Dictionary<Type, IModule> moduleDict = new Dictionary<Type, IModule>();
-            /// <summary>
-            /// 获取外源模块；
-            /// 此类模块不由CF框架生成，由用户自定义
-            /// 需要从Module类派生;
-            /// 线程安全；
-            /// </summary>
-            /// <typeparam name="TModule">实现模块功能的类对象</typeparam>
-            /// <returns>获取的模块</returns>
-            public static TModule GetModule<TModule>()
-                where TModule : Module<TModule>, new()
+            Type type = typeof(TModule);
+            IModule module = default;
+            var result = customeModuleDict.TryGetValue(type, out module);
+            if (result)
             {
-                Type type = typeof(TModule);
-                IModule module = default;
-                var result = moduleDict.TryGetValue(type, out module);
-                if (!result)
-                {
-                    module = new TModule();
-                    moduleDict.Add(type, module);
-                    module.OnInitialization();
-                    Utility.Debug.LogInfo($"生成新模块 , Module :{module.ToString()} ");
-                    GameManager.Instance.refreshHandler += module.OnRefresh;
-                }
                 return module as TModule;
             }
-            /// <summary>
-            /// 清理外源模块；
-            /// 此类模块不由CF框架生成，由用户自定义
-            /// 需要从Module类派生;
-            /// </summary>
-            /// <typeparam name="TModule"></typeparam>
-            public static void RemoveModule<TModule>()
-        where TModule : Module<TModule>, new()
+            else
+                return default(TModule);
+        }
+        /// <summary>
+        /// 初始化自定义模块
+        /// </summary>
+        /// <param name="assembly">模块所在程序集</param>
+        public static void InitCustomeModule(Assembly assembly)
+        {
+            Type[] types = assembly.GetTypes();
+            for (int i = 0; i < types.Length; i++)
             {
-                Type type = typeof(TModule);
-                if (moduleDict.ContainsKey(type))
+                if (types[i].GetCustomAttribute<CustomeModuleAttribute>() != null)
                 {
-                    var module = moduleDict[type];
-                    try
+                    var module = Utility.Assembly.GetTypeInstance(types[i]) as IModule;
+                    var result = customeModuleDict.TryAdd(types[i], module);
+                    if (result)
                     {
-                        GameManager.Instance.refreshHandler -= module.OnRefresh;
+                        module.OnInitialization();
+                        Utility.Debug.LogInfo($"Instance Custome Module :{module.ToString()} ");
+                        GameManager.Instance.refreshHandler += module.OnRefresh;
                     }
-                    catch (Exception e)
-                    {
-                        throw e;
-                    }
-                    module.OnTermination();
-                    moduleDict.Remove(type);
                 }
             }
-            public static bool HasModule<TModule>()
-        where TModule : Module<TModule>, new()
+            PrepareCustomeModule();
+        }
+        static void PrepareCustomeModule()
+        {
+            foreach (var module in customeModuleDict.Values)
             {
-                Type type = typeof(TModule);
-                return moduleDict.ContainsKey(type);
-            }
-            public static void ClearAllModule()
-            {
-                moduleDict.Clear();
+                module.OnPreparatory();
             }
         }
     }

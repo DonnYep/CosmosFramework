@@ -22,42 +22,29 @@ namespace Cosmos
     public static partial class Facade
     {
 
-        #region ExtensionsModule
+        #region CustomeModule
         /// <summary>
-        /// 获取外源模块；
-        /// 此类模块不由CF框架生成，由用户自定义
-        /// 需要从Module类派生;
         /// 线程安全；
+        /// 获取自定义模块；
+        /// 需要从Module类派生;
+        /// 此类模块不由CF框架生成，由用户自定义
         /// </summary>
         /// <typeparam name="TModule">实现模块功能的类对象</typeparam>
         /// <returns>获取的模块</returns>
-        public static TModule GetExternalModule<TModule>()
+        public static TModule CustomeModule<TModule>()
             where TModule : Module<TModule>, new()
         {
-            return GameManager.External.GetModule<TModule>();
+            return GameManager.CustomeModule<TModule>();
         }
         /// <summary>
-        /// 清理外源模块；
-        /// 此类模块不由CF框架生成，由用户自定义
-        /// 需要从Module类派生;
+        /// 初始化自定义模块
         /// </summary>
-        /// <typeparam name="TModule"></typeparam>
-        public static void RemoveExternalModule<TModule>()
-    where TModule : Module<TModule>, new()
+        /// <param name="assembly">模块所在程序集</param>
+        public static void InitCustomeModule(Assembly assembly)
         {
-             GameManager.External.RemoveModule<TModule>();
-        }
-        public static bool HasExternalModule<TModule>()
-        where TModule : Module<TModule>, new()
-        {
-            return GameManager.External.HasModule<TModule>();
-        }
-        public static void ClearAllExternalModule()
-        {
-            GameManager.External.ClearAllModule();
+            GameManager.InitCustomeModule(assembly);
         }
         #endregion
-
 
         #region FacadeMethods
         public static void InitAllModule()
@@ -1447,15 +1434,6 @@ where T : class
             GameManager.NetworkManager.SendNetworkMessage(netMsg, endPoint);
         }
         /// <summary>
-        /// 发送网络消息
-        /// </summary>
-        /// <param name="opCode">操作码</param>
-        /// <param name="message">序列化后的数据</param>
-        public static void SendNetworkMessage(ushort opCode, byte[] message)
-        {
-            GameManager.NetworkManager.SendNetworkMessage(opCode, message);
-        }
-        /// <summary>
         /// 发送报文信息；
         /// 发送给默认的endpoint对象，目标为默认远程点；
         /// </summary>
@@ -1463,6 +1441,10 @@ where T : class
         public static void SendNetworkMessage(INetworkMessage netMsg)
         {
             GameManager.NetworkManager.SendNetworkMessage(netMsg);
+        }
+        public static void SendNetworkMessage(ushort opCode, byte[] message)
+        {
+            GameManager.NetworkManager.SendNetworkMessage(opCode, message);
         }
         public static void NetworkDisconnect(bool notifyRemote = true)
         {
@@ -1472,9 +1454,19 @@ where T : class
         {
             GameManager.NetworkManager.RunHeartbeat(intervalSec, maxRecur);
         }
-            #endregion
+        public static event Action NetworkOnConnect
+        {
+            add { GameManager.NetworkManager.NetworkOnConnect += value; }
+            remove { GameManager.NetworkManager.NetworkOnConnect -= value; }
+        }
+        public static event Action NetworkOnDisconnect
+        {
+            add { GameManager.NetworkManager.NetworkOnDisconnect += value; }
+            remove { GameManager.NetworkManager.NetworkOnDisconnect -= value; }
+        }
+        #endregion
         #region ConfigManager
-       public static bool AddConfigData(ushort cfgKey, bool boolValue, int intValue, float floatValue, string stringValue)
+        public static bool AddConfigData(ushort cfgKey, bool boolValue, int intValue, float floatValue, string stringValue)
         {
             return GameManager.ConfigManager.AddConfigData(cfgKey, boolValue, intValue, floatValue, stringValue);
         }

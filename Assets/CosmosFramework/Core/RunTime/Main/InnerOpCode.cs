@@ -10,7 +10,7 @@ namespace Cosmos
     internal class InnerOpCode
     {
         public static readonly ushort _Heartbeat = 65534;
-        public static readonly byte _PeerConnect= 1;
-        public static readonly  byte _PeerDisconnect= 2;
+        public static readonly ushort _Connect = 65530;
+        public static readonly ushort _Disconnect = 65531;
     }
 }

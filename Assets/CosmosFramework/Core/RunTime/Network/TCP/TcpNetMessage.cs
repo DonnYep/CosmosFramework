@@ -10,7 +10,9 @@ namespace Cosmos
     {
         public long Conv { get; set; }
 
-        public bool DecodeMessage(byte[] buffer)
+        public byte[] ServiceMsg { get; private set; }
+
+        public  bool DecodeMessage(byte[] buffer)
         {
             return false;
         }

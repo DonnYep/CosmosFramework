@@ -74,7 +74,7 @@ namespace Cosmos.Data
         {
             string absoluteFullpath = Utility.Unity.CombineAppPersistentPath(relativePath);
             if (!Directory.Exists(absoluteFullpath))
-                throw new ArgumentNullException("DataManager-->> Json floder not exist!");
+                throw new IOException("DataManager-->> Json floder not exist!");
             string json = "";
             using (FileStream stream = File.Open(Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), FileMode.Open))
             {
@@ -109,7 +109,7 @@ namespace Cosmos.Data
         {
             string absoluteFullpath = Utility.Unity.CombineAppPersistentPath(fullRelativeFilePath);
             if (!File.Exists(absoluteFullpath))
-                throw new ArgumentNullException("DataManager-->> Json file not exist!");
+                throw new IOException("DataManager-->> Json file not exist!");
             string json = "";
             using (FileStream stream = File.Open(Utility.Unity.CombineAppPersistentPath(absoluteFullpath), FileMode.Open))
             {

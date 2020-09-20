@@ -15,34 +15,40 @@ namespace Cosmos
         /// 轮询委托
         /// </summary>
         UdpClientPeer peer;
-
         public UdpClientService():base()
         {
             //构造传入0表示接收任意端口收发的数据
-            peer = new UdpClientPeer();
-            peer.SetValue(SendMessageAsync, OnDeactive, 0, null);
+            peer = new UdpClientPeer(OnConnectHandler,OnDisconnectHandler);
+            peer.SetValue(SendMessageAsync, Disconnect, 0, null);
+        }
+        void OnConnectHandler()
+        {
+            onConnect?.Invoke();
+        }
+        void OnDisconnectHandler()
+        {
+            onDisconnect?.Invoke();
         }
         public override void SetHeartbeat(IHeartbeat heartbeat)
         {
             peer.Heartbeat = heartbeat;
         }
-        public override void OnActive()
+        public override void Connect(string ip, int port)
         {
-            base.OnActive();
-            serverEndPoint = new IPEndPoint(IPAddress.Parse(IP), Port);
-            peer.OnActive();
-            SendSYNMessage();
+            Conv = 0;
+            serverEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+            UdpNetMessage udpNetMsg = UdpNetMessage.EncodeMessage(InnerOpCode._Connect, null);
+            udpNetMsg.Cmd = KcpProtocol.SYN;
+            SendMessageAsync(udpNetMsg);
         }
-        public override void OnDeactive()
+        public override void Disconnect()
         {
-            //SendFINMessage();
-            peer.OnDeactive();
-            base.OnDeactive();
+            UdpNetMessage udpNetMsg = UdpNetMessage.EncodeMessage(InnerOpCode._Disconnect, null);
+            udpNetMsg.Cmd = KcpProtocol.FIN;
+            SendMessageAsync(udpNetMsg);
         }
         public override void SendMessageAsync(INetworkMessage netMsg)
         {
-            if (!Available)
-                return;
             UdpNetMessage udpNetMsg = netMsg as UdpNetMessage;
             var result = peer.EncodeMessage(ref udpNetMsg);
             if (result)
@@ -54,8 +60,6 @@ namespace Cosmos
         }
         public override void OnRefresh()
         {
-            if (!Available)
-                return;
             OnReceive();
             peer.OnRefresh();
             if (awaitHandle.Count > 0)
@@ -77,16 +81,6 @@ namespace Cosmos
                     }
                 }
             }
-        }
-        void SendSYNMessage()
-        {
-            UdpNetMessage udpNetMsg = new UdpNetMessage(0,KcpProtocol.SYN); 
-            SendMessageAsync(udpNetMsg);
-        }
-        void SendFINMessage()
-        {
-            UdpNetMessage udpNetMsg = new UdpNetMessage(0, KcpProtocol.FIN);
-            SendMessageAsync(udpNetMsg);
         }
     }
 }

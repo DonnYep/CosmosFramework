@@ -8,14 +8,8 @@ namespace Cosmos
     /// <summary>
     /// 网络服务接口
     /// </summary>
-    public interface INetworkService:IOperable,IRefreshable
+    public interface INetworkService:IRefreshable
     {
-        Action OnConnect { get; set; }
-        Action OnDisconnect { get; set; }
-        /// <summary>
-        /// 网络服务是否可用
-        /// </summary>
-        bool Available { get; }
         void SetHeartbeat(IHeartbeat heartbeat);
         /// <summary>
         /// 发送网络消息;
@@ -32,5 +26,7 @@ namespace Cosmos
         /// 接收网络消息
         /// </summary>
         void OnReceive();
+        void Connect(string ip,int port);
+        void Disconnect();
     }
 }

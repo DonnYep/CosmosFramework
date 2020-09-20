@@ -10,7 +10,7 @@ namespace Cosmos
     /// <summary>
     /// Peer对象接口；
     /// </summary>
-    public interface IRemotePeer : IReference
+    public interface IRemotePeer:IReference,IOperable
     {
         /// <summary>
         /// 会话ID
@@ -26,8 +26,12 @@ namespace Cosmos
         /// <param name="netMsg">消息体</param>
         void SendMessage(INetworkMessage netMsg);
         /// <summary>
-        /// 终断连接
+        /// 接收网络消息；
         /// </summary>
-        //void AbortConnection();
+        /// <param name="netMsg">消息体</param>
+        //void OnReceiveMessage(INetworkMessage netMsg);
+        //void Disconnect();
+        //void Dispose();
+        //void Flush();
     }
 }

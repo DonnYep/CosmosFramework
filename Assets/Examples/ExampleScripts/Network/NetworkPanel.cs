@@ -16,6 +16,8 @@ public class NetworkPanel : UILogicResident
     [SerializeField] string ip = "127.0.0.1";
     [SerializeField] int port = 8511;
     [SerializeField] uint heartbeatInterval = 45;
+    NetClient netClient;
+    bool isConnected;
     protected override void OnInitialization()
     {
         btnConnect = GetUIPanel<Button>("BtnConnect");
@@ -26,30 +28,42 @@ public class NetworkPanel : UILogicResident
         btnSend.onClick.AddListener(SendClick);
         info = GetUIPanel<Text>("Info");
         inputMsg = GetUIPanel<InputField>("InputMsg");
-        NetworkMsgEventCore.Instance.AddEventListener(10, ServerMsg);
+        netClient = new NetClient();
+        netClient.NetworkConnect += ConnectCallback;
+        netClient.NetworkDisconnect += DisconnectCallback;
     }
     void ConnectClick()
     {
-        Facade.NetworkConnect(ip,port,System.Net.Sockets.ProtocolType.Udp);
-        Facade.RunHeartbeat(heartbeatInterval,5); 
+        netClient.Connect(ip, port);
     }
     void DisconnectClick()
     {
-        Facade.NetworkDisconnect();
+        netClient.Disconnect();
     }
     void SendClick()
     {
         string str = inputMsg.text;
-        var data= Utility.Encode.ConvertToByte(str);
+        var data = Utility.Encode.ConvertToByte(str);
         Facade.SendNetworkMessage(10, data);
-
-        //UdpNetMessage msg = new UdpNetMessage(0,0,KcpProtocol.MSG,10,data);
-        //Facade.SendNetworkMessage(msg);
     }
     void ServerMsg(INetworkMessage netMsg)
     {
-        var data = (netMsg as UdpNetMessage).ServiceMsg;
-        if(data!=null)
-        Utility.Debug.LogInfo($"{ Utility.Converter.GetString(data)}");
+        Utility.Debug.LogInfo($"{ Utility.Converter.GetString((netMsg as UdpNetMessage).ServiceMsg)}");
+    }
+    void ConnectCallback()
+    {
+        netClient.RunHeartBeat(heartbeatInterval, 5);
+        Utility.Debug.LogInfo("NetworkPanel回调，连接成功！");
+        isConnected = true;
+    }
+    void DisconnectCallback()
+    {
+        Utility.Debug.LogInfo("NetworkPanel回调，与服务器断开链接！");
+        isConnected = false;
+    }
+    protected override void OnTermination()
+    {
+        if (isConnected)
+            netClient.Disconnect();
     }
 }
