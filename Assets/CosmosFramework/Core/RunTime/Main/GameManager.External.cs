@@ -50,7 +50,7 @@ namespace Cosmos
                     if (result)
                     {
                         module.OnInitialization();
-                        Utility.Debug.LogInfo($"Instance Custome Module :{module.ToString()} ");
+                        Utility.Debug.LogInfo($"Custome Module :{module} is OnInitialization");
                         GameManager.Instance.refreshHandler += module.OnRefresh;
                     }
                 }

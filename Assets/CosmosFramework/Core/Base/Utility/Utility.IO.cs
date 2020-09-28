@@ -119,17 +119,66 @@ namespace Cosmos
             /// 若文件为空，则自动创建；
             /// 此方法为text类型文件写入；
             /// </summary>
-            /// <param name="relativePath">相对路径</param>
+            /// <param name="filePath">文件路径</param>
             /// <param name="fileName">文件名</param>
             /// <param name="info">写入的信息</param>
-            public static void AppendWriteTextFile(string relativePath, string fileName, string info)
+            public static void AppendWriteTextFile(string filePath, string fileName, string info)
             {
-                string absoluteFullpath = Utility.IO.CombineRelativeFilePath(relativePath);
-                if (!Directory.Exists(absoluteFullpath))
-                    Directory.CreateDirectory(absoluteFullpath);
-                using (FileStream stream = new FileStream(Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                if (!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+                using (FileStream stream = new FileStream(Utility.IO.CombineRelativeFilePath(fileName, filePath), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     stream.Position = stream.Length;
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    {
+                        writer.WriteLine(info);
+                        writer.Close();
+                        stream.Close();
+                    }
+                }
+            }
+            /// <summary>
+            /// 使用UTF8编码；
+            /// 写入文件信息；
+            /// 若文件为空，则自动创建；
+            /// 此方法为text类型文件写入；
+            /// </summary>
+            /// <param name="filePath">文件路径</param>
+            /// <param name="fileName">文件名</param>
+            /// <param name="info">写入的信息</param>
+            /// <param name="append">是否追加</param>
+            public static void WriteTextFile(string filePath, string fileName, string info, bool append = false)
+            {
+                if (!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+                using (FileStream stream = File.Open(Utility.IO.CombineRelativeFilePath(fileName, filePath), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    if (append)
+                        stream.Position = stream.Length;
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    {
+                        writer.WriteLine(info);
+                        writer.Close();
+                        stream.Close();
+                    }
+                }
+            }
+            /// <summary>
+            /// 完全覆写；
+            ///  使用UTF8编码；
+            /// </summary>
+            /// <param name="filePath">w文件路径</param>
+            /// <param name="fileName">文件名</param>
+            /// <param name="info">写入的信息</param>
+            public static void OverwriteTextFile(string filePath, string fileName, string info)
+            {
+                if (!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+                var fileFullPath = Utility.IO.CombineRelativeFilePath(fileName, filePath);
+                using (FileStream stream = File.Open(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.SetLength(0);
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
                     {
                         writer.WriteLine(info);
@@ -146,8 +195,6 @@ namespace Cosmos
             /// <returns>是否写入成功</returns>
             public static bool WriterFormattedBinary(string fileFullPath, object context)
             {
-                if (!File.Exists(fileFullPath))
-                    return false;
                 using (FileStream stream = new FileStream(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     BinaryFormatter formatter = new BinaryFormatter();

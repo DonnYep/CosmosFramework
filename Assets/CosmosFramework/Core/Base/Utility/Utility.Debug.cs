@@ -19,23 +19,23 @@ namespace Cosmos
             {
                 debugHelper = null;
             }
-            public static void LogInfo(object msg, Object context = null)
+            public static void LogInfo(object msg, object context = null)
             {
                 debugHelper?.LogInfo(msg, context);
             }
-            public static void LogInfo(object msg, string msgColor, Object context = null)
+            public static void LogInfo(object msg, string msgColor, object context = null)
             {
                 debugHelper?.LogInfo(msg, msgColor, context);
             }
-            public static void LogWarning(object msg, Object context = null)
+            public static void LogWarning(object msg, object context = null)
             {
                 debugHelper?.LogWarning(msg, context);
             }
-            public static void LogError(object o, Object context = null)
+            public static void LogError(object o, object context = null)
             {
                 debugHelper?.LogError(o, context);
             }
-            public static void LogFatal(object o, Object context = null)
+            public static void LogFatal(object o, object context = null)
             {
                 debugHelper?.LogFatal(o, context);
             }

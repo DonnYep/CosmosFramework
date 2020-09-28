@@ -115,6 +115,8 @@ namespace Cosmos.UI
         {
             if (HasPanel(panelName))
             {
+                var panel = uiPanelDict[panelName] as T;
+                panel.gameObject.SetActive(true);
                 callBack?.Invoke(uiPanelDict[panelName] as T);
                 return;
             }

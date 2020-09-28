@@ -297,10 +297,10 @@ namespace Cosmos
                 moduleDict.Add(moduleEnum, module);
                 moduleCount++;
                 refreshHandler += module.OnRefresh;
-                Utility.Debug.LogInfo("Module:\"" + moduleEnum.ToString() + "\" " + "  is OnInitialization" + "\n based on GameManager");
+                Utility.Debug.LogInfo($"Module :{module} is OnInitialization");
             }
             else
-                throw new ArgumentException("Module:\"" + moduleEnum.ToString() + "\" " + " is already exist!");
+                throw new ArgumentException($"Module : {module} is already exist!");
         }
         /// <summary>
         /// 注销模块
@@ -313,10 +313,10 @@ namespace Cosmos
                 refreshHandler -= m.OnRefresh;
                 moduleDict.Remove(module);
                 moduleCount--;
-                Utility.Debug.LogInfo("Module:\"" + module.ToString() + "\" " + "  is OnTermination" + " based on GameManager", MessageColor.DARKBLUE);
+                Utility.Debug.LogInfo($"Module :{module} is OnTermination", MessageColor.DARKBLUE);
             }
             else
-                throw new ArgumentNullException("Module:\"" + module.ToString()+ "\" " + " is  not exist!");
+                throw new ArgumentException($"Module : {module} is not exist!");
         }
         internal bool HasModule(ModuleEnum module)
         {
@@ -355,8 +355,6 @@ namespace Cosmos
         /// 默认延迟为0，表示立刻删除、
         /// 仅在场景中删除对应对象
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="t">默认参数，表示延迟</param>
         internal static void KillObject(Object obj, float delay = 0)
         {
             GameObject.Destroy(obj, delay);
@@ -365,7 +363,6 @@ namespace Cosmos
         /// 立刻清理实例对象
         /// 会在内存中清理实例
         /// </summary>
-        /// <param name="obj"></param>
         internal static void KillObjectImmediate(Object obj)
         {
             GameObject.DestroyImmediate(obj);
@@ -373,8 +370,6 @@ namespace Cosmos
         /// <summary>
         /// 清除一组实例
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="objs"></param>
         internal static void KillObjects<T>(List<T> objs) where T : Object
         {
             for (int i = 0; i < objs.Count; i++)
