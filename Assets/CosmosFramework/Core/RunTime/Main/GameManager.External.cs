@@ -41,18 +41,27 @@ namespace Cosmos
         public static void InitCustomeModule(Assembly assembly)
         {
             Type[] types = assembly.GetTypes();
+            var moduleType = typeof(IModule);
             for (int i = 0; i < types.Length; i++)
             {
-                if (types[i].GetCustomAttribute<CustomeModuleAttribute>() != null)
+                if (types[i].GetCustomAttribute<CustomeModuleAttribute>() != null && moduleType.IsAssignableFrom(types[i]))
                 {
-                    var module = Utility.Assembly.GetTypeInstance(types[i]) as IModule;
-                    var result = customeModuleDict.TryAdd(types[i], module);
-                    if (result)
+                    try
                     {
-                        module.OnInitialization();
-                        Utility.Debug.LogInfo($"Custome Module :{module} is OnInitialization");
-                        GameManager.Instance.refreshHandler += module.OnRefresh;
+                        var module = Utility.Assembly.GetTypeInstance(types[i]) as IModule;
+                        var result = customeModuleDict.TryAdd(types[i], module);
+                        if (result)
+                        {
+                            module.OnInitialization();
+                            Utility.Debug.LogInfo($"Custome Module :{module} is OnInitialization");
+                            GameManager.Instance.refreshHandler += module.OnRefresh;
+                        }
                     }
+                    catch
+                    {
+                        Utility.Debug.LogError($"Custome module create instance fail:{types[i]} is not derived from the{ typeof(Cosmos.Module<>)}");
+                    }
+
                 }
             }
             PrepareCustomeModule();
