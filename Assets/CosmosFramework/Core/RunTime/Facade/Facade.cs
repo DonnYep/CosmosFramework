@@ -45,116 +45,21 @@ namespace Cosmos
             GameManager.InitCustomeModule(assembly);
         }
         #endregion
-
-        #region FacadeMethods
-        public static void InitAllModule()
+        #region GameManagerUpdate
+        public static event Action FixedRefreshHandler
         {
-            GameManager.AudioManager.OnInitialization();
-            GameManager.ResourceManager.OnInitialization();
-            GameManager.ObjectPoolManager.OnInitialization();
-            GameManager.NetworkManager.OnInitialization();
-            GameManager.MonoManager.OnInitialization();
-            GameManager.InputManager.OnInitialization();
-            GameManager.UIManager.OnInitialization();
-            GameManager.EventManager.OnInitialization();
-            GameManager.SceneManager.OnInitialization();
-            GameManager.FSMManager.OnInitialization();
-            GameManager.ConfigManager.OnInitialization();
-            GameManager.DataManager.OnInitialization();
-            GameManager.ControllerManager.OnInitialization();
-            GameManager.EntityManager.OnInitialization();
-            GameManager.HotfixManager.OnInitialization();
-            Utility.Debug.LogInfo("Module Count:\t" + GameManager.Instance.ModuleCount);
+            add { GameManager.FixedRefreshHandler+= value; }
+            remove{GameManager.FixedRefreshHandler -= value;}
         }
-        public static void RegisterModule(ModuleEnum module)
+        public static event Action LateRefreshHandler
         {
-            InitModule(module);
+            add { GameManager.LateRefreshHandler+= value; }
+            remove{GameManager.LateRefreshHandler -= value;}
         }
-        //TODO 反射初始化需要为AOT做出预留，专门设计为IOS系统的symbol
-        static IModule InitModule(ModuleEnum module)
+        public static event Action RefreshHandler
         {
-#if UNITY_EDITOR||UNITY_EDITOR_WIN||UNITY_STANDALONE_WIN||UNITY_ANDROID
-            var result = GameManager.Instance.GetModule(module);
-            if (result == null)
-            {
-                var moduleResult = Utility.Assembly.GetTypeInstance<IModule>(Assembly.GetAssembly(typeof(Facade)), Utility.Framework.GetModuleTypeFullName(module.ToString()));
-                GameManager.Instance.ModuleInitialization(moduleResult);
-                return moduleResult;
-            }
-            else return result;
-#elif UNITY_IOS
-            return InitModuleForIOS(moduleName);
-#endif
-        }
-        /// <summary>
-        ///这个是为了避免IOS环境下的AOT编译无法通过反射初始化模块的方法
-        /// </summary>
-        static IModule InitModuleForIOS(ModuleEnum module)
-        {
-            switch (module)
-            {
-                case ModuleEnum.Audio:
-                    GameManager.AudioManager.OnInitialization();
-                    break;
-                case ModuleEnum.Config:
-                    GameManager.ConfigManager.OnInitialization();
-                    break;
-                case ModuleEnum.Controller:
-                    GameManager.ControllerManager.OnInitialization();
-                    break;
-                case ModuleEnum.Data:
-                    GameManager.DataManager.OnInitialization();
-                    break;
-                case ModuleEnum.Entity:
-                    GameManager.EntityManager.OnInitialization();
-                    break;
-                case ModuleEnum.Event:
-                    GameManager.EventManager.OnInitialization();
-                    break;
-                case ModuleEnum.FSM:
-                    GameManager.FSMManager.OnInitialization();
-                    break;
-                case ModuleEnum.Input:
-                    GameManager.InputManager.OnInitialization();
-                    break;
-                case ModuleEnum.Mono:
-                    GameManager.MonoManager.OnInitialization();
-                    break;
-                case ModuleEnum.Network:
-                    GameManager.NetworkManager.OnInitialization();
-                    break;
-                case ModuleEnum.ObjectPool:
-                    GameManager.ObjectPoolManager.OnInitialization();
-                    break;
-                case ModuleEnum.ReferencePool:
-                    GameManager.ReferencePoolManager.OnInitialization();
-                    break;
-                case ModuleEnum.Resource:
-                    GameManager.ResourceManager.OnInitialization();
-                    break;
-                case ModuleEnum.Scene:
-                    GameManager.SceneManager.OnInitialization();
-                    break;
-                case ModuleEnum.UI:
-                    GameManager.UIManager.OnInitialization();
-                    break;
-            }
-            var result = GameManager.Instance.GetModule(module);
-            return result;
-        }
-        public static IModule GetModule(ModuleEnum module)
-        {
-            //var fullModuleName = Utility.Framework.GetModuleTypeFullName(moduleName);
-            var moduleResult = GameManager.Instance.GetModule(module);
-            if (moduleResult == null)
-            {
-                moduleResult = InitModule(module);
-            }
-            return moduleResult;
-        }
-        public static bool HasModule(ModuleEnum module)
-        {
-            return GameManager.Instance.HasModule(module);
+            add { GameManager.RefreshHandler += value; }
+            remove{GameManager.RefreshHandler -= value;}
         }
         #endregion
         #region InputManager
@@ -309,14 +214,6 @@ namespace Cosmos
         }
         #endregion
         #region MonoManager
-        public static void AddMonoListener(Action act, UpdateType type, out short monoPoolID)
-        {
-            GameManager.MonoManager.AddListener(act, type, out monoPoolID);
-        }
-        public static void RemoveMonoListener(Action act, UpdateType type, short monoID)
-        {
-            GameManager.MonoManager.RemoveListener(act, type, monoID);
-        }
         public static Coroutine StartCoroutine(IEnumerator routine)
         {
             return GameManager.MonoManager.StartCoroutine(routine);

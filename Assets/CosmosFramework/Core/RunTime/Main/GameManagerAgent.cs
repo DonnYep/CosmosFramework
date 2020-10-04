@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Object = UnityEngine.Object;
-namespace Cosmos {
+namespace Cosmos
+{
     /// <summary>
     /// GameManager是静态的，因此由此类代理完成生命周期
     /// </summary>
     [DisallowMultipleComponent]
     [DefaultExecutionOrder(-1000)]
-    public sealed class GameManagerAgent :MonoSingleton<GameManagerAgent>,IControllable
+    public sealed class GameManagerAgent : MonoSingleton<GameManagerAgent>, IControllable
     {
         public bool IsPause { get; private set; }
         public bool Pause
@@ -30,28 +31,22 @@ namespace Cosmos {
                 }
             }
         }
-        event Action UpdateHandler;
-        event Action FixedUpdateHandler;
-        event Action LateUpdateHandler;
+
         event Action ApplicationQuitHandler;
         public void OnPause()
         {
-            GameManager.Instance.OnPause();
+            GameManager.OnPause();
         }
         public void OnUnPause()
         {
-            GameManager.Instance.OnUnPause();
+            GameManager.OnUnPause();
         }
         protected override void Awake()
         {
             base.Awake();
             DontDestroyOnLoad(this.gameObject);
         }
-        public void AddFixedUpdateListener(Action handler)
-        {
-            FixedUpdateHandler += handler;
-        }
-        public int ModuleCount { get { return GameManager.Instance.ModuleCount; } }
+        public int ModuleCount { get { return GameManager.ModuleCount; } }
         /// <summary>
         /// 清除单个实例，有一个默认参数。
         /// 默认延迟为0，表示立刻删除、
@@ -61,7 +56,7 @@ namespace Cosmos {
         /// <param name="t">默认参数，表示延迟</param>
         public static void KillObject(Object obj, float delay = 0)
         {
-           GameManager .KillObject(obj, delay);
+            GameManager.KillObject(obj, delay);
         }
         /// <summary>
         /// 立刻清理实例对象
@@ -81,7 +76,7 @@ namespace Cosmos {
         {
             for (int i = 0; i < objs.Count; i++)
             {
-              GameManager.KillObject (objs[i]);
+                GameManager.KillObject(objs[i]);
             }
             objs.Clear();
         }
@@ -95,26 +90,21 @@ namespace Cosmos {
         }
         protected override void OnDestroy()
         {
-            GameManager.Instance.Dispose();
+            GameManager.Dispose();
         }
         private void FixedUpdate()
         {
-            FixedUpdateHandler?.Invoke();
+            GameManager.OnFixRefresh();
         }
         private void Update()
         {
             if (IsPause)
                 return;
-            UpdateHandler?.Invoke();
-            GameManager.Instance.OnRefresh();
-            //foreach ( KeyValuePair<ModuleEnum,IModule> module in moduleDict)
-            //{
-            //    module.Value?.OnRefresh();
-            //}
+            GameManager.OnRefresh();
         }
         private void LateUpdate()
         {
-            LateUpdateHandler?.Invoke();
+            GameManager.OnLateRefresh ();
         }
         private void OnApplicationQuit()
         {

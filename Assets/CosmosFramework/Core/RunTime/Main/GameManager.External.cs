@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    internal sealed partial class GameManager
+    internal static partial class GameManager
     {
         /// <summary>
         /// 自定义模块容器；
@@ -54,14 +54,13 @@ namespace Cosmos
                         {
                             module.OnInitialization();
                             Utility.Debug.LogInfo($"Custome Module :{module} is OnInitialization");
-                            GameManager.Instance.refreshHandler += module.OnRefresh;
+                            GameManager.RefreshHandler+= module.OnRefresh;
                         }
                     }
                     catch
                     {
                         Utility.Debug.LogError($"Custome module create instance fail:{types[i]} is not derived from the{ typeof(Cosmos.Module<>)}");
                     }
-
                 }
             }
             PrepareCustomeModule();

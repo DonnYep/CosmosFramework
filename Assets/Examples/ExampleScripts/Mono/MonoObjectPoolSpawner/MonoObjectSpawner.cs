@@ -20,7 +20,7 @@ namespace Cosmos
                 if (deactiveObjectMount == null)
                 {
                     deactiveObjectMount = new GameObject(this.gameObject.name + "->>DeactiveObjectMount");
-                    deactiveObjectMount.transform.SetParent(Facade.GetModule(ModuleEnum.ObjectPool).MountPoint.transform);
+                    deactiveObjectMount.transform.SetParent(GameManagerAgent.Instance.transform);
                     deactiveObjectMount.transform.ResetLocalTransform();
                 }
                 return deactiveObjectMount.transform;

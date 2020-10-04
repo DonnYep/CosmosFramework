@@ -17,7 +17,6 @@ namespace Cosmos
         public CameraTarget CameraTarget { get; private set; }
         float yaw;
         float pitch;
-        short lateUpdateID;
         //当前与相机目标的距离
         float currentDistance;
         Vector3 cameraOffset = Vector3.zero;
@@ -44,14 +43,14 @@ namespace Cosmos
         protected override void Awake()
         {
             base.Awake();
-            Facade.AddMonoListener(LateUpdateCamera, UpdateType.LateUpdate,out lateUpdateID );
+            Facade.LateRefreshHandler += LateUpdateCamera;
             Facade.AddEventListener(ControllerEventCodeParams.CONTROLLER_INPUT, CameraHandler);
             Facade.RegisterController(this);
         }
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            Facade.RemoveMonoListener(LateUpdateCamera, UpdateType.LateUpdate, lateUpdateID);
+            Facade.LateRefreshHandler -= LateUpdateCamera;
             Facade.RemoveEventListener(ControllerEventCodeParams.CONTROLLER_INPUT, CameraHandler);
             Facade.DeregisterController(this);
             Utility.Debug.LogInfo("CameraController destory");

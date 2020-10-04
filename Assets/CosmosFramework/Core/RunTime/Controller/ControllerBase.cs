@@ -34,18 +34,25 @@ namespace Cosmos
         ///  非空虚函数
         ///  覆写时需要保留父类方法
         /// </summary>
-        protected override void Awake() { controllerName = this.GetType().Name; }
+        protected override void Awake() 
+        {
+            controllerName = this.GetType().Name;
+        }
         /// <summary>
         /// 空虚函数
         /// </summary>
         protected virtual void UpdateHandler() { }
         /// <summary>
-        /// 空虚函数
+        /// 非空虚函数
         /// </summary>
-        protected virtual  void OnEnable(){}
+        protected virtual  void OnEnable(){
+            Facade.RegisterController(this);
+        }
         /// <summary>
-        /// 空虚函数
+        /// 非空虚函数
         /// </summary>
-        protected virtual void OnDisable() { }
+        protected virtual void OnDisable() {
+            Facade.DeregisterController(this);
+        }
     }
 }

@@ -17,7 +17,6 @@ using Cosmos.Config;
 using Cosmos.Network;
 using Cosmos.Entity;
 using Cosmos.Hotfix;
-using System.Reflection;
 using System;
 
 namespace Cosmos
@@ -27,30 +26,60 @@ namespace Cosmos
     /// 管理器对象都会通过这个对象的实例来调用，避免复杂化
     /// 可以理解为是一个Facade
     /// </summary>
-    internal sealed partial class GameManager : Singleton<GameManager>,IControllable,IRefreshable
+    internal static partial class GameManager 
     {
         #region Properties
+        public static event Action FixedRefreshHandler
+        {
+            add { fixedRefreshHandler += value; }
+            remove
+            {
+                try { fixedRefreshHandler -= value; }
+                catch (Exception e) { Utility.Debug.LogError(e); }
+            }
+        }
+        public static event Action LateRefreshHandler
+        {
+            add { lateRefreshHandler += value; }
+            remove
+            {
+                try { lateRefreshHandler -= value; }
+                catch (Exception e) { Utility.Debug.LogError(e); }
+            }
+        }
+        public static event Action RefreshHandler
+        {
+            add { refreshHandler += value; }
+            remove
+            {
+                try { refreshHandler -= value; }
+                catch (Exception e) { Utility.Debug.LogError(e); }
+            }
+        }
+        static Action fixedRefreshHandler;
+        static Action lateRefreshHandler;
+        static Action refreshHandler;
         // 模块表
-        static Dictionary<ModuleEnum, IModule> moduleDict;
-        internal static Dictionary<ModuleEnum, IModule> ModuleDict { get { return moduleDict; } }
+        static Dictionary<Type, IModule> moduleDict;
+        internal static Dictionary<Type, IModule> ModuleDict { get { return moduleDict; } }
         /// <summary>
         /// 轮询更新委托
         /// </summary>
-        internal Action refreshHandler;
-        public bool IsPause { get; private set; }
+        public static bool IsPause { get; private set; }
         //当前注册的模块总数
-        int moduleCount = 0;
-        internal int ModuleCount { get { return moduleCount; } }
-        internal GameObject InstanceObject
+        static int moduleCount = 0;
+        internal static int ModuleCount { get { return moduleCount; } }
+        internal static GameObject InstanceObject
         {
             get
             {
                 if (instanceObject == null)
-                { instanceObject = new GameObject(this.GetType().ToString()); Object.DontDestroyOnLoad(instanceObject); }
+                { instanceObject = new GameObject(typeof(GameManager).ToString()); 
+                    Object.DontDestroyOnLoad(instanceObject); }
                 return instanceObject;
             }
         }
-        GameObject instanceObject;
+        static GameObject instanceObject;
         static AudioManager audioManager;
         internal static AudioManager AudioManager
         {
@@ -59,7 +88,7 @@ namespace Cosmos
                 if (audioManager == null)
                 {
                     audioManager = new AudioManager();
-                    Instance.ModuleInitialization(audioManager);
+                    ModuleInitialization(audioManager);
                 }
                 return audioManager;
             }
@@ -72,7 +101,7 @@ namespace Cosmos
                 if (resourceManager == null)
                 {
                     resourceManager = new ResourceManager();
-                    Instance.ModuleInitialization(resourceManager);
+                    ModuleInitialization(resourceManager);
                 }
                 return resourceManager;
             }
@@ -85,7 +114,7 @@ namespace Cosmos
                 if (objectPoolManager == null)
                 {
                     objectPoolManager = new ObjectPoolManager();
-                    Instance.ModuleInitialization(objectPoolManager);
+                    ModuleInitialization(objectPoolManager);
                 }
                 return objectPoolManager;
             }
@@ -98,7 +127,7 @@ namespace Cosmos
                 if (networkManager == null)
                 {
                     networkManager = new NetworkManager();
-                    Instance.ModuleInitialization(networkManager);
+                    ModuleInitialization(networkManager);
                 }
                 return networkManager;
             }
@@ -111,7 +140,7 @@ namespace Cosmos
                 if (monoManager == null)
                 {
                     monoManager = new MonoManager();
-                    Instance.ModuleInitialization(monoManager);
+                    ModuleInitialization(monoManager);
                 }
                 return monoManager;
             }
@@ -124,7 +153,7 @@ namespace Cosmos
                 if (inputManager == null)
                 {
                     inputManager = new InputManager();
-                    Instance.ModuleInitialization(inputManager);
+                    ModuleInitialization(inputManager);
                 }
                 return inputManager;
             }
@@ -137,7 +166,7 @@ namespace Cosmos
                 if (uiManager == null)
                 {
                     uiManager = new UIManager();
-                    Instance.ModuleInitialization(uiManager);
+                    ModuleInitialization(uiManager);
                 }
                 return uiManager;
             }
@@ -150,7 +179,7 @@ namespace Cosmos
                 if (eventManager == null)
                 {
                     eventManager = new EventManager();
-                    Instance.ModuleInitialization(eventManager);
+                    ModuleInitialization(eventManager);
                 }
                 return eventManager;
             }
@@ -163,7 +192,7 @@ namespace Cosmos
                 if (sceneManager == null)
                 {
                     sceneManager = new SceneManager();
-                    Instance.ModuleInitialization(sceneManager);
+                    ModuleInitialization(sceneManager);
                 }
                 return sceneManager;
             }
@@ -176,7 +205,7 @@ namespace Cosmos
                 if (fsmManager == null)
                 {
                     fsmManager = new FSMManager();
-                    Instance.ModuleInitialization(fsmManager);
+                    ModuleInitialization(fsmManager);
                 }
                 return fsmManager;
             }
@@ -189,7 +218,7 @@ namespace Cosmos
                 if (configManager == null)
                 {
                     configManager = new ConfigManager();
-                    Instance.ModuleInitialization(configManager);
+                    ModuleInitialization(configManager);
                 }
                 return configManager;
             }
@@ -202,7 +231,7 @@ namespace Cosmos
                 if (dataManager == null)
                 {
                     dataManager = new DataManager();
-                    Instance.ModuleInitialization(dataManager);
+                    ModuleInitialization(dataManager);
                 }
                 return dataManager;
             }
@@ -215,7 +244,7 @@ namespace Cosmos
                 if (controllerManager == null)
                 {
                     controllerManager = new ControllerManager();
-                    Instance.ModuleInitialization(controllerManager);
+                    ModuleInitialization(controllerManager);
                 }
                 return controllerManager;
             }
@@ -228,7 +257,7 @@ namespace Cosmos
                 if (entityManager == null)
                 {
                     entityManager = new EntityManager();
-                    Instance.ModuleInitialization(entityManager);
+                    ModuleInitialization(entityManager);
                 }
                 return entityManager;
             }
@@ -241,7 +270,7 @@ namespace Cosmos
                 if (referencePoolManager == null)
                 {
                     referencePoolManager = new ReferencePoolManager();
-                    Instance.ModuleInitialization(referencePoolManager);
+                    ModuleInitialization(referencePoolManager);
                 }
                 return referencePoolManager;
             }
@@ -254,101 +283,89 @@ namespace Cosmos
                 if (hotfixManager == null)
                 {
                     hotfixManager = new HotfixManager();
-                    Instance.ModuleInitialization(hotfixManager);
+                 ModuleInitialization(hotfixManager);
                 }
                 return hotfixManager;
             }
         }
         #endregion
 
-
         #region Methods
-        public void OnPause()
+        public static void OnPause()
         {
             IsPause = true;
         }
-        public void OnUnPause()
+        public static void OnUnPause()
         {
             IsPause = false;
         }
-        public void OnRefresh()
+        public static void OnRefresh()
         {
             if (IsPause)
                 return;
             refreshHandler?.Invoke();
         }
-        internal void ModuleInitialization(IModule module)
+        public static void OnLateRefresh()
         {
-            module.OnInitialization();
-            Instance.RegisterModule(module.ModuleEnum, module);
+            if (IsPause)
+                return;
+            lateRefreshHandler?.Invoke();
         }
-        internal void ModuleTermination(IModule module)
+        public static void OnFixRefresh()
         {
-            module.OnTermination();
-            Instance.DeregisterModule(module.ModuleEnum);
+            if (IsPause)
+                return;
+            fixedRefreshHandler?.Invoke();
         }
-        /// <summary>
-        /// 注册模块
-        /// </summary>
-        internal void RegisterModule(ModuleEnum moduleEnum, IModule module)
+        internal static void ModuleInitialization(IModule module)
         {
-            if (!HasModule(moduleEnum))
+            var type = module.GetType();
+            if (!HasModule(type))
             {
-                moduleDict.Add(moduleEnum, module);
+                module.OnInitialization();
+                moduleDict.Add(module.GetType(), module);
                 moduleCount++;
-                refreshHandler += module.OnRefresh;
+                RefreshHandler += module.OnRefresh;
                 Utility.Debug.LogInfo($"Module :{module} is OnInitialization");
             }
             else
                 throw new ArgumentException($"Module : {module} is already exist!");
         }
-        /// <summary>
-        /// 注销模块
-        /// </summary>
-        internal void DeregisterModule(ModuleEnum module)
+        internal static void ModuleTermination(IModule module)
         {
-            if (HasModule(module))
+            var type = module.GetType();
+            if (HasModule(type))
             {
-                var m = moduleDict[module];
-                refreshHandler -= m.OnRefresh;
-                moduleDict.Remove(module);
+                module.OnTermination();
+                var m = moduleDict[type];
+                RefreshHandler -= m.OnRefresh;
+                moduleDict.Remove(type);
                 moduleCount--;
                 Utility.Debug.LogInfo($"Module :{module} is OnTermination", MessageColor.DARKBLUE);
             }
             else
                 throw new ArgumentException($"Module : {module} is not exist!");
         }
-        internal bool HasModule(ModuleEnum module)
+        internal static bool HasModule(Type type)
         {
-            return moduleDict.ContainsKey(module);
-        }
-        internal IModule GetModule(ModuleEnum module)
-        {
-            if (HasModule(module))
-                return moduleDict[module];
-            else
-            {
-                return null;
-            }
+            return moduleDict.ContainsKey(type);
         }
         /// <summary>
         /// 构造函数，只有使用到时候才产生
         /// </summary>
-        public GameManager()
+        static GameManager()
         {
             if (moduleDict == null)
             {
-                moduleDict = new Dictionary<ModuleEnum, IModule>();
+                moduleDict = new Dictionary<Type, IModule>();
                 InstanceObject.gameObject.AddComponent<GameManagerAgent>();
             }
         }
-  
         /// <summary>
         /// 清理静态成员的对象，内存未释放完全
         /// </summary>
-        internal static void ClearGameManager()
+        internal static void Dispose()
         {
-            Instance.Dispose();
         }
         /// <summary>
         /// 清除单个实例，有一个默认参数。
@@ -387,11 +404,5 @@ namespace Cosmos
             objs.Clear();
         }
         #endregion
-    }
-    internal enum ContainerState : short
-    {
-        Empty = -1,
-        Hold = 0,
-        Full = 1
     }
 }

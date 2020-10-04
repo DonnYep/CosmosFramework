@@ -38,13 +38,13 @@ namespace Cosmos.Test{
                 case ModuleType.None:
                     break;
                 case ModuleType.All:
-                    Facade.InitAllModule();
+                    //Facade.InitAllModule();
                     break;
                 default:
-                    var moduleEnum = Utility.Framework.GetModuleEnum(module.ToString());
-                    var moduleResult= Facade.GetModule( moduleEnum );
-                    if (moduleResult != null)
-                        Utility.Debug.LogInfo(moduleResult.MountPoint.name);
+                    //var moduleEnum = Utility.Framework.GetModuleEnum(module.ToString());
+                    //var moduleResult= Facade.GetModule( moduleEnum );
+                    //if (moduleResult != null)
+                    //    Utility.Debug.LogInfo(moduleResult.MountPoint.name);
                     break;
             }
         }

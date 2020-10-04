@@ -10,6 +10,5 @@ namespace Cosmos
     public interface IMountPoint
     {
         GameObject MountPoint{ get; }
-        Type MountType { get; }
     }
 }

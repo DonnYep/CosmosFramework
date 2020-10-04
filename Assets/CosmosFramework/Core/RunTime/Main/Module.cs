@@ -8,13 +8,11 @@ namespace Cosmos
     /// 模块的抽象基类；
     /// 外部可扩展；
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public abstract class Module<T> : IModule
         where T : Module<T>, new()
     {
         #region Properties
         #region IMountPoint
-        public Type MountType { get { return typeof(T); } }
         GameObject mountPoint;
         public GameObject MountPoint
         {
@@ -23,7 +21,7 @@ namespace Cosmos
                 if (mountPoint == null)
                 {
                     mountPoint = new GameObject(ModuleName + "Module-->>Container");
-                    mountPoint.transform.SetParent(GameManager.Instance.InstanceObject.transform);
+                    mountPoint.transform.SetParent(GameManager.InstanceObject.transform);
                 }
                 return mountPoint;
             }
@@ -39,33 +37,24 @@ namespace Cosmos
             get
             {
                 if (string.IsNullOrEmpty(moduleName))
-                    moduleName = Utility.Text.StringSplit(Utility.Assembly.GetTypeFullName<T>(), new string[] { "." }, true, 2);
+                    moduleName = typeof(T).Name;
+                    //moduleName = Utility.Text.StringSplit(Utility.Assembly.GetTypeFullName<T>(), new string[] { "." }, true, 2);
                 return moduleName;
             }
         }
         /// <summary>
         /// 模块的完全限定名
         /// </summary>
-        string moduleFullyQualifiedName = null;
-        public string ModuleFullyQualifiedName
+        string moduleFullName = null;
+        public string ModuleFullName
         {
             get
             {
-                if (string.IsNullOrEmpty(moduleFullyQualifiedName))
-                    moduleFullyQualifiedName = Utility.Assembly.GetTypeFullName<T>();
-                return moduleFullyQualifiedName;
+                if (string.IsNullOrEmpty(moduleFullName))
+                    moduleFullName = typeof(T).FullName;
+                return moduleFullName;
             }
         }
-        public ModuleEnum ModuleEnum
-        {
-            get
-            {
-                var module = ModuleName.Replace("Manager", "");
-                return Utility.Framework.GetModuleEnum(module);
-            }
-        }
-
-
         #endregion
 
         #region Methods
@@ -83,7 +72,7 @@ namespace Cosmos
             //TODO 生命周期销毁问题 ，module
             mountPoint = null;
             moduleName = null;
-            moduleFullyQualifiedName = null;
+            moduleFullName = null;
         }
         /// <summary>
         /// 非空虚函数

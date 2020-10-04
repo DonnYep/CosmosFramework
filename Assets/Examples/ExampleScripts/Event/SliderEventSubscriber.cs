@@ -23,14 +23,6 @@ public class SliderEventSubscriber : MonoBehaviour
         startText = text.text;
     }
     string startText;
-    public void DeregisterEvent()
-    {
-        Facade.RemoveEventListener(eventKey, Handler);
-    }
-    public void DeregisterEventManager()
-    {
-        GameManager.Instance.DeregisterModule(ModuleEnum.Event);
-    }
     void Handler(object sender, GameEventArgs arg)
     {
         uch = arg as LogicEventArgs<Slider>;

@@ -2,9 +2,8 @@
 using System;
 namespace Cosmos
 {
-    public interface IModule: IControllableBehaviour,IMountPoint
+    internal interface IModule: IControllableBehaviour,IMountPoint
     {
-        string ModuleFullyQualifiedName { get; }
-        ModuleEnum ModuleEnum { get; }
+        string ModuleFullName { get; }
     }
 }
