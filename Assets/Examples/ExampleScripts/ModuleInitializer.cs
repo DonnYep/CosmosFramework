@@ -38,7 +38,6 @@ namespace Cosmos.Test{
                 case ModuleType.None:
                     break;
                 case ModuleType.All:
-                    //Facade.InitAllModule();
                     break;
                 default:
                     //var moduleEnum = Utility.Framework.GetModuleEnum(module.ToString());

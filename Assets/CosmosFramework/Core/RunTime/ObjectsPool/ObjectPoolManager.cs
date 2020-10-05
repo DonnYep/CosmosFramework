@@ -4,6 +4,7 @@ using System;
 //using Cosmos.Event;
 namespace Cosmos.ObjectPool
 {
+    [Module]
     internal sealed class ObjectPoolManager: Module<ObjectPoolManager>
     {
         #region Properties

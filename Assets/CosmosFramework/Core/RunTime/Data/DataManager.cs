@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 namespace Cosmos.Data
 {
+    [Module]
     internal sealed class DataManager : Module<DataManager>
     {
         #region Methods

@@ -4,8 +4,9 @@ using UnityEngine;
 namespace Cosmos.Hotfix
 {
     /// <summary>
-    /// 热修复管理器，推荐使用Xlua
+    /// 热修复管理器
     /// </summary>
+    [Module]
     internal class HotfixManager : Module<HotfixManager>
     {
 

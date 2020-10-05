@@ -7,6 +7,7 @@ namespace Cosmos.Config
     /// <summary>
     /// 载入时候读取配置，例如声音大小，角色等
     /// </summary>
+    [Module]
     internal sealed class ConfigManager : Module<ConfigManager>
     {
         Dictionary<ushort, ConfigData> configDataDict = new Dictionary<ushort, ConfigData>();

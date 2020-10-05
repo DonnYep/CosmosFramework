@@ -8,6 +8,7 @@ using UnityEngine.Events;
 
 namespace Cosmos.Scene
 {
+    [Module]
     internal sealed class SceneManager : Module<SceneManager>
     {
         /// <summary>

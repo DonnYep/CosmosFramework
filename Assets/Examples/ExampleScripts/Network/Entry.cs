@@ -7,5 +7,6 @@ public class Entry : MonoBehaviour
     private void Awake()
     {
         Utility.Debug.SetHelper(new UnityDebugHelper());
+        Facade.CheckCosmosModule();
     }
 }

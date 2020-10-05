@@ -40,6 +40,17 @@ namespace Cosmos
             if (Facade.GetButtonDown(InputButtonType.Escape))
                 UnlockMouse();
         }
+        public override void OnRefresh()
+        {
+            yaw = -Facade.GetAxis(InputAxisType.MouseX);
+            pitch = Facade.GetAxis(InputAxisType.MouseY);
+            pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
+            if (Facade.GetAxis(InputAxisType.MouseScrollWheel) != 0)
+                Utility.Debug.LogInfo("MouseScrollWheel ", MessageColor.INDIGO);
+            distanceFromTarget -= Facade.GetAxis(InputAxisType.MouseScrollWheel);
+            distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
+            HideMouse();
+        }
         protected override void Awake()
         {
             base.Awake();
@@ -62,17 +73,7 @@ namespace Cosmos
             cameraViewDamp = Mathf.Clamp(cameraViewDamp, 0, 1000);
             pitchMinMax = Utility.Unity.Clamp(pitchMinMax, new Vector2(-90, 0), new Vector2(0, 90));
         }
-        protected override void UpdateHandler()
-        {
-            yaw = -Facade.GetAxis(InputAxisType.MouseX);
-            pitch = Facade.GetAxis(InputAxisType.MouseY);
-            pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
-            if (Facade.GetAxis(InputAxisType.MouseScrollWheel) != 0)
-                Utility.Debug.LogInfo("MouseScrollWheel " ,MessageColor.INDIGO);
-            distanceFromTarget -= Facade.GetAxis(InputAxisType.MouseScrollWheel);
-            distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
-            HideMouse();
-        }
+
         void LateUpdateCamera()
         {
             cameraOffset.z = -distanceFromTarget;

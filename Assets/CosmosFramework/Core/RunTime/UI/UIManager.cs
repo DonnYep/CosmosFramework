@@ -6,6 +6,7 @@ using System.Reflection;
 
 namespace Cosmos.UI
 {
+    [Module]
     internal sealed class UIManager : Module<UIManager>
     {
         #region Properties

@@ -10,6 +10,7 @@ namespace Cosmos.Input
     /// <summary>
     /// 输入管理器，主要为不同平台设备类型做适配，与之对应的有ControllerManager。
     /// </summary>
+    [Module]
     internal sealed class InputManager : Module<InputManager>
     {
         public override void OnInitialization()

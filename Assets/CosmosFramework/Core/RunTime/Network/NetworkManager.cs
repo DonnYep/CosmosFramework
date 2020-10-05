@@ -10,6 +10,7 @@ namespace Cosmos.Network
     /// <summary>
     /// 此模块为客户端网络管理类
     /// </summary>
+    [Module]
     internal sealed class NetworkManager : Module<NetworkManager>
     {
         public event Action NetworkOnConnect

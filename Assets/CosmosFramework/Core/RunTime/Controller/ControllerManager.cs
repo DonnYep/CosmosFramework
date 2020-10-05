@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
 namespace Cosmos
 {
@@ -27,6 +26,7 @@ namespace Cosmos.Controller
     /// 控制器模块，客户端本地玩家的主要控制器。
     /// 从InputManager获取值后，由此控制输入值
     /// </summary>
+    [Module]
     internal sealed class ControllerManager : Module<ControllerManager>
     {
         #region Properties

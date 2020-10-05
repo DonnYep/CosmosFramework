@@ -21,7 +21,13 @@ namespace Cosmos
     /// </summary>
     public static partial class Facade
     {
-
+        /// <summary>
+        /// 检测框架提供的模块；
+        /// </summary>
+        public static void CheckCosmosModule()
+        {
+            GameManager.CheckModule();
+        }
         #region CustomeModule
         /// <summary>
         /// 线程安全；

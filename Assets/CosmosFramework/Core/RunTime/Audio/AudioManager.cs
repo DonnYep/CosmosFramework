@@ -5,6 +5,7 @@ using System;
 
 namespace Cosmos.Audio
 {
+    [Module]
     internal sealed class AudioManager : Module<AudioManager>
     {
         #region Properties

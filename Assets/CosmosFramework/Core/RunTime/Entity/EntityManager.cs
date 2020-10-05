@@ -8,6 +8,7 @@ namespace Cosmos.Entity
     /// 实例对象管理器；
     /// 管理例如角色身上的Gadget
     /// </summary>
+    [Module]
     internal class EntityManager : Module<EntityManager>
     {
         #region Properties

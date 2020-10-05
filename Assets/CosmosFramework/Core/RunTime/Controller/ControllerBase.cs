@@ -26,10 +26,9 @@ namespace Cosmos
         public void OnPause() { IsPause = true; }
         public void OnUnPause() { IsPause = false; }
         /// <summary>
-        /// 非空虚函数
-        /// 调用了UpdateHandler()
+        /// 空虚函数
         /// </summary>
-        public virtual void OnRefresh() { UpdateHandler(); }
+        public virtual void OnRefresh() { }
         /// <summary>
         ///  非空虚函数
         ///  覆写时需要保留父类方法
@@ -41,18 +40,10 @@ namespace Cosmos
         /// <summary>
         /// 空虚函数
         /// </summary>
-        protected virtual void UpdateHandler() { }
+        protected virtual  void OnEnable(){}
         /// <summary>
-        /// 非空虚函数
+        /// 空虚函数
         /// </summary>
-        protected virtual  void OnEnable(){
-            Facade.RegisterController(this);
-        }
-        /// <summary>
-        /// 非空虚函数
-        /// </summary>
-        protected virtual void OnDisable() {
-            Facade.DeregisterController(this);
-        }
+        protected virtual void OnDisable() {}
     }
 }

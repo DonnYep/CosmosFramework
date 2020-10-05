@@ -17,13 +17,7 @@ public class AxisSubscriber : ControllerBase
     int SliderOffset { get { return Utility.Converter.Int(slider.maxValue / 2); } }
     Slider slider;
     Text text;
-    private void Start()
-    {
-        slider = GetComponentInChildren<Slider>();
-        text = GetComponentsInChildren<Text>()[1];
-        Facade.SetInputDevice(new StandardInputDevice());
-    }
-    protected override void UpdateHandler()
+    public override void OnRefresh()
     {
         switch (key)
         {
@@ -36,5 +30,11 @@ public class AxisSubscriber : ControllerBase
         }
         float textValue = slider.value - SliderOffset;
         text.text = Utility.Converter.Int(textValue).ToString();
+    }
+    private void Start()
+    {
+        slider = GetComponentInChildren<Slider>();
+        text = GetComponentsInChildren<Text>()[1];
+        Facade.SetInputDevice(new StandardInputDevice());
     }
 }

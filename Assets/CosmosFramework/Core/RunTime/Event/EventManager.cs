@@ -6,14 +6,18 @@ using Object = UnityEngine.Object;
 
 namespace Cosmos.Event
 {
+    [Module]
     internal sealed class EventManager : Module<EventManager>
     {
+#if SERVER
         /// <summary>
         /// 支持并发的字典
         /// </summary>
         ConcurrentDictionary<string, Action<object, GameEventArgs>> concurrentEventDict
             = new ConcurrentDictionary<string, Action<object, GameEventArgs>>();
-        //Dictionary<string, Action<object, GameEventArgs>> concurrentEventDict = new Dictionary<string, Action<object, GameEventArgs>>();
+#else
+        Dictionary<string, Action<object, GameEventArgs>> concurrentEventDict = new Dictionary<string, Action<object, GameEventArgs>>();
+#endif
         /// <summary>
         /// 添加事件
         /// </summary>
@@ -54,9 +58,13 @@ namespace Cosmos.Event
                 concurrentEventDict[eventKey] -= hander;
                 if (concurrentEventDict[eventKey] == null)
                 {
+#if SERVER
                     Action<object, GameEventArgs> handler;
                     concurrentEventDict.TryRemove(eventKey, out handler);
                     handler = null;
+#else
+                    concurrentEventDict.Remove(eventKey);
+#endif
                 }
             }
         }
@@ -95,9 +103,13 @@ namespace Cosmos.Event
             if (concurrentEventDict.ContainsKey(eventKey))
             {
                 concurrentEventDict[eventKey] = null;
+#if SERVER
                 Action<object, GameEventArgs> handler;
                 concurrentEventDict.TryRemove(eventKey, out handler);
                 handler = null;
+#else
+                concurrentEventDict.Remove(eventKey);
+#endif
             }
         }
         /// <summary>

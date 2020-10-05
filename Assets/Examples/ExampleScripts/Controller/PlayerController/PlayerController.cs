@@ -26,26 +26,13 @@ namespace Cosmos
         //点积
         float dot = 0;
 
-        protected override void Awake()
+        public override void OnRefresh()
         {
-            base.Awake();
-            animator = GetComponentInChildren<Animator>();
-            controllerEventArgs = new LogicEventArgs<CameraTarget>().SetData(GetComponentInChildren<CameraTarget>());
-            Facade.SetInputDevice(new StandardInputDevice());
-            Facade.RegisterController(this);
-        }
-        protected override void OnDestroy()
-        {
-            Facade.DeregisterController(this);
-        }
-        protected override void UpdateHandler()
-        {
-            //if (inputEventArgs.Data.HorizVertAxis.magnitude != 0)
-            if (Facade.GetAxis(InputAxisType.Vertical) != 0|| Facade.GetAxis(InputAxisType.Horizontal)!=0)
+            if (Facade.GetAxis(InputAxisType.Vertical) != 0 || Facade.GetAxis(InputAxisType.Horizontal) != 0)
                 animator.SetBool(inputHash, true);
             else
                 animator.SetBool(inputHash, false);
-            moveForword =Facade.GetAxis(InputAxisType.Vertical);
+            moveForword = Facade.GetAxis(InputAxisType.Vertical);
             moveTurn = Facade.GetAxis(InputAxisType.Horizontal);
             if (Facade.GetButton(InputButtonType.LeftShift))
                 moveForword *= 2;
@@ -64,6 +51,19 @@ namespace Cosmos
             animator.SetFloat(forwardHash, moveForword, forwardDampTime, Time.deltaTime);
             animator.SetFloat(turnHash, moveTurn, turnDampTime, Time.deltaTime);
         }
+        protected override void Awake()
+        {
+            base.Awake();
+            animator = GetComponentInChildren<Animator>();
+            controllerEventArgs = new LogicEventArgs<CameraTarget>().SetData(GetComponentInChildren<CameraTarget>());
+            Facade.SetInputDevice(new StandardInputDevice());
+            Facade.RegisterController(this);
+        }
+        protected override void OnDestroy()
+        {
+            Facade.DeregisterController(this);
+        }
+
         private void Start()
         {
             Facade.DispatchEvent(ControllerEventCodeParams.CONTROLLER_INPUT, this, controllerEventArgs);

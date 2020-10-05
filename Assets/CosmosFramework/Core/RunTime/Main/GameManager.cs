@@ -26,7 +26,7 @@ namespace Cosmos
     /// 管理器对象都会通过这个对象的实例来调用，避免复杂化
     /// 可以理解为是一个Facade
     /// </summary>
-    internal static partial class GameManager 
+    internal static partial class GameManager
     {
         #region Properties
         public static event Action FixedRefreshHandler
@@ -74,8 +74,10 @@ namespace Cosmos
             get
             {
                 if (instanceObject == null)
-                { instanceObject = new GameObject(typeof(GameManager).ToString()); 
-                    Object.DontDestroyOnLoad(instanceObject); }
+                {
+                    instanceObject = new GameObject(typeof(GameManager).ToString());
+                    Object.DontDestroyOnLoad(instanceObject);
+                }
                 return instanceObject;
             }
         }
@@ -87,10 +89,11 @@ namespace Cosmos
             {
                 if (audioManager == null)
                 {
-                    audioManager = new AudioManager();
-                    ModuleInitialization(audioManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(AudioManager), out module);
+                    audioManager = module as AudioManager;
                 }
-                return audioManager;
+                return audioManager; ;
             }
         }
         static ResourceManager resourceManager;
@@ -100,8 +103,9 @@ namespace Cosmos
             {
                 if (resourceManager == null)
                 {
-                    resourceManager = new ResourceManager();
-                    ModuleInitialization(resourceManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(ResourceManager), out module);
+                    resourceManager = module as ResourceManager;
                 }
                 return resourceManager;
             }
@@ -113,8 +117,9 @@ namespace Cosmos
             {
                 if (objectPoolManager == null)
                 {
-                    objectPoolManager = new ObjectPoolManager();
-                    ModuleInitialization(objectPoolManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(ObjectPoolManager), out module);
+                    objectPoolManager = module as ObjectPoolManager;
                 }
                 return objectPoolManager;
             }
@@ -126,8 +131,9 @@ namespace Cosmos
             {
                 if (networkManager == null)
                 {
-                    networkManager = new NetworkManager();
-                    ModuleInitialization(networkManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(NetworkManager), out module);
+                    networkManager = module as NetworkManager;
                 }
                 return networkManager;
             }
@@ -139,8 +145,9 @@ namespace Cosmos
             {
                 if (monoManager == null)
                 {
-                    monoManager = new MonoManager();
-                    ModuleInitialization(monoManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(MonoManager), out module);
+                    monoManager = module as MonoManager;
                 }
                 return monoManager;
             }
@@ -152,8 +159,9 @@ namespace Cosmos
             {
                 if (inputManager == null)
                 {
-                    inputManager = new InputManager();
-                    ModuleInitialization(inputManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(InputManager), out module);
+                    inputManager = module as InputManager;
                 }
                 return inputManager;
             }
@@ -165,8 +173,9 @@ namespace Cosmos
             {
                 if (uiManager == null)
                 {
-                    uiManager = new UIManager();
-                    ModuleInitialization(uiManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(InputManager), out module);
+                    uiManager = module as UIManager;
                 }
                 return uiManager;
             }
@@ -178,8 +187,9 @@ namespace Cosmos
             {
                 if (eventManager == null)
                 {
-                    eventManager = new EventManager();
-                    ModuleInitialization(eventManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(EventManager), out module);
+                    eventManager = module as EventManager;
                 }
                 return eventManager;
             }
@@ -191,8 +201,9 @@ namespace Cosmos
             {
                 if (sceneManager == null)
                 {
-                    sceneManager = new SceneManager();
-                    ModuleInitialization(sceneManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(SceneManager), out module);
+                    sceneManager = module as SceneManager;
                 }
                 return sceneManager;
             }
@@ -204,8 +215,9 @@ namespace Cosmos
             {
                 if (fsmManager == null)
                 {
-                    fsmManager = new FSMManager();
-                    ModuleInitialization(fsmManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(FSMManager), out module);
+                    fsmManager = module as FSMManager;
                 }
                 return fsmManager;
             }
@@ -217,8 +229,9 @@ namespace Cosmos
             {
                 if (configManager == null)
                 {
-                    configManager = new ConfigManager();
-                    ModuleInitialization(configManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(ConfigManager), out module);
+                    configManager = module as ConfigManager;
                 }
                 return configManager;
             }
@@ -230,8 +243,9 @@ namespace Cosmos
             {
                 if (dataManager == null)
                 {
-                    dataManager = new DataManager();
-                    ModuleInitialization(dataManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(DataManager), out module);
+                    dataManager = module as DataManager;
                 }
                 return dataManager;
             }
@@ -243,8 +257,9 @@ namespace Cosmos
             {
                 if (controllerManager == null)
                 {
-                    controllerManager = new ControllerManager();
-                    ModuleInitialization(controllerManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(ControllerManager), out module);
+                    controllerManager = module as ControllerManager;
                 }
                 return controllerManager;
             }
@@ -256,8 +271,9 @@ namespace Cosmos
             {
                 if (entityManager == null)
                 {
-                    entityManager = new EntityManager();
-                    ModuleInitialization(entityManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(EntityManager), out module);
+                    entityManager = module as EntityManager;
                 }
                 return entityManager;
             }
@@ -269,8 +285,9 @@ namespace Cosmos
             {
                 if (referencePoolManager == null)
                 {
-                    referencePoolManager = new ReferencePoolManager();
-                    ModuleInitialization(referencePoolManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(ReferencePoolManager), out module);
+                    referencePoolManager = module as ReferencePoolManager;
                 }
                 return referencePoolManager;
             }
@@ -282,8 +299,9 @@ namespace Cosmos
             {
                 if (hotfixManager == null)
                 {
-                    hotfixManager = new HotfixManager();
-                 ModuleInitialization(hotfixManager);
+                    IModule module;
+                    moduleDict.TryGetValue(typeof(HotfixManager), out module);
+                    hotfixManager = module as HotfixManager;
                 }
                 return hotfixManager;
             }
@@ -317,49 +335,25 @@ namespace Cosmos
                 return;
             fixedRefreshHandler?.Invoke();
         }
-        internal static void ModuleInitialization(IModule module)
+        public static void CheckModule()
         {
-            var type = module.GetType();
-            if (!HasModule(type))
+            foreach (var module in moduleDict.Values)
             {
-                module.OnInitialization();
-                moduleDict.Add(module.GetType(), module);
-                moduleCount++;
-                RefreshHandler += module.OnRefresh;
-                Utility.Debug.LogInfo($"Module :{module} is OnInitialization");
+                Utility.Debug.LogInfo($"Module :{module} has already been initialized");
             }
-            else
-                throw new ArgumentException($"Module : {module} is already exist!");
         }
-        internal static void ModuleTermination(IModule module)
-        {
-            var type = module.GetType();
-            if (HasModule(type))
-            {
-                module.OnTermination();
-                var m = moduleDict[type];
-                RefreshHandler -= m.OnRefresh;
-                moduleDict.Remove(type);
-                moduleCount--;
-                Utility.Debug.LogInfo($"Module :{module} is OnTermination", MessageColor.DARKBLUE);
-            }
-            else
-                throw new ArgumentException($"Module : {module} is not exist!");
-        }
-        internal static bool HasModule(Type type)
-        {
-            return moduleDict.ContainsKey(type);
-        }
-        /// <summary>
-        /// 构造函数，只有使用到时候才产生
-        /// </summary>
         static GameManager()
         {
             if (moduleDict == null)
             {
                 moduleDict = new Dictionary<Type, IModule>();
                 InstanceObject.gameObject.AddComponent<GameManagerAgent>();
+                InitModule();
             }
+        }
+        internal static bool HasModule(Type type)
+        {
+            return moduleDict.ContainsKey(type);
         }
         /// <summary>
         /// 清理静态成员的对象，内存未释放完全
@@ -402,6 +396,51 @@ namespace Cosmos
                 GameObject.Destroy(obj);
             }
             objs.Clear();
+        }
+        static void ModuleInitialization(IModule module)
+        {
+            var type = module.GetType();
+            if (!HasModule(type))
+            {
+                module.OnInitialization();
+                moduleDict.Add(module.GetType(), module);
+                moduleCount++;
+                RefreshHandler += module.OnRefresh;
+                //Utility.Debug.LogInfo($"Module :{module} is OnInitialization");
+            }
+            else
+                throw new ArgumentException($"Module : {module} is already exist!");
+        }
+        static void ModuleTermination(IModule module)
+        {
+            var type = module.GetType();
+            if (HasModule(type))
+            {
+                module.OnTermination();
+                var m = moduleDict[type];
+                RefreshHandler -= m.OnRefresh;
+                moduleDict.Remove(type);
+                moduleCount--;
+                Utility.Debug.LogInfo($"Module :{module} is OnTermination", MessageColor.DARKBLUE);
+            }
+            else
+                throw new ArgumentException($"Module : {module} is not exist!");
+        }
+        static void InitModule()
+        {
+            var modules = Utility.Assembly.GetInstancesByAttribute<ModuleAttribute, IModule>();
+            for (int i = 0; i < modules.Length; i++)
+            {
+                ModuleInitialization(modules[i]);
+            }
+            PrepareModule();
+        }
+        static void PrepareModule()
+        {
+            foreach (var module in moduleDict.Values)
+            {
+                module.OnPreparatory();
+            }
         }
         #endregion
     }

@@ -32,6 +32,7 @@ namespace Cosmos.Resource
         Resource = 0,
         AssetBundle = 1
     }
+    [Module]
     internal sealed class ResourceManager : Module<ResourceManager>
     {
         #region Properties
