@@ -10,6 +10,7 @@ namespace Cosmos
     /// </summary>
     public interface INetworkService:IRefreshable
     {
+        long Conv { get; }
         void SetHeartbeat(IHeartbeat heartbeat);
         /// <summary>
         /// 发送网络消息;

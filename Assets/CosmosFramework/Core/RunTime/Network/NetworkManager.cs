@@ -53,6 +53,7 @@ namespace Cosmos.Network
         Action networkOnConnect;
         Action networkOnDisconnect;
         IHeartbeat heartbeat;
+        public long Conv { get { return service.Conv; } }
         public bool IsConnected{ get; private set; }
         public IPEndPoint ServerEndPoint
         {

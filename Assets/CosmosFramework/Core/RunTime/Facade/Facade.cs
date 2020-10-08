@@ -1306,6 +1306,7 @@ where T : class
         }
         #endregion
         #region Network
+        public static long NetworkConv { get { return GameManager.NetworkManager.Conv; } }
         /// <summary>
         /// 连接指定地址的网络
         /// 初始化建立连接;
