@@ -5,5 +5,7 @@ namespace Cosmos
     internal interface IModule: IControllableBehaviour,IMountPoint
     {
         string ModuleFullName { get; }
+        void OnFixRefresh();
+        void OnLateRefresh();
     }
 }

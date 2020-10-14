@@ -80,7 +80,7 @@ public class NetClient : IDisposable
     }
     public void Connect(string ip, int port)
     {
-        NetworkMessageEventCore.Instance.AddEventListener(MessagePacketPort.GATE_MSG_PORT, OnReceiveNetMessage);
+        NetworkMsgEventCore.Instance.AddEventListener(MessagePacketPort.GATE_MSG_PORT, OnReceiveNetMessage);
         Facade.NetworkOnConnect += OnConnect;
         Facade.NetworkOnDisconnect += OnDisconnect;
         Facade.NetworkConnect(ip, port, System.Net.Sockets.ProtocolType.Udp);

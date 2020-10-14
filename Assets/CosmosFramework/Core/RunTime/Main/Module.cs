@@ -79,6 +79,8 @@ namespace Cosmos
         /// 覆写时请尽量保留父类方法
         /// </summary>
         public virtual void OnRefresh() { if (IsPause) return; }
+        public virtual void OnFixRefresh() { if (IsPause) return; }
+        public virtual void OnLateRefresh() { if (IsPause) return; }
         public virtual void OnPreparatory() { }
         public virtual void OnPause() { IsPause = true; }
         public virtual void OnUnPause() { IsPause = false; }

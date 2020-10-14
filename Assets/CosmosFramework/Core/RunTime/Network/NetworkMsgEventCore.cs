@@ -8,7 +8,7 @@ namespace Cosmos
     ///客户端；
     ///网络并发事件Core，Key为ushort的码，值为INetworkMessage
     /// </summary>
-    public class NetworkMessageEventCore:EventCore<ushort,INetworkMessage,NetworkMessageEventCore>
+    public class NetworkMsgEventCore:EventCore<ushort,INetworkMessage,NetworkMsgEventCore>
     {
 
     }

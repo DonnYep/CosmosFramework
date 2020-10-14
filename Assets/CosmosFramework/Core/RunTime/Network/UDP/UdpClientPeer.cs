@@ -220,7 +220,7 @@ namespace Cosmos.Network
                 return;
             foreach (var msg in sndMsgDict.Values)
             {
-                if (msg.RecurCount >= 20)
+                if (msg.RecurCount >= 10)
                 {
                     Available = false;
                     onDisconnectHandler?.Invoke();
@@ -231,7 +231,8 @@ namespace Cosmos.Network
                     //重发次数+1
                     msg.RecurCount += 1;
                     //超时重发
-                    sendMessageHandler?.Invoke(msg);
+                    if (sndMsgDict.TryRemove(msg.SN, out var unaMsg))
+                        sendMessageHandler?.Invoke(msg);
                 }
             }
         }
@@ -243,8 +244,12 @@ namespace Cosmos.Network
         public bool EncodeMessage(ref UdpNetMessage netMsg)
         {
             netMsg.TS = Utility.Time.MillisecondTimeStamp();
-            SendSN += 1;
-            netMsg.SN = SendSN;
+            if (netMsg.OperationCode != InnerOpCode._Heartbeat)
+            {
+                SendSN += 1;
+                netMsg.SN = SendSN;
+                netMsg.Snd_nxt = SendSN + 1;
+            }
             netMsg.Conv = Conv;
             netMsg.EncodeMessage();
             bool result = true;
@@ -295,7 +300,7 @@ namespace Cosmos.Network
                 rcvMsgDict.TryAdd(netMsg.SN, netMsg);
             }
             HandleSN = netMsg.SN;
-            NetworkMessageEventCore.Instance.Dispatch(netMsg.OperationCode, netMsg);
+            NetworkMsgEventCore.Instance.Dispatch(netMsg.OperationCode, netMsg);
             //Utility.Debug.LogWarning($"Peer Conv:{Conv}， HandleMsgSN : {netMsg.ToString()}");
             UdpNetMessage nxtNetMsg;
             if (rcvMsgDict.TryRemove(HandleSN + 1, out nxtNetMsg))

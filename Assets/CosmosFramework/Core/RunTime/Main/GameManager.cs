@@ -406,7 +406,8 @@ namespace Cosmos
                 moduleDict.Add(module.GetType(), module);
                 moduleCount++;
                 RefreshHandler += module.OnRefresh;
-                //Utility.Debug.LogInfo($"Module :{module} is OnInitialization");
+                FixedRefreshHandler+= module.OnFixRefresh;
+                LateRefreshHandler+= module.OnLateRefresh;
             }
             else
                 throw new ArgumentException($"Module : {module} is already exist!");
@@ -418,7 +419,9 @@ namespace Cosmos
             {
                 module.OnTermination();
                 var m = moduleDict[type];
-                RefreshHandler -= m.OnRefresh;
+                RefreshHandler -= module.OnRefresh;
+                FixedRefreshHandler -= module.OnFixRefresh;
+                LateRefreshHandler -= module.OnLateRefresh;
                 moduleDict.Remove(type);
                 moduleCount--;
                 Utility.Debug.LogInfo($"Module :{module} is OnTermination", MessageColor.DARKBLUE);

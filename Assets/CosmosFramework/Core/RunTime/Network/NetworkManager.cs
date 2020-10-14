@@ -54,7 +54,8 @@ namespace Cosmos.Network
         Action networkOnDisconnect;
         IHeartbeat heartbeat;
         public long Conv { get { return service.Conv; } }
-        public bool IsConnected{ get; private set; }
+
+        public bool IsConnected { get; private set; }
         public IPEndPoint ServerEndPoint
         {
             get
@@ -74,7 +75,7 @@ namespace Cosmos.Network
                 return clientEndPoint;
             }
         }
-        public override void OnRefresh()
+        public override void OnFixRefresh()
         {
             if (IsPause)
                 return;
@@ -107,7 +108,7 @@ namespace Cosmos.Network
         {
             if (IsConnected)
             {
-                var netMsg= netMessageHelper.EncodeMessage(opCode, message);
+                var netMsg = netMessageHelper.EncodeMessage(opCode, message);
                 service.SendMessageAsync(netMsg);
             }
             else
@@ -143,7 +144,7 @@ namespace Cosmos.Network
                             UdpClientService udp = service as UdpClientService;
                             udp.OnConnect += OnConnectHandler;
                             udp.OnDisconnect += OnDisconnectHandler;
-                            heartbeat= new Heartbeat();
+                            heartbeat = new Heartbeat();
                             service.SetHeartbeat(heartbeat);
                         }
                         UdpClientService udpSrv = service as UdpClientService;
