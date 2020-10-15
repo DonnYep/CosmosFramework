@@ -7,11 +7,11 @@ using Cosmos;
 #if UNITY_EDITOR
 namespace Cosmos.CosmosEditor
 {
-    public class AnnotationScriptProcessor :UnityEditor. AssetModificationProcessor
+    public class AnnotationScriptProcessor : UnityEditor.AssetModificationProcessor
     {
         static string annotationStr =
 @"//====================================
-//* Author :
+//* Author :#Author#
 //* CreateTime :#CreateTime#
 //* Version :
 //* Description :
@@ -32,6 +32,7 @@ namespace Cosmos.CosmosEditor
             if (path.EndsWith(".cs"))
             {
                 annotationStr = annotationStr.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:ss"));
+                annotationStr = annotationStr.Replace("#Author#", EditorConst.AnnotationAuthor);
                 annotationStr += File.ReadAllText(path);
                 File.WriteAllText(path, annotationStr);
             }
