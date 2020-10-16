@@ -39,7 +39,7 @@ namespace Cosmos.CosmosEditor
                     {
                         str = providerAnnoTitle + str;
                     }
-                    str = str.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:ss"));
+                    str = str.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:mm:ss"));
                     str = str.Replace("#Author#", EditorConst.AnnotationAuthor);
                     File.WriteAllText(path, str);
                 }
@@ -54,7 +54,7 @@ namespace Cosmos.CosmosEditor
                     {
                         str = annotationStr + str;
                     }
-                    str = str.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:ss"));
+                    str = str.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:mm:ss"));
                     str = str.Replace("#Author#", EditorConst.AnnotationAuthor);
                     File.WriteAllText(path, str);
                 }
