@@ -9,6 +9,7 @@ namespace Cosmos
         string ToJson<T>(T obj);
         byte[] ToByteArray<T>(T obj);
         T ToObject<T>(byte[] buffer);
-        object ToObject(byte[] buffer , Type objectType);
+        object ToObject(byte[] buffer, Type objectType);
+        object ToObject(string json, Type objectType);
     }
 }

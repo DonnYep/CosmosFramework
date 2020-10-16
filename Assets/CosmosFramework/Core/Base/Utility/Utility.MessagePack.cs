@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-namespace Cosmos { 
-    public sealed partial  class Utility
+namespace Cosmos
+{
+    public sealed partial class Utility
     {
         public static class MessagePack
         {
@@ -30,7 +31,7 @@ namespace Cosmos {
                     throw new ArgumentNullException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
                 }
             }
-            public static byte[] ToByteArray<T>(T obj)
+            public static byte[] ToByteArray(object obj)
             {
                 if (messagePackHelper == null)
                 {
@@ -68,7 +69,22 @@ namespace Cosmos {
                 }
                 try
                 {
-                    return messagePackHelper.ToObject(buffer,objectType);
+                    return messagePackHelper.ToObject(buffer, objectType);
+                }
+                catch (Exception exception)
+                {
+                    throw new ArgumentNullException(Utility.Text.Format("Can not convert to ByteArray with exception '{0}", exception.ToString()), exception);
+                }
+            }
+            public static object ToObject(string json, Type objectType)
+            {
+                if (messagePackHelper == null)
+                {
+                    throw new ArgumentNullException("messagePackHelper is invalid");
+                }
+                try
+                {
+                    return messagePackHelper.ToObject(json, objectType);
                 }
                 catch (Exception exception)
                 {
