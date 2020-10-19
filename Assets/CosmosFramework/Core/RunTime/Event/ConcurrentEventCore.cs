@@ -14,11 +14,11 @@ namespace Cosmos
     /// <typeparam name="TKey">key的类型</typeparam>
     /// <typeparam name="TValue">value的类型</typeparam>
     /// <typeparam name="TDerived">派生类的类型</typeparam>
-    public class ConcurrentEventCore<TKey, TValue, TDerived> : ConcurrentSingleton<TDerived>
+    public class ConcurrentEventCore<TKey, TValue, TDerived> : Singleton<TDerived>
         where TDerived : ConcurrentEventCore<TKey, TValue, TDerived>, new()
         where TValue : class
     {
-        protected Dictionary<TKey, List<Action<TValue>>> eventDict = new Dictionary<TKey, List<Action<TValue>>>();
+        protected ConcurrentDictionary<TKey, List<Action<TValue>>> eventDict = new ConcurrentDictionary<TKey, List<Action<TValue>>>();
         #region Sync
         public virtual void AddEventListener(TKey key, Action<TValue> handler)
         {
@@ -28,7 +28,7 @@ namespace Cosmos
             {
                 List<Action<TValue>> handlerSet = new List<Action<TValue>>();
                 handlerSet.Add(handler);
-                eventDict.Add(key, handlerSet);
+                eventDict.TryAdd(key, handlerSet);
             }
         }
         public virtual void RemoveEventListener(TKey key, Action<TValue> handler)
@@ -38,7 +38,7 @@ namespace Cosmos
                 var handlerSet = eventDict[key];
                 handlerSet.Remove(handler);
                 if (handlerSet.Count <= 0)
-                    eventDict.Remove(key);
+                    eventDict.TryRemove(key, out _);
             }
         }
         public bool HasEventListened(TKey key)
@@ -66,16 +66,16 @@ namespace Cosmos
         public async virtual Task AddEventListenerAsync(TKey key, Action<TValue> handler)
         {
             await Task.Run(() =>
-           {
-               if (eventDict.ContainsKey(key))
-                   eventDict[key].Add(handler);
-               else
-               {
-                   List<Action<TValue>> handlerSet = new List<Action<TValue>>();
-                   handlerSet.Add(handler);
-                   eventDict.Add(key, handlerSet);
-               }
-           });
+            {
+                if (eventDict.ContainsKey(key))
+                    eventDict[key].Add(handler);
+                else
+                {
+                    List<Action<TValue>> handlerSet = new List<Action<TValue>>();
+                    handlerSet.Add(handler);
+                    eventDict.TryAdd(key, handlerSet);
+                }
+            });
         }
         public async virtual Task RemoveEventListenerAsyncc(TKey key, Action<TValue> handler)
         {
@@ -86,7 +86,7 @@ namespace Cosmos
                     var handlerSet = eventDict[key];
                     handlerSet.Remove(handler);
                     if (handlerSet.Count <= 0)
-                        eventDict.Remove(key);
+                        eventDict.TryRemove(key, out _);
                 }
             });
         }
