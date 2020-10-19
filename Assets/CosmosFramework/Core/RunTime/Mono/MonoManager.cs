@@ -17,7 +17,9 @@ namespace Cosmos.Mono
         IMonoProvider monoProvider;
         public override void OnInitialization()
         {
-            monoProvider = (new GameObject(typeof(MonoProvider).Name)).AddComponent<MonoProvider>();
+            var go= new GameObject(typeof(MonoProvider).Name);
+            monoProvider = go.AddComponent<MonoProvider>();
+            go.transform.SetParent(MountPoint.transform);
         }
         #region Methods
         /// <summary>
