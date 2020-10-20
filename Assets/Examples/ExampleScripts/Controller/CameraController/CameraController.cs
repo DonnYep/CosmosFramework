@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cosmos.Input;
+using System;
 
 namespace Cosmos
 {
-    public class CameraController : ControllerBase
+    public class CameraController : ControllerBase<CameraController>
     {
         [Range(0.5f,15)]
         [SerializeField]float distanceFromTarget=10;
@@ -33,37 +34,35 @@ namespace Cosmos
         }
         public void HideMouse()
         {
-            if (Facade.GetButtonDown(InputButtonType.MouseLeft) ||
-                Facade.GetButtonDown(InputButtonType.MouseRight) ||
-                Facade.GetButtonDown(InputButtonType.MouseMiddle))
+            if (Facade.GetButtonDown(InputButtonType._MouseLeft) ||
+                Facade.GetButtonDown(InputButtonType._MouseRight) ||
+                Facade.GetButtonDown(InputButtonType._MouseMiddle))
                 LockMouse();
-            if (Facade.GetButtonDown(InputButtonType.Escape))
+            if (Facade.GetButtonDown(InputButtonType._Escape))
                 UnlockMouse();
         }
-        public override void OnRefresh()
+        protected override void RefreshHandler()
         {
-            yaw = -Facade.GetAxis(InputAxisType.MouseX);
-            pitch = Facade.GetAxis(InputAxisType.MouseY);
+            yaw = -Facade.GetAxis(InputAxisType._MouseX);
+            pitch = Facade.GetAxis(InputAxisType._MouseY);
             pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
-            if (Facade.GetAxis(InputAxisType.MouseScrollWheel) != 0)
+            if (Facade.GetAxis(InputAxisType._MouseScrollWheel) != 0)
                 Utility.Debug.LogInfo("MouseScrollWheel ", MessageColor.INDIGO);
-            distanceFromTarget -= Facade.GetAxis(InputAxisType.MouseScrollWheel);
+            distanceFromTarget -= Facade.GetAxis(InputAxisType._MouseScrollWheel);
             distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
             HideMouse();
         }
-        protected override void Awake()
+        protected override void OnEnable()
         {
-            base.Awake();
+            base.OnEnable();
             Facade.LateRefreshHandler += LateUpdateCamera;
             Facade.AddEventListener(ControllerEventCodeParams.CONTROLLER_INPUT, CameraHandler);
-            Facade.RegisterController(this);
         }
-        protected override void OnDestroy()
+        protected override void OnDisable()
         {
-            base.OnDestroy();
+            base.OnDisable();
             Facade.LateRefreshHandler -= LateUpdateCamera;
             Facade.RemoveEventListener(ControllerEventCodeParams.CONTROLLER_INPUT, CameraHandler);
-            Facade.DeregisterController(this);
             Utility.Debug.LogInfo("CameraController destory");
         }
         protected override void OnValidate()

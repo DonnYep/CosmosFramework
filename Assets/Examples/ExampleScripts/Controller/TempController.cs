@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
-public class TempController : ControllerBase
+using System;
+
+public class TempController : ControllerBase<TempController>
 {
-    public override void OnRefresh()
+
+    protected override void RefreshHandler()
     {
         Utility.Debug.LogInfo("IController OnRefresh",MessageColor.INDIGO);
     }

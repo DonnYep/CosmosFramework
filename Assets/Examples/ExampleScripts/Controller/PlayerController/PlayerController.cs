@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Cosmos.Input;
+using System;
+
 namespace Cosmos
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CapsuleCollider))]
-    public class PlayerController : ControllerBase
+    public class PlayerController : ControllerBase<PlayerController>
     {
         [SerializeField]
         [Range(0, 1)]
@@ -25,16 +27,15 @@ namespace Cosmos
         LogicEventArgs<CameraTarget> controllerEventArgs;
         //点积
         float dot = 0;
-
-        public override void OnRefresh()
+        protected override void RefreshHandler ()
         {
-            if (Facade.GetAxis(InputAxisType.Vertical) != 0 || Facade.GetAxis(InputAxisType.Horizontal) != 0)
+            if (Facade.GetAxis(InputAxisType._Vertical) != 0 || Facade.GetAxis(InputAxisType._Horizontal) != 0)
                 animator.SetBool(inputHash, true);
             else
                 animator.SetBool(inputHash, false);
-            moveForword = Facade.GetAxis(InputAxisType.Vertical);
-            moveTurn = Facade.GetAxis(InputAxisType.Horizontal);
-            if (Facade.GetButton(InputButtonType.LeftShift))
+            moveForword = Facade.GetAxis(InputAxisType._Vertical);
+            moveTurn = Facade.GetAxis(InputAxisType._Horizontal);
+            if (Facade.GetButton(InputButtonType._LeftShift))
                 moveForword *= 2;
             //合并旋转
             MatchRotation();
@@ -57,11 +58,11 @@ namespace Cosmos
             animator = GetComponentInChildren<Animator>();
             controllerEventArgs = new LogicEventArgs<CameraTarget>().SetData(GetComponentInChildren<CameraTarget>());
             Facade.SetInputDevice(new StandardInputDevice());
-            Facade.RegisterController(this);
+            //Facade.RegisterController(this);
         }
         protected override void OnDestroy()
         {
-            Facade.DeregisterController(this);
+            //Facade.DeregisterController(this);
         }
 
         private void Start()

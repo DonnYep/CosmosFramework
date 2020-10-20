@@ -8,5 +8,6 @@ public class Entry : MonoBehaviour
     {
         Utility.Debug.SetHelper(new UnityDebugHelper());
         Facade.CheckCosmosModule();
+        Facade.SetInputDevice(new StandardInputDevice());
     }
 }
