@@ -56,13 +56,13 @@ namespace Cosmos
         {
             base.OnEnable();
             Facade.LateRefreshHandler += LateUpdateCamera;
-            Facade.AddEventListener(ControllerEventCodeParams.CONTROLLER_INPUT, CameraHandler);
+            Facade.AddEventListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
         }
         protected override void OnDisable()
         {
             base.OnDisable();
             Facade.LateRefreshHandler -= LateUpdateCamera;
-            Facade.RemoveEventListener(ControllerEventCodeParams.CONTROLLER_INPUT, CameraHandler);
+            Facade.RemoveEventListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
             Utility.Debug.LogInfo("CameraController destory");
         }
         protected override void OnValidate()

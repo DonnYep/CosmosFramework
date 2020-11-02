@@ -67,7 +67,7 @@ namespace Cosmos
 
         private void Start()
         {
-            Facade.DispatchEvent(ControllerEventCodeParams.CONTROLLER_INPUT, this, controllerEventArgs);
+            Facade.DispatchEvent(ControllerEventDefine.CTRL_INPUT, this, controllerEventArgs);
         }
         void MatchRotation()
         {

@@ -31,7 +31,7 @@ namespace Cosmos
             GetUIPanel<Button>("BtnSave").onClick.AddListener(SaveClick);
             GetUIPanel<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
             txtDescription = GetUIPanel<Text>("TxtDescription");
-            Facade.AddEventListener(UIImplementCodeParams.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
+            Facade.AddEventListener(UIIEventDefine.UI_IMPL_ITEM_DESC, UpdateItemHandler);
         }
         protected override void OnTermination()
         {
@@ -39,11 +39,11 @@ namespace Cosmos
             GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
             GetUIPanel<Button>("BtnSave").onClick.RemoveAllListeners();
             GetUIPanel<Button>("BtnUpdate").onClick.RemoveAllListeners();
-            Facade.RemoveEventListener(UIImplementCodeParams.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
+            Facade.RemoveEventListener(UIIEventDefine.UI_IMPL_ITEM_DESC, UpdateItemHandler);
         }
         private void Start()
         {
-           Facade.DispatchEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, null, Uip);
+           Facade.DispatchEvent(UIIEventDefine.UI_IMPL_UPD_SLOT, null, Uip);
         }
         void LoadClick()
         {
@@ -66,7 +66,7 @@ namespace Cosmos
         }
         void UpdateClick()
         {
-           Facade. DispatchEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, this, Uip);
+           Facade. DispatchEvent(UIIEventDefine.UI_IMPL_UPD_SLOT, this, Uip);
         }
         void UpdateItemHandler(object sender,GameEventArgs args)
         {
