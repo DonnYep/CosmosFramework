@@ -13,10 +13,14 @@ namespace Cosmos.UI
         internal static string MainUICanvasName { get; set; }
         GameObject mainUICanvas;
         internal GameObject MainUICanvas { get { return mainUICanvas; } set { mainUICanvas = value; } }
-        Dictionary<string, UILogicBase> uiPanelDict = new Dictionary<string, UILogicBase>();
+        Dictionary<string, UILogicBase> uiPanelDict;
         #endregion
 
         #region Methods
+        public override void OnInitialization()
+        {
+            uiPanelDict = new Dictionary<string, UILogicBase>();
+        }
         /// <summary>
         /// Resource文件夹相对路径
         /// 返回实例化的对象
@@ -136,7 +140,7 @@ namespace Cosmos.UI
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="callBack"></param>
-        internal void ShowPanel<T>( Action<T> callBack = null)
+        internal void ShowPanel<T>(Action<T> callBack = null)
     where T : UILogicBase
         {
             Type type = typeof(T);
@@ -173,7 +177,7 @@ namespace Cosmos.UI
                 Utility.Debug.LogError("UIManager-->>" + "Panel :" + panelName + "  not register !");
         }
         internal void RemovePanel<T>()
-            where T:UILogicBase
+            where T : UILogicBase
         {
             Type type = typeof(T);
             PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();

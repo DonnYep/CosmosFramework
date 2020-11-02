@@ -236,7 +236,7 @@ namespace Cosmos
         }
         public byte[] GetBuffer()
         {
-            return EncodeMessage();
+            return IsFull == true ? Buffer : EncodeMessage();
         }
         public void Clear()
         {

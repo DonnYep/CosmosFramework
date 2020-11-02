@@ -32,29 +32,17 @@ namespace Cosmos
         public static event Action FixedRefreshHandler
         {
             add { fixedRefreshHandler += value; }
-            remove
-            {
-                try { fixedRefreshHandler -= value; }
-                catch (Exception e) { Utility.Debug.LogError(e); }
-            }
+            remove{fixedRefreshHandler -= value; }
         }
         public static event Action LateRefreshHandler
         {
             add { lateRefreshHandler += value; }
-            remove
-            {
-                try { lateRefreshHandler -= value; }
-                catch (Exception e) { Utility.Debug.LogError(e); }
-            }
+            remove{lateRefreshHandler -= value; }
         }
         public static event Action RefreshHandler
         {
             add { refreshHandler += value; }
-            remove
-            {
-                try { refreshHandler -= value; }
-                catch (Exception e) { Utility.Debug.LogError(e); }
-            }
+            remove{ refreshHandler -= value; }
         }
         static Action fixedRefreshHandler;
         static Action lateRefreshHandler;
@@ -347,7 +335,14 @@ namespace Cosmos
             if (moduleDict == null)
             {
                 moduleDict = new Dictionary<Type, IModule>();
-                InstanceObject.gameObject.AddComponent<GameManagerAgent>();
+                try
+                {
+                    InstanceObject.gameObject.AddComponent<GameManagerAgent>();
+                }
+                catch (Exception e)
+                {
+                    Utility.Debug.LogError(e);
+                }
                 InitModule();
             }
         }
@@ -408,6 +403,7 @@ namespace Cosmos
                 RefreshHandler += module.OnRefresh;
                 FixedRefreshHandler+= module.OnFixRefresh;
                 LateRefreshHandler+= module.OnLateRefresh;
+                
             }
             else
                 throw new ArgumentException($"Module : {module} is already exist!");
@@ -417,13 +413,14 @@ namespace Cosmos
             var type = module.GetType();
             if (HasModule(type))
             {
-                module.OnTermination();
+                module.OnDeactive();
                 var m = moduleDict[type];
                 RefreshHandler -= module.OnRefresh;
                 FixedRefreshHandler -= module.OnFixRefresh;
                 LateRefreshHandler -= module.OnLateRefresh;
                 moduleDict.Remove(type);
                 moduleCount--;
+                module.OnTermination();
                 Utility.Debug.LogInfo($"Module :{module} is OnTermination", MessageColor.DARKBLUE);
             }
             else
@@ -435,6 +432,14 @@ namespace Cosmos
             for (int i = 0; i < modules.Length; i++)
             {
                 ModuleInitialization(modules[i]);
+            }
+            ActiveModule();
+        }
+        static void ActiveModule()
+        {
+            foreach (var module in moduleDict.Values)
+            {
+                module.OnActive();
             }
             PrepareModule();
         }

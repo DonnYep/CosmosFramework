@@ -1,6 +1,9 @@
 ﻿using System;
 namespace Cosmos
 {
+    /// <summary>
+    /// Variable类型为模块之间的数据节点数据；
+    /// </summary>
     public abstract class Variable : IRenewable
     {
         protected Variable() { }
@@ -9,21 +12,19 @@ namespace Cosmos
         /// </summary>
         public abstract Type Type { get; }
         /// <summary>
-        /// 空虚函数；
         /// 获取变量值
         /// </summary>
         /// <returns></returns>
-        public virtual object GetValue() { return null; }
+        public abstract object GetValue();
         /// <summary>
-        /// 空虚函数；
         /// 设置变量值
         /// </summary>
         /// <param name="value">变量值</param>
-        public virtual void SetValue(object value) { }
+        public abstract void SetValue(object value);
         /// <summary>
-        /// 空虚函数；
         /// 重置变量;
+        /// 空虚函数；
         /// </summary>
-        public virtual void OnRenewal() { }
+        public abstract void OnRenewal();
     }
 }

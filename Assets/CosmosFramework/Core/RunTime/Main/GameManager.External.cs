@@ -63,6 +63,14 @@ namespace Cosmos
                     }
                 }
             }
+            ActiveCustomeModule();
+        }
+        static void ActiveCustomeModule()
+        {
+            foreach (var module in customeModuleDict.Values)
+            {
+                module.OnActive();
+            }
             PrepareCustomeModule();
         }
         static void PrepareCustomeModule()

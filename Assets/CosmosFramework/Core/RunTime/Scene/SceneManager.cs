@@ -49,7 +49,30 @@ namespace Cosmos.Scene
                 UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex, LoadSceneMode.Additive);
             loadedCallBack?.Invoke();
         }
-
+        internal void UnLoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallBack, Action unLoadedCallBack = null)
+        {
+            Facade.StartCoroutine(EnumUnLoadSceneAsync(sceneIndex, progressCallBack, unLoadedCallBack));
+        }
+        internal void UnLoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallBack, Action unLoadedCallBack = null)
+        {
+            Facade.StartCoroutine(EnumUnLoadSceneAsync(sceneName, progressCallBack, unLoadedCallBack));
+        }
+        internal void UnLoadSceneAsync(string sceneName, Action<float> progressCallBack, Action unLoadedCallBack = null)
+        {
+            Facade.StartCoroutine(EnumUnLoadSceneAsync(sceneName, progressCallBack, unLoadedCallBack));
+        }
+        internal void UnLoadSceneAsync(int sceneIndex, Action<float> progressCallBack, Action unLoadedCallBack = null)
+        {
+            Facade.StartCoroutine(EnumUnLoadSceneAsync(sceneIndex, progressCallBack, unLoadedCallBack));
+        }
+        internal void UnLoadSceneAsync(string sceneName, Action unLoadedCallBack = null)
+        {
+            Facade.StartCoroutine(EnumUnLoadSceneAsync(sceneName, unLoadedCallBack));
+        }
+        internal void UnLoadSceneAsync(int sceneIndex, Action unLoadedCallBack = null)
+        {
+            Facade.StartCoroutine(EnumUnLoadSceneAsync(sceneIndex, unLoadedCallBack));
+        }
         internal void LoadSceneAsync(string sceneName,  Action loadedCallBack = null)
         {
             Facade.StartCoroutine(EnumLoadSceneAsync(sceneName,false, loadedCallBack));
@@ -205,6 +228,68 @@ namespace Cosmos.Scene
             }
             yield return ao.isDone;
             loadedCallBack?.Invoke();
+        }
+        IEnumerator EnumUnLoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallBack, Action unLoadedCallBack = null)
+        {
+            AsyncOperation ao;
+            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneIndex);
+            while (!ao.isDone)
+            {
+                progressCallBack?.Invoke(ao);
+                yield return ao.progress;
+            }
+            yield return ao.isDone;
+            unLoadedCallBack?.Invoke();
+        }
+        IEnumerator EnumUnLoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallBack, Action unLoadedCallBack = null)
+        {
+            AsyncOperation ao;
+            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneName);
+            while (!ao.isDone)
+            {
+                progressCallBack?.Invoke(ao);
+                yield return ao.progress;
+            }
+            yield return ao.isDone;
+            unLoadedCallBack?.Invoke();
+        }
+        IEnumerator EnumUnLoadSceneAsync(string sceneName, Action<float> progressCallBack, Action unLoadedCallBack = null)
+        {
+            AsyncOperation ao;
+            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneName);
+            while (!ao.isDone)
+            {
+                progressCallBack?.Invoke(ao.progress);
+                yield return ao.progress;
+            }
+            yield return ao.isDone;
+            unLoadedCallBack?.Invoke();
+        }
+        IEnumerator EnumUnLoadSceneAsync(int sceneIndex, Action<float> progressCallBack, Action unLoadedCallBack = null)
+        {
+            AsyncOperation ao;
+            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneIndex);
+            while (!ao.isDone)
+            {
+                progressCallBack?.Invoke(ao.progress);
+                yield return ao.progress;
+            }
+            yield return ao.isDone;
+            unLoadedCallBack?.Invoke();
+        }
+        IEnumerator EnumUnLoadSceneAsync(int sceneIndex, Action unLoadedCallBack = null)
+        {
+            AsyncOperation ao;
+            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneIndex);
+            yield return ao.isDone;
+            unLoadedCallBack?.Invoke();
+        }
+        IEnumerator EnumUnLoadSceneAsync(string sceneName, Action unLoadedCallBack = null)
+        {
+            AsyncOperation ao;
+            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneName);
+            yield return ao.isDone;
+            unLoadedCallBack?.Invoke();
         }
     }
 }

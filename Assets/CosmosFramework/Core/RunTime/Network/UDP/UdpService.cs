@@ -25,33 +25,13 @@ namespace Cosmos.Network
         public long Conv { get; protected set; } = 0;
         public event Action OnConnect
         {
-            add { onConnect += value;}
-            remove
-            {
-                try
-                {
-                    onConnect -= value;
-                }
-                catch (Exception e)
-                {
-                    Utility.Debug.LogError(e);
-                }
-            }
+            add { onConnect += value; }
+            remove { onConnect -= value; }
         }
         public event Action OnDisconnect
         {
             add { onDisconnect += value; }
-            remove
-            {
-                try
-                {
-                    onDisconnect -= value;
-                }
-                catch (Exception e)
-                {
-                    Utility.Debug.LogError(e);
-                }
-            }
+            remove { onDisconnect -= value; }
         }
         /// <summary>
         /// udpSocket对象
@@ -124,6 +104,25 @@ namespace Cosmos.Network
         public virtual void SendMessageAsync(INetworkMessage netMsg)
         {
             SendMessageAsync(netMsg, serverEndPoint);
+        }
+        /// <summary>
+        /// 发送报文信息；
+        /// </summary>
+        /// <param name="buffer">编码后的消息；</param>
+        public async virtual void SendMessageAsync(byte[] buffer)
+        {
+            try
+            {
+                int length = await udpSocket.SendAsync(buffer, buffer.Length, serverEndPoint);
+                if (length != buffer.Length)
+                {
+                    SendMessageAsync(buffer);
+                }
+            }
+            catch (Exception e)
+            {
+                Utility.Debug.LogError($"Send net KCP_MSG Exception:{e.Message}");
+            }
         }
         /// <summary>
         /// 轮询更新;

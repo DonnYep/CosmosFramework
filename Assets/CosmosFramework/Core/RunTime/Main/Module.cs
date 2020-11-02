@@ -81,9 +81,11 @@ namespace Cosmos
         public virtual void OnRefresh() { if (IsPause) return; }
         public virtual void OnFixRefresh() { if (IsPause) return; }
         public virtual void OnLateRefresh() { if (IsPause) return; }
+        public virtual void OnActive() { }
         public virtual void OnPreparatory() { }
         public virtual void OnPause() { IsPause = true; }
         public virtual void OnUnPause() { IsPause = false; }
+        public virtual void OnDeactive(){}
         #endregion
         #endregion
     }

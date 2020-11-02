@@ -325,10 +325,15 @@ namespace Cosmos
         /// <typeparam name="T">需要加载的类型</typeparam>
         /// <param name="instantiate">是否生实例化对象</param>
         /// <returns>返回实体化或未实例化的资源对象</returns>
-        public static GameObject LoadResPrefab<T>(bool instantiate = false)
+        public static GameObject LoadResPrefab<T>(bool instantiate )
             where T : MonoBehaviour
         {
             return GameManager.ResourceManager.LoadResPrefab<T>(instantiate);
+        }
+        public static T LoadResPrefab<T>()
+            where T : MonoBehaviour
+        {
+            return GameManager.ResourceManager.LoadResPrefab<T>();
         }
         /// <summary>
         /// 利用挂载特性的泛型对象同步加载PrefabObject；
@@ -565,6 +570,30 @@ namespace Cosmos
         public static void LoadSceneAsync(int sceneIndex, bool additive, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
         {
             GameManager.SceneManager.LoadSceneAsync(sceneIndex, additive, progressCallback, loadedCallback);
+        }
+        public static void UnLoadSceneAsync(string sceneName, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneName, unLoadedCallback);
+        }
+        public static void UnLoadSceneAsync(int sceneIndex, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneIndex, unLoadedCallback);
+        }
+        public static void UnLoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallBack, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneName, progressCallBack, unLoadedCallback);
+        }
+        public static void UnLoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallBack, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneIndex, progressCallBack, unLoadedCallback);
+        }
+        public static void UnLoadSceneAsync(string sceneName, Action<float> progressCallBack, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneName, progressCallBack, unLoadedCallback);
+        }
+        public static void UnLoadSceneAsync(int sceneIndex, Action<float> progressCallBack, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneIndex, progressCallBack, unLoadedCallback);
         }
         #endregion
         #region GameObjectPool
@@ -850,6 +879,9 @@ namespace Cosmos
         {
             GameManager.UIManager.ShowPanel(panelName, callback);
         }
+        /// <summary>
+        /// PrefabUnit特性获取对象，PrefabName需要赋值；
+        /// </summary>
         public static void ShowPanel<T>(Action<T> callback = null)
                 where T : UILogicBase
         {
@@ -1370,19 +1402,23 @@ where T : class
         }
         #endregion
         #region ConfigManager
-        public static bool AddConfigData(ushort cfgKey, bool boolValue, int intValue, float floatValue, string stringValue)
+        public static bool AddConfigData(string cfgKey, string configValue)
         {
-            return GameManager.ConfigManager.AddConfigData(cfgKey, boolValue, intValue, floatValue, stringValue);
+            return GameManager.ConfigManager.AddConfig(cfgKey, configValue);
         }
-        public static bool RemoveConfig(ushort cfgKey)
+        public static bool AddConfigData( string cfgKey, bool boolValue, int intValue, float floatValue, string stringValue)
+        {
+            return GameManager.ConfigManager.AddConfig(cfgKey, boolValue, intValue, floatValue, stringValue);
+        }
+        public static bool RemoveConfig(string cfgKey)
         {
             return GameManager.ConfigManager.RemoveConfig(cfgKey);
         }
-        public static bool HasConfig(ushort cfgKey)
+        public static bool HasConfig(string cfgKey)
         {
             return GameManager.ConfigManager.HasConfig(cfgKey);
         }
-        public static ConfigData? GetConfigData(ushort cfgKey)
+        public static ConfigData? GetConfigData(string cfgKey)
         {
             return GameManager.ConfigManager.GetConfigData(cfgKey);
         }
@@ -1391,7 +1427,7 @@ where T : class
         /// </summary>
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <returns>读取的布尔值。</returns>
-        public static bool GetConfigBool(ushort cfgKey)
+        public static bool GetConfigBool(string cfgKey)
         {
             return GameManager.ConfigManager.GetConfigBool(cfgKey);
         }
@@ -1401,7 +1437,7 @@ where T : class
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
         /// <returns>读取的布尔值。</returns>
-        public static bool GetConfigBool(ushort cfgKey, bool defaultValue)
+        public static bool GetConfigBool(string cfgKey, bool defaultValue)
         {
             return GameManager.ConfigManager.GetConfigBool(cfgKey, defaultValue);
         }
@@ -1410,7 +1446,7 @@ where T : class
         /// </summary>
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <returns>读取的整数值。</returns>
-        public static int GetConfigInt(ushort cfgKey)
+        public static int GetConfigInt(string cfgKey)
         {
             return GameManager.ConfigManager.GetConfigInt(cfgKey);
         }
@@ -1420,7 +1456,7 @@ where T : class
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
         /// <returns>读取的整数值。</returns>
-        public static int GetConfigInt(ushort cfgKey, int defaultValue)
+        public static int GetConfigInt(string cfgKey, int defaultValue)
         {
             return GameManager.ConfigManager.GetConfigInt(cfgKey, defaultValue);
         }
@@ -1429,7 +1465,7 @@ where T : class
         /// </summary>
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <returns>读取的浮点数值。</returns>
-        public static float GetConfigFloat(ushort cfgKey)
+        public static float GetConfigFloat(string cfgKey)
         {
             return GameManager.ConfigManager.GetConfigFloat(cfgKey);
         }
@@ -1439,7 +1475,7 @@ where T : class
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
         /// <returns>读取的浮点数值。</returns>
-        public static float GetConfigFloat(ushort cfgKey, float defaultValue)
+        public static float GetConfigFloat(string cfgKey, float defaultValue)
         {
             return GameManager.ConfigManager.GetConfigFloat(cfgKey, defaultValue);
         }
@@ -1448,7 +1484,7 @@ where T : class
         /// </summary>
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <returns>读取的字符串值。</returns>
-        public static string GetConfigString(ushort cfgKey)
+        public static string GetConfigString(string cfgKey)
         {
             return GameManager.ConfigManager.GetConfigString(cfgKey);
         }
@@ -1458,7 +1494,7 @@ where T : class
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
         /// <returns>读取的字符串值。</returns>
-        public static string GetConfigString(ushort cfgKey, string defaultValue)
+        public static string GetConfigString(string cfgKey, string defaultValue)
         {
             return GameManager.ConfigManager.GetConfigString(cfgKey, defaultValue);
         }

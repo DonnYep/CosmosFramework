@@ -161,23 +161,11 @@ namespace Cosmos.Network
                             OnDeactive();
                         }
                         if (sndMsgDict.TryRemove(netMsg.SN, out tmpMsg))
-                        {
-                            //Utility.Debug.LogInfo($" Conv :{Conv}，Receive ACK Message");
                             Facade.DespawnReference(tmpMsg);
-                        }
-                        else
-                        {
-                            //if (netMsg.Conv != 0)
-                            //    Utility.DebugError($"Receive ACK Message Exception；SN : {netMsg.SN} ");
-
-                            //常见false主要是收到非MSG类型的ACK，譬如FIN、SYN等；
-                            //网络较差时也会出现错序报文，这里也需要进行算法优化；
-                        }
                     }
                     break;
                 case KcpProtocol.MSG:
                     {
-                        //Utility.DebugError($"Conv : {Conv} ,Receive MSG Message");
                         //生成一个ACK报文，并返回发送
                         var ack = UdpNetMessage.ConvertToACK(netMsg);
                         //这里需要发送ACK报文
@@ -200,7 +188,6 @@ namespace Cosmos.Network
                     {
                         //结束建立连接Cmd，这里需要谨慎考虑；
                         Utility.Debug.LogError($"Conv : {Conv} ,Receive FIN Message");
-                        //TODO  KcpProtocol.FIN 内部耦合
                         onDisconnectHandler?.Invoke();
                     }
                     break;
@@ -230,9 +217,10 @@ namespace Cosmos.Network
                 {
                     //重发次数+1
                     msg.RecurCount += 1;
-                    //超时重发
-                    if (sndMsgDict.TryRemove(msg.SN, out var unaMsg))
-                        sendMessageHandler?.Invoke(msg);
+                    //绕过编码消息，直接发送；
+                    GameManager.NetworkManager.SendNetworkMessage(msg.GetBuffer());
+                    //if (sndMsgDict.TryRemove(msg.SN, out var unaMsg))
+                    //    sendMessageHandler?.Invoke(msg);
                 }
             }
         }
@@ -256,8 +244,6 @@ namespace Cosmos.Network
             if (Conv != 0)
             {
                 //若会话ID不为0，则缓存入ACK容器中，等接收成功后进行移除
-                /* result =*/
-                //ackMsgDict.TryAdd(netMsg.SN, netMsg);
                 try
                 {
                     if (netMsg.Cmd == KcpProtocol.MSG)
@@ -270,7 +256,6 @@ namespace Cosmos.Network
             }
             return result;
         }
-
         public void Clear()
         {
             Available = false;
@@ -301,11 +286,9 @@ namespace Cosmos.Network
             }
             HandleSN = netMsg.SN;
             NetworkMsgEventCore.Instance.Dispatch(netMsg.OperationCode, netMsg);
-            //Utility.Debug.LogWarning($"Peer Conv:{Conv}， HandleMsgSN : {netMsg.ToString()}");
             UdpNetMessage nxtNetMsg;
             if (rcvMsgDict.TryRemove(HandleSN + 1, out nxtNetMsg))
             {
-                //Utility.Debug.LogInfo($"HandleMsgSN Next KCP_MSG : {netMsg.ToString()}");
                 HandleMsgSN(nxtNetMsg);
             }
         }

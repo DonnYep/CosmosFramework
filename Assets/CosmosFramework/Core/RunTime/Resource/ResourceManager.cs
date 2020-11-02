@@ -79,7 +79,7 @@ namespace Cosmos.Resource
         /// <typeparam name="T">需要加载的类型</typeparam>
         /// <param name="instantiate">是否生实例化对象</param>
         /// <returns>返回实体化或未实例化的资源对象</returns>
-        internal GameObject LoadResPrefab<T>(bool instantiate = false)
+        internal GameObject LoadResPrefab<T>(bool instantiate )
             where T : MonoBehaviour
         {
             Type type = typeof(T);
@@ -94,6 +94,22 @@ namespace Cosmos.Resource
                     prefab = Utility.Unity.Instantiate<T>(prefab).gameObject;
             }
             return prefab;
+        }
+        internal T LoadResPrefab<T>()
+where T : MonoBehaviour
+        {
+            Type type = typeof(T);
+            PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
+            GameObject prefab = default;
+            T Comp = default;
+            if (attribute != null)
+            {
+                prefab = Resources.Load<GameObject>(attribute.ResourcePath);
+                if (prefab == null)
+                    throw new ArgumentNullException("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
+                Comp = Utility.Unity.Instantiate<T>(prefab);
+            }
+            return Comp;
         }
         /// <summary>
         /// 利用挂载特性的泛型对象同步加载PrefabObject；

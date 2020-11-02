@@ -22,6 +22,7 @@ namespace Cosmos.ObjectPool
                 {
                     activeObjectMount = new GameObject("ObjectPoolModule->>ActiveObjectMount");
                     activeObjectMount.transform.ResetWorldTransform();
+                    activeObjectMount.transform.SetParent(MountPoint.transform);
                 }
                 return activeObjectMount;
             }

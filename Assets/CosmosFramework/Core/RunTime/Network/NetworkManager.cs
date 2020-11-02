@@ -16,32 +16,12 @@ namespace Cosmos.Network
         public event Action NetworkOnConnect
         {
             add { networkOnConnect += value; }
-            remove
-            {
-                try
-                {
-                    networkOnConnect -= value;
-                }
-                catch (Exception e)
-                {
-                    Utility.Debug.LogError(e);
-                }
-            }
+            remove { networkOnConnect -= value; }
         }
         public event Action NetworkOnDisconnect
         {
             add { networkOnDisconnect += value; }
-            remove
-            {
-                try
-                {
-                    networkOnDisconnect -= value;
-                }
-                catch (Exception e)
-                {
-                    Utility.Debug.LogError(e);
-                }
-            }
+            remove { networkOnDisconnect -= value; }
         }
         string serverIP;
         int serverPort;
@@ -95,6 +75,15 @@ namespace Cosmos.Network
             if (IsConnected)
             {
                 service.SendMessageAsync(netMsg);
+            }
+            else
+                Utility.Debug.LogError("Can not send net message, no service");
+        }
+        internal void SendNetworkMessage(byte[] buffer)
+        {
+            if (IsConnected)
+            {
+                service.SendMessageAsync(buffer);
             }
             else
                 Utility.Debug.LogError("Can not send net message, no service");
