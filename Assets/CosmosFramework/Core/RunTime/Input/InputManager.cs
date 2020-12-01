@@ -11,14 +11,14 @@ namespace Cosmos.Input
     /// 输入管理器，主要为不同平台设备类型做适配，与之对应的有ControllerManager。
     /// </summary>
     [Module]
-    internal sealed class InputManager : Module<InputManager>
+    internal sealed class InputManager : Module, IInputManager
     {
         public override void OnInitialization()
         {
             base.OnInitialization();
             _inputDevice?.OnStart();
         }
-       public override void OnTermination()
+        public override void OnTermination()
         {
             base.OnTermination();
             _inputDevice?.OnShutdown();
@@ -31,10 +31,10 @@ namespace Cosmos.Input
                 _inputDevice?.OnRun();
         }
         public bool IsEnableInputDevice { get; set; } = true;
-        VirtualInput inputModule=new VirtualInput();
-       static InputDevice _inputDevice;
+        VirtualInput inputModule = new VirtualInput();
+        static InputDevice _inputDevice;
 
-        public  void SetInputDevice(InputDevice inputDevice)
+        public void SetInputDevice(InputDevice inputDevice)
         {
             _inputDevice = inputDevice;
         }
@@ -43,7 +43,7 @@ namespace Cosmos.Input
         /// </summary>
         /// <param name="name">按键名称</param>
         /// <returns>是否存在</returns>
-        internal bool IsExistVirtualAxis(string name)
+        public bool IsExistVirtualAxis(string name)
         {
             return inputModule.IsExistVirtualAxis(name);
         }
@@ -52,7 +52,7 @@ namespace Cosmos.Input
         /// </summary>
         /// <param name="name">按键名称</param>
         /// <returns>是否存在</returns>
-        internal bool IsExistVirtualButton(string name)
+        public bool IsExistVirtualButton(string name)
         {
             return inputModule.IsExistVirtualButton(name);
         }
@@ -60,7 +60,7 @@ namespace Cosmos.Input
         /// 注册虚拟按键
         /// </summary>
         /// <param name="name">按键名称</param>
-        internal void RegisterVirtualButton(string name)
+        public void RegisterVirtualButton(string name)
         {
             inputModule.RegisterVirtualButton(name);
         }
@@ -68,7 +68,7 @@ namespace Cosmos.Input
         /// 注销虚拟按键
         /// </summary>
         /// <param name="name">按键名称</param>
-        internal void DeregisterVirtualButton(string name)
+        public void DeregisterVirtualButton(string name)
         {
             inputModule.DeregisterVirtualButton(name);
         }
@@ -76,7 +76,7 @@ namespace Cosmos.Input
         /// 注册虚拟按键
         /// </summary>
         /// <param name="name">按键名称</param>
-        internal void RegisterVirtualAxis(string name)
+        public void RegisterVirtualAxis(string name)
         {
             inputModule.RegisterVirtualAxis(name);
         }
@@ -84,7 +84,7 @@ namespace Cosmos.Input
         /// 注销虚拟轴线
         /// </summary>
         /// <param name="name">按键名称</param>
-        internal void DeregisterVirtualAxis(string name)
+        public void DeregisterVirtualAxis(string name)
         {
             inputModule.DeregisterVirtualAxis(name);
         }
@@ -92,22 +92,22 @@ namespace Cosmos.Input
         /// <summary>
         /// 鼠标位置
         /// </summary>
-        internal Vector3 MousePosition { get { return inputModule.MousePosition; } }
+        public Vector3 MousePosition { get { return inputModule.MousePosition; } }
         /// <summary>
         /// 获得轴线
         /// </summary>
         /// <param name="name">按键名称</param>
         /// <returns></returns>
-        internal float GetAxis(string name)
+        public float GetAxis(string name)
         {
-            return inputModule.GetAxis(name,false);
+            return inputModule.GetAxis(name, false);
         }
         /// <summary>
         /// 未插值的输入 -1，0 ，1
         /// </summary>
         /// <param name="name">按键名称</param>
         /// <returns></returns>
-       internal float GetAxisRaw(string name)
+        public float GetAxisRaw(string name)
         {
             return inputModule.GetAxis(name, true);
         }
@@ -116,7 +116,7 @@ namespace Cosmos.Input
         /// </summary>
         /// <param name="name">按键名称</param>
         /// <returns>是否按下</returns>
-        internal bool GetButtonDown(string name)
+        public bool GetButtonDown(string name)
         {
             return inputModule.GetButtonDown(name);
         }
@@ -125,16 +125,16 @@ namespace Cosmos.Input
         /// </summary>
         /// <param name="name">按键名称</param>
         /// <returns>是否按下</returns>
-        internal bool GetButton(string name)
+        public bool GetButton(string name)
         {
-            return  inputModule.GetButton(name);
+            return inputModule.GetButton(name);
         }
         /// <summary>
         /// 按钮抬起
         /// </summary>
         /// <param name="name">按键名称</param>
         /// <returns>是否按下</returns>
-         internal bool GetButtonUp(string name)
+        public bool GetButtonUp(string name)
         {
             return inputModule.GetButtonUp(name);
         }
@@ -143,7 +143,7 @@ namespace Cosmos.Input
         /// 设置按钮按下
         /// </summary>
         /// <param name="name">按钮名称</param>
-        internal void SetButtonDown(string name)
+        public void SetButtonDown(string name)
         {
             inputModule.SetButtonDown(name);
         }
@@ -151,7 +151,7 @@ namespace Cosmos.Input
         /// 设置按钮抬起
         /// </summary>
         /// <param name="name">按钮名称</param>
-       internal void SetButtonUp(string name)
+        public void SetButtonUp(string name)
         {
             inputModule.SetButtonUp(name);
         }
@@ -159,7 +159,7 @@ namespace Cosmos.Input
         /// 设置虚拟鼠标位置
         /// </summary>
         /// <param name="value">鼠标位置</param>
-        internal void SetVirtualMousePosition(Vector3 value)
+        public void SetVirtualMousePosition(Vector3 value)
         {
             inputModule.SetVirtualMousePosition(value);
         }
@@ -169,7 +169,7 @@ namespace Cosmos.Input
         /// <param name="x">x值</param>
         /// <param name="y">y值</param>
         /// <param name="z">z值</param>
-        internal void SetVirtualMousePosition(float x,float y,float z)
+        public void SetVirtualMousePosition(float x, float y, float z)
         {
             inputModule.SetVirtualMousePosition(x, y, z);
         }
@@ -177,7 +177,7 @@ namespace Cosmos.Input
         /// 设置轴线值为正方向1
         /// </summary>
         /// <param name="name">轴线名称</param>
-        internal void SetAxisPositive(string name)
+        public void SetAxisPositive(string name)
         {
             inputModule.SetAxisPositive(name);
         }
@@ -185,7 +185,7 @@ namespace Cosmos.Input
         /// 设置轴线值为负方向-1
         /// </summary>
         /// <param name="name">轴线名称</param>
-       internal void SetAxisNegative(string name)
+        public void SetAxisNegative(string name)
         {
             inputModule.SetAxisNegative(name);
         }
@@ -193,7 +193,7 @@ namespace Cosmos.Input
         /// 设置轴线值为0
         /// </summary>
         /// <param name="name">轴线名称</param>
-       internal void SetAxisZero(string name)
+        public void SetAxisZero(string name)
         {
             inputModule.SetAxisZero(name);
         }
@@ -202,7 +202,7 @@ namespace Cosmos.Input
         /// </summary>
         /// <param name="name">轴线名称</param>
         /// <param name="value">值</param>
-        internal void SetAxis(string name,float value)
+        public void SetAxis(string name, float value)
         {
             inputModule.SetAxis(name, value);
         }

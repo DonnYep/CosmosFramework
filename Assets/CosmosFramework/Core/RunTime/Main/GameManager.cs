@@ -70,20 +70,6 @@ namespace Cosmos
             }
         }
         static GameObject instanceObject;
-        static AudioManager audioManager;
-        internal static AudioManager AudioManager
-        {
-            get
-            {
-                if (audioManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(AudioManager), out module);
-                    audioManager = module as AudioManager;
-                }
-                return audioManager; ;
-            }
-        }
         static ResourceManager resourceManager;
         internal static ResourceManager ResourceManager
         {
@@ -345,6 +331,12 @@ namespace Cosmos
                 }
                 InitModule();
             }
+        }
+        public static T GetModule<T>() where T : class
+        {
+            Type type= typeof(T);
+            moduleDict.TryGetValue(type,out var module);
+            return module;
         }
         internal static bool HasModule(Type type)
         {

@@ -9,14 +9,14 @@ namespace Cosmos
     /// <summary>
     /// Json辅助类接口，用于适配各类JSON解决方案
     /// </summary>
-    public  interface IJsonHelper
+    public interface IJsonHelper
     {
         /// <summary>
         /// 将对象序列化为JSON字段
         /// </summary>
         /// <param name="obj">需要被序列化的对象</param>
         /// <returns>序列化后的JSON字符串</returns>
-        string ToJson(object obj);
+        string ToJson(object obj, bool prettyPrint);
         /// <summary>
         /// 将JSON字符串反序列化为对象
         /// </summary>
@@ -30,6 +30,6 @@ namespace Cosmos
         /// <param name="objectType">对象类型</param>
         /// <param name="json">需要被反序列化的JSON字符串</param>
         /// <returns>反序列化后的对象</returns>
-        object ToObject(string json,Type objectType);
+        object ToObject(string json, Type objectType);
     }
 }

@@ -20,7 +20,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="obj">需要被序列化的对象</param>
             /// <returns>序列化后的JSON字符串</returns>xxxx
-            public static string ToJson(object obj)
+            public static string ToJson(object obj, bool prettyPrint = false)
             {
                 if (jsonHelper == null)
                 {
@@ -28,7 +28,7 @@ namespace Cosmos
                 }
                 try
                 {
-                    return jsonHelper.ToJson(obj);
+                    return jsonHelper.ToJson(obj, prettyPrint);
                 }
                 catch (Exception exception)
                 {
@@ -69,7 +69,7 @@ namespace Cosmos
             /// <param name="objectType">对象类型</param>
             /// <param name="json">需要反序列化的JSON字符串</param>
             /// <returns>反序列化后的对象</returns>
-            public static object ToObject( string json,Type objectType)
+            public static object ToObject(string json, Type objectType)
             {
                 if (jsonHelper == null)
                     throw new ArgumentNullException("JSON warpper is invalid");

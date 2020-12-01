@@ -2,7 +2,7 @@
 using System;
 namespace Cosmos
 {
-    internal interface IModule: IControllableBehaviour,IMountPoint,IOperable
+    internal interface IModule
     {
         string ModuleFullName { get; }
         void OnFixRefresh();

@@ -7,7 +7,7 @@ using System.Reflection;
 namespace Cosmos.UI
 {
     [Module]
-    internal sealed class UIManager : Module<UIManager>
+    internal sealed class UIManager : Module
     {
         #region Properties
         internal static string MainUICanvasName { get; set; }

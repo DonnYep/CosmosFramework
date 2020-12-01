@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Reflection;
-using System.ComponentModel;
 
 namespace Cosmos.Mono
 {
@@ -12,7 +11,7 @@ namespace Cosmos.Mono
     /// 当前只生成一个mc
     /// </summary>
     [Module]
-    internal sealed class MonoManager : Module<MonoManager>
+    internal sealed class MonoManager : Module,IMonoManager
     {
         IMonoProvider monoProvider;
         public override void OnInitialization()
@@ -28,23 +27,23 @@ namespace Cosmos.Mono
         /// <param name="routine">执行条件</param>
         /// <param name="callBack">执行条件结束后自动执行回调函数</param>
         /// <returns>Coroutine</returns>
-        internal Coroutine StartCoroutine(Coroutine routine, Action callBack)
+        public Coroutine StartCoroutine(Coroutine routine, Action callBack)
         {
             return monoProvider.StartCoroutine(routine, callBack);
         }
-        internal Coroutine DelayCoroutine(float delay, Action callBack)
+        public Coroutine DelayCoroutine(float delay, Action callBack)
         {
             return monoProvider.DelayCoroutine(delay, callBack);
         }
-        internal Coroutine PredicateCoroutine(Func<bool> handler, Action callBack)
+        public Coroutine PredicateCoroutine(Func<bool> handler, Action callBack)
         {
             return monoProvider.PredicateCoroutine(handler, callBack);
         }
-        internal Coroutine StartCoroutine(IEnumerator routine)
+        public Coroutine StartCoroutine(IEnumerator routine)
         {
             return monoProvider.StartCoroutine(routine);
         }
-        internal void StopAllCoroutines()
+        public void StopAllCoroutines()
         {
             monoProvider.StopAllCoroutines();
         }
@@ -52,11 +51,11 @@ namespace Cosmos.Mono
         /// 关闭协程
         /// </summary>
         /// <param name="methodName"></param>
-        internal void StopCoroutine(IEnumerator routine)
+        public void StopCoroutine(IEnumerator routine)
         {
             monoProvider.StopCoroutine(routine);
         }
-        internal void StopCoroutine(Coroutine routine)
+        public void StopCoroutine(Coroutine routine)
         {
             monoProvider.StopCoroutine(routine);
         }

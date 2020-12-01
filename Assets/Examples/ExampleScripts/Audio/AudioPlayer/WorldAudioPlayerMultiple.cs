@@ -11,21 +11,19 @@ namespace Cosmos
         public GameObject AudioAttachTarget { get { return audioAttachTarget; } set { audioAttachTarget = value; } }
         global::Cosmos.AudioObject audioObject = new global::Cosmos.AudioObject();
         public override AudioObject AudioObject { get { return audioObject; } }
-        List<LogicEventArgs<IAudio>> audioArgs=new List<LogicEventArgs<IAudio>>();
-        public LogicEventArgs<IAudio>[] AudioArgs
+        List<IAudio> audioList=new List<IAudio>();
+        public IAudio[] AudioArgs
         {
             get
             {
-                audioArgs.Clear();
+                audioList.Clear();
                 for (int i = 0; i < AudioDataSets.Length; i++)
                 {
                     global::Cosmos.AudioObject audioVar = new global::Cosmos.AudioObject();
-                    LogicEventArgs<IAudio> args = new LogicEventArgs<IAudio>(audioVar);
                     audioVar= SetAudioVariable(audioVar, AudioDataSets[i]);
-                    args.SetData(audioVar);
-                    audioArgs.Add(args);
+                    audioList.Add(audioVar);
                 }
-                return audioArgs.ToArray();
+                return audioList.ToArray();
             }
         }
         [SerializeField] AudioDataSet[] audioDataSets;

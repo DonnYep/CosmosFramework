@@ -8,7 +8,7 @@ namespace Cosmos.Config
     /// 载入时候读取配置，例如声音大小，角色等
     /// </summary>
     [Module]
-    internal sealed class ConfigManager : Module<ConfigManager>
+    internal sealed class ConfigManager : Module
     {
         Dictionary<string, ConfigData> configDataDict = new Dictionary<string, ConfigData>();
         public override void OnPreparatory()

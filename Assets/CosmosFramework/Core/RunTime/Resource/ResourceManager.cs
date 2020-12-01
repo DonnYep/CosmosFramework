@@ -33,7 +33,7 @@ namespace Cosmos.Resource
         AssetBundle = 1
     }
     [Module]
-    internal sealed class ResourceManager : Module<ResourceManager>
+    internal sealed class ResourceManager : Module
     {
         #region Properties
         //缓存的所有AssetBundle包 <AB包名称、AB包>

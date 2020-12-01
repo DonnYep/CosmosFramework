@@ -12,7 +12,7 @@ namespace Cosmos
         /// <summary>
         /// 自定义模块容器；
         /// </summary>
-        static Dictionary<Type, IModule> customeModuleDict = new Dictionary<Type, IModule>();
+        static Dictionary<Type, Module> customeModuleDict = new Dictionary<Type, Module>();
         /// <summary>
         /// 线程安全；
         /// 获取自定义模块；
@@ -22,10 +22,10 @@ namespace Cosmos
         /// <typeparam name="TModule">实现模块功能的类对象</typeparam>
         /// <returns>获取的模块</returns>
         public static TModule CustomeModule<TModule>()
-            where TModule : Module<TModule>, new()
+            where TModule : Module, new()
         {
             Type type = typeof(TModule);
-            IModule module = default;
+            Module module = default;
             var result = customeModuleDict.TryGetValue(type, out module);
             if (result)
             {
@@ -41,14 +41,14 @@ namespace Cosmos
         public static void InitCustomeModule(Assembly assembly)
         {
             Type[] types = assembly.GetTypes();
-            var moduleType = typeof(IModule);
+            var moduleType = typeof(Module);
             for (int i = 0; i < types.Length; i++)
             {
                 if (types[i].GetCustomAttribute<CustomeModuleAttribute>() != null && moduleType.IsAssignableFrom(types[i]))
                 {
                     try
                     {
-                        var module = Utility.Assembly.GetTypeInstance(types[i]) as IModule;
+                        var module = Utility.Assembly.GetTypeInstance(types[i]) as Module;
                         var result = customeModuleDict.TryAdd(types[i], module);
                         if (result)
                         {
@@ -59,7 +59,7 @@ namespace Cosmos
                     }
                     catch
                     {
-                        Utility.Debug.LogError($"Custome module create instance fail:{types[i]} is not derived from the{ typeof(Cosmos.Module<>)}");
+                        Utility.Debug.LogError($"Custome module create instance fail:{types[i]}");
                     }
                 }
             }

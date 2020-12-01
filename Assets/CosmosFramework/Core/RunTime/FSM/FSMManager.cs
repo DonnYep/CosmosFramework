@@ -8,7 +8,7 @@ namespace Cosmos.FSM
     /// fsmMgr设计成，轮询是在具体对象山给轮询的，fsmMgr作为一个Fsm的事件中心
     /// </summary>
     [Module]
-    internal sealed class FSMManager : Module<FSMManager>
+    internal sealed class FSMManager : Module 
     {
         #region Properties
         /// <summary>

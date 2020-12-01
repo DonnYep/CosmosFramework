@@ -27,7 +27,7 @@ namespace Cosmos.Controller
     /// 从InputManager获取值后，由此控制输入值
     /// </summary>
     [Module]
-    internal sealed class ControllerManager : Module<ControllerManager>
+    internal sealed class ControllerManager : Module
     {
         #region Properties
         Dictionary<Type, List<IController>> controllerDict = new Dictionary<Type, List<IController>>();

@@ -121,8 +121,8 @@ namespace Cosmos
             /// </summary>
             /// <param name="filePath">文件路径</param>
             /// <param name="fileName">文件名</param>
-            /// <param name="info">写入的信息</param>
-            public static void AppendWriteTextFile(string filePath, string fileName, string info)
+            /// <param name="context">写入的信息</param>
+            public static void AppendWriteTextFile(string filePath, string fileName, string context)
             {
                 if (!Directory.Exists(filePath))
                     Directory.CreateDirectory(filePath);
@@ -131,7 +131,28 @@ namespace Cosmos
                     stream.Position = stream.Length;
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
                     {
-                        writer.WriteLine(info);
+                        writer.WriteLine(context);
+                        writer.Close();
+                        stream.Close();
+                    }
+                }
+            }
+            /// <summary>
+            /// 使用UTF8编码；
+            /// 追加写入文件信息；
+            /// 若文件为空，则自动创建；
+            /// 此方法为text类型文件写入
+            /// </summary>
+            /// <param name="fileFullPath">文件完整路径</param>
+            /// <param name="context">写入的信息</param>
+            public static void AppendWriteTextFile(string fileFullPath, string context)
+            {
+                using (FileStream stream = new FileStream(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    stream.Position = stream.Length;
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    {
+                        writer.WriteLine(context);
                         writer.Close();
                         stream.Close();
                     }
@@ -145,9 +166,9 @@ namespace Cosmos
             /// </summary>
             /// <param name="filePath">文件路径</param>
             /// <param name="fileName">文件名</param>
-            /// <param name="info">写入的信息</param>
+            /// <param name="context">写入的信息</param>
             /// <param name="append">是否追加</param>
-            public static void WriteTextFile(string filePath, string fileName, string info, bool append = false)
+            public static void WriteTextFile(string filePath, string fileName, string context, bool append = false)
             {
                 if (!Directory.Exists(filePath))
                     Directory.CreateDirectory(filePath);
@@ -157,7 +178,30 @@ namespace Cosmos
                         stream.Position = stream.Length;
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
                     {
-                        writer.WriteLine(info);
+                        writer.WriteLine(context);
+                        writer.Close();
+                        stream.Close();
+                    }
+                }
+            }
+            /// <summary>
+            /// 使用UTF8编码；
+            /// 写入文件信息；
+            /// 若文件为空，则自动创建；
+            /// 此方法为text类型文件写入；
+            /// </summary>
+            /// <param name="fileFullPath">文件完整路径</param>
+            /// <param name="context">写入的信息</param>
+            /// <param name="append">是否追加</param>
+            public static void WriteTextFile(string fileFullPath, string context, bool append = false)
+            {
+                using (FileStream stream = File.Open(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    if (append)
+                        stream.Position = stream.Length;
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    {
+                        writer.WriteLine(context);
                         writer.Close();
                         stream.Close();
                     }
@@ -169,8 +213,8 @@ namespace Cosmos
             /// </summary>
             /// <param name="filePath">w文件路径</param>
             /// <param name="fileName">文件名</param>
-            /// <param name="info">写入的信息</param>
-            public static void OverwriteTextFile(string filePath, string fileName, string info)
+            /// <param name="context">写入的信息</param>
+            public static void OverwriteTextFile(string filePath, string fileName, string context)
             {
                 if (!Directory.Exists(filePath))
                     Directory.CreateDirectory(filePath);
@@ -181,7 +225,27 @@ namespace Cosmos
                     stream.SetLength(0);
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
                     {
-                        writer.WriteLine(info);
+                        writer.WriteLine(context);
+                        writer.Close();
+                        stream.Close();
+                    }
+                }
+            }
+            /// <summary>
+            /// 完全覆写；
+            ///  使用UTF8编码；
+            /// </summary>
+            /// <param name="fileFullPath">文件完整路径</param>
+            /// <param name="context">写入的信息</param>
+            public static void OverwriteTextFile(string fileFullPath, string context)
+            {
+                using (FileStream stream = File.Open(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.SetLength(0);
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    {
+                        writer.WriteLine(context);
                         writer.Close();
                         stream.Close();
                     }

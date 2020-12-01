@@ -8,10 +8,8 @@ namespace Cosmos
     /// 模块的抽象基类；
     /// 外部可扩展；
     /// </summary>
-    public abstract class Module<T> : IModule
-        where T : Module<T>, new()
+    public abstract class Module: IControllableBehaviour, IMountPoint, IOperable
     {
-        #region Properties
         #region IMountPoint
         GameObject mountPoint;
         public GameObject MountPoint
@@ -20,7 +18,7 @@ namespace Cosmos
             {
                 if (mountPoint == null)
                 {
-                    mountPoint = new GameObject(ModuleName + "Module-->>Container");
+                    mountPoint = new GameObject("Module-->>Container");
                     mountPoint.transform.SetParent(GameManager.InstanceObject.transform);
                 }
                 return mountPoint;
@@ -28,35 +26,6 @@ namespace Cosmos
         }
         #endregion
         public bool IsPause { get; protected set; }
-        /// <summary>
-        /// 模块的非完全限定名 
-        /// </summary>
-        string moduleName = null;
-        public string ModuleName
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(moduleName))
-                    moduleName = typeof(T).Name;
-                    //moduleName = Utility.Text.StringSplit(Utility.Assembly.GetTypeFullName<T>(), new string[] { "." }, true, 2);
-                return moduleName;
-            }
-        }
-        /// <summary>
-        /// 模块的完全限定名
-        /// </summary>
-        string moduleFullName = null;
-        public string ModuleFullName
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(moduleFullName))
-                    moduleFullName = typeof(T).FullName;
-                return moduleFullName;
-            }
-        }
-        #endregion
-
         #region Methods
         #region interface IModule
         /// <summary>
@@ -71,8 +40,6 @@ namespace Cosmos
         {
             //TODO 生命周期销毁问题 ，module
             mountPoint = null;
-            moduleName = null;
-            moduleFullName = null;
         }
         /// <summary>
         /// 非空虚函数

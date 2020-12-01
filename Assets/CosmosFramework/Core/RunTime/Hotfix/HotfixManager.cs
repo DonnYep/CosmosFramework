@@ -7,7 +7,7 @@ namespace Cosmos.Hotfix
     /// 热修复管理器
     /// </summary>
     [Module]
-    internal class HotfixManager : Module<HotfixManager>
+    internal class HotfixManager : Module , IHotfixManager
     {
 
     }

@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Cosmos{
     public abstract class AudioPlayer: MonoBehaviour
     {
+        protected IAudioManager audioManager;
         public virtual AudioDataSet AudioDataSet { get; }
         public virtual AudioObject AudioObject { get; }
         public abstract void PlayAudio();

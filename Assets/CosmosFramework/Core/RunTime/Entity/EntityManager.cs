@@ -9,8 +9,8 @@ namespace Cosmos.Entity
     /// 管理例如角色身上的Gadget
     /// </summary>
     [Module]
-    internal class EntityManager : Module<EntityManager>
-    {
+    internal class EntityManager : Module 
+    { 
         #region Properties
         internal int EntityTypeCount { get { return entityTypeObjectDict.Count; } }
         Dictionary<Type, List<IEntityObject>> entityTypeObjectDict = new Dictionary<Type, List<IEntityObject>>();

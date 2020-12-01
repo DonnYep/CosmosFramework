@@ -8,7 +8,7 @@ using System.IO;
 namespace Cosmos.Data
 {
     [Module]
-    internal sealed class DataManager : Module<DataManager>
+    internal sealed class DataManager : Module
     {
         #region Methods
         /// <summary>
