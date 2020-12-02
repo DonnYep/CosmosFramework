@@ -38,7 +38,7 @@ namespace Cosmos
         /// 初始化自定义模块
         /// </summary>
         /// <param name="assembly">模块所在程序集</param>
-        public static void InitCustomeModule(Assembly assembly)
+        public static void InitExternalModule(Assembly assembly)
         {
             Type[] types = assembly.GetTypes();
             var moduleType = typeof(Module);

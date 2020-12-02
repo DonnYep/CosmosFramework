@@ -21,6 +21,7 @@ public class SliderEventDispatcher : MonoBehaviour
         referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
         slider = GetComponentInChildren<Slider>();
         uch = referencePoolManager.Spawn<LogicEventArgs<Slider>>().SetData(slider);
+        eventManager = GameManager.GetModule<IEventManager>();
     }
     Slider slider;
     public void DispatchEvent()

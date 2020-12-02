@@ -28,7 +28,7 @@ public class AxisSubscriber : ControllerBase<AxisSubscriber>
                 slider.value = inputManager.GetAxis(InputAxisType._Vertical) * slider.maxValue + SliderOffset;
                 break;
             case InputKey.Horizontal:
-                slider.value = inputManager.GetAxis(InputAxisType._Horizontal)* slider.maxValue + SliderOffset;
+                slider.value = inputManager.GetAxis(InputAxisType._Horizontal) * slider.maxValue + SliderOffset;
                 break;
         }
         float textValue = slider.value - SliderOffset;
@@ -39,5 +39,6 @@ public class AxisSubscriber : ControllerBase<AxisSubscriber>
         slider = GetComponentInChildren<Slider>();
         text = GetComponentsInChildren<Text>()[1];
         inputManager = GameManager.GetModule<IInputManager>();
+        GameManager.GetModule<IInputManager>().SetInputDevice(new StandardInputDevice());
     }
 }

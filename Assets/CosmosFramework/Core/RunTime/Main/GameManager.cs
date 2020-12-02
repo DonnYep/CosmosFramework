@@ -49,8 +49,20 @@ namespace Cosmos
         static Action fixedRefreshHandler;
         static Action lateRefreshHandler;
         static Action refreshHandler;
-        // 模块表
+        /// <summary>
+        /// 模块字典；
+        /// key=>moduleType；value=>module
+        /// </summary>
         static Dictionary<Type, Module> moduleDict;
+        /// <summary>
+        /// 接口-module字典；
+        /// key=>IModuleManager；value=>Module
+        /// </summary>
+        static Dictionary<Type, Type> interfaceModuleDict;
+        /// <summary>
+        /// 模块-mount字典；
+        ///  key=>moduleType；value=>gameobject
+        /// </summary>
         static Dictionary<Type, GameObject> moduleMountDict;
         /// <summary>
         /// 轮询更新委托
@@ -107,22 +119,58 @@ namespace Cosmos
                 Utility.Debug.LogInfo($"Module :{module} has  been initialized");
             }
         }
+        /// <summary>
+        /// 获取内置模块；
+        /// </summary>
+        /// <typeparam name="T">内置模块接口</typeparam>
+        /// <returns>模板模块接口</returns>
         public static T GetModule<T>() where T : class, IModuleManager
         {
-            Type type = typeof(T);
-            moduleDict.TryGetValue(type, out var module);
+            Type interfaceType = typeof(T);
+            var hasType = interfaceModuleDict.TryGetValue(interfaceType, out var derivedType);
+            if (!hasType)
+            {
+                foreach (var m in moduleDict)
+                {
+                    if (interfaceType.IsAssignableFrom(m.Key))
+                    {
+                        derivedType = m.Key;
+                        interfaceModuleDict.TryAdd(interfaceType, derivedType);
+                        break;
+                    }
+                }
+            }
+            moduleDict.TryGetValue(derivedType, out var module);
             return module as T;
         }
+        /// <summary>
+        /// 获取内置模块的挂载对象；
+        /// </summary>
+        /// <typeparam name="T">内置模块接口</typeparam>
+        /// <returns>挂载对象</returns>
         public static GameObject GetModuleMount<T>() where T : class, IModuleManager
         {
-            Type type = typeof(T);
+            Type interfaceType = typeof(T);
+            Type derivedType=null;
+            var hasType = interfaceModuleDict.TryGetValue(interfaceType, out derivedType);
+            if (!hasType)
+            {
+                foreach (var m in moduleDict)
+                {
+                    if (interfaceType.IsAssignableFrom(m.Key))
+                    {
+                        derivedType = m.Key;
+                        break;
+                    }
+                }
+            }
             GameObject moduleMount;
-            var hasMount = moduleMountDict.TryGetValue(type, out moduleMount);
+            var hasMount = moduleMountDict.TryGetValue(derivedType, out moduleMount);
             if (!hasMount)
             {
-                moduleMount = new GameObject(type.Name + "Module-->>Container");
+                moduleMount = new GameObject(derivedType.Name + "Module-->>Container");
                 moduleMount.transform.SetParent(InstanceObject.transform);
-                if (!moduleMountDict.TryAdd(type, moduleMount))
+                if (!moduleMountDict.TryAdd(derivedType, moduleMount))
                 {
                     KillObjectImmediate(moduleMount);
                 }
@@ -135,6 +183,7 @@ namespace Cosmos
             {
                 moduleDict = new Dictionary<Type, Module>();
                 moduleMountDict = new Dictionary<Type, GameObject>();
+                interfaceModuleDict = new Dictionary<Type, Type>();
                 try
                 {
                     InstanceObject.gameObject.AddComponent<GameManagerAgent>();
@@ -235,8 +284,8 @@ namespace Cosmos
         {
             foreach (var module in moduleDict.Values)
             {
-                
-                (module as Module) .OnActive();
+
+                (module as Module).OnActive();
             }
             PrepareModule();
         }
@@ -250,6 +299,9 @@ namespace Cosmos
                 FixedRefreshHandler += module.OnFixRefresh;
                 LateRefreshHandler += module.OnLateRefresh;
             }
+        }
+        static void AssignModuleProperties()
+        {
         }
         #endregion
     }

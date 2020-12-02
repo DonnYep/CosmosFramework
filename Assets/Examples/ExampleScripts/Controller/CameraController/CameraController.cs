@@ -17,12 +17,18 @@ namespace Cosmos
         [SerializeField] float cameraViewDamp=10;
         Camera cam;
         public CameraTarget CameraTarget { get; private set; }
+        IInputManager inputManager;
         float yaw;
         float pitch;
         //当前与相机目标的距离
         float currentDistance;
         Vector3 cameraOffset = Vector3.zero;
         LogicEventArgs<CameraTarget> controllerEventArgs;
+        protected override void Awake()
+        {
+            base.Awake();
+            inputManager=GameManager.GetModule<IInputManager>();
+        }
         public void LockMouse()
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -35,21 +41,21 @@ namespace Cosmos
         }
         public void HideMouse()
         {
-            if (GameManager.GetModule<IInputManager>().GetButtonDown(InputButtonType._MouseLeft) ||
-                GameManager.GetModule<IInputManager>().GetButtonDown(InputButtonType._MouseRight) ||
-                GameManager.GetModule<IInputManager>().GetButtonDown(InputButtonType._MouseMiddle))
+            if (inputManager.GetButtonDown(InputButtonType._MouseLeft) ||
+                inputManager.GetButtonDown(InputButtonType._MouseRight) ||
+                inputManager.GetButtonDown(InputButtonType._MouseMiddle))
                 LockMouse();
-            if (GameManager.GetModule<IInputManager>().GetButtonDown(InputButtonType._Escape))
+            if (inputManager.GetButtonDown(InputButtonType._Escape))
                 UnlockMouse();
         }
         protected override void RefreshHandler()
         {
-            yaw = -GameManager.GetModule<IInputManager>().GetAxis(InputAxisType._MouseX);
-            pitch = GameManager.GetModule<IInputManager>().GetAxis(InputAxisType._MouseY);
+            yaw = -inputManager.GetAxis(InputAxisType._MouseX);
+            pitch = inputManager.GetAxis(InputAxisType._MouseY);
             pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
-            if (GameManager.GetModule<IInputManager>().GetAxis(InputAxisType._MouseScrollWheel) != 0)
+            if (inputManager.GetAxis(InputAxisType._MouseScrollWheel) != 0)
                 Utility.Debug.LogInfo("MouseScrollWheel ", MessageColor.INDIGO);
-            distanceFromTarget -= GameManager.GetModule<IInputManager>().GetAxis(InputAxisType._MouseScrollWheel);
+            distanceFromTarget -= inputManager.GetAxis(InputAxisType._MouseScrollWheel);
             distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
             HideMouse();
         }

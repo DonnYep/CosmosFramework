@@ -365,7 +365,6 @@ namespace Cosmos
                 }
                 return set.ToArray();
             }
-
             /// <summary>
             /// 获取某类型的所有派生类数组；
             /// </summary>
@@ -374,8 +373,21 @@ namespace Cosmos
             public static Type[] GetDerivedTypes<T>()
                 where T : class
             {
-                Type type = typeof(T);
-                List<Type> set = new List<Type>();
+                return GetDerivedTypes(typeof(T));
+            }
+            /// <summary>
+            /// 获取某类型的第一个派生类；
+            /// </summary>
+            /// <typeparam name="T">基类</typeparam>
+            /// <returns>非抽象派生类</returns>
+            public static Type GetDerivedType<T>()
+    where T : class
+            {
+                return GetDerivedType(typeof(T));
+            }
+            public static Type GetDerivedType(Type type)
+            {
+                Type targetType = null;
                 Type[] types = type.Assembly.GetTypes();
                 for (int i = 0; i < types.Length; i++)
                 {
@@ -383,11 +395,12 @@ namespace Cosmos
                     {
                         if (types[i].IsClass && !types[i].IsAbstract)
                         {
-                            set.Add(types[i]);
+                            targetType = types[i];
+                            return targetType;
                         }
                     }
                 }
-                return set.ToArray();
+                return targetType;
             }
             /// <summary>
             /// 获取某类型在指定程序集的所有派生类数组；

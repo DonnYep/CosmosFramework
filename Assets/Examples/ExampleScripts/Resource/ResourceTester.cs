@@ -11,9 +11,12 @@ using Cosmos.Resource;
 public class ResourceTester : MonoBehaviour
 {
     IResourceManager resourceManager;
-    void Start()
+    private void Awake()
     {
         resourceManager = GameManager.GetModule<IResourceManager>();
+    }
+    void Start()
+    {
        var go= resourceManager.LoadResPrefabInstance<ResourceUnitCube>(true);
         go.transform.position = new Vector3(3, 0, 0);
         resourceManager.LoadResPrefabInstanceAsync<ResourceUnitSphere>(LoadDone);

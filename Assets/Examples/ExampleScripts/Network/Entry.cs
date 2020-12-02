@@ -10,6 +10,5 @@ public class Entry : MonoBehaviour
     {
         Utility.Debug.SetHelper(new UnityDebugHelper());
         GameManager.PreparatoryModule();
-        //GameManager.GetModule<IInputManager>().SetInputDevice(new StandardInputDevice());
     }
 }

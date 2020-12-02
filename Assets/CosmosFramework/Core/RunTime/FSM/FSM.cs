@@ -27,8 +27,6 @@ namespace Cosmos.FSM{
         public override bool IsRunning { get { return currentState != null; } }
         public override Type OwnerType { get { return typeof(T); } }
         public override string CurrentStateName{get{return currentState != null ? currentState.GetType().FullName : string.Empty;}}
-        [InjectModule]
-        public IReferencePoolManager ReferencePoolManager { get; set; }
         #endregion
 
         #region Lifecycle
@@ -151,7 +149,7 @@ namespace Cosmos.FSM{
         }
         public override void Shutdown()
         {
-           ReferencePoolManager .Despawn(this);
+           GameManager.GetModule<IReferencePoolManager>().Despawn(this);
         }
         #endregion
         #region State
