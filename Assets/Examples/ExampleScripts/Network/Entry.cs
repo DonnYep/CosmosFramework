@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
+using Cosmos.Input;
+[DefaultExecutionOrder(1000)]
 public class Entry : MonoBehaviour
 {
     private void Awake()
     {
         Utility.Debug.SetHelper(new UnityDebugHelper());
-        Facade.CheckCosmosModule();
-        Facade.SetInputDevice(new StandardInputDevice());
+        GameManager.PreparatoryModule();
+        //GameManager.GetModule<IInputManager>().SetInputDevice(new StandardInputDevice());
     }
 }

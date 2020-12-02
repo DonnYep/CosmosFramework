@@ -12,7 +12,7 @@ namespace Cosmos
         /// <summary>
         /// 自定义模块容器；
         /// </summary>
-        static Dictionary<Type, Module> customeModuleDict = new Dictionary<Type, Module>();
+        static Dictionary<Type, Module> externalModuleDict = new Dictionary<Type, Module>();
         /// <summary>
         /// 线程安全；
         /// 获取自定义模块；
@@ -21,12 +21,12 @@ namespace Cosmos
         /// </summary>
         /// <typeparam name="TModule">实现模块功能的类对象</typeparam>
         /// <returns>获取的模块</returns>
-        public static TModule CustomeModule<TModule>()
+        public static TModule ExternalModule<TModule>()
             where TModule : Module, new()
         {
             Type type = typeof(TModule);
             Module module = default;
-            var result = customeModuleDict.TryGetValue(type, out module);
+            var result = externalModuleDict.TryGetValue(type, out module);
             if (result)
             {
                 return module as TModule;
@@ -44,12 +44,12 @@ namespace Cosmos
             var moduleType = typeof(Module);
             for (int i = 0; i < types.Length; i++)
             {
-                if (types[i].GetCustomAttribute<CustomeModuleAttribute>() != null && moduleType.IsAssignableFrom(types[i]))
+                if (types[i].GetCustomAttribute<ExternalModuleAttribute>() != null && moduleType.IsAssignableFrom(types[i]))
                 {
                     try
                     {
                         var module = Utility.Assembly.GetTypeInstance(types[i]) as Module;
-                        var result = customeModuleDict.TryAdd(types[i], module);
+                        var result = externalModuleDict.TryAdd(types[i], module);
                         if (result)
                         {
                             module.OnInitialization();
@@ -63,19 +63,19 @@ namespace Cosmos
                     }
                 }
             }
-            ActiveCustomeModule();
+            ActiveExternalModule();
         }
-        static void ActiveCustomeModule()
+        static void ActiveExternalModule()
         {
-            foreach (var module in customeModuleDict.Values)
+            foreach (var module in externalModuleDict.Values)
             {
                 module.OnActive();
             }
-            PrepareCustomeModule();
+            PrepareExternalModule();
         }
-        static void PrepareCustomeModule()
+        static void PrepareExternalModule()
         {
-            foreach (var module in customeModuleDict.Values)
+            foreach (var module in externalModuleDict.Values)
             {
                 module.OnPreparatory();
             }

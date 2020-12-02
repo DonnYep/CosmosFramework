@@ -7,7 +7,7 @@ namespace Cosmos.Test {
     {
         private void Start()
         {
-            var result = Facade.InitMainCanvas("UI/MainUICanvas");
+            var result = GameManager.GetModule<IUIManager>().InitMainCanvas("UI/MainUICanvas");
             InitUtility();
         }
         void InitUtility()

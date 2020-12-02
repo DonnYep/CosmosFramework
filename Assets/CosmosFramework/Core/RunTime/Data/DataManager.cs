@@ -1,137 +1,124 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using Cosmos.Resource;
 using System;
-using System.Xml;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
+using System.Collections.Generic;
+
 namespace Cosmos.Data
 {
     [Module]
-    internal sealed class DataManager : Module
+    internal sealed class DataManager : Module,IDataManager
     {
+        #region Properties
+        #endregion
         #region Methods
         /// <summary>
-        /// 从Resource文件夹下读取Json
+        /// 对象字典；
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="relativePath">相对路径</param>
-        /// <param name="fileName">文件名</param>
-        /// <param name="dataSet">存储json的类模型</param>
-        /// <param name="callback">回调函数</param>
-        internal void ParseDataFromResource<T>(string relativePath, string fileName, ref T dataSet, Action<T> callback = null)
-            where T : class, new()
-        {
-            string relativeFullPath = Utility.IO.CombineRelativeFilePath(fileName, relativePath);
-            TextAsset ta = Facade.LoadResAsset<TextAsset>(relativeFullPath);
-            dataSet = Utility.Json.ToObject<T>(ta.text);
-            callback?.Invoke(dataSet);
-        }
+        Dictionary<Type, object> typeObjectDict;
         /// <summary>
-        /// 保存Json数据到本地的绝对路径
+        /// json数据字典；
         /// </summary>
-        /// <param name="relativePath">相对路径</param>
-        /// <param name="fileName">文件名称</param>
-        /// <param name="dataSet">装箱后的数据</param>
-        /// <param name="binary">文件是否为二进制</param>
-        /// <param name="callback">回调函数，当写入成功后调用</param>
-        internal void SaveJsonDataToLocal<T>(string relativePath, string fileName, T dataSet, bool binary = false, Action callback = null)
-            where T : class, new()
+        Dictionary<string, string> jsonDict;
+        public override void OnActive()
         {
-            string absoluteFullpath = Utility.Unity.CombineAppPersistentPath(relativePath);
-            if (!Directory.Exists(absoluteFullpath))
-                Directory.CreateDirectory(absoluteFullpath);
-            using (FileStream stream = File.Create(Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath)))
+            var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IDataProvider>();
+            for (int i = 0; i < objs.Length; i++)
             {
-                Utility.Debug.LogInfo("Save local path：\n" + Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), MessageColor.GREEN);
-                if (binary)
+                try 
                 {
-                    BinaryFormatter bf = new BinaryFormatter();//二进制
-                    var json = Utility.Json.ToJson(dataSet);
-                    bf.Serialize(stream, json);//二进制
+                    objs[i]?.LoadData();
                 }
-                else
+                catch (Exception e)
                 {
-                    using (StreamWriter writer = new StreamWriter(stream))
-                    {
-                        var json = Utility.Json.ToJson(dataSet);
-                        writer.Write(json);
-                        writer.Close();
-                    }
+                    Utility.Debug.LogError(e);
                 }
-                callback?.Invoke();
-                stream.Close();
             }
         }
-        /// <summary>
-        /// 从本地的绝对路径读取Json数据
-        /// </summary>
-        /// <typeparam name="T">反序列化的目标类型</typeparam>
-        /// <param name="relativePath">相对路径</param>
-        /// <param name="fileName">文件名称</param>
-        /// <param name="binary">文件是否为二进制</param>
-        /// <param name="callback">回调函数，当读取成功后调用</param>
-       internal string LoadJsonDataFromLocal(string relativePath, string fileName, bool binary=false, Action callback = null)
+        public bool ContainsDataObject(Type key)
         {
-            string absoluteFullpath = Utility.Unity.CombineAppPersistentPath(relativePath);
-            if (!Directory.Exists(absoluteFullpath))
-                throw new IOException("DataManager-->> Json floder not exist!");
-            string json = "";
-            using (FileStream stream = File.Open(Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), FileMode.Open))
-            {
-                Utility.Debug.LogInfo("Load local path : \n" + Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), MessageColor.GREEN);
-                if (binary)
-                {
-                    BinaryFormatter bf = new BinaryFormatter();
-                   json= (string)bf.Deserialize(stream);
-                }
-                else
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                         json = reader.ReadToEnd();
-                        reader.Close();
-                    }
-                }
-                callback?.Invoke();
-                stream.Close();
-                return json;
-            }
+            return typeObjectDict.ContainsKey(key);
+        }
+        public bool AddDataObject(Type key, object value)
+        {
+            return typeObjectDict. TryAdd(key, value);
+        }
+        public bool GetDataObject(Type key, out object value)
+        {
+            return typeObjectDict. TryGetValue(key, out value);
+        }
+        public bool RemoveDataObject(Type key)
+        {
+            return typeObjectDict.Remove(key);
+        }
+        public bool RemoveDataObject(Type key, out object value)
+        {
+            return typeObjectDict.Remove(key, out value);
+        }
+        public bool ContainsDataObject<T>()
+            where T : class
+        {
+            return ContainsDataObject(typeof(T));
+        }
+        public bool AddDataObject<T>(T value)
+            where T : class
+        {
+            return AddDataObject(typeof(T), value);
+        }
+        public bool GetDataObject<T>(out T value)
+            where T : class
+        {
+            value = default;
+            object data;
+            var result = GetDataObject(typeof(T), out data);
+            if (result)
+                value = data as T;
+            return result;
+        }
+        public bool RemoveDataObject<T>()
+            where T : class
+        {
+            return RemoveDataObject(typeof(T));
+        }
+        public bool RemoveDataObject<T>(out T value)
+            where T : class
+        {
+            value = default;
+            object data;
+            var result = RemoveDataObject(typeof(T), out data);
+            if (result)
+                value = data as T;
+            return result;
+        }
+        public bool AddDataString(string key, string value)
+        {
+            return jsonDict. TryAdd(key, value);
         }
         /// <summary>
-        /// 从本地的绝对路径读取Json数据
+        /// 通过类名获取json数据；
+        /// typeof(Data).Name可作为key；
         /// </summary>
-        /// <typeparam name="T">反序列化的目标类型</typeparam>
-        /// <param name="fullRelativeFilePath">完整的相对路径，具体到文件名</param>
-        /// <param name="dataSet">装箱后的数据</param>
-        /// <param name="binary">文件是否为二进制</param>
-        /// <param name="callback">回调函数，读取成功后调用</param>
-        internal string LoadJsonDataFromLocal(string fullRelativeFilePath,  bool binary=false, Action callback = null)
+        /// <param name="key">类名</param>
+        /// <param name="value">json数据</param>
+        /// <returns>是否获取成功</returns>
+        public bool GetDataString(string key, out string value)
         {
-            string absoluteFullpath = Utility.Unity.CombineAppPersistentPath(fullRelativeFilePath);
-            if (!File.Exists(absoluteFullpath))
-                throw new IOException("DataManager-->> Json file not exist!");
-            string json = "";
-            using (FileStream stream = File.Open(Utility.Unity.CombineAppPersistentPath(absoluteFullpath), FileMode.Open))
-            {
-                Utility.Debug.LogInfo("Load local path：\n" + Utility.IO.CombineRelativeFilePath(absoluteFullpath), MessageColor.GREEN);
-                if (binary)
-                {
-                    BinaryFormatter bf = new BinaryFormatter();
-                    json = (string)bf.Deserialize(stream);
-                }
-                else
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        json = reader.ReadToEnd();
-                        reader.Close();
-                    }
-                }
-                callback?.Invoke();
-                stream.Close();
-                return json;
-            }
+            return jsonDict. TryGetValue(key, out  value);
+        }
+        public bool RemoveDataString(string key)
+        {
+            return jsonDict.Remove(key);
+        }
+        public bool RemoveDataString(string key, out string value)
+        {
+            return jsonDict.Remove(key, out value);
+        }
+        public bool ContainsDataString(string key)
+        {
+            return jsonDict.ContainsKey(key);
+        }
+        public void ClearAll()
+        {
+            jsonDict.Clear();
+            typeObjectDict.Clear();
         }
         #endregion
     }

@@ -3,17 +3,18 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-
+using Cosmos.Resource;
 namespace Cosmos.UI
 {
     [Module]
-    internal sealed class UIManager : Module
+    internal sealed class UIManager : Module, IUIManager
     {
         #region Properties
         internal static string MainUICanvasName { get; set; }
         GameObject mainUICanvas;
-        internal GameObject MainUICanvas { get { return mainUICanvas; } set { mainUICanvas = value; } }
+        public GameObject MainUICanvas { get { return mainUICanvas; } set { mainUICanvas = value; } }
         Dictionary<string, UILogicBase> uiPanelDict;
+        IResourceManager resourceManager;
         #endregion
 
         #region Methods
@@ -21,18 +22,22 @@ namespace Cosmos.UI
         {
             uiPanelDict = new Dictionary<string, UILogicBase>();
         }
+        public override void OnPreparatory()
+        {
+            resourceManager = GameManager.GetModule<ResourceManager>();
+        }
         /// <summary>
         /// Resource文件夹相对路径
         /// 返回实例化的对象
         /// </summary>
         /// <param name="path">如UI\Canvas</param>
-        internal GameObject InitMainCanvas(string path)
+        public GameObject InitMainCanvas(string path)
         {
             if (mainUICanvas != null)
                 return mainUICanvas;
             else
             {
-                Facade.LoadResAysnc<GameObject>(path, go =>
+                resourceManager.LoadResAysnc<GameObject>(path, go =>
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = "MainUICanvas";
@@ -47,13 +52,13 @@ namespace Cosmos.UI
         /// </summary>
         /// <param name="path">如UI\Canvas</param>
         /// <param name="name">生成后重命名的名称</param>
-        internal GameObject InitMainCanvas(string path, string name)
+        public GameObject InitMainCanvas(string path, string name)
         {
             if (mainUICanvas != null)
                 return mainUICanvas;
             else
             {
-                Facade.LoadResAysnc<GameObject>(path, go =>
+                resourceManager.LoadResAysnc<GameObject>(path, go =>
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = name;
@@ -69,12 +74,12 @@ namespace Cosmos.UI
         /// <typeparam name="T"> UILogicBase</typeparam>
         /// <param name="panelName">相对完整路径</param>
         /// <param name="callBack">仅在载入时回调</param>
-        internal void LoadPanel<T>(string panelName, Action<T> callBack = null)
+        public void LoadPanel<T>(string panelName, Action<T> callBack = null)
             where T : UILogicBase
         {
             if (HasPanel(panelName))
                 return;
-            Facade.LoadResAysnc<GameObject>(panelName, go =>
+            resourceManager.LoadResAysnc<GameObject>(panelName, go =>
             {
                 GameObject result = go;
                 result.transform.SetParent(MainUICanvas.transform);
@@ -89,7 +94,7 @@ namespace Cosmos.UI
         /// </summary>
         /// <typeparam name="T">UILogicBase派生类</typeparam>
         /// <param name="callBack">加载完毕后的回调</param>
-        internal void LoadPanel<T>(Action<T> callBack = null)
+        public void LoadPanel<T>(Action<T> callBack = null)
     where T : UILogicBase
         {
             Type type = typeof(T);
@@ -98,7 +103,7 @@ namespace Cosmos.UI
                 return;
             if (HasPanel(attribute.PrefabName))
                 return;
-            Facade.LoadResPrefabAsync<T>(go =>
+            resourceManager.LoadResPrefabAsync<T>(go =>
             {
                 go.transform.SetParent(MainUICanvas.transform);
                 (go.transform as RectTransform).ResetLocalTransform();
@@ -115,7 +120,7 @@ namespace Cosmos.UI
         /// <typeparam name="T"> UILogicBase</typeparam>
         /// <param name="panelName">相对完整路径</param>
         /// <param name="callBack">仅在载入时回调</param>
-        internal void ShowPanel<T>(string panelName, Action<T> callBack = null)
+        public void ShowPanel<T>(string panelName, Action<T> callBack = null)
             where T : UILogicBase
         {
             if (HasPanel(panelName))
@@ -125,7 +130,7 @@ namespace Cosmos.UI
                 callBack?.Invoke(uiPanelDict[panelName] as T);
                 return;
             }
-            Facade.LoadResAysnc<GameObject>(panelName, go =>
+            resourceManager.LoadResAysnc<GameObject>(panelName, go =>
             {
                 GameObject result = go;
                 result.transform.SetParent(MainUICanvas.transform);
@@ -140,7 +145,7 @@ namespace Cosmos.UI
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="callBack"></param>
-        internal void ShowPanel<T>(Action<T> callBack = null)
+        public void ShowPanel<T>(Action<T> callBack = null)
     where T : UILogicBase
         {
             Type type = typeof(T);
@@ -152,7 +157,7 @@ namespace Cosmos.UI
                 callBack?.Invoke(uiPanelDict[attribute.PrefabName] as T);
                 return;
             }
-            Facade.LoadResPrefabAsync<T>(panel =>
+            resourceManager.LoadResPrefabAsync<T>(panel =>
             {
                 panel.transform.SetParent(MainUICanvas.transform);
                 (panel.transform as RectTransform).ResetLocalTransform();
@@ -160,12 +165,12 @@ namespace Cosmos.UI
                 uiPanelDict.Add(attribute.PrefabName, panel);
             });
         }
-        internal void HidePanel(string panelName)
+        public void HidePanel(string panelName)
         {
             if (uiPanelDict.ContainsKey(panelName))
                 uiPanelDict[panelName].HidePanel();
         }
-        internal void RemovePanel(string panelName)
+        public void RemovePanel(string panelName)
         {
             if (uiPanelDict.ContainsKey(panelName))
             {
@@ -176,7 +181,7 @@ namespace Cosmos.UI
             else
                 Utility.Debug.LogError("UIManager-->>" + "Panel :" + panelName + "  not register !");
         }
-        internal void RemovePanel<T>()
+        public void RemovePanel<T>()
             where T : UILogicBase
         {
             Type type = typeof(T);
@@ -192,7 +197,7 @@ namespace Cosmos.UI
             else
                 Utility.Debug.LogError("UIManager-->>" + "Panel :" + attribute.PrefabName + "  not register !");
         }
-        internal bool HasPanel(string panelName)
+        public bool HasPanel(string panelName)
         {
             return uiPanelDict.ContainsKey(panelName);
         }

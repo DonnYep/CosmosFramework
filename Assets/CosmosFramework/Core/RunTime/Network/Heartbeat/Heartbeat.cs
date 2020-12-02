@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.Network;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -65,7 +66,7 @@ namespace Cosmos
                 Available = false;
                 //UnavailableHandler?.Invoke();
                 //TODO  心跳断开连接强耦合
-                Facade.NetworkDisconnect(false);
+                GameManager.GetModule<INetworkManager>().Disconnect(false);
                 return;
             }
             SendHeartbeatHandler?.Invoke(UdpNetMessage.HeartbeatMessage(Conv));

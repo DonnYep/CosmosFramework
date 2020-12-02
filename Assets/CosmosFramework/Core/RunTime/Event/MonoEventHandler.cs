@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Cosmos.Event;
 namespace Cosmos
 {
     /// <summary>
@@ -29,7 +30,7 @@ namespace Cosmos
         protected virtual void EventHandler(object sender, GameEventArgs args) { }
         protected void DispatchEvent(string eventKey,GameEventArgs args)
         {
-            Facade.DispatchEvent(eventKey, this, args);
+            GameManager.GetModule<IEventManager>().DispatchEvent(eventKey, this, args);
         }
         /// <summary>
         /// 注册事件，默认将EventHandler注册到事件中心
@@ -37,11 +38,11 @@ namespace Cosmos
         /// </summary>
         protected void AddDefaultEventListener(string eventKey)
         {
-            Facade.AddEventListener(eventKey, EventHandler);
+            GameManager.GetModule<IEventManager>().AddListener(eventKey, EventHandler);
         }
-        protected void AddEventListener(string eventKey,Action<object,GameEventArgs> handler)
+        protected void AddEventListener(string eventKey,EventHandler<GameEventArgs> handler)
         {
-            Facade.AddEventListener(eventKey, handler);
+            GameManager.GetModule<IEventManager>().AddListener(eventKey, handler);
         }
         /// <summary>
         /// 注销事件，默认将EventHandler从事件中心注销
@@ -49,11 +50,11 @@ namespace Cosmos
         /// </summary>
         protected void RemoveDefaultEventListener(string eventKey)
         {
-            Facade.RemoveEventListener(eventKey, EventHandler);
+            GameManager.GetModule<IEventManager>().RemoveListener(eventKey, EventHandler);
         }
-        protected void RemoveEventListener(string eventKey,Action<object ,GameEventArgs>handler)
+        protected void RemoveEventListener(string eventKey,EventHandler<GameEventArgs>handler)
         {
-            Facade.RemoveEventListener(eventKey, handler);
+            GameManager.GetModule<IEventManager>().RemoveListener(eventKey, handler);
         }
     }
 }

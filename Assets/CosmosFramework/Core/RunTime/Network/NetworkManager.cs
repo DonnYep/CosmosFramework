@@ -11,7 +11,7 @@ namespace Cosmos.Network
     /// 此模块为客户端网络管理类
     /// </summary>
     [Module]
-    internal sealed class NetworkManager : Module
+     internal sealed class NetworkManager : Module, INetworkManager
     {
         public event Action NetworkOnConnect
         {
@@ -61,7 +61,7 @@ namespace Cosmos.Network
                 return;
             service?.OnRefresh();
         }
-        internal void SendNetworkMessage(INetworkMessage netMsg, IPEndPoint endPoint)
+         public void SendNetworkMessage(INetworkMessage netMsg, IPEndPoint endPoint)
         {
             if (IsConnected)
             {
@@ -70,7 +70,7 @@ namespace Cosmos.Network
             else
                 Utility.Debug.LogError("Can not send net message, no service");
         }
-        internal void SendNetworkMessage(INetworkMessage netMsg)
+         public void SendNetworkMessage(INetworkMessage netMsg)
         {
             if (IsConnected)
             {
@@ -79,7 +79,7 @@ namespace Cosmos.Network
             else
                 Utility.Debug.LogError("Can not send net message, no service");
         }
-        internal void SendNetworkMessage(byte[] buffer)
+         public void SendNetworkMessage(byte[] buffer)
         {
             if (IsConnected)
             {
@@ -93,7 +93,7 @@ namespace Cosmos.Network
         /// </summary>
         /// <param name="opCode">操作码</param>
         /// <param name="message">序列化后的数据</param>
-        internal void SendNetworkMessage(ushort opCode, byte[] message)
+         public void SendNetworkMessage(ushort opCode, byte[] message)
         {
             if (IsConnected)
             {
@@ -110,7 +110,7 @@ namespace Cosmos.Network
         /// <param name="ip">ip地址</param>
         /// <param name="port">端口号</param>
         /// <param name="protocolType">协议类型</param>
-        internal void Connect(string ip, int port, ProtocolType protocolType)
+         public void Connect(string ip, int port, ProtocolType protocolType)
         {
             OnUnPause();
             if (IsConnected)
@@ -148,7 +148,7 @@ namespace Cosmos.Network
         /// 与远程建立连接；
         /// </summary>
         /// <param name="service">自定义实现的服务</param>
-        internal void Connect(INetworkService service)
+         public void Connect(INetworkService service)
         {
             if (service == null)
             {
@@ -160,7 +160,7 @@ namespace Cosmos.Network
             //service.Connect(service.);
             Utility.Debug.LogInfo("Try to connect to the server");
         }
-        internal void Disconnect(bool notifyRemote = true)
+         public void Disconnect(bool notifyRemote = true)
         {
             if (service == null)
             {
@@ -174,7 +174,7 @@ namespace Cosmos.Network
             }
             service.Disconnect();
         }
-        internal void RunHeartbeat(uint intervalSec, byte maxRecur)
+         public void RunHeartbeat(uint intervalSec, byte maxRecur)
         {
             //var hb = new Heartbeat();
             heartbeat.MaxRecurCount = maxRecur;

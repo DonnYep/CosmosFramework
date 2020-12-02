@@ -18,6 +18,8 @@ using Cosmos.Network;
 using Cosmos.Entity;
 using Cosmos.Hotfix;
 using System;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Cosmos
 {
@@ -32,24 +34,24 @@ namespace Cosmos
         public static event Action FixedRefreshHandler
         {
             add { fixedRefreshHandler += value; }
-            remove{fixedRefreshHandler -= value; }
+            remove { fixedRefreshHandler -= value; }
         }
         public static event Action LateRefreshHandler
         {
             add { lateRefreshHandler += value; }
-            remove{lateRefreshHandler -= value; }
+            remove { lateRefreshHandler -= value; }
         }
         public static event Action RefreshHandler
         {
             add { refreshHandler += value; }
-            remove{ refreshHandler -= value; }
+            remove { refreshHandler -= value; }
         }
         static Action fixedRefreshHandler;
         static Action lateRefreshHandler;
         static Action refreshHandler;
         // 模块表
-        static Dictionary<Type, IModule> moduleDict;
-        internal static Dictionary<Type, IModule> ModuleDict { get { return moduleDict; } }
+        static Dictionary<Type, Module> moduleDict;
+        static Dictionary<Type, GameObject> moduleMountDict;
         /// <summary>
         /// 轮询更新委托
         /// </summary>
@@ -70,218 +72,7 @@ namespace Cosmos
             }
         }
         static GameObject instanceObject;
-        static ResourceManager resourceManager;
-        internal static ResourceManager ResourceManager
-        {
-            get
-            {
-                if (resourceManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(ResourceManager), out module);
-                    resourceManager = module as ResourceManager;
-                }
-                return resourceManager;
-            }
-        }
-        static ObjectPoolManager objectPoolManager;
-        internal static ObjectPoolManager ObjectPoolManager
-        {
-            get
-            {
-                if (objectPoolManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(ObjectPoolManager), out module);
-                    objectPoolManager = module as ObjectPoolManager;
-                }
-                return objectPoolManager;
-            }
-        }
-        static NetworkManager networkManager;
-        internal static NetworkManager NetworkManager
-        {
-            get
-            {
-                if (networkManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(NetworkManager), out module);
-                    networkManager = module as NetworkManager;
-                }
-                return networkManager;
-            }
-        }
-        static MonoManager monoManager;
-        internal static MonoManager MonoManager
-        {
-            get
-            {
-                if (monoManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(MonoManager), out module);
-                    monoManager = module as MonoManager;
-                }
-                return monoManager;
-            }
-        }
-        static InputManager inputManager;
-        internal static InputManager InputManager
-        {
-            get
-            {
-                if (inputManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(InputManager), out module);
-                    inputManager = module as InputManager;
-                }
-                return inputManager;
-            }
-        }
-        static UIManager uiManager;
-        internal static UIManager UIManager
-        {
-            get
-            {
-                if (uiManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(InputManager), out module);
-                    uiManager = module as UIManager;
-                }
-                return uiManager;
-            }
-        }
-        static EventManager eventManager;
-        internal static EventManager EventManager
-        {
-            get
-            {
-                if (eventManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(EventManager), out module);
-                    eventManager = module as EventManager;
-                }
-                return eventManager;
-            }
-        }
-        static SceneManager sceneManager;
-        internal static SceneManager SceneManager
-        {
-            get
-            {
-                if (sceneManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(SceneManager), out module);
-                    sceneManager = module as SceneManager;
-                }
-                return sceneManager;
-            }
-        }
-        static FSMManager fsmManager;
-        internal static FSMManager FSMManager
-        {
-            get
-            {
-                if (fsmManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(FSMManager), out module);
-                    fsmManager = module as FSMManager;
-                }
-                return fsmManager;
-            }
-        }
-        static ConfigManager configManager;
-        internal static ConfigManager ConfigManager
-        {
-            get
-            {
-                if (configManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(ConfigManager), out module);
-                    configManager = module as ConfigManager;
-                }
-                return configManager;
-            }
-        }
-        static DataManager dataManager;
-        internal static DataManager DataManager
-        {
-            get
-            {
-                if (dataManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(DataManager), out module);
-                    dataManager = module as DataManager;
-                }
-                return dataManager;
-            }
-        }
-        static ControllerManager controllerManager;
-        internal static ControllerManager ControllerManager
-        {
-            get
-            {
-                if (controllerManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(ControllerManager), out module);
-                    controllerManager = module as ControllerManager;
-                }
-                return controllerManager;
-            }
-        }
-        static EntityManager entityManager;
-        internal static EntityManager EntityManager
-        {
-            get
-            {
-                if (entityManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(EntityManager), out module);
-                    entityManager = module as EntityManager;
-                }
-                return entityManager;
-            }
-        }
-        static ReferencePoolManager referencePoolManager;
-        internal static ReferencePoolManager ReferencePoolManager
-        {
-            get
-            {
-                if (referencePoolManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(ReferencePoolManager), out module);
-                    referencePoolManager = module as ReferencePoolManager;
-                }
-                return referencePoolManager;
-            }
-        }
-        static HotfixManager hotfixManager;
-        internal static HotfixManager HotfixManager
-        {
-            get
-            {
-                if (hotfixManager == null)
-                {
-                    IModule module;
-                    moduleDict.TryGetValue(typeof(HotfixManager), out module);
-                    hotfixManager = module as HotfixManager;
-                }
-                return hotfixManager;
-            }
-        }
         #endregion
-
         #region Methods
         public static void OnPause()
         {
@@ -309,18 +100,41 @@ namespace Cosmos
                 return;
             fixedRefreshHandler?.Invoke();
         }
-        public static void CheckModule()
+        public static void PreparatoryModule()
         {
-            foreach (var module in moduleDict.Values)
+            foreach (var module in moduleDict.Keys)
             {
-                Utility.Debug.LogInfo($"Module :{module} has already been initialized");
+                Utility.Debug.LogInfo($"Module :{module} has  been initialized");
             }
+        }
+        public static T GetModule<T>() where T : class, IModuleManager
+        {
+            Type type = typeof(T);
+            moduleDict.TryGetValue(type, out var module);
+            return module as T;
+        }
+        public static GameObject GetModuleMount<T>() where T : class, IModuleManager
+        {
+            Type type = typeof(T);
+            GameObject moduleMount;
+            var hasMount = moduleMountDict.TryGetValue(type, out moduleMount);
+            if (!hasMount)
+            {
+                moduleMount = new GameObject(type.Name + "Module-->>Container");
+                moduleMount.transform.SetParent(InstanceObject.transform);
+                if (!moduleMountDict.TryAdd(type, moduleMount))
+                {
+                    KillObjectImmediate(moduleMount);
+                }
+            }
+            return moduleMount;
         }
         static GameManager()
         {
             if (moduleDict == null)
             {
-                moduleDict = new Dictionary<Type, IModule>();
+                moduleDict = new Dictionary<Type, Module>();
+                moduleMountDict = new Dictionary<Type, GameObject>();
                 try
                 {
                     InstanceObject.gameObject.AddComponent<GameManagerAgent>();
@@ -331,12 +145,6 @@ namespace Cosmos
                 }
                 InitModule();
             }
-        }
-        public static T GetModule<T>() where T : class
-        {
-            Type type= typeof(T);
-            moduleDict.TryGetValue(type,out var module);
-            return module;
         }
         internal static bool HasModule(Type type)
         {
@@ -384,23 +192,19 @@ namespace Cosmos
             }
             objs.Clear();
         }
-        static void ModuleInitialization(IModule module)
+        static void ModuleInitialization(Module module)
         {
             var type = module.GetType();
             if (!HasModule(type))
             {
                 module.OnInitialization();
-                moduleDict.Add(module.GetType(), module);
+                moduleDict.Add(type, module);
                 moduleCount++;
-                RefreshHandler += module.OnRefresh;
-                FixedRefreshHandler+= module.OnFixRefresh;
-                LateRefreshHandler+= module.OnLateRefresh;
-                
             }
             else
-                throw new ArgumentException($"Module : {module} is already exist!");
+                throw new ArgumentException($"Module : {type} is already exist!");
         }
-        static void ModuleTermination(IModule module)
+        static void ModuleTermination(Module module)
         {
             var type = module.GetType();
             if (HasModule(type))
@@ -420,7 +224,7 @@ namespace Cosmos
         }
         static void InitModule()
         {
-            var modules = Utility.Assembly.GetInstancesByAttribute<ModuleAttribute, IModule>();
+            var modules = Utility.Assembly.GetInstancesByAttribute<ModuleAttribute, Module>();
             for (int i = 0; i < modules.Length; i++)
             {
                 ModuleInitialization(modules[i]);
@@ -431,15 +235,20 @@ namespace Cosmos
         {
             foreach (var module in moduleDict.Values)
             {
-                module.OnActive();
+                
+                (module as Module) .OnActive();
             }
             PrepareModule();
         }
         static void PrepareModule()
         {
-            foreach (var module in moduleDict.Values)
+            foreach (var mgr in moduleDict.Values)
             {
+                var module = mgr as Module;
                 module.OnPreparatory();
+                RefreshHandler += module.OnRefresh;
+                FixedRefreshHandler += module.OnFixRefresh;
+                LateRefreshHandler += module.OnLateRefresh;
             }
         }
         #endregion

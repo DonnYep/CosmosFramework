@@ -27,10 +27,12 @@ public class Timer : MonoBehaviour {
         [SerializeField] UnityEvent action;
         public UnityEvent Action { get { return action; } set { action = value; } }
         Coroutine  tempRoutine;
-        private void Awake()
+        IMonoManager monoManager;
+        private void Start()
         {
+            monoManager = GameManager.GetModule<IMonoManager>();
             if (autoStart)
-                tempRoutine = Facade.StartCoroutine(EnumAction(StartDelay, () => action.Invoke()));
+                tempRoutine = monoManager.StartCoroutine(EnumAction(StartDelay, () => action.Invoke()));
         }
         private void OnValidate()
         {
@@ -44,23 +46,23 @@ public class Timer : MonoBehaviour {
         public virtual void ExecuteTimerAction()
         {
             if(!RandomInterval)
-            tempRoutine = Facade.StartCoroutine(EnumAction(Interval, ()=>action.Invoke()));
+            tempRoutine = monoManager.StartCoroutine(EnumAction(Interval, ()=>action.Invoke()));
             else
-                tempRoutine = Facade.StartCoroutine(EnumAction(Interval+ Utility.Unity.Random(-RandomRange, RandomRange), () => action.Invoke()));
+                tempRoutine = monoManager.StartCoroutine(EnumAction(Interval+ Utility.Unity.Random(-RandomRange, RandomRange), () => action.Invoke()));
         }
         /// <summary>
         /// 立即停止
         /// </summary>
         public virtual void StopTimerAction()
         {
-            Facade.StopCoroutine(tempRoutine);
+            monoManager.StopCoroutine(tempRoutine);
         }
         IEnumerator EnumAction(object arg,Action handler)
         {
             yield return new WaitForSeconds(Utility.Converter.Float(arg));
             handler?.Invoke();
             if(loop)
-                tempRoutine = Facade.StartCoroutine(EnumAction(Interval, () => action.Invoke()));
+                tempRoutine = monoManager.StartCoroutine(EnumAction(Interval, () => action.Invoke()));
         }
     }
 }

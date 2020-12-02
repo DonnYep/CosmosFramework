@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
+using Cosmos.Resource;
 /// <summary>
 /// 此示例展示了通过挂载特性达到资源生成的效果;
 /// 使用时挂载好特性，并且实现IReference接口即可；
@@ -9,12 +10,14 @@ using Cosmos;
 /// </summary>
 public class ResourceTester : MonoBehaviour
 {
+    IResourceManager resourceManager;
     void Start()
     {
-       var go= Facade.LoadResPrefabInstance<ResourceUnitCube>(true);
+        resourceManager = GameManager.GetModule<IResourceManager>();
+       var go= resourceManager.LoadResPrefabInstance<ResourceUnitCube>(true);
         go.transform.position = new Vector3(3, 0, 0);
-        Facade.LoadResPrefabInstanceAsync<ResourceUnitSphere>(LoadDone);
-        var monoGo= Facade.LoadResPrefab<ResourceMonoUnitTester>(true);
+        resourceManager.LoadResPrefabInstanceAsync<ResourceUnitSphere>(LoadDone);
+        var monoGo= resourceManager.LoadResPrefab<ResourceMonoUnitTester>(true);
         monoGo.transform.position = new Vector3(5, 0, 0);
     }
     void LoadDone(ResourceUnitSphere resUnit, GameObject go)

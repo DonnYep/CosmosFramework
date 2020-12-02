@@ -11,6 +11,7 @@ public class NavigatePanel : UILogicResident
     SettingPanel setting;
     StorePanel store;
     StatusPanel status;
+    IUIManager uiManager;
     protected override void OnInitialization()
     {
         GetUIPanel<Button>("BtnWelcome").onClick.AddListener(WelcomeClick);
@@ -18,6 +19,7 @@ public class NavigatePanel : UILogicResident
         GetUIPanel<Button>("BtnStore").onClick.AddListener(StoreClick);
         GetUIPanel<Button>("BtnStatus").onClick.AddListener(StatusClick);
         GetUIPanel<Button>("BtnSetting").onClick.AddListener(SettingClick);
+        uiManager = GameManager.GetModule<IUIManager>();
     }
     protected override void OnTermination()
     {
@@ -33,10 +35,10 @@ public class NavigatePanel : UILogicResident
     void WelcomeClick()
     {
         if (welcome == null)
-            Facade.ShowPanel<WelcomePanel>(panel =>
+            uiManager.ShowPanel<WelcomePanel>(panel =>
             { panel.gameObject.SetActive(true); welcome = panel; });
         else
-            Facade.RemovePanel<WelcomePanel>();
+            uiManager.RemovePanel<WelcomePanel>();
     }
     /// <summary>
     /// Invenmtory panel是常驻类型，若不存在，则载入；开启与关闭只进行显示与隐藏操作
@@ -45,7 +47,7 @@ public class NavigatePanel : UILogicResident
     {
         if (inventory == null)
         {
-            Facade.ShowPanel<InventoryPanel>(Utility.UI.GetUIFullRelativePath("InventoryPanel"), panel =>
+            uiManager.ShowPanel<InventoryPanel>(Utility.UI.GetUIFullRelativePath("InventoryPanel"), panel =>
             { panel.gameObject.name = "InventoryPanel"; panel.gameObject.SetActive(true); inventory = panel; });
             return;
         }
@@ -58,7 +60,7 @@ public class NavigatePanel : UILogicResident
     {
         if (store == null)
         {
-            Facade.ShowPanel<StorePanel>(panel =>
+            uiManager.ShowPanel<StorePanel>(panel =>
             { panel.gameObject.SetActive(true); store = panel; });
             return;
         }
@@ -71,7 +73,7 @@ public class NavigatePanel : UILogicResident
     {
         if (setting == null)
         {
-            Facade.ShowPanel<SettingPanel>(panel => 
+            uiManager.ShowPanel<SettingPanel>(panel => 
             { panel.gameObject.SetActive(true);setting = panel; });
             return;
         }
@@ -84,7 +86,7 @@ public class NavigatePanel : UILogicResident
     {
         if (status == null)
         {
-            Facade.ShowPanel<StatusPanel>(panel => 
+            uiManager.ShowPanel<StatusPanel>(panel => 
             { panel.gameObject.SetActive(true);status = panel; });
             return;
         }

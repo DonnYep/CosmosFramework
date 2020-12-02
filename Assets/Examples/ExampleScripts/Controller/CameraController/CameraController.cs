@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cosmos.Input;
+using Cosmos.Event;
 using System;
 
 namespace Cosmos
@@ -34,35 +35,35 @@ namespace Cosmos
         }
         public void HideMouse()
         {
-            if (Facade.GetButtonDown(InputButtonType._MouseLeft) ||
-                Facade.GetButtonDown(InputButtonType._MouseRight) ||
-                Facade.GetButtonDown(InputButtonType._MouseMiddle))
+            if (GameManager.GetModule<IInputManager>().GetButtonDown(InputButtonType._MouseLeft) ||
+                GameManager.GetModule<IInputManager>().GetButtonDown(InputButtonType._MouseRight) ||
+                GameManager.GetModule<IInputManager>().GetButtonDown(InputButtonType._MouseMiddle))
                 LockMouse();
-            if (Facade.GetButtonDown(InputButtonType._Escape))
+            if (GameManager.GetModule<IInputManager>().GetButtonDown(InputButtonType._Escape))
                 UnlockMouse();
         }
         protected override void RefreshHandler()
         {
-            yaw = -Facade.GetAxis(InputAxisType._MouseX);
-            pitch = Facade.GetAxis(InputAxisType._MouseY);
+            yaw = -GameManager.GetModule<IInputManager>().GetAxis(InputAxisType._MouseX);
+            pitch = GameManager.GetModule<IInputManager>().GetAxis(InputAxisType._MouseY);
             pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
-            if (Facade.GetAxis(InputAxisType._MouseScrollWheel) != 0)
+            if (GameManager.GetModule<IInputManager>().GetAxis(InputAxisType._MouseScrollWheel) != 0)
                 Utility.Debug.LogInfo("MouseScrollWheel ", MessageColor.INDIGO);
-            distanceFromTarget -= Facade.GetAxis(InputAxisType._MouseScrollWheel);
+            distanceFromTarget -= GameManager.GetModule<IInputManager>().GetAxis(InputAxisType._MouseScrollWheel);
             distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
             HideMouse();
         }
         protected override void OnEnable()
         {
             base.OnEnable();
-            Facade.LateRefreshHandler += LateUpdateCamera;
-            Facade.AddEventListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
+            GameManager.LateRefreshHandler+= LateUpdateCamera;
+            GameManager.GetModule<IEventManager>().AddListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
         }
         protected override void OnDisable()
         {
             base.OnDisable();
-            Facade.LateRefreshHandler -= LateUpdateCamera;
-            Facade.RemoveEventListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
+            GameManager.LateRefreshHandler -= LateUpdateCamera;
+            GameManager.GetModule<IEventManager>().RemoveListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
             Utility.Debug.LogInfo("CameraController destory");
         }
         protected override void OnValidate()

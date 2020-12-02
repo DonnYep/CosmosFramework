@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Cosmos.ObjectPool;
+using Cosmos.Mono;
 
 namespace Cosmos{
     public class MonoObjectSpawnerGroup : MonoObjectSpawner
@@ -16,6 +18,8 @@ namespace Cosmos{
         List<ObjectGroup> SpawnObjectGroup { get { return spawnObjectGroup; } }
         //标志位，存储当前group中的
         int flag = 0;
+        IObjectPoolManager objectPoolManager;
+        IMonoManager monoManager;
         public override void Spawn()
         {
             for (int i = 0; i < SpawnObjectGroup.Count; i++)
@@ -27,8 +31,8 @@ namespace Cosmos{
                     flag = i;
                     for (int j = 0; j < SpawnObjectGroup[i].PoolObject.SpawnCount; j++)
                     {
-                        Facade.SetObjectSpawnItem(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject);
-                        var go = Facade.SpawnObject(SpawnObjectGroup[i].SpawnTransform);
+                        objectPoolManager.SetSpawnItem(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject);
+                        var go = objectPoolManager.Spawn(SpawnObjectGroup[i].SpawnTransform);
                         AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
                     }
                 }
@@ -40,7 +44,7 @@ namespace Cosmos{
             {
                 if(SpawnObjectGroup[i].SpawnTransform!=null&&SpawnObjectGroup[i].PoolObject!=null)
                 {
-                    Facade.RegisterObjcetSpawnPool(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject,
+                    objectPoolManager.RegisterSpawnPool(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject,
                       SpawnHandler, DespawnHandler);
                 }
             }
@@ -51,7 +55,7 @@ namespace Cosmos{
             {
                 if (SpawnObjectGroup[i].SpawnTransform != null && SpawnObjectGroup[i].PoolObject != null)
                 {
-                    Facade.DeregisterObjectSpawnPool(SpawnObjectGroup[i].SpawnTransform);
+                    objectPoolManager.DeregisterSpawnPool(SpawnObjectGroup[i].SpawnTransform);
                 }
             }
             GameManagerAgent.KillObject(deactiveObjectMount);
@@ -60,8 +64,8 @@ namespace Cosmos{
         {
             if (go == null)
                 return;
-            Facade.StartCoroutine(EnumCollect(SpawnObjectGroup[flag].CollectDelay,
-                (tempFlag) => { Facade.DespawnObject(SpawnObjectGroup[Utility.Converter.Int( tempFlag)].SpawnTransform, go); },flag));
+            monoManager.StartCoroutine(EnumCollect(SpawnObjectGroup[flag].CollectDelay,
+                (tempFlag) => { objectPoolManager.Despawn(SpawnObjectGroup[Utility.Converter.Int( tempFlag)].SpawnTransform, go); },flag));
         }
         protected IEnumerator EnumCollect(float delay, Action<object> action ,object arg)
         {
@@ -86,6 +90,12 @@ namespace Cosmos{
                     }
                 }
             }
+        }
+        protected override void Start()
+        {
+            base.Start();
+            objectPoolManager = GameManager.GetModule<IObjectPoolManager>();
+            monoManager = GameManager.GetModule<IMonoManager>();
         }
         [System.Serializable]
         class ObjectGroup

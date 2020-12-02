@@ -33,7 +33,7 @@ namespace Cosmos
                 {
                     return Client != null && Client.Connected;
                 }
-                catch (Exception exception)
+                catch (Exception e)
                 {
                     throw new ArgumentException("Client is invalid.");
                 }
@@ -48,7 +48,7 @@ namespace Cosmos
             if (Client == null)
             {
                 Client = new Socket(AddressFamily.InterNetwork, MsgMode, Protocol);
-                Client.Connect(GameManager.NetworkManager.ServerEndPoint);
+                Client.Connect(GameManager.GetModule<INetworkManager>().ServerEndPoint);
             }
         }
         public void DisconnectServer()

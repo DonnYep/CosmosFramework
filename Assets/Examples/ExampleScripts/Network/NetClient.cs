@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cosmos;
+using Cosmos.Network;
 using System;
 public class NetClient : IDisposable
 {
@@ -61,19 +62,21 @@ public class NetClient : IDisposable
             }
         }
     }
+    INetworkManager networkManager;
     public NetClient()
     {
         MessagePacket.SetHelper(new MessagePacketJsonHelper());
+        networkManager = GameManager.GetModule<INetworkManager>();
     }
     public void SendMessage(MessagePacket packet)
     {
         var packetBuffer = MessagePacket.Serialize(packet);
-        Facade.SendNetworkMessage(MessagePacketPort.GATE_MSG_PORT, packetBuffer);
+        networkManager.SendNetworkMessage(MessagePacketPort.GATE_MSG_PORT, packetBuffer);
     }
     public void Dispose()
     {
-        Facade.NetworkOnConnect -= OnConnect;
-        Facade.NetworkOnDisconnect -= OnDisconnect;
+        networkManager.NetworkOnConnect -= OnConnect;
+        networkManager.NetworkOnDisconnect -= OnDisconnect;
         networkReceive = null;
         networkConnect = null;
         networkDisconnect = null;
@@ -81,17 +84,17 @@ public class NetClient : IDisposable
     public void Connect(string ip, int port)
     {
         NetworkMsgEventCore.Instance.AddEventListener(MessagePacketPort.GATE_MSG_PORT, OnReceiveNetMessage);
-        Facade.NetworkOnConnect += OnConnect;
-        Facade.NetworkOnDisconnect += OnDisconnect;
-        Facade.NetworkConnect(ip, port, System.Net.Sockets.ProtocolType.Udp);
+        networkManager.NetworkOnConnect += OnConnect;
+        networkManager.NetworkOnDisconnect += OnDisconnect;
+        networkManager.Connect(ip, port, System.Net.Sockets.ProtocolType.Udp);
     }
     public void Disconnect()
     {
-        Facade.NetworkDisconnect();
+        networkManager.Disconnect();
     }
     public void RunHeartBeat(uint interval, byte maxRecur)
     {
-        Facade.RunHeartbeat(interval, maxRecur);
+        networkManager.RunHeartbeat(interval, maxRecur);
     }
     /// <summary>
     /// 空虚函数

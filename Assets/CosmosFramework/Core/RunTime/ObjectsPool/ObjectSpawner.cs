@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cosmos.ObjectPool;
 namespace Cosmos
 {
     public abstract class ObjectSpawner: IObjectSpawner
@@ -9,6 +10,7 @@ namespace Cosmos
         public GameObject SpawnItem { get; set; }
         public GameObject ActivatedObjectMounting { get; set; }
         public GameObject DeactivatedObjectMounting { get; set; }
+        IObjectPoolManager objectPoolManager;
         public void SetSpawnData(string key, GameObject spawnItem)
         {
             SpawnObjectPoolKey = key;
@@ -25,7 +27,7 @@ namespace Cosmos
         /// </summary>
         protected virtual void RegisterObjectSpawnPool()
         {
-            Facade.RegisterObjcetSpawnPool(SpawnObjectPoolKey, SpawnItem, OnSpawn, OnDespawn);
+            objectPoolManager.RegisterSpawnPool(SpawnObjectPoolKey, SpawnItem, OnSpawn, OnDespawn);
         }
         /// <summary>
         /// 注销对象池
@@ -33,7 +35,7 @@ namespace Cosmos
         /// </summary>
         protected virtual void DeregisterObjectSpawnPool()
         {
-            Facade.DeregisterObjectSpawnPool(SpawnObjectPoolKey);
+            objectPoolManager.DeregisterSpawnPool(SpawnObjectPoolKey);
         }
         /// <summary>
         /// 生成时触发的方法

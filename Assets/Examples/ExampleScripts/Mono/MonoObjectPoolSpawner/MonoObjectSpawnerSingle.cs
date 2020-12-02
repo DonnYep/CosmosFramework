@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Cosmos.ObjectPool;
 namespace Cosmos{
     public class MonoObjectSpawnerSingle : MonoObjectSpawner {
 
@@ -15,21 +15,27 @@ namespace Cosmos{
         public override float CollectDelay { get { return poolDataSet.CollectDelay; } }
         HashSet<GameObject> uncollectibleHashSet = new HashSet<GameObject>();
         public override HashSet<GameObject> UncollectibleHashSet { get { return uncollectibleHashSet; } protected set { uncollectibleHashSet = value; } }
+        IObjectPoolManager objectPoolManager;
+        protected override void Start()
+        {
+            base.Start();
+            objectPoolManager = GameManager.GetModule<IObjectPoolManager>();
+        }
         public override void Spawn()
         {
             if (!poolDataSet.ObjectAddsResult)
                 return;
             for (int i = 0; i < poolDataSet.SpawnCount; i++)
             {
-                Facade.SetObjectSpawnItem(this, PoolDataSet.SpawnObject);
-                var go = Facade.SpawnObject(this);
+                objectPoolManager.SetSpawnItem(this, PoolDataSet.SpawnObject);
+                var go = objectPoolManager.Spawn(this);
                 AlignObject(PoolDataSet.AlignType, go, SpawnTransform);
             }
         }
         protected override void RegisterSpawner()
         {
             if(poolDataSet != null)
-                Facade.RegisterObjcetSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
+                objectPoolManager.RegisterSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
         }
         public override void SpawnUncollectible()
         {

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
+using Cosmos.Input;
+using Cosmos.Controller;
+
 public class ControllerOwner : MonoBehaviour
 {
     [SerializeField] GameObject controller;
     private void Awake()
     {
-        Facade.SetInputDevice(new StandardInputDevice());
+        GameManager.GetModule<IInputManager>().SetInputDevice(new StandardInputDevice());
     }
     void Start()
     {
@@ -16,6 +19,6 @@ public class ControllerOwner : MonoBehaviour
         {
             c= controller.GetComponent<TempController>();
         }
-        Facade.RegisterController(typeof(TempController), c);
+        GameManager.GetModule<IControllerManager>().RegisterController(typeof(TempController), c);
     }
 }

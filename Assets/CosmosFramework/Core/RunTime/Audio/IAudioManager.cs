@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cosmos
+namespace Cosmos.Audio
 {
-    public interface IAudioManager 
+    public interface IAudioManager :IModuleManager
     {
+        bool Mute { get; set; }
+        void PlayBackgroundAudio(IAudio audio);
         void PauseBackgroundAudio();
         void UnpauseBackgroundAudio();
         void StopBackgroundAudio();

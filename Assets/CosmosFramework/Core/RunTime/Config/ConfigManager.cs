@@ -8,7 +8,7 @@ namespace Cosmos.Config
     /// 载入时候读取配置，例如声音大小，角色等
     /// </summary>
     [Module]
-    internal sealed class ConfigManager : Module
+    internal sealed class ConfigManager : Module, IConfigManager
     {
         Dictionary<string, ConfigData> configDataDict = new Dictionary<string, ConfigData>();
         public override void OnPreparatory()
@@ -25,7 +25,7 @@ namespace Cosmos.Config
         /// <param name="cfgKey">要增加全局配置项的名称。</param>
         /// <param name="configValue">全局配置项的值。</param>
         /// <returns>是否增加全局配置项成功。</returns>
-        internal bool AddConfig(string cfgKey, string configValue)
+        public bool AddConfig(string cfgKey, string configValue)
         {
             bool boolValue = false;
             bool.TryParse(configValue, out boolValue);
@@ -38,14 +38,14 @@ namespace Cosmos.Config
 
             return AddConfig(cfgKey, boolValue, intValue, floatValue, configValue);
         }
-        internal bool AddConfig(string cfgKey, bool boolValue, int intValue, float floatValue, string stringValue)
+        public bool AddConfig(string cfgKey, bool boolValue, int intValue, float floatValue, string stringValue)
         {
             if (HasConfig(cfgKey))
                 return false;
             configDataDict.Add(cfgKey, new ConfigData(boolValue, intValue, floatValue, stringValue));
             return true;
         }
-        internal bool RemoveConfig(string cfgKey)
+        public bool RemoveConfig(string cfgKey)
         {
             if (HasConfig(cfgKey))
             {
@@ -55,11 +55,11 @@ namespace Cosmos.Config
             else
                 return false;
         }
-        internal bool HasConfig(string cfgKey)
+        public bool HasConfig(string cfgKey)
         {
             return configDataDict.ContainsKey(cfgKey);
         }
-        internal ConfigData? GetConfigData(string cfgKey)
+        public ConfigData? GetConfigData(string cfgKey)
         {
             ConfigData data;
             if (configDataDict.TryGetValue(cfgKey, out data))
@@ -71,7 +71,7 @@ namespace Cosmos.Config
         /// </summary>
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <returns>读取的布尔值。</returns>
-        internal bool GetConfigBool(string cfgKey)
+        public bool GetConfigBool(string cfgKey)
         {
             ConfigData? configData = GetConfigData(cfgKey);
             if (!configData.HasValue)
@@ -87,7 +87,7 @@ namespace Cosmos.Config
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
         /// <returns>读取的布尔值。</returns>
-        internal bool GetConfigBool(string cfgKey, bool defaultValue)
+        public bool GetConfigBool(string cfgKey, bool defaultValue)
         {
             ConfigData? configData = GetConfigData(cfgKey);
             return configData.HasValue ? configData.Value.BoolValue : defaultValue;
@@ -97,7 +97,7 @@ namespace Cosmos.Config
         /// </summary>
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <returns>读取的整数值。</returns>
-        internal int GetConfigInt(string cfgKey)
+        public int GetConfigInt(string cfgKey)
         {
             ConfigData? configData = GetConfigData(cfgKey);
             if (!configData.HasValue)
@@ -113,7 +113,7 @@ namespace Cosmos.Config
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
         /// <returns>读取的整数值。</returns>
-        internal int GetConfigInt(string cfgKey, int defaultValue)
+        public int GetConfigInt(string cfgKey, int defaultValue)
         {
             ConfigData? configData = GetConfigData(cfgKey);
             return configData.HasValue ? configData.Value.IntValue : defaultValue;
@@ -123,7 +123,7 @@ namespace Cosmos.Config
         /// </summary>
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <returns>读取的浮点数值。</returns>
-        internal float GetConfigFloat(string cfgKey)
+        public float GetConfigFloat(string cfgKey)
         {
             ConfigData? configData = GetConfigData(cfgKey);
             if (!configData.HasValue)
@@ -139,7 +139,7 @@ namespace Cosmos.Config
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
         /// <returns>读取的浮点数值。</returns>
-        internal float GetConfigFloat(string cfgKey, float defaultValue)
+        public float GetConfigFloat(string cfgKey, float defaultValue)
         {
             ConfigData? configData = GetConfigData(cfgKey);
             return configData.HasValue ? configData.Value.FloatValue : defaultValue;
@@ -149,7 +149,7 @@ namespace Cosmos.Config
         /// </summary>
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <returns>读取的字符串值。</returns>
-        internal string GetConfigString(string cfgKey)
+        public string GetConfigString(string cfgKey)
         {
             ConfigData? configData = GetConfigData(cfgKey);
             if (!configData.HasValue)
@@ -164,12 +164,12 @@ namespace Cosmos.Config
         /// <param name="cfgKey">要获取全局配置项的Key。</param>
         /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
         /// <returns>读取的字符串值。</returns>
-       internal string GetConfigString(string cfgKey, string defaultValue)
+        public string GetConfigString(string cfgKey, string defaultValue)
         {
             ConfigData? configData = GetConfigData(cfgKey);
             return configData.HasValue ? configData.Value.StringValue : defaultValue;
         }
-        internal  void RemoveAllConfig()
+        public void RemoveAllConfig()
         {
             configDataDict.Clear();
         }

@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 using Cosmos;
 using Cosmos.FSM;
+using Cosmos.Mono;
+
 public class FSMTester : MonoBehaviour
 {
     [SerializeField] Transform target;
@@ -14,6 +16,8 @@ public class FSMTester : MonoBehaviour
     public int Range { get { return range; } }
     FSM<FSMTester> fsm;
     List<FSMState<FSMTester>> stateList;
+    IFSMManager fsmManager;
+    IMonoManager  monoManager;
     private void OnValidate()
     {
         if (range <= 0)
@@ -23,6 +27,8 @@ public class FSMTester : MonoBehaviour
     }
     private void Start()
     {
+        fsmManager = GameManager.GetModule<IFSMManager>();
+        monoManager = GameManager.GetModule<IMonoManager>();
         stateList = new List<FSMState<FSMTester>>();
         var enterState = new EnterRangeState();
         var enterTrigger = new EnterTestTrigger();
@@ -32,11 +38,10 @@ public class FSMTester : MonoBehaviour
         enterState.AddTrigger(exitTrigger, exitState);
         stateList.Add(exitState);
         stateList.Add(enterState);
-        fsm = Facade.CreateFSM("FSMTester",this,false, stateList.ToArray()) as FSM<FSMTester>;
-        Facade.SetFSMSetRefreshInterval<FSMTester>(refreshInterval);
+        fsm = fsmManager.CreateFSM("FSMTester",this,false, stateList.ToArray()) as FSM<FSMTester>;
+        fsmManager.SetFSMSetRefreshInterval<FSMTester>(refreshInterval);
         fsm.DefaultState = exitState;
         fsm.StartDefault();
-        //Facade.DelayCoroutine(pauseDelay, () => { fsm.OnPause(); });
-        Facade.DelayCoroutine(pauseDelay, () => { Facade.PauseFSMSet<FSMTester>(); });
+        monoManager.DelayCoroutine(pauseDelay, () => { fsmManager.PauseFSMSet<FSMTester>(); });
     }
 }

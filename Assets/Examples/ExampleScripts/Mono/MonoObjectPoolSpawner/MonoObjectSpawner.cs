@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Cosmos.ObjectPool;
+using Cosmos.Mono;
 namespace Cosmos
 {
     /// <summary>
@@ -30,10 +31,10 @@ namespace Cosmos
         {
             get
             {
-                return Facade.GetObjectSpawnPoolActiveMount().transform;
+                return GameManager.GetModuleMount<IObjectPoolManager>().transform;
             }
         }
-        protected virtual void Awake()
+        protected virtual void Start()
         {
             RegisterSpawner();
         }
@@ -62,14 +63,15 @@ namespace Cosmos
         /// </summary>
         protected virtual void DeregisterSpawner()
         {
-            Facade.DeregisterObjectSpawnPool(this);
+            GameManager.GetModule<IObjectPoolManager>().DeregisterSpawnPool(this);
             GameManagerAgent.KillObject(deactiveObjectMount);
         }
         protected virtual void SpawnHandler(GameObject go)
         {
             if (go == null)
                 return;
-            Facade.StartCoroutine(EnumCollect(CollectDelay,()=> Facade.DespawnObject(this, go)));
+            GameManager.GetModule<IMonoManager>().StartCoroutine(EnumCollect(CollectDelay,
+                ()=> GameManager.GetModule<IObjectPoolManager>().Despawn(this, go)));
         }
         protected virtual  void DespawnHandler(GameObject go)
         {
@@ -80,7 +82,7 @@ namespace Cosmos
         }
         public virtual void ClearAll()
         {
-            Facade.ClearObjectSpawnPool(this);
+            GameManager.GetModule<IObjectPoolManager>().Clear(this);
         }
         protected  IEnumerator EnumCollect(float delay,Action action=null)
         {

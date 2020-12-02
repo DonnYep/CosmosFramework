@@ -27,7 +27,7 @@ namespace Cosmos.Controller
     /// 从InputManager获取值后，由此控制输入值
     /// </summary>
     [Module]
-    internal sealed class ControllerManager : Module
+     internal sealed class ControllerManager : Module, IControllerManager
     {
         #region Properties
         Dictionary<Type, List<IController>> controllerDict = new Dictionary<Type, List<IController>>();
@@ -60,12 +60,12 @@ namespace Cosmos.Controller
                 controllerCache[i].OnRefresh();
             }
         }
-        internal bool RegisterController<T>(T controller)
+         public bool RegisterController<T>(T controller)
             where T : class, IController
         {
             return RegisterController(typeof(T), controller);
         }
-        internal bool RegisterController(Type type, IController controller)
+         public bool RegisterController(Type type, IController controller)
         {
             if (!controllerType.IsAssignableFrom(type))
                 throw new NotImplementedException(type.ToString() + " : Not Implemented IController");
@@ -89,12 +89,12 @@ namespace Cosmos.Controller
             }
             return result;
         }
-        internal bool DeregisterController<T>(T controller)
+         public bool DeregisterController<T>(T controller)
             where T : class, IController
         {
             return DeregisterController(typeof(T), controller);
         }
-        internal bool DeregisterController(Type type, IController controller)
+         public bool DeregisterController(Type type, IController controller)
         {
             if (!controllerType.IsAssignableFrom(type))
                 throw new NotImplementedException(type.ToString() + " : Not Implemented IController");
@@ -120,18 +120,18 @@ namespace Cosmos.Controller
             }
             return result;
         }
-        internal bool HasController<T>()
+         public bool HasController<T>()
             where T : class, IController
         {
             return controllerDict.ContainsKey(typeof(T));
         }
-        internal bool HasController(Type type)
+         public bool HasController(Type type)
         {
             if (!controllerType.IsAssignableFrom(type))
                 throw new NotImplementedException(type.ToString() + " : Not Implemented IController");
             return controllerDict.ContainsKey(type);
         }
-        internal bool HasControllerItem<T>(T controller)
+         public bool HasControllerItem<T>(T controller)
             where T : class, IController
         {
             if (!HasController<T>())
@@ -139,7 +139,7 @@ namespace Cosmos.Controller
             else
                 return controllerDict[typeof(T)].Contains(controller);
         }
-        internal bool HasControllerItem(Type type, IController controller)
+         public bool HasControllerItem(Type type, IController controller)
         {
             if (!controllerType.IsAssignableFrom(type))
                 throw new NotImplementedException(type.ToString() + " : Not Implemented IController");
@@ -148,7 +148,7 @@ namespace Cosmos.Controller
             else
                 return controllerDict[type].Contains(controller);
         }
-        internal T GetController<T>(Predicate<T> predicate)
+         public T GetController<T>(Predicate<T> predicate)
             where T : class, IController
         {
             var key = typeof(T);
@@ -168,7 +168,7 @@ namespace Cosmos.Controller
             }
             return temp as T;
         }
-        internal T[] GetControllers<T>(Predicate<T> predicate)
+         public T[] GetControllers<T>(Predicate<T> predicate)
             where T : class, IController
         {
             var key = typeof(T);
@@ -187,7 +187,8 @@ namespace Cosmos.Controller
             else
                 throw new ArgumentNullException("ControllerManager-->>" + "Controller Type: " + key.ToString() + "  has not  registered");
         }
-        internal short GetControllerItemCount<T>()
+         public short GetControllerItemCount<T>()
+            where T : class, IController
         {
             var key = typeof(T);
             if (controllerDict.ContainsKey(key))
@@ -195,7 +196,7 @@ namespace Cosmos.Controller
             else
                 throw new ArgumentNullException("ControllerManager-->>" + "Controller Type: " + key.ToString() + "  has not  registered");
         }
-        internal short GetControllerItemCount(Type type)
+         public short GetControllerItemCount(Type type)
         {
             if (!controllerType.IsAssignableFrom(type))
                 throw new NotImplementedException(type.ToString() + " : Not Implemented IController");
@@ -204,16 +205,16 @@ namespace Cosmos.Controller
             else
                 throw new ArgumentNullException("ControllerManager-->>" + "Controller Type: " + type.ToString() + "  has not  registered");
         }
-        internal short GetControllerTypeCount()
+         public short GetControllerTypeCount()
         {
             return controllerTypeCount;
         }
-        internal void ClearAllController()
+         public void ClearAllController()
         {
             controllerDict.Clear();
             controllerTypeCount = 0;
         }
-        internal void ClearControllerItem<T>()
+         public void ClearControllerItem<T>()
             where T : class, IController
         {
             if (HasController<T>())
@@ -221,7 +222,7 @@ namespace Cosmos.Controller
             else
                 throw new ArgumentNullException("ControllerManager-->>" + "Controller Type: " + typeof(T).ToString() + "  has not  registered");
         }
-        internal void ClearControllerItem(Type type)
+         public void ClearControllerItem(Type type)
         {
             if (!controllerType.IsAssignableFrom(type))
                 throw new NotImplementedException(type.ToString() + " : Not Implemented IController");
@@ -235,7 +236,7 @@ namespace Cosmos.Controller
         /// </summary>
         /// <param name="mode"></param>
         /// <param name="callback">回调函数，与具体mode无关</param>
-        internal void SetControlMode(ControlMode mode, Action callback = null)
+         public void SetControlMode(ControlMode mode, Action callback = null)
         {
             switch (mode)
             {
@@ -249,7 +250,7 @@ namespace Cosmos.Controller
             currentControlMode = mode;
             callback?.Invoke();
         }
-        internal ControlMode GetControlMode()
+         public ControlMode GetControlMode()
         {
             return currentControlMode;
         }

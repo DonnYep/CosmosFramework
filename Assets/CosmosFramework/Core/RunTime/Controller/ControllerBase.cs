@@ -47,14 +47,14 @@ namespace Cosmos
         /// </summary>
         protected virtual void OnEnable()
         {
-            Facade.RegisterController(ControllerType, this);
+            GameManager.GetModule<Controller.IControllerManager>().RegisterController(ControllerType, this);
         }
         /// <summary>
         /// 非空虚函数
         /// </summary>
         protected virtual void OnDisable()
         {
-            Facade.DeregisterController(ControllerType, this);
+            GameManager.GetModule<Controller.IControllerManager>().DeregisterController(ControllerType, this);
         }
     }
 }

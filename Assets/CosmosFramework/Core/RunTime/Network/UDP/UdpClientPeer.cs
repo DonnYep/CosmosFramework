@@ -161,7 +161,7 @@ namespace Cosmos.Network
                             OnDeactive();
                         }
                         if (sndMsgDict.TryRemove(netMsg.SN, out tmpMsg))
-                            Facade.DespawnReference(tmpMsg);
+                            GameManager.GetModule<Reference.IReferencePoolManager>().Despawn(tmpMsg);
                     }
                     break;
                 case KcpProtocol.MSG:
@@ -218,7 +218,7 @@ namespace Cosmos.Network
                     //重发次数+1
                     msg.RecurCount += 1;
                     //绕过编码消息，直接发送；
-                    GameManager.NetworkManager.SendNetworkMessage(msg.GetBuffer());
+                    GameManager.GetModule<INetworkManager>().SendNetworkMessage(msg.GetBuffer());
                     //if (sndMsgDict.TryRemove(msg.SN, out var unaMsg))
                     //    sendMessageHandler?.Invoke(msg);
                 }

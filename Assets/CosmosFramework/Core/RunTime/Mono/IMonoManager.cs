@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Reflection;
-namespace Cosmos
+namespace Cosmos.Mono
 {
-    public interface IMonoManager
+    public interface IMonoManager: IModuleManager
     {
         Coroutine StartCoroutine(Coroutine routine, Action callBack);
         Coroutine DelayCoroutine(float delay, Action callBack);

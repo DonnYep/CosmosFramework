@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using Cosmos.Reference;
 namespace Cosmos.Entity
 {
     /// <summary>
@@ -9,15 +10,19 @@ namespace Cosmos.Entity
     /// 管理例如角色身上的Gadget
     /// </summary>
     [Module]
-    internal class EntityManager : Module 
+    internal class EntityManager : Module , IEntityManager
     { 
         #region Properties
-        internal int EntityTypeCount { get { return entityTypeObjectDict.Count; } }
+        public int EntityTypeCount { get { return entityTypeObjectDict.Count; } }
         Dictionary<Type, List<IEntityObject>> entityTypeObjectDict = new Dictionary<Type, List<IEntityObject>>();
         Type entityObjectType = typeof(IEntityObject);
         #endregion
-
+        IReferencePoolManager referencePoolManager;
         #region Methods
+        public override void OnPreparatory()
+        {
+            referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
+        }
         public override void OnRefresh()
         {
             if (IsPause)
@@ -35,13 +40,13 @@ namespace Cosmos.Entity
             base.OnTermination();
             entityTypeObjectDict.Clear();
         }
-        internal bool AddEntity<T>(T entity)
+        public bool AddEntity<T>(T entity)
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
             return AddEntity(type,entity);
         }
-        internal bool AddEntity(Type type,IEntityObject entity)
+        public bool AddEntity(Type type,IEntityObject entity)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -67,7 +72,7 @@ namespace Cosmos.Entity
         /// 若实体对象存在于缓存中，则移除。若不存在，则不做操作；
         /// </summary>
         /// <param name="entity">实体对象</param>
-        internal void RecoveryEntity<T>(T entity)
+        public void RecoveryEntity<T>(T entity)
               where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
@@ -77,13 +82,13 @@ namespace Cosmos.Entity
                 if (set.Contains(entity))
                     set.Remove(entity);
             }
-            Facade.DespawnReference(entity);
+            referencePoolManager.Despawn(entity);
         }
         /// <summary>
         /// 回收某一类型的实体对象
         /// </summary>
         /// <param name="type">实体类型</param>
-        internal void RecoveryEntities(Type type)
+        public void RecoveryEntities(Type type)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -93,11 +98,11 @@ namespace Cosmos.Entity
             int length = set.Count;
             for (int i = 0; i < length; i++)
             {
-                Facade.DespawnReference(set[i]);
+                referencePoolManager.Despawns(set[i]);
             }
         }
         // TODO  使用特性来管理实体资源加载
-        internal T CreateEntity<T>(Action<float> loadingCallback, Action<IEntityObject> loadDoneCallback)
+        public T CreateEntity<T>(Action<float> loadingCallback, Action<IEntityObject> loadDoneCallback)
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
@@ -110,13 +115,13 @@ namespace Cosmos.Entity
             }
             return default;
         }
-        internal int GetEntityCount<T>()
+        public int GetEntityCount<T>()
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
             return GetEntityCount(type);
         }
-        internal int GetEntityCount(Type type)
+        public int GetEntityCount(Type type)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -124,7 +129,7 @@ namespace Cosmos.Entity
                 return -1;
             return entityTypeObjectDict[type].Count;
         }
-        internal T GetEntity<T>(Predicate<T> predicate)
+        public T GetEntity<T>(Predicate<T> predicate)
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
@@ -144,7 +149,7 @@ namespace Cosmos.Entity
                 throw new ArgumentNullException("EntityManager : can not register entity,entityObject is  empty");
             return entity;
         }
-        internal IEntityObject GetEntity(Type type, Predicate<IEntityObject> predicate)
+        public IEntityObject GetEntity(Type type, Predicate<IEntityObject> predicate)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -162,13 +167,13 @@ namespace Cosmos.Entity
                 throw new ArgumentNullException("EntityManager : can not register entity,entityObject is  empty");
             return entity;
         }
-        internal ICollection<IEntityObject> GetEntityCollection<T>()
+        public ICollection<IEntityObject> GetEntityCollection<T>()
             where T : IEntityObject, new()
         {
             Type type = typeof(T);
             return GetEntityCollection(type);
         }
-        internal ICollection<IEntityObject> GetEntityCollection(Type type)
+        public ICollection<IEntityObject> GetEntityCollection(Type type)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -177,13 +182,13 @@ namespace Cosmos.Entity
             var set = entityTypeObjectDict[type];
             return set;
         }
-        internal IEntityObject[] GetEntities<T>()
+        public IEntityObject[] GetEntities<T>()
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
             return GetEntities(type);
         }
-        internal IEntityObject[] GetEntities(Type type)
+        public IEntityObject[] GetEntities(Type type)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -192,13 +197,13 @@ namespace Cosmos.Entity
             var set = entityTypeObjectDict[type];
             return set.ToArray();
         }
-        internal List<IEntityObject> GetEntityList<T>()
+        public List<IEntityObject> GetEntityList<T>()
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
             return GetEntityList(type);
         }
-        internal List<IEntityObject> GetEntityList(Type type)
+        public List<IEntityObject> GetEntityList(Type type)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -207,13 +212,13 @@ namespace Cosmos.Entity
             var set = entityTypeObjectDict[type];
             return set;
         }
-        internal void RegisterEntityType<T>()
+        public void RegisterEntityType<T>()
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
             RegisterEntityType(type);
         }
-        internal void RegisterEntityType(Type type)
+        public void RegisterEntityType(Type type)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -221,13 +226,13 @@ namespace Cosmos.Entity
                 throw new ArgumentException("EntityManager : can not register entity,entityObject already exist Entity Type : " + type.ToString());
             entityTypeObjectDict.Add(type, new List<IEntityObject>());
         }
-        internal bool DeregisterEntityType<T>()
+        public bool DeregisterEntityType<T>()
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
             return DeregisterEntityType(type);
         }
-        internal bool DeregisterEntityType(Type type)
+        public bool DeregisterEntityType(Type type)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -237,13 +242,13 @@ namespace Cosmos.Entity
             result = entityTypeObjectDict.Remove(type);
             return result;
         }
-        internal bool ActiveEntity<T>(T entity)
+        public bool ActiveEntity<T>(T entity)
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
             return ActiveEntity(type, entity);
         }
-        internal void ActiveEntity<T>(Predicate<T> predicate)
+        public void ActiveEntity<T>(Predicate<T> predicate)
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
@@ -255,7 +260,7 @@ namespace Cosmos.Entity
                     set[i].OnActive();
             }
         }
-        internal bool ActiveEntity(Type type, IEntityObject entity)
+        public bool ActiveEntity(Type type, IEntityObject entity)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -272,7 +277,7 @@ namespace Cosmos.Entity
                 throw new ArgumentNullException("EntityManager : can not register entity, entity is  empty Entity : " + entity.ToString());
             return result;
         }
-        internal void ActiveEntity(Type type, Predicate<IEntityObject> predicate)
+        public void ActiveEntity(Type type, Predicate<IEntityObject> predicate)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -286,13 +291,13 @@ namespace Cosmos.Entity
                     set[i].OnActive();
             }
         }
-        internal void ActiveEntities<T>()
+        public void ActiveEntities<T>()
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
             ActiveEntities(type);
         }
-        internal void ActiveEntities(Type type)
+        public void ActiveEntities(Type type)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -301,13 +306,13 @@ namespace Cosmos.Entity
             for (int i = 0; i < length; i++)
                 set[i].OnActive();
         }
-        internal void DeactiveEntities<T>()
+        public void DeactiveEntities<T>()
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
             DeactiveEntities(type);
         }
-        internal void DeactiveEntities(Type type)
+        public void DeactiveEntities(Type type)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -318,7 +323,7 @@ namespace Cosmos.Entity
             for (int i = 0; i < length; i++)
                 set[i].OnDeactive();
         }
-        internal bool HasEntity<T>(Predicate<T> predicate)
+        public bool HasEntity<T>(Predicate<T> predicate)
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
@@ -335,7 +340,7 @@ namespace Cosmos.Entity
             }
             return false;
         }
-        internal bool HasEntity(Type type,  Predicate<IEntityObject> predicate)
+        public bool HasEntity(Type type,  Predicate<IEntityObject> predicate)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
@@ -350,13 +355,13 @@ namespace Cosmos.Entity
             }
             return false;
         }
-        internal bool HasEntityType<T>()
+        public bool HasEntityType<T>()
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
             return HasEntityType(type);
         }
-        internal bool HasEntityType(Type type)
+        public bool HasEntityType(Type type)
         {
             if (!entityObjectType.IsAssignableFrom(type))
                 throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());

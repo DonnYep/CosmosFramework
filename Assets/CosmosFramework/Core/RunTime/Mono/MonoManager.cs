@@ -13,14 +13,16 @@ namespace Cosmos.Mono
     [Module]
     internal sealed class MonoManager : Module,IMonoManager
     {
+        #region Properties
         IMonoProvider monoProvider;
+        #endregion
+        #region Methods
         public override void OnInitialization()
         {
-            var go= new GameObject(typeof(MonoProvider).Name);
+            var go = new GameObject(typeof(MonoProvider).Name);
             monoProvider = go.AddComponent<MonoProvider>();
             go.transform.SetParent(MountPoint.transform);
         }
-        #region Methods
         /// <summary>
         /// 嵌套协程
         /// </summary>

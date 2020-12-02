@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos.UI;
 using Cosmos;
+using Cosmos.Scene;
 /// <summary>
 /// 显示进度的脚本
 /// </summary>
@@ -11,10 +12,13 @@ public class LoadingScenePanel : UILogicResident
 {
     Text txtProgress;
     Slider sldProgress;
+    ISceneManager sceneManager;
+
     protected override void OnInitialization()
     {
         txtProgress = GetUIPanel<Text>("TxtProgress");
         sldProgress = GetUIPanel<Slider>("SldProgress");
+        sceneManager = GameManager.GetModule<ISceneManager>();
         LoadLevel();
     }
     void LoadLevel()
@@ -23,10 +27,10 @@ public class LoadingScenePanel : UILogicResident
         if (Utility.Text.IsNumeric(Utility.Global.TargetLevel))
         {
             int index = int.Parse(Utility.Global.TargetLevel);
-            Facade.LoadSceneAsync(index, UpdateSlider);
+            sceneManager.LoadSceneAsync(index, UpdateSlider);
         }
         else
-            Facade.LoadSceneAsync(Utility.Global.TargetLevel, UpdateSlider);
+            sceneManager.LoadSceneAsync(Utility.Global.TargetLevel, UpdateSlider);
     }
     void UpdateSlider(float value)
     {

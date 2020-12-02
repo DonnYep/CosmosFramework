@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using Cosmos;
+using Cosmos.Event;
 public class SliderEventSubscriber : MonoBehaviour
 {
     [SerializeField]
@@ -12,7 +13,7 @@ public class SliderEventSubscriber : MonoBehaviour
     LogicEventArgs<Slider> uch;
     public void RegisterEvent()
     {
-        Facade.AddEventListener(eventKey, Handler);
+        GameManager.GetModule<IEventManager>().AddListener(eventKey, Handler);
     }
     Slider slider;
     Text text;

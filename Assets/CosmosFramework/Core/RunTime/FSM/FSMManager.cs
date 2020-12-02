@@ -8,7 +8,7 @@ namespace Cosmos.FSM
     /// fsmMgr设计成，轮询是在具体对象山给轮询的，fsmMgr作为一个Fsm的事件中心
     /// </summary>
     [Module]
-    internal sealed class FSMManager : Module 
+    internal sealed class FSMManager : Module, IFSMManager
     {
         #region Properties
         /// <summary>
@@ -20,7 +20,7 @@ namespace Cosmos.FSM
         /// </summary>
         Dictionary<Type, IFSMPool> fsmSetDict = new Dictionary<Type, IFSMPool>();
         List<FSMBase> fsmCache = new List<FSMBase>();
-        internal int FsmCount { get { return fsmIndividualDict.Count; } }
+        public int FsmCount { get { return fsmIndividualDict.Count; } }
         #endregion
 
         #region Methods
@@ -50,8 +50,8 @@ namespace Cosmos.FSM
         /// </summary>
         /// <typeparam name="T">类型目标</typeparam>
         /// <param name="interval">轮询间隔</param>
-        internal void SetFSMSetRefreshInterval<T>(float interval)
-            where T : class
+        public void SetFSMSetRefreshInterval<T>(float interval)
+           where T : class
         {
             Type type = typeof(T);
             SetFSMSetRefreshInterval(type, interval);
@@ -62,7 +62,7 @@ namespace Cosmos.FSM
         /// </summary>
         /// <param name="type">类型目标</param>
         /// <param name="interval">轮询间隔</param>
-        internal void SetFSMSetRefreshInterval(Type type, float interval)
+        public void SetFSMSetRefreshInterval(Type type, float interval)
         {
             if (HasFSMSet(type))
                 fsmSetDict[type].SetRefreshInterval(interval);
@@ -73,8 +73,8 @@ namespace Cosmos.FSM
         /// 暂停指定类型fsm集合
         /// </summary>
         /// <typeparam name="T">目标类型</typeparam>
-        internal void PauseFSMSet<T>()
-    where T : class
+        public void PauseFSMSet<T>()
+   where T : class
         {
             Type type = typeof(T);
             PauseFSMSet(type);
@@ -83,7 +83,7 @@ namespace Cosmos.FSM
         /// 暂停指定类型fsm集合
         /// </summary>
         /// <param name="type">目标类型</param>
-        internal void PauseFSMSet(Type type)
+        public void PauseFSMSet(Type type)
         {
             if (HasFSMSet(type))
                 fsmSetDict[type].OnPause();
@@ -94,8 +94,8 @@ namespace Cosmos.FSM
         /// 继续执行指定fsm集合
         /// </summary>
         /// <typeparam name="T">目标类型</typeparam>
-        internal void UnPauseFSMSet<T>()
-            where T : class
+        public void UnPauseFSMSet<T>()
+           where T : class
         {
             UnPauseFSMSet(typeof(T));
         }
@@ -103,20 +103,20 @@ namespace Cosmos.FSM
         /// 继续执行指定fsm集合
         /// </summary>
         /// <param name="type">目标类型</param>
-        internal void UnPauseFSMSet(Type type)
+        public void UnPauseFSMSet(Type type)
         {
             if (HasFSMSet(type))
                 fsmSetDict[type].OnUnPause();
             else
                 throw new ArgumentNullException("FSMManager：FSM Set not exist ! Type:" + type.ToString());
         }
-        internal FSMBase GetIndividualFSM<T>()
-    where T : class
+        public FSMBase GetIndividualFSM<T>()
+   where T : class
         {
             Type type = typeof(T).GetType();
             return GetIndividualFSM(type);
         }
-        internal FSMBase GetIndividualFSM(Type type)
+        public FSMBase GetIndividualFSM(Type type)
         {
             if (fsmIndividualDict.ContainsKey(type))
             {
@@ -129,12 +129,12 @@ namespace Cosmos.FSM
         /// </summary>
         /// <typeparam name="T">拥有者</typeparam>
         /// <returns>元素数量</returns>
-        internal int GetFSMSetElementCount<T>()
-    where T : class
+        public int GetFSMSetElementCount<T>()
+   where T : class
         {
             return GetFSMSetElementCount(typeof(T));
         }
-        internal int GetFSMSetElementCount(Type type)
+        public int GetFSMSetElementCount(Type type)
         {
             if (!HasFSMSet(type))
                 throw new ArgumentNullException("FSMManager：FSM Set not exist ! Type:" + type.ToString());
@@ -145,8 +145,8 @@ namespace Cosmos.FSM
         /// </summary>
         /// <typeparam name="T">拥有者类型</typeparam>
         /// <returns>状态机集合</returns>
-        internal List<FSMBase> GetFSMSet<T>()
-            where T : class
+        public List<FSMBase> GetFSMSet<T>()
+           where T : class
         {
             return GetFSMSet(typeof(T));
         }
@@ -155,7 +155,7 @@ namespace Cosmos.FSM
         /// </summary>
         /// <param name="type">类型对象</param>
         /// <returns>状态机集合</returns>
-        internal List<FSMBase> GetFSMSet(Type type)
+        public List<FSMBase> GetFSMSet(Type type)
         {
             IFSMPool fsmPool;
             fsmSetDict.TryGetValue(type, out fsmPool);
@@ -167,8 +167,8 @@ namespace Cosmos.FSM
         /// <typeparam name="T">拥有者类型</typeparam>
         /// <param name="predicate">查找语句</param>
         /// <returns>查找到的FSM</returns>
-        internal FSMBase GetSetElementFSM<T>(Predicate<FSMBase> predicate)
-            where T : class
+        public FSMBase GetSetElementFSM<T>(Predicate<FSMBase> predicate)
+           where T : class
         {
             return GetSetElementFSM(typeof(T), predicate);
         }
@@ -178,7 +178,7 @@ namespace Cosmos.FSM
         /// <param name="type">拥有者类型</param>
         /// <param name="predicate">查找语句</param>
         /// <returns>查找到的FSM</returns>
-        internal FSMBase GetSetElementFSM(Type type, Predicate<FSMBase> predicate)
+        public FSMBase GetSetElementFSM(Type type, Predicate<FSMBase> predicate)
         {
             if (fsmIndividualDict.ContainsKey(type))
             {
@@ -186,7 +186,7 @@ namespace Cosmos.FSM
             }
             else return null;
         }
-        internal FSMBase[] GetAllIndividualFSM()
+        public FSMBase[] GetAllIndividualFSM()
         {
             if (fsmIndividualDict.Count <= 0)
                 return null;
@@ -197,12 +197,12 @@ namespace Cosmos.FSM
             }
             return fsms.ToArray();
         }
-        internal bool HasIndividualFSM<T>()
-            where T : class
+        public bool HasIndividualFSM<T>()
+           where T : class
         {
             return HasIndividualFSM(typeof(T));
         }
-        internal bool HasIndividualFSM(Type type)
+        public bool HasIndividualFSM(Type type)
         {
             return fsmIndividualDict.ContainsKey(type);
         }
@@ -211,33 +211,33 @@ namespace Cosmos.FSM
         /// </summary>
         /// <typeparam name="T">拥有者类型</typeparam>
         /// <returns>是否存在</returns>
-        internal bool HasFSMSet<T>()
-            where T : class
+        public bool HasFSMSet<T>()
+           where T : class
         {
             return HasFSMSet(typeof(T));
         }
-        internal bool HasFSMSet(Type type)
+        public bool HasFSMSet(Type type)
         {
             return fsmSetDict.ContainsKey(type);
         }
-        internal bool HasSetElementFSM<T>(Predicate<FSMBase> predicate)
-    where T : class
+        public bool HasSetElementFSM<T>(Predicate<FSMBase> predicate)
+   where T : class
         {
             return HasSetElementFSM(typeof(T), predicate);
         }
-        internal bool HasSetElementFSM(Type type, Predicate<FSMBase> predicate)
+        public bool HasSetElementFSM(Type type, Predicate<FSMBase> predicate)
         {
             if (!fsmSetDict.ContainsKey(type))
                 return false;
             var fsmPool = fsmSetDict[type];
             return fsmPool.HasFSM(predicate);
         }
-        internal bool HasSetElementFSM<T>(FSMBase fsm)
-            where T : class
+        public bool HasSetElementFSM<T>(FSMBase fsm)
+           where T : class
         {
             return HasSetElementFSM(typeof(T), fsm);
         }
-        internal bool HasSetElementFSM(Type type, FSMBase fsm)
+        public bool HasSetElementFSM(Type type, FSMBase fsm)
         {
             if (!fsmSetDict.ContainsKey(type))
                 return false;
@@ -253,13 +253,13 @@ namespace Cosmos.FSM
         /// <param name="Individual">是否为独立状态机</param>
         /// <param name="states">状态</param>
         /// <returns>创建成功后的状态机</returns>
-        internal IFSM<T> CreateFSM<T>(T owner, bool Individual, params FSMState<T>[] states)
-            where T : class
+        public IFSM<T> CreateFSM<T>(T owner, bool Individual, params FSMState<T>[] states)
+           where T : class
         {
             return CreateFSM(string.Empty, owner, Individual, states);
         }
-        internal IFSM<T> CreateFSM<T>(string name, T owner, bool Individual, params FSMState<T>[] states)
-            where T : class
+        public IFSM<T> CreateFSM<T>(string name, T owner, bool Individual, params FSMState<T>[] states)
+           where T : class
         {
             Type type = typeof(T);
             FSM<T> fsm = default;
@@ -289,8 +289,8 @@ namespace Cosmos.FSM
             }
             return fsm;
         }
-        internal IFSM<T> CreateFSM<T>(T owner, bool Individual, List<FSMState<T>> states)
-            where T : class
+        public IFSM<T> CreateFSM<T>(T owner, bool Individual, List<FSMState<T>> states)
+           where T : class
         {
             return CreateFSM(string.Empty, owner, Individual, states);
         }
@@ -304,8 +304,8 @@ namespace Cosmos.FSM
         /// <param name="Individual">是否为独立状态机</param>
         /// <param name="states">状态</param>
         /// <returns>创建成功后的状态机</returns>
-        internal IFSM<T> CreateFSM<T>(string name, T owner, bool Individual, List<FSMState<T>> states)
-            where T : class
+        public IFSM<T> CreateFSM<T>(string name, T owner, bool Individual, List<FSMState<T>> states)
+           where T : class
         {
             Type type = typeof(T);
             FSM<T> fsm = default;
@@ -339,12 +339,12 @@ namespace Cosmos.FSM
         /// 销毁独立的状态机
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        internal void DestoryIndividualFSM<T>()
-            where T : class
+        public void DestoryIndividualFSM<T>()
+           where T : class
         {
             DestoryIndividualFSM(typeof(T));
         }
-        internal void DestoryIndividualFSM(Type type)
+        public void DestoryIndividualFSM(Type type)
         {
             FSMBase fsm = null;
             if (fsmIndividualDict.TryGetValue(type, out fsm))
@@ -353,12 +353,12 @@ namespace Cosmos.FSM
                 fsmIndividualDict.Remove(type);
             }
         }
-        internal void DestoryFSMSet<T>()
+        public void DestoryFSMSet<T>()
 where T : class
         {
             DestoryFSMSet(typeof(T));
         }
-        internal void DestoryFSMSet(Type type)
+        public void DestoryFSMSet(Type type)
         {
             FSMBase fsm = null;
             if (fsmIndividualDict.TryGetValue(type, out fsm))
@@ -372,8 +372,8 @@ where T : class
         /// </summary>
         /// <typeparam name="T">拥有者</typeparam>
         /// <param name="predicate">查找条件</param>
-        internal void DestorySetElementFSM<T>(Predicate<FSMBase> predicate)
-            where T : class
+        public void DestorySetElementFSM<T>(Predicate<FSMBase> predicate)
+           where T : class
         {
             DestorySetElementFSM(typeof(T), predicate);
         }
@@ -382,7 +382,7 @@ where T : class
         /// </summary>
         /// <param name="type">拥有者类型</param>
         /// <param name="predicate">查找条件</param>
-        internal void DestorySetElementFSM(Type type, Predicate<FSMBase> predicate)
+        public void DestorySetElementFSM(Type type, Predicate<FSMBase> predicate)
         {
             IFSMPool fsmPool;
             if (fsmSetDict.TryGetValue(type, out fsmPool))
@@ -390,7 +390,7 @@ where T : class
                 fsmPool.DestoryFSM(predicate);
             }
         }
-        internal void DestoryAllFSM()
+        public void DestoryAllFSM()
         {
             if (fsmIndividualDict.Count > 0)
                 foreach (var fsm in fsmIndividualDict)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
+using Cosmos.Resource;
 public class SlotController : MonoEventHandler
 {
     string slotItemName = "Slot";
@@ -10,12 +11,14 @@ public class SlotController : MonoEventHandler
     string fullPath;
     List<Slot> slotList = new List<Slot>();
     int SlotCount { get { return slotList.Count; } }
+    IResourceManager resourceManager;
     protected override void Awake()
     {
         fullPath = Utility.UI.GetUIFullRelativePath(slotItemName);
         AddDefaultEventListener(UIIEventDefine.UI_IMPL_UPD_SLOT);
         AddEventListener(UIIEventDefine.UI_IMPL_UPD_ITEM, UpdateItemHandler);
-        slot = Facade.LoadResAsset<GameObject>(fullPath);
+        resourceManager = GameManager.GetModule<IResourceManager>();
+        slot = resourceManager.LoadResAsset<GameObject>(fullPath);
     }
     protected override void OnDestroy()
     {

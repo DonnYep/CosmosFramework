@@ -58,7 +58,7 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
             transform.ResetLocalTransform();
             GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
-        Facade. DispatchEvent(UIIEventDefine.UI_IMPL_UPD_ITEM, null, null);
+        GameManager.GetModule<Cosmos.Event.IEventManager>(). DispatchEvent(UIIEventDefine.UI_IMPL_UPD_ITEM, null, null);
     }
     public void SetItem(ItemDataSet item)
     {
@@ -83,7 +83,7 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
     }
     protected override void OnInitialization()
     {
-        uip = Facade.SpawnReference<LogicEventArgs<string>>();
+        uip = GameManager.GetModule<Cosmos.Reference.IReferencePoolManager>().Spawn<LogicEventArgs<string>>();
         GetUIPanel<Button>("Item").onClick.AddListener(IItemClick);
         imgItem = GetUIPanel<Image>("Item");
         txtNumber= GetUIPanel<Text>("TxtNumber");
@@ -92,6 +92,6 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
     void IItemClick()
     {
         uip.SetData(itemDescription);
-       Facade. DispatchEvent(UIIEventDefine.UI_IMPL_ITEM_DESC, this, uip);
+        GameManager.GetModule<Cosmos.Event.IEventManager>(). DispatchEvent(UIIEventDefine.UI_IMPL_ITEM_DESC, this, uip);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cosmos.Audio;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,6 +24,10 @@ namespace Cosmos{
             audioVariable.Loop = DataSet.Loop;
             audioVariable.AudioClip = DataSet.AudioClip;
             return audioVariable;
+        }
+       protected virtual void Start()
+        {
+            audioManager = GameManager.GetModule<IAudioManager>();
         }
     }
 }

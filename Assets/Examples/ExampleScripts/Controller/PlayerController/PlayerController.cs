@@ -25,17 +25,18 @@ namespace Cosmos
         float moveForword = 0;
         float moveTurn = 0;
         LogicEventArgs<CameraTarget> controllerEventArgs;
+        IInputManager inputManager;
         //点积
         float dot = 0;
         protected override void RefreshHandler ()
         {
-            if (Facade.GetAxis(InputAxisType._Vertical) != 0 || Facade.GetAxis(InputAxisType._Horizontal) != 0)
+            if (inputManager.GetAxis(InputAxisType._Vertical) != 0 || inputManager.GetAxis(InputAxisType._Horizontal) != 0)
                 animator.SetBool(inputHash, true);
             else
                 animator.SetBool(inputHash, false);
-            moveForword = Facade.GetAxis(InputAxisType._Vertical);
-            moveTurn = Facade.GetAxis(InputAxisType._Horizontal);
-            if (Facade.GetButton(InputButtonType._LeftShift))
+            moveForword = inputManager.GetAxis(InputAxisType._Vertical);
+            moveTurn = inputManager.GetAxis(InputAxisType._Horizontal);
+            if (inputManager.GetButton(InputButtonType._LeftShift))
                 moveForword *= 2;
             //合并旋转
             MatchRotation();
@@ -57,8 +58,9 @@ namespace Cosmos
             base.Awake();
             animator = GetComponentInChildren<Animator>();
             controllerEventArgs = new LogicEventArgs<CameraTarget>().SetData(GetComponentInChildren<CameraTarget>());
-            Facade.SetInputDevice(new StandardInputDevice());
+            GameManager.GetModule<IInputManager>().SetInputDevice(new StandardInputDevice());
             //Facade.RegisterController(this);
+            inputManager = GameManager.GetModule<IInputManager>();
         }
         protected override void OnDestroy()
         {
@@ -67,11 +69,11 @@ namespace Cosmos
 
         private void Start()
         {
-            Facade.DispatchEvent(ControllerEventDefine.CTRL_INPUT, this, controllerEventArgs);
+            GameManager.GetModule<Event.IEventManager>().DispatchEvent(ControllerEventDefine.CTRL_INPUT, this, controllerEventArgs);
         }
         void MatchRotation()
         {
-            var cameraController = Facade.GetController<CameraController>(c=>c.ControllerName==cameraControllerName);
+            var cameraController = GameManager.GetModule<Controller.IControllerManager>().GetController<CameraController>(c=>c.ControllerName==cameraControllerName);
             if (cameraController == null)
             {
                 Utility.Debug.LogInfo("cameraController empty", MessageColor.RED);

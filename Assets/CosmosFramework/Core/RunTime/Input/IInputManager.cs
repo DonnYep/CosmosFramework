@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Cosmos.Input
 {
-    public interface IInputManager
+    public interface IInputManager:IModuleManager
     {
         bool IsEnableInputDevice { get; set; }
         void SetInputDevice(InputDevice inputDevice);

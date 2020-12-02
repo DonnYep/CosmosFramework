@@ -19,15 +19,16 @@ public class AxisSubscriber : ControllerBase<AxisSubscriber>
     int SliderOffset { get { return Utility.Converter.Int(slider.maxValue / 2); } }
     Slider slider;
     Text text;
+    IInputManager inputManager;
     protected override void RefreshHandler()
     {
         switch (key)
         {
             case InputKey.Vertical:
-                slider.value = Facade.GetAxis(InputAxisType._Vertical) * slider.maxValue + SliderOffset;
+                slider.value = inputManager.GetAxis(InputAxisType._Vertical) * slider.maxValue + SliderOffset;
                 break;
             case InputKey.Horizontal:
-                slider.value = Facade.GetAxis(InputAxisType._Horizontal)* slider.maxValue + SliderOffset;
+                slider.value = inputManager.GetAxis(InputAxisType._Horizontal)* slider.maxValue + SliderOffset;
                 break;
         }
         float textValue = slider.value - SliderOffset;
@@ -37,5 +38,6 @@ public class AxisSubscriber : ControllerBase<AxisSubscriber>
     {
         slider = GetComponentInChildren<Slider>();
         text = GetComponentsInChildren<Text>()[1];
+        inputManager = GameManager.GetModule<IInputManager>();
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
+using Cosmos.Reference;
+using Cosmos.Event;
 public class SliderEventDispatcher : MonoBehaviour
 {
     [SerializeField]
@@ -12,24 +14,27 @@ public class SliderEventDispatcher : MonoBehaviour
     LogicEventArgs<Slider> uch;
     [SerializeField]
     string message;
+    IReferencePoolManager referencePoolManager;
+    IEventManager eventManager;
     private void Start()
     {
+        referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
         slider = GetComponentInChildren<Slider>();
-        uch = Facade.SpawnReference<LogicEventArgs<Slider>>().SetData(slider);
+        uch = referencePoolManager.Spawn<LogicEventArgs<Slider>>().SetData(slider);
     }
     Slider slider;
     public void DispatchEvent()
     {
         uch.Data.maxValue = slider.maxValue;
         uch.Data.value = slider.value;
-        Facade.DispatchEvent(eventKey, null, uch);
+        eventManager.DispatchEvent(eventKey, null, uch);
     }
     public void DeregisterEvent()
     {
-        Facade.DeregisterEvent(eventKey);
+        eventManager.DeregisterEvent(eventKey);
     }
     private void OnDestroy()
     {
-        Facade.DespawnReference(uch);
+        referencePoolManager.Despawn(uch);
     }
 }

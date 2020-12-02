@@ -35,7 +35,7 @@ namespace Cosmos.Audio
         }
         bool mute = false;
         //整个AudioManager下的所有声音都设置位静音
-        internal bool Mute
+        public bool Mute
         {
             get { return mute; }
             set
@@ -69,13 +69,12 @@ namespace Cosmos.Audio
         /// </summary>
         /// <param name="clip"></param>
         /// <param name="args"></param>
-        public void PlayBackgroundAudio(GameEventArgs args)
+        public void PlayBackgroundAudio(IAudio  audio)
         {
-            var tempArgs = args as LogicEventArgs<IAudio>;
             if (backgroundAduio == null)
             {
-                backgroundAduio = CreateBGMAudioSource(tempArgs.Data);
-                backgroundAduio.clip = tempArgs.Data.AudioClip;
+                backgroundAduio = CreateBGMAudioSource(audio);
+                backgroundAduio.clip = audio.AudioClip;
                 backgroundAduio.Play();
             }
             else
@@ -84,8 +83,8 @@ namespace Cosmos.Audio
                 {
                     backgroundAduio.Stop();
                 }
-                backgroundAduio.clip = tempArgs.Data.AudioClip;
-                SetAudioProperties(ref backgroundAduio, tempArgs.Data);
+                backgroundAduio.clip = audio.AudioClip;
+                SetAudioProperties(ref backgroundAduio, audio);
                 backgroundAduio.Play();
             }
         }

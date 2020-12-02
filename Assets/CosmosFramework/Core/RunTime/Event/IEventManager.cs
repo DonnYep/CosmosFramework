@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos
+namespace Cosmos.Event
 {
-    public interface IEventManager
+    public interface IEventManager: IModuleManager
     {
         void AddListener(string eventKey, EventHandler<GameEventArgs> handler);
         /// <summary>

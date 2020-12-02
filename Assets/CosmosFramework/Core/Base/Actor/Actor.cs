@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Cosmos.Reference;
 namespace Cosmos
 {
     /// <summary>
@@ -75,7 +76,7 @@ namespace Cosmos
         /// <returns>生成后的Actor</returns>
         public static Actor<T>Create(byte actorType,int actorID,T owner)
         {
-            Actor<T> actor = Facade.SpawnReference<Actor<T>>();
+            Actor<T> actor = GameManager.GetModule<IReferencePoolManager>().Spawn<Actor<T>>();
             actor.Owner = owner;
             actor.ActorID = actorID;
             actor.ActorType = actorType;

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
+using Cosmos.Network;
 using System.IO;
 
 public class NetworkPanel : UILogicResident
@@ -18,8 +19,10 @@ public class NetworkPanel : UILogicResident
     [SerializeField] uint heartbeatInterval = 45;
     NetClient netClient;
     bool isConnected;
+    INetworkManager networkManager;
     protected override void OnInitialization()
     {
+        networkManager = GameManager.GetModule<INetworkManager>();
         btnConnect = GetUIPanel<Button>("BtnConnect");
         btnConnect.onClick.AddListener(ConnectClick);
         btnDisconnect = GetUIPanel<Button>("BtnDisconnect");
@@ -44,7 +47,7 @@ public class NetworkPanel : UILogicResident
     {
         string str = inputMsg.text;
         var data = Utility.Encode.ConvertToByte(str);
-        Facade.SendNetworkMessage(10, data);
+        networkManager.SendNetworkMessage(10, data);
     }
     void ServerMsg(INetworkMessage netMsg)
     {
