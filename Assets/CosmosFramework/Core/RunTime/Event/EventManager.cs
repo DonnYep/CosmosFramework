@@ -16,7 +16,11 @@ namespace Cosmos.Event
         ConcurrentDictionary<string, Action<object, GameEventArgs>> eventDict
             = new ConcurrentDictionary<string, Action<object, GameEventArgs>>();
 #else
-        Dictionary<string, EventHandler<GameEventArgs>> eventDict = new Dictionary<string, EventHandler<GameEventArgs>>();
+        Dictionary<string, EventHandler<GameEventArgs>> eventDict;
+        public override void OnInitialization()
+        {
+            eventDict = new Dictionary<string, EventHandler<GameEventArgs>>();
+        }
 #endif
         /// <summary>
         /// 添加事件

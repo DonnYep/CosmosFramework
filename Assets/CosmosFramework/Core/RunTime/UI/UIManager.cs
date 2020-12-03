@@ -18,9 +18,12 @@ namespace Cosmos.UI
         #endregion
 
         #region Methods
-        public override void OnPreparatory()
+        public override void OnInitialization()
         {
             uiPanelDict = new Dictionary<string, UILogicBase>();
+        }
+        public override void OnPreparatory()
+        {
             resourceManager = GameManager.GetModule<ResourceManager>();
         }
         /// <summary>

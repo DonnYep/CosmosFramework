@@ -18,6 +18,11 @@ namespace Cosmos.Data
         /// json数据字典；
         /// </summary>
         Dictionary<string, string> jsonDict;
+        public override void OnInitialization()
+        {
+            typeObjectDict = new Dictionary<Type, object>();
+            jsonDict = new Dictionary<string, string>();
+        }
         public override void OnActive()
         {
             var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IDataProvider>();

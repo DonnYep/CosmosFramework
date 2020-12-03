@@ -30,8 +30,8 @@ namespace Cosmos.Controller
      internal sealed class ControllerManager : Module, IControllerManager
     {
         #region Properties
-        Dictionary<Type, List<IController>> controllerDict = new Dictionary<Type, List<IController>>();
-        List<IController> controllerCache = new List<IController>();
+        Dictionary<Type, List<IController>> controllerDict;
+        List<IController> controllerCache;
         Type controllerType = typeof(IController);
         /// <summary>
         /// 相机跟随对象
@@ -43,6 +43,11 @@ namespace Cosmos.Controller
         #endregion
 
         #region Methods
+        public override void OnInitialization()
+        {
+            controllerDict = new Dictionary<Type, List<IController>>();
+            controllerCache = new List<IController>();
+        }
         public override void OnRefresh()
         {
             if (IsPause)

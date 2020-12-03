@@ -14,12 +14,11 @@ namespace Cosmos.Audio
         //单一不重复音效，全局只播放一个，新的单通道会覆盖旧的单通道音效，例如NPC
         AudioSource singleAudio;
         //多通道音效，多用于技能、UI
-        Dictionary<GameObject, List<AudioSource>> multipleAudio = new Dictionary<GameObject, List<AudioSource>>();
+        Dictionary<GameObject, List<AudioSource>> multipleAudio;
         //放着先，到时候再说-->>
-        List<AudioSource> multipleAudios = new List<AudioSource>();
-
+        List<AudioSource> multipleAudios;
         //世界音效，为3D背景音乐、3D技能音效对白等设计
-        Dictionary<GameObject, AudioSource> worldAudios = new Dictionary<GameObject, AudioSource>();
+        Dictionary<GameObject, AudioSource> worldAudios;
         #endregion
         //轮询间距，按照update渲染的5秒计算，不使用真实时间
         internal const short _Interval = 5;
@@ -27,7 +26,9 @@ namespace Cosmos.Audio
         #region Methods
         public override void OnInitialization()
         {
-            base.OnInitialization();
+            multipleAudio = new Dictionary<GameObject, List<AudioSource>>();
+            multipleAudios = new List<AudioSource>();
+            worldAudios = new Dictionary<GameObject, AudioSource>();
         }
         public override void OnRefresh()
         {

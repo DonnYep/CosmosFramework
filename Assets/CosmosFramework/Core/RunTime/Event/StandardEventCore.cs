@@ -20,20 +20,20 @@ namespace Cosmos
             where TDerived : StandardEventCore<TKey, TValue, TDerived>, new()
     where TValue : class
     {
-        protected Dictionary<TKey, List<Action<object, TValue>>> eventDict = new Dictionary<TKey, List<Action<object, TValue>>>();
+        protected Dictionary<TKey, List<EventHandler<TValue>>> eventDict = new Dictionary<TKey, List<EventHandler<TValue>>>();
         #region Sync
-        public virtual void AddEventListener(TKey key, Action<object, TValue> handler)
+        public virtual void AddEventListener(TKey key, EventHandler<TValue> handler)
         {
             if (eventDict.ContainsKey(key))
                 eventDict[key].Add(handler);
             else
             {
-                List<Action<object, TValue>> handlerSet = new List<Action<object, TValue>>();
+                List<EventHandler<TValue>> handlerSet = new List<EventHandler<TValue>>();
                 handlerSet.Add(handler);
                 eventDict.Add(key, handlerSet);
             }
         }
-        public virtual void RemoveEventListener(TKey key, Action<object, TValue> handler)
+        public virtual void RemoveEventListener(TKey key, EventHandler<TValue> handler)
         {
             if (eventDict.ContainsKey(key))
             {
@@ -65,7 +65,7 @@ namespace Cosmos
         }
         #endregion
         #region Async
-        public async virtual Task AddEventListenerAsync(TKey key, Action<object, TValue> handler)
+        public async virtual Task AddEventListenerAsync(TKey key, EventHandler<TValue> handler)
         {
             await Task.Run(() =>
             {
@@ -73,13 +73,13 @@ namespace Cosmos
                     eventDict[key].Add(handler);
                 else
                 {
-                    List<Action<object, TValue>> handlerSet = new List<Action<object, TValue>>();
+                    List<EventHandler<TValue>> handlerSet = new List<EventHandler<TValue>>();
                     handlerSet.Add(handler);
                     eventDict.Add(key, handlerSet);
                 }
             });
         }
-        public async virtual Task RemoveEventListenerAsyncc(TKey key, Action<object, TValue> handler)
+        public async virtual Task RemoveEventListenerAsyncc(TKey key, EventHandler<TValue> handler)
         {
             await Task.Run(() =>
             {

@@ -14,11 +14,15 @@ namespace Cosmos.Entity
     { 
         #region Properties
         public int EntityTypeCount { get { return entityTypeObjectDict.Count; } }
-        Dictionary<Type, List<IEntityObject>> entityTypeObjectDict = new Dictionary<Type, List<IEntityObject>>();
+        Dictionary<Type, List<IEntityObject>> entityTypeObjectDict;
         Type entityObjectType = typeof(IEntityObject);
         #endregion
         IReferencePoolManager referencePoolManager;
         #region Methods
+        public override void OnInitialization()
+        {
+            entityTypeObjectDict = new Dictionary<Type, List<IEntityObject>>();
+        }
         public override void OnPreparatory()
         {
             referencePoolManager = GameManager.GetModule<IReferencePoolManager>();

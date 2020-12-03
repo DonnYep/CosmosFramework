@@ -10,7 +10,11 @@ namespace Cosmos.Config
     [Module]
     internal sealed class ConfigManager : Module, IConfigManager
     {
-        Dictionary<string, ConfigData> configDataDict = new Dictionary<string, ConfigData>();
+        Dictionary<string, ConfigData> configDataDict;
+        public override void OnInitialization()
+        {
+            configDataDict = new Dictionary<string, ConfigData>();
+        }
         public override void OnPreparatory()
         {
             var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IConfigProvider>();

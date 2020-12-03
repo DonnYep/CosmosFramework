@@ -35,9 +35,9 @@ namespace Cosmos.Resource
     {
         #region Properties
         //缓存的所有AssetBundle包 <AB包名称、AB包>
-        Dictionary<string, AssetBundle> assetBundleDict = new Dictionary<string, AssetBundle>();
+        Dictionary<string, AssetBundle> assetBundleDict;
         //所有AssetBundle验证的Hash128值 <AB包名称、Hash128值>
-        Dictionary<string, Hash128> assetBundleHashDict = new Dictionary<string, Hash128>();
+        Dictionary<string, Hash128> assetBundleHashDict ;
         //所有AssetBundle资源包清单
         AssetBundleManifest assetBundleManifest;
         string assetBundleManifestName;
@@ -49,6 +49,11 @@ namespace Cosmos.Resource
         #endregion
 
         #region Methods
+        public override void OnInitialization()
+        {
+            assetBundleDict = new Dictionary<string, AssetBundle>();
+            assetBundleHashDict = new Dictionary<string, Hash128>();
+        }
         public override void OnPreparatory()
         {
             referencePoolManager = GameManager.GetModule<IReferencePoolManager>();

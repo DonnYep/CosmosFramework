@@ -11,10 +11,14 @@ namespace Cosmos.Reference
         /// 单个引用池上限
         /// </summary>
         internal static readonly short _ReferencePoolCapcity= 5000;
-        Dictionary<Type, ReferenceSpawnPool> referenceDict = new Dictionary<Type, ReferenceSpawnPool>();
+        Dictionary<Type, ReferenceSpawnPool> referenceDict;
         #endregion
 
         #region Methods
+        public override void OnInitialization()
+        {
+            referenceDict = new Dictionary<Type, ReferenceSpawnPool>();
+        }
         public int GetPoolCount<T>() 
             where T : class, IReference, new()
         {
