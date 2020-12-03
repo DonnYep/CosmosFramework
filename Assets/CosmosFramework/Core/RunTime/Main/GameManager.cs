@@ -181,28 +181,8 @@ namespace Cosmos
         {
             return moduleDict.ContainsKey(type);
         }
-        /// <summary>
-        /// 清理静态成员的对象，内存未释放完全
-        /// </summary>
         internal static void Dispose()
         {
-        }
-        /// <summary>
-        /// 清除单个实例，有一个默认参数。
-        /// 默认延迟为0，表示立刻删除、
-        /// 仅在场景中删除对应对象
-        /// </summary>
-        static void ModuleInitialization(Module module)
-        {
-            var type = module.GetType();
-            if (!HasModule(type))
-            {
-                module.OnInitialization();
-                moduleDict.Add(type, module);
-                moduleCount++;
-            }
-            else
-                throw new ArgumentException($"Module : {type} is already exist!");
         }
         static void ModuleTermination(Module module)
         {
@@ -227,7 +207,15 @@ namespace Cosmos
             var modules = Utility.Assembly.GetInstancesByAttribute<ModuleAttribute, Module>();
             for (int i = 0; i < modules.Length; i++)
             {
-                ModuleInitialization(modules[i]);
+                var type = modules[i].GetType();
+                if (!HasModule(type))
+                {
+                    modules[i].OnInitialization();
+                    moduleDict.Add(type, modules[i]);
+                    moduleCount++;
+                }
+                else
+                    throw new ArgumentException($"Module : {type} is already exist!");
             }
             ActiveModule();
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Cosmos
 {
@@ -13,6 +14,8 @@ namespace Cosmos
         /// 自定义模块容器；
         /// </summary>
         static Dictionary<Type, Module> externalModuleDict = new Dictionary<Type, Module>();
+        static Dictionary<Type, Type> externalInterfaceModuleDict = new Dictionary<Type, Type>();
+        static Dictionary<Type, GameObject> externalModuleMountDict = new Dictionary<Type, GameObject>();
         /// <summary>
         /// 线程安全；
         /// 获取自定义模块；
@@ -21,18 +24,60 @@ namespace Cosmos
         /// </summary>
         /// <typeparam name="TModule">实现模块功能的类对象</typeparam>
         /// <returns>获取的模块</returns>
-        public static TModule ExternalModule<TModule>()
-            where TModule : class , IModuleManager
+        public static T ExternalModule<T>()
+            where T : class, IModuleManager
         {
-            Type type = typeof(TModule);
-            Module module = default;
-            var result = externalModuleDict.TryGetValue(type, out module);
-            if (result)
+            Type interfaceType = typeof(T);
+            var hasType = externalInterfaceModuleDict.TryGetValue(interfaceType, out var derivedType);
+            if (!hasType)
             {
-                return module as TModule;
+                foreach (var m in moduleDict)
+                {
+                    if (interfaceType.IsAssignableFrom(m.Key))
+                    {
+                        derivedType = m.Key;
+                        externalInterfaceModuleDict.TryAdd(interfaceType, derivedType);
+                        break;
+                    }
+                }
             }
-            else
-                return default(TModule);
+            externalModuleDict.TryGetValue(derivedType, out var module);
+            return module as T;
+        }
+        /// <summary>
+        /// 扩展模块挂载对象；
+        /// </summary>
+        /// <typeparam name="T">模块interface</typeparam>
+        /// <returns>挂载对象</returns>
+        public static GameObject GetExternalModuleMount<T>()
+    where T : class, IModuleManager
+        {
+            Type interfaceType = typeof(T);
+            Type derivedType = null;
+            var hasType = externalInterfaceModuleDict.TryGetValue(interfaceType, out derivedType);
+            if (!hasType)
+            {
+                foreach (var m in moduleDict)
+                {
+                    if (interfaceType.IsAssignableFrom(m.Key))
+                    {
+                        derivedType = m.Key;
+                        break;
+                    }
+                }
+            }
+            GameObject moduleMount;
+            var hasMount = externalModuleMountDict.TryGetValue(derivedType, out moduleMount);
+            if (!hasMount)
+            {
+                moduleMount = new GameObject(derivedType.Name + "Module-->>Container");
+                moduleMount.transform.SetParent(InstanceObject.transform);
+                if (!externalModuleMountDict.TryAdd(derivedType, moduleMount))
+                {
+                    GameObject.Destroy(moduleMount);
+                }
+            }
+            return moduleMount;
         }
         /// <summary>
         /// 初始化自定义模块
