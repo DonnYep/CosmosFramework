@@ -7,7 +7,7 @@ namespace Cosmos
     /// <summary>
     /// LRU缓存Least Recently Used
     /// </summary>
-    public class LRUCache <Key,Value>:IEnumerable<Value>
+    public class LRU<Key,Value>:IEnumerable<Value>
     {
         // TODO LRUCache实现IDictionary接口
 
@@ -70,8 +70,8 @@ namespace Cosmos
                 }
             }
         }
-        public LRUCache() : this(DEFAULT_CAPACITY) { }
-        public LRUCache(uint capacity)
+        public LRU() : this(DEFAULT_CAPACITY) { }
+        public LRU (uint capacity)
         {
             locker = new ReaderWriterLockSlim();
             this.capacity = capacity > 0 ? capacity : DEFAULT_CAPACITY;
@@ -237,7 +237,7 @@ namespace Cosmos
         #region IEnumerable
         public IEnumerator<Value> GetEnumerator()
         {
-            return new LRUCacheIEnumerator<Value>(dictionary.Values);
+            return new LRUEnumerator<Value>(dictionary.Values);
         }
         IEnumerator IEnumerable.GetEnumerator()
         {

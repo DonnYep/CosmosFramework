@@ -5,7 +5,7 @@ public class LRUTester: MonoBehaviour
 {
     IObjectPoolManager objectPoolManager;
     GameObject spawnItem;
-    LRUCache<int, GameObject> goDict = new LRUCache<int, GameObject>(4);
+    LRU<int, GameObject> goDict = new LRU<int, GameObject>(4);
     int index = 0;
     protected GameObject deactiveObjectMount;
     public Transform DeactiveObjectMount

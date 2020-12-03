@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System;
 namespace Cosmos {
-    public struct LRUCacheIEnumerator <T>:  IReference, IEnumerator<T>
+    public struct LRUEnumerator <T>:  IReference, IEnumerator<T>
     {
         T current;
         int index;
         T[] list;
-        public LRUCacheIEnumerator(ICollection<T> collection)
+        public LRUEnumerator(ICollection<T> collection)
         {
             current = default(T);
             index = -1;
