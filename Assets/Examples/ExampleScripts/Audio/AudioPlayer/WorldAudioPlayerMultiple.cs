@@ -26,12 +26,12 @@ namespace Cosmos
                 return audioList.ToArray();
             }
         }
-        [SerializeField] AudioDataSet[] audioDataSets;
-        public AudioDataSet[] AudioDataSets
+        [SerializeField] AudioDataset[] audioDataSets;
+        public AudioDataset[] AudioDataSets
         {
             get
             {
-                List<AudioDataSet> argObject = new List<AudioDataSet>();
+                List<AudioDataset> argObject = new List<AudioDataset>();
                 for (short i = 0; i < audioDataSets.Length; i++)
                 {
                     if (audioDataSets[i] != null)

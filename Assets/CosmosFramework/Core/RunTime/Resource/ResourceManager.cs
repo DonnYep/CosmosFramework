@@ -25,14 +25,13 @@ using UnityEngine.Networking;
 
 namespace Cosmos.Resource
 {
-
-     public enum ResourceLoadMode : byte
+    public enum ResourceLoadMode : byte
     {
         Resource = 0,
         AssetBundle = 1
     }
     [Module]
-     internal sealed class ResourceManager : Module,IResourceManager
+    internal sealed class ResourceManager : Module, IResourceManager
     {
         #region Properties
         //缓存的所有AssetBundle包 <AB包名称、AB包>
@@ -85,8 +84,8 @@ namespace Cosmos.Resource
         /// <typeparam name="T">需要加载的类型</typeparam>
         /// <param name="instantiate">是否生实例化对象</param>
         /// <returns>返回实体化或未实例化的资源对象</returns>
-         public GameObject LoadResPrefab<T>(bool instantiate )
-            where T : MonoBehaviour
+        public GameObject LoadResPrefab<T>(bool instantiate)
+           where T : MonoBehaviour
         {
             Type type = typeof(T);
             PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
@@ -101,7 +100,7 @@ namespace Cosmos.Resource
             }
             return prefab;
         }
-         public T LoadResPrefab<T>()
+        public T LoadResPrefab<T>()
 where T : MonoBehaviour
         {
             Type type = typeof(T);
@@ -124,12 +123,12 @@ where T : MonoBehaviour
         /// <param name="go">载入的资源对象</param>
         /// <param name="instantiate">是否实例化</param>
         /// <returns>载入的对象</returns>
-         public GameObject LoadResPrefabInstance<T>(bool instantiate = false)
-            where T : class, IReference, new()
+        public GameObject LoadResPrefabInstance<T>(bool instantiate = false)
+           where T : class, IReference, new()
         {
             Type type = typeof(T);
             PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
-           GameObject  go = default;
+            GameObject go = default;
             T referObj = default;
             if (attribute != null)
             {
@@ -147,8 +146,8 @@ where T : MonoBehaviour
         /// </summary>
         /// <typeparam name="T">组件类型</typeparam>
         /// <param name="callBack">载入完毕后的回调</param>
-         public void LoadResPrefabAsync<T>(Action<T> callBack = null)
-            where T : MonoBehaviour
+        public void LoadResPrefabAsync<T>(Action<T> callBack = null)
+           where T : MonoBehaviour
         {
             Type type = typeof(T);
             PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
@@ -161,16 +160,16 @@ where T : MonoBehaviour
         /// </summary>
         /// <typeparam name="T">非Mono对象</typeparam>
         /// <param name="callBack">加载完毕后的回调</param>
-         public void LoadResPrefabInstanceAsync<T>(Action<T,GameObject> callBack = null)
-            where T : class,IReference, new()
+        public void LoadResPrefabInstanceAsync<T>(Action<T, GameObject> callBack = null)
+           where T : class, IReference, new()
         {
             Type type = typeof(T);
             PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
             if (attribute != null)
                 monoManager.StartCoroutine(EnumLoadResPrefabInstanceAsync<T>(attribute.ResourcePath, callBack));
         }
-         public T LoadResAsset<T>(bool instantiateGameObject = false)
-            where T : UnityEngine.Component
+        public T LoadResourceUnit<T>(bool instantiateGameObject = false)
+           where T : UnityEngine.Component
         {
             Type type = typeof(T);
             ResourceUnitAttribute attribute = type.GetCustomAttribute<ResourceUnitAttribute>();
@@ -195,10 +194,53 @@ where T : MonoBehaviour
             }
             return res;
         }
+
+        /// <summary>
+        /// ResourceUnitAttribute加载gameobject对象；
+        /// </summary>
+        /// <typeparam name="T">mono脚本</typeparam>
+        /// <param name="resUnitGo">返回的预制体对象</param>
+        /// <param name="instantiateGameObject">是否实例化对象</param>
+        /// <returns>加载的T预制体</returns>
+        public T LoadResourceUnitAsync<T>(out GameObject resUnitGo,bool instantiateGameObject = false )
+   where T : UnityEngine.MonoBehaviour
+        {
+            Type type = typeof(T);
+            ResourceUnitAttribute attribute = type.GetCustomAttribute<ResourceUnitAttribute>();
+            T res = default;
+            GameObject resGo = null;
+            resUnitGo = null;
+            if (attribute != null)
+            {
+                monoManager.StartCoroutine(EnumLoadRessourceUnitAsync<T>(attribute.ResourcePath, instantiateGameObject, (go) =>
+                {
+                    if (go == null)
+                    {
+                        Utility.Debug.LogError("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
+                        return;
+                    }
+                    if (instantiateGameObject)
+                    {
+                        res = go.gameObject.AddComponent<T>();
+                        resGo = res.gameObject;
+                    }
+                    else
+                    {
+                        resGo = go.gameObject;
+                    }
+                }));
+                resUnitGo = resGo;
+            }
+            else
+            {
+                Utility.Debug.LogError("ResourceManager-->>" + "Assets: has no attribute,check your mono script!");
+            }
+            return res;
+        }
         /// <summary>
         /// 异步加载资源,如果目标是Gameobject，则实例化
         /// </summary>
-         public void LoadResAysnc<T>(string path, Action<T> callBack = null)
+        public void LoadResAysnc<T>(string path, Action<T> callBack = null)
             where T : UnityEngine.Object
         {
             monoManager.StartCoroutine(EnumLoadResAsync(path, callBack));
@@ -206,16 +248,16 @@ where T : MonoBehaviour
         /// <summary>
         /// 异步加载资源,不实例化任何类型
         /// </summary>
-         public void LoadResAssetAysnc<T>(string path, Action<T> callBack = null)
-            where T : UnityEngine.Object
+        public void LoadResAssetAysnc<T>(string path, Action<T> callBack = null)
+           where T : UnityEngine.Object
         {
             monoManager.StartCoroutine(EnumLoadResAssetAsync(path, callBack));
         }
         /// <summary>
         /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
         /// </summary>
-         public List<T> LoadResFolderAssets<T>(string path)
-       where T : class
+        public List<T> LoadResFolderAssets<T>(string path)
+      where T : class
         {
             List<T> list = new List<T>();
             var resList = Resources.LoadAll(path, typeof(T)) as T[];
@@ -228,8 +270,8 @@ where T : MonoBehaviour
         /// <summary>
         /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
         /// </summary>
-         public T[] LoadResAll<T>(string path)
-            where T : UnityEngine.Object
+        public T[] LoadResAll<T>(string path)
+           where T : UnityEngine.Object
         {
             T[] res = Resources.LoadAll<T>(path);
             if (res == null)
@@ -247,7 +289,7 @@ where T : MonoBehaviour
         #endregion
         #region  AssetBundles
         //TODO ResourceManager AB资源的特性加载
-         public void SetManifestName(string name)
+        public void SetManifestName(string name)
         {
             this.assetBundleManifestName = name;
         }
@@ -258,8 +300,8 @@ where T : MonoBehaviour
         /// <param name="path"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-         public T LoadABAsset<T>(string path, string name)
-            where T : UnityEngine.Object
+        public T LoadABAsset<T>(string path, string name)
+           where T : UnityEngine.Object
         {
             var ab = AssetBundle.LoadFromFile(path);
             var asset = ab.LoadAsset<T>(name);
@@ -272,8 +314,8 @@ where T : MonoBehaviour
         /// <param name="resUnit"></param>
         /// <param name="loadingCallBack"></param>
         /// <param name="loadDoneCallBack"></param>
-         public void LoadABAssetAsync<T>(ResourceUnit resUnit, Action<float> loadingCallBack, Action<T> loadDoneCallBack)
-            where T : UnityEngine.Object
+        public void LoadABAssetAsync<T>(ResourceUnit resUnit, Action<float> loadingCallBack, Action<T> loadDoneCallBack)
+           where T : UnityEngine.Object
         {
             monoManager.StartCoroutine(EnumLoadABAssetAsync(resUnit, loadingCallBack, loadDoneCallBack));
         }
@@ -281,7 +323,7 @@ where T : MonoBehaviour
         /// 异步加载AB依赖包
         /// </summary>
         /// <param name="abName"></param>
-         public void LoadDependenciesABAsync(string abName)
+        public void LoadDependenciesABAsync(string abName)
         {
             monoManager.StartCoroutine(EnumLoadDependenciesABAsyn(abName));
         }
@@ -290,18 +332,18 @@ where T : MonoBehaviour
         /// </summary>
         /// <param name="abName">AssetBundle Name</param>
         /// <param name="isManifest">是否为AB清单</param>
-         public void LoadABAsync(string abName, bool isManifest = false)
+        public void LoadABAsync(string abName, bool isManifest = false)
         {
             monoManager.StartCoroutine(EnumLoadABAsync(abName, isManifest));
         }
         /// <summary>
         /// 异步加载AB包清单
         /// </summary>
-         public void LoadABManifestAsync()
+        public void LoadABManifestAsync()
         {
             monoManager.StartCoroutine(EnumLoadABManifestAsync());
         }
-         public void UnloadAsset(string abName, bool unloadAllAssets = false)
+        public void UnloadAsset(string abName, bool unloadAllAssets = false)
         {
             var ab = QueryAssetBundle(abName);
             if (ab != null)
@@ -314,7 +356,7 @@ where T : MonoBehaviour
         /// 卸载所有资源
         /// </summary>
         /// <param name="unloadAllAssets">是否卸所有实体对象</param>
-         public void UnloadAllAsset(bool unloadAllAssets = false)
+        public void UnloadAllAsset(bool unloadAllAssets = false)
         {
             foreach (var ab in assetBundleDict)
             {
@@ -325,13 +367,13 @@ where T : MonoBehaviour
         }
         #endregion
         #region Resources Private
-        IEnumerator EnumLoadResPrefabInstanceAsync<T>(string path, Action<T,GameObject> callBack)
+        IEnumerator EnumLoadResPrefabInstanceAsync<T>(string path, Action<T, GameObject> callBack)
             where T : class, IReference, new()
         {
             ResourceRequest req = Resources.LoadAsync<GameObject>(path);
             yield return req;
             var obj = referencePoolManager.Spawn<T>();
-            callBack?.Invoke(obj,GameObject.Instantiate(req.asset) as GameObject);
+            callBack?.Invoke(obj, GameObject.Instantiate(req.asset) as GameObject);
         }
         IEnumerator EnumLoadResPrefabAsync<T>(string path, Action<T> callBack)
             where T : MonoBehaviour
@@ -355,6 +397,16 @@ where T : MonoBehaviour
             yield return req;
             if (req.asset is GameObject)
                 callBack?.Invoke(GameObject.Instantiate(req.asset) as T);
+        }
+        IEnumerator EnumLoadRessourceUnitAsync<T>(string path, bool instantiateGameObject, Action<T> callBack)
+    where T : UnityEngine.MonoBehaviour
+        {
+            ResourceRequest req = Resources.LoadAsync<GameObject>(path);
+            yield return req;
+            if (instantiateGameObject)
+                callBack?.Invoke(GameObject.Instantiate(req.asset) as T);
+            else
+                callBack?.Invoke(req.asset as T);
         }
         #endregion
         #region    AssetBundles Private

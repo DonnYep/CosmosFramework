@@ -7,13 +7,13 @@ namespace Cosmos{
     public abstract class AudioPlayer: MonoBehaviour
     {
         protected IAudioManager audioManager;
-        public virtual AudioDataSet AudioDataSet { get; }
+        public virtual AudioDataset AudioDataSet { get; }
         public virtual AudioObject AudioObject { get; }
         public abstract void PlayAudio();
         public abstract void PauseAudio();
         public abstract void UnpauseAudio();
         public abstract void StopAudio();
-       protected AudioObject SetAudioVariable(AudioObject audioVariable, AudioDataSet DataSet)
+       protected AudioObject SetAudioVariable(AudioObject audioVariable, AudioDataset DataSet)
         {
             audioVariable.Mute = DataSet.Mute;
             audioVariable.Volume = DataSet.Volume;
@@ -25,7 +25,7 @@ namespace Cosmos{
             audioVariable.AudioClip = DataSet.AudioClip;
             return audioVariable;
         }
-       protected virtual void Start()
+       protected virtual void Awake()
         {
             audioManager = GameManager.GetModule<IAudioManager>();
         }

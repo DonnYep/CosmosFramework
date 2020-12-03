@@ -17,11 +17,12 @@ namespace Cosmos.Mono
         IMonoProvider monoProvider;
         #endregion
         #region Methods
-        public override void OnInitialization()
+        public override void OnActive()
         {
             var go = new GameObject(typeof(MonoProvider).Name);
             monoProvider = go.AddComponent<MonoProvider>();
-            go.transform.SetParent(MountPoint.transform);
+            var mountGo = GameManager.GetModuleMount<IMonoManager>();
+            go.transform.SetParent(mountGo.transform);
         }
         /// <summary>
         /// 嵌套协程
@@ -32,6 +33,10 @@ namespace Cosmos.Mono
         public Coroutine StartCoroutine(Coroutine routine, Action callBack)
         {
             return monoProvider.StartCoroutine(routine, callBack);
+        }
+        public Coroutine StartCoroutine(Action handler)
+        {
+            return monoProvider.StartCoroutine(handler);
         }
         public Coroutine DelayCoroutine(float delay, Action callBack)
         {

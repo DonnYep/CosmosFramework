@@ -9,10 +9,11 @@ namespace Cosmos.UI
 {
     public abstract class UILogicBase : MonoBehaviour
     {
+        protected IUIManager uiManager;
         /// <summary>
         /// UI的映射表，名字作为主键，具有一个list容器
         /// </summary>
-        Dictionary<string, List<UIBehaviour>> uiDict = new Dictionary<string, List<UIBehaviour>>();
+        Dictionary<string, List<UIBehaviour>> uiDict;
         /// <summary>
         /// 是否自动注册获取当前节点下的UIBehaviour对象
         /// </summary>
@@ -41,6 +42,8 @@ namespace Cosmos.UI
                 GetChildPanels<Image>();
                 GetChildPanels<InputField>();
             }
+            uiDict= new Dictionary<string, List<UIBehaviour>>();
+            uiManager = GameManager.GetModule<IUIManager>();
             OnInitialization();
         }
         protected abstract void OnInitialization();

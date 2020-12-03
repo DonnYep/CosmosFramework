@@ -18,6 +18,10 @@ namespace Cosmos.Mono
         {
             return StartCoroutine(EnumDelay(delay, callBack));
         }
+        public Coroutine StartCoroutine(Action handler)
+        {
+            return StartCoroutine(EnumCoroutine(handler));
+        }
         /// <summary>
         /// 嵌套协程
         /// </summary>
@@ -41,6 +45,11 @@ namespace Cosmos.Mono
         {
             yield return routine;
             callBack?.Invoke();
+        }
+        IEnumerator EnumCoroutine(Action handler)
+        {
+            handler?.Invoke();
+            yield return null;
         }
         IEnumerator EnumPredicateCoroutine(Func<bool> handler, Action callBack)
         {

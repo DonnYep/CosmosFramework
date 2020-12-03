@@ -7,8 +7,8 @@ namespace Cosmos
     {
         [SerializeField] GameObject audioAttachTarget;
         public GameObject AudioAttachTarget { get { return audioAttachTarget; } set { audioAttachTarget = value; }  }
-        [SerializeField] AudioDataSet audioDataSet;
-        public override AudioDataSet AudioDataSet { get { return audioDataSet; } }
+        [SerializeField] AudioDataset audioDataSet;
+        public override AudioDataset AudioDataSet { get { return audioDataSet; } }
        AudioObject audioObject = new AudioObject();
         public override AudioObject AudioObject { get { return audioObject; } }
         public override void PlayAudio()

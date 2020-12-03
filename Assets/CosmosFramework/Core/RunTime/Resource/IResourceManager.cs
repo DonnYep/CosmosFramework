@@ -41,7 +41,7 @@ namespace Cosmos.Resource
         /// <typeparam name="T">非Mono对象</typeparam>
         /// <param name="callBack">加载完毕后的回调</param>
         void LoadResPrefabInstanceAsync<T>(Action<T, GameObject> callBack = null) where T : class, IReference, new();
-        T LoadResAsset<T>(bool instantiateGameObject = false) where T : UnityEngine.Component;
+        T LoadResourceUnit<T>(bool instantiateGameObject = false) where T : UnityEngine.Component;
         /// <summary>
         /// 异步加载资源,如果目标是Gameobject，则实例化
         /// </summary>

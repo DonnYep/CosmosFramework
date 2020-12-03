@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
-
+using Cosmos.Reference;
 namespace Cosmos.Network
 {
     /// <summary>
@@ -68,11 +68,15 @@ namespace Cosmos.Network
         Action<INetworkMessage> sendMessageHandler;
         Action onConnectHandler;
         Action onDisconnectHandler;
+        INetworkManager networkManager;
+        IReferencePoolManager referencePoolManager;
         public UdpClientPeer()
         {
             //Available = true;
             sndMsgDict = new ConcurrentDictionary<uint, UdpNetMessage>();
             rcvMsgDict = new ConcurrentDictionary<uint, UdpNetMessage>();
+            networkManager= GameManager.GetModule<INetworkManager>();
+            referencePoolManager= GameManager.GetModule<IReferencePoolManager>();
         }
         public UdpClientPeer(Action onConnect, Action onDisconnect) : this()
         {
@@ -161,7 +165,7 @@ namespace Cosmos.Network
                             OnDeactive();
                         }
                         if (sndMsgDict.TryRemove(netMsg.SN, out tmpMsg))
-                            GameManager.GetModule<Reference.IReferencePoolManager>().Despawn(tmpMsg);
+                            referencePoolManager.Despawn(tmpMsg);
                     }
                     break;
                 case KcpProtocol.MSG:
@@ -218,7 +222,7 @@ namespace Cosmos.Network
                     //重发次数+1
                     msg.RecurCount += 1;
                     //绕过编码消息，直接发送；
-                    GameManager.GetModule<INetworkManager>().SendNetworkMessage(msg.GetBuffer());
+                    networkManager.SendNetworkMessage(msg.GetBuffer());
                     //if (sndMsgDict.TryRemove(msg.SN, out var unaMsg))
                     //    sendMessageHandler?.Invoke(msg);
                 }

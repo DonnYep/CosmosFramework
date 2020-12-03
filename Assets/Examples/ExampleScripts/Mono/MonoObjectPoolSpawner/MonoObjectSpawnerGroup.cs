@@ -58,7 +58,7 @@ namespace Cosmos{
                     objectPoolManager.DeregisterSpawnPool(SpawnObjectGroup[i].SpawnTransform);
                 }
             }
-            GameManagerAgent.KillObject(deactiveObjectMount);
+            GameObject.Destroy(deactiveObjectMount);
         }
         protected override void SpawnHandler(GameObject go)
         {
@@ -104,8 +104,8 @@ namespace Cosmos{
             Transform spawnTransform;
             public Transform SpawnTransform { get { return spawnTransform; } }
             [SerializeField]
-            ObjectPoolDataSet poolDataSet;
-            public ObjectPoolDataSet PoolObject { get { return poolDataSet; } }
+            ObjectPoolDataset poolDataSet;
+            public ObjectPoolDataset PoolObject { get { return poolDataSet; } }
             public float CollectDelay { get { return poolDataSet.CollectDelay; } }
         }
     }

@@ -60,20 +60,20 @@ namespace Cosmos.CosmosEditor
         }
         void SetButtonClick()
         {
-            CFEditorUtility.SetEditorPrefsBool(EditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY, EditorConst.EnableScriptTemplateAnnotation);
-            CFEditorUtility.SetEditorPrefsBool(EditorConst.CONSOLE_DEBUGLOG_KEY, EditorConst.ConsoleDebugLog);
-            CFEditorUtility.SetEditorPresString(EditorConst.LOGOUTPUT_DIRECTORY_KEY, EditorConst.LogOutputDirectory);
-            CFEditorUtility.SetEditorPrefsBool(EditorConst.OUTPUT_DEBUGLOG_KEY, EditorConst.OutputDebugLog);
-            CFEditorUtility.SetEditorPresString(EditorConst.ANNOTATION_AUTHOR_KEY, EditorConst.AnnotationAuthor);
+            CosmosEditorUtility.SetEditorPrefsBool(CosmosEditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY, CosmosEditorConst.EnableScriptTemplateAnnotation);
+            CosmosEditorUtility.SetEditorPrefsBool(CosmosEditorConst.CONSOLE_DEBUGLOG_KEY, CosmosEditorConst.ConsoleDebugLog);
+            CosmosEditorUtility.SetEditorPresString(CosmosEditorConst.LOGOUTPUT_DIRECTORY_KEY, CosmosEditorConst.LogOutputDirectory);
+            CosmosEditorUtility.SetEditorPrefsBool(CosmosEditorConst.OUTPUT_DEBUGLOG_KEY, CosmosEditorConst.OutputDebugLog);
+            CosmosEditorUtility.SetEditorPresString(CosmosEditorConst.ANNOTATION_AUTHOR_KEY, CosmosEditorConst.AnnotationAuthor);
 
         }
         void ResetButtonClick()
         {
-            EditorConst.ConsoleDebugLog = CFEditorUtility.GetEditorPrefsBool(EditorConst.CONSOLE_DEBUGLOG_KEY);
-            EditorConst.EnableScriptTemplateAnnotation = CFEditorUtility.GetEditorPrefsBool(EditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY);
-            EditorConst.LogOutputDirectory = CFEditorUtility.GetEditorPrefsString(EditorConst.LOGOUTPUT_DIRECTORY_KEY);
-            EditorConst.OutputDebugLog = CFEditorUtility.GetEditorPrefsBool(EditorConst.OUTPUT_DEBUGLOG_KEY);
-            EditorConst.AnnotationAuthor = CFEditorUtility.GetEditorPrefsString(EditorConst.ANNOTATION_AUTHOR_KEY);
+            CosmosEditorConst.ConsoleDebugLog = CosmosEditorUtility.GetEditorPrefsBool(CosmosEditorConst.CONSOLE_DEBUGLOG_KEY);
+            CosmosEditorConst.EnableScriptTemplateAnnotation = CosmosEditorUtility.GetEditorPrefsBool(CosmosEditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY);
+            CosmosEditorConst.LogOutputDirectory = CosmosEditorUtility.GetEditorPrefsString(CosmosEditorConst.LOGOUTPUT_DIRECTORY_KEY);
+            CosmosEditorConst.OutputDebugLog = CosmosEditorUtility.GetEditorPrefsBool(CosmosEditorConst.OUTPUT_DEBUGLOG_KEY);
+            CosmosEditorConst.AnnotationAuthor = CosmosEditorUtility.GetEditorPrefsString(CosmosEditorConst.ANNOTATION_AUTHOR_KEY);
         }
         #region ScriptTemplateAnnotation
         void DrawScriptTemplateAnnotation()
@@ -85,14 +85,14 @@ namespace Cosmos.CosmosEditor
             GUILayout.BeginHorizontal();
             GUILayout.Label("EnableScriptTemplateAnnotation", GUILayout.Width(192));
             GUILayout.Space(128);
-            EditorConst.EnableScriptTemplateAnnotation = EditorGUILayout.Toggle(EditorConst.EnableScriptTemplateAnnotation);
+            CosmosEditorConst.EnableScriptTemplateAnnotation = EditorGUILayout.Toggle(CosmosEditorConst.EnableScriptTemplateAnnotation);
             GUILayout.EndHorizontal();
-            if (EditorConst.EnableScriptTemplateAnnotation)
+            if (CosmosEditorConst.EnableScriptTemplateAnnotation)
             {
                 GUILayout.Space(16);
                 EditorGUILayout.LabelField("输入作者名称");
                 GUILayout.BeginHorizontal();
-                EditorConst.AnnotationAuthor = EditorGUILayout.TextField("Author", EditorConst.AnnotationAuthor);
+                CosmosEditorConst.AnnotationAuthor = EditorGUILayout.TextField("Author", CosmosEditorConst.AnnotationAuthor);
                 GUILayout.EndHorizontal();
             }
             GUI.color = Color.white;
@@ -111,30 +111,30 @@ namespace Cosmos.CosmosEditor
             GUILayout.BeginHorizontal();
             GUILayout.Label("ConsoleDebugLog", GUILayout.Width(192));
             GUILayout.Space(128);
-            EditorConst.ConsoleDebugLog = EditorGUILayout.Toggle(EditorConst.ConsoleDebugLog);
+            CosmosEditorConst.ConsoleDebugLog = EditorGUILayout.Toggle(CosmosEditorConst.ConsoleDebugLog);
             GUILayout.EndVertical();
 
             EditorGUILayout.HelpBox("是否输出Log日志", MessageType.Info);
             GUILayout.BeginHorizontal();
             GUILayout.Label("OutputDebugLog", GUILayout.Width(192));
             GUILayout.Space(128);
-            EditorConst.OutputDebugLog = EditorGUILayout.Toggle(EditorConst.OutputDebugLog);
+            CosmosEditorConst.OutputDebugLog = EditorGUILayout.Toggle(CosmosEditorConst.OutputDebugLog);
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical();
-            if (EditorConst.OutputDebugLog)
+            if (CosmosEditorConst.OutputDebugLog)
             {
-                EditorConst.LogOutputDirectory = EditorGUILayout.TextField("OutputPath", EditorConst.LogOutputDirectory);
+                CosmosEditorConst.LogOutputDirectory = EditorGUILayout.TextField("OutputPath", CosmosEditorConst.LogOutputDirectory);
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(8);
                 if (GUILayout.Button("路径检测", GUILayout.Height(32)))
                 {
-                    logPathExists = Directory.Exists(EditorConst.LogOutputDirectory);
+                    logPathExists = Directory.Exists(CosmosEditorConst.LogOutputDirectory);
                 }
                 GUILayout.Space(128);
                 if (GUILayout.Button("设为默认", GUILayout.Height(32)))
                 {
-                    EditorConst.LogOutputDirectory = EditorConst.GetDefaultLogOutputDirectory();
+                    CosmosEditorConst.LogOutputDirectory = CosmosEditorConst.GetDefaultLogOutputDirectory();
                 }
                 GUILayout.Space(8);
                 GUILayout.EndHorizontal();

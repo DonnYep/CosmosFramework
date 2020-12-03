@@ -10,8 +10,8 @@ namespace Cosmos{
         Transform spawnTransform;
         public Transform SpawnTransform { get { return spawnTransform; } }
         [SerializeField]
-        ObjectPoolDataSet poolDataSet;
-        public ObjectPoolDataSet PoolDataSet { get { return poolDataSet; } }
+        ObjectPoolDataset poolDataSet;
+        public ObjectPoolDataset PoolDataSet { get { return poolDataSet; } }
         public override float CollectDelay { get { return poolDataSet.CollectDelay; } }
         HashSet<GameObject> uncollectibleHashSet = new HashSet<GameObject>();
         public override HashSet<GameObject> UncollectibleHashSet { get { return uncollectibleHashSet; } protected set { uncollectibleHashSet = value; } }

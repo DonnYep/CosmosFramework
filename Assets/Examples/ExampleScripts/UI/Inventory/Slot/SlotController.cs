@@ -48,7 +48,7 @@ public class SlotController : MonoEventHandler
             {
                 if (i >= uip.Data.ItemDataSets.Count)
                 {
-                    GameManager.KillObjectImmediate(slotList[i].gameObject);
+                    GameObject.Destroy(slotList[i].gameObject);
                 }
             }
             slotList.RemoveRange(uip.Data.ItemDataSets.Count, slotList.Count - uip.Data.ItemDataSets.Count);

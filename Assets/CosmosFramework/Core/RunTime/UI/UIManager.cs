@@ -18,12 +18,9 @@ namespace Cosmos.UI
         #endregion
 
         #region Methods
-        public override void OnInitialization()
-        {
-            uiPanelDict = new Dictionary<string, UILogicBase>();
-        }
         public override void OnPreparatory()
         {
+            uiPanelDict = new Dictionary<string, UILogicBase>();
             resourceManager = GameManager.GetModule<ResourceManager>();
         }
         /// <summary>
@@ -41,7 +38,8 @@ namespace Cosmos.UI
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = "MainUICanvas";
-                    mainUICanvas.transform.SetParent(MountPoint.transform);
+                    var mountGo = GameManager.GetModuleMount<IUIManager>();
+                    mainUICanvas.transform.SetParent(mountGo.transform);
                 });
                 return mainUICanvas;
             }
@@ -62,7 +60,8 @@ namespace Cosmos.UI
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = name;
-                    mainUICanvas.transform.SetParent(MountPoint.transform);
+                    var mountGo = GameManager.GetModuleMount<IUIManager>();
+                    mainUICanvas.transform.SetParent(mountGo.transform);
                 });
                 return mainUICanvas;
             }
@@ -141,10 +140,10 @@ namespace Cosmos.UI
             });
         }
         /// <summary>
-        /// 通过特性UIResourceAttribute加载Panel
+        /// 通过特性PrefabUnitAttribute加载Panel
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="callBack"></param>
+        /// <typeparam name="T">带有PrefabUnitAttribute特性的panel类</typeparam>
+        /// <param name="callBack">加载成功的回调。若失败，则不执行</param>
         public void ShowPanel<T>(Action<T> callBack = null)
     where T : UILogicBase
         {
@@ -152,34 +151,25 @@ namespace Cosmos.UI
             PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
             if (attribute == null)
                 return;
-            if (HasPanel(attribute.PrefabName))
-            {
-                callBack?.Invoke(uiPanelDict[attribute.PrefabName] as T);
-                return;
-            }
             resourceManager.LoadResPrefabAsync<T>(panel =>
             {
                 panel.transform.SetParent(MainUICanvas.transform);
                 (panel.transform as RectTransform).ResetLocalTransform();
                 callBack?.Invoke(panel);
-                uiPanelDict.Add(attribute.PrefabName, panel);
+                uiPanelDict.Add(panel.gameObject.name, panel);
             });
         }
         public void HidePanel(string panelName)
         {
-            if (uiPanelDict.ContainsKey(panelName))
-                uiPanelDict[panelName].HidePanel();
+            uiPanelDict.TryGetValue(panelName, out var panel);
+            panel?.HidePanel();
         }
         public void RemovePanel(string panelName)
         {
-            if (uiPanelDict.ContainsKey(panelName))
-            {
-                var result = uiPanelDict[panelName].gameObject;
-                GameManager.KillObject(result);
-                uiPanelDict.Remove(panelName);
-            }
+            if (uiPanelDict.TryRemove(panelName, out var panel))
+                GameObject.Destroy(panel);
             else
-                Utility.Debug.LogError("UIManager-->>" + "Panel :" + panelName + "  not register !");
+                Utility.Debug.LogError("UIManager-->>" + "Panel :" + panelName + " not exist !");
         }
         public void RemovePanel<T>()
             where T : UILogicBase
@@ -188,14 +178,10 @@ namespace Cosmos.UI
             PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
             if (attribute == null)
                 return;
-            if (uiPanelDict.ContainsKey(attribute.PrefabName))
-            {
-                var result = uiPanelDict[attribute.PrefabName].gameObject;
-                GameManager.KillObject(result);
-                uiPanelDict.Remove(attribute.PrefabName);
-            }
+            if (uiPanelDict.TryRemove(attribute.PrefabName, out var panel))
+                GameObject.Destroy(panel);
             else
-                Utility.Debug.LogError("UIManager-->>" + "Panel :" + attribute.PrefabName + "  not register !");
+                Utility.Debug.LogError("UIManager-->>" + "Panel :" + attribute.PrefabName + "  not exist !");
         }
         public bool HasPanel(string panelName)
         {

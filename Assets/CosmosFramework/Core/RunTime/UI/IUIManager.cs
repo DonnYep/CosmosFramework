@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Cosmos.UI
 {
-    internal interface IUIManager:IModuleManager
+    public interface IUIManager:IModuleManager
     {
         GameObject MainUICanvas { get; set; }
 

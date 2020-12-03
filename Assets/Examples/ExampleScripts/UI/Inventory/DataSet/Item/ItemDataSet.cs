@@ -4,7 +4,7 @@ using UnityEngine;
 using Cosmos;
 using System;
 [Serializable]
-public abstract class ItemDataSet : CFDataSet
+public abstract class ItemDataSet : DatasetBase
 {
     [SerializeField]protected Sprite itemImage;
     public Sprite ItemImage { get { return itemImage; } set { itemImage = value; } }

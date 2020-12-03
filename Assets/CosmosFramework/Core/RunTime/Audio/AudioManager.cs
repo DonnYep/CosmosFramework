@@ -258,7 +258,8 @@ namespace Cosmos.Audio
         AudioSource CreateBGMAudioSource(IAudio args)
         {
             GameObject go = new GameObject(args.AudioClip.name);
-            go.transform.SetParent(MountPoint.transform);
+            var mountGo = GameManager.GetModuleMount<IAudioManager>();
+            go.transform.SetParent(mountGo.transform);
             go.transform.ResetLocalTransform();
             AudioSource audio = go.AddComponent<AudioSource>();
             SetAudioProperties(ref audio, args);
@@ -309,7 +310,7 @@ namespace Cosmos.Audio
                 if (!audio.Value.isPlaying)
                 {
                     removeSet.Add(audio.Key);
-                    GameManager.KillObject(audio.Value);
+                    GameObject.Destroy(audio.Value);
                 }
             }
             foreach (var item in removeSet)
@@ -332,7 +333,7 @@ namespace Cosmos.Audio
                 {
                     if (!audioList.Value[i].isPlaying)
                     {
-                        GameManager.KillObject(audioList.Value[i]);
+                        GameObject.Destroy(audioList.Value[i]);
                         clips.Add(audioList.Value[i]);
                     }
                 }

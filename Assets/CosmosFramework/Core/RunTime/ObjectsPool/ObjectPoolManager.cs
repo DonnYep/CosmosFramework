@@ -8,27 +8,14 @@ namespace Cosmos.ObjectPool
     {
         #region Properties
         internal static readonly short _ObjectPoolCapacity = 150;
-        Dictionary<object, ObjectSpawnPool> spawnPoolDict = new Dictionary<object, ObjectSpawnPool>();
-        GameObject activeObjectMount;
-        /// <summary>
-        /// 激活对象在场景中的容器，唯一
-        /// </summary>
-        internal GameObject ActiveObjectMount
-        {
-            get
-            {
-                if (activeObjectMount == null)
-                {
-                    activeObjectMount = new GameObject("ObjectPoolModule->>ActiveObjectMount");
-                    activeObjectMount.transform.ResetWorldTransform();
-                    activeObjectMount.transform.SetParent(MountPoint.transform);
-                }
-                return activeObjectMount;
-            }
-        }
+        Dictionary<object, ObjectSpawnPool> spawnPoolDict;
         #endregion
 
         #region Methods
+        public override void OnInitialization()
+        {
+            spawnPoolDict = new Dictionary<object, ObjectSpawnPool>();
+        }
         /// <summary>
         /// 注册对象池
         /// </summary>
@@ -117,7 +104,7 @@ namespace Cosmos.ObjectPool
             {
                 //如果对象没有key，则直接销毁
                 Utility.Debug.LogInfo("ObjectPoolManager\n" + "Despawn fail ,pool not exist,Destroying it instead.!", MessageColor.PURPLE, key as UnityEngine.Object);
-                GameManager.KillObject(go);
+                GameObject.Destroy(go);
             }
         }
         /// <summary>
@@ -139,7 +126,7 @@ namespace Cosmos.ObjectPool
                 Utility.Debug.LogInfo("ObjectPoolManager\n" + "Despawn fail ,pool not exist,Destroying it instead.!", MessageColor.PURPLE, key as UnityEngine.Object);
                 for (int i = 0; i < gos.Length; i++)
                 {
-                    GameManager.KillObject(gos[i]);
+                    GameObject.Destroy(gos[i]);
                 }
             }
         }

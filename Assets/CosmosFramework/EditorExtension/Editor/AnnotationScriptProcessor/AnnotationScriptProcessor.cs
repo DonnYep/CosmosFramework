@@ -29,7 +29,7 @@ namespace Cosmos.CosmosEditor
 
         public static void OnWillCreateAsset(string name)
         {
-            if (!EditorConst.EnableScriptTemplateAnnotation)
+            if (!CosmosEditorConst.EnableScriptTemplateAnnotation)
                 return;
             if (provider != null)
             {
@@ -42,7 +42,7 @@ namespace Cosmos.CosmosEditor
                         str = providerAnnoTitle + str;
                     }
                     str = str.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:mm:ss"));
-                    str = str.Replace("#Author#", EditorConst.AnnotationAuthor);
+                    str = str.Replace("#Author#", CosmosEditorConst.AnnotationAuthor);
                     File.WriteAllText(path, str, Encoding.UTF8);
                 }
             }
@@ -57,7 +57,7 @@ namespace Cosmos.CosmosEditor
                         str = annotationStr + str;
                     }
                     str = str.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:mm:ss"));
-                    str = str.Replace("#Author#", EditorConst.AnnotationAuthor);
+                    str = str.Replace("#Author#", CosmosEditorConst.AnnotationAuthor);
                     File.WriteAllText(path, str, Encoding.UTF8);
                 }
             }

@@ -41,13 +41,14 @@ namespace Cosmos.Network
         /// IP对象；
         /// </summary>
         protected IPEndPoint serverEndPoint;
-        protected ConcurrentQueue<UdpReceiveResult> awaitHandle = new ConcurrentQueue<UdpReceiveResult>();
+        protected ConcurrentQueue<UdpReceiveResult> awaitHandle;
         protected Action onConnect;
         protected Action onDisconnect;
         public UdpService()
         {
             //构造传入0表示接收任意端口收发的数据
             udpSocket = new UdpClient(0);
+            awaitHandle = new ConcurrentQueue<UdpReceiveResult>();
         }
         public virtual void SetHeartbeat(IHeartbeat heartbeat) { }
         /// <summary>

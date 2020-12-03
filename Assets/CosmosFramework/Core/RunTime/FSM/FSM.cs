@@ -12,8 +12,8 @@ namespace Cosmos.FSM{
         public T Owner { get { return owner; } private set { owner = value; } }
         FSMState<T> currentState;
         public FSMState<T> CurrentState { get { return currentState; } }
-        FSMVariable data;
-        public FSMVariable CurrentData { get { return data; } }
+        Variable data;
+        public Variable CurrentData { get { return data; } }
         bool isDestoryed;
         public bool IsDestoryed { get { return isDestoryed; } private set { isDestoryed = value; } }
         FSMState<T> defaultState;
@@ -22,7 +22,7 @@ namespace Cosmos.FSM{
         /// state存储的类型为派生类
         /// </summary>
         Dictionary<Type, FSMState<T>> fsmStateDict = new Dictionary<Type, FSMState<T>>();
-        Dictionary<string, FSMVariable> fsmDataDict = new Dictionary<string, FSMVariable>();
+        Dictionary<string, Variable> fsmDataDict = new Dictionary<string, Variable>();
         public override int FSMStateCount { get { return fsmStateDict.Count; } }
         public override bool IsRunning { get { return currentState != null; } }
         public override Type OwnerType { get { return typeof(T); } }
@@ -225,24 +225,24 @@ namespace Cosmos.FSM{
         }
         #endregion
         #region Data
-        public void SetData(string dataName, FSMVariable data)
+        public void SetData(string dataName, Variable data)
         {
             if (string.IsNullOrEmpty(dataName))
                 Utility.Debug.LogError("Data name is invalid !");
             fsmDataDict[dataName] = data;
         }
         public void SetData<TData>(string dataName, TData data)
-            where TData : FSMVariable
+            where TData : Variable
         {
             if (string.IsNullOrEmpty(dataName))
                 Utility.Debug.LogError("Data name is invalid !");
             fsmDataDict[dataName] = data;
         }
-        public FSMVariable GetData(string dataName)
+        public Variable GetData(string dataName)
         {
             if (string.IsNullOrEmpty(dataName))
                 Utility.Debug.LogError("Data name is invalid !");
-            FSMVariable data = null;
+            Variable data = null;
             if (fsmDataDict.TryGetValue(dataName, out data))
             {
                 return data;
@@ -250,7 +250,7 @@ namespace Cosmos.FSM{
             return null;
         }
         public TData GetData<TData>(string dataName)
-            where TData : FSMVariable
+            where TData : Variable
         {
             return (TData)GetData(dataName);
         }

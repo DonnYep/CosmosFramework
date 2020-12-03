@@ -21,7 +21,7 @@ namespace Cosmos
                 if (deactiveObjectMount == null)
                 {
                     deactiveObjectMount = new GameObject(this.gameObject.name + "->>DeactiveObjectMount");
-                    deactiveObjectMount.transform.SetParent(GameManagerAgent.Instance.transform);
+                    deactiveObjectMount.transform.SetParent(MonoGameManager.Instance.transform);
                     deactiveObjectMount.transform.ResetLocalTransform();
                 }
                 return deactiveObjectMount.transform;
@@ -55,7 +55,11 @@ namespace Cosmos
         /// </summary>
         public virtual void DespawnUncollectible()
         {
-            GameManagerAgent.KillObjects(UncollectibleHashSet);
+            foreach (var go in UncollectibleHashSet)
+            {
+                GameObject.Destroy(go);
+            }
+            UncollectibleHashSet.Clear();
         }
         protected abstract void RegisterSpawner();
         /// <summary>
@@ -64,7 +68,7 @@ namespace Cosmos
         protected virtual void DeregisterSpawner()
         {
             GameManager.GetModule<IObjectPoolManager>().DeregisterSpawnPool(this);
-            GameManagerAgent.KillObject(deactiveObjectMount);
+            GameObject.Destroy(deactiveObjectMount);
         }
         protected virtual void SpawnHandler(GameObject go)
         {
@@ -131,7 +135,7 @@ namespace Cosmos
             go.transform.SetParent(ActiveObjectMount);
         }
         //TODO Spawn后随机旋转
-        protected void AlignObject(ObjectPoolDataSet poolDataSet, GameObject go, Transform trans)
+        protected void AlignObject(ObjectPoolDataset poolDataSet, GameObject go, Transform trans)
         {
             ObjectSpawnAlignType alignType = poolDataSet.AlignType;
             if (trans == null)

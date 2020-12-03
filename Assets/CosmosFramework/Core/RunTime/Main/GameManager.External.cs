@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    internal static partial class GameManager
+    public static partial class GameManager
     {
         /// <summary>
         /// 自定义模块容器；
@@ -22,7 +22,7 @@ namespace Cosmos
         /// <typeparam name="TModule">实现模块功能的类对象</typeparam>
         /// <returns>获取的模块</returns>
         public static TModule ExternalModule<TModule>()
-            where TModule : Module, new()
+            where TModule : class , IModuleManager
         {
             Type type = typeof(TModule);
             Module module = default;
@@ -54,7 +54,6 @@ namespace Cosmos
                         {
                             module.OnInitialization();
                             Utility.Debug.LogInfo($"Custome Module :{module} is OnInitialization");
-                            GameManager.RefreshHandler+= module.OnRefresh;
                         }
                     }
                     catch
@@ -78,6 +77,16 @@ namespace Cosmos
             foreach (var module in externalModuleDict.Values)
             {
                 module.OnPreparatory();
+            }
+            ExternalListenRefresh();
+        }
+        static void ExternalListenRefresh()
+        {
+            foreach (var module in externalModuleDict.Values)
+            {
+                GameManager.RefreshHandler += module.OnRefresh;
+                GameManager.LateRefreshHandler += module.OnLateRefresh;
+                GameManager.FixedRefreshHandler += module.OnFixRefresh;
             }
         }
     }

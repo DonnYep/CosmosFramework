@@ -116,7 +116,7 @@ namespace Cosmos
                         for (int i = 0; i < ts.Length; i++)
                         {
                             if (ts[i] != null)
-                                GameManager.KillObject(go);
+                                GameObject.DestroyImmediate(go);
                         }
                         t = go.AddComponent<T>();
                     }

@@ -1,25 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Object = UnityEngine.Object;
-using Cosmos.Event;
-using Cosmos.UI;
-using Cosmos.Mono;
-using Cosmos.Input;
-using Cosmos.Scene;
-using Cosmos.ObjectPool;
-using Cosmos.Audio;
-using Cosmos.Resource;
-using Cosmos.Reference;
-using Cosmos.Controller;
-using Cosmos.FSM;
-using Cosmos.Data;
-using Cosmos.Config;
-using Cosmos.Network;
-using Cosmos.Entity;
-using Cosmos.Hotfix;
 using System;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Cosmos
 {
@@ -28,7 +10,7 @@ namespace Cosmos
     /// 管理器对象都会通过这个对象的实例来调用，避免复杂化
     /// 可以理解为是一个Facade
     /// </summary>
-    internal static partial class GameManager
+    public static partial class GameManager
     {
         #region Properties
         public static event Action FixedRefreshHandler
@@ -86,27 +68,27 @@ namespace Cosmos
         static GameObject instanceObject;
         #endregion
         #region Methods
-        public static void OnPause()
+        internal static void OnPause()
         {
             IsPause = true;
         }
-        public static void OnUnPause()
+        internal static void OnUnPause()
         {
             IsPause = false;
         }
-        public static void OnRefresh()
+        internal static void OnRefresh()
         {
             if (IsPause)
                 return;
             refreshHandler?.Invoke();
         }
-        public static void OnLateRefresh()
+        internal static void OnLateRefresh()
         {
             if (IsPause)
                 return;
             lateRefreshHandler?.Invoke();
         }
-        public static void OnFixRefresh()
+        internal static void OnFixRefresh()
         {
             if (IsPause)
                 return;
@@ -151,7 +133,7 @@ namespace Cosmos
         public static GameObject GetModuleMount<T>() where T : class, IModuleManager
         {
             Type interfaceType = typeof(T);
-            Type derivedType=null;
+            Type derivedType = null;
             var hasType = interfaceModuleDict.TryGetValue(interfaceType, out derivedType);
             if (!hasType)
             {
@@ -172,7 +154,7 @@ namespace Cosmos
                 moduleMount.transform.SetParent(InstanceObject.transform);
                 if (!moduleMountDict.TryAdd(derivedType, moduleMount))
                 {
-                    KillObjectImmediate(moduleMount);
+                    GameObject.Destroy(moduleMount);
                 }
             }
             return moduleMount;
@@ -186,7 +168,7 @@ namespace Cosmos
                 interfaceModuleDict = new Dictionary<Type, Type>();
                 try
                 {
-                    InstanceObject.gameObject.AddComponent<GameManagerAgent>();
+                    InstanceObject.gameObject.AddComponent<MonoGameManager>();
                 }
                 catch (Exception e)
                 {
@@ -210,37 +192,6 @@ namespace Cosmos
         /// 默认延迟为0，表示立刻删除、
         /// 仅在场景中删除对应对象
         /// </summary>
-        internal static void KillObject(Object obj, float delay = 0)
-        {
-            GameObject.Destroy(obj, delay);
-        }
-        /// <summary>
-        /// 立刻清理实例对象
-        /// 会在内存中清理实例
-        /// </summary>
-        internal static void KillObjectImmediate(Object obj)
-        {
-            GameObject.DestroyImmediate(obj);
-        }
-        /// <summary>
-        /// 清除一组实例
-        /// </summary>
-        internal static void KillObjects<T>(List<T> objs) where T : Object
-        {
-            for (int i = 0; i < objs.Count; i++)
-            {
-                GameObject.Destroy(objs[i]);
-            }
-            objs.Clear();
-        }
-        internal static void KillObjects<T>(HashSet<T> objs) where T : Object
-        {
-            foreach (var obj in objs)
-            {
-                GameObject.Destroy(obj);
-            }
-            objs.Clear();
-        }
         static void ModuleInitialization(Module module)
         {
             var type = module.GetType();
@@ -291,17 +242,20 @@ namespace Cosmos
         }
         static void PrepareModule()
         {
-            foreach (var mgr in moduleDict.Values)
+            foreach (var module in moduleDict.Values)
             {
-                var module = mgr as Module;
                 module.OnPreparatory();
-                RefreshHandler += module.OnRefresh;
-                FixedRefreshHandler += module.OnFixRefresh;
-                LateRefreshHandler += module.OnLateRefresh;
             }
+            InnerListenRefresh();
         }
-        static void AssignModuleProperties()
+        static void InnerListenRefresh()
         {
+            foreach (var module in externalModuleDict.Values)
+            {
+                GameManager.RefreshHandler += module.OnRefresh;
+                GameManager.LateRefreshHandler += module.OnLateRefresh;
+                GameManager.FixedRefreshHandler += module.OnFixRefresh;
+            }
         }
         #endregion
     }

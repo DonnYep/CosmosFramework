@@ -8,7 +8,7 @@ using System;
 /// </summary>
 [CreateAssetMenu(fileName = "NewInventory", menuName = "CosmosFramework/Implement/InventoryDataSet/Inventory")]
 [Serializable]
-public class InventoryDataSet : CFDataSet
+public class InventoryDataSet : DatasetBase
 {
     [SerializeField]
      int inventoryCapacity = 0;

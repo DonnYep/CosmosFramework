@@ -15,7 +15,7 @@ public class LRUTester: MonoBehaviour
             if (deactiveObjectMount == null)
             {
                 deactiveObjectMount = new GameObject(this.gameObject.name + "->>DeactiveObjectMount");
-                deactiveObjectMount.transform.SetParent(GameManagerAgent.Instance.transform);
+                deactiveObjectMount.transform.SetParent(MonoGameManager.Instance.transform);
                 deactiveObjectMount.transform.ResetLocalTransform();
             }
             return deactiveObjectMount.transform;
@@ -36,7 +36,7 @@ public class LRUTester: MonoBehaviour
         get
         {
             Transform tran = GameManager.GetModuleMount<IObjectPoolManager>().transform;
-            tran.SetParent(GameManagerAgent.Instance.transform);
+            tran.SetParent(MonoGameManager.Instance.transform);
             return tran;
         }
     }

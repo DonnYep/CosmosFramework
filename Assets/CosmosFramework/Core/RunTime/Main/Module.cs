@@ -8,23 +8,8 @@ namespace Cosmos
     /// 模块的抽象基类；
     /// 外部可扩展；
     /// </summary>
-    public abstract class Module: IControllableBehaviour, IMountPoint, IOperable
+    public abstract class Module: IControllableBehaviour,  IOperable
     {
-        #region IMountPoint
-        GameObject mountPoint;
-        public GameObject MountPoint
-        {
-            get
-            {
-                if (mountPoint == null)
-                {
-                    mountPoint = new GameObject("Module-->>Container");
-                    mountPoint.transform.SetParent(GameManager.InstanceObject.transform);
-                }
-                return mountPoint;
-            }
-        }
-        #endregion
         public bool IsPause { get; protected set; }
         #region Methods
         #region interface IModule
@@ -33,14 +18,9 @@ namespace Cosmos
         /// </summary>
         public virtual void OnInitialization(){}
         /// <summary>
-        /// 非空虚函数，停止模块
-        /// 在子类调用时，建议保留执行父类函数
+        /// 空虚函数，停止模块
         /// </summary>
-        public virtual void OnTermination()
-        {
-            //TODO 生命周期销毁问题 ，module
-            mountPoint = null;
-        }
+        public virtual void OnTermination(){}
         /// <summary>
         /// 非空虚函数
         /// 覆写时请尽量保留父类方法

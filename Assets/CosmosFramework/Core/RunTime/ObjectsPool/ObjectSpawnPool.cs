@@ -65,7 +65,7 @@ namespace Cosmos.ObjectPool
         {
             if (ObjectCount >= ObjectPoolManager._ObjectPoolCapacity)
             {
-                GameManager.KillObject(go);//超出部分被销毁
+                GameObject.Destroy(go);//超出部分被销毁
             }
             else
             {
@@ -82,7 +82,7 @@ namespace Cosmos.ObjectPool
             {
                 GameObject go = objectList[0];
                 objectList.RemoveAt(0);
-                GameManager.KillObject(go);
+                GameObject.Destroy(go);
             }
         }
     }
