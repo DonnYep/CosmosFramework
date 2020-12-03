@@ -33,6 +33,8 @@ namespace Cosmos.UI
         }
         protected virtual void Awake()
         {
+            uiDict = new Dictionary<string, List<UIBehaviour>>();
+            uiManager = GameManager.GetModule<IUIManager>();
             if (AutoGetChildPanels)
             {
                 GetChildPanels<Button>();
@@ -42,8 +44,6 @@ namespace Cosmos.UI
                 GetChildPanels<Image>();
                 GetChildPanels<InputField>();
             }
-            uiDict= new Dictionary<string, List<UIBehaviour>>();
-            uiManager = GameManager.GetModule<IUIManager>();
             OnInitialization();
         }
         protected abstract void OnInitialization();
