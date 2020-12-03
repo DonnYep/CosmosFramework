@@ -14,20 +14,12 @@ public class NavigatePanel : UILogicResident
     IUIManager uiManager;
     protected override void OnInitialization()
     {
-        GetUIPanel<Button>("BtnWelcome").onClick.AddListener(WelcomeClick);
-        GetUIPanel<Button>("BtnInventory").onClick.AddListener(InventoryClick);
-        GetUIPanel<Button>("BtnStore").onClick.AddListener(StoreClick);
-        GetUIPanel<Button>("BtnStatus").onClick.AddListener(StatusClick);
-        GetUIPanel<Button>("BtnSetting").onClick.AddListener(SettingClick);
         uiManager = GameManager.GetModule<IUIManager>();
-    }
-    protected override void OnTermination()
-    {
-        GetUIPanel<Button>("BtnWelcome").onClick.RemoveAllListeners();
-        GetUIPanel<Button>("BtnInventory").onClick.RemoveAllListeners();
-        GetUIPanel<Button>("BtnStore").onClick.RemoveAllListeners();
-        GetUIPanel<Button>("BtnStatus").onClick.RemoveAllListeners();
-        GetUIPanel<Button>("BtnSetting").onClick.RemoveAllListeners();
+        GetUIForm<Button>("BtnWelcome").onClick.AddListener(WelcomeClick);
+        GetUIForm<Button>("BtnInventory").onClick.AddListener(InventoryClick);
+        GetUIForm<Button>("BtnStore").onClick.AddListener(StoreClick);
+        GetUIForm<Button>("BtnStatus").onClick.AddListener(StatusClick);
+        GetUIForm<Button>("BtnSetting").onClick.AddListener(SettingClick);
     }
     /// <summary>
     /// welcome panel 是临时类型，因此当panel存在时，点击移除，不存在时则载入
@@ -47,7 +39,7 @@ public class NavigatePanel : UILogicResident
     {
         if (inventory == null)
         {
-            uiManager.ShowPanel<InventoryPanel>(Utility.UI.GetUIFullRelativePath("InventoryPanel"), panel =>
+            uiManager.ShowPanel<InventoryPanel>(panel =>
             { panel.gameObject.name = "InventoryPanel"; panel.gameObject.SetActive(true); inventory = panel; });
             return;
         }

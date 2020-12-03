@@ -14,13 +14,13 @@ public class SceneLoader : UILogicResident
 
     protected override void OnInitialization()
     {
-        GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
-        inputTargetLevel = GetUIPanel<InputField>("InputTargetLevel");
+        GetUIForm<Button>("BtnLoad").onClick.AddListener(LoadClick);
+        inputTargetLevel = GetUIForm<InputField>("InputTargetLevel");
         sceneManager = GameManager.GetModule<ISceneManager>();
     }
     protected override void OnTermination()
     {
-        GetUIPanel<Button>("BtnLoad").onClick.RemoveAllListeners();
+        GetUIForm<Button>("BtnLoad").onClick.RemoveAllListeners();
     }
     void LoadClick()
     {

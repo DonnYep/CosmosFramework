@@ -9,11 +9,11 @@ public class StorePanel : UILogicResident
 {
     protected override void OnInitialization()
     {
-        GetUIPanel<Button>("BtnQuit").onClick.AddListener(QuitClick);
+        GetUIForm<Button>("BtnQuit").onClick.AddListener(QuitClick);
     }
     protected override void OnTermination()
     {
-        GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
+        GetUIForm<Button>("BtnQuit").onClick.RemoveAllListeners();
     }
     void QuitClick()
     {

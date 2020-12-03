@@ -11,6 +11,7 @@ namespace Cosmos
     /// <summary>
     /// 仅测试
     /// </summary>
+    [PrefabUnit("UI/InventoryPanel")]
     public class InventoryPanel : UILogicResident
     {
         [SerializeField] InventoryDataSet inventoryDataSet;
@@ -30,19 +31,15 @@ namespace Cosmos
         protected override void OnInitialization()
         {
             eventManager = GameManager.GetModule<IEventManager>();
-            GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
-            GetUIPanel<Button>("BtnQuit").onClick.AddListener(QuitClick);
-            GetUIPanel<Button>("BtnSave").onClick.AddListener(SaveClick);
-            GetUIPanel<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
-            txtDescription = GetUIPanel<Text>("TxtDescription");
+            GetUIForm<Button>("BtnLoad").onClick.AddListener(LoadClick);
+            GetUIForm<Button>("BtnQuit").onClick.AddListener(QuitClick);
+            GetUIForm<Button>("BtnSave").onClick.AddListener(SaveClick);
+            GetUIForm<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
+            txtDescription = GetUIForm<Text>("TxtDescription");
             eventManager.AddListener(UIIEventDefine.UI_IMPL_ITEM_DESC, UpdateItemHandler);
         }
         protected override void OnTermination()
         {
-            GetUIPanel<Button>("BtnLoad").onClick.RemoveAllListeners();
-            GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
-            GetUIPanel<Button>("BtnSave").onClick.RemoveAllListeners();
-            GetUIPanel<Button>("BtnUpdate").onClick.RemoveAllListeners();
             eventManager.RemoveListener(UIIEventDefine.UI_IMPL_ITEM_DESC, UpdateItemHandler);
         }
         private void Start()

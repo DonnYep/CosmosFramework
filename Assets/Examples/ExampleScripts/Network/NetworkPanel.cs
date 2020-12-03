@@ -23,14 +23,14 @@ public class NetworkPanel : UILogicResident
     protected override void OnInitialization()
     {
         networkManager = GameManager.GetModule<INetworkManager>();
-        btnConnect = GetUIPanel<Button>("BtnConnect");
+        btnConnect = GetUIForm<Button>("BtnConnect");
         btnConnect.onClick.AddListener(ConnectClick);
-        btnDisconnect = GetUIPanel<Button>("BtnDisconnect");
+        btnDisconnect = GetUIForm<Button>("BtnDisconnect");
         btnDisconnect.onClick.AddListener(DisconnectClick);
-        btnSend = GetUIPanel<Button>("BtnSend");
+        btnSend = GetUIForm<Button>("BtnSend");
         btnSend.onClick.AddListener(SendClick);
-        info = GetUIPanel<Text>("Info");
-        inputMsg = GetUIPanel<InputField>("InputMsg");
+        info = GetUIForm<Text>("Info");
+        inputMsg = GetUIForm<InputField>("InputMsg");
         netClient = new NetClient();
         netClient.NetworkConnect += ConnectCallback;
         netClient.NetworkDisconnect += DisconnectCallback;

@@ -84,9 +84,9 @@ public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHa
     protected override void OnInitialization()
     {
         uip = GameManager.GetModule<Cosmos.Reference.IReferencePoolManager>().Spawn<LogicEventArgs<string>>();
-        GetUIPanel<Button>("Item").onClick.AddListener(IItemClick);
-        imgItem = GetUIPanel<Image>("Item");
-        txtNumber= GetUIPanel<Text>("TxtNumber");
+        GetUIForm<Button>("Item").onClick.AddListener(IItemClick);
+        imgItem = GetUIForm<Image>("Item");
+        txtNumber= GetUIForm<Text>("TxtNumber");
         PreviouseParent = transform.parent;
     }
     void IItemClick()

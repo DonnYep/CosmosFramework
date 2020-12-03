@@ -17,8 +17,8 @@ namespace Cosmos.UI
         /// <summary>
         /// 是否自动注册获取当前节点下的UIBehaviour对象
         /// </summary>
-        protected virtual bool AutoGetChildPanels { get; set; } = true;
-        public virtual string UILogicName { get { return gameObject.name; } }
+        protected virtual bool AutoGetChildUIForm { get; set; } = true;
+        public virtual string UIName { get { return gameObject.name; } }
         /// <summary>
         /// 空虚函数
         /// </summary>
@@ -27,7 +27,7 @@ namespace Cosmos.UI
         /// 空虚函数
         /// </summary>
         public virtual void HidePanel() { }
-        public bool HasPanel(string name)
+        public bool HasUIForm(string name)
         {
             return uiDict.ContainsKey(name);
         }
@@ -35,22 +35,22 @@ namespace Cosmos.UI
         {
             uiDict = new Dictionary<string, List<UIBehaviour>>();
             uiManager = GameManager.GetModule<IUIManager>();
-            if (AutoGetChildPanels)
+            if (AutoGetChildUIForm)
             {
-                GetChildPanels<Button>();
-                GetChildPanels<Text>();
-                GetChildPanels<Slider>();
-                GetChildPanels<ScrollRect>();
-                GetChildPanels<Image>();
-                GetChildPanels<InputField>();
+                GetChildUIForm<Button>();
+                GetChildUIForm<Text>();
+                GetChildUIForm<Slider>();
+                GetChildUIForm<ScrollRect>();
+                GetChildUIForm<Image>();
+                GetChildUIForm<InputField>();
             }
             OnInitialization();
         }
         protected abstract void OnInitialization();
-        protected T GetUIPanel<T>(string name)
+        protected T GetUIForm<T>(string name)
             where T : UIBehaviour
         {
-            if (HasPanel(name))
+            if (HasUIForm(name))
             {
                 short listCount = (short)uiDict[name].Count;
                 for (short i = 0; i < listCount; i++)
@@ -66,7 +66,7 @@ namespace Cosmos.UI
         /// 获取默认节点下的UIBehaviour；
         /// </summary>
         /// <typeparam name="T">目标类型</typeparam>
-        protected void GetChildPanels<T>()
+        protected void GetChildUIForm<T>()
             where T : UIBehaviour
         {
             T[] uiPanels = GetComponentsInChildren<T>();
@@ -90,7 +90,7 @@ namespace Cosmos.UI
         /// </summary>
         /// <typeparam name="T">UGUI目标类型</typeparam>
         /// <param name="root">目标节点</param>
-        protected void GetChildPanels<T>(Transform root)
+        protected void GetChildUIForm<T>(Transform root)
             where T : UIBehaviour
         {
             T[] uiPanels = root.GetComponentsInChildren<T>();
@@ -118,10 +118,6 @@ namespace Cosmos.UI
         /// 空虚函数
         /// </summary>
         protected virtual void OnTermination() { }
-        /// <summary>
-        /// 非空虚函数，此虚方法内部已实现SetPanelActive(true)
-        /// </summary>
-        protected virtual void ShowPanelHandler(object sender, GameEventArgs args) { SetPanelActive(true); }
         protected virtual void SetPanelActive(bool state) { gameObject.SetActive(state); }
     }
 }

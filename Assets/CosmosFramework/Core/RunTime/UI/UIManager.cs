@@ -74,7 +74,7 @@ namespace Cosmos.UI
         /// 基于Resources
         /// </summary>
         /// <typeparam name="T"> UILogicBase</typeparam>
-        /// <param name="panelName">相对完整路径</param>
+        /// <param name="panelName">panel类的UILogicName</param>
         /// <param name="callBack">仅在载入时回调</param>
         public void LoadPanel<T>(string panelName, Action<T> callBack = null)
             where T : UILogicBase
@@ -120,26 +120,26 @@ namespace Cosmos.UI
         /// 基于Resources
         /// </summary>
         /// <typeparam name="T"> UILogicBase</typeparam>
-        /// <param name="panelName">相对完整路径</param>
+        /// <param name="panelResPath">Panel预制体的完整路径</param>
         /// <param name="callBack">仅在载入时回调</param>
-        public void ShowPanel<T>(string panelName, Action<T> callBack = null)
+        public void ShowPanel<T>(string panelResPath, Action<T> callBack = null)
             where T : UILogicBase
         {
-            if (HasPanel(panelName))
+            if (HasPanel(panelResPath))
             {
-                var panel = uiPanelDict[panelName] as T;
+                var panel = uiPanelDict[panelResPath] as T;
                 panel.gameObject.SetActive(true);
-                callBack?.Invoke(uiPanelDict[panelName] as T);
+                callBack?.Invoke(uiPanelDict[panelResPath] as T);
                 return;
             }
-            resourceManager.LoadResAysnc<GameObject>(panelName, go =>
+            resourceManager.LoadResAysnc<GameObject>(panelResPath, go =>
             {
                 GameObject result = go;
                 result.transform.SetParent(MainUICanvas.transform);
                 (result.transform as RectTransform).ResetLocalTransform();
                 T panel = result.GetComponent<T>();
                 callBack?.Invoke(panel);
-                uiPanelDict.Add(panelName, panel);
+                uiPanelDict.Add(panel.UIName, panel);
             });
         }
         /// <summary>
@@ -153,13 +153,16 @@ namespace Cosmos.UI
             Type type = typeof(T);
             PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
             if (attribute == null)
+            {
+                Utility.Debug.LogError($"Type:{type} has no PrefabUnitAttribute");
                 return;
+            }
             resourceManager.LoadResPrefabAsync<T>(panel =>
             {
                 panel.transform.SetParent(MainUICanvas.transform);
                 (panel.transform as RectTransform).ResetLocalTransform();
                 callBack?.Invoke(panel);
-                uiPanelDict.Add(panel.gameObject.name, panel);
+                uiPanelDict.Add(panel.UIName, panel);
             });
         }
         public void HidePanel(string panelName)
@@ -172,7 +175,7 @@ namespace Cosmos.UI
             if (uiPanelDict.TryRemove(panelName, out var panel))
                 GameObject.Destroy(panel);
             else
-                Utility.Debug.LogError("UIManager-->>" + "Panel :" + panelName + " not exist !");
+                Utility.Debug.LogError("UIManager-->>" + "Panel :" + panelName + "is not exist !");
         }
         public void RemovePanel<T>()
             where T : UILogicBase
@@ -184,7 +187,7 @@ namespace Cosmos.UI
             if (uiPanelDict.TryRemove(attribute.PrefabName, out var panel))
                 GameObject.Destroy(panel);
             else
-                Utility.Debug.LogError("UIManager-->>" + "Panel :" + attribute.PrefabName + "  not exist !");
+                Utility.Debug.LogError("UIManager-->>" + "Panel :" + attribute.PrefabName + "is not exist !");
         }
         public bool HasPanel(string panelName)
         {

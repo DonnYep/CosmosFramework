@@ -17,14 +17,14 @@ public class LoadPanel : UILogicResident
 
     protected override void OnInitialization()
     {
-        GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
-        inputLoadLevel = GetUIPanel<InputField>("InputLoadLevel");
-        inputTargetLevel = GetUIPanel<InputField>("InputTargetLevel");
+        GetUIForm<Button>("BtnLoad").onClick.AddListener(LoadClick);
+        inputLoadLevel = GetUIForm<InputField>("InputLoadLevel");
+        inputTargetLevel = GetUIForm<InputField>("InputTargetLevel");
         sceneManager = GameManager.GetModule<ISceneManager>();
     }
     protected override void OnTermination()
     {
-        GetUIPanel<Button>("BtnLoad").onClick.RemoveAllListeners();
+        GetUIForm<Button>("BtnLoad").onClick.RemoveAllListeners();
     }
     void LoadClick()
     {

@@ -16,8 +16,8 @@ public class LoadingScenePanel : UILogicResident
 
     protected override void OnInitialization()
     {
-        txtProgress = GetUIPanel<Text>("TxtProgress");
-        sldProgress = GetUIPanel<Slider>("SldProgress");
+        txtProgress = GetUIForm<Text>("TxtProgress");
+        sldProgress = GetUIForm<Slider>("SldProgress");
         sceneManager = GameManager.GetModule<ISceneManager>();
         LoadLevel();
     }
