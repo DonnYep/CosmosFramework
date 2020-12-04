@@ -59,21 +59,15 @@ namespace Cosmos
             animator = GetComponentInChildren<Animator>();
             controllerEventArgs = new LogicEventArgs<CameraTarget>().SetData(GetComponentInChildren<CameraTarget>());
             GameManager.GetModule<IInputManager>().SetInputDevice(new StandardInputDevice());
-            //Facade.RegisterController(this);
             inputManager = GameManager.GetModule<IInputManager>();
         }
-        protected override void OnDestroy()
-        {
-            //Facade.DeregisterController(this);
-        }
-
         private void Start()
         {
-            GameManager.GetModule<Event.IEventManager>().DispatchEvent(ControllerEventDefine.CTRL_INPUT, this, controllerEventArgs);
+            GameManager.GetModule<IEventManager>().DispatchEvent(ControllerEventDefine.CTRL_INPUT, this, controllerEventArgs);
         }
         void MatchRotation()
         {
-            var cameraController = GameManager.GetModule<Controller.IControllerManager>().GetController<CameraController>(c=>c.ControllerName==cameraControllerName);
+            var cameraController = GameManager.GetModule<IControllerManager>().GetController<CameraController>(c=>c.ControllerName==cameraControllerName);
             if (cameraController == null)
             {
                 Utility.Debug.LogInfo("cameraController empty", MessageColor.RED);

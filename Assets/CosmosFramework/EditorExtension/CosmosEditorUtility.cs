@@ -1,10 +1,4 @@
-﻿//====================================
-//* Author :Don
-//* CreateTime :2020-12-03 09:34:15
-//* Version :
-//* Description :
-//==================================== 
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

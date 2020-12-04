@@ -4,18 +4,8 @@ using System;
 namespace Cosmos
 {
     [AttributeUsage(AttributeTargets.Class,AllowMultiple =false,Inherited =false)]
-    public class ResourceUnitAttribute : Attribute
+    public class AssetAttribute : Attribute
     {
-        public ResourceUnitAttribute(string assetBundleName, string assetPath, string resourcePath)
-        {
-            AssetBundleName = assetBundleName;
-            AssetPath = assetPath;
-            ResourcePath = resourcePath;
-        }
-        public ResourceUnitAttribute(string resourcePath) : this(null, null, resourcePath)
-        {
-            ResourcePath = resourcePath;
-        }
         /// <summary>
         /// AB包名
         /// </summary>
@@ -28,5 +18,15 @@ namespace Cosmos
         /// 基于Resource的资源路径
         /// </summary>
         public string ResourcePath { get; private set; }
+        public AssetAttribute(string assetBundleName, string assetPath, string resourcePath)
+        {
+            AssetBundleName = assetBundleName;
+            AssetPath = assetPath;
+            ResourcePath = resourcePath;
+        }
+        public AssetAttribute(string resourcePath) : this(null, null, resourcePath)
+        {
+            ResourcePath = resourcePath;
+        }
     }
 }

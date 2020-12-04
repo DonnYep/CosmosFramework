@@ -9,7 +9,7 @@ namespace Cosmos.UI
     {
         public override void HidePanel()
         {
-            uiManager.RemovePanel(UIName);
+            uiManager.RemoveUI(UIName);
         }
     }
 }

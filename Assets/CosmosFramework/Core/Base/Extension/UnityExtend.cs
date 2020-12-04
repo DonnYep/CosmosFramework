@@ -38,5 +38,13 @@ namespace Cosmos
         {
             return time.ToString("yyyy/MM/dd HH:mm:ss");
         }
+        public static RectTransform RectTransform(this  GameObject go)
+        {
+            return go.GetComponent<RectTransform>();
+        }
+        public static T Convert<T>(this object source)where T:class
+        {
+            return source as T;
+        }
     }
 }

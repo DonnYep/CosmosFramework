@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
-namespace Cosmos.Scene
+namespace Cosmos
 {
     public interface ISceneManager:IModuleManager
     {

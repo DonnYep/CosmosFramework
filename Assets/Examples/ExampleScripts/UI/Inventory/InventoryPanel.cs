@@ -11,7 +11,7 @@ namespace Cosmos
     /// <summary>
     /// 仅测试
     /// </summary>
-    [PrefabUnit("UI/InventoryPanel")]
+    [PrefabAsset("UI/InventoryPanel")]
     public class InventoryPanel : UILogicResident
     {
         [SerializeField] InventoryDataSet inventoryDataSet;

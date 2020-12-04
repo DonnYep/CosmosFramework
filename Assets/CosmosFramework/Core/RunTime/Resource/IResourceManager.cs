@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.Resource;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,20 +7,20 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Cosmos.Resource
+namespace Cosmos
 {
     public interface IResourceManager: IModuleManager
     {
         #region  Resources 
-        T LoadResAsset<T>(string path, bool instantiate = false) where T : UnityEngine.Object;
+        T LoadResource<T>(string path, bool instantiate = false) where T : UnityEngine.Object;
         /// <summary>
         /// 利用挂载特性的泛型对象同步加载Prefab；
         /// </summary>
         /// <typeparam name="T">需要加载的类型</typeparam>
         /// <param name="instantiate">是否生实例化对象</param>
         /// <returns>返回实体化或未实例化的资源对象</returns>
-        GameObject LoadResPrefab<T>(bool instantiate) where T : MonoBehaviour;
-        T LoadResPrefab<T>() where T : MonoBehaviour;
+        GameObject LoadPrefab<T>(bool instantiate) where T : MonoBehaviour;
+        T LoadPrefab<T>() where T : MonoBehaviour;
         /// <summary>
         /// 利用挂载特性的泛型对象同步加载PrefabObject；
         /// </summary>
@@ -27,25 +28,25 @@ namespace Cosmos.Resource
         /// <param name="go">载入的资源对象</param>
         /// <param name="instantiate">是否实例化</param>
         /// <returns>载入的对象</returns>
-        GameObject LoadResPrefabInstance<T>(bool instantiate = false) where T : class, IReference, new();
+        GameObject LoadPrefabInstance<T>(bool instantiate = false) where T : class, new();
         /// <summary>
         /// 利用挂载特性的泛型对象异步加载Prefab；
         /// </summary>
         /// <typeparam name="T">组件类型</typeparam>
         /// <param name="callBack">载入完毕后的回调</param>
-        void LoadResPrefabAsync<T>(Action<T> callBack = null) where T : MonoBehaviour;
+        void LoadPrefabAsync<T>(Action<T> callBack = null) where T : MonoBehaviour;
         /// <summary>
         /// 利用挂载特性的泛型对象异步加载Prefab；
         /// 泛型对象为Mono类型；
         /// </summary>
         /// <typeparam name="T">非Mono对象</typeparam>
         /// <param name="callBack">加载完毕后的回调</param>
-        void LoadResPrefabInstanceAsync<T>(Action<T, GameObject> callBack = null) where T : class, IReference, new();
-        T LoadResourceUnit<T>(bool instantiateGameObject = false) where T : UnityEngine.Component;
+        void LoadPrefabInstanceAsync<T>(Action< GameObject> callBack = null) where T : class,  new();
+        T LoadResource<T>(bool instantiateGameObject = false) where T : UnityEngine.Component;
         /// <summary>
         /// 异步加载资源,如果目标是Gameobject，则实例化
         /// </summary>
-        void LoadResAysnc<T>(string path, Action<T> callBack = null) where T : UnityEngine.Object;
+        void LoadResourceAysnc<T>(string path, Action<T> callBack = null) where T : UnityEngine.Object;
         /// <summary>
         /// 异步加载资源,不实例化任何类型
         /// </summary>

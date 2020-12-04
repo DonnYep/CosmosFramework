@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos.Network
+namespace Cosmos
 {
     public interface INetworkManager: IModuleManager
     {

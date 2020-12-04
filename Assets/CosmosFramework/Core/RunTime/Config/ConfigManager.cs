@@ -20,7 +20,14 @@ namespace Cosmos.Config
             var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IConfigProvider>();
             for (int i = 0; i < objs.Length; i++)
             {
-                objs[i].LoadConfig();
+                try
+                {
+                    objs[i].LoadConfig();
+                }
+                catch (Exception e)
+                {
+                    Utility.Debug.LogError(e);
+                }
             }
         }
         /// <summary>

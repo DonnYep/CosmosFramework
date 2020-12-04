@@ -27,10 +27,10 @@ public class NavigatePanel : UILogicResident
     void WelcomeClick()
     {
         if (welcome == null)
-            uiManager.ShowPanel<WelcomePanel>(panel =>
+            uiManager.OpenUI<WelcomePanel>(panel =>
             { panel.gameObject.SetActive(true); welcome = panel; });
         else
-            uiManager.RemovePanel<WelcomePanel>();
+            uiManager.RemoveUl<WelcomePanel>();
     }
     /// <summary>
     /// Invenmtory panel是常驻类型，若不存在，则载入；开启与关闭只进行显示与隐藏操作
@@ -39,7 +39,7 @@ public class NavigatePanel : UILogicResident
     {
         if (inventory == null)
         {
-            uiManager.ShowPanel<InventoryPanel>(panel =>
+            uiManager.OpenUI<InventoryPanel>(panel =>
             { panel.gameObject.name = "InventoryPanel"; panel.gameObject.SetActive(true); inventory = panel; });
             return;
         }
@@ -52,7 +52,7 @@ public class NavigatePanel : UILogicResident
     {
         if (store == null)
         {
-            uiManager.ShowPanel<StorePanel>(panel =>
+            uiManager.OpenUI<StorePanel>(panel =>
             { panel.gameObject.SetActive(true); store = panel; });
             return;
         }
@@ -65,7 +65,7 @@ public class NavigatePanel : UILogicResident
     {
         if (setting == null)
         {
-            uiManager.ShowPanel<SettingPanel>(panel => 
+            uiManager.OpenUI<SettingPanel>(panel => 
             { panel.gameObject.SetActive(true);setting = panel; });
             return;
         }
@@ -78,7 +78,7 @@ public class NavigatePanel : UILogicResident
     {
         if (status == null)
         {
-            uiManager.ShowPanel<StatusPanel>(panel => 
+            uiManager.OpenUI<StatusPanel>(panel => 
             { panel.gameObject.SetActive(true);status = panel; });
             return;
         }

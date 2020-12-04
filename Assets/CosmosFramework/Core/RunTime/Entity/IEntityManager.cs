@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Cosmos.Entity;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Cosmos.Entity
+namespace Cosmos
 {
     public interface IEntityManager:IModuleManager
     {

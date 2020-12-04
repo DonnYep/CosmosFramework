@@ -17,10 +17,10 @@ public class ResourceTester : MonoBehaviour
     }
     void Start()
     {
-       var go= resourceManager.LoadResPrefabInstance<ResourceUnitCube>(true);
+       var go= resourceManager.LoadPrefabInstance<ResourceUnitCube>(true);
         go.transform.position = new Vector3(3, 0, 0);
-        resourceManager.LoadResPrefabInstanceAsync<ResourceUnitSphere>(LoadDone);
-        var monoGo= resourceManager.LoadResPrefab<ResourceMonoUnitTester>(true);
+        //resourceManager.LoadPrefabInstanceAsync<ResourceUnitSphere>(LoadDone);
+        var monoGo= resourceManager.LoadPrefab<ResourceMonoUnitTester>(true);
         monoGo.transform.position = new Vector3(5, 0, 0);
     }
     void LoadDone(ResourceUnitSphere resUnit, GameObject go)
@@ -30,7 +30,7 @@ public class ResourceTester : MonoBehaviour
         resUnit.ResPrefab = go;
     }
 }
-[PrefabUnit("ResPrefab/ResPrefab_Cube")]
+[PrefabAsset("ResPrefab/ResPrefab_Cube")]
 public class ResourceUnitCube : IBehaviour, IReference
 {
     public GameObject ResPrefab { get; set; }
@@ -48,7 +48,7 @@ public class ResourceUnitCube : IBehaviour, IReference
         Utility.Debug.LogInfo("ResoureceUnitCube OnTermination! ", MessageColor.INDIGO);
     }
 }
-[PrefabUnit("ResPrefab/ResPrefab_Sphere")]
+[PrefabAsset("ResPrefab/ResPrefab_Sphere")]
 public class ResourceUnitSphere : IBehaviour, IReference
 {
     public GameObject ResPrefab { get; set; }

@@ -6,7 +6,7 @@ using Cosmos;
 /// Mono类型资源示例;
 /// 此类型会在资源生成时自动挂载在生成对象上
 /// </summary>
-[PrefabUnit("ResPrefab/ResPrefab_Mono")]
+[PrefabAsset("ResPrefab/ResPrefab_Mono")]
 public class ResourceMonoUnitTester : MonoBehaviour
 {
     private void Start()

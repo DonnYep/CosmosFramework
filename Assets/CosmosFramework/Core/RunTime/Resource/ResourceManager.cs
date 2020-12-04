@@ -22,7 +22,6 @@ using Object = UnityEngine.Object;
 using Cosmos.Mono;
 using Cosmos.Reference;
 using UnityEngine.Networking;
-
 namespace Cosmos.Resource
 {
     public enum ResourceLoadMode : byte
@@ -31,13 +30,13 @@ namespace Cosmos.Resource
         AssetBundle = 1
     }
     [Module]
-    internal sealed class ResourceManager : Module, IResourceManager
+    internal sealed class ResourceManager : Module // , IResourceManager
     {
         #region Properties
         //缓存的所有AssetBundle包 <AB包名称、AB包>
         Dictionary<string, AssetBundle> assetBundleDict;
         //所有AssetBundle验证的Hash128值 <AB包名称、Hash128值>
-        Dictionary<string, Hash128> assetBundleHashDict ;
+        Dictionary<string, Hash128> assetBundleHashDict;
         //所有AssetBundle资源包清单
         AssetBundleManifest assetBundleManifest;
         string assetBundleManifestName;
@@ -67,12 +66,12 @@ namespace Cosmos.Resource
         /// <param name="path">相对Resource路径</param>
         /// <param name="instantiate">是否实例化GameObject类型</param>
         /// <returns></returns>
-        public T LoadResAsset<T>(string path, bool instantiate = false)
+        public T LoadResource<T>(string path, bool instantiate = false)
             where T : UnityEngine.Object
         {
             T res = Resources.Load<T>(path);
             if (res == null)
-                throw new ArgumentNullException("ResourceManager-- >> " + "Assets: " + path + " not exist, check your path!");
+                throw new ArgumentNullException($"ResourceManager-- >> Assets: {path } not exist, check your path!");
             if (instantiate)
             {
                 if (res is GameObject)
@@ -89,34 +88,38 @@ namespace Cosmos.Resource
         /// <typeparam name="T">需要加载的类型</typeparam>
         /// <param name="instantiate">是否生实例化对象</param>
         /// <returns>返回实体化或未实例化的资源对象</returns>
-        public GameObject LoadResPrefab<T>(bool instantiate)
+        public GameObject LoadPrefab<T>(bool instantiate = false)
            where T : MonoBehaviour
         {
             Type type = typeof(T);
-            PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
+            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             GameObject prefab = default;
             if (attribute != null)
             {
                 prefab = Resources.Load<GameObject>(attribute.ResourcePath);
                 if (prefab == null)
-                    throw new ArgumentNullException("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
+                    throw new ArgumentNullException($"ResourceManager-->>Assets: {attribute.ResourcePath } not exist,check your path!");
                 if (instantiate)
                     prefab = Utility.Unity.Instantiate<T>(prefab).gameObject;
             }
+            else
+            {
+                Utility.Debug.LogError($"ResourceManager-->>Assets has  no attribute :{typeof(PrefabAssetAttribute)}:not exist,check your path!");
+            }
             return prefab;
         }
-        public T LoadResPrefab<T>()
-where T : MonoBehaviour
+        public T LoadPrefab<T>()
+            where T : MonoBehaviour
         {
             Type type = typeof(T);
-            PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
+            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             GameObject prefab = default;
             T Comp = default;
             if (attribute != null)
             {
                 prefab = Resources.Load<GameObject>(attribute.ResourcePath);
                 if (prefab == null)
-                    throw new ArgumentNullException("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
+                    throw new ArgumentNullException($"ResourceManager-->>Assets: {attribute.ResourcePath } not exist,check your path!");
                 Comp = Utility.Unity.Instantiate<T>(prefab);
             }
             return Comp;
@@ -128,19 +131,17 @@ where T : MonoBehaviour
         /// <param name="go">载入的资源对象</param>
         /// <param name="instantiate">是否实例化</param>
         /// <returns>载入的对象</returns>
-        public GameObject LoadResPrefabInstance<T>(bool instantiate = false)
-           where T : class, IReference, new()
+        public GameObject LoadPrefabInstance<T>(bool instantiate = false)
+           where T : class, new()
         {
             Type type = typeof(T);
-            PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
+            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             GameObject go = default;
-            T referObj = default;
             if (attribute != null)
             {
                 go = Resources.Load<GameObject>(attribute.ResourcePath);
                 if (go == null)
-                    throw new ArgumentNullException("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
-                referObj = referencePoolManager.Spawn<T>();
+                    throw new ArgumentNullException($"ResourceManager-->>Assets: {attribute.ResourcePath }not exist,check your path!");
                 if (instantiate)
                     go = GameObject.Instantiate(go);
             }
@@ -151,11 +152,11 @@ where T : MonoBehaviour
         /// </summary>
         /// <typeparam name="T">组件类型</typeparam>
         /// <param name="callBack">载入完毕后的回调</param>
-        public void LoadResPrefabAsync<T>(Action<T> callBack = null)
+        public void LoadPrefabAsync<T>(Action<T> callBack = null)
            where T : MonoBehaviour
         {
             Type type = typeof(T);
-            PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
+            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
                 monoManager.StartCoroutine(EnumLoadResPrefabAsync<T>(attribute.ResourcePath, callBack));
         }
@@ -165,26 +166,26 @@ where T : MonoBehaviour
         /// </summary>
         /// <typeparam name="T">非Mono对象</typeparam>
         /// <param name="callBack">加载完毕后的回调</param>
-        public void LoadResPrefabInstanceAsync<T>(Action<T, GameObject> callBack = null)
-           where T : class, IReference, new()
+        public void LoadPrefabInstanceAsync<T>(Action<GameObject> callBack = null)
+           where T : class, new()
         {
             Type type = typeof(T);
-            PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
+            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
                 monoManager.StartCoroutine(EnumLoadResPrefabInstanceAsync<T>(attribute.ResourcePath, callBack));
         }
-        public T LoadResourceUnit<T>(bool instantiateGameObject = false)
+        public T LoadResource<T>(bool instantiateGameObject = false)
            where T : UnityEngine.Component
         {
             Type type = typeof(T);
-            ResourceUnitAttribute attribute = type.GetCustomAttribute<ResourceUnitAttribute>();
+            AssetAttribute attribute = type.GetCustomAttribute<AssetAttribute>();
             T res = default;
             if (attribute != null)
             {
                 var go = Resources.Load<GameObject>(attribute.ResourcePath);
                 if (go == null)
                 {
-                    Utility.Debug.LogError("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
+                    Utility.Debug.LogError($"ResourceManager-->>Assets:{attribute.ResourcePath } not exist,check your path!");
                     return null;
                 }
                 if (instantiateGameObject)
@@ -199,7 +200,6 @@ where T : MonoBehaviour
             }
             return res;
         }
-
         /// <summary>
         /// ResourceUnitAttribute加载gameobject对象；
         /// </summary>
@@ -207,11 +207,11 @@ where T : MonoBehaviour
         /// <param name="resUnitGo">返回的预制体对象</param>
         /// <param name="instantiateGameObject">是否实例化对象</param>
         /// <returns>加载的T预制体</returns>
-        public T LoadResourceUnitAsync<T>(out GameObject resUnitGo,bool instantiateGameObject = false )
+        public T LoadResourceAsync<T>(out GameObject resUnitGo, bool instantiateGameObject = false)
    where T : UnityEngine.MonoBehaviour
         {
             Type type = typeof(T);
-            ResourceUnitAttribute attribute = type.GetCustomAttribute<ResourceUnitAttribute>();
+            AssetAttribute attribute = type.GetCustomAttribute<AssetAttribute>();
             T res = default;
             GameObject resGo = null;
             resUnitGo = null;
@@ -221,7 +221,7 @@ where T : MonoBehaviour
                 {
                     if (go == null)
                     {
-                        Utility.Debug.LogError("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
+                        Utility.Debug.LogError($"ResourceManager-->>Assets: { attribute.ResourcePath } not exist,check your path!");
                         return;
                     }
                     if (instantiateGameObject)
@@ -238,14 +238,14 @@ where T : MonoBehaviour
             }
             else
             {
-                Utility.Debug.LogError("ResourceManager-->>" + "Assets: has no attribute,check your mono script!");
+                Utility.Debug.LogError($"ResourceManager-->>Assets: has no attribute,check your mono script!");
             }
             return res;
         }
         /// <summary>
         /// 异步加载资源,如果目标是Gameobject，则实例化
         /// </summary>
-        public void LoadResAysnc<T>(string path, Action<T> callBack = null)
+        public void LoadResourceAysnc<T>(string path, Action<T> callBack = null)
             where T : UnityEngine.Object
         {
             monoManager.StartCoroutine(EnumLoadResAsync(path, callBack));
@@ -281,7 +281,7 @@ where T : MonoBehaviour
             T[] res = Resources.LoadAll<T>(path);
             if (res == null)
             {
-                Utility.Debug.LogError("ResourceManager-->>" + "Assets: " + path + "  not exist,check your path!");
+                Utility.Debug.LogError($"ResourceManager-->>Assets: {path}  not exist,check your path!");
                 return null;
             }
             if (res is GameObject)
@@ -293,7 +293,6 @@ where T : MonoBehaviour
         }
         #endregion
         #region  AssetBundles
-        //TODO ResourceManager AB资源的特性加载
         public void SetManifestName(string name)
         {
             this.assetBundleManifestName = name;
@@ -372,13 +371,12 @@ where T : MonoBehaviour
         }
         #endregion
         #region Resources Private
-        IEnumerator EnumLoadResPrefabInstanceAsync<T>(string path, Action<T, GameObject> callBack)
-            where T : class, IReference, new()
+        IEnumerator EnumLoadResPrefabInstanceAsync<T>(string path, Action<GameObject> callBack)
+            where T : class, new()
         {
             ResourceRequest req = Resources.LoadAsync<GameObject>(path);
             yield return req;
-            var obj = referencePoolManager.Spawn<T>();
-            callBack?.Invoke(obj, GameObject.Instantiate(req.asset) as GameObject);
+            callBack?.Invoke(GameObject.Instantiate(req.asset) as GameObject);
         }
         IEnumerator EnumLoadResPrefabAsync<T>(string path, Action<T> callBack)
             where T : MonoBehaviour
@@ -463,13 +461,13 @@ where T : MonoBehaviour
                         else
                         {
                             //TODO  resMgr异常
-                            throw new ArgumentNullException("Requet :" + request.url + "have not assetBundle");
+                            throw new ArgumentNullException($"Requet :{request.url } have not assetBundle");
                         }
                     }
                     else
                     {
                         //TODO resMgr异常
-                        throw new ArgumentNullException("Requet :" + request.url + " net work error ,check your netWork");
+                        throw new ArgumentNullException($"Requet :{ request.url } net work error ,check your netWork");
                     }
                 }
             }
@@ -536,8 +534,6 @@ where T : MonoBehaviour
         }
         #endregion
         #endregion
-
     }
-
 }
 

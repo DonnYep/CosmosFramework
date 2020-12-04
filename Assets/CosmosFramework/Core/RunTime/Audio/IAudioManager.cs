@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cosmos.Audio
+namespace Cosmos
 {
     public interface IAudioManager :IModuleManager
     {

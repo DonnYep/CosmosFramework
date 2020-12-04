@@ -24,7 +24,7 @@ namespace Cosmos.UI
         }
         public override void OnPreparatory()
         {
-            resourceManager = GameManager.GetModule<ResourceManager>();
+            //resourceManager = GameManager.GetModule<ResourceManager>();
         }
         /// <summary>
         /// Resource文件夹相对路径
@@ -37,7 +37,7 @@ namespace Cosmos.UI
                 return mainUICanvas;
             else
             {
-                resourceManager.LoadResAysnc<GameObject>(path, go =>
+                resourceManager.LoadResourceAysnc<GameObject>(path, go =>
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = "MainUICanvas";
@@ -59,7 +59,7 @@ namespace Cosmos.UI
                 return mainUICanvas;
             else
             {
-                resourceManager.LoadResAysnc<GameObject>(path, go =>
+                resourceManager.LoadResourceAysnc<GameObject>(path, go =>
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = name;
@@ -70,28 +70,6 @@ namespace Cosmos.UI
             }
         }
         /// <summary>
-        /// 载入面板，若字典中已存在，则返回且不使用回调。若不存在，则异步加载且使用回调。
-        /// 基于Resources
-        /// </summary>
-        /// <typeparam name="T"> UILogicBase</typeparam>
-        /// <param name="panelName">panel类的UILogicName</param>
-        /// <param name="callBack">仅在载入时回调</param>
-        public void LoadPanel<T>(string panelName, Action<T> callBack = null)
-            where T : UILogicBase
-        {
-            if (HasPanel(panelName))
-                return;
-            resourceManager.LoadResAysnc<GameObject>(panelName, go =>
-            {
-                GameObject result = go;
-                result.transform.SetParent(MainUICanvas.transform);
-                (result.transform as RectTransform).ResetLocalTransform();
-                T panel = result.GetComponent<T>();
-                callBack?.Invoke(panel);
-                uiPanelDict.Add(panelName, panel);
-            });
-        }
-        /// <summary>
         /// 通过特性UIResourceAttribute加载Panel
         /// </summary>
         /// <typeparam name="T">UILogicBase派生类</typeparam>
@@ -100,12 +78,12 @@ namespace Cosmos.UI
     where T : UILogicBase
         {
             Type type = typeof(T);
-            PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
+            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute == null)
                 return;
-            if (HasPanel(attribute.PrefabName))
+            if (HasUI(attribute.PrefabName))
                 return;
-            resourceManager.LoadResPrefabAsync<T>(go =>
+            resourceManager.LoadPrefabAsync<T>(go =>
             {
                 go.transform.SetParent(MainUICanvas.transform);
                 (go.transform as RectTransform).ResetLocalTransform();
@@ -116,48 +94,21 @@ namespace Cosmos.UI
             );
         }
         /// <summary>
-        /// 载入面板，若字典中已存在，则使用回调，并返回。若不存在，则异步加载且使用回调。
-        /// 基于Resources
-        /// </summary>
-        /// <typeparam name="T"> UILogicBase</typeparam>
-        /// <param name="panelResPath">Panel预制体的完整路径</param>
-        /// <param name="callBack">仅在载入时回调</param>
-        public void ShowPanel<T>(string panelResPath, Action<T> callBack = null)
-            where T : UILogicBase
-        {
-            if (HasPanel(panelResPath))
-            {
-                var panel = uiPanelDict[panelResPath] as T;
-                panel.gameObject.SetActive(true);
-                callBack?.Invoke(uiPanelDict[panelResPath] as T);
-                return;
-            }
-            resourceManager.LoadResAysnc<GameObject>(panelResPath, go =>
-            {
-                GameObject result = go;
-                result.transform.SetParent(MainUICanvas.transform);
-                (result.transform as RectTransform).ResetLocalTransform();
-                T panel = result.GetComponent<T>();
-                callBack?.Invoke(panel);
-                uiPanelDict.Add(panel.UIName, panel);
-            });
-        }
-        /// <summary>
         /// 通过特性PrefabUnitAttribute加载Panel
         /// </summary>
         /// <typeparam name="T">带有PrefabUnitAttribute特性的panel类</typeparam>
         /// <param name="callBack">加载成功的回调。若失败，则不执行</param>
-        public void ShowPanel<T>(Action<T> callBack = null)
+        public void OpenUI<T>(Action<T> callBack = null)
     where T : UILogicBase
         {
             Type type = typeof(T);
-            PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
+            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute == null)
             {
                 Utility.Debug.LogError($"Type:{type} has no PrefabUnitAttribute");
                 return;
             }
-            resourceManager.LoadResPrefabAsync<T>(panel =>
+            resourceManager.LoadPrefabAsync<T>(panel =>
             {
                 panel.transform.SetParent(MainUICanvas.transform);
                 (panel.transform as RectTransform).ResetLocalTransform();
@@ -165,23 +116,39 @@ namespace Cosmos.UI
                 uiPanelDict.Add(panel.UIName, panel);
             });
         }
-        public void HidePanel(string panelName)
+        public void OpenUI(Type type,Action<UILogicBase>callback=null)
+        {
+            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
+            if (attribute == null)
+            {
+                Utility.Debug.LogError($"Type:{type} has no PrefabUnitAttribute");
+                return;
+            }
+            //resourceManager.LoadResPrefabAsync<T>(panel =>
+            //{
+            //    panel.transform.SetParent(MainUICanvas.transform);
+            //    (panel.transform as RectTransform).ResetLocalTransform();
+            //    callBack?.Invoke(panel);
+            //    uiPanelDict.Add(panel.UIName, panel);
+            //});
+        }
+        public void HideUI(string panelName)
         {
             uiPanelDict.TryGetValue(panelName, out var panel);
             panel?.HidePanel();
         }
-        public void RemovePanel(string panelName)
+        public void RemoveUI(string panelName)
         {
             if (uiPanelDict.TryRemove(panelName, out var panel))
                 GameObject.Destroy(panel);
             else
                 Utility.Debug.LogError("UIManager-->>" + "Panel :" + panelName + "is not exist !");
         }
-        public void RemovePanel<T>()
+        public void RemoveUl<T>()
             where T : UILogicBase
         {
             Type type = typeof(T);
-            PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
+            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute == null)
                 return;
             if (uiPanelDict.TryRemove(attribute.PrefabName, out var panel))
@@ -189,7 +156,7 @@ namespace Cosmos.UI
             else
                 Utility.Debug.LogError("UIManager-->>" + "Panel :" + attribute.PrefabName + "is not exist !");
         }
-        public bool HasPanel(string panelName)
+        public bool HasUI(string panelName)
         {
             return uiPanelDict.ContainsKey(panelName);
         }

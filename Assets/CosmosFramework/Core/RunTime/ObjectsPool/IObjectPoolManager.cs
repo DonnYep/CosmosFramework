@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Cosmos.ObjectPool
+namespace Cosmos
 {
     public interface IObjectPoolManager: IModuleManager
     {

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Cosmos.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Cosmos.Input
+namespace Cosmos
 {
     public interface IInputManager:IModuleManager
     {

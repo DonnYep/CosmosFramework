@@ -102,7 +102,10 @@ namespace Cosmos
             }
         }
         /// <summary>
-        /// 获取内置模块；
+        /// 获取模块；
+        /// 若需要进行外部扩展，请继承自Module，需要实现接口 IModuleManager，并标记特性：ModuleAttribute
+        /// 如：public class TestManager:Module,ITestManager{}
+        /// ITestManager 需要包含所有外部可调用的方法；具体请参考Cosmos源码；
         /// </summary>
         /// <typeparam name="T">内置模块接口</typeparam>
         /// <returns>模板模块接口</returns>
@@ -204,18 +207,25 @@ namespace Cosmos
         }
         static void InitModule()
         {
-            var modules = Utility.Assembly.GetInstancesByAttribute<ModuleAttribute, Module>();
-            for (int i = 0; i < modules.Length; i++)
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var assemblyLength = assemblies.Length;
+            for (int h = 0; h < assemblyLength; h++)
             {
-                var type = modules[i].GetType();
-                if (!HasModule(type))
+                var modules = Utility.Assembly.GetInstancesByAttribute<ModuleAttribute, Module>(assemblies[h]);
+                for (int i = 0; i < modules.Length; i++)
                 {
-                    modules[i].OnInitialization();
-                    moduleDict.Add(type, modules[i]);
-                    moduleCount++;
+                    var type = modules[i].GetType();
+                    if (!HasModule(type))
+                    {
+                        if (moduleDict.TryAdd(type, modules[i]))
+                        {
+                            modules[i].OnInitialization();
+                            moduleCount++;
+                        }
+                    }
+                    else
+                        throw new ArgumentException($"Module : {type} is already exist!");
                 }
-                else
-                    throw new ArgumentException($"Module : {type} is already exist!");
             }
             ActiveModule();
         }
@@ -223,7 +233,6 @@ namespace Cosmos
         {
             foreach (var module in moduleDict.Values)
             {
-
                 (module as Module).OnActive();
             }
             PrepareModule();
@@ -238,7 +247,7 @@ namespace Cosmos
         }
         static void InnerListenRefresh()
         {
-            foreach (var module in externalModuleDict.Values)
+            foreach (var module in moduleDict.Values)
             {
                 GameManager.RefreshHandler += module.OnRefresh;
                 GameManager.LateRefreshHandler += module.OnLateRefresh;

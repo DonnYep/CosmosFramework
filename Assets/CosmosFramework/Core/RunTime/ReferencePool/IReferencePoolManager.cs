@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos.Reference
+namespace Cosmos
 {
     public interface IReferencePoolManager: IModuleManager
     {

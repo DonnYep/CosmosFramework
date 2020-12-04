@@ -110,7 +110,7 @@ namespace Cosmos.Entity
             where T : class, IEntityObject, new()
         {
             Type type = typeof(T);
-            EntityResourceAttribute attribute = type.GetCustomAttribute<EntityResourceAttribute>();
+            EntityAssetAttribute attribute = type.GetCustomAttribute<EntityAssetAttribute>();
             if (attribute != null)
             {
                 if (HasEntityType(type))

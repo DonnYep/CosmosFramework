@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
-[PrefabUnit("UI/SettingPanel",PrefabName = "SettingPanel")]
+[PrefabAsset("UI/SettingPanel",PrefabName = "SettingPanel")]
 public class SettingPanel : UILogicResident
 {
     protected override void OnInitialization()

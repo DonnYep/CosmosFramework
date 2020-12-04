@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Cosmos.FSM;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos.FSM
+namespace Cosmos
 {
     public interface IFSMManager:IModuleManager
     {
