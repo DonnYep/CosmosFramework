@@ -43,7 +43,7 @@ namespace Cosmos.CosmosEditor
             //TODO解算二进制
             selectedIndexs = EditorGUILayout.MaskField("EventKeys",selectedIndexs,new string[] { "AAA","BBB","CCC","DDD","EEE","FFF","GGG"});
             Utility.Debug.LogInfo("selectedIndexs>>" + selectedIndexs);
-            var byteResult = Utility.Encode.ConvertToString(selectedIndexs);
+            var byteResult = Utility.Converter.ConvertToString(selectedIndexs);
             Utility.Debug.LogInfo("byteResult>>" + byteResult);
 
             targetObject.ApplyModifiedProperties();

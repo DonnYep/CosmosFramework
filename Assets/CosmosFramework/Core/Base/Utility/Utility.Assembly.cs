@@ -375,6 +375,54 @@ namespace Cosmos
             {
                 return GetDerivedTypes(typeof(T));
             }
+            public static Type[] GetDerivedTypesByAttribute<T, K>(bool inherit = false)
+            where T : Attribute
+            where K : class
+            {
+                return GetDerivedTypesByAttribute<T>(typeof(K), inherit);
+            }
+            public static Type[] GetDerivedTypesByAttribute<T>(Type type,bool inherit = false)
+                where T : Attribute
+            {
+                List<Type> set = new List<Type>();
+                Type[] types = type.Assembly.GetTypes();
+                for (int i = 0; i < types.Length; i++)
+                {
+                    if (type.IsAssignableFrom(types[i]))
+                    {
+                        if (types[i].IsClass && !types[i].IsAbstract)
+                        {
+                            if (types[i].GetCustomAttributes<T>(inherit).Count() > 0)
+                                set.Add(types[i]);
+                        }
+                    }
+                }
+                return set.ToArray();
+            }
+            public static Type[] GetDerivedTypesByAttribute<T, K>(System.Reflection.Assembly assembly, bool inherit = false)
+where T : Attribute
+where K : class
+            {
+                return GetDerivedTypesByAttribute<T>(typeof(K), assembly, inherit);
+            }
+            public static Type[] GetDerivedTypesByAttribute<T>(Type type, System.Reflection.Assembly assembly, bool inherit = false)
+    where T : Attribute
+            {
+                List<Type> set = new List<Type>();
+                Type[] types =assembly.GetTypes();
+                for (int i = 0; i < types.Length; i++)
+                {
+                    if (type.IsAssignableFrom(types[i]))
+                    {
+                        if (types[i].IsClass && !types[i].IsAbstract)
+                        {
+                            if (types[i].GetCustomAttributes<T>(inherit).Count() > 0)
+                                set.Add(types[i]);
+                        }
+                    }
+                }
+                return set.ToArray();
+            }
             /// <summary>
             /// 获取某类型的第一个派生类；
             /// </summary>

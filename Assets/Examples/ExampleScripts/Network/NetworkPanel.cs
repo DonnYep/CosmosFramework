@@ -46,7 +46,7 @@ public class NetworkPanel : UILogicResident
     void SendClick()
     {
         string str = inputMsg.text;
-        var data = Utility.Encode.ConvertToByte(str);
+        var data = Utility.Converter.ConvertToByte(str);
         networkManager.SendNetworkMessage(10, data);
     }
     void ServerMsg(INetworkMessage netMsg)

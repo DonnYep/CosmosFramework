@@ -8,7 +8,12 @@ namespace Cosmos
     {
         private void Awake()
         {
-            Utility.Debug.SetHelper(new UnityDebugHelper());
+            var debugHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IDebugHelper>();
+            var jsonHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IJsonHelper>();
+            var messagePackHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IMessagePackHelper>();
+            Utility.Debug.SetHelper(debugHelper);
+            Utility.Json.SetHelper(jsonHelper);
+            Utility.MessagePack.SetHelper(messagePackHelper);
             GameManager.PreparatoryModule();
         }
     }

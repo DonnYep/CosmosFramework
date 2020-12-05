@@ -24,7 +24,7 @@ public class SceneLoader : UILogicResident
     }
     void LoadClick()
     {
-        Utility.Global.TargetLevel = inputTargetLevel.text;
+        LevelLoadInfo.TargetLevel = inputTargetLevel.text;
         if (Utility.Text.IsNumeric(inputTargetLevel.text))
         {
             int index = int.Parse(inputTargetLevel.text);

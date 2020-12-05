@@ -13,7 +13,7 @@ namespace Cosmos.Resource
     /// <summary>
     /// 默认的资源管理器助手
     /// </summary>
-    public sealed class DefaultResourceHelper : IResourceHelper
+    public sealed class DefaultResourceHelper// : IResourceHelper
     {
         /// <summary>
         /// 当前的资源加载模式
@@ -147,7 +147,6 @@ namespace Cosmos.Resource
             }
             else
             {
-#if UNITY_EDITOR
                 if (IsEditorMode)
                 {
                     loadingAction?.Invoke(1);
@@ -186,24 +185,6 @@ namespace Cosmos.Resource
                         }
                     }
                 }
-#else
-                yield return LoadAssetBundleAsync(info.AssetBundleName, loadingAction);
-                if (AssetBundles.ContainsKey(info.AssetBundleName))
-                {
-                    asset = AssetBundles[info.AssetBundleName].LoadAsset<T>(info.AssetPath);
-                    if (asset)
-                    {
-                        if (isPrefab)
-                        {
-                            asset = ClonePrefab(asset as GameObject, parent, isUI);
-                        }
-                    }
-                    else
-                    {
-                            throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
-                    }
-                }
-#endif
             }
             DateTime endTime = DateTime.Now;
             //Utility.Debug.LogInfo($"异步加载资源{asset? '成功' :'失败'} {LoadMode.ToString()}模式]：\r\n{LoadMode == ResourceLoadMode.Resource ? info.GetResourceFullPath() : info.GetAssetBundleFullPath(AssetBundleRootPath)}\r\n等待耗时：{(waitTime - beginTime).TotalSeconds}秒  加载耗时：{(endTime - waitTime).TotalSeconds))}秒"
@@ -236,7 +217,6 @@ namespace Cosmos.Resource
             }
             else
             {
-#if UNITY_EDITOR
                 if (IsEditorMode)
                 {
                     throw new ArgumentException($"ResourceManager-->>加载场景失败：场景加载不允许使用编辑器模式！");
@@ -244,13 +224,8 @@ namespace Cosmos.Resource
                 else
                 {
                     yield return LoadAssetBundleAsync(info.AssetBundleName, loadingAction);
-
                     yield return SceneManager.LoadSceneAsync(info.AssetPath, LoadSceneMode.Additive);
                 }
-#else
-                yield return LoadAssetBundleAsync(info.AssetBundleName, loadingAction);
-                yield return SceneManager.LoadSceneAsync(info.AssetPath, LoadSceneMode.Additive);
-#endif
             }
             DateTime endTime = DateTime.Now;
             Utility.Debug.LogInfo(string.Format("异步加载场景完成[{0}模式]：{1}\r\n等待耗时：{2}秒  加载耗时：{3}秒"
@@ -331,7 +306,6 @@ namespace Cosmos.Resource
             {
                 prefab.transform.SetParent(parent);
             }
-
             if (isUI)
             {
                 prefab.RectTransform().anchoredPosition3D = prefabTem.RectTransform().anchoredPosition3D;
@@ -360,7 +334,6 @@ namespace Cosmos.Resource
         {
             if (LoadMode == ResourceLoadMode.AssetBundle)
             {
-#if UNITY_EDITOR
                 if (!IsEditorMode)
                 {
                     yield return LoadAssetBundleManifestAsync();
@@ -379,22 +352,6 @@ namespace Cosmos.Resource
                         }
                     }
                 }
-#else
-                yield return LoadAssetBundleManifestAsync();
-
-                if (AssetBundleManifest != null)
-                {
-                    string[] dependencies = AssetBundleManifest.GetAllDependencies(assetBundleName);
-                    foreach (string item in dependencies)
-                    {
-                        if (AssetBundles.ContainsKey(item))
-                        {
-                            continue;
-                        }
-                        yield return LoadAssetBundleAsync(item);
-                    }
-                }
-#endif
             }
             yield return null;
         }

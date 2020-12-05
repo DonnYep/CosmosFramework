@@ -23,16 +23,12 @@ namespace Cosmos.Resource
         /// </summary>
         string resourcePath;
         public string RessourcePath { get { return resourcePath; } }
-
-
         public ResourceUnit(string assetBundleName, string assetPath, string resourcePath)
         {
             this.assetBundleName = assetBundleName;
             this.assetPath = assetPath;
             this.resourcePath = resourcePath;
         }
-
-
         public void Dispose(){ }
 
     }

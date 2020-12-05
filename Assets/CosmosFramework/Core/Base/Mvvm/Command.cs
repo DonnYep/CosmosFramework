@@ -5,17 +5,9 @@ namespace Cosmos.Mvvm
     public abstract class Command
     {
         public abstract void Execute( object data);
-        protected T GetModel<T>() where T : Model
-        {
-            return MVC.GetModel<T>();
-        }
         protected T GetModel<T>(string modelName) where T : Model
         {
             return MVC.GetModel<T>(modelName);
-        }
-        protected T GetView<T>()where T :View
-        {
-            return MVC.GetView<T>();
         }
         protected T GetView<T>(string viewName) where T : View
         {

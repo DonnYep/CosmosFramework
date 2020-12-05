@@ -28,7 +28,7 @@ public class LoadPanel : UILogicResident
     }
     void LoadClick()
     {
-       Utility.Global.TargetLevel = inputTargetLevel.text;
+        LevelLoadInfo.TargetLevel = inputTargetLevel.text;
         string loadingLevel = inputLoadLevel.text;
         if (Utility.Text.IsNumeric(loadingLevel))
         {

@@ -27,7 +27,8 @@ namespace Cosmos.Resource
     public enum ResourceLoadMode : byte
     {
         Resource = 0,
-        AssetBundle = 1
+        AssetBundle = 1,
+        Editor=2
     }
     [Module]
     internal sealed class ResourceManager : Module // , IResourceManager

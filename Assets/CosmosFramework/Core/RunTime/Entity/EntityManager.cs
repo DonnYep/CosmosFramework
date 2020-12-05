@@ -16,8 +16,8 @@ namespace Cosmos.Entity
         public int EntityTypeCount { get { return entityTypeObjectDict.Count; } }
         Dictionary<Type, List<IEntityObject>> entityTypeObjectDict;
         Type entityObjectType = typeof(IEntityObject);
-        #endregion
         IReferencePoolManager referencePoolManager;
+        #endregion
         #region Methods
         public override void OnInitialization()
         {

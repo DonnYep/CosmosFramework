@@ -12,14 +12,10 @@ namespace Cosmos.Mvvm
     [AttributeUsage( AttributeTargets.Class, AllowMultiple =false, Inherited =false)]
     public class CommandAttribute:Attribute
     {
-        public CommandAttribute(string cmdName):this(cmdName,null){}
-        public CommandAttribute(Type cmdType) : this(string.Empty, cmdType) { }
-        public CommandAttribute(string cmdName,Type cmdType)
+        public CommandAttribute(string cmdName )
         {
             CommandName = cmdName;
-            CommandType= cmdType;
         }
         public string CommandName { get; private set; }
-        public Type CommandType { get; private set; }
     }
 }
