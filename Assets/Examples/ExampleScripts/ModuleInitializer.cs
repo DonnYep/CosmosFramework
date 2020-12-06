@@ -27,10 +27,6 @@ namespace Cosmos.Test{
         }
         [Tooltip("模块初始化器，用于测试或者游戏中使用")]
         [SerializeField] ModuleType module;
-        private void Awake()
-        {
-            Utility.Debug.SetHelper(new UnityDebugHelper());
-        }
         private void Start()
         {
             switch (module)
@@ -46,6 +42,9 @@ namespace Cosmos.Test{
                     //    Utility.Debug.LogInfo(moduleResult.MountPoint.name);
                     break;
             }
+            Debug.Log("纯debug Log测试");
+            Debug.LogError("纯debug LogError测试");
+            throw new System.Exception("异常抛出测试");
         }
     }
 }

@@ -74,6 +74,13 @@ namespace Cosmos.Resource
             AssetBundleManifestName = manifestName;
             _loadWait = new WaitUntil(() => { return !_isLoading; });
         }
+        public void SetLoader(ResourceLoadMode loadMode, string assetBundleRootPath, string manifestName)
+        {
+            LoadMode = loadMode;
+            AssetBundleRootPath = assetBundleRootPath;
+            AssetBundleManifestName = manifestName;
+            _loadWait = new WaitUntil(() => { return !_isLoading; });
+        }
         /// <summary>
         /// 设置AssetBundle资源根路径（仅当使用AssetBundle加载时有效）
         /// </summary>
@@ -147,12 +154,11 @@ namespace Cosmos.Resource
             }
             else
             {
-                if (IsEditorMode)
-                {
-                    loadingAction?.Invoke(1);
-                    yield return null;
+                yield return LoadAssetBundleAsync(info.AssetBundleName, loadingAction);
 
-                    asset = AssetDatabase.LoadAssetAtPath<T>(info.AssetPath);
+                if (AssetBundles.ContainsKey(info.AssetBundleName))
+                {
+                    asset = AssetBundles[info.AssetBundleName].LoadAsset<T>(info.AssetPath);
                     if (asset)
                     {
                         if (isPrefab)
@@ -162,27 +168,7 @@ namespace Cosmos.Resource
                     }
                     else
                     {
-                        throw new ArgumentNullException($"ResourceManager-->>加载资源失败：路径中不存在资源 { info.AssetPath }！");
-                    }
-                }
-                else
-                {
-                    yield return LoadAssetBundleAsync(info.AssetBundleName, loadingAction);
-
-                    if (AssetBundles.ContainsKey(info.AssetBundleName))
-                    {
-                        asset = AssetBundles[info.AssetBundleName].LoadAsset<T>(info.AssetPath);
-                        if (asset)
-                        {
-                            if (isPrefab)
-                            {
-                                asset = ClonePrefab(asset as GameObject, parent, isUI);
-                            }
-                        }
-                        else
-                        {
-                            throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
-                        }
+                        throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
                     }
                 }
             }

@@ -71,8 +71,6 @@ namespace Cosmos
                 Debug.Log($"<b><color={MessageColor.CYAN}>{"[INFO]-->>"} </color></b>{msg}");
             else
                 Debug.Log($"<b><color={MessageColor.CYAN}>{"[INFO]-->>"}</color></b>{msg}", context as Object);
-            string str = $"{DateTime.Now.ToString()}[ - ] > INFO : {msg};{context};";
-            Utility.IO.AppendWriteTextFile(logFullPath, logFileName, str);
         }
         public void LogInfo(object msg, string msgColor, object context)
         {
@@ -80,8 +78,6 @@ namespace Cosmos
                 Debug.Log($"<b><color={msgColor }>{"[INFO]-->>"}</color></b>{msg}");
             else
                 Debug.Log($"<b><color={msgColor }>{"[INFO]-->>"}</color></b>{msg}", context as Object);
-            string str = $"{DateTime.Now.ToString()}[ - ] > INFO : {msg};{context};";
-            Utility.IO.AppendWriteTextFile(logFullPath, logFileName, str);
         }
         public void LogError(object msg, object context)
         {
@@ -89,18 +85,14 @@ namespace Cosmos
                 Debug.LogError($"<b><color={MessageColor.RED}>{"[ERROR]-->>"} </color></b>{msg}");
             else
                 Debug.LogError($"<b><color={MessageColor.RED}>{"[ERROR]-->>"}</color></b>{msg}", context as Object);
-            string str = $"{DateTime.Now.ToString()}[ - ] > ERROR :  {msg};{context};";
-            Utility.IO.AppendWriteTextFile(logFullPath, logFileName, str);
         }
 
         public void LogWarning(object msg, object context)
         {
             if (context == null)
-                Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[WARNING-->>" }</color></b>{msg}");
+                Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[WARNING]-->>" }</color></b>{msg}");
             else
-                Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"WARNING]-->>" }</color></b>{msg}", context as Object);
-            string str = $"{DateTime.Now.ToString()}[ - ] > WARN : {msg};{context};;";
-            Utility.IO.AppendWriteTextFile(logFullPath, logFileName, str);
+                Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[WARNING]-->>" }</color></b>{msg}", context as Object);
         }
         public void LogFatal(object msg, object context)
         {
@@ -108,11 +100,54 @@ namespace Cosmos
                 Debug.LogError($"<b><color={MessageColor.RED}>{ "[FATAL]-->>" }</color></b>{msg}");
             else
                 Debug.LogError($"<b><color={MessageColor.RED}>{ "[FATAL]-->>" }</color></b>{msg}", context as Object);
-            string str = $"{DateTime.Now.ToString()}[ - ] > FATAL : {msg};{context};";
-            Utility.IO.AppendWriteTextFile(logFullPath, logFileName, str);
         }
         void UnityLog(string msgStr, string stackTrace, LogType logType)
         {
+            string str = null;
+            string[] splitedStr = null;
+            try
+            {
+                splitedStr = Utility.Text.StringSplit(msgStr, new string[] { "</color></b>" });
+            }
+            catch { }
+            switch (logType)
+            {
+                case LogType.Error:
+                    {
+                        if (splitedStr.Length > 1)
+                            str = $"{DateTime.Now}[ - ] > ERROR : {splitedStr[1]};{stackTrace}";
+                        else
+                            str = $"{DateTime.Now}[ - ] > ERROR : {msgStr};{stackTrace}";
+                    }
+                    break;
+                case LogType.Assert:
+                    {
+                        str = $"{DateTime.Now}[ - ] > ASSERT : {msgStr};{stackTrace}";
+                    }
+                    break;
+                case LogType.Warning:
+                    {
+                        if (splitedStr.Length > 1)
+                            str = $"{DateTime.Now}[ - ] > WARN : {splitedStr[1]};{stackTrace}";
+                        else
+                            str = $"{DateTime.Now}[ - ] > WARN : {msgStr};{stackTrace}";
+                    }
+                    break;
+                case LogType.Log:
+                    {
+                        if (splitedStr.Length > 1)
+                            str = $"{DateTime.Now}[ - ] > INFO : {splitedStr[1]};{stackTrace}";
+                        else
+                            str = $"{DateTime.Now}[ - ] > INFO : {msgStr};{stackTrace}";
+                    }
+                    break;
+                case LogType.Exception:
+                    {
+                        str = $"{DateTime.Now}[ - ] > EXCEPTION : {msgStr};{stackTrace}";
+                    }
+                    break;
+            }
+            Utility.IO.AppendWriteTextFile(logFullPath, logFileName, str);
         }
     }
 }

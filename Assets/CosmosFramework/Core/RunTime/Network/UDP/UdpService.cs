@@ -9,8 +9,6 @@ using System.Net;
 using System.Threading;
 using Cosmos;
 using Cosmos.Reference;
-using TMPro;
-
 namespace Cosmos.Network
 {
     /// <summary>
