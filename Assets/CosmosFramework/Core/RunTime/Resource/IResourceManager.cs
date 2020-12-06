@@ -11,95 +11,77 @@ namespace Cosmos
 {
     public interface IResourceManager: IModuleManager
     {
-        #region  Resources 
-        T LoadResource<T>(string path, bool instantiate = false) where T : UnityEngine.Object;
+        ResourceLoadMode LoadMode { get; }
+        void SetLoader(ResourceLoadMode loadMode, string assetBundleRootPath, string manifestName);
         /// <summary>
-        /// 利用挂载特性的泛型对象同步加载Prefab；
+        /// 设置AssetBundle资源根路径（仅当使用AssetBundle加载时有效）
         /// </summary>
-        /// <typeparam name="T">需要加载的类型</typeparam>
-        /// <param name="instantiate">是否生实例化对象</param>
-        /// <returns>返回实体化或未实例化的资源对象</returns>
-        GameObject LoadPrefab<T>(bool instantiate) where T : MonoBehaviour;
-        T LoadPrefab<T>() where T : MonoBehaviour;
+        /// <param name="path">AssetBundle资源根路径</param>
+        void SetAssetBundlePath(string path);
         /// <summary>
-        /// 利用挂载特性的泛型对象同步加载PrefabObject；
+        /// 通过名称获取指定的AssetBundle
         /// </summary>
-        /// <typeparam name="T">实现了引用池的非Mono对象</typeparam>
-        /// <param name="go">载入的资源对象</param>
-        /// <param name="instantiate">是否实例化</param>
-        /// <returns>载入的对象</returns>
-        GameObject LoadPrefabInstance<T>(bool instantiate = false) where T : class, new();
+        /// <param name="assetBundleName">名称</param>
+        /// <returns>AssetBundle</returns>
+        AssetBundle GetAssetBundle(string assetBundleName);
         /// <summary>
-        /// 利用挂载特性的泛型对象异步加载Prefab；
+        /// 特性无效！；
+        /// 加载资源（异步）；
         /// </summary>
-        /// <typeparam name="T">组件类型</typeparam>
-        /// <param name="callBack">载入完毕后的回调</param>
-        void LoadPrefabAsync<T>(Action<T> callBack = null) where T : MonoBehaviour;
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <param name="loadingCallback">加载中事件</param>
+        /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
+        /// <returns>加载协程迭代器</returns>
+        Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object;
         /// <summary>
-        /// 利用挂载特性的泛型对象异步加载Prefab；
-        /// 泛型对象为Mono类型；
+        /// 特性无效！；
+        /// 加载预制体资源（异步）；
         /// </summary>
-        /// <typeparam name="T">非Mono对象</typeparam>
-        /// <param name="callBack">加载完毕后的回调</param>
-        void LoadPrefabInstanceAsync<T>(Action< GameObject> callBack = null) where T : class,  new();
-        T LoadResource<T>(bool instantiateGameObject = false) where T : UnityEngine.Component;
+        /// <param name="info">资源信息标记</param>
+        /// <param name="loadingCallback">加载中事件</param>
+        /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载协程</returns>
+        Coroutine LoadPrefabAsync(AssetInfo info, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false);
         /// <summary>
-        /// 异步加载资源,如果目标是Gameobject，则实例化
+        /// 特性加载:PrefabAssetAttribute！；
+        /// 加载预制体资源（异步）；
         /// </summary>
-        void LoadResourceAysnc<T>(string path, Action<T> callBack = null) where T : UnityEngine.Object;
+        /// <param name="type">类对象类型</param>
+        /// <param name="loadingCallback">加载中事件</param>
+        /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载协程</returns>
+        Coroutine LoadPrefabAsync(Type type, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false);
         /// <summary>
-        /// 异步加载资源,不实例化任何类型
+        /// 特性加载:PrefabAssetAttribute！；
+        /// 加载预制体资源（异步）；
         /// </summary>
-        void LoadResAssetAysnc<T>(string path, Action<T> callBack = null) where T : UnityEngine.Object;
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="loadingCallback">加载中事件</param>
+        /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载协程</returns>
+        Coroutine LoadPrefabAsync<T>(Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false) where T : class;
         /// <summary>
-        /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
+        /// 加载场景（异步）
         /// </summary>
-        List<T> LoadResFolderAssets<T>(string path) where T : class;
+        /// <param name="info">资源信息标记</param>
+        /// <param name="loadingCallback">加载中事件</param>
+        /// <param name="loadDoneCallback">加载完成事件</param>
+        /// <returns>加载协程迭代器</returns>
+        Coroutine LoadSceneAsync(SceneInfo info, Action loadDoneCallback, Action<float> loadingCallback = null);
         /// <summary>
-        /// 载入resources文件夹下的指定文件夹下某一类型的所有资源
+        /// 卸载资源（卸载AssetBundle）
         /// </summary>
-        T[] LoadResAll<T>(string path) where T : UnityEngine.Object;
-        #endregion
-        #region  AssetBundles
-        //TODO ResourceManager AB资源的特性加载
-        void SetManifestName(string name);
+        /// <param name="assetBundleName">AB包名称</param>
+        /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
+        void UnLoadAsset(string assetBundleName, bool unloadAllLoadedObjects = false);
         /// <summary>
-        /// 从一个AB包中获得资源
+        /// 卸载所有资源（卸载AssetBundle）
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="path"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        T LoadABAsset<T>(string path, string name) where T : UnityEngine.Object;
-        /// <summary>
-        /// 异步加载AB资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="resUnit"></param>
-        /// <param name="loadingCallBack"></param>
-        /// <param name="loadDoneCallBack"></param>
-        void LoadABAssetAsync<T>(ResourceUnit resUnit, Action<float> loadingCallBack, Action<T> loadDoneCallBack) where T : UnityEngine.Object;
-        /// <summary>
-        /// 异步加载AB依赖包
-        /// </summary>
-        /// <param name="abName"></param>
-        void LoadDependenciesABAsync(string abName);
-        /// <summary>
-        /// 异步加载AB包，若不存在，则从web端加载
-        /// </summary>
-        /// <param name="abName">AssetBundle Name</param>
-        /// <param name="isManifest">是否为AB清单</param>
-        void LoadABAsync(string abName, bool isManifest = false);
-        /// <summary>
-        /// 异步加载AB包清单
-        /// </summary>
-        void LoadABManifestAsync();
-        void UnloadAsset(string abName, bool unloadAllAssets = false);
-        /// <summary>
-        /// 卸载所有资源
-        /// </summary>
-        /// <param name="unloadAllAssets">是否卸所有实体对象</param>
-        void UnloadAllAsset(bool unloadAllAssets = false);
-        #endregion
+        /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
+        void UnLoadAllAsset(bool unloadAllLoadedObjects = false);
     }
 }

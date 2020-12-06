@@ -37,7 +37,7 @@ namespace Cosmos.UI
                 return mainUICanvas;
             else
             {
-                resourceManager.LoadResourceAysnc<GameObject>(path, go =>
+                resourceManager.LoadPrefabAsync(path, go =>
                 {
                     mainUICanvas = go;
                     mainUICanvas.name = "MainUICanvas";

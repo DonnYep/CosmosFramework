@@ -4,7 +4,7 @@ using System;
 namespace Cosmos
 {
     [AttributeUsage(AttributeTargets.Class,AllowMultiple =false,Inherited =false)]
-    public class AssetAttribute : Attribute
+    public abstract class AssetAttribute : Attribute
     {
         /// <summary>
         /// AB包名
