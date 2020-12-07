@@ -12,9 +12,8 @@ namespace Cosmos.Entity
     {
         public object Entity { get; protected set; }
         public bool IsPause { get; protected set; }
-        /// <summary>
-        /// 空虚函数
-        /// </summary>
+        public virtual void OnInitialization() { }
+        public virtual void OnTermination() { }
         public virtual void Clear() { }
         public abstract void OnActive();
         public abstract void OnDeactive();
@@ -45,5 +44,6 @@ namespace Cosmos.Entity
         public void OnUnPause(){IsPause = false;}
         public void SetEntity(object entity){Entity = entity;}
         public object GetEntity(){return Entity;}
+
     }
 }

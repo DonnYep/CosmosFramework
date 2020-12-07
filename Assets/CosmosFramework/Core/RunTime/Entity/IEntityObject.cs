@@ -10,7 +10,7 @@ namespace Cosmos.Entity
     /// <summary>
     /// 与unity耦合的实体对象，当前版本中使用的是此实体对象
     /// </summary>
-    public interface IEntityObject: IReference, IRefreshable, IOperable,IControllable
+    public interface IEntityObject: IReference, IRefreshable, IOperable,IControllable,IBehaviour
     {
         void SetEntity(object entity);
        object GetEntity();
