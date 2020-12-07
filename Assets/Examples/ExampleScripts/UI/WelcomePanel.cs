@@ -37,6 +37,6 @@ public class WelcomePanel : UILogicTemporary
     }
     public override void HidePanel()
     {
-        GameManager.GetModule<IUIManager>().RemoveUl<WelcomePanel>();
+        GameManager.GetModule<IUIManager>().RemoveUI(UIName,out _ );
     }
 }

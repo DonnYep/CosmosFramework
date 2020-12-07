@@ -137,7 +137,45 @@ namespace Cosmos
                             }
                         }
                     }
-
+                }
+                return t;
+            }
+            public static Component Add(Type type,GameObject go, bool removeExistComp = false) 
+            {
+                if (!typeof(Component).IsAssignableFrom(type))
+                {
+                    throw new NotImplementedException($"Type :{type} is not iherit from Component !");
+                }
+                Component t = default;
+                if (go != null)
+                {
+                    if (removeExistComp)
+                    {
+                        Component[] ts = go.GetComponents(type);
+                        for (int i = 0; i < ts.Length; i++)
+                        {
+                            if (ts[i] != null)
+                                GameObject.DestroyImmediate(go);
+                        }
+                        t = go.AddComponent(type);
+                    }
+                    else
+                    {
+                        Component[] ts = go.GetComponents(type);
+                        if (ts.Length == 0)
+                        {
+                            t = go.AddComponent(type);
+                            return t;
+                        }
+                        for (int i = 0; i < ts.Length; i++)
+                        {
+                            if (ts[i] != null)
+                            {
+                                t = go.gameObject.GetComponent(type);
+                                return t;
+                            }
+                        }
+                    }
                 }
                 return t;
             }

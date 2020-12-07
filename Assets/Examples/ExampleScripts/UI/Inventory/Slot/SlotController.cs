@@ -18,7 +18,7 @@ public class SlotController : MonoEventHandler
         AddDefaultEventListener(UIIEventDefine.UI_IMPL_UPD_SLOT);
         AddEventListener(UIIEventDefine.UI_IMPL_UPD_ITEM, UpdateItemHandler);
         resourceManager = GameManager.GetModule<IResourceManager>();
-        slot = resourceManager.LoadPrefabAsync(fullPath);
+        resourceManager.LoadPrefabAsync(typeof(Slot), (go => slot = go));
     }
     protected override void OnDestroy()
     {

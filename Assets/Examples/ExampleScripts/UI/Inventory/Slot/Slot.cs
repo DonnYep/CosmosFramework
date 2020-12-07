@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
+[UIAsset( null,null, "UI/Slot")]
 public class Slot : MonoBehaviour
 {
     public void SetupSlot(ItemDataSet item)

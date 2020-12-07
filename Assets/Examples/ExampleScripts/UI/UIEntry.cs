@@ -7,7 +7,10 @@ namespace Cosmos.Test {
     {
         private void Start()
         {
-            var result = GameManager.GetModule<IUIManager>().InitMainCanvas("UI/MainUICanvas");
+            var mianUICanvas = GameManager.GetModule<IResourceManager>().LoadPrefabAsync(new AssetInfo(null, null, "UI/MainUICanvas"),(go=> 
+            {
+                GameManager.GetModule<IUIManager>().SetUIRoot(go);
+            }),null,true);
             InitUtility();
         }
         void InitUtility()

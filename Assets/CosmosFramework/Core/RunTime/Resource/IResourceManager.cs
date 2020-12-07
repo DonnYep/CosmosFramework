@@ -11,7 +11,21 @@ namespace Cosmos
 {
     public interface IResourceManager: IModuleManager
     {
+        /// <summary>
+        ///  资源模块加载资源的模式；
+        /// </summary>
         ResourceLoadMode LoadMode { get; }
+        /// <summary>
+        /// 设置默认设置加载器;
+        /// 此方法会使加载模式变为Resource；
+        /// </summary>
+        void SetDefaultLoader();
+        /// <summary>
+        /// 设置加载器
+        /// </summary>
+        /// <param name="loadMode">加载模式</param>
+        /// <param name="assetBundleRootPath">资源加载的完全路径</param>
+        /// <param name="manifestName">AB包清单名称</param>
         void SetLoader(ResourceLoadMode loadMode, string assetBundleRootPath, string manifestName);
         /// <summary>
         /// 设置AssetBundle资源根路径（仅当使用AssetBundle加载时有效）

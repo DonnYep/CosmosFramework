@@ -7,16 +7,13 @@ using Cosmos.Resource;
 namespace Cosmos.UI
 {
     [Module]
-    internal sealed class UIManager : Module, IUIManager
+    internal sealed class UIManager : Module,IUIManager
     {
         #region Properties
-        internal static string MainUICanvasName { get; set; }
-        GameObject mainUICanvas;
-        public GameObject MainUICanvas { get { return mainUICanvas; } set { mainUICanvas = value; } }
+        public GameObject UIRoot{ get; private set; }
         Dictionary<string, UILogicBase> uiPanelDict;
         IResourceManager resourceManager;
         #endregion
-
         #region Methods
         public override void OnInitialization()
         {
@@ -24,137 +21,106 @@ namespace Cosmos.UI
         }
         public override void OnPreparatory()
         {
-            //resourceManager = GameManager.GetModule<ResourceManager>();
+            resourceManager = GameManager.GetModule<ResourceManager>();
         }
         /// <summary>
-        /// Resource文件夹相对路径
-        /// 返回实例化的对象
+        /// 设置UI根节点
         /// </summary>
-        /// <param name="path">如UI\Canvas</param>
-        public GameObject InitMainCanvas(string path)
+        /// <param name="uiRoot">传入的UIRoot</param>
+        /// <param name="destroyOldOne">销毁旧的uiRoot对象</param>
+        public void SetUIRoot(GameObject uiRoot,bool destroyOldOne=false)
         {
-            if (mainUICanvas != null)
-                return mainUICanvas;
-            else
-            {
-                resourceManager.LoadPrefabAsync(path, go =>
-                {
-                    mainUICanvas = go;
-                    mainUICanvas.name = "MainUICanvas";
-                    var mountGo = GameManager.GetModuleMount<IUIManager>();
-                    mainUICanvas.transform.SetParent(mountGo.transform);
-                });
-                return mainUICanvas;
-            }
+            if (destroyOldOne)
+                GameObject.Destroy(UIRoot);
+            var mountGo = GameManager.GetModuleMount<IUIManager>();
+            uiRoot.transform.SetParent(mountGo.transform);
+            UIRoot = uiRoot;
         }
         /// <summary>
-        /// Resource文件夹相对路径
-        /// 返回实例化的对象
+        /// 通过特性UIAssetAttribute加载Panel
         /// </summary>
-        /// <param name="path">如UI\Canvas</param>
-        /// <param name="name">生成后重命名的名称</param>
-        public GameObject InitMainCanvas(string path, string name)
-        {
-            if (mainUICanvas != null)
-                return mainUICanvas;
-            else
-            {
-                resourceManager.LoadResourceAysnc<GameObject>(path, go =>
-                {
-                    mainUICanvas = go;
-                    mainUICanvas.name = name;
-                    var mountGo = GameManager.GetModuleMount<IUIManager>();
-                    mainUICanvas.transform.SetParent(mountGo.transform);
-                });
-                return mainUICanvas;
-            }
-        }
-        /// <summary>
-        /// 通过特性UIResourceAttribute加载Panel
-        /// </summary>
-        /// <typeparam name="T">UILogicBase派生类</typeparam>
-        /// <param name="callBack">加载完毕后的回调</param>
-        public void LoadPanel<T>(Action<T> callBack = null)
+        /// <typeparam name="T">带有UIAssetAttribute特性的panel类</typeparam>
+        /// <param name="callback">加载成功的回调。若失败，则不执行</param>
+        public void OpenUIAsync<T>(Action<T> callback = null)
     where T : UILogicBase
         {
             Type type = typeof(T);
-            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
-            if (attribute == null)
-                return;
-            if (HasUI(attribute.PrefabName))
-                return;
-            resourceManager.LoadPrefabAsync<T>(go =>
-            {
-                go.transform.SetParent(MainUICanvas.transform);
-                (go.transform as RectTransform).ResetLocalTransform();
-                go.gameObject.name = attribute.PrefabName;
-                callBack?.Invoke(go);
-                uiPanelDict.Add(attribute.PrefabName, go);
-            }
-            );
-        }
-        /// <summary>
-        /// 通过特性PrefabUnitAttribute加载Panel
-        /// </summary>
-        /// <typeparam name="T">带有PrefabUnitAttribute特性的panel类</typeparam>
-        /// <param name="callBack">加载成功的回调。若失败，则不执行</param>
-        public void OpenUI<T>(Action<T> callBack = null)
-    where T : UILogicBase
-        {
-            Type type = typeof(T);
-            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
+            var attribute = type.GetCustomAttribute<UIAssetAttribute>();
             if (attribute == null)
             {
-                Utility.Debug.LogError($"Type:{type} has no PrefabUnitAttribute");
+                Utility.Debug.LogError($"Type:{type} has no UIAssetAttribute");
                 return;
             }
             resourceManager.LoadPrefabAsync<T>(panel =>
             {
-                panel.transform.SetParent(MainUICanvas.transform);
+                panel.transform.SetParent(UIRoot.transform);
                 (panel.transform as RectTransform).ResetLocalTransform();
-                callBack?.Invoke(panel);
-                uiPanelDict.Add(panel.UIName, panel);
+                var comp = Utility.Unity.Add<T>(panel, true);
+                callback?.Invoke(comp);
+                uiPanelDict.Add(comp.UIName, comp);
             });
         }
-        public void OpenUI(Type type,Action<UILogicBase>callback=null)
+        public void OpenUIAsync(Type type, Action<UILogicBase> callback = null)
         {
             PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute == null)
             {
-                Utility.Debug.LogError($"Type:{type} has no PrefabUnitAttribute");
+                Utility.Debug.LogError($"Type:{type} has no UIAssetAttribute");
                 return;
             }
-            //resourceManager.LoadResPrefabAsync<T>(panel =>
-            //{
-            //    panel.transform.SetParent(MainUICanvas.transform);
-            //    (panel.transform as RectTransform).ResetLocalTransform();
-            //    callBack?.Invoke(panel);
-            //    uiPanelDict.Add(panel.UIName, panel);
-            //});
+            resourceManager.LoadPrefabAsync(type, panel =>
+             {
+                 panel.transform.SetParent(UIRoot.transform);
+                 (panel.transform as RectTransform).ResetLocalTransform();
+                 var comp = Utility.Unity.Add(type, panel, true) as UILogicBase;
+                 callback?.Invoke(comp);
+                 uiPanelDict.Add(comp.UIName, comp);
+             });
         }
-        public void HideUI(string panelName)
+        /// <summary>
+        /// 隐藏UI，调用UI中的HidePanel方法；
+        /// <see cref=" UILogicBase",>
+        /// UILogicBase.UIName
+        /// </summary>
+        /// <param name="uiName">UILogicBase.UIName</param>
+        public void HideUI(string uiName)
         {
-            uiPanelDict.TryGetValue(panelName, out var panel);
-            panel?.HidePanel();
+            if (uiPanelDict.TryRemove(uiName, out var panel))
+                panel?.HidePanel();
+            else
+                Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
         }
-        public void RemoveUI(string panelName)
+        /// <summary>
+        /// 移除UI，但是不销毁
+        /// <see cref=" UILogicBase",>
+        /// UILogicBase.UIName
+        /// </summary>
+        /// <param name="uiName">UILogicBase.UIName</param>
+        /// <param name="panel">移除后返回的panel</param>
+        public void RemoveUI(string uiName,out UILogicBase panel)
         {
-            if (uiPanelDict.TryRemove(panelName, out var panel))
+            var hasPanel = uiPanelDict.TryRemove(uiName, out panel);
+            if(!hasPanel)
+                Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
+        }
+        public void RemoveUI(string uiName )
+        {
+            var hasPanel = uiPanelDict.TryRemove(uiName,out _ );
+            if (!hasPanel)
+                Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
+        }
+        /// <summary>
+        /// 销毁UI
+        /// <see cref=" UILogicBase",>
+        /// UILogicBase.UIName
+        /// </summary>
+        /// <param name="uiName">UILogicBase.UIName</param>
+        public void DestroyUl(string uiName)
+        {
+            if (uiPanelDict.TryRemove(uiName, out var panel))
                 GameObject.Destroy(panel);
             else
-                Utility.Debug.LogError("UIManager-->>" + "Panel :" + panelName + "is not exist !");
-        }
-        public void RemoveUl<T>()
-            where T : UILogicBase
-        {
-            Type type = typeof(T);
-            PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
-            if (attribute == null)
-                return;
-            if (uiPanelDict.TryRemove(attribute.PrefabName, out var panel))
-                GameObject.Destroy(panel);
-            else
-                Utility.Debug.LogError("UIManager-->>" + "Panel :" + attribute.PrefabName + "is not exist !");
+                Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
         }
         public bool HasUI(string panelName)
         {

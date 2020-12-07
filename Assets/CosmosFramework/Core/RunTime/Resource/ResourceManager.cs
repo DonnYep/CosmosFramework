@@ -14,11 +14,11 @@ namespace Cosmos.Resource
         AssetBundle = 1,
     }
     [Module]
-    internal sealed class ResourceManager : Module , IResourceManager
+    internal sealed class ResourceManager : Module,IResourceManager
     {
         #region Properties
         /// <summary>
-        /// 当前的资源加载模式
+        /// 资源模块加载资源的模式；
         /// </summary>
         public ResourceLoadMode LoadMode { get; private set; }
         /// <summary>
@@ -83,6 +83,15 @@ namespace Cosmos.Resource
             _loadWait = new WaitUntil(() => { return !_isLoading; });
         }
         /// <summary>
+        /// 设置默认设置加载器;
+        /// 此方法会使加载模式变为Resource；
+        /// </summary>
+        public void SetDefaultLoader()
+        {
+            LoadMode =  ResourceLoadMode.Resource;
+            _loadWait = new WaitUntil(() => { return !_isLoading; });
+        }
+        /// <summary>
         /// 设置AssetBundle资源根路径（仅当使用AssetBundle加载时有效）
         /// </summary>
         /// <param name="path">AssetBundle资源根路径</param>
@@ -109,10 +118,10 @@ namespace Cosmos.Resource
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback,Action<float> loadingCallback=null )
+        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null)
             where T : UnityEngine.Object
         {
-            return monoManager.StartCoroutine(EnumLoadAssetAsync(info, loadDoneCallback,loadingCallback));
+            return monoManager.StartCoroutine(EnumLoadAssetAsync(info, loadDoneCallback, loadingCallback));
         }
         /// <summary>
         /// 特性加载:PrefabAssetAttribute！；
@@ -123,7 +132,7 @@ namespace Cosmos.Resource
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(Type type,Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync(Type type, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
         {
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
@@ -143,8 +152,8 @@ namespace Cosmos.Resource
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync<T>( Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
-            where T:class
+        public Coroutine LoadPrefabAsync<T>(Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+            where T : class
         {
             var type = typeof(T);
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
@@ -165,7 +174,7 @@ namespace Cosmos.Resource
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(AssetInfo info, Action<GameObject> loadDoneCallback,Action<float> loadingCallback=null,  bool instantiate = false)
+        public Coroutine LoadPrefabAsync(AssetInfo info, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
         {
             return monoManager.StartCoroutine(EnumLoadAssetAsync(info, loadDoneCallback, loadingCallback, instantiate));
         }
@@ -176,7 +185,7 @@ namespace Cosmos.Resource
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadSceneAsync(SceneInfo info, Action loadDoneCallback, Action<float> loadingCallback=null)
+        public Coroutine LoadSceneAsync(SceneInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
         {
             return monoManager.StartCoroutine(EnumLoadSceneAsync(info, loadDoneCallback, loadingCallback));
         }

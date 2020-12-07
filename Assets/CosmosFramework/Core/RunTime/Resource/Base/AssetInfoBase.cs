@@ -26,5 +26,9 @@ namespace Cosmos
             AssetPath = assetPath;
             ResourcePath = resourcePath;
         }
+        public AssetInfoBase(string resourcePath):this(string.Empty,string.Empty,resourcePath)
+        {
+            ResourcePath = resourcePath;
+        }
     }
 }

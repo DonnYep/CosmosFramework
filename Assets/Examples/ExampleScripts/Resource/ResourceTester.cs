@@ -17,11 +17,13 @@ public class ResourceTester : MonoBehaviour
     }
     void Start()
     {
-       var go= resourceManager.LoadPrefabInstance<ResourceUnitCube>(true);
-        go.transform.position = new Vector3(3, 0, 0);
-        //resourceManager.LoadPrefabInstanceAsync<ResourceUnitSphere>(LoadDone);
-        var monoGo= resourceManager.LoadPrefab<ResourceMonoUnitTester>(true);
-        monoGo.transform.position = new Vector3(5, 0, 0);
+        resourceManager.LoadPrefabAsync<ResourceUnitCube>((go)=> 
+       {
+           go.transform.position = new Vector3(3, 0, 0);
+       },null);
+        resourceManager.LoadPrefabAsync<ResourceMonoUnitTester>((monoGo)=> {
+            monoGo.transform.position = new Vector3(5, 0, 0);
+        });
     }
     void LoadDone(ResourceUnitSphere resUnit, GameObject go)
     {
