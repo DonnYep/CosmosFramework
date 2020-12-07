@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Cosmos.Reference;
+using UnityEngine;
+
 namespace Cosmos.Entity
 {
     /// <summary>
@@ -10,22 +12,32 @@ namespace Cosmos.Entity
     /// 管理例如角色身上的Gadget
     /// </summary>
     [Module]
-    internal class EntityManager : Module , IEntityManager
+    internal class EntityManager : Module// , IEntityManager
     { 
         #region Properties
         public int EntityTypeCount { get { return entityTypeObjectDict.Count; } }
         Dictionary<Type, List<IEntityObject>> entityTypeObjectDict;
         Type entityObjectType = typeof(IEntityObject);
+
+
+        /// <summary>
+        /// 所有实体列表
+        /// </summary>
+        public Dictionary<Type, List<EntityObject>> entityDict { get; private set; } 
+
         IReferencePoolManager referencePoolManager;
+        IResourceManager resourceManager;
         #endregion
         #region Methods
         public override void OnInitialization()
         {
             entityTypeObjectDict = new Dictionary<Type, List<IEntityObject>>();
+            entityDict = new Dictionary<Type, List<EntityObject>>();
         }
         public override void OnPreparatory()
         {
             referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
+            resourceManager = GameManager.GetModule<IResourceManager>();
         }
         public override void OnRefresh()
         {
@@ -105,7 +117,6 @@ namespace Cosmos.Entity
                 referencePoolManager.Despawns(set[i]);
             }
         }
-        // TODO  使用特性来管理实体资源加载
         public T CreateEntity<T>(Action<float> loadingCallback, Action<IEntityObject> loadDoneCallback)
             where T : class, IEntityObject, new()
         {
@@ -373,6 +384,54 @@ namespace Cosmos.Entity
                 return false;
             return true;
         }
+
+
+
+        //public Coroutine CreateEntity(Type type, string entityName, Action<float> loadingAction, Action<EntityObject> loadDoneAction)
+        //{
+        //    var attribute = type.GetCustomAttribute<EntityAssetAttribute>();
+        //    if (attribute != null)
+        //    {
+        //        if (entityDict.ContainsKey(type))
+        //        {
+        //            if (attribute.IsUseObjectPool && ObjectPools[type].Count > 0)
+        //            {
+        //                EntityLogicBase entityLogic = GenerateEntity(type, ObjectPools[type].Dequeue(), entityName == "<None>" ? type.Name : entityName);
+
+        //                loadingAction?.Invoke(1);
+        //                loadDoneAction?.Invoke(entityLogic);
+        //                Main.m_Event.Throw(this, Main.m_ReferencePool.Spawn<EventCreateEntitySucceed>().Fill(entityLogic));
+        //                return null;
+        //            }
+        //            else
+        //            {
+        //                if (_defineEntities.ContainsKey(type.FullName) && _defineEntities[type.FullName] != null)
+        //                {
+        //                    EntityLogicBase entityLogic = GenerateEntity(type, Main.Clone(_defineEntities[type.FullName], _entitiesGroup[type].transform), entityName == "<None>" ? type.Name : entityName);
+        //                    loadingAction?.Invoke(1);
+        //                    loadDoneAction?.Invoke(entityLogic);
+        //                    Main.m_Event.Throw(this, Main.m_ReferencePool.Spawn<EventCreateEntitySucceed>().Fill(entityLogic));
+        //                    return null;
+        //                }
+        //                else
+        //                {
+        //                    return Main.m_Resource.LoadPrefab(new PrefabInfo(attribute), _entitiesGroup[type].transform, loadingAction, (obj) =>
+        //                    {
+        //                        EntityLogicBase entityLogic = GenerateEntity(type, obj, entityName == "<None>" ? type.Name : entityName);
+
+        //                        loadDoneAction?.Invoke(entityLogic);
+        //                        Main.m_Event.Throw(this, Main.m_ReferencePool.Spawn<EventCreateEntitySucceed>().Fill(entityLogic));
+        //                    });
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            throw new ArgumentNullException($"EntityManager-->创建实体失败：实体对象 :{type.Name }并未存在！");
+        //        }
+        //    }
+        //    return null;
+        //}
         #endregion
     }
 }
