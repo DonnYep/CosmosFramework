@@ -16,6 +16,14 @@ namespace Cosmos
         /// </summary>
         ResourceLoadMode LoadMode { get; }
         /// <summary>
+        /// AssetBundle资源加载根路径
+        /// </summary>
+        string AssetBundleRootPath { get;  }
+        /// <summary>
+        /// 所有AssetBundle资源包清单的名称
+        /// </summary>
+        string AssetBundleManifestName { get; }
+        /// <summary>
         /// 设置默认设置加载器;
         /// 此方法会使加载模式变为Resource；
         /// </summary>
@@ -38,6 +46,31 @@ namespace Cosmos
         /// <param name="assetBundleName">名称</param>
         /// <returns>AssetBundle</returns>
         AssetBundle GetAssetBundle(string assetBundleName);
+        T LoadAsset<T>(AssetInfo info) where T : UnityEngine.Object;
+        /// <summary>
+        /// 特性加载:PrefabAssetAttribute！；
+        /// 加载预制体资源（同步）；
+        /// </summary>
+        /// <param name="type">类对象类型</param>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载协程</returns>
+        GameObject LoadPrefab(Type type, bool instantiate = false);
+        /// <summary>
+        /// 特性加载:PrefabAssetAttribute！；
+        /// 加载预制体资源（同步）；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载协程</returns>
+        GameObject LoadPrefab<T>(bool instantiate = false) where T : class;
+        /// <summary>
+        /// 特性无效！；
+        /// 加载预制体资源（同步）；
+        /// </summary>
+        /// <param name="info">资源信息标记</param>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载协程</returns>
+        GameObject LoadPrefab(AssetInfo info, bool instantiate = false);
         /// <summary>
         /// 特性无效！；
         /// 加载资源（异步）；

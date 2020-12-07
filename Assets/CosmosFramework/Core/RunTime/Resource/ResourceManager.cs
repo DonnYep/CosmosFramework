@@ -24,11 +24,11 @@ namespace Cosmos.Resource
         /// <summary>
         /// AssetBundle资源加载根路径
         /// </summary>
-        string assetBundleRootPath;
+        public string AssetBundleRootPath { get; private set; }
         /// <summary>
         /// 所有AssetBundle资源包清单的名称
         /// </summary>
-        string assetBundleManifestName;
+        public  string AssetBundleManifestName { get; private set; }
         /// <summary>
         /// 缓存的所有AssetBundle包【AB包名称、AB包】
         /// </summary>
@@ -78,8 +78,8 @@ namespace Cosmos.Resource
         public void SetLoader(ResourceLoadMode loadMode, string assetBundleRootPath, string manifestName)
         {
             LoadMode = loadMode;
-            this.assetBundleRootPath = assetBundleRootPath;
-            assetBundleManifestName = manifestName;
+            this.AssetBundleRootPath = assetBundleRootPath;
+            AssetBundleManifestName = manifestName;
             _loadWait = new WaitUntil(() => { return !_isLoading; });
         }
         /// <summary>
@@ -97,7 +97,7 @@ namespace Cosmos.Resource
         /// <param name="path">AssetBundle资源根路径</param>
         public void SetAssetBundlePath(string path)
         {
-            assetBundleRootPath = path;
+            AssetBundleRootPath = path;
         }
         /// <summary>
         /// 通过名称获取指定的AssetBundle
@@ -108,6 +108,130 @@ namespace Cosmos.Resource
         {
             assetBundleDict.TryGetValue(assetBundleName, out var ab);
             return ab;
+        }
+        /// <summary>
+        /// 特性无效！；
+        /// 加载资源（异步）；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>加载协程迭代器</returns>
+        public T LoadAsset<T>(AssetInfo info)
+            where T : UnityEngine.Object
+        {
+            var type = typeof(T);
+            var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
+            if (attribute == null)
+            {
+                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：{type}！");
+            }
+            T asset = null;
+            if (LoadMode == ResourceLoadMode.Resource)
+            {
+                ResourceRequest request = Resources.LoadAsync<T>(info.ResourcePath);
+                asset = request.asset as T;
+                if (asset == null)
+                {
+                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
+                }
+            }
+            else
+            {
+                if (assetBundleDict.ContainsKey(info.AssetBundleName))
+                {
+                    asset = assetBundleDict[info.AssetBundleName].LoadAsset<T>(info.AssetPath);
+                    if (asset == null)
+                    {
+                        throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
+                    }
+                }
+            }
+            return asset;
+        }
+        /// <summary>
+        /// 特性加载:PrefabAssetAttribute！；
+        /// 加载预制体资源（同步）；
+        /// </summary>
+        /// <param name="type">类对象类型</param>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载协程</returns>
+        public GameObject LoadPrefab (Type type, bool instantiate = false)
+        {
+            var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
+            if (attribute != null)
+            {
+                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+                return LoadPrefab(info, instantiate);
+            }
+            else
+                return null;
+        }
+        /// <summary>
+        /// 特性加载:PrefabAssetAttribute！；
+        /// 加载预制体资源（同步）；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载协程</returns>
+        public GameObject  LoadPrefab <T>( bool instantiate = false)
+            where T : class
+        {
+            var type = typeof(T);
+            var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
+            if (attribute != null)
+            {
+                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+                return LoadPrefab(info, instantiate);
+            }
+            else
+                return null;
+        }
+        /// <summary>
+        /// 特性无效！；
+        /// 加载预制体资源（同步）；
+        /// </summary>
+        /// <param name="info">资源信息标记</param>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载协程</returns>
+        public GameObject LoadPrefab (AssetInfo info,  bool instantiate = false)
+        {
+
+             GameObject asset = null;
+            if (LoadMode == ResourceLoadMode.Resource)
+            {
+                ResourceRequest request = Resources.LoadAsync<GameObject>(info.ResourcePath);
+                asset = request.asset as GameObject;
+                if (asset == null)
+                {
+                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
+                }
+                else
+                {
+                    if (instantiate)
+                    {
+                        asset = GameObject.Instantiate(asset);
+                    }
+                }
+            }
+            else
+            {
+                if (assetBundleDict.ContainsKey(info.AssetBundleName))
+                {
+                    asset = assetBundleDict[info.AssetBundleName].LoadAsset<GameObject>(info.AssetPath);
+                    if (asset == null)
+                    {
+                        throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
+                    }
+                }
+            }
+            if (asset != null)
+            {
+                if (instantiate)
+                {
+                    asset = GameObject.Instantiate(asset);
+                }
+            }
+            return asset;
         }
         /// <summary>
         /// 特性无效！；
@@ -275,7 +399,7 @@ namespace Cosmos.Resource
         /// <returns>协程迭代器</returns>
         IEnumerator LoadAssetBundleManifestAsync()
         {
-            if (string.IsNullOrEmpty(assetBundleManifestName))
+            if (string.IsNullOrEmpty(AssetBundleManifestName))
             {
                 throw new ArgumentException($"ResourceManager-->>请设置资源管理模块的 Manifest Name 属性，为所有AB包提供依赖清单！");
             }
@@ -283,12 +407,12 @@ namespace Cosmos.Resource
             {
                 if (assetBundleManifest == null)
                 {
-                    yield return LoadAssetBundleAsync(assetBundleManifestName, true);
+                    yield return LoadAssetBundleAsync(AssetBundleManifestName, true);
 
-                    if (assetBundleDict.ContainsKey(assetBundleManifestName))
+                    if (assetBundleDict.ContainsKey(AssetBundleManifestName))
                     {
-                        assetBundleManifest = assetBundleDict[assetBundleManifestName].LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                        UnLoadAsset(assetBundleManifestName);
+                        assetBundleManifest = assetBundleDict[AssetBundleManifestName].LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                        UnLoadAsset(AssetBundleManifestName);
                     }
                 }
             }
@@ -305,8 +429,8 @@ namespace Cosmos.Resource
             if (!assetBundleDict.ContainsKey(assetBundleName))
             {
                 using (UnityWebRequest request = isManifest
-                    ? UnityWebRequestAssetBundle.GetAssetBundle(assetBundleRootPath + assetBundleName)
-                    : UnityWebRequestAssetBundle.GetAssetBundle(assetBundleRootPath + assetBundleName, GetAssetBundleHash(assetBundleName)))
+                    ? UnityWebRequestAssetBundle.GetAssetBundle(AssetBundleRootPath + assetBundleName)
+                    : UnityWebRequestAssetBundle.GetAssetBundle(AssetBundleRootPath + assetBundleName, GetAssetBundleHash(assetBundleName)))
                 {
                     yield return request.SendWebRequest();
                     if (!request.isNetworkError && !request.isHttpError)
@@ -341,8 +465,8 @@ namespace Cosmos.Resource
             if (!assetBundleDict.ContainsKey(assetBundleName))
             {
                 using (UnityWebRequest request = isManifest
-                    ? UnityWebRequestAssetBundle.GetAssetBundle(assetBundleRootPath + assetBundleName)
-                    : UnityWebRequestAssetBundle.GetAssetBundle(assetBundleRootPath + assetBundleName, GetAssetBundleHash(assetBundleName)))
+                    ? UnityWebRequestAssetBundle.GetAssetBundle(AssetBundleRootPath + assetBundleName)
+                    : UnityWebRequestAssetBundle.GetAssetBundle(AssetBundleRootPath + assetBundleName, GetAssetBundleHash(assetBundleName)))
                 {
                     request.SendWebRequest();
                     while (!request.isDone)

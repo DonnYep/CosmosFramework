@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 namespace Cosmos
 {
     [DefaultExecutionOrder(2000)]
@@ -8,12 +9,35 @@ namespace Cosmos
     {
         private void Awake()
         {
-            var debugHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IDebugHelper>();
-            var jsonHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IJsonHelper>();
-            var messagePackHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IMessagePackHelper>();
-            Utility.Debug.SetHelper(debugHelper);
-            Utility.Json.SetHelper(jsonHelper);
-            Utility.MessagePack.SetHelper(messagePackHelper);
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var length = assemblies.Length;
+            for (int i = 0; i < length; i++)
+            {
+                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IDebugHelper>(assemblies[i]);
+                if (helper != null)
+                {
+                    Utility.Debug.SetHelper(helper);
+                    break;
+                }
+            }
+            for (int i = 0; i < length; i++)
+            {
+                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IJsonHelper>(assemblies[i]);
+                if (helper != null)
+                {
+                    Utility.Json.SetHelper(helper);
+                    break;
+                }
+            }
+            for (int i = 0; i < length; i++)
+            {
+                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IMessagePackHelper>(assemblies[i]);
+                if (helper != null)
+                {
+                    Utility.MessagePack.SetHelper(helper);
+                    break;
+                }
+            }
             GameManager.PreparatoryModule();
         }
     }
