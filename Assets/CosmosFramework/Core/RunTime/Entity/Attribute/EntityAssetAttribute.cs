@@ -6,13 +6,23 @@ namespace Cosmos
     [AttributeUsage(AttributeTargets.Class,AllowMultiple =false,Inherited =false)]
     public class EntityAssetAttribute : AssetAttribute
     {
-        public EntityAssetAttribute(string assetBundleName, string assetPath, string resourcePath, bool useObjectPool):base(assetBundleName,assetPath,resourcePath)
+        public EntityAssetAttribute(string entityGroupName, string assetBundleName, string assetPath, string resourcePath)
+            :base(assetBundleName,assetPath,resourcePath)
         {
-            UseObjectPool = useObjectPool;
+            this.EntityGroupName = entityGroupName;
+        }
+        public EntityAssetAttribute(string entityGroupName, string resourcePath)
+    : base(string.Empty,string.Empty, resourcePath)
+        {
+            this.EntityGroupName = entityGroupName;
         }
         /// <summary>
         /// 是否使用对象池进行生成
         /// </summary>
-        public bool UseObjectPool{ get; private set; }
+        public bool UseObjectPool{ get;  set; }
+        /// <summary>
+        /// 实体组名称；
+        /// </summary>
+        public string EntityGroupName { get; private set; }
     }
 }

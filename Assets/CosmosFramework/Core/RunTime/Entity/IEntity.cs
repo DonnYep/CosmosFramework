@@ -1,49 +1,78 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Cosmos;
+using UnityEngine;
 namespace Cosmos.Entity
 {
     /// <summary>
-    /// 与Unity解耦的实体对象
+    /// 与unity耦合的实体对象，当前版本中使用的是此实体对象
     /// </summary>
-    public interface IEntity:IBehaviour,IControllable,IOperable,IRefreshable
+    public interface IEntity: IReference, IRefreshable, IOperable,IRecyclable
     {
         /// <summary>
-        /// 获取实体编号。
+        /// 实体id；
         /// </summary>
-        int Id { get; }
+        int EntityId { get; }
         /// <summary>
-        /// 获取实体资源名称。
+        /// 实体名称；
         /// </summary>
-        string EnitityAssetName { get; }
+        string EntityName { get; }
         /// <summary>
-        /// 获取实体实例。
+        /// 实体索引的具体对象；
         /// </summary>
-        object Handle { get; }
+        object EntityAsset { get; }
         /// <summary>
-        /// 实体附加子实体。
+        /// 实体所属的实体组。
         /// </summary>
-        /// <param name="childEntity">附加的子实体。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        void OnAttached(IEntity childEntity, object userData);
+        EntityGroup EntityGroup{get;}
         /// <summary>
-        /// 实体解除子实体。
+        /// 父实体对象；
         /// </summary>
-        /// <param name="childEntity">解除的子实体。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        void OnDetached(IEntity childEntity, object userData);
+        IEntity ParentEntity { get; }
         /// <summary>
-        /// 实体附加子实体。
+        /// 子实体总数
         /// </summary>
-        /// <param name="parentEntity">被附加的父实体。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        void OnAttachTo(IEntity parentEntity, object userData);
+        int ChildEntityCount { get; }
         /// <summary>
-        /// 实体解除子实体。
+        /// 配置实体对象；
         /// </summary>
-        /// <param name="parentEntity">被解除的父实体。</param>
-        /// <param name="userData">用户自定义数据。</param>
-        void OnDetachFrom(IEntity parentEntity, object userData);
+        /// <param name="entityId">实体id</param>
+        /// <param name="entityName">实体名称</param>
+        /// <param name="entityAsset">实体索引的具体对象</param>
+        /// <param name="entityGroup">实体所在的实体组</param>
+        void SetEntity(int entityId,string entityName,object entityAsset,EntityGroup entityGroup);
+        /// <summary>
+        /// 获取一个子实体
+        /// </summary>
+        /// <returns>获取的子实体</returns>
+        IEntity GetChildEntity();
+        /// <summary>
+        /// 获取所有子实体
+        /// </summary>
+        /// <returns>所有子实体的数组</returns>
+        IEntity[] GetChildEntities();
+        /// <summary>
+        /// 挂载到一个实体上；
+        /// </summary>
+        /// <param name="parent">父实体对象</param>
+        void OnAttachTo(IEntity parent);
+        /// <summary>
+        /// 挂载一个子实体到此实体上；
+        /// </summary>
+        /// <param name="child">子实体对象</param>
+        void OnAttached(IEntity child);
+        /// <summary>
+        /// 从父实体对象上接触挂载；
+        /// </summary>
+        /// <param name="parent">父实体对象</param>
+        void OnDetachFrom(IEntity parent);
+        /// <summary>
+        /// 解除子实体的挂载；
+        /// </summary>
+        /// <param name="child">子实体对象</param>
+        void OnDetached(IEntity child);
     }
 }

@@ -9,7 +9,7 @@ namespace Cosmos.FSM
     /// <summary>
     /// 状态机容器
     /// </summary>
-    internal class FSMPool : IFSMPool
+    internal class FSMGroup : IFSMGroup
     {
         #region Properties
         List<FSMBase> fsmSet = new List<FSMBase>();

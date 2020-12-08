@@ -205,13 +205,6 @@ namespace Cosmos.Resource
                 {
                     throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
                 }
-                else
-                {
-                    if (instantiate)
-                    {
-                        asset = GameObject.Instantiate(asset);
-                    }
-                }
             }
             else
             {
@@ -564,6 +557,13 @@ namespace Cosmos.Resource
                     if (asset == null)
                     {
                         throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
+                    }
+                    else
+                    {
+                        if (instantiate)
+                        {
+                            asset = GameObject.Instantiate(asset);
+                        }
                     }
                 }
             }

@@ -9,7 +9,7 @@ namespace Cosmos.FSM
     /// <summary>
     /// 状态机池
     /// </summary>
-    internal interface IFSMPool:IRefreshable,IControllable
+    internal interface IFSMGroup:IRefreshable,IControllable
     {
         /// <summary>
         /// 轮询更新间隔

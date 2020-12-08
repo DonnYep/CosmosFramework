@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using Cosmos.Reference;
 using UnityEngine;
-
 namespace Cosmos.Entity
 {
     /// <summary>
@@ -13,404 +12,197 @@ namespace Cosmos.Entity
     /// </summary>
     [Module]
     internal class EntityManager : Module// , IEntityManager
-    { 
+    {
         #region Properties
-        public int EntityTypeCount { get { return entityTypeObjectDict.Count; } }
-        Dictionary<Type, List<IEntityObject>> entityTypeObjectDict;
-        Type entityObjectType = typeof(IEntityObject);
-        Action<EntityObject> entitySpawnSucceed;
-        public event Action<EntityObject> EntitySpawnSucceed
+        public int EntityGroupCount { get { return entityGroupDict.Count; } }
+        Action<EntityBase> entitySpawnSucceed;
+        public event Action<IEntity> EntitySpawnSucceed
         {
             add { entitySpawnSucceed += value; }
             remove { entitySpawnSucceed -= value; }
         }
-        public GameObject EntityRoot { get; private set; }
+        IEntityHelper entityHelper;
         /// <summary>
         /// 所有实体列表
         /// </summary>
-        public Dictionary<Type, List<EntityObject>> entityDict { get; private set; } 
-
+        public Dictionary<string, EntityGroup> entityGroupDict { get; private set; }
+        Dictionary<string, GameObject> entityAssetDict;
+        Dictionary<int, IEntity> entityIdDict;
         IReferencePoolManager referencePoolManager;
         IResourceManager resourceManager;
+        IMonoManager monoManager;
         #endregion
         #region Methods
         public override void OnInitialization()
         {
-            entityTypeObjectDict = new Dictionary<Type, List<IEntityObject>>();
-            entityDict = new Dictionary<Type, List<EntityObject>>();
+            entityGroupDict = new Dictionary<string, EntityGroup>();
+            entityAssetDict = new Dictionary<string, GameObject>();
+            entityIdDict = new Dictionary<int, IEntity>();
         }
         public override void OnPreparatory()
         {
             referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
             resourceManager = GameManager.GetModule<IResourceManager>();
+            monoManager = GameManager.GetModule<IMonoManager>();
         }
         public override void OnRefresh()
         {
             if (IsPause)
                 return;
-            foreach (var entityDict in entityTypeObjectDict)
+        }
+        public void SetHelper(IEntityHelper helper)
+        {
+            this.entityHelper = helper;
+        }
+        public void ActiveEntities(string entityGroupName)
+        {
+            
+            entityGroupDict.TryGetValue(entityGroupName, out var group);
+            group?.ActiveEntities(); 
+        }
+        public void DeactiveEntities(string entityGroupName)
+        {
+            entityGroupDict.TryGetValue(entityGroupName, out var group);
+            group?.DeactiveEntities();
+        }
+        public bool RegisterEntityGroup(EntityAssetInfo entityAssetInfo)
+        {
+            if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
             {
-                foreach (var entity in entityDict.Value)
-                {
-                    entity.OnRefresh();
-                }
+                throw new ArgumentNullException("Entity group name is invalid.");
             }
-        }
-        public bool AddEntity<T>(T entity)
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            return AddEntity(type,entity);
-        }
-        public bool AddEntity(Type type,IEntityObject entity)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            bool result = false;
-            if (!entityTypeObjectDict.ContainsKey(type))
-            {
-                entityTypeObjectDict.Add(type, new List<IEntityObject>() { entity });
-                result = true;
-            }
-            else
-            {
-                var set = entityTypeObjectDict[type];
-                if (!set.Contains(entity))
-                {
-                    set.Add(entity);
-                    result = true;
-                }
-            }
-            return result;
-        }
-        /// <summary>
-        /// 回收单个实体对象;
-        /// 若实体对象存在于缓存中，则移除。若不存在，则不做操作；
-        /// </summary>
-        /// <param name="entity">实体对象</param>
-        public void RecoveryEntity<T>(T entity)
-              where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            if (entityTypeObjectDict.ContainsKey(type))
-            {
-                var set = entityTypeObjectDict[type];
-                if (set.Contains(entity))
-                    set.Remove(entity);
-            }
-            referencePoolManager.Despawn(entity);
-        }
-        /// <summary>
-        /// 回收某一类型的实体对象
-        /// </summary>
-        /// <param name="type">实体类型</param>
-        public void RecoveryEntities(Type type)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                throw new ArgumentNullException("EntityManager : can not attach entity, entity type not exist !  Entity Type : " + type.ToString());
-            var set = entityTypeObjectDict[type];
-            int length = set.Count;
-            for (int i = 0; i < length; i++)
-            {
-                referencePoolManager.Despawns(set[i]);
-            }
-        }
-        public int GetEntityCount<T>()
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            return GetEntityCount(type);
-        }
-        public int GetEntityCount(Type type)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                return -1;
-            return entityTypeObjectDict[type].Count;
-        }
-        public T GetEntity<T>(Predicate<T> predicate)
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                throw new ArgumentNullException("EntityManager : can not attach entity, entity type not exist !  Entity Type : " + type.ToString());
-            T entity = default;
-            var set = entityTypeObjectDict[type];
-            int length = set.Count;
-            for (int i = 0; i < length; i++)
-            {
-                if (predicate(set[i] as T))
-                    return set[i] as T;
-            }
-            if (entity == null)
-                throw new ArgumentNullException("EntityManager : can not register entity,entityObject is  empty");
-            return entity;
-        }
-        public IEntityObject GetEntity(Type type, Predicate<IEntityObject> predicate)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                throw new ArgumentNullException("EntityManager : can not attach entity, entity type not exist !  Entity Type : " + type.ToString());
-            IEntityObject entity = default;
-            var set = entityTypeObjectDict[type];
-            int length = set.Count;
-            for (int i = 0; i < length; i++)
-            {
-                if (predicate(set[i]))
-                    return set[i];
-            }
-            if (entity == null)
-                throw new ArgumentNullException("EntityManager : can not register entity,entityObject is  empty");
-            return entity;
-        }
-        public IEntityObject[] GetEntities<T>()
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            return GetEntities(type);
-        }
-        public IEntityObject[] GetEntities(Type type)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                throw new ArgumentNullException("EntityManager : can not attach entity, entity type not exist !  Entity Type : " + type.ToString());
-            var set = entityTypeObjectDict[type];
-            return set.ToArray();
-        }
-        public List<IEntityObject> GetEntityList<T>()
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            return GetEntityList(type);
-        }
-        public List<IEntityObject> GetEntityList(Type type)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                throw new ArgumentNullException("EntityManager : can not attach entity, entity type not exist !  Entity Type : " + type.ToString());
-            var set = entityTypeObjectDict[type];
-            return set;
-        }
-        public void RegisterEntityType<T>()
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            RegisterEntityType(type);
-        }
-        public void RegisterEntityType(Type type)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                throw new ArgumentException("EntityManager : can not register entity,entityObject already exist Entity Type : " + type.ToString());
-            entityTypeObjectDict.Add(type, new List<IEntityObject>());
-        }
-        public bool DeregisterEntityType<T>()
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            return DeregisterEntityType(type);
-        }
-        public bool DeregisterEntityType(Type type)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                throw new ArgumentNullException("EntityManager : can not attach entity, entity type not exist !  Entity Type : " + type.ToString());
-            bool result = false;
-            result = entityTypeObjectDict.Remove(type);
-            return result;
-        }
-        public bool ActiveEntity<T>(T entity)
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            return ActiveEntity(type, entity);
-        }
-        public void ActiveEntity<T>(Predicate<T> predicate)
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            var set = entityTypeObjectDict[type];
-            int length = set.Count;
-            for (int i = 0; i < length; i++)
-            {
-                if (predicate(set[i] as T))
-                    set[i].OnActive();
-            }
-        }
-        public bool ActiveEntity(Type type, IEntityObject entity)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                throw new ArgumentNullException("EntityManager : can not attach entity, entity type not exist !  Entity Type : " + type.ToString());
-            bool result = false;
-            var set = entityTypeObjectDict[type];
-            if (set.Contains(entity))
-            {
-                entity.OnActive();
-                result = true;
-            }
-            else
-                throw new ArgumentNullException("EntityManager : can not register entity, entity is  empty Entity : " + entity.ToString());
-            return result;
-        }
-        public void ActiveEntity(Type type, Predicate<IEntityObject> predicate)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                throw new ArgumentNullException("EntityManager : can not attach entity, entity type not exist !  Entity Type : " + type.ToString());
-            var set = entityTypeObjectDict[type];
-            int length = set.Count;
-            for (int i = 0; i < length; i++)
-            {
-                if (predicate(set[i]))
-                    set[i].OnActive();
-            }
-        }
-        public void ActiveEntities<T>()
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            ActiveEntities(type);
-        }
-        public void ActiveEntities(Type type)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            var set = entityTypeObjectDict[type];
-            int length = set.Count;
-            for (int i = 0; i < length; i++)
-                set[i].OnActive();
-        }
-        public void DeactiveEntities<T>()
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            DeactiveEntities(type);
-        }
-        public void DeactiveEntities(Type type)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                throw new ArgumentNullException("EntityManager : can not attach entity, entity type not exist !  Entity Type : " + type.ToString());
-            var set = entityTypeObjectDict[type];
-            int length = set.Count;
-            for (int i = 0; i < length; i++)
-                set[i].OnDeactive();
-        }
-        public bool HasEntity<T>(Predicate<T> predicate)
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                return false;
-            var set = entityTypeObjectDict[type];
-            int length = set.Count;
-            for (int i = 0; i < length; i++)
-            {
-                if (predicate(set[i] as T))
-                    return true;
-            }
-            return false;
-        }
-        public bool HasEntity(Type type,  Predicate<IEntityObject> predicate)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                return false;
-            var set = entityTypeObjectDict[type];
-            int length = set.Count;
-            for (int i = 0; i < length; i++)
-            {
-                if (predicate(set[i]))
-                    return true;
-            }
-            return false;
-        }
-        public bool HasEntityType<T>()
-            where T : class, IEntityObject, new()
-        {
-            Type type = typeof(T);
-            return HasEntityType(type);
-        }
-        public bool HasEntityType(Type type)
-        {
-            if (!entityObjectType.IsAssignableFrom(type))
-                throw new TypeAccessException("EntityManager : type  is not sub class of EntityObject ! Type : " + type.ToString());
-            if (!entityTypeObjectDict.ContainsKey(type))
-                return false;
+            entityGroupDict.Add(entityAssetInfo.EntityGroupName, new EntityGroup(entityAssetInfo.EntityGroupName));
             return true;
         }
-
-        public Coroutine CreateEntity(Type type, string entityName, Action<float> loadingAction, Action<EntityObject> loadDoneAction)
+        public bool DeregisterEntityGroup(string entityGroupName)
         {
-            var attribute = type.GetCustomAttribute<EntityAssetAttribute>();
-            if (attribute != null)
+            if (string.IsNullOrEmpty(entityGroupName))
             {
-                if (entityDict.ContainsKey(type))
-                {
-                    //if (attribute.UseObjectPool&& ObjectPools[type].Count > 0)
-                    //{
-                    //    EntityObject entityObject = SpawnEntity(type, ObjectPools[type].Dequeue(), entityName == "<None>" ? type.Name : entityName);
-
-                    //    loadingAction?.Invoke(1);
-                    //    loadDoneAction?.Invoke(entityObject);
-                    //    entitySpawnSucceed?.Invoke(entityObject);
-                    //    return null;
-                    //}
-                    //else
-                    //{
-                    //    if (_defineEntities.ContainsKey(type.FullName) && _defineEntities[type.FullName] != null)
-                    //    {
-                    //        EntityObject entityObject = SpawnEntity(type, Main.Clone(_defineEntities[type.FullName], _entitiesGroup[type].transform), entityName == "<None>" ? type.Name : entityName);
-                    //        loadingAction?.Invoke(1);
-                    //        loadDoneAction?.Invoke(entityObject);
-                    //        entitySpawnSucceed?.Invoke(entityObject);
-                    //        return null;
-                    //    }
-                    //    else
-                    //    {
-                    //        var assetInfo = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-                    //       return resourceManager.LoadPrefabAsync(assetInfo, (obj) => 
-                    //        {
-                    //            EntityObject entityObject = SpawnEntity(type, obj, entityName == "<None>" ? type.Name : entityName);
-                    //            loadDoneAction?.Invoke(entityObject);
-                    //            entitySpawnSucceed?.Invoke(entityObject);
-                    //        }, loadingAction);
-                    //    }
-                    //}
-                }
-                else
-                {
-                    throw new ArgumentNullException($"EntityManager-->创建实体失败：实体对象 :{type.Name }并未存在！");
-                }
+                throw new ArgumentNullException("Entity group name is invalid.");
             }
-            return null;
+            entityGroupDict.Remove(entityGroupName);
+            return true;
         }
-        //生成实体
-        private EntityObject SpawnEntity(Type type, object entity, string entityName)
+        public bool HasEntityGroup(string entityGroupName)
         {
-            EntityObject entityObject =referencePoolManager.Spawn(type) as EntityObject;
-            entityDict[type].Add(entityObject);
-            entityObject.SetEntity( entity);
-            entityObject.OnInitialization();
-            entityObject.OnActive();
-            return entityObject;
+            if (string.IsNullOrEmpty(entityGroupName))
+            {
+                throw new ArgumentNullException("Entity group name is invalid.");
+            }
+            return entityGroupDict.ContainsKey(entityGroupName);
+        }
+        public EntityGroup GetEntityGroup(string entityGroupName)
+        {
+            if (string.IsNullOrEmpty(entityGroupName))
+            {
+                throw new ArgumentNullException("Entity group name is invalid.");
+            }
+            entityGroupDict.TryGetValue(entityGroupName, out var entityGroup);
+            return entityGroup;
+        }
+        public EntityGroup[] GetAllEntityGroups()
+        {
+            var entityGroupList = new List<EntityGroup>();
+            entityGroupList.AddRange(entityGroupDict.Values);
+            return entityGroupList.ToArray();
+        }
+        public bool HasEntity(int entityId)
+        {
+            return entityIdDict.ContainsKey(entityId);
+        }
+        public void ActiveEntity(int entityId, EntityAssetInfo entityAssetInfo)
+        {
+            if (entityHelper== null)
+            {
+                throw new ArgumentNullException("You must set entity helper first.");
+            }
+            if (entityAssetInfo== null)
+            {
+                throw new ArgumentNullException("entityAssetInfo is invalid..");
+            }
+            if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
+            {
+                throw new ArgumentNullException("Entity group name is invalid.");
+            }
+            if (HasEntity(entityId))
+            {
+                throw new ArgumentException($"Entity id '{entityId}' is already exist.");
+            }
+            resourceManager.LoadPrefabAsync(entityAssetInfo, (go) => 
+            {
+                entityAssetDict.AddOrUpdate(entityAssetInfo.EntityGroupName, go);
+            });
+        }
+        //public Coroutine CreateEntity(Type type, string entityName, Action<IEntity> loadDoneAction, Action<float> loadingAction)
+        //{
+        //    var attribute = type.GetCustomAttribute<EntityAssetAttribute>();
+        //    if (attribute != null)
+        //    {
+        //        if (registeredEntityType.Contains(type))
+        //        {
+        //            var assetInfo = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+        //            var entity = referencePoolManager.Spawn(type) as IEntity;
+        //            return resourceManager.LoadPrefabAsync(assetInfo, entityGo =>
+        //            {
+        //                entity.SetEntity(0, entityName, entityGo);
+        //                loadDoneAction?.Invoke(entity);
+        //            }, loadingAction, true);
+        //        }
+        //        else
+        //        {
+        //            throw new ArgumentException($"EntityManager : type：{type} has not been register");
+        //        }
+        //    }
+        //    return null;
+        //}
+        /// <summary>
+        /// 自动获取所有程序集中挂载EntityAssetAttribute的类，并注册EntityGroup (异步)；
+        /// </summary>
+        /// <returns>协程对象</returns>
+        public Coroutine AutoRegisterEntityGroupsAsync()
+        {
+            return monoManager.StartCoroutine(EnumAutoRegisterEntityGroups());
+        }
+        IEnumerator EnumAutoRegisterEntityGroups()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var entityAttributes = new List<EntityAssetAttribute>();
+            var length = assemblies.Length;
+            for (int i = 0; i < length; i++)
+            {
+                var attributes = Utility.Assembly.GetAttributesInAssembly<EntityAssetAttribute>(assemblies[i]);
+                entityAttributes.AddRange(attributes);
+            }
+            var attLength = entityAttributes.Count;
+            for (int i = 0; i < attLength; i++)
+            {
+                var ea = entityAttributes[i];
+                var entityAssetInfo = new EntityAssetInfo(ea.EntityGroupName, ea.AssetBundleName, ea.AssetPath, ea.ResourcePath);
+               RegisterEntityGroup(entityAssetInfo);
+            }
+            yield return null;
+        }
+        /// <summary>
+        /// 生成实体对象
+        /// </summary>
+        /// <param name="entityGroupName">实体类型</param>
+        /// <param name="entityAsset">实体资源对象</param>
+        /// <param name="entityAssetName">实体名称</param>
+        /// <returns>生成实体后的接口引用</returns>
+        IEntity SpawnEntity(Type entityType,string entityGroupName, object entityAsset, string entityAssetName)
+        {
+            var entity = referencePoolManager.Spawn(entityType) as IEntity;
+            if(entityGroupDict.TryGetValue(entityGroupName,out var group))
+            {
+                group.AddEntity(entity);
+                entity.SetEntity(0, entityAssetName, entityAsset,group);
+            }
+            else
+            {
+                group = new EntityGroup(entityGroupName);
+            }
+            entity.OnActive();
+            return entity;
         }
         #endregion
     }

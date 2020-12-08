@@ -18,7 +18,7 @@ namespace Cosmos.FSM
         /// <summary>
         /// 状态机群组集合
         /// </summary>
-        Dictionary<Type, IFSMPool> fsmSetDict;
+        Dictionary<Type, IFSMGroup> fsmSetDict;
         List<FSMBase> fsmCache = new List<FSMBase>();
         public int FsmCount { get { return fsmIndividualDict.Count; } }
         #endregion
@@ -28,7 +28,7 @@ namespace Cosmos.FSM
         #region Module
         public override void OnInitialization()
         {
-            fsmSetDict = new Dictionary<Type, IFSMPool>();
+            fsmSetDict = new Dictionary<Type, IFSMGroup>();
             fsmIndividualDict = new Dictionary<Type, FSMBase>(); 
         }
         public override void OnRefresh()
@@ -162,7 +162,7 @@ namespace Cosmos.FSM
         /// <returns>状态机集合</returns>
         public List<FSMBase> GetFSMSet(Type type)
         {
-            IFSMPool fsmPool;
+            IFSMGroup fsmPool;
             fsmSetDict.TryGetValue(type, out fsmPool);
             return fsmPool.FSMSet;
         }
@@ -287,7 +287,7 @@ namespace Cosmos.FSM
                 }
                 else
                 {
-                    var fsmPool = new FSMPool();
+                    var fsmPool = new FSMGroup();
                     fsmPool.AddFSM(fsm);
                     fsmSetDict.Add(type, fsmPool);
                 }
@@ -333,7 +333,7 @@ namespace Cosmos.FSM
                 }
                 else
                 {
-                    var fsmPool = new FSMPool();
+                    var fsmPool = new FSMGroup();
                     fsmPool.AddFSM(fsm);
                     fsmSetDict.Add(type, fsmPool);
                 }
@@ -389,7 +389,7 @@ where T : class
         /// <param name="predicate">查找条件</param>
         public void DestorySetElementFSM(Type type, Predicate<FSMBase> predicate)
         {
-            IFSMPool fsmPool;
+            IFSMGroup fsmPool;
             if (fsmSetDict.TryGetValue(type, out fsmPool))
             {
                 fsmPool.DestoryFSM(predicate);

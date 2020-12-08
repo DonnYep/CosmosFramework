@@ -186,6 +186,7 @@ namespace Cosmos
         }
         internal static void Dispose()
         {
+            OnDeactive();
         }
         static void ModuleTermination(Module module)
         {
@@ -219,8 +220,15 @@ namespace Cosmos
                     {
                         if (moduleDict.TryAdd(type, modules[i]))
                         {
-                            modules[i].OnInitialization();
-                            moduleCount++;
+                            try
+                            {
+                                modules[i].OnInitialization();
+                                moduleCount++;
+                            }
+                            catch (Exception e)
+                            {
+                                Utility.Debug.LogError(e);
+                            }
                         }
                     }
                     else
@@ -233,7 +241,14 @@ namespace Cosmos
         {
             foreach (var module in moduleDict.Values)
             {
-                (module as Module).OnActive();
+                try
+                {
+                    (module as Module).OnActive();
+                }
+                catch (Exception e)
+                {
+                    Utility.Debug.LogError(e);
+                }
             }
             PrepareModule();
         }
@@ -241,17 +256,53 @@ namespace Cosmos
         {
             foreach (var module in moduleDict.Values)
             {
-                module.OnPreparatory();
+                try
+                {
+                    module.OnPreparatory();
+                }
+                catch (Exception e)
+                {
+                    Utility.Debug.LogError(e);
+                }
             }
-            InnerListenRefresh();
+            ListenRefresh();
         }
-        static void InnerListenRefresh()
+        static void ListenRefresh()
         {
             foreach (var module in moduleDict.Values)
             {
                 GameManager.RefreshHandler += module.OnRefresh;
                 GameManager.LateRefreshHandler += module.OnLateRefresh;
                 GameManager.FixedRefreshHandler += module.OnFixRefresh;
+            }
+        }
+        static void OnDeactive()
+        {
+            foreach (var module in moduleDict?.Values)
+            {
+                try
+                {
+                    module?.OnDeactive();
+                }
+                catch (Exception e)
+                {
+                    Utility.Debug.LogError(e);
+                }
+            }
+            OnTermination();
+        }
+        static void OnTermination()
+        {
+            foreach (var module in moduleDict?.Values)
+            {
+                try
+                {
+                    module?.OnTermination();
+                }
+                catch (Exception e)
+                {
+                    Utility.Debug.LogError(e);
+                }
             }
         }
         #endregion
