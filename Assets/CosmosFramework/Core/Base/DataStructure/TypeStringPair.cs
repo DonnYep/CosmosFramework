@@ -17,23 +17,12 @@ namespace Cosmos
             this.type = type;
             this._string = str;
         }
-        public void SetValue(Type type, string str)
-        {
-            Clear();
-            this.type = type;
-            this._string = str;
-        }
-        public void SetValue(Type type)
-        {
-            Clear();
-            SetValue(type, string.Empty);
-        }
+        public TypeStringPair(Type type) : this(type, string.Empty) { }
         public void Clear()
         {
             type = default;
             _string = default;
         }
-        public TypeStringPair(Type type) : this(type, string.Empty) { }
         public bool Equals(TypeStringPair other)
         {
             return type == other.type && _string == other._string;

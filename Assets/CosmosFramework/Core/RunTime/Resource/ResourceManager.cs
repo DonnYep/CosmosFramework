@@ -111,25 +111,18 @@ namespace Cosmos.Resource
         }
         /// <summary>
         /// 特性无效！；
-        /// 加载资源（异步）；
+        /// 加载资源（同步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="info">资源信息标记</param>
-        /// <returns>加载协程迭代器</returns>
+        /// <returns>资源</returns>
         public T LoadAsset<T>(AssetInfo info)
             where T : UnityEngine.Object
         {
-            var type = typeof(T);
-            var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
-            if (attribute == null)
-            {
-                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：{type}！");
-            }
             T asset = null;
             if (LoadMode == ResourceLoadMode.Resource)
             {
-                ResourceRequest request = Resources.LoadAsync<T>(info.ResourcePath);
-                asset = request.asset as T;
+                asset = Resources.Load<T>(info.ResourcePath);
                 if (asset == null)
                 {
                     throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
@@ -140,6 +133,39 @@ namespace Cosmos.Resource
                 if (assetBundleDict.ContainsKey(info.AssetBundleName))
                 {
                     asset = assetBundleDict[info.AssetBundleName].LoadAsset<T>(info.AssetPath);
+                    if (asset == null)
+                    {
+                        throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
+                    }
+                }
+            }
+            return asset;
+        }
+        /// <summary>
+        /// 特性无效！；
+        /// 加载资源（同步）；
+        /// 注意：AB环境下会获取bundle中所有T类型的对象；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>资源</returns>
+        public T[] LoadAllAsset<T>(AssetInfo info)
+        where T : UnityEngine.Object
+        {
+            T[] asset = null;
+            if (LoadMode == ResourceLoadMode.Resource)
+            {
+                asset = Resources.LoadAll<T>(info.ResourcePath);
+                if (asset == null)
+                {
+                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
+                }
+            }
+            else
+            {
+                if (assetBundleDict.ContainsKey(info.AssetBundleName))
+                {
+                    asset = assetBundleDict[info.AssetBundleName].LoadAllAssets<T>();
                     if (asset == null)
                     {
                         throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");

@@ -27,7 +27,7 @@ namespace Cosmos.Entity
         /// <summary>
         /// 实体所属的实体组。
         /// </summary>
-        EntityGroup EntityGroup{get;}
+        IEntityGroup EntityGroup{get;}
         /// <summary>
         /// 父实体对象；
         /// </summary>
@@ -43,7 +43,7 @@ namespace Cosmos.Entity
         /// <param name="entityName">实体名称</param>
         /// <param name="entityAsset">实体索引的具体对象</param>
         /// <param name="entityGroup">实体所在的实体组</param>
-        void SetEntity(int entityId,string entityName,object entityAsset,EntityGroup entityGroup);
+        void SetEntity(int entityId,string entityName,object entityAsset,IEntityGroup entityGroup);
         /// <summary>
         /// 获取一个子实体
         /// </summary>

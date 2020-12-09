@@ -101,6 +101,7 @@ namespace Cosmos
             if (IsPause)
                 return;
             GameManager.OnRefresh();
+            GameManager.OnElapseRefresh(Utility.Time.MillisecondNow());
         }
         private void LateUpdate()
         {

@@ -28,9 +28,18 @@ namespace Cosmos
             add { refreshHandler += value; }
             remove { refreshHandler -= value; }
         }
+        /// <summary>
+        /// 时间流逝轮询委托；
+        /// </summary>
+        public static event Action<long> ElapseRefreshHandler
+        {
+            add { elapseRefreshHandler += value; }
+            remove { elapseRefreshHandler -= value; }
+        }
         static Action fixedRefreshHandler;
         static Action lateRefreshHandler;
         static Action refreshHandler;
+        static Action<long> elapseRefreshHandler;
         /// <summary>
         /// 模块字典；
         /// key=>moduleType；value=>module
@@ -81,6 +90,16 @@ namespace Cosmos
             if (IsPause)
                 return;
             refreshHandler?.Invoke();
+        }
+        /// <summary>
+        /// 时间流逝轮询;
+        /// </summary>
+        /// <param name="msNow">utc毫秒当前时间</param>
+        internal static void OnElapseRefresh(long msNow)
+        {
+            if (IsPause)
+                return;
+            elapseRefreshHandler?.Invoke(msNow);
         }
         internal static void OnLateRefresh()
         {
@@ -265,15 +284,16 @@ namespace Cosmos
                     Utility.Debug.LogError(e);
                 }
             }
-            ListenRefresh();
+            AddRefreshListen();
         }
-        static void ListenRefresh()
+        static void AddRefreshListen()
         {
             foreach (var module in moduleDict.Values)
             {
                 GameManager.RefreshHandler += module.OnRefresh;
                 GameManager.LateRefreshHandler += module.OnLateRefresh;
                 GameManager.FixedRefreshHandler += module.OnFixRefresh;
+                GameManager.ElapseRefreshHandler += module.OnElapseRefresh;
             }
         }
         static void OnDeactive()
@@ -303,6 +323,17 @@ namespace Cosmos
                 {
                     Utility.Debug.LogError(e);
                 }
+            }
+            RemoveRefreshListen();
+        }
+        static void RemoveRefreshListen()
+        {
+            foreach (var module in moduleDict.Values)
+            {
+                GameManager.RefreshHandler -= module.OnRefresh;
+                GameManager.LateRefreshHandler -= module.OnLateRefresh;
+                GameManager.FixedRefreshHandler -= module.OnFixRefresh;
+                GameManager.ElapseRefreshHandler -= module.OnElapseRefresh;
             }
         }
         #endregion

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 namespace Cosmos
 {
-    [AttributeUsage(AttributeTargets.Class,AllowMultiple =false,Inherited =false)]
+    [AttributeUsage(AttributeTargets.Class,AllowMultiple =true,Inherited =false)]
     public class EntityAssetAttribute : AssetAttribute
     {
         public EntityAssetAttribute(string entityGroupName, string assetBundleName, string assetPath, string resourcePath)

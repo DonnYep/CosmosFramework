@@ -26,7 +26,6 @@ namespace Cosmos.Entity
         /// 所有实体列表
         /// </summary>
         public Dictionary<string, EntityGroup> entityGroupDict { get; private set; }
-        Dictionary<string, GameObject> entityAssetDict;
         Dictionary<int, IEntity> entityIdDict;
         IReferencePoolManager referencePoolManager;
         IResourceManager resourceManager;
@@ -36,7 +35,6 @@ namespace Cosmos.Entity
         public override void OnInitialization()
         {
             entityGroupDict = new Dictionary<string, EntityGroup>();
-            entityAssetDict = new Dictionary<string, GameObject>();
             entityIdDict = new Dictionary<int, IEntity>();
         }
         public override void OnPreparatory()
@@ -56,32 +54,55 @@ namespace Cosmos.Entity
         }
         public void ActiveEntities(string entityGroupName)
         {
-            
+
             entityGroupDict.TryGetValue(entityGroupName, out var group);
-            group?.ActiveEntities(); 
+            group?.ActiveEntities();
         }
         public void DeactiveEntities(string entityGroupName)
         {
             entityGroupDict.TryGetValue(entityGroupName, out var group);
             group?.DeactiveEntities();
         }
-        public bool RegisterEntityGroup(EntityAssetInfo entityAssetInfo)
+        /// <summary>
+        /// 注册EntityGroup (异步)；
+        /// </summary>
+        /// <param name="entityAssetInfo">实体对象信息</param>
+        public void RegisterEntityGroup(EntityAssetInfo entityAssetInfo)
         {
             if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
             {
                 throw new ArgumentNullException("Entity group name is invalid.");
             }
-            entityGroupDict.Add(entityAssetInfo.EntityGroupName, new EntityGroup(entityAssetInfo.EntityGroupName));
-            return true;
+            var result = HasEntityGroup(entityAssetInfo.EntityGroupName);
+            if (!result)
+            {
+                var entityAsset = resourceManager.LoadPrefab(entityAssetInfo);
+                entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset));
+            }
         }
-        public bool DeregisterEntityGroup(string entityGroupName)
+        public Coroutine RegisterEntityGroupAsync(EntityAssetInfo entityAssetInfo)
+        {
+            if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
+            {
+                throw new ArgumentNullException("Entity group name is invalid.");
+            }
+            var result = HasEntityGroup(entityAssetInfo.EntityGroupName);
+            if (!result)
+            {
+                return resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
+                {
+                    entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset));
+                });
+            }
+            return null;
+        }
+        public void DeregisterEntityGroup(string entityGroupName)
         {
             if (string.IsNullOrEmpty(entityGroupName))
             {
                 throw new ArgumentNullException("Entity group name is invalid.");
             }
             entityGroupDict.Remove(entityGroupName);
-            return true;
         }
         public bool HasEntityGroup(string entityGroupName)
         {
@@ -91,7 +112,7 @@ namespace Cosmos.Entity
             }
             return entityGroupDict.ContainsKey(entityGroupName);
         }
-        public EntityGroup GetEntityGroup(string entityGroupName)
+        public object GetGroupEntityAsset(string entityGroupName)
         {
             if (string.IsNullOrEmpty(entityGroupName))
             {
@@ -100,27 +121,21 @@ namespace Cosmos.Entity
             entityGroupDict.TryGetValue(entityGroupName, out var entityGroup);
             return entityGroup;
         }
-        public EntityGroup[] GetAllEntityGroups()
-        {
-            var entityGroupList = new List<EntityGroup>();
-            entityGroupList.AddRange(entityGroupDict.Values);
-            return entityGroupList.ToArray();
-        }
         public bool HasEntity(int entityId)
         {
             return entityIdDict.ContainsKey(entityId);
         }
-        public void ActiveEntity(int entityId, EntityAssetInfo entityAssetInfo)
+        public void ActiveEntity(int entityId, string entityName, string entityGroupName, object userData)
         {
-            if (entityHelper== null)
+            if (entityHelper == null)
             {
                 throw new ArgumentNullException("You must set entity helper first.");
             }
-            if (entityAssetInfo== null)
+            if (string.IsNullOrEmpty(entityName))
             {
-                throw new ArgumentNullException("entityAssetInfo is invalid..");
+                throw new ArgumentNullException("Entity name is invalid.");
             }
-            if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
+            if (string.IsNullOrEmpty(entityGroupName))
             {
                 throw new ArgumentNullException("Entity group name is invalid.");
             }
@@ -128,33 +143,43 @@ namespace Cosmos.Entity
             {
                 throw new ArgumentException($"Entity id '{entityId}' is already exist.");
             }
-            resourceManager.LoadPrefabAsync(entityAssetInfo, (go) => 
+            if (!HasEntityGroup(entityGroupName))
             {
-                entityAssetDict.AddOrUpdate(entityAssetInfo.EntityGroupName, go);
-            });
+                throw new ArgumentException($"Entity group {entityGroupName}  is not exist.");
+            }
+            entityGroupDict.TryGetValue(entityGroupName, out var entityGroup);
+            var entity = entityGroup.GetEntity(entityName);
+            if (entity != null)
+            {
+                entity.OnActive();
+            }
+            else
+            {
+                entity = entityHelper.CreateEntity(entityGroup.EntityAsset, entityGroup, userData);
+                entity.OnActive();
+            }
         }
-        //public Coroutine CreateEntity(Type type, string entityName, Action<IEntity> loadDoneAction, Action<float> loadingAction)
-        //{
-        //    var attribute = type.GetCustomAttribute<EntityAssetAttribute>();
-        //    if (attribute != null)
-        //    {
-        //        if (registeredEntityType.Contains(type))
-        //        {
-        //            var assetInfo = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-        //            var entity = referencePoolManager.Spawn(type) as IEntity;
-        //            return resourceManager.LoadPrefabAsync(assetInfo, entityGo =>
-        //            {
-        //                entity.SetEntity(0, entityName, entityGo);
-        //                loadDoneAction?.Invoke(entity);
-        //            }, loadingAction, true);
-        //        }
-        //        else
-        //        {
-        //            throw new ArgumentException($"EntityManager : type：{type} has not been register");
-        //        }
-        //    }
-        //    return null;
-        //}
+        public void DeactiveEntity(int entityId)
+        {
+            if (entityHelper == null)
+            {
+                throw new ArgumentNullException("You must set entity helper first.");
+            }
+            if (HasEntity(entityId))
+            {
+                throw new ArgumentException($"Entity id '{entityId}' is already exist.");
+            }
+            entityIdDict.TryGetValue(entityId, out var entity);
+            entityHelper.ReleaseEntity(entity.EntityAsset);
+        }
+        public void DeactiveEntity(IEntity entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException("Entity is invalid.");
+            }
+            entity.OnDeactive();
+        }
         /// <summary>
         /// 自动获取所有程序集中挂载EntityAssetAttribute的类，并注册EntityGroup (异步)；
         /// </summary>
@@ -177,8 +202,11 @@ namespace Cosmos.Entity
             for (int i = 0; i < attLength; i++)
             {
                 var ea = entityAttributes[i];
-                var entityAssetInfo = new EntityAssetInfo(ea.EntityGroupName, ea.AssetBundleName, ea.AssetPath, ea.ResourcePath);
-               RegisterEntityGroup(entityAssetInfo);
+                if (!HasEntityGroup(ea.EntityGroupName))
+                {
+                    var entityAssetInfo = new EntityAssetInfo(ea.EntityGroupName, ea.AssetBundleName, ea.AssetPath, ea.ResourcePath);
+                    RegisterEntityGroup(entityAssetInfo);
+                }
             }
             yield return null;
         }
@@ -189,17 +217,17 @@ namespace Cosmos.Entity
         /// <param name="entityAsset">实体资源对象</param>
         /// <param name="entityAssetName">实体名称</param>
         /// <returns>生成实体后的接口引用</returns>
-        IEntity SpawnEntity(Type entityType,string entityGroupName, object entityAsset, string entityAssetName)
+        IEntity SpawnEntity(Type entityType, string entityGroupName, object entityAsset, string entityAssetName)
         {
             var entity = referencePoolManager.Spawn(entityType) as IEntity;
-            if(entityGroupDict.TryGetValue(entityGroupName,out var group))
+            if (entityGroupDict.TryGetValue(entityGroupName, out var group))
             {
                 group.AddEntity(entity);
-                entity.SetEntity(0, entityAssetName, entityAsset,group);
+                entity.SetEntity(0, entityAssetName, entityAsset, group);
             }
             else
             {
-                group = new EntityGroup(entityGroupName);
+                //group = new EntityGroup(entityGroupName);
             }
             entity.OnActive();
             return entity;

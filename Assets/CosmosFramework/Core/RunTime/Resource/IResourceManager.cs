@@ -46,7 +46,23 @@ namespace Cosmos
         /// <param name="assetBundleName">名称</param>
         /// <returns>AssetBundle</returns>
         AssetBundle GetAssetBundle(string assetBundleName);
+        /// <summary>
+        /// 特性无效！；
+        /// 加载资源（同步）；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>资源</returns>
         T LoadAsset<T>(AssetInfo info) where T : UnityEngine.Object;
+        /// <summary>
+        /// 特性无效！；
+        /// 加载资源（同步）；
+        /// 注意：AB环境下会获取bundle中所有T类型的对象；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>资源</returns>
+        T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object;
         /// <summary>
         /// 特性加载:PrefabAssetAttribute！；
         /// 加载预制体资源（同步）；

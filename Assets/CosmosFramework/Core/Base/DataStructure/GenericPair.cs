@@ -18,11 +18,6 @@ namespace Cosmos
             this.value1 = value1;
             this.value2 = value2;
         }
-        public void SetValue(TValue1 value1, TValue2 value2)
-        {
-            this.value1 = value1;
-            this.value2 = value2;
-        }
         public static bool operator ==(GenericPair<TValue1, TValue2> a, GenericPair<TValue1, TValue2> b)
         {
             return a.Equals(b);

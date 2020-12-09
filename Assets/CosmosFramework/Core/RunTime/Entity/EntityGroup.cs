@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace Cosmos.Entity
 {
-    public class EntityGroup :IRefreshable
+    internal sealed class EntityGroup : IEntityGroup
     {
         public string EntityGroupName { get; private set; }
         public int EntityCount { get { return entityLinkedList.Count; } }
         LinkedList<IEntity> entityLinkedList;
+        public object EntityAsset { get; private set; }
         int entityId;
         public IEntity EntityAssetRoot { get; private set; }
         Action refreshHandler;
@@ -27,10 +28,11 @@ namespace Cosmos.Entity
         {
             EntityAssetRoot = root;
         }
-        public EntityGroup(string name)
+        public EntityGroup(string name, object entityAsset)
         {
             EntityGroupName = name;
             entityLinkedList = new LinkedList<IEntity>();
+            this.EntityAsset = entityAsset;
         }
         public void OnRefresh()
         {

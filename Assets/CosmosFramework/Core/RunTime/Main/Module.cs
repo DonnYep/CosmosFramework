@@ -8,7 +8,7 @@ namespace Cosmos
     /// 模块的抽象基类；
     /// 外部可扩展；
     /// </summary>
-    public abstract class Module: IControllableBehaviour,  IOperable
+    public abstract class Module: IControllableBehaviour,  IOperable, IElapesRefreshable
     {
         public bool IsPause { get; protected set; }
         #region Methods
@@ -26,6 +26,11 @@ namespace Cosmos
         /// 覆写时请尽量保留父类方法
         /// </summary>
         public virtual void OnRefresh() { if (IsPause) return; }
+        /// <summary>
+        /// 时间流逝轮询;
+        /// </summary>
+        /// <param name="msNow">utc毫秒当前时间</param>
+        public virtual void OnElapseRefresh(long msNow) { if (IsPause) return; }
         public virtual void OnFixRefresh() { if (IsPause) return; }
         public virtual void OnLateRefresh() { if (IsPause) return; }
         public virtual void OnActive() { }

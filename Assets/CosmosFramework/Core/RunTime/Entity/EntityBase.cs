@@ -9,7 +9,6 @@ namespace Cosmos.Entity
     /// </summary>
     public abstract class EntityBase : IEntity
     {
-
         /// <summary>
         /// 实体id；
         /// </summary>
@@ -25,7 +24,7 @@ namespace Cosmos.Entity
         /// <summary>
         /// 获取实体所属的实体组;
         /// </summary>
-        public EntityGroup EntityGroup { get; protected set; }
+        public IEntityGroup EntityGroup { get; protected set; }
         /// <summary>
         /// 父实体对象；
         /// </summary>
@@ -77,7 +76,7 @@ namespace Cosmos.Entity
         /// 当对象被回收;
         /// </summary>
         public abstract void OnRecycle();
-        public void SetEntity(int entityId, string entityName, object entityAsset, EntityGroup entityGroup)
+        public void SetEntity(int entityId, string entityName, object entityAsset, IEntityGroup entityGroup)
         {
             this.EntityId = entityId;
             this.EntityName = entityName;

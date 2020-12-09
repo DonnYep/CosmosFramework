@@ -21,16 +21,15 @@ namespace Cosmos.Entity
         /// <summary>
         /// 创建实体。
         /// </summary>
-        /// <param name="entityInstance">实体实例。</param>
+        /// <param name="entityAsset">实体实例。</param>
         /// <param name="entityGroup">实体所属的实体组。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>实体。</returns>
-        IEntity CreateEntity(object entityInstance, EntityGroup entityGroup, object userData);
+        IEntity CreateEntity(object entityAsset, IEntityGroup entityGroup, object userData);
         /// <summary>
         /// 释放实体。
         /// </summary>
         /// <param name="entityAsset">要释放的实体资源。</param>
-        /// <param name="entityInstance">要释放的实体实例。</param>
-        void ReleaseEntity(object entityAsset, object entityInstance);
+        void ReleaseEntity(object entityAsset);
     }
 }
