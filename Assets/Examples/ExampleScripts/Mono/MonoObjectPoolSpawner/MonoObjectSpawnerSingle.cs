@@ -27,15 +27,15 @@ namespace Cosmos{
                 return;
             for (int i = 0; i < poolDataSet.SpawnCount; i++)
             {
-                objectPoolManager.SetSpawnItem(this, PoolDataSet.SpawnObject);
-                var go = objectPoolManager.Spawn(this);
-                AlignObject(PoolDataSet.AlignType, go, SpawnTransform);
+                //objectPoolManager.SetSpawnItem(this, PoolDataSet.SpawnObject);
+                //var go = objectPoolManager.Spawn(this);
+                //AlignObject(PoolDataSet.AlignType, go, SpawnTransform);
             }
         }
         protected override void RegisterSpawner()
         {
-            if(poolDataSet != null)
-                objectPoolManager.RegisterSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
+            //if(poolDataSet != null)
+            //    objectPoolManager.RegisterSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
         }
         public override void SpawnUncollectible()
         {

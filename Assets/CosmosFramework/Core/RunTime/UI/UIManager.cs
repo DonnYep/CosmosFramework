@@ -115,7 +115,7 @@ namespace Cosmos.UI
                  (panel.transform as RectTransform).ResetLocalTransform();
                  var comp = Utility.Unity.Add<T>(panel, true);
                  callback?.Invoke(comp);
-                 uiPanelDict.Add(comp.UIName, comp);
+                 uiPanelDict.Add(comp.UIAssetName, comp);
              });
         }
         /// <summary>
@@ -133,7 +133,7 @@ namespace Cosmos.UI
                  (panel.transform as RectTransform).ResetLocalTransform();
                  var comp = Utility.Unity.Add(type, panel, true) as UILogicBase;
                  loadDoneCallback?.Invoke(comp);
-                 uiPanelDict.Add(comp.UIName, comp);
+                 uiPanelDict.Add(comp.UIAssetName, comp);
              });
         }
         /// <summary>
@@ -151,7 +151,7 @@ namespace Cosmos.UI
                 (panel.transform as RectTransform).ResetLocalTransform();
                 var comp = Utility.Unity.Add<T>(panel, true);
                 loadDoneCallback?.Invoke(comp);
-                uiPanelDict.Add(comp.UIName, comp);
+                uiPanelDict.Add(comp.UIAssetName, comp);
             });
         }
         /// <summary>
@@ -173,7 +173,7 @@ namespace Cosmos.UI
                  (panel.transform as RectTransform).ResetLocalTransform();
                  var comp = Utility.Unity.Add(type, panel, true) as UILogicBase;
                  loadDoneCallback?.Invoke(comp);
-                 uiPanelDict.Add(comp.UIName, comp);
+                 uiPanelDict.Add(comp.UIAssetName, comp);
              });
         }
         /// <summary>

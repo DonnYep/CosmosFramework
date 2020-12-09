@@ -7,6 +7,8 @@ public class LRUTester: MonoBehaviour
     GameObject spawnItem;
     LRU<int, GameObject> goDict = new LRU<int, GameObject>(4);
     int index = 0;
+    IObjectPool objectPool;
+    string objectKey = "LRUTester";
     protected GameObject deactiveObjectMount;
     public Transform DeactiveObjectMount
     {
@@ -27,7 +29,7 @@ public class LRUTester: MonoBehaviour
     }
     public void AddLRU()
     {
-        goDict.Add(index++, objectPoolManager.Spawn(this));
+        goDict.Add(index++, objectPool.Spawn().Convert<GameObject>());
         if (index >= 16)
             goDict.ResetCapacity(8);
     }
@@ -55,8 +57,8 @@ public class LRUTester: MonoBehaviour
     void Start()
     {
         spawnItem = new GameObject("LRUSpawnItem");
-        objectPoolManager.RegisterSpawnPool(this, spawnItem, SpawnHandler, DespawnHandler);
-        goDict.AddOverflowAction((x) => objectPoolManager.Despawn(this, x));
+        objectPool= objectPoolManager.RegisterObjectPool(objectKey,spawnItem);
+        goDict.AddOverflowAction((x) => objectPool.Despawn(x));
     }
 
 

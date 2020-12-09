@@ -18,7 +18,7 @@ namespace Cosmos.UI
         /// 是否自动注册获取当前节点下的UIBehaviour对象
         /// </summary>
         protected virtual bool AutoGetChildUIForm { get; set; } = true;
-        public virtual string UIName { get { return gameObject.name; } }
+        public virtual string UIAssetName { get { return gameObject.name; } }
         /// <summary>
         /// 空虚函数
         /// </summary>

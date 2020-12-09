@@ -67,15 +67,15 @@ namespace Cosmos
         /// </summary>
         protected virtual void DeregisterSpawner()
         {
-            GameManager.GetModule<IObjectPoolManager>().DeregisterSpawnPool(this);
+            //GameManager.GetModule<IObjectPoolManager>().DeregisterSpawnPool(this);
             GameObject.Destroy(deactiveObjectMount);
         }
         protected virtual void SpawnHandler(GameObject go)
         {
             if (go == null)
                 return;
-            GameManager.GetModule<IMonoManager>().StartCoroutine(EnumCollect(CollectDelay,
-                ()=> GameManager.GetModule<IObjectPoolManager>().Despawn(this, go)));
+            //GameManager.GetModule<IMonoManager>().StartCoroutine(EnumCollect(CollectDelay,
+            //    ()=> GameManager.GetModule<IObjectPoolManager>().Despawn(this, go)));
         }
         protected virtual  void DespawnHandler(GameObject go)
         {
@@ -86,7 +86,7 @@ namespace Cosmos
         }
         public virtual void ClearAll()
         {
-            GameManager.GetModule<IObjectPoolManager>().Clear(this);
+            //GameManager.GetModule<IObjectPoolManager>().Clear(this);
         }
         protected  IEnumerator EnumCollect(float delay,Action action=null)
         {

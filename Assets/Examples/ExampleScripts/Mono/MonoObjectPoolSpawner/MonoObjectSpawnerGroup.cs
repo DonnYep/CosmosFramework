@@ -31,9 +31,9 @@ namespace Cosmos{
                     flag = i;
                     for (int j = 0; j < SpawnObjectGroup[i].PoolObject.SpawnCount; j++)
                     {
-                        objectPoolManager.SetSpawnItem(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject);
-                        var go = objectPoolManager.Spawn(SpawnObjectGroup[i].SpawnTransform);
-                        AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
+                        //objectPoolManager.SetSpawnItem(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject);
+                        //var go = objectPoolManager.Spawn(SpawnObjectGroup[i].SpawnTransform);
+                        //AlignObject(SpawnObjectGroup[i].PoolObject.AlignType, go, SpawnObjectGroup[i].SpawnTransform);
                     }
                 }
             }
@@ -44,8 +44,8 @@ namespace Cosmos{
             {
                 if(SpawnObjectGroup[i].SpawnTransform!=null&&SpawnObjectGroup[i].PoolObject!=null)
                 {
-                    objectPoolManager.RegisterSpawnPool(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject,
-                      SpawnHandler, DespawnHandler);
+                    //objectPoolManager.RegisterSpawnPool(SpawnObjectGroup[i].SpawnTransform, SpawnObjectGroup[i].PoolObject.SpawnObject,
+                    //  SpawnHandler, DespawnHandler);
                 }
             }
         }
@@ -55,7 +55,7 @@ namespace Cosmos{
             {
                 if (SpawnObjectGroup[i].SpawnTransform != null && SpawnObjectGroup[i].PoolObject != null)
                 {
-                    objectPoolManager.DeregisterSpawnPool(SpawnObjectGroup[i].SpawnTransform);
+                    //objectPoolManager.DeregisterSpawnPool(SpawnObjectGroup[i].SpawnTransform);
                 }
             }
             GameObject.Destroy(deactiveObjectMount);
@@ -64,8 +64,8 @@ namespace Cosmos{
         {
             if (go == null)
                 return;
-            monoManager.StartCoroutine(EnumCollect(SpawnObjectGroup[flag].CollectDelay,
-                (tempFlag) => { objectPoolManager.Despawn(SpawnObjectGroup[Utility.Converter.Int( tempFlag)].SpawnTransform, go); },flag));
+            //monoManager.StartCoroutine(EnumCollect(SpawnObjectGroup[flag].CollectDelay,
+            //    (tempFlag) => { objectPoolManager.Despawn(SpawnObjectGroup[Utility.Converter.Int( tempFlag)].SpawnTransform, go); },flag));
         }
         protected IEnumerator EnumCollect(float delay, Action<object> action ,object arg)
         {

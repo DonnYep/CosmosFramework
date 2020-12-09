@@ -24,16 +24,16 @@ namespace Cosmos{
                     return;
                 for (int j = 0; j < poolDataSet.SpawnCount; j++)
                 {
-                    objectPoolManager.SetSpawnItem(this, PoolDataSet.SpawnObject);
-                    var go = objectPoolManager.Spawn(this);
-                    AlignObject(PoolDataSet.AlignType, go, SpawnTransforms[i]);
+                    //objectPoolManager.SetSpawnItem(this, PoolDataSet.SpawnObject);
+                    //var go = objectPoolManager.Spawn(this);
+                    //AlignObject(PoolDataSet.AlignType, go, SpawnTransforms[i]);
                 }
             }
         }
         protected override void RegisterSpawner()
         {
-            if(poolDataSet != null)
-                objectPoolManager.RegisterSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
+            //if(poolDataSet != null)
+            //    objectPoolManager.RegisterSpawnPool(this, PoolDataSet.SpawnObject, SpawnHandler, DespawnHandler);
         }
         //TODO不可回收的对象
         public override void SpawnUncollectible()

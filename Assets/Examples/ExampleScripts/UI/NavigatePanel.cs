@@ -30,7 +30,7 @@ public class NavigatePanel : UILogicResident
             uiManager.OpenUIAsync<WelcomePanel>(panel =>
             { panel.gameObject.SetActive(true); welcome = panel; });
         else
-            uiManager.RemoveUI(welcome.UIName, out _ );
+            uiManager.RemoveUI(welcome.UIAssetName, out _ );
     }
     /// <summary>
     /// Invenmtory panel是常驻类型，若不存在，则载入；开启与关闭只进行显示与隐藏操作

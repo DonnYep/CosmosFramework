@@ -7,7 +7,7 @@ namespace Cosmos.ObjectPool
     internal sealed class ObjectPoolManager : Module//, IObjectPoolManager
     {
         #region Properties
-        Dictionary<TypeStringPair, ObjectSpawnPool> poolDict;
+        Dictionary<TypeStringPair, ObjectPool> poolDict;
         Action<long> elapseRefreshHandler;
         event Action<long> ElapseRefreshHandler
         {
@@ -20,7 +20,7 @@ namespace Cosmos.ObjectPool
         #region Methods
         public override void OnInitialization()
         {
-            poolDict = new Dictionary<TypeStringPair, ObjectSpawnPool>();
+            poolDict = new Dictionary<TypeStringPair, ObjectPool>();
         }
         public override void OnPreparatory()
         {
@@ -31,7 +31,13 @@ namespace Cosmos.ObjectPool
             elapseRefreshHandler?.Invoke(msNow);
         }
 
-        public Coroutine RegisterObjectAssetAsync(ObjectAssetInfo objectAssetInfo,Action<IObjectSpawnPool>onRegisterCallback=null)
+        /// <summary>
+        /// 注册对象池（异步）;
+        /// </summary>
+        /// <param name="objectAssetInfo">对象资源信息</param>
+        /// <param name="onRegisterCallback">注册成功后的回调，若失败则不回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine RegisterObjectPoolAsync(ObjectAssetInfo objectAssetInfo,Action<IObjectPool>onRegisterCallback=null)
         {
             if (objectAssetInfo == null)
             {
@@ -43,15 +49,20 @@ namespace Cosmos.ObjectPool
                     var objectKey = objectAssetInfo.ObjectKey;
                     if (!HasObjectPool(objectKey))
                     {
-                        var pool = new ObjectSpawnPool(spawnItem);
-                        poolDict.TryAdd(objectKey, new ObjectSpawnPool(spawnItem));
+                        var pool = new ObjectPool(spawnItem);
+                        poolDict.TryAdd(objectKey, new ObjectPool(spawnItem));
                         onRegisterCallback?.Invoke(pool);
                     }
                     else
                         throw new ArgumentException($"object key :{objectKey} is exist.");
                 });
         }
-        public IObjectSpawnPool RegisterObjectAsset(ObjectAssetInfo objectAssetInfo)
+        /// <summary>
+        /// 注册对象池（同步）;
+        /// </summary>
+        /// <param name="objectAssetInfo">对象资源信息</param>
+        /// <returns>注册生成后的池对象接口</returns>
+        public IObjectPool RegisterObjectPool(ObjectAssetInfo objectAssetInfo)
         {
             if (objectAssetInfo == null)
             {
@@ -61,14 +72,20 @@ namespace Cosmos.ObjectPool
             if (!HasObjectPool(objectKey))
             {
                 var spawnItem = resourceManager.LoadPrefab(objectAssetInfo);
-                var pool = new ObjectSpawnPool(spawnItem);
-                poolDict.TryAdd(objectKey, new ObjectSpawnPool(spawnItem));
+                var pool = new ObjectPool(spawnItem);
+                poolDict.TryAdd(objectKey, new ObjectPool(spawnItem));
                 return pool;
             }
             else
                 throw new ArgumentException($"object key :{objectKey} is exist.");
         }
-        public IObjectSpawnPool RegisterObjectAsset(TypeStringPair objectKey, object spawnItem)
+        /// <summary>
+        /// 注册对象池（同步）;
+        /// </summary>
+        /// <param name="objectKey">对象池key</param>
+        /// <param name="spawnItem">需要生成的对象</param>
+        /// <returns>注册生成后的池对象接口</returns>
+        public IObjectPool RegisterObjectPool(TypeStringPair objectKey, object spawnItem)
         {
             if (objectKey == null)
             {
@@ -76,46 +93,81 @@ namespace Cosmos.ObjectPool
             }
             if (!HasObjectPool(objectKey))
             {
-                var pool = new ObjectSpawnPool(spawnItem);
-                poolDict.TryAdd(objectKey, new ObjectSpawnPool(spawnItem));
+                var pool = new ObjectPool(spawnItem);
+                poolDict.TryAdd(objectKey, new ObjectPool(spawnItem));
                 return pool;
             }
             else
                 throw new ArgumentException($"object key :{objectKey} is exist.");
         }
-        public IObjectSpawnPool RegisterObjectAsset(Type objectType, string name, object spawnItem)
+        /// <summary>
+        /// 注册对象池（同步）;
+        /// </summary>
+        /// <param name="objectType">对象的类型</param>
+        /// <param name="name">对象的名称</param>
+        /// <param name="spawnItem">需要生成的对象</param>
+        /// <returns>注册生成后的池对象接口</returns>
+        public IObjectPool RegisterObjectPool(Type objectType, string name, object spawnItem)
         {
             var objectKey = new TypeStringPair(objectType, name);
-            return RegisterObjectAsset(objectKey, spawnItem);
+            return RegisterObjectPool(objectKey, spawnItem);
         }
-        public IObjectSpawnPool RegisterObjectAsset(Type objectType, object spawnItem)
+        /// <summary>
+        /// 注册对象池（同步）;
+        /// </summary>
+        /// <param name="objectType">对象的类型</param>
+        /// <param name="spawnItem">需要生成的对象</param>
+        /// <returns>注册生成后的池对象接口</returns>
+        public IObjectPool RegisterObjectPool(Type objectType, object spawnItem)
         {
             var objectKey = new TypeStringPair(objectType);
-            return RegisterObjectAsset(objectKey, spawnItem);
+            return RegisterObjectPool(objectKey, spawnItem);
         }
-        public IObjectSpawnPool RegisterObjectAsset<T>(string name, object spawnItem) where T : class
+        /// <summary>
+        /// 注册对象池（同步）;
+        /// </summary>
+        /// <typeparam name="T">对象的类型</typeparam>
+        /// <param name="name">对象的名称</param>
+        /// <param name="spawnItem">需要生成的对象</param>
+        /// <returns>注册生成后的池对象接口</returns>
+        public IObjectPool RegisterObjectPool<T>(string name, object spawnItem) where T : class
         {
-            return RegisterObjectAsset(typeof(T), name, spawnItem);
+            return RegisterObjectPool(typeof(T), name, spawnItem);
         }
-        public IObjectSpawnPool RegisterObjectAsset<T>(object spawnItem) where T : class
+        /// <summary>
+        /// 注册对象池（同步）;
+        /// </summary>
+        /// <typeparam name="T">对象的类型</typeparam>
+        /// <param name="spawnItem">需要生成的对象</param>
+        /// <returns>注册生成后的池对象接口</returns>
+        public IObjectPool RegisterObjectPool<T>(object spawnItem) where T : class
         {
-            return RegisterObjectAsset(typeof(T), spawnItem);
+            return RegisterObjectPool(typeof(T), spawnItem);
         }
-        public IObjectSpawnPool RegisterObjectAsset(string name, object spawnItem)
+        /// <summary>
+        /// 注册对象池（同步）;
+        /// </summary>
+        /// <param name="name">对象的名称</param>
+        /// <param name="spawnItem">需要生成的对象</param>
+        /// <returns>注册生成后的池对象接口</returns>
+        public IObjectPool RegisterObjectPool(string name, object spawnItem)
         {
             var objectKey = new TypeStringPair(typeof(object), name);
             if (!HasObjectPool(objectKey))
             {
-                var pool = new ObjectSpawnPool(spawnItem);
-                poolDict.TryAdd(objectKey, new ObjectSpawnPool(spawnItem));
+                var pool = new ObjectPool(spawnItem);
+                poolDict.TryAdd(objectKey, new ObjectPool(spawnItem));
                 return pool;
             }
             else
                 throw new ArgumentException($"object key :{objectKey} is exist.");
         }
 
-
-        public void DeregisterObjectAsset(TypeStringPair objectKey)
+        /// <summary>
+        /// 注销对象池;
+        /// </summary>
+        /// <param name="objectKey">对象池key</param>
+        public void DeregisterObjectPool(TypeStringPair objectKey)
         {
             if (objectKey == null)
             {
@@ -124,10 +176,15 @@ namespace Cosmos.ObjectPool
             if (poolDict.Remove(objectKey, out var pool))
             {
                 ElapseRefreshHandler -= pool.OnElapseRefresh;
-                pool.Clear();
+                pool.ClearPool();
             }
         }
-        public void DeregisterObjectAsset(Type objectType, string name)
+        /// <summary>
+        /// 注销对象池;
+        /// </summary>
+        /// <param name="objectType">对象的类型</param>
+        /// <param name="name">对象的名称</param>
+        public void DeregisterObjectPool(Type objectType, string name)
         {
             if (objectType == null)
             {
@@ -138,290 +195,53 @@ namespace Cosmos.ObjectPool
                 throw new ArgumentNullException("name is  invalid.");
             }
             var objectKey = new TypeStringPair(objectType, name);
-            DeregisterObjectAsset(objectKey);
+            DeregisterObjectPool(objectKey);
         }
-        public void DeregisterObjectAsset(Type objectType)
+        /// <summary>
+        /// 注销对象池;
+        /// </summary>
+        /// <param name="objectType">对象的类型</param>
+        public void DeregisterObjectPool(Type objectType)
         {
             if (objectType == null)
             {
                 throw new ArgumentNullException("objectType is  invalid.");
             }
             var objectKey = new TypeStringPair(objectType);
-            DeregisterObjectAsset(objectKey);
+            DeregisterObjectPool(objectKey);
         }
-        public void DeregisterObjectAsset<T>(string name) where T : class
+        /// <summary>
+        /// 注销对象池;
+        /// </summary>
+        /// <typeparam name="T">对象的类型</typeparam>
+        /// <param name="name">对象的名称</param>
+        public void DeregisterObjectPool<T>(string name) where T : class
         {
-            DeregisterObjectAsset(typeof(T), name);
+            DeregisterObjectPool(typeof(T), name);
         }
-        public void DeregisterObjectAsset<T>() where T : class
+        /// <summary>
+        /// 注销对象池;
+        /// </summary>
+        /// <typeparam name="T">对象的类型</typeparam>
+        public void DeregisterObjectPool<T>() where T : class
         {
-            DeregisterObjectAsset(typeof(T));
+            DeregisterObjectPool(typeof(T));
         }
-        public void DeregisterObjectAsset(string name)
+        /// <summary>
+        /// 注销对象池;
+        /// </summary>
+        /// <param name="name">对象的名称</param>
+        public void DeregisterObjectPool(string name)
         {
-            DeregisterObjectAsset(typeof(object), name);
+            DeregisterObjectPool(typeof(object), name);
         }
 
-        public object SpawnObject(TypeStringPair objectKey)
-        {
-            if (objectKey == null)
-            {
-                throw new ArgumentNullException("objectKey is  invalid.");
-            }
-            var hasPool = poolDict.TryGetValue(objectKey, out var pool);
-            if (hasPool)
-            {
-                return pool.Spawn();
-            }
-            else
-            {
-                throw new ArgumentNullException($"object key :{objectKey} has not been register");
-            }
-        }
-        public object SpawnObject(Type objectType, string name)
-        {
-            if (objectType == null)
-            {
-                throw new ArgumentNullException("objectType is  invalid.");
-            }
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException("name is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType, name);
-            return SpawnObject(objectKey);
-        }
-        public object SpawnObject(Type objectType)
-        {
-            if (objectType == null)
-            {
-                throw new ArgumentNullException("objectType is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType);
-            return SpawnObject(objectKey);
-        }
-        public object SpawnObject<T>(string name) where T : class
-        {
-            return SpawnObject(typeof(T), name);
-        }
-        public object SpawnObject<T>() where T : class
-        {
-            return SpawnObject(typeof(T));
-        }
-        public object SpawnObject(string name)
-        {
-            return SpawnObject(typeof(object), name);
-        }
-
-        public object[] SpawnObjects(TypeStringPair objectKey, int count)
-        {
-            if (objectKey == null)
-            {
-                throw new ArgumentNullException("objectKey is  invalid.");
-            }
-            if (count <= 0)
-            {
-                throw new ArgumentException($"count :{count} is  invalid.");
-            }
-            var hasPool = poolDict.TryGetValue(objectKey, out var pool);
-            if (hasPool)
-            {
-                return pool.Spawns(count);
-            }
-            else
-            {
-                throw new ArgumentNullException($"object key :{objectKey} has not been register");
-            }
-        }
-        public object[] SpawnObjects(Type objectType, string name, int count)
-        {
-            if (objectType == null)
-            {
-                throw new ArgumentNullException("objectType is  invalid.");
-            }
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException("name is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType, name);
-            return SpawnObjects(objectKey, count);
-        }
-        public object[] SpawnObjects(Type objectType, int count)
-        {
-            if (objectType == null)
-            {
-                throw new ArgumentNullException("objectType is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType);
-            return SpawnObjects(objectKey, count);
-        }
-        public object[] SpawnObjects<T>(string name, int count) where T : class
-        {
-            return SpawnObjects(typeof(T), name, count);
-        }
-        public object[] SpawnObjects<T>(int count) where T : class
-        {
-            return SpawnObjects(typeof(T), count);
-        }
-        public object[] SpawnObjects(string name, int count)
-        {
-            return SpawnObjects(typeof(object), name, count);
-        }
-
-        public void DespawnObject(TypeStringPair objectKey, object target)
-        {
-            if (objectKey == null)
-            {
-                throw new ArgumentNullException("objectKey is  invalid.");
-            }
-            if (poolDict.TryGetValue(objectKey, out var pool))
-            {
-                pool?.Despawn(target);
-            }
-            else
-            {
-                throw new ArgumentNullException($"object key :{objectKey} has not been register");
-            }
-        }
-        public void DespawnObject(Type objectType, string name, object target)
-        {
-            if (objectType == null)
-            {
-                throw new ArgumentNullException("objectType is  invalid.");
-            }
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException("name is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType, name);
-            DespawnObject(objectKey, target);
-        }
-        public void DespawnObject(Type objectType, object target)
-        {
-            if (objectType == null)
-            {
-                throw new ArgumentNullException("objectType is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType);
-            DespawnObject(objectKey, target);
-
-        }
-        public void DespawnObject<T>(string name, object target) where T : class
-        {
-            DespawnObject(typeof(T), name, target);
-        }
-        public void DespawnObject<T>(object target) where T : class
-        {
-            DespawnObject(typeof(T), target);
-        }
-        public void DespawnObject(string name, object target)
-        {
-            DespawnObject(typeof(object), name, target);
-        }
-
-        public void DespawnObjects(TypeStringPair objectKey, object[] targets)
-        {
-            if (objectKey == null)
-            {
-                throw new ArgumentNullException("objectKey is  invalid.");
-            }
-            if (poolDict.TryGetValue(objectKey, out var pool))
-            {
-                pool?.Despawns(targets);
-            }
-            else
-            {
-                throw new ArgumentNullException($"object key :{objectKey} has not been register");
-            }
-        }
-        public void DespawnObjects(Type objectType, string name, object[] targets)
-        {
-            if (objectType == null)
-            {
-                throw new ArgumentNullException("objectType is  invalid.");
-            }
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException("name is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType, name);
-            DespawnObjects(objectKey, targets);
-        }
-        public void DespawnObjects(Type objectType, object[] targets)
-        {
-            if (objectType == null)
-            {
-                throw new ArgumentNullException("objectType is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType);
-            DespawnObjects(objectKey, targets);
-
-        }
-        public void DespawnObjects<T>(string name, object[] targets) where T : class
-        {
-            DespawnObjects(typeof(T), name, targets);
-        }
-        public void DespawnObjects<T>(object[] targets) where T : class
-        {
-            DespawnObjects(typeof(T), targets);
-        }
-        public void DespawnObjects(string name, object[] targets)
-        {
-            DespawnObjects(typeof(object), name, targets);
-        }
-
-        public int GetPoolCount(TypeStringPair objectKey)
-        {
-            if (objectKey == null)
-            {
-                throw new ArgumentNullException("objectKey is  invalid.");
-            }
-            var hasPool = poolDict.TryGetValue(objectKey, out var pool);
-            if (hasPool)
-            {
-                return pool.ObjectCount;
-            }
-            else
-            {
-                throw new ArgumentNullException($"object key :{objectKey} has not been register");
-            }
-        }
-        public int GetPoolCount(Type objectType, string name)
-        {
-            if (objectType == null)
-            {
-                throw new ArgumentNullException("objectType is  invalid.");
-            }
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException("name is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType, name);
-            return GetPoolCount(objectKey);
-        }
-        public int GetPoolCount(Type objectType)
-        {
-            if (objectType == null)
-            {
-                throw new ArgumentNullException("objectType is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType);
-            return GetPoolCount(objectKey);
-        }
-        public int GetPoolCount<T>(string name) where T : class
-        {
-            return GetPoolCount(typeof(T), name);
-        }
-        public int GetPoolCount<T>() where T : class
-        {
-            return GetPoolCount(typeof(T));
-        }
-        public int GetPoolCount(string name)
-        {
-            return GetPoolCount(typeof(object), name);
-        }
-
-        public IObjectSpawnPool GetObjectSpawnPool(TypeStringPair objectKey)
+        /// <summary>
+        /// 获得对象池;
+        /// </summary>
+        /// <param name="objectKey">对象池key</param>
+        /// <returns>对象池对象的接口</returns>
+        public IObjectPool GetObjectPool(TypeStringPair objectKey)
         {
             if (objectKey == null)
             {
@@ -437,7 +257,13 @@ namespace Cosmos.ObjectPool
                 throw new ArgumentNullException($"object key :{objectKey} has not been register");
             }
         }
-        public IObjectSpawnPool GetObjectSpawnPool(Type objectType, string name)
+        /// <summary>
+        /// 获得对象池;
+        /// </summary>
+        /// <param name="objectType">对象的类型</param>
+        /// <param name="name">对象的名称</param>
+        /// <returns>对象池对象的接口</returns>
+        public IObjectPool GetObjectPool(Type objectType, string name)
         {
             if (objectType == null)
             {
@@ -448,30 +274,56 @@ namespace Cosmos.ObjectPool
                 throw new ArgumentNullException("name is  invalid.");
             }
             var objectKey = new TypeStringPair(objectType, name);
-            return GetObjectSpawnPool(objectKey);
+            return GetObjectPool(objectKey);
         }
-        public IObjectSpawnPool GetObjectSpawnPool(Type objectType)
+        /// <summary>
+        /// 获得对象池;
+        /// </summary>
+        /// <param name="objectType">对象的类型</param>
+        /// <returns>对象池对象的接口</returns>
+        public IObjectPool GetObjectPool(Type objectType)
         {
             if (objectType == null)
             {
                 throw new ArgumentNullException("objectType is  invalid.");
             }
             var objectKey = new TypeStringPair(objectType);
-            return GetObjectSpawnPool(objectKey);
+            return GetObjectPool(objectKey);
         }
-        public IObjectSpawnPool GetObjectSpawnPool<T>(string name) where T : class
+        /// <summary>
+        /// 获得对象池;
+        /// </summary>
+        /// <typeparam name="T">对象的类型</typeparam>
+        /// <param name="name">对象的名称</param>
+        /// <returns>对象池对象的接口</returns>
+        public IObjectPool GetObjectPool<T>(string name) where T : class
         {
-            return GetObjectSpawnPool(typeof(T), name);
+            return GetObjectPool(typeof(T), name);
         }
-        public IObjectSpawnPool GetObjectSpawnPool<T>() where T : class
+        /// <summary>
+        /// 获得对象池;
+        /// </summary>
+        /// <typeparam name="T">对象的类型</typeparam>
+        /// <returns>对象池对象的接口</returns>
+        public IObjectPool GetObjectPool<T>() where T : class
         {
-            return GetObjectSpawnPool(typeof(T));
+            return GetObjectPool(typeof(T));
         }
-        public IObjectSpawnPool GetObjectSpawnPool(string name)
+        /// <summary>
+        /// 获得对象池;
+        /// </summary>
+        /// <param name="name">对象的名称</param>
+        /// <returns>对象池对象的接口</returns>
+        public IObjectPool GetObjectPool(string name)
         {
-            return GetObjectSpawnPool(typeof(object), name);
+            return GetObjectPool(typeof(object), name);
         }
 
+        /// <summary>
+        /// 是否存在对象池；
+        /// </summary>
+        /// <param name="objectKey">对象池key</param>
+        /// <returns>是否存在</returns>
         public bool HasObjectPool(TypeStringPair objectKey)
         {
             if (objectKey == null)
@@ -480,6 +332,12 @@ namespace Cosmos.ObjectPool
             }
             return poolDict.ContainsKey(objectKey);
         }
+        /// <summary>
+        /// 是否存在对象池；
+        /// </summary>
+        /// <param name="objectType">对象的类型</param>
+        /// <param name="name">对象的名称</param>
+        /// <returns>是否存在</returns>
         public bool HasObjectPool(Type objectType, string name)
         {
             if (objectType == null)
@@ -493,6 +351,11 @@ namespace Cosmos.ObjectPool
             var objectKey = new TypeStringPair(objectType, name);
             return poolDict.ContainsKey(objectKey);
         }
+        /// <summary>
+        /// 是否存在对象池；
+        /// </summary>
+        /// <param name="objectType">对象的类型</param>
+        /// <returns>是否存在</returns>
         public bool HasObjectPool(Type objectType)
         {
             if (objectType == null)
@@ -503,70 +366,44 @@ namespace Cosmos.ObjectPool
             var objectKey = new TypeStringPair(objectType);
             return poolDict.ContainsKey(objectKey);
         }
+        /// <summary>
+        /// 是否存在对象池；
+        /// </summary>
+        /// <typeparam name="T">对象的类型</typeparam>
+        /// <param name="name">对象的名称</param>
+        /// <returns>是否存在</returns>
         public bool HasObjectPool<T>(string name) where T : class
         {
 
             return HasObjectPool(typeof(T), name);
         }
+        /// <summary>
+        /// 是否存在对象池；
+        /// </summary>
+        /// <typeparam name="T">对象的类型</typeparam>
+        /// <returns>是否存在</returns>
         public bool HasObjectPool<T>() where T : class
         {
             return HasObjectPool(typeof(T));
         }
+        /// <summary>
+        /// 是否存在对象池；
+        /// </summary>
+        /// <param name="name">对象的名称</param>
+        /// <returns>是否存在</returns>
         public bool HasObjectPool(string name)
         {
             return HasObjectPool(typeof(object), name);
         }
 
-        public void Clear(TypeStringPair objectKey)
-        {
-            if (objectKey == null)
-            {
-                throw new ArgumentNullException("objectKey is  invalid.");
-            }
-            if (poolDict.TryGetValue(objectKey, out var pool))
-            {
-                pool?.Clear();
-            }
-            else
-            {
-                throw new ArgumentNullException($"object key :{objectKey} has not been register");
-            }
-        }
         /// <summary>
-        /// 清空指定对象池
+        /// 注销所有池对象
         /// </summary>
-        /// <param name="key"></param>
-        public void Clear(Type objectType, string name)
-        {
-            var objectKey = new TypeStringPair(objectType, name);
-            Clear(objectKey);
-        }
-        public void Clear(Type objectType)
-        {
-            var objectKey = new TypeStringPair(objectType);
-            Clear(objectKey);
-        }
-        public void Clear<T>(string name) where T : class
-        {
-            Clear(typeof(T), name);
-        }
-        public void Clear<T>() where T : class
-        {
-            Clear(typeof(T));
-        }
-        public void Clear(string name)
-        {
-            Clear(typeof(object), name);
-        }
-
-        /// <summary>
-        /// 清除所有池对象
-        /// </summary>
-        public void ClearAll()
+        public void DeregisterAllObjectPool()
         {
             foreach (var pool in poolDict)
             {
-                pool.Value.Clear();
+                pool.Value.ClearPool();
             }
             poolDict.Clear();
         }
