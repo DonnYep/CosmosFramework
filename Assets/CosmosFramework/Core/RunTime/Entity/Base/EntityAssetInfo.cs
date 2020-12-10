@@ -16,10 +16,11 @@ namespace Cosmos
         {
             this.EntityGroupName = entityGroupName;
         }
-        public EntityAssetInfo(string entityGroupName, string resourcePath) : base(resourcePath) 
+        public EntityAssetInfo(string entityGroupName, string resourcePath) : base(resourcePath)
         {
             this.EntityGroupName = entityGroupName;
         }
         public string EntityGroupName { get; private set; }
+        public bool UseObjectPool { get; set; }
     }
 }

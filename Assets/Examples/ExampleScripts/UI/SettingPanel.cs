@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
 [PrefabAsset("UI/SettingPanel",PrefabName = "SettingPanel")]
-public class SettingPanel : UILogicResident
+public class SettingPanel : UIResidentForm
 {
     protected override void OnInitialization()
     {
@@ -17,6 +17,6 @@ public class SettingPanel : UILogicResident
     }
     void QuitClick()
     {
-        HidePanel();
+        HideUIForm();
     }
 }

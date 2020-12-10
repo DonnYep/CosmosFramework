@@ -5,11 +5,11 @@ namespace Cosmos.UI
     /// <summary>
     /// 临时UI
     /// </summary>
-    public abstract class UILogicTemporary :UILogicBase
+    public abstract class UITemporaryForm :UIFormBase
     {
-        public override void HidePanel()
+        public sealed override void HideUIForm()
         {
-            uiManager.RemoveUI(UIAssetName,out _ );
+            uiManager.RemoveUI(UIFormName,out _ );
         }
     }
 }

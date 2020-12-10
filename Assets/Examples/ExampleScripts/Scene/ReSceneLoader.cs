@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-public class ReSceneLoader : UILogicResident
+public class ReSceneLoader : UIResidentForm
 {
     InputField inputTargetLevel;
     ISceneManager sceneManager;

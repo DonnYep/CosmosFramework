@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 namespace Cosmos.UI
 {
-    public abstract class UILogicBase : MonoBehaviour
+    public abstract class UIFormBase : MonoBehaviour
     {
         protected IUIManager uiManager;
         /// <summary>
@@ -17,34 +17,21 @@ namespace Cosmos.UI
         /// <summary>
         /// 是否自动注册获取当前节点下的UIBehaviour对象
         /// </summary>
-        protected virtual bool AutoGetChildUIForm { get; set; } = true;
-        public virtual string UIAssetName { get { return gameObject.name; } }
+        protected bool autoGetChildUIForm = true;
+        public virtual string UIFormName { get { return gameObject.name; } }
         /// <summary>
-        /// 空虚函数
+        /// 被开启；
+        /// 空虚函数；
         /// </summary>
-        public virtual void ShowPanel() { }
+        public virtual void ShowUIForm() { }
         /// <summary>
-        /// 空虚函数
+        /// 被关闭；
+        /// 空虚函数；
         /// </summary>
-        public virtual void HidePanel() { }
+        public virtual void HideUIForm() { }
         public bool HasUIForm(string name)
         {
             return uiDict.ContainsKey(name);
-        }
-        protected virtual void Awake()
-        {
-            uiDict = new Dictionary<string, List<UIBehaviour>>();
-            uiManager = GameManager.GetModule<IUIManager>();
-            if (AutoGetChildUIForm)
-            {
-                GetChildUIForm<Button>();
-                GetChildUIForm<Text>();
-                GetChildUIForm<Slider>();
-                GetChildUIForm<ScrollRect>();
-                GetChildUIForm<Image>();
-                GetChildUIForm<InputField>();
-            }
-            OnInitialization();
         }
         protected abstract void OnInitialization();
         protected T GetUIForm<T>(string name)
@@ -109,15 +96,30 @@ namespace Cosmos.UI
                 }
             }
         }
-        protected virtual void OnDestroy()
-        {
-            OnTermination();
-            uiDict.Clear();
-        }
         /// <summary>
         /// 空虚函数
         /// </summary>
         protected virtual void OnTermination() { }
         protected virtual void SetPanelActive(bool state) { gameObject.SetActive(state); }
+        void Awake()
+        {
+            uiDict = new Dictionary<string, List<UIBehaviour>>();
+            uiManager = GameManager.GetModule<IUIManager>();
+            if (autoGetChildUIForm)
+            {
+                GetChildUIForm<Button>();
+                GetChildUIForm<Text>();
+                GetChildUIForm<Slider>();
+                GetChildUIForm<ScrollRect>();
+                GetChildUIForm<Image>();
+                GetChildUIForm<InputField>();
+            }
+            OnInitialization();
+        }
+        void OnDestroy()
+        {
+            OnTermination();
+            uiDict.Clear();
+        }
     }
 }

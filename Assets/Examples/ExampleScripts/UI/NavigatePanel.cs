@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
-public class NavigatePanel : UILogicResident
+public class NavigatePanel : UIResidentForm
 {
     WelcomePanel welcome;
     InventoryPanel inventory;
@@ -15,6 +15,7 @@ public class NavigatePanel : UILogicResident
     protected override void OnInitialization()
     {
         uiManager = GameManager.GetModule<IUIManager>();
+        uiManager.SetHelper(new ExampleUIHelper());
         GetUIForm<Button>("BtnWelcome").onClick.AddListener(WelcomeClick);
         GetUIForm<Button>("BtnInventory").onClick.AddListener(InventoryClick);
         GetUIForm<Button>("BtnStore").onClick.AddListener(StoreClick);
@@ -30,7 +31,7 @@ public class NavigatePanel : UILogicResident
             uiManager.OpenUIAsync<WelcomePanel>(panel =>
             { panel.gameObject.SetActive(true); welcome = panel; });
         else
-            uiManager.RemoveUI(welcome.UIAssetName, out _ );
+            uiManager.RemoveUI(welcome.UIFormName, out _ );
     }
     /// <summary>
     /// Invenmtory panel是常驻类型，若不存在，则载入；开启与关闭只进行显示与隐藏操作
@@ -44,9 +45,9 @@ public class NavigatePanel : UILogicResident
             return;
         }
         if (inventory.gameObject.activeSelf)
-            inventory.HidePanel();
+            inventory.HideUIForm();
         else
-            inventory.ShowPanel();
+            inventory.ShowUIForm();
     }
     void StoreClick()
     {
@@ -57,9 +58,9 @@ public class NavigatePanel : UILogicResident
             return;
         }
         if (store.gameObject.activeSelf)
-            store.HidePanel();
+            store.HideUIForm();
         else
-           store.ShowPanel();
+           store.ShowUIForm();
     }
     void SettingClick()
     {
@@ -70,9 +71,9 @@ public class NavigatePanel : UILogicResident
             return;
         }
         if (setting.gameObject.activeSelf)
-            setting.HidePanel();
+            setting.HideUIForm();
         else
-            setting.ShowPanel();
+            setting.ShowUIForm();
     }
     void StatusClick()
     {
@@ -83,9 +84,9 @@ public class NavigatePanel : UILogicResident
             return;
         }
         if (status.gameObject.activeSelf)
-            status.HidePanel();
+            status.HideUIForm();
         else
-            status.ShowPanel();
+            status.ShowUIForm();
     }
 
 }

@@ -11,13 +11,14 @@ namespace Cosmos.UI
     {
         #region Properties
         public GameObject UIRoot { get; private set; }
-        Dictionary<string, UILogicBase> uiPanelDict;
+        Dictionary<string, UIFormBase> uiDict;
+        IUIFormHelper uiFormHelper;
         IResourceManager resourceManager;
         #endregion
         #region Methods
         public override void OnInitialization()
         {
-            uiPanelDict = new Dictionary<string, UILogicBase>();
+            uiDict = new Dictionary<string, UIFormBase>();
         }
         public override void OnPreparatory()
         {
@@ -36,13 +37,17 @@ namespace Cosmos.UI
             uiRoot.transform.SetParent(mountGo.transform);
             UIRoot = uiRoot;
         }
+        public void SetHelper(IUIFormHelper helper)
+        {
+            this.uiFormHelper = helper;
+        }
         /// <summary>
         /// 通过特性UIAssetAttribute加载Panel（同步）；
         /// </summary>
         /// <typeparam name="T">目标组件的type类型</typeparam>
         /// <returns>生成的UI对象Comp</returns>
         public T OpenUI<T>()
-            where T : UILogicBase
+            where T : UIFormBase
         {
             return OpenUI(typeof(T)) as T;
         }
@@ -51,11 +56,11 @@ namespace Cosmos.UI
         /// </summary>
         /// <param name="type">目标组件的type类型</param>
         /// <returns>生成的UI对象Comp</returns>
-        public UILogicBase OpenUI(Type type)
+        public UIFormBase OpenUI(Type type)
         {
-            if (typeof(UILogicBase).IsAssignableFrom(type))
+            if (typeof(UIFormBase).IsAssignableFrom(type))
             {
-                throw new NotImplementedException($"Type:{type} is not inherit form UILogicBase");
+                throw new NotImplementedException($"Type:{type} is not inherit form UIFormBase");
             }
             var attribute = type.GetCustomAttribute<UIAssetAttribute>();
             if (attribute == null)
@@ -72,7 +77,7 @@ namespace Cosmos.UI
         /// <param name="assetInfo">传入的assetInfo对象</param>
         /// <returns>生成的UI对象Comp</returns>
         public T OpenUI<T>(AssetInfo assetInfo)
-            where T :UILogicBase
+            where T : UIFormBase
         {
             return OpenUI(assetInfo, typeof(T)) as T;
         }
@@ -82,16 +87,16 @@ namespace Cosmos.UI
         /// <param name="assetInfo">目标组件的type类型</param>
         /// <param name="type">传入的assetInfo对象</param>
         /// <returns>生成的UI对象Comp</returns>
-        public UILogicBase OpenUI(AssetInfo assetInfo, Type type)
+        public UIFormBase OpenUI(AssetInfo assetInfo, Type type)
         {
-            if (typeof(UILogicBase).IsAssignableFrom(type))
+            if (typeof(UIFormBase).IsAssignableFrom(type))
             {
-                throw new NotImplementedException($"Type:{type} is not inherit form UILogicBase");
+                throw new NotImplementedException($"Type:{type} is not inherit form UIFormBase");
             }
             var panel = resourceManager.LoadPrefab(assetInfo, true);
             panel?.transform.SetParent(UIRoot.transform);
             (panel?.transform as RectTransform).ResetLocalTransform();
-            var comp = Utility.Unity.Add(type, panel?.gameObject, true) as UILogicBase;
+            var comp = Utility.Unity.Add(type, panel?.gameObject, true) as UIFormBase;
             return comp;
         }
         /// <summary>
@@ -100,7 +105,7 @@ namespace Cosmos.UI
         /// <typeparam name="T">带有UIAssetAttribute特性的panel类</typeparam>
         /// <param name="callback">加载成功的回调。若失败，则不执行</param>
         public Coroutine OpenUIAsync<T>(Action<T> callback = null)
-    where T : UILogicBase
+    where T : UIFormBase
         {
             Type type = typeof(T);
             var attribute = type.GetCustomAttribute<UIAssetAttribute>();
@@ -115,7 +120,7 @@ namespace Cosmos.UI
                  (panel.transform as RectTransform).ResetLocalTransform();
                  var comp = Utility.Unity.Add<T>(panel, true);
                  callback?.Invoke(comp);
-                 uiPanelDict.Add(comp.UIAssetName, comp);
+                 uiDict.Add(comp.UIFormName, comp);
              });
         }
         /// <summary>
@@ -125,15 +130,15 @@ namespace Cosmos.UI
         /// <param name="type">目标组件的type类型</param>
         /// <param name="loadDoneCallback">加载完成后的回调</param>
         /// <returns></returns>
-        public Coroutine OpenUIAsync(AssetInfo assetInfo, Type type, Action<UILogicBase> loadDoneCallback = null)
+        public Coroutine OpenUIAsync(AssetInfo assetInfo, Type type, Action<UIFormBase> loadDoneCallback = null)
         {
             return resourceManager.LoadPrefabAsync(assetInfo, panel =>
              {
                  panel.transform.SetParent(UIRoot.transform);
                  (panel.transform as RectTransform).ResetLocalTransform();
-                 var comp = Utility.Unity.Add(type, panel, true) as UILogicBase;
+                 var comp = Utility.Unity.Add(type, panel, true) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
-                 uiPanelDict.Add(comp.UIAssetName, comp);
+                 uiDict.Add(comp.UIFormName, comp);
              });
         }
         /// <summary>
@@ -143,7 +148,7 @@ namespace Cosmos.UI
         /// <param name="assetInfo">传入的assetInfo对象</param>
         /// <param name="loadDoneCallback">加载完成后的回调</param>
         public Coroutine OpenUIAsync<T>(AssetInfo assetInfo, Action<T> loadDoneCallback = null)
-            where T : UILogicBase
+            where T : UIFormBase
         {
             return resourceManager.LoadPrefabAsync(assetInfo, panel =>
             {
@@ -151,7 +156,7 @@ namespace Cosmos.UI
                 (panel.transform as RectTransform).ResetLocalTransform();
                 var comp = Utility.Unity.Add<T>(panel, true);
                 loadDoneCallback?.Invoke(comp);
-                uiPanelDict.Add(comp.UIAssetName, comp);
+                uiDict.Add(comp.UIFormName, comp);
             });
         }
         /// <summary>
@@ -160,7 +165,7 @@ namespace Cosmos.UI
         /// <param name="type">带有UIAssetAttribute特性的panel类</param>
         /// <param name="loadDoneCallback">加载成功的回调。若失败，则不执行</param>
         /// <returns></returns>
-        public Coroutine OpenUIAsync(Type type, Action<UILogicBase> loadDoneCallback = null)
+        public Coroutine OpenUIAsync(Type type, Action<UIFormBase> loadDoneCallback = null)
         {
             PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute == null)
@@ -171,72 +176,111 @@ namespace Cosmos.UI
              {
                  panel.transform.SetParent(UIRoot.transform);
                  (panel.transform as RectTransform).ResetLocalTransform();
-                 var comp = Utility.Unity.Add(type, panel, true) as UILogicBase;
+                 var comp = Utility.Unity.Add(type, panel, true) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
-                 uiPanelDict.Add(comp.UIAssetName, comp);
+                 uiDict.Add(comp.UIFormName, comp);
              });
         }
         /// <summary>
         /// 隐藏UI，调用UI中的HidePanel方法；
-        /// <see cref=" UILogicBase",>
-        /// UILogicBase.UIName
+        /// <see cref=" UIFormBase",>
+        /// UIFormBase.UIName
         /// </summary>
-        /// <param name="uiName">UILogicBase.UIName</param>
+        /// <param name="uiName">UIFormBase.UIName</param>
         public void HideUI(string uiName)
         {
-            if (uiPanelDict.TryRemove(uiName, out var panel))
-                panel?.HidePanel();
+            if (string.IsNullOrEmpty(uiName))
+            {
+                throw new ArgumentNullException("name is  invalid.");
+            }
+            if (uiDict.TryGetValue(uiName, out var uiForm))
+                uiFormHelper?.HideUIForm(uiForm);
+            else
+                Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
+        }
+        public void HideUI(UIFormBase uiForm)
+        {
+            if (uiForm == null)
+            {
+                throw new ArgumentNullException("ui form is  invalid.");
+            }
+            uiFormHelper?.HideUIForm(uiForm);
+        }
+        public void ShowUI(UIFormBase uiForm)
+        {
+            if (uiForm == null)
+            {
+                throw new ArgumentNullException("ui form is  invalid.");
+            }
+            if (!HasUI(uiForm.UIFormName))
+            {
+                uiDict.TryAdd(uiForm.UIFormName, uiForm);
+            }
+            uiFormHelper?.ShowUIForm(uiForm);
+        }
+        public void ShowUI(string uiName)
+        {
+            if (string.IsNullOrEmpty(uiName))
+            {
+                throw new ArgumentNullException("name is  invalid.");
+            }
+            if (uiDict.TryGetValue(uiName, out var uiForm))
+                uiFormHelper?.ShowUIForm(uiForm);
             else
                 Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
         }
         /// <summary>
         /// 移除UI，但是不销毁
-        /// <see cref=" UILogicBase",>
-        /// UILogicBase.UIName
+        /// <see cref=" UIFormBase",>
+        /// UIFormBase.UIName
         /// </summary>
-        /// <param name="uiName">UILogicBase.UIName</param>
+        /// <param name="uiName">UIFormBase.UIName</param>
         /// <param name="panel">移除后返回的panel</param>
-        public void RemoveUI(string uiName, out UILogicBase panel)
+        public void RemoveUI(string uiName, out UIFormBase panel)
         {
-            var hasPanel = uiPanelDict.TryRemove(uiName, out panel);
+            var hasPanel = uiDict.TryRemove(uiName, out panel);
             if (!hasPanel)
                 Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
         }
         /// <summary>
         /// 移除UI，但是不销毁
-        /// <see cref=" UILogicBase",>
-        /// UILogicBase.UIName
+        /// <see cref=" UIFormBase",>
+        /// UIFormBase.UIName
         /// </summary>
-        /// <param name="uiName">UILogicBase.UIName</param>
+        /// <param name="uiName">UIFormBase.UIName</param>
         public void RemoveUI(string uiName)
         {
-            var hasPanel = uiPanelDict.TryRemove(uiName, out _);
+            var hasPanel = uiDict.TryRemove(uiName, out _);
             if (!hasPanel)
                 Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
         }
         /// <summary>
         /// 销毁UI
-        /// <see cref=" UILogicBase",>
-        /// UILogicBase.UIName
+        /// <see cref=" UIFormBase",>
+        /// UIFormBase.UIName
         /// </summary>
-        /// <param name="uiName">UILogicBase.UIName</param>
+        /// <param name="uiName">UIFormBase.UIName</param>
         public void DestroyUl(string uiName)
         {
-            if (uiPanelDict.TryRemove(uiName, out var panel))
+            if (uiDict.TryRemove(uiName, out var panel))
                 GameObject.Destroy(panel);
             else
                 Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
         }
+        public void DestroyUl(UIFormBase uiForm)
+        {
+            GameObject.Destroy(uiForm.gameObject);
+        }
         /// <summary>
         /// 是否存在UI;
-        /// <see cref=" UILogicBase",>
-        /// UILogicBase.UIName
+        /// <see cref=" UIFormBase",>
+        /// UIFormBase.UIName
         /// </summary>
-        /// <param name="uiName">UILogicBase.UIName</param>
+        /// <param name="uiName">UIFormBase.UIName</param>
         /// <returns>存在的结果</returns>
         public bool HasUI(string uiName)
         {
-            return uiPanelDict.ContainsKey(uiName);
+            return uiDict.ContainsKey(uiName);
         }
         #endregion
     }

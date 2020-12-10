@@ -20,6 +20,11 @@ namespace Cosmos.Entity
             add { refreshHandler += value; }
             remove { refreshHandler -= value; }
         }
+        public IObjectPool ObjectPool { get; private set; }
+        public void SetObjectPool(IObjectPool objectPool)
+        {
+            this.ObjectPool= objectPool;
+        }
         /// <summary>
         /// 为实体组赋予根节点；
         /// </summary>
@@ -106,7 +111,7 @@ namespace Cosmos.Entity
             }
             return entityList.ToArray();
         }
-        public IEntity[] GetAllEntities()
+        public IEntity[] GetAllChildEntities()
         {
             List<IEntity> entityList = new List<IEntity>();
             foreach (IEntity entity in entityLinkedList)
@@ -125,19 +130,10 @@ namespace Cosmos.Entity
             entityLinkedList.Remove(entity);
             RefreshHandler -= entity.OnRefresh;
         }
-        public void ActiveEntities()
+        public void ClearChildEntities()
         {
-            foreach (IEntity entity in entityLinkedList)
-            {
-                entity.OnActive();
-            }
-        }
-        public void DeactiveEntities()
-        {
-            foreach (IEntity entity in entityLinkedList)
-            {
-                entity.OnDeactive();
-            }
+            entityLinkedList.Clear();
+            refreshHandler = null;
         }
     }
 }

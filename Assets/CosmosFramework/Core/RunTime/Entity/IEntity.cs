@@ -10,7 +10,7 @@ namespace Cosmos.Entity
     /// <summary>
     /// 与unity耦合的实体对象，当前版本中使用的是此实体对象
     /// </summary>
-    public interface IEntity: IReference, IRefreshable, IOperable,IRecyclable
+    public interface IEntity: IReference, IRefreshable
     {
         /// <summary>
         /// 实体id；
@@ -23,7 +23,7 @@ namespace Cosmos.Entity
         /// <summary>
         /// 实体索引的具体对象；
         /// </summary>
-        object EntityAsset { get; }
+        object EntityInstance { get; }
         /// <summary>
         /// 实体所属的实体组。
         /// </summary>
@@ -37,12 +37,12 @@ namespace Cosmos.Entity
         /// </summary>
         int ChildEntityCount { get; }
         /// <summary>
-        /// 配置实体对象；
+        /// 设置实体数据；
         /// </summary>
         /// <param name="entityId">实体id</param>
         /// <param name="entityName">实体名称</param>
-        /// <param name="entityAsset">实体索引的具体对象</param>
-        /// <param name="entityGroup">实体所在的实体组</param>
+        /// <param name="entityAsset"> 实体实例对象</param>
+        /// <param name="entityGroup">实体所属的实体组</param>
         void SetEntity(int entityId,string entityName,object entityAsset,IEntityGroup entityGroup);
         /// <summary>
         /// 获取一个子实体
@@ -54,25 +54,5 @@ namespace Cosmos.Entity
         /// </summary>
         /// <returns>所有子实体的数组</returns>
         IEntity[] GetChildEntities();
-        /// <summary>
-        /// 挂载到一个实体上；
-        /// </summary>
-        /// <param name="parent">父实体对象</param>
-        void OnAttachTo(IEntity parent);
-        /// <summary>
-        /// 挂载一个子实体到此实体上；
-        /// </summary>
-        /// <param name="child">子实体对象</param>
-        void OnAttached(IEntity child);
-        /// <summary>
-        /// 从父实体对象上接触挂载；
-        /// </summary>
-        /// <param name="parent">父实体对象</param>
-        void OnDetachFrom(IEntity parent);
-        /// <summary>
-        /// 解除子实体的挂载；
-        /// </summary>
-        /// <param name="child">子实体对象</param>
-        void OnDetached(IEntity child);
     }
 }

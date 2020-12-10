@@ -8,7 +8,7 @@ using Cosmos.Scene;
 /// <summary>
 /// 显示进度的脚本
 /// </summary>
-public class LoadingScenePanel : UILogicResident
+public class LoadingScenePanel : UIResidentForm
 {
     Text txtProgress;
     Slider sldProgress;

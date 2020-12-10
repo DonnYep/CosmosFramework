@@ -4,10 +4,10 @@ using System;
 namespace Cosmos.ObjectPool
 {
     [Module]
-    internal sealed class ObjectPoolManager : Module//, IObjectPoolManager
+    internal sealed class ObjectPoolManager : Module, IObjectPoolManager
     {
         #region Properties
-        Dictionary<TypeStringPair, ObjectPool> poolDict;
+        Dictionary<TypeStringPair, IObjectPool> poolDict;
         Action<long> elapseRefreshHandler;
         event Action<long> ElapseRefreshHandler
         {
@@ -20,7 +20,7 @@ namespace Cosmos.ObjectPool
         #region Methods
         public override void OnInitialization()
         {
-            poolDict = new Dictionary<TypeStringPair, ObjectPool>();
+            poolDict = new Dictionary<TypeStringPair, IObjectPool>();
         }
         public override void OnPreparatory()
         {
@@ -49,8 +49,9 @@ namespace Cosmos.ObjectPool
                     var objectKey = objectAssetInfo.ObjectKey;
                     if (!HasObjectPool(objectKey))
                     {
-                        var pool = new ObjectPool(spawnItem);
-                        poolDict.TryAdd(objectKey, new ObjectPool(spawnItem));
+                        var pool = new ObjectPool(spawnItem,objectKey);
+                        poolDict.TryAdd(objectKey,  pool);
+                        ElapseRefreshHandler += pool.OnElapseRefresh;
                         onRegisterCallback?.Invoke(pool);
                     }
                     else
@@ -72,8 +73,9 @@ namespace Cosmos.ObjectPool
             if (!HasObjectPool(objectKey))
             {
                 var spawnItem = resourceManager.LoadPrefab(objectAssetInfo);
-                var pool = new ObjectPool(spawnItem);
-                poolDict.TryAdd(objectKey, new ObjectPool(spawnItem));
+                var pool = new ObjectPool(spawnItem,objectKey);
+                poolDict.TryAdd(objectKey, pool);
+                ElapseRefreshHandler += pool.OnElapseRefresh;
                 return pool;
             }
             else
@@ -93,8 +95,9 @@ namespace Cosmos.ObjectPool
             }
             if (!HasObjectPool(objectKey))
             {
-                var pool = new ObjectPool(spawnItem);
-                poolDict.TryAdd(objectKey, new ObjectPool(spawnItem));
+                var pool = new ObjectPool(spawnItem,objectKey);
+                poolDict.TryAdd(objectKey, pool);
+                ElapseRefreshHandler += pool.OnElapseRefresh;
                 return pool;
             }
             else
@@ -109,6 +112,14 @@ namespace Cosmos.ObjectPool
         /// <returns>注册生成后的池对象接口</returns>
         public IObjectPool RegisterObjectPool(Type objectType, string name, object spawnItem)
         {
+            if (objectType == null)
+            {
+                throw new ArgumentNullException("objectType is  invalid.");
+            }
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException("name is  invalid.");
+            }
             var objectKey = new TypeStringPair(objectType, name);
             return RegisterObjectPool(objectKey, spawnItem);
         }
@@ -120,6 +131,10 @@ namespace Cosmos.ObjectPool
         /// <returns>注册生成后的池对象接口</returns>
         public IObjectPool RegisterObjectPool(Type objectType, object spawnItem)
         {
+            if (objectType == null)
+            {
+                throw new ArgumentNullException("objectType is  invalid.");
+            }
             var objectKey = new TypeStringPair(objectType);
             return RegisterObjectPool(objectKey, spawnItem);
         }
@@ -152,15 +167,7 @@ namespace Cosmos.ObjectPool
         /// <returns>注册生成后的池对象接口</returns>
         public IObjectPool RegisterObjectPool(string name, object spawnItem)
         {
-            var objectKey = new TypeStringPair(typeof(object), name);
-            if (!HasObjectPool(objectKey))
-            {
-                var pool = new ObjectPool(spawnItem);
-                poolDict.TryAdd(objectKey, new ObjectPool(spawnItem));
-                return pool;
-            }
-            else
-                throw new ArgumentException($"object key :{objectKey} is exist.");
+            return RegisterObjectPool(typeof(object),name, spawnItem);
         }
 
         /// <summary>
@@ -374,7 +381,6 @@ namespace Cosmos.ObjectPool
         /// <returns>是否存在</returns>
         public bool HasObjectPool<T>(string name) where T : class
         {
-
             return HasObjectPool(typeof(T), name);
         }
         /// <summary>

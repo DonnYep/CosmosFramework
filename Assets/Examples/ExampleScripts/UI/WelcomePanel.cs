@@ -5,7 +5,7 @@ using Cosmos.UI;
 using UnityEngine.UI;
 using Cosmos;
 [PrefabAsset("UI/WelcomePanel",PrefabName = "WelcomePanel")]
-public class WelcomePanel : UILogicTemporary
+public class WelcomePanel : UITemporaryForm
 {
     Text info;
     InputField inputMsg;
@@ -33,10 +33,6 @@ public class WelcomePanel : UILogicTemporary
     }
     void Quit()
     {
-        HidePanel();
-    }
-    public override void HidePanel()
-    {
-        GameManager.GetModule<IUIManager>().RemoveUI(UIAssetName,out _ );
+        HideUIForm();
     }
 }

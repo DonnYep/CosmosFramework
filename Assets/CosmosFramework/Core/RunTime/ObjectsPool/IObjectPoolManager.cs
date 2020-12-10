@@ -37,7 +37,6 @@ namespace Cosmos
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
         IObjectPool RegisterObjectPool(Type objectType, string name, object spawnItem);
-
         /// <summary>
         /// 注册对象池（同步）;
         /// </summary>

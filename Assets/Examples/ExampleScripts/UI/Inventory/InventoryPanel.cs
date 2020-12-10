@@ -12,7 +12,7 @@ namespace Cosmos
     /// 仅测试
     /// </summary>
     [PrefabAsset("UI/InventoryPanel")]
-    public class InventoryPanel : UILogicResident
+    public class InventoryPanel : UIResidentForm
     {
         [SerializeField] InventoryDataSet inventoryDataSet;
         IEventManager eventManager;
@@ -64,7 +64,7 @@ namespace Cosmos
         }
         void QuitClick()
         {
-            HidePanel();
+            HideUIForm();
         }
         void UpdateClick()
         {

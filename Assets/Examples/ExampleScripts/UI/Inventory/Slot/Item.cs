@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Cosmos;
 using Cosmos.UI;
-public class Item : UILogicResident, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class Item : UIResidentForm, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     Image imgItem;
     Text txtNumber;

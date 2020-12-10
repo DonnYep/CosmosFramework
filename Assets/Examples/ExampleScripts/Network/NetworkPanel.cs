@@ -7,7 +7,7 @@ using Cosmos.UI;
 using Cosmos.Network;
 using System.IO;
 
-public class NetworkPanel : UILogicResident
+public class NetworkPanel : UIResidentForm
 {
     Button btnConnect;
     Button btnDisconnect;

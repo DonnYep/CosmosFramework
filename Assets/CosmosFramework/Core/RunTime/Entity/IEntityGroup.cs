@@ -13,6 +13,8 @@ namespace Cosmos
         int EntityCount { get; }
         object EntityAsset { get; }
         IEntity EntityAssetRoot { get; }
+        IObjectPool ObjectPool { get; }
+        void SetObjectPool(IObjectPool objectPool);
         /// <summary>
         /// 为实体组赋予根节点；
         /// </summary>
@@ -23,10 +25,9 @@ namespace Cosmos
         IEntity GetEntity(int entityId);
         IEntity GetEntity(string entityName);
         IEntity[] GetEntities(string entityName);
-        IEntity[] GetAllEntities();
+        IEntity[] GetAllChildEntities();
         void AddEntity(IEntity entity);
         void RemoveEntity(IEntity entity);
-        void ActiveEntities();
-        void DeactiveEntities();
+        void ClearChildEntities();
     }
 }

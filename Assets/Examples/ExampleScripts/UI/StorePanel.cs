@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
 [PrefabAsset("UI/StorePanel", PrefabName = "StorePanel")]
-public class StorePanel : UILogicResident
+public class StorePanel : UIResidentForm
 {
     protected override void OnInitialization()
     {
@@ -17,6 +17,6 @@ public class StorePanel : UILogicResident
     }
     void QuitClick()
     {
-        HidePanel();
+        HideUIForm();
     }
 }

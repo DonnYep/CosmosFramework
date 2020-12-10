@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Cosmos.Scene;
 
-public class SceneLoader : UILogicResident
+public class SceneLoader : UIResidentForm
 {
     InputField inputTargetLevel;
     ISceneManager sceneManager;

@@ -5,7 +5,7 @@ using Cosmos.Event;
 using Object = UnityEngine.Object;
 namespace Cosmos.ObjectPool
 {
-    internal sealed class ObjectPool: IObjectPool
+    internal sealed class ObjectPool : IObjectPool
     {
         public int ExpireTime
         {
@@ -49,6 +49,9 @@ namespace Cosmos.ObjectPool
                 capacity = value;
             }
         }
+        public Type ObjectType { get { return objectKey.Type; } }
+        public string Name { get { return objectKey.String; } }
+        TypeStringPair objectKey;
         /// <summary>
         /// 当前池对象中的数量
         /// </summary>
@@ -90,7 +93,7 @@ namespace Cosmos.ObjectPool
             onSpawn?.Invoke(go);//表示一个可空类型，空内容依旧可以执行
             return go;
         }
-         public void Despawn(object targetGo)
+        public void Despawn(object targetGo)
         {
             var go = targetGo.Convert<Object>();
             if (ObjectCount >= capacity)
@@ -114,10 +117,11 @@ namespace Cosmos.ObjectPool
             }
             objectQueue.Clear();
         }
-        internal ObjectPool(object spawnItem)
+        internal ObjectPool(object spawnItem, TypeStringPair objectKey)
         {
             this.spawnItem = spawnItem.Convert<Object>();
             objectQueue = new Queue<Object>();
+            this.objectKey = objectKey;
         }
         internal void SetSpawnItem(Object spawnItem)
         {

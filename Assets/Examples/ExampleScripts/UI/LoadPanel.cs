@@ -9,7 +9,7 @@ using Cosmos.Scene;
 /// 按钮按下载入的脚本
 /// 流程：载入loading场景，loading场景通过Utility.Globle.TargetLevel参数自动在初始化时候异步加载目标场景。
 /// </summary>
-public class LoadPanel : UILogicResident
+public class LoadPanel : UIResidentForm
 {
     InputField inputTargetLevel;
     InputField inputLoadLevel;
