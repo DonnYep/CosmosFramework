@@ -278,7 +278,7 @@ namespace Cosmos.FSM{
         public void Renewal()
         {
             if (data != null)
-                data.OnRenewal();
+                data.Clear();
         }
 
         #endregion

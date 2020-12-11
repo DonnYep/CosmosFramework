@@ -4,7 +4,7 @@ namespace Cosmos
     /// <summary>
     /// Variable类型为模块之间的数据节点数据；
     /// </summary>
-    public abstract class Variable : IRenewable
+    public abstract class Variable : IReference
     {
         protected Variable() { }
         /// <summary>
@@ -25,6 +25,6 @@ namespace Cosmos
         /// 重置变量;
         /// 空虚函数；
         /// </summary>
-        public abstract void OnRenewal();
+        public abstract void Clear();
     }
 }

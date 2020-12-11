@@ -20,7 +20,7 @@ namespace Cosmos {
         {
             return value;
         }
-        public override void OnRenewal()
+        public override void Clear()
         {
             value = default(T);
         }

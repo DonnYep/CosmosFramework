@@ -5,26 +5,23 @@ using System.Collections.Generic;
 namespace Cosmos.Data
 {
     [Module]
-    internal sealed class DataManager : Module,IDataManager
+    internal sealed partial class DataManager : Module,IDataManager
     {
         #region Properties
+        private static readonly string[] EmptyStringArray = new string[] { };
+        private static readonly string[] PathSplitSeparator = new string[] { ".", "/", "\\" };
+        private const string RootName = "<Root>";
+        private DataNode rootNode;
         #endregion
         #region Methods
-        /// <summary>
-        /// 对象字典；
-        /// </summary>
-        Dictionary<Type, object> typeObjectDict;
-        /// <summary>
-        /// json数据字典；
-        /// </summary>
-        Dictionary<string, string> jsonDict;
+
         public override void OnInitialization()
         {
-            typeObjectDict = new Dictionary<Type, object>();
-            jsonDict = new Dictionary<string, string>();
         }
         public override void OnActive()
         {
+            DataNode.ReferencePool= GameManager.GetModule<IReferencePoolManager>();
+            rootNode = DataNode.Create(RootName, null);
             var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IDataProvider>();
             for (int i = 0; i < objs.Length; i++)
             {
@@ -38,92 +35,214 @@ namespace Cosmos.Data
                 }
             }
         }
-        public bool ContainsDataObject(Type key)
+        /// 获取根数据结点。
+        /// </summary>
+        public IDataNode Root
         {
-            return typeObjectDict.ContainsKey(key);
-        }
-        public bool AddDataObject(Type key, object value)
-        {
-            return typeObjectDict. TryAdd(key, value);
-        }
-        public bool GetDataObject(Type key, out object value)
-        {
-            return typeObjectDict. TryGetValue(key, out value);
-        }
-        public bool RemoveDataObject(Type key)
-        {
-            return typeObjectDict.Remove(key);
-        }
-        public bool RemoveDataObject(Type key, out object value)
-        {
-            return typeObjectDict.Remove(key, out value);
-        }
-        public bool ContainsDataObject<T>()
-            where T : class
-        {
-            return ContainsDataObject(typeof(T));
-        }
-        public bool AddDataObject<T>(T value)
-            where T : class
-        {
-            return AddDataObject(typeof(T), value);
-        }
-        public bool GetDataObject<T>(out T value)
-            where T : class
-        {
-            value = default;
-            object data;
-            var result = GetDataObject(typeof(T), out data);
-            if (result)
-                value = data as T;
-            return result;
-        }
-        public bool RemoveDataObject<T>()
-            where T : class
-        {
-            return RemoveDataObject(typeof(T));
-        }
-        public bool RemoveDataObject<T>(out T value)
-            where T : class
-        {
-            value = default;
-            object data;
-            var result = RemoveDataObject(typeof(T), out data);
-            if (result)
-                value = data as T;
-            return result;
-        }
-        public bool AddDataString(string key, string value)
-        {
-            return jsonDict. TryAdd(key, value);
+            get
+            {
+                return rootNode;
+            }
         }
         /// <summary>
-        /// 通过类名获取json数据；
-        /// typeof(Data).Name可作为key；
+        /// 根据类型获取数据结点的数据。
         /// </summary>
-        /// <param name="key">类名</param>
-        /// <param name="value">json数据</param>
-        /// <returns>是否获取成功</returns>
-        public bool GetDataString(string key, out string value)
+        /// <typeparam name="T">要获取的数据类型。</typeparam>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <returns>指定类型的数据。</returns>
+        public T GetData<T>(string path) where T : Variable
         {
-            return jsonDict. TryGetValue(key, out  value);
+            return GetData<T>(path, null);
         }
-        public bool RemoveDataString(string key)
+        /// <summary>
+        /// 获取数据结点的数据。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <returns>数据结点的数据。</returns>
+        public Variable GetData(string path)
         {
-            return jsonDict.Remove(key);
+            return GetData(path, null);
         }
-        public bool RemoveDataString(string key, out string value)
+        /// <summary>
+        /// 根据类型获取数据结点的数据。
+        /// </summary>
+        /// <typeparam name="T">要获取的数据类型。</typeparam>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="node">查找起始结点。</param>
+        /// <returns>指定类型的数据。</returns>
+        public T GetData<T>(string path, IDataNode node) where T : Variable
         {
-            return jsonDict.Remove(key, out value);
+            IDataNode current = GetNode(path, node);
+            if (current == null)
+            {
+                var nodeVar = node != null ? node.FullName : string.Empty;
+                throw new ArgumentNullException($"Data node is not exist, path '{path}', node '{nodeVar}'.");
+            }
+            return current.GetData<T>();
         }
-        public bool ContainsDataString(string key)
+        /// <summary>
+        /// 获取数据结点的数据。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="node">查找起始结点。</param>
+        /// <returns>数据结点的数据。</returns>
+        public Variable GetData(string path, IDataNode node)
         {
-            return jsonDict.ContainsKey(key);
+            IDataNode current = GetNode(path, node);
+            if (current == null)
+            {
+                var nodeVar = node != null ? node.FullName : string.Empty;
+                throw new ArgumentNullException($"Data node is not exist, path '{path}', node '{nodeVar}'.");
+            }
+            return current.GetData();
         }
-        public void ClearAll()
+        /// <summary>
+        /// 设置数据结点的数据。
+        /// </summary>
+        /// <typeparam name="T">要设置的数据类型。</typeparam>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="data">要设置的数据。</param>
+        public void SetData<T>(string path, T data) where T : Variable
         {
-            jsonDict.Clear();
-            typeObjectDict.Clear();
+            SetData(path, data, null);
+        }
+        /// <summary>
+        /// 设置数据结点的数据。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="data">要设置的数据。</param>
+        public void SetData(string path, Variable data)
+        {
+            SetData(path, data, null);
+        }
+        /// <summary>
+        /// 设置数据结点的数据。
+        /// </summary>
+        /// <typeparam name="T">要设置的数据类型。</typeparam>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="data">要设置的数据。</param>
+        /// <param name="node">查找起始结点。</param>
+        public void SetData<T>(string path, T data, IDataNode node) where T : Variable
+        {
+            IDataNode current = GetOrAddNode(path, node);
+            current.SetData(data);
+        }
+        /// <summary>
+        /// 设置数据结点的数据。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="data">要设置的数据。</param>
+        /// <param name="node">查找起始结点。</param>
+        public void SetData(string path, Variable data, IDataNode node)
+        {
+            IDataNode current = GetOrAddNode(path, node);
+            current.SetData(data);
+        }
+        /// <summary>
+        /// 获取数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <returns>指定位置的数据结点，如果没有找到，则返回空。</returns>
+        public IDataNode GetNode(string path)
+        {
+            return GetNode(path, null);
+        }
+        /// <summary>
+        /// 获取数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="node">查找起始结点。</param>
+        /// <returns>指定位置的数据结点，如果没有找到，则返回空。</returns>
+        public IDataNode GetNode(string path, IDataNode node)
+        {
+            IDataNode current = node ?? rootNode;
+            string[] splitedPath = GetSplitedPath(path);
+            foreach (string i in splitedPath)
+            {
+                current = current.GetChild(i);
+                if (current == null)
+                {
+                    return null;
+                }
+            }
+            return current;
+        }
+        /// <summary>
+        /// 获取或增加数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <returns>指定位置的数据结点，如果没有找到，则创建相应的数据结点。</returns>
+        public IDataNode GetOrAddNode(string path)
+        {
+            return GetOrAddNode(path, null);
+        }
+        /// <summary>
+        /// 获取或增加数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="node">查找起始结点。</param>
+        /// <returns>指定位置的数据结点，如果没有找到，则增加相应的数据结点。</returns>
+        public IDataNode GetOrAddNode(string path, IDataNode node)
+        {
+            IDataNode current = node ?? rootNode;
+            string[] splitedPath = GetSplitedPath(path);
+            foreach (string i in splitedPath)
+            {
+                current = current.GetOrAddChild(i);
+            }
+            return current;
+        }
+        /// <summary>
+        /// 移除数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        public void RemoveNode(string path)
+        {
+            RemoveNode(path, null);
+        }
+        /// <summary>
+        /// 移除数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="node">查找起始结点。</param>
+        public void RemoveNode(string path, IDataNode node)
+        {
+            IDataNode current = node ?? rootNode;
+            IDataNode parent = current.Parent;
+            string[] splitedPath = GetSplitedPath(path);
+            foreach (string i in splitedPath)
+            {
+                parent = current;
+                current = current.GetChild(i);
+                if (current == null)
+                {
+                    return;
+                }
+            }
+            if (parent != null)
+            {
+                parent.RemoveChild(current.Name);
+            }
+        }
+        /// <summary>
+        /// 移除所有数据结点。
+        /// </summary>
+        public void ClearNodes()
+        {
+            rootNode.ClearNode();
+        }
+        /// <summary>
+        /// 数据结点路径切分工具函数。
+        /// </summary>
+        /// <param name="path">要切分的数据结点路径。</param>
+        /// <returns>切分后的字符串数组。</returns>
+        private static string[] GetSplitedPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return EmptyStringArray;
+            }
+            return path.Split(PathSplitSeparator, StringSplitOptions.RemoveEmptyEntries);
         }
         #endregion
     }

@@ -8,28 +8,105 @@ namespace Cosmos
 {
     public interface IDataManager :IModuleManager
     {
-        bool ContainsDataObject(Type key);
-        bool AddDataObject(Type key, object value);
-        bool GetDataObject(Type key, out object value);
-        bool RemoveDataObject(Type key);
-        bool RemoveDataObject(Type key, out object value);
-        bool ContainsDataObject<T>() where T : class;
-        bool AddDataObject<T>(T value) where T : class;
-        bool GetDataObject<T>(out T value) where T : class;
-        bool RemoveDataObject<T>() where T : class;
-        bool RemoveDataObject<T>(out T value) where T : class;
-        bool AddDataString(string key, string value);
-        /// <summary>
-        /// 通过类名获取json数据；
-        /// typeof(Data).Name可作为key；
+        /// 获取根数据结点。
         /// </summary>
-        /// <param name="key">类名</param>
-        /// <param name="value">json数据</param>
-        /// <returns>是否获取成功</returns>
-        bool GetDataString(string key, out string value);
-        bool RemoveDataString(string key);
-        bool RemoveDataString(string key, out string value);
-        bool ContainsDataString(string key);
-        void ClearAll();
+        IDataNode Root { get; }
+        /// <summary>
+        /// 根据类型获取数据结点的数据。
+        /// </summary>
+        /// <typeparam name="T">要获取的数据类型。</typeparam>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <returns>指定类型的数据。</returns>
+        T GetData<T>(string path) where T : Variable;
+        /// <summary>
+        /// 获取数据结点的数据。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <returns>数据结点的数据。</returns>
+        Variable GetData(string path);
+        /// <summary>
+        /// 根据类型获取数据结点的数据。
+        /// </summary>
+        /// <typeparam name="T">要获取的数据类型。</typeparam>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="node">查找起始结点。</param>
+        /// <returns>指定类型的数据。</returns>
+        T GetData<T>(string path, IDataNode node) where T : Variable;
+        /// <summary>
+        /// 获取数据结点的数据。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="node">查找起始结点。</param>
+        /// <returns>数据结点的数据。</returns>
+        Variable GetData(string path, IDataNode node);
+        /// <summary>
+        /// 设置数据结点的数据。
+        /// </summary>
+        /// <typeparam name="T">要设置的数据类型。</typeparam>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="data">要设置的数据。</param>
+        void SetData<T>(string path, T data) where T : Variable;
+        /// <summary>
+        /// 设置数据结点的数据。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="data">要设置的数据。</param>
+        void SetData(string path, Variable data);
+        /// <summary>
+        /// 设置数据结点的数据。
+        /// </summary>
+        /// <typeparam name="T">要设置的数据类型。</typeparam>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="data">要设置的数据。</param>
+        /// <param name="node">查找起始结点。</param>
+        void SetData<T>(string path, T data, IDataNode node) where T : Variable;
+        /// <summary>
+        /// 设置数据结点的数据。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="data">要设置的数据。</param>
+        /// <param name="node">查找起始结点。</param>
+        void SetData(string path, Variable data, IDataNode node);
+        /// <summary>
+        /// 获取数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <returns>指定位置的数据结点，如果没有找到，则返回空。</returns>
+        IDataNode GetNode(string path);
+        /// <summary>
+        /// 获取数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="node">查找起始结点。</param>
+        /// <returns>指定位置的数据结点，如果没有找到，则返回空。</returns>
+        IDataNode GetNode(string path, IDataNode node);
+        /// <summary>
+        /// 获取或增加数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <returns>指定位置的数据结点，如果没有找到，则创建相应的数据结点。</returns>
+        IDataNode GetOrAddNode(string path);
+        /// <summary>
+        /// 获取或增加数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="node">查找起始结点。</param>
+        /// <returns>指定位置的数据结点，如果没有找到，则增加相应的数据结点。</returns>
+        IDataNode GetOrAddNode(string path, IDataNode node);
+        /// <summary>
+        /// 移除数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        void RemoveNode(string path);
+        /// <summary>
+        /// 移除数据结点。
+        /// </summary>
+        /// <param name="path">相对于 node 的查找路径。</param>
+        /// <param name="node">查找起始结点。</param>
+        void RemoveNode(string path, IDataNode node);
+        /// <summary>
+        /// 移除所有数据结点。
+        /// </summary>
+        void ClearNodes();
     }
 }

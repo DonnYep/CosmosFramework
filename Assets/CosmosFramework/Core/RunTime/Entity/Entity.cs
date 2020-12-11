@@ -7,7 +7,7 @@ namespace Cosmos.Entity
     /// <summary>
     /// 实体对象
     /// </summary>
-    internal sealed class Entity : IEntity
+    internal sealed class Entity : IEntity,IReference
     {
         /// <summary>
         /// 实体id；

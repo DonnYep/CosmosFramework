@@ -259,6 +259,7 @@ namespace Cosmos.Entity
                 for (int i = 0; i < length; i++)
                 {
                     group.ObjectPool.Despawn(childEntities[i].EntityInstance);
+                    referencePoolManager.Despawn(childEntities[i].Convert<Entity>());
                 }
             }
             else
@@ -267,9 +268,9 @@ namespace Cosmos.Entity
                 for (int i = 0; i < length; i++)
                 {
                     entityHelper.DespawnEntityInstance(childEntities[i].EntityInstance);
+                    referencePoolManager.Despawn(childEntities[i].Convert<Entity>());
                 }
             }
-            referencePoolManager.Despawns(childEntities);
         }
         /// <summary>
         /// 激活&添加实体对象；
@@ -342,7 +343,7 @@ namespace Cosmos.Entity
             {
                 entityHelper.DespawnEntityInstance(entity.EntityInstance);
             }
-            referencePoolManager.Despawn(entity);
+            referencePoolManager.Despawn(entity.Convert<Entity>());
         }
         /// <summary>
         /// 失活&移除实体对象

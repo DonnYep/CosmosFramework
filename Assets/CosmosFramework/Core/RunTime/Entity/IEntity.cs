@@ -10,7 +10,7 @@ namespace Cosmos.Entity
     /// <summary>
     /// 与unity耦合的实体对象，当前版本中使用的是此实体对象
     /// </summary>
-    public interface IEntity: IReference, IRefreshable
+    public interface IEntity: IRefreshable
     {
         /// <summary>
         /// 实体id；
