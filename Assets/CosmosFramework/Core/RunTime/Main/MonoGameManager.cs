@@ -10,7 +10,7 @@ namespace Cosmos
     /// </summary>
     [DisallowMultipleComponent]
     //[DefaultExecutionOrder(-1000)]
-    public sealed class MonoGameManager : MonoSingleton<MonoGameManager>
+    public sealed class MonoGameManager: MonoSingleton<MonoGameManager>
     {
         public bool IsPause { get; private set; }
         public bool Pause
@@ -61,6 +61,7 @@ namespace Cosmos
         /// <summary>
         /// 立刻清理实例对象
         /// 会在内存中清理实例
+        /// Editor适用
         /// </summary>
         /// <param name="obj"></param>
         public static void KillObjectImmediate(Object obj)

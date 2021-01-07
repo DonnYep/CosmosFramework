@@ -9,19 +9,11 @@ namespace Cosmos.Event
     [Module]
     internal sealed class EventManager : Module, IEventManager
     {
-#if SERVER
-        /// <summary>
-        /// 支持并发的字典
-        /// </summary>
-        ConcurrentDictionary<string, Action<object, GameEventArgs>> eventDict
-            = new ConcurrentDictionary<string, Action<object, GameEventArgs>>();
-#else
         Dictionary<string, EventHandler<GameEventArgs>> eventDict;
         public override void OnInitialization()
         {
             eventDict = new Dictionary<string, EventHandler<GameEventArgs>>();
         }
-#endif
         /// <summary>
         /// 添加事件
         /// </summary>

@@ -122,4 +122,8 @@ public static class NetCoreExtend
         return result;
     }
 #endif
+    public static bool Remove<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dict, TKey key)
+    {
+        return dict.TryRemove(key, out _);
+    }
 }

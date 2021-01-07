@@ -19,10 +19,8 @@ public class NetworkPanel : UIResidentForm
     [SerializeField] uint heartbeatInterval = 45;
     NetClient netClient;
     bool isConnected;
-    INetworkManager networkManager;
     protected override void OnInitialization()
     {
-        networkManager = GameManager.GetModule<INetworkManager>();
         btnConnect = GetUIForm<Button>("BtnConnect");
         btnConnect.onClick.AddListener(ConnectClick);
         btnDisconnect = GetUIForm<Button>("BtnDisconnect");
@@ -47,7 +45,7 @@ public class NetworkPanel : UIResidentForm
     {
         string str = inputMsg.text;
         var data = Utility.Converter.ConvertToByte(str);
-        networkManager.SendNetworkMessage(10, data);
+        CosmosEntry.NetworkManager.SendNetworkMessage(10, data);
     }
     void ServerMsg(INetworkMessage netMsg)
     {

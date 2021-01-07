@@ -77,42 +77,6 @@ namespace Cosmos
         static GameObject instanceObject;
         #endregion
         #region Methods
-        internal static void OnPause()
-        {
-            IsPause = true;
-        }
-        internal static void OnUnPause()
-        {
-            IsPause = false;
-        }
-        internal static void OnRefresh()
-        {
-            if (IsPause)
-                return;
-            refreshHandler?.Invoke();
-        }
-        /// <summary>
-        /// 时间流逝轮询;
-        /// </summary>
-        /// <param name="msNow">utc毫秒当前时间</param>
-        internal static void OnElapseRefresh(long msNow)
-        {
-            if (IsPause)
-                return;
-            elapseRefreshHandler?.Invoke(msNow);
-        }
-        internal static void OnLateRefresh()
-        {
-            if (IsPause)
-                return;
-            lateRefreshHandler?.Invoke();
-        }
-        internal static void OnFixRefresh()
-        {
-            if (IsPause)
-                return;
-            fixedRefreshHandler?.Invoke();
-        }
         public static void PreparatoryModule()
         {
             foreach (var module in moduleDict.Keys)
@@ -180,6 +144,42 @@ namespace Cosmos
                 }
             }
             return moduleMount;
+        }
+        internal static void OnPause()
+        {
+            IsPause = true;
+        }
+        internal static void OnUnPause()
+        {
+            IsPause = false;
+        }
+        internal static void OnRefresh()
+        {
+            if (IsPause)
+                return;
+            refreshHandler?.Invoke();
+        }
+        /// <summary>
+        /// 时间流逝轮询;
+        /// </summary>
+        /// <param name="msNow">utc毫秒当前时间</param>
+        internal static void OnElapseRefresh(long msNow)
+        {
+            if (IsPause)
+                return;
+            elapseRefreshHandler?.Invoke(msNow);
+        }
+        internal static void OnLateRefresh()
+        {
+            if (IsPause)
+                return;
+            lateRefreshHandler?.Invoke();
+        }
+        internal static void OnFixRefresh()
+        {
+            if (IsPause)
+                return;
+            fixedRefreshHandler?.Invoke();
         }
         static GameManager()
         {

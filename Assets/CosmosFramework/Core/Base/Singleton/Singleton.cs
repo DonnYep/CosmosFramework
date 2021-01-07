@@ -18,8 +18,6 @@ namespace Cosmos
                 if (instance == null)
                 {
                     instance = new TDerived();
-                    if (instance is IConstruction)
-                        (instance as IConstruction).OnConstruction();
                 }
                 return instance;
             }
