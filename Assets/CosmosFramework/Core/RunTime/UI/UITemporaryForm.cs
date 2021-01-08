@@ -9,7 +9,7 @@ namespace Cosmos.UI
     {
         public sealed override void HideUIForm()
         {
-            uiManager.RemoveUI(UIFormName,out _ );
+            uiManager.RemoveUI(UIFormName);
         }
     }
 }

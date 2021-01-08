@@ -15,15 +15,15 @@ public class SlotController : MonoEventHandler
     protected override void Awake()
     {
         fullPath = Utility.UI.GetUIFullRelativePath(slotItemName);
-        AddDefaultEventListener(UIIEventDefine.UI_IMPL_UPD_SLOT);
-        AddEventListener(UIIEventDefine.UI_IMPL_UPD_ITEM, UpdateItemHandler);
+        AddDefaultEventListener(UIEventDefine.UI_IMPL_UPD_SLOT);
+        AddEventListener(UIEventDefine.UI_IMPL_UPD_ITEM, UpdateItemHandler);
         resourceManager = GameManager.GetModule<IResourceManager>();
         resourceManager.LoadPrefabAsync(typeof(Slot), (go => slot = go));
     }
     protected override void OnDestroy()
     {
-        RemoveDefaultEventListener(UIIEventDefine.UI_IMPL_UPD_SLOT);
-        RemoveEventListener(UIIEventDefine.UI_IMPL_UPD_ITEM, UpdateItemHandler);
+        RemoveDefaultEventListener(UIEventDefine.UI_IMPL_UPD_SLOT);
+        RemoveEventListener(UIEventDefine.UI_IMPL_UPD_ITEM, UpdateItemHandler);
     }
     protected override void EventHandler(object sender, GameEventArgs args)
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
-[PrefabAsset("UI/StorePanel", PrefabName = "StorePanel")]
+[UIAsset("UI/StorePanel", PrefabName = "StorePanel")]
 public class StorePanel : UIResidentForm
 {
     protected override void OnInitialization()

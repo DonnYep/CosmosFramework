@@ -22,5 +22,15 @@ namespace Cosmos
         /// </summary>
         /// <param name="uiForm">传入的form</param>
         void HideUIForm(UIFormBase uiForm);
+        /// <summary>
+        /// ui帮助接口移除ui对象；
+        /// </summary>
+        /// <param name="uiForm">传入的form</param>
+        void RemoveUIForm(UIFormBase uiForm);
+        /// <summary>
+        /// ui帮助接口销毁ui对象；
+        /// </summary>
+        /// <param name="uiForm">传入的form</param>
+        void DestroyUIForm(UIFormBase uiForm);
     }
 }

@@ -118,10 +118,10 @@ namespace Cosmos.UI
              {
                  panel.transform.SetParent(UIRoot.transform);
                  (panel.transform as RectTransform).ResetLocalTransform();
-                 var comp = Utility.Unity.Add<T>(panel, true);
+                 var comp = Utility.Unity.Add<T>(panel, false);
                  callback?.Invoke(comp);
                  uiDict.Add(comp.UIFormName, comp);
-             });
+             },null,true);
         }
         /// <summary>
         /// 通过AssetInfo加载UI对象（异步）；
@@ -236,9 +236,10 @@ namespace Cosmos.UI
         /// </summary>
         /// <param name="uiName">UIFormBase.UIName</param>
         /// <param name="panel">移除后返回的panel</param>
-        public void RemoveUI(string uiName, out UIFormBase panel)
+        public void RemoveUI(string uiName, out UIFormBase uiForm)
         {
-            var hasPanel = uiDict.TryRemove(uiName, out panel);
+            var hasPanel = uiDict.TryRemove(uiName, out uiForm);
+            uiFormHelper.RemoveUIForm(uiForm);
             if (!hasPanel)
                 Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
         }
@@ -250,9 +251,7 @@ namespace Cosmos.UI
         /// <param name="uiName">UIFormBase.UIName</param>
         public void RemoveUI(string uiName)
         {
-            var hasPanel = uiDict.TryRemove(uiName, out _);
-            if (!hasPanel)
-                Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
+            RemoveUI(uiName, out _ );
         }
         /// <summary>
         /// 销毁UI
@@ -262,14 +261,14 @@ namespace Cosmos.UI
         /// <param name="uiName">UIFormBase.UIName</param>
         public void DestroyUl(string uiName)
         {
-            if (uiDict.TryRemove(uiName, out var panel))
-                GameObject.Destroy(panel);
+            if (uiDict.TryRemove(uiName, out var uiForm))
+                uiFormHelper.DestroyUIForm(uiForm);
             else
                 Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
         }
         public void DestroyUl(UIFormBase uiForm)
         {
-            GameObject.Destroy(uiForm.gameObject);
+            uiFormHelper.DestroyUIForm(uiForm);
         }
         /// <summary>
         /// 是否存在UI;

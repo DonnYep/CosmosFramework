@@ -6,12 +6,10 @@ using Cosmos;
 using Cosmos.UI;
 using Cosmos.Event;
 using Cosmos.Data;
-namespace Cosmos
-{
     /// <summary>
     /// 仅测试
     /// </summary>
-    [PrefabAsset("UI/InventoryPanel")]
+    [UIAsset("UI/InventoryPanel")]
     public class InventoryPanel : UIResidentForm
     {
         [SerializeField] InventoryDataSet inventoryDataSet;
@@ -36,15 +34,15 @@ namespace Cosmos
             GetUIForm<Button>("BtnSave").onClick.AddListener(SaveClick);
             GetUIForm<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
             txtDescription = GetUIForm<Text>("TxtDescription");
-            eventManager.AddListener(UIIEventDefine.UI_IMPL_ITEM_DESC, UpdateItemHandler);
+            eventManager.AddListener(UIEventDefine.UI_IMPL_ITEM_DESC, UpdateItemHandler);
         }
         protected override void OnTermination()
         {
-            eventManager.RemoveListener(UIIEventDefine.UI_IMPL_ITEM_DESC, UpdateItemHandler);
+            eventManager.RemoveListener(UIEventDefine.UI_IMPL_ITEM_DESC, UpdateItemHandler);
         }
         private void Start()
         {
-            GameManager.GetModule<IEventManager>().DispatchEvent(UIIEventDefine.UI_IMPL_UPD_SLOT, null, Uip);
+            GameManager.GetModule<IEventManager>().DispatchEvent(UIEventDefine.UI_IMPL_UPD_SLOT, null, Uip);
         }
         void LoadClick()
         {
@@ -68,7 +66,7 @@ namespace Cosmos
         }
         void UpdateClick()
         {
-            eventManager.DispatchEvent(UIIEventDefine.UI_IMPL_UPD_SLOT, this, Uip);
+            eventManager.DispatchEvent(UIEventDefine.UI_IMPL_UPD_SLOT, this, Uip);
         }
         void UpdateItemHandler(object sender,GameEventArgs args)
         {
@@ -76,4 +74,3 @@ namespace Cosmos
             txtDescription.text = stringUip.Data;
         }
     }
-}
