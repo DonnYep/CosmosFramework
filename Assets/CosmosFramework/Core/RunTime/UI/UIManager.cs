@@ -12,6 +12,7 @@ namespace Cosmos.UI
         #region Properties
         public GameObject UIRoot { get; private set; }
         Dictionary<string, UIFormBase> uiDict;
+        Type uiFromBaseType = typeof(UIFormBase);
         IUIFormHelper uiFormHelper;
         IResourceManager resourceManager;
         #endregion
@@ -54,21 +55,21 @@ namespace Cosmos.UI
         /// <summary>
         ///  通过特性UIAssetAttribute加载Panel（同步）
         /// </summary>
-        /// <param name="type">目标组件的type类型</param>
+        /// <param name="uiType">目标组件的type类型</param>
         /// <returns>生成的UI对象Comp</returns>
-        public UIFormBase OpenUI(Type type)
+        public UIFormBase OpenUI(Type uiType)
         {
-            if (typeof(UIFormBase).IsAssignableFrom(type))
+            if (uiFromBaseType.IsAssignableFrom(uiType))
             {
-                throw new NotImplementedException($"Type:{type} is not inherit form UIFormBase");
+                throw new NotImplementedException($"Type:{uiType} is not inherit form UIFormBase");
             }
-            var attribute = type.GetCustomAttribute<UIAssetAttribute>();
+            var attribute = uiType.GetCustomAttribute<UIAssetAttribute>();
             if (attribute == null)
             {
-                throw new NotImplementedException($"Type:{type} has no UIAssetAttribute");
+                throw new NotImplementedException($"Type:{uiType} has no UIAssetAttribute");
             }
             var assetInfo = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-            return OpenUI(assetInfo, type);
+            return OpenUI(assetInfo, uiType);
         }
         /// <summary>
         ///  通过AssetInfo加载UI对象（同步）；
@@ -85,18 +86,19 @@ namespace Cosmos.UI
         /// 通过AssetInfo加载UI对象（同步）；
         /// </summary>
         /// <param name="assetInfo">目标组件的type类型</param>
-        /// <param name="type">传入的assetInfo对象</param>
+        /// <param name="uiType">传入的assetInfo对象</param>
         /// <returns>生成的UI对象Comp</returns>
-        public UIFormBase OpenUI(AssetInfo assetInfo, Type type)
+        public UIFormBase OpenUI(AssetInfo assetInfo, Type uiType)
         {
-            if (typeof(UIFormBase).IsAssignableFrom(type))
+            if (!uiFromBaseType.IsAssignableFrom(uiType))
             {
-                throw new NotImplementedException($"Type:{type} is not inherit form UIFormBase");
+                throw new NotImplementedException($"Type:{uiType} is not inherit form UIFormBase");
             }
             var panel = resourceManager.LoadPrefab(assetInfo, true);
             panel?.transform.SetParent(UIRoot.transform);
             (panel?.transform as RectTransform).ResetLocalTransform();
-            var comp = Utility.Unity.Add(type, panel?.gameObject, true) as UIFormBase;
+            var comp = Utility.Unity.Add(uiType, panel?.gameObject, true) as UIFormBase;
+            uiDict.TryAdd(comp.UIFormName, comp);
             return comp;
         }
         /// <summary>
@@ -120,25 +122,29 @@ namespace Cosmos.UI
                  (panel.transform as RectTransform).ResetLocalTransform();
                  var comp = Utility.Unity.Add<T>(panel, false);
                  callback?.Invoke(comp);
-                 uiDict.Add(comp.UIFormName, comp);
-             },null,true);
+                 uiDict.TryAdd(comp.UIFormName, comp);
+             }, null, true);
         }
         /// <summary>
         /// 通过AssetInfo加载UI对象（异步）；
         /// </summary>
         /// <param name="assetInfo">传入的assetInfo对象</param>
-        /// <param name="type">目标组件的type类型</param>
+        /// <param name="uiType">目标组件的type类型</param>
         /// <param name="loadDoneCallback">加载完成后的回调</param>
         /// <returns></returns>
-        public Coroutine OpenUIAsync(AssetInfo assetInfo, Type type, Action<UIFormBase> loadDoneCallback = null)
+        public Coroutine OpenUIAsync(AssetInfo assetInfo, Type uiType, Action<UIFormBase> loadDoneCallback = null)
         {
+            if (!uiFromBaseType.IsAssignableFrom(uiType))
+            {
+                throw new ArgumentException($"Type:{uiType} is not inherit from UIFormBase");
+            }
             return resourceManager.LoadPrefabAsync(assetInfo, panel =>
              {
                  panel.transform.SetParent(UIRoot.transform);
                  (panel.transform as RectTransform).ResetLocalTransform();
-                 var comp = Utility.Unity.Add(type, panel, true) as UIFormBase;
+                 var comp = Utility.Unity.Add(uiType, panel, true) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
-                 uiDict.Add(comp.UIFormName, comp);
+                 uiDict.TryAdd(comp.UIFormName, comp);
              });
         }
         /// <summary>
@@ -150,13 +156,18 @@ namespace Cosmos.UI
         public Coroutine OpenUIAsync<T>(AssetInfo assetInfo, Action<T> loadDoneCallback = null)
             where T : UIFormBase
         {
+            var type = typeof(T);
+            if (!uiFromBaseType.IsAssignableFrom(type))
+            {
+                throw new ArgumentException($"Type:{type} is not inherit from UIFormBase");
+            }
             return resourceManager.LoadPrefabAsync(assetInfo, panel =>
             {
                 panel.transform.SetParent(UIRoot.transform);
                 (panel.transform as RectTransform).ResetLocalTransform();
                 var comp = Utility.Unity.Add<T>(panel, true);
                 loadDoneCallback?.Invoke(comp);
-                uiDict.Add(comp.UIFormName, comp);
+                uiDict.TryAdd(comp.UIFormName, comp);
             });
         }
         /// <summary>
@@ -168,6 +179,10 @@ namespace Cosmos.UI
         public Coroutine OpenUIAsync(Type type, Action<UIFormBase> loadDoneCallback = null)
         {
             PrefabAssetAttribute attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
+            if (!uiFromBaseType.IsAssignableFrom(type))
+            {
+                throw new ArgumentException($"Type:{type} is not inherit from UIFormBase");
+            }
             if (attribute == null)
             {
                 throw new ArgumentNullException($"Type:{type} has no UIAssetAttribute");
@@ -178,7 +193,7 @@ namespace Cosmos.UI
                  (panel.transform as RectTransform).ResetLocalTransform();
                  var comp = Utility.Unity.Add(type, panel, true) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
-                 uiDict.Add(comp.UIFormName, comp);
+                 uiDict.TryAdd(comp.UIFormName, comp);
              });
         }
         /// <summary>
@@ -251,7 +266,7 @@ namespace Cosmos.UI
         /// <param name="uiName">UIFormBase.UIName</param>
         public void RemoveUI(string uiName)
         {
-            RemoveUI(uiName, out _ );
+            RemoveUI(uiName, out _);
         }
         /// <summary>
         /// 销毁UI
@@ -280,6 +295,49 @@ namespace Cosmos.UI
         public bool HasUI(string uiName)
         {
             return uiDict.ContainsKey(uiName);
+        }
+        public T PeekUIForm<T>(string uiName)
+            where T : UIFormBase
+        {
+            return PeekUIForm(typeof(T), uiName) as T;
+        }
+        public UIFormBase PeekUIForm(Type uiType, string uiName)
+        {
+            if (!uiFromBaseType.IsAssignableFrom(uiType))
+            {
+                throw new ArgumentException($"Type:{uiType} is not inherit from UIFormBase");
+            }
+            uiDict.TryGetValue(uiName, out var uiForm);
+            return uiForm;
+        }
+        /// <summary>
+        /// 注册UI；
+        /// UIFormBase.UIName
+        /// </summary>
+        /// <param name="uiForm">UI对象</param>
+        public void RegisterUI(UIFormBase uiForm)
+        {
+            if (!HasUI(uiForm.UIFormName))
+            {
+                uiDict.Add(uiForm.UIFormName, uiForm);
+            }
+            else
+            {
+                RemoveUI(uiForm.UIFormName);
+                uiDict.Add(uiForm.UIFormName, uiForm);
+            }
+        }
+        /// <summary>
+        /// 注销UI;
+        /// UIFormBase.UIName
+        /// </summary>
+        /// <param name="uiForm">UI对象</param>
+        public void DeregisterUI(UIFormBase uiForm)
+        {
+            if (HasUI(uiForm.UIFormName))
+            {
+                RemoveUI(uiForm.UIFormName);
+            }
         }
         #endregion
     }

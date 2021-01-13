@@ -58,7 +58,7 @@ public class Item : UIResidentForm, IBeginDragHandler, IDragHandler, IEndDragHan
             transform.ResetLocalTransform();
             GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
-        GameManager.GetModule<Cosmos.IEventManager>(). DispatchEvent(UIEventDefine.UI_IMPL_UPD_ITEM, null, null);
+        GameManager.GetModule<Cosmos.IEventManager>(). DispatchEvent(UIEventDefine.UI_UPD_ITEM, null, null);
     }
     public void SetItem(ItemDataSet item)
     {
@@ -92,6 +92,6 @@ public class Item : UIResidentForm, IBeginDragHandler, IDragHandler, IEndDragHan
     void IItemClick()
     {
         uip.SetData(itemDescription);
-        GameManager.GetModule<Cosmos.IEventManager>(). DispatchEvent(UIEventDefine.UI_IMPL_ITEM_DESC, this, uip);
+        GameManager.GetModule<Cosmos.IEventManager>(). DispatchEvent(UIEventDefine.UI_ITEM_DESC, this, uip);
     }
 }

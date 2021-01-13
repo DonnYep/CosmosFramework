@@ -111,5 +111,31 @@ namespace Cosmos
         /// <param name="uiName">UIFormBase.UIName</param>
         /// <returns>存在的结果</returns>
         bool HasUI(string uiName);
+        /// <summary>
+        /// 获得UI；
+        /// </summary>
+        /// <typeparam name="T">UIForm的类型</typeparam>
+        /// <param name="uiName">UI的名称</param>
+        /// <returns>UI对象组件</returns>
+        T PeekUIForm<T>(string uiName) where T : UIFormBase;
+        /// <summary>
+        /// 获得UI；
+        /// </summary>
+        /// <param name="uiType">UIForm的类型</param>
+        /// <param name="uiName">UI的名称</param>
+        /// <returns>UI对象组件</returns>
+        UIFormBase PeekUIForm(Type uiType, string uiName);
+        /// <summary>
+        /// 注册UI；
+        /// UIFormBase.UIName
+        /// </summary>
+        /// <param name="uiForm">UI对象</param>
+        void RegisterUI(UIFormBase uiForm);
+        /// <summary>
+        /// 注销UI;
+        /// UIFormBase.UIName
+        /// </summary>
+        /// <param name="uiForm">UI对象</param>
+        void DeregisterUI(UIFormBase uiForm);
     }
 }

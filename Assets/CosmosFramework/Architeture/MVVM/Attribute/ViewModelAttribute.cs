@@ -10,12 +10,12 @@ namespace Cosmos.Mvvm
     /// 若目标继承自ViewModel且挂载此标签，则可进行自动注册；
     /// </summary>
     [AttributeUsage( AttributeTargets.Class, AllowMultiple =false, Inherited =false)]
-    public class CommandAttribute:Attribute
+    public class ViewModelAttribute:Attribute
     {
-        public CommandAttribute(string cmdKey )
+        public ViewModelAttribute(string vmKey )
         {
-            CommandKey = cmdKey;
+            ViewModelKey = vmKey;
         }
-        public string CommandKey { get; private set; }
+        public string ViewModelKey { get; private set; }
     }
 }

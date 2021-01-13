@@ -21,14 +21,12 @@ namespace Cosmos.UI
         public virtual string UIFormName { get { return gameObject.name; } }
         /// <summary>
         /// 被开启；
-        /// 空虚函数；
         /// </summary>
-        public virtual void ShowUIForm() { }
+        public abstract void ShowUIForm();
         /// <summary>
         /// 被关闭；
-        /// 空虚函数；
         /// </summary>
-        public virtual void HideUIForm() { }
+        public abstract void HideUIForm();
         public bool HasUIForm(string name)
         {
             return uiDict.ContainsKey(name);
@@ -114,11 +112,13 @@ namespace Cosmos.UI
                 GetChildUIForm<Image>();
                 GetChildUIForm<InputField>();
             }
+            uiManager.RegisterUI(this);
             OnInitialization();
         }
         void OnDestroy()
         {
             OnTermination();
+            uiManager.DeregisterUI(this);
             uiDict.Clear();
         }
     }

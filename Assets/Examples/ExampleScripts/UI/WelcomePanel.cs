@@ -4,7 +4,7 @@ using UnityEngine;
 using Cosmos.UI;
 using UnityEngine.UI;
 using Cosmos;
-[UIAsset("UI/WelcomePanel",PrefabName = "WelcomePanel")]
+[UIAsset("UI/WelcomePanel" )]
 public class WelcomePanel : UITemporaryForm
 {
     Text info;

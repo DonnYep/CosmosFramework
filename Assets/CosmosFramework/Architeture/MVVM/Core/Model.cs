@@ -5,10 +5,10 @@ namespace Cosmos.Mvvm
     [ImplementProvider]
     public abstract class Model
     {
-        public abstract string CommandKey { get; }
+        //public abstract string ViewModelKey { get; }
         protected void Fire(string cmdKey, object data = null)
         {
-            MVC.Fire(cmdKey, data);
+            MVVM.Fire(cmdKey, data);
         }
     }
 }
