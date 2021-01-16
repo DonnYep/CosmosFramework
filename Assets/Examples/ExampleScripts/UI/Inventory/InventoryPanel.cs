@@ -30,7 +30,7 @@ namespace Cosmos.Mvvm
         }
         private void Start()
         {
-            MVVM.Fire(UIEventDefine.UI_UPD_SLOT);
+            //MVVM.Fire(UIEventDefine.UI_UPD_SLOT);
             //GameManager.GetModule<IEventManager>().DispatchEvent(UIEventDefine.UI_UPD_SLOT, null, Uip);
         }
         void LoadClick()

@@ -13,12 +13,12 @@ namespace Cosmos.Test
         M_Inventory inventoryModel;
         public VM_Inventory()
         {
-            inventoryModel = GetModel<M_Inventory>();
+            //inventoryModel = GetModel<M_Inventory>();
         }
-        public override void Execute(object data)
-        {
+        //public override void Execute(object data)
+        //{
 
-        }
+        //}
         void LoadJson()
         {
             string json = null;

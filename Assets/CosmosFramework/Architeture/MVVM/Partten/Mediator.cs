@@ -11,8 +11,11 @@ namespace Cosmos.Mvvm
 {
     public abstract class Mediator
     {
-        public abstract void OnBind();
-        public abstract void OnUnbind();
-
+        public object ViewEntity { get; set; }
+        public abstract string MediatorName { get; protected set; }
+        public List<string> EventKeys { get; protected set; }
+        public virtual void OnRegister() { }
+        public virtual void OnRemove() { }
+        public abstract void HandleEvent(object sender,NotifyArgs notifyArgs);
     }
 }

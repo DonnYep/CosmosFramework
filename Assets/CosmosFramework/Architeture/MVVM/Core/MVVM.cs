@@ -12,186 +12,59 @@ namespace Cosmos.Mvvm
     /// </summary>
     public static class MVVM
     {
-        static Dictionary<Type, View> viewDict;
-        static Dictionary<Type, Model> modelDict;
-        static Dictionary<string, Type> vmTypeDict;
-        static Dictionary<Type, Queue<ViewModel>> vmQueueDict;
-        /// <summary>
-        /// 绑定View
-        /// </summary>
-        /// <typeparam name="T">继承自View的子类</typeparam>
-        /// <param name="view">view对象</param>
-        public static void BindView<T>(T view)
-          where T : View
+        #region ViewModel
+        public static void RegisterCommand(string actionKey,Type cmdType)
         {
-            var type = typeof(T);
-            view.BindVMKey();
-            viewDict.AddOrUpdate(type, view);
+            ViewModel.Instance.RegisterCommand(actionKey, cmdType);
         }
-        public static void BindView(Type viewType,View view)
+        public static void RemoveCommand(string actionKey)
         {
-            if (!typeof(View).IsAssignableFrom(viewType))
-            {
-                throw new ArgumentException($"View :{viewType} is not inherit form view");
-            }
-            view.BindVMKey();
-            viewDict.AddOrUpdate(viewType, view);
+            ViewModel.Instance.RemoveCommand(actionKey);
         }
-        /// <summary>
-        /// 绑定数据
-        /// </summary>
-        /// <typeparam name="T">派生自Model的子类</typeparam>
-        /// <param name="model">数据模型</param>
-        public static void BindModel<T>(T model)
-            where T : Model
+        public static bool HasCommand(string actionKey)
         {
-            var type = typeof(T);
-            modelDict.AddOrUpdate(type, model);
+            return ViewModel.Instance.HasCommand(actionKey);
         }
-        public static void BindModel (Type modelType,Model model)
+        #endregion
+        #region View
+        public static void RegisterMediator(Mediator mediator)
         {
-            if (!typeof(Model).IsAssignableFrom(modelType))
-            {
-                throw new ArgumentException($"Model :{modelType} is not inherit form Model");
-            }
-            modelDict.AddOrUpdate(modelType, model);
+            View.Instance.RegisterMediator(mediator);
         }
-        /// <summary>
-        /// 绑定command；
-        /// </summary>
-        /// <typeparam name="T">继承自command的子类</typeparam>
-        /// <param name="vmKey">command key</param>
-        public static void BindViewModel<T>( string vmKey)
-where T : ViewModel
+        public static Mediator PeekMediator(string mediatorName)
         {
-            var vmType = typeof(T);
-            vmTypeDict.AddOrUpdate(vmKey, vmType);
-            if (!vmQueueDict.ContainsKey(vmType))
-            {
-                vmQueueDict.Add(vmType, new Queue<ViewModel>());
-            }
+            return View.Instance.PeekMediator(mediatorName);
         }
-        /// <summary>
-        /// 绑定command；
-        /// </summary>
-        /// <param name="vmType">继承自command的子类</param>
-        /// <param name="vmKey">command key</param>
-        public static void BindViewModel(Type vmType, string vmKey)
+        public static bool HasMediator(string mediatorName)
         {
-            if (typeof(ViewModel).IsAssignableFrom(vmType))
-            {
-                vmTypeDict.AddOrUpdate(vmKey, vmType);
-                if (!vmQueueDict.ContainsKey(vmType))
-                {
-                    vmQueueDict.Add(vmType, new Queue<ViewModel>());
-                }
-            }
-            else
-            {
-                throw new ArgumentException($"ViewModel :{vmType} is not inherit form ViewModel!");
-            }
+            return View.Instance.HasMediator(mediatorName);
         }
-        public static T GetView<T>() where T : View
+        public static void Dispatch(string actionKey, object sender,NotifyArgs notifyArgs)
         {
-            var type = typeof(T);
-            var result = viewDict.TryGetValue(type, out var view);
-            if (result)
-                return view as T;
-            else
-                return null;
+            View.Instance.Dispatch(actionKey, sender,notifyArgs);
         }
-        public static  View GetView(Type viewType) 
+        public static void Dispatch(string actionKey, NotifyArgs notifyArgs)
         {
-            if (!typeof(View).IsAssignableFrom(viewType))
-            {
-                throw new ArgumentException($"View :{viewType} is not inherit form view");
-            }
-            var result = viewDict.TryGetValue(viewType, out var view);
-            if (result)
-                return view ;
-            else
-                return null;
+            View.Instance.Dispatch(actionKey, null, notifyArgs);
         }
-        public static T GetModel<T>() where T : Model
+        #endregion
+        #region Model
+        public static bool HasProxy(string proxyName)
         {
-            var type = typeof(T);
-            var result = modelDict.TryGetValue(type, out var model);
-            if (result)
-                return model as T;
-            else
-                return null;
+            return Model.Instance.HasProxy(proxyName);
         }
-        public static Model GetModel(Type modelType)  
+        public static Proxy PeekProxy(string proxyName)
         {
-            if (!typeof(Model).IsAssignableFrom(modelType))
-            {
-                throw new ArgumentException($"Model :{modelType} is not inherit form Model");
-            }
-            var result = modelDict.TryGetValue(modelType, out var model);
-            if (result)
-                return model;
-            else
-                return null;
+            return Model.Instance.PeekProxy(proxyName);
         }
-        public static T GetViewModel<T>(string vmKey) where T : ViewModel
+        public static void RegisterProxy(Proxy proxy)
         {
-            var result = vmTypeDict.TryGetValue(vmKey, out var vm);
-            if (result)
-                return vm as T;
-            else
-                return null;
+            Model.Instance.RegisterProxy(proxy);
         }
-        /// <summary>
-        /// 抛出事件，线程安全；
-        /// </summary>
-        /// <param name="vmKey">command key</param>
-        /// <param name="data">附带的数据</param>
-        public static void Fire(string vmKey, object data = null)
+        public static void RemoveProxy(string proxyName, out Proxy proxy)
         {
-            if (vmTypeDict.TryGetValue(vmKey, out var vmType))
-            {
-                vmQueueDict.TryGetValue(vmType, out var vmQueue);
-                ViewModel vm = null;
-                if (vmQueue.Count > 0)
-                    vm = vmQueue.Dequeue();
-                else
-                    vm = Utility.Assembly.GetTypeInstance(vmType) as ViewModel;
-                vm.Execute(data);
-                //执行完进行回收；
-                lock (vmQueueDict)
-                {
-                    vmQueue.Enqueue(vm);
-                }
-            }
-            foreach (var view in viewDict.Values)
-            {
-                view.ExecuteEvent(vmKey, data);
-            }
+            Model.Instance.RemoveProxy(proxyName, out proxy);
         }
-        /// <summary>
-        /// 自动绑定所有标记ViewModelAttribute标签的类
-        /// </summary>
-        public static void AutoBindViewModel()
-        {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var assemblyLength = assemblies.Length;
-            for (int h = 0; h < assemblyLength; h++)
-            {
-                var cmdTypes = Utility.Assembly.GetDerivedTypesByAttribute<ViewModelAttribute, ViewModel>(assemblies[h]);
-                var length = cmdTypes.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    var cmdAtt = cmdTypes[i].GetCustomAttribute<ViewModelAttribute>();
-                    BindViewModel(cmdTypes[i], cmdAtt.ViewModelKey);
-                }
-            }
-        }
-        static MVVM()
-        {
-            viewDict = new Dictionary<Type, View>();
-            modelDict = new Dictionary<Type, Model>();
-            vmTypeDict = new Dictionary<string, Type>();
-            vmQueueDict = new Dictionary<Type, Queue<ViewModel>>();
-        }
+        #endregion
     }
 }

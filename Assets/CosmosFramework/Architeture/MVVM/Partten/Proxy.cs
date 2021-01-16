@@ -8,8 +8,17 @@ namespace Cosmos.Mvvm
 {
     public abstract class Proxy
     {
-        public abstract void OnBind();
-        public abstract void OnUnbind();
+        public string ProxyName { get; protected set; }
+        public object Data { get; set; }
+        public Proxy() { }
+        public Proxy(string proxyName):this(proxyName,null){}
+        public Proxy(string proxyName,object data)
+        {
+            ProxyName = proxyName;
+            Data = data;
+        }
+        public abstract void OnRegister();
+        public abstract void OnRemove();
 
     }
 }

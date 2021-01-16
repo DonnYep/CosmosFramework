@@ -9,17 +9,17 @@ namespace Cosmos.Test
 {
     public class VM_Navigate : ViewModel
     {
-        public override void Execute(object data)
+        public  void Execute(object data)
         {
             Utility.Debug.LogInfo($"Run {UIEventDefine.VM_Navigate}",MessageColor.RED);
 
-            BindModel(new M_Inventory());
+            //BindModel(new M_Inventory());
 
 
-            BindView(new V_Inventory());
+            //    BindView(new V_Inventory());
 
 
-            BindViewModel<VM_Inventory>(UIEventDefine.VM_Inventory);
+            //    BindViewModel<VM_Inventory>(UIEventDefine.VM_Inventory);
         }
     }
 }

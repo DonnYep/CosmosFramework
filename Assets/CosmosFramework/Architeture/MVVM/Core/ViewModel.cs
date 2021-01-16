@@ -1,39 +1,71 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using Cosmos;
 namespace Cosmos.Mvvm
 {
-    public abstract class ViewModel
+    public  class ViewModel:ConcurrentSingleton<ViewModel>
     {
-        public abstract void Execute( object data);
-        protected T GetModel<T>() where T : Model
+        protected Dictionary<string, Type> cmdTypeDict;
+        protected Dictionary<Type, Queue<Command>> typeCmdQueueDict;
+        protected Type cmdType = typeof(Command);
+        protected View view;
+        readonly protected object locker = new object();
+        public ViewModel()
         {
-            return MVVM.GetModel<T>();
+            cmdTypeDict = new Dictionary<string, Type>();
+            typeCmdQueueDict = new Dictionary<Type, Queue<Command>>();
+            OnInitialization();
         }
-        protected Model GetModel(Type modelType) 
+        public virtual void RegisterCommand(string actionKey,Type cmdType)
         {
-            return MVVM.GetModel(modelType);
+            lock (locker)
+            {
+                //if (!cmdTypeDict.ContainsKey(actionKey))
+                //{
+                //    view.AddListener(actionKey, ExecuteCommand);
+                //}
+                cmdTypeDict[actionKey] = cmdType;
+            }
         }
-        protected T GetView<T>() where T : View
+        public virtual void RemoveCommand(string actionKey)
         {
-            return MVVM.GetView<T>();
+            lock (locker)
+            {
+                if (cmdTypeDict.Remove(actionKey,out var type))
+                {
+                    typeCmdQueueDict.Remove(type);
+                    //view.RemoveListener(actionKey, ExecuteCommand);
+                }
+            }
         }
-        protected View GetView(Type viewType) 
+        public virtual void ExecuteCommand(string actionKey, object sender, NotifyArgs notifyArgs)
         {
-            return MVVM.GetView(viewType);
+            Command cmd=null;
+            Queue<Command> cmdQueue = null;
+            if (cmdTypeDict.TryGetValue(actionKey, out var type))
+            {
+                if (typeCmdQueueDict.TryGetValue(type, out var queue))
+                {
+                    if (queue.Count > 0)
+                        cmd = queue.Dequeue();
+                    else
+                        cmd = Activator.CreateInstance(type) as Command;
+                }
+            }
+            cmd.Execute(sender, notifyArgs);
+            cmdQueue.Enqueue(cmd);
         }
-        protected void BindView(View view)
+        public virtual bool HasCommand(string actionKey)
         {
-            MVVM.BindView(view);
+            lock (locker)
+            {
+                return cmdTypeDict.ContainsKey(actionKey);
+            }
         }
-        protected void BindModel(Model model)
+        protected virtual void OnInitialization()
         {
-            MVVM.BindModel(model);
-        }
-        protected void BindViewModel<T>(string vmKey)
-            where T :ViewModel
-        {
-            MVVM.BindViewModel<T>(vmKey);
+            view = View.Instance;
         }
     }
 }
