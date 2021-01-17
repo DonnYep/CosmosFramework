@@ -11,6 +11,6 @@ namespace Cosmos.Mvvm
 {
     public abstract class Command
     {
-        public abstract void Execute (object sender,NotifyArgs notifyArgs);
+        public abstract void ExecuteCommand (object sender,NotifyArgs notifyArgs);
     }
 }

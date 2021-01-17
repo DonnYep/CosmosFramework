@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿ using System.Collections;
 using System.Collections.Generic;
 namespace Cosmos.Mvvm
 {
@@ -13,6 +13,11 @@ namespace Cosmos.Mvvm
                 return proxyDict.ContainsKey(proxyName);
             }
         }
+        /// <summary>
+        /// 获取一个数据代理对象；
+        /// </summary>
+        /// <param name="proxyName">代理名</param>
+        /// <returns>数据的代理对对象</returns>
         public virtual Proxy PeekProxy(string proxyName)
         {
             lock (locker)

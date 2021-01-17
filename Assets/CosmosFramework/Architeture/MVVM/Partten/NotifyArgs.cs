@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Cosmos;
 namespace Cosmos.Mvvm
 {
-    public abstract class NotifyArgs : GameEventArgs
+    public abstract class NotifyArgs : EventArgs
     {
     }
 }

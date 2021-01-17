@@ -6,53 +6,10 @@ namespace Cosmos.Mvvm
     public class View : ConcurrentSingleton<View>
     {
         protected Dictionary<string, Mediator> mediatorDict;
-
-        protected Dictionary<string, IList<EventHandler<NotifyArgs>>> eventDict;
-
         protected readonly object locker = new object();
         public View()
         {
             mediatorDict = new Dictionary<string, Mediator>();
-            eventDict = new Dictionary<string, IList<EventHandler<NotifyArgs>>>();
-        }
-        public virtual void AddListener(string actionKey, EventHandler<NotifyArgs> notifyHandler)
-        {
-            lock (locker)
-            {
-                IList<EventHandler<NotifyArgs>> handlerList;
-                if (!eventDict.TryGetValue(actionKey, out handlerList))
-                    handlerList = new List<EventHandler<NotifyArgs>>();
-                if (!handlerList.Contains(notifyHandler))
-                    handlerList.Add(notifyHandler);
-            }
-        }
-        public virtual void RemoveListener(string actionKey, EventHandler<NotifyArgs> notifyHandler)
-        {
-            lock (locker)
-            {
-                if (eventDict.TryGetValue(actionKey, out var handlerList))
-                {
-                    if (handlerList.Contains(notifyHandler))
-                        handlerList.Remove(notifyHandler);
-                    if (handlerList.Count <= 0)
-                        eventDict.Remove(actionKey);
-                }
-            }
-        }
-        public virtual void Dispatch(string actionKey,object sender, NotifyArgs notifyArgs)
-        {
-            lock (locker)
-            {
-                ViewModel.Instance.ExecuteCommand(actionKey, sender, notifyArgs);
-                if (eventDict.TryGetValue(actionKey, out var handlerList))
-                {
-                    var length = handlerList.Count;
-                    for (int i = 0; i < length; i++)
-                    {
-                        handlerList[i].Invoke(sender,notifyArgs);
-                    }
-                }
-            }
         }
         public virtual void RegisterMediator(Mediator mediator)
         {
@@ -65,7 +22,7 @@ namespace Cosmos.Mvvm
                     var length = bindedKeys.Count;
                     for (int i = 0; i < length; i++)
                     {
-                        AddListener(bindedKeys[i], mediator.HandleEvent);
+                        ViewModel.Instance.AddListener(bindedKeys[i], mediator.HandleEvent);
                     }
                 }
             }
@@ -83,7 +40,7 @@ namespace Cosmos.Mvvm
                     var length = bindedKeys.Count;
                     for (int i = 0; i < length; i++)
                     {
-                        RemoveListener(bindedKeys[i], mediator.HandleEvent);
+                        ViewModel.Instance. RemoveListener(bindedKeys[i], mediator.HandleEvent);
                     }
                 }
             }

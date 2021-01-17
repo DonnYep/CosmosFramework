@@ -4,8 +4,6 @@ namespace Cosmos
     /// <summary>
     /// 多线程单例基类，内部包含线程锁;
     /// 可选实现IConstruction接口;
-    /// 若实现IConstruction，则对象被new完成后，自动调用OnConstruction方法；
-    /// </summary>
     /// <typeparam name="TDerived">继承自此单例的可构造类型</typeparam>
     public abstract class ConcurrentSingleton<TDerived> : IDisposable
               where TDerived : class, new()
