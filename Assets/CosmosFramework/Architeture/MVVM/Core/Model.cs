@@ -1,10 +1,12 @@
-﻿ using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 namespace Cosmos.Mvvm
 {
     public class Model:ConcurrentSingleton<Model>
     {
         protected Dictionary<string, Proxy> proxyDict;
+
         protected readonly object locker= new object();
         public virtual bool HasProxy(string proxyName)
         {
@@ -45,8 +47,10 @@ namespace Cosmos.Mvvm
         public Model()
         {
             proxyDict = new Dictionary<string, Proxy>();
+
             OnInitialization();
         }
+
         protected virtual void OnInitialization() { }
     }
 }

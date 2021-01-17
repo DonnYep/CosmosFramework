@@ -6,10 +6,12 @@ namespace Cosmos.Mvvm
     public class View : ConcurrentSingleton<View>
     {
         protected Dictionary<string, Mediator> mediatorDict;
+
         protected readonly object locker = new object();
         public View()
         {
             mediatorDict = new Dictionary<string, Mediator>();
+
         }
         public virtual void RegisterMediator(Mediator mediator)
         {
@@ -22,7 +24,7 @@ namespace Cosmos.Mvvm
                     var length = bindedKeys.Count;
                     for (int i = 0; i < length; i++)
                     {
-                        ViewModel.Instance.AddListener(bindedKeys[i], mediator.HandleEvent);
+                         ViewModel.Instance. AddListener(bindedKeys[i], mediator.HandleEvent);
                     }
                 }
             }
@@ -40,7 +42,7 @@ namespace Cosmos.Mvvm
                     var length = bindedKeys.Count;
                     for (int i = 0; i < length; i++)
                     {
-                        ViewModel.Instance. RemoveListener(bindedKeys[i], mediator.HandleEvent);
+                        ViewModel.Instance.RemoveListener(bindedKeys[i], mediator.HandleEvent);
                     }
                 }
             }
@@ -60,6 +62,10 @@ namespace Cosmos.Mvvm
             {
                 return mediatorDict.ContainsKey(mediatorName);
             }
+        }
+        public void Dispatch(string actionKey, object sender, NotifyArgs notifyArgs)
+        {
+            ViewModel.Instance.Dispatch(actionKey, sender, notifyArgs);
         }
         protected virtual void OnInitialization(){}
     }

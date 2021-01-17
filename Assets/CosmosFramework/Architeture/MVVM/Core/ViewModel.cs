@@ -12,6 +12,7 @@ namespace Cosmos.Mvvm
         protected Dictionary<string, Type> cmdTypeDict;
         protected Dictionary<Type, Queue<Command>> typeCmdQueueDict;
         protected Dictionary<string, IList<EventHandler<NotifyArgs>>> eventDict;
+
         protected Type cmdType = typeof(Command);
         readonly protected object locker = new object();
         public ViewModel()
@@ -19,6 +20,7 @@ namespace Cosmos.Mvvm
             cmdTypeDict = new Dictionary<string, Type>();
             typeCmdQueueDict = new Dictionary<Type, Queue<Command>>();
             eventDict = new Dictionary<string, IList<EventHandler<NotifyArgs>>>();
+
             OnInitialization();
         }
         /// <summary>
@@ -54,37 +56,32 @@ namespace Cosmos.Mvvm
         /// <param name="actionKey">消息码</param>
         /// <param name="sender">标准事件模型中的发送者</param>
         /// <param name="notifyArgs">消息模型</param>
-        public virtual void Dispatch(string actionKey, object sender, NotifyArgs notifyArgs)
+        internal virtual void Dispatch(string actionKey, object sender, NotifyArgs notifyArgs)
         {
             Command cmd = null;
             Queue<Command> cmdQueue = null;
-            if (cmdTypeDict.TryGetValue(actionKey, out var type))
-            {
-                if (typeCmdQueueDict.TryGetValue(type, out var queue))
-                {
-                    if (queue.Count > 0)
-                        cmd = queue.Dequeue();
-                    else
-                        cmd = Activator.CreateInstance(type) as Command;
-                }
-            }
-            cmd.ExecuteCommand(sender, notifyArgs);
-            if (eventDict.TryGetValue(actionKey, out var handlerList))
-            {
-                var length = handlerList.Count;
-                for (int i = 0; i < length; i++)
-                {
-                    handlerList[i].Invoke(sender, notifyArgs);
-                }
-            }
-            cmdQueue.Enqueue(cmd);
-        }
-        public virtual bool HasCommand(string actionKey)
-        {
+            IList<EventHandler<NotifyArgs>> handlerList = null;
             lock (locker)
             {
-                return cmdTypeDict.ContainsKey(actionKey);
+                if (cmdTypeDict.TryGetValue(actionKey, out var type))
+                {
+                    if (typeCmdQueueDict.TryGetValue(type, out var queue))
+                    {
+                        if (queue.Count > 0)
+                            cmd = queue.Dequeue();
+                        else
+                            cmd = Activator.CreateInstance(type) as Command;
+                    }
+                }
+                eventDict.TryGetValue(actionKey, out handlerList);
             }
+            cmd.ExecuteCommand(sender, notifyArgs);
+            var length = handlerList.Count;
+            for (int i = 0; i < length; i++)
+            {
+                handlerList[i].Invoke(sender, notifyArgs);
+            }
+            cmdQueue.Enqueue(cmd);
         }
         internal virtual void AddListener(string actionKey, EventHandler<NotifyArgs> notifyHandler)
         {
@@ -108,6 +105,13 @@ namespace Cosmos.Mvvm
                     if (handlerList.Count <= 0)
                         eventDict.Remove(actionKey);
                 }
+            }
+        }
+        public virtual bool HasCommand(string actionKey)
+        {
+            lock (locker)
+            {
+                return cmdTypeDict.ContainsKey(actionKey);
             }
         }
         protected virtual void OnInitialization() { }
