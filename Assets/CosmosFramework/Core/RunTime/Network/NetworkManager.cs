@@ -2,6 +2,8 @@
 using Cosmos;
 using System.Net;
 using System.Net.Sockets;
+using System;
+
 namespace Cosmos.Network
 {
     //TODO NetworkManager  这里使用了停等ARQ协议，目前未实现包组发送
@@ -10,12 +12,28 @@ namespace Cosmos.Network
     /// </summary>
     internal sealed class NetworkManager : Module<NetworkManager>
     {
+        public event Action NetworkOnConnect
+        {
+            add { networkOnConnect += value; }
+            remove{networkOnConnect -= value;}
+        }
+        public event Action NetworkOnDisconnect
+        {
+            add { networkOnDisconnect += value; }
+            remove{networkOnDisconnect -= value;}
+        }
         string serverIP;
         int serverPort;
         string clientIP;
         int clientPort;
         INetworkService service;
         IPEndPoint serverEndPoint;
+        INetworkMessageHelper netMessageHelper;
+        Action networkOnConnect;
+        Action networkOnDisconnect;
+        IHeartbeat heartbeat;
+        public long Conv { get { return service.Conv; } }
+        public bool IsConnected{ get; private set; }
         public IPEndPoint ServerEndPoint
         {
             get
@@ -43,27 +61,45 @@ namespace Cosmos.Network
         }
         internal void SendNetworkMessage(INetworkMessage netMsg, IPEndPoint endPoint)
         {
-            if (service != null)
+            if (IsConnected)
             {
-                if (service.Available)
-                    service.SendMessage(netMsg,endPoint);
-                else
-                    Utility.Debug.LogError($"当前无网络连接");
+                service.SendMessageAsync(netMsg, endPoint);
             }
             else
-                Utility.Debug.LogError($"当前网络未初始化");
+                Utility.DebugError("Can not send net message, no service");
+        }
+        internal void SendNetworkMessage(byte[] buffer )
+        {
+            if (IsConnected)
+            {
+                service.SendMessageAsync(buffer);
+            }
+            else
+                Utility.DebugError("Can not send net message, no service");
         }
         internal void SendNetworkMessage(INetworkMessage netMsg)
         {
-            if (service != null)
+            if (IsConnected)
             {
-                if (service.Available)
-                    service.SendMessage(netMsg);
-                else
-                    Utility.Debug.LogError($"当前无网络连接");
+                service.SendMessageAsync(netMsg);
             }
             else
-                Utility.Debug.LogError($"当前网络未初始化");
+                Utility.DebugError("Can not send net message, no service");
+        }
+        /// <summary>
+        /// 发送网络消息
+        /// </summary>
+        /// <param name="opCode">操作码</param>
+        /// <param name="message">序列化后的数据</param>
+        internal void SendNetworkMessage(ushort opCode, byte[] message)
+        {
+            if (IsConnected)
+            {
+                var netMsg= netMessageHelper.EncodeMessage(opCode, message);
+                service.SendMessageAsync(netMsg);
+            }
+            else
+                Utility.DebugError("Can not send net message, no service");
         }
         /// <summary>
         /// 与远程建立连接；
@@ -72,9 +108,14 @@ namespace Cosmos.Network
         /// <param name="ip">ip地址</param>
         /// <param name="port">端口号</param>
         /// <param name="protocolType">协议类型</param>
-        internal void Connect(string ip,int port,ProtocolType protocolType)
+        internal void Connect(string ip, int port, ProtocolType protocolType)
         {
             OnUnPause();
+            if (IsConnected)
+            {
+                Utility.DebugError("Network is Connected !");
+                return;
+            }
             switch (protocolType)
             {
                 case ProtocolType.Tcp:
@@ -86,12 +127,17 @@ namespace Cosmos.Network
                         if (service == null)
                         {
                             service = new UdpClientService();
+                            netMessageHelper = new UdpNetMessageHelper();
                             UdpClientService udp = service as UdpClientService;
-                            udp.IP = ip;
-                            udp.Port = port;
+                            udp.OnConnect += OnConnectHandler;
+                            udp.OnDisconnect += OnDisconnectHandler;
+                            heartbeat= new Heartbeat();
+                            service.SetHeartbeat(heartbeat);
                         }
-                        service.OnActive();
-                        Utility.Debug.LogInfo("建立网络连接");
+                        UdpClientService udpSrv = service as UdpClientService;
+                        udpSrv.Connect(ip, port);
+
+                        Utility.DebugLog("Try to connect to the server");
                     }
                     break;
             }
@@ -102,26 +148,51 @@ namespace Cosmos.Network
         /// <param name="service">自定义实现的服务</param>
         internal void Connect(INetworkService service)
         {
-            if (service == null) 
+            if (service == null)
             {
-                Utility.Debug.LogError("Service Empty");
+                Utility.DebugError("No Service ");
                 return;
             }
             OnUnPause();
             this.service = service;
-            service.OnActive();
-            Utility.Debug.LogInfo("建立网络连接");
+            //service.Connect(service.);
+            Utility.DebugLog("Try to connect to the server");
         }
-        internal void Disconnect()
+        internal void Disconnect(bool notifyRemote = true)
         {
-            OnPause();
             if (service == null)
             {
-                Utility.Debug.LogError("Service 无服务");
+                Utility.DebugError("No Service");
                 return;
             }
-            service.OnDeactive();
-            Utility.Debug.LogError("关闭网络,停用Servce");
+            if (!IsConnected)
+            {
+                Utility.DebugError("App is not connected to the network! ");
+                return;
+            }
+            service.Disconnect();
+        }
+        internal void RunHeartbeat(uint intervalSec, byte maxRecur)
+        {
+            //var hb = new Heartbeat();
+            heartbeat.MaxRecurCount = maxRecur;
+            heartbeat.HeartbeatInterval = intervalSec;
+            heartbeat.SendHeartbeatHandler = service.SendMessageAsync;
+            heartbeat.OnActive();
+            //service.SetHeartbeat(hb);
+        }
+        void OnDisconnectHandler()
+        {
+            OnPause();
+            IsConnected = false;
+            Utility.DebugError("Disconnect network, stop service");
+            networkOnDisconnect?.Invoke();
+        }
+        void OnConnectHandler()
+        {
+            IsConnected = true;
+            Utility.DebugLog("Network is connected ! ");
+            networkOnConnect?.Invoke();
         }
     }
 }

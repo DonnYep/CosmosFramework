@@ -36,9 +36,9 @@ namespace Cosmos.Resource
     {
         #region Properties
         //缓存的所有AssetBundle包 <AB包名称、AB包>
-        Dictionary<string, AssetBundle> assetBundleDict = new Dictionary<string, AssetBundle>();
+        Dictionary<string, AssetBundle> assetBundleDict;
         //所有AssetBundle验证的Hash128值 <AB包名称、Hash128值>
-        Dictionary<string, Hash128> assetBundleHashDict = new Dictionary<string, Hash128>();
+        Dictionary<string, Hash128> assetBundleHashDict;
         //所有AssetBundle资源包清单
         AssetBundleManifest assetBundleManifest;
         string assetBundleManifestName;
@@ -49,6 +49,11 @@ namespace Cosmos.Resource
 
         #region Methods
         #region  Resources 
+        public override void OnInitialization()
+        {
+            assetBundleDict = new Dictionary<string, AssetBundle>();
+            assetBundleHashDict = new Dictionary<string, Hash128>();
+        }
         /// <summary>
         /// 同步加载资源，若可选参数为true，则返回实例化后的对象，否则只返回资源对象
         /// </summary>
@@ -78,7 +83,7 @@ namespace Cosmos.Resource
         /// <typeparam name="T">需要加载的类型</typeparam>
         /// <param name="instantiate">是否生实例化对象</param>
         /// <returns>返回实体化或未实例化的资源对象</returns>
-        internal GameObject LoadResPrefab<T>(bool instantiate = false)
+        internal GameObject LoadResPrefab<T>(bool instantiate )
             where T : MonoBehaviour
         {
             Type type = typeof(T);
@@ -93,6 +98,22 @@ namespace Cosmos.Resource
                     prefab = Utility.Unity.Instantiate<T>(prefab).gameObject;
             }
             return prefab;
+        }
+        internal T LoadResPrefab<T>()
+    where T : MonoBehaviour
+        {
+            Type type = typeof(T);
+            PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
+            GameObject prefab = default;
+            T Comp = default;
+            if (attribute != null)
+            {
+                prefab = Resources.Load<GameObject>(attribute.ResourcePath);
+                if (prefab == null)
+                    throw new ArgumentNullException("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
+                    Comp = Utility.Unity.Instantiate<T>(prefab);
+            }
+            return Comp;
         }
         /// <summary>
         /// 利用挂载特性的泛型对象同步加载PrefabObject；
@@ -157,7 +178,7 @@ namespace Cosmos.Resource
                 var go = Resources.Load<GameObject>(attribute.ResourcePath);
                 if (go == null)
                 {
-                    Utility.Debug.LogError("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
+                    Utility.DebugError("ResourceManager-->>" + "Assets: " + attribute.ResourcePath + " not exist,check your path!");
                     return null;
                 }
                 if (instantiateGameObject)
@@ -211,7 +232,7 @@ namespace Cosmos.Resource
             T[] res = Resources.LoadAll<T>(path);
             if (res == null)
             {
-                Utility.Debug.LogError("ResourceManager-->>" + "Assets: " + path + "  not exist,check your path!");
+                Utility.DebugError("ResourceManager-->>" + "Assets: " + path + "  not exist,check your path!");
                 return null;
             }
             if (res is GameObject)

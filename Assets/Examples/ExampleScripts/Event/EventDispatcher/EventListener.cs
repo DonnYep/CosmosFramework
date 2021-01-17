@@ -19,12 +19,12 @@ namespace Cosmos{
         private void Awake()
         {
             Register();
-            Utility.Debug.LogInfo("RegisterEvent:\n"+ this.gameObject.name, this.gameObject);
+            Utility.DebugLog("RegisterEvent:\n"+ this.gameObject.name, this.gameObject);
         }
         private void OnDestroy()
         {
             Deregister();
-            Utility.Debug.LogInfo("DeregisterEvent:\n" + this.gameObject.name);
+            Utility.DebugLog("DeregisterEvent:\n" + this.gameObject.name);
         }
         void Handler(object sender,GameEventArgs arg)
         {

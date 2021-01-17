@@ -15,7 +15,7 @@ namespace Cosmos
         /// <summary>
         /// 会话ID
         /// </summary>
-        uint Conv { get; }
+        long Conv { get; }
         /// <summary>
         /// 是否存活；
         /// </summary>

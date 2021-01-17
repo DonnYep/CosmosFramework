@@ -7,5 +7,9 @@ namespace Cosmos.UI
     /// </summary>
     public abstract class UILogicTemporary :UILogicBase
     {
+        public override void HidePanel()
+        {
+            GameManagerAgent.KillObject(gameObject);
+        }
     }
 }

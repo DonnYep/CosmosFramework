@@ -15,43 +15,51 @@ namespace Cosmos
         /// 轮询委托
         /// </summary>
         UdpClientPeer peer;
-
         public UdpClientService():base()
         {
             //构造传入0表示接收任意端口收发的数据
-            peer = new UdpClientPeer();
-            peer.SetValue(SendMessage, OnDeactive, 0, null);
+            peer = new UdpClientPeer(OnConnectHandler,OnDisconnectHandler);
+            peer.SetValue(SendMessageAsync, Disconnect, 0, null);
         }
-        public override void OnActive()
+        void OnConnectHandler()
         {
-            base.OnActive();
-            serverEndPoint = new IPEndPoint(IPAddress.Parse(IP), Port);
-            peer.OnActive();
-            SendSYNMessage();
+            onConnect?.Invoke();
         }
-        public override void OnDeactive()
+        void OnDisconnectHandler()
         {
-            SendFINMessage();
-            peer.OnDeactive();
-            base.OnDeactive();
+            onDisconnect?.Invoke();
         }
-        public override void SendMessage(INetworkMessage netMsg)
+        public override void SetHeartbeat(IHeartbeat heartbeat)
         {
-            if (!Available)
-                return;
-            UdpNetworkMessage udpNetMsg = netMsg as UdpNetworkMessage;
+            peer.Heartbeat = heartbeat;
+        }
+        public override void Connect(string ip, int port)
+        {
+            Conv = 0;
+            serverEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+            UdpNetMessage udpNetMsg = UdpNetMessage.EncodeMessage(InnerOpCode._Connect, null);
+            udpNetMsg.Cmd = KcpProtocol.SYN;
+            SendMessageAsync(udpNetMsg);
+        }
+        public override void Disconnect()
+        {
+            UdpNetMessage udpNetMsg = UdpNetMessage.EncodeMessage(InnerOpCode._Disconnect, null);
+            udpNetMsg.Cmd = KcpProtocol.FIN;
+            SendMessageAsync(udpNetMsg);
+        }
+        public override void SendMessageAsync(INetworkMessage netMsg)
+        {
+            UdpNetMessage udpNetMsg = netMsg as UdpNetMessage;
             var result = peer.EncodeMessage(ref udpNetMsg);
             if (result)
             {
-               SendMessage(udpNetMsg, serverEndPoint);
+               SendMessageAsync(udpNetMsg, serverEndPoint);
             }
             else
-                Utility.Debug.LogError("INetworkMessage 消息编码失败");
+                Utility.DebugError("INetworkMessage 消息编码失败");
         }
         public override void OnRefresh()
         {
-            if (!Available)
-                return;
             OnReceive();
             peer.OnRefresh();
             if (awaitHandle.Count > 0)
@@ -59,8 +67,8 @@ namespace Cosmos
                 UdpReceiveResult data;
                 if (awaitHandle.TryDequeue(out data))
                 {
-                    UdpNetworkMessage netMsg = Facade.SpawnReference<UdpNetworkMessage>();
-                    netMsg.CacheDecodeBuffer(data.Buffer);
+                    UdpNetMessage netMsg = Facade.SpawnReference<UdpNetMessage>();
+                    netMsg.DecodeMessage(data.Buffer);
                     if (Conv == 0)
                     {
                         Conv = netMsg.Conv;
@@ -73,16 +81,6 @@ namespace Cosmos
                     }
                 }
             }
-        }
-        void SendSYNMessage()
-        {
-            UdpNetworkMessage udpNetMsg = new UdpNetworkMessage(0,KcpProtocol.SYN); 
-            SendMessage(udpNetMsg);
-        }
-        void SendFINMessage()
-        {
-            UdpNetworkMessage udpNetMsg = new UdpNetworkMessage(0, KcpProtocol.FIN);
-            SendMessage(udpNetMsg);
         }
     }
 }

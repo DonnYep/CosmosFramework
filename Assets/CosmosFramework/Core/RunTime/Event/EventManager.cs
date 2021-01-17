@@ -1,40 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System;
 using Object = UnityEngine.Object;
-
 namespace Cosmos.Event
 {
     internal sealed class EventManager : Module<EventManager>
     {
-        /// <summary>
-        /// 支持并发的字典
-        /// </summary>
-        ConcurrentDictionary<string, Action<object, GameEventArgs>> concurrentEventDict
-            = new ConcurrentDictionary<string, Action<object, GameEventArgs>>();
-        //Dictionary<string, Action<object, GameEventArgs>> concurrentEventDict = new Dictionary<string, Action<object, GameEventArgs>>();
+        Dictionary<string, EventHandler<GameEventArgs>> eventDict;
+        public override void OnInitialization()
+        {
+            eventDict = new Dictionary<string, EventHandler<GameEventArgs>>();
+        }
         /// <summary>
         /// 添加事件
         /// </summary>
         /// <param name="eventKey">事件的key，可以是对象，字符</param>
         /// <param name="handler">事件处理者</param>
         /// <param name="callBack">只有事件注册成功才执行回调函数</param>
-        internal void AddListener(string eventKey, Action<object, GameEventArgs> handler)
+        internal void AddListener(string eventKey, EventHandler<GameEventArgs> handler)
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.Debug.LogInfo("Event key is  empty", MessageColor.RED);
+                Utility.DebugLog("Event key is  empty",MessageColor.RED);
                 return;
             }
-            if (concurrentEventDict.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
             {
-                concurrentEventDict[eventKey] += handler;
+                eventDict[eventKey] += handler;
             }
             else
             {
-                concurrentEventDict.TryAdd(eventKey, null);
-                concurrentEventDict[eventKey] += handler;
+                eventDict.Add(eventKey,null);
+                eventDict[eventKey] += handler;
             }
         }
         /// <summary>
@@ -42,22 +39,18 @@ namespace Cosmos.Event
         /// </summary>
         /// <param name="eventKey">事件的key，可以是对象，字符</param>
         /// <param name="hander">事件处理者</param>
-        internal void RemoveListener(string eventKey, Action<object, GameEventArgs> hander)
+        internal void RemoveListener(string eventKey, EventHandler< GameEventArgs> hander)
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.Debug.LogInfo("Event key is  empty", MessageColor.RED);
+                Utility.DebugLog("Event key is  empty", MessageColor.RED);
                 return;
             }
-            if (concurrentEventDict.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
             {
-                concurrentEventDict[eventKey] -= hander;
-                if (concurrentEventDict[eventKey] == null)
-                {
-                    Action<object, GameEventArgs> handler;
-                    concurrentEventDict.TryRemove(eventKey, out handler);
-                    handler = null;
-                }
+                eventDict[eventKey] -= hander;
+                if (eventDict[eventKey] == null)
+                    eventDict.Remove(eventKey);
             }
         }
         /// <summary>
@@ -65,22 +58,22 @@ namespace Cosmos.Event
         /// </summary>
         /// <param name="sender">事件的触发者</param>
         /// <param name="args">事件处理类</param>
-        internal void DispatchEvent(string eventKey, object sender, GameEventArgs args)
+        internal void DispatchEvent(string eventKey,object sender, GameEventArgs args)
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.Debug.LogInfo("Event key is  empty", MessageColor.MAROON);
+                Utility.DebugLog("Event key is  empty", MessageColor.MAROON);
                 return;
             }
-            if (concurrentEventDict.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
             {
-                if (concurrentEventDict[eventKey] != null)
+                if (eventDict[eventKey] != null)
                 {
-                    concurrentEventDict[eventKey](sender, args);
+                    eventDict[eventKey](sender,args);
                 }
             }
             else
-                Utility.Debug.LogInfo("EventManager  " + "Event:" + eventKey + " has not  registered", MessageColor.RED);
+                Utility.DebugLog( "EventManager  "+"Event:" +eventKey+ " has not  registered",MessageColor.RED);
         }
         /// <summary>
         /// 注销并移除事件
@@ -89,15 +82,13 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.Debug.LogInfo("Event key is  empty", MessageColor.RED);
+                Utility.DebugLog("Event key is  empty", MessageColor.RED);
                 return;
             }
-            if (concurrentEventDict.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
             {
-                concurrentEventDict[eventKey] = null;
-                Action<object, GameEventArgs> handler;
-                concurrentEventDict.TryRemove(eventKey, out handler);
-                handler = null;
+                eventDict[eventKey] = null;
+                eventDict.Remove(eventKey);
             }
         }
         /// <summary>
@@ -108,12 +99,12 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.Debug.LogInfo("Event key is  empty", MessageColor.RED);
+                Utility.DebugLog("Event key is  empty", MessageColor.RED);
                 return;
             }
-            if (!concurrentEventDict.ContainsKey(eventKey))
+            if (!eventDict.ContainsKey(eventKey))
             {
-                concurrentEventDict.TryAdd(eventKey, null);
+                eventDict.Add(eventKey, null);
             }
         }
         /// <summary>
@@ -123,12 +114,12 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.Debug.LogInfo("Event key is  empty", MessageColor.RED);
+                Utility.DebugLog("Event key is  empty", MessageColor.RED);
                 return;
             }
-            if (concurrentEventDict.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
             {
-                concurrentEventDict[eventKey] = null;
+                eventDict[eventKey] = null;
             }
         }
         /// <summary>
@@ -136,7 +127,7 @@ namespace Cosmos.Event
         /// </summary>
         internal void ClearAllEvent()
         {
-            foreach (var key in concurrentEventDict.Keys)
+            foreach (var key in eventDict.Keys)
             {
                 if (IsSystemEvent(key))
                 {
@@ -156,10 +147,10 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
             {
-                Utility.Debug.LogInfo("Event key is  empty", MessageColor.RED);
+                Utility.DebugLog("Event key is  empty", MessageColor.RED);
                 return false;
             }
-            if (concurrentEventDict.ContainsKey(eventKey))
+            if (eventDict.ContainsKey(eventKey))
                 return true;
             else
                 return false;

@@ -15,27 +15,26 @@ namespace Cosmos
 	/// </summary>
 	public class Locker : IDisposable
     {
-		private object locked;
-		public bool HasLock { get; private set; }
+		private object lockedObject;
+		public bool IsLocked { get; private set; }
         public Locker(object obj)
 		{
 			if (!Monitor.TryEnter(obj))
 			{
 				return;
 			}
-			this.HasLock = true;
-			this.locked = obj;
+			this.IsLocked = true;
+			this.lockedObject = obj;
 		}
 		public void Dispose()
 		{
-			if (!this.HasLock)
+			if (!this.IsLocked)
 			{
 				return;
 			}
-
-			Monitor.Exit(this.locked);
-			this.locked = null;
-			this.HasLock = false;
+			Monitor.Exit(this.lockedObject);
+			this.lockedObject = null;
+			this.IsLocked = false;
 		}
 	}
 }

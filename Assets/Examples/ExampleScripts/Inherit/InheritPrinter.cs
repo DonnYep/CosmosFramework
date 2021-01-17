@@ -20,7 +20,7 @@ public class InheritPrinter : MonoBehaviour
                 if (types[i].IsClass && !types[i].IsAbstract)
                 {
                     var result= Utility.Assembly.GetTypeInstance(types[i]) as Person;
-                    Utility.Debug.LogInfo(result.GetType().FullName);
+                    Utility.DebugLog(result.GetType().FullName);
                 }
             }
         }

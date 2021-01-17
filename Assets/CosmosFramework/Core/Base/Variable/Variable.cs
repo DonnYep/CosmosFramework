@@ -1,7 +1,10 @@
 ﻿using System;
 namespace Cosmos
 {
-    public abstract class Variable : IBehaviour, IRenewable
+    /// <summary>
+    /// Variable类型为模块之间的数据节点数据；
+    /// </summary>
+    public abstract class Variable :IRenewable
     {
         protected Variable() { }
         /// <summary>
@@ -9,31 +12,19 @@ namespace Cosmos
         /// </summary>
         public abstract Type Type { get; }
         /// <summary>
-        /// 空虚函数；
         /// 获取变量值
         /// </summary>
         /// <returns></returns>
-        public virtual object GetValue() { return null; }
+        public abstract object GetValue();
         /// <summary>
-        /// 空虚函数；
         /// 设置变量值
         /// </summary>
         /// <param name="value">变量值</param>
-        public virtual void SetValue(object value) { }
+        public abstract void SetValue(object value);
         /// <summary>
-        /// 空虚函数；
         /// 重置变量;
+        /// 空虚函数；
         /// </summary>
-        public virtual void OnRenewal() { }
-        /// <summary>
-        /// 空虚函数;
-        /// 初始化
-        /// </summary>
-        public virtual void OnInitialization() { }
-        /// <summary>
-        /// 空虚函数;
-        /// 终结释放变量;
-        /// </summary>
-        public virtual void OnTermination() { }
+        public abstract void OnRenewal();
     }
 }

@@ -16,7 +16,7 @@ namespace Cosmos
             /// <summary>
             /// 升序排序
             /// </summary>
-            public static void SortByAscending<T, K>(T[] array, Func<T, K> handler)
+            public static void SortByAscending<T, K>(  T[] array, Func<T, K> handler)
                 where K : IComparable<K>
             {
                 for (int i = 0; i < array.Length; i++)
@@ -117,17 +117,17 @@ namespace Cosmos
             /// 泛型二分查找，需要传入升序数组
             /// </summary>
             /// <returns>返回对象在数组中的序号，若不存在，则返回-1</returns>
-            public static int BinarySearch<T, K>(T[] array, K target, Func<T, K> handler)
-                where K : IComparable<K>
+            public static int BinarySearch<T,K>(T[] array, K target,Func<T,K> handler)
+                where K:IComparable<K>
             {
                 int first = 0;
                 int last = array.Length - 1;
-                while (first <= last)
+                while (first<=last)
                 {
                     int mid = first + (last - first) / 2;
                     if (handler(array[mid]).CompareTo(target) > 0)
                         last = mid - 1;
-                    else if (handler(array[mid]).CompareTo(target) < 0)
+                    else if (handler(array[mid]).CompareTo(target) <0)
                         first = mid + 1;
                     else
                         return mid;

@@ -4,51 +4,56 @@ using UnityEngine;
 using System;
 using System.IO;
 using Cosmos;
-#if UNITY_EDITOR
+using UnityEditor;
+using System.Text;
+
 namespace Cosmos.CosmosEditor
 {
-    public class AnnotationScriptProcessor :UnityEditor. AssetModificationProcessor
+    [InitializeOnLoad]
+    public class AnnotationScriptProcessor : UnityEditor.AssetModificationProcessor
     {
         static string annotationStr =
 @"//====================================
-//* Author :
+//* Author :#Author#
 //* CreateTime :#CreateTime#
 //* Version :
 //* Description :
 //==================================== " + "\n";
-        /// <summary>
-        /// 设置注释
-        /// </summary>
-        /// <param name="annotation"></param>
-        public static void SetAnnotation(string annotation)
+        static IAnnotationProvider provider;
+        static string providerAnnoTitle;
+        static AnnotationScriptProcessor()
         {
-            annotationStr = annotation;
+            provider = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IAnnotationProvider>();
+            providerAnnoTitle = provider?.AnnotationTitle;
         }
         public static void OnWillCreateAsset(string name)
         {
             if (!EditorConst.EnableScriptTemplateAnnotation)
                 return;
-            string path = name.Replace(".meta", "");
-            if (path.EndsWith(".cs"))
+            if (provider != null)
             {
-                annotationStr = annotationStr.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:ss"));
-                annotationStr += File.ReadAllText(path);
-                File.WriteAllText(path, annotationStr);
+                string path = name.Replace(".meta", "");
+                if (path.EndsWith(".cs"))
+                {
+                    var str = File.ReadAllText(path);
+                    str = providerAnnoTitle + str;
+                    str = str.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:mm:ss"));
+                    str = str.Replace("#Author#", EditorConst.AnnotationAuthor);
+                    File.WriteAllText(path, str, Encoding.UTF8);
+                }
             }
-            //GenericMenu genericMenu = new GenericMenu();
-            //genericMenu.AddItem(new GUIContent("确定"), false, (o) =>
-            //{
-            //    if (path.EndsWith(".cs"))
-            //    {
-            //        annotationStr = annotationStr.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy/MM/dd HH:ss"));
-            //        annotationStr += File.ReadAllText(path);
-            //        File.WriteAllText(path, annotationStr);
-            //    }
-            //}, "Done");
-            //genericMenu.AddSeparator("");
-            //genericMenu.AddItem(new GUIContent("取消"), false, () => { return; });
-            //genericMenu.ShowAsContext();
+            else
+            {
+                string path = name.Replace(".meta", "");
+                if (path.EndsWith(".cs"))
+                {
+                    var str = File.ReadAllText(path);
+                    str = annotationStr + str;
+                    str = str.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:mm:ss"));
+                    str = str.Replace("#Author#", EditorConst.AnnotationAuthor);
+                    File.WriteAllText(path, str, Encoding.UTF8);
+                }
+            }
         }
     }
 }
-#endif

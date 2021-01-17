@@ -13,18 +13,24 @@ namespace Cosmos.FSM
         /// <summary>
         /// 单个状态机
         /// </summary>
-        Dictionary<Type, FSMBase> fsmIndividualDict = new Dictionary<Type, FSMBase>();
+        Dictionary<Type, FSMBase> fsmIndividualDict;
         /// <summary>
         /// 状态机群组集合
         /// </summary>
-        Dictionary<Type, IFSMPool> fsmSetDict = new Dictionary<Type, IFSMPool>();
-        List<FSMBase> fsmCache = new List<FSMBase>();
+        Dictionary<Type, IFSMPool> fsmSetDict;
+        List<FSMBase> fsmCache;
         internal int FsmCount { get { return fsmIndividualDict.Count; } }
         #endregion
 
         #region Methods
 
         #region Module
+        public override void OnInitialization()
+        {
+            fsmIndividualDict = new Dictionary<Type, FSMBase>();
+            fsmSetDict = new Dictionary<Type, IFSMPool>();
+            fsmCache = new List<FSMBase>();
+        }
         public override void OnRefresh()
         {
             if (IsPause)

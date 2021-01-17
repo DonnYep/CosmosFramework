@@ -11,7 +11,7 @@ namespace Cosmos
     /// 当为T类型对象追加数据时，无需打开T类进行代码重构；
     /// 例如为Peer对象追加数据，则无需修改peer，只需添加Variable即可
     /// </summary>
-    /// <typeparam name="T">引用类型约束</typeparam>
+    /// <typeparam name="T"></typeparam>
     public class Actor<T> : ActorBase,IActor<T>,IReference
         where T : class
     {
@@ -24,10 +24,10 @@ namespace Cosmos
         public override int ActorID { get ;protected  set ; }
         public T Owner { get; private set; }
         /// <summary>
-        /// 当前Actor的数据缓存	[0 ,65535]
+        /// 当前Actor的数据缓存	[-32768 ,32767]
         /// </summary>
-        Dictionary<ushort, Variable> actorDataDict = new Dictionary<ushort, Variable>();
-        public TData GetData<TData>(ushort dataKey)
+        Dictionary<short, Variable> actorDataDict = new Dictionary<short, Variable>();
+        public TData GetData<TData>(short dataKey)
             where TData : Variable
         {
             if (actorDataDict.ContainsKey(dataKey))
@@ -35,11 +35,11 @@ namespace Cosmos
             else
                 return null;
         }
-        public bool HasData(ushort dataKey)
+        public bool HasData(short dataKey)
         {
             return actorDataDict.ContainsKey(dataKey);
         }
-        public bool RemoveData(ushort dataKey)
+        public bool RemoveData(short dataKey)
         {
             if (actorDataDict.ContainsKey(dataKey))
                 return actorDataDict.Remove(dataKey);
@@ -54,7 +54,7 @@ namespace Cosmos
         /// <typeparam name="TData">数据类型</typeparam>
         /// <param name="dataKey">数据的key</param>
         /// <param name="data">具体数据</param>
-        public void SetData<TData>(ushort dataKey, TData data)
+        public void SetData<TData>(short dataKey, TData data)
             where TData : Variable
         {
             if (!actorDataDict.ContainsKey(dataKey))

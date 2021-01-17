@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cosmos.Input;
+using System;
 
 namespace Cosmos
 {
-    public class CameraController : ControllerBase
+    public class CameraController : ControllerBase<CameraController>
     {
         [Range(0.5f,15)]
         [SerializeField]float distanceFromTarget=10;
@@ -15,9 +16,9 @@ namespace Cosmos
         [SerializeField] float cameraViewDamp=10;
         Camera cam;
         public CameraTarget CameraTarget { get; private set; }
+
         float yaw;
         float pitch;
-        short lateUpdateID;
         //当前与相机目标的距离
         float currentDistance;
         Vector3 cameraOffset = Vector3.zero;
@@ -34,27 +35,27 @@ namespace Cosmos
         }
         public void HideMouse()
         {
-            if (Facade.GetButtonDown(InputButtonType.MouseLeft) ||
-                Facade.GetButtonDown(InputButtonType.MouseRight) ||
-                Facade.GetButtonDown(InputButtonType.MouseMiddle))
+            if (Facade.GetButtonDown(InputButtonType._MouseLeft) ||
+                Facade.GetButtonDown(InputButtonType._MouseRight) ||
+                Facade.GetButtonDown(InputButtonType._MouseMiddle))
                 LockMouse();
-            if (Facade.GetButtonDown(InputButtonType.Escape))
+            if (Facade.GetButtonDown(InputButtonType._Escape))
                 UnlockMouse();
         }
         protected override void Awake()
         {
             base.Awake();
-            Facade.AddMonoListener(LateUpdateCamera, UpdateType.LateUpdate,out lateUpdateID );
-            Facade.AddEventListener(ControllerEventCodeParams.CONTROLLER_INPUT, CameraHandler);
-            Facade.RegisterController(this);
+            Facade.LateRefreshHandler += LateUpdateCamera;
+            Facade.AddEventListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
+            //Facade.RegisterController(this);
         }
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            Facade.RemoveMonoListener(LateUpdateCamera, UpdateType.LateUpdate, lateUpdateID);
-            Facade.RemoveEventListener(ControllerEventCodeParams.CONTROLLER_INPUT, CameraHandler);
-            Facade.DeregisterController(this);
-            Utility.Debug.LogInfo("CameraController destory");
+            Facade.LateRefreshHandler -= LateUpdateCamera;
+            Facade.RemoveEventListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
+            //Facade.DeregisterController(this);
+            Utility.DebugLog("CameraController destory");
         }
         protected override void OnValidate()
         {
@@ -63,14 +64,14 @@ namespace Cosmos
             cameraViewDamp = Mathf.Clamp(cameraViewDamp, 0, 1000);
             pitchMinMax = Utility.Unity.Clamp(pitchMinMax, new Vector2(-90, 0), new Vector2(0, 90));
         }
-        protected override void UpdateHandler()
+        protected override void RefreshHandler()
         {
-            yaw = -Facade.GetAxis(InputAxisType.MouseX);
-            pitch = Facade.GetAxis(InputAxisType.MouseY);
+            yaw = -Facade.GetAxis(InputAxisType._MouseX);
+            pitch = Facade.GetAxis(InputAxisType._MouseY);
             pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
-            if (Facade.GetAxis(InputAxisType.MouseScrollWheel) != 0)
-                Utility.Debug.LogInfo("MouseScrollWheel " ,MessageColor.INDIGO);
-            distanceFromTarget -= Facade.GetAxis(InputAxisType.MouseScrollWheel);
+            if (Facade.GetAxis(InputAxisType._MouseScrollWheel) != 0)
+                Utility.DebugLog("MouseScrollWheel " ,MessageColor.INDIGO);
+            distanceFromTarget -= Facade.GetAxis(InputAxisType._MouseScrollWheel);
             distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
             HideMouse();
         }

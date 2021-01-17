@@ -15,13 +15,13 @@ public class AlgorithmTester : MonoBehaviour
     {
         Utility.Algorithm.SortByAscending( list, (v) => v);
         var result = Utility.Algorithm.BinarySearch(list, target, (v) => v);
-        Utility.Debug.LogInfo("BinarySearch result index>>" + result);
+        Utility.DebugLog("BinarySearch result index>>" + result);
     }
     public void StrBinarySearch()
     {
         Utility.Algorithm.SortByAscending( strList, (v) => v);
         var result = Utility.Algorithm.BinarySearch(strList, strTarget, (v) => v);
-        Utility.Debug.LogInfo("BinarySearch result index>>" + result);
+        Utility.DebugLog("BinarySearch result index>>" + result);
     }
     public void Sort()
     {
@@ -30,7 +30,7 @@ public class AlgorithmTester : MonoBehaviour
     public void Max()
     {
         var result= Utility.Algorithm.Max(list, (v) => v);
-        Utility.Debug.LogInfo("Max result index>>" + result);
+        Utility.DebugLog("Max result index>>" + result);
     }
     /// <summary>
     /// 返回第一个符合条件的对象
@@ -38,6 +38,6 @@ public class AlgorithmTester : MonoBehaviour
     public void Find()
     {
         var result = Utility.Algorithm.Find(list, (v)=>v>target);
-        Utility.Debug.LogInfo("Max result >>" + result);
+        Utility.DebugLog("Max result >>" + result);
     }
 }

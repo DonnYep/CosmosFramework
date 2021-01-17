@@ -13,6 +13,6 @@ namespace Cosmos
     /// <param name="fsm">有限状态机引用</param>
     /// <param name="sender">事件源，发送者</param>
     /// <param name="fsmData">用户自定义的数据</param>
-    public delegate void FSMEventHandler<T>(IFSM<T> fsm,object sender, FSMVariable fsmData)
+    public delegate void FSMEventHandler<T>(IFSM<T> fsm,object sender, Variable fsmData)
         where T:class;
 }

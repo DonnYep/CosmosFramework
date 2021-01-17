@@ -27,7 +27,7 @@ namespace Cosmos.CosmosEditor
                 CFEditorUtility.SetEditorPrefsBool(EditorConst.OUTPUT_DEBUGLOG_KEY, false);
             if (!CFEditorUtility.HasEditorPrefsKey(EditorConst.LOGOUTPUT_DIRECTORY_KEY))
                 CFEditorUtility.SetEditorPresString(EditorConst.LOGOUTPUT_DIRECTORY_KEY, EditorConst.GetDefaultLogOutputDirectory());
-            EditorConst.ConsoleDebugLog= CFEditorUtility.GetEditorPrefsBool(EditorConst.CONSOLE_DEBUGLOG_KEY);
+            EditorConst.ConsoleDebugLog = CFEditorUtility.GetEditorPrefsBool(EditorConst.CONSOLE_DEBUGLOG_KEY);
             EditorConst.EnableScriptTemplateAnnotation = CFEditorUtility.GetEditorPrefsBool(EditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY);
             EditorConst.LogOutputDirectory = CFEditorUtility.GetEditorPrefsString(EditorConst.LOGOUTPUT_DIRECTORY_KEY);
         }

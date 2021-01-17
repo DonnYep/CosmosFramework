@@ -36,7 +36,7 @@ namespace Cosmos.CosmosEditor
             GUILayout.BeginVertical("box");
             EditorGUILayout.Space();
             GUI.color = Color.green;
-            EditorGUILayout.HelpBox("创建脚本注释。", MessageType.None, true);
+            EditorGUILayout.HelpBox("log日志输出。", MessageType.None, true);
             #region CustomDrawEditor
             DrawDebug();
             DrawScriptTemplateAnnotation();
@@ -64,6 +64,7 @@ namespace Cosmos.CosmosEditor
             CFEditorUtility.SetEditorPrefsBool(EditorConst.CONSOLE_DEBUGLOG_KEY, EditorConst.ConsoleDebugLog);
             CFEditorUtility.SetEditorPresString(EditorConst.LOGOUTPUT_DIRECTORY_KEY, EditorConst.LogOutputDirectory);
             CFEditorUtility.SetEditorPrefsBool(EditorConst.OUTPUT_DEBUGLOG_KEY, EditorConst.OutputDebugLog);
+            CFEditorUtility.SetEditorPresString(EditorConst.ANNOTATION_AUTHOR_KEY, EditorConst.AnnotationAuthor);
 
         }
         void ResetButtonClick()
@@ -72,6 +73,7 @@ namespace Cosmos.CosmosEditor
             EditorConst.EnableScriptTemplateAnnotation = CFEditorUtility.GetEditorPrefsBool(EditorConst.ENABLE_SCRIPTTEMPLATE_ANNOTATION_KEY);
             EditorConst.LogOutputDirectory = CFEditorUtility.GetEditorPrefsString(EditorConst.LOGOUTPUT_DIRECTORY_KEY);
             EditorConst.OutputDebugLog = CFEditorUtility.GetEditorPrefsBool(EditorConst.OUTPUT_DEBUGLOG_KEY);
+            EditorConst.AnnotationAuthor = CFEditorUtility.GetEditorPrefsString(EditorConst.ANNOTATION_AUTHOR_KEY);
         }
         #region ScriptTemplateAnnotation
         void DrawScriptTemplateAnnotation()
@@ -85,6 +87,14 @@ namespace Cosmos.CosmosEditor
             GUILayout.Space(128);
             EditorConst.EnableScriptTemplateAnnotation = EditorGUILayout.Toggle(EditorConst.EnableScriptTemplateAnnotation);
             GUILayout.EndHorizontal();
+            if (EditorConst.EnableScriptTemplateAnnotation)
+            {
+                GUILayout.Space(16);
+                EditorGUILayout.LabelField("输入作者名称");
+                GUILayout.BeginHorizontal();
+                EditorConst.AnnotationAuthor = EditorGUILayout.TextField("Author", EditorConst.AnnotationAuthor);
+                GUILayout.EndHorizontal();
+            }
             GUI.color = Color.white;
             EditorGUILayout.Space();
             EditorGUILayout.Space();

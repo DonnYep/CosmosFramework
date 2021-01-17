@@ -12,7 +12,7 @@ namespace Cosmos.FSM
         public abstract int FSMStateCount { get; }
         public abstract bool IsRunning { get; }
         public abstract string CurrentStateName { get; }
-        public bool IsPause { get;protected set; }
+        public bool IsPause { get; set; }
         public void OnPause(){IsPause = true;}
         public abstract void OnRefresh();
         public void OnUnPause(){IsPause = false;}

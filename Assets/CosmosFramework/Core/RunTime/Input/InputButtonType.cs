@@ -6,31 +6,31 @@ namespace Cosmos.Input
     /// <summary>
     /// 输入按键类型
     /// </summary>
-    public static class InputButtonType
+    public class InputButtonType
     {
         /// <summary>
         /// 鼠标左键
         /// </summary>
-        public static string MouseLeft = "MouseLeft";
+        public static readonly string _MouseLeft = "MouseLeft";
         /// <summary>
         /// 鼠标右键
         /// </summary>
-        public static string MouseRight = "MouseRight";
+        public static readonly string _MouseRight = "MouseRight";
         /// <summary>
         /// 鼠标中键
         /// </summary>
-        public static string MouseMiddle = "MouseMiddle";
+        public static readonly string _MouseMiddle = "MouseMiddle";
         /// <summary>
         /// 鼠标左键双击
         /// </summary>
-        public static string MouseLeftDoubleClick = "MouseLeftDoubleClick";
+        public static readonly string _MouseLeftDoubleClick = "MouseLeftDoubleClick";
         /// <summary>
         /// 左侧shift按键
         /// </summary>
-        public static string LeftShift = "LeftShift";
+        public static readonly string _LeftShift = "LeftShift";
         /// <summary>
         /// Escape按键
         /// </summary>
-        public static string Escape = "Escape";
+        public static readonly string _Escape = "Escape";
     }
 }

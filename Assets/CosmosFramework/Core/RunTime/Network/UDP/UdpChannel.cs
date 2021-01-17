@@ -15,7 +15,7 @@ namespace Cosmos
         public override bool IsNeedConnect { get { return false; } }
         public override byte[] EncodingMessage(INetworkMessage message)
         {
-            UdpNetworkMessage udpNetMsg = message as UdpNetworkMessage;
+            UdpNetMessage udpNetMsg = message as UdpNetMessage;
             return udpNetMsg.EncodeMessage();
         }
         public override INetworkMessage ReceiveMessage(Socket client)

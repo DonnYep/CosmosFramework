@@ -31,7 +31,7 @@ namespace Cosmos
             GetUIPanel<Button>("BtnSave").onClick.AddListener(SaveClick);
             GetUIPanel<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
             txtDescription = GetUIPanel<Text>("TxtDescription");
-            AddUIEventListener(UIImplementCodeParams.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
+            AddUIEventListener(UIEventDefine.UI_IMPL_ITEM_DESC, UpdateItemHandler);
         }
         protected override void OnTermination()
         {
@@ -39,11 +39,11 @@ namespace Cosmos
             GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
             GetUIPanel<Button>("BtnSave").onClick.RemoveAllListeners();
             GetUIPanel<Button>("BtnUpdate").onClick.RemoveAllListeners();
-            RemoveUIEventListener(UIImplementCodeParams.UIIMPLEMENT_ITEMDESCRIPTION, UpdateItemHandler);
+            RemoveUIEventListener(UIEventDefine.UI_IMPL_ITEM_DESC, UpdateItemHandler);
         }
         private void Start()
         {
-            DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, null, Uip);
+            DispatchUIEvent(UIEventDefine.UI_IMPL_UPD_SLOT, null, Uip);
         }
         void LoadClick()
         {
@@ -52,13 +52,13 @@ namespace Cosmos
 
             string json = Facade.LoadJsonDataFromLocal("Inventory", "InventoryCache.json");
             JsonUtility.FromJsonOverwrite(json, inventoryDataSet);
-            Utility.Debug.LogInfo("LoadJsonDataFromLocal");
+            Utility.DebugLog("LoadJsonDataFromLocal");
             UpdateClick();
         }
         void SaveClick()
         {
             Facade.SaveJsonDataToLocal("Inventory", "InventoryCache.json", inventoryDataSet);
-            Utility.Debug.LogInfo("SaveJsonDataToLocal");
+            Utility.DebugLog("SaveJsonDataToLocal");
         }
         void QuitClick()
         {
@@ -66,7 +66,7 @@ namespace Cosmos
         }
         void UpdateClick()
         {
-            DispatchUIEvent(UIImplementCodeParams.UIIMPLEMENT_UPDATESLOT, this, Uip);
+            DispatchUIEvent(UIEventDefine.UI_IMPL_UPD_SLOT, this, Uip);
         }
         void UpdateItemHandler(object sender,GameEventArgs args)
         {

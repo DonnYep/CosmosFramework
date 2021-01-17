@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Text;
-namespace Cosmos { 
+namespace Cosmos
+{
     public sealed partial class Utility
     {
         public static class Text
         {
             [ThreadStatic]//每个静态类型字段对于每一个线程都是唯一的
             static StringBuilder stringBuilderCache;
-           public static StringBuilder StringBuilderCache
+            public static StringBuilder StringBuilderCache
             {
                 get
                 {
@@ -23,7 +24,7 @@ namespace Cosmos {
             /// <param name="format">字符串格式</param>
             /// <param name="args">字符串参数</param>
             /// <returns>格式化后的字符串</returns>
-            public static string Format(string format,params object[] args)
+            public static string Format(string format, params object[] args)
             {
                 if (format == null)
                 {
@@ -43,18 +44,32 @@ namespace Cosmos {
             /// <param name="format">需要格式化的字符串</param>
             /// <param name="arg">额外的参数</param>
             /// <returns></returns>
-            public static string Format(string format,object arg)
+            public static string Format(string format, object arg)
             {
                 if (string.IsNullOrEmpty(format))
                 {
                     throw new ArgumentNullException("Format is invalid.");
                 }
-                if (arg==null)
+                if (arg == null)
                 {
                     throw new ArgumentNullException("Arg is invalid.");
                 }
                 StringBuilderCache.Length = 0;
                 StringBuilderCache.AppendFormat(format, arg);
+                return StringBuilderCache.ToString();
+            }
+            public static string Append(params object[] args)
+            {
+                if (args == null)
+                {
+                    throw new ArgumentNullException("Append is invalid.");
+                }
+                StringBuilderCache.Length = 0;
+                int length = args.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    StringBuilderCache.Append(args[i]);
+                }
                 return StringBuilderCache.ToString();
             }
             public static void ClearStringBuilder()
@@ -83,7 +98,7 @@ namespace Cosmos {
             /// <param name="separator">new string[]{"."}</param>
             /// <param name="removeEmptyEntries">是否返回分割后数组中的空元素</param>
             /// <param name="subStringIndex">分割后数组的序号</param>
-            /// <returns></returns>
+            /// <returns>分割后的字段</returns>
             public static string StringSplit(string fullString, String[] separator, bool removeEmptyEntries, int subStringIndex)
             {
                 string[] stringArray = null;
@@ -94,6 +109,14 @@ namespace Cosmos {
                 string subString = stringArray[subStringIndex];
                 return subString;
             }
+            /// <summary>
+            /// 分割字符串
+            /// </summary>
+            /// <param name="fullString">完整字段</param>
+            /// <param name="separator">new string[]{"."}</param>
+            /// <param name="count">要返回的子字符串的最大数量</param>
+            /// <param name="removeEmptyEntries">是否移除空实体</param>
+            /// <returns>分割后的字段</returns>
             public static string StringSplit(string fullString, String[] separator, int count, bool removeEmptyEntries)
             {
                 string[] stringArray = null;
@@ -102,6 +125,18 @@ namespace Cosmos {
                 else
                     stringArray = fullString.Split(separator, count, StringSplitOptions.None);
                 return stringArray.ToString();
+            }
+            /// <summary>
+            /// 分割字符串
+            /// </summary>
+            /// <param name="fullString">分割字符串</param>
+            /// <param name="separator">new string[]{"."}</param>
+            /// <returns>分割后的字段数组</returns>
+            public static string[] StringSplit(string fullString, String[] separator)
+            {
+                string[] stringArray = null;
+                stringArray = fullString.Split(separator, StringSplitOptions.None);
+                return stringArray;
             }
             public static int CharCount(string fullString, char separator)
             {

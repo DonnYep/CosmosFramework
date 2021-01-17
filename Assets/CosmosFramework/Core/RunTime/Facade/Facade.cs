@@ -11,6 +11,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using System.Net.Sockets;
 using System.Net;
+using Cosmos.Config;
 
 namespace Cosmos
 {
@@ -20,54 +21,50 @@ namespace Cosmos
     /// </summary>
     public static partial class Facade
     {
-
-        #region ExtensionsModule
+        #region CustomeModule
         /// <summary>
-        /// 外源模块容器；
-        /// </summary>
-        static Dictionary<Type, IModule> extensionsModuleDict = new Dictionary<Type, IModule>();
-        /// <summary>
-        /// 获取外源模块；
-        /// 此类模块不由CF框架生成，由用户自定义
-        /// 需要从Module类派生;
         /// 线程安全；
+        /// 获取自定义模块；
+        /// 需要从Module类派生;
+        /// 此类模块不由CF框架生成，由用户自定义
         /// </summary>
         /// <typeparam name="TModule">实现模块功能的类对象</typeparam>
         /// <returns>获取的模块</returns>
-        public static TModule GetExtensionsModule<TModule>()
+        public static TModule CustomeModule<TModule>()
             where TModule : Module<TModule>, new()
         {
-            Type type = typeof(TModule);
-            IModule module = default;
-            var result = extensionsModuleDict.TryGetValue(type, out module);
-            if (!result)
-            {
-                module = new TModule();
-                extensionsModuleDict.Add(type, module);
-                module.OnInitialization();
-                Utility.Debug.LogInfo($"生成新模块 , Module :{module.ToString()} ");
-            }
-            return module as TModule;
+            return GameManager.CustomeModule<TModule>();
         }
         /// <summary>
-        /// 清理外源模块；
-        /// 此类模块不由CF框架生成，由用户自定义
-        /// 需要从Module类派生;
+        /// 初始化自定义模块
         /// </summary>
-        /// <typeparam name="TModule"></typeparam>
-        public static void ClearExtensionsModule<TModule>()
-    where TModule : Module<TModule>, new()
+        /// <param name="assembly">模块所在程序集</param>
+        public static void InitCustomeModule(Assembly assembly)
         {
-            Type type = typeof(TModule);
-            if (extensionsModuleDict.ContainsKey(type))
-            {
-                var module = extensionsModuleDict[type];
-                module.OnTermination();
-                extensionsModuleDict.Remove(type);
-            }
+            GameManager.InitCustomeModule(assembly);
+        }
+        public static Type[] GetCustomModuleTypes()
+        {
+            return GameManager.GetCustomModuleTypes();
         }
         #endregion
-
+        #region GameManagerUpdate
+        public static event Action FixedRefreshHandler
+        {
+            add { GameManager.FixedRefreshHandler += value; }
+            remove { GameManager.FixedRefreshHandler -= value; }
+        }
+        public static event Action LateRefreshHandler
+        {
+            add { GameManager.LateRefreshHandler += value; }
+            remove { GameManager.LateRefreshHandler -= value; }
+        }
+        public static event Action RefreshHandler
+        {
+            add { GameManager.RefreshHandler += value; }
+            remove { GameManager.RefreshHandler -= value; }
+        }
+        #endregion
 
         #region FacadeMethods
         public static void InitAllModule()
@@ -87,7 +84,7 @@ namespace Cosmos
             GameManager.ControllerManager.OnInitialization();
             GameManager.EntityManager.OnInitialization();
             GameManager.HotfixManager.OnInitialization();
-            Utility.Debug.LogInfo("Module Count:\t" + GameManager.Instance.ModuleCount);
+            Utility.DebugLog("Module Count:\t" + GameManager.Instance.ModuleCount);
         }
         public static void RegisterModule(ModuleEnum module)
         {
@@ -186,6 +183,10 @@ namespace Cosmos
         /// </summary>
         /// <param name="inputDevice">InputDevice的具体平台实现方法</param>
         public static void SetInputDevice(InputDevice inputDevice) { GameManager.InputManager.SetInputDevice(inputDevice); }
+        /// <summary>
+        /// 清理当前的输入适配；
+        /// </summary>
+        public static void ClearInputDevice() { GameManager.InputManager.ClearInputDevice(); }
         /// <summary>
         /// 虚拟轴线是否存在
         /// </summary>
@@ -298,11 +299,11 @@ namespace Cosmos
 
         #endregion
         #region EventManager
-        public static void AddEventListener(string eventKey, Action<object, GameEventArgs> handler)
+        public static void AddEventListener(string eventKey, EventHandler< GameEventArgs> handler)
         {
             GameManager.EventManager.AddListener(eventKey, handler);
         }
-        public static void RemoveEventListener(string eventKey, Action<object, GameEventArgs> hander)
+        public static void RemoveEventListener(string eventKey, EventHandler<GameEventArgs> hander)
         {
             GameManager.EventManager.RemoveListener(eventKey, hander);
         }
@@ -332,14 +333,6 @@ namespace Cosmos
         }
         #endregion
         #region MonoManager
-        public static void AddMonoListener(Action act, UpdateType type, out short monoPoolID)
-        {
-            GameManager.MonoManager.AddListener(act, type, out monoPoolID);
-        }
-        public static void RemoveMonoListener(Action act, UpdateType type, short monoID)
-        {
-            GameManager.MonoManager.RemoveListener(act, type, monoID);
-        }
         public static Coroutine StartCoroutine(IEnumerator routine)
         {
             return GameManager.MonoManager.StartCoroutine(routine);
@@ -361,6 +354,15 @@ namespace Cosmos
         public static Coroutine StartCoroutine(Coroutine routine, Action callback)
         {
             return GameManager.MonoManager.StartCoroutine(routine, callback);
+        }
+        /// <summary>
+        /// 普通协程
+        /// </summary>
+        /// <param name="handler">协程中运行的委托</param>
+        /// <returns>Coroutine</returns>
+        public static Coroutine StartCoroutine( Action handler)
+        {
+            return GameManager.MonoManager.StartCoroutine(handler);
         }
         public static Coroutine DelayCoroutine(float delay, Action callback)
         {
@@ -445,10 +447,15 @@ namespace Cosmos
         /// <typeparam name="T">需要加载的类型</typeparam>
         /// <param name="instantiate">是否生实例化对象</param>
         /// <returns>返回实体化或未实例化的资源对象</returns>
-        public static GameObject LoadResPrefab<T>(bool instantiate = false)
+        public static GameObject LoadResPrefab<T>(bool instantiate)
             where T : MonoBehaviour
         {
             return GameManager.ResourceManager.LoadResPrefab<T>(instantiate);
+        }
+        public static T LoadResPrefab<T>()
+        where T : MonoBehaviour
+        {
+            return GameManager.ResourceManager.LoadResPrefab<T>();
         }
         /// <summary>
         /// 利用挂载特性的泛型对象同步加载PrefabObject；
@@ -600,6 +607,30 @@ namespace Cosmos
         public static void LoadScene(int sceneIndex, bool additive, Action loadedCallback = null)
         {
             GameManager.SceneManager.LoadScene(sceneIndex, additive, loadedCallback);
+        }
+        public static void UnLoadSceneAsync(string sceneName, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneName, unLoadedCallback);
+        }
+        public static void UnLoadSceneAsync(int sceneIndex, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneIndex, unLoadedCallback);
+        }
+        public static void UnLoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallBack, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneName, progressCallBack, unLoadedCallback);
+        }
+        public static void UnLoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallBack, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneIndex, progressCallBack, unLoadedCallback);
+        }
+        public static void UnLoadSceneAsync(string sceneName, Action<float> progressCallBack, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneName, progressCallBack, unLoadedCallback);
+        }
+        public static void UnLoadSceneAsync(int sceneIndex, Action<float> progressCallBack, Action unLoadedCallback = null)
+        {
+            GameManager.SceneManager.UnLoadSceneAsync(sceneIndex, progressCallBack, unLoadedCallback);
         }
         /// <summary>
         /// 异步加载场景；
@@ -970,6 +1001,9 @@ namespace Cosmos
         {
             GameManager.UIManager.ShowPanel(panelName, callback);
         }
+        /// <summary>
+        /// PrefabUnit特性获取对象，PrefabName需要赋值；
+        /// </summary>
         public static void ShowPanel<T>(Action<T> callback = null)
                 where T : UILogicBase
         {
@@ -1426,6 +1460,8 @@ where T : class
         }
         #endregion
         #region Network
+        public static long NetworkConv { get { return GameManager.NetworkManager.Conv; } }
+
         /// <summary>
         /// 连接指定地址的网络
         /// 初始化建立连接;
@@ -1465,9 +1501,129 @@ where T : class
         {
             GameManager.NetworkManager.SendNetworkMessage(netMsg);
         }
-        public static void NetworkDisconnect()
+        public static void SendNetworkMessage(ushort opCode, byte[] message)
         {
-            GameManager.NetworkManager.Disconnect();
+            GameManager.NetworkManager.SendNetworkMessage(opCode, message);
+        }
+        public static void NetworkDisconnect(bool notifyRemote = true)
+        {
+            GameManager.NetworkManager.Disconnect(notifyRemote);
+        }
+        public static void RunHeartbeat(uint intervalSec, byte maxRecur)
+        {
+            GameManager.NetworkManager.RunHeartbeat(intervalSec, maxRecur);
+        }
+        public static event Action NetworkOnConnect
+        {
+            add { GameManager.NetworkManager.NetworkOnConnect += value; }
+            remove { GameManager.NetworkManager.NetworkOnConnect -= value; }
+        }
+        public static event Action NetworkOnDisconnect
+        {
+            add { GameManager.NetworkManager.NetworkOnDisconnect += value; }
+            remove { GameManager.NetworkManager.NetworkOnDisconnect -= value; }
+        }
+        #endregion
+        #region ConfigManager
+        public static bool AddConfigData(string cfgKey, string configValue)
+        {
+            return GameManager.ConfigManager.AddConfig(cfgKey, configValue);
+        }
+        public static bool AddConfigData(string cfgKey, bool boolValue, int intValue, float floatValue, string stringValue)
+        {
+            return GameManager.ConfigManager.AddConfigData(cfgKey, boolValue, intValue, floatValue, stringValue);
+        }
+        public static bool RemoveConfig(string cfgKey)
+        {
+            return GameManager.ConfigManager.RemoveConfig(cfgKey);
+        }
+        public static bool HasConfig(string cfgKey)
+        {
+            return GameManager.ConfigManager.HasConfig(cfgKey);
+        }
+        public static ConfigData? GetConfigData(string cfgKey)
+        {
+            return GameManager.ConfigManager.GetConfigData(cfgKey);
+        }
+        /// <summary>
+        /// 从指定全局配置项中读取布尔值。
+        /// </summary>
+        /// <param name="cfgKey">要获取全局配置项的Key。</param>
+        /// <returns>读取的布尔值。</returns>
+        public static bool GetConfigBool(string cfgKey)
+        {
+            return GameManager.ConfigManager.GetConfigBool(cfgKey);
+        }
+        /// <summary>
+        /// 从指定全局配置项中读取布尔值。
+        /// </summary>
+        /// <param name="cfgKey">要获取全局配置项的Key。</param>
+        /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
+        /// <returns>读取的布尔值。</returns>
+        public static bool GetConfigBool(string cfgKey, bool defaultValue)
+        {
+            return GameManager.ConfigManager.GetConfigBool(cfgKey, defaultValue);
+        }
+        /// <summary>
+        /// 从指定全局配置项中读取整数值。
+        /// </summary>
+        /// <param name="cfgKey">要获取全局配置项的Key。</param>
+        /// <returns>读取的整数值。</returns>
+        public static int GetConfigInt(string cfgKey)
+        {
+            return GameManager.ConfigManager.GetConfigInt(cfgKey);
+        }
+        /// <summary>
+        /// 从指定全局配置项中读取整数值。
+        /// </summary>
+        /// <param name="cfgKey">要获取全局配置项的Key。</param>
+        /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
+        /// <returns>读取的整数值。</returns>
+        public static int GetConfigInt(string cfgKey, int defaultValue)
+        {
+            return GameManager.ConfigManager.GetConfigInt(cfgKey, defaultValue);
+        }
+        /// <summary>
+        /// 从指定全局配置项中读取浮点数值。
+        /// </summary>
+        /// <param name="cfgKey">要获取全局配置项的Key。</param>
+        /// <returns>读取的浮点数值。</returns>
+        public static float GetConfigFloat(string cfgKey)
+        {
+            return GameManager.ConfigManager.GetConfigFloat(cfgKey);
+        }
+        /// <summary>
+        /// 从指定全局配置项中读取浮点数值。
+        /// </summary>
+        /// <param name="cfgKey">要获取全局配置项的Key。</param>
+        /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
+        /// <returns>读取的浮点数值。</returns>
+        public static float GetConfigFloat(string cfgKey, float defaultValue)
+        {
+            return GameManager.ConfigManager.GetConfigFloat(cfgKey, defaultValue);
+        }
+        /// <summary>
+        /// 从指定全局配置项中读取字符串值。
+        /// </summary>
+        /// <param name="cfgKey">要获取全局配置项的Key。</param>
+        /// <returns>读取的字符串值。</returns>
+        public static string GetConfigString(string cfgKey)
+        {
+            return GameManager.ConfigManager.GetConfigString(cfgKey);
+        }
+        /// <summary>
+        /// 从指定全局配置项中读取字符串值。
+        /// </summary>
+        /// <param name="cfgKey">要获取全局配置项的Key。</param>
+        /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值。</param>
+        /// <returns>读取的字符串值。</returns>
+        public static string GetConfigString(string cfgKey, string defaultValue)
+        {
+            return GameManager.ConfigManager.GetConfigString(cfgKey, defaultValue);
+        }
+        public static void RemoveAllConfig()
+        {
+            GameManager.ConfigManager.RemoveAllConfig();
         }
         #endregion
     }

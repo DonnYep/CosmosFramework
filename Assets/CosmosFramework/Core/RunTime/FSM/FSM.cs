@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-namespace Cosmos.FSM{
+namespace Cosmos.FSM
+{
     //type.ToString()输出一个完全限定名，尝试使用反射机制获得对象
-    public sealed class FSM<T> : FSMBase,IFSM<T>,IReference
+    public sealed class FSM<T> : FSMBase, IFSM<T>, IReference
         where T : class
     {
         #region Properties
@@ -12,8 +13,8 @@ namespace Cosmos.FSM{
         public T Owner { get { return owner; } private set { owner = value; } }
         FSMState<T> currentState;
         public FSMState<T> CurrentState { get { return currentState; } }
-        FSMVariable data;
-        public FSMVariable CurrentData { get { return data; } }
+        Variable data;
+        public Variable CurrentData { get { return data; } }
         bool isDestoryed;
         public bool IsDestoryed { get { return isDestoryed; } private set { isDestoryed = value; } }
         FSMState<T> defaultState;
@@ -22,11 +23,11 @@ namespace Cosmos.FSM{
         /// state存储的类型为派生类
         /// </summary>
         Dictionary<Type, FSMState<T>> fsmStateDict = new Dictionary<Type, FSMState<T>>();
-        Dictionary<string, FSMVariable> fsmDataDict = new Dictionary<string, FSMVariable>();
+        Dictionary<string, Variable> fsmDataDict = new Dictionary<string, Variable>();
         public override int FSMStateCount { get { return fsmStateDict.Count; } }
         public override bool IsRunning { get { return currentState != null; } }
         public override Type OwnerType { get { return typeof(T); } }
-        public override string CurrentStateName{get{return currentState != null ? currentState.GetType().FullName : string.Empty;}}
+        public override string CurrentStateName { get { return currentState != null ? currentState.GetType().FullName : string.Empty; } }
         #endregion
 
         #region Lifecycle
@@ -102,7 +103,7 @@ namespace Cosmos.FSM{
                 return;
             Type type = defaultState.GetType();
             if (!typeof(FSMState<T>).IsAssignableFrom(type))
-                throw new ArgumentException("State type is invalid" +type.FullName);
+                throw new ArgumentException("State type is invalid" + type.FullName);
             FSMState<T> state = GetState(type);
             if (state == null)
                 return;
@@ -127,7 +128,7 @@ namespace Cosmos.FSM{
             currentState.OnEnter(this);
         }
         public void Start<TState>()
-            where TState:FSMState<T>
+            where TState : FSMState<T>
         {
             if (IsRunning)
                 return;
@@ -140,7 +141,7 @@ namespace Cosmos.FSM{
         /// <summary>
         /// FSM轮询，由拥有者轮询调用
         /// </summary>
-        public  override  void  OnRefresh()
+        public override void OnRefresh()
         {
             if (IsPause)
                 return;
@@ -158,7 +159,7 @@ namespace Cosmos.FSM{
             if (stateType == null)
                 throw new ArgumentNullException("State type is invalid !");
             if (!typeof(FSMState<T>).IsAssignableFrom(stateType))
-                throw new ArgumentException("State type is invalid !"  + stateType.FullName);
+                throw new ArgumentException("State type is invalid !" + stateType.FullName);
             return fsmStateDict.ContainsKey(stateType);
         }
         public bool HasState(FSMState<T> state)
@@ -201,7 +202,7 @@ namespace Cosmos.FSM{
             if (stateType == null)
                 throw new ArgumentNullException("State type is invaild !");
             if (!typeof(FSMState<T>).IsAssignableFrom(stateType))
-                throw new ArgumentNullException("State type is invaild !"  + stateType.FullName);
+                throw new ArgumentNullException("State type is invaild !" + stateType.FullName);
             FSMState<T> state = null;
             if (fsmStateDict.TryGetValue(stateType, out state))
                 return state;
@@ -225,52 +226,57 @@ namespace Cosmos.FSM{
         }
         #endregion
         #region Data
-        public void SetData(string dataName, FSMVariable data)
+        public void SetData(string dataName, Variable data)
         {
             if (string.IsNullOrEmpty(dataName))
-                Utility.Debug.LogError("Data name is invalid !");
-            fsmDataDict[dataName] = data;
+                Utility.DebugError("Data name is invalid !");
+            if (fsmDataDict.ContainsKey(dataName))
+                fsmDataDict[dataName] = data;
+            else
+                fsmDataDict.Add(dataName, data);
         }
         public void SetData<TData>(string dataName, TData data)
-            where TData : FSMVariable
+            where TData :  Variable
         {
             if (string.IsNullOrEmpty(dataName))
-                Utility.Debug.LogError("Data name is invalid !");
-            fsmDataDict[dataName] = data;
+                Utility.DebugError("Data name is invalid !");
+            if (fsmDataDict.ContainsKey(dataName))
+                fsmDataDict[dataName] = data;
+            else
+                fsmDataDict.Add(dataName, data);
         }
-        public FSMVariable GetData(string dataName)
+        public Variable GetData(string dataName)
         {
             if (string.IsNullOrEmpty(dataName))
-                Utility.Debug.LogError("Data name is invalid !");
-            FSMVariable data = null;
-            if (fsmDataDict.TryGetValue(dataName, out data))
+                Utility.DebugError("Data name is invalid !");
+            if (fsmDataDict.TryGetValue(dataName, out var data))
             {
                 return data;
             }
             return null;
         }
         public TData GetData<TData>(string dataName)
-            where TData : FSMVariable
+            where TData : Variable
         {
             return (TData)GetData(dataName);
         }
         public bool HasData(string dataName)
         {
             if (string.IsNullOrEmpty(dataName))
-                Utility.Debug.LogError("Data name is invalid !");
+                Utility.DebugError("Data name is invalid !");
             return fsmDataDict.ContainsKey(dataName);
         }
         public void RemoveData(string dataName)
         {
             if (string.IsNullOrEmpty(dataName))
             {
-                Utility.Debug.LogError("Data name is invalid !");
+                Utility.DebugError("Data name is invalid !");
                 return;
             }
             if (fsmDataDict.ContainsKey(dataName))
                 fsmDataDict.Remove(dataName);
             else
-                Utility.Debug.LogError("Fsm data :" + dataName + " not set !");
+                Utility.DebugError("Fsm data :" + dataName + " not set !");
         }
         /// <summary>
         /// 数据重启
@@ -280,7 +286,6 @@ namespace Cosmos.FSM{
             if (data != null)
                 data.OnRenewal();
         }
-
         #endregion
     }
 }

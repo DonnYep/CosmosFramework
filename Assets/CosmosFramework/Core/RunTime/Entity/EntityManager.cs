@@ -13,12 +13,16 @@ namespace Cosmos.Entity
     {
         #region Properties
         internal int EntityTypeCount { get { return entityTypeObjectDict.Count; } }
-        Dictionary<Type, List<IEntityObject>> entityTypeObjectDict = new Dictionary<Type, List<IEntityObject>>();
+        Dictionary<Type, List<IEntityObject>> entityTypeObjectDict;
         Type entityObjectType = typeof(IEntityObject);
         //List<IEntityObject> entityObjectCacheSet = new List<IEntityObject>();
         #endregion
 
         #region Methods
+        public override void OnInitialization()
+        {
+            entityTypeObjectDict = new Dictionary<Type, List<IEntityObject>>();
+        }
         public override void OnRefresh()
         {
             if (IsPause)

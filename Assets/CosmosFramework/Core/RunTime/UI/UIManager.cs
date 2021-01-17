@@ -12,10 +12,14 @@ namespace Cosmos.UI
         internal static string MainUICanvasName { get; set; }
         GameObject mainUICanvas;
         internal GameObject MainUICanvas { get { return mainUICanvas; } set { mainUICanvas = value; } }
-        Dictionary<string, UILogicBase> uiPanelDict = new Dictionary<string, UILogicBase>();
+        Dictionary<string, UILogicBase> uiPanelDict;
         #endregion
 
         #region Methods
+        public override void OnInitialization()
+        {
+            uiPanelDict = new Dictionary<string, UILogicBase>();
+        }
         /// <summary>
         /// Resource文件夹相对路径
         /// 返回实例化的对象
@@ -76,7 +80,7 @@ namespace Cosmos.UI
                 (result.transform as RectTransform).ResetLocalTransform();
                 T panel = result.GetComponent<T>();
                 callBack?.Invoke(panel);
-                uiPanelDict.Add(panelName, panel);
+                uiPanelDict.AddOrUpdate(panelName, panel);
             });
         }
         /// <summary>
@@ -99,7 +103,7 @@ namespace Cosmos.UI
                 (go.transform as RectTransform).ResetLocalTransform();
                 go.gameObject.name = attribute.PrefabName;
                 callBack?.Invoke(go);
-                uiPanelDict.Add(attribute.PrefabName, go);
+                uiPanelDict.AddOrUpdate(attribute.PrefabName, go);
             }
             );
         }
@@ -125,7 +129,7 @@ namespace Cosmos.UI
                 (result.transform as RectTransform).ResetLocalTransform();
                 T panel = result.GetComponent<T>();
                 callBack?.Invoke(panel);
-                uiPanelDict.Add(panelName, panel);
+                uiPanelDict.AddOrUpdate(panelName, panel);
             });
         }
         /// <summary>
@@ -139,10 +143,15 @@ namespace Cosmos.UI
             Type type = typeof(T);
             PrefabUnitAttribute attribute = type.GetCustomAttribute<PrefabUnitAttribute>();
             if (attribute == null)
+            {
+                Utility.DebugError($"Type:{type} has no PrefabUnitAttribute");
                 return;
+            }
             if (HasPanel(attribute.PrefabName))
             {
-                callBack?.Invoke(uiPanelDict[attribute.PrefabName] as T);
+                var panel = uiPanelDict[attribute.PrefabName] as T;
+                panel.gameObject.SetActive(true);
+                callBack?.Invoke(panel);
                 return;
             }
             Facade.LoadResPrefabAsync<T>(panel =>
@@ -150,7 +159,7 @@ namespace Cosmos.UI
                 panel.transform.SetParent(MainUICanvas.transform);
                 (panel.transform as RectTransform).ResetLocalTransform();
                 callBack?.Invoke(panel);
-                uiPanelDict.Add(attribute.PrefabName, panel);
+                uiPanelDict.AddOrUpdate(attribute.PrefabName, panel);
             });
         }
         internal void HidePanel(string panelName)
@@ -167,7 +176,7 @@ namespace Cosmos.UI
                 uiPanelDict.Remove(panelName);
             }
             else
-                Utility.Debug.LogError("UIManager-->>" + "Panel :" + panelName + "  not register !");
+                Utility.DebugError("UIManager-->>" + "Panel :" + panelName + "  not register !");
         }
         internal void RemovePanel<T>()
             where T:UILogicBase
@@ -183,7 +192,7 @@ namespace Cosmos.UI
                 uiPanelDict.Remove(attribute.PrefabName);
             }
             else
-                Utility.Debug.LogError("UIManager-->>" + "Panel :" + attribute.PrefabName + "  not register !");
+                Utility.DebugError("UIManager-->>" + "Panel :" + attribute.PrefabName + "  not register !");
         }
         internal bool HasPanel(string panelName)
         {

@@ -21,7 +21,7 @@ namespace Cosmos.CosmosEditor
             ((EditorWindow)window).minSize = CosmosDevWinSize;
         }
         static readonly Vector2 cosmosDevWinSize = new Vector2(512f, 384f);
-        static readonly Vector2 cosmosMaxWinSize = new Vector2(768f, 768f);
+        static readonly Vector2 cosmosMaxWinSize = new Vector2(512f, 768f);
        public static Vector2 CosmosDevWinSize { get { return cosmosDevWinSize; } }
        public static Vector2 CosmosMaxWinSize { get { return cosmosMaxWinSize; } }
         DebugTool()

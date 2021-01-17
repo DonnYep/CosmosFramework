@@ -11,12 +11,19 @@ public class LoadingScenePanel : UILogicResident
 {
     Text txtProgress;
     Slider sldProgress;
+    float currentProgress;
     protected override void OnInitialization()
     {
         txtProgress = GetUIPanel<Text>("TxtProgress");
         sldProgress = GetUIPanel<Slider>("SldProgress");
         LoadLevel();
+        Facade.RefreshHandler += RefreshHandler;
     }
+    protected override void OnTermination()
+    {
+        Facade.RefreshHandler -= RefreshHandler;
+    }
+
     void LoadLevel()
     {
         sldProgress.value = 0;
@@ -30,9 +37,20 @@ public class LoadingScenePanel : UILogicResident
     }
     void UpdateSlider(float value)
     {
-        sldProgress.value = value * 100;
+        currentProgress = value;
+    }
+    void RefreshHandler()
+    {
         txtProgress.text = (int)sldProgress.value + "%";
-        if (value >= 0.9)
+        if (currentProgress >= 0.9f)
+        {
+            currentProgress = 1;
+        }
+        sldProgress.value = Mathf.Lerp(sldProgress.value, currentProgress * 100, Time.deltaTime);
+
+        if (sldProgress.value > 0.99f)
+        {
             sldProgress.value = 100;
+        }
     }
 }

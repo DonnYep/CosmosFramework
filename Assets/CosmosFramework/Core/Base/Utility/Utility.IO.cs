@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
+
 namespace Cosmos
 {
     public sealed partial class Utility
@@ -9,23 +12,21 @@ namespace Cosmos
         {
             public static void CreateFolder(string path)
             {
-
                 var dir = new DirectoryInfo(path);
                 if (!dir.Exists)
                 {
                     dir.Create();
-                    Utility.Debug.LogInfo("Path:" + path + "Folder is created");
+                    Utility.DebugLog("Path:" + path + "Folder is created");
                 }
             }
             public static void CreateFolder(string path, string folderName)
             {
-
                 var fullPath = CombineRelativePath(path, folderName);
                 var dir = new DirectoryInfo(fullPath);
                 if (!dir.Exists)
                 {
                     dir.Create();
-                    Utility.Debug.LogInfo("Path:" + path + "Folder is created ");
+                    Utility.DebugLog("Path:" + path + "Folder is created ");
                 }
             }
             /// <summary>
@@ -86,7 +87,7 @@ namespace Cosmos
             public static string ReadTextFileContent(string fullFilePath)
             {
                 if (!File.Exists(fullFilePath))
-                    Utility.Debug.LogError(new IOException("ReadTextFileContent path not exist !" + fullFilePath));
+                    Utility.DebugError(new IOException("ReadTextFileContent path not exist !" + fullFilePath));
                 Utility.Text.ClearStringBuilder();
 
                 using (FileStream stream = File.Open(fullFilePath, FileMode.Open))
@@ -109,32 +110,188 @@ namespace Cosmos
             public static string ReadTextFileContent(string folderPath, string fileName)
             {
                 if (!Directory.Exists(folderPath))
-                    Utility.Debug.LogError(new IOException("ReadTextFileContent folder path not exist !" + folderPath));
+                    Utility.DebugError(new IOException("ReadTextFileContent folder path not exist !" + folderPath));
                 return ReadTextFileContent(Utility.IO.CombineRelativeFilePath(fileName, folderPath));
             }
             /// <summary>
+            /// 使用UTF8编码；
             /// 追加写入文件信息；
             /// 若文件为空，则自动创建；
             /// 此方法为text类型文件写入；
             /// </summary>
-            /// <param name="relativePath">相对路径</param>
+            /// <param name="filePath">文件路径</param>
             /// <param name="fileName">文件名</param>
-            /// <param name="info">写入的信息</param>
-            public static void AppendWriteTextFile(string relativePath, string fileName, string info)
+            /// <param name="context">写入的信息</param>
+            public static void AppendWriteTextFile(string filePath, string fileName, string context)
             {
-                string absoluteFullpath = Utility.IO.CombineRelativeFilePath(relativePath);
-                if (!Directory.Exists(absoluteFullpath))
-                    Directory.CreateDirectory(absoluteFullpath);
-                using (FileStream stream = new FileStream(Utility.IO.CombineRelativeFilePath(fileName, absoluteFullpath), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                if (!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+                using (FileStream stream = new FileStream(Utility.IO.CombineRelativeFilePath(fileName, filePath), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     stream.Position = stream.Length;
-                    using (StreamWriter writer = new StreamWriter(stream))
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
                     {
-                        writer.WriteLine(info);
+                        writer.WriteLine(context);
                         writer.Close();
                         stream.Close();
                     }
                 }
+            }
+            /// <summary>
+            /// 使用UTF8编码；
+            /// 追加写入文件信息；
+            /// 若文件为空，则自动创建；
+            /// 此方法为text类型文件写入
+            /// </summary>
+            /// <param name="fileFullPath">文件完整路径</param>
+            /// <param name="context">写入的信息</param>
+            public static void AppendWriteTextFile(string fileFullPath, string context)
+            {
+                using (FileStream stream = new FileStream(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    stream.Position = stream.Length;
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    {
+                        writer.WriteLine(context);
+                        writer.Close();
+                        stream.Close();
+                    }
+                }
+            }
+            /// <summary>
+            /// 使用UTF8编码；
+            /// 写入文件信息；
+            /// 若文件为空，则自动创建；
+            /// 此方法为text类型文件写入；
+            /// </summary>
+            /// <param name="filePath">文件路径</param>
+            /// <param name="fileName">文件名</param>
+            /// <param name="context">写入的信息</param>
+            /// <param name="append">是否追加</param>
+            public static void WriteTextFile(string filePath, string fileName, string context, bool append = false)
+            {
+                if (!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+                using (FileStream stream = File.Open(Utility.IO.CombineRelativeFilePath(fileName, filePath), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    if (append)
+                        stream.Position = stream.Length;
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    {
+                        writer.WriteLine(context);
+                        writer.Close();
+                        stream.Close();
+                    }
+                }
+            }
+            /// <summary>
+            /// 使用UTF8编码；
+            /// 写入文件信息；
+            /// 若文件为空，则自动创建；
+            /// 此方法为text类型文件写入；
+            /// </summary>
+            /// <param name="fileFullPath">文件完整路径</param>
+            /// <param name="context">写入的信息</param>
+            /// <param name="append">是否追加</param>
+            public static void WriteTextFile(string fileFullPath, string context, bool append = false)
+            {
+                using (FileStream stream = File.Open(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    if (append)
+                        stream.Position = stream.Length;
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    {
+                        writer.WriteLine(context);
+                        writer.Close();
+                        stream.Close();
+                    }
+                }
+            }
+            /// <summary>
+            /// 完全覆写；
+            ///  使用UTF8编码；
+            /// </summary>
+            /// <param name="filePath">w文件路径</param>
+            /// <param name="fileName">文件名</param>
+            /// <param name="context">写入的信息</param>
+            public static void OverwriteTextFile(string filePath, string fileName, string context)
+            {
+                if (!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+                var fileFullPath = Utility.IO.CombineRelativeFilePath(fileName, filePath);
+                using (FileStream stream = File.Open(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.SetLength(0);
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    {
+                        writer.WriteLine(context);
+                        writer.Close();
+                        stream.Close();
+                    }
+                }
+            }
+            /// <summary>
+            /// 完全覆写；
+            ///  使用UTF8编码；
+            /// </summary>
+            /// <param name="fileFullPath">文件完整路径</param>
+            /// <param name="context">写入的信息</param>
+            public static void OverwriteTextFile(string fileFullPath, string context)
+            {
+                using (FileStream stream = File.Open(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.SetLength(0);
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    {
+                        writer.WriteLine(context);
+                        writer.Close();
+                        stream.Close();
+                    }
+                }
+            }
+            /// <summary>
+            /// 写入二进制
+            /// </summary>
+            /// <param name="fileFullPath">完整文件路径</param>
+            /// <param name="context">内容</param>
+            /// <returns>是否写入成功</returns>
+            public static bool WriterFormattedBinary(string fileFullPath, object context)
+            {
+                using (FileStream stream = new FileStream(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, context);
+                    return true;
+                }
+            }
+            /// <summary>
+            /// 读取二进制
+            /// </summary>
+            /// <param name="fileFullPath">完整文件路径</param>
+            /// <returns>内容</returns>
+            public static object ReadFormattedBinary(string fileFullPath)
+            {
+                if (!File.Exists(fileFullPath))
+                    return null;
+                using (FileStream stream = new FileStream(fileFullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    return formatter.Deserialize(stream);
+                }
+            }
+            /// <summary>
+            /// 清空text类型的文本
+            /// </summary>
+            /// <param name="fileFullPath">完整文件路径</param>
+            /// <returns>是否写入成功</returns>
+            public static bool ClearTextContext(string fileFullPath)
+            {
+                if (!File.Exists(fileFullPath))
+                    return false;
+                File.WriteAllText(fileFullPath, string.Empty);
+                return true;
             }
         }
     }

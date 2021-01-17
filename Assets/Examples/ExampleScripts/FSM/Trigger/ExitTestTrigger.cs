@@ -7,7 +7,7 @@ public class ExitTestTrigger : FSMTrigger<FSMTester>
 {
     public override bool Handler(IFSM<FSMTester> fsm)
     {
-        Utility.Debug.LogInfo("ExitTestTrigger", MessageColor.INDIGO, fsm.Owner.gameObject);
+        Utility.DebugLog("ExitTestTrigger", MessageColor.INDIGO, fsm.Owner.gameObject);
         float distance = Vector3.Distance(fsm.Owner.transform.position, fsm.Owner.Target.position);
         if (distance > fsm.Owner.Range)
             return true;
@@ -16,6 +16,6 @@ public class ExitTestTrigger : FSMTrigger<FSMTester>
     }
     public override void OnInitialization()
     {
-        Utility.Debug.LogInfo("ExitTestTrigger OnInitialization");
+        Utility.DebugLog("ExitTestTrigger OnInitialization");
     }
 }

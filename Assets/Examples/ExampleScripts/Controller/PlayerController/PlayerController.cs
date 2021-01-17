@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Cosmos.Input;
+using System;
+
 namespace Cosmos
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CapsuleCollider))]
-    public class PlayerController : ControllerBase
+    public class PlayerController : ControllerBase<PlayerController>
     {
         [SerializeField]
         [Range(0, 1)]
@@ -25,29 +27,24 @@ namespace Cosmos
         LogicEventArgs<CameraTarget> controllerEventArgs;
         //点积
         float dot = 0;
-
         protected override void Awake()
         {
             base.Awake();
             animator = GetComponentInChildren<Animator>();
             controllerEventArgs = new LogicEventArgs<CameraTarget>().SetData(GetComponentInChildren<CameraTarget>());
             Facade.SetInputDevice(new StandardInputDevice());
-            Facade.RegisterController(this);
+            //Facade.RegisterController(this);
         }
-        protected override void OnDestroy()
-        {
-            Facade.DeregisterController(this);
-        }
-        protected override void UpdateHandler()
+        protected override void RefreshHandler()
         {
             //if (inputEventArgs.Data.HorizVertAxis.magnitude != 0)
-            if (Facade.GetAxis(InputAxisType.Vertical) != 0|| Facade.GetAxis(InputAxisType.Horizontal)!=0)
+            if (Facade.GetAxis(InputAxisType._Vertical) != 0|| Facade.GetAxis(InputAxisType._Horizontal)!=0)
                 animator.SetBool(inputHash, true);
             else
                 animator.SetBool(inputHash, false);
-            moveForword =Facade.GetAxis(InputAxisType.Vertical);
-            moveTurn = Facade.GetAxis(InputAxisType.Horizontal);
-            if (Facade.GetButton(InputButtonType.LeftShift))
+            moveForword =Facade.GetAxis(InputAxisType._Vertical);
+            moveTurn = Facade.GetAxis(InputAxisType._Horizontal);
+            if (Facade.GetButton(InputButtonType._LeftShift))
                 moveForword *= 2;
             //合并旋转
             MatchRotation();
@@ -66,14 +63,14 @@ namespace Cosmos
         }
         private void Start()
         {
-            Facade.DispatchEvent(ControllerEventCodeParams.CONTROLLER_INPUT, this, controllerEventArgs);
+            Facade.DispatchEvent(ControllerEventDefine.CTRL_INPUT, this, controllerEventArgs);
         }
         void MatchRotation()
         {
             var cameraController = Facade.GetController<CameraController>(c=>c.ControllerName==cameraControllerName);
             if (cameraController == null)
             {
-                Utility.Debug.LogInfo("cameraController empty", MessageColor.RED);
+                Utility.DebugLog("cameraController empty", MessageColor.RED);
                 return;
             }
             Vector3 cameraForward= cameraController.transform.forward;

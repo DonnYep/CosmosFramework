@@ -30,9 +30,6 @@ namespace Cosmos {
                 }
             }
         }
-        event Action UpdateHandler;
-        event Action FixedUpdateHandler;
-        event Action LateUpdateHandler;
         event Action ApplicationQuitHandler;
         public void OnPause()
         {
@@ -46,10 +43,6 @@ namespace Cosmos {
         {
             base.Awake();
             DontDestroyOnLoad(this.gameObject);
-        }
-        public void AddFixedUpdateListener(Action handler)
-        {
-            FixedUpdateHandler += handler;
         }
         public int ModuleCount { get { return GameManager.Instance.ModuleCount; } }
         /// <summary>
@@ -95,29 +88,33 @@ namespace Cosmos {
         }
         protected override void OnDestroy()
         {
-            GameManager.Instance.Dispose();
-        }
-        private void FixedUpdate()
-        {
-            FixedUpdateHandler?.Invoke();
+            //GameManager.Instance.Dispose();
         }
         private void Update()
         {
             if (IsPause)
                 return;
-            UpdateHandler?.Invoke();
             GameManager.Instance.OnRefresh();
-            //foreach ( KeyValuePair<ModuleEnum,IModule> module in moduleDict)
-            //{
-            //    module.Value?.OnRefresh();
-            //}
+        }
+        private void FixedUpdate()
+        {
+            if (IsPause)
+                return;
+            GameManager.Instance.OnFixRefresh();
         }
         private void LateUpdate()
         {
-            LateUpdateHandler?.Invoke();
+            if (IsPause)
+                return;
+            GameManager.Instance.OnLateRefresh();
         }
         private void OnApplicationQuit()
         {
+            try
+            {
+                GameManager.Instance.Dispose();
+            }
+            catch{}
             ApplicationQuitHandler?.Invoke();
         }
     }

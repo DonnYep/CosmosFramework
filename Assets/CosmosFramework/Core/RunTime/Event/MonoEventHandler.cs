@@ -39,7 +39,7 @@ namespace Cosmos
         {
             Facade.AddEventListener(eventKey, EventHandler);
         }
-        protected void AddEventListener(string eventKey,Action<object,GameEventArgs> handler)
+        protected void AddEventListener(string eventKey, EventHandler<GameEventArgs> handler)
         {
             Facade.AddEventListener(eventKey, handler);
         }
@@ -51,7 +51,7 @@ namespace Cosmos
         {
             Facade.RemoveEventListener(eventKey, EventHandler);
         }
-        protected void RemoveEventListener(string eventKey,Action<object ,GameEventArgs>handler)
+        protected void RemoveEventListener(string eventKey, EventHandler<GameEventArgs> handler)
         {
             Facade.RemoveEventListener(eventKey, handler);
         }

@@ -13,6 +13,10 @@ namespace Cosmos
         where T : Module<T>, new()
     {
         #region Properties
+        /// <summary>
+        /// 获取游戏框架模块优先级。
+        /// </summary>
+        public virtual int Priority { get { return 0; } }
         #region IMountPoint
         public Type MountType { get { return typeof(T); } }
         GameObject mountPoint;
@@ -43,19 +47,6 @@ namespace Cosmos
                 return moduleName;
             }
         }
-        /// <summary>
-        /// 模块的完全限定名
-        /// </summary>
-        string moduleFullyQualifiedName = null;
-        public string ModuleFullyQualifiedName
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(moduleFullyQualifiedName))
-                    moduleFullyQualifiedName = Utility.Assembly.GetTypeFullName<T>();
-                return moduleFullyQualifiedName;
-            }
-        }
         public ModuleEnum ModuleEnum
         {
             get
@@ -64,6 +55,7 @@ namespace Cosmos
                 return Utility.Framework.GetModuleEnum(module);
             }
         }
+
 
 
         #endregion
@@ -83,7 +75,6 @@ namespace Cosmos
             //TODO 生命周期销毁问题 ，module
             mountPoint = null;
             moduleName = null;
-            moduleFullyQualifiedName = null;
         }
         /// <summary>
         /// 非空虚函数
@@ -93,6 +84,8 @@ namespace Cosmos
         public virtual void OnPreparatory() { }
         public virtual void OnPause() { IsPause = true; }
         public virtual void OnUnPause() { IsPause = false; }
+        public virtual void OnActive(){}
+        public virtual void OnDeactive(){}
         #endregion
         #endregion
     }

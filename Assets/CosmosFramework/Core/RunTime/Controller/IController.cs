@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace Cosmos
@@ -6,5 +7,6 @@ namespace Cosmos
     public interface  IController:IOperable,IControllable,IRefreshable
     {
         string ControllerName { get; }
+        Type ControllerType { get; }
     }
 }

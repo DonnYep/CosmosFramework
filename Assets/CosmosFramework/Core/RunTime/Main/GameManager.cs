@@ -30,13 +30,30 @@ namespace Cosmos
     internal sealed partial class GameManager : Singleton<GameManager>,IControllable,IRefreshable
     {
         #region Properties
+        public static event Action FixedRefreshHandler
+        {
+            add { fixedRefreshHandler += value; }
+            remove{fixedRefreshHandler -= value;}
+        }
+        public static event Action LateRefreshHandler
+        {
+            add { lateRefreshHandler += value; }
+            remove{lateRefreshHandler -= value;}
+        }
+        public static event Action RefreshHandler
+        {
+            add { refreshHandler += value; }
+            remove{refreshHandler -= value;}
+        }
+        static Action fixedRefreshHandler;
+        static Action lateRefreshHandler;
+        static Action refreshHandler;
         // 模块表
         static Dictionary<ModuleEnum, IModule> moduleDict;
         internal static Dictionary<ModuleEnum, IModule> ModuleDict { get { return moduleDict; } }
         /// <summary>
         /// 轮询更新委托
         /// </summary>
-        Action refreshHandler;
         public bool IsPause { get; private set; }
         //当前注册的模块总数
         int moduleCount = 0;
@@ -277,14 +294,24 @@ namespace Cosmos
                 return;
             refreshHandler?.Invoke();
         }
+        public void OnLateRefresh()
+        {
+            if (IsPause)
+                return;
+            lateRefreshHandler?.Invoke();
+        }
+        public void OnFixRefresh()
+        {
+            if (IsPause)
+                return;
+            fixedRefreshHandler?.Invoke();
+        }
         internal void ModuleInitialization(IModule module)
         {
-            module.OnInitialization();
             Instance.RegisterModule(module.ModuleEnum, module);
         }
         internal void ModuleTermination(IModule module)
         {
-            module.OnTermination();
             Instance.DeregisterModule(module.ModuleEnum);
         }
         /// <summary>
@@ -294,13 +321,16 @@ namespace Cosmos
         {
             if (!HasModule(moduleEnum))
             {
+                module.OnInitialization();
                 moduleDict.Add(moduleEnum, module);
                 moduleCount++;
                 refreshHandler += module.OnRefresh;
-                Utility.Debug.LogInfo("Module:\"" + moduleEnum.ToString() + "\" " + "  is OnInitialization" + "\n based on GameManager");
+                Utility.DebugLog($"Module :{module} is OnInitialization");
+                module.OnActive();
+                module.OnPreparatory();
             }
             else
-                throw new ArgumentException("Module:\"" + moduleEnum.ToString() + "\" " + " is already exist!");
+                throw new ArgumentException($"Module : {module} is already exist!");
         }
         /// <summary>
         /// 注销模块
@@ -311,12 +341,14 @@ namespace Cosmos
             {
                 var m = moduleDict[module];
                 refreshHandler -= m.OnRefresh;
-                moduleDict.Remove(module);
+                moduleDict.Remove(module,out var tmpModule);
                 moduleCount--;
-                Utility.Debug.LogInfo("Module:\"" + module.ToString() + "\" " + "  is OnTermination" + " based on GameManager", MessageColor.DARKBLUE);
+                Utility.DebugLog($"Module :{module} is OnTermination" , MessageColor.DARKBLUE);
+                tmpModule.OnDeactive();
+                tmpModule.OnTermination();
             }
             else
-                throw new ArgumentNullException("Module:\"" + module.ToString()+ "\" " + " is  not exist!");
+                throw new ArgumentException($"Module : {module} is not exist!");
         }
         internal bool HasModule(ModuleEnum module)
         {
@@ -339,7 +371,14 @@ namespace Cosmos
             if (moduleDict == null)
             {
                 moduleDict = new Dictionary<ModuleEnum, IModule>();
-                InstanceObject.gameObject.AddComponent<GameManagerAgent>();
+                try
+                {
+                    InstanceObject.gameObject.AddComponent<GameManagerAgent>();
+                }
+                catch (Exception e)
+                {
+                    Utility.DebugError(e);
+                }
             }
         }
   

@@ -15,6 +15,9 @@ public class NetworkPanel : UILogicResident
     InputField inputMsg;
     [SerializeField] string ip = "127.0.0.1";
     [SerializeField] int port = 8511;
+    [SerializeField] uint heartbeatInterval = 45;
+    NetClient netClient;
+    bool isConnected;
     protected override void OnInitialization()
     {
         btnConnect = GetUIPanel<Button>("BtnConnect");
@@ -25,20 +28,42 @@ public class NetworkPanel : UILogicResident
         btnSend.onClick.AddListener(SendClick);
         info = GetUIPanel<Text>("Info");
         inputMsg = GetUIPanel<InputField>("InputMsg");
+        netClient = new NetClient();
+        netClient.NetworkConnect += ConnectCallback;
+        netClient.NetworkDisconnect+=DisconnectCallback;
     }
     void ConnectClick()
     {
-        Facade.NetworkConnect(ip,port,System.Net.Sockets.ProtocolType.Udp);
+        netClient.Connect(ip, port);
     }
     void DisconnectClick()
     {
-        Facade.NetworkDisconnect();
+        netClient.Disconnect();
     }
     void SendClick()
     {
         string str = inputMsg.text;
-        var data= Utility.Encode.ConvertToByte(str);
-        UdpNetworkMessage msg = new UdpNetworkMessage(0,0,KcpProtocol.MSG,0,data);
-        Facade.SendNetworkMessage(msg);
+        var data = Utility.Encode.ConvertToByte(str);
+        Facade.SendNetworkMessage(10, data);
+    }
+    void ServerMsg(INetworkMessage netMsg)
+    {
+        Utility.DebugLog($"{ Utility.Converter.GetString((netMsg as UdpNetMessage).ServiceMsg)}");
+    }
+    void ConnectCallback()
+    {
+        netClient.RunHeartBeat(heartbeatInterval, 5);
+        Utility.DebugLog("NetworkPanel回调，连接成功！");
+        isConnected = true;
+    }
+    void DisconnectCallback()
+    {
+        Utility.DebugLog("NetworkPanel回调，与服务器断开链接！");
+        isConnected = false;
+    }
+    protected override void OnTermination()
+    {
+        if (isConnected)
+            netClient.Disconnect();
     }
 }

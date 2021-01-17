@@ -1,51 +1,57 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+
 namespace Cosmos
 {
     /// <summary>
     /// 框架所有输入可控抽象基类
     /// 用作PlayerController，aminationController等用途
     /// </summary>
-    public abstract class ControllerBase : MonoEventHandler, IController
+    public abstract class ControllerBase<T> : MonoEventHandler, IController
+        where T: ControllerBase<T>
     {
-        protected string controllerName;
-        //返回controller所挂载的对象名称
-        public virtual string ControllerName { get { return controllerName; } protected set { controllerName = value; } }
-        public bool IsPause { get; protected set; }
-        protected short monoPoolID;
+        public virtual string ControllerName { get { return typeof(T).Name; } protected set { } }
+        public virtual Type ControllerType { get { return typeof(T); } }
+        public bool IsPause { get; set; }
         /// <summary>
-        /// 空虚函数
-        /// 对象被激活
+        /// 空虚函数;
+        /// 逻辑激活；
+        /// 对象被激活;
         /// </summary>
         public virtual void OnActive() { }
         /// <summary>
-        /// 空虚函数
-        /// 对象被激活
+        /// 空虚函数；
+        /// 逻辑失活；
+        /// 对象被失活；
         /// </summary>
         public virtual void OnDeactive() { }
         public void OnPause() { IsPause = true; }
         public void OnUnPause() { IsPause = false; }
+        public void OnRefresh() { if (IsPause) return; RefreshHandler(); }
         /// <summary>
-        /// 非空虚函数
-        /// 调用了UpdateHandler()
+        ///  空虚函数
+        ///  覆写时可以根据需要保留父类方法；
         /// </summary>
-        public virtual void OnRefresh() { UpdateHandler(); }
+        protected override void Awake() { }
+        /// <summary>
+        ///  空虚函数
+        ///  覆写时需要保留父类方法
+        /// </summary>
+        protected virtual void RefreshHandler() { }
         /// <summary>
         ///  非空虚函数
         ///  覆写时需要保留父类方法
         /// </summary>
-        protected override void Awake() { controllerName = this.GetType().Name; }
+        protected virtual  void OnEnable(){
+            Facade.RegisterController(ControllerType, this);
+        }
         /// <summary>
-        /// 空虚函数
+        ///  非空虚函数
+        ///  覆写时需要保留父类方法
         /// </summary>
-        protected virtual void UpdateHandler() { }
-        /// <summary>
-        /// 空虚函数
-        /// </summary>
-        protected virtual  void OnEnable(){}
-        /// <summary>
-        /// 空虚函数
-        /// </summary>
-        protected virtual void OnDisable() { }
+        protected virtual void OnDisable() { 
+            Facade.DeregisterController(ControllerType, this);
+        }
     }
 }
