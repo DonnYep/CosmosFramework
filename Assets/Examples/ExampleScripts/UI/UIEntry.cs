@@ -18,6 +18,8 @@ namespace Cosmos.Test {
             {
                 CosmosEntry.UIManager.SetUIRoot(go);
             }),null,true);
+            MVVM.RegisterCommand<CMD_Navigate>(MVVMDefine.CMD_Navigate);
+            MVVM.Dispatch(MVVMDefine.CMD_Navigate);
         }
     }
 }

@@ -15,6 +15,11 @@ namespace Cosmos.Mvvm
         {
             ViewModel.Instance.RegisterCommand(actionKey, cmdType);
         }
+        public static void RegisterCommand<T>(string actionKey)
+            where T:Command
+        {
+            RegisterCommand(actionKey, typeof(T));
+        }
         public static void RemoveCommand(string actionKey)
         {
             ViewModel.Instance.RemoveCommand(actionKey);
@@ -32,6 +37,11 @@ namespace Cosmos.Mvvm
         public static Mediator PeekMediator(string mediatorName)
         {
             return View.Instance.PeekMediator(mediatorName);
+        }
+        public static T PeekMediator<T>(string mediatorName)
+            where T:Mediator
+        {
+            return View.Instance.PeekMediator(mediatorName) as T;
         }
         public static bool HasMediator(string mediatorName)
         {
@@ -58,6 +68,11 @@ namespace Cosmos.Mvvm
         public static bool HasProxy(string proxyName)
         {
             return Model.Instance.HasProxy(proxyName);
+        }
+        public static T PeekProxy<T>(string proxyName)
+            where T:Proxy
+        {
+            return Model.Instance.PeekProxy(proxyName) as T;
         }
         public static Proxy PeekProxy(string proxyName)
         {

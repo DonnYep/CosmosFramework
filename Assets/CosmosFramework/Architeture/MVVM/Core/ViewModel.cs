@@ -65,21 +65,29 @@ namespace Cosmos.Mvvm
             {
                 if (cmdTypeDict.TryGetValue(actionKey, out var type))
                 {
-                    if (typeCmdQueueDict.TryGetValue(type, out var queue))
+                    if (typeCmdQueueDict.TryGetValue(type, out cmdQueue))
                     {
-                        if (queue.Count > 0)
-                            cmd = queue.Dequeue();
+                        if (cmdQueue.Count > 0)
+                            cmd = cmdQueue.Dequeue();
                         else
                             cmd = Activator.CreateInstance(type) as Command;
+                    }
+                    else
+                    {
+                        cmdQueue = new Queue<Command>();
+                        cmd = Activator.CreateInstance(type) as Command;
                     }
                 }
                 eventDict.TryGetValue(actionKey, out handlerList);
             }
-            cmd.ExecuteCommand(sender, notifyArgs);
-            var length = handlerList.Count;
-            for (int i = 0; i < length; i++)
+            cmd?.ExecuteCommand(sender, notifyArgs);
+            if (handlerList != null)
             {
-                handlerList[i].Invoke(sender, notifyArgs);
+                var length = handlerList.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    handlerList[i].Invoke(sender, notifyArgs);
+                }
             }
             cmdQueue.Enqueue(cmd);
         }

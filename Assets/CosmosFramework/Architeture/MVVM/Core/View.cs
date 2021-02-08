@@ -21,6 +21,8 @@ namespace Cosmos.Mvvm
                 {
                     mediatorDict.Add(mediator.MediatorName, mediator);
                     var bindedKeys = mediator.EventKeys;
+                    if (bindedKeys == null)
+                        return;
                     var length = bindedKeys.Count;
                     for (int i = 0; i < length; i++)
                     {

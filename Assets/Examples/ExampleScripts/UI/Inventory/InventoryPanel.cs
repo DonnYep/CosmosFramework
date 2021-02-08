@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Cosmos;
+using Cosmos.Mvvm;
 using Cosmos.UI;
-using Cosmos.Event;
-using Cosmos.Data;
-namespace Cosmos.Mvvm
+namespace Cosmos.Test
 {
     /// <summary>
     /// 仅测试
@@ -14,9 +12,11 @@ namespace Cosmos.Mvvm
     [UIAsset("UI/InventoryPanel")]
     public class InventoryPanel : UIResidentForm
     {
-        LogicEventArgs<InventoryDataSet> uip;
         Text txtDescription;
-        public void UpdataItem(string desc)
+        MED_Inventory med_Inventory;
+        SlotContext slotContext;
+        public SlotContext SlotContext { get { return slotContext; } }
+        public void UpdataItemDescription(string desc)
         {
             txtDescription.text = desc;
         }
@@ -26,21 +26,25 @@ namespace Cosmos.Mvvm
             GetUIForm<Button>("BtnQuit").onClick.AddListener(QuitClick);
             GetUIForm<Button>("BtnSave").onClick.AddListener(SaveClick);
             GetUIForm<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
+
+            MVVM.Dispatch(MVVMDefine.CMD_Inventory);
+            slotContext = gameObject.GetComponentInChildren<SlotContext>();
             txtDescription = GetUIForm<Text>("TxtDescription");
         }
         private void Start()
         {
-            //MVVM.Fire(UIEventDefine.UI_UPD_SLOT);
-            //GameManager.GetModule<IEventManager>().DispatchEvent(UIEventDefine.UI_UPD_SLOT, null, Uip);
+            med_Inventory= MVVM.PeekMediator<MED_Inventory>(MVVMDefine.MED_Inventory);
+
+            med_Inventory.UpdateInventorySlotItem();
+
         }
         void LoadClick()
         {
-            UpdateClick();
+            med_Inventory.LoadInventoryJson();
         }
         void SaveClick()
         {
-            //Facade.SaveJsonDataToLocal("Inventory", "InventoryCache.json", inventoryDataSet);
-            Utility.Debug.LogInfo("SaveJsonDataToLocal");
+            med_Inventory.SaveInventoryJson();
         }
         void QuitClick()
         {
@@ -48,7 +52,7 @@ namespace Cosmos.Mvvm
         }
         void UpdateClick()
         {
-            //eventManager.DispatchEvent(UIEventDefine.UI_UPD_SLOT, this, Uip);
+            med_Inventory.UpdateInventorySlotItem();
         }
     }
 }

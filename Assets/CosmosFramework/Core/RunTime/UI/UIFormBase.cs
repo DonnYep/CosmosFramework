@@ -118,8 +118,8 @@ namespace Cosmos.UI
         void OnDestroy()
         {
             OnTermination();
-            uiManager.DeregisterUI(this);
-            uiDict.Clear();
+            uiManager?.DeregisterUI(this);
+            uiDict?.Clear();
         }
     }
 }

@@ -225,8 +225,7 @@ namespace Cosmos.Resource
              GameObject asset = null;
             if (LoadMode == ResourceLoadMode.Resource)
             {
-                ResourceRequest request = Resources.LoadAsync<GameObject>(info.ResourcePath);
-                asset = request.asset as GameObject;
+                asset=  Resources.Load(info.ResourcePath) as GameObject;
                 if (asset == null)
                 {
                     throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");

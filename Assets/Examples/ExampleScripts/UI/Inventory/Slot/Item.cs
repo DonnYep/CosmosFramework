@@ -3,95 +3,98 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using Cosmos;
+using Cosmos.Mvvm;
 using Cosmos.UI;
-public class Item : UIResidentForm, IBeginDragHandler, IDragHandler, IEndDragHandler
+namespace Cosmos.Test
 {
-    Image imgItem;
-    Text txtNumber;
-    ItemDataSet itemDataSet;
-    public ItemDataSet ItemDataSet { get { return itemDataSet; } }
-    LogicEventArgs<string> uip;
-    Transform previouseParent;
-    Transform dragParent;
-    public Transform DragParent { get { return dragParent; } set { dragParent = value; } }
-    string itemDescription;
-    public Transform PreviouseParent { get { return previouseParent; } set { previouseParent = value; } }
-    public bool Dragable{ get { return !(imgItem.color.a == 0 || txtNumber.enabled == false); } }
-    public void OnBeginDrag(PointerEventData eventData)
+    public class Item : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        if (!Dragable)
-            return;
-        transform.position = eventData.position;
-        GetComponent<CanvasGroup>().blocksRaycasts = false;
-        DragParent = transform.parent.parent.parent;
-        PreviouseParent = transform.parent;
-        transform.parent = DragParent;
-    }
-    public void OnDrag(PointerEventData eventData)
-    {
-        if (!Dragable)
-            return;
-        transform.position = eventData.position;
-    }
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        if (!Dragable)
-            return;
-        if (eventData.pointerCurrentRaycast.gameObject.name == "Item")
+        Image imgItem;
+        Text txtNumber;
+        ItemDataSet itemDataSet;
+        public ItemDataSet ItemDataSet { get { return itemDataSet; } }
+        Transform previouseParent;
+        Transform dragParent;
+        MED_Inventory med_Inventory;
+        public Transform DragParent { get { return dragParent; } set { dragParent = value; } }
+        string itemDescription;
+        public Transform PreviouseParent { get { return previouseParent; } set { previouseParent = value; } }
+        public bool Dragable { get { return !(imgItem.color.a == 0 || txtNumber.enabled == false); } }
+        public void OnBeginDrag(PointerEventData eventData)
         {
-            transform.SetParent(eventData.pointerCurrentRaycast.gameObject.transform.parent);
-            eventData.pointerCurrentRaycast.gameObject.transform.SetParent(PreviouseParent);
-            eventData.pointerCurrentRaycast.gameObject.transform.ResetLocalTransform();
-            GetComponent<CanvasGroup>().blocksRaycasts = true;
-            transform.ResetLocalTransform();
-        }else
-        if (eventData.pointerCurrentRaycast.gameObject.name == "Slot")
-        {
-            transform.SetParent(eventData.pointerCurrentRaycast.gameObject.transform);
-            transform.ResetLocalTransform();
-            GetComponent<CanvasGroup>().blocksRaycasts = true;
+            if (!Dragable)
+                return;
+            transform.position = eventData.position;
+            GetComponent<CanvasGroup>().blocksRaycasts = false;
+            DragParent = transform.parent.parent.parent;
+            PreviouseParent = transform.parent;
+            transform.parent = DragParent;
         }
-        else
+        public void OnDrag(PointerEventData eventData)
         {
-            transform.SetParent(PreviouseParent);
-            transform.ResetLocalTransform();
-            GetComponent<CanvasGroup>().blocksRaycasts = true;
+            if (!Dragable)
+                return;
+            transform.position = eventData.position;
         }
-        GameManager.GetModule<Cosmos.IEventManager>(). DispatchEvent(UIEventDefine.UI_UPD_ITEM, null, null);
-    }
-    public void SetItem(ItemDataSet item)
-    {
-        if (item == null)
+        public void OnEndDrag(PointerEventData eventData)
         {
-            itemDataSet =null;
-            imgItem.sprite = null;
-            imgItem.color = Color.clear;
-            txtNumber.text = null;
-            txtNumber.enabled = false;
-            itemDescription = null;
+            if (!Dragable)
+                return;
+            if (eventData.pointerCurrentRaycast.gameObject.name == "Item")
+            {
+                transform.SetParent(eventData.pointerCurrentRaycast.gameObject.transform.parent);
+                eventData.pointerCurrentRaycast.gameObject.transform.SetParent(PreviouseParent);
+                eventData.pointerCurrentRaycast.gameObject.transform.ResetLocalTransform();
+                GetComponent<CanvasGroup>().blocksRaycasts = true;
+                transform.ResetLocalTransform();
+            }
+            else
+            if (eventData.pointerCurrentRaycast.gameObject.name == "Slot")
+            {
+                transform.SetParent(eventData.pointerCurrentRaycast.gameObject.transform);
+                transform.ResetLocalTransform();
+                GetComponent<CanvasGroup>().blocksRaycasts = true;
+            }
+            else
+            {
+                transform.SetParent(PreviouseParent);
+                transform.ResetLocalTransform();
+                GetComponent<CanvasGroup>().blocksRaycasts = true;
+            }
+            med_Inventory.UpdateDataSet();
         }
-        else
+        public void SetItem(ItemDataSet item)
         {
-            itemDataSet = item;
-            imgItem.sprite = item.ItemImage;
-            imgItem.color = Color.white;
-            txtNumber.text = item.ItemNumber.ToString();
-            txtNumber.enabled = true;
-            itemDescription = item.Description;
+            if (item == null)
+            {
+                itemDataSet = null;
+                imgItem.sprite = null;
+                imgItem.color = Color.clear;
+                txtNumber.text = null;
+                txtNumber.enabled = false;
+                itemDescription = null;
+            }
+            else
+            {
+                itemDataSet = item;
+                imgItem.sprite = item.ItemImage;
+                imgItem.color = Color.white;
+                txtNumber.text = item.ItemNumber.ToString();
+                txtNumber.enabled = true;
+                itemDescription = item.Description;
+            }
         }
-    }
-    protected override void OnInitialization()
-    {
-        uip = GameManager.GetModule<Cosmos.IReferencePoolManager>().Spawn<LogicEventArgs<string>>();
-        GetUIForm<Button>("Item").onClick.AddListener(IItemClick);
-        imgItem = GetUIForm<Image>("Item");
-        txtNumber= GetUIForm<Text>("TxtNumber");
-        PreviouseParent = transform.parent;
-    }
-    void IItemClick()
-    {
-        uip.SetData(itemDescription);
-        GameManager.GetModule<Cosmos.IEventManager>(). DispatchEvent(UIEventDefine.UI_ITEM_DESC, this, uip);
+        private void Awake()
+        {
+            GetComponent<Button>().onClick.AddListener(IItemClick);
+            imgItem = GetComponent<Image>();
+            txtNumber = GetComponentInChildren<Text>();
+            PreviouseParent = transform.parent;
+             med_Inventory=MVVM.PeekMediator<MED_Inventory>(MVVMDefine.MED_Inventory);
+        }
+        void IItemClick()
+        {
+            med_Inventory.UpdateItemDescription(itemDescription);
+        }
     }
 }
