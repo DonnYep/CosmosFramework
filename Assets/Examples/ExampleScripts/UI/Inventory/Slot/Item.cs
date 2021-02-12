@@ -61,7 +61,7 @@ namespace Cosmos.Test
                 transform.ResetLocalTransform();
                 GetComponent<CanvasGroup>().blocksRaycasts = true;
             }
-            med_Inventory.UpdateDataSet();
+            med_Inventory.FlushDataSet();
         }
         public void SetItem(ItemDataSet item)
         {
@@ -94,7 +94,7 @@ namespace Cosmos.Test
         }
         void IItemClick()
         {
-            med_Inventory.UpdateItemDescription(itemDescription);
+            med_Inventory.DisplayItemDesc(itemDescription);
         }
     }
 }

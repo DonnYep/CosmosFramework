@@ -10,8 +10,6 @@ namespace Cosmos.Test {
 
         private void Start()
         {
-            //MVVM.BindViewModel<VM_Navigate>(UIEventDefine.VM_Navigate);
-            //MVVM.Fire(UIEventDefine.VM_Navigate);
             CosmosEntry.UIManager.SetHelper(new DefaultUIFormHelper());
             Utility.Json.SetHelper(new JsonUtilityHelper());
             var mianUICanvas = CosmosEntry.ResourceManager.LoadPrefabAsync(new AssetInfo(null, null, "UI/MainUICanvas"),(go=> 

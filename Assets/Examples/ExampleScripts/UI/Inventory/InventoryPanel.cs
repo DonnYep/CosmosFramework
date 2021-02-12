@@ -20,6 +20,11 @@ namespace Cosmos.Test
         {
             txtDescription.text = desc;
         }
+        public void UpdateSlotItem(InventoryDataSet invDataSet)
+        {
+            SlotContext.UpdateSlot(invDataSet);
+            SlotContext.UpdateItem(invDataSet);
+        }
         protected override void OnInitialization()
         {
             GetUIForm<Button>("BtnLoad").onClick.AddListener(LoadClick);
@@ -34,9 +39,7 @@ namespace Cosmos.Test
         private void Start()
         {
             med_Inventory= MVVM.PeekMediator<MED_Inventory>(MVVMDefine.MED_Inventory);
-
-            med_Inventory.UpdateInventorySlotItem();
-
+            med_Inventory.UpdateSlotItem();
         }
         void LoadClick()
         {
@@ -52,7 +55,7 @@ namespace Cosmos.Test
         }
         void UpdateClick()
         {
-            med_Inventory.UpdateInventorySlotItem();
+            med_Inventory.UpdateSlotItem();
         }
     }
 }
