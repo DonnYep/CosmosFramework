@@ -51,7 +51,7 @@ namespace Cosmos.UI
         /// 获取默认节点下的UIBehaviour；
         /// </summary>
         /// <typeparam name="T">目标类型</typeparam>
-        protected void GetChildUIForm<T>()
+        protected void GetUIComponents<T>()
             where T : UIBehaviour
         {
             T[] uiPanels = GetComponentsInChildren<T>();
@@ -75,7 +75,7 @@ namespace Cosmos.UI
         /// </summary>
         /// <typeparam name="T">UGUI目标类型</typeparam>
         /// <param name="root">目标节点</param>
-        protected void GetChildUIForm<T>(Transform root)
+        protected void GetUIComponents<T>(Transform root)
             where T : UIBehaviour
         {
             T[] uiPanels = root.GetComponentsInChildren<T>();
@@ -105,20 +105,20 @@ namespace Cosmos.UI
             uiManager = GameManager.GetModule<IUIManager>();
             if (autoGetChildUIForm)
             {
-                GetChildUIForm<Button>();
-                GetChildUIForm<Text>();
-                GetChildUIForm<Slider>();
-                GetChildUIForm<ScrollRect>();
-                GetChildUIForm<Image>();
-                GetChildUIForm<InputField>();
+                GetUIComponents<Button>();
+                GetUIComponents<Text>();
+                GetUIComponents<Slider>();
+                GetUIComponents<ScrollRect>();
+                GetUIComponents<Image>();
+                GetUIComponents<InputField>();
             }
-            uiManager.RegisterUI(this);
+            uiManager.RegisterUIForm(this);
             OnInitialization();
         }
         void OnDestroy()
         {
             OnTermination();
-            uiManager?.DeregisterUI(this);
+            uiManager?.DeregisterUIForm(this);
             uiDict?.Clear();
         }
     }

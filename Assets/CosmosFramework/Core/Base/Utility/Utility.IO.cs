@@ -89,7 +89,6 @@ namespace Cosmos
                 if (!File.Exists(fullFilePath))
                     Utility.Debug.LogError(new IOException("ReadTextFileContent path not exist !" + fullFilePath));
                 Utility.Text.ClearStringBuilder();
-
                 using (FileStream stream = File.Open(fullFilePath, FileMode.Open))
                 {
                     using (StreamReader reader = new StreamReader(stream))

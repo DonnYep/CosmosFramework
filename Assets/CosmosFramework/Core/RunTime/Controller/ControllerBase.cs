@@ -11,7 +11,7 @@ namespace Cosmos
     public abstract class ControllerBase<T> : MonoEventHandler, IController
         where T: ControllerBase<T>
     {
-        public Type ControllerType { get { return controllerType; } }
+        public  virtual Type ControllerType { get { return controllerType; } }
         public virtual string ControllerName { get; protected set; }
         public bool IsPause { get; protected set; }
         Type controllerType = typeof(T);

@@ -12,6 +12,7 @@ namespace Cosmos
     {
         event Action NetworkOnConnect;
         event Action NetworkOnDisconnect;
+        long Conv { get; }
         bool IsConnected { get; }
         IPEndPoint ServerEndPoint { get; }
         IPEndPoint ClientEndPoint { get; }

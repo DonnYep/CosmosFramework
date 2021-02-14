@@ -2,28 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Reflection;
+
 namespace Cosmos
 {
-    [DefaultExecutionOrder(2000)]
-    public class CosmosEntry : MonoBehaviour
+    public class CosmosEntry 
     {
-        public static IAudioManager AudioManager { get; private set; }
-        public static IControllerManager ControllerManager { get; private set; }
-        public static IFSMManager FSMManager { get; private set; }
-        public static IObjectPoolManager ObjectPoolManager { get; private set; }
-        public static IMonoManager MonoManager { get; private set; }
-        public static IConfigManager ConfigManager { get; private set; }
-        public static IInputManager InputManager { get; private set; }
-        public static INetworkManager NetworkManager { get; private set; }
-        public static IReferencePoolManager ReferencePoolManager { get; private set; }
-        public static IResourceManager ResourceManager { get; private set; }
-        public static IUIManager UIManager { get; private set; }
-        public static IHotfixManager HotfixManager { get; private set; }
-        public static IDataManager DataManager { get; private set; }
-        public static IEntityManager EntityManager { get; private set; }
-        public static IEventManager EventManager { get; private set; }
-        public static ISceneManager SceneManager { get; private set; }
-        private void Awake()
+        public static IAudioManager AudioManager { get { return GameManager.GetModule<IAudioManager>(); } }
+        public static IControllerManager ControllerManager { get { return GameManager.GetModule<IControllerManager>(); } }
+        public static IFSMManager FSMManager { get { return GameManager.GetModule<IFSMManager>(); } }
+        public static IObjectPoolManager ObjectPoolManager { get { return GameManager.GetModule<IObjectPoolManager>(); } }
+        public static IMonoManager MonoManager { get { return GameManager.GetModule<IMonoManager>(); } }
+        public static IConfigManager ConfigManager { get { return GameManager.GetModule<IConfigManager>(); } }
+        public static IInputManager InputManager { get { return GameManager.GetModule<IInputManager>(); } }
+        public static INetworkManager NetworkManager { get { return GameManager.GetModule<INetworkManager>(); } }
+        public static IReferencePoolManager ReferencePoolManager { get { return GameManager.GetModule<IReferencePoolManager>(); } }
+        public static IResourceManager ResourceManager { get { return GameManager.GetModule<IResourceManager>(); } }
+        public static IUIManager UIManager { get { return GameManager.GetModule<IUIManager>(); } }
+        public static IHotfixManager HotfixManager { get { return GameManager.GetModule<IHotfixManager>(); } }
+        public static IDataManager DataManager { get { return GameManager.GetModule<IDataManager>(); } }
+        public static IEntityManager EntityManager { get { return GameManager.GetModule<IEntityManager>(); } }
+        public static IEventManager EventManager { get { return GameManager.GetModule<IEventManager>(); } }
+        public static ISceneManager SceneManager { get { return GameManager.GetModule<ISceneManager>(); } }
+
+        public static GameObject AudioMount { get { return GameManager.GetModuleMount<IAudioManager>(); } }
+        public static GameObject ControllerMount { get { return GameManager.GetModuleMount<IControllerManager>(); } }
+        public static GameObject FSMMount { get { return GameManager.GetModuleMount<IFSMManager>(); } }
+        public static GameObject ObjectPoolMount { get { return GameManager.GetModuleMount<IObjectPoolManager>(); } }
+        public static GameObject MonoMount { get { return GameManager.GetModuleMount<IMonoManager>(); } }
+        public static GameObject ConfigMount { get { return GameManager.GetModuleMount<IConfigManager>(); } }
+        public static GameObject InputMount { get { return GameManager.GetModuleMount<IInputManager>(); } }
+        public static GameObject NetworkMount { get { return GameManager.GetModuleMount<INetworkManager>(); } }
+        public static GameObject ReferencePoolMount { get { return GameManager.GetModuleMount<IReferencePoolManager>(); } }
+        public static GameObject ResourceMount { get { return GameManager.GetModuleMount<IResourceManager>(); } }
+        public static GameObject UIMount { get { return GameManager.GetModuleMount<IUIManager>(); } }
+        public static GameObject HotfixMount { get { return GameManager.GetModuleMount<IHotfixManager>(); } }
+        public static GameObject DataMount { get { return GameManager.GetModuleMount<IDataManager>(); } }
+        public static GameObject EntityMount { get { return GameManager.GetModuleMount<IEntityManager>(); } }
+        public static GameObject EventMount { get { return GameManager.GetModuleMount<IEventManager>(); } }
+        public static GameObject SceneMount { get { return GameManager.GetModuleMount<ISceneManager>(); } }
+        public static void LaunchHelpers()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             var length = assemblies.Length;
@@ -54,43 +72,10 @@ namespace Cosmos
                     break;
                 }
             }
-            GameManager.PreparatoryModule();
-            AssignManager();
         }
-        void AssignManager()
+        public static void LaunchModules()
         {
-            try{AudioManager = GameManager.GetModule<IAudioManager>();}
-            catch (Exception e){Utility.Debug.LogError(e);}
-            try{ControllerManager = GameManager.GetModule<IControllerManager>();}
-            catch (Exception e){Utility.Debug.LogError(e);}
-            try { ObjectPoolManager= GameManager.GetModule<IObjectPoolManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { FSMManager = GameManager.GetModule<IFSMManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { MonoManager = GameManager.GetModule<IMonoManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { ConfigManager = GameManager.GetModule<IConfigManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { InputManager = GameManager.GetModule<IInputManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { NetworkManager = GameManager.GetModule<INetworkManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { ReferencePoolManager = GameManager.GetModule<IReferencePoolManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { ResourceManager = GameManager.GetModule<IResourceManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { UIManager = GameManager.GetModule<IUIManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { HotfixManager = GameManager.GetModule<IHotfixManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { DataManager = GameManager.GetModule<IDataManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { EntityManager = GameManager.GetModule<IEntityManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { EventManager = GameManager.GetModule<IEventManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
-            try { SceneManager = GameManager.GetModule<ISceneManager>(); }
-            catch (Exception e) { Utility.Debug.LogError(e); }
+            GameManager.PreparatoryModule();
         }
     }
 }

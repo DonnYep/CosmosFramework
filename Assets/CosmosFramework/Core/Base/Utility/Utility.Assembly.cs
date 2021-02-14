@@ -88,7 +88,8 @@ namespace Cosmos
             /// <returns>装箱后的对象</returns>
             public static object GetTypeInstance(Type type)
             {
-                return type.Assembly.CreateInstance(type.FullName);
+                return Activator.CreateInstance(type);
+                //return type.Assembly.CreateInstance(type.FullName);
             }
             /// <summary>
             /// 反射工具，得到反射类的对象；
