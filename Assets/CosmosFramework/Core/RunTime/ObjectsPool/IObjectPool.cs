@@ -11,7 +11,13 @@ namespace Cosmos
         int Capacity { get; set; }
         Type ObjectType { get; }
         string Name { get;  }
-        void SetObjectHandler(Action<Object> onSpawn, Action<Object> onDespawn);
+        /// <summary>
+        /// 设置回调；
+        /// 此回调在对象被生成、回收时触发；
+        /// </summary>
+        /// <param name="onSpawn">生成时的回调</param>
+        /// <param name="onDespawn">回收时的回调</param>
+        void SetCallback(Action<Object> onSpawn, Action<Object> onDespawn);
         object Spawn();
         void Despawn(object target);
         void ClearPool();

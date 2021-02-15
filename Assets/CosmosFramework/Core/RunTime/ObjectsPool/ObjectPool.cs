@@ -74,7 +74,7 @@ namespace Cosmos.ObjectPool
             if (expireTime <= 0)
                 return;
         }
-        public void SetObjectHandler(Action<Object> onSpawn, Action<Object> onDespawn)
+        public void SetCallback(Action<Object> onSpawn, Action<Object> onDespawn)
         {
             this.onDespawn = onDespawn;
             this.onSpawn = onSpawn;

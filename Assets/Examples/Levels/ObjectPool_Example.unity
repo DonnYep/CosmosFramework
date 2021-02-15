@@ -229,15 +229,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnObjectGroup:
   - spawnTransform: {fileID: 1727667396}
-    poolDataSet: {fileID: 11400000, guid: ab561abdc38c7674dbb93ee857f295b3, type: 2}
+    poolDataSet: {fileID: 0}
   - spawnTransform: {fileID: 811413295}
-    poolDataSet: {fileID: 11400000, guid: 9d431428916bcbd41bf1724581226286, type: 2}
+    poolDataSet: {fileID: 0}
   - spawnTransform: {fileID: 37563108}
-    poolDataSet: {fileID: 11400000, guid: 62f7d2cdf203f4e469ca6c63a1523ba9, type: 2}
+    poolDataSet: {fileID: 0}
   - spawnTransform: {fileID: 324390344}
-    poolDataSet: {fileID: 11400000, guid: 9d431428916bcbd41bf1724581226286, type: 2}
+    poolDataSet: {fileID: 0}
   - spawnTransform: {fileID: 334417137}
-    poolDataSet: {fileID: 11400000, guid: ab561abdc38c7674dbb93ee857f295b3, type: 2}
+    poolDataSet: {fileID: 0}
 --- !u!114 &201609286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -729,7 +729,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1484335752}
-  - component: {fileID: 1484335751}
   m_Layer: 0
   m_Name: Entry
   m_TagString: Untagged
@@ -737,18 +736,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1484335751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1484335750}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bf6ecfc17afc1f48a6049b78f34cef6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1484335752
 Transform:
   m_ObjectHideFlags: 0
@@ -938,7 +925,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1861258380
 Transform:
   m_ObjectHideFlags: 0

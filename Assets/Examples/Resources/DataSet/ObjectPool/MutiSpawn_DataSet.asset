@@ -9,21 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d6d5c63fa57f1849960b2bf052c89c5, type: 3}
+  m_Script: {fileID: 11500000, guid: 1860a75b5cd548049a5c15353744faa0, type: 3}
   m_Name: MutiSpawn_DataSet
   m_EditorClassIdentifier: 
-  objectName: MutiObject
+  objectName: Mix
   objectOdds: 25
   groupSpawn: 0
   minSpawnCount: 0
   maxSpawnCount: 1
-  rangeCollectDelay: 1
-  minCollectDelay: 7
-  maxCollectDelay: 11
+  rangeCollectDelay: 0
+  minCollectDelay: 3
+  maxCollectDelay: 3
   randomRotationOnSpawn: 0
   alignType: 0
-  severalTime: 2
+  severalTime: 0
   spawnObjects:
-  - {fileID: 1836443238213990, guid: 8a8417a066faaf54681fd6b50528d39c, type: 3}
   - {fileID: 1710601175091384, guid: 829bf2b842b96a149a21723a68947d87, type: 3}
+  - {fileID: 1836443238213990, guid: 8a8417a066faaf54681fd6b50528d39c, type: 3}
   - {fileID: 1002502963443486, guid: 3376b1f58ee2c9f4e91fccef586213ac, type: 3}
