@@ -7,7 +7,11 @@ namespace Cosmos.Test {
 
     public class UIEntry : MonoBehaviour
     {
-
+        private void Awake()
+        {
+            CosmosEntry.LaunchHelpers();
+            CosmosEntry.LaunchModules();
+        }
         private void Start()
         {
             CosmosEntry.UIManager.SetHelper(new DefaultUIFormHelper());

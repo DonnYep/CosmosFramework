@@ -143,6 +143,14 @@ namespace Cosmos
                     GameObject.Destroy(moduleMount);
                 }
             }
+            else
+            {
+                if (moduleMount == null)
+                {
+                    moduleMount = new GameObject(derivedType.Name + "Module-->>Container");
+                    moduleMount.transform.SetParent(InstanceObject.transform);
+                }
+            }
             return moduleMount;
         }
         internal static void OnPause()
@@ -235,23 +243,27 @@ namespace Cosmos
                 for (int i = 0; i < modules.Length; i++)
                 {
                     var type = modules[i].GetType();
-                    if (!HasModule(type))
+                    if (typeof(IModuleManager).IsAssignableFrom(type))
                     {
-                        if (moduleDict.TryAdd(type, modules[i]))
+
+                        if (!HasModule(type))
                         {
-                            try
+                            if (moduleDict.TryAdd(type, modules[i]))
                             {
-                                modules[i].OnInitialization();
-                                moduleCount++;
-                            }
-                            catch (Exception e)
-                            {
-                                Utility.Debug.LogError(e);
+                                try
+                                {
+                                    modules[i].OnInitialization();
+                                    moduleCount++;
+                                }
+                                catch (Exception e)
+                                {
+                                    Utility.Debug.LogError(e);
+                                }
                             }
                         }
+                        else
+                            throw new ArgumentException($"Module : {type} is already exist!");
                     }
-                    else
-                        throw new ArgumentException($"Module : {type} is already exist!");
                 }
             }
             ActiveModule();

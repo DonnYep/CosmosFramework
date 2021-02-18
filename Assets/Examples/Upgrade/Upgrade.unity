@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 892884aadcc84544f859822280df3d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  folderPath: F:\LtdDev\AscensionClient\Assets\Scripts
+  folderPath: 
 --- !u!4 &994890154
 Transform:
   m_ObjectHideFlags: 0

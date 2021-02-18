@@ -67,6 +67,32 @@ public class Upgrade : MonoBehaviour
                     //str = str.Replace("Facade.RemovePanel", "CosmosEntry.UIManager.RemoveUIForm");
                     //str = str.Replace("Facade.StartCoroutine", "CosmosEntry.MonoManager.StartCoroutine");
                     //str = str.Replace("Facade.DespawnsReference", "CosmosEntry.ReferencePoolManager.Despawn");
+
+                    //======================================================================================
+
+                    //str = str.Replace("GameManager.GetModule<NetworkManager>()", "GameEntry.NetworkManager");
+                    //str = str.Replace("GameManager.GetModule<DataManager>()", "GameEntry.DataManager");
+                    //str = str.Replace("GameManager.GetModule<RoleStatusManager>()", "GameEntry.RoleStatusManager");
+                    //str = str.Replace("GameManager.GetModule<SkillManager>()", "GameEntry.SkillManager");
+                    //str = str.Replace("GameManager.GetModule<BattleRoomManager>()", "GameEntry.BattleRoomManager");
+                    //str = str.Replace("GameManager.GetModule<RoleStatusManager>()", "GameEntry.RoleStatusManager");
+                    //str = str.Replace("GameManager.GetModule<LevelManager>()", "GameEntry.LevelManager");
+                    //str = str.Replace("GameManager.GetModule<TacticManager>()", "GameEntry.TacticManager");
+                    //str = str.Replace("GameManager.GetModule<RoleManager>()", "GameEntry.RoleManager");
+                    //str = str.Replace("GameManager.GetModule<BattleHudManager>()", "GameEntry.BattleHudManager");
+                    //str = str.Replace("GameManager.GetModule<BattlePerformManager>()", "GameEntry.BattlePerformManager");
+                    //str = str.Replace("GameManager.GetModule<BattleCharacterManager>()", "GameEntry.BattleCharacterManager");
+                    //str = str.Replace("GameManager.GetModule<BattleCommandActionManager>()", "GameEntry.BattleCommandActionManager");
+                    //str = str.Replace("GameManager.GetModule<NumAutoUpdateManager>()", "GameEntry.NumAutoUpdateManager");
+                    //str = str.Replace("GameManager.GetModule<PetManager>()", "GameEntry.PetManager");
+                    //str = str.Replace("GameManager.GetModule<ProgressBarManager>()", "GameEntry.ProgressBarManager");
+                    //str = str.Replace("GameManager.GetModule<BottleneckController>()", "GameEntry.BottleneckController");
+                    //str = str.Replace("GameManager.GetModule<NetworkInteractiveManager>()", "GameEntry.NetworkInteractiveManager");
+                    //str = str.Replace("GameManager.GetModule<BattleBuffManager>()", "GameEntry.BattleBuffManager");
+                    //str = str.Replace("GameManager.GetModule<FlyMagicToolsManager>()", "GameEntry.FlyMagicToolsManager");
+
+                    //======================================================================================
+
                     Utility.IO.OverwriteTextFile(fileInfos[i].FullName, str);
                 }
             }

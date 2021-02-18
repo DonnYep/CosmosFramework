@@ -116,14 +116,14 @@ namespace Cosmos
                         for (int i = 0; i < ts.Length; i++)
                         {
                             if (ts[i] != null)
-                                GameObject.DestroyImmediate(go);
+                                GameObject.Destroy(ts[i]);
                         }
                         t = go.AddComponent<T>();
                     }
                     else
                     {
                         T[] ts = go.GetComponents<T>();
-                        if (ts.Length== 0)
+                        if (ts.Length == 0)
                         {
                             t = go.AddComponent<T>();
                             return t;
@@ -140,7 +140,7 @@ namespace Cosmos
                 }
                 return t;
             }
-            public static Component Add(Type type,GameObject go, bool removeExistComp = false) 
+            public static Component Add(Type type, GameObject go, bool removeExistComp = false)
             {
                 if (!typeof(Component).IsAssignableFrom(type))
                 {
@@ -155,7 +155,7 @@ namespace Cosmos
                         for (int i = 0; i < ts.Length; i++)
                         {
                             if (ts[i] != null)
-                                GameObject.DestroyImmediate(go);
+                                GameObject.Destroy(ts[i]);
                         }
                         t = go.AddComponent(type);
                     }
@@ -213,7 +213,7 @@ namespace Cosmos
                 }
                 else
                 {
-                    comp = Add<T>(go,true);
+                    comp = Add<T>(go, true);
                 }
                 return comp;
             }

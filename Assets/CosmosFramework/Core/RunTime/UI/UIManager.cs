@@ -94,10 +94,10 @@ namespace Cosmos.UI
             {
                 throw new NotImplementedException($"Type:{uiType} is not inherit form UIFormBase");
             }
-            var panel = resourceManager.LoadPrefab(assetInfo, true);
-            panel?.transform.SetParent(UIRoot.transform);
-            (panel?.transform as RectTransform).ResetLocalTransform();
-            var comp = Utility.Unity.Add(uiType, panel?.gameObject, true) as UIFormBase;
+            var go = resourceManager.LoadPrefab(assetInfo, true);
+            go?.transform.SetParent(UIRoot.transform);
+            (go?.transform as RectTransform).ResetLocalTransform();
+            var comp = Utility.Unity.Add(uiType, go?.gameObject) as UIFormBase;
             uiDict.TryAdd(comp.UIFormName, comp);
             return comp;
         }
@@ -120,7 +120,7 @@ namespace Cosmos.UI
              {
                  panel.transform.SetParent(UIRoot.transform);
                  (panel.transform as RectTransform).ResetLocalTransform();
-                 var comp = Utility.Unity.Add<T>(panel, false);
+                 var comp = Utility.Unity.Add<T>(panel);
                  callback?.Invoke(comp);
                  uiDict.TryAdd(comp.UIFormName, comp);
              }, null, true);
@@ -138,11 +138,11 @@ namespace Cosmos.UI
             {
                 throw new ArgumentException($"Type:{uiType} is not inherit from UIFormBase");
             }
-            return resourceManager.LoadPrefabAsync(assetInfo, panel =>
+            return resourceManager.LoadPrefabAsync(assetInfo, go =>
              {
-                 panel.transform.SetParent(UIRoot.transform);
-                 (panel.transform as RectTransform).ResetLocalTransform();
-                 var comp = Utility.Unity.Add(uiType, panel, true) as UIFormBase;
+                 go.transform.SetParent(UIRoot.transform);
+                 (go.transform as RectTransform).ResetLocalTransform();
+                 var comp = Utility.Unity.Add(uiType, go) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
                  uiDict.TryAdd(comp.UIFormName, comp);
              },null,true);
@@ -161,11 +161,11 @@ namespace Cosmos.UI
             {
                 throw new ArgumentException($"Type:{type} is not inherit from UIFormBase");
             }
-            return resourceManager.LoadPrefabAsync(assetInfo, panel =>
+            return resourceManager.LoadPrefabAsync(assetInfo, go =>
             {
-                panel.transform.SetParent(UIRoot.transform);
-                (panel.transform as RectTransform).ResetLocalTransform();
-                var comp = Utility.Unity.Add<T>(panel, true);
+                go.transform.SetParent(UIRoot.transform);
+                (go.transform as RectTransform).ResetLocalTransform();
+                var comp = Utility.Unity.Add<T>(go);
                 loadDoneCallback?.Invoke(comp);
                 uiDict.TryAdd(comp.UIFormName, comp);
             }, null, true);
@@ -187,11 +187,11 @@ namespace Cosmos.UI
             {
                 throw new ArgumentNullException($"Type:{type} has no UIAssetAttribute");
             }
-            return resourceManager.LoadPrefabAsync(type, panel =>
+            return resourceManager.LoadPrefabAsync(type, go =>
              {
-                 panel.transform.SetParent(UIRoot.transform);
-                 (panel.transform as RectTransform).ResetLocalTransform();
-                 var comp = Utility.Unity.Add(type, panel, true) as UIFormBase;
+                 go.transform.SetParent(UIRoot.transform);
+                 (go.transform as RectTransform).ResetLocalTransform();
+                 var comp = Utility.Unity.Add(type, go,true) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
                  uiDict.TryAdd(comp.UIFormName, comp);
              }, null, true);
@@ -259,7 +259,7 @@ namespace Cosmos.UI
                 Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
                 return;
             }
-            uiFormHelper.RemoveUIForm(uiForm);
+            uiFormHelper?.RemoveUIForm(uiForm);
         }
         /// <summary>
         /// 移除UI，但是不销毁
@@ -280,7 +280,7 @@ namespace Cosmos.UI
         public void DestroyUlForm(string uiName)
         {
             if (uiDict.TryRemove(uiName, out var uiForm))
-                uiFormHelper.DestroyUIForm(uiForm);
+                uiFormHelper?.DestroyUIForm(uiForm);
             else
                 Utility.Debug.LogError($"UIManager-->>Panel :{ uiName} is not exist !");
         }
@@ -288,7 +288,7 @@ namespace Cosmos.UI
         {
             if (uiForm == null)
                 return;
-            uiFormHelper.DestroyUIForm(uiForm);
+            uiFormHelper?.DestroyUIForm(uiForm);
         }
         /// <summary>
         /// 是否存在UI;
