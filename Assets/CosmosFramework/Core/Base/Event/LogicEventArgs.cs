@@ -3,35 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 namespace Cosmos
 {
-    /// <summary>
-    /// 泛型数据传输容器
-    /// 封闭继承
-    /// </summary>
-    public sealed class LogicEventArgs<T> : GameEventArgs
+    public class LogicEventArgs : GameEventArgs
     {
-        /// <summary>
-        /// 泛型构造
-        /// </summary>
-        /// <param name="data"></param>
-        public LogicEventArgs(T data)
+        public object Data { get; private set; }
+        public LogicEventArgs(object data)
         {
             SetData(data);
         }
         public LogicEventArgs() { }
-        /// <summary>
-        /// 泛型数据类型
-        /// </summary>
-        public T Data { get; private set; }
-        public LogicEventArgs<T> SetData(T data)
+        public object SetData(object data)
         {
             Data = data;
             return this;
         }
         public override void Clear()
         {
-            Data = default(T);
+            Data = null;
         }
     }
 }
