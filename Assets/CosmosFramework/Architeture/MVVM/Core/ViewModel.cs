@@ -96,8 +96,11 @@ namespace Cosmos.Mvvm
             lock (locker)
             {
                 IList<EventHandler<NotifyArgs>> handlerList;
-                if (!eventDict.TryGetValue(actionKey, out handlerList))
+                if (!eventDict.TryGetValue(actionKey, out handlerList)) 
+                {
                     handlerList = new List<EventHandler<NotifyArgs>>();
+                    eventDict.Add(actionKey, handlerList);
+                }
                 if (!handlerList.Contains(notifyHandler))
                     handlerList.Add(notifyHandler);
             }
