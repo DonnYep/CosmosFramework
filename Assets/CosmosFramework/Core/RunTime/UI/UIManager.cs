@@ -96,7 +96,7 @@ namespace Cosmos.UI
             }
             var go = resourceManager.LoadPrefab(assetInfo, true);
             go?.transform.SetParent(UIRoot.transform);
-            (go?.transform as RectTransform).ResetLocalTransform();
+            (go?.transform as RectTransform).ResetRectTransform();
             var comp = Utility.Unity.Add(uiType, go?.gameObject) as UIFormBase;
             uiDict.TryAdd(comp.UIFormName, comp);
             return comp;
@@ -119,7 +119,7 @@ namespace Cosmos.UI
             return resourceManager.LoadPrefabAsync(assetInfo, panel =>
              {
                  panel.transform.SetParent(UIRoot.transform);
-                 (panel.transform as RectTransform).ResetLocalTransform();
+                 (panel.transform as RectTransform).ResetRectTransform();
                  var comp = Utility.Unity.Add<T>(panel);
                  callback?.Invoke(comp);
                  uiDict.TryAdd(comp.UIFormName, comp);
@@ -141,11 +141,11 @@ namespace Cosmos.UI
             return resourceManager.LoadPrefabAsync(assetInfo, go =>
              {
                  go.transform.SetParent(UIRoot.transform);
-                 (go.transform as RectTransform).ResetLocalTransform();
+                 (go.transform as RectTransform).ResetRectTransform();
                  var comp = Utility.Unity.Add(uiType, go) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
                  uiDict.TryAdd(comp.UIFormName, comp);
-             },null,true);
+             }, null, true);
         }
         /// <summary>
         /// 通过AssetInfo加载UI对象
@@ -164,7 +164,7 @@ namespace Cosmos.UI
             return resourceManager.LoadPrefabAsync(assetInfo, go =>
             {
                 go.transform.SetParent(UIRoot.transform);
-                (go.transform as RectTransform).ResetLocalTransform();
+                (go.transform as RectTransform).ResetRectTransform();
                 var comp = Utility.Unity.Add<T>(go);
                 loadDoneCallback?.Invoke(comp);
                 uiDict.TryAdd(comp.UIFormName, comp);
@@ -190,8 +190,8 @@ namespace Cosmos.UI
             return resourceManager.LoadPrefabAsync(type, go =>
              {
                  go.transform.SetParent(UIRoot.transform);
-                 (go.transform as RectTransform).ResetLocalTransform();
-                 var comp = Utility.Unity.Add(type, go,true) as UIFormBase;
+                 //(go.transform as RectTransform).ResetLocalTransform();
+                 var comp = Utility.Unity.Add(type, go, true) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
                  uiDict.TryAdd(comp.UIFormName, comp);
              }, null, true);
@@ -288,6 +288,7 @@ namespace Cosmos.UI
         {
             if (uiForm == null)
                 return;
+            uiDict.TryRemove(uiForm.UIFormName,out _ );
             uiFormHelper?.DestroyUIForm(uiForm);
         }
         /// <summary>

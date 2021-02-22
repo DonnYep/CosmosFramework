@@ -17,7 +17,7 @@ namespace Cosmos.UI
         /// <summary>
         /// 是否自动注册获取当前节点下的UIBehaviour对象
         /// </summary>
-        protected bool autoGetChildUIForm = true;
+        protected bool autoGetUIComponents = true;
         public virtual string UIFormName { get { return gameObject.name; } }
         /// <summary>
         /// 被开启；
@@ -103,7 +103,7 @@ namespace Cosmos.UI
         {
             uiDict = new Dictionary<string, List<UIBehaviour>>();
             uiManager = GameManager.GetModule<IUIManager>();
-            if (autoGetChildUIForm)
+            if (autoGetUIComponents)
             {
                 GetUIComponents<Button>();
                 GetUIComponents<Text>();
@@ -112,13 +112,11 @@ namespace Cosmos.UI
                 GetUIComponents<Image>();
                 GetUIComponents<InputField>();
             }
-            uiManager.RegisterUIForm(this);
             OnInitialization();
         }
         void OnDestroy()
         {
             OnTermination();
-            uiManager?.DeregisterUIForm(this);
             uiDict?.Clear();
         }
     }
