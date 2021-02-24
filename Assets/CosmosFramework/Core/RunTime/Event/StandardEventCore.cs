@@ -14,26 +14,27 @@ namespace Cosmos
     /// EventManager为全局事件，当前此类事件可以是区域事件；
     /// </summary>
     /// <typeparam name="TKey">key的类型</typeparam>
-    /// <typeparam name="TValue">value的类型</typeparam>
+    /// <typeparam name="TValueA">valueA的类型</typeparam>
+    /// <typeparam name="TValueB">valueB的类型</typeparam>
     /// <typeparam name="TDerived">派生类的类型</typeparam>
-    public class StandardEventCore<TKey, TValue, TDerived> : Singleton<TDerived>
-            where TDerived : StandardEventCore<TKey, TValue, TDerived>, new()
-    where TValue : class
+    public class StandardEventCore<TKey, TValueA, TValueB, TDerived> : Singleton<TDerived>
+            where TDerived : StandardEventCore<TKey, TValueA, TValueB, TDerived>, new()
+    where TValueB : class
     {
-        protected Dictionary<TKey, List<EventHandler<TValue>>> eventDict = new Dictionary<TKey, List<EventHandler<TValue>>>();
+        protected Dictionary<TKey, List<Action<TValueA,TValueB>>> eventDict = new Dictionary<TKey, List<Action<TValueA,TValueB>>>();
         #region Sync
-        public virtual void AddEventListener(TKey key, EventHandler<TValue> handler)
+        public virtual void AddEventListener(TKey key, Action<TValueA, TValueB> handler)
         {
             if (eventDict.ContainsKey(key))
                 eventDict[key].Add(handler);
             else
             {
-                List<EventHandler<TValue>> handlerSet = new List<EventHandler<TValue>>();
+                List<Action<TValueA, TValueB>> handlerSet = new List<Action<TValueA, TValueB>>();
                 handlerSet.Add(handler);
                 eventDict.Add(key, handlerSet);
             }
         }
-        public virtual void RemoveEventListener(TKey key, EventHandler<TValue> handler)
+        public virtual void RemoveEventListener(TKey key, Action<TValueA, TValueB> handler)
         {
             if (eventDict.ContainsKey(key))
             {
@@ -47,7 +48,7 @@ namespace Cosmos
         {
             return eventDict.ContainsKey(key);
         }
-        public void Dispatch(TKey key, object sender, TValue value)
+        public void Dispatch(TKey key, TValueA valueA, TValueB valueB)
         {
             if (eventDict.ContainsKey(key))
             {
@@ -55,17 +56,17 @@ namespace Cosmos
                 int length = handlerSet.Count;
                 for (int i = 0; i < length; i++)
                 {
-                    handlerSet[i]?.Invoke(sender, value);
+                    handlerSet[i]?.Invoke(valueA, valueB);
                 }
             }
         }
-        public void Dispatch(TKey key, object sender)
+        public void Dispatch(TKey key, TValueA valueA)
         {
-            Dispatch(key, sender, null);
+            Dispatch(key, valueA, null);
         }
         #endregion
         #region Async
-        public async virtual Task AddEventListenerAsync(TKey key, EventHandler<TValue> handler)
+        public async virtual Task AddEventListenerAsync(TKey key, Action<TValueA, TValueB> handler)
         {
             await Task.Run(() =>
             {
@@ -73,13 +74,13 @@ namespace Cosmos
                     eventDict[key].Add(handler);
                 else
                 {
-                    List<EventHandler<TValue>> handlerSet = new List<EventHandler<TValue>>();
+                    List<Action<TValueA, TValueB>> handlerSet = new List<Action<TValueA, TValueB>>();
                     handlerSet.Add(handler);
                     eventDict.Add(key, handlerSet);
                 }
             });
         }
-        public async virtual Task RemoveEventListenerAsyncc(TKey key, EventHandler<TValue> handler)
+        public async virtual Task RemoveEventListenerAsyncc(TKey key, Action<TValueA, TValueB> handler)
         {
             await Task.Run(() =>
             {
@@ -96,7 +97,7 @@ namespace Cosmos
         {
             return await Task.Run<bool>(() => { return eventDict.ContainsKey(key); });
         }
-        public async Task DispatchAsync(TKey key, object sender, TValue value)
+        public async Task DispatchAsync(TKey key, TValueA valueA, TValueB valueB)
         {
             await Task.Run(() =>
             {
@@ -106,14 +107,14 @@ namespace Cosmos
                     int length = handlerSet.Count;
                     for (int i = 0; i < length; i++)
                     {
-                        handlerSet[i]?.Invoke(sender, value);
+                        handlerSet[i]?.Invoke(valueA, valueB);
                     }
                 }
             });
         }
-        public async Task DispatchAsync(TKey key, object sender)
+        public async Task DispatchAsync(TKey key, TValueA valueA)
         {
-            await DispatchAsync(key, sender, null);
+            await DispatchAsync(key, valueA, null);
         }
         #endregion
     }
