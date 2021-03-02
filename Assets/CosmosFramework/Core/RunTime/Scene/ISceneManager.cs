@@ -10,53 +10,198 @@ namespace Cosmos
 {
     public interface ISceneManager:IModuleManager
     {
-        void LoadScene(string sceneName, Action loadedCallBack = null);
         /// <summary>
-        /// 同步加载 
+        /// 同步加载场景
         /// </summary>
-        void LoadScene(string sceneName, bool additive, Action loadedCallBack = null);
+        /// <param name="sceneName">场景名</param>
+        /// <param name="additive">是否叠加模式</param>
+        void LoadScene(string sceneName, bool additive = false);
         /// <summary>
-        /// 同步加载 
+        /// 同步加载场景
         /// </summary>
-        void LoadScene(int sceneIndex, Action loadedCallBack = null);
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="additive">是否叠加模式</param>
+        void LoadScene(int sceneIndex, bool additive = false);
         /// <summary>
-        /// 同步加载 
+        /// 异步卸载；
         /// </summary>
-        void LoadScene(int sceneIndex, bool additive, Action loadedCallBack = null);
-        Coroutine UnLoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallBack, Action unLoadedCallBack = null);
-        Coroutine UnLoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallBack, Action unLoadedCallBack = null);
-        Coroutine UnLoadSceneAsync(string sceneName, Action<float> progressCallBack, Action unLoadedCallBack = null);
-        Coroutine UnLoadSceneAsync(int sceneIndex, Action<float> progressCallBack, Action unLoadedCallBack = null);
-        Coroutine UnLoadSceneAsync(string sceneName, Action unLoadedCallBack = null);
-        Coroutine UnLoadSceneAsync(int sceneIndex, Action unLoadedCallBack = null);
-        Coroutine LoadSceneAsync(string sceneName, Action loadedCallBack = null);
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="progressCallback">卸载场景的进度</param>
+        /// <param name="unLoadedCallback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine UnLoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallback, Action unLoadedCallback = null);
         /// <summary>
-        /// 异步加载场景；
+        /// 异步卸载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="progressCallback">卸载场景的进度</param>
+        /// <param name="unLoadedCallback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine UnLoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallback, Action unLoadedCallback = null);
+        /// <summary>
+        /// 异步卸载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="progressCallback">卸载场景的进度</param>
+        /// <param name="unLoadedCallback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine UnLoadSceneAsync(string sceneName, Action<float> progressCallback, Action unLoadedCallback = null);
+        /// <summary>
+        /// 异步卸载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="progressCallback">卸载场景的进度</param>
+        /// <param name="unLoadedCallback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine UnLoadSceneAsync(int sceneIndex, Action<float> progressCallback, Action unLoadedCallback = null);
+        /// <summary>
+        /// 异步卸载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="unLoadedCallback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine UnLoadSceneAsync(string sceneName, Action unLoadedCallback = null);
+        /// <summary>
+        /// 异步卸载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="unLoadedCallback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine UnLoadSceneAsync(int sceneIndex, Action unLoadedCallback = null);
+        /// <summary>
+        ///  异步加载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="loadedCallback">加载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, Action loadedCallback = null);
+        /// <summary>
+        ///  异步加载；
         /// </summary>
         /// <param name="sceneName">场景名</param>
         /// <param name="additive">是否叠加场景</param>
-        /// <param name="loadedCallBack">加载完毕后的回调</param>
-        Coroutine LoadSceneAsync(string sceneName, bool additive, Action loadedCallBack = null);
+        /// <param name="loadedCallback">加载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, bool additive, Action loadedCallback = null);
         /// <summary>
-        /// 异步加载场景；
+        ///  异步加载；
         /// </summary>
         /// <param name="sceneName">场景名</param>
-        /// <param name="progressCallBack">加载场景进度回调</param>
-        /// <param name="loadedCallBack">场景加载完毕回调</param>
-        Coroutine LoadSceneAsync(string sceneName, Action<float> progressCallBack, Action loadedCallBack = null);
-        Coroutine LoadSceneAsync(string sceneName, bool additive, Action<float> progressCallBack, Action loadedCallBack = null);
-        Coroutine LoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallBack, Action loadedCallBack = null);
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, Action<float> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        ///  异步加载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, bool additive, Action<float> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        ///  异步加载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        ///  异步加载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
         Coroutine LoadSceneAsync(string sceneName, bool additive, Action<AsyncOperation> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        ///  异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
         Coroutine LoadSceneAsync(int sceneIndex, Action loadedCallback = null);
+        /// <summary>
+        ///  异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
         Coroutine LoadSceneAsync(int sceneIndex, bool additive, Action<float> progressCallback, Action loadedCallback = null);
         /// <summary>
-        /// 异步加载 index
+        /// 异步加载；
         /// </summary>
-        /// <param name="sceneIndex"></param>
-        /// <param name="progressCallback"></param>
-        Coroutine LoadSceneAsync(int sceneIndex, Action<float> progressCallback, Action loadDoneCallBack = null);
-        Coroutine LoadSceneAsync(int sceneIndex, bool additive, Action loadedCallBack = null);
-        Coroutine LoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallback, Action loadedCallBack = null);
-        Coroutine LoadSceneAsync(int sceneIndex, bool additive, Action<AsyncOperation> progressCallBack, Action loadedCallBack = null);
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(int sceneIndex, Action<float> progressCallback, Action loadDoneCallback = null);
+        /// <summary>
+        ///  异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(int sceneIndex, bool additive, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(int sceneIndex, bool additive, Action<AsyncOperation> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action loadedCallback = null);
     }
 }
