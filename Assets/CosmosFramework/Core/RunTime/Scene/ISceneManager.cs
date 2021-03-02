@@ -138,6 +138,7 @@ namespace Cosmos
         /// </summary>
         /// <param name="sceneIndex">场景序号</param>
         /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadDoneCallback">场景加载完毕回调</param>
         /// <returns>协程对象</returns>
         Coroutine LoadSceneAsync(int sceneIndex, Action<float> progressCallback, Action loadDoneCallback = null);
         /// <summary>
@@ -179,6 +180,15 @@ namespace Cosmos
         /// 异步加载；
         /// </summary>
         /// <param name="sceneName">场景名</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
         /// <param name="additive">是否叠加模式</param>
         /// <param name="customYield">自定义的yield</param>
         /// <param name="loadedCallback">场景加载完毕回调</param>
@@ -206,6 +216,15 @@ namespace Cosmos
         /// 异步加载；
         /// </summary>
         /// <param name="sceneIndex">场景序号</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(int sceneIndex, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
         /// <param name="additive">是否叠加模式</param>
         /// <param name="customYield">自定义的yield</param>
         /// <param name="loadedCallback">场景加载完毕回调</param>
@@ -218,7 +237,44 @@ namespace Cosmos
         /// <param name="customYield">自定义的yield</param>
         /// <param name="loadedCallback">场景加载完毕回调</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadSceneAsync(int sceneIndex, CustomYieldInstruction customYield, Action loadedCallBack = null);
-
+        Coroutine LoadSceneAsync(int sceneIndex, CustomYieldInstruction customYield, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="additive">是否叠加模式</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(int sceneIndex, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null);
     }
 }

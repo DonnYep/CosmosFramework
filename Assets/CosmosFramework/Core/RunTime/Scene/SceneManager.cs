@@ -125,27 +125,51 @@ namespace Cosmos.Scene
         }
         public Coroutine LoadSceneAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneAsync(sceneName, additive, customYield, progressCallback, loadedCallback));
+            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, additive, customYield, progressCallback, loadedCallback));
+        }
+        public Coroutine LoadSceneAsync(string sceneName, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
+        {
+            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, false, customYield, progressCallback, loadedCallback));
         }
         public Coroutine LoadSceneAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action loadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneAsync(sceneName, additive, customYield, null, loadedCallback));
+            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, additive, customYield, null, loadedCallback));
         }
         public Coroutine LoadSceneAsync(string sceneName,  CustomYieldInstruction customYield, Action loadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneAsync(sceneName, false, customYield, null, loadedCallback));
+            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, false, customYield, null, loadedCallback));
         }
         public Coroutine LoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneAsync(sceneIndex, additive, customYield, progressCallback, loadedCallback));
+            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, additive, customYield, progressCallback, loadedCallback));
+        }
+        public Coroutine LoadSceneAsync(int sceneIndex, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
+        {
+            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, false, customYield, progressCallback, loadedCallback));
         }
         public Coroutine LoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action loadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneAsync(sceneIndex, additive, customYield, null, loadedCallback));
+            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, additive, customYield, null, loadedCallback));
         }
         public Coroutine LoadSceneAsync(int sceneIndex,  CustomYieldInstruction customYield, Action loadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneAsync(sceneIndex, false, customYield, null, loadedCallback));
+            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, false, customYield, null, loadedCallback));
+        }
+        public Coroutine LoadSceneAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
+        {
+            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneName, additive, customYield, progressCallback, loadedCallback));
+        }
+        public Coroutine LoadSceneAsync(string sceneName, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
+        {
+            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneName, false, customYield, progressCallback, loadedCallback));
+        }
+        public Coroutine LoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
+        {
+            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneIndex, additive, customYield, progressCallback, loadedCallback));
+        }
+        public Coroutine LoadSceneAsync(int sceneIndex, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
+        {
+            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneIndex, false, customYield, progressCallback, loadedCallback));
         }
         IEnumerator EnumLoadSceneProgressAsync(string sceneName, bool additive, Action<float> progressCallback, Action loadedCallback = null)
         {
@@ -255,7 +279,7 @@ namespace Cosmos.Scene
             yield return ao.isDone;
             unLoadedCallback?.Invoke();
         }
-        IEnumerator EnumLoadSceneAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
+        IEnumerator EnumLoadSceneProgressAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
         {
             AsyncOperation ao;
             if (additive)
@@ -271,7 +295,7 @@ namespace Cosmos.Scene
             yield return customYield;
             loadedCallback?.Invoke();
         }
-        IEnumerator EnumLoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
+        IEnumerator EnumLoadSceneProgressAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
         {
             AsyncOperation ao;
             if (additive)
@@ -281,6 +305,38 @@ namespace Cosmos.Scene
             while (!ao.isDone)
             {
                 progressCallback?.Invoke(ao.progress);
+                yield return new WaitForEndOfFrame();
+            }
+            yield return ao.isDone;
+            yield return customYield;
+            loadedCallback?.Invoke();
+        }
+        IEnumerator EnumLoadSceneOperationAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
+        {
+            AsyncOperation ao;
+            if (additive)
+                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            else
+                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
+            while (!ao.isDone)
+            {
+                progressCallback?.Invoke(ao);
+                yield return new WaitForEndOfFrame();
+            }
+            yield return ao.isDone;
+            yield return customYield;
+            loadedCallback?.Invoke();
+        }
+        IEnumerator EnumLoadSceneOperationAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
+        {
+            AsyncOperation ao;
+            if (additive)
+                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
+            else
+                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
+            while (!ao.isDone)
+            {
+                progressCallback?.Invoke(ao);
                 yield return new WaitForEndOfFrame();
             }
             yield return ao.isDone;

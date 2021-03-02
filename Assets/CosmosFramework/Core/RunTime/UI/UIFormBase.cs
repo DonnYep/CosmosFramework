@@ -9,6 +9,24 @@ namespace Cosmos.UI
 {
     public abstract class UIFormBase : MonoBehaviour
     {
+        /// <summary>
+        /// 设置 UIForm层级顺序 ；
+        /// 默认优先级为100，取值区间为[0,10000]；
+        /// </summary>
+        public int Priority
+        {
+            get { return priority; }
+            set
+            {
+                if (value > 10000)
+                    priority = 10000;
+                else if (value < 0)
+                    priority = 0;
+                var peerComps = Utility.Unity.PeersComponet<UIFormBase>(transform);
+                Utility.Unity.SortCompsByAscending(peerComps, (comp) => comp.Priority);
+            }
+        }
+        protected int priority = 100;
         protected IUIManager uiManager;
         /// <summary>
         /// UI的映射表，名字作为主键，具有一个list容器

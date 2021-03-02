@@ -234,7 +234,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="go">同级别当前对象</param>
             /// <param name="subNode">同级别目标对象名称</param>
-            /// <returns></returns>
+            /// <returns>查找到的目标对象</returns>
             public static GameObject Peer(Transform go, string subNode)
             {
                 Transform tran = go.parent.Find(subNode);
@@ -242,6 +242,97 @@ namespace Cosmos
                     return tran.gameObject;
                 else
                     return null;
+            }
+            /// <summary>
+            /// 查找同级别其他对象；
+            /// 略耗性能；
+            /// </summary>
+            /// <param name="go">同级别当前对象</param>
+            /// <returns>当前级别下除此对象的其他同级的对象</returns>
+            public static GameObject[] Peers(Transform go)
+            {
+                Transform parentTrans = go.parent;
+                var childTrans = parentTrans.GetComponentsInChildren<Transform>();
+                var length = childTrans.Length;
+                List<GameObject> peersGo = new List<GameObject>();
+                if (length > 0)
+                {
+                    for (int i = 0; i < length; i++)
+                    {
+                        if (childTrans[i].parent == parentTrans && childTrans[i] != go)
+                        {
+                            peersGo.Add(childTrans[i].gameObject);
+                        }
+                    }
+                }
+                return peersGo.Count > 0 ? peersGo.ToArray() : null;
+            }
+            /// <summary>
+            /// 查找同级别下所有目标组件；
+            /// 略耗性能；
+            /// </summary>
+            /// <typeparam name="T">目标组件</typeparam>
+            /// <param name="go">同级别当前对象</param>
+            /// <returns>当前级别下除此对象的其他同级的对象组件</returns>
+            public static T[] PeersComponet<T>(Transform go) where T : Component
+            {
+                Transform parentTrans = go.parent;
+                var childTrans = parentTrans.GetComponentsInChildren<Transform>();
+                var length = childTrans.Length;
+                List<T> peerComps = new List<T>();
+                if (length > 0)
+                {
+                    for (int i = 0; i < length; i++)
+                    {
+                        if (childTrans[i].parent == parentTrans && childTrans[i] != go)
+                        {
+                            var comps = childTrans[i].GetComponents<T>();
+                            if (comps != null)
+                                peerComps.AddRange(comps);
+                        }
+                    }
+                }
+                return peerComps.Count > 0 ? peerComps.ToArray() : null;
+            }
+            /// <summary>
+            /// 对unity对象进行升序排序
+            /// </summary>
+            /// <typeparam name="T">组件类型</typeparam>
+            /// <typeparam name="K">排序的值</typeparam>
+            /// <param name="comps">传入的组件数组</param>
+            /// <param name="handler">处理的方法</param>
+            public static void SortCompsByAscending<T,K>(T [] comps,Func<T,K>handler)
+                where K:IComparable<K>
+                where T:Component
+            {
+                Utility.Algorithm.SortByAscending(comps, handler);
+                var length = comps.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    comps[i].transform.SetSiblingIndex(i);
+                }
+            }
+            /// <summary>
+            /// 对unity对象进行降序排序
+            /// </summary>
+            /// <typeparam name="T">组件类型</typeparam>
+            /// <typeparam name="K">排序的值</typeparam>
+            /// <param name="comps">传入的组件数组</param>
+            /// <param name="handler">处理的方法</param>
+            public static void SortCompsByDescending<T, K>(T[] comps, Func<T, K> handler)
+        where K : IComparable<K>
+        where T : Component
+            {
+                Utility.Algorithm.SortByDescending(comps, handler);
+                var length = comps.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    comps[i].transform.SetSiblingIndex(i);
+                }
+            }
+            public static GameObject[] Peers(GameObject go)
+            {
+                return Peers(go.transform);
             }
             /// <summary>
             /// 查找同级别

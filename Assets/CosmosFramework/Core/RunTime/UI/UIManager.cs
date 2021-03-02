@@ -15,11 +15,13 @@ namespace Cosmos.UI
         Type uiFromBaseType = typeof(UIFormBase);
         IUIFormHelper uiFormHelper;
         IResourceManager resourceManager;
+        List<UIFormBase> peerFormCache;
         #endregion
         #region Methods
         public override void OnInitialization()
         {
             uiDict = new Dictionary<string, UIFormBase>();
+            peerFormCache = new List<UIFormBase>();
         }
         public override void OnPreparatory()
         {
@@ -123,6 +125,7 @@ namespace Cosmos.UI
                  var comp = Utility.Unity.Add<T>(panel);
                  callback?.Invoke(comp);
                  uiDict.TryAdd(comp.UIFormName, comp);
+                 SortUIForm(comp);
              }, null, true);
         }
         /// <summary>
@@ -145,6 +148,7 @@ namespace Cosmos.UI
                  var comp = Utility.Unity.Add(uiType, go) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
                  uiDict.TryAdd(comp.UIFormName, comp);
+                 SortUIForm(comp);
              }, null, true);
         }
         /// <summary>
@@ -168,6 +172,7 @@ namespace Cosmos.UI
                 var comp = Utility.Unity.Add<T>(go);
                 loadDoneCallback?.Invoke(comp);
                 uiDict.TryAdd(comp.UIFormName, comp);
+                SortUIForm(comp);
             }, null, true);
         }
         /// <summary>
@@ -190,10 +195,11 @@ namespace Cosmos.UI
             return resourceManager.LoadPrefabAsync(type, go =>
              {
                  go.transform.SetParent(UIRoot.transform);
-                 //(go.transform as RectTransform).ResetLocalTransform();
+                 (go.transform as RectTransform).ResetRectTransform();
                  var comp = Utility.Unity.Add(type, go, true) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
                  uiDict.TryAdd(comp.UIFormName, comp);
+                 SortUIForm(comp);
              }, null, true);
         }
         /// <summary>
@@ -288,7 +294,7 @@ namespace Cosmos.UI
         {
             if (uiForm == null)
                 return;
-            uiDict.TryRemove(uiForm.UIFormName,out _ );
+            uiDict.TryRemove(uiForm.UIFormName, out _);
             uiFormHelper?.DestroyUIForm(uiForm);
         }
         /// <summary>
@@ -348,6 +354,22 @@ namespace Cosmos.UI
             {
                 RemoveUIForm(uiForm.UIFormName);
             }
+        }
+        void SortUIForm(UIFormBase uiForm)
+        {
+            return;
+            peerFormCache.Clear();
+            var peers = Utility.Unity.Peers(uiForm.transform);
+            var length = peers.Length;
+            for (int i = 0; i < length; i++)
+            {
+                if (uiDict.TryGetValue(peers[i].name, out var uiFormComp))
+                {
+                    peerFormCache.Add(uiFormComp);
+                }
+            }
+            if (peerFormCache.Count > 0)
+                Utility.Unity.SortCompsByAscending(peerFormCache.ToArray(), (form) => form.Priority);
         }
         #endregion
     }
