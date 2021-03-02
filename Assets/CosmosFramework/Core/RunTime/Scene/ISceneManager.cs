@@ -187,6 +187,14 @@ namespace Cosmos
         /// <summary>
         /// 异步加载；
         /// </summary>
+        /// <param name="sceneName">场景名</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(string sceneName, CustomYieldInstruction customYield, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
         /// <param name="sceneIndex">场景序号</param>
         /// <param name="additive">是否叠加模式</param>
         /// <param name="customYield">自定义的yield</param>
@@ -203,5 +211,14 @@ namespace Cosmos
         /// <param name="loadedCallback">场景加载完毕回调</param>
         /// <returns>协程对象</returns>
         Coroutine LoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action loadedCallback = null);
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneIndex">场景序号</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadSceneAsync(int sceneIndex, CustomYieldInstruction customYield, Action loadedCallBack = null);
+
     }
 }
