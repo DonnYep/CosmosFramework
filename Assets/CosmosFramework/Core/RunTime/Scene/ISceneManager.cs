@@ -35,7 +35,7 @@ namespace Cosmos
         /// 异步加载；
         /// </summary>
         /// <param name="sceneInfo">场景信息</param>
-        /// <param name="customYield">自定义的yield</param>
+        /// <param name="loadedPredicate">场景加载完成的条件</param>
         /// <param name="loadedCallback">场景加载完毕回调</param>
         /// <returns>协程对象</returns>
         Coroutine LoadSceneAsync(SceneInfo sceneInfo, Func<bool> loadedPredicate, Action loadedCallback = null);
@@ -43,7 +43,7 @@ namespace Cosmos
         /// 异步加载；
         /// </summary>
         /// <param name="sceneInfo">场景信息</param>
-        /// <param name="customYield">自定义的yield</param>
+        /// <param name="loadedPredicate">场景加载完成的条件</param>
         /// <param name="progressCallback">加载场景进度回调</param>
         /// <param name="loadedCallback">场景加载完毕回调</param>
         /// <returns>协程对象</returns>
