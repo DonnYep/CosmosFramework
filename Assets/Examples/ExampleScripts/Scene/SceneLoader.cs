@@ -25,18 +25,13 @@ public class SceneLoader : UIResidentForm
     void LoadClick()
     {
         LevelLoadInfo.TargetLevel = inputTargetLevel.text;
-        if (Utility.Text.IsNumeric(inputTargetLevel.text))
+        sceneManager.LoadSceneAsync(new SceneInfo(inputTargetLevel.text), () =>
         {
-            int index = int.Parse(inputTargetLevel.text);
-            sceneManager.LoadSceneAsync(index, () => Utility.Debug.LogInfo("Scene load Done"));
-        }
-        else
-            sceneManager.LoadSceneAsync(inputTargetLevel.text,()=>{
-                Utility.Debug.LogInfo ("LoadDoneCallBack Done");
-                GameObject go = new GameObject("Done Go");
-            });
+            Utility.Debug.LogInfo("LoadDoneCallBack Done");
+            GameObject go = new GameObject("Done Go");
+        });
     }
-    void LoadDoneCallBack(Scene scene,LoadSceneMode loadMode)
+    void LoadDoneCallBack(Scene scene, LoadSceneMode loadMode)
     {
         Utility.Debug.LogInfo("LoadDoneCallBack Done");
         GameObject go = new GameObject("Done Go");

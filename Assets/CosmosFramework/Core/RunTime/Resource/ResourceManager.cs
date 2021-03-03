@@ -327,7 +327,7 @@ namespace Cosmos.Resource
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadSceneAsync(SceneInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
         {
             return monoManager.StartCoroutine(EnumLoadSceneAsync(info, loadDoneCallback, loadingCallback));
         }
@@ -606,10 +606,9 @@ namespace Cosmos.Resource
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
-        IEnumerator EnumLoadSceneAsync(SceneInfo info, Action loadDoneCallback, Action<float> loadingCallback)
+        IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback)
         {
             DateTime beginTime = DateTime.Now;
-
             if (_isLoading)
             {
                 yield return _loadWait;

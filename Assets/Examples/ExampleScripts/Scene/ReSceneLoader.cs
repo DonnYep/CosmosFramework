@@ -24,14 +24,7 @@ public class ReSceneLoader : UIResidentForm
     void LoadClick()
     {
         LevelLoadInfo.TargetLevel = inputTargetLevel.text;
-        if (Utility.Text.IsNumeric(inputTargetLevel.text))
-        {
-            int index = int.Parse(inputTargetLevel.text);
-            sceneManager.LoadSceneAsync(index, () => Utility.Debug.LogInfo("Scene load Done"));
-        }
-        else
-            sceneManager.LoadSceneAsync(inputTargetLevel.text, () => Utility.Debug.LogInfo("Scene load Done"));
-        //Facade.LoadSceneAsync(inputTargetLevel.text, LoadDoneCallBack);
+        sceneManager.LoadSceneAsync(new SceneInfo(inputTargetLevel.text), () => Utility.Debug.LogInfo("Scene load Done"));
     }
     void LoadDoneCallBack(Scene scene,LoadSceneMode loadMode)
     {

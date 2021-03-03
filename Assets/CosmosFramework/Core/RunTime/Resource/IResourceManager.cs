@@ -134,7 +134,7 @@ namespace Cosmos
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
-        Coroutine LoadSceneAsync(SceneInfo info, Action loadDoneCallback, Action<float> loadingCallback = null);
+        Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null);
         /// <summary>
         /// 卸载资源（卸载AssetBundle）
         /// </summary>

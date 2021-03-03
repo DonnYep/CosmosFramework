@@ -11,6 +11,7 @@ namespace Cosmos.Test {
         {
             CosmosEntry.LaunchHelpers();
             CosmosEntry.LaunchModules();
+            CosmosEntry.SceneManager.SetHelper(new DefaultSceneHelper());
         }
         private void Start()
         {

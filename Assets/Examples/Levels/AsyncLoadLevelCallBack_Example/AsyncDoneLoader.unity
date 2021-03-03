@@ -266,7 +266,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: TargetLevelNameOrIndex
+  m_Text: "\u52A0\u8F7D\u7684\u76EE\u6807\u573A\u666F"
 --- !u!222 &501511088
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -299,9 +299,9 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 698183370}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bf6ecfc17afc1f48a6049b78f34cef6, type: 3}
+  m_Script: {fileID: 11500000, guid: e84a381cf54cbff4d909f36c2335a555, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &698183372

@@ -5,7 +5,7 @@ using Cosmos.Event;
 using Object = UnityEngine.Object;
 namespace Cosmos.ObjectPool
 {
-    internal sealed class ObjectPool : IObjectPool
+    internal sealed class ObjectPool :  IObjectPool
     {
         public int ExpireTime
         {
@@ -108,7 +108,7 @@ namespace Cosmos.ObjectPool
                 objectQueue.Enqueue(go);//只有回收的时候会被加入列表
             }
         }
-        public void ClearPool()
+        public  void ClearPool()
         {
             while (objectQueue.Count > 0)
             {

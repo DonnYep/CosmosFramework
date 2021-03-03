@@ -10,338 +10,127 @@ namespace Cosmos.Scene
     [Module]
     internal sealed class SceneManager : Module, ISceneManager
     {
+        ISceneHelper sceneHelper;
         IMonoManager monoManager;
         public override void OnPreparatory()
         {
             monoManager = GameManager.GetModule<IMonoManager>();
         }
-        /// <summary>
-        /// 同步加载场景
-        /// </summary>
-        /// <param name="sceneName">场景名</param>
-        /// <param name="additive">是否叠加模式</param>
-        public void LoadScene(string sceneName, bool additive = false)
+        public void SetHelper(ISceneHelper sceneHelper)
         {
-            if (additive)
-                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-            else
-                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+            this.sceneHelper = sceneHelper;
         }
         /// <summary>
         /// 同步加载场景
         /// </summary>
-        /// <param name="sceneIndex">场景序号</param>
-        /// <param name="additive">是否叠加模式</param>
-        public void LoadScene(int sceneIndex, bool additive = false)
+        /// <param name="sceneInfo">场景信息</param>
+        public void LoadScene(SceneInfo sceneInfo)
         {
-            if (additive)
-                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex, LoadSceneMode.Additive);
-            else
-                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex, LoadSceneMode.Additive);
-        }
-        public Coroutine UnLoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallback, Action unLoadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumUnLoadSceneOperationAsync(sceneIndex, progressCallback, unLoadedCallback));
-        }
-        public Coroutine UnLoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallback, Action unLoadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumUnLoadSceneOperationAsync(sceneName, progressCallback, unLoadedCallback));
-        }
-        public Coroutine UnLoadSceneAsync(string sceneName, Action<float> progressCallback, Action unLoadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumUnLoadSceneProgressAsync(sceneName, progressCallback, unLoadedCallback));
-        }
-        public Coroutine UnLoadSceneAsync(int sceneIndex, Action<float> progressCallback, Action unLoadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumUnLoadSceneProgressAsync(sceneIndex, progressCallback, unLoadedCallback));
-        }
-        public Coroutine UnLoadSceneAsync(string sceneName, Action unLoadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumUnLoadSceneProgressAsync(sceneName, null, unLoadedCallback));
-        }
-        public Coroutine UnLoadSceneAsync(int sceneIndex, Action unLoadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumUnLoadSceneProgressAsync(sceneIndex, null, unLoadedCallback));
-        }
-        public Coroutine LoadSceneAsync(string sceneName, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, false, null, loadedCallback));
+            sceneHelper.LoadScene(sceneInfo);
         }
         /// <summary>
-        /// 异步加载场景；
+        ///  异步加载；
         /// </summary>
-        /// <param name="sceneName">场景名</param>
-        /// <param name="additive">是否叠加场景</param>
+        /// <param name="sceneInfo">场景信息</param>
         /// <param name="loadedCallback">加载完毕后的回调</param>
-        public Coroutine LoadSceneAsync(string sceneName, bool additive, Action loadedCallback = null)
+        /// <returns>协程对象</returns>
+        public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Action loadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, additive, null, loadedCallback));
+            if (sceneHelper == null)
+                throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
+            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, null, loadedCallback));
         }
         /// <summary>
-        /// 异步加载场景；
+        ///  异步加载；
         /// </summary>
-        /// <param name="sceneName">场景名</param>
+        /// <param name="sceneInfo">场景信息</param>
         /// <param name="progressCallback">加载场景进度回调</param>
         /// <param name="loadedCallback">场景加载完毕回调</param>
-        public Coroutine LoadSceneAsync(string sceneName, Action<float> progressCallback, Action loadedCallback = null)
+        /// <returns>协程对象</returns>
+        public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Action<float> progressCallback, Action loadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, false, progressCallback, loadedCallback));
+            if (sceneHelper == null)
+                throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
+            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, progressCallback, loadedCallback));
         }
-        public Coroutine LoadSceneAsync(string sceneName, bool additive, Action<float> progressCallback, Action loadedCallback = null)
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneInfo">场景信息</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Func<bool> loadedPredicate, Action loadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, additive, progressCallback, loadedCallback));
+            if (sceneHelper == null)
+                throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
+            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, null, loadedPredicate, loadedCallback));
         }
-        public Coroutine LoadSceneAsync(string sceneName, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
+        /// <summary>
+        /// 异步加载；
+        /// </summary>
+        /// <param name="sceneInfo">场景信息</param>
+        /// <param name="customYield">自定义的yield</param>
+        /// <param name="progressCallback">加载场景进度回调</param>
+        /// <param name="loadedCallback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Action<float> progressCallback, Func<bool> loadedPredicate, Action loadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneName, false, progressCallback, loadedCallback));
+            if (sceneHelper == null)
+                throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
+            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, progressCallback, loadedPredicate, loadedCallback));
         }
-        public Coroutine LoadSceneAsync(string sceneName, bool additive, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
+        /// <summary>
+        /// 异步卸载；
+        /// </summary>
+        /// <param name="sceneInfo">场景信息</param>
+        /// <param name="progressCallback">卸载场景的进度</param>
+        /// <param name="unLoadedPredicate">卸载场景完成的条件</param>
+        /// <param name="unLoadedCallback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine UnLoadSceneAsync(SceneInfo sceneInfo, Action<float> progressCallback, Func<bool> unLoadedPredicate, Action unLoadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneName, additive, progressCallback, loadedCallback));
+            if (sceneHelper == null)
+                throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
+            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, progressCallback, unLoadedPredicate, unLoadedCallback));
         }
-        public Coroutine LoadSceneAsync(int sceneIndex, Action loadedCallback = null)
+        /// <summary>
+        /// 异步卸载；
+        /// </summary>
+        /// <param name="sceneInfo">场景信息</param>
+        /// <param name="progressCallback">卸载场景的进度</param>
+        /// <param name="unLoadedCallback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine UnLoadSceneAsync(SceneInfo sceneInfo, Action<float> progressCallback, Action unLoadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, false, null, loadedCallback));
+            if (sceneHelper == null)
+                throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
+            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, progressCallback, unLoadedCallback));
         }
-        public Coroutine LoadSceneAsync(int sceneIndex, bool additive, Action<float> progressCallback, Action loadedCallback = null)
+        /// <summary>
+        ///  异步卸载；
+        /// </summary>
+        /// <param name="sceneInfo">场景信息</param>
+        /// <param name="unLoadedPredicate">卸载场景完成的条件</param>
+        /// <param name="unLoadedCallback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine UnLoadSceneAsync(SceneInfo sceneInfo, Func<bool> unLoadedPredicate, Action unLoadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, additive, progressCallback, loadedCallback));
+            if (sceneHelper == null)
+                throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
+            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, null, unLoadedPredicate, unLoadedCallback));
         }
-        public Coroutine LoadSceneAsync(int sceneIndex, Action<float> progressCallback, Action loadDoneCallback = null)
+        /// <summary>
+        /// 异步卸载；
+        /// </summary>
+        /// <param name="sceneInfo">场景信息</param>
+        /// <param name="unLoadedCallback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine UnLoadSceneAsync(SceneInfo sceneInfo, Action unLoadedCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, false, progressCallback, loadDoneCallback));
-        }
-        public Coroutine LoadSceneAsync(int sceneIndex, bool additive, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, additive, null, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(int sceneIndex, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneIndex, false, progressCallback, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(int sceneIndex, bool additive, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneIndex, additive, progressCallback, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, additive, customYield, progressCallback, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(string sceneName, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, false, customYield, progressCallback, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, additive, customYield, null, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(string sceneName,  CustomYieldInstruction customYield, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneName, false, customYield, null, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, additive, customYield, progressCallback, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(int sceneIndex, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, false, customYield, progressCallback, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, additive, customYield, null, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(int sceneIndex,  CustomYieldInstruction customYield, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneProgressAsync(sceneIndex, false, customYield, null, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneName, additive, customYield, progressCallback, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(string sceneName, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneName, false, customYield, progressCallback, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneIndex, additive, customYield, progressCallback, loadedCallback));
-        }
-        public Coroutine LoadSceneAsync(int sceneIndex, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
-        {
-            return monoManager.StartCoroutine(EnumLoadSceneOperationAsync(sceneIndex, false, customYield, progressCallback, loadedCallback));
-        }
-        IEnumerator EnumLoadSceneProgressAsync(string sceneName, bool additive, Action<float> progressCallback, Action loadedCallback = null)
-        {
-            AsyncOperation ao;
-            if (additive)
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-            else
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao.progress);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            loadedCallback?.Invoke();
-        }
-        IEnumerator EnumLoadSceneOperationAsync(string sceneName, bool additive, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
-        {
-            AsyncOperation ao;
-            if (additive)
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-            else
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            loadedCallback?.Invoke();
-        }
-        IEnumerator EnumLoadSceneProgressAsync(int sceneIndex, bool additive, Action<float> progressCallback, Action loadedCallback = null)
-        {
-            AsyncOperation ao;
-            if (additive)
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
-            else
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao.progress);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            loadedCallback?.Invoke();
-        }
-        IEnumerator EnumLoadSceneOperationAsync(int sceneIndex, bool additive, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
-        {
-            AsyncOperation ao;
-            if (additive)
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
-            else
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            loadedCallback?.Invoke();
-        }
-        IEnumerator EnumUnLoadSceneOperationAsync(int sceneIndex, Action<AsyncOperation> progressCallback, Action unLoadedCallback = null)
-        {
-            AsyncOperation ao;
-            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneIndex);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            unLoadedCallback?.Invoke();
-        }
-        IEnumerator EnumUnLoadSceneOperationAsync(string sceneName, Action<AsyncOperation> progressCallback, Action unLoadedCallback = null)
-        {
-            AsyncOperation ao;
-            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneName);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            unLoadedCallback?.Invoke();
-        }
-        IEnumerator EnumUnLoadSceneProgressAsync(string sceneName, Action<float> progressCallback, Action unLoadedCallback = null)
-        {
-            AsyncOperation ao;
-            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneName);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao.progress);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            unLoadedCallback?.Invoke();
-        }
-        IEnumerator EnumUnLoadSceneProgressAsync(int sceneIndex, Action<float> progressCallback, Action unLoadedCallback = null)
-        {
-            AsyncOperation ao;
-            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneIndex);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao.progress);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            unLoadedCallback?.Invoke();
-        }
-        IEnumerator EnumLoadSceneProgressAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
-        {
-            AsyncOperation ao;
-            if (additive)
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-            else
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao.progress);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            yield return customYield;
-            loadedCallback?.Invoke();
-        }
-        IEnumerator EnumLoadSceneProgressAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<float> progressCallback, Action loadedCallback = null)
-        {
-            AsyncOperation ao;
-            if (additive)
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
-            else
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao.progress);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            yield return customYield;
-            loadedCallback?.Invoke();
-        }
-        IEnumerator EnumLoadSceneOperationAsync(string sceneName, bool additive, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
-        {
-            AsyncOperation ao;
-            if (additive)
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-            else
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            yield return customYield;
-            loadedCallback?.Invoke();
-        }
-        IEnumerator EnumLoadSceneOperationAsync(int sceneIndex, bool additive, CustomYieldInstruction customYield, Action<AsyncOperation> progressCallback, Action loadedCallback = null)
-        {
-            AsyncOperation ao;
-            if (additive)
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
-            else
-                ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
-            while (!ao.isDone)
-            {
-                progressCallback?.Invoke(ao);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return ao.isDone;
-            yield return customYield;
-            loadedCallback?.Invoke();
+            if (sceneHelper == null)
+                throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
+            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, null, unLoadedCallback));
         }
     }
 }

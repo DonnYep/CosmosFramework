@@ -30,12 +30,6 @@ public class LoadPanel : UIResidentForm
     {
         LevelLoadInfo.TargetLevel = inputTargetLevel.text;
         string loadingLevel = inputLoadLevel.text;
-        if (Utility.Text.IsNumeric(loadingLevel))
-        {
-            int index = int.Parse(loadingLevel);
-            sceneManager.LoadSceneAsync(index,()=>Utility.Debug.LogInfo("Scene load Done"));
-        }
-        else
-            sceneManager.LoadSceneAsync(loadingLevel, () => Utility.Debug.LogInfo("Scene load Done"));
+        sceneManager.LoadSceneAsync(new SceneInfo( loadingLevel), () => Utility.Debug.LogInfo("Scene load Done"));
     }
 }
