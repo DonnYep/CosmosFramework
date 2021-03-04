@@ -41,7 +41,10 @@ namespace Cosmos
         public static GameObject EntityMount { get { return GameManager.GetModuleMount<IEntityManager>(); } }
         public static GameObject EventMount { get { return GameManager.GetModuleMount<IEventManager>(); } }
         public static GameObject SceneMount { get { return GameManager.GetModuleMount<ISceneManager>(); } }
-        public static void LaunchHelpers()
+        /// <summary>
+        /// 启动当前AppDomain下的helper
+        /// </summary>
+        public static void LaunchAppDomainHelpers()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             var length = assemblies.Length;
@@ -73,9 +76,44 @@ namespace Cosmos
                 }
             }
         }
-        public static void LaunchModules()
+        /// <summary>
+        /// 启动目标程序集下的helper
+        /// </summary>
+        /// <param name="assembly">查询的目标程序集</param>
+        public static void LaunchAssemblyHelpers(System.Reflection.Assembly assembly)
         {
-            GameManager.PreparatoryModule();
+            var debugHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IDebugHelper>(assembly);
+            if (debugHelper!= null)
+            {
+                Utility.Debug.SetHelper(debugHelper);
+            }
+            var jsonHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IJsonHelper>(assembly);
+            if (jsonHelper!= null)
+            {
+                Utility.Json.SetHelper(jsonHelper);
+            }
+            var mpHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IMessagePackHelper>(assembly);
+            if (mpHelper != null)
+            {
+                Utility.MessagePack.SetHelper(mpHelper);
+            }
+        }
+        /// <summary>
+        /// 初始化当前AppDomain下的Module；
+        /// 注意：初始化尽量只执行一次！！！
+        /// </summary>
+        public static void LaunchAppDomainModules()
+        {
+            GameManager.InitAppDomainModule();
+        }
+        /// <summary>
+        /// 初始化目标程序集下的Module；
+        /// 注意：初始化尽量只执行一次！！！
+        /// </summary>
+        /// <param name="assemblies">查询的目标程序集</param>
+        public static void LaunchAssemblyModules(params System.Reflection .Assembly[]  assemblies)
+        {
+            GameManager.InitAssemblyModule(assemblies);
         }
     }
 }

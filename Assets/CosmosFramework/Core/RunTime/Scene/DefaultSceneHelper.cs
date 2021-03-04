@@ -21,10 +21,7 @@ namespace Cosmos
         public IEnumerator LoadSceneAsync(SceneInfo sceneInfo, Action<float> progressCallback, Action loadedCallback = null)
         {
             AsyncOperation ao;
-            if (sceneInfo.Additive)
-                ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName, LoadSceneMode.Additive);
-            else
-                ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName);
+            ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName, (LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
             while (!ao.isDone)
             {
                 progressCallback?.Invoke(ao.progress);
@@ -33,14 +30,10 @@ namespace Cosmos
             yield return ao.isDone;
             loadedCallback?.Invoke();
         }
-
         public IEnumerator LoadSceneAsync(SceneInfo sceneInfo, Action<float> progressCallback, Func<bool> loadedPredicate, Action loadedCallback = null)
         {
             AsyncOperation ao;
-            if (sceneInfo.Additive)
-                ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName, LoadSceneMode.Additive);
-            else
-                ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName);
+            ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName, (LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
             while (!ao.isDone)
             {
                 progressCallback?.Invoke(ao.progress);
@@ -62,7 +55,6 @@ namespace Cosmos
             yield return ao.isDone;
             unLoadedCallback?.Invoke();
         }
-
         public IEnumerator UnLoadSceneAsync(SceneInfo sceneInfo, Action<float> progressCallback, Func<bool> unLoadedPredicate, Action unLoadedCallback = null)
         {
             AsyncOperation ao;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Cosmos.Data
 {
     [Module]
-    internal sealed partial class DataManager : Module,IDataManager
+    internal sealed partial class DataManager : Module, IDataManager
     {
         #region Properties
         private static readonly string[] EmptyStringArray = new string[] { };
@@ -14,24 +14,25 @@ namespace Cosmos.Data
         private DataNode rootNode;
         #endregion
         #region Methods
-
-        public override void OnInitialization()
-        {
-        }
         public override void OnActive()
         {
-            DataNode.ReferencePool= GameManager.GetModule<IReferencePoolManager>();
+            DataNode.ReferencePool = GameManager.GetModule<IReferencePoolManager>();
             rootNode = DataNode.Create(RootName, null);
-            var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IDataProvider>();
-            for (int i = 0; i < objs.Length; i++)
+            var assemblies = GameManager.Assemblies;
+            var length = assemblies.Length;
+            for (int i = 0; i < length; i++)
             {
-                try 
+                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IDataProvider>(assemblies[i]);
+                for (int j = 0; j < objs.Length; j++)
                 {
-                    objs[i]?.LoadData();
-                }
-                catch (Exception e)
-                {
-                    Utility.Debug.LogError(e);
+                    try
+                    {
+                        objs[i]?.LoadData();
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
                 }
             }
         }

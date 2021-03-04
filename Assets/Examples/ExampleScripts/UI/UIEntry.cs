@@ -9,8 +9,8 @@ namespace Cosmos.Test {
     {
         private void Awake()
         {
-            CosmosEntry.LaunchHelpers();
-            CosmosEntry.LaunchModules();
+            CosmosEntry.LaunchAppDomainHelpers();
+            CosmosEntry.LaunchAppDomainModules();
             CosmosEntry.SceneManager.SetHelper(new DefaultSceneHelper());
         }
         private void Start()

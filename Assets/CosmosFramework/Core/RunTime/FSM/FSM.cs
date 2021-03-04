@@ -45,7 +45,7 @@ namespace Cosmos.FSM{
                     throw new ArgumentNullException("FSM owner is invalid");
                 Type type = states[i].GetType();
                 if (fsm.HasState(type))
-                    throw new ArgumentException("FSM state is is already exist " + Utility.Assembly.GetTypeFullName(states[i]));
+                    throw new ArgumentException("FSM state is is already exist " +states[i].GetType().FullName);
                 else
                 {
                     states[i].OnInitialization(fsm);
@@ -69,7 +69,7 @@ namespace Cosmos.FSM{
                     throw new ArgumentNullException("FSM owner is invalid");
                 Type type = states[i].GetType();
                 if (fsm.HasState(type))
-                    throw new ArgumentException("FSM state is is already exist " + Utility.Assembly.GetTypeFullName(states[i]));
+                    throw new ArgumentException("FSM state is is already exist " + states[i].GetType().FullName);
                 else
                 {
                     states[i].OnInitialization(fsm);

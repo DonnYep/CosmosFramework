@@ -16,6 +16,6 @@ namespace Cosmos.Mvvm
         public List<string> EventKeys { get; protected set; }
         public virtual void OnRegister() { }
         public virtual void OnRemove() { }
-        public abstract void HandleEvent(object sender,NotifyArgs notifyArgs);
+        public virtual void HandleEvent(object sender,NotifyArgs notifyArgs) { }
     }
 }

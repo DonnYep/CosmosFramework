@@ -36,6 +36,7 @@ namespace Cosmos
             add { elapseRefreshHandler += value; }
             remove { elapseRefreshHandler -= value; }
         }
+        internal static System.Reflection.Assembly[] Assemblies { get; private set; }
         static Action fixedRefreshHandler;
         static Action lateRefreshHandler;
         static Action refreshHandler;
@@ -77,13 +78,6 @@ namespace Cosmos
         static GameObject instanceObject;
         #endregion
         #region Methods
-        public static void PreparatoryModule()
-        {
-            foreach (var module in moduleDict.Keys)
-            {
-                Utility.Debug.LogInfo($"Module :{module} has  been initialized");
-            }
-        }
         /// <summary>
         /// 获取模块；
         /// 若需要进行外部扩展，请继承自Module，需要实现接口 IModuleManager，并标记特性：ModuleAttribute
@@ -204,7 +198,6 @@ namespace Cosmos
                 {
                     Utility.Debug.LogError(e);
                 }
-                InitModule();
             }
         }
         internal static bool HasModule(Type type)
@@ -233,9 +226,47 @@ namespace Cosmos
             else
                 throw new ArgumentException($"Module : {module} is not exist!");
         }
-        static void InitModule()
+        internal static void InitAssemblyModule(System.Reflection.Assembly[] assemblies)
+        {
+            if (assemblies == null)
+                throw new ArgumentNullException("InitAssemblyModule : assemblies is invalid");
+            Assemblies = assemblies;
+            var assemblyLength = assemblies.Length;
+            for (int h = 0; h < assemblyLength; h++)
+            {
+                var modules = Utility.Assembly.GetInstancesByAttribute<ModuleAttribute, Module>(assemblies[h]);
+                for (int i = 0; i < modules.Length; i++)
+                {
+                    var type = modules[i].GetType();
+                    if (typeof(IModuleManager).IsAssignableFrom(type))
+                    {
+
+                        if (!HasModule(type))
+                        {
+                            if (moduleDict.TryAdd(type, modules[i]))
+                            {
+                                try
+                                {
+                                    modules[i].OnInitialization();
+                                    moduleCount++;
+                                }
+                                catch (Exception e)
+                                {
+                                    Utility.Debug.LogError(e);
+                                }
+                            }
+                        }
+                        else
+                            throw new ArgumentException($"Module : {type} is already exist!");
+                    }
+                }
+            }
+            ActiveModule();
+        }
+        internal static void InitAppDomainModule()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            Assemblies = assemblies;
             var assemblyLength = assemblies.Length;
             for (int h = 0; h < assemblyLength; h++)
             {
@@ -290,6 +321,7 @@ namespace Cosmos
                 try
                 {
                     module.OnPreparatory();
+                    Utility.Debug.LogInfo($"Module :{module} is OnPreparatory");
                 }
                 catch (Exception e)
                 {

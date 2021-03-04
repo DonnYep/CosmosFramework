@@ -17,16 +17,21 @@ namespace Cosmos.Config
         }
         public override void OnPreparatory()
         {
-            var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IConfigProvider>();
-            for (int i = 0; i < objs.Length; i++)
+            var assemblies = GameManager.Assemblies;
+            var length = assemblies.Length;
+            for (int i = 0; i < length; i++)
             {
-                try
+                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IConfigProvider>(assemblies[i]);
+                for (int j = 0; j < objs.Length; j++)
                 {
-                    objs[i].LoadConfig();
-                }
-                catch (Exception e)
-                {
-                    Utility.Debug.LogError(e);
+                    try
+                    {
+                        objs[j].LoadConfig();
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
                 }
             }
         }

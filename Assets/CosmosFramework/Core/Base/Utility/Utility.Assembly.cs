@@ -11,75 +11,6 @@ namespace Cosmos
     {
         public static class Assembly
         {
-            public static string GetTypeFullName<T>()
-            {
-                return typeof(T).ToString();
-            }
-            public static string GetTypeFullName<T>(T arg)
-            {
-                return arg.ToString();
-            }
-            public static string GetTypeFullName<T>(string name)
-                where T : class
-            {
-                return GetTypeFullName(typeof(T), name);
-            }
-            public static string GetTypeFullName(Type type, string name)
-            {
-                if (type == null)
-                {
-                    throw new ArgumentNullException("Type is invalid");
-                }
-                string typeName = type.FullName;
-                return string.IsNullOrEmpty(name) ? typeName : Utility.Text.Format(typeName, name);
-            }
-            /// <summary>
-            /// 反射工具，得到反射类的对象；
-            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
-            /// </summary>
-            /// <typeparam name="T">类型目标</typeparam>
-            /// <param name="assembly">目标程序集</param>
-            /// <param name="typeFullName">完全限定名</param>
-            /// <returns>返回T类型的目标类型对象</returns>
-            public static T GetTypeInstance<T>(System.Reflection.Assembly assembly, string typeFullName)
-                where T : class
-            {
-                Type type = assembly.GetType(typeFullName);
-                if (type != null)
-                {
-                    var obj = assembly.CreateInstance(typeFullName) as T;
-                    return obj;
-                }
-                else
-                {
-                    throw new ArgumentNullException("Type : Assembly" + type.AssemblyQualifiedName + "Not exist!");
-                }
-            }
-            /// <summary>
-            /// 反射工具，得到反射类的对象；
-            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
-            /// </summary>
-            /// <typeparam name="T">类型目标</typeparam>
-            /// <param name="type">目标对象程序集中的某个对象类型:GetType()</param>
-            /// <param name="typeFullName">完全限定名</param>
-            /// <returns>返回T类型的目标类型对象</returns>
-            public static T GetTypeInstance<T>(Type type, string typeFullName)
-                where T : class, new()
-            {
-                return GetTypeInstance<T>(type.Assembly, typeFullName);
-            }
-            /// <summary>
-            /// 反射工具，得到反射类的对象；
-            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
-            /// <typeparam name="T">目标类型</typeparam>
-            /// <param name="arg">目标类型的对象</param>
-            /// <param name="typeFullName">完全限定名</param>
-            /// <returns>返回T类型的目标类型对象</returns>
-            public static T GetTypeInstance<T>(string typeFullName)
-                where T : class, new()
-            {
-                return GetTypeInstance<T>(typeof(T).Assembly, typeFullName);
-            }
             /// <summary>
             /// 反射工具，得到反射类的对象；
             /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
@@ -89,7 +20,6 @@ namespace Cosmos
             public static object GetTypeInstance(Type type)
             {
                 return Activator.CreateInstance(type);
-                //return type.Assembly.CreateInstance(type.FullName);
             }
             /// <summary>
             /// 反射工具，得到反射类的对象；
@@ -106,14 +36,14 @@ namespace Cosmos
             /// 获取所有派生类的实例对象
             /// </summary>
             /// <typeparam name="T">目标类型</typeparam>
-            /// <param name="type">类型</param>
+            /// <param name="assembly">需要检测的程序集</param>
             /// <returns>反射生成后的对象数组</returns>
-            public static T[] GetDerivedTypeInstances<T>()
+            public static T[] GetDerivedTypeInstances<T>(System.Reflection.Assembly assembly = null)
                 where T : class
             {
                 Type type = typeof(T);
                 List<T> list = new List<T>();
-                var types = GetDerivedTypes(type);
+                var types = GetDerivedTypes(type, assembly);
                 var length = types.Length;
                 for (int i = 0; i < length; i++)
                 {
@@ -122,10 +52,17 @@ namespace Cosmos
                 }
                 return list.ToArray();
             }
-            public static object[] GetDerivedTypeInstances(Type type)
+            /// <returns></returns>
+            /// <summary>
+            /// 获取目标类的派生对象；
+            /// </summary>
+            /// <param name="type">基类</param>
+            /// <param name="assembly">需要检测的程序集</param>
+            /// <returns>实例对象</returns>
+            public static object[] GetDerivedTypeInstances(Type type, System.Reflection.Assembly assembly = null)
             {
                 List<object> list = new List<object>();
-                var types = GetDerivedTypes(type);
+                var types = GetDerivedTypes(type, assembly);
                 var length = types.Length;
                 for (int i = 0; i < length; i++)
                 {
@@ -148,29 +85,6 @@ namespace Cosmos
             {
                 MemberExpression me = (MemberExpression)memberExperssion.Body;
                 return me.Member.Name;
-            }
-            /// <summary>
-            /// 通过特性获取对象实体；
-            /// </summary>
-            /// <typeparam name="T">目标特性</typeparam>
-            /// <param name="type">基类</param>
-            /// <param name="inherit">是否检查基类特性</param>
-            /// <returns>生成的对象</returns>
-            public static object GetInstanceByAttribute<T>(Type type, bool inherit = false)
-                where T : Attribute
-            {
-                object obj = default;
-                var types = GetDerivedTypes(type);
-                int length = types.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    if (types[i].GetCustomAttributes(typeof(T), inherit).Length > 0)
-                    {
-                        obj = GetTypeInstance(types[i]);
-                        return obj;
-                    }
-                }
-                return obj;
             }
             /// <summary>
             /// 通过特性获取对象实体；
@@ -201,34 +115,10 @@ namespace Cosmos
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <typeparam name="K">基类，new()约束</typeparam>
-            /// <param name="inherit">是否检查基类特性</param>
-            /// <returns>生成的对象</returns>
-            public static K GetInstanceByAttribute<T, K>(bool inherit = false)
-                where T : Attribute
-                where K : class
-            {
-                K obj = default;
-                var types = GetDerivedTypes(typeof(K));
-                int length = types.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    if (types[i].GetCustomAttributes(typeof(T), inherit).Length > 0)
-                    {
-                        obj = GetTypeInstance(types[i]) as K;
-                        return obj;
-                    }
-                }
-                return obj;
-            }
-            /// <summary>
-            /// 通过特性获取对象实体；
-            /// </summary>
-            /// <typeparam name="T">目标特性</typeparam>
-            /// <typeparam name="K">基类，new()约束</typeparam>
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>生成的对象</returns>
-            public static K GetInstanceByAttribute<T, K>(System.Reflection.Assembly assembly, bool inherit = false)
+            public static K GetInstanceByAttribute<T, K>(System.Reflection.Assembly assembly = null, bool inherit = false)
       where T : Attribute
       where K : class
             {
@@ -247,49 +137,17 @@ namespace Cosmos
             }
             /// <summary>
             /// 通过特性获取对象实体数组；
-            /// </summary>
-            /// <typeparam name="T">目标特性</typeparam>
-            /// <param name="type">基类</param>
-            /// <param name="inherit">是否检查基类特性</param>
-            /// <returns>生成的对象数组</returns>
-            public static object[] GetInstancesByAttribute<T>(Type type, bool inherit = false)
-                where T : Attribute
-            {
-                List<object> set = new List<object>();
-                var types = GetDerivedTypes(type);
-                int length = types.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    if (types[i].GetCustomAttributes(typeof(T), inherit).Length > 0)
-                    {
-                        set.Add(GetTypeInstance(types[i]));
-                    }
-                }
-                return set.ToArray();
-            }
-            /// <summary>
-            /// 通过特性获取对象实体数组；
             /// 生成的对象必须是无参可构造；
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <typeparam name="K">基类，new()约束</typeparam>
-            /// <param name="inherit">是否检查基类特性</param>
+            /// <param name="assembly">查询的程序集</param>
             /// <returns>生成的对象数组</returns>
-            public static K[] GetInstancesByAttribute<T, K>(bool inherit = false)
-                where T : Attribute
-                where K : class
+            public static K[] GetInstancesByAttribute<T, K>(System.Reflection.Assembly assembly)
+            where T : Attribute
+            where K : class
             {
-                List<K> set = new List<K>();
-                var types = GetDerivedTypes(typeof(K));
-                int length = types.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    if (types[i].GetCustomAttributes<T>(inherit).Count() > 0)
-                    {
-                        set.Add(GetTypeInstance(types[i]) as K);
-                    }
-                }
-                return set.ToArray();
+                return GetInstancesByAttribute<T, K>(false, assembly);
             }
             /// <summary>
             /// 通过特性获取对象实体数组；
@@ -300,7 +158,7 @@ namespace Cosmos
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>生成的对象数组</returns>
-            public static K[] GetInstancesByAttribute<T, K>(System.Reflection.Assembly assembly, bool inherit = false)
+            public static K[] GetInstancesByAttribute<T, K>(bool inherit = false, System.Reflection.Assembly assembly = null)
     where T : Attribute
     where K : class
             {
@@ -323,13 +181,26 @@ namespace Cosmos
             /// <typeparam name="T">目标特性</typeparam>
             /// <param name="type">基类，new()约束</param>
             /// <param name="assembly">查询的程序集</param>
+            /// <returns><生成的对象数组/returns>
+            public static object[] GetInstancesByAttribute<T>(Type type, System.Reflection.Assembly assembly = null)
+    where T : Attribute
+            {
+                return GetInstancesByAttribute<T>(type, false, assembly);
+            }
+            /// <summary>
+            /// 通过特性获取对象实体数组；
+            /// 生成的对象必须是无参可构造；
+            /// </summary>
+            /// <typeparam name="T">目标特性</typeparam>
+            /// <param name="type">基类，new()约束</param>
+            /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
-            /// <returns></returns>
-            public static object[] GetInstancesByAttribute<T>(Type type, System.Reflection.Assembly assembly, bool inherit = false)
+            /// <returns>生成的对象数组</returns>
+            public static object[] GetInstancesByAttribute<T>(Type type, bool inherit = false, System.Reflection.Assembly assembly = null)
     where T : Attribute
             {
                 List<object> set = new List<object>();
-                var types = GetDerivedTypes(type);
+                var types = GetDerivedTypes(type, assembly);
                 int length = types.Length;
                 for (int i = 0; i < length; i++)
                 {
@@ -341,73 +212,17 @@ namespace Cosmos
                 return set.ToArray();
             }
             /// <summary>
-            /// 获取某类型的所有派生类数组；
-            /// </summary>
-            /// <param name="type">基类</param>
-            /// <returns>非抽象派生类</returns>
-            public static Type[] GetDerivedTypes(Type type)
-            {
-                List<Type> set = new List<Type>();
-                Type[] types = type.Assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
-                {
-                    if (type.IsAssignableFrom(types[i]))
-                    {
-                        if (types[i].IsClass && !types[i].IsAbstract)
-                        {
-                            set.Add(types[i]);
-                        }
-                    }
-                }
-                return set.ToArray();
-            }
-            /// <summary>
-            /// 获取某类型的所有派生类数组；
-            /// </summary>
-            /// <typeparam name="T">基类</typeparam>
-            /// <returns>非抽象派生类</returns>
-            public static Type[] GetDerivedTypes<T>()
-                where T : class
-            {
-                return GetDerivedTypes(typeof(T));
-            }
-            /// <summary>
             /// 通过特性获取目标派生类的所有可实例化类；
             /// </summary>
             /// <typeparam name="T">特性类型</typeparam>
             /// <typeparam name="K">派生的基类</typeparam>
-            /// <param name="inherit">是否检查基类特性</param>
+            /// <param name="assembly">查询的程序集</param>
             /// <returns>非抽象派生类数组</returns>
-            public static Type[] GetDerivedTypesByAttribute<T, K>(bool inherit = false)
+            public static Type[] GetDerivedTypesByAttribute<T, K>(System.Reflection.Assembly assembly = null)
             where T : Attribute
             where K : class
             {
-                return GetDerivedTypesByAttribute<T>(typeof(K), inherit);
-            }
-            /// <summary>
-            /// 通过特性获取目标派生类的所有可实例化类；
-            /// </summary>
-            /// <typeparam name="T">特性类型</typeparam>
-            /// <param name="type">派生的基类</param>
-            /// <param name="inherit">是否检查基类特性</param>
-            /// <returns>非抽象派生类数组</returns>
-            public static Type[] GetDerivedTypesByAttribute<T>(Type type,bool inherit = false)
-                where T : Attribute
-            {
-                List<Type> set = new List<Type>();
-                Type[] types = type.Assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
-                {
-                    if (type.IsAssignableFrom(types[i]))
-                    {
-                        if (types[i].IsClass && !types[i].IsAbstract)
-                        {
-                            if (types[i].GetCustomAttributes<T>(inherit).Count() > 0)
-                                set.Add(types[i]);
-                        }
-                    }
-                }
-                return set.ToArray();
+                return GetDerivedTypesByAttribute<T, K>(false, assembly);
             }
             /// <summary>
             /// 通过特性获取目标派生类的所有可实例化类；
@@ -417,11 +232,24 @@ namespace Cosmos
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>非抽象派生类数组</returns>
-            public static Type[] GetDerivedTypesByAttribute<T, K>(System.Reflection.Assembly assembly, bool inherit = false)
+            public static Type[] GetDerivedTypesByAttribute<T, K>(bool inherit = false, System.Reflection.Assembly assembly = null)
 where T : Attribute
 where K : class
             {
-                return GetDerivedTypesByAttribute<T>(typeof(K), assembly, inherit);
+                return GetDerivedTypesByAttribute<T>(typeof(K), inherit, assembly);
+            }
+            /// <summary>
+            /// 通过特性获取目标派生类的所有可实例化类；
+            /// </summary>
+            /// <typeparam name="T">特性类型</typeparam>
+            /// <param name="type">派生的基类</param>
+            /// <param name="assembly">查询的程序集</param>
+            /// <returns>非抽象派生类数组</returns>
+            public static Type[] GetDerivedTypesByAttribute<T>(Type type, System.Reflection.Assembly assembly = null)
+    where T : Attribute
+
+            {
+                return GetDerivedTypesByAttribute<T>(type, false, assembly);
             }
             /// <summary>
             /// 通过特性获取目标派生类的所有可实例化类；
@@ -431,11 +259,11 @@ where K : class
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>非抽象派生类数组</returns>
-            public static Type[] GetDerivedTypesByAttribute<T>(Type type, System.Reflection.Assembly assembly, bool inherit = false)
+            public static Type[] GetDerivedTypesByAttribute<T>(Type type, bool inherit = false, System.Reflection.Assembly assembly = null)
     where T : Attribute
             {
                 List<Type> set = new List<Type>();
-                Type[] types =assembly.GetTypes();
+                Type[] types = assembly.GetTypes();
                 for (int i = 0; i < types.Length; i++)
                 {
                     if (type.IsAssignableFrom(types[i]))
@@ -453,21 +281,27 @@ where K : class
             /// 获取某类型的第一个派生类；
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
+            /// <param name="assembly">查询的程序集</param>
             /// <returns>非抽象派生类</returns>
-            public static Type GetDerivedType<T>()
+            public static Type GetDerivedType<T>(System.Reflection.Assembly assembly = null)
     where T : class
             {
-                return GetDerivedType(typeof(T));
+                return GetDerivedType(typeof(T), assembly);
             }
             /// <summary>
             ///  获取某类型的第一个派生类；
             /// </summary>
             /// <param name="type">基类</param>
+            /// <param name="assembly">查询的程序集</param>
             /// <returns>非抽象派生类</returns>
-            public static Type GetDerivedType(Type type)
+            public static Type GetDerivedType(Type type, System.Reflection.Assembly assembly = null)
             {
                 Type targetType = null;
-                Type[] types = type.Assembly.GetTypes();
+                Type[] types;
+                if (assembly == null)
+                    types = type.Assembly.GetTypes();
+                else
+                    types = assembly.GetTypes();
                 for (int i = 0; i < types.Length; i++)
                 {
                     if (type.IsAssignableFrom(types[i]))
@@ -487,12 +321,16 @@ where K : class
             /// <typeparam name="T">基类</typeparam>
             /// <param name="assembly">查询的程序集</param>
             /// <returns>非抽象派生类</returns>
-            public static Type[] GetDerivedTypes<T>(System.Reflection.Assembly assembly)
+            public static Type[] GetDerivedTypes<T>(System.Reflection.Assembly assembly = null)
     where T : class
             {
                 Type type = typeof(T);
                 List<Type> set = new List<Type>();
-                Type[] types = assembly.GetTypes();
+                Type[] types;
+                if (assembly == null)
+                    types = type.Assembly.GetTypes();
+                else
+                    types = assembly.GetTypes();
                 for (int i = 0; i < types.Length; i++)
                 {
                     if (type.IsAssignableFrom(types[i]))
@@ -511,10 +349,14 @@ where K : class
             /// <param name="type">基类</param>
             /// <param name="assembly">查询的程序集</param>
             /// <returns>非抽象派生类</returns>
-            public static Type[] GetDerivedTypes(Type type, System.Reflection.Assembly assembly)
+            public static Type[] GetDerivedTypes(Type type, System.Reflection.Assembly assembly = null)
             {
                 List<Type> set = new List<Type>();
-                Type[] types = assembly.GetTypes();
+                Type[] types;
+                if (assembly == null)
+                    types = type.Assembly.GetTypes();
+                else
+                    types = assembly.GetTypes();
                 for (int i = 0; i < types.Length; i++)
                 {
                     if (type.IsAssignableFrom(types[i]))
@@ -592,9 +434,9 @@ where K : class
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>特性数组</returns>
             public static T[] GetAttributes<T>(Type type, bool inherit = false)
-                where T :Attribute
+                where T : Attribute
             {
-                var attributes= type.GetCustomAttributes<T>(inherit).ToArray();
+                var attributes = type.GetCustomAttributes<T>(inherit).ToArray();
                 return attributes;
             }
             /// <summary>
@@ -604,11 +446,11 @@ where K : class
             /// <typeparam name="K">目标类型</typeparam>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>特性数组</returns>
-            public static T[] GetAttributes<T,K>(bool inherit = false)
+            public static T[] GetAttributes<T, K>(bool inherit = false)
     where T : Attribute
-                where K:class
+                where K : class
             {
-                return GetAttributes<T>(typeof(K),inherit);
+                return GetAttributes<T>(typeof(K), inherit);
             }
             /// <summary>
             /// 获取程序集中所有被挂载的特性数组
@@ -618,14 +460,14 @@ where K : class
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>特性数组</returns>
             public static T[] GetAttributesInAssembly<T>(System.Reflection.Assembly assembly, bool inherit = false)
-                where T :Attribute
+                where T : Attribute
             {
                 var attributes = new List<T>();
                 Type[] types = assembly.GetTypes();
                 var length = types.Length;
                 for (int i = 0; i < length; i++)
                 {
-                    var atts= GetAttributes<T>(types[i],inherit);
+                    var atts = GetAttributes<T>(types[i], inherit);
                     attributes.AddRange(atts);
                 }
                 return attributes.ToArray();

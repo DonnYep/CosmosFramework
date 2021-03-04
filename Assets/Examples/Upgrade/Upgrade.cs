@@ -10,8 +10,8 @@ public class Upgrade : MonoBehaviour
     List<DirectoryInfo> dirInfoList = new List<DirectoryInfo>();
     private void Awake()
     {
-        CosmosEntry.LaunchHelpers();
-        CosmosEntry.LaunchModules();
+        CosmosEntry.LaunchAppDomainHelpers();
+        CosmosEntry.LaunchAppDomainModules();
     }
     void Start()
     {
