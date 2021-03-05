@@ -100,7 +100,10 @@ namespace Cosmos.UI
             go?.transform.SetParent(UIRoot.transform);
             (go?.transform as RectTransform).ResetRectTransform();
             var comp = Utility.Unity.Add(uiType, go?.gameObject) as UIFormBase;
-            uiDict.TryAdd(comp.UIFormName, comp);
+            if (uiDict.TryAdd(comp.UIFormName, comp))
+                SortUIForm(comp);
+            else
+                uiFormHelper?.RemoveUIForm(comp);
             return comp;
         }
         /// <summary>
@@ -124,8 +127,10 @@ namespace Cosmos.UI
                  (panel.transform as RectTransform).ResetRectTransform();
                  var comp = Utility.Unity.Add<T>(panel);
                  callback?.Invoke(comp);
-                 uiDict.TryAdd(comp.UIFormName, comp);
-                 SortUIForm(comp);
+                 if (uiDict.TryAdd(comp.UIFormName, comp))
+                     SortUIForm(comp);
+                 else
+                     uiFormHelper?.RemoveUIForm(comp);
              }, null, true);
         }
         /// <summary>
@@ -147,8 +152,10 @@ namespace Cosmos.UI
                  (go.transform as RectTransform).ResetRectTransform();
                  var comp = Utility.Unity.Add(uiType, go) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
-                 uiDict.TryAdd(comp.UIFormName, comp);
-                 SortUIForm(comp);
+                 if (uiDict.TryAdd(comp.UIFormName, comp))
+                     SortUIForm(comp);
+                 else
+                     uiFormHelper?.RemoveUIForm(comp);
              }, null, true);
         }
         /// <summary>
@@ -171,8 +178,10 @@ namespace Cosmos.UI
                 (go.transform as RectTransform).ResetRectTransform();
                 var comp = Utility.Unity.Add<T>(go);
                 loadDoneCallback?.Invoke(comp);
-                uiDict.TryAdd(comp.UIFormName, comp);
-                SortUIForm(comp);
+                if (uiDict.TryAdd(comp.UIFormName, comp))
+                    SortUIForm(comp);
+                else
+                    uiFormHelper?.RemoveUIForm(comp);
             }, null, true);
         }
         /// <summary>
@@ -198,8 +207,10 @@ namespace Cosmos.UI
                  (go.transform as RectTransform).ResetRectTransform();
                  var comp = Utility.Unity.Add(type, go, true) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
-                 uiDict.TryAdd(comp.UIFormName, comp);
-                 SortUIForm(comp);
+                 if (uiDict.TryAdd(comp.UIFormName, comp))
+                     SortUIForm(comp);
+                 else
+                     uiFormHelper?.RemoveUIForm(comp);
              }, null, true);
         }
         /// <summary>
