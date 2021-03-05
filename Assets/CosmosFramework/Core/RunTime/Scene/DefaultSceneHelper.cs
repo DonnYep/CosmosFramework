@@ -34,13 +34,18 @@ namespace Cosmos
         {
             AsyncOperation ao;
             ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName, (LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
+            ao.allowSceneActivation = false;
             while (!ao.isDone)
             {
                 progressCallback?.Invoke(ao.progress);
+                if (ao.progress >= 0.9f)
+                {
+                    break;
+                }
                 yield return new WaitForEndOfFrame();
             }
-            yield return ao.isDone;
-            yield return loadedPredicate;
+            yield return new WaitUntil(loadedPredicate);
+            ao.allowSceneActivation = true;
             loadedCallback?.Invoke();
         }
         public IEnumerator UnLoadSceneAsync(SceneInfo sceneInfo, Action<float> progressCallback, Action unLoadedCallback = null)
@@ -62,10 +67,13 @@ namespace Cosmos
             while (!ao.isDone)
             {
                 progressCallback?.Invoke(ao.progress);
+                if (ao.progress >= 0.9f)
+                {
+                    break;
+                }
                 yield return new WaitForEndOfFrame();
             }
-            yield return ao.isDone;
-            yield return unLoadedPredicate;
+            yield return new WaitUntil(unLoadedPredicate);
             unLoadedCallback?.Invoke();
         }
     }
