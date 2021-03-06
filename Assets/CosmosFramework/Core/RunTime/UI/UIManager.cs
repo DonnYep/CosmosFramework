@@ -100,18 +100,16 @@ namespace Cosmos.UI
             go?.transform.SetParent(UIRoot.transform);
             (go?.transform as RectTransform).ResetRectTransform();
             var comp = Utility.Unity.Add(uiType, go?.gameObject) as UIFormBase;
-            if (uiDict.TryAdd(comp.UIFormName, comp))
-                SortUIForm(comp);
-            else
-                uiFormHelper?.RemoveUIForm(comp);
+            if (!EqualUIFormPtrAdress(comp))
+                RegisterUIForm(comp);
             return comp;
         }
         /// <summary>
         /// 通过特性UIAssetAttribute加载Panel（异步）；
         /// </summary>
         /// <typeparam name="T">带有UIAssetAttribute特性的panel类</typeparam>
-        /// <param name="callback">加载成功的回调。若失败，则不执行</param>
-        public Coroutine OpenUIFormAsync<T>(Action<T> callback = null)
+        /// <param name="loadDoneCallback">加载成功的回调。若失败，则不执行</param>
+        public Coroutine OpenUIFormAsync<T>(Action<T> loadDoneCallback = null)
     where T : UIFormBase
         {
             Type type = typeof(T);
@@ -126,11 +124,9 @@ namespace Cosmos.UI
                  panel.transform.SetParent(UIRoot.transform);
                  (panel.transform as RectTransform).ResetRectTransform();
                  var comp = Utility.Unity.Add<T>(panel);
-                 callback?.Invoke(comp);
-                 if (uiDict.TryAdd(comp.UIFormName, comp))
-                     SortUIForm(comp);
-                 else
-                     uiFormHelper?.RemoveUIForm(comp);
+                 loadDoneCallback?.Invoke(comp);
+                 if (!EqualUIFormPtrAdress(comp))
+                     RegisterUIForm(comp);
              }, null, true);
         }
         /// <summary>
@@ -152,10 +148,8 @@ namespace Cosmos.UI
                  (go.transform as RectTransform).ResetRectTransform();
                  var comp = Utility.Unity.Add(uiType, go) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
-                 if (uiDict.TryAdd(comp.UIFormName, comp))
-                     SortUIForm(comp);
-                 else
-                     uiFormHelper?.RemoveUIForm(comp);
+                 if (!EqualUIFormPtrAdress(comp))
+                     RegisterUIForm(comp);
              }, null, true);
         }
         /// <summary>
@@ -178,10 +172,8 @@ namespace Cosmos.UI
                 (go.transform as RectTransform).ResetRectTransform();
                 var comp = Utility.Unity.Add<T>(go);
                 loadDoneCallback?.Invoke(comp);
-                if (uiDict.TryAdd(comp.UIFormName, comp))
-                    SortUIForm(comp);
-                else
-                    uiFormHelper?.RemoveUIForm(comp);
+                if (!EqualUIFormPtrAdress(comp))
+                    RegisterUIForm(comp);
             }, null, true);
         }
         /// <summary>
@@ -207,10 +199,8 @@ namespace Cosmos.UI
                  (go.transform as RectTransform).ResetRectTransform();
                  var comp = Utility.Unity.Add(type, go, true) as UIFormBase;
                  loadDoneCallback?.Invoke(comp);
-                 if (uiDict.TryAdd(comp.UIFormName, comp))
-                     SortUIForm(comp);
-                 else
-                     uiFormHelper?.RemoveUIForm(comp);
+                 if (!EqualUIFormPtrAdress(comp))
+                     RegisterUIForm(comp);
              }, null, true);
         }
         /// <summary>
@@ -348,9 +338,11 @@ namespace Cosmos.UI
             }
             else
             {
+                Utility.Debug.LogError($"Form : {uiForm.name} has been registered , replaced by latest one !");
                 RemoveUIForm(uiForm.UIFormName);
                 uiDict.Add(uiForm.UIFormName, uiForm);
             }
+            SortUIForm(uiForm);
         }
         /// <summary>
         /// 注销UI;
@@ -381,6 +373,18 @@ namespace Cosmos.UI
             }
             if (peerFormCache.Count > 0)
                 Utility.Unity.SortCompsByAscending(peerFormCache.ToArray(), (form) => form.Priority);
+        }
+        /// <summary>
+        ///检测组件在内存中的地址是否相同 
+        /// </summary>
+        bool EqualUIFormPtrAdress(UIFormBase uiForm)
+        {
+            if (uiDict.TryGetValue(uiForm.name, out var compareForm))
+            {
+                if (uiForm == compareForm)
+                    return true;
+            }
+            return false;
         }
         #endregion
     }
