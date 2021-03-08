@@ -103,7 +103,7 @@ namespace Cosmos
             /// <summary>
             /// 获得传入元素某个符合条件的所有对象
             /// </summary>
-            public static T[] FindAll<T, K>(T[] array, Predicate<T> handler)
+            public static T[] FindAll<T>(T[] array, Predicate<T> handler)
             {
                 List<T> list = new List<T>();
                 for (int i = 0; i < array.Length; i++)

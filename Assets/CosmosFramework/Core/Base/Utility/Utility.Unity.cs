@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 namespace Cosmos
 {
     public sealed partial class Utility
@@ -225,9 +227,40 @@ namespace Cosmos
                 else
                     return null;
             }
+            /// <summary>
+            /// 查找所有符合名称的子节点
+            /// </summary>
+            /// <param name="go">目标对象</param>
+            /// <param name="subNode">子级别目标对象名称</param>
+            /// <returns>名字符合的对象数组</returns>
+            public static GameObject[] Childs (Transform go, string subNode)
+            {
+                var trans = go.GetComponentsInChildren<Transform>();
+                List<GameObject> subGos = new List<GameObject>();
+                var length = trans.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    if (trans[i].name.Contains(subNode))
+                    {
+                        subGos.Add(trans[i].gameObject);
+                    }
+                }
+                return subGos.ToArray();
+            }
             public static GameObject Child(GameObject go, string subNode)
             {
                 return Child(go.transform, subNode);
+            }
+            /// <summary>
+            /// 查找目标场景中的目标对象
+            /// </summary>
+            /// <param name="sceneName">传入的场景名</param>
+            /// <param name="predicate">查找条件</param>
+            /// <returns>查找到的对象</returns>
+            public  static GameObject FindSceneGameObject(string sceneName, Func<GameObject, bool> predicate)
+            {
+                var scene = SceneManager.GetSceneByName(sceneName);
+                return scene.GetRootGameObjects().FirstOrDefault(predicate);
             }
             /// <summary>
             /// 查找同级别
