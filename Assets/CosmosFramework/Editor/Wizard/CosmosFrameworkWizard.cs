@@ -40,6 +40,13 @@ namespace Cosmos.CosmosEditor
             EditorGUILayout.HelpBox("这是一个轻量级的游戏框架。Utiity脚本提供了常用的功能函数。" +
                 "Facade脚本作为中间类，已封装了所有模块的公共函数，只需调用Facade.Instance，即可出现当前大部分模块的公共方法。", MessageType.Info);
             GUILayout.EndVertical();
+            EditorGUILayout.Space(16);
+            //GUILayout.BeginVertical("box");
+            GUILayout.Label("框架中附带的Symbo: ");
+            EditorGUILayout.Space(8);
+            GUILayout.Label("Addressable资源操作模块 : COSMOS_ADDRESSABLE；\n在开启此Symbol后，可使用Addressables package进行资源加载");
+            EditorGUILayout.Space(8);
+            //GUILayout.EndVertical();
         }
     }
 }
