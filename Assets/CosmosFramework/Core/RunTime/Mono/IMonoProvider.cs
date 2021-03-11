@@ -12,6 +12,7 @@ namespace Cosmos.Mono
         Coroutine StartCoroutine(Action handler);
         Coroutine DelayCoroutine(float delay, Action callBack);
         Coroutine PredicateCoroutine(Func<bool> handler, Action callBack);
+        Coroutine PredicateNestCoroutine(Func<bool> handler, Action callBack);
         Coroutine StartCoroutine(IEnumerator routine);
         void StopCoroutine(IEnumerator routine);
         void StopCoroutine(Coroutine routine);

@@ -8,11 +8,21 @@ namespace Cosmos.Mono
     /// mono池对象
     /// </summary>
     [DisallowMultipleComponent]
-   internal class MonoProvider : MonoBehaviour, IMonoProvider
+    internal class MonoProvider : MonoBehaviour, IMonoProvider
     {
         public Coroutine PredicateCoroutine(Func<bool> handler, Action callBack)
         {
             return StartCoroutine(EnumPredicateCoroutine(handler, callBack));
+        }
+        /// <summary>
+        /// 嵌套协程；
+        /// </summary>
+        /// <param name="predicateHandler">条件函数</param>
+        /// <param name="nestHandler">条件成功后执行的嵌套协程</param>
+        /// <returnsCoroutine></returns>
+        public Coroutine PredicateNestCoroutine(Func<bool> predicateHandler, Action nestHandler)
+        {
+            return StartCoroutine(EnumPredicateNestCoroutine(predicateHandler, nestHandler));
         }
         public Coroutine DelayCoroutine(float delay, Action callBack)
         {
@@ -31,10 +41,6 @@ namespace Cosmos.Mono
         public Coroutine StartCoroutine(Coroutine routine, Action callBack)
         {
             return StartCoroutine(EnumCoroutine(routine, callBack));
-        }
-        IEnumerator EnumDelay(float delay)
-        {
-            yield return new WaitForSeconds(delay);
         }
         IEnumerator EnumDelay(float delay, Action callBack)
         {
@@ -55,6 +61,16 @@ namespace Cosmos.Mono
         {
             yield return new WaitUntil(handler);
             callBack();
+        }
+        /// <summary>
+        /// 嵌套协程执行体；
+        /// </summary>
+        /// <param name="predicateHandler">条件函数</param>
+        /// <param name="nestHandler">条件成功后执行的嵌套协程</param>
+        IEnumerator EnumPredicateNestCoroutine(Func<bool> predicateHandler, Action nestHandler)
+        {
+            yield return new WaitUntil(predicateHandler);
+            yield return StartCoroutine(EnumCoroutine(nestHandler));
         }
     }
 }

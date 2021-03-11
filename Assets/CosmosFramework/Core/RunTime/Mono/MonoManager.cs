@@ -46,6 +46,16 @@ namespace Cosmos.Mono
         {
             return monoProvider.PredicateCoroutine(handler, callBack);
         }
+        /// <summary>
+        /// 嵌套协程；
+        /// </summary>
+        /// <param name="predicateHandler">条件函数</param>
+        /// <param name="nestHandler">条件成功后执行的嵌套协程</param>
+        /// <returns>Coroutine></returns>
+        public Coroutine PredicateNestCoroutine(Func<bool> predicateHandler, Action nestHandler)
+        {
+            return monoProvider.PredicateNestCoroutine(predicateHandler, nestHandler);
+        }
         public Coroutine StartCoroutine(IEnumerator routine)
         {
             return monoProvider.StartCoroutine(routine);
