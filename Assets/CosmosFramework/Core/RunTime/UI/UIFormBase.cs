@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 namespace Cosmos.UI
 {
+    [DisallowMultipleComponent]
     public abstract class UIFormBase : MonoBehaviour
     {
         /// <summary>
@@ -36,7 +37,16 @@ namespace Cosmos.UI
         /// 是否自动注册获取当前节点下的UIBehaviour对象
         /// </summary>
         protected bool autoGetUIComponents = true;
-        public virtual string UIFormName { get { return gameObject.name; } }
+        public virtual string UIFormName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(uiFormName))
+                    uiFormName = GetComponent<UIFormBase>().GetType().Name;
+                return uiFormName;
+            }
+        }
+        string uiFormName;
         /// <summary>
         /// 被开启；
         /// </summary>

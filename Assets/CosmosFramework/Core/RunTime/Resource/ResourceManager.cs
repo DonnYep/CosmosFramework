@@ -12,6 +12,7 @@ namespace Cosmos.Resource
     {
         Resource = 0,
         AssetBundle = 1,
+        Addressable=2
     }
     [Module]
     internal sealed class ResourceManager : Module,IResourceManager
@@ -82,6 +83,11 @@ namespace Cosmos.Resource
             AssetBundleManifestName = manifestName;
             _loadWait = new WaitUntil(() => { return !_isLoading; });
         }
+        public void SetLoader(ResourceLoadMode loadMode)
+        {
+            LoadMode = loadMode;
+            _loadWait = new WaitUntil(() => { return !_isLoading; });
+        }
         /// <summary>
         /// 设置默认设置加载器;
         /// 此方法会使加载模式变为Resource；
@@ -128,7 +134,7 @@ namespace Cosmos.Resource
                     throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
                 }
             }
-            else
+            else if(LoadMode==ResourceLoadMode.AssetBundle)
             {
                 if (assetBundleDict.ContainsKey(info.AssetBundleName))
                 {
@@ -138,6 +144,10 @@ namespace Cosmos.Resource
                         throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
                     }
                 }
+            }
+            else if(LoadMode==ResourceLoadMode.Addressable)
+            {
+
             }
             return asset;
         }
