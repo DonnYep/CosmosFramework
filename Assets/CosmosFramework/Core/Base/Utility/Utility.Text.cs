@@ -154,6 +154,33 @@ namespace Cosmos
                 }
                 return count;
             }
+            /// <summary>
+            /// 获取内容在UTF8编码下的字节长度；
+            /// </summary>
+            /// <param name="context">需要检测的内容</param>
+            /// <returns>字节长度</returns>
+            public static int GetUTF8Length(string context)
+            {
+                return Encoding.UTF8.GetBytes(context).Length;
+            }
+            /// <summary>
+            /// 是否包含字符串验证
+            /// </summary>
+            /// <param name="context">传入的内容</param>
+            /// <param name="values">需要检测的字符数组</param>
+            /// <returns>是否包含</returns>
+            public static bool StringContans(string context,string[] values)
+            {
+                var length = values.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    if (context.Contains(values[i]))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
     }
 }
