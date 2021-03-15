@@ -11,14 +11,14 @@ namespace Cosmos
 {
     public class DefaultSceneHelper : ISceneHelper
     {
-        public void LoadScene(SceneInfo sceneInfo)
+        public void LoadScene(ISceneInfo sceneInfo)
         {
             if (sceneInfo.Additive)
                 SceneManager.LoadScene(sceneInfo.SceneName, LoadSceneMode.Additive);
             else
                 SceneManager.LoadScene(sceneInfo.SceneName);
         }
-        public IEnumerator LoadSceneAsync(SceneInfo sceneInfo, Action startLoadCallback, Action<float> progressCallback, Action loadedCallback = null)
+        public IEnumerator LoadSceneAsync(ISceneInfo sceneInfo, Action startLoadCallback, Action<float> progressCallback, Action loadedCallback = null)
         {
             startLoadCallback?.Invoke();
             AsyncOperation ao;
@@ -31,7 +31,7 @@ namespace Cosmos
             yield return ao.isDone;
             loadedCallback?.Invoke();
         }
-        public IEnumerator LoadSceneAsync(SceneInfo sceneInfo, Action startLoadCallback, Action<float> progressCallback, Func<bool> loadedPredicate, Action loadedCallback = null)
+        public IEnumerator LoadSceneAsync(ISceneInfo sceneInfo, Action startLoadCallback, Action<float> progressCallback, Func<bool> loadedPredicate, Action loadedCallback = null)
         {
             startLoadCallback?.Invoke();
             AsyncOperation ao;
@@ -50,7 +50,7 @@ namespace Cosmos
             ao.allowSceneActivation = true;
             loadedCallback?.Invoke();
         }
-        public IEnumerator UnLoadSceneAsync(SceneInfo sceneInfo, Action startUnloadCallback, Action<float> progressCallback, Action unLoadedCallback = null)
+        public IEnumerator UnLoadSceneAsync(ISceneInfo sceneInfo, Action startUnloadCallback, Action<float> progressCallback, Action unLoadedCallback = null)
         {
             startUnloadCallback?.Invoke();
             AsyncOperation ao;
@@ -63,7 +63,7 @@ namespace Cosmos
             yield return ao.isDone;
             unLoadedCallback?.Invoke();
         }
-        public IEnumerator UnLoadSceneAsync(SceneInfo sceneInfo, Action startUnloadCallback, Action<float> progressCallback, Func<bool> unLoadedPredicate, Action unLoadedCallback = null)
+        public IEnumerator UnLoadSceneAsync(ISceneInfo sceneInfo, Action startUnloadCallback, Action<float> progressCallback, Func<bool> unLoadedPredicate, Action unLoadedCallback = null)
         {
             startUnloadCallback?.Invoke();
             AsyncOperation ao;

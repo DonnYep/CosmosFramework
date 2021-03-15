@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public struct SceneInfo
+    public struct SceneInfo: ISceneInfo
     {
         public string SceneName { get; private set; }
         public bool Additive { get; private set; }

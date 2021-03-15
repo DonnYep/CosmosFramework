@@ -95,9 +95,9 @@ namespace Cosmos
                 value.y = (float)Math.Round(value.y, decimals);
                 return value;
             }
-            public static T Get<T>(Component comp, string subNode) where T : Component
+            public static T Get<T>(Transform go, string subNode) where T : Component
             {
-                return comp.transform.Find(subNode).GetComponent<T>();
+                return  Child(go,subNode).GetComponent<T>();
             }
             /// <summary>
             /// 添加目标组件；默认不移除组件;
@@ -191,7 +191,13 @@ namespace Cosmos
             /// <returns>返回添加的目标组件</returns>
             public static T Add<T>(Transform go, bool removeExistComp = false) where T : Component
             {
-                return Add<T>(go.gameObject);
+                return Add<T>(go.gameObject,removeExistComp);
+            }
+            public static T Add<T>(Transform go, string subNode, bool removeExistComp = false) where T : Component
+            {
+                var childGo = Child(go, subNode);
+                var comp = Add<T>(childGo, removeExistComp);
+                return comp;
             }
             /// <summary>
             /// 实例化对象；
@@ -261,6 +267,20 @@ namespace Cosmos
             {
                 var scene = SceneManager.GetSceneByName(sceneName);
                 return scene.GetRootGameObjects().FirstOrDefault(predicate);
+            }
+            /// <summary>
+            /// 场景是否被加载；
+            /// </summary>
+            /// <param name="sceneName">场景名</param>
+            /// <returns>是否被加载</returns>
+            public static bool SceneIsLoaded(string sceneName)
+            {
+                var scene = SceneManager.GetSceneByName(sceneName);
+                if (scene != null)
+                {
+                    return scene.isLoaded;
+                }
+                return false;
             }
             /// <summary>
             /// 查找同级别
