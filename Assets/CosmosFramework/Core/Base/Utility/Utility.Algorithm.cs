@@ -216,6 +216,26 @@ namespace Cosmos
                 t1 = t2;
                 t2 = t3;
             }
+            /// <summary>
+            /// 随机打乱数组
+            /// </summary>
+            /// <typeparam name="T">数组类型</typeparam>
+            /// <param name="array">数组</param>
+            public static void Disrupt<T>( T[] array)
+            {
+                int index = 0;
+                T tmp;
+                for (int i = 0; i < array.Length; i++)
+                {
+                    index = UnityEngine.Random.Range(0, array.Length);
+                    if (index != i)
+                    {
+                        tmp = array[i];
+                        array[i] = array[index];
+                        array[index] = tmp;
+                    }
+                }
+            }
         }
     }
 }

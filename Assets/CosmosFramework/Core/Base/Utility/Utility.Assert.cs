@@ -7,12 +7,10 @@ namespace Cosmos
     {
         /// <summary>
         /// 断言处理工具;
-        /// Assert断言仅用于测试环境调试，请勿在生产环境使用。
         /// </summary>
         public static class Assert
         {
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 判断不为空
             /// </summary>
             /// <typeparam name="T">泛型类型</typeparam>
@@ -23,7 +21,6 @@ namespace Cosmos
                     throw new ArgumentNullException("object" + obj.ToString() + "isEmpty !");
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 判断不为空
             /// </summary>
             /// <typeparam name="T">泛型类型</typeparam>
@@ -35,7 +32,6 @@ namespace Cosmos
                     throw new ArgumentNullException(message.ToString());
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 判断不为空
             /// 若不为空，则执行回调
             /// </summary>
@@ -50,7 +46,6 @@ namespace Cosmos
                     notNullCallBack?.Invoke();
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 判断不为空
             /// </summary>
             /// <param name="obj"></param>
@@ -64,7 +59,6 @@ namespace Cosmos
                     notNullCallBack?.Invoke();
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 是否为空
             /// </summary>
             /// <param name="obj">判断是否为空的对象</param>
@@ -80,7 +74,6 @@ namespace Cosmos
                     nullCallBack?.Invoke();
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 是否为空
             /// </summary>
             /// <param name="obj">判断是否为空的对象</param>
@@ -94,7 +87,6 @@ namespace Cosmos
                     notNullCallBack?.Invoke();
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 判断是否为继承关系
             /// </summary>
             /// <typeparam name="T1">父类</typeparam>
@@ -110,7 +102,6 @@ namespace Cosmos
                     throw new InvalidCastException("SuperType : " + subType.FullName + "unssignable from subType : " + subType.FullName);
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 是否为继承
             /// </summary>
             /// <typeparam name="T1">super</typeparam>
@@ -122,7 +113,6 @@ namespace Cosmos
                     callBack?.Invoke();
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// if assaignable ,run callBack method
             /// </summary>
             /// <typeparam name="T1">superType</typeparam>
@@ -139,7 +129,6 @@ namespace Cosmos
                     throw new InvalidCastException("SuperType : " + subType.FullName + "unssignable from subType : " + subType.FullName);
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 状态检测
             /// </summary>
             /// <param name="expression">表达式</param>
@@ -148,7 +137,6 @@ namespace Cosmos
                 State(expression, "this state must be true");
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 状态检测
             /// </summary>
             /// <param name="expression">表达式</param>
@@ -169,7 +157,6 @@ namespace Cosmos
                     callBack?.Invoke();
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 状态检测
             /// </summary>
             /// <param name="expression">表达式</param>
@@ -183,7 +170,6 @@ namespace Cosmos
                     callBack?.Invoke();
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 条件委托，
             /// 若handler返回true，则run callBack
             /// </summary>
@@ -199,7 +185,6 @@ namespace Cosmos
                     callBack?.Invoke(arg);
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 条件委托是否为true
             /// </summary>
             /// <param name="handler">条件委托</param>
@@ -210,7 +195,6 @@ namespace Cosmos
                     trueCallBack?.Invoke();
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 条件委托是否为true
             /// </summary>
             /// <param name="handler">条件委托</param>
@@ -224,7 +208,6 @@ namespace Cosmos
                     falseCallBack?.Invoke();
             }
             /// <summary>
-            /// Assert断言仅用于测试环境调试
             /// 普通异常处理捕捉者
             /// </summary>
             /// <param name="handler">处理者函数</param>

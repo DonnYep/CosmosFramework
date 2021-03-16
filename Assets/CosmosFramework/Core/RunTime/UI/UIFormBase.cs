@@ -24,7 +24,7 @@ namespace Cosmos.UI
                 else if (value < 0)
                     priority = 0;
                 var peerComps = Utility.Unity.PeersComponet<UIFormBase>(transform);
-                Utility.Unity.SortCompsByAscending(peerComps, (comp) => comp.Priority);
+                Utility.Unity.SortCompsByDescending(peerComps, (comp) => comp.Priority);
             }
         }
         protected int priority = 100;
@@ -126,7 +126,7 @@ namespace Cosmos.UI
         /// 空虚函数
         /// </summary>
         protected virtual void OnTermination() { }
-        protected virtual void SetPanelActive(bool state) { gameObject.SetActive(state); }
+        protected virtual void SetUIFormActive(bool state) { gameObject.SetActive(state); }
         void Awake()
         {
             uiDict = new Dictionary<string, List<UIBehaviour>>();
