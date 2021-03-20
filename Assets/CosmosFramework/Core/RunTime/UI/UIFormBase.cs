@@ -28,7 +28,7 @@ namespace Cosmos.UI
             }
         }
         protected int priority = 100;
-        protected IUIManager uiManager;
+        protected IUIManager UIManager { get { return GameManager.GetModule<IUIManager>(); } }
         /// <summary>
         /// UI的映射表，名字作为主键，具有一个list容器
         /// </summary>
@@ -130,7 +130,6 @@ namespace Cosmos.UI
         void Awake()
         {
             uiDict = new Dictionary<string, List<UIBehaviour>>();
-            uiManager = GameManager.GetModule<IUIManager>();
             if (autoGetUIComponents)
             {
                 GetUIComponents<Button>();

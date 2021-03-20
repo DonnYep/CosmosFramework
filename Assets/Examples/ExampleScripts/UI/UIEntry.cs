@@ -4,7 +4,7 @@ using UnityEngine;
 using Cosmos.UI;
 using Cosmos.Mvvm;
 namespace Cosmos.Test {
-
+    [DefaultExecutionOrder(1100)]
     public class UIEntry : MonoBehaviour
     {
         private void Awake()

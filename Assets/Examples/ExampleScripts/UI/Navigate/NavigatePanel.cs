@@ -28,7 +28,7 @@ namespace Cosmos.Test
         void WelcomeClick()
         {
             if (welcome == null)
-                uiManager.OpenUIFormAsync<WelcomePanel>(panel =>
+                UIManager.OpenUIFormAsync<WelcomePanel>(panel =>
                 { panel.gameObject.SetActive(true); welcome = panel; });
             else
                 welcome.HideUIForm();
@@ -40,7 +40,7 @@ namespace Cosmos.Test
         {
             if (inventory == null)
             {
-                uiManager.OpenUIFormAsync<InventoryPanel>(panel =>
+                UIManager.OpenUIFormAsync<InventoryPanel>(panel =>
                 { panel.gameObject.name = "InventoryPanel"; panel.gameObject.SetActive(true); inventory = panel; });
                 return;
             }
@@ -53,7 +53,7 @@ namespace Cosmos.Test
         {
             if (store == null)
             {
-                uiManager.OpenUIFormAsync<StorePanel>(panel =>
+                UIManager.OpenUIFormAsync<StorePanel>(panel =>
                 { panel.gameObject.SetActive(true); store = panel; });
                 return;
             }
@@ -66,7 +66,7 @@ namespace Cosmos.Test
         {
             if (setting == null)
             {
-                uiManager.OpenUIFormAsync<SettingPanel>(panel =>
+                UIManager.OpenUIFormAsync<SettingPanel>(panel =>
                 { panel.gameObject.SetActive(true); setting = panel; });
                 return;
             }
@@ -79,7 +79,7 @@ namespace Cosmos.Test
         {
             if (status == null)
             {
-                uiManager.OpenUIFormAsync<StatusPanel>(panel =>
+                UIManager.OpenUIFormAsync<StatusPanel>(panel =>
                 { panel.gameObject.SetActive(true); status = panel; });
                 return;
             }

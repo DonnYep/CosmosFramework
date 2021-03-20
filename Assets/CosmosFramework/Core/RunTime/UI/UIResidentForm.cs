@@ -10,11 +10,11 @@ namespace Cosmos.UI
     {
         public sealed override void ShowUIForm()
         {
-            uiManager.ShowUIForm(this);
+            UIManager.ShowUIForm(this);
         }
         public sealed override void HideUIForm()
         {
-            uiManager.HideUIForm(this);
+            UIManager.HideUIForm(this);
         }
     }
 }
