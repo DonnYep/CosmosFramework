@@ -225,6 +225,20 @@ namespace Cosmos
                 }
                 return comp;
             }
+            /// <summary>
+            /// 删除父节点下的子对象；
+            /// </summary>
+            /// <param name="go">目标对象</param>
+            public static void DeleteChilds(Transform go)
+            {
+                var childCount = go.childCount;
+                if (childCount == 0)
+                    return;
+                for (int i = 0; i < childCount; i++)
+                {
+                    GameObject.Destroy(go.GetChild(i).gameObject);
+                }
+            }
             public static GameObject Child(Transform go, string subNode)
             {
                 Transform tran = go.Find(subNode);
