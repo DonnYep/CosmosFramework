@@ -91,8 +91,6 @@ namespace Cosmos.Network
         {
             sndMsgDict.Clear();
             rcvMsgDict.Clear();
-            //HandleSN = 0;
-            //SendSN = 0;
             Available = true;
             latestPollingTime = Utility.Time.MillisecondNow() + interval;
         }
