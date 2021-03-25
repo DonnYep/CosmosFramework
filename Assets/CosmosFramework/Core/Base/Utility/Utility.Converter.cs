@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Cosmos
 {
-    public  sealed partial class Utility
+    public sealed partial class Utility
     {
         public static class Converter
         {
@@ -22,19 +22,19 @@ namespace Cosmos
             {
                 return Encoding.UTF8.GetBytes(value);
             }
-            public static void GetBytes(bool value,byte[] buffer,int startIndex)
+            public static void GetBytes(bool value, byte[] buffer, int startIndex)
             {
                 if (buffer == null)
                 {
                     throw new ArgumentNullException("Buffer is invalid.");
                 }
-                if(startIndex < 0 || startIndex + 1 > buffer.Length)
+                if (startIndex < 0 || startIndex + 1 > buffer.Length)
                 {
                     throw new ArgumentNullException("Start index is invalid.");
                 }
                 buffer[startIndex] = value ? (byte)1 : (byte)0;
             }
-            public static string GetString(byte[] value,int startIndex,int length)
+            public static string GetString(byte[] value, int startIndex, int length)
             {
                 if (value == null)
                 {
@@ -144,6 +144,45 @@ namespace Cosmos
                     hexString = Utility.Text.StringBuilderCache.ToString();
                 }
                 return hexString;
+            }
+            /// <summary>
+            /// 约束数值长度，少增多减；
+            /// 例如128约束5位等于12800，1024约束3位等于102；
+            /// </summary>
+            /// <param name="srcValue">原始数值</param>
+            /// <param name="length">需要保留的长度</param>
+            /// <returns>修改后的int数值</returns>
+            public static long RetainInt64(long srcValue, ushort length)
+            {
+                if (length == 0)
+                    return 0;
+                var len = srcValue.ToString().Length;
+                if (len > length)
+                {
+                    string sub = srcValue.ToString().Substring(0, length);
+                    return long.Parse(sub);
+                }
+                else
+                {
+                    var result= srcValue * (long)Math.Pow(10,length - len);
+                    return result;
+                }
+            }
+            public static int RetainInt32(int srcValue, ushort length)
+            {
+                if (length == 0)
+                    return 0;
+                var len = srcValue.ToString().Length;
+                if (len > length)
+                {
+                    string sub = srcValue.ToString().Substring(0, length);
+                    return int.Parse(sub);
+                }
+                else
+                {
+                    var result = srcValue * (int)Math.Pow(10, length - len);
+                    return result;
+                }
             }
         }
     }
