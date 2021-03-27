@@ -8,6 +8,29 @@ namespace Cosmos
 {
     public class CosmosEntry 
     {
+        public static event Action FixedRefreshHandler
+        {
+            add { GameManager.FixedRefreshHandler+= value; }
+            remove { GameManager.FixedRefreshHandler -= value; }
+        }
+        public static event Action LateRefreshHandler
+        {
+            add { GameManager.LateRefreshHandler+= value; }
+            remove { GameManager.LateRefreshHandler -= value; }
+        }
+        public static event Action RefreshHandler
+        {
+            add { GameManager.RefreshHandler+= value; }
+            remove { GameManager.RefreshHandler -= value; }
+        }
+        /// <summary>
+        /// 时间流逝轮询委托；
+        /// </summary>
+        public static event Action<long> ElapseRefreshHandler
+        {
+            add { GameManager.ElapseRefreshHandler+= value; }
+            remove { GameManager.ElapseRefreshHandler -= value; }
+        }
         public static IAudioManager AudioManager { get { return GameManager.GetModule<IAudioManager>(); } }
         public static IControllerManager ControllerManager { get { return GameManager.GetModule<IControllerManager>(); } }
         public static IFSMManager FSMManager { get { return GameManager.GetModule<IFSMManager>(); } }

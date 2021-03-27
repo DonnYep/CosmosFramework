@@ -13,17 +13,17 @@ namespace Cosmos
     public static partial class GameManager
     {
         #region Properties
-        public static event Action FixedRefreshHandler
+        internal static event Action FixedRefreshHandler
         {
             add { fixedRefreshHandler += value; }
             remove { fixedRefreshHandler -= value; }
         }
-        public static event Action LateRefreshHandler
+        internal static event Action LateRefreshHandler
         {
             add { lateRefreshHandler += value; }
             remove { lateRefreshHandler -= value; }
         }
-        public static event Action RefreshHandler
+        internal static event Action RefreshHandler
         {
             add { refreshHandler += value; }
             remove { refreshHandler -= value; }
@@ -31,7 +31,7 @@ namespace Cosmos
         /// <summary>
         /// 时间流逝轮询委托；
         /// </summary>
-        public static event Action<long> ElapseRefreshHandler
+        internal static event Action<long> ElapseRefreshHandler
         {
             add { elapseRefreshHandler += value; }
             remove { elapseRefreshHandler -= value; }

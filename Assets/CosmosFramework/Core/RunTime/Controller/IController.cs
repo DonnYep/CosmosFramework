@@ -5,6 +5,6 @@ namespace Cosmos
 {
     public interface  IController:IOperable,IControllable,IRefreshable
     {
-        string ControllerName { get; }
+        string ControllerName { get; set; }
     }
 }

@@ -95,9 +95,9 @@ namespace Cosmos
                 value.y = (float)Math.Round(value.y, decimals);
                 return value;
             }
-            public static T Get<T>(Transform go, string subNode) where T : Component
+            public static T Get<T>(Transform go ) where T : Component
             {
-                return  Child(go,subNode).GetComponent<T>();
+                return   go.GetComponent<T>();
             }
             /// <summary>
             /// 添加目标组件；默认不移除组件;

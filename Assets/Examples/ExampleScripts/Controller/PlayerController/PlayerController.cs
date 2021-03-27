@@ -58,16 +58,16 @@ namespace Cosmos
             base.Awake();
             animator = GetComponentInChildren<Animator>();
             controllerEventArgs = new LogicEventArgs<CameraTarget>().SetData(GetComponentInChildren<CameraTarget>());
-            GameManager.GetModule<IInputManager>().SetInputDevice(new StandardInputDevice());
-            inputManager = GameManager.GetModule<IInputManager>();
+            CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
+            inputManager = CosmosEntry.InputManager;
         }
         private void Start()
         {
-            GameManager.GetModule<IEventManager>().DispatchEvent(ControllerEventDefine.CTRL_INPUT, this, controllerEventArgs);
+            CosmosEntry.EventManager.DispatchEvent(ControllerEventDefine.CTRL_INPUT, this, controllerEventArgs);
         }
         void MatchRotation()
         {
-            var cameraController = GameManager.GetModule<IControllerManager>().GetController<CameraController>(c=>c.ControllerName==cameraControllerName);
+            var cameraController = CosmosEntry.ControllerManager.GetController<CameraController>(cameraControllerName);
             if (cameraController == null)
             {
                 Utility.Debug.LogInfo("cameraController empty", MessageColor.RED);

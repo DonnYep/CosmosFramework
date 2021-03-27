@@ -62,10 +62,9 @@ namespace Cosmos
             /// 是否为空
             /// </summary>
             /// <param name="obj">判断是否为空的对象</param>
-            public static void IsNull(object obj)
+            public static bool IsNull(object obj)
             {
-                if (obj != null)
-                    throw new ArgumentException("Object" + obj.ToString() + "must be null !");
+                return System.Object.ReferenceEquals(obj, null);
             }
             public static void IsNull(object obj, Action nullCallBack)
             {

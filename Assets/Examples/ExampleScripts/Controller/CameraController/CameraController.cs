@@ -61,15 +61,13 @@ namespace Cosmos
         }
         protected override void OnEnable()
         {
-            base.OnEnable();
-            GameManager.LateRefreshHandler+= LateUpdateCamera;
-            GameManager.GetModule<IEventManager>().AddListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
+            CosmosEntry.LateRefreshHandler+= LateUpdateCamera;
+           CosmosEntry.EventManager.AddListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
         }
         protected override void OnDisable()
         {
-            base.OnDisable();
-            GameManager.LateRefreshHandler -= LateUpdateCamera;
-            GameManager.GetModule<IEventManager>().RemoveListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
+            CosmosEntry.LateRefreshHandler -= LateUpdateCamera;
+            CosmosEntry.EventManager.RemoveListener(ControllerEventDefine.CTRL_INPUT, CameraHandler);
             Utility.Debug.LogInfo("CameraController destory");
         }
         protected override void OnValidate()
