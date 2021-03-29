@@ -42,7 +42,7 @@ namespace Cosmos.CosmosEditor
             GUILayout.EndVertical();
             EditorGUILayout.Space(16);
             //GUILayout.BeginVertical("box");
-            GUILayout.Label("框架中附带的Symbo: ");
+            GUILayout.Label("框架中附带的Symbol: ");
             EditorGUILayout.Space(8);
             GUILayout.Label("Addressable资源操作模块 : COSMOS_ADDRESSABLE；\n在开启此Symbol后，可使用Addressables package进行资源加载");
             EditorGUILayout.Space(8);
