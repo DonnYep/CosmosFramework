@@ -9,13 +9,13 @@ namespace kcp
     {
         // original Kcp has a define option, which is not defined by default:
         // #define FASTACK_CONSERVE
-
+        //Recovery Time Objective,RTO
         public const int RTO_NDL = 30;             // no delay min rto
         public const int RTO_MIN = 100;            // normal min rto
         public const int RTO_DEF = 200;            // default RTO
         public const int RTO_MAX = 60000;          // maximum RTO
         public const int CMD_PUSH = 81;            // cmd: push data
-        public const int CMD_ACK  = 82;            // cmd: ack
+        public const int CMD_ACK = 82;            // cmd: ack
         public const int CMD_WASK = 83;            // cmd: window probe (ask)
         public const int CMD_WINS = 84;            // cmd: window size (tell)
         public const int ASK_SEND = 1;             // need to send CMD_WASK
@@ -40,37 +40,37 @@ namespace kcp
         }
 
         // kcp members.
-        internal int state;
+        internal int state;             //连接状态
         readonly uint conv;          // conversation
-        internal uint mtu;
-        internal uint mss;           // maximum segment size := MTU - OVERHEAD
-        internal uint snd_una;       // unacknowledged. e.g. snd_una is 9 it means 8 has been confirmed, 9 and 10 have been sent
-        internal uint snd_nxt;
-        internal uint rcv_nxt;
-        internal uint ssthresh;      // slow start threshold
-        internal int rx_rttval;      // average deviation of rtt, used to measure the jitter of rtt
-        internal int rx_srtt;        // smoothed round trip time (a weighted average of rtt)
-        internal int rx_rto;
-        internal int rx_minrto;
-        internal uint snd_wnd;       // send window
-        internal uint rcv_wnd;       // receive window
-        internal uint rmt_wnd;       // remote window
-        internal uint cwnd;          // congestion window
-        internal uint probe;
-        internal uint interval;
-        internal uint ts_flush;
+        internal uint mtu;              //最大传输单元
+        internal uint mss;           //最大分片大小  maximum segment size := MTU - OVERHEAD
+        internal uint snd_una;       // 第一个未确认的包 unacknowledged. e.g. snd_una is 9 it means 8 has been confirmed, 9 and 10 have been sent
+        internal uint snd_nxt;      //待发送包的序号
+        internal uint rcv_nxt;          //待接收消息序号
+        internal uint ssthresh;      // 拥塞窗口阈值  slow start threshold
+        internal int rx_rttval;      // ack接收rtt浮动值 average deviation of rtt, used to measure the jitter of rtt
+        internal int rx_srtt;        //ack接收rtt静态值 smoothed round trip time (a weighted average of rtt)
+        internal int rx_rto;        //由ack接收延迟计算出来的复原时间
+        internal int rx_minrto;     //最小复原时间
+        internal uint snd_wnd;       //发送窗口大小 send window
+        internal uint rcv_wnd;       // 接收窗口大小 receive window
+        internal uint rmt_wnd;       // 远端接收窗口大小 remote window
+        internal uint cwnd;          //拥塞窗口大小 congestion window
+        internal uint probe;        //探查变量 
+        internal uint interval;         //内部flush刷新间隔
+        internal uint ts_flush;             //下次flush刷新时间戳
         internal uint xmit;
-        internal uint nodelay;       // not a bool. original Kcp has '<2 else' check.
-        internal bool updated;
-        internal uint ts_probe;      // timestamp probe
-        internal uint probe_wait;
-        internal uint dead_link;
-        internal uint incr;
+        internal uint nodelay;       //是否启动无延迟模式 not a bool. original Kcp has '<2 else' check.
+        internal bool updated;         //是否调用过update函数的标识
+        internal uint ts_probe;      //下次探查窗口的时间戳 timestamp probe
+        internal uint probe_wait;   //探查窗口需要等待的时间
+        internal uint dead_link;    //最大重传次数
+        internal uint incr;             //可发送的最大数据量
         internal uint current;       // current time (milliseconds). set by Update.
 
-        internal int fastresend;
+        internal int fastresend;//触发快速重传的重复ack个数
         internal int fastlimit;
-        internal bool nocwnd;        // no congestion window
+        internal bool nocwnd;        // 取消拥塞控制no congestion window
         internal readonly Queue<Segment> snd_queue = new Queue<Segment>(16); // send queue
         internal readonly Queue<Segment> rcv_queue = new Queue<Segment>(16); // receive queue
         // snd_buffer needs index removals.
@@ -392,7 +392,7 @@ namespace kcp
         // appends an ack.
         void AckPush(uint sn, uint ts)
         {
-            acklist.Add(new AckItem{ serialNumber = sn, timestamp = ts });
+            acklist.Add(new AckItem { serialNumber = sn, timestamp = ts });
         }
 
         // ikcp_parse_data
