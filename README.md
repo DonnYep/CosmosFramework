@@ -1,5 +1,8 @@
 # CosmosFramework
 CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块、算法工具类等。自定义模块可与原生模块完全同等优先级，共享相同的生命周期。
+
+## Master、V0.1分支暂停维护，最新维护内容请切换到V1.0!
+
 ## 环境
 
 - Unity版本：2017及以上； .NET API版本：4.x。
@@ -50,7 +53,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - [Behaviour]：内置生命周期函数。生命周期优先级为：OnInitialization > OnActive > OnPreparatory > OnFixRefresh > OnRefresh > OnLateRefresh > OnDeactive > OnTermination。此生命周期可参考Unity的MONO生命周期。需要注意，此内置生命周期适用于原生模块与自定义模块，相对于Unity生命周期是独立的。
 
-[Extension]：静态扩展工具。提供unity的扩展以及.NETCore对unity.NET的扩展。
+- [Extension]：静态扩展工具。提供unity的扩展以及.NETCore对unity.NET的扩展。
 
 ## 内置软件架构 MVVM
 
@@ -71,5 +74,14 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 - 默认请使用 V1.0 版本，V0.1 已经停止维护。Master分支暂停维护，所有最新的功能都在V1.0中。
 
 - 内置使用案例地址为：Assets\Examples\Levels。
+
+## 其他
+
+- MVVM的纯C#版本：https://github.com/DonHitYep/Cosmos_SimpleMVVM
+
+- CosmosFramework的服务器版本：https://github.com/DonHitYep/CosmosFramework4Server 
+服务器版本当前提供的协议为类似于KCP的可靠高速UDP，TCP持续更新中。内置模块与Unity客户端类似，内置类型都为线程安全类型。
+
+
 
 
