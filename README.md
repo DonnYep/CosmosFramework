@@ -53,7 +53,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - [Behaviour]：内置生命周期函数。生命周期优先级为：OnInitialization > OnActive > OnPreparatory > OnFixRefresh > OnRefresh > OnLateRefresh > OnDeactive > OnTermination。此生命周期可参考Unity的MONO生命周期。需要注意，此内置生命周期适用于原生模块与自定义模块，相对于Unity生命周期是独立的。
 
-[Extension]：静态扩展工具。提供unity的扩展以及.NETCore对unity.NET的扩展。
+- [Extension]：静态扩展工具。提供unity的扩展以及.NETCore对unity.NET的扩展。
 
 ## 内置软件架构 MVVM
 
