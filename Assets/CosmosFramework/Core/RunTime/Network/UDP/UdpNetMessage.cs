@@ -188,7 +188,7 @@ namespace Cosmos
             Snd_nxt = BitConverter.ToUInt32(buffer, 28);
             Rcv_nxt = BitConverter.ToUInt32(buffer, 32);
             OperationCode = BitConverter.ToUInt16(buffer, 36);
-            if (Cmd == KcpProtocol.MSG)
+            if (Cmd == UdpProtocol.MSG)
             {
                 ServiceMsg = new byte[ServiceMsgLength];
                 Array.Copy(buffer, 38, ServiceMsg, 0, ServiceMsgLength);
@@ -201,7 +201,7 @@ namespace Cosmos
         /// <returns>编码后的消息字节流</returns>
         public byte[] EncodeMessage()
         {
-            if (Cmd == KcpProtocol.ACK)
+            if (Cmd == UdpProtocol.ACK)
                 ServiceMsgLength = 0;
             int srvMsgLen=0;
             if (ServiceMsg != null)
@@ -229,7 +229,7 @@ namespace Cosmos
             Array.Copy(rcv_nxt, 0, data, 32, 4);
             Array.Copy(opCode, 0, data, 36, 2);
             //如果不是ACK报文，则追加数据
-            if (Cmd == KcpProtocol.MSG)
+            if (Cmd == UdpProtocol.MSG)
                 if (ServiceMsg != null)//空包保护
                     Array.Copy(ServiceMsg, 0, data, 38, srvMsgLen);
             Buffer = data;
@@ -248,7 +248,7 @@ namespace Cosmos
             Snd_nxt = 0;
             SN = 0;
             TS = 0;
-            Cmd = KcpProtocol.NIL;
+            Cmd = UdpProtocol.NIL;
             OperationCode = 0;
             RecurCount = 0;
             ServiceMsg = null;
@@ -265,7 +265,7 @@ namespace Cosmos
             ack.Conv = srcMsg.Conv;
             ack.Snd_una = srcMsg.Snd_una;
             ack.SN = srcMsg.SN;
-            ack.Cmd = KcpProtocol.ACK;
+            ack.Cmd = UdpProtocol.ACK;
             ack.OperationCode = srcMsg.OperationCode;
             ack.RecurCount = 0;
             ack.EncodeMessage();
@@ -280,7 +280,7 @@ namespace Cosmos
         {
             var udpNetMsg = GameManager.GetModule<IReferencePoolManager>().Spawn<UdpNetMessage>();
             udpNetMsg.Conv = conv;
-            udpNetMsg.Cmd = KcpProtocol.MSG;
+            udpNetMsg.Cmd = UdpProtocol.MSG;
             udpNetMsg.ServiceMsgLength = 0;
             udpNetMsg.OperationCode = InnerOpCode._Heartbeat;
             return udpNetMsg;
@@ -289,7 +289,7 @@ namespace Cosmos
         {
             var udpNetMsg = GameManager.GetModule<IReferencePoolManager>().Spawn<UdpNetMessage>();
             udpNetMsg.Conv = conv;
-            udpNetMsg.Cmd = KcpProtocol.MSG;
+            udpNetMsg.Cmd = UdpProtocol.MSG;
             udpNetMsg.ServiceMsgLength = 0;
             udpNetMsg.OperationCode = 0;
             return udpNetMsg;
@@ -303,7 +303,7 @@ namespace Cosmos
         public static UdpNetMessage EncodeMessage(ushort opCode, byte[] message)
         {
             var udpNetMsg = GameManager.GetModule<IReferencePoolManager>().Spawn<UdpNetMessage>();
-            udpNetMsg.Cmd = KcpProtocol.MSG;
+            udpNetMsg.Cmd = UdpProtocol.MSG;
             udpNetMsg.ServiceMsgLength = 0;
             udpNetMsg.OperationCode = opCode;
             udpNetMsg.ServiceMsg = message;

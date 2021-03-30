@@ -146,7 +146,7 @@ namespace Cosmos.Network
             switch (netMsg.Cmd)
             {
                 //ACK报文
-                case KcpProtocol.ACK:
+                case UdpProtocol.ACK:
                     {
                         UdpNetMessage tmpMsg;
                         //Utility.DebugLog($" Receive ACK Message:{netMsg}");
@@ -166,7 +166,7 @@ namespace Cosmos.Network
                             referencePoolManager.Despawn(tmpMsg);
                     }
                     break;
-                case KcpProtocol.MSG:
+                case UdpProtocol.MSG:
                     {
                         //生成一个ACK报文，并返回发送
                         var ack = UdpNetMessage.ConvertToACK(netMsg);
@@ -176,7 +176,7 @@ namespace Cosmos.Network
                         HandleMsgSN(netMsg);
                     }
                     break;
-                case KcpProtocol.SYN:
+                case UdpProtocol.SYN:
                     {
                         //建立连接标志
                         Utility.Debug.LogInfo($"Conv : {Conv} ,Receive SYN Message");
@@ -186,7 +186,7 @@ namespace Cosmos.Network
                         sendMessageHandler?.Invoke(ack);
                     }
                     break;
-                case KcpProtocol.FIN:
+                case UdpProtocol.FIN:
                     {
                         //结束建立连接Cmd，这里需要谨慎考虑；
                         Utility.Debug.LogError($"Conv : {Conv} ,Receive FIN Message");
@@ -248,7 +248,7 @@ namespace Cosmos.Network
                 //若会话ID不为0，则缓存入ACK容器中，等接收成功后进行移除
                 try
                 {
-                    if (netMsg.Cmd == KcpProtocol.MSG)
+                    if (netMsg.Cmd == UdpProtocol.MSG)
                         sndMsgDict.TryAdd(netMsg.SN, netMsg);
                 }
                 catch (Exception e)

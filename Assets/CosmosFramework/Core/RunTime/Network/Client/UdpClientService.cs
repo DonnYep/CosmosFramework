@@ -40,13 +40,13 @@ namespace Cosmos
             Conv = 0;
             serverEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
             UdpNetMessage udpNetMsg = UdpNetMessage.EncodeMessage(InnerOpCode._Connect, null);
-            udpNetMsg.Cmd = KcpProtocol.SYN;
+            udpNetMsg.Cmd = UdpProtocol.SYN;
             SendMessageAsync(udpNetMsg);
         }
         public override void Disconnect()
         {
             UdpNetMessage udpNetMsg = UdpNetMessage.EncodeMessage(InnerOpCode._Disconnect, null);
-            udpNetMsg.Cmd = KcpProtocol.FIN;
+            udpNetMsg.Cmd = UdpProtocol.FIN;
             SendMessageAsync(udpNetMsg);
         }
         public override void SendMessageAsync(INetworkMessage netMsg)
