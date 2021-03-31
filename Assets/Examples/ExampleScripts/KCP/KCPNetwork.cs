@@ -10,6 +10,28 @@ namespace Cosmos.Test
     public class KCPNetwork : MonoSingleton<KCPNetwork>
     {
         KcpClientService kcpClientService = new KcpClientService();
+        [SerializeField] string ip = "127.0.0.1";
+        [SerializeField] int port = 8521;
+        [SerializeField] GameObject localPlayerPrefab;
+        public GameObject LocalPlayerPrefab { get { return localPlayerPrefab; } }
+        [SerializeField] GameObject remotePlayerPrefab;
+        public GameObject RemotePlayerPrefab { get { return remotePlayerPrefab; } }
+
+        public event Action OnClientConnected
+        {
+            add { kcpClientService.OnClientConnected += value; }
+            remove { kcpClientService.OnClientConnected -= value; }
+        }
+        public event Action OnClientDisconnected
+        {
+            add { kcpClientService.OnClientDisconnected += value; }
+            remove { kcpClientService.OnClientDisconnected -= value; }
+        }
+        public void SendNetKcpMessage(byte[] data)
+        {
+            var arraySegment = new ArraySegment<byte>(data);
+            kcpClientService.ServiceSend(KcpChannel.Reliable, arraySegment);
+        }
         public void SendKcpMessage(string msg)
         {
             var buffer = Encoding.UTF8.GetBytes(msg);
@@ -17,9 +39,9 @@ namespace Cosmos.Test
             var arraySegment = new ArraySegment<byte>(buffer);
             kcpClientService.ServiceSend(KcpChannel.Reliable, arraySegment);
         }
-        public void Connect(string ip, ushort port)
+        public void Connect()
         {
-            kcpClientService.Port = port;
+            kcpClientService.Port = (ushort)port;
             kcpClientService.ServiceConnect(ip);
         }
         public void Disconnect()
@@ -58,8 +80,17 @@ namespace Cosmos.Test
         }
         void RsvKcpMsg(ArraySegment<byte> msg, byte channel)
         {
-            var str = Encoding.UTF8.GetString(msg.Array);
-            Utility.Debug.LogInfo(str,MessageColor.YELLOW);
+            //var str = Encoding.UTF8.GetString(msg.Array);
+            //Utility.Debug.LogInfo(str, MessageColor.YELLOW);
+            try
+            {
+                var mp = MessagePacket.Deserialize(msg.Array);
+                MsgCmdEventCore.Instance.Dispatch(mp.OperationCode, mp);
+            }
+            catch (Exception e)
+            {
+                Utility.Debug.LogError(e);
+            }
         }
 
     }

@@ -8,21 +8,18 @@ using Cosmos.Network;
 using System.IO;
 namespace Cosmos.Test
 {
-    public class KCPNetworkPanel : UIResidentForm
+    public class CustomNetworkPanel : UIResidentForm
     {
         Button btnConnect;
         Button btnDisconnect;
-        Button btnSend;
         InputField inputMsg;
-    
+
         protected override void OnInitialization()
         {
             btnConnect = GetUIForm<Button>("BtnConnect");
             btnConnect.onClick.AddListener(ConnectClick);
             btnDisconnect = GetUIForm<Button>("BtnDisconnect");
             btnDisconnect.onClick.AddListener(DisconnectClick);
-            btnSend = GetUIForm<Button>("BtnSend");
-            btnSend.onClick.AddListener(SendClick);
             inputMsg = GetUIForm<InputField>("InputMsg");
         }
         void ConnectClick()
@@ -31,12 +28,7 @@ namespace Cosmos.Test
         }
         void DisconnectClick()
         {
-            KCPNetwork .Instance.Disconnect();
-        }
-        void SendClick()
-        {
-            string str = inputMsg.text;
-            KCPNetwork .Instance.SendKcpMessage(str);
+            KCPNetwork.Instance.Disconnect();
         }
     }
 }
