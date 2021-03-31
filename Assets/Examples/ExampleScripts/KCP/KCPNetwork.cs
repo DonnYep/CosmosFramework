@@ -7,29 +7,60 @@ using System.Text;
 
 namespace Cosmos.Test
 {
-    public class KCPNetwork : MonoBehaviour
+    public class KCPNetwork : MonoSingleton<KCPNetwork>
     {
-        KcpService kcpService;
-        private void Awake()
+        KcpClientService kcpClientService = new KcpClientService();
+        public void SendKcpMessage(string msg)
         {
-            Log.Info = Debug.Log;
-            Log.Warning = Debug.LogWarning;
-            Log.Error = Debug.LogError;
-
-            kcpService = new KcpService();
-            kcpService.LaunchClient();
-            kcpService.ClientConnect("localhost");
+            var buffer = Encoding.UTF8.GetBytes(msg);
+            Utility.Debug.LogInfo($"向服务器发送消息，信息长度为：{buffer.Length}");
+            var arraySegment = new ArraySegment<byte>(buffer);
+            kcpClientService.ServiceSend(KcpChannel.Reliable, arraySegment);
         }
-        void Start()
+        public void Connect(string ip, ushort port)
         {
-            Log.Info("KCP向服务器发送消息");
-            kcpService.client.Unpause();
+            kcpClientService.Port = port;
+            kcpClientService.ServiceConnect(ip);
+        }
+        public void Disconnect()
+        {
+            if (kcpClientService.Connected)
+                kcpClientService.ServiceDisconnect();
+        }
+        protected override void Awake()
+        {
+            base.Awake();
+            DontDestroyOnLoad(this.gameObject);
+            Log.Info = (s) => Utility.Debug.LogInfo(s);
+            Log.Warning = (s) => Utility.Debug.LogInfo(s, MessageColor.YELLOW);
+            Log.Error = (s) => Utility.Debug.LogError(s);
 
-            kcpService.ClientSend(KcpChannel.Reliable, new ArraySegment<byte>(Encoding.UTF8.GetBytes("Cosmos KCP 客户端发送消息测试")));
+            kcpClientService.ServiceSetup();
+            kcpClientService.OnClientDataReceived += RsvKcpMsg;
+            kcpClientService.OnClientConnected += () => { Utility.Debug.LogInfo("KCP 服务器建立连接"); };
+            kcpClientService.OnClientDisconnected += () => { Utility.Debug.LogInfo("KCP 服务器断开连接"); };
+        }
+        private void OnEnable()
+        {
+            kcpClientService.ServiceUnpause();
+        }
+        private void OnDisable()
+        {
+            kcpClientService.ServicePause();
         }
         private void Update()
         {
-            kcpService.ClientEarlyUpdate();
+            kcpClientService.ServiceTick();
         }
+        protected override void OnDestroy()
+        {
+            kcpClientService.ServiceDisconnect();
+        }
+        void RsvKcpMsg(ArraySegment<byte> msg, byte channel)
+        {
+            var str = Encoding.UTF8.GetString(msg.Array);
+            Utility.Debug.LogInfo(str,MessageColor.YELLOW);
+        }
+
     }
 }
