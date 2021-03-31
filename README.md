@@ -35,7 +35,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **[Hotfix]**：热更新模块。此模块适用于基于C#的热更方案，如ILRuntime、JEngine等。
 
-- **[Network]**：网络模块。当前模块提供了可靠快速的类似KCP协议的UDP协议。TCP协议持续更新中。
+- **[Network]**：网络模块。当前模块提供了可靠的UDP协议，并集成了KCP协议。TCP协议持续更新中。
 
 - **[UI]**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取等功能。
 
@@ -67,8 +67,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - 框架的AB方案正在开发中。
 
-- 此框架不提供第三方的工具，但有为第三方开辟的适配工具，如Utility.Json，用户可自定义任意JSON方案。
-此框架使用的高速传输协议为MessagePack，其性能与ProtoBuf各有优势。暂时不提供ProtoBuf的Utility适配工具。
+- 框架提供第三方适配，如Utility.Json，用户可自定义任意JSON方案。框架建议使用的高速传输协议为MessagePack，并未其开辟了适配方案。
 MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
 - 默认请使用 V1.0 版本，V0.1 已经停止维护。Master分支暂停维护，所有最新的功能都在V1.0中。
@@ -80,8 +79,11 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 - MVVM的纯C#版本：https://github.com/DonHitYep/Cosmos_SimpleMVVM
 
 - CosmosFramework的服务器版本：https://github.com/DonHitYep/CosmosFramework4Server 
-服务器版本当前提供的协议为类似于KCP的可靠高速UDP，TCP持续更新中。内置模块与Unity客户端类似，内置类型都为线程安全类型。
+服务器版本已提供可靠UDP协议，并集成了KCP协议。TCP持续更新中。内置模块与Unity客户端类似，内置类型都为线程安全类型。
 
+- KCP地址：https://github.com/skywind3000/kcp
 
+- 服务器版本的KCP与客户端版本的KCP皆为参考自Mirror。
+    Mirror地址:https://github.com/vis2k/Mirror
 
 
