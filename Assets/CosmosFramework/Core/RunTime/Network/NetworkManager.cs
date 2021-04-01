@@ -13,15 +13,20 @@ namespace Cosmos.Network
     [Module]
      internal sealed class NetworkManager : Module, INetworkManager
     {
-        public event Action NetworkOnConnect
+        public event Action OnConnect
         {
-            add { networkOnConnect += value; }
-            remove { networkOnConnect -= value; }
+            add { onConnect += value; }
+            remove { onConnect -= value; }
         }
-        public event Action NetworkOnDisconnect
+        public event Action OnDisconnect
         {
-            add { networkOnDisconnect += value; }
-            remove { networkOnDisconnect -= value; }
+            add { onDisconnect += value; }
+            remove { onDisconnect -= value; }
+        }
+        public event Action<ArraySegment<byte>> OnReceiveData
+        {
+            add { onReceiveData += value; }
+            remove { onReceiveData -= value; }
         }
         string serverIP;
         int serverPort;
@@ -29,9 +34,9 @@ namespace Cosmos.Network
         int clientPort;
         INetworkService service;
         IPEndPoint serverEndPoint;
-        INetworkMessageHelper netMessageHelper;
-        Action networkOnConnect;
-        Action networkOnDisconnect;
+        Action onConnect;
+        Action onDisconnect;
+        Action<ArraySegment<byte>> onReceiveData;
         IHeartbeat heartbeat;
         public long Conv { get { return service.Conv; } }
         public bool IsConnected { get; private set; }
@@ -88,28 +93,13 @@ namespace Cosmos.Network
                 Utility.Debug.LogError("Can not send net message, no service");
         }
         /// <summary>
-        /// 发送网络消息
-        /// </summary>
-        /// <param name="opCode">操作码</param>
-        /// <param name="message">序列化后的数据</param>
-         public void SendNetworkMessage(ushort opCode, byte[] message)
-        {
-            if (IsConnected)
-            {
-                var netMsg = netMessageHelper.EncodeMessage(opCode, message);
-                service.SendMessageAsync(netMsg);
-            }
-            else
-                Utility.Debug.LogError("Can not send net message, no service");
-        }
-        /// <summary>
         /// 与远程建立连接；
         /// 当前只有udp
         /// </summary>
         /// <param name="ip">ip地址</param>
         /// <param name="port">端口号</param>
         /// <param name="protocolType">协议类型</param>
-         public void Connect(string ip, int port, ProtocolType protocolType)
+         public void Connect(string ip, int port, NetworkProtocolType protocolType)
         {
             OnUnPause();
             if (IsConnected)
@@ -119,19 +109,23 @@ namespace Cosmos.Network
             }
             switch (protocolType)
             {
-                case ProtocolType.Tcp:
+                case NetworkProtocolType.KCP:
                     {
                     }
                     break;
-                case ProtocolType.Udp:
+                case NetworkProtocolType.TCP:
+                    {
+                    }
+                    break;
+                case NetworkProtocolType.UDP:
                     {
                         if (service == null)
                         {
                             service = new UdpClientService();
-                            netMessageHelper = new UdpNetMessageHelper();
                             UdpClientService udp = service as UdpClientService;
                             udp.OnConnect += OnConnectHandler;
                             udp.OnDisconnect += OnDisconnectHandler;
+                            udp.OnReceiveData += OnReceiveDataHandler;
                             heartbeat = new Heartbeat();
                             service.SetHeartbeat(heartbeat);
                         }
@@ -173,7 +167,7 @@ namespace Cosmos.Network
             }
             service.Disconnect();
         }
-         public void RunHeartbeat(uint intervalSec, byte maxRecur)
+        void RunHeartbeat(uint intervalSec, byte maxRecur)
         {
             //var hb = new Heartbeat();
             heartbeat.MaxRecurCount = maxRecur;
@@ -187,13 +181,18 @@ namespace Cosmos.Network
             OnPause();
             IsConnected = false;
             Utility.Debug.LogError("Disconnect network, stop service");
-            networkOnDisconnect?.Invoke();
+            onDisconnect?.Invoke();
         }
         void OnConnectHandler()
         {
+            RunHeartbeat(NetworkConsts.HeartbeatInterval, NetworkConsts.MaxRecurCount);
             IsConnected = true;
             Utility.Debug.LogInfo("Network is connected ! ");
-            networkOnConnect?.Invoke();
+            onConnect?.Invoke();
+        }
+        void OnReceiveDataHandler(ArraySegment<byte> arrSeg)
+        {
+            onReceiveData?.Invoke(arrSeg);
         }
     }
 }

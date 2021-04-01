@@ -10,6 +10,7 @@ namespace Cosmos.Test
     public class KCPNetwork : MonoSingleton<KCPNetwork>
     {
         KcpClientService kcpClientService = new KcpClientService();
+        public KcpClientService KcpClientService { get { return kcpClientService; } }
         [SerializeField] string ip = "127.0.0.1";
         [SerializeField] int port = 8521;
         [SerializeField] GameObject localPlayerPrefab;
@@ -80,8 +81,8 @@ namespace Cosmos.Test
         }
         void RsvKcpMsg(ArraySegment<byte> msg, byte channel)
         {
-            //var str = Encoding.UTF8.GetString(msg.Array);
-            //Utility.Debug.LogInfo(str, MessageColor.YELLOW);
+            var str = Encoding.UTF8.GetString(msg.Array);
+            Utility.Debug.LogInfo(str, MessageColor.YELLOW);
             try
             {
                 var mp = MessagePacket.Deserialize(msg.Array);

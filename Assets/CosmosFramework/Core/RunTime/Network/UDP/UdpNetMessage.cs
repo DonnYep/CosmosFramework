@@ -1,7 +1,5 @@
-﻿using Cosmos.Reference;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -42,21 +40,10 @@ namespace Cosmos
         /// </summary>
         public uint SN { get; set; }
         /// <summary>
-        /// 第一个未确认的包
+        ///通讯码，用于区分数据包含的是连接、断开、心跳、消息；
+        ///<see cref="UdpHeader">
         /// </summary>
-        public uint Snd_una { get; set; }
-        /// <summary>
-        ///下一个需要发送的msg序号
-        /// </summary>
-        public uint Snd_nxt { get; set; }
-        /// <summary>
-        /// 待接收消息序号；
-        /// </summary>
-        public uint Rcv_nxt { get; set; }
-        /// <summary>
-        /// 前后端通讯的操作码；
-        /// </summary>
-        public ushort OperationCode { get; set; }
+        public UdpHeader HeaderCode { get; private set; }
         /// <summary>
         /// 业务报文
         /// </summary>
@@ -95,9 +82,9 @@ namespace Cosmos
         /// <param name="conv">会话ID</param>
         /// <param name="sn">msg序号</param>
         /// <param name="cmd">协议ID</param>
-        /// <param name="opCode">操作码</param>
+        /// <param name="headerCode">操作码</param>
         /// <param name="message">消息内容</param>
-        public UdpNetMessage(long conv, uint sn, byte cmd, ushort opCode, byte[] message)
+        public UdpNetMessage(long conv, uint sn, byte cmd, UdpHeader headerCode, byte[] message)
         {
             if (message == null)
                 ServiceMsgLength = 0;
@@ -107,27 +94,21 @@ namespace Cosmos
             SN = sn;
             Cmd = cmd;
             ServiceMsg = message;
-            Rcv_nxt = sn;
-            Snd_nxt = SN + 1;
-            OperationCode = opCode;
+            HeaderCode = headerCode;
         }
         /// <summary>
         /// ACK报文构造
         /// </summary>
         /// <param name="conv">会话ID</param>
-        /// <param name="snd_una">未确认的报文</param>
         /// <param name="sn">msgID</param>
         /// <param name="cmd">协议</param>
-        /// <param name="opCode">前后端消息ID</param>
-        public UdpNetMessage(long conv, uint snd_una, uint sn, ushort cmd, ushort opCode)
+        /// <param name="headerCode">前后端消息ID</param>
+        public UdpNetMessage(long conv, uint sn, ushort cmd, UdpHeader headerCode)
         {
             Conv = conv;
-            Snd_una = snd_una;
             SN = sn;
-            Rcv_nxt = SN;
-            Snd_nxt = SN + 1;
             Cmd = cmd;
-            OperationCode = opCode;
+            HeaderCode = headerCode;
         }
         /// <summary>
         /// 消息构造
@@ -152,9 +133,7 @@ namespace Cosmos
             SN = udpNetMsg.SN;
             Cmd = udpNetMsg.Cmd;
             ServiceMsg = message;
-            Rcv_nxt = udpNetMsg.SN;
-            Snd_nxt = SN + 1;
-            OperationCode = udpNetMsg.OperationCode;
+            HeaderCode = udpNetMsg.HeaderCode;
         }
         /// <summary>
         /// 解析UDP数据报文
@@ -184,14 +163,11 @@ namespace Cosmos
             Cmd = BitConverter.ToUInt16(buffer, 10);
             TS = BitConverter.ToInt64(buffer, 12);
             SN = BitConverter.ToUInt32(buffer, 20);
-            Snd_una = BitConverter.ToUInt32(buffer, 24);
-            Snd_nxt = BitConverter.ToUInt32(buffer, 28);
-            Rcv_nxt = BitConverter.ToUInt32(buffer, 32);
-            OperationCode = BitConverter.ToUInt16(buffer, 36);
+            HeaderCode = (UdpHeader)BitConverter.ToUInt16(buffer, 24);
             if (Cmd == UdpProtocol.MSG)
             {
                 ServiceMsg = new byte[ServiceMsgLength];
-                Array.Copy(buffer, 38, ServiceMsg, 0, ServiceMsgLength);
+                Array.Copy(buffer, 26, ServiceMsg, 0, ServiceMsgLength);
             }
             return true;
         }
@@ -203,38 +179,36 @@ namespace Cosmos
         {
             if (Cmd == UdpProtocol.ACK)
                 ServiceMsgLength = 0;
-            int srvMsgLen=0;
+            int srvMsgLen = 0;
             if (ServiceMsg != null)
             {
                 srvMsgLen = ServiceMsg.Length;
                 ServiceMsgLength = Convert.ToUInt16(srvMsgLen);
             }
-            byte[] data = new byte[38 + srvMsgLen];
-            byte[] len = BitConverter.GetBytes(srvMsgLen);
+            byte[] data = new byte[38 + ServiceMsgLength];
+            byte[] len = BitConverter.GetBytes(ServiceMsgLength);
             byte[] conv = BitConverter.GetBytes(Conv);
             byte[] cmd = BitConverter.GetBytes(Cmd);
             byte[] ts = BitConverter.GetBytes(TS);
             byte[] sn = BitConverter.GetBytes(SN);
-            byte[] snd_una = BitConverter.GetBytes(Snd_una);
-            byte[] snd_nxt = BitConverter.GetBytes(Snd_nxt);
-            byte[] rcv_nxt = BitConverter.GetBytes(Rcv_nxt);
-            byte[] opCode = BitConverter.GetBytes(OperationCode);
+            byte[] headerCode = BitConverter.GetBytes((ushort)HeaderCode);
             Array.Copy(len, 0, data, 0, 2);
             Array.Copy(conv, 0, data, 2, 8);
             Array.Copy(cmd, 0, data, 10, 2);
             Array.Copy(ts, 0, data, 12, 8);
             Array.Copy(sn, 0, data, 20, 4);
-            Array.Copy(snd_una, 0, data, 24, 4);
-            Array.Copy(snd_nxt, 0, data, 28, 4);
-            Array.Copy(rcv_nxt, 0, data, 32, 4);
-            Array.Copy(opCode, 0, data, 36, 2);
+            Array.Copy(headerCode, 0, data, 24, 2);
             //如果不是ACK报文，则追加数据
             if (Cmd == UdpProtocol.MSG)
                 if (ServiceMsg != null)//空包保护
-                    Array.Copy(ServiceMsg, 0, data, 38, srvMsgLen);
+                    Array.Copy(ServiceMsg, 0, data, 26, ServiceMsg.Length);
             Buffer = data;
             return data;
         }
+        /// <summary>
+        /// 获取编码后的数据buffer
+        /// </summary>
+        /// <returns>序列化后的buffer</returns>
         public byte[] GetBuffer()
         {
             return IsFull == true ? Buffer : EncodeMessage();
@@ -243,30 +217,26 @@ namespace Cosmos
         {
             ServiceMsgLength = 0;
             Conv = 0;
-            Snd_una = 0;
-            Rcv_nxt = 0;
-            Snd_nxt = 0;
             SN = 0;
             TS = 0;
             Cmd = UdpProtocol.NIL;
-            OperationCode = 0;
+            HeaderCode = 0;
             RecurCount = 0;
             ServiceMsg = null;
             IsFull = false;
         }
         public override string ToString()
         {
-            string str = $"Length:{ServiceMsgLength} ; Conv:{Conv} ;Cmd:{Cmd};TS :{TS } ;  SN:{SN} ; Snd_una:{Snd_una} ; Snd_nxt :{Snd_nxt} ;Rcv_nxt:{Rcv_nxt} ; OperationCode : {OperationCode} ; RecurCount:{RecurCount} ";
+            string str = $"Length:{ServiceMsgLength} ; Conv:{Conv} ;Cmd:{Cmd};TS :{TS } ;  SN:{SN} ;  HeaderCode: {HeaderCode} ; RecurCount:{RecurCount} ";
             return str;
         }
         public static UdpNetMessage ConvertToACK(UdpNetMessage srcMsg)
         {
-            UdpNetMessage ack = GameManager.GetModule<IReferencePoolManager>().Spawn<UdpNetMessage>();
+            UdpNetMessage ack = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
             ack.Conv = srcMsg.Conv;
-            ack.Snd_una = srcMsg.Snd_una;
             ack.SN = srcMsg.SN;
             ack.Cmd = UdpProtocol.ACK;
-            ack.OperationCode = srcMsg.OperationCode;
+            ack.HeaderCode = srcMsg.HeaderCode;
             ack.RecurCount = 0;
             ack.EncodeMessage();
             return ack;
@@ -278,34 +248,48 @@ namespace Cosmos
         /// <returns></returns>
         public static UdpNetMessage HeartbeatMessage(long conv)
         {
-            var udpNetMsg = GameManager.GetModule<IReferencePoolManager>().Spawn<UdpNetMessage>();
+            var udpNetMsg = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
             udpNetMsg.Conv = conv;
-            udpNetMsg.Cmd = UdpProtocol.MSG;
+            udpNetMsg.Cmd = UdpProtocol.ACK;
             udpNetMsg.ServiceMsgLength = 0;
-            udpNetMsg.OperationCode = InnerOpCode._Heartbeat;
+            udpNetMsg.HeaderCode = UdpHeader.Hearbeat;
             return udpNetMsg;
         }
         public static UdpNetMessage EncodeMessage(long conv)
         {
-            var udpNetMsg = GameManager.GetModule<IReferencePoolManager>().Spawn<UdpNetMessage>();
+            var udpNetMsg = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
             udpNetMsg.Conv = conv;
             udpNetMsg.Cmd = UdpProtocol.MSG;
             udpNetMsg.ServiceMsgLength = 0;
-            udpNetMsg.OperationCode = 0;
+            udpNetMsg.HeaderCode = UdpHeader.Message;
             return udpNetMsg;
         }
         /// <summary>
         /// 编码默认消息
         /// </summary>
-        /// <param name="opCode">操作码</param>
+        /// <param name="headerCode">操作码</param>
         /// <param name="message">二进制业务报文</param>
         /// <returns>编码成功后的数据</returns>
-        public static UdpNetMessage EncodeMessage(ushort opCode, byte[] message)
+        public static UdpNetMessage EncodeMessage(UdpHeader headerCode, byte[] message)
         {
-            var udpNetMsg = GameManager.GetModule<IReferencePoolManager>().Spawn<UdpNetMessage>();
+            var udpNetMsg = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
             udpNetMsg.Cmd = UdpProtocol.MSG;
             udpNetMsg.ServiceMsgLength = 0;
-            udpNetMsg.OperationCode = opCode;
+            udpNetMsg.HeaderCode = headerCode;
+            udpNetMsg.ServiceMsg = message;
+            udpNetMsg.EncodeMessage();
+            return udpNetMsg;
+        }
+        /// <summary>
+        ///普通消息；MSG 
+        /// </summary>
+        public static UdpNetMessage EncodeMessage(long conv, byte[] message)
+        {
+            var udpNetMsg = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
+            udpNetMsg.Conv = conv;
+            udpNetMsg.Cmd = UdpProtocol.MSG;
+            udpNetMsg.ServiceMsgLength = 0;
+            udpNetMsg.HeaderCode = UdpHeader.Message;
             udpNetMsg.ServiceMsg = message;
             udpNetMsg.EncodeMessage();
             return udpNetMsg;
@@ -315,6 +299,13 @@ namespace Cosmos
             return await Task.Run<UdpNetMessage>(() =>
             {
                 return EncodeMessage(conv);
+            });
+        }
+        public static async Task<UdpNetMessage> EncodeMessageAsync(long conv, byte[] message)
+        {
+            return await Task.Run<UdpNetMessage>(() =>
+            {
+                return EncodeMessage(conv, message);
             });
         }
     }

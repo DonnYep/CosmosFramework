@@ -18,7 +18,7 @@ namespace Cosmos
         public UdpClientService():base()
         {
             //构造传入0表示接收任意端口收发的数据
-            peer = new UdpClientPeer(OnConnectHandler,OnDisconnectHandler);
+            peer = new UdpClientPeer(OnConnectHandler,OnDisconnectHandler, OnReceiveDataHandler);
             peer.SetValue(SendMessageAsync, Disconnect, 0, null);
             referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
 
@@ -31,6 +31,10 @@ namespace Cosmos
         {
             onDisconnect?.Invoke();
         }
+        void OnReceiveDataHandler(ArraySegment<byte> arrSeg)
+        {
+            onReceiveData?.Invoke(arrSeg);
+        }
         public override void SetHeartbeat(IHeartbeat heartbeat)
         {
             peer.Heartbeat = heartbeat;
@@ -39,13 +43,13 @@ namespace Cosmos
         {
             Conv = 0;
             serverEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-            UdpNetMessage udpNetMsg = UdpNetMessage.EncodeMessage(InnerOpCode._Connect, null);
+            UdpNetMessage udpNetMsg = UdpNetMessage.EncodeMessage(UdpHeader.Connect, null);
             udpNetMsg.Cmd = UdpProtocol.SYN;
             SendMessageAsync(udpNetMsg);
         }
         public override void Disconnect()
         {
-            UdpNetMessage udpNetMsg = UdpNetMessage.EncodeMessage(InnerOpCode._Disconnect, null);
+            UdpNetMessage udpNetMsg = UdpNetMessage.EncodeMessage(UdpHeader.Disconnect, null);
             udpNetMsg.Cmd = UdpProtocol.FIN;
             SendMessageAsync(udpNetMsg);
         }

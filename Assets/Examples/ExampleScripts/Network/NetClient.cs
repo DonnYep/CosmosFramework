@@ -7,7 +7,7 @@ public class NetClient : IDisposable
 {
     Action networkConnect;
     Action networkDisconnect;
-    Action<MessagePacket> networkReceive;
+    Action<ArraySegment<byte>> networkReceiveData;
     public event Action NetworkConnect
     {
         add
@@ -44,69 +44,46 @@ public class NetClient : IDisposable
             }
         }
     }
-    public event Action<MessagePacket> NetworkReceive
+    public event Action<ArraySegment<byte>> NetworkReceiveData
     {
-        add
-        {
-            networkReceive += value;
-        }
-        remove
-        {
-            try
-            {
-                networkReceive -= value;
-            }
-            catch (Exception e)
-            {
-                Utility.Debug.LogError(e);
-            }
-        }
+        add { networkReceiveData += value; }
+        remove{ networkReceiveData -= value; }
     }
+
     INetworkManager networkManager;
     public NetClient()
     {
         MessagePacket.SetHelper(new MessagePacketJsonHelper());
-        networkManager = GameManager.GetModule<INetworkManager>();
+        networkManager = CosmosEntry.NetworkManager;
     }
     public void SendMessage(MessagePacket packet)
     {
         var packetBuffer = MessagePacket.Serialize(packet);
-        networkManager.SendNetworkMessage(MessagePacketPort.GATE_MSG_PORT, packetBuffer);
+        networkManager.SendNetworkMessage( packetBuffer);
     }
     public void Dispose()
     {
-        networkManager.NetworkOnConnect -= OnConnect;
-        networkManager.NetworkOnDisconnect -= OnDisconnect;
-        networkReceive = null;
+        networkManager.OnConnect -= OnConnect;
+        networkManager.OnDisconnect -= OnDisconnect;
         networkConnect = null;
         networkDisconnect = null;
     }
     public void Connect(string ip, int port)
     {
-        NetworkMsgEventCore.Instance.AddEventListener(MessagePacketPort.GATE_MSG_PORT, OnReceiveNetMessage);
-        networkManager.NetworkOnConnect += OnConnect;
-        networkManager.NetworkOnDisconnect += OnDisconnect;
-        networkManager.Connect(ip, port, System.Net.Sockets.ProtocolType.Udp);
+        networkManager.OnConnect += OnConnect;
+        networkManager.OnDisconnect += OnDisconnect;
+        networkManager.OnReceiveData += OnReceiveData;
+        networkManager.Connect(ip, port, NetworkProtocolType.UDP);
     }
     public void Disconnect()
     {
         networkManager.Disconnect();
-    }
-    public void RunHeartBeat(uint interval, byte maxRecur)
-    {
-        networkManager.RunHeartbeat(interval, maxRecur);
     }
     /// <summary>
     /// 空虚函数
     /// </summary>
     /// <param name="packet">消息体</param>
     protected virtual void OnReceiveMessage(MessagePacket packet) { }
-    void OnReceiveNetMessage(INetworkMessage netMsg)
-    {
-        var packet = MessagePacket.Deserialize(netMsg.ServiceMsg);
-        OnReceiveMessage(packet);
-        networkReceive?.Invoke(packet);
-    }
     void OnConnect()
     {
         networkConnect?.Invoke();
@@ -114,5 +91,9 @@ public class NetClient : IDisposable
     void OnDisconnect()
     {
         networkDisconnect?.Invoke();
+    }
+    void OnReceiveData(ArraySegment<byte> arrSeg)
+    {
+        networkReceiveData?.Invoke(arrSeg);
     }
 }

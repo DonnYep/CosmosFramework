@@ -24,11 +24,13 @@ namespace Cosmos.Test
         }
         void ConnectClick()
         {
-            KCPNetwork.Instance.Connect();
+            CosmosEntry.NetworkManager.Connect("127.0.0.1", 8521, NetworkProtocolType.UDP);
+            //KCPNetwork.Instance.Connect();
         }
         void DisconnectClick()
         {
-            KCPNetwork.Instance.Disconnect();
+            CosmosEntry.NetworkManager.Disconnect();
+            //KCPNetwork.Instance.Disconnect();
         }
     }
 }

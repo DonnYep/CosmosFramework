@@ -14,7 +14,7 @@ namespace Cosmos
         /// 秒级别；
         /// 1代表1秒；
         /// </summary>
-        public uint HeartbeatInterval { get; set; } 
+        public uint HeartbeatInterval { get; set; } = NetworkConsts.HeartbeatInterval;
         /// <summary>
         /// 秒级别；
         /// 上一次心跳时间；
@@ -27,7 +27,7 @@ namespace Cosmos
         /// <summary>
         /// 最大失效次数
         /// </summary>
-        public byte MaxRecurCount { get; set; } 
+        public byte MaxRecurCount { get; set; } = NetworkConsts.MaxRecurCount;
         /// <summary>
         /// 失活时触发的委托；
         /// </summary>

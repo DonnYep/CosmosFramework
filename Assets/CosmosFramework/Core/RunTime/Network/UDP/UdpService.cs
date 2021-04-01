@@ -31,6 +31,11 @@ namespace Cosmos.Network
             add { onDisconnect += value; }
             remove { onDisconnect -= value; }
         }
+        public event Action<ArraySegment<byte>> OnReceiveData
+        {
+            add { onReceiveData += value; }
+            remove { onReceiveData -= value; }
+        }
         /// <summary>
         /// udpSocket对象
         /// </summary>
@@ -42,6 +47,7 @@ namespace Cosmos.Network
         protected ConcurrentQueue<UdpReceiveResult> awaitHandle;
         protected Action onConnect;
         protected Action onDisconnect;
+        protected Action<ArraySegment<byte>> onReceiveData;
         public UdpService()
         {
             //构造传入0表示接收任意端口收发的数据

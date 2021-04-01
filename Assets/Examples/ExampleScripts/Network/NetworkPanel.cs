@@ -45,7 +45,7 @@ public class NetworkPanel : UIResidentForm
     {
         string str = inputMsg.text;
         var data = Utility.Converter.ConvertToByte(str);
-        CosmosEntry.NetworkManager.SendNetworkMessage(10, data);
+        CosmosEntry.NetworkManager.SendNetworkMessage(data);
     }
     void ServerMsg(INetworkMessage netMsg)
     {
@@ -53,7 +53,6 @@ public class NetworkPanel : UIResidentForm
     }
     void ConnectCallback()
     {
-        netClient.RunHeartBeat(heartbeatInterval, 5);
         Utility.Debug.LogInfo("NetworkPanel回调，连接成功！");
         isConnected = true;
     }

@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public interface INetworkMessageHelper
+    public enum UdpHeader:byte
     {
-        INetworkMessage EncodeMessage(ushort opCode, byte[] dataBuffer);
+        Connect=0x01,
+        Message=0x02,
+        Hearbeat=0x03,
+        Disconnect=0x04,
     }
 }

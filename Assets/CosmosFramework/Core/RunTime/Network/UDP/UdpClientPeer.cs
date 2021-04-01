@@ -68,6 +68,7 @@ namespace Cosmos.Network
         Action<INetworkMessage> sendMessageHandler;
         Action onConnectHandler;
         Action onDisconnectHandler;
+        Action<ArraySegment<byte>> onReceiveDataHandler;
         INetworkManager networkManager;
         IReferencePoolManager referencePoolManager;
         public UdpClientPeer()
@@ -78,10 +79,11 @@ namespace Cosmos.Network
             networkManager= GameManager.GetModule<INetworkManager>();
             referencePoolManager= GameManager.GetModule<IReferencePoolManager>();
         }
-        public UdpClientPeer(Action onConnect, Action onDisconnect) : this()
+        public UdpClientPeer(Action onConnect, Action onDisconnect,Action<ArraySegment<byte>> onReceive) : this()
         {
-            this.onConnectHandler += onConnect;
-            this.onDisconnectHandler += onDisconnect;
+            this.onConnectHandler = onConnect;
+            this.onDisconnectHandler = onDisconnect;
+            this.onReceiveDataHandler = onReceive;
         }
         public UdpClientPeer(uint conv) : this()
         {
@@ -149,15 +151,14 @@ namespace Cosmos.Network
                 case UdpProtocol.ACK:
                     {
                         UdpNetMessage tmpMsg;
-                        //Utility.DebugLog($" Receive ACK Message:{netMsg}");
-                        if (netMsg.OperationCode == InnerOpCode._Heartbeat)
+                        if (netMsg.HeaderCode == UdpHeader.Hearbeat)
                             Heartbeat.OnRenewal();
-                        if (netMsg.OperationCode == InnerOpCode._Connect)
+                        if (netMsg.HeaderCode == UdpHeader.Connect)
                         {
                             OnActive();
                             onConnectHandler?.Invoke();
                         }
-                        if (netMsg.OperationCode == InnerOpCode._Disconnect)
+                        if (netMsg.HeaderCode == UdpHeader.Disconnect)
                         {
                             onDisconnectHandler?.Invoke();
                             OnDeactive();
@@ -234,11 +235,10 @@ namespace Cosmos.Network
         public bool EncodeMessage(ref UdpNetMessage netMsg)
         {
             netMsg.TS = Utility.Time.MillisecondTimeStamp();
-            if (netMsg.OperationCode != InnerOpCode._Heartbeat)
+            if (netMsg.HeaderCode != UdpHeader.Hearbeat)
             {
                 SendSN += 1;
                 netMsg.SN = SendSN;
-                netMsg.Snd_nxt = SendSN + 1;
             }
             netMsg.Conv = Conv;
             netMsg.EncodeMessage();
@@ -287,7 +287,8 @@ namespace Cosmos.Network
                 rcvMsgDict.TryAdd(netMsg.SN, netMsg);
             }
             HandleSN = netMsg.SN;
-            NetworkMsgEventCore.Instance.Dispatch(netMsg.OperationCode, netMsg);
+            onReceiveDataHandler.Invoke(new ArraySegment<byte>(netMsg.ServiceMsg));
+            //NetworkMsgEventCore.Instance.Dispatch(netMsg.OperationCode, netMsg);
             UdpNetMessage nxtNetMsg;
             if (rcvMsgDict.TryRemove(HandleSN + 1, out nxtNetMsg))
             {

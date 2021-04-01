@@ -12,6 +12,7 @@ namespace Cosmos.Test {
             CosmosEntry.LaunchAppDomainHelpers();
             CosmosEntry.LaunchAppDomainModules();
             CosmosEntry.SceneManager.SetHelper(new DefaultSceneHelper());
+            CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
         }
         private void Start()
         {

@@ -11,6 +11,7 @@ namespace Cosmos
     public interface INetworkService:IRefreshable
     {
         long Conv { get; }
+        event Action<ArraySegment<byte>> OnReceiveData;
         void SetHeartbeat(IHeartbeat heartbeat);
         /// <summary>
         /// 发送网络消息;

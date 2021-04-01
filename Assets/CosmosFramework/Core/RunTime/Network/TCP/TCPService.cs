@@ -14,6 +14,12 @@ namespace Cosmos
         TCPClientPeer tcpClientPeer;
         public long Conv { get; private set; }
         IReferencePoolManager referencePoolManager;
+        public event Action<ArraySegment<byte>> OnReceiveData
+        {
+            add { onReceiveData += value; }
+            remove { onReceiveData -= value; }
+        }
+        protected Action<ArraySegment<byte>> onReceiveData;
         public TCPService()
         {
             referencePoolManager = GameManager.GetModule<IReferencePoolManager>();

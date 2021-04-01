@@ -613,7 +613,7 @@ MonoBehaviour:
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
-  m_Text: "\u4F60\u597DKCP\u670D\u52A1\u5668\uFF0C\u6211KCP\u5BA2\u6237\u7AEF"
+  m_Text: "\u4F60\u597DKCP\u670D\u52A1\u5668\uFF0C\u6211\u662FKCP\u5BA2\u6237\u7AEF"
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
@@ -740,6 +740,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1277566612}
   - component: {fileID: 1277566611}
+  - component: {fileID: 1277566613}
   m_Layer: 0
   m_Name: Entry
   m_TagString: Untagged
@@ -773,36 +774,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1549985990
-GameObject:
+--- !u!114 &1277566613
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1549985991}
-  m_Layer: 0
-  m_Name: "\u4FEE\u6539\u573A\u666F\u4E2D\u670D\u52A1\u5668\u8FDE\u63A5\u914D\u7F6E\uFF1AMainUICanvas/NetworkPanel"
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1549985991
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1549985990}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 1277566610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ed17f0cadded249aa3a0330d3f551b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ip: 127.0.0.1
+  port: 8521
+  localPlayerPrefab: {fileID: 0}
+  remotePlayerPrefab: {fileID: 0}
 --- !u!1 &1558106830
 GameObject:
   m_ObjectHideFlags: 0
@@ -1108,8 +1095,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d7266b473a59b44c811c85ca8d3f133, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ip: 127.0.0.1
-  port: 8521
 --- !u!114 &1845435218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1492,7 +1477,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u4F60\u597DKCP\u670D\u52A1\u5668\uFF0C\u6211KCP\u5BA2\u6237\u7AEF"
+  m_Text: "\u4F60\u597DKCP\u670D\u52A1\u5668\uFF0C\u6211\u662FKCP\u5BA2\u6237\u7AEF"
 --- !u!222 &2119894307
 CanvasRenderer:
   m_ObjectHideFlags: 0

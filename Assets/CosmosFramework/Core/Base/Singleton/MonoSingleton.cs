@@ -37,7 +37,8 @@ namespace Cosmos
             }
         }
         /// <summary>
-        /// 非空，可覆写Awake函数
+        /// 非空虚函数；
+        /// 覆写是需要保留Awake函数
         /// </summary>
         protected virtual void Awake()
         {

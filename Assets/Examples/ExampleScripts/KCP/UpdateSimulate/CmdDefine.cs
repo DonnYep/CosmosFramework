@@ -5,8 +5,8 @@ namespace Cosmos.Test
 {
     public class CmdDefine
     {
-        public const short PlayerEnter = 1004;
-        public const short PlayerExit= 1005;
-        public const short PlayerInput= 1006;
+        public const short PlayerEnter = 74;
+        public const short PlayerExit= 75;
+        public const short PlayerInput= 76;
     }
 }

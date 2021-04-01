@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-namespace Cosmos.Input
+namespace Cosmos
 {
     /// <summary>
     /// 输入按键类型
