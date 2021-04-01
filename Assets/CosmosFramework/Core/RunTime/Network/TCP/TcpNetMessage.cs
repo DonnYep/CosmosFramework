@@ -10,7 +10,7 @@ namespace Cosmos
     {
         public long Conv { get; set; }
         public int ServiceMsgLength { get; private set; }
-        public byte[] ServiceMsg { get; private set; }
+        public byte[] ServiceData { get; private set; }
         /// <summary>
         /// 前后端通讯的操作码；
         /// </summary>
@@ -44,12 +44,12 @@ namespace Cosmos
             }
             Conv = BitConverter.ToInt64(buffer, 4);
             OperationCode = BitConverter.ToUInt16(buffer, 12);
-            Array.Copy(buffer, 14, ServiceMsg, 0, ServiceMsgLength);
+            Array.Copy(buffer, 14, ServiceData, 0, ServiceMsgLength);
             return true;
         }
         public byte[] EncodeMessage()
         {
-            int srvMsgLen = ServiceMsg.Length;
+            int srvMsgLen = ServiceData.Length;
             byte[] data = new byte[14 + srvMsgLen];
             var len= BitConverter.GetBytes(srvMsgLen);
             var conv = BitConverter.GetBytes(Conv);
@@ -57,7 +57,7 @@ namespace Cosmos
             Array.Copy(len, 0, data, 0, 4);
             Array.Copy(conv, 0, data, 4, 8);
             Array.Copy(opCode, 0, data, 12, 2);
-            Array.Copy(ServiceMsg, 0, data, 14, srvMsgLen);
+            Array.Copy(ServiceData, 0, data, 14, srvMsgLen);
             return data;
         }
         public byte[] GetBuffer()

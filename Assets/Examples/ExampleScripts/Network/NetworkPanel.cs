@@ -49,7 +49,7 @@ public class NetworkPanel : UIResidentForm
     }
     void ServerMsg(INetworkMessage netMsg)
     {
-        Utility.Debug.LogInfo($"{ Utility.Converter.GetString((netMsg as UdpNetMessage).ServiceMsg)}");
+        Utility.Debug.LogInfo($"{ Utility.Converter.GetString((netMsg as UdpNetMessage).ServiceData)}");
     }
     void ConnectCallback()
     {

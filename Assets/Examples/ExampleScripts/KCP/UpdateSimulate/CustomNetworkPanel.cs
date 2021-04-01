@@ -32,5 +32,9 @@ namespace Cosmos.Test
             CosmosEntry.NetworkManager.Disconnect();
             //KCPNetwork.Instance.Disconnect();
         }
+        protected override void OnTermination()
+        {
+            CosmosEntry.NetworkManager.Disconnect();
+        }
     }
 }

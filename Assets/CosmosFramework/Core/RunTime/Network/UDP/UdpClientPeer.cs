@@ -287,7 +287,7 @@ namespace Cosmos.Network
                 rcvMsgDict.TryAdd(netMsg.SN, netMsg);
             }
             HandleSN = netMsg.SN;
-            onReceiveDataHandler.Invoke(new ArraySegment<byte>(netMsg.ServiceMsg));
+            onReceiveDataHandler.Invoke(new ArraySegment<byte>(netMsg.ServiceData));
             //NetworkMsgEventCore.Instance.Dispatch(netMsg.OperationCode, netMsg);
             UdpNetMessage nxtNetMsg;
             if (rcvMsgDict.TryRemove(HandleSN + 1, out nxtNetMsg))
