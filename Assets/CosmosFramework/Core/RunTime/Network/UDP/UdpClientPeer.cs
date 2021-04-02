@@ -258,6 +258,7 @@ namespace Cosmos.Network
             }
             return result;
         }
+
         public void Clear()
         {
             Available = false;
@@ -289,8 +290,7 @@ namespace Cosmos.Network
             HandleSN = netMsg.SN;
             onReceiveDataHandler.Invoke(new ArraySegment<byte>(netMsg.ServiceData));
             //NetworkMsgEventCore.Instance.Dispatch(netMsg.OperationCode, netMsg);
-            UdpNetMessage nxtNetMsg;
-            if (rcvMsgDict.TryRemove(HandleSN + 1, out nxtNetMsg))
+            if (rcvMsgDict.TryRemove(HandleSN + 1, out var nxtNetMsg))
             {
                 HandleMsgSN(nxtNetMsg);
             }

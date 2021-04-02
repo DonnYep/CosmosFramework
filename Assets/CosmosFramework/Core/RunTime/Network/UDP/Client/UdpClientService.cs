@@ -15,10 +15,10 @@ namespace Cosmos
         /// </summary>
         UdpClientPeer peer;
         IReferencePoolManager referencePoolManager;
-        public UdpClientService():base()
+        public UdpClientService() : base()
         {
             //构造传入0表示接收任意端口收发的数据
-            peer = new UdpClientPeer(OnConnectHandler,OnDisconnectHandler, OnReceiveDataHandler);
+            peer = new UdpClientPeer(OnConnectHandler, OnDisconnectHandler, OnReceiveDataHandler);
             peer.SetValue(SendMessageAsync, Disconnect, 0, null);
             referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
 
@@ -53,13 +53,18 @@ namespace Cosmos
             udpNetMsg.Cmd = UdpProtocol.FIN;
             SendMessageAsync(udpNetMsg);
         }
+        public override void SendMessageAsync(byte[] buffer)
+        {
+            var netMsg = UdpNetMessage.EncodeMessage(Conv, buffer);
+            SendMessageAsync(netMsg);
+        }
         public override void SendMessageAsync(INetworkMessage netMsg)
         {
             UdpNetMessage udpNetMsg = netMsg as UdpNetMessage;
             var result = peer.EncodeMessage(ref udpNetMsg);
             if (result)
             {
-               SendMessageAsync(udpNetMsg, serverEndPoint);
+                SendMessageAsync(udpNetMsg, serverEndPoint);
             }
             else
                 Utility.Debug.LogError("INetworkMessage 消息编码失败");

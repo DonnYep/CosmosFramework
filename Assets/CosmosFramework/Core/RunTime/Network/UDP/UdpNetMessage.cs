@@ -246,11 +246,11 @@ namespace Cosmos
         /// </summary>
         /// <param name="conv">会话ID</param>
         /// <returns></returns>
-        public static UdpNetMessage HeartbeatMessage(long conv)
+        public static UdpNetMessage HeartbeatMessageC2S(long conv)
         {
             var udpNetMsg = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
             udpNetMsg.Conv = conv;
-            udpNetMsg.Cmd = UdpProtocol.ACK;
+            udpNetMsg.Cmd = UdpProtocol.MSG;
             udpNetMsg.Len = 0;
             udpNetMsg.HeaderCode = UdpHeader.Hearbeat;
             return udpNetMsg;

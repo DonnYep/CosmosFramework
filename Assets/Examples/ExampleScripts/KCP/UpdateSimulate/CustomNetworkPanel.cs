@@ -24,7 +24,7 @@ namespace Cosmos.Test
         }
         void ConnectClick()
         {
-            CosmosEntry.NetworkManager.Connect("127.0.0.1", 8521, NetworkProtocolType.UDP);
+            CosmosEntry.NetworkManager.Connect(KCPNetwork.Instance.IP, KCPNetwork.Instance.Port, NetworkProtocolType.UDP);
             //KCPNetwork.Instance.Connect();
         }
         void DisconnectClick()

@@ -12,7 +12,9 @@ namespace Cosmos.Test
         KcpClientService kcpClientService = new KcpClientService();
         public KcpClientService KcpClientService { get { return kcpClientService; } }
         [SerializeField] string ip = "127.0.0.1";
+        public string IP { get { return ip; } }
         [SerializeField] int port = 8521;
+        public int Port { get { return port; } }
         [SerializeField] GameObject localPlayerPrefab;
         public GameObject LocalPlayerPrefab { get { return localPlayerPrefab; } }
         [SerializeField] GameObject remotePlayerPrefab;

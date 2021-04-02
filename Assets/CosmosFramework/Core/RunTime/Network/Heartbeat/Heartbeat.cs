@@ -40,7 +40,7 @@ namespace Cosmos
         /// 当前发送的心跳次数
         /// </summary>
         byte currentRecurCount;
-        public Heartbeat(){}
+        public Heartbeat() { }
         public Heartbeat(uint heartbeatInterval, byte maxRecurCount)
         {
             HeartbeatInterval = heartbeatInterval;
@@ -63,21 +63,22 @@ namespace Cosmos
             currentRecurCount += 1;
             if (currentRecurCount >= MaxRecurCount)
             {
-                Available = false;
                 //UnavailableHandler?.Invoke();
                 //TODO  心跳断开连接强耦合
-                GameManager.GetModule<INetworkManager>().Disconnect(false);
+                GameManager.GetModule<INetworkManager>().Disconnect();
+                //Available = false;
+                Utility.Debug.LogInfo($"Heartbeat invalid , disconnect ", MessageColor.RED);
                 return;
             }
-            SendHeartbeatHandler?.Invoke(UdpNetMessage.HeartbeatMessage(Conv));
-            Utility.Debug.LogInfo($"Client heartbeat：Conv : {Conv} ; currentRecurCount : {currentRecurCount}",MessageColor.ORANGE);
+            SendHeartbeatHandler?.Invoke(UdpNetMessage.HeartbeatMessageC2S(Conv));
+            //Utility.Debug.LogInfo($"Client heartbeat：Conv : {Conv} ; currentRecurCount : {currentRecurCount}", MessageColor.ORANGE);
         }
         public void OnRenewal()
         {
             long now = Utility.Time.SecondNow();
             LatestHeartbeatTime = now + HeartbeatInterval;
             currentRecurCount = 0;
-            Utility.Debug.LogInfo($"Receive heartbeat ACK ：Conv : {Conv} ",MessageColor.INDIGO);
+            //Utility.Debug.LogInfo($"Receive heartbeat ACK ：Conv : {Conv} ", MessageColor.INDIGO);
         }
         public void OnDeactive()
         {
