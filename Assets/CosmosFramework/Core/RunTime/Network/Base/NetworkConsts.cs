@@ -15,10 +15,18 @@ namespace Cosmos
         /// 秒级别；
         /// 1代表1秒；
         /// </summary>
-        public const byte MaxRecurCount = 3;
+        public const byte HeartbeatMaxRto = 3;
         /// <summary>
         /// 最大失效次数
         /// </summary>
-        public const uint  HeartbeatInterval = 5;
+        public const uint HeartbeatInterval = 5;
+        /// <summary>
+        /// 重传次数；
+        /// </summary>
+        public const int RTO_DEF = 200;
+        /// <summary>
+        /// 解析间隔
+        /// </summary>// default RTO
+        public const int Interval = 100;
     }
 }

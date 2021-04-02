@@ -185,7 +185,7 @@ namespace Cosmos.Network
         }
         void OnConnectHandler()
         {
-            RunHeartbeat(NetworkConsts.HeartbeatInterval, NetworkConsts.MaxRecurCount);
+            RunHeartbeat(NetworkConsts.HeartbeatInterval, NetworkConsts.HeartbeatMaxRto);
             IsConnected = true;
             Utility.Debug.LogInfo("Network is connected ! ");
             onConnect?.Invoke();

@@ -168,7 +168,6 @@ namespace Cosmos
             /// </summary>
             /// <param name="intArray">传入的数组</param>
             /// <returns>转换成整数后的int</returns>
-
             public static int ConvertIntArrayToInt(int[] intArray)
             {
                 int result = 0;

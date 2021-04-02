@@ -58,10 +58,6 @@ namespace Cosmos.Network
         /// </summary>
         protected long latestPollingTime;
         /// <summary>
-        /// 解析间隔
-        /// </summary>
-        protected const int interval = 500;
-        /// <summary>
         /// 发送网络消息委托；
         /// 这里函数指针指向service的sendMessage
         /// </summary>
@@ -76,10 +72,10 @@ namespace Cosmos.Network
             //Available = true;
             sndMsgDict = new ConcurrentDictionary<uint, UdpNetMessage>();
             rcvMsgDict = new ConcurrentDictionary<uint, UdpNetMessage>();
-            networkManager= GameManager.GetModule<INetworkManager>();
-            referencePoolManager= GameManager.GetModule<IReferencePoolManager>();
+            networkManager = GameManager.GetModule<INetworkManager>();
+            referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
         }
-        public UdpClientPeer(Action onConnect, Action onDisconnect,Action<ArraySegment<byte>> onReceive) : this()
+        public UdpClientPeer(Action onConnect, Action onDisconnect, Action<ArraySegment<byte>> onReceive) : this()
         {
             this.onConnectHandler = onConnect;
             this.onDisconnectHandler = onDisconnect;
@@ -94,7 +90,7 @@ namespace Cosmos.Network
             sndMsgDict.Clear();
             rcvMsgDict.Clear();
             Available = true;
-            latestPollingTime = Utility.Time.MillisecondNow() + interval;
+            latestPollingTime = Utility.Time.MillisecondNow() + NetworkConsts.Interval;
         }
         public void OnDeactive()
         {
@@ -192,6 +188,7 @@ namespace Cosmos.Network
                         //结束建立连接Cmd，这里需要谨慎考虑；
                         Utility.Debug.LogError($"Conv : {Conv} ,Receive FIN Message");
                         onDisconnectHandler?.Invoke();
+                        OnDeactive();
                     }
                     break;
             }
@@ -205,26 +202,21 @@ namespace Cosmos.Network
             long now = Utility.Time.MillisecondNow();
             if (now <= latestPollingTime)
                 return;
-            latestPollingTime = now + interval;
+            latestPollingTime = now + NetworkConsts.Interval;
             if (!Available)
                 return;
             foreach (var msg in sndMsgDict.Values)
             {
-                if (msg.RecurCount >= 10)
+                if (msg.RecurCount >= NetworkConsts.RTO_DEF)
                 {
                     Available = false;
                     onDisconnectHandler?.Invoke();
                     return;
                 }
-                if (Utility.Time.MillisecondTimeStamp() - msg.TS >= (msg.RecurCount + 1) * interval)
-                {
-                    //重发次数+1
-                    msg.RecurCount += 1;
-                    //绕过编码消息，直接发送；
-                    networkManager.SendNetworkMessage(msg.GetBuffer());
-                    //if (sndMsgDict.TryRemove(msg.SN, out var unaMsg))
-                    //    sendMessageHandler?.Invoke(msg);
-                }
+                //重发次数+1
+                msg.RecurCount += 1;
+                //绕过编码消息，直接发送；
+                networkManager.SendNetworkMessage(msg.GetBuffer());
             }
         }
         /// <summary>

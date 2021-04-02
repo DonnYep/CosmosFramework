@@ -27,7 +27,7 @@ namespace Cosmos
         /// <summary>
         /// 最大失效次数
         /// </summary>
-        public byte MaxRecurCount { get; set; } = NetworkConsts.MaxRecurCount;
+        public byte MaxRecurCount { get; set; } = NetworkConsts.HeartbeatMaxRto;
         /// <summary>
         /// 失活时触发的委托；
         /// </summary>
@@ -41,11 +41,6 @@ namespace Cosmos
         /// </summary>
         byte currentRecurCount;
         public Heartbeat() { }
-        public Heartbeat(uint heartbeatInterval, byte maxRecurCount)
-        {
-            HeartbeatInterval = heartbeatInterval;
-            MaxRecurCount = maxRecurCount;
-        }
         public void OnActive()
         {
             LatestHeartbeatTime = Utility.Time.SecondNow() + HeartbeatInterval;
@@ -71,7 +66,6 @@ namespace Cosmos
                 return;
             }
             SendHeartbeatHandler?.Invoke(UdpNetMessage.HeartbeatMessageC2S(Conv));
-            //Utility.Debug.LogInfo($"Client heartbeat：Conv : {Conv} ; currentRecurCount : {currentRecurCount}", MessageColor.ORANGE);
         }
         public void OnRenewal()
         {
