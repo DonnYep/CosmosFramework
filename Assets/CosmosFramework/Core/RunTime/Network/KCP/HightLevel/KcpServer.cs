@@ -83,7 +83,7 @@ namespace kcp
             // only start once
             if (socket != null)
             {
-                Log.Warning("KCP: server already started!");
+                KCPLog.Warning("KCP: server already started!");
             }
 
             // listen
@@ -178,7 +178,7 @@ namespace kcp
 
                                 // add to connections dict after being authenticated.
                                 connections.Add(connectionId, connection);
-                                Log.Info($"KCP: server added connection({connectionId}): {newClientEP}");
+                                KCPLog.Info($"KCP: server added connection({connectionId}): {newClientEP}");
 
                                 // setup Data + Disconnected events only AFTER the
                                 // handshake. we don't want to fire OnServerDisconnected
@@ -202,12 +202,12 @@ namespace kcp
                                     connectionsToRemove.Add(connectionId);
 
                                     // call mirror event
-                                    Log.Info($"KCP: OnServerDisconnected({connectionId})");
+                                    KCPLog.Info($"KCP: OnServerDisconnected({connectionId})");
                                     OnDisconnected.Invoke(connectionId);
                                 };
 
                                 // finally, call mirror OnConnected event
-                                Log.Info($"KCP: OnServerConnected({connectionId})");
+                                KCPLog.Info($"KCP: OnServerConnected({connectionId})");
                                 OnConnected.Invoke(connectionId);
                             };
 
@@ -230,7 +230,7 @@ namespace kcp
                     }
                     else
                     {
-                        Log.Error($"KCP Server: message of size {msgLength} does not fit into buffer of size {rawReceiveBuffer.Length}. The excess was silently dropped. Disconnecting connectionId={connectionId}.");
+                        KCPLog.Error($"KCP Server: message of size {msgLength} does not fit into buffer of size {rawReceiveBuffer.Length}. The excess was silently dropped. Disconnecting connectionId={connectionId}.");
                         Disconnect(connectionId);
                     }
                 }

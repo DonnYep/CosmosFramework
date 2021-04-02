@@ -56,9 +56,9 @@ namespace Cosmos.Test
         {
             base.Awake();
             DontDestroyOnLoad(this.gameObject);
-            Log.Info = (s) => Utility.Debug.LogInfo(s);
-            Log.Warning = (s) => Utility.Debug.LogInfo(s, MessageColor.YELLOW);
-            Log.Error = (s) => Utility.Debug.LogError(s);
+            KCPLog.Info = (s) => Utility.Debug.LogInfo(s);
+            KCPLog.Warning = (s) => Utility.Debug.LogInfo(s, MessageColor.YELLOW);
+            KCPLog.Error = (s) => Utility.Debug.LogError(s);
 
             kcpClientService.ServiceSetup();
             kcpClientService.OnClientDataReceived += RsvKcpMsg;

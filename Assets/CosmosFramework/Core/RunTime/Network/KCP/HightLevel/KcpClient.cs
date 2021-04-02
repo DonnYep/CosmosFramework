@@ -26,7 +26,7 @@ namespace kcp
         {
             if (connected)
             {
-                Log.Warning("KCP: client already connected!");
+                KCPLog.Warning("KCP: client already connected!");
                 return;
             }
 
@@ -35,7 +35,7 @@ namespace kcp
             // setup events
             connection.OnAuthenticated = () =>
             {
-                Log.Info($"KCP: OnClientConnected");
+                KCPLog.Info($"KCP: OnClientConnected");
                 connected = true;
                 OnConnected.Invoke();
             };
@@ -46,7 +46,7 @@ namespace kcp
             };
             connection.OnDisconnected = () =>
             {
-                Log.Info($"KCP: OnClientDisconnected");
+                KCPLog.Info($"KCP: OnClientDisconnected");
                 connected = false;
                 connection = null;
                 OnDisconnected.Invoke();
@@ -62,7 +62,7 @@ namespace kcp
             {
                 connection.SendData(segment, channel);
             }
-            else Log.Warning("KCP: can't send because client not connected!");
+            else KCPLog.Warning("KCP: can't send because client not connected!");
         }
 
         public void Disconnect()

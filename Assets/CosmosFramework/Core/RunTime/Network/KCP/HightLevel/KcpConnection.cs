@@ -151,7 +151,7 @@ namespace kcp
             //       only ever happen if the connection is truly gone.
             if (time >= lastReceiveTime + TIMEOUT)
             {
-                Log.Warning($"KCP: Connection timed out after not receiving any message for {TIMEOUT}ms. Disconnecting.");
+                KCPLog.Warning($"KCP: Connection timed out after not receiving any message for {TIMEOUT}ms. Disconnecting.");
                 Disconnect();
             }
         }
@@ -161,7 +161,7 @@ namespace kcp
             // kcp has 'dead_link' detection. might as well use it.
             if (kcp.state == -1)
             {
-                Log.Warning("KCP Connection dead_link detected. Disconnecting.");
+                KCPLog.Warning("KCP Connection dead_link detected. Disconnecting.");
                 Disconnect();
             }
         }
@@ -188,7 +188,7 @@ namespace kcp
                         kcp.rcv_buf.Count + kcp.snd_buf.Count;
             if (total >= QueueDisconnectThreshold)
             {
-                Log.Warning($"KCP: disconnecting connection because it can't process data fast enough.\n" +
+                KCPLog.Warning($"KCP: disconnecting connection because it can't process data fast enough.\n" +
                                  $"Queue total {total}>{QueueDisconnectThreshold}. rcv_queue={kcp.rcv_queue.Count} snd_queue={kcp.snd_queue.Count} rcv_buf={kcp.rcv_buf.Count} snd_buf={kcp.snd_buf.Count}\n" +
                                  $"* Try to Enable NoDelay, decrease INTERVAL, disable Congestion Window (= enable NOCWND!), increase SEND/RECV WINDOW or compress data.\n" +
                                  $"* Or perhaps the network is simply too slow on our end, or on the other end.\n");
@@ -227,7 +227,7 @@ namespace kcp
                     else
                     {
                         // if receive failed, close everything
-                        Log.Warning($"Receive failed with error={received}. closing connection.");
+                        KCPLog.Warning($"Receive failed with error={received}. closing connection.");
                         Disconnect();
                     }
                 }
@@ -235,7 +235,7 @@ namespace kcp
                 // attacker. let's disconnect to avoid allocation attacks etc.
                 else
                 {
-                    Log.Warning($"KCP: possible allocation attack for msgSize {msgSize} > buffer {kcpMessageBuffer.Length}. Disconnecting the connection.");
+                    KCPLog.Warning($"KCP: possible allocation attack for msgSize {msgSize} > buffer {kcpMessageBuffer.Length}. Disconnecting the connection.");
                     Disconnect();
                 }
             }
@@ -262,7 +262,7 @@ namespace kcp
                     {
                         // we were waiting for a handshake.
                         // it proves that the other end speaks our protocol.
-                        Log.Info("KCP: received handshake");
+                        KCPLog.Info("KCP: received handshake");
                         state = KcpState.Authenticated;
                         OnAuthenticated?.Invoke();
                         break;
@@ -276,7 +276,7 @@ namespace kcp
                     case KcpHeader.Disconnect:
                     {
                         // everything else is not allowed during handshake!
-                        Log.Warning($"KCP: received invalid header {header} while Connected. Disconnecting the connection.");
+                        KCPLog.Warning($"KCP: received invalid header {header} while Connected. Disconnecting the connection.");
                         Disconnect();
                         break;
                     }
@@ -313,7 +313,7 @@ namespace kcp
                     case KcpHeader.Handshake:
                     {
                         // should never receive another handshake after auth
-                        Log.Warning($"KCP: received invalid header {header} while Authenticated. Disconnecting the connection.");
+                        KCPLog.Warning($"KCP: received invalid header {header} while Authenticated. Disconnecting the connection.");
                         Disconnect();
                         break;
                     }
@@ -328,7 +328,7 @@ namespace kcp
                         // empty data = attacker, or something went wrong
                         else
                         {
-                            Log.Warning("KCP: received empty Data message while Authenticated. Disconnecting the connection.");
+                            KCPLog.Warning("KCP: received empty Data message while Authenticated. Disconnecting the connection.");
                             Disconnect();
                         }
                         break;
@@ -341,7 +341,7 @@ namespace kcp
                     case KcpHeader.Disconnect:
                     {
                         // disconnect might happen
-                        Log.Info("KCP: received disconnect message");
+                        KCPLog.Info("KCP: received disconnect message");
                         Disconnect();
                         break;
                     }
@@ -377,19 +377,19 @@ namespace kcp
             catch (SocketException exception)
             {
                 // this is ok, the connection was closed
-                Log.Info($"KCP Connection: Disconnecting because {exception}. This is fine.");
+                KCPLog.Info($"KCP Connection: Disconnecting because {exception}. This is fine.");
                 Disconnect();
             }
             catch (ObjectDisposedException exception)
             {
                 // fine, socket was closed
-                Log.Info($"KCP Connection: Disconnecting because {exception}. This is fine.");
+                KCPLog.Info($"KCP Connection: Disconnecting because {exception}. This is fine.");
                 Disconnect();
             }
             catch (Exception ex)
             {
                 // unexpected
-                Log.Error(ex.ToString());
+                KCPLog.Error(ex.ToString());
                 Disconnect();
             }
         }
@@ -419,19 +419,19 @@ namespace kcp
             catch (SocketException exception)
             {
                 // this is ok, the connection was closed
-                Log.Info($"KCP Connection: Disconnecting because {exception}. This is fine.");
+                KCPLog.Info($"KCP Connection: Disconnecting because {exception}. This is fine.");
                 Disconnect();
             }
             catch (ObjectDisposedException exception)
             {
                 // fine, socket was closed
-                Log.Info($"KCP Connection: Disconnecting because {exception}. This is fine.");
+                KCPLog.Info($"KCP Connection: Disconnecting because {exception}. This is fine.");
                 Disconnect();
             }
             catch (Exception ex)
             {
                 // unexpected
-                Log.Error(ex.ToString());
+                KCPLog.Error(ex.ToString());
                 Disconnect();
             }
         }
@@ -450,7 +450,7 @@ namespace kcp
                         int input = kcp.Input(buffer, 1, msgLength - 1);
                         if (input != 0)
                         {
-                            Log.Warning($"Input failed with error={input} for buffer with length={msgLength - 1}");
+                            KCPLog.Warning($"Input failed with error={input} for buffer with length={msgLength - 1}");
                         }
                         break;
                     }
@@ -500,7 +500,7 @@ namespace kcp
                         else
                         {
                             // should never
-                            Log.Warning($"KCP: received unreliable message in state {state}. Disconnecting the connection.");
+                            KCPLog.Warning($"KCP: received unreliable message in state {state}. Disconnecting the connection.");
                             Disconnect();
                         }
                         break;
@@ -508,7 +508,7 @@ namespace kcp
                     default:
                     {
                         // not a valid channel. random data or attacks.
-                        Log.Info($"Disconnecting connection because of invalid channel header: {channel}");
+                        KCPLog.Info($"Disconnecting connection because of invalid channel header: {channel}");
                         Disconnect();
                         break;
                     }
@@ -542,11 +542,11 @@ namespace kcp
                 int sent = kcp.Send(kcpSendBuffer, 0, 1 + content.Count);
                 if (sent < 0)
                 {
-                    Log.Warning($"Send failed with error={sent} for content with length={content.Count}");
+                    KCPLog.Warning($"Send failed with error={sent} for content with length={content.Count}");
                 }
             }
             // otherwise content is larger than MaxMessageSize. let user know!
-            else Log.Error($"Failed to send reliable message of size {content.Count} because it's larger than ReliableMaxMessageSize={ReliableMaxMessageSize}");
+            else KCPLog.Error($"Failed to send reliable message of size {content.Count} because it's larger than ReliableMaxMessageSize={ReliableMaxMessageSize}");
         }
 
         void SendUnreliable(ArraySegment<byte> message)
@@ -560,7 +560,7 @@ namespace kcp
                 RawSend(rawSendBuffer, message.Count + 1);
             }
             // otherwise content is larger than MaxMessageSize. let user know!
-            else Log.Error($"Failed to send unreliable message of size {message.Count} because it's larger than UnreliableMaxMessageSize={UnreliableMaxMessageSize}");
+            else KCPLog.Error($"Failed to send unreliable message of size {message.Count} because it's larger than UnreliableMaxMessageSize={UnreliableMaxMessageSize}");
         }
 
         // server & client need to send handshake at different times, so we need
@@ -571,7 +571,7 @@ namespace kcp
         // => handshake info needs to be delivered, so it goes over reliable.
         public void SendHandshake()
         {
-            Log.Info("KcpConnection: sending Handshake to other end!");
+            KCPLog.Info("KcpConnection: sending Handshake to other end!");
             SendReliable(KcpHeader.Handshake, default);
         }
 
@@ -583,7 +583,7 @@ namespace kcp
             // let's make it obvious so it's easy to debug.
             if (data.Count == 0)
             {
-                Log.Warning("KcpConnection: tried sending empty message. This should never happen. Disconnecting.");
+                KCPLog.Warning("KcpConnection: tried sending empty message. This should never happen. Disconnecting.");
                 Disconnect();
                 return;
             }
@@ -639,7 +639,7 @@ namespace kcp
             }
 
             // set as Disconnected, call event
-            Log.Info("KCP Connection: Disconnected.");
+            KCPLog.Info("KCP Connection: Disconnected.");
             state = KcpState.Disconnected;
             OnDisconnected?.Invoke();
         }

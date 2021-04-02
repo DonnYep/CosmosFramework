@@ -14,7 +14,7 @@ namespace kcp
 
         public void Connect(string host, ushort port, bool noDelay, uint interval = Kcp.INTERVAL, int fastResend = 0, bool congestionWindow = true, uint sendWindowSize = Kcp.WND_SND, uint receiveWindowSize = Kcp.WND_RCV)
         {
-            Log.Info($"KcpClient: connect to {host}:{port}");
+            KCPLog.Info($"KcpClient: connect to {host}:{port}");
             IPAddress[] ipAddress = Dns.GetHostAddresses(host);
             if (ipAddress.Length < 1)
                 throw new SocketException((int)SocketError.HostNotFound);
@@ -51,7 +51,7 @@ namespace kcp
                         }
                         else
                         {
-                            Log.Error($"KCP ClientConnection: message of size {msgLength} does not fit into buffer of size {rawReceiveBuffer.Length}. The excess was silently dropped. Disconnecting.");
+                            KCPLog.Error($"KCP ClientConnection: message of size {msgLength} does not fit into buffer of size {rawReceiveBuffer.Length}. The excess was silently dropped. Disconnecting.");
                             Disconnect();
                         }
                     }
