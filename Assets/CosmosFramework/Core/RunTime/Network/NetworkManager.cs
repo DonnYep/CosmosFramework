@@ -192,6 +192,9 @@ namespace Cosmos.Network
             IsConnected = false;
             Utility.Debug.LogInfo("Server Disconnected", MessageColor.RED);
             onDisconnect?.Invoke();
+            onConnect=null;
+            onDisconnect=null;
+            onReceiveData=null;
         }
         void OnConnectHandler()
         {
