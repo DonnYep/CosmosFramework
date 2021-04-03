@@ -24,17 +24,13 @@ namespace Cosmos.Test
         }
         void ConnectClick()
         {
-            CosmosEntry.NetworkManager.Connect(KCPNetwork.Instance.IP, KCPNetwork.Instance.Port, NetworkProtocolType.UDP);
-            //KCPNetwork.Instance.Connect();
+            KCPNetwork.Instance.Connect();
         }
         void DisconnectClick()
         {
             CosmosEntry.NetworkManager.Disconnect();
             //KCPNetwork.Instance.Disconnect();
         }
-        protected override void OnTermination()
-        {
-            CosmosEntry.NetworkManager.Disconnect();
-        }
+
     }
 }

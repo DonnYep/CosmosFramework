@@ -28,7 +28,7 @@ namespace kcp
 
         // If we don't receive anything these many milliseconds
         // then consider us disconnected
-        public const int TIMEOUT = 10000;
+        public static int TIMEOUT = 20000;
         uint lastReceiveTime;
 
         // internal time.

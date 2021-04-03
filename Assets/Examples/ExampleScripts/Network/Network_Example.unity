@@ -526,7 +526,6 @@ GameObject:
   - component: {fileID: 1277566612}
   - component: {fileID: 1277566611}
   - component: {fileID: 1277566613}
-  - component: {fileID: 1277566614}
   m_Layer: 0
   m_Name: Entry
   m_TagString: Untagged
@@ -572,27 +571,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75ed17f0cadded249aa3a0330d3f551b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ip: 121.41.13.97
+  ip: 127.0.0.1
   port: 8521
   localPlayerPrefab: {fileID: 3186471653507580192, guid: 9056a110e5f0d0d4c9e2e1be8a924d11,
     type: 3}
   remotePlayerPrefab: {fileID: 2727154827868484503, guid: baf58279860760449bad0f8f12cc0e10,
     type: 3}
---- !u!114 &1277566614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1277566610}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67502ae7599482e429459b22ba019c6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sendMsg: 0
-  sendSN: 0
-  sendInterval: 1200
 --- !u!1 &1558106830
 GameObject:
   m_ObjectHideFlags: 0

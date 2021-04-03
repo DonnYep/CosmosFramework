@@ -73,7 +73,7 @@ public class NetClient : IDisposable
         networkManager.OnConnect += OnConnect;
         networkManager.OnDisconnect += OnDisconnect;
         networkManager.OnReceiveData += OnReceiveData;
-        networkManager.Connect(ip, port, NetworkProtocolType.UDP);
+        networkManager.Connect(ip, (ushort)port, NetworkProtocolType.UDP);
     }
     public void Disconnect()
     {

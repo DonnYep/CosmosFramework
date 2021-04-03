@@ -19,7 +19,11 @@ namespace Cosmos.Test
             netIdCache = new List<NetworkIndentity>();
             networkIdentityDict = new Dictionary<int, NetworkIndentity>();
             dataDict = new Dictionary<byte, object>();
+        }
+        private void Start()
+        {
             CosmosEntry.NetworkManager.OnReceiveData += NetworkManager_OnReceiveData;
+            
         }
         void NetworkManager_OnReceiveData(ArraySegment<byte> arrSeg)
         {
@@ -29,7 +33,6 @@ namespace Cosmos.Test
                 var length=netIdCache.Count;
                 for (int i = 0; i < length; i++)
                 {
-                 //   dataDict.Add(netIdCache[i], netIdCache[i].OnSerializeAllSafely(writer));
                 }
             }
         }

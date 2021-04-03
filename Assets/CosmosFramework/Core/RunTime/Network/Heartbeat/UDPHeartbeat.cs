@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public class Heartbeat : IHeartbeat
+    public class UDPHeartbeat : IHeartbeat
     {
         public long Conv { get; set; }
         /// <summary>
@@ -40,7 +40,7 @@ namespace Cosmos
         /// 当前发送的心跳次数
         /// </summary>
         byte currentRecurCount;
-        public Heartbeat() { }
+        public UDPHeartbeat() { }
         public void OnActive()
         {
             LatestHeartbeatTime = Utility.Time.SecondNow() + HeartbeatInterval;

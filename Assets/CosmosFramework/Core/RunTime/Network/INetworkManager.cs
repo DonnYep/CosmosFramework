@@ -13,12 +13,8 @@ namespace Cosmos
         event Action OnConnect;
         event Action OnDisconnect;
         event Action<ArraySegment<byte>> OnReceiveData;
-        long Conv { get; }
+        //long Conv { get; }
         bool IsConnected { get; }
-        IPEndPoint ServerEndPoint { get; }
-        IPEndPoint ClientEndPoint { get; }
-        void SendNetworkMessage(INetworkMessage netMsg, IPEndPoint endPoint);
-        void SendNetworkMessage(INetworkMessage netMsg);
         void SendNetworkMessage(byte[] buffer);
         /// <summary>
         /// 与远程建立连接；
@@ -27,12 +23,7 @@ namespace Cosmos
         /// <param name="ip">ip地址</param>
         /// <param name="port">端口号</param>
         /// <param name="protocolType">协议类型</param>
-        void Connect(string ip, int port, NetworkProtocolType protocolType);
-        /// <summary>
-        /// 与远程建立连接；
-        /// </summary>
-        /// <param name="service">自定义实现的服务</param>
-        void Connect(INetworkService service);
+        void Connect(string ip, ushort port, NetworkProtocolType protocolType= NetworkProtocolType.KCP);
         void Disconnect(bool notifyRemote = true);
     }
 }
