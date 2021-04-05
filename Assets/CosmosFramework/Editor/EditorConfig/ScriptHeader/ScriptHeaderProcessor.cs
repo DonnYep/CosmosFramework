@@ -10,26 +10,26 @@ using System.Text;
 namespace Cosmos.CosmosEditor
 {
     [InitializeOnLoad]
-    public class AnnotationScriptProcessor : UnityEditor.AssetModificationProcessor
+    public class ScriptHeaderProcessor : UnityEditor.AssetModificationProcessor
     {
-        static string annotationStr =
+        static string headerStr =
 @"//====================================
 //* Author :#Author#
 //* CreateTime :#CreateTime#
 //* Version :
 //* Description :
 //==================================== " + "\n";
-        static IAnnotationProvider provider;
+        static IScriptHeaderProvider provider;
         static string providerAnnoTitle;
-        static AnnotationScriptProcessor()
+        static ScriptHeaderProcessor()
         {
-            provider = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IAnnotationProvider>();
-            providerAnnoTitle = provider?.AnnotationTitle;
+            provider = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IScriptHeaderProvider>();
+            providerAnnoTitle = provider?.HeaderContext;
         }
 
         public static void OnWillCreateAsset(string name)
         {
-            if (!CosmosEditorConst.EnableScriptTemplateAnnotation)
+            if (!EditorConfigWindow.EditorConfigData.EnableScriptHeader)
                 return;
             if (provider != null)
             {
@@ -42,7 +42,7 @@ namespace Cosmos.CosmosEditor
                         str = providerAnnoTitle + str;
                     }
                     str = str.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:mm:ss"));
-                    str = str.Replace("#Author#", CosmosEditorConst.AnnotationAuthor);
+                    str = str.Replace("#Author#", EditorConfigWindow.EditorConfigData.HeaderAuthor);
                     File.WriteAllText(path, str, Encoding.UTF8);
                 }
             }
@@ -52,12 +52,12 @@ namespace Cosmos.CosmosEditor
                 if (path.EndsWith(".cs"))
                 {
                     var str = File.ReadAllText(path, Encoding.UTF8);
-                    if (!str.Contains(annotationStr))
+                    if (!str.Contains(headerStr))
                     {
-                        str = annotationStr + str;
+                        str = headerStr + str;
                     }
                     str = str.Replace("#CreateTime#", System.DateTime.Now.ToString("yyy-MM-dd HH:mm:ss"));
-                    str = str.Replace("#Author#", CosmosEditorConst.AnnotationAuthor);
+                    str = str.Replace("#Author#", EditorConfigWindow.EditorConfigData.HeaderAuthor);
                     File.WriteAllText(path, str, Encoding.UTF8);
                 }
             }

@@ -15,10 +15,7 @@ public class NetworkPanel : UIResidentForm
     Text info;
     InputField inputMsg;
     [SerializeField] string ip = "127.0.0.1";
-    [SerializeField] int port = 8511;
-    [SerializeField] uint heartbeatInterval = 45;
-    NetClient netClient;
-    bool isConnected;
+    [SerializeField] ushort port = 8511;
     protected override void OnInitialization()
     {
         btnConnect = GetUIForm<Button>("BtnConnect");
@@ -29,17 +26,16 @@ public class NetworkPanel : UIResidentForm
         btnSend.onClick.AddListener(SendClick);
         info = GetUIForm<Text>("Info");
         inputMsg = GetUIForm<InputField>("InputMsg");
-        netClient = new NetClient();
-        netClient.NetworkConnect += ConnectCallback;
-        netClient.NetworkDisconnect += DisconnectCallback;
+        CosmosEntry.NetworkManager.OnConnect += ConnectCallback;
+        CosmosEntry.NetworkManager.OnDisconnect += DisconnectCallback;
     }
     void ConnectClick()
     {
-        netClient.Connect(ip, port);
+        CosmosEntry.NetworkManager.Connect(ip, port);
     }
     void DisconnectClick()
     {
-        netClient.Disconnect();
+        CosmosEntry.NetworkManager.Disconnect();
     }
     void SendClick()
     {
@@ -54,16 +50,13 @@ public class NetworkPanel : UIResidentForm
     void ConnectCallback()
     {
         Utility.Debug.LogInfo("NetworkPanel回调，连接成功！");
-        isConnected = true;
     }
     void DisconnectCallback()
     {
         Utility.Debug.LogInfo("NetworkPanel回调，与服务器断开链接！");
-        isConnected = false;
     }
     protected override void OnTermination()
     {
-        if (isConnected)
-            netClient.Disconnect();
+        CosmosEntry.NetworkManager.Disconnect();
     }
 }

@@ -8,19 +8,19 @@ using UnityEditor;
 # if UNITY_EDITOR
 namespace Cosmos.CosmosEditor
 {
-    public class ReferenceTool:EditorWindow{
-        [MenuItem("Cosmos/ReferenceTool")]
-        public static void ReferenceToolWindow()
+    public class ComponentReferenceWindow:EditorWindow{
+        [MenuItem("Cosmos/ComponentReference")]
+        public static void OpenReferenceToolWindow()
         {
             OpenWindow();
         }
         public static void OpenWindow()
         {
-            var window = GetWindow<ReferenceTool>();
-            ((EditorWindow)window).maxSize = DebugTool.CosmosMaxWinSize;
-            ((EditorWindow)window).minSize = DebugTool.CosmosDevWinSize;
+            var window = GetWindow<ComponentReferenceWindow>();
+            ((EditorWindow)window).maxSize = EditorUtility.CosmosMaxWinSize;
+            ((EditorWindow)window).minSize = EditorUtility.CosmosDevWinSize;
         }
-       public ReferenceTool()
+       public ComponentReferenceWindow()
         {
             this.titleContent = new GUIContent("ReferenceFinder");
         }

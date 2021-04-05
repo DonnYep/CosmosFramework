@@ -25,9 +25,9 @@ namespace Cosmos.Test
             CosmosEntry.NetworkManager.OnReceiveData += NetworkManager_OnReceiveData;
             
         }
-        void NetworkManager_OnReceiveData(ArraySegment<byte> arrSeg)
+        void NetworkManager_OnReceiveData(byte[] buffer)
         {
-            var mp= MessagePacket.Deserialize(arrSeg.Array);
+            var mp= MessagePacket.Deserialize(buffer);
             if (mp.OperationCode == CmdDefine.PlayerInput)
             {
                 var length=netIdCache.Count;

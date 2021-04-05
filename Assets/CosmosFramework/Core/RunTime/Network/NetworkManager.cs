@@ -24,14 +24,14 @@ namespace Cosmos.Network
             add { onDisconnect += value; }
             remove { onDisconnect -= value; }
         }
-        public event Action<ArraySegment<byte>> OnReceiveData
+        public event Action<byte[]> OnReceiveData
         {
             add { onReceiveData += value; }
             remove { onReceiveData -= value; }
         }
         Action onConnect;
         Action onDisconnect;
-        Action<ArraySegment<byte>> onReceiveData;
+        Action<byte[]> onReceiveData;
         NetworkProtocolType currentNetworkProtocolType;
 
         #region UDP
@@ -177,24 +177,15 @@ namespace Cosmos.Network
                     break;
             }
         }
-        void RunHeartbeat(uint intervalSec, byte maxRecur)
-        {
-            //var hb = new Heartbeat();
-            heartbeat.MaxRecurCount = maxRecur;
-            heartbeat.HeartbeatInterval = intervalSec;
-            heartbeat.SendHeartbeatHandler = service.SendMessageAsync;
-            heartbeat.OnActive();
-            //service.SetHeartbeat(hb);
-        }
         void OnDisconnectHandler()
         {
             OnPause();
             IsConnected = false;
             Utility.Debug.LogInfo("Server Disconnected", MessageColor.RED);
             onDisconnect?.Invoke();
-            onConnect=null;
-            onDisconnect=null;
-            onReceiveData=null;
+            onConnect = null;
+            onDisconnect = null;
+            onReceiveData = null;
         }
         void OnConnectHandler()
         {
@@ -204,11 +195,14 @@ namespace Cosmos.Network
         }
         void OnReceiveDataHandler(ArraySegment<byte> arrSeg)
         {
-            onReceiveData?.Invoke(arrSeg);
+            //  onReceiveData?.Invoke(arrSeg);
         }
         void OnKCPReceiveDataHandler(ArraySegment<byte> arrSeg, byte channel)
         {
-            onReceiveData?.Invoke(arrSeg);
+            var rcvLen = arrSeg.Count;
+            var rcvData = new byte[rcvLen];
+            Array.Copy(arrSeg.Array, arrSeg.Offset, rcvData, 0, rcvLen);
+            onReceiveData?.Invoke(rcvData);
         }
     }
 }

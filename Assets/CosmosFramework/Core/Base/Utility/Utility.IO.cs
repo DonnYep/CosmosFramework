@@ -41,7 +41,7 @@ namespace Cosmos
                 Utility.Text.ClearStringBuilder();
                 for (int i = 0; i < relativePath.Length; i++)
                 {
-                    Utility.Text.StringBuilderCache.Append(relativePath[i] + "/");
+                    Utility.Text.StringBuilderCache.Append(relativePath[i] + "\\");
                 }
                 return Utility.Text.StringBuilderCache.ToString();
             }
@@ -50,12 +50,12 @@ namespace Cosmos
             /// 合并地址,返回相对路径；
             /// 参考示例：Resources\JsonData\CF.json
             /// </summary>
-            /// <param name="fileFullName">文件的完整名称（包括文件扩展名）</param>
+            /// <param name="fileName">文件的完整名称（包括文件扩展名）</param>
             /// <param name="relativePath">相对路径</param>
             /// <returns></returns>
-            public static string CombineRelativeFilePath(string fileFullName, params string[] relativePath)
+            public static string CombineRelativeFilePath(string fileName, params string[] relativePath)
             {
-                return Utility.IO.CombineRelativePath(relativePath) + fileFullName;
+                return Utility.IO.CombineRelativePath(relativePath) + fileName;
             }
             /// <summary>
             /// 删除文件夹下的所有文件以及文件夹
@@ -253,12 +253,34 @@ namespace Cosmos
             /// <summary>
             /// 写入二进制
             /// </summary>
-            /// <param name="fileFullPath">完整文件路径</param>
+            /// <param name="fileFullPath">完整文件路径，带后缀名</param>
             /// <param name="context">内容</param>
             /// <returns>是否写入成功</returns>
             public static bool WriterFormattedBinary(string fileFullPath, object context)
             {
+                if (!File.Exists(fileFullPath))
+                    File.Create(fileFullPath);
                 using (FileStream stream = new FileStream(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, context);
+                    return true;
+                }
+            }
+            /// <summary>
+            /// 写入二进制；
+            /// 传入的路径必为 ：{ Asset\Core\ } 格式
+            /// </summary>
+            /// <param name="filePath">文件夹路径</param>
+            /// <param name="fileName">带后缀的文件名</param>
+            /// <param name="context">内容</param>
+            /// <returns>是否写入成功</returns>
+            public static bool WriterFormattedBinary(string filePath, string fileName, object context)
+            {
+                if (!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+                var fullFilePath = CombineRelativeFilePath( fileName,filePath);
+                using (FileStream stream = new FileStream(fullFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     BinaryFormatter formatter = new BinaryFormatter();
                     formatter.Serialize(stream, context);

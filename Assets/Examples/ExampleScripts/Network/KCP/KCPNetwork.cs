@@ -23,9 +23,9 @@ namespace Cosmos.Test
         {
             CosmosEntry.NetworkManager.OnReceiveData += NetworkManager_OnReceiveData;
         }
-        void NetworkManager_OnReceiveData(ArraySegment<byte> obj)
+        void NetworkManager_OnReceiveData(byte[] buffer)
         {
-            Utility.Debug.LogInfo(Encoding.UTF8.GetString(obj.Array));
+            Utility.Debug.LogInfo(Encoding.UTF8.GetString(buffer));
         }
         public void SendKcpMessage(string msg)
         {

@@ -12,7 +12,7 @@ namespace Cosmos
     {
         event Action OnConnect;
         event Action OnDisconnect;
-        event Action<ArraySegment<byte>> OnReceiveData;
+        event Action<byte[]> OnReceiveData;
         //long Conv { get; }
         bool IsConnected { get; }
         void SendNetworkMessage(byte[] buffer);

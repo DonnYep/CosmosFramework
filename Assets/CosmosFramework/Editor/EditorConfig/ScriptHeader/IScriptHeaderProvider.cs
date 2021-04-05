@@ -9,7 +9,7 @@ namespace Cosmos.CosmosEditor
     /// 作者：#Author#  
     /// 创建时间：#CreateTime#
     /// </summary>
-    public interface IAnnotationProvider
+    public interface IScriptHeaderProvider
     {
         /* 参考，需要保留带 ##  符号的文字；
         @"//====================================
@@ -19,6 +19,6 @@ namespace Cosmos.CosmosEditor
         //* Description :
         //==================================== " + "\n";
         */
-        string AnnotationTitle { get; }
+        string HeaderContext { get; }
     }
 }
