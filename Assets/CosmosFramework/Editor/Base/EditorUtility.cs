@@ -56,8 +56,7 @@ namespace Cosmos.CosmosEditor
         }
         public static void WriteEditorConfig(string fileName,string context)
         {
-            var filePath = Utility.IO.CombineRelativeFilePath(fileName, EditorUtility.LibraryCachePath);
-             Utility.IO.WriterFormattedBinary(filePath,context);
+             Utility.IO.WriterFormattedBinary(EditorUtility.LibraryCachePath, fileName, context);
         }
         public static T ReadEditorConfig<T>(string fileName)
             where T:IEditorData
