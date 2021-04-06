@@ -7,7 +7,7 @@ namespace Cosmos.Test
     {
         DataPoint start;
         DataPoint goal;
-
+        public override NetworkdComponetType NetworkdComponetType { get; set; } = NetworkdComponetType.Trasform;
         public class DataPoint
         {
             public float timeStamp;

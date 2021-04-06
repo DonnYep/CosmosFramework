@@ -9,8 +9,6 @@ namespace Cosmos.Test
 {
     public class MovementSphereManager : MonoSingleton<MovementSphereManager>
     {
-        KcpClientService kcpClientService = new KcpClientService();
-        public KcpClientService KcpClientService { get { return kcpClientService; } }
         [SerializeField] string ip = "127.0.0.1";
         public string IP { get { return ip; } }
         [SerializeField] int port = 8521;
@@ -20,10 +18,9 @@ namespace Cosmos.Test
         [SerializeField] GameObject remotePlayerPrefab;
         public GameObject RemotePlayerPrefab { get { return remotePlayerPrefab; } }
 
-        Dictionary<int, NetworkIndentity> networkIdentityDict;
-        List<NetworkIndentity> netIdCache;
-        NetworkWriter writer;
-        Dictionary<int, Pool<NetworkWriter>> writePool;
+        public NetworkWriter NetworkWriter { get; private set; }
+
+        OperationData authorityInputOpdata;
 
         Action onConnect;
         public event Action OnConnect
@@ -50,6 +47,15 @@ namespace Cosmos.Test
             add { onPlayerExit += value; }
             remove { onPlayerExit -= value; }
         }
+
+        Action<Dictionary<int, byte[]>> onPlayerInput;
+        public event Action<Dictionary<int, byte[]>> OnPlayerInput
+        {
+            add { onPlayerInput += value; }
+            remove { onPlayerInput -= value; }
+        }
+
+
         public int AuthorityConv { get; private set; }
         public void SendKcpMessage(string msg)
         {
@@ -64,6 +70,14 @@ namespace Cosmos.Test
         {
             CosmosEntry.NetworkManager.Disconnect();
         }
+        public void SendAuthorityData(byte[] iptData)
+        {
+            Utility.Debug.LogInfo("上传当前输入信息");
+            authorityInputOpdata.DataContract = Encoding.UTF8.GetString( iptData);
+            var json = Utility.Json.ToJson(authorityInputOpdata);
+            var data = Encoding.UTF8.GetBytes(json);
+            CosmosEntry.NetworkManager.SendNetworkMessage(data);
+        }
         protected override void OnDestroy()
         {
             CosmosEntry.NetworkManager.Disconnect();
@@ -71,8 +85,8 @@ namespace Cosmos.Test
         protected override void Awake()
         {
             base.Awake();
-            netIdCache = new List<NetworkIndentity>();
-            networkIdentityDict = new Dictionary<int, NetworkIndentity>();
+            NetworkWriter = new NetworkWriter();
+            authorityInputOpdata = new OperationData((byte)OperationCode.PlayerInput);
         }
         void Start()
         {
@@ -95,20 +109,31 @@ namespace Cosmos.Test
             var opCode = (OperationCode)opData.OperationCode;
             switch (opCode)
             {
-                case OperationCode.PlayerEnter:
+                case OperationCode.SYN:
                     {
-                        var messageDict = opData.DataContract as Dictionary<byte, object>;
+                        var messageDict = Utility.Json.ToObject<Dictionary<byte, object>>(Convert.ToString(opData.DataContract));
+                        //var messageDict =  opData.DataContract as Dictionary<byte, object>;
                         var authorityConv = Utility.GetValue(messageDict, (byte)ParameterCode.AuthorityConv);
                         AuthorityConv = Convert.ToInt32(authorityConv);
 
                         onConnect?.Invoke();
 
-                        var remoteConvs= Utility.GetValue(messageDict, (byte)ParameterCode.RemoteConvs) as List<int>;
-                        var length = remoteConvs.Count;
-                        for (int i = 0; i < length; i++)
+                        var remoteConvsJson = Convert.ToString(Utility.GetValue(messageDict, (byte)ParameterCode.RemoteConvs));
+                        var remoteConvs = Utility.Json.ToObject<List<int>>(remoteConvsJson);
+                        if (remoteConvs != null)
                         {
-                            onPlayerEnter(remoteConvs[i]);
+                            var length = remoteConvs.Count;
+                            for (int i = 0; i < length; i++)
+                            {
+                                onPlayerEnter(remoteConvs[i]);
+                            }
                         }
+                    }
+                    break;
+                case OperationCode.PlayerEnter:
+                    {
+                        var enterNetId = Convert.ToInt32(opData.DataContract);
+                        onPlayerEnter(enterNetId);
                     }
                     break;
                 case OperationCode.PlayerExit:
@@ -119,7 +144,9 @@ namespace Cosmos.Test
                     break;
                 case OperationCode.PlayerInput:
                     {
-
+                        var messageDict = Utility.Json.ToObject<Dictionary<int, byte[]>>(Convert.ToString(opData.DataContract));
+                        if (messageDict != null)
+                            onPlayerInput?.Invoke(messageDict);
                     }
                     break;
                 case OperationCode.FIN:

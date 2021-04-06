@@ -9,7 +9,7 @@ namespace Cosmos.Test
     public class NetworkBehaviour:MonoBehaviour
     {
         public int NetId { get; set; }
-        public NetworkdComponetType NetworkdComponetType { get; set; }
+        public virtual NetworkdComponetType NetworkdComponetType { get; set; }
         /// <summary>
         /// 是否是本地；
         /// </summary>

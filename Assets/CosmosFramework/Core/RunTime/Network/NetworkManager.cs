@@ -33,7 +33,6 @@ namespace Cosmos.Network
         Action onDisconnect;
         Action<byte[]> onReceiveData;
         NetworkProtocolType currentNetworkProtocolType;
-
         #region UDP
         INetworkService service;
         IHeartbeat heartbeat;
@@ -114,11 +113,11 @@ namespace Cosmos.Network
         public void Connect(string ip, ushort port, NetworkProtocolType protocolType)
         {
             OnUnPause();
-            //if (IsConnected)
-            //{
-            //    Utility.Debug.LogError("Network is Connected !");
-            //    return;
-            //}
+            if (IsConnected)
+            {
+                Utility.Debug.LogError("Network is Connected !");
+                return;
+            }
             currentNetworkProtocolType = protocolType;
             switch (protocolType)
             {

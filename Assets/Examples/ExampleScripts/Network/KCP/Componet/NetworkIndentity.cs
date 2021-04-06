@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Cosmos.Test
 {
+    [RequireComponent(typeof(NetworkTransform))]
     public class NetworkIndentity : MonoBehaviour
     {
         Dictionary<byte, NetworkBehaviour> networkBehaviourDict;
@@ -24,7 +25,19 @@ namespace Cosmos.Test
                 return networkBehaviourDict;
             }
         }
-        List<NetworkBehaviour> cache;
+        List<NetworkBehaviour> BehaviourCache
+        {
+            get
+            {
+                if (behaviourCache == null)
+                {
+                    behaviourCache = new List<NetworkBehaviour>();
+                    behaviourCache.AddRange(NetworkBehaviourDict.Values.ToList());
+                }
+                return behaviourCache;
+            }
+        }
+        List<NetworkBehaviour> behaviourCache;
         public int NetId { get { return netId; } set { netId = value; netIdpending = netId; } }
         [SerializeField] int netId;
         int netIdpending;
@@ -32,7 +45,7 @@ namespace Cosmos.Test
         internal void OnDeserializeAllSafely(NetworkReader reader, bool initialState)
         {
             // deserialize all components that were received
-            NetworkBehaviour[] components = cache.ToArray();
+            NetworkBehaviour[] components = BehaviourCache.ToArray();
             while (reader.Position < reader.Length)
             {
                 // read & check index [0..255]
@@ -44,12 +57,12 @@ namespace Cosmos.Test
                 }
             }
         }
-        internal void OnSerializeAllSafely(NetworkWriter  Writer)
+        internal void OnSerializeAllSafely(NetworkWriter Writer)
         {
-            var length = cache.Count;
+            var length = BehaviourCache.Count;
             for (int i = 0; i < length; i++)
             {
-                cache[i].OnSerialize(Writer);
+                BehaviourCache[i].OnSerialize(Writer);
             }
         }
         void OnDeserializeSafely(NetworkBehaviour comp, NetworkReader reader, bool initialState)
@@ -65,7 +78,7 @@ namespace Cosmos.Test
             {
                 Debug.LogError(e);
             }
-             if (reader.Position != chunkEnd)
+            if (reader.Position != chunkEnd)
             {
                 // warn the user
                 int bytesRead = reader.Position - chunkStart;

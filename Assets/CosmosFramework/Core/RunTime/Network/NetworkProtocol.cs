@@ -8,8 +8,8 @@ namespace Cosmos
 {
     public enum NetworkProtocolType:byte
     {
-        TCP=0x0,
-        UDP=0x1,
-        KCP=0x2
+        KCP=0x1,
+        UDP=0x2,
+        TCP=0x3
     }
 }
