@@ -34,20 +34,9 @@ namespace Cosmos
             originalRot= transform.rotation.eulerAngles;
             inputManager = GameManager.GetModule<IInputManager>();
         }
-        public void LockMouse()
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        public void UnlockMouse()
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = true;
-        }
         public void HideMouse()
         {
-            if (inputManager.GetButtonDown(InputButtonType._MouseLeft) ||
-                inputManager.GetButtonDown(InputButtonType._MouseRight) ||
+            if (inputManager.GetButtonDown(InputButtonType._MouseRight) ||
                 inputManager.GetButtonDown(InputButtonType._MouseMiddle))
                 LockMouse();
             if (inputManager.GetButtonDown(InputButtonType._Escape))
@@ -75,7 +64,7 @@ namespace Cosmos
             pitch = inputManager.GetAxis(InputAxisType._MouseY);
             pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
             if (inputManager.GetAxis(InputAxisType._MouseScrollWheel) != 0)
-                Utility.Debug.LogInfo("MouseScrollWheel ", MessageColor.INDIGO);
+                //Utility.Debug.LogInfo("MouseScrollWheel ", MessageColor.INDIGO);
             distanceFromTarget -= inputManager.GetAxis(InputAxisType._MouseScrollWheel);
             distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
             HideMouse();
@@ -95,9 +84,10 @@ namespace Cosmos
             cameraViewDamp = Mathf.Clamp(cameraViewDamp, 0, 1000);
             pitchMinMax = Utility.Unity.Clamp(pitchMinMax, new Vector2(-90, 0), new Vector2(0, 90));
         }
-
         void LateUpdateCamera()
         {
+            if (Utility.Assert.IsNull(target))
+                return;
             cameraOffset.z = -distanceFromTarget;
             cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, 
                 cameraOffset, Time.deltaTime * cameraViewDamp);
@@ -106,6 +96,16 @@ namespace Cosmos
             Vector3 rotResult = new Vector3(pitchResult, yawResult, 0);
             transform.eulerAngles -= rotResult;
             transform.position = target.transform.position;
+        }
+        void LockMouse()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        void UnlockMouse()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }

@@ -25,6 +25,7 @@ namespace Cosmos.CosmosEditor
             {
                 EditorUtility.LogInfo("未能获取EditorConfigData");
                 EditorConfigData = new EditorConfigData();
+                EditorUtility.WriteEditorConfig(EditorConfigFileName, EditorConfigData);
             }
         }
         static readonly string EditorConfigFileName = "EditorConfig.txt";

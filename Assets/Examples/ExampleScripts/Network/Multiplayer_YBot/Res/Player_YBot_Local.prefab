@@ -411,7 +411,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5198454984706767960}
-  - component: {fileID: 5198454984706767961}
   m_Layer: 0
   m_Name: CameraTarget
   m_TagString: Untagged
@@ -433,18 +432,6 @@ Transform:
   m_Father: {fileID: 5198454984788336019}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5198454984706767961
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5198454984706767963}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b94520bfe822b041b7a4082ce316d34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5198454984732013116
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,9 +572,8 @@ GameObject:
   - component: {fileID: 5198454984788336018}
   - component: {fileID: 5198454984788336021}
   - component: {fileID: 5198454984788336020}
-  - component: {fileID: 5198454984788336023}
   m_Layer: 0
-  m_Name: Player_YBot_Blue
+  m_Name: Player_YBot_Local
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -642,7 +628,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
@@ -660,21 +646,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &5198454984788336023
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5198454984788336022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2ef185ae0d87d24793e315d77e1bbe9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  forwardDampTime: 0.1
-  turnDampTime: 0.05
-  cameraControllerName: CameraController
 --- !u!1 &5198454984861804535
 GameObject:
   m_ObjectHideFlags: 0

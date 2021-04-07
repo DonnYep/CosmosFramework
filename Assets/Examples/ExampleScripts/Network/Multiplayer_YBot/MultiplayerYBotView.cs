@@ -20,6 +20,7 @@ namespace Cosmos.Test
         }
         void OnConnectHandler()
         {
+            multiplayerYBotCamera = GameObject.Find("YBotCamera").AddComponent<MultiplayerYBotCamera>();
             var go = GameObject.Instantiate(MultiplayerManager.Instance.LocalPlayerPrefab);
             authorityTrans = go.AddComponent<NetworkTransform>();
            var ctrlComp= go.AddComponent<MultiplayerYBotController>();
@@ -67,6 +68,7 @@ namespace Cosmos.Test
                 authorityTrans = null;
                 netTransDict.Clear();
                 multiplayerYBotCamera.ReleaseTarget();
+                MonoGameManager.KillObject(multiplayerYBotCamera);
             }
             catch { }
         }
