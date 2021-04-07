@@ -33,6 +33,8 @@ namespace Cosmos.Network
         Action onDisconnect;
         Action<byte[]> onReceiveData;
         NetworkProtocolType currentNetworkProtocolType;
+
+        bool clearCallbackWhenDisconnected = false;
         #region UDP
         INetworkService service;
         IHeartbeat heartbeat;
@@ -42,27 +44,6 @@ namespace Cosmos.Network
         KcpClientService kcpClientService;
         #endregion
 
-        //public long Conv
-        //{
-        //    get
-        //    {
-        //        long conv = 0;
-        //        switch (currentNetworkProtocolType)
-        //        {
-        //            case NetworkProtocolType.TCP:
-        //                break;
-        //            case NetworkProtocolType.UDP:
-        //                conv = service.Conv;
-        //                break;
-        //            case NetworkProtocolType.KCP:
-        //                conv = 0;
-        //                break;
-        //            default:
-        //                break;
-        //        }
-        //        return conv;
-        //    }
-        //}
         public bool IsConnected { get; private set; }
         public override void OnRefresh()
         {
@@ -119,6 +100,7 @@ namespace Cosmos.Network
                 return;
             }
             currentNetworkProtocolType = protocolType;
+            clearCallbackWhenDisconnected = false;
             switch (protocolType)
             {
                 case NetworkProtocolType.KCP:
@@ -162,8 +144,13 @@ namespace Cosmos.Network
                     break;
             }
         }
-        public void Disconnect(bool notifyRemote = true)
+        /// <summary>
+        /// 断开网络链接；
+        /// </summary>
+        /// <param name="clearCallbackWhenDisconnected">是否在断开连接后清空回调的监听</param>
+        public void Disconnect(bool clearCallbackWhenDisconnected = false)
         {
+            this.clearCallbackWhenDisconnected = clearCallbackWhenDisconnected;
             switch (currentNetworkProtocolType)
             {
                 case NetworkProtocolType.TCP:
@@ -182,9 +169,12 @@ namespace Cosmos.Network
             IsConnected = false;
             Utility.Debug.LogInfo("Server Disconnected", MessageColor.RED);
             onDisconnect?.Invoke();
-            onConnect = null;
-            onDisconnect = null;
-            onReceiveData = null;
+            if (clearCallbackWhenDisconnected)
+            {
+                onConnect = null;
+                onDisconnect = null;
+                onReceiveData = null;
+            }
         }
         void OnConnectHandler()
         {

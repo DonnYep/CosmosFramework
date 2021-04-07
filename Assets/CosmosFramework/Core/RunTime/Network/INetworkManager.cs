@@ -24,6 +24,10 @@ namespace Cosmos
         /// <param name="port">端口号</param>
         /// <param name="protocolType">协议类型</param>
         void Connect(string ip, ushort port, NetworkProtocolType protocolType= NetworkProtocolType.KCP);
-        void Disconnect(bool notifyRemote = true);
+        /// <summary>
+        /// 断开网络链接；
+        /// </summary>
+        /// <param name="clearCallbackWhenDisconnected">是否在断开连接后清空回调的监听</param>
+        void Disconnect(bool clearCallbackWhenDisconnected = false);
     }
 }
