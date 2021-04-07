@@ -1,5 +1,4 @@
-// kcp client logic abstracted into a class.
-// for use in Mirror, DOTSNET, testing, etc.
+
 using System;
 
 namespace kcp 

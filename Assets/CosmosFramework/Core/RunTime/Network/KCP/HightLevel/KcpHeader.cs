@@ -1,9 +1,5 @@
 namespace kcp 
 {
-    // header for messages processed by kcp.
-    // this is NOT for the raw receive messages(!) because handshake/disconnect
-    // need to be sent reliably. it's not enough to have those in rawreceive
-    // because those messages might get lost without being resent!
     public enum KcpHeader : byte
     {
         // don't react on 0x00. might help to filter out random noise.
