@@ -8,7 +8,9 @@ namespace Cosmos.Test
 {
     public class NetworkBehaviour:MonoBehaviour
     {
-        public int NetId { get; set; }
+        public int NetId { get { return netId; } set { netId = value; netIdpending = netId; } }
+        [SerializeField] int netId;
+        int netIdpending;
         public virtual NetworkdComponetType NetworkdComponetType { get; set; }
         /// <summary>
         /// 是否是本地；
@@ -16,5 +18,9 @@ namespace Cosmos.Test
         public bool IsAuthority { get; set; }
         public virtual void OnDeserialize(NetworkReader reader){}
         public virtual void OnSerialize(NetworkWriter writer) { }
+        void OnValidate()
+        {
+            netId = netIdpending;
+        }
     }
 }

@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 namespace Cosmos.Test
 {
     public class MovementSphereView : MonoBehaviour
     {
-        Dictionary<int, NetworkIndentity> netIndentityDict = new Dictionary<int, NetworkIndentity>();
+        Dictionary<int, NetworkTransform> netTransDict = new Dictionary<int, NetworkTransform>();
         Camera playerTraceCamera;
         MovementSphereCamera movementSphereCamera;
-        NetworkIndentity authorityIndentity;
+        NetworkTransform authorityTrans;
         NetworkWriter writer = new NetworkWriter();
         Dictionary<int, Pool<NetworkWriter>> writePool;
 
@@ -28,52 +29,53 @@ namespace Cosmos.Test
         void OnConnectHandler()
         {
             var go = GameObject.Instantiate(MovementSphereManager.Instance.LocalPlayerPrefab);
-            authorityIndentity = go.AddComponent<NetworkIndentity>();
+            authorityTrans = go.AddComponent<NetworkTransform>();
             go.AddComponent<NetworkPlayerController>();
-            authorityIndentity.NetId = MovementSphereManager.Instance.AuthorityConv;
-            authorityIndentity.IsAuthority = true;
-            movementSphereCamera.SetTarget(authorityIndentity.transform);
+            authorityTrans.NetId = MovementSphereManager.Instance.AuthorityConv;
+            authorityTrans.IsAuthority = true;
+            movementSphereCamera.SetTarget(authorityTrans.transform);
         }
         void OnPlayerEnterHandler(int conv)
         {
             var go = GameObject.Instantiate(MovementSphereManager.Instance.RemotePlayerPrefab);
-            var comp = go.AddComponent<NetworkIndentity>();
+            var comp = go.AddComponent<NetworkTransform>();
             comp.NetId = conv;
             comp.IsAuthority = false;
-            netIndentityDict.Add(comp.NetId, comp);
+            netTransDict.Add(comp.NetId, comp);
         }
         void OnPlayerExitHandler(int conv)
         {
-            if (netIndentityDict.Remove(conv, out var networkIndentity))
+            if (netTransDict.Remove(conv, out var networkIndentity))
             {
                 MonoGameManager.KillObject(networkIndentity.gameObject);
             }
         }
-        void OnPlayerInputHandler(Dictionary<int, byte[]> inputData)
+        /// <summary>
+        /// int表示Conv，string表示FixTransform的json
+        /// </summary>
+        void OnPlayerInputHandler(Dictionary<int, string> inputData)
         {
             foreach (var  iptData in inputData)
             {
-                if( netIndentityDict.TryGetValue(iptData.Key, out var indentity))
+                if(netTransDict.TryGetValue(iptData.Key, out var netTrans))
                 {
-                    indentity.OnDeserializeAllSafely(new NetworkReader(iptData.Value),false);
+                    netTrans.DeserializeNetworkTransform(Utility.Json.ToObject<FixTransform>(iptData.Value));
                 }
             }
-                authorityIndentity.OnSerializeAllSafely(writer);
-                MovementSphereManager.Instance.SendAuthorityData(writer.ToArray());
-                writer.Reset();
-     
+                authorityTrans.SerializeNetworkTransform(out var fixTransform);
+                MovementSphereManager.Instance.SendAuthorityData(fixTransform);
         }
         void OnDisconnectHandler()
         {
             try
             {
-                foreach (var netObj in netIndentityDict.Values)
+                foreach (var netObj in netTransDict.Values)
                 {
                     MonoGameManager.KillObject(netObj.gameObject);
                 }
-                MonoGameManager.KillObject(authorityIndentity.gameObject);
-                authorityIndentity = null;
-                netIndentityDict.Clear();
+                MonoGameManager.KillObject(authorityTrans.gameObject);
+                authorityTrans = null;
+                netTransDict.Clear();
                 movementSphereCamera.ReleaseTarget();
             }
             catch { }

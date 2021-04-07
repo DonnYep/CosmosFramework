@@ -11,6 +11,10 @@ namespace Cosmos.Test
         /// <summary>
         /// 同步的帧率；
         /// </summary>
-        public const int SyncInterval = 20;
+        public static float SyncInterval { get { return  IntervalMS/ 1000 ; } }
+        /// <summary>
+        /// 同步的毫秒间隔;
+        /// </summary>
+        public static int IntervalMS { get; set; } = 100;
     }
 }

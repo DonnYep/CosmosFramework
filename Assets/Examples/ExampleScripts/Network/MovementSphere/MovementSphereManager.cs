@@ -48,13 +48,15 @@ namespace Cosmos.Test
             remove { onPlayerExit -= value; }
         }
 
-        Action<Dictionary<int, byte[]>> onPlayerInput;
-        public event Action<Dictionary<int, byte[]>> OnPlayerInput
+        Action<Dictionary<int, string>> onPlayerInput;
+        /// <summary>
+        /// int表示Conv，string表示FixTransform的json
+        /// </summary>
+        public event Action<Dictionary<int, string>> OnPlayerInput
         {
             add { onPlayerInput += value; }
             remove { onPlayerInput -= value; }
         }
-
 
         public int AuthorityConv { get; private set; }
         public void SendKcpMessage(string msg)
@@ -70,10 +72,11 @@ namespace Cosmos.Test
         {
             CosmosEntry.NetworkManager.Disconnect();
         }
-        public void SendAuthorityData(byte[] iptData)
+        public void SendAuthorityData(FixTransform fixTransform)
         {
-            Utility.Debug.LogInfo("上传当前输入信息");
-            authorityInputOpdata.DataContract = Encoding.UTF8.GetString( iptData);
+            var dataDict = new Dictionary<int, string>();
+            dataDict.Add(AuthorityConv,Utility.Json.ToJson( fixTransform));
+            authorityInputOpdata.DataContract = Utility.Json.ToJson(dataDict);
             var json = Utility.Json.ToJson(authorityInputOpdata);
             var data = Encoding.UTF8.GetBytes(json);
             CosmosEntry.NetworkManager.SendNetworkMessage(data);
@@ -112,10 +115,10 @@ namespace Cosmos.Test
                 case OperationCode.SYN:
                     {
                         var messageDict = Utility.Json.ToObject<Dictionary<byte, object>>(Convert.ToString(opData.DataContract));
-                        //var messageDict =  opData.DataContract as Dictionary<byte, object>;
                         var authorityConv = Utility.GetValue(messageDict, (byte)ParameterCode.AuthorityConv);
+                         var serverSyncInterval= Utility.GetValue(messageDict, (byte)ParameterCode.ServerSyncInterval);
                         AuthorityConv = Convert.ToInt32(authorityConv);
-
+                        NetworkSimulateConsts.IntervalMS = Convert.ToInt32(serverSyncInterval);
                         onConnect?.Invoke();
 
                         var remoteConvsJson = Convert.ToString(Utility.GetValue(messageDict, (byte)ParameterCode.RemoteConvs));
@@ -144,7 +147,7 @@ namespace Cosmos.Test
                     break;
                 case OperationCode.PlayerInput:
                     {
-                        var messageDict = Utility.Json.ToObject<Dictionary<int, byte[]>>(Convert.ToString(opData.DataContract));
+                        var messageDict = Utility.Json.ToObject<Dictionary<int, string>>(Convert.ToString(opData.DataContract));
                         if (messageDict != null)
                             onPlayerInput?.Invoke(messageDict);
                     }
