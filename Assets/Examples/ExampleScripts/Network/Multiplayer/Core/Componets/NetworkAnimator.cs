@@ -142,7 +142,7 @@ namespace Cosmos.Test
             }
             return change;
         }
-        void HandleAnimMsg(int stateHash, float normalizedTime, int layerId, float weight, NetworkReader reader)
+        void HandleAnimMsg(int stateHash, float normalizedTime, int layerId, float weight, FixAnimator anim)
         {
             if (IsAuthority)
                 return;
@@ -150,10 +150,8 @@ namespace Cosmos.Test
             {
                 animator.Play(stateHash, layerId, normalizedTime);
             }
-
             animator.SetLayerWeight(layerId, weight);
 
-            ReadParameters(reader);
         }
         void ReadParameters(NetworkReader reader)
         {

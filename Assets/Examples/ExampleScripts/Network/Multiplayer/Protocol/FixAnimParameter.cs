@@ -12,9 +12,12 @@ namespace Cosmos.Test
 
     public class FixAnimParameter
     {
-        public byte ParameterType { get; set; }
-        public  string ParameterKey { get; set; }
+        public byte Type { get; set; }
+        public  int StringHash{ get; set; }
         public object ParameterValue { get; set; }
-
+        public int LayerIndex { get; set; }
+        public FixFloat CurrentSpeed{ get; set; }
+        public FixFloat LayerWeight{ get; set; }
+        public FixFloat NormalizedTime { get; set; }
     }
 }
