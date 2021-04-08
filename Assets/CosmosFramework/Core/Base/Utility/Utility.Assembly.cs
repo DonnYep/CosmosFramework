@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Cosmos
 {
-    public sealed partial class Utility
+    public static partial class Utility
     {
-        public static class Assembly
+        public sealed class Assembly
         {
             /// <summary>
             /// 反射工具，得到反射类的对象；

@@ -2,9 +2,9 @@
 using System;
 namespace Cosmos
 {
-    public sealed partial class Utility
+    public static partial class Utility
     {
-        public static class Json
+        public sealed class Json
         {
             static IJsonHelper jsonHelper = null;
             public static void SetHelper(IJsonHelper helper)

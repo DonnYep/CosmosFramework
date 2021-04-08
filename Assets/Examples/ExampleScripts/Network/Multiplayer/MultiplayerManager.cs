@@ -91,7 +91,7 @@ namespace Cosmos.Test
             NetworkWriter = new NetworkWriter();
             authorityInputOpdata = new OperationData((byte)OperationCode.PlayerInput);
         }
-        void Start()
+     protected virtual   void Start()
         {
             CosmosEntry.NetworkManager.OnReceiveData += OnReceiveDataHandler;
             CosmosEntry.NetworkManager.OnDisconnect += OnDisconnectHandler;

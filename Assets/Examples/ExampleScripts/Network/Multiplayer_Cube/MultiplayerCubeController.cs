@@ -11,7 +11,7 @@ namespace Cosmos.Test
     {
         Rigidbody m_Rigidbody;
         [SerializeField] float moveSpeed = 5;
-        [SerializeField] float rotSpeed = 5;
+        [SerializeField] float rotSpeed = 10;
         private void Awake()
         {
             m_Rigidbody = GetComponent<Rigidbody>();

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System;
 namespace Cosmos
 {
-    public sealed partial class Utility
+    public static partial class Utility
     {
         /// <summary>
         /// 时间相关工具，提供了不同精度的时间戳等函数
         /// </summary>
-        public static class Time
+        public sealed class Time
         {
             //1s=1000ms
             //1ms=1000us

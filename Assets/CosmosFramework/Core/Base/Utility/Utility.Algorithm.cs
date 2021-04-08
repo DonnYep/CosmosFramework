@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public sealed partial class Utility
+    public static partial class Utility
     {
         /// <summary>
         /// 通用算法工具类，封装了常用算法。
         /// </summary>
-        public static class Algorithm
+        public sealed class Algorithm
         {
             /// <summary>
             /// 升序排序

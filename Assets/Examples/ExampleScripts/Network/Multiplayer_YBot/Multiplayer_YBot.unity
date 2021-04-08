@@ -554,7 +554,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1445863190}
   - component: {fileID: 1445863189}
-  - component: {fileID: 1445863191}
   - component: {fileID: 1445863192}
   m_Layer: 0
   m_Name: Entry
@@ -589,24 +588,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1445863191
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1445863188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75ed17f0cadded249aa3a0330d3f551b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ip: 127.0.0.1
-  port: 8531
-  localPlayerPrefab: {fileID: 5198454984788336022, guid: 645410bb7e9f2754287581f02ece6038,
-    type: 3}
-  remotePlayerPrefab: {fileID: 1749076629832013700, guid: 0827a1fa4db270348b3a5bd967e5cc0f,
-    type: 3}
 --- !u!114 &1445863192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,6 +600,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 707259dee271c344ba8bab3c7ad15dda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ip: 192.168.0.117
+  port: 8531
+  localPlayerPrefab: {fileID: 6551793662335542995, guid: 9293e883b13ac6d4199a74ffcad4e0fe,
+    type: 3}
+  remotePlayerPrefab: {fileID: 2824591780702960994, guid: 94367ba1ad211174a914163b63a076a3,
+    type: 3}
 --- !u!1 &1661611821
 GameObject:
   m_ObjectHideFlags: 0

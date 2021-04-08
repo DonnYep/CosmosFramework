@@ -525,7 +525,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1277566612}
   - component: {fileID: 1277566611}
-  - component: {fileID: 1277566614}
   - component: {fileID: 1277566613}
   m_Layer: 0
   m_Name: Entry
@@ -572,19 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d747f2da5cbcb1b44a9dc74c716ac6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1277566614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1277566610}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75ed17f0cadded249aa3a0330d3f551b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ip: 192.168.0.117
+  ip: 127.0.0.1
   port: 8531
   localPlayerPrefab: {fileID: 5580617838142533433, guid: 5b11b0ff297d7c14ea9743fb03003a12,
     type: 3}

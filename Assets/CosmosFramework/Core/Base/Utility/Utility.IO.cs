@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Cosmos
 {
-    public sealed partial class Utility
+    public static partial class Utility
     {
-        public static class IO
+        public sealed class IO
         {
             public static void CreateFolder(string path)
             {

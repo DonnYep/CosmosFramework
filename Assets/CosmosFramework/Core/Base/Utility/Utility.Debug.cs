@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public sealed partial class Utility
+    public static partial class Utility
     {
-        public static class Debug
+        public sealed class Debug
         {
             static IDebugHelper debugHelper = null;
             public static void SetHelper(IDebugHelper helper)

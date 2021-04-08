@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Cosmos
 {
-    public sealed partial class Utility
+    public static partial class Utility
     {
-        public static class Converter
+        public sealed class Converter
         {
             //TODO Converter 转换工具需要完善
             public static string GetString(byte[] value)

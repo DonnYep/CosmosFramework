@@ -15,6 +15,7 @@ namespace Cosmos
         [SerializeField] float yawSpeed=15;
         [SerializeField] float pitchSpeed=10;
         [SerializeField] float cameraViewDamp=10;
+        [SerializeField] float sensitivity = 5f;
         Camera cam;
         Transform target;
         IInputManager inputManager;
@@ -27,12 +28,10 @@ namespace Cosmos
         Vector3 originalPos;
         Vector3 originalRot;
 
-        protected override void Awake()
+        public Vector3 PitchYaw { get; private set; }
+        public Vector3 CameraForwordDirection()
         {
-            base.Awake();
-            originalPos = transform.position;
-            originalRot= transform.rotation.eulerAngles;
-            inputManager = GameManager.GetModule<IInputManager>();
+            return cam.transform.forward;
         }
         public void HideMouse()
         {
@@ -57,6 +56,13 @@ namespace Cosmos
             this.target = null;
             transform.position = originalPos;
             transform.eulerAngles=originalRot;
+        }
+        protected override void Awake()
+        {
+            base.Awake();
+            originalPos = transform.position;
+            originalRot = transform.rotation.eulerAngles;
+            inputManager = GameManager.GetModule<IInputManager>();
         }
         protected override void RefreshHandler()
         {
@@ -94,8 +100,9 @@ namespace Cosmos
             float yawResult = yaw * Time.deltaTime*yawSpeed;
             float pitchResult = pitch * Time.deltaTime*pitchSpeed;
             Vector3 rotResult = new Vector3(pitchResult, yawResult, 0);
-            transform.eulerAngles -= rotResult;
-            transform.position = target.transform.position;
+            PitchYaw= rotResult;
+            transform.eulerAngles -= rotResult*sensitivity;
+            transform.position =Vector3.Lerp(transform.position, target.transform.position,Time.deltaTime*cameraViewDamp);
         }
         void LockMouse()
         {

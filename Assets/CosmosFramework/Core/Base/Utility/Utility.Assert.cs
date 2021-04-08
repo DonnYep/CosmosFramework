@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System;
 namespace Cosmos
 {
-    public sealed partial class Utility
+    public static partial class Utility
     {
         /// <summary>
         /// 断言处理工具;
         /// </summary>
-        public static class Assert
+        public sealed class Assert
         {
             /// <summary>
             /// 判断不为空

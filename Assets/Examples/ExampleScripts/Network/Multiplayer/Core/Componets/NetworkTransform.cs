@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Cosmos.Test
 {
+    [RequireComponent(typeof(NetworkIdentity))]
     public class NetworkTransform : NetworkBehaviour
     {
         DataPoint start;
         DataPoint goal;
         float latestTime = 0;
-        public override NetworkdComponetType NetworkdComponetType { get; set; } = NetworkdComponetType.Trasform;
+        public override NetworkdComponetType NetworkdComponetType { get; protected set; } = NetworkdComponetType.Trasform;
         public class DataPoint
         {
             public float timeStamp;

@@ -16,39 +16,61 @@ namespace Cosmos
         [Range(0, 1)]
         float turnDampTime = 0.05f;
         Animator animator;
-        int forwardHash = Animator.StringToHash("Forward");
-        int turnHash = Animator.StringToHash("Turn");
+        int verticalHash = Animator.StringToHash("Vertical");
         int inputHash = Animator.StringToHash("Input");
-        float moveForword = 0;
-        float moveTurn = 0;
+        float moveMagnitude = 0;
+        float turnSmoothVelocity;
+        public float turnSmoothTime = 0.3f;
         public Transform CameraTarget { get; private set; }
+
+        [SerializeField] float walkSpeed = 1.5f;
+        [SerializeField] float runSpeed = 3;
+        [SerializeField] float rotSpeed = 5;
+        float currentSpeed;
+
         IInputManager inputManager;
-        //点积
-        float dot = 0;
-        protected override void RefreshHandler ()
+
+        MultiplayerYBotCamera cameraCache;
+        public MultiplayerYBotCamera Camera
         {
-            if (inputManager.GetAxis(InputAxisType._Vertical) != 0 || inputManager.GetAxis(InputAxisType._Horizontal) != 0)
+            get
+            {
+                if (cameraCache == null)
+                {
+                    cameraCache = CosmosEntry.ControllerManager.GetController<MultiplayerYBotCamera>(typeof(MultiplayerYBotCamera).Name);
+                }
+                return cameraCache;
+            }
+        }
+        protected override void RefreshHandler()
+        {
+            var v = inputManager.GetAxis(InputAxisType._Vertical);
+            var h = inputManager.GetAxis(InputAxisType._Horizontal);
+            if (v != 0 || h != 0)
                 animator.SetBool(inputHash, true);
             else
                 animator.SetBool(inputHash, false);
-            moveForword = inputManager.GetAxis(InputAxisType._Vertical);
-            moveTurn = inputManager.GetAxis(InputAxisType._Horizontal);
+
+            Vector2 input = new Vector2(h, v);
+            Vector2 inputDir = input.normalized;
+            moveMagnitude = input.normalized.magnitude;
             if (inputManager.GetButton(InputButtonType._LeftShift))
-                moveForword *= 2;
-            //合并旋转
-            MatchRotation();
-            //{
-            //    if (dot >= 0)
-            //    {
-            //        moveTurn += (1-dot);
-            //    }
-            //    else
-            //    {
-            //        //?????
-            //    }
-            //}
-            animator.SetFloat(forwardHash, moveForword, forwardDampTime, Time.deltaTime);
-            animator.SetFloat(turnHash, moveTurn, turnDampTime, Time.deltaTime);
+            {
+                currentSpeed = runSpeed;
+                moveMagnitude *= 2;
+            }
+            else
+                currentSpeed = walkSpeed;
+
+            animator.SetFloat(verticalHash, moveMagnitude, forwardDampTime, Time.deltaTime);
+
+            if (inputDir != Vector2.zero)
+            {
+                //输入方向与相机forword夹角；
+                float targetRotation = Mathf.Atan2(inputDir.x, inputDir.y) * Mathf.Rad2Deg + Camera.transform.eulerAngles.y;
+                transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, turnSmoothTime);
+                transform.position += transform.forward * currentSpeed * moveMagnitude * Time.deltaTime;
+            }
         }
         protected override void Awake()
         {
@@ -57,20 +79,6 @@ namespace Cosmos
             CameraTarget = transform.Find("CameraTarget").transform;
             CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
             inputManager = CosmosEntry.InputManager;
-        }
-        void MatchRotation()
-        {
-            var cameraController = CosmosEntry.ControllerManager.GetController<MultiplayerYBotCamera>(typeof( MultiplayerYBotCamera).Name);
-            if (cameraController == null)
-            {
-                Utility.Debug.LogInfo("cameraController empty", MessageColor.RED);
-                return;
-            }
-            Vector3 cameraForward= cameraController.transform.forward;
-            cameraForward.y = 0;
-            cameraForward.Normalize();
-            dot = Vector3.Dot( transform.forward,cameraForward);
-            Debug.DrawLine(transform.position, transform.position + cameraForward, Color.red, 0.2f);
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Cosmos
     /// 数组工具，反射工具，文字工具，加密工具，
     /// 数学工具，持久化数据工具，Debug工具
     /// </summary>
-    public sealed partial class Utility
+    public static partial class Utility
     {
         /// <summary>
         ///字典工具 

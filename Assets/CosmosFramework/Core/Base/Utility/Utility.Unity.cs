@@ -8,12 +8,12 @@ using UnityEngine.SceneManagement;
 
 namespace Cosmos
 {
-    public sealed partial class Utility
+    public static partial class Utility
     {
         /// <summary>
         /// 这个类封装了所有跟Unity相关的工具函数，是所有Utiltiy中需要引入UnityEngine的类
         /// </summary>
-        public static class Unity
+        public sealed class Unity
         {
             /// <summary>
             /// 持久化数据层路径，可写入

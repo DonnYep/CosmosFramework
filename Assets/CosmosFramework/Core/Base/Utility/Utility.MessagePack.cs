@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 namespace Cosmos
 {
-    public sealed partial class Utility
+    public static partial class Utility
     {
-        public static class MessagePack
+        public sealed class MessagePack
         {
             static IMessagePackHelper messagePackHelper = null;
             public static void SetHelper(IMessagePackHelper helper)
