@@ -20,6 +20,7 @@ namespace Cosmos
         int inputHash = Animator.StringToHash("Input");
         int attack00Hash = Animator.StringToHash("Attack_00");
         int attack01Hash = Animator.StringToHash("Attack_01");
+        int attack02Hash = Animator.StringToHash("Attack_02");
         float moveMagnitude = 0;
         float turnSmoothVelocity;
         public float turnSmoothTime = 0.3f;
@@ -33,6 +34,7 @@ namespace Cosmos
         IInputManager inputManager;
 
         MultiplayerYBotCamera cameraCache;
+        bool canMove;
         public MultiplayerYBotCamera Camera
         {
             get
@@ -47,7 +49,29 @@ namespace Cosmos
 
         protected override void RefreshHandler()
         {
-            MoveAndRot();
+            var currentAnim = animator.GetCurrentAnimatorStateInfo(0);
+            if (inputManager.GetButtonDown(InputButtonType._MouseLeft))
+            {
+                if (currentAnim.shortNameHash == attack00Hash && currentAnim.normalizedTime > 0.5f)
+                {
+                    animator.SetTrigger(attack01Hash);
+                    //animator.ResetTrigger(attack00Hash);
+                }
+                else if (currentAnim.shortNameHash == attack01Hash && currentAnim.normalizedTime > 0.5f)
+                {
+                    animator.SetTrigger(attack02Hash);
+                    //animator.ResetTrigger(attack00Hash);
+                    //animator.ResetTrigger(attack01Hash);
+                }
+                else if (currentAnim.shortNameHash != attack02Hash && currentAnim.shortNameHash != attack01Hash)
+                {
+                    animator.SetTrigger(attack00Hash);
+                }
+            }
+            var currentHash = currentAnim.shortNameHash;
+            if (currentHash != attack00Hash && currentHash != attack01Hash && currentHash != attack02Hash)
+                MoveAndRot();
+
         }
         protected override void Awake()
         {
@@ -71,14 +95,15 @@ namespace Cosmos
                 //输入方向与相机forword夹角；
                 float targetRotation = Mathf.Atan2(inputDir.x, inputDir.y) * Mathf.Rad2Deg + Camera.transform.eulerAngles.y;
                 transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, turnSmoothTime);
-                transform.position += transform.forward * currentSpeed * moveMagnitude * Time.deltaTime;
+                //transform.position += transform.forward * currentSpeed * moveMagnitude * Time.deltaTime;
+                transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * moveMagnitude, Time.deltaTime * currentSpeed);
             }
             else
                 animator.SetBool(inputHash, false);
             if (inputManager.GetButton(InputButtonType._LeftShift))
             {
                 currentSpeed = runSpeed;
-                moveMagnitude = input.normalized.magnitude*2;
+                moveMagnitude = input.normalized.magnitude * 2;
             }
             else
                 currentSpeed = walkSpeed;

@@ -30,7 +30,7 @@ namespace Cosmos.Test
         public override void OnDeserialize(string compJson)
         {
             var animParams = Utility.Json.ToObject<List<FixAnimParameter>>(compJson);
-            if (IsAuthority||!animator.enabled)
+            if (IsAuthority || !animator.enabled)
                 return;
             for (int i = 0; i < animParams.Count; i++)
             {
@@ -38,7 +38,7 @@ namespace Cosmos.Test
 
                 if (par.type == AnimatorControllerParameterType.Int)
                 {
-                    var value= Convert.ToInt32(animParams[i].ParameterValue);
+                    var value = Convert.ToInt32(animParams[i].ParameterValue);
                     animator.SetInteger(animParams[i].NameHash, value);
                 }
                 else if (par.type == AnimatorControllerParameterType.Float)
@@ -48,15 +48,17 @@ namespace Cosmos.Test
                 }
                 else if (par.type == AnimatorControllerParameterType.Bool)
                 {
-                    par.defaultBool= Convert.ToBoolean(animParams[i].ParameterValue);
                     var value = Convert.ToBoolean(animParams[i].ParameterValue);
                     animator.SetBool(animParams[i].NameHash, value);
                 }
-                //if (animParams[i].StringHash != 0  )
-                //{
-                //    animator.Play(animParams[i].StringHash, animParams[i].LayerId, animParams[i].NormalizedTime.GetFloat());
-                //}
-                //animator.SetLayerWeight(animParams[i].LayerId, animParams[i].LayerWeight.GetFloat());
+                else if (par.type == AnimatorControllerParameterType.Trigger)
+                {
+                    var isTriggered = Convert.ToBoolean(animParams[i].ParameterValue);
+                    if (isTriggered)
+                        animator.SetTrigger(animParams[i].NameHash);
+                    else
+                        animator.ResetTrigger(animParams[i].NameHash);
+                }
             }
         }
         string GetCurrentParameterValue()
@@ -71,7 +73,6 @@ namespace Cosmos.Test
                     var animParameter = new FixAnimParameter();
                     animParameter.Type = (byte)AnimatorControllerParameterType.Int;
                     int newIntValue = animator.GetInteger(par.nameHash);
-                    //animParameter.NormalizedTime= new FixFloat( animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
                     animParameter.ParameterValue = newIntValue;
                     animParameter.NameHash = par.nameHash;
                     animParas.Add(animParameter);
@@ -80,7 +81,6 @@ namespace Cosmos.Test
                 {
                     var animParameter = new FixAnimParameter();
                     animParameter.Type = (byte)AnimatorControllerParameterType.Float;
-                    //animParameter.NormalizedTime = new FixFloat(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
                     float newFloatValue = animator.GetFloat(par.nameHash);
                     animParameter.NameHash = par.nameHash;
 
@@ -91,11 +91,17 @@ namespace Cosmos.Test
                 {
                     var animParameter = new FixAnimParameter();
                     animParameter.Type = (byte)AnimatorControllerParameterType.Bool;
-                    //animParameter.NormalizedTime = new FixFloat(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
                     bool newBoolValue = animator.GetBool(par.nameHash);
                     animParameter.NameHash = par.nameHash;
-
                     animParameter.ParameterValue = newBoolValue;
+                    animParas.Add(animParameter);
+                }
+                else if (par.type == AnimatorControllerParameterType.Trigger)
+                {
+                    var animParameter = new FixAnimParameter();
+                    animParameter.Type = (byte)AnimatorControllerParameterType.Trigger;
+                    animParameter.NameHash = par.nameHash;
+                    animParameter.ParameterValue= animator.GetBool(par.nameHash);
                     animParas.Add(animParameter);
                 }
             }
