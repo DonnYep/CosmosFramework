@@ -6,9 +6,11 @@ namespace Cosmos.Test
 {
     public class YBotMultiplayerManager : MultiplayerManager
     {
-        Dictionary<int, NetworkTransform> netTransDict = new Dictionary<int, NetworkTransform>();
+        Dictionary<int, NetworkIdentity> netTransDict = new Dictionary<int, NetworkIdentity>();
         MultiplayerYBotCamera  multiplayerYBotCamera;
-        NetworkTransform authorityTrans;
+        NetworkIdentity authorityIdentity;
+        float latestTime = 0;
+
         protected override void Awake()
         {
             base.Awake();
@@ -17,29 +19,44 @@ namespace Cosmos.Test
         protected override void Start()
         {
             base.Start();
-            MultiplayerManager.Instance.OnConnect += OnConnectHandler;
-            MultiplayerManager.Instance.OnPlayerEnter += OnPlayerEnterHandler;
-            MultiplayerManager.Instance.OnPlayerExit += OnPlayerExitHandler;
-            MultiplayerManager.Instance.OnDisconnect += OnDisconnectHandler;
-            MultiplayerManager.Instance.OnPlayerInput += OnPlayerInputHandler;
+            OnConnect += OnConnectHandler;
+            OnPlayerEnter += OnPlayerEnterHandler;
+            OnPlayerExit += OnPlayerExitHandler;
+            OnDisconnect += OnDisconnectHandler;
+            OnPlayerInput += OnPlayerInputHandler;
+        }
+        private void FixedUpdate()
+        {
+            if (!IsConnected)
+                return;
+
+            var now = Time.time;
+            if (latestTime <= now)
+            {
+                latestTime = now + NetworkSimulateConsts.SyncInterval;
+                authorityIdentity.OnSerialize(out var transportData);
+                SendAuthorityTransportData(transportData);
+            }
         }
         void OnConnectHandler()
         {
             multiplayerYBotCamera = GameObject.Find("YBotCamera").AddComponent<MultiplayerYBotCamera>();
             var go = GameObject.Instantiate(MultiplayerManager.Instance.LocalPlayerPrefab);
-            authorityTrans = go.AddComponent<NetworkTransform>();
+            go.AddComponent<NetworkAnimator>();
+            authorityIdentity = go.AddComponent<NetworkTransform>().NetworkIdentity;
            var ctrlComp= go.AddComponent<MultiplayerYBotController>();
-            authorityTrans.NetId = MultiplayerManager.Instance.AuthorityConv;
-            authorityTrans.IsAuthority = true;
+            authorityIdentity.NetId = MultiplayerManager.Instance.AuthorityConv;
+            authorityIdentity.IsAuthority = true;
             multiplayerYBotCamera.SetCameraTarget(ctrlComp.CameraTarget);
         }
         void OnPlayerEnterHandler(int conv)
         {
             var go = GameObject.Instantiate(MultiplayerManager.Instance.RemotePlayerPrefab);
+            go.AddComponent<NetworkAnimator>();
             var comp = go.AddComponent<NetworkTransform>();
             comp.NetId = conv;
             comp.IsAuthority = false;
-            netTransDict.Add(comp.NetId, comp);
+            netTransDict.Add(comp.NetId, comp.NetworkIdentity);
         }
         void OnPlayerExitHandler(int conv)
         {
@@ -51,13 +68,14 @@ namespace Cosmos.Test
         /// <summary>
         /// int表示Conv，string表示FixTransform的json
         /// </summary>
-        void OnPlayerInputHandler(Dictionary<int, string> inputData)
+        void OnPlayerInputHandler( FixTransportData[] inputDatas)
         {
-            foreach (var iptData in inputData)
+            var length = inputDatas.Length;
+            for (int i = 0; i < length; i++)
             {
-                if (netTransDict.TryGetValue(iptData.Key, out var netTrans))
+                if (netTransDict.TryGetValue(inputDatas[i].Conv, out var netIdentity))
                 {
-                    netTrans.DeserializeNetworkTransform(Utility.Json.ToObject<FixTransform>(iptData.Value));
+                    netIdentity.OnDeserialize(inputDatas[i]);
                 }
             }
         }
@@ -69,8 +87,8 @@ namespace Cosmos.Test
                 {
                     MonoGameManager.KillObject(netObj.gameObject);
                 }
-                MonoGameManager.KillObject(authorityTrans.gameObject);
-                authorityTrans = null;
+                MonoGameManager.KillObject(authorityIdentity.gameObject);
+                authorityIdentity = null;
                 netTransDict.Clear();
                 multiplayerYBotCamera.ReleaseTarget();
                 MonoGameManager.KillObject(multiplayerYBotCamera);

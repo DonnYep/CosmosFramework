@@ -6,12 +6,14 @@ namespace Cosmos.Test
 {
     public class CubeMultiplayerManager : MultiplayerManager
     {
-        Dictionary<int, NetworkTransform> netTransDict = new Dictionary<int, NetworkTransform>();
+        Dictionary<int, NetworkIdentity> netIdentityDict = new Dictionary<int, NetworkIdentity>();
         Camera playerTraceCamera;
         MultiplayerCubeCamera movementSphereCamera;
-        NetworkTransform authorityTrans;
+        NetworkIdentity authorityIdentity;
         NetworkWriter writer = new NetworkWriter();
         Dictionary<int, Pool<NetworkWriter>> writePool;
+        float latestTime = 0;
+
         protected override void Awake()
         {
             base.Awake();
@@ -23,21 +25,32 @@ namespace Cosmos.Test
             playerTraceCamera = GameObject.Find("MovementSphereCamera").GetComponent<Camera>();
             movementSphereCamera = playerTraceCamera.gameObject.AddComponent<MultiplayerCubeCamera>();
 
-            MultiplayerManager.Instance.OnConnect += OnConnectHandler;
-            MultiplayerManager.Instance.OnPlayerEnter += OnPlayerEnterHandler;
-            MultiplayerManager.Instance.OnPlayerExit += OnPlayerExitHandler;
-            MultiplayerManager.Instance.OnDisconnect += OnDisconnectHandler;
-            MultiplayerManager.Instance.OnPlayerInput += OnPlayerInputHandler;
-
+            OnConnect += OnConnectHandler;
+            OnPlayerEnter += OnPlayerEnterHandler;
+            OnPlayerExit += OnPlayerExitHandler;
+            OnDisconnect += OnDisconnectHandler;
+            OnPlayerInput += OnPlayerInputHandler;
+        }
+        private void FixedUpdate()
+        {
+            if (!IsConnected)
+                return;
+            var now = Time.time ;
+            if (latestTime < now)
+            {
+                latestTime = now + NetworkSimulateConsts.SyncInterval;
+                authorityIdentity.OnSerialize(out var transportData);
+                SendAuthorityTransportData(transportData);
+            }
         }
         void OnConnectHandler()
         {
             var go = GameObject.Instantiate(MultiplayerManager.Instance.LocalPlayerPrefab);
-            authorityTrans = go.AddComponent<NetworkTransform>();
+            authorityIdentity = go.AddComponent<NetworkTransform>().NetworkIdentity;
             go.AddComponent<MultiplayerCubeController>();
-            authorityTrans.NetId = MultiplayerManager.Instance.AuthorityConv;
-            authorityTrans.IsAuthority = true;
-            movementSphereCamera.SetCameraTarget(authorityTrans.transform);
+            authorityIdentity.NetId = MultiplayerManager.Instance.AuthorityConv;
+            authorityIdentity.IsAuthority = true;
+            movementSphereCamera.SetCameraTarget(authorityIdentity.transform);
         }
         void OnPlayerEnterHandler(int conv)
         {
@@ -45,25 +58,23 @@ namespace Cosmos.Test
             var comp = go.AddComponent<NetworkTransform>();
             comp.NetId = conv;
             comp.IsAuthority = false;
-            netTransDict.Add(comp.NetId, comp);
+            netIdentityDict.Add(comp.NetId, comp.NetworkIdentity);
         }
         void OnPlayerExitHandler(int conv)
         {
-            if (netTransDict.Remove(conv, out var networkIndentity))
+            if (netIdentityDict.Remove(conv, out var networkIndentity))
             {
                 MonoGameManager.KillObject(networkIndentity.gameObject);
             }
         }
-        /// <summary>
-        /// int表示Conv，string表示FixTransform的json
-        /// </summary>
-        void OnPlayerInputHandler(Dictionary<int, string> inputData)
+        void OnPlayerInputHandler(FixTransportData[] inputDatas)
         {
-            foreach (var  iptData in inputData)
+            var length = inputDatas.Length;
+            for (int i = 0; i < length; i++)
             {
-                if(netTransDict.TryGetValue(iptData.Key, out var netTrans))
+                if (netIdentityDict.TryGetValue(inputDatas[i].Conv, out var netIdentity))
                 {
-                    netTrans.DeserializeNetworkTransform(Utility.Json.ToObject<FixTransform>(iptData.Value));
+                    netIdentity.OnDeserialize(inputDatas[i]);
                 }
             }
         }
@@ -71,13 +82,13 @@ namespace Cosmos.Test
         {
             try
             {
-                foreach (var netObj in netTransDict.Values)
+                foreach (var netObj in netIdentityDict.Values)
                 {
                     MonoGameManager.KillObject(netObj.gameObject);
                 }
-                MonoGameManager.KillObject(authorityTrans.gameObject);
-                authorityTrans = null;
-                netTransDict.Clear();
+                MonoGameManager.KillObject(authorityIdentity.gameObject);
+                authorityIdentity = null;
+                netIdentityDict.Clear();
                 movementSphereCamera.ReleaseTarget();
             }
             catch { }

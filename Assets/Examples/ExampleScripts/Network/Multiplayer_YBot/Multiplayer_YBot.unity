@@ -600,7 +600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 707259dee271c344ba8bab3c7ad15dda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ip: 192.168.0.117
+  ip: 60.12.176.54
   port: 8531
   localPlayerPrefab: {fileID: 6551793662335542995, guid: 9293e883b13ac6d4199a74ffcad4e0fe,
     type: 3}

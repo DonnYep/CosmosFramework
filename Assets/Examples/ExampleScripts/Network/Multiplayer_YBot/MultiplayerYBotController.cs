@@ -18,13 +18,15 @@ namespace Cosmos
         Animator animator;
         int verticalHash = Animator.StringToHash("Vertical");
         int inputHash = Animator.StringToHash("Input");
+        int attack00Hash = Animator.StringToHash("Attack_00");
+        int attack01Hash = Animator.StringToHash("Attack_01");
         float moveMagnitude = 0;
         float turnSmoothVelocity;
         public float turnSmoothTime = 0.3f;
         public Transform CameraTarget { get; private set; }
 
         [SerializeField] float walkSpeed = 1.5f;
-        [SerializeField] float runSpeed = 3;
+        [SerializeField] float runSpeed = 5;
         [SerializeField] float rotSpeed = 5;
         float currentSpeed;
 
@@ -42,35 +44,10 @@ namespace Cosmos
                 return cameraCache;
             }
         }
+
         protected override void RefreshHandler()
         {
-            var v = inputManager.GetAxis(InputAxisType._Vertical);
-            var h = inputManager.GetAxis(InputAxisType._Horizontal);
-            if (v != 0 || h != 0)
-                animator.SetBool(inputHash, true);
-            else
-                animator.SetBool(inputHash, false);
-
-            Vector2 input = new Vector2(h, v);
-            Vector2 inputDir = input.normalized;
-            moveMagnitude = input.normalized.magnitude;
-            if (inputManager.GetButton(InputButtonType._LeftShift))
-            {
-                currentSpeed = runSpeed;
-                moveMagnitude *= 2;
-            }
-            else
-                currentSpeed = walkSpeed;
-
-            animator.SetFloat(verticalHash, moveMagnitude, forwardDampTime, Time.deltaTime);
-
-            if (inputDir != Vector2.zero)
-            {
-                //输入方向与相机forword夹角；
-                float targetRotation = Mathf.Atan2(inputDir.x, inputDir.y) * Mathf.Rad2Deg + Camera.transform.eulerAngles.y;
-                transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, turnSmoothTime);
-                transform.position += transform.forward * currentSpeed * moveMagnitude * Time.deltaTime;
-            }
+            MoveAndRot();
         }
         protected override void Awake()
         {
@@ -79,6 +56,33 @@ namespace Cosmos
             CameraTarget = transform.Find("CameraTarget").transform;
             CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
             inputManager = CosmosEntry.InputManager;
+        }
+        void MoveAndRot()
+        {
+            var v = inputManager.GetAxis(InputAxisType._Vertical);
+            var h = inputManager.GetAxis(InputAxisType._Horizontal);
+            Vector2 input = new Vector2(h, v);
+            Vector2 inputDir = input.normalized;
+
+            moveMagnitude = input.normalized.magnitude;
+            if (input != Vector2.zero)
+            {
+                animator.SetBool(inputHash, true);
+                //输入方向与相机forword夹角；
+                float targetRotation = Mathf.Atan2(inputDir.x, inputDir.y) * Mathf.Rad2Deg + Camera.transform.eulerAngles.y;
+                transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, turnSmoothTime);
+                transform.position += transform.forward * currentSpeed * moveMagnitude * Time.deltaTime;
+            }
+            else
+                animator.SetBool(inputHash, false);
+            if (inputManager.GetButton(InputButtonType._LeftShift))
+            {
+                currentSpeed = runSpeed;
+                moveMagnitude = input.normalized.magnitude*2;
+            }
+            else
+                currentSpeed = walkSpeed;
+            animator.SetFloat(verticalHash, moveMagnitude, forwardDampTime, Time.deltaTime);
         }
     }
 }

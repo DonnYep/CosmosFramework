@@ -41,6 +41,7 @@ namespace Cosmos.Test
             add { onPlayerEnter += value; }
             remove { onPlayerEnter -= value; }
         }
+
         Action<int> onPlayerExit;
         public event Action<int> OnPlayerExit
         {
@@ -48,17 +49,16 @@ namespace Cosmos.Test
             remove { onPlayerExit -= value; }
         }
 
-        Action<Dictionary<int, string>> onPlayerInput;
-        /// <summary>
-        /// int表示Conv，string表示FixTransform的json
-        /// </summary>
-        public event Action<Dictionary<int, string>> OnPlayerInput
+        Action<FixTransportData[]> onPlayerInput;
+        public event Action<FixTransportData[]> OnPlayerInput
         {
             add { onPlayerInput += value; }
             remove { onPlayerInput -= value; }
         }
 
         public int AuthorityConv { get; private set; }
+       public bool IsConnected { get; private set; }
+        FixTransportData fixTransportData;
         public void SendKcpMessage(string msg)
         {
             var buffer = Encoding.UTF8.GetBytes(msg);
@@ -72,11 +72,10 @@ namespace Cosmos.Test
         {
             CosmosEntry.NetworkManager.Disconnect();
         }
-        public void SendAuthorityData(FixTransform fixTransform)
+        public void SendAuthorityTransportData(FixTransportData transportData)
         {
-            var dataDict = new Dictionary<int, string>();
-            dataDict.Add(AuthorityConv,Utility.Json.ToJson( fixTransform));
-            authorityInputOpdata.DataContract = Utility.Json.ToJson(dataDict);
+            fixTransportData = transportData;
+            authorityInputOpdata.DataContract = Utility.Json.ToJson(fixTransportData);
             var json = Utility.Json.ToJson(authorityInputOpdata);
             var data = Encoding.UTF8.GetBytes(json);
             CosmosEntry.NetworkManager.SendNetworkMessage(data);
@@ -91,7 +90,7 @@ namespace Cosmos.Test
             NetworkWriter = new NetworkWriter();
             authorityInputOpdata = new OperationData((byte)OperationCode.PlayerInput);
         }
-     protected virtual   void Start()
+        protected virtual void Start()
         {
             CosmosEntry.NetworkManager.OnReceiveData += OnReceiveDataHandler;
             CosmosEntry.NetworkManager.OnDisconnect += OnDisconnectHandler;
@@ -106,6 +105,7 @@ namespace Cosmos.Test
         {
             AuthorityConv = 0;
             onDisconnect?.Invoke();
+            IsConnected = false;
         }
         void ProcessHandler(OperationData opData)
         {
@@ -116,7 +116,7 @@ namespace Cosmos.Test
                     {
                         var messageDict = Utility.Json.ToObject<Dictionary<byte, object>>(Convert.ToString(opData.DataContract));
                         var authorityConv = Utility.GetValue(messageDict, (byte)ParameterCode.AuthorityConv);
-                         var serverSyncInterval= Utility.GetValue(messageDict, (byte)ParameterCode.ServerSyncInterval);
+                        var serverSyncInterval = Utility.GetValue(messageDict, (byte)ParameterCode.ServerSyncInterval);
                         AuthorityConv = Convert.ToInt32(authorityConv);
                         NetworkSimulateConsts.IntervalMS = Convert.ToInt32(serverSyncInterval);
 
@@ -132,6 +132,7 @@ namespace Cosmos.Test
                                 onPlayerEnter(remoteConvs[i]);
                             }
                         }
+                        IsConnected = true;
                     }
                     break;
                 case OperationCode.PlayerEnter:
@@ -148,9 +149,9 @@ namespace Cosmos.Test
                     break;
                 case OperationCode.PlayerInput:
                     {
-                        var messageDict = Utility.Json.ToObject<Dictionary<int, string>>(Convert.ToString(opData.DataContract));
-                        if (messageDict != null)
-                            onPlayerInput?.Invoke(messageDict);
+                        var fixTransports= Utility.Json.ToObject<List< FixTransportData>>(Convert.ToString(opData.DataContract));
+                        if (fixTransports!= null)
+                            onPlayerInput?.Invoke(fixTransports.ToArray());
                     }
                     break;
                 case OperationCode.FIN:

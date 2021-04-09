@@ -8,7 +8,6 @@ namespace Cosmos.Test
     {
         DataPoint start;
         DataPoint goal;
-        float latestTime = 0;
         public override NetworkdComponetType NetworkdComponetType { get; protected set; } = NetworkdComponetType.Trasform;
         public class DataPoint
         {
@@ -18,9 +17,15 @@ namespace Cosmos.Test
             public Vector3 localScale;
             public float movementSpeed;
         }
-        #region NetworkTransform
-        public void DeserializeNetworkTransform(FixTransform fixTransform)
+        public override string OnSerialize()
         {
+            var fixTransform = new FixTransform(transform.position, transform.rotation.eulerAngles, transform.localScale);
+            return Utility.Json.ToJson(fixTransform);
+        }
+        public override void OnDeserialize(string compJson)
+        {
+            var fixTransform = Utility.Json.ToObject<FixTransform>(compJson);
+
             DataPoint temp = new DataPoint
             {
                 localPosition = fixTransform.Position.GetVector(),
@@ -28,7 +33,6 @@ namespace Cosmos.Test
                 localScale = fixTransform.Scale.GetVector(),
                 timeStamp = Time.time
             };
-
             temp.movementSpeed = EstimateMovementSpeed(goal, temp, transform, NetworkSimulateConsts.SyncInterval);
 
             if (start == null)
@@ -58,24 +62,6 @@ namespace Cosmos.Test
             }
             goal = temp;
         }
-        public void SerializeNetworkTransform(out FixTransform fixTransform)
-        {
-            fixTransform = new FixTransform(transform.position, transform.rotation.eulerAngles, transform.localScale);
-        }
-        #endregion
-        public static void SerializeIntoWriter(NetworkWriter writer, Vector3 position)
-        {
-            writer.WriteVector3(position);
-        }
-        public override void OnDeserialize(NetworkReader reader)
-        {
-            DataPoint temp = new DataPoint
-            {
-                localPosition = reader.ReadVector3(),
-            };
-            temp.movementSpeed = EstimateMovementSpeed(goal, temp, transform, NetworkSimulateConsts.SyncInterval);
-        }
-
         private void Update()
         {
             if (!IsAuthority)
@@ -96,16 +82,6 @@ namespace Cosmos.Test
                             InterpolateScale(start, goal, transform.localScale)
                             );
                     }
-                }
-            }
-            else
-            {
-                var now = Time.time;
-                if (latestTime <= now)
-                {
-                    latestTime = now + NetworkSimulateConsts.SyncInterval;
-                    SerializeNetworkTransform(out var fixTransform);
-                    MultiplayerManager.Instance.SendAuthorityData(fixTransform);
                 }
             }
         }
@@ -172,5 +148,7 @@ namespace Cosmos.Test
             // avoid NaN
             return elapsed > 0 ? delta.magnitude / elapsed : 0;
         }
+
+
     }
 }

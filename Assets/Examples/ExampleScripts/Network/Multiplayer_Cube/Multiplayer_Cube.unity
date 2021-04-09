@@ -571,7 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d747f2da5cbcb1b44a9dc74c716ac6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ip: 127.0.0.1
+  ip: 60.12.176.54
   port: 8531
   localPlayerPrefab: {fileID: 5580617838142533433, guid: 5b11b0ff297d7c14ea9743fb03003a12,
     type: 3}

@@ -7,23 +7,6 @@ namespace Cosmos.Test
 {
     public class NetworkIdentity : MonoBehaviour
     {
-        Dictionary<byte, NetworkBehaviour> networkBehaviourDict;
-        public Dictionary<byte, NetworkBehaviour> NetworkBehaviourDict
-        {
-            get
-            {
-                if (networkBehaviourDict == null)
-                {
-                    networkBehaviourDict = new Dictionary<byte, NetworkBehaviour>();
-                    var comps = GetComponents<NetworkBehaviour>();
-                    for (int i = 0; i < comps.Length; i++)
-                    {
-                        networkBehaviourDict.Add((byte)comps[i].NetworkdComponetType, comps[i]);
-                    }
-                }
-                return networkBehaviourDict;
-            }
-        }
         List<NetworkBehaviour> BehaviourCache
         {
             get
@@ -31,7 +14,8 @@ namespace Cosmos.Test
                 if (behaviourCache == null)
                 {
                     behaviourCache = new List<NetworkBehaviour>();
-                    behaviourCache.AddRange(NetworkBehaviourDict.Values.ToList());
+                    var comps = GetComponents<NetworkBehaviour>();
+                    behaviourCache.AddRange(comps);
                 }
                 return behaviourCache;
             }
@@ -41,48 +25,33 @@ namespace Cosmos.Test
         [SerializeField] int netId;
         int netIdpending;
         public bool IsAuthority { get; set; }
-        internal void OnDeserializeAllSafely(NetworkReader reader, bool initialState)
+        internal void OnDeserialize(FixTransportData transportData)
         {
             NetworkBehaviour[] components = BehaviourCache.ToArray();
-            while (reader.Position < reader.Length)
+            var compData = transportData.CompData;
+            var length = components.Length;
+            for (int i = 0; i < length; i++)
             {
-                // read & check index [0..255]
-                byte index = reader.ReadByte();
-                if (index < components.Length)
+                if (compData.TryGetValue((byte)components[i].NetworkdComponetType, out var jsonData))
                 {
-                    OnDeserializeSafely(components[index], reader, initialState);
+                    components[i].OnDeserialize(jsonData);
                 }
             }
         }
-        internal void OnSerializeAllSafely(NetworkWriter Writer)
+        internal void OnSerialize(out FixTransportData transportData)
         {
+            transportData = new FixTransportData();
+            transportData.Conv = netId;
             var length = BehaviourCache.Count;
+            var compData = new Dictionary<byte, string>();
             for (int i = 0; i < length; i++)
             {
-                BehaviourCache[i].OnSerialize(Writer);
+                var component = BehaviourCache[i];
+                compData.TryAdd((byte)component.NetworkdComponetType, component.OnSerialize());
             }
+            transportData.CompData = compData;
         }
-        void OnDeserializeSafely(NetworkBehaviour comp, NetworkReader reader, bool initialState)
-        {
-            int contentSize = reader.ReadInt32();
-            int chunkStart = reader.Position;
-            int chunkEnd = reader.Position + contentSize;
-            try
-            {
-                comp.OnDeserialize(reader);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-            }
-            if (reader.Position != chunkEnd)
-            {
-                // warn the user
-                int bytesRead = reader.Position - chunkStart;
-                Debug.LogWarning("OnDeserialize was expected to read " + contentSize + " instead of " + bytesRead + " bytes for object:" + name + " component=" + comp.GetType() + " sceneId=" + ("X") + ". Make sure that OnSerialize and OnDeserialize write/read the same amount of data in all cases.");
-                reader.Position = chunkEnd;
-            }
-        }
+
         void OnValidate()
         {
             netId = netIdpending;

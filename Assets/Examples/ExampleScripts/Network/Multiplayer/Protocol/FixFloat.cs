@@ -1,29 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+#if UNITY_EDITOR || UNITY_STANDALONE
+using UnityEngine;
+#endif
 namespace Cosmos.Test
 {
     /// <summary>
-    /// float放大一千倍；
+    /// float网络传输类型，防止传输时失真；
     /// </summary>
     [Serializable]
     public struct FixFloat
     {
         public FixFloat(float value)
         {
-            Value = (int)value * 1000;
+            Value= Mathf.FloorToInt(value * 1000);
         }
         public int Value { get; set; }
         public static FixFloat SetFloat(float value)
         {
             return new FixFloat(value);
         }
-        public float GetValue()
+        public float GetFloat()
         {
             return (float)Value / 1000;
+        }
+        public override string ToString()
+        {
+            return $"Value :{(float)Value/1000}";
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Cosmos.Test
             var Z = Mathf.FloorToInt(vector.z * 1000);
             return new FixVector3(X, Y, Z);
         }
-        public  Vector3 GetVector()
+        public Vector3 GetVector()
         {
             return new Vector3((float)X / 1000, (float)Y / 1000, (float)Z / 1000);
         }

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos.Test
 {
-    public class NetworkBehaviour : MonoBehaviour
+    public abstract class NetworkBehaviour : MonoBehaviour
     {
-        public int NetId { get { return netIdentity.NetId; }set { netIdentity.NetId = value; } }
+        public int NetId { get { return NetworkIdentity.NetId; }set { NetworkIdentity.NetId = value; } }
         public virtual NetworkdComponetType NetworkdComponetType { get; protected set; }
         NetworkIdentity netIdentityCache;
-        public NetworkIdentity netIdentity
+        public NetworkIdentity NetworkIdentity
         {
             get
             {
@@ -26,9 +26,8 @@ namespace Cosmos.Test
                 return netIdentityCache;
             }
         }
-        public bool IsAuthority { get { return netIdentityCache.IsAuthority; }set { netIdentityCache.IsAuthority = value; } }
-        public virtual void OnDeserialize(NetworkReader reader) { }
-        public virtual void OnSerialize(NetworkWriter writer) { }
-
+        public bool IsAuthority { get { return NetworkIdentity.IsAuthority; }set { NetworkIdentity.IsAuthority = value; } }
+        public abstract string OnSerialize();
+        public abstract void OnDeserialize(string compJson);
     }
 }
