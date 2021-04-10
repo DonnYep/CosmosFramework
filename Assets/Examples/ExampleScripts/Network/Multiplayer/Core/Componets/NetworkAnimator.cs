@@ -51,14 +51,7 @@ namespace Cosmos.Test
                     var value = Convert.ToBoolean(animParams[i].ParameterValue);
                     animator.SetBool(animParams[i].NameHash, value);
                 }
-                else if (par.type == AnimatorControllerParameterType.Trigger)
-                {
-                    var isTriggered = Convert.ToBoolean(animParams[i].ParameterValue);
-                    if (isTriggered)
-                        animator.SetTrigger(animParams[i].NameHash);
-                    else
-                        animator.ResetTrigger(animParams[i].NameHash);
-                }
+                animator.Play(animParams[i].NameHash, animParams[i].LayerId, animParams[i].NormalizedTime.GetFloat());
             }
         }
         string GetCurrentParameterValue()
@@ -96,12 +89,13 @@ namespace Cosmos.Test
                     animParameter.ParameterValue = newBoolValue;
                     animParas.Add(animParameter);
                 }
-                else if (par.type == AnimatorControllerParameterType.Trigger)
+                var aniState = animator.GetCurrentAnimatorStateInfo(0);
+                if (aniState.shortNameHash == par.nameHash)
                 {
                     var animParameter = new FixAnimParameter();
                     animParameter.Type = (byte)AnimatorControllerParameterType.Trigger;
                     animParameter.NameHash = par.nameHash;
-                    animParameter.ParameterValue= animator.GetBool(par.nameHash);
+                    animParameter.NormalizedTime = new FixFloat(aniState.normalizedTime);
                     animParas.Add(animParameter);
                 }
             }
