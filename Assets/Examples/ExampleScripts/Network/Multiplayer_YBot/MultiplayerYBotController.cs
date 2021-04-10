@@ -18,9 +18,11 @@ namespace Cosmos
         Animator animator;
         int verticalHash = Animator.StringToHash("Vertical");
         int inputHash = Animator.StringToHash("Input");
-        int attack00Hash = Animator.StringToHash("Attack_00");
-        int attack01Hash = Animator.StringToHash("Attack_01");
-        int attack02Hash = Animator.StringToHash("Attack_02");
+        //int attack00Hash = Animator.StringToHash("Attack_00");
+        //int attack01Hash = Animator.StringToHash("Attack_01");
+        //int attack02Hash = Animator.StringToHash("Attack_02");
+        int attackIndexHash = Animator.StringToHash("AttackIndex");
+        int normalizedTimeHash = Animator.StringToHash("NormalizedTime");
         float moveMagnitude = 0;
         float turnSmoothVelocity;
         public float turnSmoothTime = 0.3f;
@@ -31,10 +33,11 @@ namespace Cosmos
         [SerializeField] float rotSpeed = 5;
         float currentSpeed;
 
+        int hitCount = 0;
+
         IInputManager inputManager;
 
         MultiplayerYBotCamera cameraCache;
-        bool canMove;
         public MultiplayerYBotCamera Camera
         {
             get
@@ -49,27 +52,30 @@ namespace Cosmos
 
         protected override void RefreshHandler()
         {
-            var currentAnim = animator.GetCurrentAnimatorStateInfo(0);
+            var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            //var normalizedTimeValue = animator.GetFloat(normalizedTimeHash);
+            if ((stateInfo.IsName("Attack_00") || stateInfo.IsName("Attack_01") || stateInfo.IsName("Attack_02")) && stateInfo.normalizedTime> 1f)
+            {
+                hitCount = 0;
+                animator.SetInteger(attackIndexHash, 0);
+            }
             if (inputManager.GetButtonDown(InputButtonType._MouseLeft))
             {
-                if (currentAnim.shortNameHash == attack00Hash && currentAnim.normalizedTime > 0.5f)
+                if (stateInfo.IsName("Ground") && hitCount == 0)
                 {
-                    animator.SetTrigger(attack01Hash);
-                    //animator.ResetTrigger(attack00Hash);
+                    hitCount = 1;
                 }
-                else if (currentAnim.shortNameHash == attack01Hash && currentAnim.normalizedTime > 0.5f)
+                else if(stateInfo.IsName("Attack_00") && hitCount == 1&&stateInfo.normalizedTime<0.7f)
                 {
-                    animator.SetTrigger(attack02Hash);
-                    //animator.ResetTrigger(attack00Hash);
-                    //animator.ResetTrigger(attack01Hash);
+                    hitCount = 2;
                 }
-                else if (currentAnim.shortNameHash != attack02Hash && currentAnim.shortNameHash != attack01Hash)
+                else if(stateInfo.IsName("Attack_01") && hitCount == 2 && stateInfo.normalizedTime < 0.7f)
                 {
-                    animator.SetTrigger(attack00Hash);
+                    hitCount = 3;
                 }
+                animator.SetInteger(attackIndexHash, hitCount);
             }
-            var currentHash = currentAnim.shortNameHash;
-            if (currentHash != attack00Hash && currentHash != attack01Hash && currentHash != attack02Hash)
+            if (hitCount==0)
                 MoveAndRot();
 
         }
