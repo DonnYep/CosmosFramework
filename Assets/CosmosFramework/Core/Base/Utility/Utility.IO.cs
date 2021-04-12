@@ -8,7 +8,7 @@ namespace Cosmos
 {
     public static partial class Utility
     {
-        public sealed class IO
+        public static class IO
         {
             public static void CreateFolder(string path)
             {

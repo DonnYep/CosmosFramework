@@ -8,7 +8,7 @@ namespace Cosmos
 {
     public static partial class Utility
     {
-        public sealed class Debug
+        public static class Debug
         {
             static IDebugHelper debugHelper = null;
             public static void SetHelper(IDebugHelper helper)

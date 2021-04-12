@@ -11,7 +11,7 @@ namespace Cosmos
         /// <summary>
         /// 通用算法工具类，封装了常用算法。
         /// </summary>
-        public sealed class Algorithm
+        public static class Algorithm
         {
             /// <summary>
             /// 升序排序

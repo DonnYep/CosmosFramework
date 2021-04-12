@@ -4,7 +4,7 @@ namespace Cosmos
 {
     public static partial class Utility
     {
-        public sealed class Text
+        public static class Text
         {
             [ThreadStatic]//每个静态类型字段对于每一个线程都是唯一的
             static StringBuilder stringBuilderCache;

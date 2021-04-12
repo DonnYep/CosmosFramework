@@ -9,7 +9,7 @@ namespace Cosmos
 {
     public static partial class Utility
     {
-        public sealed class Assembly
+        public static class Assembly
         {
             /// <summary>
             /// 反射工具，得到反射类的对象；

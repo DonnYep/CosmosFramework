@@ -4,7 +4,7 @@ namespace Cosmos
 {
     public static partial class Utility
     {
-        public sealed class Json
+        public static class Json
         {
             static IJsonHelper jsonHelper = null;
             public static void SetHelper(IJsonHelper helper)

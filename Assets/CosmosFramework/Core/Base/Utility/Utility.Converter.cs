@@ -7,7 +7,7 @@ namespace Cosmos
 {
     public static partial class Utility
     {
-        public sealed class Converter
+        public static class Converter
         {
             //TODO Converter 转换工具需要完善
             public static string GetString(byte[] value)

@@ -12,7 +12,7 @@ namespace Cosmos
         /// <summary>
         /// 加密工具
         /// </summary>
-        public sealed class Encryption
+        public static class Encryption
         {
             public  enum GUIDFormat
             {

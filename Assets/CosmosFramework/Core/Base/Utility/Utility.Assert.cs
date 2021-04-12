@@ -8,7 +8,7 @@ namespace Cosmos
         /// <summary>
         /// 断言处理工具;
         /// </summary>
-        public sealed class Assert
+        public static class Assert
         {
             /// <summary>
             /// 判断不为空

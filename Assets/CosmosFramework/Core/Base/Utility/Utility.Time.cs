@@ -8,7 +8,7 @@ namespace Cosmos
         /// <summary>
         /// 时间相关工具，提供了不同精度的时间戳等函数
         /// </summary>
-        public sealed class Time
+        public static class Time
         {
             //1s=1000ms
             //1ms=1000us

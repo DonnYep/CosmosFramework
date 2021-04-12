@@ -13,7 +13,7 @@ namespace Cosmos
         /// <summary>
         /// 这个类封装了所有跟Unity相关的工具函数，是所有Utiltiy中需要引入UnityEngine的类
         /// </summary>
-        public sealed class Unity
+        public static class Unity
         {
             /// <summary>
             /// 持久化数据层路径，可写入

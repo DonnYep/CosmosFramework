@@ -5,7 +5,7 @@ namespace Cosmos
 {
     public static partial class Utility
     {
-        public sealed class MessagePack
+        public static class MessagePack
         {
             static IMessagePackHelper messagePackHelper = null;
             public static void SetHelper(IMessagePackHelper helper)
