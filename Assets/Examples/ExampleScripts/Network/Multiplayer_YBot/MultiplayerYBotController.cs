@@ -18,11 +18,7 @@ namespace Cosmos
         Animator animator;
         int verticalHash = Animator.StringToHash("Vertical");
         int inputHash = Animator.StringToHash("Input");
-        //int attack00Hash = Animator.StringToHash("Attack_00");
-        //int attack01Hash = Animator.StringToHash("Attack_01");
-        //int attack02Hash = Animator.StringToHash("Attack_02");
         int attackIndexHash = Animator.StringToHash("AttackIndex");
-        int normalizedTimeHash = Animator.StringToHash("NormalizedTime");
         float moveMagnitude = 0;
         float turnSmoothVelocity;
         public float turnSmoothTime = 0.3f;
@@ -36,7 +32,6 @@ namespace Cosmos
         int hitCount = 0;
 
         IInputManager inputManager;
-
         MultiplayerYBotCamera cameraCache;
         public MultiplayerYBotCamera Camera
         {
@@ -49,11 +44,9 @@ namespace Cosmos
                 return cameraCache;
             }
         }
-
         protected override void RefreshHandler()
         {
             var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            //var normalizedTimeValue = animator.GetFloat(normalizedTimeHash);
             if ((stateInfo.IsName("Attack_00") || stateInfo.IsName("Attack_01") || stateInfo.IsName("Attack_02")) && stateInfo.normalizedTime> 1f)
             {
                 hitCount = 0;
@@ -77,7 +70,6 @@ namespace Cosmos
             }
             if (hitCount==0)
                 MoveAndRot();
-
         }
         protected override void Awake()
         {
@@ -101,7 +93,6 @@ namespace Cosmos
                 //输入方向与相机forword夹角；
                 float targetRotation = Mathf.Atan2(inputDir.x, inputDir.y) * Mathf.Rad2Deg + Camera.transform.eulerAngles.y;
                 transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref turnSmoothVelocity, turnSmoothTime);
-                //transform.position += transform.forward * currentSpeed * moveMagnitude * Time.deltaTime;
                 transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * moveMagnitude, Time.deltaTime * currentSpeed);
             }
             else
