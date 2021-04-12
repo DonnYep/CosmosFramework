@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Cosmos.Test
 {
-    public class MultiplayerManager : MonoSingleton<MultiplayerManager>
+    public class MultiplayManager : MonoSingleton<MultiplayManager>
     {
         [SerializeField] string ip = "127.0.0.1";
         public string IP { get { return ip; } }
@@ -75,7 +75,7 @@ namespace Cosmos.Test
         public void SendAuthorityTransportData(FixTransportData transportData)
         {
             fixTransportData = transportData;
-            authorityInputOpdata.DataContract = Utility.Json.ToJson(fixTransportData);
+            authorityInputOpdata.DataMessage = Utility.Json.ToJson(fixTransportData);
             var json = Utility.Json.ToJson(authorityInputOpdata);
             var data = Encoding.UTF8.GetBytes(json);
             CosmosEntry.NetworkManager.SendNetworkMessage(data);
@@ -114,7 +114,7 @@ namespace Cosmos.Test
             {
                 case OperationCode.SYN:
                     {
-                        var messageDict = Utility.Json.ToObject<Dictionary<byte, object>>(Convert.ToString(opData.DataContract));
+                        var messageDict = Utility.Json.ToObject<Dictionary<byte, object>>(Convert.ToString(opData.DataMessage));
                         var authorityConv = Utility.GetValue(messageDict, (byte)ParameterCode.AuthorityConv);
                         var serverSyncInterval = Utility.GetValue(messageDict, (byte)ParameterCode.ServerSyncInterval);
                         AuthorityConv = Convert.ToInt32(authorityConv);
@@ -137,26 +137,26 @@ namespace Cosmos.Test
                     break;
                 case OperationCode.PlayerEnter:
                     {
-                        var enterNetId = Convert.ToInt32(opData.DataContract);
+                        var enterNetId = Convert.ToInt32(opData.DataMessage);
                         onPlayerEnter(enterNetId);
                     }
                     break;
                 case OperationCode.PlayerExit:
                     {
-                        var exitNetId = Convert.ToInt32(opData.DataContract);
+                        var exitNetId = Convert.ToInt32(opData.DataMessage);
                         onPlayerExit?.Invoke(exitNetId);
                     }
                     break;
                 case OperationCode.PlayerInput:
                     {
-                        var fixTransports= Utility.Json.ToObject<List< FixTransportData>>(Convert.ToString(opData.DataContract));
+                        var fixTransports= Utility.Json.ToObject<List< FixTransportData>>(Convert.ToString(opData.DataMessage));
                         if (fixTransports!= null)
                             onPlayerInput?.Invoke(fixTransports.ToArray());
                     }
                     break;
                 case OperationCode.FIN:
                     {
-                        Utility.Debug.LogError(opData.DataContract);
+                        Utility.Debug.LogError(opData.DataMessage);
                         Disconnect();
                     }
                     break;

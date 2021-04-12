@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos.Test
 {
-    public class MultiplayerCubeCamera : MonoBehaviour
+    public class MultiplayCubeCamera : MonoBehaviour
     {
         Vector3 originalWorldPos;
         Vector3 originalOffset;

@@ -4,10 +4,10 @@ using System.Text;
 using UnityEngine;
 namespace Cosmos.Test
 {
-    public class YBotMultiplayerManager : MultiplayerManager
+    public class YBotMultiplayManager : MultiplayManager
     {
         Dictionary<int, NetworkIdentity> netTransDict = new Dictionary<int, NetworkIdentity>();
-        MultiplayerYBotCamera  multiplayerYBotCamera;
+        MultiplayYBotCamera  multiplayerYBotCamera;
         NetworkIdentity authorityIdentity;
         float latestTime = 0;
 
@@ -40,18 +40,18 @@ namespace Cosmos.Test
         }
         void OnConnectHandler()
         {
-            multiplayerYBotCamera = GameObject.Find("YBotCamera").AddComponent<MultiplayerYBotCamera>();
-            var go = GameObject.Instantiate(MultiplayerManager.Instance.LocalPlayerPrefab);
+            multiplayerYBotCamera = GameObject.Find("YBotCamera").AddComponent<MultiplayYBotCamera>();
+            var go = GameObject.Instantiate(MultiplayManager.Instance.LocalPlayerPrefab);
             go.AddComponent<NetworkAnimator>();
             authorityIdentity = go.AddComponent<NetworkTransform>().NetworkIdentity;
-           var ctrlComp= go.AddComponent<MultiplayerYBotController>();
-            authorityIdentity.NetId = MultiplayerManager.Instance.AuthorityConv;
+           var ctrlComp= go.AddComponent<MultiplayYBotController>();
+            authorityIdentity.NetId = MultiplayManager.Instance.AuthorityConv;
             authorityIdentity.IsAuthority = true;
             multiplayerYBotCamera.SetCameraTarget(ctrlComp.CameraTarget);
         }
         void OnPlayerEnterHandler(int conv)
         {
-            var go = GameObject.Instantiate(MultiplayerManager.Instance.RemotePlayerPrefab);
+            var go = GameObject.Instantiate(MultiplayManager.Instance.RemotePlayerPrefab);
             go.AddComponent<NetworkAnimator>();
             var comp = go.AddComponent<NetworkTransform>();
             comp.NetId = conv;

@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Cosmos.Test
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class MultiplayerCubeController : MonoBehaviour
+    public class MultiplayCubeController : MonoBehaviour
     {
         Rigidbody m_Rigidbody;
         [SerializeField] float moveSpeed = 5;

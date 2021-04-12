@@ -8,7 +8,7 @@ using Cosmos.Network;
 using System.IO;
 namespace Cosmos.Test
 {
-    public class MultiplayerNetworkPanel : UIResidentForm
+    public class MultiplayNetworkPanel : UIResidentForm
     {
         Button btnConnect;
         Button btnDisconnect;
@@ -24,11 +24,11 @@ namespace Cosmos.Test
         }
         void ConnectClick()
         {
-            MultiplayerManager.Instance.Connect();
+            MultiplayManager.Instance.Connect();
         }
         void DisconnectClick()
         {
-            MultiplayerManager.Instance.Disconnect();
+            MultiplayManager.Instance.Disconnect();
         }
     }
 }

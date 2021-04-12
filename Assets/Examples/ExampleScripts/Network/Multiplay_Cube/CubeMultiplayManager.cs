@@ -4,11 +4,11 @@ using System.Text;
 using UnityEngine;
 namespace Cosmos.Test
 {
-    public class CubeMultiplayerManager : MultiplayerManager
+    public class CubeMultiplayManager : MultiplayManager
     {
         Dictionary<int, NetworkIdentity> netIdentityDict = new Dictionary<int, NetworkIdentity>();
         Camera playerTraceCamera;
-        MultiplayerCubeCamera movementSphereCamera;
+        MultiplayCubeCamera movementSphereCamera;
         NetworkIdentity authorityIdentity;
         NetworkWriter writer = new NetworkWriter();
         Dictionary<int, Pool<NetworkWriter>> writePool;
@@ -23,7 +23,7 @@ namespace Cosmos.Test
         {
             base.Start();
             playerTraceCamera = GameObject.Find("MovementSphereCamera").GetComponent<Camera>();
-            movementSphereCamera = playerTraceCamera.gameObject.AddComponent<MultiplayerCubeCamera>();
+            movementSphereCamera = playerTraceCamera.gameObject.AddComponent<MultiplayCubeCamera>();
 
             OnConnect += OnConnectHandler;
             OnPlayerEnter += OnPlayerEnterHandler;
@@ -45,16 +45,16 @@ namespace Cosmos.Test
         }
         void OnConnectHandler()
         {
-            var go = GameObject.Instantiate(MultiplayerManager.Instance.LocalPlayerPrefab);
+            var go = GameObject.Instantiate(MultiplayManager.Instance.LocalPlayerPrefab);
             authorityIdentity = go.AddComponent<NetworkTransform>().NetworkIdentity;
-            go.AddComponent<MultiplayerCubeController>();
-            authorityIdentity.NetId = MultiplayerManager.Instance.AuthorityConv;
+            go.AddComponent<MultiplayCubeController>();
+            authorityIdentity.NetId = MultiplayManager.Instance.AuthorityConv;
             authorityIdentity.IsAuthority = true;
             movementSphereCamera.SetCameraTarget(authorityIdentity.transform);
         }
         void OnPlayerEnterHandler(int conv)
         {
-            var go = GameObject.Instantiate(MultiplayerManager.Instance.RemotePlayerPrefab);
+            var go = GameObject.Instantiate(MultiplayManager.Instance.RemotePlayerPrefab);
             var comp = go.AddComponent<NetworkTransform>();
             comp.NetId = conv;
             comp.IsAuthority = false;

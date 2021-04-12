@@ -7,7 +7,7 @@ namespace Cosmos
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CapsuleCollider))]
-    public class MultiplayerYBotController : ControllerBase<MultiplayerYBotController>
+    public class MultiplayYBotController : ControllerBase<MultiplayYBotController>
     {
         [SerializeField]
         [Range(0, 1)]
@@ -32,14 +32,14 @@ namespace Cosmos
         int hitCount = 0;
 
         IInputManager inputManager;
-        MultiplayerYBotCamera cameraCache;
-        public MultiplayerYBotCamera Camera
+        MultiplayYBotCamera cameraCache;
+        public MultiplayYBotCamera Camera
         {
             get
             {
                 if (cameraCache == null)
                 {
-                    cameraCache = CosmosEntry.ControllerManager.GetController<MultiplayerYBotCamera>(typeof(MultiplayerYBotCamera).Name);
+                    cameraCache = CosmosEntry.ControllerManager.GetController<MultiplayYBotCamera>(typeof(MultiplayYBotCamera).Name);
                 }
                 return cameraCache;
             }
