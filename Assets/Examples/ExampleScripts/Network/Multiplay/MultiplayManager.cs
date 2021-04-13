@@ -66,7 +66,7 @@ namespace Cosmos.Test
         public void SendAuthorityTransportData(FixTransportData transportData)
         {
             fixTransportData = transportData;
-            authorityInputOpdata.DataMessage = Utility.Json.ToJson(fixTransportData);
+            authorityInputOpdata.DataContract = Utility.Json.ToJson(fixTransportData);
             var json = Utility.Json.ToJson(authorityInputOpdata);
             var data = Encoding.UTF8.GetBytes(json);
             CosmosEntry.NetworkManager.SendNetworkMessage(data);
@@ -104,7 +104,7 @@ namespace Cosmos.Test
             {
                 case OperationCode.SYN:
                     {
-                        var messageDict = Utility.Json.ToObject<Dictionary<byte, object>>(Convert.ToString(opData.DataMessage));
+                        var messageDict = Utility.Json.ToObject<Dictionary<byte, object>>(Convert.ToString(opData.DataContract));
                         var authorityConv = Utility.GetValue(messageDict, (byte)ParameterCode.AuthorityConv);
                         var serverSyncInterval = Utility.GetValue(messageDict, (byte)ParameterCode.ServerSyncInterval);
                         AuthorityConv = Convert.ToInt32(authorityConv);
@@ -127,26 +127,26 @@ namespace Cosmos.Test
                     break;
                 case OperationCode.PlayerEnter:
                     {
-                        var enterNetId = Convert.ToInt32(opData.DataMessage);
+                        var enterNetId = Convert.ToInt32(opData.DataContract);
                         onPlayerEnter(enterNetId);
                     }
                     break;
                 case OperationCode.PlayerExit:
                     {
-                        var exitNetId = Convert.ToInt32(opData.DataMessage);
+                        var exitNetId = Convert.ToInt32(opData.DataContract);
                         onPlayerExit?.Invoke(exitNetId);
                     }
                     break;
                 case OperationCode.PlayerInput:
                     {
-                        var fixTransports= Utility.Json.ToObject<List< FixTransportData>>(Convert.ToString(opData.DataMessage));
+                        var fixTransports= Utility.Json.ToObject<List< FixTransportData>>(Convert.ToString(opData.DataContract));
                         if (fixTransports!= null)
                             onPlayerInput?.Invoke(fixTransports.ToArray());
                     }
                     break;
                 case OperationCode.FIN:
                     {
-                        Utility.Debug.LogError(opData.DataMessage);
+                        Utility.Debug.LogError(opData.DataContract);
                         Disconnect();
                     }
                     break;

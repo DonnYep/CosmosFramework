@@ -12,7 +12,7 @@ namespace Cosmos.Test
     {
         public byte OperationCode { get; set; }
         public ushort SubOperationCode { get; set; }
-        public object DataMessage { get; set; }
+        public object DataContract { get; set; }
         public short ReturnCode { get; set; }
         public OperationData() { }
         public OperationData(byte operationCode)
@@ -22,7 +22,7 @@ namespace Cosmos.Test
         public void Dispose()
         {
             OperationCode = 0;
-            DataMessage = null;
+            DataContract = null;
             ReturnCode = 0;
             SubOperationCode = 0;
         }

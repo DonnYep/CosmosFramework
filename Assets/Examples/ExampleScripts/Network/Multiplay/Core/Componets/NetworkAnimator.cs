@@ -51,12 +51,13 @@ namespace Cosmos.Test
                     var value = Convert.ToBoolean(animParams[i].ParameterValue);
                     animator.SetBool(animParams[i].NameHash, value);
                 }
-                animator.Play(animParams[i].NameHash, animParams[i].LayerId, animParams[i].NormalizedTime.GetFloat());
+                animator.Play(animParams[i].NameHash, animParams[i].LayerId, animParams[i].NormalizedTime.GetFloat()+NetworkSimulateConsts.SyncInterval);
             }
         }
         string GetCurrentParameterValue()
         {
             List<FixAnimParameter> animParas = new List<FixAnimParameter>();
+            var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
             for (int i = 0; i < parameters.Length; i++)
             {
@@ -93,7 +94,7 @@ namespace Cosmos.Test
                 if (aniState.shortNameHash == par.nameHash)
                 {
                     var animParameter = new FixAnimParameter();
-                    animParameter.Type = (byte)AnimatorControllerParameterType.Trigger;
+                    //animParameter.Type = (byte)AnimatorControllerParameterType.Trigger;
                     animParameter.NameHash = par.nameHash;
                     animParameter.NormalizedTime = new FixFloat(aniState.normalizedTime);
                     animParas.Add(animParameter);
