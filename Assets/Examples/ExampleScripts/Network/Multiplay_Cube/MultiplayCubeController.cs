@@ -9,13 +9,8 @@ namespace Cosmos.Test
     [RequireComponent(typeof(Rigidbody))]
     public class MultiplayCubeController : MonoBehaviour
     {
-        Rigidbody m_Rigidbody;
         [SerializeField] float moveSpeed = 5;
         [SerializeField] float rotSpeed = 10;
-        private void Awake()
-        {
-            m_Rigidbody = GetComponent<Rigidbody>();
-        }
         private void Update()
         {
             var h = CosmosEntry.InputManager.GetAxis(InputAxisType._Horizontal);

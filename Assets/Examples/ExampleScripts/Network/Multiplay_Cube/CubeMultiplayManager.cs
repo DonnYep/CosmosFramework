@@ -10,10 +10,7 @@ namespace Cosmos.Test
         Camera playerTraceCamera;
         MultiplayCubeCamera movementSphereCamera;
         NetworkIdentity authorityIdentity;
-        NetworkWriter writer = new NetworkWriter();
-        Dictionary<int, Pool<NetworkWriter>> writePool;
         float latestTime = 0;
-
         protected override void Awake()
         {
             base.Awake();

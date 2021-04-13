@@ -47,7 +47,8 @@ namespace Cosmos
         /// </summary>
         protected virtual void RefreshHandler() { }
         /// <summary>
-        ///  空虚函数
+        ///  非空虚函数；
+        /// 覆写时需要保留基类方法； 
         /// </summary>
         protected virtual void Awake()
         {

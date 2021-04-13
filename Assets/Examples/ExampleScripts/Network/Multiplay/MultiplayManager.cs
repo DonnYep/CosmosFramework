@@ -18,10 +18,7 @@ namespace Cosmos.Test
         [SerializeField] GameObject remotePlayerPrefab;
         public GameObject RemotePlayerPrefab { get { return remotePlayerPrefab; } }
 
-        public NetworkWriter NetworkWriter { get; private set; }
-
         OperationData authorityInputOpdata;
-
         Action onConnect;
         public event Action OnConnect
         {
@@ -55,15 +52,9 @@ namespace Cosmos.Test
             add { onPlayerInput += value; }
             remove { onPlayerInput -= value; }
         }
-
         public int AuthorityConv { get; private set; }
        public bool IsConnected { get; private set; }
         FixTransportData fixTransportData;
-        public void SendKcpMessage(string msg)
-        {
-            var buffer = Encoding.UTF8.GetBytes(msg);
-            CosmosEntry.NetworkManager.SendNetworkMessage(buffer);
-        }
         public void Connect()
         {
             CosmosEntry.NetworkManager.Connect(IP, (ushort)Port);
@@ -87,7 +78,6 @@ namespace Cosmos.Test
         protected override void Awake()
         {
             base.Awake();
-            NetworkWriter = new NetworkWriter();
             authorityInputOpdata = new OperationData((byte)OperationCode.PlayerInput);
         }
         protected virtual void Start()
