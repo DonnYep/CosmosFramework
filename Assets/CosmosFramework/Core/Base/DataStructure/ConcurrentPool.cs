@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Concurrent;
 using System.Text;
-using System.Threading.Tasks;
-
+using System.Collections;
 namespace Cosmos
 {
-    public class Pool<T> : IEnumerable
+    /// <summary>
+    ///泛型池对象，线程安全； 
+    /// </summary>
+    public class ConcurrentPool<T> : IEnumerable
     {
         public int Count { get { return objects.Count; } }
-        readonly Queue<T> objects = new Queue<T>();
+        readonly ConcurrentQueue<T> objects = new ConcurrentQueue<T>();
         readonly Func<T> objectGenerator;
         readonly Action<T> objectDispose;
-        public Pool(Func<T> objectGenerator, Action<T> objectDispose = null)
+        public ConcurrentPool(Func<T> objectGenerator, Action<T> objectDispose = null)
         {
             this.objectGenerator = objectGenerator;
             this.objectDispose = objectDispose;
@@ -21,7 +22,10 @@ namespace Cosmos
         public T Spawn()
         {
             if (objects.Count > 0)
-                return objects.Dequeue();
+            {
+                objects.TryDequeue(out var obj);
+                return obj; ;
+            }
             else
                 return objectGenerator();
         }
