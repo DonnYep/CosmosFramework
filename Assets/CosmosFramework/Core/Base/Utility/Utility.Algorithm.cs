@@ -226,7 +226,7 @@ namespace Cosmos
                 T tmp;
                 for (int i = 0; i < array.Length; i++)
                 {
-                    index = UnityEngine.Random.Range(0, array.Length);
+                    index = CreateRandomInt(0, array.Length);
                     if (index != i)
                     {
                         tmp = array[i];
