@@ -28,7 +28,7 @@ namespace Cosmos.CosmosEditor
                 EditorUtility.WriteEditorConfig(EditorConfigFileName, EditorConfigData);
             }
         }
-        static readonly string EditorConfigFileName = "EditorConfig.txt";
+        static readonly string EditorConfigFileName = "EditorConfig.Json";
         public EditorConfigWindow()
         {
             this.titleContent = new GUIContent("EditorConfig");
