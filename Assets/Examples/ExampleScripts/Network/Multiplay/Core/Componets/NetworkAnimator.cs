@@ -35,7 +35,6 @@ namespace Cosmos.Test
             for (int i = 0; i < animParams.Count; i++)
             {
                 AnimatorControllerParameter par = parameters[i];
-
                 if (par.type == AnimatorControllerParameterType.Int)
                 {
                     var value = Convert.ToInt32(animParams[i].ParameterValue);
@@ -51,16 +50,18 @@ namespace Cosmos.Test
                     var value = Convert.ToBoolean(animParams[i].ParameterValue);
                     animator.SetBool(animParams[i].NameHash, value);
                 }
-                animator.Play(animParams[i].NameHash, animParams[i].LayerId, animParams[i].NormalizedTime.GetFloat()+NetworkSimulateConsts.SyncInterval);
+                else if (par.type == AnimatorControllerParameterType.Trigger)
+                {
+                    animator.Play(animParams[i].NameHash, animParams[i].LayerId, animParams[i].NormalizedTime.GetFloat() + NetworkSimulateConsts.SyncInterval);
+                }
             }
         }
         string GetCurrentParameterValue()
         {
             List<FixAnimParameter> animParas = new List<FixAnimParameter>();
-            var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-
             for (int i = 0; i < parameters.Length; i++)
             {
+                var aniState = animator.GetCurrentAnimatorStateInfo(0);
                 AnimatorControllerParameter par = parameters[i];
                 if (par.type == AnimatorControllerParameterType.Int)
                 {
@@ -77,7 +78,6 @@ namespace Cosmos.Test
                     animParameter.Type = (byte)AnimatorControllerParameterType.Float;
                     float newFloatValue = animator.GetFloat(par.nameHash);
                     animParameter.NameHash = par.nameHash;
-
                     animParameter.ParameterValue = Mathf.FloorToInt(newFloatValue * 1000);
                     animParas.Add(animParameter);
                 }
@@ -90,14 +90,16 @@ namespace Cosmos.Test
                     animParameter.ParameterValue = newBoolValue;
                     animParas.Add(animParameter);
                 }
-                var aniState = animator.GetCurrentAnimatorStateInfo(0);
-                if (aniState.shortNameHash == par.nameHash)
+                else if (par.type == AnimatorControllerParameterType.Trigger)
                 {
-                    var animParameter = new FixAnimParameter();
-                    //animParameter.Type = (byte)AnimatorControllerParameterType.Trigger;
-                    animParameter.NameHash = par.nameHash;
-                    animParameter.NormalizedTime = new FixFloat(aniState.normalizedTime);
-                    animParas.Add(animParameter);
+                    if (aniState.shortNameHash == par.nameHash)
+                    {
+                        var animParameter = new FixAnimParameter();
+                        animParameter.Type = (byte)AnimatorControllerParameterType.Trigger;
+                        animParameter.NameHash = par.nameHash;
+                        animParameter.NormalizedTime = new FixFloat(aniState.normalizedTime);
+                        animParas.Add(animParameter);
+                    }
                 }
             }
             return Utility.Json.ToJson(animParas);
