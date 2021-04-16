@@ -57,9 +57,8 @@ namespace Cosmos
             transform.position = originalPos;
             transform.eulerAngles=originalRot;
         }
-        protected override void Awake()
+        protected override void OnInitialization()
         {
-            base.Awake();
             originalPos = transform.position;
             originalRot = transform.rotation.eulerAngles;
             inputManager = GameManager.GetModule<IInputManager>();
@@ -75,15 +74,15 @@ namespace Cosmos
             distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
             HideMouse();
         }
-        protected override void OnEnable()
+        protected  void OnEnable()
         {
             CosmosEntry.LateRefreshHandler+= LateUpdateCamera;
         }
-        protected override void OnDisable()
+        protected void OnDisable()
         {
             CosmosEntry.LateRefreshHandler -= LateUpdateCamera;
         }
-        protected override void OnValidate()
+        protected void OnValidate()
         {
             yawSpeed = Mathf.Clamp(yawSpeed, 0, 1000);
             pitchSpeed = Mathf.Clamp(pitchSpeed, 0, 1000);

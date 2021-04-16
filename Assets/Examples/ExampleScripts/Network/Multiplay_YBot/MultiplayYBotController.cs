@@ -71,9 +71,8 @@ namespace Cosmos
             if (hitCount==0)
                 MoveAndRot();
         }
-        protected override void Awake()
+        protected override void OnInitialization()
         {
-            base.Awake();
             animator = GetComponentInChildren<Animator>();
             CameraTarget = transform.Find("CameraTarget").transform;
             CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());

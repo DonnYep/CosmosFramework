@@ -50,29 +50,31 @@ namespace Cosmos
         ///  非空虚函数；
         /// 覆写时需要保留基类方法； 
         /// </summary>
-        protected virtual void Awake()
+        protected  void Awake()
         {
             ControllerManager.RegisterController(ControllerType, this);
+            OnInitialization();
         }
         /// <summary>
+        /// 初始化；
         /// 空虚函数；
         /// </summary>
-        protected virtual void OnValidate() { }
+        protected virtual void OnInitialization(){}
         /// <summary>
-        /// 空虚函数
+        /// 终结；
+        /// 空虚函数；
         /// </summary>
-        protected virtual void OnEnable(){}
-        /// <summary>
-        /// 空虚函数
-        /// </summary>
-        protected virtual void OnDisable(){}
-        protected virtual void OnDestroy()
+        protected virtual void OnTermination(){}
+        protected void OnDestroy()
         {
             try
             {
                 ControllerManager.DeregisterController(ControllerType, this);
+                OnTermination();
             }
             catch { }
         }
+
+
     }
 }
