@@ -16,11 +16,14 @@ namespace Cosmos.Test
             var h = CosmosEntry.InputManager.GetAxis(InputAxisType._Horizontal);
             var v = CosmosEntry.InputManager.GetAxis(InputAxisType._Vertical);
             var pos = new Vector3(h, 0, v);
-            if (transform.forward != pos)
+            if (pos != Vector3.zero)
             {
-                transform.forward = Vector3.Slerp(transform.forward, Vector3.Normalize(pos), Time.deltaTime * rotSpeed);
+                if (transform.forward != pos)
+                {
+                    transform.forward = Vector3.Slerp(transform.forward, Vector3.Normalize(pos), Time.deltaTime * rotSpeed);
+                }
+                transform.position += Vector3.Normalize(pos) * Time.deltaTime * moveSpeed;
             }
-            transform.position += pos * Time.deltaTime * moveSpeed;
         }
     }
 }
