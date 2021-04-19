@@ -13,26 +13,47 @@ namespace Cosmos
         public int Count { get { return objects.Count; } }
         readonly ConcurrentQueue<T> objects = new ConcurrentQueue<T>();
         readonly Func<T> objectGenerator;
-        readonly Action<T> objectDispose;
-        public ConcurrentPool(Func<T> objectGenerator, Action<T> objectDispose = null)
+        readonly Action<T> objectDespawn;
+        readonly Action<T> objectOverflow;
+        readonly Action<T> objectSpawn;
+        readonly int capacity = 0;
+        public ConcurrentPool(int capacity, Func<T> objectGenerator, Action<T> objectSpawn, Action<T> objectDesapwn, Action<T> objectOverflow)
         {
             this.objectGenerator = objectGenerator;
-            this.objectDispose = objectDispose;
+            this.objectDespawn = objectDesapwn;
+            this.objectOverflow = objectOverflow;
+            this.objectSpawn = objectSpawn;
+            this.capacity = capacity;
         }
+        public ConcurrentPool(Func<T> objectGenerator, Action<T> objectSpawn, Action<T> objectDesapwn) : this(0, objectGenerator, objectSpawn, objectDesapwn, null) { }
+        public ConcurrentPool(Func<T> objectGenerator, Action<T> objectDesapwn) : this(0, objectGenerator, null, objectDesapwn, null) { }
+        public ConcurrentPool(Func<T> objectGenerator) : this(0, objectGenerator, null, null, null) { }
         public T Spawn()
         {
             if (objects.Count > 0)
             {
                 objects.TryDequeue(out var obj);
-                return obj; ;
+                objectSpawn?.Invoke(obj);
+                return obj;
             }
             else
-                return objectGenerator();
+            {
+                var obj = objectGenerator();
+                objectSpawn?.Invoke(obj);
+                return obj;
+            }
         }
         public void Despawn(T obj)
         {
-            objectDispose?.Invoke(obj);
-            objects.Enqueue(obj);
+            if (capacity == 0 || objects.Count < capacity)
+            {
+                objectDespawn?.Invoke(obj);
+                objects.Enqueue(obj);
+            }
+            else
+            {
+                objectOverflow?.Invoke(obj);
+            }
         }
         public IEnumerator GetEnumerator()
         {
