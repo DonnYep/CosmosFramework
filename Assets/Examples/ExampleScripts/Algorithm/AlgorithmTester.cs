@@ -7,25 +7,25 @@ using Cosmos;
 /// </summary>
 public class AlgorithmTester : MonoBehaviour
 {
-    public uint target;
-    public uint[] list;
+    public int target;
+    public int[] list;
     public string strTarget;
     public string[] strList;
     public void BinarySearch()
     {
-        Utility.Algorithm.SortByAscending( list, (v) => v);
+        Utility.Algorithm.SortByAscend( list, (v) => v,0,list.Length-1);
         var result = Utility.Algorithm.BinarySearch(list, target, (v) => v);
         Utility.Debug.LogInfo("BinarySearch result index>>" + result);
     }
     public void StrBinarySearch()
     {
-        Utility.Algorithm.SortByAscending( strList, (v) => v);
+        Utility.Algorithm.SortByAscend( strList, (v) => v);
         var result = Utility.Algorithm.BinarySearch(strList, strTarget, (v) => v);
         Utility.Debug.LogInfo("BinarySearch result index>>" + result);
     }
     public void Sort()
     {
-        Utility.Algorithm.SortByAscending( list, (v) => v);
+        Utility.Algorithm.SortByDescend(list, (v)=>v,0, list.Length-1);
     }
     public void Max()
     {

@@ -14,9 +14,85 @@ namespace Cosmos
         public static class Algorithm
         {
             /// <summary>
-            /// 升序排序
+            /// 快速排序：降序
             /// </summary>
-            public static void SortByAscending<T, K>(T[] array, Func<T, K> handler)
+            /// <typeparam name="T">数组类型</typeparam>
+            /// <typeparam name="K">比较类型</typeparam>
+            /// <param name="array">需要排序的数组对象</param>
+            /// <param name="handler">排序条件</param>
+            /// <param name="start">起始位</param>
+            /// <param name="end">结束位</param>
+            public static void SortByDescend<T, K>(T[] array, Func<T, K> handler, int start, int end)
+                where K : IComparable<K>
+            {
+                if (array == null)
+                    throw new ArgumentNullException("SortByDescend : array is null");
+                if (handler == null)
+                    throw new ArgumentNullException("SortByDescend : handler is null");
+                if (start < 0 || end < 0 || start >= end)
+                {
+                    return;
+                }
+                int pivort = start;
+                T pivortValue = array[pivort];
+                Swap(array, end, pivort);
+                int storeIndex = start;
+                for (int i = start; i <= end - 1; i++)
+                {
+                    if (handler(array[i]).CompareTo(handler(pivortValue)) > 0)
+                    {
+                        Swap(array, i, storeIndex);
+                        storeIndex++;
+                    }
+                }
+                Swap(array, storeIndex, end);
+                SortByDescend(array, handler, start, storeIndex - 1);
+                SortByDescend(array, handler, storeIndex + 1, end);
+            }
+            /// <summary>
+            /// 快速排序：升序
+            /// </summary>
+            /// <typeparam name="T">数组类型</typeparam>
+            /// <typeparam name="K">比较类型</typeparam>
+            /// <param name="array">需要排序的数组对象</param>
+            /// <param name="handler">排序条件</param>
+            /// <param name="start">起始位</param>
+            /// <param name="end">结束位</param>
+            public static void SortByAscend<T, K>(T[] array, Func<T, K> handler, int start, int end)
+                where K : IComparable<K>
+            {
+                if (array == null)
+                    throw new ArgumentNullException("QuickSortByAscend : array is null");
+                if (handler == null)
+                    throw new ArgumentNullException("QuickSortByAscend : handler is null");
+                if (start < 0 || end < 0 || start >= end)
+                {
+                    return;
+                }
+                int pivort = start;
+                T pivortValue = array[pivort];
+                Swap(array, end, pivort);
+                int storeIndex = start;
+                for (int i = start; i <= end - 1; i++)
+                {
+                    if (handler(array[i]).CompareTo(handler(pivortValue)) < 0)
+                    {
+                        Swap(array, i, storeIndex);
+                        storeIndex++;
+                    }
+                }
+                Swap(array, storeIndex, end);
+                SortByAscend(array, handler, start, storeIndex - 1);
+                SortByAscend(array, handler, storeIndex + 1, end);
+            }
+            /// <summary>
+            /// 冒泡排序：升序
+            /// </summary>
+            /// <typeparam name="T">数组类型</typeparam>
+            /// <typeparam name="K">比较类型</typeparam>
+            /// <param name="array">需要排序的数组对象</param>
+            /// <param name="handler">排序条件</param>
+            public static void SortByAscend<T, K>(T[] array, Func<T, K> handler)
                 where K : IComparable<K>
             {
                 for (int i = 0; i < array.Length; i++)
@@ -33,9 +109,13 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 降序排序
+            /// 冒泡排序：降序
             /// </summary>
-            public static void SortByDescending<T, K>(T[] array, Func<T, K> handler)
+            /// <typeparam name="T">数组类型</typeparam>
+            /// <typeparam name="K">比较类型</typeparam>
+            /// <param name="array">需要排序的数组对象</param>
+            /// <param name="handler">排序条件</param>
+            public static void SortByDescend<T, K>(T[] array, Func<T, K> handler)
                 where K : IComparable<K>
             {
                 for (int i = 0; i < array.Length; i++)
@@ -144,7 +224,7 @@ namespace Cosmos
             public static int[] DoubleArrayToNonRepeatedRandom(int length, int minValue, int maxValue)
             {
                 int seed = Guid.NewGuid().GetHashCode();
-                Random radom = new Random(seed);
+                Random random = new Random(seed);
                 int[] index = new int[length];
                 for (int i = 0; i < length; i++)
                 {
@@ -155,7 +235,7 @@ namespace Cosmos
                 int idx;                       // 获取index数组中索引为idx位置的数据，赋给结果数组array的j索引位置
                 for (int j = 0; j < length; j++)
                 {
-                    idx = radom.Next(0, site - 1);  // 生成随机索引数
+                    idx = random.Next(0, site - 1);  // 生成随机索引数
                     array[j] = index[idx];          // 在随机索引位置取出一个数，保存到结果数组 
                     index[idx] = index[site - 1];   // 作废当前索引位置数据，并用数组的最后一个数据代替之
                     site--;                         // 索引位置的上限减一（弃置最后一个数据）
@@ -216,11 +296,24 @@ namespace Cosmos
                 t2 = t3;
             }
             /// <summary>
+            /// 交换数组中的两个元素
+            /// </summary>
+            /// <typeparam name="T">传入的对象类型</typeparam>
+            /// <param name="array">传入的数组</param>
+            /// <param name="idxA">序号A</param>
+            /// <param name="idxB">序号B</param>
+            public static void Swap<T>(T[] array, int idxA, int idxB)
+            {
+                T temp = array[idxA];
+                array[idxA] = array[idxB];
+                array[idxB] = temp;
+            }
+            /// <summary>
             /// 随机打乱数组
             /// </summary>
             /// <typeparam name="T">数组类型</typeparam>
             /// <param name="array">数组</param>
-            public static void Disrupt<T>( T[] array)
+            public static void Disrupt<T>(T[] array)
             {
                 int index = 0;
                 T tmp;
