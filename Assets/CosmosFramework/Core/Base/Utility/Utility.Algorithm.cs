@@ -13,6 +13,8 @@ namespace Cosmos
         /// </summary>
         public static class Algorithm
         {
+            static Random random = new Random(Guid.NewGuid().GetHashCode());
+            static int RandomSeed { get { return Guid.NewGuid().GetHashCode(); } }
             /// <summary>
             /// 快速排序：降序
             /// </summary>
@@ -215,34 +217,6 @@ namespace Cosmos
                 return -1;
             }
             /// <summary>
-            /// 使用双精度数组随机生成不重复的ID
-            /// </summary>
-            /// <param name="length">数组长度</param>
-            /// <param name="minValue">随机取值最小区间</param>
-            /// <param name="maxValue">随机取值最大区间</param>
-            /// <returns>生成的int数组</returns>
-            public static int[] DoubleArrayToNonRepeatedRandom(int length, int minValue, int maxValue)
-            {
-                int seed = Guid.NewGuid().GetHashCode();
-                Random random = new Random(seed);
-                int[] index = new int[length];
-                for (int i = 0; i < length; i++)
-                {
-                    index[i] = i + 1;
-                }
-                int[] array = new int[length]; // 用来保存随机生成的不重复的数 
-                int site = length;             // 设置上限 
-                int idx;                       // 获取index数组中索引为idx位置的数据，赋给结果数组array的j索引位置
-                for (int j = 0; j < length; j++)
-                {
-                    idx = random.Next(0, site - 1);  // 生成随机索引数
-                    array[j] = index[idx];          // 在随机索引位置取出一个数，保存到结果数组 
-                    index[idx] = index[site - 1];   // 作废当前索引位置数据，并用数组的最后一个数据代替之
-                    site--;                         // 索引位置的上限减一（弃置最后一个数据）
-                }
-                return array;
-            }
-            /// <summary>
             /// 将一个int数组转换为顺序的整数;
             /// 若数组中存在负值，则默认将负值取绝对值
             /// </summary>
@@ -261,14 +235,27 @@ namespace Cosmos
             /// <summary>
             /// 生成指定长度的int整数
             /// </summary>
-            /// <param name="length">数组长度</param>
+            /// <param name="length">数值长度</param>
             /// <param name="minValue">随机取值最小区间</param>
             /// <param name="maxValue">随机取值最大区间</param>
             /// <returns>生成的int整数</returns>
-            public static int CreateRandomInt(int length, int minValue, int maxValue)
+            public static int RandomRange(int length, int minValue, int maxValue)
             {
-                var arr = DoubleArrayToNonRepeatedRandom(length, minValue, maxValue);
-                return ConvertIntArrayToInt(arr);
+                if(minValue>=maxValue)
+                    throw new ArgumentNullException("RandomRange : minValue is greater than or equal to maxValue");
+                string buffer = "0123456789";// 随机字符中也可以为汉字（任何）
+                StringBuilder strbuilder = new StringBuilder();
+                int range = buffer.Length;
+                int resultValue = 0;
+                do
+                {
+                    for (int i = 0; i < length; i++)
+                    {
+                        strbuilder.Append(buffer.Substring(random.Next(range), 1));
+                    }
+                    resultValue = Int32.Parse(strbuilder.ToString());
+                } while (resultValue > maxValue || resultValue < minValue);
+                return resultValue;
             }
             /// <summary>
             /// 随机在范围内生成一个int
@@ -276,8 +263,10 @@ namespace Cosmos
             /// <param name="minValue">随机取值最小区间</param>
             /// <param name="maxValue">随机取值最大区间</param>
             /// <returns>生成的int整数</returns>
-            public static int CreateRandomInt(int minValue, int maxValue)
+            public static int RandomRange(int minValue, int maxValue)
             {
+                if (minValue >= maxValue)
+                    throw new ArgumentNullException("RandomRange : minValue is greater than or equal to maxValue");
                 int seed = Guid.NewGuid().GetHashCode();
                 Random random = new Random(seed);
                 int result = random.Next(minValue, maxValue);
@@ -319,7 +308,7 @@ namespace Cosmos
                 T tmp;
                 for (int i = 0; i < array.Length; i++)
                 {
-                    index = CreateRandomInt(0, array.Length);
+                    index = RandomRange(0, array.Length);
                     if (index != i)
                     {
                         tmp = array[i];
@@ -328,6 +317,40 @@ namespace Cosmos
                     }
                 }
             }
+            /// <summary>
+            /// 产生均匀随机数
+            /// </summary>
+            public static double AverageRandom(double minValue, double maxValue)
+            {
+                int min = (int)(minValue * 10000);
+                int max  = (int)(maxValue * 10000);
+                int result = random.Next(min , max );
+                return result / 10000.0;
+            }
+            /// <summary>
+            /// 正态分布概率密度函数
+            /// </summary>
+            public static double NormalDistributionProbability(double x, double miu, double sigma) 
+            {
+                return 1.0 / (x * Math.Sqrt(2 * Math.PI) * sigma) * Math.Exp(-1 * (Math.Log(x) - miu) * (Math.Log(x) - miu) / (2 * sigma * sigma));
+            }
+            /// <summary>
+            /// 随机正态分布；
+            /// </summary>
+            public static double RandomNormalDistribution(double miu, double sigma, double min, double max)//产生正态分布随机数
+            {
+                double x;
+                double dScope;
+                double y;
+                do
+                {
+                    x = AverageRandom(min, max);
+                    y = NormalDistributionProbability(x, miu, sigma);
+                    dScope = AverageRandom(0, NormalDistributionProbability(miu, miu, sigma));
+                } while (dScope > y);
+                return x;
+            }
+
         }
     }
 }
