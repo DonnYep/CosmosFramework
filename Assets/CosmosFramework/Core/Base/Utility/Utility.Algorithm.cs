@@ -240,7 +240,7 @@ namespace Cosmos
             /// <returns>生成的int整数</returns>
             public static int RandomRange(int length, int minValue, int maxValue)
             {
-                if(minValue>=maxValue)
+                if (minValue >= maxValue)
                     throw new ArgumentNullException("RandomRange : minValue is greater than or equal to maxValue");
                 string buffer = "0123456789";// 随机字符中也可以为汉字（任何）
                 StringBuilder strbuilder = new StringBuilder();
@@ -322,14 +322,14 @@ namespace Cosmos
             public static double AverageRandom(double minValue, double maxValue)
             {
                 int min = (int)(minValue * 10000);
-                int max  = (int)(maxValue * 10000);
-                int result = random.Next(min , max );
+                int max = (int)(maxValue * 10000);
+                int result = random.Next(min, max);
                 return result / 10000.0;
             }
             /// <summary>
             /// 正态分布概率密度函数
             /// </summary>
-            public static double NormalDistributionProbability(double x, double miu, double sigma) 
+            public static double NormalDistributionProbability(double x, double miu, double sigma)
             {
                 return 1.0 / (x * Math.Sqrt(2 * Math.PI) * sigma) * Math.Exp(-1 * (Math.Log(x) - miu) * (Math.Log(x) - miu) / (2 * sigma * sigma));
             }
@@ -349,7 +349,10 @@ namespace Cosmos
                 } while (dScope > y);
                 return x;
             }
-
+            public static bool IsAdd(long value)
+            {
+                return !Convert.ToBoolean(value & 0x1);
+            }
         }
     }
 }
