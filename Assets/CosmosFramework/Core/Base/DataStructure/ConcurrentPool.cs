@@ -55,13 +55,17 @@ namespace Cosmos
                 objectOverflow?.Invoke(obj);
             }
         }
-        public IEnumerator GetEnumerator()
-        {
-            return objects.GetEnumerator();
-        }
         public void Clear()
         {
             objects.Clear();
+        }
+        public IEnumerator<T> GetEnumerator()
+        {
+            return objects.GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
