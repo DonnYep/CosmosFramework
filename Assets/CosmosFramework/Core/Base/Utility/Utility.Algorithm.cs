@@ -14,7 +14,6 @@ namespace Cosmos
         public static class Algorithm
         {
             static Random random = new Random(Guid.NewGuid().GetHashCode());
-            static int RandomSeed { get { return Guid.NewGuid().GetHashCode(); } }
             /// <summary>
             /// 快速排序：降序
             /// </summary>

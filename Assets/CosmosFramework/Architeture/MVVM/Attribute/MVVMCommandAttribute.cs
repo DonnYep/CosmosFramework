@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-namespace Cosmos
+namespace Cosmos.Mvvm
 {
     [AttributeUsage(AttributeTargets.Class,AllowMultiple =true,Inherited =false)]
     public class MVVMCommandAttribute : Attribute 
