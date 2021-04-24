@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace Cosmos
 {
     public class Pool<T> : IEnumerable<T>
+        where T:class
     {
         public int Count { get { return objects.Count; } }
         readonly Queue<T> objects = new Queue<T>();

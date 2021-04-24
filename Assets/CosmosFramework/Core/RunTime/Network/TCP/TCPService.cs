@@ -13,7 +13,6 @@ namespace Cosmos
         TcpClient tcpClient;
         TCPClientPeer tcpClientPeer;
         public long Conv { get; private set; }
-        IReferencePoolManager referencePoolManager;
         public event Action<ArraySegment<byte>> OnReceiveData
         {
             add { onReceiveData += value; }
@@ -22,7 +21,6 @@ namespace Cosmos
         protected Action<ArraySegment<byte>> onReceiveData;
         public TCPService()
         {
-            referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
             tcpClientPeer = new TCPClientPeer();
         }
         public void Connect(string ip, int port)
@@ -55,7 +53,7 @@ namespace Cosmos
                 //缓存接收到的数据 byte[]
                 byte[] buffer = new byte[4096];
                 await tcpClient.GetStream().ReadAsync(buffer, 0, buffer.Length);
-                var  netMsg = referencePoolManager.Spawn<TcpNetMessage>();
+                var  netMsg = ReferencePool.Accquire<TcpNetMessage>();
                 netMsg.DecodeMessage(buffer);
                 if (netMsg.IsFull)
                 {

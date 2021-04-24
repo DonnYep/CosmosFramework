@@ -9,6 +9,7 @@ namespace Cosmos
     ///泛型池对象，线程安全； 
     /// </summary>
     public class ConcurrentPool<T> : IEnumerable
+        where T : class
     {
         public int Count { get { return objects.Count; } }
         readonly ConcurrentQueue<T> objects = new ConcurrentQueue<T>();

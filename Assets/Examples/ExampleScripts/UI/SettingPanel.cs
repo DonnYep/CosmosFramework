@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
-[UIAsset("UI/SettingPanel" )]
+[UIAsset(nameof(SettingPanel), "UI/SettingPanel" )]
 public class SettingPanel : UIResidentForm
 {
     protected override void OnInitialization()

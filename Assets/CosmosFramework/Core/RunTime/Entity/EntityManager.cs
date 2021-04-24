@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Cosmos.Reference;
 using UnityEngine;
 namespace Cosmos.Entity
 {
@@ -22,7 +21,6 @@ namespace Cosmos.Entity
         /// </summary>
         Dictionary<string, EntityGroup> entityGroupDict;
         Dictionary<int, IEntity> entityIdDict;
-        IReferencePoolManager referencePoolManager;
         IObjectPoolManager objectPoolManager;
         IResourceManager resourceManager;
         IMonoManager monoManager;
@@ -35,7 +33,6 @@ namespace Cosmos.Entity
         }
         public override void OnPreparatory()
         {
-            referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
             objectPoolManager = GameManager.GetModule<IObjectPoolManager>();
             resourceManager = GameManager.GetModule<IResourceManager>();
             monoManager = GameManager.GetModule<IMonoManager>();
@@ -259,7 +256,7 @@ namespace Cosmos.Entity
                 for (int i = 0; i < length; i++)
                 {
                     group.ObjectPool.Despawn(childEntities[i].EntityInstance);
-                    referencePoolManager.Despawn(childEntities[i].Convert<Entity>());
+                    ReferencePool.Release(childEntities[i].Convert<Entity>());
                 }
             }
             else
@@ -268,7 +265,7 @@ namespace Cosmos.Entity
                 for (int i = 0; i < length; i++)
                 {
                     entityHelper.DespawnEntityInstance(childEntities[i].EntityInstance);
-                    referencePoolManager.Despawn(childEntities[i].Convert<Entity>());
+                    ReferencePool.Release(childEntities[i].Convert<Entity>());
                 }
             }
         }
@@ -305,7 +302,7 @@ namespace Cosmos.Entity
             var entity = entityGroup.GetEntity(entityName);
             if (entity == null)
             {
-                entity = referencePoolManager.Spawn<Entity>();
+                entity = ReferencePool.Accquire<Entity>();
                 object entityInstance = null;
                 if (entityGroup.ObjectPool != null)
                 {
@@ -343,7 +340,7 @@ namespace Cosmos.Entity
             {
                 entityHelper.DespawnEntityInstance(entity.EntityInstance);
             }
-            referencePoolManager.Despawn(entity.Convert<Entity>());
+            ReferencePool.Release(entity.Convert<Entity>());
         }
         /// <summary>
         /// 失活&移除实体对象

@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
-using Cosmos.Reference;
 namespace Cosmos.Network
 {
     /// <summary>
@@ -66,14 +65,12 @@ namespace Cosmos.Network
         Action onDisconnectHandler;
         Action<ArraySegment<byte>> onReceiveDataHandler;
         INetworkManager networkManager;
-        IReferencePoolManager referencePoolManager;
         public UdpClientPeer()
         {
             //Available = true;
             sndMsgDict = new ConcurrentDictionary<uint, UdpNetMessage>();
             rcvMsgDict = new ConcurrentDictionary<uint, UdpNetMessage>();
             networkManager = GameManager.GetModule<INetworkManager>();
-            referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
         }
         public UdpClientPeer(Action onConnect, Action onDisconnect, Action<ArraySegment<byte>> onReceive) : this()
         {
@@ -160,7 +157,7 @@ namespace Cosmos.Network
                             OnDeactive();
                         }
                         if (sndMsgDict.TryRemove(netMsg.SN, out tmpMsg))
-                            referencePoolManager.Despawn(tmpMsg);
+                            ReferencePool.Release(tmpMsg);
                     }
                     break;
                 case UdpProtocol.MSG:

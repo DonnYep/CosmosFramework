@@ -16,7 +16,6 @@ namespace Cosmos.Data
         #region Methods
         public override void OnActive()
         {
-            DataNode.ReferencePool = GameManager.GetModule<IReferencePoolManager>();
             rootNode = DataNode.Create(RootName, null);
             var assemblies = GameManager.Assemblies;
             var length = assemblies.Length;

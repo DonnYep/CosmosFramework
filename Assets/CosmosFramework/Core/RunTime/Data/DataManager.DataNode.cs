@@ -14,7 +14,6 @@ namespace Cosmos.Data
         private class DataNode : IDataNode, IReference
         {
             private static readonly DataNode[] EmptyDataNodeArray = new DataNode[] { };
-            internal static IReferencePoolManager ReferencePool { get; set; }
             private string nodeName;
             private Variable nodeData;
             private DataNode nodeParent;
@@ -40,7 +39,7 @@ namespace Cosmos.Data
                 {
                     throw new ArgumentException("Name of data node is invalid.");
                 }
-                DataNode node = ReferencePool.Spawn<DataNode>();
+                DataNode node = ReferencePool.Accquire<DataNode>();
                 node.nodeName = name;
                 node.nodeParent = parent;
                 return node;
@@ -113,7 +112,7 @@ namespace Cosmos.Data
             {
                 if (nodeData != null)
                 {
-                    ReferencePool.Despawn(nodeData);
+                    ReferencePool.Release(nodeData);
                 }
                 nodeData = data;
             }
@@ -260,7 +259,7 @@ namespace Cosmos.Data
                     return;
                 }
                 nodeChilds.Remove(node);
-                ReferencePool.Despawn(node);
+                ReferencePool.Release(node);
             }
             /// <summary>
             /// 根据名称移除子数据结点。
@@ -274,13 +273,13 @@ namespace Cosmos.Data
                     return;
                 }
                 nodeChilds.Remove(node);
-                ReferencePool.Despawn(node);
+                ReferencePool.Release(node);
             }
             public void ClearNode()
             {
                 if (nodeData != null)
                 {
-                    ReferencePool.Despawn(nodeData);
+                    ReferencePool.Release(nodeData);
                     nodeData = null;
                 }
 
@@ -288,7 +287,7 @@ namespace Cosmos.Data
                 {
                     foreach (DataNode child in nodeChilds)
                     {
-                        ReferencePool.Despawn(child);
+                        ReferencePool.Release(child);
                     }
 
                     nodeChilds.Clear();

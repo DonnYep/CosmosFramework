@@ -4,7 +4,7 @@ using UnityEngine;
 using Cosmos;
 namespace Cosmos.Test
 {
-    [UIAsset( "UI/Slot")]
+    [PrefabAsset("UI/Slot")]
     public class Slot : MonoBehaviour
     {
         public void SetupSlot(ItemDataSet item)

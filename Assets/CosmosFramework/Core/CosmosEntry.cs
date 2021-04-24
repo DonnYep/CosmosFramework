@@ -39,7 +39,6 @@ namespace Cosmos
         public static IConfigManager ConfigManager { get { return GameManager.GetModule<IConfigManager>(); } }
         public static IInputManager InputManager { get { return GameManager.GetModule<IInputManager>(); } }
         public static INetworkManager NetworkManager { get { return GameManager.GetModule<INetworkManager>(); } }
-        public static IReferencePoolManager ReferencePoolManager { get { return GameManager.GetModule<IReferencePoolManager>(); } }
         public static IResourceManager ResourceManager { get { return GameManager.GetModule<IResourceManager>(); } }
         public static IUIManager UIManager { get { return GameManager.GetModule<IUIManager>(); } }
         public static IHotfixManager HotfixManager { get { return GameManager.GetModule<IHotfixManager>(); } }
@@ -56,7 +55,6 @@ namespace Cosmos
         public static GameObject ConfigMount { get { return GameManager.GetModuleMount<IConfigManager>(); } }
         public static GameObject InputMount { get { return GameManager.GetModuleMount<IInputManager>(); } }
         public static GameObject NetworkMount { get { return GameManager.GetModuleMount<INetworkManager>(); } }
-        public static GameObject ReferencePoolMount { get { return GameManager.GetModuleMount<IReferencePoolManager>(); } }
         public static GameObject ResourceMount { get { return GameManager.GetModuleMount<IResourceManager>(); } }
         public static GameObject UIMount { get { return GameManager.GetModuleMount<IUIManager>(); } }
         public static GameObject HotfixMount { get { return GameManager.GetModuleMount<IHotfixManager>(); } }

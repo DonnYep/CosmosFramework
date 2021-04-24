@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
-[UIAsset("UI/StatusPanel")]
+[UIAsset(nameof(StatusPanel), "UI/StatusPanel")]
 public class StatusPanel : UIResidentForm
 {
     protected override void OnInitialization()

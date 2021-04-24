@@ -232,7 +232,7 @@ namespace Cosmos
         }
         public static UdpNetMessage ConvertToACK(UdpNetMessage srcMsg)
         {
-            UdpNetMessage ack = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
+            UdpNetMessage ack = ReferencePool.Accquire<UdpNetMessage>();
             ack.Conv = srcMsg.Conv;
             ack.SN = srcMsg.SN;
             ack.Cmd = UdpProtocol.ACK;
@@ -248,7 +248,7 @@ namespace Cosmos
         /// <returns></returns>
         public static UdpNetMessage HeartbeatMessageC2S(long conv)
         {
-            var udpNetMsg = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
+            var udpNetMsg = ReferencePool.Accquire<UdpNetMessage>();
             udpNetMsg.Conv = conv;
             udpNetMsg.Cmd = UdpProtocol.MSG;
             udpNetMsg.Len = 0;
@@ -257,7 +257,7 @@ namespace Cosmos
         }
         public static UdpNetMessage EncodeMessage(long conv)
         {
-            var udpNetMsg = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
+            var udpNetMsg = ReferencePool.Accquire<UdpNetMessage>();
             udpNetMsg.Conv = conv;
             udpNetMsg.Cmd = UdpProtocol.MSG;
             udpNetMsg.Len = 0;
@@ -272,7 +272,7 @@ namespace Cosmos
         /// <returns>编码成功后的数据</returns>
         public static UdpNetMessage EncodeMessage(UdpHeader headerCode, byte[] message)
         {
-            var udpNetMsg = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
+            var udpNetMsg = ReferencePool.Accquire<UdpNetMessage>();
             udpNetMsg.Cmd = UdpProtocol.MSG;
             udpNetMsg.Len = 0;
             udpNetMsg.HeaderCode = headerCode;
@@ -285,7 +285,7 @@ namespace Cosmos
         /// </summary>
         public static UdpNetMessage EncodeMessage(long conv, byte[] message)
         {
-            var udpNetMsg = CosmosEntry.ReferencePoolManager.Spawn<UdpNetMessage>();
+            var udpNetMsg = ReferencePool.Accquire<UdpNetMessage>();
             udpNetMsg.Conv = conv;
             udpNetMsg.Cmd = UdpProtocol.MSG;
             udpNetMsg.Len = 0;

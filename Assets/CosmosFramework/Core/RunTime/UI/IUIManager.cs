@@ -14,128 +14,82 @@ namespace Cosmos
         /// UI根节点对象；
         /// </summary>
         GameObject UIRoot { get; }
-        /// <summary>
-        /// 设置UI根节点
-        /// </summary>
-        /// <param name="uiRoot">传入的UIRoot</param>
-        /// <param name="destroyOldOne">销毁旧的uiRoot对象</param>
         void SetUIRoot(GameObject uiRoot, bool destroyOldOne = false);
         void SetHelper(IUIFormHelper helper);
+        /// <summary>
+        /// 通过特性UIAssetAttribute加载Panel（同步）；
+        /// </summary>
+        /// <typeparam name="T">目标组件的type类型</typeparam>
+        /// <returns>生成的UI对象Comp</returns>
         T OpenUIForm<T>() where T : UIFormBase;
         /// <summary>
         ///  通过特性UIAssetAttribute加载Panel（同步）
         /// </summary>
-        /// <param name="type">目标组件的type类型</param>
+        /// <param name="uiType">目标组件的type类型</param>
         /// <returns>生成的UI对象Comp</returns>
-        UIFormBase OpenUIForm(Type type);
+        UIFormBase OpenUIForm(Type uiType);
         /// <summary>
-        ///  通过AssetInfo加载UI对象（同步）；
+        ///  通过UIAssetInfo加载UI对象（同步）；
         /// </summary>
         /// <typeparam name="T">目标组件的type类型</typeparam>
         /// <param name="assetInfo">传入的assetInfo对象</param>
         /// <returns>生成的UI对象Comp</returns>
-        T OpenUIForm<T>(AssetInfo assetInfo) where T : UIFormBase;
+         T OpenUIForm<T>(UIAssetInfo assetInfo) where T : UIFormBase;
         /// <summary>
-        /// 通过AssetInfo加载UI对象（同步）；
+        /// 通过UIAssetInfo加载UI对象（同步）；
         /// </summary>
         /// <param name="assetInfo">目标组件的type类型</param>
-        /// <param name="type">传入的assetInfo对象</param>
+        /// <param name="uiType">传入的assetInfo对象</param>
         /// <returns>生成的UI对象Comp</returns>
-        UIFormBase OpenUIForm(AssetInfo assetInfo, Type type);
+        UIFormBase OpenUIForm(UIAssetInfo assetInfo, Type uiType);
         /// <summary>
-        /// 通过特性UIAssetAttribute加载Panel
+        /// 通过特性UIAssetAttribute加载Panel（异步）；
         /// </summary>
         /// <typeparam name="T">带有UIAssetAttribute特性的panel类</typeparam>
-        /// <param name="callback">加载成功的回调。若失败，则不执行</param>
-        Coroutine OpenUIFormAsync<T>(Action<T> callback = null) where T : UIFormBase;
+        /// <param name="loadDoneCallback">加载成功的回调。若失败，则不执行</param>
+        /// <returns>协程对象</returns>
+        Coroutine OpenUIFormAsync<T>(Action<T> loadDoneCallback = null) where T : UIFormBase;
         /// <summary>
-        /// 通过AssetInfo加载UI对象
+        /// 通过UIAssetInfo加载UI对象（异步）；
         /// </summary>
         /// <param name="assetInfo">传入的assetInfo对象</param>
-        /// <param name="type">目标组件的type类型</param>
+        /// <param name="uiType">目标组件的type类型</param>
         /// <param name="loadDoneCallback">加载完成后的回调</param>
-        /// <returns></returns>
-        Coroutine OpenUIFormAsync(AssetInfo assetInfo, Type type, Action<UIFormBase> loadDoneCallback = null);
+        /// <returns>协程对象</returns>
+        Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<UIFormBase> loadDoneCallback = null);
         /// <summary>
-        /// 通过AssetInfo加载UI对象
+        /// 通过UIAssetInfo加载UI对象
         /// </summary>
         /// <typeparam name="T">目标UI组件</typeparam>
         /// <param name="assetInfo">传入的assetInfo对象</param>
         /// <param name="loadDoneCallback">加载完成后的回调</param>
-        Coroutine OpenUIFormAsync<T>(AssetInfo assetInfo, Action<T> loadDoneCallback = null) where T : UIFormBase;
+        /// <returns>协程对象</returns>
+        Coroutine OpenUIFormAsync<T>(UIAssetInfo assetInfo, Action<T> loadDoneCallback = null) where T : UIFormBase;
         /// <summary>
-        /// 通过特性UIAssetAttribute加载Panel
+        /// 通过特性UIAssetAttribute加载Panel（异步）；
         /// </summary>
         /// <param name="type">带有UIAssetAttribute特性的panel类</param>
         /// <param name="loadDoneCallback">加载成功的回调。若失败，则不执行</param>
-        /// <returns></returns>
+        /// <returns>协程对象</returns>
         Coroutine OpenUIFormAsync(Type type, Action<UIFormBase> loadDoneCallback = null);
+        void CloseUIForm(string uiAssetName);
         /// <summary>
         /// 隐藏UI，调用UI中的HidePanel方法；
         /// <see cref=" UIFormBase",>
         /// UIFormBase.UIName
         /// </summary>
-        /// <param name="uiName">UIFormBase.UIName</param>
-        void HideUIForm(string uiName);
-        void HideUIForm(UIFormBase uiForm);
-        void ShowUIForm(string uiName);
-        void ShowUIForm(UIFormBase uiForm);
-        /// <summary>
-        /// 移除UI，但是不销毁
-        /// <see cref=" UIFormBase",>
-        /// UIFormBase.UIName
-        /// </summary>
-        /// <param name="uiName">UIFormBase.UIName</param>
-        /// <param name="panel">移除后返回的panel</param>
-        void RemoveUIForm(string uiName, out UIFormBase panel);
-        /// <summary>
-        /// 移除UI，但是不销毁
-        /// <see cref=" UIFormBase",>
-        /// UIFormBase.UIName
-        /// </summary>
-        /// <param name="uiName">UIFormBase.UIName</param>
-        void RemoveUIForm(string uiName);
-        /// <summary>
-        /// 销毁UI
-        /// <see cref=" UIFormBase",>
-        /// UIFormBase.UIName
-        /// </summary>
-        /// <param name="uiName">UIFormBase.UIName</param>
-        void DestroyUlForm(string uiName);
-        void DestroyUlForm(UIFormBase uiForm);
+        /// <param name="uiAssetName">ui资源的名称</param>
+        void HideUIForm(string uiAssetName);
+        void ShowUIForm(string uiAssetName);
         /// <summary>
         /// 是否存在UI;
         /// <see cref=" UIFormBase",>
         /// UIFormBase.UIName
         /// </summary>
-        /// <param name="uiName">UIFormBase.UIName</param>
+        /// <param name="uiAssetName">ui资源的名称</param>
         /// <returns>存在的结果</returns>
-        bool HasUIForm(string uiName);
-        /// <summary>
-        /// 获得UI；
-        /// </summary>
-        /// <typeparam name="T">UIForm的类型</typeparam>
-        /// <param name="uiName">UI的名称</param>
-        /// <returns>UI对象组件</returns>
-        T PeekUIForm<T>(string uiName) where T : UIFormBase;
-        /// <summary>
-        /// 获得UI；
-        /// </summary>
-        /// <param name="uiType">UIForm的类型</param>
-        /// <param name="uiName">UI的名称</param>
-        /// <returns>UI对象组件</returns>
-        UIFormBase PeekUIForm(Type uiType, string uiName);
-        /// <summary>
-        /// 注册UI；
-        /// UIFormBase.UIName
-        /// </summary>
-        /// <param name="uiForm">UI对象</param>
-        void RegisterUIForm(UIFormBase uiForm);
-        /// <summary>
-        /// 注销UI;
-        /// UIFormBase.UIName
-        /// </summary>
-        /// <param name="uiForm">UI对象</param>
-        void DeregisterUIForm(UIFormBase uiForm);
+        bool HasUIForm(string uiAssetName);
+        T PeekUIForm<T>(string uiAssetName) where T : UIFormBase;
+        UIFormBase PeekUIForm(string uiAssetName);
     }
 }

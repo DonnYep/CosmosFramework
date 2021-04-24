@@ -1,5 +1,4 @@
 ﻿using Cosmos.Network;
-using Cosmos.Reference;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,14 +13,11 @@ namespace Cosmos
         /// 轮询委托
         /// </summary>
         UdpClientPeer peer;
-        IReferencePoolManager referencePoolManager;
         public UdpClientService() : base()
         {
             //构造传入0表示接收任意端口收发的数据
             peer = new UdpClientPeer(OnConnectHandler, OnDisconnectHandler, OnReceiveDataHandler);
             peer.SetValue(SendMessageAsync, Disconnect, 0, null);
-            referencePoolManager = GameManager.GetModule<IReferencePoolManager>();
-
         }
         void OnConnectHandler()
         {
@@ -78,7 +74,7 @@ namespace Cosmos
                 UdpReceiveResult data;
                 if (awaitHandle.TryDequeue(out data))
                 {
-                    UdpNetMessage netMsg = referencePoolManager.Spawn<UdpNetMessage>();
+                    UdpNetMessage netMsg = ReferencePool.Accquire<UdpNetMessage>();
                     netMsg.DecodeMessage(data.Buffer);
                     if (Conv == 0)
                     {

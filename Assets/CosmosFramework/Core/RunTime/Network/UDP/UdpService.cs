@@ -8,7 +8,6 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using Cosmos;
-using Cosmos.Reference;
 namespace Cosmos.Network
 {
     /// <summary>

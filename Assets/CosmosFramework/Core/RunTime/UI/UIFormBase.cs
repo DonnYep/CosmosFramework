@@ -10,6 +10,7 @@ namespace Cosmos.UI
     [DisallowMultipleComponent]
     public abstract class UIFormBase : MonoBehaviour
     {
+        public virtual bool IsTemporaryForm { get; protected set; }
         /// <summary>
         /// 设置 UIForm层级顺序 ；
         /// 默认优先级为100，取值区间为[0,10000]；

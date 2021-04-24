@@ -7,8 +7,15 @@ namespace Cosmos
 {
     public class UIAssetAttribute : PrefabAssetAttribute
     {
-        public UIAssetAttribute(string resourcePath) : base(resourcePath) { }
-        public UIAssetAttribute(string assetBundleName, string assetPath, string resourcePath)
-            : base(assetBundleName, assetPath, resourcePath) { }
+        public string UIAssetName { get; private set; }
+        public UIAssetAttribute(string uiAssetName, string resourcePath) : base(resourcePath) 
+        {
+            this.UIAssetName = uiAssetName;
+        }
+        public UIAssetAttribute(string uiAssetName, string assetBundleName, string assetPath, string resourcePath)
+            : base(assetBundleName, assetPath, resourcePath)
+        {
+            this.UIAssetName = uiAssetName;
+        }
     }
 }

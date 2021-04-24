@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-using Cosmos.Reference;
 namespace Cosmos.FSM{
     //type.ToString()输出一个完全限定名，尝试使用反射机制获得对象
     public sealed class FSM<T> : FSMBase,IFSM<T>,IReference
@@ -35,7 +34,7 @@ namespace Cosmos.FSM{
             if (states == null || states.Length < 1)
                 throw new ArgumentNullException("FSM owner is invalid");
             //从引用池获得同类
-            FSM<T> fsm = GameManager.GetModule<IReferencePoolManager>().Spawn<FSM<T>>();
+            FSM<T> fsm =ReferencePool.Accquire<FSM<T>>();
             fsm.Name = name;
             fsm.Owner = owner;
             fsm.IsDestoryed = false;
@@ -59,7 +58,7 @@ namespace Cosmos.FSM{
             if (states == null || states.Count < 1)
                 throw new ArgumentNullException("FSM owner is invalid");
             //从引用池获得同类
-            FSM<T> fsm =GameManager.GetModule<IReferencePoolManager>().Spawn<FSM<T>>();
+            FSM<T> fsm = ReferencePool.Accquire<FSM<T>>();
             fsm.Name = name;
             fsm.Owner = owner;
             fsm.IsDestoryed = false;
@@ -149,7 +148,7 @@ namespace Cosmos.FSM{
         }
         public override void Shutdown()
         {
-           GameManager.GetModule<IReferencePoolManager>().Despawn(this);
+            ReferencePool.Release(this);
         }
         #endregion
         #region State

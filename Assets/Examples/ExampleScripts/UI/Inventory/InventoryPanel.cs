@@ -9,7 +9,7 @@ namespace Cosmos.Test
     /// <summary>
     /// 仅测试
     /// </summary>
-    [UIAsset("UI/InventoryPanel")]
+    [UIAsset(nameof(InventoryPanel), "UI/InventoryPanel")]
     public class InventoryPanel : UIResidentForm
     {
         Text txtDescription;
