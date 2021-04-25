@@ -95,9 +95,9 @@ namespace Cosmos
                 value.y = (float)Math.Round(value.y, decimals);
                 return value;
             }
-            public static T Get<T>(Transform go ) where T : Component
+            public static T Get<T>(Transform go) where T : Component
             {
-                return   go.GetComponent<T>();
+                return go.GetComponent<T>();
             }
             /// <summary>
             /// 添加目标组件；默认不移除组件;
@@ -191,7 +191,7 @@ namespace Cosmos
             /// <returns>返回添加的目标组件</returns>
             public static T Add<T>(Transform go, bool removeExistComp = false) where T : Component
             {
-                return Add<T>(go.gameObject,removeExistComp);
+                return Add<T>(go.gameObject, removeExistComp);
             }
             public static T Add<T>(Transform go, string subNode, bool removeExistComp = false) where T : Component
             {
@@ -241,11 +241,14 @@ namespace Cosmos
             }
             public static GameObject Child(Transform go, string subNode)
             {
-                Transform tran = go.Find(subNode);
-                if (tran != null)
-                    return tran.gameObject;
-                else
-                    return null;
+                var trans = go.GetComponentsInChildren<Transform>();
+                var length = trans.Length;
+                for (int i = 1; i < length; i++)
+                {
+                    if (trans[i].name.Equals(subNode))
+                        return trans[i].gameObject;
+                }
+                return null;
             }
             /// <summary>
             /// 查找所有符合名称的子节点
@@ -253,7 +256,7 @@ namespace Cosmos
             /// <param name="go">目标对象</param>
             /// <param name="subNode">子级别目标对象名称</param>
             /// <returns>名字符合的对象数组</returns>
-            public static GameObject[] Childs (Transform go, string subNode)
+            public static GameObject[] Childs(Transform go, string subNode)
             {
                 var trans = go.GetComponentsInChildren<Transform>();
                 List<GameObject> subGos = new List<GameObject>();
@@ -277,7 +280,7 @@ namespace Cosmos
             /// <param name="sceneName">传入的场景名</param>
             /// <param name="predicate">查找条件</param>
             /// <returns>查找到的对象</returns>
-            public  static GameObject FindSceneGameObject(string sceneName, Func<GameObject, bool> predicate)
+            public static GameObject FindSceneGameObject(string sceneName, Func<GameObject, bool> predicate)
             {
                 var scene = SceneManager.GetSceneByName(sceneName);
                 return scene.GetRootGameObjects().FirstOrDefault(predicate);
@@ -368,9 +371,9 @@ namespace Cosmos
             /// <typeparam name="K">排序的值</typeparam>
             /// <param name="comps">传入的组件数组</param>
             /// <param name="handler">处理的方法</param>
-            public static void SortCompsByAscending<T,K>(T [] comps,Func<T,K>handler)
-                where K:IComparable<K>
-                where T:Component
+            public static void SortCompsByAscending<T, K>(T[] comps, Func<T, K> handler)
+                where K : IComparable<K>
+                where T : Component
             {
                 Utility.Algorithm.SortByAscend(comps, handler);
                 var length = comps.Length;
