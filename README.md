@@ -1,5 +1,6 @@
 # CosmosFramework
-CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块、算法工具类等。自定义模块可与原生模块完全同等优先级，共享相同的生命周期。
+
+CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块、算法工具类等。自定义扩展模块享有与原生模块完全相同的权限与生命周期。
 
 ## Master、V0.1分支暂停维护，稳定版请使用V1.0，最新内容请切换到V1.1!
 
@@ -43,9 +44,9 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 ## 内置数据、工具
 
-- **Utility**：提供了反射、算法、断言、转换、Debug富文本、IO、加密、Json、MessagePack、Time、Text、Unity等常用工具函数。是非常实用的工具包。
+- **Utility**：提供了反射、算法、断言、转换、Debug富文本、IO、加密、Json、MessagePack、Time、Text、Unity等常用工具函数。
 
-- **Singleton**：单例基类。提供了线程安全、非线程安全、MONO单例基类。使用时仅继承即可。
+- **Singleton**：单例基类。提供了线程安全、非线程安全、MONO单例基类。
 
 - **DataStructure**：常用数据结构。链表、双向链表、二叉树、LRU、线程锁等数据结构。
 
@@ -53,26 +54,42 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **Extension**：静态扩展工具。提供unity的扩展以及.NETCore对unity.NET的扩展。
 
--**EventCore** ：轻量级事件模块，可自定义监听的数据类型；
+- **EventCore** ：轻量级事件模块，可自定义监听的数据类型；
+
+- **ReferencePool** ：全局引用池模块；
+
+- **Editor** ：Editor中提供了在Hierarchy常用检索对象、组件的方法，EditorConfig提供了代码生成是自动创建代码标头的功能；
 
 ## 内置软件架构 MVVM
 
-- MVVM是基于PureMVC改进的更适于理解的软件架构。对Command、Mediator、Proxy注册使用基本与PureMVC相同。框架提供了基于特性更加简洁的注册方式，即：MVVMCommandAttribute、MVVMMediatorAttribute、MVVMProxyAttribute分别对应各自的注册类型，在入口调用MVVM.RegisterAttributedMVVM()方法即可。
+- MVVM是基于PureMVC改进的更适于理解的软件架构。对Command、Mediator、Proxy注册使用基本与PureMVC相同。
+    框架提供了基于特性更加简洁的注册方式：
+    1、MVVMCommandAttribute，对应Command，即C或MV层；
+    2、MVVMMediatorAttribute，对应Mediator，即V层；
+    3、MVVMProxyAttribute，对应Proxy，即M层；
+    自动注册只需在入口调用MVVM.RegisterAttributedMVVM()方法即可。
 
 - 需要注意，MVVM.RegisterAttributedMVVM()方法需要传入对应的程序集。目前已经验证跨程序集反射MVVM成员是可行且稳定的。
 
 ## 注意事项
 
-- 所有带Default开头的模块、方法，都需要在开始时都需要传入其对应的默认类型的Hepler传入。
+- 自定义模块请参考原生模块的写法：
+    1、继承自Module，并打上ModuleAttribute的特性。
+    2、自定义一个与模块类名相同的接口，此接口派生自IModuleManager。
+    3、在此接口写入需要开放给外部调用的方法属性等。
 
-- 框架的AB方案正在开发中。
+- 部分带有Helper的模块可由使用者进行自定义实现，也可使用提供的Default对象；
+
+- 框架的AB方案正在开发中；
 
 - 框架提供第三方适配，如Utility.Json，用户可自定义任意JSON方案。框架建议使用的高速传输协议为MessagePack，包含适配方案。
 MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
-- 默认请使用 V1.0 版本，V0.1 已经停止维护。Master暂停维护，所有最新的功能都在V1.0中。
+- 最新请使用 V1.1 版本，稳定版请使用V1.0。V0.1 已经停止维护。Master暂停维护。
 
 - 内置案例地址：Assets\Examples\ExampleScripts 。
+
+- 数据结构中，提供了池的的底层对象“Pool”，框架中的对象池与引用池皆为“Pool”作为底层实现；
 
 ## 其他
 
@@ -85,5 +102,3 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
 - 服务器版本的KCP与客户端版本的KCP皆为参考自Mirror。
     Mirror地址:https://github.com/vis2k/Mirror
-
-
