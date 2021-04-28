@@ -11,10 +11,6 @@ namespace Cosmos.CosmosEditor
     {
         static readonly Vector2 wizardSize = new Vector2( 512, 368);
         [MenuItem("Cosmos/CFrameworkWizard")]
-        public static void CosmosFrameworkWizardWindow()
-        {
-            OpenWindow();
-        }
         public static void OpenWindow()
         {
             var window = GetWindow<CosmosFrameworkWizard>();

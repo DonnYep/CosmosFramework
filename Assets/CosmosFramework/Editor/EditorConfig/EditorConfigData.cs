@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
 namespace Cosmos.CosmosEditor
 {
@@ -12,7 +11,7 @@ namespace Cosmos.CosmosEditor
         public string LogOutputDirectory;
         public bool EnableScriptHeader;
         public string HeaderAuthor;
-        public void ResetEditorData()
+        public void Dispose()
         {
             ConsoleDebugLog = false;
             OutputDebugLog = false;

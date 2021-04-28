@@ -10,15 +10,11 @@ namespace Cosmos.CosmosEditor
 {
     public class ComponentReferenceWindow:EditorWindow{
         [MenuItem("Cosmos/ComponentReference")]
-        public static void OpenReferenceToolWindow()
-        {
-            OpenWindow();
-        }
         public static void OpenWindow()
         {
             var window = GetWindow<ComponentReferenceWindow>();
-            ((EditorWindow)window).maxSize = EditorUtility.CosmosMaxWinSize;
-            ((EditorWindow)window).minSize = EditorUtility.CosmosDevWinSize;
+            ((EditorWindow)window).maxSize = CosmosEditorUtility.CosmosMaxWinSize;
+            ((EditorWindow)window).minSize = CosmosEditorUtility.CosmosDevWinSize;
         }
        public ComponentReferenceWindow()
         {
@@ -51,9 +47,11 @@ namespace Cosmos.CosmosEditor
         int missCompTransCount;
 
         int selectedBar =0;
+        string[] barArray = new string[] { "MonoReference", "ChildCount", "MonoCount", "FindByName", "MissingComp" };
+
         private void OnGUI()
         {
-            selectedBar = GUILayout.Toolbar(selectedBar, new[] { "MonoReference" , "ChildCount", "MonoCount","FindByName","MissingComp" },GUILayout.Height(24));
+            selectedBar = GUILayout.Toolbar(selectedBar, barArray, GUILayout.Height(24));
             GUILayout.Space(16);
             switch (selectedBar)
             {

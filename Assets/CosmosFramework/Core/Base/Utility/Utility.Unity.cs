@@ -290,7 +290,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="sceneName">场景名</param>
             /// <returns>是否被加载</returns>
-            public static bool SceneIsLoaded(string sceneName)
+            public static bool IsSceneLoaded(string sceneName)
             {
                 var scene = SceneManager.GetSceneByName(sceneName);
                 if (scene != null)

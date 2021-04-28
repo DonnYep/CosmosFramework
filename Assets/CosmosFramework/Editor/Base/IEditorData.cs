@@ -1,13 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System;
 namespace Cosmos.CosmosEditor 
 {
     /// <summary>
     /// Editor数据接口；
     /// </summary>
-    public interface IEditorData
+    public interface IEditorData:IDisposable
     {
-        void ResetEditorData();
     }
 }

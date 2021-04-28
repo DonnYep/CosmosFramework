@@ -3,13 +3,34 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-
+using System;
 namespace Cosmos
 {
     public static partial class Utility
     {
         public static class IO
         {
+            /// <summary>
+            /// 遍历文件夹下的文件；
+            /// </summary>
+            /// <param name="folderPath">文件夹路径</param>
+            /// <param name="handler">遍历到一个文件时的处理的函数</param>
+            public static void TraverseFolderFile(string folderPath,Action<FileSystemInfo> handler)
+            {
+                DirectoryInfo d = new DirectoryInfo(folderPath);
+                FileSystemInfo[] fsInfoArr = d.GetFileSystemInfos();
+                foreach (FileSystemInfo fsInfo in fsInfoArr)
+                {
+                    if (fsInfo is DirectoryInfo)     //判断是否为文件夹
+                    {
+                        TraverseFolderFile(fsInfo.FullName,handler);//递归调用
+                    }
+                    else
+                    {
+                        handler(fsInfo);
+                    }
+                }
+            }
             public static void CreateFolder(string path)
             {
                 var dir = new DirectoryInfo(path);
@@ -77,6 +98,13 @@ namespace Cosmos
                         DeleteFolder(folder.FullName);
                     }
                     directory.Delete();
+                }
+            }
+            public static void DeleteFile(string fileFullPath)
+            {
+                if (File.Exists(fileFullPath))
+                {
+                    File.Delete(fileFullPath);
                 }
             }
             /// <summary>
