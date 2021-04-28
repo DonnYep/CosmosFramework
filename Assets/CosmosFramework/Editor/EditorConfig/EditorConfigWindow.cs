@@ -26,13 +26,13 @@ namespace Cosmos.CosmosEditor
         {
             try
             {
-                EditorConfigData = CosmosEditorUtility.ReadEditorConfig<EditorConfigData>(EditorConfigFileName);
+                EditorConfigData = CosmosEditorUtility.ReadEditorData<EditorConfigData>(EditorConfigFileName);
             }
             catch
             {
                 CosmosEditorUtility.LogInfo("未能获取EditorConfigData");
                 EditorConfigData = new EditorConfigData();
-                CosmosEditorUtility.WriteEditorConfig(EditorConfigFileName, EditorConfigData);
+                CosmosEditorUtility.WriteEditorData(EditorConfigFileName, EditorConfigData);
             }
         }
         static readonly string EditorConfigFileName = "EditorConfig.Json";
@@ -76,7 +76,7 @@ namespace Cosmos.CosmosEditor
         {
             try
             {
-                CosmosEditorUtility.WriteEditorConfig(EditorConfigFileName, EditorConfigData == null ? new EditorConfigData() : EditorConfigData);
+                CosmosEditorUtility.WriteEditorData(EditorConfigFileName, EditorConfigData == null ? new EditorConfigData() : EditorConfigData);
                 CosmosEditorUtility.LogInfo("设置 CosmosFramework EditorConfigData 成功 ");
             }
             catch(Exception e)
@@ -90,7 +90,7 @@ namespace Cosmos.CosmosEditor
             {
                 //EditorUtility.ReadEditorConfig(EditorConfigFileName);
                 //var filePath = Utility.IO.CombineRelativeFilePath(EditorConfigFileName, EditorUtility.LibraryCachePath);
-                var cfgStr = CosmosEditorUtility.ReadEditorConfig(EditorConfigFileName);
+                var cfgStr = CosmosEditorUtility.ReadEditorDataJson(EditorConfigFileName);
                 EditorConfigData = JsonUtility.FromJson<EditorConfigData>(cfgStr.ToString());
                 CosmosEditorUtility.LogInfo("重置 CosmosFramework EditorConfigData 成功");
             }

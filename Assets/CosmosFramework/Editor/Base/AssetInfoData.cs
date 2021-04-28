@@ -6,17 +6,20 @@ namespace Cosmos.CosmosEditor
     [Serializable]
     public class AssetInfoData : IEditorData
     {
+        public int AssetCount;
         public List<AssetInfo> AssetInfos;
-        public void AddAssetInfo(string assetName,string assetExtension,string assetPath)
+        public void AddAssetInfo(string assetName, string assetExtension, string assetPath)
         {
-         var info=   new AssetInfo() { AssetExtension = assetExtension, AssetName = assetName, AssetPath = assetPath };
+            var info = new AssetInfo() { AssetExtension = assetExtension, AssetName = assetName, AssetPath = assetPath };
             if (AssetInfos == null)
                 AssetInfos = new List<AssetInfo>();
-            AssetInfos.Add(info); ; ;
+            AssetInfos.Add(info);
+            AssetCount = AssetInfos.Count;
         }
         public void Dispose()
         {
-            AssetInfos.Clear(); ;
+            AssetCount = 0;
+            AssetInfos?.Clear();
         }
         [Serializable]
         public class AssetInfo

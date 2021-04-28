@@ -6,9 +6,6 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using Object = UnityEngine.Object;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 # if UNITY_EDITOR
 namespace Cosmos.CosmosEditor
 {
@@ -48,32 +45,32 @@ namespace Cosmos.CosmosEditor
             }
             return libraryPath;
         }
-        public static void WriteEditorConfig<T>(string fileName, T editorData)
+        public static void WriteEditorData<T>(string fileName, T editorData)
             where T: IEditorData
         {
               var jsom= JsonUtility.ToJson(editorData,true);
-            WriteEditorConfig(fileName, jsom);
+            WriteEditorDataJson(fileName, jsom);
         }
-        public static void WriteEditorConfig(string fileName,string context)
+        public static void WriteEditorDataJson(string fileName,string context)
         {
-             Utility.IO.WriterFormattedBinary(CosmosEditorUtility.LibraryCachePath, fileName, context);
+             Utility.IO.OverwriteTextFile(LibraryCachePath, fileName, context);
         }
-        public static T ReadEditorConfig<T>(string fileName)
+        public static T ReadEditorData<T>(string fileName)
             where T:IEditorData
         {
-            var json = ReadEditorConfig(fileName);
+            var json = ReadEditorDataJson(fileName);
             var obj = JsonUtility.FromJson<T>(json);
             return obj;
         }
-        public static string ReadEditorConfig(string fileName)
+        public static string ReadEditorDataJson(string fileName)
         {
-            var filePath = Utility.IO.CombineRelativeFilePath(fileName, CosmosEditorUtility.LibraryCachePath);
-            var cfgStr = Utility.IO.ReadFormattedBinary(filePath);
+            var filePath = Utility.IO.CombineRelativeFilePath(fileName, LibraryCachePath);
+            var cfgStr = Utility.IO.ReadTextFileContent(filePath);
             return cfgStr.ToString();
         }
-        public static void ClearEditorConfig(string fileName)
+        public static void ClearEditorData(string fileName)
         {
-            var filePath = Utility.IO.CombineRelativeFilePath(fileName, CosmosEditorUtility.LibraryCachePath);
+            var filePath = Utility.IO.CombineRelativeFilePath(fileName, LibraryCachePath);
             Utility.IO.DeleteFile(filePath);
         }
         public static string GetDefaultLogOutputDirectory()
@@ -88,13 +85,6 @@ namespace Cosmos.CosmosEditor
                 Debug.Log($"<b><color={MessageColor.CYAN}>{"[EDITOR-INFO]-->>"} </color></b>{msg}");
             else
                 Debug.Log($"<b><color={MessageColor.CYAN}>{"[EDITOR-INFO]-->>"}</color></b>{msg}", context as Object);
-        }
-        public static void LogInfo(object msg, string msgColor, object context = null)
-        {
-            if (context == null)
-                Debug.Log($"<b><color={msgColor }>{"[EDITOR-INFO]-->>"}</color></b>{msg}");
-            else
-                Debug.Log($"<b><color={msgColor }>{"[EDITOR-INFO]-->>"}</color></b>{msg}", context as Object);
         }
         public static void LogWarning(object msg, object context = null)
         {
