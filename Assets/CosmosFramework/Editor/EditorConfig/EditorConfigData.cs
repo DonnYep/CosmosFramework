@@ -12,7 +12,8 @@ namespace Cosmos.CosmosEditor
         public string LogOutputDirectory;
         public bool EnableScriptHeader;
         public string HeaderAuthor;
-        public void ResetEditorData()
+
+        public void Dispose()
         {
             ConsoleDebugLog = false;
             OutputDebugLog = false;

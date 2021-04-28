@@ -12,7 +12,7 @@ using UnityEditor;
 # if UNITY_EDITOR
 namespace Cosmos.CosmosEditor
 {
-    public sealed class EditorUtility
+    public static class CosmosEditorUtility
     {
         static readonly Vector2 cosmosDevWinSize = new Vector2(512f, 384f);
         static readonly Vector2 cosmosMaxWinSize = new Vector2(768f, 768f);
@@ -22,7 +22,7 @@ namespace Cosmos.CosmosEditor
         {
             get
             {
-                return Utility.IO.CombineRelativePath( LibraryPath(), "CosmosFramework"); ;
+                return Utility.IO.CombineRelativePath(LibraryPath(), "CosmosFramework"); ;
             }
         }
         /// <summary>
@@ -49,17 +49,17 @@ namespace Cosmos.CosmosEditor
             return libraryPath;
         }
         public static void WriteEditorConfig<T>(string fileName, T editorData)
-            where T: IEditorData
+            where T : IEditorData
         {
-              var jsom= JsonUtility.ToJson(editorData);
+            var jsom = JsonUtility.ToJson(editorData, true);
             WriteEditorConfig(fileName, jsom);
         }
-        public static void WriteEditorConfig(string fileName,string context)
+        public static void WriteEditorConfig(string fileName, string context)
         {
-             Utility.IO.WriterFormattedBinary(EditorUtility.LibraryCachePath, fileName, context);
+            Utility.IO.WriterFormattedBinary(CosmosEditorUtility.LibraryCachePath, fileName, context);
         }
         public static T ReadEditorConfig<T>(string fileName)
-            where T:IEditorData
+            where T : IEditorData
         {
             var json = ReadEditorConfig(fileName);
             var obj = JsonUtility.FromJson<T>(json);
@@ -67,9 +67,14 @@ namespace Cosmos.CosmosEditor
         }
         public static string ReadEditorConfig(string fileName)
         {
-            var filePath = Utility.IO.CombineRelativeFilePath(fileName, EditorUtility.LibraryCachePath);
+            var filePath = Utility.IO.CombineRelativeFilePath(fileName, CosmosEditorUtility.LibraryCachePath);
             var cfgStr = Utility.IO.ReadFormattedBinary(filePath);
             return cfgStr.ToString();
+        }
+        public static void ClearEditorConfig(string fileName)
+        {
+            var filePath = Utility.IO.CombineRelativeFilePath(fileName, CosmosEditorUtility.LibraryCachePath);
+            Utility.IO.DeleteFile(filePath);
         }
         public static string GetDefaultLogOutputDirectory()
         {
@@ -80,37 +85,37 @@ namespace Cosmos.CosmosEditor
         public static void LogInfo(object msg, object context = null)
         {
             if (context == null)
-                Debug.Log($"<b><color={MessageColor.CYAN}>{"[EDITOR INFO]-->>"} </color></b>{msg}");
+                Debug.Log($"<b><color={MessageColor.CYAN}>{"[EDITOR-INFO]-->>"} </color></b>{msg}");
             else
-                Debug.Log($"<b><color={MessageColor.CYAN}>{"[EDITOR INFO]-->>"}</color></b>{msg}", context as Object);
+                Debug.Log($"<b><color={MessageColor.CYAN}>{"[EDITOR-INFO]-->>"}</color></b>{msg}", context as Object);
         }
         public static void LogInfo(object msg, string msgColor, object context = null)
         {
             if (context == null)
-                Debug.Log($"<b><color={msgColor }>{"[EDITOR INFO]-->>"}</color></b>{msg}");
+                Debug.Log($"<b><color={msgColor }>{"[EDITOR-INFO]-->>"}</color></b>{msg}");
             else
-                Debug.Log($"<b><color={msgColor }>{"[EDITOR INFO]-->>"}</color></b>{msg}", context as Object);
+                Debug.Log($"<b><color={msgColor }>{"[EDITOR-INFO]-->>"}</color></b>{msg}", context as Object);
         }
         public static void LogWarning(object msg, object context = null)
         {
             if (context == null)
-                Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[EDITOR WARNING]-->>" }</color></b>{msg}");
+                Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[EDITOR-WARNING]-->>" }</color></b>{msg}");
             else
-                Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[EDITOR WARNING]-->>" }</color></b>{msg}", context as Object);
+                Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[EDITOR-WARNING]-->>" }</color></b>{msg}", context as Object);
         }
         public static void LogError(object msg, object context = null)
         {
             if (context == null)
-                Debug.LogError($"<b><color={MessageColor.RED}>{"[EDITOR ERROR]-->>"} </color></b>{msg}");
+                Debug.LogError($"<b><color={MessageColor.RED}>{"[EDITOR-ERROR]-->>"} </color></b>{msg}");
             else
-                Debug.LogError($"<b><color={MessageColor.RED}>{"[EDITOR ERROR]-->>"}</color></b>{msg}", context as Object);
+                Debug.LogError($"<b><color={MessageColor.RED}>{"[EDITOR-ERROR]-->>"}</color></b>{msg}", context as Object);
         }
         public static void LogFatal(object msg, object context = null)
         {
             if (context == null)
-                Debug.LogError($"<b><color={MessageColor.RED}>{ "[EDITOR FATAL]-->>" }</color></b>{msg}");
+                Debug.LogError($"<b><color={MessageColor.RED}>{ "[EDITOR-FATAL]-->>" }</color></b>{msg}");
             else
-                Debug.LogError($"<b><color={MessageColor.RED}>{ "[EDITOR FATAL]-->>" }</color></b>{msg}", context as Object);
+                Debug.LogError($"<b><color={MessageColor.RED}>{ "[EDITOR-FATAL]-->>" }</color></b>{msg}", context as Object);
         }
     }
 }

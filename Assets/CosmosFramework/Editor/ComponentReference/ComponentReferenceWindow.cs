@@ -17,8 +17,8 @@ namespace Cosmos.CosmosEditor
         public static void OpenWindow()
         {
             var window = GetWindow<ComponentReferenceWindow>();
-            ((EditorWindow)window).maxSize = EditorUtility.CosmosMaxWinSize;
-            ((EditorWindow)window).minSize = EditorUtility.CosmosDevWinSize;
+            ((EditorWindow)window).maxSize = CosmosEditorUtility.CosmosMaxWinSize;
+            ((EditorWindow)window).minSize = CosmosEditorUtility.CosmosDevWinSize;
         }
        public ComponentReferenceWindow()
         {
