@@ -12,7 +12,8 @@ namespace Cosmos.Resource
     {
         Resource = 0,
         AssetBundle = 1,
-        Addressable=2
+        Addressable=2,
+        QuarkAsset=2
     }
     [Module]
     internal sealed class ResourceManager : Module,IResourceManager

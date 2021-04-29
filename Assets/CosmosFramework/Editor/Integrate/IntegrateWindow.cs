@@ -25,7 +25,7 @@ namespace Cosmos.CosmosEditor
         {
             this.titleContent = new GUIContent("Integrate");
         }
-        [MenuItem("Cosmos/Integrate")]
+        [MenuItem("Window/Cosmos/Integrate")]
         public static void OpenIntegrateWindow()
         {
             var window = GetWindow<IntegrateWindow>();

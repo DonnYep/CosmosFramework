@@ -6,7 +6,8 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using Object = UnityEngine.Object;
-# if UNITY_EDITOR
+using UnityEditor;
+#if UNITY_EDITOR
 namespace Cosmos.CosmosEditor
 {
     public static class CosmosEditorUtility
@@ -15,13 +16,6 @@ namespace Cosmos.CosmosEditor
         static readonly Vector2 cosmosMaxWinSize = new Vector2(768f, 768f);
         public static Vector2 CosmosDevWinSize { get { return cosmosDevWinSize; } }
         public static Vector2 CosmosMaxWinSize { get { return cosmosMaxWinSize; } }
-        public static string LibraryCachePath
-        {
-            get
-            {
-                return Utility.IO.CombineRelativePath( LibraryPath(), "CosmosFramework"); ;
-            }
-        }
         /// <summary>
         /// 刷新unity编辑器；
         /// </summary>
@@ -29,48 +23,36 @@ namespace Cosmos.CosmosEditor
         {
             UnityEditor.AssetDatabase.Refresh();
         }
-        public static string LibraryPath()
+        /// <summary>
+        /// 写入方式为覆写；
+        /// 对象数据会被存储为json；
+        /// </summary>
+        public static void SaveData<T>(string fileName, T editorData)
+            where T : class,new()
         {
-            var editorPath = new DirectoryInfo(Application.dataPath);
-            var parentPath = editorPath.Parent;
-            var dirs = parentPath.GetDirectories();
-            string libraryPath = "";
-            for (int i = 0; i < dirs.Length; i++)
-            {
-                if (dirs[i].Name == "Library")
-                {
-                    libraryPath = dirs[i].FullName;
-                    return libraryPath;
-                }
-            }
-            return libraryPath;
+            var json =JsonUtility.ToJson(editorData, true);
+            SaveDataJson(fileName, json);
         }
-        public static void WriteEditorData<T>(string fileName, T editorData)
-            where T: IEditorData
+        public static void SaveDataJson(string fileName, string context)
         {
-              var jsom= JsonUtility.ToJson(editorData,true);
-            WriteEditorDataJson(fileName, jsom);
+            Utility.IO.OverwriteTextFile(ApplicationConst.LibraryPath, fileName, context);
         }
-        public static void WriteEditorDataJson(string fileName,string context)
+        public static T GetData<T>(string fileName)
+            where T : class,new()
         {
-             Utility.IO.OverwriteTextFile(LibraryCachePath, fileName, context);
-        }
-        public static T ReadEditorData<T>(string fileName)
-            where T:IEditorData
-        {
-            var json = ReadEditorDataJson(fileName);
+            var json = GetDataJson(fileName);
             var obj = JsonUtility.FromJson<T>(json);
             return obj;
         }
-        public static string ReadEditorDataJson(string fileName)
+        public static string GetDataJson(string fileName)
         {
-            var filePath = Utility.IO.CombineRelativeFilePath(fileName, LibraryCachePath);
+            var filePath = Utility.IO.CombineRelativeFilePath(fileName, ApplicationConst.LibraryPath);
             var cfgStr = Utility.IO.ReadTextFileContent(filePath);
             return cfgStr.ToString();
         }
-        public static void ClearEditorData(string fileName)
+        public static void ClearData(string fileName)
         {
-            var filePath = Utility.IO.CombineRelativeFilePath(fileName, LibraryCachePath);
+            var filePath = Utility.IO.CombineRelativeFilePath(fileName, ApplicationConst.LibraryPath);
             Utility.IO.DeleteFile(filePath);
         }
         public static string GetDefaultLogOutputDirectory()
@@ -78,6 +60,18 @@ namespace Cosmos.CosmosEditor
             DirectoryInfo info = new DirectoryInfo(Application.dataPath);
             string path = info.Parent.FullName;
             return path;
+        }
+        public static void DrawVerticalContext(Action context)
+        {
+            GUILayout.BeginVertical();
+            context?.Invoke();
+            GUILayout.EndVertical();
+        }
+        public static void DrawHorizontalContext(Action context)
+        {
+            GUILayout.BeginHorizontal();
+            context?.Invoke();
+            GUILayout.EndHorizontal();
         }
         public static void LogInfo(object msg, object context = null)
         {

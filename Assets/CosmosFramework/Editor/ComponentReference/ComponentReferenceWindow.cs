@@ -9,7 +9,7 @@ using UnityEditor;
 namespace Cosmos.CosmosEditor
 {
     public class ComponentReferenceWindow:EditorWindow{
-        [MenuItem("Cosmos/ComponentReference")]
+        [MenuItem("Window/Cosmos/ComponentReference")]
         public static void OpenWindow()
         {
             var window = GetWindow<ComponentReferenceWindow>();
