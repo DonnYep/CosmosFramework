@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
-using Cosmos.Test;
 using Cosmos.QuarkAsset;
 namespace Cosmos.CosmosEditor
 {
