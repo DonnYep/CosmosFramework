@@ -14,49 +14,31 @@ namespace Cosmos.CosmosEditor
         static bool isDebugMode;
         static bool logPathExists = false;
         public static EditorConfigData EditorConfigData { get; private set; }
-        [InitializeOnLoadMethod]
-        public static void LoadData()
-        {
-            try
-            {
-                EditorConfigData = CosmosEditorUtility.ReadEditorConfig<EditorConfigData>(EditorConfigFileName);
-            }
-            catch
-            {
-                CosmosEditorUtility.LogInfo("未能获取EditorConfigData");
-                EditorConfigData = new EditorConfigData();
-                CosmosEditorUtility.WriteEditorConfig(EditorConfigFileName, EditorConfigData);
-            }
-        }
-        static readonly string EditorConfigFileName = "EditorConfig.Json";
-        public EditorConfigWindow()
-        {
-            this.titleContent = new GUIContent("EditorConfig");
-
-        }
-        [MenuItem("Cosmos/EditorConfig")]
-        public static void ApplicationConfigWindow()
-        {
-            OpenWindow();
-        }
+        [MenuItem("Window/Cosmos/EditorConfig")]
         public static void OpenWindow()
         {
             var window = GetWindow<EditorConfigWindow>();
             ((EditorWindow)window).maxSize = CosmosEditorUtility.CosmosMaxWinSize;
             ((EditorWindow)window).minSize = CosmosEditorUtility.CosmosDevWinSize;
         }
-        //private void OnEnable()
-        //{
-        //    try
-        //    {
-        //        EditorConfigData=EditorUtility.ReadEditorConfig<EditorConfigData>(EditorConfigFileName);
-        //    }
-        //    catch
-        //    {
-        //        EditorUtility.LogInfo("未能获取EditorConfigData");
-        //        EditorConfigData = new EditorConfigData();
-        //    }
-        //}
+        [InitializeOnLoadMethod]
+        public static void LoadData()
+        {
+            try
+            {
+                EditorConfigData = CosmosEditorUtility.GetData<EditorConfigData>(EditorConfigFileName);
+            }
+            catch
+            {
+                EditorConfigData = new EditorConfigData();
+                CosmosEditorUtility.SaveData(EditorConfigFileName, EditorConfigData);
+            }
+        }
+        static readonly string EditorConfigFileName = "EditorConfig.Json";
+        public EditorConfigWindow()
+        {
+            this.titleContent = new GUIContent("EditorConfig");
+        }
         private void OnGUI()
         {
             DrawWindow();
@@ -75,7 +57,7 @@ namespace Cosmos.CosmosEditor
             EditorGUILayout.Space();
             GUILayout.BeginHorizontal();
             GUILayout.Space(8);
-            if (GUILayout.Button("Sete", GUILayout.Height(32)))
+            if (GUILayout.Button("Set", GUILayout.Height(32)))
             {
                 SetButtonClick();
             }
@@ -92,22 +74,19 @@ namespace Cosmos.CosmosEditor
         {
             try
             {
-                CosmosEditorUtility.WriteEditorConfig(EditorConfigFileName, EditorConfigData == null ? new EditorConfigData() : EditorConfigData);
+                CosmosEditorUtility.SaveData(EditorConfigFileName, EditorConfigData == null ? new EditorConfigData() : EditorConfigData);
                 CosmosEditorUtility.LogInfo("设置 CosmosFramework EditorConfigData 成功 ");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                CosmosEditorUtility.LogError("设置 CosmosFramework EditorConfigData 失败 : "+e);
+                CosmosEditorUtility.LogError("设置 CosmosFramework EditorConfigData 失败 : " + e);
             }
         }
         void ResetButtonClick()
         {
             try
             {
-                //EditorUtility.ReadEditorConfig(EditorConfigFileName);
-                //var filePath = Utility.IO.CombineRelativeFilePath(EditorConfigFileName, EditorUtility.LibraryCachePath);
-                var cfgStr = CosmosEditorUtility.ReadEditorConfig(EditorConfigFileName);
-                EditorConfigData = JsonUtility.FromJson<EditorConfigData>(cfgStr.ToString());
+                EditorConfigData = CosmosEditorUtility.GetData<EditorConfigData>(EditorConfigFileName);
                 CosmosEditorUtility.LogInfo("重置 CosmosFramework EditorConfigData 成功");
             }
             catch (Exception e)
@@ -125,7 +104,7 @@ namespace Cosmos.CosmosEditor
             GUILayout.BeginHorizontal();
             GUILayout.Label("EnableScriptHeader", GUILayout.Width(192));
             GUILayout.Space(128);
-            EditorConfigData.EnableScriptHeader= EditorGUILayout.Toggle(EditorConfigData.EnableScriptHeader);
+            EditorConfigData.EnableScriptHeader = EditorGUILayout.Toggle(EditorConfigData.EnableScriptHeader);
             GUILayout.EndHorizontal();
             if (EditorConfigData.EnableScriptHeader)
             {

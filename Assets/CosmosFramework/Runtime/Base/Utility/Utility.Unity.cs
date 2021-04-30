@@ -504,7 +504,7 @@ namespace Cosmos
                 {
                     Utility.Text.StringBuilderCache.Append(relativePath[i] + "/");
                 }
-                return ApplicationConst.ApplicationDataPath + "/" + Utility.Text.StringBuilderCache.ToString();
+                return Application.dataPath+ "/" + Utility.Text.StringBuilderCache.ToString();
             }
             /// <summary>
             /// Unity方法；
@@ -544,7 +544,7 @@ namespace Cosmos
             /// <returns>相对路径</returns>
             public static string DecomposeAppAbsolutePath(string absolutePath)
             {
-                return absolutePath.Remove(0, ApplicationConst.ApplicationDataPath.Length);
+                return absolutePath.Remove(0, Application.dataPath.Length);
             }
         }
     }

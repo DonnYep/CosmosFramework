@@ -5,7 +5,7 @@ using System;
 namespace Cosmos.CosmosEditor
 {
     [Serializable]
-    public class EditorConfigData : IEditorData
+    public class EditorConfigData : IDisposable
     {
         public bool ConsoleDebugLog;
         public bool OutputDebugLog;
