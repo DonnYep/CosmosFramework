@@ -5,7 +5,7 @@ using UnityEngine;
 using Cosmos.QuarkAsset;
 namespace Cosmos.Test
 {
-    public class QuarkAssetTest : MonoBehaviour
+    public class QuarkAssetLoader : MonoBehaviour
     {
         void Start()
         {

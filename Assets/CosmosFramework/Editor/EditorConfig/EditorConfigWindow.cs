@@ -30,7 +30,6 @@ namespace Cosmos.CosmosEditor
             }
             catch
             {
-                CosmosEditorUtility.LogInfo("未能获取EditorConfigData");
                 EditorConfigData = new EditorConfigData();
                 CosmosEditorUtility.SaveData(EditorConfigFileName, EditorConfigData);
             }
@@ -39,7 +38,6 @@ namespace Cosmos.CosmosEditor
         public EditorConfigWindow()
         {
             this.titleContent = new GUIContent("EditorConfig");
-
         }
         private void OnGUI()
         {
@@ -88,10 +86,7 @@ namespace Cosmos.CosmosEditor
         {
             try
             {
-                //EditorUtility.ReadEditorConfig(EditorConfigFileName);
-                //var filePath = Utility.IO.CombineRelativeFilePath(EditorConfigFileName, EditorUtility.LibraryCachePath);
-                var cfgStr = CosmosEditorUtility.GetDataJson(EditorConfigFileName);
-                EditorConfigData = JsonUtility.FromJson<EditorConfigData>(cfgStr.ToString());
+                EditorConfigData =CosmosEditorUtility.GetData<EditorConfigData>(EditorConfigFileName);
                 CosmosEditorUtility.LogInfo("重置 CosmosFramework EditorConfigData 成功");
             }
             catch (Exception e)

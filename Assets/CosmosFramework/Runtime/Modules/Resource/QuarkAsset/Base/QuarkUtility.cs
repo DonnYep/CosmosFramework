@@ -35,9 +35,11 @@ namespace Cosmos.QuarkAsset
             var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
             var json = Utility.IO.ReadTextFileContent(filePath);
             var lnkJson = Utility.IO.ReadTextFileContent(lnkPath);
+            if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(lnkJson))
+                return null;
             quarkAssetData = Utility.Json.ToObject<QuarkAssetData>(json);
             assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
-            return JsonUtility.FromJson<QuarkAssetData>(json);
+            return Utility.Json.ToObject<QuarkAssetData>(json);
 #else
             return null;
 #endif
@@ -60,8 +62,15 @@ namespace Cosmos.QuarkAsset
             if (assetDict == null)
             {
                 var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
-                var lnkJson = Utility.IO.ReadTextFileContent(lnkPath);
-                assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
+                try
+                {
+                    var lnkJson = Utility.IO.ReadTextFileContent(lnkPath);
+                    assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
+                }
+                catch
+                {
+                    throw new Exception("未执行QuarkAsset build 操作");
+                }
             }
             if (assetDict.TryGetValue(assetName, out var lnk))
             {

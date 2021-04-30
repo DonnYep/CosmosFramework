@@ -19,12 +19,17 @@ namespace Cosmos.CosmosEditor
         ".3ds",".bmp",".blend",".eps",".exif",".gif",".icns",".ico",".jpeg",
         ".jpg",".ma",".max",".mb",".pcx",".png",".psd",".svg",".controller",
         ".wav",".txt",".prefab",".xml",".shadervariants",".shader",".anim",
-        ".unity",".mat",".dll",".mask",".overrideController",".tif",".spriteatlas"
+        ".unity",".mat",".mask",".overrideController",".tif",".spriteatlas"
         };
         int selectedBar = 0;
         string[] barArray = new string[] { "BuildAsset", "PlatfromBuild" };
         static int filterLength;
-         QuarkAssetData quarkAssetData=new QuarkAssetData();
+        static QuarkAssetData quarkAssetData;
+        /// <summary>
+        /// Editor配置文件；
+        /// </summary>
+        static QuarkAssetConfigData quarkAssetConfigData;
+        const string QuarkAssetConfigDataFileName = "QuarkAssetConfigData.json";
         public QuarkAssetWindow()
         {
             this.titleContent = new GUIContent("QuarkAsset");
@@ -40,12 +45,21 @@ namespace Cosmos.CosmosEditor
         static void InitData()
         {
             filterLength = Application.dataPath.Length - 6;
-            var jsonHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute,IJsonHelper>();
+            var jsonHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IJsonHelper>();
             Utility.Json.SetHelper(jsonHelper);
         }
         private void OnEnable()
         {
-            quarkAssetData = QuarkUtility.LoadQuarkAssetData();
+            try
+            {
+                quarkAssetData = QuarkUtility.LoadQuarkAssetData();
+                quarkAssetConfigData = CosmosEditorUtility.GetData<QuarkAssetConfigData>(QuarkAssetConfigDataFileName);
+            }
+            catch
+            {
+                quarkAssetData = new QuarkAssetData();
+                quarkAssetConfigData = new QuarkAssetConfigData();
+            }
         }
         private void OnGUI()
         {
@@ -73,7 +87,7 @@ namespace Cosmos.CosmosEditor
             CosmosEditorUtility.DrawHorizontalContext(() =>
             {
                 EditorGUILayout.LabelField("GenerateAssetPathCode", GUILayout.Width(128));
-                quarkAssetData.GenerateAssetPathCode = EditorGUILayout.Toggle(quarkAssetData.GenerateAssetPathCode);
+                quarkAssetConfigData.GenerateAssetPathCode = EditorGUILayout.Toggle(quarkAssetConfigData.GenerateAssetPathCode);
             });
 
             CosmosEditorUtility.DrawHorizontalContext(() =>
@@ -92,32 +106,52 @@ namespace Cosmos.CosmosEditor
                             {
                                 var assetPath = file.FullName.Remove(0, filterLength);
                                 var assetName = file.Name.Replace(file.Extension, string.Empty);
+                                var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
                                 var assetObj = new QuarkAssetObject()
                                 {
                                     AssetExtension = file.Extension,
                                     AssetName = assetName,
-                                    AssetPath = assetPath
+                                    AssetPath = assetPath,
+                                    AssetType = type.ToString()
                                 };
+
                                 quarkAssetList.Add(assetObj);
                             }
                         }
                     });
                     quarkAssetData.QuarkAssetObjectList = quarkAssetList;
+                    quarkAssetData.QuarkAssetCount = quarkAssetList.Count;
+                    if (quarkAssetConfigData.GenerateAssetPathCode)
+                        CreatePathScript();
                     QuarkUtility.SetAndSaveQuarkAsset(quarkAssetData);
-                    CosmosEditorUtility.LogInfo("Quark asset data build done ");
+                    CosmosEditorUtility.SaveData(QuarkAssetConfigDataFileName, quarkAssetConfigData);
+                    CosmosEditorUtility.LogInfo("Quark asset  build done ");
                 }
                 if (GUILayout.Button("Clear", GUILayout.Height(32)))
                 {
                     QuarkUtility.ClearQuarkAsset();
-                    CosmosEditorUtility.LogInfo("Quark asset data clear done ");
+                    CosmosEditorUtility.ClearData(QuarkAssetConfigDataFileName);
+                    CosmosEditorUtility.LogInfo("Quark asset clear done ");
                 }
             });
             GUILayout.EndVertical();
-
+        }
+        void CreatePathScript()
+        {
+            var str = "public static class QuarkAssetDefine\n{\n";
+            var con = "    public static string ";
+            for (int i = 0; i < quarkAssetData.QuarkAssetCount; i++)
+            {
+                var srcName = quarkAssetData.QuarkAssetObjectList[i].AssetName;
+                var fnlName = srcName.Contains(".") == true ? srcName.Replace(".", "_") : srcName;
+                str = Utility.Text.Append(str, con, fnlName,"= \"", srcName, "\""," ;\n");
+            }
+            str += "\n}";
+            Utility.IO.OverwriteTextFile(Application.dataPath, "QuarkAssetDefine.cs", str);
+            CosmosEditorUtility.RefreshEditor();
         }
         void DrawPlatformBuild()
         {
-
         }
     }
 }
