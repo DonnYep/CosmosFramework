@@ -30,7 +30,6 @@ namespace Cosmos.QuarkAsset
         }
         public static QuarkAssetData LoadQuarkAssetData()
         {
-#if UNITY_EDITOR
             var filePath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.QuarkAssetFileName, ApplicationConst.LibraryPath);
             var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
             var json = Utility.IO.ReadTextFileContent(filePath);
@@ -40,18 +39,13 @@ namespace Cosmos.QuarkAsset
             quarkAssetData = Utility.Json.ToObject<QuarkAssetData>(json);
             assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
             return Utility.Json.ToObject<QuarkAssetData>(json);
-#else
-            return null;
-#endif
         }
         public static void ClearQuarkAsset()
         {
-#if UNITY_EDITOR
             var filePath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.QuarkAssetFileName, ApplicationConst.LibraryPath);
             var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
             Utility.IO.DeleteFile(filePath);
             Utility.IO.DeleteFile(lnkPath);
-#endif
         }
         public static T LoadAsset<T>(string assetName, string assetExtension = null)
             where T : UnityEngine.Object
