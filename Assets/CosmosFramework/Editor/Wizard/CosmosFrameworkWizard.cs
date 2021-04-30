@@ -9,7 +9,7 @@ namespace Cosmos.CosmosEditor
 {
     public class CosmosFrameworkWizard : EditorWindow
     {
-        static readonly Vector2 wizardSize = new Vector2( 512, 368);
+        static readonly Vector2 wizardSize = new Vector2(512, 368);
         [MenuItem("Window/Cosmos/Wizard")]
         public static void OpenWindow()
         {
@@ -19,7 +19,7 @@ namespace Cosmos.CosmosEditor
         }
         public CosmosFrameworkWizard()
         {
-            this.titleContent = new GUIContent("CFWizard");
+            this.titleContent = new GUIContent("Wizard");
         }
         private void OnGUI()
         {
@@ -33,14 +33,13 @@ namespace Cosmos.CosmosEditor
             {
                 Application.OpenURL("https://github.com/DonHitYep/CosmosFramework");
             }
-            EditorGUILayout.HelpBox("这是一个轻量级的游戏框架。Utiity脚本提供了常用的功能函数。" +
-                "Facade脚本作为中间类，已封装了所有模块的公共函数，只需调用Facade.Instance，即可出现当前大部分模块的公共方法。", MessageType.Info);
+            EditorGUILayout.HelpBox("CosmosFramework是一款轻量级的游戏框架。内置常用工具类，封装了大部分常用功能模块，案例可参考 Examples 。", MessageType.Info);
             GUILayout.EndVertical();
             EditorGUILayout.Space(16);
             //GUILayout.BeginVertical("box");
-            GUILayout.Label("框架中附带的Symbol: ");
+            //GUILayout.Label("框架中附带的Symbol: ");
             EditorGUILayout.Space(8);
-            GUILayout.Label("Addressable资源操作模块 : COSMOS_ADDRESSABLE；\n在开启此Symbol后，可使用Addressables package进行资源加载");
+            //GUILayout.Label("Addressable资源操作模块 : COSMOS_ADDRESSABLE；\n在开启此Symbol后，可使用Addressables package进行资源加载");
             EditorGUILayout.Space(8);
             //GUILayout.EndVertical();
         }
