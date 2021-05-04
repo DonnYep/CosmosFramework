@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace Cosmos.UI
 {
     [DisallowMultipleComponent]
-    public abstract class UIFormBase : MonoBehaviour
+    public abstract class UIFormBase : MonoBehaviour,IUIForm
     {
         public virtual bool IsTemporaryForm { get; protected set; }
         /// <summary>

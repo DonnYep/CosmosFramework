@@ -5,7 +5,7 @@ using Cosmos.Event;
 using Object = UnityEngine.Object;
 namespace Cosmos.ObjectPool
 {
-    internal sealed class ObjectPool :  IObjectPool
+    internal sealed class ObjectPool: IObjectPool
     {
         public int ExpireTime
         {
@@ -55,14 +55,14 @@ namespace Cosmos.ObjectPool
         /// <summary>
         /// 当前池对象中的数量
         /// </summary>
-        public int ObjectCount { get { return objectQueue.Count; } }
+        public int ObjectCount { get { return pool.Count; } }
         /// <summary>
         /// 生成的对象
         /// </summary>
-        Object spawnItem;
-        Action<Object> onSpawn;
-        Action<Object> onDespawn;
-        Queue<Object> objectQueue;
+        GameObject spawnItem;
+        Pool<GameObject> pool;
+        Action<GameObject> onSpawn;
+        Action<GameObject>  onDespawn;
         /// <summary>
         /// 对象生成后的过期时间；
         /// </summary>
@@ -74,62 +74,36 @@ namespace Cosmos.ObjectPool
             if (expireTime <= 0)
                 return;
         }
-        public void SetCallback(Action<Object> onSpawn, Action<Object> onDespawn)
+        public void SetCallback(Action<GameObject> onSpawn, Action<GameObject> onDespawn)
         {
             this.onDespawn = onDespawn;
             this.onSpawn = onSpawn;
         }
-        public object Spawn()
+        public GameObject Spawn()
         {
-            Object go;
-            if (objectQueue.Count > 0)
-            {
-                go = objectQueue.Dequeue();
-            }
-            else
-            {
-                go = GameObject.Instantiate(spawnItem) as GameObject;//实例化产生
-            }
-            onSpawn?.Invoke(go);//表示一个可空类型，空内容依旧可以执行
+            var go= pool.Spawn();
+            onSpawn?.Invoke(go);
             return go;
         }
-        public void Despawn(object targetGo)
+        public void Despawn(object obj)
         {
-            var go = targetGo.Convert<Object>();
-            if (ObjectCount >= capacity)
-            {
-                GameObject.Destroy(go);//超出部分被销毁
-            }
-            else
-            {
-                onDespawn?.Invoke(go);
-                if (go == null)
-                    return;
-                objectQueue.Enqueue(go);//只有回收的时候会被加入列表
-            }
+            var go = obj.Convert<GameObject>();
+            onDespawn?.Invoke(go);
+            pool.Despawn(go);
         }
-        public  void ClearPool()
+        public void ClearPool()
         {
-            while (objectQueue.Count > 0)
-            {
-                var go = objectQueue.Dequeue();
-                GameObject.Destroy(go);
-            }
-            objectQueue.Clear();
+            pool.Clear();
         }
-        internal ObjectPool(object spawnItem, TypeStringPair objectKey)
+        internal ObjectPool(GameObject spawnItem, TypeStringPair objectKey)
         {
-            this.spawnItem = spawnItem.Convert<Object>();
-            objectQueue = new Queue<Object>();
+            this.spawnItem = spawnItem;
+            pool = new Pool<GameObject>(capacity,
+            () => { return GameObject.Instantiate(this.spawnItem); },
+            (go) => { go.gameObject.SetActive(true); },
+            (go) => { go.gameObject.SetActive(false); },
+            (go) => { GameObject.Destroy(go); });
             this.objectKey = objectKey;
-        }
-        internal void SetSpawnItem(Object spawnItem)
-        {
-            if (this.spawnItem != spawnItem)
-            {
-                this.spawnItem = spawnItem;
-                ClearPool();
-            }
         }
     }
 }

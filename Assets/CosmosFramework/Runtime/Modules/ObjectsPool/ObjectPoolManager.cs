@@ -4,7 +4,7 @@ using System;
 namespace Cosmos.ObjectPool
 {
     [Module]
-    internal sealed class ObjectPoolManager : Module, IObjectPoolManager
+    internal sealed class ObjectPoolManager : Module , IObjectPoolManager
     {
         #region Properties
         Dictionary<TypeStringPair, IObjectPool> poolDict;
@@ -37,7 +37,7 @@ namespace Cosmos.ObjectPool
         /// <param name="objectAssetInfo">对象资源信息</param>
         /// <param name="onRegisterCallback">注册成功后的回调，若失败则不回调</param>
         /// <returns>协程对象</returns>
-        public Coroutine RegisterObjectPoolAsync(ObjectAssetInfo objectAssetInfo,Action<IObjectPool>onRegisterCallback=null)
+        public Coroutine RegisterObjectPoolAsync(ObjectAssetInfo objectAssetInfo, Action<IObjectPool> onRegisterCallback = null)
         {
             if (objectAssetInfo == null)
             {
@@ -49,8 +49,8 @@ namespace Cosmos.ObjectPool
                     var objectKey = objectAssetInfo.ObjectKey;
                     if (!HasObjectPool(objectKey))
                     {
-                        var pool = new ObjectPool(spawnItem,objectKey);
-                        poolDict.TryAdd(objectKey,  pool);
+                        var pool = new ObjectPool(spawnItem, objectKey);
+                        poolDict.TryAdd(objectKey, pool);
                         ElapseRefreshHandler += pool.OnElapseRefresh;
                         onRegisterCallback?.Invoke(pool);
                     }
@@ -73,7 +73,7 @@ namespace Cosmos.ObjectPool
             if (!HasObjectPool(objectKey))
             {
                 var spawnItem = resourceManager.LoadPrefab(objectAssetInfo);
-                var pool = new ObjectPool(spawnItem,objectKey);
+                var pool = new ObjectPool(spawnItem, objectKey);
                 poolDict.TryAdd(objectKey, pool);
                 ElapseRefreshHandler += pool.OnElapseRefresh;
                 return pool;
@@ -87,7 +87,7 @@ namespace Cosmos.ObjectPool
         /// <param name="objectKey">对象池key</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        public IObjectPool RegisterObjectPool(TypeStringPair objectKey, object spawnItem)
+        public IObjectPool RegisterObjectPool(TypeStringPair objectKey, GameObject spawnItem)
         {
             if (objectKey == null)
             {
@@ -95,7 +95,7 @@ namespace Cosmos.ObjectPool
             }
             if (!HasObjectPool(objectKey))
             {
-                var pool = new ObjectPool(spawnItem,objectKey);
+                var pool = new ObjectPool(spawnItem, objectKey);
                 poolDict.TryAdd(objectKey, pool);
                 ElapseRefreshHandler += pool.OnElapseRefresh;
                 return pool;
@@ -110,7 +110,7 @@ namespace Cosmos.ObjectPool
         /// <param name="name">对象的名称</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        public IObjectPool RegisterObjectPool(Type objectType, string name, object spawnItem)
+        public IObjectPool RegisterObjectPool(Type objectType, string name, GameObject spawnItem)
         {
             if (objectType == null)
             {
@@ -129,7 +129,7 @@ namespace Cosmos.ObjectPool
         /// <param name="objectType">对象的类型</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        public IObjectPool RegisterObjectPool(Type objectType, object spawnItem)
+        public IObjectPool RegisterObjectPool(Type objectType, GameObject spawnItem)
         {
             if (objectType == null)
             {
@@ -145,7 +145,7 @@ namespace Cosmos.ObjectPool
         /// <param name="name">对象的名称</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        public IObjectPool RegisterObjectPool<T>(string name, object spawnItem) where T : class
+        public IObjectPool RegisterObjectPool<T>(string name, GameObject spawnItem) where T : class
         {
             return RegisterObjectPool(typeof(T), name, spawnItem);
         }
@@ -155,7 +155,7 @@ namespace Cosmos.ObjectPool
         /// <typeparam name="T">对象的类型</typeparam>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        public IObjectPool RegisterObjectPool<T>(object spawnItem) where T : class
+        public IObjectPool RegisterObjectPool<T>(GameObject spawnItem) where T : class
         {
             return RegisterObjectPool(typeof(T), spawnItem);
         }
@@ -165,9 +165,9 @@ namespace Cosmos.ObjectPool
         /// <param name="name">对象的名称</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        public IObjectPool RegisterObjectPool(string name, object spawnItem)
+        public IObjectPool RegisterObjectPool(string name, GameObject spawnItem)
         {
-            return RegisterObjectPool(typeof(object),name, spawnItem);
+            return RegisterObjectPool(typeof(GameObject), name, spawnItem);
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace Cosmos.ObjectPool
         /// <param name="name">对象的名称</param>
         public void DeregisterObjectPool(string name)
         {
-            DeregisterObjectPool(typeof(object), name);
+            DeregisterObjectPool(typeof(GameObject), name);
         }
 
         /// <summary>
@@ -399,7 +399,7 @@ namespace Cosmos.ObjectPool
         /// <returns>是否存在</returns>
         public bool HasObjectPool(string name)
         {
-            return HasObjectPool(typeof(object), name);
+            return HasObjectPool(typeof(GameObject), name);
         }
 
         /// <summary>

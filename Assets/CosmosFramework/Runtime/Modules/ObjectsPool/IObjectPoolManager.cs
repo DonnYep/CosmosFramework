@@ -28,7 +28,7 @@ namespace Cosmos
         /// <param name="objectKey">对象池key</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        IObjectPool RegisterObjectPool(TypeStringPair objectKey, object spawnItem);
+        IObjectPool RegisterObjectPool(TypeStringPair objectKey, GameObject spawnItem);
         /// <summary>
         /// 注册对象池（同步）;
         /// </summary>
@@ -36,14 +36,14 @@ namespace Cosmos
         /// <param name="name">对象的名称</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        IObjectPool RegisterObjectPool(Type objectType, string name, object spawnItem);
+        IObjectPool RegisterObjectPool(Type objectType, string name, GameObject spawnItem);
         /// <summary>
         /// 注册对象池（同步）;
         /// </summary>
         /// <param name="objectType">对象的类型</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        IObjectPool RegisterObjectPool(Type objectType, object spawnItem);
+        IObjectPool RegisterObjectPool(Type objectType, GameObject spawnItem);
 
         /// <summary>
         /// 注册对象池（同步）;
@@ -52,21 +52,21 @@ namespace Cosmos
         /// <param name="name">对象的名称</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        IObjectPool RegisterObjectPool<T>(string name, object spawnItem) where T : class;
+        IObjectPool RegisterObjectPool<T>(string name, GameObject spawnItem) where T : class;
         /// <summary>
         /// 注册对象池（同步）;
         /// </summary>
         /// <typeparam name="T">对象的类型</typeparam>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        IObjectPool RegisterObjectPool<T>(object spawnItem) where T : class;
+        IObjectPool RegisterObjectPool<T>(GameObject spawnItem) where T : class;
         /// <summary>
         /// 注册对象池（同步）;
         /// </summary>
         /// <param name="name">对象的名称</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        IObjectPool RegisterObjectPool(string name, object spawnItem);
+        IObjectPool RegisterObjectPool(string name, GameObject spawnItem);
         /// <summary>
         /// 注销对象池;
         /// </summary>
