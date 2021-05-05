@@ -16,6 +16,7 @@ namespace Cosmos.QuarkAsset
         static QuarkAssetData quarkAssetData;
         static Dictionary<string, LinkedList<QuarkAssetObject>> assetDict;
         public static QuarkAssetData QuarkAssetData { get { return quarkAssetData; } }
+
         public static void SetAndSaveQuarkAsset(QuarkAssetData assetData)
         {
             quarkAssetData = assetData;
@@ -53,16 +54,17 @@ namespace Cosmos.QuarkAsset
             QuarkAssetObject quarkAssetObject = new QuarkAssetObject();
             if (assetDict == null)
             {
-                var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
-                try
-                {
-                    var lnkJson = Utility.IO.ReadTextFileContent(lnkPath);
-                    assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
-                }
-                catch
-                {
-                    throw new Exception("未执行QuarkAsset build 操作");
-                }
+                //var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
+                //try
+                //{
+                //    var lnkJson = Utility.IO.ReadTextFileContent(lnkPath);
+                //    assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
+                //}
+                //catch
+                //{
+                //    throw new Exception("未执行QuarkAsset build 操作");
+                //}
+                throw new Exception("未执行QuarkAsset build 操作");
             }
             if (assetDict.TryGetValue(assetName, out var lnk))
             {
@@ -103,6 +105,21 @@ namespace Cosmos.QuarkAsset
                 }
             }
             return lnkDict;
+        }
+        /// <summary>
+        /// Runtime自动加载数据；
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod]
+        static void InitQuarkAsset()
+        {
+            var filePath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.QuarkAssetFileName, ApplicationConst.LibraryPath);
+            var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
+            var json = Utility.IO.ReadTextFileContent(filePath);
+            var lnkJson = Utility.IO.ReadTextFileContent(lnkPath);
+            if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(lnkJson))
+                return ;
+            quarkAssetData = Utility.Json.ToObject<QuarkAssetData>(json);
+            assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
         }
     }
 }
