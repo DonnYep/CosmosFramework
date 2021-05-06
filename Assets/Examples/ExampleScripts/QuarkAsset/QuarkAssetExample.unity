@@ -215,7 +215,7 @@ GameObject:
   - component: {fileID: 1852068250}
   - component: {fileID: 1852068249}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: QuarkAssetLoader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

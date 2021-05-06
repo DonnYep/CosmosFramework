@@ -51,7 +51,7 @@ namespace Cosmos.CosmosEditor
         {
             try
             {
-                quarkAssetData = QuarkUtility.LoadQuarkAssetData();
+                quarkAssetData = QuarkAssetEditorUtility.LoadQuarkAssetData();
                 quarkAssetConfigData = CosmosEditorUtility.GetData<QuarkAssetConfigData>(QuarkAssetConfigDataFileName);
             }
             catch
@@ -122,13 +122,13 @@ namespace Cosmos.CosmosEditor
                     quarkAssetData.QuarkAssetCount = quarkAssetList.Count;
                     if (quarkAssetConfigData.GenerateAssetPathCode)
                         CreatePathScript();
-                    QuarkUtility.SetAndSaveQuarkAsset(quarkAssetData);
+                    QuarkAssetEditorUtility.SetAndSaveQuarkAsset(quarkAssetData);
                     CosmosEditorUtility.SaveData(QuarkAssetConfigDataFileName, quarkAssetConfigData);
                     CosmosEditorUtility.LogInfo("Quark asset  build done ");
                 }
                 if (GUILayout.Button("Clear", GUILayout.Height(32)))
                 {
-                    QuarkUtility.ClearQuarkAsset();
+                    QuarkAssetEditorUtility.ClearQuarkAsset();
                     CosmosEditorUtility.ClearData(QuarkAssetConfigDataFileName);
                     CosmosEditorUtility.LogInfo("Quark asset clear done ");
                 }

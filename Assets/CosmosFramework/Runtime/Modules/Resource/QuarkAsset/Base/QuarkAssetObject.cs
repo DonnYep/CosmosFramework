@@ -6,9 +6,9 @@ namespace Cosmos.QuarkAsset
     [Serializable]
     public struct QuarkAssetObject
     {
-        public string AssetName { get; set; }
-        public string AssetExtension { get; set; }
-        public string AssetPath { get; set; }
-        public string AssetType { get; set; }
+        public string AssetName;
+        public string AssetExtension;
+        public string AssetPath;
+        public string AssetType;
     }
 }

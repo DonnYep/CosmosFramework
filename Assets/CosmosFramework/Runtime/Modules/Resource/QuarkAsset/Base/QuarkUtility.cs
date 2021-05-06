@@ -6,9 +6,9 @@ namespace Cosmos.QuarkAsset
 {
     public enum QuarkAssetLoadMode : byte
     {
-        None = 0,
-        AssetDataBase = 1,
-        BuiltAssetBundle = 2
+        None = 0x0,
+        AssetDataBase = 0x1,
+        BuiltAssetBundle = 0x2
     }
     public static class QuarkUtility
     {
@@ -16,56 +16,37 @@ namespace Cosmos.QuarkAsset
         static QuarkAssetData quarkAssetData;
         static Dictionary<string, LinkedList<QuarkAssetObject>> assetDict;
         public static QuarkAssetData QuarkAssetData { get { return quarkAssetData; } }
-
-        public static void SetAndSaveQuarkAsset(QuarkAssetData assetData)
-        {
-            quarkAssetData = assetData;
-            var json = Utility.Json.ToJson(quarkAssetData, true);
-            var lnkDict = EncodeSchema(assetData);
-            assetDict = lnkDict;
-            var linkedJson = Utility.Json.ToJson(lnkDict, true);
-            Utility.IO.OverwriteTextFile(ApplicationConst.LibraryPath, QuarkAssetConst.QuarkAssetFileName, json);
-            Utility.IO.OverwriteTextFile(ApplicationConst.LibraryPath, QuarkAssetConst.LinkedQuarkAssetFileName, linkedJson);
-        }
-        public static QuarkAssetData LoadQuarkAssetData()
-        {
-            var filePath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.QuarkAssetFileName, ApplicationConst.LibraryPath);
-            var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
-            var json = Utility.IO.ReadTextFileContent(filePath);
-            var lnkJson = Utility.IO.ReadTextFileContent(lnkPath);
-            if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(lnkJson))
-                return null;
-            quarkAssetData = Utility.Json.ToObject<QuarkAssetData>(json);
-            assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
-            return Utility.Json.ToObject<QuarkAssetData>(json);
-        }
-        public static void ClearQuarkAsset()
-        {
-            var filePath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.QuarkAssetFileName, ApplicationConst.LibraryPath);
-            var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
-            Utility.IO.DeleteFile(filePath);
-            Utility.IO.DeleteFile(lnkPath);
-        }
         public static T LoadAsset<T>(string assetName, string assetExtension = null)
+            where T : UnityEngine.Object
+        {
+            T asset = null;
+            switch (quarkAssetData.QuarkAssetLoadMode)
+            {
+                case QuarkAssetLoadMode.AssetDataBase:
+                    asset = AssetDatabaseLoadAsset<T>(assetName, assetExtension);
+                    break;
+                case QuarkAssetLoadMode.BuiltAssetBundle:
+                    break;
+            }
+            return asset;
+        }
+        public static GameObject LoadPrefab(string assetName, string assetExtension = null)
+        {
+            return LoadAsset<GameObject>(assetName, assetExtension);
+        }
+        public static GameObject Instantiate<T>(string assetName, string assetExtension = null)
+        {
+            var go = LoadAsset<GameObject>(assetName, assetExtension);
+            return GameObject.Instantiate(go);
+        }
+        static T AssetDatabaseLoadAsset<T>(string assetName, string assetExtension = null)
             where T : UnityEngine.Object
         {
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
             QuarkAssetObject quarkAssetObject = new QuarkAssetObject();
             if (assetDict == null)
-            {
-                //var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
-                //try
-                //{
-                //    var lnkJson = Utility.IO.ReadTextFileContent(lnkPath);
-                //    assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
-                //}
-                //catch
-                //{
-                //    throw new Exception("未执行QuarkAsset build 操作");
-                //}
-                throw new Exception("未执行QuarkAsset build 操作");
-            }
+                throw new Exception("QuarkAsset 未执行 build 操作！");
             if (assetDict.TryGetValue(assetName, out var lnk))
             {
                 if (!string.IsNullOrEmpty(assetExtension))
@@ -86,40 +67,22 @@ namespace Cosmos.QuarkAsset
             }
             return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(quarkAssetObject.AssetPath);
         }
-        static Dictionary<string, LinkedList<QuarkAssetObject>> EncodeSchema(QuarkAssetData assetData)
-        {
-            var lnkDict = new Dictionary<string, LinkedList<QuarkAssetObject>>();
-            var length = assetData.QuarkAssetObjectList.Count;
-            for (int i = 0; i < length; i++)
-            {
-                var name = assetData.QuarkAssetObjectList[i].AssetName;
-                if (!lnkDict.TryGetValue(name, out var lnkList))
-                {
-                    var lnk = new LinkedList<QuarkAssetObject>();
-                    lnk.AddLast(assetData.QuarkAssetObjectList[i]);
-                    lnkDict.Add(name, lnk);
-                }
-                else
-                {
-                    lnkList.AddLast(assetData.QuarkAssetObjectList[i]);
-                }
-            }
-            return lnkDict;
-        }
         /// <summary>
         /// Runtime自动加载数据；
         /// </summary>
         [RuntimeInitializeOnLoadMethod]
-        static void InitQuarkAsset()
+        static void InitQuarkAssetData()
         {
+#if UNITY_EDITOR
             var filePath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.QuarkAssetFileName, ApplicationConst.LibraryPath);
             var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
             var json = Utility.IO.ReadTextFileContent(filePath);
             var lnkJson = Utility.IO.ReadTextFileContent(lnkPath);
             if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(lnkJson))
-                return ;
+                return;
             quarkAssetData = Utility.Json.ToObject<QuarkAssetData>(json);
             assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
+#endif
         }
     }
 }

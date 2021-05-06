@@ -7,17 +7,10 @@ namespace Cosmos.Test
 {
     public class QuarkAssetLoader : MonoBehaviour
     {
-        [RuntimeInitializeOnLoadMethod]
-        static void RuntimeCallback()
-        {
-            Debug.Log("RuntimeInitializeOnLoadMethod");
-        }
         void Start()
         {
-            var go = QuarkUtility.LoadAsset<GameObject>("YBot_LM_Local");
-            if (go != null)
-                Instantiate(go);
-            else
+            var go = QuarkUtility.Instantiate<GameObject>("YBot_LM_Local");
+            if (go == null)
                 Debug.LogError("go null");
         }
     }
