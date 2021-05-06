@@ -12,6 +12,7 @@ namespace Cosmos.Test
             var go = QuarkUtility.Instantiate<GameObject>("YBot_LM_Local");
             if (go == null)
                 Debug.LogError("go null");
+            Debug.Log(QuarkAssetDataset.Instance.ToString());
         }
     }
 }

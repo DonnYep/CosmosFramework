@@ -51,6 +51,7 @@ namespace Cosmos.CosmosEditor
         {
             try
             {
+                //EditorBuildSettings.TryGetConfigObject<QuarkAssetDataset>("QuarkAssetDataset", out var so);
                 quarkAssetData = QuarkAssetEditorUtility.LoadQuarkAssetData();
                 quarkAssetConfigData = CosmosEditorUtility.GetData<QuarkAssetConfigData>(QuarkAssetConfigDataFileName);
             }
@@ -143,7 +144,7 @@ namespace Cosmos.CosmosEditor
             {
                 var srcName = quarkAssetData.QuarkAssetObjectList[i].AssetName;
                 var fnlName = srcName.Contains(".") == true ? srcName.Replace(".", "_") : srcName;
-                str = Utility.Text.Append(str, con, fnlName,"= \"", srcName, "\""," ;\n");
+                str = Utility.Text.Append(str, con, fnlName, "= \"", srcName, "\"", " ;\n");
             }
             str += "\n}";
             Utility.IO.OverwriteTextFile(Application.dataPath, "QuarkAssetDefine.cs", str);

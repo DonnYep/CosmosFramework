@@ -93,7 +93,7 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
 ## 其他
 
-- MVVM的纯C#版本：https://github.com/DonHitYep/Cosmos_SimpleMVVM
+- MVVM的纯C#版本：https://github.com/DonHitYep/CosmosMVVM
 
 - CosmosFramework的服务器版本：https://github.com/DonHitYep/CosmosFramework4Server 
 服务器版本已提供可靠UDP协议，并集成了KCP协议。TCP持续更新中。内置模块与Unity客户端类似，内置类型都为线程安全类型。
