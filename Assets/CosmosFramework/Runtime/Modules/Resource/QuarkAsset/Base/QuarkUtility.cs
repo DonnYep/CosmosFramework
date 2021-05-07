@@ -12,10 +12,9 @@ namespace Cosmos.QuarkAsset
     }
     public static class QuarkUtility
     {
-        static QuarkAssetLoadMode mode;
-        static QuarkAssetData quarkAssetData;
+        static QuarkAssetDataset quarkAssetData;
         static Dictionary<string, LinkedList<QuarkAssetObject>> assetDict;
-        public static QuarkAssetData QuarkAssetData { get { return quarkAssetData; } }
+        public static QuarkAssetDataset QuarkAssetData { get { return quarkAssetData; } }
         public static T LoadAsset<T>(string assetName, string assetExtension = null)
             where T : UnityEngine.Object
         {
@@ -38,6 +37,11 @@ namespace Cosmos.QuarkAsset
         {
             var go = LoadAsset<GameObject>(assetName, assetExtension);
             return GameObject.Instantiate(go);
+        }
+        public static void SetData(QuarkAssetDataset assetData, Dictionary<string, LinkedList<QuarkAssetObject>> lnkData)
+        {
+            assetDict = lnkData;
+            quarkAssetData = assetData;
         }
         static T AssetDatabaseLoadAsset<T>(string assetName, string assetExtension = null)
             where T : UnityEngine.Object
@@ -66,23 +70,6 @@ namespace Cosmos.QuarkAsset
                 }
             }
             return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(quarkAssetObject.AssetPath);
-        }
-        /// <summary>
-        /// Runtime自动加载数据；
-        /// </summary>
-        [RuntimeInitializeOnLoadMethod]
-        static void InitQuarkAssetData()
-        {
-#if UNITY_EDITOR
-            var filePath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.QuarkAssetFileName, ApplicationConst.LibraryPath);
-            var lnkPath = Utility.IO.CombineRelativeFilePath(QuarkAssetConst.LinkedQuarkAssetFileName, ApplicationConst.LibraryPath);
-            var json = Utility.IO.ReadTextFileContent(filePath);
-            var lnkJson = Utility.IO.ReadTextFileContent(lnkPath);
-            if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(lnkJson))
-                return;
-            quarkAssetData = Utility.Json.ToObject<QuarkAssetData>(json);
-            assetDict = Utility.Json.ToObject<Dictionary<string, LinkedList<QuarkAssetObject>>>(lnkJson);
-#endif
         }
     }
 }

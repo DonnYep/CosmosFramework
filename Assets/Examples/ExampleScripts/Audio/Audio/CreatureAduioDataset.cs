@@ -8,7 +8,7 @@ namespace Cosmos
     {
         [SerializeField] AudioClip aduioCilp;
         public override AudioClip AudioClip { get { return aduioCilp; } }
-        public override void Reset()
+        public override void Dispose()
         {
            objectName = "NewCreatureAduio";
             mute = false;

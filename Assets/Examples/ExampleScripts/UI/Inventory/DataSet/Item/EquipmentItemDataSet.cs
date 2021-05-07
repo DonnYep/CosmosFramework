@@ -5,7 +5,7 @@ using System;
 [Serializable]
 public class EquipmentItemDataSet : ItemDataSet
 {
-    public override void Reset()
+    public override void Dispose()
     {
         itemImage = null;
         itemNumber = 0;

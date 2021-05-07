@@ -16,7 +16,7 @@ public class InventoryDataSet : DatasetBase
     [SerializeField]
     List<ItemDataSet> itemDataSets = new List<ItemDataSet>();
     public List<ItemDataSet> ItemDataSets { get { return itemDataSets; } set { itemDataSets = value; } }
-    public override void Reset()
+    public override void Dispose()
     {
         itemDataSets.Clear();
         inventoryCapacity = 0;

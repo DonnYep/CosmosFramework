@@ -59,11 +59,11 @@ public class InventoryDataSetEditor : Editor
         {
             inventoryDataSet.Preview();
         }
-        if (GUILayout.Button("Reset", GUILayout.Height(20)))
+        if (GUILayout.Button("Dispose", GUILayout.Height(20)))
         {
             var canReset = EditorUtility.DisplayDialog("Reset ScriptableObject", "You will reset ScriptableObject Properties", "Reset", "Cancel");
             if (canReset)
-                inventoryDataSet.Reset();
+                inventoryDataSet.Dispose();
         }
         GUILayout.EndHorizontal();
     }

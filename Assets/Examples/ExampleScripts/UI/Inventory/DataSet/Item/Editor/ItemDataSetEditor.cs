@@ -39,11 +39,11 @@ public class ItemDataSetEditor : Editor
         {
             itemDataSet.Preview();
         }
-        if (GUILayout.Button("Reset", GUILayout.Height(20)))
+        if (GUILayout.Button("Dispose", GUILayout.Height(20)))
         {
             var canReset = EditorUtility.DisplayDialog("Reset ScriptableObject", "You will reset ScriptableObject Properties", "Reset", "Cancel");
             if (canReset)
-                itemDataSet.Reset();
+                itemDataSet.Dispose();
         }
         GUILayout.EndHorizontal();
     }

@@ -48,11 +48,11 @@ namespace Cosmos
             {
                stringContent.Preview();
             }
-            if (GUILayout.Button("Reset", GUILayout.Height(20)))
+            if (GUILayout.Button("Dispose", GUILayout.Height(20)))
             {
                 var canReset =UnityEditor. EditorUtility.DisplayDialog("Reset ScriptableObject", "You will reset ScriptableObject Properties", "Reset", "Cancel");
                 if (canReset)
-                    stringContent.Reset();
+                    stringContent.Dispose();
             }
             GUILayout.EndHorizontal();
         }

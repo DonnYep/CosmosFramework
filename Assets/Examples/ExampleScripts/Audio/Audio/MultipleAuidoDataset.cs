@@ -10,7 +10,7 @@ namespace Cosmos
         [SerializeField]
         AudioClip[] audioClips;
         public AudioClip[] AudioClips { get { return audioClips; } }
-        public override void Reset()
+        public override void Dispose()
         {
             objectName = "NewMultipleAudio";
             mute = false;

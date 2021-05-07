@@ -23,7 +23,7 @@ namespace Cosmos.CosmosEditor
         int selectedBar = 0;
         string[] barArray = new string[] { "BuildAsset", "PlatfromBuild" };
         static int filterLength;
-        static QuarkAssetData quarkAssetData;
+        static QuarkAssetDataset quarkAssetData;
         /// <summary>
         /// Editor配置文件；
         /// </summary>
@@ -46,18 +46,19 @@ namespace Cosmos.CosmosEditor
             filterLength = Application.dataPath.Length - 6;
             var jsonHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IJsonHelper>();
             Utility.Json.SetHelper(jsonHelper);
+            quarkAssetData = QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance;
         }
         private void OnEnable()
         {
             try
             {
                 //EditorBuildSettings.TryGetConfigObject<QuarkAssetDataset>("QuarkAssetDataset", out var so);
-                quarkAssetData = QuarkAssetEditorUtility.LoadQuarkAssetData();
+                quarkAssetData = QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance;
                 quarkAssetConfigData = CosmosEditorUtility.GetData<QuarkAssetConfigData>(QuarkAssetConfigDataFileName);
             }
             catch
             {
-                quarkAssetData = new QuarkAssetData();
+                quarkAssetData = QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance;
                 quarkAssetConfigData = new QuarkAssetConfigData();
             }
         }
@@ -123,13 +124,12 @@ namespace Cosmos.CosmosEditor
                     quarkAssetData.QuarkAssetCount = quarkAssetList.Count;
                     if (quarkAssetConfigData.GenerateAssetPathCode)
                         CreatePathScript();
-                    QuarkAssetEditorUtility.SetAndSaveQuarkAsset(quarkAssetData);
                     CosmosEditorUtility.SaveData(QuarkAssetConfigDataFileName, quarkAssetConfigData);
                     CosmosEditorUtility.LogInfo("Quark asset  build done ");
                 }
                 if (GUILayout.Button("Clear", GUILayout.Height(32)))
                 {
-                    QuarkAssetEditorUtility.ClearQuarkAsset();
+                    QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance.Dispose();
                     CosmosEditorUtility.ClearData(QuarkAssetConfigDataFileName);
                     CosmosEditorUtility.LogInfo("Quark asset clear done ");
                 }
