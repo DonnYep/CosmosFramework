@@ -8,6 +8,7 @@ namespace Cosmos.QuarkAsset
     /// QuarkAssetDataset用于在Editor Runtime快速开发时使用；
     /// build之后需配合AB资源使用；
     /// </summary>
+    [Serializable]
     public class QuarkAssetDataset : DatasetBase
     {
         public QuarkAssetLoadMode QuarkAssetLoadMode;

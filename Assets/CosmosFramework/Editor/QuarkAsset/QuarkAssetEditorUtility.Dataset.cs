@@ -12,7 +12,7 @@ namespace Cosmos.CosmosEditor
     {
         public static class Dataset
         {
-            const string folderPath = "Assets/QuarkAsset/";
+            const string folderPath = "Assets/QuarkAsset";
             const string datasetPath = "Assets/QuarkAsset/QuarkAssetDataset.asset";
             static QuarkAssetDataset quarkAssetDataset;
             public static QuarkAssetDataset QuarkAssetDatasetInstance
@@ -21,20 +21,21 @@ namespace Cosmos.CosmosEditor
                 {
                     if (quarkAssetDataset == null)
                     {
-                        var so = UnityEditor.AssetDatabase.LoadAssetAtPath<QuarkAssetDataset>(datasetPath);
+                        var so = AssetDatabase.LoadAssetAtPath<QuarkAssetDataset>(datasetPath);
                         if (so == null)
                         {
-                            so = ScriptableObject.CreateInstance<QuarkAssetDataset>();
-                            so.hideFlags = HideFlags.NotEditable;
                             if (!AssetDatabase.IsValidFolder(folderPath))
                             {
                                 AssetDatabase.CreateFolder("Assets", "QuarkAsset");
                             }
+                            so = ScriptableObject.CreateInstance<QuarkAssetDataset>();
+                            so.hideFlags = HideFlags.NotEditable;
                             AssetDatabase.CreateAsset(so, datasetPath);
+                            EditorUtility.SetDirty(so);
                             AssetDatabase.SaveAssets();
                             AssetDatabase.Refresh();
-                            quarkAssetDataset = AssetDatabase.LoadAssetAtPath<QuarkAssetDataset>(datasetPath);
                         }
+                        quarkAssetDataset = so;
                     }
                     return quarkAssetDataset;
                 }

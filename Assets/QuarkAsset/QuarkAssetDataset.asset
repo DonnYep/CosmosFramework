@@ -13,6 +13,238 @@ MonoBehaviour:
   m_Name: QuarkAssetDataset
   m_EditorClassIdentifier: 
   objectName: NewScriptableObject
-  QuarkAssetLoadMode: 0
-  QuarkAssetCount: 0
-  QuarkAssetObjectList: []
+  QuarkAssetLoadMode: 1
+  QuarkAssetCount: 58
+  QuarkAssetObjectList:
+  - AssetName: Alpha_Body_Bule_MAT
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\ActionPack\YBot\BaseActionPack\Alpha_Body_Bule_MAT.mat
+    AssetType: UnityEngine.Material
+  - AssetName: Alpha_Body_Red_MAT
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\ActionPack\YBot\BaseActionPack\Alpha_Body_Red_MAT.mat
+    AssetType: UnityEngine.Material
+  - AssetName: PlayerOverrideAC
+    AssetExtension: .overrideController
+    AssetPath: Assets\Examples\ActionPack\YBot\PlayerOverrideAC.overrideController
+    AssetType: UnityEngine.AnimatorOverrideController
+  - AssetName: RM_YBotAC
+    AssetExtension: .controller
+    AssetPath: Assets\Examples\ActionPack\YBot\RM_YBotAC.controller
+    AssetType: UnityEditor.Animations.AnimatorController
+  - AssetName: SimplePlayer_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ActionPack\SimplePlayer_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: UnitGrid10240
+    AssetExtension: .psd
+    AssetPath: Assets\Examples\Common\UnitSquare\UnitGrid10240.psd
+    AssetType: UnityEngine.Texture2D
+  - AssetName: UnitGrid10240_Mat
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\Common\UnitSquare\UnitGrid10240_Mat.mat
+    AssetType: UnityEngine.Material
+  - AssetName: UnitGrid256
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\Common\UnitSquare\UnitGrid256.mat
+    AssetType: UnityEngine.Material
+  - AssetName: UnitGrid256_01
+    AssetExtension: .psd
+    AssetPath: Assets\Examples\Common\UnitSquare\UnitGrid256_01.psd
+    AssetType: UnityEngine.Texture2D
+  - AssetName: UnitSquare
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Common\UnitSquare\UnitSquare.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: Algorithm_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Algorithm\Algorithm_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: LRU_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Algorithm\LRU_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: AudioModule_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Audio\AudioModule_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: Encrytion
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Encrytion\Encrytion.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: EventCenter_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Event\EventCenter_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: EventUtilityTool_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Event\EventUtilityTool_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: InputModule_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Event\InputModule_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: FSM_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\FSM\FSM_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: Timer_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\HelperImpl\Timer_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: Module_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Mono\Module_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: LocalCube
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\ExampleScripts\Network\Multiplay_Cube\Res\LocalCube.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: RemoteCube
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\ExampleScripts\Network\Multiplay_Cube\Res\RemoteCube.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: Multiplay_Cube
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Network\Multiplay_Cube\Multiplay_Cube.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: LM_YBotAC
+    AssetExtension: .controller
+    AssetPath: Assets\Examples\ExampleScripts\Network\Multiplay_YBot\Res\LM_YBotAC.controller
+    AssetType: UnityEditor.Animations.AnimatorController
+  - AssetName: YBot_LM_Local
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\ExampleScripts\Network\Multiplay_YBot\Res\YBot_LM_Local.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: YBot_LM_Remote
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\ExampleScripts\Network\Multiplay_YBot\Res\YBot_LM_Remote.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: Multiplay_YBot
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Network\Multiplay_YBot\Multiplay_YBot.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: ObjectPool_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\ObjectPool\ObjectPool_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: QuarkAssetExample
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\QuarkAsset\QuarkAssetExample.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: ResLoad_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Resource\ResLoad_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: AsyncDoneLoader
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Scene\AsyncLoadLevelCallBack_Example\AsyncDoneLoader.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: AsyncDoneTarget
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Scene\AsyncLoadLevelCallBack_Example\AsyncDoneTarget.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: AsyncLoader
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Scene\AsyncLoadLevelSilder_Example\AsyncLoader.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: AsyncLoadingScene
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Scene\AsyncLoadLevelSilder_Example\AsyncLoadingScene.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: AsyncTarget
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\Scene\AsyncLoadLevelSilder_Example\AsyncTarget.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: SortUnityComps_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\SortUnityComps\SortUnityComps_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: UI_Example
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\ExampleScripts\UI\UI_Example.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: link
+    AssetExtension: .xml
+    AssetPath: Assets\Examples\Plugins\JsonDotNet\link.xml
+    AssetType: UnityEngine.TextAsset
+  - AssetName: Capsule
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\DataSet\ObjectPool\Capsule.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: Cube
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\DataSet\ObjectPool\Cube.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: Mat01
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\Resources\DataSet\ObjectPool\Mat01.mat
+    AssetType: UnityEngine.Material
+  - AssetName: Mat02
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\Resources\DataSet\ObjectPool\Mat02.mat
+    AssetType: UnityEngine.Material
+  - AssetName: Mat03
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\Resources\DataSet\ObjectPool\Mat03.mat
+    AssetType: UnityEngine.Material
+  - AssetName: Sphere
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\DataSet\ObjectPool\Sphere.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: PlayerCamera
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\Player\PlayerCamera.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: ResPrefab_Cube
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\ResPrefab\ResPrefab_Cube.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: ResPrefab_Mono
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\ResPrefab\ResPrefab_Mono.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: ResPrefab_Sphere
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\ResPrefab\ResPrefab_Sphere.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: InventoryItem
+    AssetExtension: .psd
+    AssetPath: Assets\Examples\Resources\Texture\InventoryItem.psd
+    AssetType: UnityEngine.Texture2D
+  - AssetName: InventoryPanel
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\UI\InventoryPanel.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: MainUICanvas
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\UI\MainUICanvas.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: SettingPanel
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\UI\SettingPanel.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: Slot
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\UI\Slot.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: StatusPanel
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\UI\StatusPanel.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: StorePanel
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\UI\StorePanel.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: WelcomePanel
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\Resources\UI\WelcomePanel.prefab
+    AssetType: UnityEngine.GameObject
+  - AssetName: Upgrade
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\Upgrade\Upgrade.unity
+    AssetType: UnityEditor.SceneAsset
+  - AssetName: ReadMe
+    AssetExtension: .txt
+    AssetPath: Assets\Examples\ReadMe.txt
+    AssetType: UnityEngine.TextAsset
