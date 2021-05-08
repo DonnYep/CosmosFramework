@@ -410,21 +410,59 @@ where K : class
             /// </summary>
             /// <typeparam name="T">实例对象类型</typeparam>
             /// <param name="obj">实例对象</param>
-            /// <returns>每个字段与字段值的数组</returns>
-            public static string[] TraverseInstanceAllFiled<T>(T obj)
+            /// <param name="handler">遍历到一条字段执行的方法</param>
+            public static void TraverseInstanceAllFileds<T>(T obj, Action<string, object> handler)
             {
+                TraverseInstanceAllFileds(typeof(T), obj, handler);
+            }
+            /// <summary>
+            /// 遍历实例对象上的所有字段；
+            /// 此方法可识别属性与字段，打印属性时候需要特别注意过滤自动属性的额外字段；
+            /// </summary>
+            /// <param name="type">实例对象类型</param>
+            /// <param name="obj">实例对象</param>
+            /// <param name="handler">遍历到一条字段执行的方法</param>
+            public static void TraverseInstanceAllFileds(Type type,object obj, Action<string, object> handler)
+            {
+                if (type == null)
+                    throw new ArgumentNullException("type is invalid");
                 if (obj == null)
-                    return null;
-                Type type = typeof(T);
-                var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty);
-                var length = fields.Length;
-                List<string> filedSet = new List<string>();
-                for (int i = 0; i < length; i++)
+                    throw new ArgumentNullException("obj is invalid");
+                if (handler == null)
+                    throw new ArgumentNullException("handler is invalid");
+                var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.Static);
+                foreach (var f in fields)
                 {
-                    var info = $"{fields[i].Name}:{fields[i].GetValue(obj)};";
-                    filedSet.Add(info);
+                    handler.Invoke(f.Name, f.GetValue(obj));
                 }
-                return filedSet.ToArray();
+            }
+            /// <summary>
+            /// 遍历type类型上的非对象字段；
+            /// 包含静态、常量、属性等；
+            /// </summary>
+            /// <typeparam name="T">遍历的类型</typeparam>
+            /// <param name="handler">遍历到一条字段执行的方法</param>
+            public static void TraverseTypeFileds<T>(Action<string, object> handler)
+            {
+                TraverseTypeFileds(typeof(T), handler);
+            }
+            /// <summary>
+            /// 遍历type类型上的非对象字段；
+            /// 包含静态、常量、属性等；
+            /// </summary>
+            /// <param name="type">遍历的类型</param>
+            /// <param name="handler">遍历到一条字段执行的方法</param>
+            public static void TraverseTypeFileds(Type type, Action<string, object> handler)
+            {
+                if (type == null)
+                    throw new ArgumentNullException("type is invalid");
+                if (handler == null)
+                    throw new ArgumentNullException("handler is invalid");
+                var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.Static);
+                foreach (var f in fields)
+                {
+                    handler.Invoke(f.Name, f.GetValue(null));
+                }
             }
             /// <summary>
             /// 查询单个类型中存在的目标特性

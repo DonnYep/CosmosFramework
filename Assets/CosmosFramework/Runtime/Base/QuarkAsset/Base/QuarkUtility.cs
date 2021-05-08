@@ -15,14 +15,28 @@ namespace Cosmos.QuarkAsset
         static QuarkAssetDataset quarkAssetData;
         static Dictionary<string, LinkedList<QuarkAssetObject>> assetDict;
         public static QuarkAssetDataset QuarkAssetData { get { return quarkAssetData; } }
-        public static T LoadAsset<T>(string assetName, string assetExtension = null)
+        public static T LoadAssetByPath<T>(string assetPath)
             where T : UnityEngine.Object
         {
             T asset = null;
             switch (quarkAssetData.QuarkAssetLoadMode)
             {
                 case QuarkAssetLoadMode.AssetDataBase:
-                    asset = AssetDatabaseLoadAsset<T>(assetName, assetExtension);
+                    asset = AssetDatabaseLoadAssetByPath<T>(assetPath);
+                    break;
+                case QuarkAssetLoadMode.BuiltAssetBundle:
+                    break;
+            }
+            return asset;
+        }
+        public static T LoadAssetByName<T>(string assetName, string assetExtension = null)
+            where T : UnityEngine.Object
+        {
+            T asset = null;
+            switch (quarkAssetData.QuarkAssetLoadMode)
+            {
+                case QuarkAssetLoadMode.AssetDataBase:
+                    asset = AssetDatabaseLoadAssetByName<T>(assetName, assetExtension);
                     break;
                 case QuarkAssetLoadMode.BuiltAssetBundle:
                     break;
@@ -31,11 +45,11 @@ namespace Cosmos.QuarkAsset
         }
         public static GameObject LoadPrefab(string assetName, string assetExtension = null)
         {
-            return LoadAsset<GameObject>(assetName, assetExtension);
+            return LoadAssetByName<GameObject>(assetName, assetExtension);
         }
         public static GameObject Instantiate<T>(string assetName, string assetExtension = null)
         {
-            var go = LoadAsset<GameObject>(assetName, assetExtension);
+            var go = LoadAssetByName<GameObject>(assetName, assetExtension);
             return GameObject.Instantiate(go);
         }
         public static void SetData(QuarkAssetDataset assetData, Dictionary<string, LinkedList<QuarkAssetObject>> lnkData)
@@ -43,7 +57,7 @@ namespace Cosmos.QuarkAsset
             assetDict = lnkData;
             quarkAssetData = assetData;
         }
-        static T AssetDatabaseLoadAsset<T>(string assetName, string assetExtension = null)
+        static T AssetDatabaseLoadAssetByName<T>(string assetName, string assetExtension = null)
             where T : UnityEngine.Object
         {
             if (string.IsNullOrEmpty(assetName))
@@ -69,7 +83,17 @@ namespace Cosmos.QuarkAsset
                     quarkAssetObject = lnk.First.Value;
                 }
             }
-            return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(quarkAssetObject.AssetPath);
+            var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetObject.AssetGuid);
+            return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(guid2path);
+        }
+        static T AssetDatabaseLoadAssetByPath<T>(string assetPath)
+       where T : UnityEngine.Object
+        {
+            if (string.IsNullOrEmpty(assetPath))
+                throw new ArgumentNullException("Asset name is invalid!");
+            if (assetDict == null)
+                throw new Exception("QuarkAsset 未执行 build 操作！");
+            return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
         }
     }
 }

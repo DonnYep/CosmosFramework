@@ -10,5 +10,6 @@ namespace Cosmos.QuarkAsset
         public string AssetExtension;
         public string AssetPath;
         public string AssetType;
+        public string AssetGuid;
     }
 }

@@ -110,7 +110,8 @@ namespace Cosmos.CosmosEditor
                                     AssetExtension = file.Extension,
                                     AssetName = assetName,
                                     AssetPath = assetPath,
-                                    AssetType = type.ToString()
+                                    AssetType = type.ToString(),
+                                    AssetGuid = AssetDatabase.AssetPathToGUID(assetPath)
                                 };
 
                                 quarkAssetList.Add(assetObj);
