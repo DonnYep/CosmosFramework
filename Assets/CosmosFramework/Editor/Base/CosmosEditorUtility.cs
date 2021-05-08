@@ -12,6 +12,21 @@ namespace Cosmos.CosmosEditor
 {
     public static class CosmosEditorUtility
     {
+        public const string CosmosFramework = "CosmosFramework";
+        public static string LibraryPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(libraryPath))
+                {
+                    var editorPath = new DirectoryInfo(Application.dataPath);
+                    var rootPath = editorPath.Parent.FullName + "/Library/";
+                    libraryPath = Utility.IO.CombineRelativePath(rootPath, CosmosFramework);
+                }
+                return libraryPath;
+            }
+        }
+        static string libraryPath;
         static readonly Vector2 cosmosDevWinSize = new Vector2(512f, 384f);
         static readonly Vector2 cosmosMaxWinSize = new Vector2(768f, 768f);
         public static Vector2 CosmosDevWinSize { get { return cosmosDevWinSize; } }
@@ -35,7 +50,7 @@ namespace Cosmos.CosmosEditor
         }
         public static void SaveDataJson(string fileName, string context)
         {
-            Utility.IO.OverwriteTextFile(ApplicationConst.LibraryPath, fileName, context);
+            Utility.IO.OverwriteTextFile(LibraryPath, fileName, context);
         }
         public static T GetData<T>(string fileName)
             where T : class,new()
@@ -46,13 +61,13 @@ namespace Cosmos.CosmosEditor
         }
         public static string GetDataJson(string fileName)
         {
-            var filePath = Utility.IO.CombineRelativeFilePath(fileName, ApplicationConst.LibraryPath);
+            var filePath = Utility.IO.CombineRelativeFilePath(fileName, LibraryPath);
             var cfgStr = Utility.IO.ReadTextFileContent(filePath);
             return cfgStr.ToString();
         }
         public static void ClearData(string fileName)
         {
-            var filePath = Utility.IO.CombineRelativeFilePath(fileName, ApplicationConst.LibraryPath);
+            var filePath = Utility.IO.CombineRelativeFilePath(fileName, LibraryPath);
             Utility.IO.DeleteFile(filePath);
         }
         public static string GetDefaultLogOutputDirectory()

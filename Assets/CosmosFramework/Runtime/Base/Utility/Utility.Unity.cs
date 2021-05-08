@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using System.IO;
 namespace Cosmos
 {
     public static partial class Utility
@@ -15,6 +15,10 @@ namespace Cosmos
         /// </summary>
         public static class Unity
         {
+            /// <summary>
+            /// PlayerPrefs持久化前缀
+            /// </summary>
+            public const string Perfix = "Cosmos";
             /// <summary>
             /// 持久化数据层路径，可写入
             /// </summary>
@@ -446,7 +450,7 @@ namespace Cosmos
             public static string GetPrefsKey(string key)
             {
                 Utility.Text.ClearStringBuilder();
-                return Utility.Text.Format(ApplicationConst.APPPERFIX + "_" + key);
+                return Utility.Text.Format(Perfix + "_" + key);
             }
             public static int GetPrefsInt(string key)
             {
@@ -545,6 +549,25 @@ namespace Cosmos
             public static string DecomposeAppAbsolutePath(string absolutePath)
             {
                 return absolutePath.Remove(0, Application.dataPath.Length);
+            }
+            /// <summary>
+            /// 保存截屏到持久化路径；
+            /// </summary>
+            /// <param name="fileName">文件名，需要包含后缀</param>
+            public static void CaptureScreen2PersistentDataPath(string fileName)
+            {
+                var fullPath = Path.Combine(Application.persistentDataPath, fileName);
+                ScreenCapture.CaptureScreenshot(fullPath);
+            }
+            /// <summary>
+            /// 保存截屏；
+            /// </summary>
+            /// <param name="filePath">文件路径</param>
+            /// <param name="fileName">文件名，需要包含后缀</param>
+            public static void CaptureScreen(string filePath, string fileName)
+            {
+                var fullPath = Path.Combine(filePath, fileName);
+                ScreenCapture.CaptureScreenshot(fullPath);
             }
         }
     }
