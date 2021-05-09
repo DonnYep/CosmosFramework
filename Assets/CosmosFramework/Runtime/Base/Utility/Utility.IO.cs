@@ -11,6 +11,23 @@ namespace Cosmos
         public static class IO
         {
             /// <summary>
+            /// 获取文件夹中的文件数量；
+            /// </summary>
+            /// <param name="folderPath">文件夹路径</param>
+            /// <returns>文件数量</returns>
+            public static int FolderFileCount(string folderPath)
+            {
+                int count = 0;
+                var files = Directory.GetFiles(folderPath); //String数组类型
+                count += files.Length;
+                var dirs = Directory.GetDirectories(folderPath);
+                foreach (var dir in dirs)
+                {
+                    count += FolderFileCount(dir);
+                }
+                return count;
+            }
+            /// <summary>
             /// 遍历文件夹下的文件；
             /// </summary>
             /// <param name="folderPath">文件夹路径</param>

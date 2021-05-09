@@ -8,17 +8,17 @@ using UnityEditor;
 # if UNITY_EDITOR
 namespace Cosmos.CosmosEditor
 {
-    public class ComponentReferenceWindow:EditorWindow{
-        [MenuItem("Window/Cosmos/ComponentReference")]
+    public class HierachyFinderWindow : EditorWindow{
+        [MenuItem("Window/Cosmos/HierachyFinder")]
         public static void OpenWindow()
         {
-            var window = GetWindow<ComponentReferenceWindow>();
+            var window = GetWindow<HierachyFinderWindow>();
             ((EditorWindow)window).maxSize = CosmosEditorUtility.CosmosMaxWinSize;
             ((EditorWindow)window).minSize = CosmosEditorUtility.CosmosDevWinSize;
         }
-       public ComponentReferenceWindow()
+       public HierachyFinderWindow()
         {
-            this.titleContent = new GUIContent("ReferenceFinder");
+            this.titleContent = new GUIContent("HierachyFinder");
         }
         Vector2 scriptScrollPos;
         MonoScript scriptObj;
