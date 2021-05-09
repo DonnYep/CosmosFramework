@@ -32,7 +32,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **Input**：输入适配模块。用于适配不同平台的输入方式。
 
-- **Hotfix**：热更新模块。此模块适用于基于C#的热更方案，如ILRuntime、JEngine等。
+- **Hotfix**：热更新模块。此模块适用于基于C#的热更方案。
 
 - **Network**：网络模块。当前模块提供了可靠的UDP协议，并集成了KCP协议。TCP协议持续更新中。
 
@@ -59,6 +59,8 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 - **ReferencePool** ：全局引用池模块；
 
 - **Editor** ：Editor中提供了在Hierarchy常用检索对象、组件的方法，EditorConfig提供了代码生成是自动创建代码标头的功能；
+
+- **QuarkAsset** ：QuarkAsset是快速的资源管理方案。动态加载时资源无需放入Resources、StreamingAssets或打包成AB包进行加载，在Assets目录下的任意位置都可以被加载到。加载时可通过文件名+后缀进行完全限定，也可以通过指定路径加载。当前AB方案正在开发中；
 
 ## 内置软件架构 MVVM
 
