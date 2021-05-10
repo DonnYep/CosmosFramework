@@ -13,7 +13,7 @@ namespace Cosmos.CosmosEditor
             BuildAsset = 0,
             PlatfromBuild = 1
         }
-        static string[] projectFiles = new string[]
+        static string[] extensions = new string[]
         {
         ".3ds",".bmp",".blend",".eps",".exif",".gif",".icns",".ico",".jpeg",
         ".jpg",".ma",".max",".mb",".pcx",".png",".psd",".svg",".controller",
@@ -120,41 +120,99 @@ namespace Cosmos.CosmosEditor
         {
             EditorUtility.ClearProgressBar();
             var count = Utility.IO.FolderFileCount(Application.dataPath);
-            int currentIndex = 0;
+            int currentBuildIndex = 0;
+            int currentDirIndex = 0;
             List<QuarkAssetObject> quarkAssetList = new List<QuarkAssetObject>();
             quarkAssetList?.Clear();
-            string path = Application.dataPath;
-            Utility.IO.TraverseFolderFile(path, (file) =>
+
+            var dirs = quarkAssetConfigData.IncludeDirectories;
+            Dictionary<string, FileSystemInfo> fileSysInfoDict = new Dictionary<string, FileSystemInfo>();
+            if (dirs != null)
             {
-                currentIndex++;
-                if (currentIndex < count)
+                foreach (var dir in dirs)
                 {
-                    EditorUtility.DisplayCancelableProgressBar("QuarkAssetDataset", "Building", (float)currentIndex / (float)count);
-                }
-                else
-                {
-                    EditorUtility.ClearProgressBar();
-                }
-                var length = projectFiles.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    if (projectFiles[i].Equals(file.Extension))
+                    Utility.IO.TraverseFolderFile(dir, (file) =>
                     {
-                        var assetPath = file.FullName.Remove(0, filterLength);
-                        var assetName = file.Name.Replace(file.Extension, string.Empty);
-                        var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
-                        var assetObj = new QuarkAssetObject()
+                        currentDirIndex++;
+                        if (currentDirIndex < dirs.Count)
                         {
-                            AssetExtension = file.Extension,
-                            AssetName = assetName,
-                            AssetPath = assetPath,
-                            AssetType = type.ToString(),
-                            AssetGuid = AssetDatabase.AssetPathToGUID(assetPath)
-                        };
-                        quarkAssetList.Add(assetObj);
+                            EditorUtility.DisplayCancelableProgressBar("TraverseFolderFile", "Building", (float)currentDirIndex / (float)dirs.Count);
+                        }
+                        else
+                        {
+                            EditorUtility.ClearProgressBar();
+                        }
+                        if (!fileSysInfoDict.ContainsKey(file.FullName))
+                        {
+                            fileSysInfoDict.Add(file.FullName, file);
+                        }
+                    });
+                }
+                var fileCount = fileSysInfoDict.Count;
+                foreach (var file in fileSysInfoDict.Values)
+                {
+                    currentBuildIndex++;
+                    if (currentBuildIndex < fileCount)
+                    {
+                        EditorUtility.DisplayCancelableProgressBar("QuarkAssetDataset", "Building", (float)currentBuildIndex / (float)fileCount);
+                    }
+                    else
+                    {
+                        EditorUtility.ClearProgressBar();
+                    }
+                    var projLength = extensions.Length;
+                    for (int i = 0; i < projLength; i++)
+                    {
+                        if (extensions[i].Equals(file.Extension))
+                        {
+                            var assetPath = file.FullName.Remove(0, filterLength);
+                            var assetName = file.Name.Replace(file.Extension, string.Empty);
+                            var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
+                            var assetObj = new QuarkAssetObject()
+                            {
+                                AssetExtension = file.Extension,
+                                AssetName = assetName,
+                                AssetPath = assetPath,
+                                AssetType = type.ToString(),
+                                AssetGuid = AssetDatabase.AssetPathToGUID(assetPath)
+                            };
+                            quarkAssetList.Add(assetObj);
+                        }
                     }
                 }
-            });
+            }
+            //string path = Application.dataPath;
+            //Utility.IO.TraverseFolderFile(path, (file) =>
+            //{
+            //    currentIndex++;
+            //    if (currentIndex < count)
+            //    {
+            //        EditorUtility.DisplayCancelableProgressBar("QuarkAssetDataset", "Building", (float)currentIndex / (float)count);
+            //    }
+            //    else
+            //    {
+            //        EditorUtility.ClearProgressBar();
+            //    }
+            //    var length = projectFiles.Length;
+            //    for (int i = 0; i < length; i++)
+            //    {
+            //        if (projectFiles[i].Equals(file.Extension))
+            //        {
+            //            var assetPath = file.FullName.Remove(0, filterLength);
+            //            var assetName = file.Name.Replace(file.Extension, string.Empty);
+            //            var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
+            //            var assetObj = new QuarkAssetObject()
+            //            {
+            //                AssetExtension = file.Extension,
+            //                AssetName = assetName,
+            //                AssetPath = assetPath,
+            //                AssetType = type.ToString(),
+            //                AssetGuid = AssetDatabase.AssetPathToGUID(assetPath)
+            //            };
+            //            quarkAssetList.Add(assetObj);
+            //        }
+            //    }
+            //});
             QuarkAssetDataset.QuarkAssetObjectList = quarkAssetList;
             QuarkAssetDataset.QuarkAssetCount = quarkAssetList.Count;
             quarkAssetConfigData.IncludeDirectories = quarkAssetDragDropTab.FolderPath;
