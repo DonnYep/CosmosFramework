@@ -569,6 +569,62 @@ namespace Cosmos
                 var fullPath = Path.Combine(filePath, fileName);
                 ScreenCapture.CaptureScreenshot(fullPath);
             }
+
+            /// <summary>
+            /// 通过相机截取屏幕
+            /// </summary>
+            /// <param name="camera">目标相机</param>
+            /// <param name="fileName">文件的完整名，路径/文件名.后缀名</param>
+            public static void CaptureScreenShotByCamera(Camera camera, string fileName)
+            {
+                var oldRenderTexture = camera.targetTexture;
+                RenderTexture renderTexture;
+                renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
+                camera.targetTexture = renderTexture;
+                camera.Render();
+                Texture2D texture2D = new Texture2D(renderTexture.width, renderTexture.height);
+                RenderTexture.active = renderTexture;
+                texture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+                texture2D.Apply();
+                byte[] bytes = texture2D.EncodeToPNG();
+                texture2D.Compress(false);
+                texture2D.Apply();
+                RenderTexture.active = null;
+                camera.targetTexture = oldRenderTexture;
+                var fullPath = System.IO.Path.Combine(Application.persistentDataPath, fileName);
+                System.IO.File.WriteAllBytes(fullPath, bytes);
+            }
+            /// <summary>
+            /// 通过相机截取屏幕并转换为Texture2D
+            /// </summary>
+            /// <param name="camera">目标相机</param>
+            /// <returns>相机抓取的屏幕Texture2D</returns>
+            public static Texture2D CaptureScreenShotByCameraAsTexture(Camera camera)
+            {
+                var oldRenderTexture = camera.targetTexture;
+                RenderTexture renderTexture;
+                renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
+                camera.targetTexture = renderTexture;
+                camera.Render();
+                Texture2D texture2D = new Texture2D(renderTexture.width, renderTexture.height);
+                RenderTexture.active = renderTexture;
+                texture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+                texture2D.Apply();
+                RenderTexture.active = null;
+                camera.targetTexture = oldRenderTexture;
+                return texture2D;
+            }
+            /// <summary>
+            /// 通过相机截取屏幕并转换为Sprite
+            /// </summary>
+            /// <param name="camera">目标相机</param>
+            /// <returns>相机抓取的屏幕Texture2D</returns>
+            public static Sprite CaptureScreenShotByCameraAsSprite(Camera camera)
+            {
+                var texture2D = CaptureScreenShotByCameraAsTexture(camera);
+                var sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), Vector2.zero);
+                return sprite;
+            }
         }
     }
 }
