@@ -569,13 +569,12 @@ namespace Cosmos
                 var fullPath = Path.Combine(filePath, fileName);
                 ScreenCapture.CaptureScreenshot(fullPath);
             }
-
             /// <summary>
             /// 通过相机截取屏幕
             /// </summary>
             /// <param name="camera">目标相机</param>
             /// <param name="fileName">文件的完整名，路径/文件名.后缀名</param>
-            public static void CaptureScreenShotByCamera(Camera camera, string fileName)
+            public static void CaptureScreenshotByCamera(Camera camera, string fileName)
             {
                 var oldRenderTexture = camera.targetTexture;
                 RenderTexture renderTexture;
@@ -599,7 +598,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="camera">目标相机</param>
             /// <returns>相机抓取的屏幕Texture2D</returns>
-            public static Texture2D CaptureScreenShotByCameraAsTexture(Camera camera)
+            public static Texture2D CaptureScreenshotByCameraAsTexture(Camera camera)
             {
                 var oldRenderTexture = camera.targetTexture;
                 RenderTexture renderTexture;
@@ -619,9 +618,9 @@ namespace Cosmos
             /// </summary>
             /// <param name="camera">目标相机</param>
             /// <returns>相机抓取的屏幕Texture2D</returns>
-            public static Sprite CaptureScreenShotByCameraAsSprite(Camera camera)
+            public static Sprite CaptureScreenshotByCameraAsSprite(Camera camera)
             {
-                var texture2D = CaptureScreenShotByCameraAsTexture(camera);
+                var texture2D = CaptureScreenshotByCameraAsTexture(camera);
                 var sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), Vector2.zero);
                 return sprite;
             }
