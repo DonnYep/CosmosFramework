@@ -23,7 +23,6 @@ namespace Cosmos.Entity
         Dictionary<int, IEntity> entityIdDict;
         IObjectPoolManager objectPoolManager;
         IResourceManager resourceManager;
-        IMonoManager monoManager;
         #endregion
         #region Methods
         public override void OnInitialization()
@@ -35,7 +34,6 @@ namespace Cosmos.Entity
         {
             objectPoolManager = GameManager.GetModule<IObjectPoolManager>();
             resourceManager = GameManager.GetModule<IResourceManager>();
-            monoManager = GameManager.GetModule<IMonoManager>();
         }
         public override void OnRefresh()
         {
@@ -60,7 +58,7 @@ namespace Cosmos.Entity
             var result = HasEntityGroup(entityAssetInfo.EntityGroupName);
             if (!result)
             {
-                var entityAsset = resourceManager.LoadPrefab(entityAssetInfo);
+                var entityAsset = resourceManager.LoadPrefab(0,entityAssetInfo);
                 var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
                 if (entityAssetInfo.UseObjectPool)
                 {
@@ -120,7 +118,7 @@ namespace Cosmos.Entity
             var result = HasEntityGroup(entityAssetInfo.EntityGroupName);
             if (!result)
             {
-                return resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
+                return resourceManager.LoadPrefabAsync(0,entityAssetInfo, (entityAsset) =>
                 {
                     var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
                     if (entityAssetInfo.UseObjectPool)
@@ -141,7 +139,7 @@ namespace Cosmos.Entity
         /// <returns>协程对象</returns>
         public Coroutine RegisterEntityGroupAsync(Type entityType)
         {
-            return monoManager.StartCoroutine( EnumRegisterEntityGroupAsync(entityType));
+            return Utility.Unity.StartCoroutine( EnumRegisterEntityGroupAsync(entityType));
         }
         /// <summary>
         /// 注册EntityGroup (异步)；
@@ -487,7 +485,7 @@ namespace Cosmos.Entity
         /// <returns>协程对象</returns>
         public Coroutine AutoRegisterEntityGroupsAsync()
         {
-            return monoManager.StartCoroutine(EnumAutoRegisterEntityGroups());
+            return Utility.Unity.StartCoroutine(EnumAutoRegisterEntityGroups());
         }
         IEnumerator EnumAutoRegisterEntityGroups()
         {
@@ -529,7 +527,7 @@ namespace Cosmos.Entity
                 {
                     var att = attributes[i];
                     var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath, att.ResourcePath);
-                    resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
+                    resourceManager.LoadPrefabAsync(0,entityAssetInfo, (entityAsset) =>
                     {
                         var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
                         if (entityAssetInfo.UseObjectPool)

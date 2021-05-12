@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System.Collections;
+
 namespace Cosmos
 {
     public static partial class Utility
@@ -15,6 +17,21 @@ namespace Cosmos
         /// </summary>
         public static class Unity
         {
+            static ICoroutineHelper coroutineHelper;
+            static ICoroutineHelper CoroutineHelper
+            {
+                get
+                {
+                    if (coroutineHelper == null)
+                    {
+                        var go = new GameObject("CoroutineHelper");
+                        go.hideFlags = HideFlags.HideInHierarchy;
+                        GameObject.DontDestroyOnLoad(go);
+                        coroutineHelper = go.AddComponent<CoroutineHelper>();
+                    }
+                    return coroutineHelper;
+                }
+            }
             /// <summary>
             /// PlayerPrefs持久化前缀
             /// </summary>
@@ -624,6 +641,64 @@ namespace Cosmos
                 var sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), Vector2.zero);
                 return sprite;
             }
+
+            #region  Coroutine
+
+            public static Coroutine StartCoroutine(Coroutine routine, Action callBack)
+            {
+                return CoroutineHelper.StartCoroutine(routine, callBack);
+            }
+            /// <summary>
+            /// 延时协程；
+            /// </summary>
+            /// <param name="delay">延时的时间</param>
+            /// <param name="callBack">延时后的回调函数</param>
+            /// <returns>协程对象</returns>
+            public static Coroutine DelayCoroutine(float delay, Action callBack)
+            {
+                return CoroutineHelper.DelayCoroutine(delay, callBack);
+            }
+            /// <summary>
+            /// 条件协程；
+            /// </summary>
+            /// <param name="handler">目标条件</param>
+            /// <param name="callBack">条件达成后执行的回调</param>
+            /// <returns>协程对象</returns>
+            public static Coroutine PredicateCoroutine(Func<bool> handler, Action callBack)
+            {
+                return CoroutineHelper.PredicateCoroutine(handler, callBack);
+            }
+            /// <summary>
+            /// 嵌套协程；
+            /// </summary>
+            /// <param name="predicateHandler">条件函数</param>
+            /// <param name="nestHandler">条件成功后执行的嵌套协程</param>
+            /// <returns>Coroutine></returns>
+            public static Coroutine PredicateNestCoroutine(Func<bool> predicateHandler, Action nestHandler)
+            {
+                return CoroutineHelper.PredicateNestCoroutine(predicateHandler, nestHandler);
+            }
+            public static Coroutine StartCoroutine(IEnumerator routine)
+            {
+                return CoroutineHelper.StartCoroutine(routine);
+            }
+            public static Coroutine StartCoroutine(Action handler)
+            {
+                return CoroutineHelper.StartCoroutine(handler);
+            }
+            public static void StopAllCoroutines()
+            {
+                CoroutineHelper.StopAllCoroutines();
+            }
+            public static void StopCoroutine(IEnumerator routine)
+            {
+                CoroutineHelper.StopCoroutine(routine);
+            }
+            public static void StopCoroutine(Coroutine routine)
+            {
+                CoroutineHelper.StopCoroutine(routine);
+            }
+            #endregion
         }
     }
 }

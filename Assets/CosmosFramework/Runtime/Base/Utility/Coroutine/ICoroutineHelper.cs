@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
-using System;
-using System.Reflection;
+
 namespace Cosmos
 {
-    public interface IMonoManager: IModuleManager
+    public interface ICoroutineHelper
     {
         Coroutine StartCoroutine(Coroutine routine, Action callBack);
         /// <summary>

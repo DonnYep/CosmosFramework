@@ -7,22 +7,13 @@ using Cosmos.Resource;
 namespace Cosmos.UI
 {
     [Module]
-    internal sealed class UIManager : Module , IUIManager
+    internal sealed class UIManager : Module, IUIManager
     {
         #region Properties
         public GameObject UIRoot { get; private set; }
         Dictionary<string, UIFormBase> uiDict;
         Type uiFromBaseType = typeof(UIFormBase);
         IUIFormHelper uiFormHelper;
-        IUIFormHelper UIFormHelper
-        {
-            get
-            {
-                if (uiFormHelper == null)
-                    uiFormHelper = new DefaultUIFormHelper();
-                return uiFormHelper;
-            }
-        }
         IResourceManager resourceManager;
         List<UIFormBase> peerFormCache;
         #endregion
@@ -31,6 +22,7 @@ namespace Cosmos.UI
         {
             uiDict = new Dictionary<string, UIFormBase>();
             peerFormCache = new List<UIFormBase>();
+            uiFormHelper = new DefaultUIFormHelper();
         }
         public override void OnPreparatory()
         {
@@ -79,7 +71,6 @@ namespace Cosmos.UI
             {
                 throw new NotImplementedException($"Type:{uiType} has no UIAssetAttribute");
             }
-            CheckUIForm(attribute.UIAssetName);
             var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
             return OpenUIForm(assetInfo, uiType);
         }
@@ -106,7 +97,14 @@ namespace Cosmos.UI
             {
                 throw new NotImplementedException($"Type:{uiType} is not inherit form UIFormBase");
             }
-            CheckUIForm(assetInfo.UIAssetName);
+            if (string.IsNullOrEmpty(assetInfo.UIAssetName))
+                throw new ArgumentException("UIFormName is invalid !");
+            if (HasUIForm(assetInfo.UIAssetName))
+            {
+                var uiForm = PeekUIForm(assetInfo.UIAssetName);
+                uiFormHelper.ShowUIForm(uiForm);
+                return uiForm;
+            }
             var go = resourceManager.LoadPrefab(assetInfo, true);
             go?.transform.SetParent(UIRoot.transform);
             (go?.transform as RectTransform).ResetRectTransform();
@@ -130,17 +128,29 @@ namespace Cosmos.UI
             {
                 throw new ArgumentNullException($"Type:{type} has no UIAssetAttribute");
             }
-            CheckUIForm(attribute.UIAssetName);
-            var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-            return resourceManager.LoadPrefabAsync(assetInfo, panel =>
-             {
-                 panel.transform.SetParent(UIRoot.transform);
-                 (panel.transform as RectTransform).ResetRectTransform();
-                 var comp = Utility.Unity.Add<T>(panel);
-                 loadDoneCallback?.Invoke(comp);
-                 uiDict.Add(assetInfo.UIAssetName, comp);
-                 SortUIForm(comp);
-             }, null, true);
+            if (string.IsNullOrEmpty(attribute.UIAssetName))
+                throw new ArgumentException("UIFormName is invalid !");
+            if (HasUIForm(attribute.UIAssetName))
+            {
+                return Utility.Unity.StartCoroutine(() =>
+                {
+                    var uiForm = PeekUIForm(attribute.UIAssetName);
+                    uiFormHelper.ShowUIForm(uiForm);
+                });
+            }
+            else
+            {
+                var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+                return resourceManager.LoadPrefabAsync(assetInfo, panel =>
+                 {
+                     panel.transform.SetParent(UIRoot.transform);
+                     (panel.transform as RectTransform).ResetRectTransform();
+                     var comp = Utility.Unity.Add<T>(panel);
+                     loadDoneCallback?.Invoke(comp);
+                     uiDict.Add(assetInfo.UIAssetName, comp);
+                     SortUIForm(comp);
+                 }, null, true);
+            }
         }
         /// <summary>
         /// 通过UIAssetInfo加载UI对象（异步）；
@@ -155,16 +165,26 @@ namespace Cosmos.UI
             {
                 throw new ArgumentException($"Type:{uiType} is not inherit from UIFormBase");
             }
-            CheckUIForm(assetInfo.UIAssetName);
-            return resourceManager.LoadPrefabAsync(assetInfo, go =>
-             {
-                 go.transform.SetParent(UIRoot.transform);
-                 (go.transform as RectTransform).ResetRectTransform();
-                 var comp = Utility.Unity.Add(uiType, go) as UIFormBase;
-                 loadDoneCallback?.Invoke(comp);
-                 uiDict.Add(assetInfo.UIAssetName, comp);
-                 SortUIForm(comp);
-             }, null, true);
+            if (string.IsNullOrEmpty(assetInfo.UIAssetName))
+                throw new ArgumentException("UIFormName is invalid !");
+            if (HasUIForm(assetInfo.UIAssetName))
+            {
+                return Utility.Unity.StartCoroutine(() =>
+                {
+                    var uiForm = PeekUIForm(assetInfo.UIAssetName);
+                    uiFormHelper.ShowUIForm(uiForm);
+                });
+            }
+            else
+                return resourceManager.LoadPrefabAsync(assetInfo, go =>
+                 {
+                     go.transform.SetParent(UIRoot.transform);
+                     (go.transform as RectTransform).ResetRectTransform();
+                     var comp = Utility.Unity.Add(uiType, go) as UIFormBase;
+                     loadDoneCallback?.Invoke(comp);
+                     uiDict.Add(assetInfo.UIAssetName, comp);
+                     SortUIForm(comp);
+                 }, null, true);
         }
         /// <summary>
         /// 通过UIAssetInfo加载UI对象
@@ -179,16 +199,26 @@ namespace Cosmos.UI
             var type = typeof(T);
             if (!uiFromBaseType.IsAssignableFrom(type))
                 throw new ArgumentException($"Type:{type} is not inherit from UIFormBase");
-            CheckUIForm(assetInfo.UIAssetName);
-            return resourceManager.LoadPrefabAsync(assetInfo, go =>
+            if (string.IsNullOrEmpty(assetInfo.UIAssetName))
+                throw new ArgumentException("UIFormName is invalid !");
+            if (HasUIForm(assetInfo.UIAssetName))
             {
-                go.transform.SetParent(UIRoot.transform);
-                (go.transform as RectTransform).ResetRectTransform();
-                var comp = Utility.Unity.Add<T>(go);
-                loadDoneCallback?.Invoke(comp);
-                uiDict.Add(assetInfo.UIAssetName, comp);
-                SortUIForm(comp);
-            }, null, true);
+                return Utility.Unity.StartCoroutine(() =>
+                {
+                    var uiForm = PeekUIForm(assetInfo.UIAssetName);
+                    uiFormHelper.ShowUIForm(uiForm);
+                });
+            }
+            else
+                return resourceManager.LoadPrefabAsync(assetInfo, go =>
+                {
+                    go.transform.SetParent(UIRoot.transform);
+                    (go.transform as RectTransform).ResetRectTransform();
+                    var comp = Utility.Unity.Add<T>(go);
+                    loadDoneCallback?.Invoke(comp);
+                    uiDict.Add(assetInfo.UIAssetName, comp);
+                    SortUIForm(comp);
+                }, null, true);
         }
         /// <summary>
         /// 通过特性UIAssetAttribute加载Panel（异步）；
@@ -203,23 +233,35 @@ namespace Cosmos.UI
                 throw new ArgumentException($"Type:{type} is not inherit from UIFormBase");
             if (attribute == null)
                 throw new ArgumentNullException($"Type:{type} has no UIAssetAttribute");
-            CheckUIForm(attribute.UIAssetName);
-            var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-            return resourceManager.LoadPrefabAsync(assetInfo, go =>
-             {
-                 go.transform.SetParent(UIRoot.transform);
-                 (go.transform as RectTransform).ResetRectTransform();
-                 var comp = Utility.Unity.Add(type, go, true) as UIFormBase;
-                 loadDoneCallback?.Invoke(comp);
-                 uiDict.Add(assetInfo.UIAssetName, comp);
-                 SortUIForm(comp);
-             }, null, true);
+            if (string.IsNullOrEmpty(attribute.UIAssetName))
+                throw new ArgumentException("UIFormName is invalid !");
+            if (HasUIForm(attribute.UIAssetName))
+            {
+                return Utility.Unity.StartCoroutine(() =>
+                {
+                    var uiForm = PeekUIForm(attribute.UIAssetName);
+                    uiFormHelper.ShowUIForm(uiForm);
+                });
+            }
+            else
+            {
+                var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+                return resourceManager.LoadPrefabAsync(0,assetInfo, go =>
+                 {
+                     go.transform.SetParent(UIRoot.transform);
+                     (go.transform as RectTransform).ResetRectTransform();
+                     var comp = Utility.Unity.Add(type, go, true) as UIFormBase;
+                     loadDoneCallback?.Invoke(comp);
+                     uiDict.Add(assetInfo.UIAssetName, comp);
+                     SortUIForm(comp);
+                 }, null, true);
+            }
         }
         public void CloseUIForm(string uiAssetName)
         {
-            CheckUIForm(uiAssetName);
+            CheckUIFormValid(uiAssetName);
             uiDict.Remove(uiAssetName, out var uiForm);
-            UIFormHelper.CloseUIForm(uiForm);
+            uiFormHelper.CloseUIForm(uiForm);
         }
         /// <summary>
         /// 隐藏UI，调用UI中的HidePanel方法；
@@ -227,17 +269,17 @@ namespace Cosmos.UI
         /// UIFormBase.UIName
         /// </summary>
         /// <param name="uiAssetName">ui资源的名称</param>
-        public void HideUIForm(string  uiAssetName)
+        public void HideUIForm(string uiAssetName)
         {
-            CheckUIForm( uiAssetName);
-            uiDict.TryGetValue( uiAssetName, out var uiForm);
-            UIFormHelper.HideUIForm(uiForm);
+            CheckUIFormValid(uiAssetName);
+            uiDict.TryGetValue(uiAssetName, out var uiForm);
+            uiFormHelper.HideUIForm(uiForm);
         }
-        public void ShowUIForm(string  uiAssetName)
+        public void ShowUIForm(string uiAssetName)
         {
-            CheckUIForm( uiAssetName);
-            uiDict.TryGetValue( uiAssetName, out var uiForm);
-            UIFormHelper.ShowUIForm(uiForm);
+            CheckUIFormValid(uiAssetName);
+            uiDict.TryGetValue(uiAssetName, out var uiForm);
+            uiFormHelper.ShowUIForm(uiForm);
         }
         /// <summary>
         /// 是否存在UI;
@@ -246,27 +288,31 @@ namespace Cosmos.UI
         /// </summary>
         /// <param name="uiAssetName">ui资源的名称</param>
         /// <returns>存在的结果</returns>
-        public bool HasUIForm(string  uiAssetName)
+        public bool HasUIForm(string uiAssetName)
         {
-            return uiDict.ContainsKey( uiAssetName);
+            return uiDict.ContainsKey(uiAssetName);
         }
-        public T PeekUIForm<T>(string  uiAssetName)
+        public T PeekUIForm<T>(string uiAssetName)
             where T : UIFormBase
         {
-            return PeekUIForm( uiAssetName) as T;
+            return PeekUIForm(uiAssetName) as T;
         }
-        public UIFormBase PeekUIForm(string  uiAssetName)
+        public UIFormBase PeekUIForm(string uiAssetName)
         {
-            CheckUIForm( uiAssetName);
-            uiDict.TryGetValue( uiAssetName, out var uiForm);
+            CheckUIFormValid(uiAssetName);
+            uiDict.TryGetValue(uiAssetName, out var uiForm);
             return uiForm;
         }
-        void CheckUIForm(string  uiAssetName)
+        /// <summary>
+        /// 检测UIForm的名字是否有效，且是否存在；
+        /// </summary>
+        /// <param name="uiAssetName">UI资源的名称</param>
+        void CheckUIFormValid(string uiAssetName)
         {
-            if (string.IsNullOrEmpty( uiAssetName))
+            if (string.IsNullOrEmpty(uiAssetName))
                 throw new ArgumentException("UIFormName is invalid !");
-            if (!uiDict.ContainsKey( uiAssetName))
-                throw new ArgumentNullException($"UI  { uiAssetName} is not existed !");
+            if (!uiDict.ContainsKey(uiAssetName))
+                throw new ArgumentNullException($"UI  { uiAssetName} is not existed or registered !");
         }
         void SortUIForm(UIFormBase uiForm)
         {

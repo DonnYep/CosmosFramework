@@ -11,14 +11,14 @@ namespace Cosmos.Test {
         {
             CosmosEntry.LaunchAppDomainHelpers();
             CosmosEntry.LaunchAppDomainModules();
-            CosmosEntry.SceneManager.SetHelper(new DefaultSceneHelper());
             CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
+            CosmosEntry.ResourceManager.AddLoadChannel(new Resource.ResourceLoadChannel(0, new DefaultResourceLoader()));
         }
         private void Start()
         {
             CosmosEntry.UIManager.SetHelper(new DefaultUIFormHelper());
             Utility.Json.SetHelper(new JsonUtilityHelper());
-            var mianUICanvas = CosmosEntry.ResourceManager.LoadPrefabAsync(new AssetInfo(null, null, "UI/MainUICanvas"),(go=> 
+            var mianUICanvas = CosmosEntry.ResourceManager.LoadPrefabAsync(0,new AssetInfo(null, null, "UI/MainUICanvas"),(go=> 
             {
                 CosmosEntry.UIManager.SetUIRoot(go);
             }),null,true);

@@ -9,9 +9,6 @@ namespace Cosmos.UI
     {
         public override bool IsTemporaryForm { get; protected set; } = true;
         public sealed override void ShowUIForm(){}
-        public sealed override void HideUIForm()
-        {
-            
-        }
+        public sealed override void HideUIForm(){}
     }
 }

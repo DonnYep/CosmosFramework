@@ -18,8 +18,6 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **FSM**： 有限状态机模块。对状态机进行创建、回收、管理。
 
-- **Mono**：MONO模块。提供常用的开启、关闭协程等功能。协程可在此进行统一管理，其中内置的协程可以直接进行调用，无需额外写协程方法。
-
 - **ObjectsPool**：对象池模块。提供常用的对象生成回收等功能。
 
 - **Resource**：资源加载模块。框架集成了基于Resources与AB两种加载模式，在使用时切换加载模式即可。并提供通过特性"PrefabAssetAttribute"加载资源的方式。
@@ -44,7 +42,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 ## 内置数据、工具
 
-- **Utility**：提供了反射、算法、断言、转换、Debug富文本、IO、加密、Json、MessagePack、Time、Text、Unity等常用工具函数。
+- **Utility**：提供了反射、算法、断言、转换、Debug富文本、IO、加密、Json、MessagePack、Time、Text、Unity协程、Unity组件等常用工具函数。
 
 - **Singleton**：单例基类。提供了线程安全、非线程安全、MONO单例基类。
 

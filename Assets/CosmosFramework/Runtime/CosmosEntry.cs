@@ -35,7 +35,6 @@ namespace Cosmos
         public static IControllerManager ControllerManager { get { return GameManager.GetModule<IControllerManager>(); } }
         public static IFSMManager FSMManager { get { return GameManager.GetModule<IFSMManager>(); } }
         public static IObjectPoolManager ObjectPoolManager { get { return GameManager.GetModule<IObjectPoolManager>(); } }
-        public static IMonoManager MonoManager { get { return GameManager.GetModule<IMonoManager>(); } }
         public static IConfigManager ConfigManager { get { return GameManager.GetModule<IConfigManager>(); } }
         public static IInputManager InputManager { get { return GameManager.GetModule<IInputManager>(); } }
         public static INetworkManager NetworkManager { get { return GameManager.GetModule<INetworkManager>(); } }
@@ -51,7 +50,6 @@ namespace Cosmos
         public static GameObject ControllerMount { get { return GameManager.GetModuleMount<IControllerManager>(); } }
         public static GameObject FSMMount { get { return GameManager.GetModuleMount<IFSMManager>(); } }
         public static GameObject ObjectPoolMount { get { return GameManager.GetModuleMount<IObjectPoolManager>(); } }
-        public static GameObject MonoMount { get { return GameManager.GetModuleMount<IMonoManager>(); } }
         public static GameObject ConfigMount { get { return GameManager.GetModuleMount<IConfigManager>(); } }
         public static GameObject InputMount { get { return GameManager.GetModuleMount<IInputManager>(); } }
         public static GameObject NetworkMount { get { return GameManager.GetModuleMount<INetworkManager>(); } }

@@ -11,10 +11,9 @@ namespace Cosmos.Scene
     internal sealed class SceneManager : Module, ISceneManager
     {
         ISceneHelper sceneHelper;
-        IMonoManager monoManager;
         public override void OnPreparatory()
         {
-            monoManager = GameManager.GetModule<IMonoManager>();
+            sceneHelper = new DefaultSceneHelper();
         }
         public void SetHelper(ISceneHelper sceneHelper)
         {
@@ -38,7 +37,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo,null, null, loadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, null, null, loadedCallback));
         }
         /// <summary>
         ///  异步加载；
@@ -51,7 +50,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, startLoadCallback, null, loadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, startLoadCallback, null, loadedCallback));
         }
         /// <summary>
         ///  异步加载；
@@ -64,7 +63,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, null,progressCallback, loadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, null, progressCallback, loadedCallback));
         }
         /// <summary>
         ///  异步加载；
@@ -78,7 +77,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, startLoadCallback, progressCallback, loadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, startLoadCallback, progressCallback, loadedCallback));
         }
         /// <summary>
         /// 异步加载；
@@ -91,7 +90,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, null,null, loadedPredicate, loadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, null, null, loadedPredicate, loadedCallback));
         }
         /// <summary>
         /// 异步加载；
@@ -105,7 +104,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, startLoadCallback, null, loadedPredicate, loadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, startLoadCallback, null, loadedPredicate, loadedCallback));
         }
         /// <summary>
         /// 异步加载；
@@ -119,7 +118,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo,null, progressCallback, loadedPredicate, loadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, null, progressCallback, loadedPredicate, loadedCallback));
         }
         /// <summary>
         /// 异步加载；
@@ -134,7 +133,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, startLoadCallback, progressCallback, loadedPredicate, loadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.LoadSceneAsync(sceneInfo, startLoadCallback, progressCallback, loadedPredicate, loadedCallback));
         }
         /// <summary>
         /// 异步卸载；
@@ -148,7 +147,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, null,progressCallback, unLoadedPredicate, unLoadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, null, progressCallback, unLoadedPredicate, unLoadedCallback));
         }
         /// <summary>
         /// 异步卸载；
@@ -163,7 +162,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, startUnloadCallback, progressCallback, unLoadedPredicate, unLoadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, startUnloadCallback, progressCallback, unLoadedPredicate, unLoadedCallback));
         }
         /// <summary>
         /// 异步卸载；
@@ -176,7 +175,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo,null, progressCallback, unLoadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, null, progressCallback, unLoadedCallback));
         }
         /// <summary>
         /// 异步卸载；
@@ -190,7 +189,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, startUnloadCallback, progressCallback, unLoadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, startUnloadCallback, progressCallback, unLoadedCallback));
         }
         /// <summary>
         ///  异步卸载；
@@ -203,7 +202,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo,null, null, unLoadedPredicate, unLoadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, null, null, unLoadedPredicate, unLoadedCallback));
         }
         /// <summary>
         ///  异步卸载；
@@ -217,7 +216,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, startUnloadCallback, null, unLoadedPredicate, unLoadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, startUnloadCallback, null, unLoadedPredicate, unLoadedCallback));
         }
         /// <summary>
         /// 异步卸载；
@@ -229,7 +228,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, null,null, unLoadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, null, null, unLoadedCallback));
         }
         /// <summary>
         /// 异步卸载；
@@ -242,7 +241,7 @@ namespace Cosmos.Scene
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
-            return monoManager.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, startUnloadCallback, null, unLoadedCallback));
+            return Utility.Unity.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, startUnloadCallback, null, unLoadedCallback));
         }
     }
 }

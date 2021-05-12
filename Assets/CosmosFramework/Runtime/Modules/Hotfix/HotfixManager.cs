@@ -90,12 +90,12 @@ namespace Cosmos.Hotfix
             if (HotfixEnable)
             {
                 IResourceManager resourceManager = GameManager.GetModule<IResourceManager>();
-                if (resourceManager.LoadMode == ResourceLoadMode.Resource)
-                {
-                    throw new ArgumentException("HotfixManager-->>热更新初始化失败：热更新库不支持使用Resource加载模式！");
-                }
-                AssetInfo info = new AssetInfo(HotfixDllAssetBundleName, HotfixDllAssetsPath, "");
-                resourceManager.LoadAssetAsync<TextAsset>(info, HotfixDllLoadDone, null);
+                //if (resourceManager.LoadMode == ResourceLoadMode.Resource)
+                //{
+                //    throw new ArgumentException("HotfixManager-->>热更新初始化失败：热更新库不支持使用Resource加载模式！");
+                //}
+                //AssetInfo info = new AssetInfo(HotfixDllAssetBundleName, HotfixDllAssetsPath, "");
+                //resourceManager.LoadAssetAsync<TextAsset>(0,info, HotfixDllLoadDone, null);
             }
         }
         /// <summary>

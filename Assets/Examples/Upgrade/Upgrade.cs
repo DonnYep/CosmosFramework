@@ -15,11 +15,11 @@ public class Upgrade : MonoBehaviour
     }
     void Start()
     {
-        CosmosEntry.MonoManager.StartCoroutine(RunUpgrade());
+        Utility.Unity.StartCoroutine(RunUpgrade());
     }
     IEnumerator RunUpgrade()
     {
-        var dirInfoRoot= Directory.CreateDirectory(folderPath);
+        var dirInfoRoot = Directory.CreateDirectory(folderPath);
         dirInfoList.Add(dirInfoRoot);
         GetAllDirectory(dirInfoRoot);
         foreach (var dir in dirInfoList)
@@ -29,7 +29,7 @@ public class Upgrade : MonoBehaviour
             {
                 if (fileInfos[i].Name.EndsWith(".cs"))
                 {
-                    var str= Utility.IO.ReadTextFileContent(fileInfos[i].FullName);
+                    var str = Utility.IO.ReadTextFileContent(fileInfos[i].FullName);
                     //str = str.Replace("UILogicTemporary", "UITemporaryForm");
                     //str = str.Replace("GetUIPanel", "GetUIForm");
                     //str = str.Replace("Utility.DebugError", "Utility.Debug.LogError");

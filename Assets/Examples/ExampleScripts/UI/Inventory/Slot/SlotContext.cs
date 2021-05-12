@@ -63,7 +63,7 @@ namespace Cosmos.Test
         protected void Awake()
         {
             resourceManager = CosmosEntry.ResourceManager;
-            slotPrefab = resourceManager.LoadPrefab(typeof(Slot));
+            slotPrefab = resourceManager.LoadPrefab(0,typeof(Slot));
         }
     }
 }

@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos.ObjectPool;
-using Cosmos.Mono;
 
 namespace Cosmos{
     public class MonoObjectSpawnerGroup : MonoObjectSpawner
@@ -19,7 +18,6 @@ namespace Cosmos{
         //标志位，存储当前group中的
         int flag = 0;
         IObjectPoolManager objectPoolManager;
-        IMonoManager monoManager;
         public override void Spawn()
         {
             for (int i = 0; i < SpawnObjectGroup.Count; i++)
@@ -95,7 +93,6 @@ namespace Cosmos{
         {
             base.Start();
             objectPoolManager = GameManager.GetModule<IObjectPoolManager>();
-            monoManager = GameManager.GetModule<IMonoManager>();
         }
         [System.Serializable]
         class ObjectGroup

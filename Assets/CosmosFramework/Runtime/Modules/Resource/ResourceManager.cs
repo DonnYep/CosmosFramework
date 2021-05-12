@@ -5,116 +5,35 @@ using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using System.Reflection;
-
 namespace Cosmos.Resource
 {
-    public enum ResourceLoadMode : byte
-    {
-        Resource = 0,
-        AssetBundle = 1,
-        Addressable=2,
-        QuarkAsset=2
-    }
     [Module]
-    internal sealed class ResourceManager : Module,IResourceManager
+    internal sealed partial class ResourceManager : Module,IResourceManager
     {
         #region Properties
-        /// <summary>
-        /// 资源模块加载资源的模式；
-        /// </summary>
-        public ResourceLoadMode LoadMode { get; private set; }
-        /// <summary>
-        /// AssetBundle资源加载根路径
-        /// </summary>
-        public string AssetBundleRootPath { get; private set; }
-        /// <summary>
-        /// 所有AssetBundle资源包清单的名称
-        /// </summary>
-        public  string AssetBundleManifestName { get; private set; }
-        /// <summary>
-        /// 缓存的所有AssetBundle包【AB包名称、AB包】
-        /// </summary>
-        Dictionary<string, AssetBundle> assetBundleDict;
-        /// <summary>
-        /// 所有AssetBundle资源包清单
-        /// </summary>
-        AssetBundleManifest assetBundleManifest;
-        /// <summary>
-        /// 所有AssetBundle的Hash128值【AB包名称、Hash128值】
-        /// </summary>
-        Dictionary<string, Hash128> assetBundleHashDict;
-        /// <summary>
-        /// 单线下载中
-        /// </summary>
-        private bool _isLoading = false;
-        /// <summary>
-        /// 单线下载等待
-        /// </summary>
-        private WaitUntil _loadWait;
-        IMonoManager monoManager;
+        public int ResourceLoadChannelCount { get { return channelDict.Count; } }
+        Dictionary<byte, ResourceLoadChannel> channelDict;
         #endregion
         #region Methods
         public override void OnInitialization()
         {
-            assetBundleHashDict = new Dictionary<string, Hash128>();
-            assetBundleDict = new Dictionary<string, AssetBundle>();
+            channelDict = new Dictionary<byte, ResourceLoadChannel>();
         }
-        public override void OnPreparatory()
-        {
-            monoManager = GameManager.GetModule<IMonoManager>();
-        }
-        /// <summary>
-        /// 终结助手
-        /// </summary>
         public override void OnTermination()
         {
-            UnLoadAllAsset(true);
             ClearMemory();
         }
-        /// <summary>
-        /// 设置加载器
-        /// </summary>
-        /// <param name="loadMode">加载模式</param>
-        /// <param name="assetBundleRootPath">资源加载的完全路径</param>
-        /// <param name="manifestName">AB包清单名称</param>
-        public void SetLoader(ResourceLoadMode loadMode, string assetBundleRootPath, string manifestName)
+        public void AddLoadChannel(ResourceLoadChannel loadChannel)
         {
-            LoadMode = loadMode;
-            this.AssetBundleRootPath = assetBundleRootPath;
-            AssetBundleManifestName = manifestName;
-            _loadWait = new WaitUntil(() => { return !_isLoading; });
+            channelDict.TryAdd(loadChannel.ResourceLoadChannelId, loadChannel);
         }
-        public void SetLoader(ResourceLoadMode loadMode)
+        public void RemoveLoadChannel(byte channelId)
         {
-            LoadMode = loadMode;
-            _loadWait = new WaitUntil(() => { return !_isLoading; });
+            channelDict.TryRemove(channelId, out _);
         }
-        /// <summary>
-        /// 设置默认设置加载器;
-        /// 此方法会使加载模式变为Resource；
-        /// </summary>
-        public void SetDefaultLoader()
+        public bool HasLoadChannel(byte channelId)
         {
-            LoadMode =  ResourceLoadMode.Resource;
-            _loadWait = new WaitUntil(() => { return !_isLoading; });
-        }
-        /// <summary>
-        /// 设置AssetBundle资源根路径（仅当使用AssetBundle加载时有效）
-        /// </summary>
-        /// <param name="path">AssetBundle资源根路径</param>
-        public void SetAssetBundlePath(string path)
-        {
-            AssetBundleRootPath = path;
-        }
-        /// <summary>
-        /// 通过名称获取指定的AssetBundle
-        /// </summary>
-        /// <param name="assetBundleName">名称</param>
-        /// <returns>AssetBundle</returns>
-        public AssetBundle GetAssetBundle(string assetBundleName)
-        {
-            assetBundleDict.TryGetValue(assetBundleName, out var ab);
-            return ab;
+            return channelDict.ContainsKey(channelId);
         }
         /// <summary>
         /// 特性无效！；
@@ -123,33 +42,16 @@ namespace Cosmos.Resource
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="info">资源信息标记</param>
         /// <returns>资源</returns>
-        public T LoadAsset<T>(AssetInfo info)
+        public T LoadAsset<T>(byte channelId, AssetInfo info)
             where T : UnityEngine.Object
         {
             T asset = null;
-            if (LoadMode == ResourceLoadMode.Resource)
+            if (channelDict.TryGetValue(channelId, out var channel))
             {
-                asset = Resources.Load<T>(info.ResourcePath);
-                if (asset == null)
-                {
-                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
-                }
+                asset = channel.ResourceLoadHelper.LoadAsset<T>(info);
             }
-            else if(LoadMode==ResourceLoadMode.AssetBundle)
-            {
-                if (assetBundleDict.ContainsKey(info.AssetBundleName))
-                {
-                    asset = assetBundleDict[info.AssetBundleName].LoadAsset<T>(info.AssetPath);
-                    if (asset == null)
-                    {
-                        throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
-                    }
-                }
-            }
-            else if(LoadMode==ResourceLoadMode.Addressable)
-            {
-
-            }
+            else
+                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
             return asset;
         }
         /// <summary>
@@ -158,47 +60,36 @@ namespace Cosmos.Resource
         /// 注意：AB环境下会获取bundle中所有T类型的对象；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="info">资源信息标记</param>
         /// <returns>资源</returns>
-        public T[] LoadAllAsset<T>(AssetInfo info)
+        public T[] LoadAllAsset<T>(byte channelId, AssetInfo info)
         where T : UnityEngine.Object
         {
-            T[] asset = null;
-            if (LoadMode == ResourceLoadMode.Resource)
+            T[] assets = null;
+            if (channelDict.TryGetValue(channelId, out var channel))
             {
-                asset = Resources.LoadAll<T>(info.ResourcePath);
-                if (asset == null)
-                {
-                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
-                }
+                assets = channel.ResourceLoadHelper.LoadAllAsset<T>(info);
             }
             else
-            {
-                if (assetBundleDict.ContainsKey(info.AssetBundleName))
-                {
-                    asset = assetBundleDict[info.AssetBundleName].LoadAllAssets<T>();
-                    if (asset == null)
-                    {
-                        throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
-                    }
-                }
-            }
-            return asset;
+                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
+            return assets;
         }
         /// <summary>
         /// 特性加载:PrefabAssetAttribute！；
         /// 加载预制体资源（同步）；
         /// </summary>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="type">类对象类型</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public GameObject LoadPrefab (Type type, bool instantiate = false)
+        public GameObject LoadPrefab(byte channelId, Type type, bool instantiate = false)
         {
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
             {
                 var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-                return LoadPrefab(info, instantiate);
+                return LoadPrefab(channelId, info, instantiate);
             }
             else
                 return null;
@@ -208,9 +99,10 @@ namespace Cosmos.Resource
         /// 加载预制体资源（同步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public GameObject  LoadPrefab <T>( bool instantiate = false)
+        public GameObject LoadPrefab<T>(byte channelId, bool instantiate = false)
             where T : class
         {
             var type = typeof(T);
@@ -218,7 +110,7 @@ namespace Cosmos.Resource
             if (attribute != null)
             {
                 var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-                return LoadPrefab(info, instantiate);
+                return LoadPrefab(channelId, info, instantiate);
             }
             else
                 return null;
@@ -227,71 +119,62 @@ namespace Cosmos.Resource
         /// 特性无效！；
         /// 加载预制体资源（同步）；
         /// </summary>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="info">资源信息标记</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public GameObject LoadPrefab (AssetInfo info,  bool instantiate = false)
+        public GameObject LoadPrefab(byte channelId, AssetInfo info, bool instantiate = false)
         {
-
-             GameObject asset = null;
-            if (LoadMode == ResourceLoadMode.Resource)
+            GameObject go = null;
+            if (channelDict.TryGetValue(channelId, out var channel))
             {
-                asset=  Resources.Load(info.ResourcePath) as GameObject;
-                if (asset == null)
-                {
-                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
-                }
+                var srcGo = channel.ResourceLoadHelper.LoadAsset<GameObject>(info);
+                if (instantiate)
+                    go = GameObject.Instantiate(srcGo);
+                else
+                    go = srcGo;
             }
             else
-            {
-                if (assetBundleDict.ContainsKey(info.AssetBundleName))
-                {
-                    asset = assetBundleDict[info.AssetBundleName].LoadAsset<GameObject>(info.AssetPath);
-                    if (asset == null)
-                    {
-                        throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
-                    }
-                }
-            }
-            if (asset != null)
-            {
-                if (instantiate)
-                {
-                    asset = GameObject.Instantiate(asset);
-                }
-            }
-            return asset;
+                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
+            return go;
         }
         /// <summary>
         /// 特性无效！；
         /// 加载资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="info">资源信息标记</param>
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null)
+        public Coroutine LoadAssetAsync<T>(byte channelId, AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null)
             where T : UnityEngine.Object
         {
-            return monoManager.StartCoroutine(EnumLoadAssetAsync(info, loadDoneCallback, loadingCallback));
+            if (channelDict.TryGetValue(channelId, out var channel))
+            {
+                return channel.ResourceLoadHelper.LoadAssetAsync<T>(info, loadDoneCallback, loadingCallback);
+            }
+            else
+                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
         }
         /// <summary>
         /// 特性加载:PrefabAssetAttribute！；
         /// 加载预制体资源（异步）；
         /// </summary>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="type">类对象类型</param>
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(Type type, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync(byte channelId, Type type, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
         {
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
             {
                 var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-                return monoManager.StartCoroutine(EnumLoadAssetAsync(info, loadDoneCallback, loadingCallback, instantiate));
+                return LoadPrefabAsync(channelId, info, loadDoneCallback, loadingCallback, instantiate);
             }
             else
                 return null;
@@ -301,349 +184,97 @@ namespace Cosmos.Resource
         /// 加载预制体资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync<T>(Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync<T>(byte channelId, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
             where T : class
         {
             var type = typeof(T);
-            var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
-            if (attribute != null)
-            {
-                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-                return monoManager.StartCoroutine(EnumLoadAssetAsync(info, loadDoneCallback, loadingCallback, instantiate));
-            }
-            else
-                return null;
+            return LoadPrefabAsync(channelId, type, loadDoneCallback, loadingCallback, instantiate);
         }
         /// <summary>
         /// 特性无效！；
         /// 加载预制体资源（异步）；
         /// </summary>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="info">资源信息标记</param>
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(AssetInfo info, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync(byte channelId, AssetInfo info, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
         {
-            return monoManager.StartCoroutine(EnumLoadAssetAsync(info, loadDoneCallback, loadingCallback, instantiate));
+            if (channelDict.TryGetValue(channelId, out var channel))
+            {
+                return channel.ResourceLoadHelper.LoadAssetAsync<GameObject>(info, (srcGo) =>
+                {
+                    if (instantiate)
+                    {
+                        var go = GameObject.Instantiate(srcGo);
+                        loadDoneCallback?.Invoke(go);
+                    }
+                    else
+                        loadDoneCallback?.Invoke(srcGo);
+                }, loadingCallback);
+            }
+            else
+                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
         }
         /// <summary>
         /// 加载场景（异步）
         /// </summary>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="info">资源信息标记</param>
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
+        public Coroutine LoadSceneAsync(byte channelId, SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
         {
-            return monoManager.StartCoroutine(EnumLoadSceneAsync(info, loadDoneCallback, loadingCallback));
+            if (channelDict.TryGetValue(channelId, out var channel))
+            {
+                return channel.ResourceLoadHelper.LoadSceneAsync(info, loadDoneCallback, loadingCallback);
+            }
+            else
+                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
         }
         /// <summary>
-        /// 卸载资源（卸载AssetBundle）
+        /// 卸载资源;
         /// </summary>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="assetBundleName">AB包名称</param>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        public void UnLoadAsset(string assetBundleName, bool unloadAllLoadedObjects = false)
+        public void UnLoadAsset(byte channelId, object customData, bool unloadAllLoadedObjects = false)
         {
-            if (LoadMode == ResourceLoadMode.Resource)
+            if (channelDict.TryGetValue(channelId, out var channel))
             {
-                Resources.UnloadUnusedAssets();
+                channel.ResourceLoadHelper.UnLoadAsset(customData, unloadAllLoadedObjects);
             }
             else
-            {
-                if (assetBundleDict.ContainsKey(assetBundleName))
-                {
-                    assetBundleDict[assetBundleName].Unload(unloadAllLoadedObjects);
-                    assetBundleDict.Remove(assetBundleName);
-                }
-                if (assetBundleHashDict.ContainsKey(assetBundleName))
-                {
-                    assetBundleHashDict.Remove(assetBundleName);
-                }
-            }
+                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
         }
         /// <summary>
-        /// 卸载所有资源（卸载AssetBundle）
+        /// 卸载所有资源;
         /// </summary>
+        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
+        public void UnLoadAllAsset(byte channelId, bool unloadAllLoadedObjects = false)
         {
-            if (LoadMode == ResourceLoadMode.Resource)
+            if (channelDict.TryGetValue(channelId, out var channel))
             {
-                Resources.UnloadUnusedAssets();
+                channel.ResourceLoadHelper.UnLoadAllAsset(unloadAllLoadedObjects);
             }
             else
-            {
-                foreach (var assetBundle in assetBundleDict)
-                {
-                    assetBundle.Value.Unload(unloadAllLoadedObjects);
-                }
-                assetBundleDict.Clear();
-                assetBundleHashDict.Clear();
-                AssetBundle.UnloadAllAssetBundles(unloadAllLoadedObjects);
-            }
+                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
         }
         /// <summary>
         /// 清理内存，释放空闲内存
         /// </summary>
         void ClearMemory()
         {
-            Resources.UnloadUnusedAssets();
             GC.Collect();
-        }
-        /// <summary>
-        /// 异步加载依赖AB包
-        /// </summary>
-        /// <param name="assetBundleName">AB包名称</param>
-        /// <returns>协程迭代器</returns>
-        IEnumerator LoadDependenciesAssetBundleAsync(string assetBundleName)
-        {
-            if (LoadMode == ResourceLoadMode.AssetBundle)
-            {
-                yield return LoadAssetBundleManifestAsync();
-
-                if (assetBundleManifest != null)
-                {
-                    string[] dependencies = assetBundleManifest.GetAllDependencies(assetBundleName);
-                    foreach (string item in dependencies)
-                    {
-                        if (assetBundleDict.ContainsKey(item))
-                        {
-                            continue;
-                        }
-
-                        yield return LoadAssetBundleAsync(item);
-                    }
-                }
-            }
-            yield return null;
-        }
-        /// <summary>
-        /// 异步加载AB包清单
-        /// </summary>
-        /// <returns>协程迭代器</returns>
-        IEnumerator LoadAssetBundleManifestAsync()
-        {
-            if (string.IsNullOrEmpty(AssetBundleManifestName))
-            {
-                throw new ArgumentException($"ResourceManager-->>请设置资源管理模块的 Manifest Name 属性，为所有AB包提供依赖清单！");
-            }
-            else
-            {
-                if (assetBundleManifest == null)
-                {
-                    yield return LoadAssetBundleAsync(AssetBundleManifestName, true);
-
-                    if (assetBundleDict.ContainsKey(AssetBundleManifestName))
-                    {
-                        assetBundleManifest = assetBundleDict[AssetBundleManifestName].LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                        UnLoadAsset(AssetBundleManifestName);
-                    }
-                }
-            }
-            yield return null;
-        }
-        /// <summary>
-        /// 异步加载AB包
-        /// </summary>
-        /// <param name="assetBundleName">AB包名称</param>
-        /// <param name="isManifest">是否是加载清单</param>
-        /// <returns>协程迭代器</returns>
-        IEnumerator LoadAssetBundleAsync(string assetBundleName, bool isManifest = false)
-        {
-            if (!assetBundleDict.ContainsKey(assetBundleName))
-            {
-                using (UnityWebRequest request = isManifest
-                    ? UnityWebRequestAssetBundle.GetAssetBundle(AssetBundleRootPath + assetBundleName)
-                    : UnityWebRequestAssetBundle.GetAssetBundle(AssetBundleRootPath + assetBundleName, GetAssetBundleHash(assetBundleName)))
-                {
-                    yield return request.SendWebRequest();
-                    if (!request.isNetworkError && !request.isHttpError)
-                    {
-                        AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(request);
-                        if (bundle)
-                        {
-                            assetBundleDict.Add(assetBundleName, bundle);
-                        }
-                        else
-                        {
-                            throw new ArgumentException($"ResourceManager-->>请求：{request.url }未下载到AB包！");
-                        }
-                    }
-                    else
-                    {
-                        throw new ArgumentException($"ResourceManager-->>请求：{request.url } 遇到网络错误：{ request.error }！");
-                    }
-                }
-            }
-            yield return null;
-        }
-        /// <summary>
-        /// 异步加载AB包（提供进度回调）
-        /// </summary>
-        /// <param name="assetBundleName">AB包名称</param>
-        /// <param name="loadingAction">加载中事件</param>
-        /// <param name="isManifest">是否是加载清单</param>
-        /// <returns>协程迭代器</returns>
-        IEnumerator LoadAssetBundleAsync(string assetBundleName, Action<float> loadingAction, bool isManifest = false)
-        {
-            if (!assetBundleDict.ContainsKey(assetBundleName))
-            {
-                using (UnityWebRequest request = isManifest
-                    ? UnityWebRequestAssetBundle.GetAssetBundle(AssetBundleRootPath + assetBundleName)
-                    : UnityWebRequestAssetBundle.GetAssetBundle(AssetBundleRootPath + assetBundleName, GetAssetBundleHash(assetBundleName)))
-                {
-                    request.SendWebRequest();
-                    while (!request.isDone)
-                    {
-                        loadingAction?.Invoke(request.downloadProgress);
-                        yield return null;
-                    }
-                    if (!request.isNetworkError && !request.isHttpError)
-                    {
-                        AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(request);
-                        if (bundle)
-                        {
-                            assetBundleDict.Add(assetBundleName, bundle);
-                        }
-                        else
-                        {
-                            throw new ArgumentException($"ResourceManager-->>请求：{request.url }未下载到AB包！");
-                        }
-                    }
-                    else
-                    {
-                        throw new ArgumentException($"ResourceManager-->>请求：{request.url }遇到网络错误：{request.error }！");
-                    }
-                }
-            }
-            yield return null;
-        }
-        /// <summary>
-        /// 获取AB包的hash值
-        /// </summary>
-        /// <param name="assetBundleName">AB包名称</param>
-        /// <returns>hash值</returns>
-        Hash128 GetAssetBundleHash(string assetBundleName)
-        {
-            if (assetBundleHashDict.ContainsKey(assetBundleName))
-            {
-                return assetBundleHashDict[assetBundleName];
-            }
-            else
-            {
-                Hash128 hash = assetBundleManifest.GetAssetBundleHash(assetBundleName);
-                assetBundleHashDict.Add(assetBundleName, hash);
-                return hash;
-            }
-        }
-        /// <summary>
-        /// 特性无效！；
-        /// 加载并实例化资源（异步）；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息标记</param>
-        /// <param name="loadingCallback">加载中事件</param>
-        /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
-        /// <param name="instantiate">是否实例化对象</param>
-        /// <returns>加载协程迭代器</returns>
-        IEnumerator EnumLoadAssetAsync<T>(AssetInfoBase info, Action<T> loadDoneCallback, Action<float> loadingCallback, bool instantiate = false)
-            where T : UnityEngine.Object
-        {
-            DateTime beginTime = DateTime.Now;
-            if (_isLoading)
-            {
-                yield return _loadWait;
-            }
-            _isLoading = true;
-            yield return LoadDependenciesAssetBundleAsync(info.AssetBundleName);
-            DateTime waitTime = DateTime.Now;
-            UnityEngine.Object asset = null;
-            if (LoadMode == ResourceLoadMode.Resource)
-            {
-                ResourceRequest request = Resources.LoadAsync<T>(info.ResourcePath);
-                while (!request.isDone)
-                {
-                    loadingCallback?.Invoke(request.progress);
-                    yield return null;
-                }
-                asset = request.asset;
-                if (asset == null)
-                {
-                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
-                }
-                else
-                {
-                    if (instantiate)
-                    {
-                        asset = GameObject.Instantiate(asset);
-                    }
-                }
-            }
-            else
-            {
-                yield return LoadAssetBundleAsync(info.AssetBundleName, loadingCallback);
-                if (assetBundleDict.ContainsKey(info.AssetBundleName))
-                {
-                    asset = assetBundleDict[info.AssetBundleName].LoadAsset<T>(info.AssetPath);
-                    if (asset == null)
-                    {
-                        throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
-                    }
-                    else
-                    {
-                        if (instantiate)
-                        {
-                            asset = GameObject.Instantiate(asset);
-                        }
-                    }
-                }
-            }
-            if (asset != null)
-            {
-                loadDoneCallback?.Invoke(asset as T);
-            }
-            asset = null;
-            _isLoading = false;
-        }
-        /// <summary>
-        /// 加载场景（异步）
-        /// </summary>
-        /// <param name="info">资源信息标记</param>
-        /// <param name="loadingCallback">加载中事件</param>
-        /// <param name="loadDoneCallback">加载完成事件</param>
-        /// <returns>加载协程迭代器</returns>
-        IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback)
-        {
-            DateTime beginTime = DateTime.Now;
-            if (_isLoading)
-            {
-                yield return _loadWait;
-            }
-            _isLoading = true;
-
-            yield return LoadDependenciesAssetBundleAsync(info.AssetBundleName);
-
-            DateTime waitTime = DateTime.Now;
-
-            if (LoadMode == ResourceLoadMode.Resource)
-            {
-                throw new ArgumentException($"ResourceManager-->>加载场景失败：场景加载不允许使用Resource模式！");
-            }
-            else
-            {
-                yield return LoadAssetBundleAsync(info.AssetBundleName, loadingCallback);
-                yield return SceneManager.LoadSceneAsync(info.AssetPath, LoadSceneMode.Additive);
-            }
-            DateTime endTime = DateTime.Now;
-            Utility.Debug.LogInfo($"异步加载场景完成[{LoadMode}模式]：" +
-                $"{info.AssetPath}\r\n等待耗时：{(waitTime - beginTime).TotalSeconds}秒  加载耗时：{(endTime - waitTime).TotalSeconds}秒");
-            loadDoneCallback?.Invoke();
-            _isLoading = false;
         }
         #endregion
     }

@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using Cosmos;
 using Cosmos.FSM;
-using Cosmos.Mono;
 
 public class FSMTester : MonoBehaviour
 {
@@ -17,7 +16,6 @@ public class FSMTester : MonoBehaviour
     FSM<FSMTester> fsm;
     List<FSMState<FSMTester>> stateList;
     IFSMManager fsmManager;
-    IMonoManager  monoManager;
     private void OnValidate()
     {
         if (range <= 0)
@@ -28,7 +26,6 @@ public class FSMTester : MonoBehaviour
     private void Start()
     {
         fsmManager = GameManager.GetModule<IFSMManager>();
-        monoManager = GameManager.GetModule<IMonoManager>();
         stateList = new List<FSMState<FSMTester>>();
         var enterState = new EnterRangeState();
         var enterTrigger = new EnterTestTrigger();
@@ -42,6 +39,6 @@ public class FSMTester : MonoBehaviour
         fsmManager.SetFSMSetRefreshInterval<FSMTester>(refreshInterval);
         fsm.DefaultState = exitState;
         fsm.StartDefault();
-        monoManager.DelayCoroutine(pauseDelay, () => { fsmManager.PauseFSMSet<FSMTester>(); });
+        Utility.Unity.DelayCoroutine(pauseDelay, () => { fsmManager.PauseFSMSet<FSMTester>(); });
     }
 }

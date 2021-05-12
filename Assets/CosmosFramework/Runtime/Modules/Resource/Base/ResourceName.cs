@@ -80,7 +80,6 @@ namespace Cosmos
         {
             return string.Equals(m_Name, value.m_Name, StringComparison.Ordinal) && string.Equals(m_Variant, value.m_Variant, StringComparison.Ordinal) && string.Equals(m_Extension, value.m_Extension, StringComparison.Ordinal);
         }
-
         public static bool operator ==(ResourceName a, ResourceName b)
         {
             return a.Equals(b);

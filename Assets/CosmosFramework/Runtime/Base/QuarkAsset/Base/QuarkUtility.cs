@@ -52,6 +52,10 @@ namespace Cosmos.QuarkAsset
             var go = LoadAssetByName<GameObject>(assetName, assetExtension);
             return GameObject.Instantiate(go);
         }
+        public static void UnLoadAsset()
+        {
+
+        }
         public static void SetData(QuarkAssetDataset assetData, Dictionary<string, LinkedList<QuarkAssetObject>> lnkData)
         {
             assetDict = lnkData;

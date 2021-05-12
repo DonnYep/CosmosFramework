@@ -1,14 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections;
-using System;
-using Cosmos.Event;
-namespace Cosmos.Mono
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
+
+namespace Cosmos
 {
-    /// <summary>
-    /// mono池对象
-    /// </summary>
     [DisallowMultipleComponent]
-    internal class MonoProvider : MonoBehaviour, IMonoProvider
+    internal class CoroutineHelper:MonoBehaviour,ICoroutineHelper
     {
         public Coroutine PredicateCoroutine(Func<bool> handler, Action callBack)
         {
