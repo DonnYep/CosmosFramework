@@ -87,7 +87,7 @@ namespace Cosmos.ObjectPool
         }
         public void Despawn(object obj)
         {
-            var go = obj.Convert<GameObject>();
+            var go = obj.CastTo<GameObject>();
             onDespawn?.Invoke(go);
             pool.Despawn(go);
         }

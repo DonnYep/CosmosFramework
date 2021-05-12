@@ -44,7 +44,6 @@ namespace Cosmos
         {
             Resources.UnloadUnusedAssets();
         }
-
         IEnumerator EnumLoadAssetAsync<T>(AssetInfoBase info, Action<T> loadDoneCallback, Action<float> loadingCallback, bool instantiate = false)
             where T : UnityEngine.Object
         {

@@ -254,7 +254,7 @@ namespace Cosmos.Entity
                 for (int i = 0; i < length; i++)
                 {
                     group.ObjectPool.Despawn(childEntities[i].EntityInstance);
-                    ReferencePool.Release(childEntities[i].Convert<Entity>());
+                    ReferencePool.Release(childEntities[i].CastTo<Entity>());
                 }
             }
             else
@@ -263,7 +263,7 @@ namespace Cosmos.Entity
                 for (int i = 0; i < length; i++)
                 {
                     entityHelper.DespawnEntityInstance(childEntities[i].EntityInstance);
-                    ReferencePool.Release(childEntities[i].Convert<Entity>());
+                    ReferencePool.Release(childEntities[i].CastTo<Entity>());
                 }
             }
         }
@@ -338,7 +338,7 @@ namespace Cosmos.Entity
             {
                 entityHelper.DespawnEntityInstance(entity.EntityInstance);
             }
-            ReferencePool.Release(entity.Convert<Entity>());
+            ReferencePool.Release(entity.CastTo<Entity>());
         }
         /// <summary>
         /// 失活&移除实体对象
@@ -377,8 +377,8 @@ namespace Cosmos.Entity
             var latestParentEntity = childEntity.ParentEntity;
             entityHelper.Attach(childEntity, parentEntity);
             entityHelper.Deatch(childEntity, latestParentEntity);
-            parentEntity.Convert<Entity>().OnAttached(childEntity);
-            childEntity.Convert<Entity>().OnAttachTo(parentEntity);
+            parentEntity.CastTo<Entity>().OnAttached(childEntity);
+            childEntity.CastTo<Entity>().OnAttachTo(parentEntity);
         }
         /// <summary>
         /// 挂载子实体到父实体；
@@ -425,8 +425,8 @@ namespace Cosmos.Entity
             entityIdDict.TryGetValue(childEntityId, out var childEntity);
             var parentEntity = childEntity.ParentEntity;
             entityHelper.Deatch(childEntity, parentEntity);
-            childEntity.Convert<Entity>().OnDetachFrom(parentEntity);
-            parentEntity.Convert<Entity>().OnDetached(childEntity);
+            childEntity.CastTo<Entity>().OnDetachFrom(parentEntity);
+            parentEntity.CastTo<Entity>().OnDetached(childEntity);
         }
         /// <summary>
         /// 解除子实体的挂载；

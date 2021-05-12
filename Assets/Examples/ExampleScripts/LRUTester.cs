@@ -29,7 +29,7 @@ public class LRUTester: MonoBehaviour
     }
     public void AddLRU()
     {
-        goDict.Add(index++, objectPool.Spawn().Convert<GameObject>());
+        goDict.Add(index++, objectPool.Spawn().CastTo<GameObject>());
         if (index >= 16)
             goDict.ResetCapacity(8);
     }
