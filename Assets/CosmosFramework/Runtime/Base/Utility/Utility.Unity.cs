@@ -128,79 +128,19 @@ namespace Cosmos
             /// <param name="go">目标对象</param>
             /// <param name="removeExistComp">是否移除已经存在的组件</param>
             /// <returns>返回添加的目标组件</returns>
-            public static T Add<T>(GameObject go, bool removeExistComp = false) where T : Component
+            public static T Add<T>(GameObject go) where T : Component
             {
-                T t = default;
-                if (go != null)
-                {
-                    if (removeExistComp)
-                    {
-                        T[] ts = go.GetComponents<T>();
-                        for (int i = 0; i < ts.Length; i++)
-                        {
-                            if (ts[i] != null)
-                                GameObject.Destroy(ts[i]);
-                        }
-                        t = go.AddComponent<T>();
-                    }
-                    else
-                    {
-                        T[] ts = go.GetComponents<T>();
-                        if (ts.Length == 0)
-                        {
-                            t = go.AddComponent<T>();
-                            return t;
-                        }
-                        for (int i = 0; i < ts.Length; i++)
-                        {
-                            if (ts[i] != null)
-                            {
-                                t = go.gameObject.GetComponent<T>();
-                                return t;
-                            }
-                        }
-                    }
-                }
-                return t;
+                return go.GetOrAddComponent<T>();
             }
-            public static Component Add(Type type, GameObject go, bool removeExistComp = false)
+            public static Component Add(Type type, GameObject go)
             {
                 if (!typeof(Component).IsAssignableFrom(type))
                 {
                     throw new NotImplementedException($"Type :{type} is not iherit from Component !");
                 }
-                Component t = default;
-                if (go != null)
-                {
-                    if (removeExistComp)
-                    {
-                        Component[] ts = go.GetComponents(type);
-                        for (int i = 0; i < ts.Length; i++)
-                        {
-                            if (ts[i] != null)
-                                GameObject.Destroy(ts[i]);
-                        }
-                        t = go.AddComponent(type);
-                    }
-                    else
-                    {
-                        Component[] ts = go.GetComponents(type);
-                        if (ts.Length == 0)
-                        {
-                            t = go.AddComponent(type);
-                            return t;
-                        }
-                        for (int i = 0; i < ts.Length; i++)
-                        {
-                            if (ts[i] != null)
-                            {
-                                t = go.gameObject.GetComponent(type);
-                                return t;
-                            }
-                        }
-                    }
-                }
-                return t;
+                if(go==null)
+                    throw new ArgumentNullException($"GameObject is invalid !");
+                return go.GetOrAddComponent(type);
             }
             /// <summary>
             /// 添加目标组件；默认不移除组件;
@@ -208,16 +148,15 @@ namespace Cosmos
             /// </summary>
             /// <typeparam name="T">目标组件</typeparam>
             /// <param name="go">目标对象</param>
-            /// <param name="removeExistComp">是否移除已经存在的组件</param>
             /// <returns>返回添加的目标组件</returns>
-            public static T Add<T>(Transform go, bool removeExistComp = false) where T : Component
+            public static T Add<T>(Transform go) where T : Component
             {
-                return Add<T>(go.gameObject, removeExistComp);
+                return Add<T>(go.gameObject);
             }
-            public static T Add<T>(Transform go, string subNode, bool removeExistComp = false) where T : Component
+            public static T Add<T>(Transform go, string subNode) where T : Component
             {
                 var childGo = Child(go, subNode);
-                var comp = Add<T>(childGo, removeExistComp);
+                var comp = Add<T>(childGo);
                 return comp;
             }
             /// <summary>
@@ -226,25 +165,13 @@ namespace Cosmos
             /// </summary>
             /// <typeparam name="T">mono脚本</typeparam>
             /// <param name="spawnItem">生成的对象</param>
-            /// <param name="removeExistComp">是否移除原本存在的T类型脚本组件</param>
             /// <returns>返回生成成功后的组件对象</returns>
-            public static T Instantiate<T>(GameObject spawnItem, bool removeExistComp = false) where T : Component
+            public static T Instantiate<T>(GameObject spawnItem) where T : Component
             {
                 if (spawnItem == null)
                     throw new ArgumentNullException("ObjectSpawner : spawnItem not exist !");
                 var go = GameObject.Instantiate(spawnItem);
-                T comp = default;
-                if (!removeExistComp)
-                {
-                    comp = go.GetComponent<T>();
-                    if (comp == null)
-                        comp = go.AddComponent<T>();
-                }
-                else
-                {
-                    comp = Add<T>(go, true);
-                }
-                return comp;
+                return Add<T>(go);
             }
             /// <summary>
             /// 删除父节点下的子对象；

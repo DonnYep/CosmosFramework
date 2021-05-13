@@ -98,7 +98,7 @@ namespace Cosmos
             T ctrl=default;
             if (!HasController(controllerName))
             {
-                ctrl = Utility.Unity.Add<T>(go);
+                ctrl = go.GetOrAddComponent<T>();
                 ctrl.ControllerName = controllerName;
                 Refresh += ctrl.OnRefresh;
             }

@@ -108,7 +108,7 @@ namespace Cosmos.UI
             var go = resourceManager.LoadPrefab(assetInfo, true);
             go?.transform.SetParent(UIRoot.transform);
             (go?.transform as RectTransform).ResetRectTransform();
-            var comp = Utility.Unity.Add(uiType, go?.gameObject) as UIFormBase;
+            var comp = go.GetOrAddComponent(uiType)as UIFormBase;
             uiDict.Add(assetInfo.UIAssetName, comp);
             SortUIForm(comp);
             return comp;
@@ -145,7 +145,7 @@ namespace Cosmos.UI
                  {
                      panel.transform.SetParent(UIRoot.transform);
                      (panel.transform as RectTransform).ResetRectTransform();
-                     var comp = Utility.Unity.Add<T>(panel);
+                     var comp = panel.GetOrAddComponent<T>();
                      loadDoneCallback?.Invoke(comp);
                      uiDict.Add(assetInfo.UIAssetName, comp);
                      SortUIForm(comp);
@@ -180,7 +180,7 @@ namespace Cosmos.UI
                  {
                      go.transform.SetParent(UIRoot.transform);
                      (go.transform as RectTransform).ResetRectTransform();
-                     var comp = Utility.Unity.Add(uiType, go) as UIFormBase;
+                     var comp = go.GetOrAddComponent(uiType)as UIFormBase;
                      loadDoneCallback?.Invoke(comp);
                      uiDict.Add(assetInfo.UIAssetName, comp);
                      SortUIForm(comp);
@@ -214,7 +214,7 @@ namespace Cosmos.UI
                 {
                     go.transform.SetParent(UIRoot.transform);
                     (go.transform as RectTransform).ResetRectTransform();
-                    var comp = Utility.Unity.Add<T>(go);
+                    var comp = go.GetOrAddComponent<T>();
                     loadDoneCallback?.Invoke(comp);
                     uiDict.Add(assetInfo.UIAssetName, comp);
                     SortUIForm(comp);
@@ -223,16 +223,16 @@ namespace Cosmos.UI
         /// <summary>
         /// 通过特性UIAssetAttribute加载Panel（异步）；
         /// </summary>
-        /// <param name="type">带有UIAssetAttribute特性的panel类</param>
+        /// <param name="uiType">带有UIAssetAttribute特性的panel类</param>
         /// <param name="loadDoneCallback">加载成功的回调。若失败，则不执行</param>
         /// <returns>协程对象</returns>
-        public Coroutine OpenUIFormAsync(Type type, Action<UIFormBase> loadDoneCallback = null)
+        public Coroutine OpenUIFormAsync(Type uiType, Action<UIFormBase> loadDoneCallback = null)
         {
-            var attribute = type.GetCustomAttribute<UIAssetAttribute>();
-            if (!uiFromBaseType.IsAssignableFrom(type))
-                throw new ArgumentException($"Type:{type} is not inherit from UIFormBase");
+            var attribute = uiType.GetCustomAttribute<UIAssetAttribute>();
+            if (!uiFromBaseType.IsAssignableFrom(uiType))
+                throw new ArgumentException($"Type:{uiType} is not inherit from UIFormBase");
             if (attribute == null)
-                throw new ArgumentNullException($"Type:{type} has no UIAssetAttribute");
+                throw new ArgumentNullException($"Type:{uiType} has no UIAssetAttribute");
             if (string.IsNullOrEmpty(attribute.UIAssetName))
                 throw new ArgumentException("UIFormName is invalid !");
             if (HasUIForm(attribute.UIAssetName))
@@ -250,7 +250,7 @@ namespace Cosmos.UI
                  {
                      go.transform.SetParent(UIRoot.transform);
                      (go.transform as RectTransform).ResetRectTransform();
-                     var comp = Utility.Unity.Add(type, go, true) as UIFormBase;
+                     var comp =go.GetOrAddComponent(uiType)as UIFormBase;
                      loadDoneCallback?.Invoke(comp);
                      uiDict.Add(assetInfo.UIAssetName, comp);
                      SortUIForm(comp);
