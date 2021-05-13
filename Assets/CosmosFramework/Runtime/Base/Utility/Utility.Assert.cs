@@ -18,7 +18,7 @@ namespace Cosmos
             public static void NotNull(object obj)
             {
                 if (obj == null)
-                    throw new ArgumentNullException("object" + obj.ToString() + "isEmpty !");
+                    throw new ArgumentNullException("object" + "isEmpty !");
             }
             /// <summary>
             /// 判断不为空
@@ -41,7 +41,7 @@ namespace Cosmos
             public static void NotNull(object obj, Action notNullCallBack)
             {
                 if (obj == null)
-                    throw new ArgumentNullException("object" + obj.ToString() + "is null !");
+                    throw new ArgumentNullException("object" + "is null !");
                 else
                     notNullCallBack?.Invoke();
             }
@@ -69,7 +69,7 @@ namespace Cosmos
             public static void IsNull(object obj, Action nullCallBack)
             {
 
-                if (obj == null)
+                if (IsNull(obj))
                     nullCallBack?.Invoke();
             }
             /// <summary>
@@ -80,7 +80,7 @@ namespace Cosmos
             /// <param name="notNullCallBack">不为空的回调</param>
             public static void IsNull(object obj, Action nullCallBack, Action notNullCallBack)
             {
-                if (obj == null)
+                if (IsNull(obj))
                     nullCallBack?.Invoke();
                 else
                     notNullCallBack?.Invoke();

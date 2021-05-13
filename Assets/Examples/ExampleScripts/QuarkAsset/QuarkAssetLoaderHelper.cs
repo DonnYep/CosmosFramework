@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Cosmos.QuarkAsset;
 using Cosmos.Resource;
-
 namespace Cosmos
 {
-    public class DefaultQuarkAssetLoader : IResourceLoadHelper
+    public class QuarkAssetLoaderHelper : IResourceLoadHelper
     {
+        public bool IsLoading { get { return isLoading; } }
+        bool isLoading = false;
         public T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object
         {
             return null;
@@ -21,7 +22,8 @@ namespace Cosmos
         }
         public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
         {
-            return Utility.Unity.StartCoroutine(() => QuarkUtility.LoadAssetByName<T>(info.AssetName));
+            isLoading = true;
+            return Utility.Unity.StartCoroutine(() => QuarkUtility.LoadAssetByName<T>(info.AssetName), () => { isLoading = false; });;
         }
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
         {

@@ -14,11 +14,11 @@ public class ResourceTester : MonoBehaviour
     void Start()
     {
         resourceManager = GameManager.GetModule<IResourceManager>();
-        resourceManager.LoadPrefabAsync<ResourceUnitCube>(0,(go)=> 
+        resourceManager.LoadPrefabAsync<ResourceUnitCube>((go)=> 
        {
            go.transform.position = new Vector3(3, 0, 0);
        },null,true);
-        resourceManager.LoadPrefabAsync<ResourceMonoUnitTester>(0,(monoGo)=> {
+        resourceManager.LoadPrefabAsync<ResourceMonoUnitTester>((monoGo)=> {
             monoGo.transform.position = new Vector3(5, 0, 0);
         },null,true);
     }

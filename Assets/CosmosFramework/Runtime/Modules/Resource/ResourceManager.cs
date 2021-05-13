@@ -7,102 +7,128 @@ using UnityEngine.SceneManagement;
 using System.Reflection;
 namespace Cosmos.Resource
 {
+    //================================================
+    //1、资源加载模块分为内置部分与自定义部分；
+    //2、内置加载通道在初始化时自动被注册，通过SwitchBuildInLoadMode()
+    //方法进行通道切换；
+    //3、自定义部分加载前需要进行通道注册，加载时需要指定通道名称；
+    //4、默认提供两种加载模式，分别为 Resource与AssetBundle；
+    //================================================
     [Module]
-    internal sealed partial class ResourceManager : Module,IResourceManager
+    internal sealed partial class ResourceManager : Module, IResourceManager
     {
         #region Properties
-        public int ResourceLoadChannelCount { get { return channelDict.Count; } }
-        Dictionary<byte, ResourceLoadChannel> channelDict;
+        ResourceLoadMode currentResourceLoadMode;
+        public ResourceLoadMode CurrentResourceLoadMode { get { return currentResourceLoadMode; } }
+        Dictionary<ResourceLoadMode, ResourceLoadChannel> buildInChannelDict;
+        IResourceLoadHelper currentDefaultLoadHelper;
         #endregion
         #region Methods
         public override void OnInitialization()
         {
-            channelDict = new Dictionary<byte, ResourceLoadChannel>();
+            buildInChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
+            buildInChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourceLoader()));
+            buildInChannelDict.Add(ResourceLoadMode.AssetBundle, new ResourceLoadChannel(ResourceLoadMode.AssetBundle.ToString(), new AssetBundleLoader()));
+            currentResourceLoadMode = ResourceLoadMode.Resource;
+            currentDefaultLoadHelper = buildInChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
         }
-        public override void OnTermination()
+        public void SwitchBuildInLoadMode(ResourceLoadMode resourceLoadMode)
         {
-            ClearMemory();
-        }
-        public void AddLoadChannel(ResourceLoadChannel loadChannel)
-        {
-            channelDict.TryAdd(loadChannel.ResourceLoadChannelId, loadChannel);
-        }
-        public void RemoveLoadChannel(byte channelId)
-        {
-            channelDict.TryRemove(channelId, out _);
-        }
-        public bool HasLoadChannel(byte channelId)
-        {
-            return channelDict.ContainsKey(channelId);
+            if (buildInChannelDict.TryGetValue(resourceLoadMode, out var channel))
+            {
+                this.currentResourceLoadMode = resourceLoadMode;
+                currentDefaultLoadHelper = channel.ResourceLoadHelper;
+            }
+            else
+            {
+                throw new ArgumentNullException($"ResourceLoadMode : {resourceLoadMode} is invalid !");
+            }
         }
         /// <summary>
+        /// 使用默认加载模式；
+        /// 添加者更新替换内置的加载帮助体；
+        /// </summary>
+        /// <param name="resourceLoadMode">加载模式</param>
+        /// <param name="loadHelper">加载帮助对象</param>
+        public void AddOrUpdateBuildInLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper)
+        {
+            if (Utility.Assert.IsNull(loadHelper))
+                throw new ArgumentNullException($"IResourceLoadHelper is invalid !");
+            if(buildInChannelDict.TryGetValue(resourceLoadMode, out var channel))
+            {
+                if (channel.ResourceLoadHelper.IsLoading)
+                {
+                    Utility.Unity.PredicateCoroutine(() => channel.ResourceLoadHelper.IsLoading, () =>
+                    {
+                        buildInChannelDict[resourceLoadMode]=new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
+                    });
+                }
+                else
+                    buildInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
+            }
+            else
+                buildInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
+        }
+        public IResourceLoadHelper PeekBuildInLoadHelper(ResourceLoadMode resourceLoadMode)
+        {
+            buildInChannelDict.TryGetValue(resourceLoadMode, out var channel);
+            return channel.ResourceLoadHelper;
+        }
+        /// <summary>
+        /// 使用默认加载模式；
         /// 特性无效！；
         /// 加载资源（同步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="info">资源信息标记</param>
         /// <returns>资源</returns>
-        public T LoadAsset<T>(byte channelId, AssetInfo info)
+        public T LoadAsset<T>(AssetInfo info)
             where T : UnityEngine.Object
         {
-            T asset = null;
-            if (channelDict.TryGetValue(channelId, out var channel))
-            {
-                asset = channel.ResourceLoadHelper.LoadAsset<T>(info);
-            }
-            else
-                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
-            return asset;
+            return currentDefaultLoadHelper.LoadAsset<T>(info);
         }
         /// <summary>
+        /// 使用默认加载模式；
         /// 特性无效！；
         /// 加载资源（同步）；
         /// 注意：AB环境下会获取bundle中所有T类型的对象；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="info">资源信息标记</param>
         /// <returns>资源</returns>
-        public T[] LoadAllAsset<T>(byte channelId, AssetInfo info)
+        public T[] LoadAllAsset<T>(AssetInfo info)
         where T : UnityEngine.Object
         {
-            T[] assets = null;
-            if (channelDict.TryGetValue(channelId, out var channel))
-            {
-                assets = channel.ResourceLoadHelper.LoadAllAsset<T>(info);
-            }
-            else
-                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
-            return assets;
+            return currentDefaultLoadHelper.LoadAllAsset<T>(info);
         }
         /// <summary>
+        /// 使用默认加载模式；
         /// 特性加载:PrefabAssetAttribute！；
         /// 加载预制体资源（同步）；
         /// </summary>
-        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="type">类对象类型</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public GameObject LoadPrefab(byte channelId, Type type, bool instantiate = false)
+        public GameObject LoadPrefab(Type type, bool instantiate = false)
         {
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
             {
                 var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-                return LoadPrefab(channelId, info, instantiate);
+                return LoadPrefab(info, instantiate);
             }
             else
                 return null;
         }
         /// <summary>
+        /// 使用默认加载模式；
         /// 特性加载:PrefabAssetAttribute！；
         /// 加载预制体资源（同步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public GameObject LoadPrefab<T>(byte channelId, bool instantiate = false)
+        public GameObject LoadPrefab<T>(bool instantiate = false)
             where T : class
         {
             var type = typeof(T);
@@ -110,171 +136,134 @@ namespace Cosmos.Resource
             if (attribute != null)
             {
                 var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-                return LoadPrefab(channelId, info, instantiate);
+                return LoadPrefab(info, instantiate);
             }
             else
                 return null;
         }
         /// <summary>
+        /// 使用默认加载模式；
         /// 特性无效！；
         /// 加载预制体资源（同步）；
         /// </summary>
-        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="info">资源信息标记</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public GameObject LoadPrefab(byte channelId, AssetInfo info, bool instantiate = false)
+        public GameObject LoadPrefab(AssetInfo info, bool instantiate = false)
         {
             GameObject go = null;
-            if (channelDict.TryGetValue(channelId, out var channel))
-            {
-                var srcGo = channel.ResourceLoadHelper.LoadAsset<GameObject>(info);
-                if (instantiate)
-                    go = GameObject.Instantiate(srcGo);
-                else
-                    go = srcGo;
-            }
+            var srcGo = LoadAsset<GameObject>(info);
+            if (instantiate)
+                go = GameObject.Instantiate(srcGo);
             else
-                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
+                go = srcGo;
             return go;
         }
         /// <summary>
+        /// 使用默认加载模式；
         /// 特性无效！；
         /// 加载资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="info">资源信息标记</param>
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadAssetAsync<T>(byte channelId, AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null)
+        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null)
             where T : UnityEngine.Object
         {
-            if (channelDict.TryGetValue(channelId, out var channel))
-            {
-                return channel.ResourceLoadHelper.LoadAssetAsync<T>(info, loadDoneCallback, loadingCallback);
-            }
-            else
-                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
+            return currentDefaultLoadHelper.LoadAssetAsync<T>(info, loadDoneCallback, loadingCallback);
         }
         /// <summary>
+        /// 使用默认加载模式；
         /// 特性加载:PrefabAssetAttribute！；
         /// 加载预制体资源（异步）；
         /// </summary>
-        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="type">类对象类型</param>
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(byte channelId, Type type, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync(Type type, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
         {
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
             {
                 var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-                return LoadPrefabAsync(channelId, info, loadDoneCallback, loadingCallback, instantiate);
+                return LoadPrefabAsync(info, loadDoneCallback, loadingCallback, instantiate);
             }
             else
                 return null;
         }
         /// <summary>
+        /// 使用默认加载模式；
         /// 特性加载:PrefabAssetAttribute！；
         /// 加载预制体资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync<T>(byte channelId, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync<T>(Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
             where T : class
         {
             var type = typeof(T);
-            return LoadPrefabAsync(channelId, type, loadDoneCallback, loadingCallback, instantiate);
+            return LoadPrefabAsync(type, loadDoneCallback, loadingCallback, instantiate);
         }
         /// <summary>
+        /// 使用默认加载模式；
         /// 特性无效！；
         /// 加载预制体资源（异步）；
         /// </summary>
-        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="info">资源信息标记</param>
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(byte channelId, AssetInfo info, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync(AssetInfo info, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
         {
-            if (channelDict.TryGetValue(channelId, out var channel))
+            return currentDefaultLoadHelper.LoadAssetAsync<GameObject>(info, (srcGo) =>
             {
-                return channel.ResourceLoadHelper.LoadAssetAsync<GameObject>(info, (srcGo) =>
+                if (instantiate)
                 {
-                    if (instantiate)
-                    {
-                        var go = GameObject.Instantiate(srcGo);
-                        loadDoneCallback?.Invoke(go);
-                    }
-                    else
-                        loadDoneCallback?.Invoke(srcGo);
-                }, loadingCallback);
-            }
-            else
-                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
+                    var go = GameObject.Instantiate(srcGo);
+                    loadDoneCallback?.Invoke(go);
+                }
+                else
+                    loadDoneCallback?.Invoke(srcGo);
+            }, loadingCallback);
         }
         /// <summary>
-        /// 加载场景（异步）
+        /// 使用默认加载模式；
+        /// 加载场景（异步）；
         /// </summary>
-        /// <param name="channelId">资源加载的通道id</param>
         /// <param name="info">资源信息标记</param>
         /// <param name="loadingCallback">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadSceneAsync(byte channelId, SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
         {
-            if (channelDict.TryGetValue(channelId, out var channel))
-            {
-                return channel.ResourceLoadHelper.LoadSceneAsync(info, loadDoneCallback, loadingCallback);
-            }
-            else
-                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
+            return currentDefaultLoadHelper.LoadSceneAsync(info, loadDoneCallback, loadingCallback);
         }
         /// <summary>
         /// 卸载资源;
         /// </summary>
-        /// <param name="channelId">资源加载的通道id</param>
-        /// <param name="assetBundleName">AB包名称</param>
+        /// <param name="customData">自定义的数据</param>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        public void UnLoadAsset(byte channelId, object customData, bool unloadAllLoadedObjects = false)
+        public void UnLoadAsset(object customData, bool unloadAllLoadedObjects = false)
         {
-            if (channelDict.TryGetValue(channelId, out var channel))
-            {
-                channel.ResourceLoadHelper.UnLoadAsset(customData, unloadAllLoadedObjects);
-            }
-            else
-                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
+            currentDefaultLoadHelper.UnLoadAsset(customData, unloadAllLoadedObjects);
         }
         /// <summary>
+        /// 使用默认加载模式；
         /// 卸载所有资源;
         /// </summary>
-        /// <param name="channelId">资源加载的通道id</param>
+        /// <param name="channelName">资源加载的通道id</param>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        public void UnLoadAllAsset(byte channelId, bool unloadAllLoadedObjects = false)
+        public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
         {
-            if (channelDict.TryGetValue(channelId, out var channel))
-            {
-                channel.ResourceLoadHelper.UnLoadAllAsset(unloadAllLoadedObjects);
-            }
-            else
-                throw new ArgumentNullException($"channelId :{channelId} is invalid !");
-        }
-        /// <summary>
-        /// 清理内存，释放空闲内存
-        /// </summary>
-        void ClearMemory()
-        {
-            GC.Collect();
+            currentDefaultLoadHelper.UnLoadAllAsset(unloadAllLoadedObjects);
         }
         #endregion
     }

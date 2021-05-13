@@ -181,6 +181,17 @@ namespace Cosmos
                 }
                 return false;
             }
+            public static bool IsStringValid(string context)
+            {
+                if (string.IsNullOrEmpty(context))
+                    return false;
+                return true;
+            }
+            public static void IsStringValid(string context,string exceptionContext)
+            {
+                if (!string.IsNullOrEmpty(context))
+                    throw new ArgumentNullException(exceptionContext);
+            }
         }
     }
 }

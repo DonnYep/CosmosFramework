@@ -20,7 +20,9 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **ObjectsPool**：对象池模块。提供常用的对象生成回收等功能。
 
-- **Resource**：资源加载模块。框架集成了基于Resources与AB两种加载模式，在使用时切换加载模式即可。并提供通过特性"PrefabAssetAttribute"加载资源的方式。
+- **Resource**：资源加载模块。框架内部提供了Resources与AB两种加载模式，通过切换加载模式可变更当前默认的加载方式。资源加载模块亦提供了自定义加载通道。
+实现自定义加载通道时，须实现继承并实现IResourceLoadHelper接口，并将helper对象传入ResourceLoadChannel中。通过注册ResourceLoadChannel来使用自定义加载方案。
+使用自定义加载通道时，第一个参数需要传入通道名(channelName)，剩余参数则与内置加载API相同。
 
 - **Scene**：场景加载模块。提供常用的异步、同步加载嵌入的场景功能。
 
@@ -100,5 +102,4 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
 - KCP地址：https://github.com/skywind3000/kcp
 
-- 服务器版本的KCP与客户端版本的KCP皆为参考自Mirror。
-    Mirror地址:https://github.com/vis2k/Mirror
+- 服务器版本的KCP与客户端版本的KCP皆为参考自Mirror。Mirror地址:https://github.com/vis2k/Mirror

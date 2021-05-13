@@ -526,8 +526,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1277566612}
-  - component: {fileID: 1277566611}
   - component: {fileID: 1277566613}
+  - component: {fileID: 1277566611}
   m_Layer: 0
   m_Name: Entry
   m_TagString: Untagged
@@ -542,9 +542,9 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1277566610}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e84a381cf54cbff4d909f36c2335a555, type: 3}
+  m_Script: {fileID: 11500000, guid: 36405f6fe0f5daf4d97f0601c42845b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &1277566612

@@ -11,14 +11,25 @@ using Cosmos.Resource;
 
 namespace Cosmos
 {
-    public class DefaultAssetBundleLoader : IResourceLoadHelper
+    public class AssetBundleLoader : IResourceLoadHelper
     {
-        public DefaultAssetBundleLoader(string assetBundleRootPath, string manifestName)
+        public AssetBundleLoader(string assetBundleRootPath, string manifestName)
         {
             assetBundleHashDict = new Dictionary<string, Hash128>();
             assetBundleDict = new Dictionary<string, AssetBundle>();
             this.AssetBundleRootPath = assetBundleRootPath;
             AssetBundleManifestName = manifestName;
+            _loadWait = new WaitUntil(() => { return !_isLoading; });
+        }
+        public void SetLoaderData(string assetBundleRootPath, string manifestName)
+        {
+            this.AssetBundleRootPath = assetBundleRootPath;
+            this.AssetBundleManifestName = manifestName;
+        }
+        public AssetBundleLoader()
+        {
+            assetBundleHashDict = new Dictionary<string, Hash128>();
+            assetBundleDict = new Dictionary<string, AssetBundle>();
             _loadWait = new WaitUntil(() => { return !_isLoading; });
         }
         /// <summary>
@@ -29,6 +40,9 @@ namespace Cosmos
         /// 所有AssetBundle资源包清单的名称
         /// </summary>
         public string AssetBundleManifestName { get; private set; }
+
+        public bool IsLoading { get { return _isLoading; } }
+
         /// <summary>
         /// 缓存的所有AssetBundle包【AB包名称、AB包】
         /// </summary>
@@ -99,7 +113,7 @@ namespace Cosmos
         }
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
         {
-            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info,loadDoneCallback,loadingCallback));
+            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info, loadDoneCallback, loadingCallback));
         }
         public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
         {
@@ -331,5 +345,7 @@ namespace Cosmos
             loadDoneCallback?.Invoke();
             _isLoading = false;
         }
+
+
     }
 }

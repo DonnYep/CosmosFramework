@@ -8,8 +8,11 @@ using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos
 {
-    public class DefaultResourceLoader : IResourceLoadHelper
+    public class ResourceLoader : IResourceLoadHelper
     {
+        public bool IsLoading { get { return isLoading; } }
+        bool isLoading = false;
+
         public T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object
         {
             var asset = Resources.LoadAll<T>(info.ResourcePath);
@@ -49,6 +52,7 @@ namespace Cosmos
         {
             UnityEngine.Object asset = null;
             ResourceRequest request = Resources.LoadAsync<T>(info.ResourcePath);
+            isLoading = true;
             while (!request.isDone)
             {
                 loadingCallback?.Invoke(request.progress);
@@ -70,6 +74,7 @@ namespace Cosmos
             {
                 loadDoneCallback?.Invoke(asset as T);
             }
+            isLoading = false;
         }
     }
 }

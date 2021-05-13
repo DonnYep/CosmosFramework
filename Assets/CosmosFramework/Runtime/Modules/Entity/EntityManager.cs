@@ -58,7 +58,7 @@ namespace Cosmos.Entity
             var result = HasEntityGroup(entityAssetInfo.EntityGroupName);
             if (!result)
             {
-                var entityAsset = resourceManager.LoadPrefab(0,entityAssetInfo);
+                var entityAsset = resourceManager.LoadPrefab(entityAssetInfo);
                 var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
                 if (entityAssetInfo.UseObjectPool)
                 {
@@ -118,7 +118,7 @@ namespace Cosmos.Entity
             var result = HasEntityGroup(entityAssetInfo.EntityGroupName);
             if (!result)
             {
-                return resourceManager.LoadPrefabAsync(0,entityAssetInfo, (entityAsset) =>
+                return resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
                 {
                     var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
                     if (entityAssetInfo.UseObjectPool)
@@ -527,7 +527,7 @@ namespace Cosmos.Entity
                 {
                     var att = attributes[i];
                     var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath, att.ResourcePath);
-                    resourceManager.LoadPrefabAsync(0,entityAssetInfo, (entityAsset) =>
+                    resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
                     {
                         var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
                         if (entityAssetInfo.UseObjectPool)

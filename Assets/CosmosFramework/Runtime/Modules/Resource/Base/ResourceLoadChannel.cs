@@ -7,14 +7,13 @@ namespace Cosmos.Resource
 {
     public class ResourceLoadChannel : IResourceLoadChannel
     {
-        readonly byte m_ResourceLoadChannelId;
         readonly IResourceLoadHelper m_ResourceLoadHelper;
-        public string Description { get; set; }
-        public byte ResourceLoadChannelId{ get { return m_ResourceLoadChannelId; } }
+        readonly string m_ChannelName;
         public IResourceLoadHelper ResourceLoadHelper { get { return m_ResourceLoadHelper; } }
-        public ResourceLoadChannel(byte resourceLoadChannelId, IResourceLoadHelper resourceLoadHelper)
+        public string ChannelName { get { return m_ChannelName; } }
+        public ResourceLoadChannel(string channelName, IResourceLoadHelper resourceLoadHelper)
         {
-            this.m_ResourceLoadChannelId = resourceLoadChannelId;
+            this.m_ChannelName= channelName;
             this.m_ResourceLoadHelper = resourceLoadHelper;
         }
     }

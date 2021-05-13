@@ -33,6 +33,10 @@ namespace Cosmos
         {
             return StartCoroutine(EnumCoroutine(handler));
         }
+        public Coroutine StartCoroutine(Action handler,Action callback)
+        {
+            return StartCoroutine(EnumCoroutine(handler, callback));
+        }
         /// <summary>
         /// 嵌套协程
         /// </summary>
@@ -57,6 +61,11 @@ namespace Cosmos
         {
             handler?.Invoke();
             yield return null;
+        }
+        IEnumerator EnumCoroutine(Action handler,Action callack)
+        {
+            yield return StartCoroutine(handler);
+            callack?.Invoke();
         }
         IEnumerator EnumPredicateCoroutine(Func<bool> handler, Action callBack)
         {

@@ -11,6 +11,9 @@ namespace Cosmos
     public interface ICoroutineHelper
     {
         Coroutine StartCoroutine(Coroutine routine, Action callBack);
+        Coroutine StartCoroutine(IEnumerator routine);
+        Coroutine StartCoroutine(Action handler);
+        Coroutine StartCoroutine(Action handler, Action callback);
         /// <summary>
         /// 延时协程；
         /// </summary>
@@ -32,8 +35,6 @@ namespace Cosmos
         /// <param name="nestHandler">条件成功后执行的嵌套协程</param>
         /// <returns>Coroutine></returns>
         Coroutine PredicateNestCoroutine(Func<bool> predicateHandler, Action nestHandler);
-        Coroutine StartCoroutine(IEnumerator routine);
-        Coroutine StartCoroutine(Action handler);
         void StopAllCoroutines();
         void StopCoroutine(IEnumerator routine);
         void StopCoroutine(Coroutine routine);

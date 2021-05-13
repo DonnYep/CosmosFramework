@@ -9,11 +9,11 @@ namespace Cosmos
     public class ObjectAssetInfo : AssetInfo
     {
         public TypeStringPair ObjectKey { get; private set; }
-        public ObjectAssetInfo(string objectName, string resourcePath) : base(resourcePath)
+        public ObjectAssetInfo(string objectName) 
         {
             this.ObjectKey = new TypeStringPair(typeof(object), objectName);
         }
-        public ObjectAssetInfo(Type objectType, string objectName, string resourcePath) : base(resourcePath)
+        public ObjectAssetInfo(Type objectType, string objectName)
         {
             this.ObjectKey = new TypeStringPair(objectType, objectName);
         }

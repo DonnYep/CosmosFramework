@@ -5,8 +5,8 @@
     /// </summary>
     public class UIAssetInfo : AssetInfo
     {
-        public string UIAssetName { get; private set; }
-        public UIAssetInfo(string uiAssetName,string resourcePath) : base(resourcePath)
+        public string UIAssetName { get; set; }
+        public UIAssetInfo(string uiAssetName)
         {
             this.UIAssetName = uiAssetName;
         }

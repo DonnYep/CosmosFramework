@@ -141,7 +141,7 @@ namespace Cosmos.UI
             else
             {
                 var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-                return resourceManager.LoadPrefabAsync(0,assetInfo, panel =>
+                return resourceManager.LoadPrefabAsync(assetInfo, panel =>
                  {
                      panel.transform.SetParent(UIRoot.transform);
                      (panel.transform as RectTransform).ResetRectTransform();
@@ -246,7 +246,7 @@ namespace Cosmos.UI
             else
             {
                 var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
-                return resourceManager.LoadPrefabAsync(0,assetInfo, go =>
+                return resourceManager.LoadPrefabAsync(assetInfo, go =>
                  {
                      go.transform.SetParent(UIRoot.transform);
                      (go.transform as RectTransform).ResetRectTransform();

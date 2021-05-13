@@ -12,8 +12,7 @@ namespace Cosmos.Resource
     /// </summary>
     public interface IResourceLoadChannel
     {
-        string Description { get; set; }
-        byte ResourceLoadChannelId { get; }
+        string ChannelName { get; }
         IResourceLoadHelper ResourceLoadHelper { get; }
     }
 }
