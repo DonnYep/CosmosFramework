@@ -96,7 +96,7 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 ## 其他
 
 - V1.1_UPM可以通过UnityPackageManager进行加载。
-加载时请使用："https://github.com/DonnYep/CosmosFramework.git#V1.1_UPM"。
+加载时请填入：https://github.com/DonnYep/CosmosFramework.git#V1.1_UPM
 
 - MVVM的纯C#版本：https://github.com/DonnYep/CosmosMVVM
 
