@@ -31,16 +31,16 @@ namespace Cosmos.CosmosEditor
             EditorGUILayout.Space();
             if (GUILayout.Button("访问源码", GUILayout.Height(32)))
             {
-                Application.OpenURL("https://github.com/DonHitYep/CosmosFramework");
+                Application.OpenURL("https://github.com/DonnYep/CosmosFramework");
             }
             EditorGUILayout.HelpBox("CosmosFramework是一款轻量级的游戏框架。内置常用工具类，封装了大部分常用功能模块，案例可参考 Examples 。", MessageType.Info);
             GUILayout.EndVertical();
-            EditorGUILayout.Space(16);
+            GUILayout.Space(16);
             //GUILayout.BeginVertical("box");
             //GUILayout.Label("框架中附带的Symbol: ");
-            EditorGUILayout.Space(8);
+            GUILayout.Space(8);
             //GUILayout.Label("Addressable资源操作模块 : COSMOS_ADDRESSABLE；\n在开启此Symbol后，可使用Addressables package进行资源加载");
-            EditorGUILayout.Space(8);
+            GUILayout.Space(8);
             //GUILayout.EndVertical();
         }
     }
