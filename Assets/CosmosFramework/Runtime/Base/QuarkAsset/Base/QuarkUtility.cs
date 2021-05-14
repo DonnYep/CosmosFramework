@@ -87,8 +87,12 @@ namespace Cosmos.QuarkAsset
                     quarkAssetObject = lnk.First.Value;
                 }
             }
+#if UNITY_EDITOR
             var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetObject.AssetGuid);
             return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(guid2path);
+#else
+            return null;
+#endif
         }
         static T AssetDatabaseLoadAssetByPath<T>(string assetPath)
        where T : UnityEngine.Object
@@ -97,7 +101,11 @@ namespace Cosmos.QuarkAsset
                 throw new ArgumentNullException("Asset name is invalid!");
             if (assetDict == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
+#if UNITY_EDITOR
             return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
+#else
+            return null;
+#endif
         }
     }
 }

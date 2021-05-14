@@ -1,9 +1,11 @@
 {
     "name": "CosmosEditor",
     "references": [
-        "GUID:c920503f8f9e7be47a128855578deee2"
+        "CosmosRuntime"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
