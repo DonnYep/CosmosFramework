@@ -40,6 +40,10 @@ using UnityEngine.Networking;
         {
             return Instance.GoStartCoroutine(routine, thisReference);
         }
+        public static EditorCoroutine StartCoroutine(IEnumerator routine)
+        {
+            return Instance.GoStartCoroutineWithoutReference(routine);
+        }
         public static EditorCoroutine StartCoroutine(string methodName, object thisReference)
         {
             return StartCoroutine(methodName, null, thisReference);
@@ -79,6 +83,14 @@ using UnityEngine.Networking;
         public static void StopCoroutine(IEnumerator routine, object thisReference)
         {
             Instance.GoStopCoroutine(routine, thisReference);
+        }
+        public static void StopCoroutine(IEnumerator routine)
+        {
+            Instance.GoStopCoroutineWithoutReference(routine);
+        }
+        public static void StopCoroutine(EditorCoroutine coroutine)
+        {
+            Instance.GoStopCoroutine(coroutine);
         }
         public static void StopCoroutine(string methodName, object thisReference)
         {
@@ -261,6 +273,16 @@ using UnityEngine.Networking;
             GoStartCoroutine(coroutine);
             return coroutine;
         }
+        EditorCoroutine GoStartCoroutineWithoutReference(IEnumerator routine)
+        {
+            if (routine == null)
+            {
+                Debug.LogException(new Exception("IEnumerator is null!"), null);
+            }
+            EditorCoroutine coroutine = CreateCoroutineWithoutReference(routine);
+            GoStartCoroutine(coroutine);
+            return coroutine;
+        }
         void GoStartCoroutine(EditorCoroutine coroutine)
         {
             if (!coroutineDict.ContainsKey(coroutine.RoutineUniqueHash))
@@ -286,9 +308,21 @@ using UnityEngine.Networking;
         {
             return new EditorCoroutine(routine, thisReference.GetHashCode(), thisReference.GetType().ToString());
         }
+        EditorCoroutine CreateCoroutineWithoutReference(IEnumerator routine)
+        {
+            return new EditorCoroutine(routine, routine.GetHashCode(), routine.GetType().ToString());
+        }
         void GoStopCoroutine(IEnumerator routine, object thisReference)
         {
             GoStopActualRoutine(CreateCoroutine(routine, thisReference));
+        }
+        void GoStopCoroutine(EditorCoroutine coroutine)
+        {
+            GoStopActualRoutine(coroutine);
+        }
+        void GoStopCoroutineWithoutReference(IEnumerator routine)
+        {
+            GoStopActualRoutine(CreateCoroutineWithoutReference(routine));
         }
         void GoStopCoroutine(string methodName, object thisReference)
         {

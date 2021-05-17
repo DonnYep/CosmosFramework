@@ -6,7 +6,7 @@ using UnityEditor.IMGUI.Controls;
 
 namespace Cosmos.CosmosEditor
 {
-    public class QuarkAssetDragDropTab
+    public class QuarkAssetDragDropOperation
 	{
 		QuarkAssetTreeView treeView;
 		TreeViewState treeViewState;

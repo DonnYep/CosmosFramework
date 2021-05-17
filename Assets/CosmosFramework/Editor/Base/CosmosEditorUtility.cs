@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using UnityEditor;
+using System.Collections;
 #if UNITY_EDITOR
 namespace Cosmos.CosmosEditor
 {
@@ -43,9 +44,9 @@ namespace Cosmos.CosmosEditor
         /// 对象数据会被存储为json；
         /// </summary>
         public static void SaveData<T>(string fileName, T editorData)
-            where T : class,new()
+            where T : class, new()
         {
-            var json =JsonUtility.ToJson(editorData, true);
+            var json = JsonUtility.ToJson(editorData, true);
             SaveDataJson(fileName, json);
         }
         public static void SaveDataJson(string fileName, string context)
@@ -53,7 +54,7 @@ namespace Cosmos.CosmosEditor
             Utility.IO.OverwriteTextFile(LibraryPath, fileName, context);
         }
         public static T GetData<T>(string fileName)
-            where T : class,new()
+            where T : class, new()
         {
             var json = GetDataJson(fileName);
             var obj = JsonUtility.FromJson<T>(json);
@@ -88,6 +89,20 @@ namespace Cosmos.CosmosEditor
             context?.Invoke();
             GUILayout.EndHorizontal();
         }
+        #region Coroutine
+        public static EditorCoroutine StartCoroutine(IEnumerator coroutine)
+        {
+            return EditorCoroutineCore.StartCoroutine(coroutine);
+        }
+        public static void StopCoroutine(EditorCoroutine coroutine)
+        {
+            EditorCoroutineCore.StopCoroutine(coroutine);
+        }
+        public static void StopCoroutine(IEnumerator coroutine)
+        {
+            EditorCoroutineCore.StopCoroutine(coroutine);
+        }
+        #endregion
         public static void LogInfo(object msg, object context = null)
         {
             if (context == null)
