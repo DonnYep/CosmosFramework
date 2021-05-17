@@ -8,6 +8,8 @@ namespace Cosmos.CosmosEditor
 {
     public class AssetBundleTab
     {
+        BuildTarget buildTarget= BuildTarget.StandaloneWindows;
+        string outputPath = "AssetBundles/StandaloneWindows";
         public void Clear()
         {
 
@@ -18,7 +20,19 @@ namespace Cosmos.CosmosEditor
         }
         public void OnGUI()
         {
-
+            DrawAssetBundleTab();
+        }
+        void DrawAssetBundleTab()
+        {
+            buildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", buildTarget);
+            GUILayout.Space(16);
+            outputPath = EditorGUILayout.TextField("OutputPath", outputPath);
+            CosmosEditorUtility.DrawHorizontalContext(() =>
+            {
+                if (GUILayout.Button("Build"))
+                {
+                }
+            });
         }
     }
 }

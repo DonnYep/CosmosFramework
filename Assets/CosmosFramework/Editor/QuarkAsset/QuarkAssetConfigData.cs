@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Cosmos.CosmosEditor
 {
-    public class QuarkAssetConfigData
+    internal class QuarkAssetConfigData
     {
         /// <summary>
         /// 目标为Asset下的所有目录
