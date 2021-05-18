@@ -51,6 +51,11 @@ namespace Cosmos.CosmosEditor
         //    base.RowGUI(args);
         //    GUI.color = old;
         //}
+        protected override void DoubleClickedItem(int id)
+        {
+            base.DoubleClickedItem(id);
+            CosmosEditorUtility.PingAndActiveObject(pathList[id]);
+        }
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };

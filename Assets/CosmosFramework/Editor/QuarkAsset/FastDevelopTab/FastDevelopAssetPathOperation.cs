@@ -6,7 +6,7 @@ using UnityEditor.IMGUI.Controls;
 
 namespace Cosmos.CosmosEditor
 {
-    public class QuarkAssetDragDropOperation
+    public class FastDevelopAssetPathOperation
 	{
 		QuarkAssetTreeView treeView;
 		TreeViewState treeViewState;
@@ -60,16 +60,16 @@ namespace Cosmos.CosmosEditor
 						Object obj = DragAndDrop.objectReferences[i];
 						string path = DragAndDrop.paths[i];
 						// Folder.
-						if (obj is DefaultAsset)
+						//if (obj is DefaultAsset)
+						//{
+						//}
+						//else if (!(obj is MonoScript))
+						//{
+						//	treeView.AddPath(path);
+						//}
+						if (!(obj is MonoScript))
 						{
-							//CosmosEditorUtility.LogInfo(path);
 							treeView.AddPath(path);
-						}
-						else if (obj is MonoScript)
-						{
-						}
-						else if (obj is Texture2D)
-						{
 						}
 					}
 				}
@@ -89,8 +89,6 @@ namespace Cosmos.CosmosEditor
 					}
 				}
 			}
-			GUILayout.FlexibleSpace();
-			EditorGUILayout.LabelField("IncludeAssets：", new GUIStyle() { fontSize = 16 });
 			DoToolbar();
 			DoTreeView();
 		}

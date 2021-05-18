@@ -32,7 +32,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="folderPath">文件夹路径</param>
             /// <param name="handler">遍历到一个文件时的处理的函数</param>
-            public static void TraverseFolderFile(string folderPath,Action<FileSystemInfo> handler)
+            public static void TraverseFolderFile(string folderPath, Action<FileSystemInfo> handler)
             {
                 DirectoryInfo d = new DirectoryInfo(folderPath);
                 FileSystemInfo[] fsInfoArr = d.GetFileSystemInfos();
@@ -40,7 +40,7 @@ namespace Cosmos
                 {
                     if (fsInfo is DirectoryInfo)     //判断是否为文件夹
                     {
-                        TraverseFolderFile(fsInfo.FullName,handler);//递归调用
+                        TraverseFolderFile(fsInfo.FullName, handler);//递归调用
                     }
                     else
                     {
@@ -59,7 +59,7 @@ namespace Cosmos
             }
             public static void CreateFolder(string path, string folderName)
             {
-                var fullPath = CombineRelativePath(path, folderName);
+                var fullPath = Combine(path, folderName);
                 var dir = new DirectoryInfo(fullPath);
                 if (!dir.Exists)
                 {
@@ -70,18 +70,13 @@ namespace Cosmos
             /// <summary>
             /// 纯 .NET方法；
             /// 合并地址,返回相对路径；
-            /// 参考示例：Resources\JsonData\
+            /// 参考示例：Resources/JsonData/
             /// </summary>
-            /// <param name="relativePath">相对路径</param>
+            /// <param name="relativePaths">相对路径</param>
             /// <returns></returns>
-            public static string CombineRelativePath(params string[] relativePath)
+            public static string Combine(params string[] relativePaths)
             {
-                Utility.Text.ClearStringBuilder();
-                for (int i = 0; i < relativePath.Length; i++)
-                {
-                    Utility.Text.StringBuilderCache.Append(relativePath[i] + "\\");
-                }
-                return Utility.Text.StringBuilderCache.ToString();
+                return Path.Combine(relativePaths);
             }
             /// <summary>
             /// 纯 .NET方法；
@@ -93,7 +88,7 @@ namespace Cosmos
             /// <returns></returns>
             public static string CombineRelativeFilePath(string fileName, params string[] relativePath)
             {
-                return Utility.IO.CombineRelativePath(relativePath) + fileName;
+                return Path.Combine(Path.Combine(relativePath), fileName);
             }
             /// <summary>
             /// 删除文件夹下的所有文件以及文件夹
@@ -155,7 +150,7 @@ namespace Cosmos
             {
                 if (!Directory.Exists(folderPath))
                     Utility.Debug.LogError(new IOException("ReadTextFileContent folder path not exist !" + folderPath));
-                return ReadTextFileContent(Utility.IO.CombineRelativeFilePath(fileName, folderPath));
+                return ReadTextFileContent(Path.Combine(folderPath, fileName));
             }
             /// <summary>
             /// 使用UTF8编码；
@@ -170,7 +165,7 @@ namespace Cosmos
             {
                 if (!Directory.Exists(filePath))
                     Directory.CreateDirectory(filePath);
-                using (FileStream stream = new FileStream(Utility.IO.CombineRelativeFilePath(fileName, filePath), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (FileStream stream = new FileStream(Path.Combine(filePath, fileName), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     stream.Position = stream.Length;
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
@@ -216,7 +211,7 @@ namespace Cosmos
             {
                 if (!Directory.Exists(filePath))
                     Directory.CreateDirectory(filePath);
-                using (FileStream stream = File.Open(Utility.IO.CombineRelativeFilePath(fileName, filePath), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (FileStream stream = File.Open(Path.Combine(filePath, fileName), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     if (append)
                         stream.Position = stream.Length;
@@ -262,7 +257,7 @@ namespace Cosmos
             {
                 if (!Directory.Exists(filePath))
                     Directory.CreateDirectory(filePath);
-                var fileFullPath = Utility.IO.CombineRelativeFilePath(fileName, filePath);
+                var fileFullPath = Path.Combine(filePath, fileName);
                 using (FileStream stream = File.Open(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     stream.Seek(0, SeekOrigin.Begin);
@@ -324,7 +319,7 @@ namespace Cosmos
             {
                 if (!Directory.Exists(filePath))
                     Directory.CreateDirectory(filePath);
-                var fullFilePath = CombineRelativeFilePath( fileName,filePath);
+                var fullFilePath = Path.Combine(filePath, fileName);
                 using (FileStream stream = new FileStream(fullFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     BinaryFormatter formatter = new BinaryFormatter();

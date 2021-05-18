@@ -13,28 +13,29 @@ namespace Cosmos.CosmosEditor
 {
     public class FastDevelopTab
     {
-        QuarkAssetDragDropOperation quarkAssetDragDropTab = new QuarkAssetDragDropOperation();
+        FastDevelopAssetPathOperation fastDevelopAssetPathOperation = new FastDevelopAssetPathOperation();
+        FastDevelopTabData fastDevelopTabData;
         QuarkAssetDataset QuarkAssetDataset { get { return QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance; } }
-        QuarkAssetConfigData QuarkAssetConfigData { get { return QuarkAssetWindow.QuarkAssetConfigData; } }
-
-        public void Clear(){}
+        const string QuarkAssetConfigDataFileName = "QuarkAssetConfigData.json";
+        public void Clear() { }
+        public void OnDisable()
+        {
+            CosmosEditorUtility.SaveData(QuarkAssetConfigDataFileName, fastDevelopTabData);
+        }
         public void OnEnable()
         {
             try
             {
-                if (QuarkAssetConfigData.IncludeDirectories == null)
-                    QuarkAssetConfigData.IncludeDirectories = new List<string>();
-                else
-                {
-                    quarkAssetDragDropTab.OnEnable();
-                    quarkAssetDragDropTab.FolderPath = QuarkAssetConfigData.IncludeDirectories;
-                }
+                fastDevelopTabData = CosmosEditorUtility.GetData<FastDevelopTabData>(QuarkAssetConfigDataFileName);
             }
             catch
             {
-                quarkAssetDragDropTab.OnEnable();
-                quarkAssetDragDropTab.FolderPath = QuarkAssetConfigData.IncludeDirectories;
+                fastDevelopTabData = new FastDevelopTabData();
             }
+            if (fastDevelopTabData.IncludeDirectories == null)
+                fastDevelopTabData.IncludeDirectories = new List<string>();
+            fastDevelopAssetPathOperation.OnEnable();
+            fastDevelopAssetPathOperation.FolderPath = fastDevelopTabData.IncludeDirectories;
         }
         public void OnGUI()
         {
@@ -47,42 +48,34 @@ namespace Cosmos.CosmosEditor
                 EditorGUILayout.LabelField("LoadMode", GUILayout.Width(128));
                 QuarkAssetDataset.QuarkAssetLoadMode = (QuarkAssetLoadMode)EditorGUILayout.EnumPopup(QuarkAssetDataset.QuarkAssetLoadMode);
             });
-            CosmosEditorUtility.DrawHorizontalContext(() =>
+            GUILayout.Space(16);
+            CosmosEditorUtility.DrawVerticalContext(() =>
             {
-                EditorGUILayout.LabelField("UnderAssetsDirectory", GUILayout.Width(128));
-                QuarkAssetConfigData.UnderAssetsDirectory = EditorGUILayout.Toggle(QuarkAssetConfigData.UnderAssetsDirectory);
+                fastDevelopTabData.UnderAssetsDirectory = EditorGUILayout.ToggleLeft("UnderAssetsDirectory", fastDevelopTabData.UnderAssetsDirectory);
+                fastDevelopTabData.GenerateAssetPathCode = EditorGUILayout.ToggleLeft("GenerateAssetPath",fastDevelopTabData.GenerateAssetPathCode);
             });
+            GUILayout.Space(16);
+     
             CosmosEditorUtility.DrawHorizontalContext(() =>
             {
-                EditorGUILayout.LabelField("GenerateAssetPath", GUILayout.Width(128));
-                QuarkAssetConfigData.GenerateAssetPathCode = EditorGUILayout.Toggle(QuarkAssetConfigData.GenerateAssetPathCode);
-            });
-            if (!QuarkAssetConfigData.UnderAssetsDirectory)
-            {
-                CosmosEditorUtility.DrawVerticalContext(() =>
+                if (GUILayout.Button("Build"))
                 {
-                    quarkAssetDragDropTab.OnGUI();
-                });
-            }
-            CosmosEditorUtility.DrawHorizontalContext(() =>
-            {
-                if (GUILayout.Button("Build", GUILayout.Height(32)))
-                {
-                     CosmosEditorUtility.StartCoroutine(EnumBuildQuarkAssetDataset());
+                    CosmosEditorUtility.StartCoroutine(EnumBuildQuarkAssetDataset());
                 }
-                if (GUILayout.Button("Clear", GUILayout.Height(32)))
+                if (GUILayout.Button("Clear"))
                 {
-                    QuarkAssetConfigData.IncludeDirectories?.Clear();
-                    quarkAssetDragDropTab.Clear();
+                    fastDevelopTabData.IncludeDirectories?.Clear();
+                    fastDevelopAssetPathOperation.Clear();
                     QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance.Dispose();
-                    CosmosEditorUtility.ClearData(QuarkAssetWindow.QuarkAssetConfigDataFileName);
+                    CosmosEditorUtility.ClearData(QuarkAssetConfigDataFileName);
                     CosmosEditorUtility.LogInfo("Quark asset clear done ");
                 }
             });
+            fastDevelopAssetPathOperation.OnGUI();
         }
         IEnumerator EnumBuildQuarkAssetDataset()
         {
-            if (!QuarkAssetConfigData.UnderAssetsDirectory)
+            if (!fastDevelopTabData.UnderAssetsDirectory)
             {
                 UnderAssetsDirectoryBuild();
             }
@@ -90,10 +83,10 @@ namespace Cosmos.CosmosEditor
             {
                 NotUnderAssetsDirectoryBuild();
             }
-            if (QuarkAssetConfigData.GenerateAssetPathCode)
+            if (fastDevelopTabData.GenerateAssetPathCode)
                 CreatePathScript();
             EditorUtility.SetDirty(QuarkAssetDataset);
-            CosmosEditorUtility.SaveData(QuarkAssetWindow.QuarkAssetConfigDataFileName, QuarkAssetConfigData);
+            CosmosEditorUtility.SaveData(QuarkAssetConfigDataFileName, fastDevelopTabData);
             yield return null;
             CosmosEditorUtility.LogInfo("Quark asset  build done ");
         }
@@ -105,7 +98,7 @@ namespace Cosmos.CosmosEditor
             List<QuarkAssetObject> quarkAssetList = new List<QuarkAssetObject>();
             quarkAssetList?.Clear();
             int currentDirIndex = 0;
-            var dirs = QuarkAssetConfigData.IncludeDirectories;
+            var dirs = fastDevelopTabData.IncludeDirectories;
             Dictionary<string, FileSystemInfo> fileSysInfoDict = new Dictionary<string, FileSystemInfo>();
             if (dirs != null)
             {
@@ -163,7 +156,7 @@ namespace Cosmos.CosmosEditor
             }
             QuarkAssetDataset.QuarkAssetObjectList = quarkAssetList;
             QuarkAssetDataset.QuarkAssetCount = quarkAssetList.Count;
-            QuarkAssetConfigData.IncludeDirectories = quarkAssetDragDropTab.FolderPath;
+            fastDevelopTabData.IncludeDirectories = fastDevelopAssetPathOperation.FolderPath;
         }
         void NotUnderAssetsDirectoryBuild()
         {
@@ -207,7 +200,7 @@ namespace Cosmos.CosmosEditor
             });
             QuarkAssetDataset.QuarkAssetObjectList = quarkAssetList;
             QuarkAssetDataset.QuarkAssetCount = quarkAssetList.Count;
-            QuarkAssetConfigData.IncludeDirectories = quarkAssetDragDropTab.FolderPath;
+            fastDevelopTabData.IncludeDirectories = fastDevelopAssetPathOperation.FolderPath;
         }
         void CreatePathScript()
         {
@@ -216,7 +209,9 @@ namespace Cosmos.CosmosEditor
             for (int i = 0; i < QuarkAssetDataset.QuarkAssetCount; i++)
             {
                 var srcName = QuarkAssetDataset.QuarkAssetObjectList[i].AssetName;
+                srcName = srcName.Trim();
                 var fnlName = srcName.Contains(".") == true ? srcName.Replace(".", "_") : srcName;
+                fnlName = srcName.Contains(" ") == true ? srcName.Replace(" ", "_") : srcName;
                 str = Utility.Text.Append(str, con, fnlName, "= \"", srcName, "\"", " ;\n");
             }
             str += "\n}";

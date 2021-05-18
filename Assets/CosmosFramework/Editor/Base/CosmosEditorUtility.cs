@@ -22,7 +22,7 @@ namespace Cosmos.CosmosEditor
                 {
                     var editorPath = new DirectoryInfo(Application.dataPath);
                     var rootPath = editorPath.Parent.FullName + "/Library/";
-                    libraryPath = Utility.IO.CombineRelativePath(rootPath, CosmosFramework);
+                    libraryPath = Utility.IO.Combine(rootPath, CosmosFramework);
                 }
                 return libraryPath;
             }
@@ -83,6 +83,18 @@ namespace Cosmos.CosmosEditor
             context?.Invoke();
             GUILayout.EndVertical();
         }
+        public static void DrawVerticalContext(Action context, params GUILayoutOption[] options)
+        {
+            GUILayout.BeginVertical(options);
+            context?.Invoke();
+            GUILayout.EndVertical();
+        }
+        public static void DrawHorizontalContext(Action context, params GUILayoutOption[] options)
+        {
+            GUILayout.BeginHorizontal(options);
+            context?.Invoke();
+            GUILayout.EndHorizontal();
+        }
         public static void DrawHorizontalContext(Action context)
         {
             GUILayout.BeginHorizontal();
@@ -103,6 +115,17 @@ namespace Cosmos.CosmosEditor
             EditorCoroutineCore.StopCoroutine(coroutine);
         }
         #endregion
+        /// <summary>
+        /// 定位目标路径在Assets下的位置；
+        /// </summary>
+        /// <param name="path">目标路径</param>
+        public static void PingAndActiveObject(string path)
+        {
+            var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
+            EditorGUIUtility.PingObject(obj);
+            Selection.activeObject = obj;
+        }
+
         public static void LogInfo(object msg, object context = null)
         {
             if (context == null)

@@ -16,16 +16,15 @@ namespace Cosmos.CosmosEditor
         int selectedBar = 0;
         string[] barArray = new string[] { "FastDevelopMode", "AssetBundleMode" };
         public static int FilterLength { get; private set; }
-        static QuarkAssetDataset QuarkAssetDataset { get { return QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance; } }
-        /// <summary>
-        /// Editor配置文件；
-        /// </summary>
-        static QuarkAssetConfigData quarkAssetConfigData;
-        internal static QuarkAssetConfigData QuarkAssetConfigData { get { return quarkAssetConfigData; } }
-        public const string QuarkAssetConfigDataFileName = "QuarkAssetConfigData.json";
-
         FastDevelopTab fastDevelopTab = new FastDevelopTab();
         AssetBundleTab assetBundleTab = new AssetBundleTab();
+
+        private GUIContent fastDevelopContent = new GUIContent("FastDevelopMode");
+        private GUIContent assetBundleContent = new GUIContent("AssetBundleMode");
+
+        private bool fastDevelopMode;
+        private bool assetBundleMode;
+
         public QuarkAssetWindow()
         {
             this.titleContent = new GUIContent("QuarkAsset");
@@ -44,32 +43,35 @@ namespace Cosmos.CosmosEditor
         }
         private void OnEnable()
         {
-            try
-            {
-                quarkAssetConfigData = CosmosEditorUtility.GetData<QuarkAssetConfigData>(QuarkAssetConfigDataFileName);
-            }
-            catch
-            {
-                quarkAssetConfigData = new QuarkAssetConfigData();
-                quarkAssetConfigData.IncludeDirectories = new List<string>();
-            }
             fastDevelopTab.OnEnable();
             assetBundleTab.OnEnable();
         }
+        private void OnDisable()
+        {
+            fastDevelopTab.OnDisable();
+            assetBundleTab.OnDisable();
+        }
         private void OnGUI()
         {
-            selectedBar = GUILayout.Toolbar(selectedBar, barArray, GUILayout.Height(24));
+            var style = EditorStyles.toolbarButton;
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar, GUILayout.Height(EditorStyles.toolbar.fixedHeight), GUILayout.ExpandWidth(true));
+            {
+                selectedBar = EditorGUILayout.Popup(selectedBar, barArray);
+                fastDevelopMode = GUILayout.Toggle(fastDevelopMode, fastDevelopContent, style, GUILayout.Width(style.CalcSize(fastDevelopContent).x));
+                assetBundleMode = GUILayout.Toggle(assetBundleMode, assetBundleContent, style, GUILayout.Width(style.CalcSize(assetBundleContent).x));
+            }
+            EditorGUILayout.EndHorizontal();
             GUILayout.Space(16);
-                var bar = (AssetInfoBar)selectedBar;
-                switch (bar)
-                {
-                    case AssetInfoBar.FastDevelopMode:
-                        fastDevelopTab.OnGUI();
-                        break;
-                    case AssetInfoBar.AssetBundleMode:
+            var bar = (AssetInfoBar)selectedBar;
+            switch (bar)
+            {
+                case AssetInfoBar.FastDevelopMode:
+                    fastDevelopTab.OnGUI();
+                    break;
+                case AssetInfoBar.AssetBundleMode:
                     assetBundleTab.OnGUI();
-                        break;
-                }
+                    break;
+            }
         }
     }
 }
