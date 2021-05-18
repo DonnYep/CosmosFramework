@@ -19,11 +19,11 @@ namespace Cosmos.CosmosEditor
         FastDevelopTab fastDevelopTab = new FastDevelopTab();
         AssetBundleTab assetBundleTab = new AssetBundleTab();
 
-        private GUIContent fastDevelopContent = new GUIContent("FastDevelopMode");
-        private GUIContent assetBundleContent = new GUIContent("AssetBundleMode");
+        //GUIContent fastDevelopContent = new GUIContent("FastDevelopMode");
+        //GUIContent assetBundleContent = new GUIContent("AssetBundleMode");
 
-        private bool fastDevelopMode;
-        private bool assetBundleMode;
+        //bool fastDevelopMode;
+        //bool assetBundleMode;
 
         public QuarkAssetWindow()
         {
@@ -53,14 +53,14 @@ namespace Cosmos.CosmosEditor
         }
         private void OnGUI()
         {
-            var style = EditorStyles.toolbarButton;
-            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar, GUILayout.Height(EditorStyles.toolbar.fixedHeight), GUILayout.ExpandWidth(true));
-            {
-                selectedBar = EditorGUILayout.Popup(selectedBar, barArray);
-                fastDevelopMode = GUILayout.Toggle(fastDevelopMode, fastDevelopContent, style, GUILayout.Width(style.CalcSize(fastDevelopContent).x));
-                assetBundleMode = GUILayout.Toggle(assetBundleMode, assetBundleContent, style, GUILayout.Width(style.CalcSize(assetBundleContent).x));
-            }
-            EditorGUILayout.EndHorizontal();
+            //var style = EditorStyles.toolbarButton;
+                selectedBar = GUILayout.Toolbar(selectedBar, barArray);
+            //EditorGUILayout.BeginHorizontal(EditorStyles.toolbar, GUILayout.Height(EditorStyles.toolbar.fixedHeight), GUILayout.ExpandWidth(true));
+            //{
+            //    fastDevelopMode = GUILayout.Toggle(fastDevelopMode, fastDevelopContent, style, GUILayout.Width(style.CalcSize(fastDevelopContent).x));
+            //    assetBundleMode = GUILayout.Toggle(assetBundleMode, assetBundleContent, style, GUILayout.Width(style.CalcSize(assetBundleContent).x));
+            //}
+            //EditorGUILayout.EndHorizontal();
             GUILayout.Space(16);
             var bar = (AssetInfoBar)selectedBar;
             switch (bar)
