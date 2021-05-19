@@ -120,13 +120,13 @@ namespace Cosmos.CosmosEditor
         }
         public static string GetDataJson(string fileName)
         {
-            var filePath = Utility.IO.CombineRelativeFilePath(fileName, LibraryPath);
+            var filePath = Utility.IO.Combine(LibraryPath,fileName);
             var cfgStr = Utility.IO.ReadTextFileContent(filePath);
             return cfgStr.ToString();
         }
         public static void ClearData(string fileName)
         {
-            var filePath = Utility.IO.CombineRelativeFilePath(fileName, LibraryPath);
+            var filePath = Utility.IO.Combine(LibraryPath, fileName);
             Utility.IO.DeleteFile(filePath);
         }
         public static string GetDefaultLogOutputDirectory()

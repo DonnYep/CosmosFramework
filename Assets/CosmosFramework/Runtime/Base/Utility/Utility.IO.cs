@@ -68,29 +68,31 @@ namespace Cosmos
                 }
             }
             /// <summary>
+            /// 合并地址；
             /// 纯 .NET方法；
-            /// 合并地址,返回相对路径；
             /// 返回结果示例：Resources\JsonData\
             /// </summary>
-            /// <param name="relativePaths">相对路径</param>
+            /// <param name="paths">路径params</param>
             /// <returns>合并的路径</returns>
-            public static string Combine(params string[] relativePaths)
+            public static string Combine(params string[] paths)
             {
-                var resultPath= Path.Combine(relativePaths);
+                var resultPath= Path.Combine(paths);
                 resultPath = resultPath.Replace("/", "\\");
                 return resultPath;
             }
             /// <summary>
+            /// 合并地址；
             /// 纯 .NET方法；
-            /// 合并地址,返回相对路径；
-            /// 参考示例：Resources\JsonData\CF.json
+            /// 参考示例：Resources\JsonData\data.json
             /// </summary>
-            /// <param name="fileName">文件的完整名称（包括文件扩展名）</param>
-            /// <param name="relativePath">相对路径</param>
-            /// <returns></returns>
-            public static string CombineRelativeFilePath(string fileName, params string[] relativePath)
+            /// <param name="path1">路径1</param>
+            /// <param name="path2">路径2</param>
+            /// <returns>合并的路径</returns>
+            public static string Combine(string path1, string path2)
             {
-                return Path.Combine(Path.Combine(relativePath), fileName);
+                var resultPath = Path.Combine(path1,path2);
+                resultPath = resultPath.Replace("/", "\\");
+                return resultPath;
             }
             /// <summary>
             /// 删除文件夹下的所有文件以及文件夹

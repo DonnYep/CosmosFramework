@@ -93,8 +93,7 @@ namespace Cosmos.CosmosEditor
         void BuildAssetBundle()
         {
             var path = Path.GetFullPath(".");
-            var fullPath = Utility.IO.Combine(path, assetBundleTabData.OutputPath);
-            fullPath= fullPath.Replace("\\", "/");
+            var fullPath = Utility.Unity.PathCombine(path, assetBundleTabData.OutputPath);
             CosmosEditorUtility.LogInfo(fullPath);
             return;
             try
