@@ -6,9 +6,9 @@ using System;
 using System.Reflection;
 using UnityEngine.Networking;
 
- namespace Cosmos.CosmosEditor
+namespace Cosmos.CosmosEditor
 {
-    public  class EditorCoroutineCore
+    public class EditorCoroutineCore
     {
         static EditorCoroutineCore instance;
         public static EditorCoroutineCore Instance
@@ -240,26 +240,30 @@ using UnityEngine.Networking;
             foreach (var pair in coroutineDict)
                 coroutineCache.Add(pair.Value);
 
-            for (var i = coroutineCache.Count-1; i >= 0; i--)
+            for (var i = coroutineCache.Count - 1; i >= 0; i--)
             {
                 var coroutines = coroutineCache[i];
                 for (int j = coroutines.Count - 1; j >= 0; j--)
                 {
                     EditorCoroutine coroutine = coroutines[j];
-                    if (!coroutine.CurrentYield.IsDone(deltaTime))
+                    try
                     {
-                        continue;
+                        if (!coroutine.CurrentYield.IsDone(deltaTime))
+                        {
+                            continue;
+                        }
+                        if (!MoveNext(coroutine))
+                        {
+                            coroutines.RemoveAt(j);
+                            coroutine.CurrentYield = null;
+                            coroutine.Finished = true;
+                        }
+                        if (coroutines.Count == 0)
+                        {
+                            coroutineDict.Remove(coroutine.RoutineUniqueHash);
+                        }
                     }
-                    if (!MoveNext(coroutine))
-                    {
-                        coroutines.RemoveAt(j);
-                        coroutine.CurrentYield = null;
-                        coroutine.Finished = true;
-                    }
-                    if (coroutines.Count == 0)
-                    {
-                        coroutineDict.Remove(coroutine.RoutineUniqueHash);
-                    }
+                    catch{}
                 }
             }
         }

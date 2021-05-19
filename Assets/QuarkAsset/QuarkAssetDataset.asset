@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: NewScriptableObject
   QuarkAssetLoadMode: 1
-  QuarkAssetCount: 58
+  QuarkAssetCount: 63
   QuarkAssetObjectList:
   - AssetName: Alpha_Body_Bule_MAT
     AssetExtension: .mat
@@ -206,6 +206,31 @@ MonoBehaviour:
     AssetPath: Assets/Examples/Plugins/JsonDotNet/link.xml
     AssetType: UnityEngine.TextAsset
     AssetGuid: 06314f49bdda26043963578d60a0a7ee
+  - AssetName: AmbientAudio
+    AssetExtension: .mp3
+    AssetPath: Assets/Examples/Resources/Audio/AmbientAudio.mp3
+    AssetType: UnityEngine.AudioClip
+    AssetGuid: 4089f11cd299e1b48b3e0d7b5c70a58a
+  - AssetName: Audio00
+    AssetExtension: .mp3
+    AssetPath: Assets/Examples/Resources/Audio/Audio00.mp3
+    AssetType: UnityEngine.AudioClip
+    AssetGuid: 2be5f9ca51075ff40bf2ad039eafc66e
+  - AssetName: Audio01
+    AssetExtension: .mp3
+    AssetPath: Assets/Examples/Resources/Audio/Audio01.mp3
+    AssetType: UnityEngine.AudioClip
+    AssetGuid: a174e0a33c2bcb349bf316bb10ac5317
+  - AssetName: Audio02
+    AssetExtension: .mp3
+    AssetPath: Assets/Examples/Resources/Audio/Audio02.mp3
+    AssetType: UnityEngine.AudioClip
+    AssetGuid: da080dbb770f44448bf7c1294a37e64a
+  - AssetName: Roundabout
+    AssetExtension: .mp3
+    AssetPath: Assets/Examples/Resources/Audio/Roundabout.mp3
+    AssetType: UnityEngine.AudioClip
+    AssetGuid: 1c93f8d66ed5c644ea9301c1cbbdec08
   - AssetName: Capsule
     AssetExtension: .prefab
     AssetPath: Assets/Examples/Resources/DataSet/ObjectPool/Capsule.prefab

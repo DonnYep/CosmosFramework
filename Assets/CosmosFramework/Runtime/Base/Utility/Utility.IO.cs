@@ -70,13 +70,15 @@ namespace Cosmos
             /// <summary>
             /// 纯 .NET方法；
             /// 合并地址,返回相对路径；
-            /// 参考示例：Resources/JsonData/
+            /// 返回结果示例：Resources\JsonData\
             /// </summary>
             /// <param name="relativePaths">相对路径</param>
-            /// <returns></returns>
+            /// <returns>合并的路径</returns>
             public static string Combine(params string[] relativePaths)
             {
-                return Path.Combine(relativePaths);
+                var resultPath= Path.Combine(relativePaths);
+                resultPath = resultPath.Replace("/", "\\");
+                return resultPath;
             }
             /// <summary>
             /// 纯 .NET方法；

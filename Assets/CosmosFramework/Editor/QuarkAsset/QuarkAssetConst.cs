@@ -14,7 +14,7 @@ namespace Cosmos.CosmosEditor
         ".3ds",".bmp",".blend",".eps",".exif",".gif",".icns",".ico",".jpeg",
         ".jpg",".ma",".max",".mb",".pcx",".png",".psd",".svg",".controller",
         ".wav",".txt",".prefab",".xml",".shadervariants",".shader",".anim",
-        ".unity",".mat",".mask",".overrideController",".tif",".spriteatlas"
+        ".unity",".mat",".mask",".overrideController",".tif",".spriteatlas",".mp3"
         };
     }
 }

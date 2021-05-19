@@ -54,7 +54,7 @@ namespace Cosmos.CosmosEditor
         private void OnGUI()
         {
             //var style = EditorStyles.toolbarButton;
-                selectedBar = GUILayout.Toolbar(selectedBar, barArray);
+            selectedBar = GUILayout.Toolbar(selectedBar, barArray);
             //EditorGUILayout.BeginHorizontal(EditorStyles.toolbar, GUILayout.Height(EditorStyles.toolbar.fixedHeight), GUILayout.ExpandWidth(true));
             //{
             //    fastDevelopMode = GUILayout.Toggle(fastDevelopMode, fastDevelopContent, style, GUILayout.Width(style.CalcSize(fastDevelopContent).x));

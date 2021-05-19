@@ -59,6 +59,18 @@ namespace Cosmos
             }
 
             /// <summary>
+            /// 合并路径；
+            /// 获得的路径一致为/作为分割符；
+            /// </summary>
+            /// <param name="paths">路径</param>
+            /// <returns>合并的路径</returns>
+            public static string PathCombine(params string[] paths)
+            {
+                var pathResult= Path.Combine(paths);
+                pathResult = pathResult.Replace("\\", "/");
+                return pathResult;
+            }
+            /// <summary>
             /// 是否约等于另一个浮点数
             /// </summary>
             public static bool Approximately(float sourceValue, float targetValue)

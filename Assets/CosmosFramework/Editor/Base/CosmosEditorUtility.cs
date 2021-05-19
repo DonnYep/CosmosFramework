@@ -40,6 +40,64 @@ namespace Cosmos.CosmosEditor
             UnityEditor.AssetDatabase.Refresh();
         }
         /// <summary>
+        ///获取项目的目录，即Assets文件夹的上一层； 
+        /// </summary>
+        public static string ApplicationPath()
+        {
+            var dirInfo = new DirectoryInfo(Application.dataPath);
+            return dirInfo.Parent.FullName;
+            //return Path.GetFullPath(".");
+        }
+        public static T[] GetAllAssets<T>(string path) where T : class
+        {
+            string[] fileEntries = Directory.GetFiles(path);
+            return fileEntries.Select(fileName =>
+                      {
+                          string assetPath = fileName.Substring(fileName.IndexOf("Assets"));
+                          assetPath = Path.ChangeExtension(assetPath, null);
+                          if (!AssetDatabase.IsValidFolder(assetPath))
+                              return UnityEditor.AssetDatabase.LoadAssetAtPath(assetPath, typeof(T));
+                          else
+                              return null;
+                      })
+                          .OfType<T>()
+                          .ToArray();
+        }
+
+        /// <summary>
+        /// 遍历文件夹下的文件；
+        /// 传入的文件夹名参考：Assets/Game
+        /// </summary>
+        /// <param name="folder">文件夹名</param>
+        /// <param name="handler">处理方法</param>
+        public static void TraverseFolderFile(string folder, Action<UnityEngine.Object> handler)
+        {
+            if (string.IsNullOrEmpty(folder))
+                throw new ArgumentNullException("Folder Name is invalid !");
+            if (handler == null)
+                throw new ArgumentNullException("Handler is invalid !");
+            if (AssetDatabase.IsValidFolder(folder))
+            {
+                var assets = GetAllAssets<UnityEngine.Object>(folder);
+                if (assets != null)
+                {
+                    var length = assets.Length;
+                    for (int i = 0; i < length; i++)
+                    {
+                        handler.Invoke(assets[i]);
+                    }
+                }
+                var subFolder = AssetDatabase.GetSubFolders(folder);
+                if (subFolder != null)
+                {
+                    foreach (var subF in subFolder)
+                    {
+                        TraverseFolderFile(subF, handler);
+                    }
+                }
+            }
+        }
+        /// <summary>
         /// 写入方式为覆写；
         /// 对象数据会被存储为json；
         /// </summary>

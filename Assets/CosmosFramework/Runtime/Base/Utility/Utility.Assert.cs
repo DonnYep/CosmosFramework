@@ -222,6 +222,17 @@ namespace Cosmos
                     exceptionHandler?.Invoke();
                 }
             }
+            public static void Traverse<T>(T[] array, Action<T> handler)
+            {
+                if (array == null)
+                    throw new ArgumentNullException("Array is invalid !");
+                if (handler == null)
+                    throw new ArgumentNullException("Handler is invalid !");
+                foreach (var e in array)
+                {
+                    handler.Invoke(e);
+                }
+            }
         }
     }
 }
