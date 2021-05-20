@@ -4,6 +4,12 @@ using System;
 using UnityEditor;
 namespace Cosmos.CosmosEditor
 {
+    internal enum AssetBundleHashType:byte
+    {
+        None=0,
+        AppendHash=1,
+        HashInstead = 2
+    }
     [Serializable]
    internal  class AssetBundleTabData 
     {
@@ -12,7 +18,7 @@ namespace Cosmos.CosmosEditor
         public bool UseDefaultPath=true;
         public bool ClearFolders;
         public bool CopyToStreamingAssets;
-        public bool AppendHash;
+        public AssetBundleHashType  NameHashType;
         public string EncryptionKey="QuarkAsset";
         public BuildAssetBundleOptions BuildAssetBundleOptions= BuildAssetBundleOptions.ChunkBasedCompression;
     }

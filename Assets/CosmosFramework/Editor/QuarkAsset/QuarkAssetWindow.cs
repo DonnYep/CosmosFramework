@@ -16,12 +16,12 @@ namespace Cosmos.CosmosEditor
         int selectedBar = 0;
         string[] barArray = new string[] { "FastDevelopMode", "AssetBundleMode" };
         public static int FilterLength { get; private set; }
-        FastDevelopTab fastDevelopTab = new FastDevelopTab();
-        AssetBundleTab assetBundleTab = new AssetBundleTab();
+      static  FastDevelopTab fastDevelopTab = new FastDevelopTab();
+        static AssetBundleTab assetBundleTab = new AssetBundleTab();
+        public static string[] IncludeDirectories { get { return fastDevelopTab.IncludeDirectories; } }
 
         //GUIContent fastDevelopContent = new GUIContent("FastDevelopMode");
         //GUIContent assetBundleContent = new GUIContent("AssetBundleMode");
-
         //bool fastDevelopMode;
         //bool assetBundleMode;
 

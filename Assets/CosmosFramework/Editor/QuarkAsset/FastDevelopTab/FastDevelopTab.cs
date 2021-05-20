@@ -15,6 +15,7 @@ namespace Cosmos.CosmosEditor
     {
         FastDevelopAssetPathOperation fastDevelopAssetPathOperation = new FastDevelopAssetPathOperation();
         FastDevelopTabData fastDevelopTabData;
+        public string[] IncludeDirectories { get { return fastDevelopTabData.IncludeDirectories.ToArray(); } }
         QuarkAssetDataset QuarkAssetDataset { get { return QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance; } }
         const string QuarkAssetConfigDataFileName = "QuarkAssetConfigData.json";
         public void Clear() { }
@@ -66,7 +67,7 @@ namespace Cosmos.CosmosEditor
                             CosmosEditorUtility.StartCoroutine(EnumBuildADBMode());
                             break;
                         case QuarkAssetLoadMode.BuiltAssetBundle:
-                            GetBABData();
+                            //GetBABData();
                             break;
                     }
                 }
