@@ -81,14 +81,6 @@ namespace Cosmos.CosmosEditor
                             break;
                     }
                 }
-                if (GUILayout.Button("GetDependencise"))
-                {
-                    var strs = QuarkAssetEditorUtility.GetDependencises(fastDevelopAssetPathOperation.FolderPath[0]);
-                    for (int i = 0; i < strs.Length; i++)
-                    {
-                        CosmosEditorUtility.LogInfo(strs[i]);
-                    }
-                }
             });
             fastDevelopAssetPathOperation.OnGUI();
         }
@@ -275,23 +267,17 @@ namespace Cosmos.CosmosEditor
             {
                 if (AssetDatabase.IsValidFolder(dirs[i]))
                 {
-
-                    //var assets = CosmosEditorUtility.GetAllAssets<UnityEngine.Object>(dirs[i]);
-                    //Utility.Assert.Traverse(assets, (str) => CosmosEditorUtility.LogInfo(str.name));
-
-
-                    CosmosEditorUtility.TraverseFolderFile(dirs[i] , (obj) =>
-                      {
-                          var path = AssetDatabase.GetAssetPath(obj);
-                          AssetImporter importer = AssetImporter.GetAtPath(path);
-                          CosmosEditorUtility.LogInfo(path);
-                          //var dependents = QuarkAssetEditorUtility.GetDependencises(path);
-                          //Utility.Assert.Traverse(dependents, (str) => CosmosEditorUtility.LogInfo(str));
-                      });
+                    CosmosEditorUtility.TraverseFolderFile(dirs[i], (obj) =>
+                     {
+                         var path = AssetDatabase.GetAssetPath(obj);
+                         AssetImporter importer = AssetImporter.GetAtPath(path);
+                         CosmosEditorUtility.LogInfo(path);
+                         //var dependents = QuarkAssetEditorUtility.GetDependencises(path);
+                         //Utility.Assert.Traverse(dependents, (str) => CosmosEditorUtility.LogInfo(str));
+                     });
                 }
-                else if(File.Exists(dirs[i]))
+                else
                 {
-
 
                     var assets = AssetDatabase.LoadAllAssetsAtPath(dirs[i]);
                     Utility.Assert.Traverse(assets, (str) => CosmosEditorUtility.LogInfo(str.name));

@@ -41,13 +41,13 @@ namespace Cosmos.CosmosEditor
             assetBundleTabData.OutputPath = EditorGUILayout.TextField("OutputPath", assetBundleTabData.OutputPath);
             CosmosEditorUtility.DrawHorizontalContext(() =>
             {
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Browse", GUILayout.MaxWidth(92f)))
-            {
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("Browse", GUILayout.MaxWidth(92f)))
+                {
                     BrowseForFolder();
-            }
-            if (GUILayout.Button("Reset", GUILayout.MaxWidth(92f)))
-            {
+                }
+                if (GUILayout.Button("Reset", GUILayout.MaxWidth(92f)))
+                {
                     ResetPath();
                 }
             });
@@ -69,11 +69,16 @@ namespace Cosmos.CosmosEditor
                 {
                     BuildAssetBundle();
                 }
+                if (GUILayout.Button("Reset"))
+                {
+                    assetBundleTabData = new AssetBundleTabData();
+                    CosmosEditorUtility.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
+                }
             });
         }
         void BrowseForFolder()
         {
-            assetBundleTabData.UseDefaultPath= false;
+            assetBundleTabData.UseDefaultPath = false;
             var newPath = EditorUtility.OpenFolderPanel("Bundle Folder", assetBundleTabData.OutputPath, string.Empty);
             if (!string.IsNullOrEmpty(newPath))
             {
@@ -81,7 +86,7 @@ namespace Cosmos.CosmosEditor
                 gamePath = gamePath.Replace("\\", "/");
                 if (newPath.StartsWith(gamePath) && newPath.Length > gamePath.Length)
                     newPath = newPath.Remove(0, gamePath.Length + 1);
-                assetBundleTabData.OutputPath= newPath;
+                assetBundleTabData.OutputPath = newPath;
             }
         }
         void ResetPath()
@@ -92,25 +97,26 @@ namespace Cosmos.CosmosEditor
         }
         void BuildAssetBundle()
         {
-            var path = Path.GetFullPath(".");
-            var fullPath = Utility.Unity.PathCombine(path, assetBundleTabData.OutputPath);
-            CosmosEditorUtility.LogInfo(fullPath);
-            return;
-            try
-            {
-                if (Directory.Exists(assetBundleTabData.OutputPath))
-                    Directory.Delete(assetBundleTabData.OutputPath, true);
-                if (assetBundleTabData.CopyToStreamingAssets)
-                    if (Directory.Exists(streamingPath))
-                        Directory.Delete(streamingPath, true);
-            }
-            catch (System.Exception e)
-            {
-                CosmosEditorUtility.LogError(e);
-            }
-            if (!Directory.Exists(assetBundleTabData.OutputPath))
-                Directory.CreateDirectory(assetBundleTabData.OutputPath);
-            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+            BuildPipeline.BuildAssetBundles(assetBundleTabData.OutputPath, assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
+            //var path = Path.GetFullPath(".");
+            //var fullPath = Utility.Unity.PathCombine(path, assetBundleTabData.OutputPath);
+            //CosmosEditorUtility.LogInfo(fullPath);
+            //return;
+            //try
+            //{
+            //    if (Directory.Exists(assetBundleTabData.OutputPath))
+            //        Directory.Delete(assetBundleTabData.OutputPath, true);
+            //    if (assetBundleTabData.CopyToStreamingAssets)
+            //        if (Directory.Exists(streamingPath))
+            //            Directory.Delete(streamingPath, true);
+            //}
+            //catch (System.Exception e)
+            //{
+            //    CosmosEditorUtility.LogError(e);
+            //}
+            //if (!Directory.Exists(assetBundleTabData.OutputPath))
+            //    Directory.CreateDirectory(assetBundleTabData.OutputPath);
+            //AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
     }
 }

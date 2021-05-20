@@ -51,6 +51,11 @@ namespace Cosmos.CosmosEditor
         //    base.RowGUI(args);
         //    GUI.color = old;
         //}
+        protected override void SingleClickedItem(int id)
+        {
+            base.SingleClickedItem(id);
+            CosmosEditorUtility.SelectionActiveObject(pathList[id]);
+        }
         protected override void DoubleClickedItem(int id)
         {
             base.DoubleClickedItem(id);

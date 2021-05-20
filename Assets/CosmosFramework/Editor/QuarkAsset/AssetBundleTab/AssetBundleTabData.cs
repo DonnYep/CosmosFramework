@@ -13,7 +13,7 @@ namespace Cosmos.CosmosEditor
         public bool ClearFolders;
         public bool CopyToStreamingAssets;
         public bool AppendHash;
-        public string EncryptionKey="QuarkAsset@#$%";
+        public string EncryptionKey="QuarkAsset";
         public BuildAssetBundleOptions BuildAssetBundleOptions= BuildAssetBundleOptions.ChunkBasedCompression;
     }
 }

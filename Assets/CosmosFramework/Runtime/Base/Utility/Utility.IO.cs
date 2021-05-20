@@ -68,6 +68,29 @@ namespace Cosmos
                 }
             }
             /// <summary>
+            /// 获取共同的路径；
+            /// </summary>
+            /// <param name="paths">传入的路径合集</param>
+            /// <returns>共同的路径</returns>
+            public static string CommonPath(string[] paths)
+            {
+                var firstPath = paths[0];
+                bool isSame = true;
+                int index = 0;
+                string commonPath = string.Empty;
+                while (isSame && index < firstPath.Length)
+                {
+                    for (int i = 1; i < paths.Length && isSame; i++)
+                    {
+                        isSame = firstPath[index]==paths[i][index];
+                    }
+                    if (isSame)
+                        commonPath += firstPath[index];
+                    index++;
+                }
+                return commonPath;
+            }
+            /// <summary>
             /// 合并地址；
             /// 纯 .NET方法；
             /// 返回结果示例：Resources\JsonData\

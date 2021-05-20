@@ -183,7 +183,11 @@ namespace Cosmos.CosmosEditor
             EditorGUIUtility.PingObject(obj);
             Selection.activeObject = obj;
         }
-
+        public static void SelectionActiveObject(string path)
+        {
+            var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
+            Selection.activeObject = obj;
+        }
         public static void LogInfo(object msg, object context = null)
         {
             if (context == null)

@@ -24,7 +24,7 @@ namespace Cosmos.Test
             }
             if (GUILayout.Button("OpenCaptureFolder", GUILayout.Width(256), GUILayout.Height(64)))
             {
-                UnityEditor.EditorUtility.RevealInFinder(Application.persistentDataPath);
+                //UnityEditor.EditorUtility.RevealInFinder(Application.persistentDataPath);
             }
         }
     }
