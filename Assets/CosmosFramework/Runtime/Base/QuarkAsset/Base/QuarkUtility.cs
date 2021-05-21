@@ -12,6 +12,7 @@ namespace Cosmos.QuarkAsset
     }
     public static class QuarkUtility
     {
+        public static QuarkAssetLoadMode QuarkAssetLoadMode { get; set; }
         static QuarkAssetDataset quarkAssetData;
         static Dictionary<string, LinkedList<QuarkAssetObject>> assetDict;
         public static QuarkAssetDataset QuarkAssetData { get { return quarkAssetData; } }
@@ -19,7 +20,7 @@ namespace Cosmos.QuarkAsset
             where T : UnityEngine.Object
         {
             T asset = null;
-            switch (quarkAssetData.QuarkAssetLoadMode)
+            switch (QuarkAssetLoadMode)
             {
                 case QuarkAssetLoadMode.AssetDataBase:
                     asset = AssetDatabaseLoadAssetByPath<T>(assetPath);
@@ -33,7 +34,7 @@ namespace Cosmos.QuarkAsset
             where T : UnityEngine.Object
         {
             T asset = null;
-            switch (quarkAssetData.QuarkAssetLoadMode)
+            switch (QuarkAssetLoadMode)
             {
                 case QuarkAssetLoadMode.AssetDataBase:
                     asset = AssetDatabaseLoadAssetByName<T>(assetName, assetExtension);

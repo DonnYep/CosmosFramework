@@ -97,6 +97,28 @@ namespace Cosmos.CosmosEditor
                 }
             }
         }
+        public static void TraverseAllFolderFile(Action<UnityEngine.Object> handler)
+        {
+            if (handler == null)
+                throw new ArgumentNullException("Handler is invalid !");
+            var assets = GetAllAssets<UnityEngine.Object>("Assets");
+            if (assets != null)
+            {
+                var length = assets.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    handler.Invoke(assets[i]);
+                }
+            }
+            var subFolder = AssetDatabase.GetSubFolders("Assets");
+            if (subFolder != null)
+            {
+                foreach (var subF in subFolder)
+                {
+                    TraverseFolderFile(subF, handler);
+                }
+            }
+        }
         /// <summary>
         /// 写入方式为覆写；
         /// 对象数据会被存储为json；
@@ -120,7 +142,7 @@ namespace Cosmos.CosmosEditor
         }
         public static string GetDataJson(string fileName)
         {
-            var filePath = Utility.IO.Combine(LibraryPath,fileName);
+            var filePath = Utility.IO.Combine(LibraryPath, fileName);
             var cfgStr = Utility.IO.ReadTextFileContent(filePath);
             return cfgStr.ToString();
         }

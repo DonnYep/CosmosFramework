@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: QuarkAssetDataset
   m_EditorClassIdentifier: 
   objectName: NewScriptableObject
-  QuarkAssetLoadMode: 1
   QuarkAssetCount: 63
   QuarkAssetObjectList:
   - AssetName: Alpha_Body_Bule_MAT

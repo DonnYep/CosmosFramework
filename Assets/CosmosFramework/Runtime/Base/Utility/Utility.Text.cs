@@ -72,6 +72,23 @@ namespace Cosmos
                 }
                 return StringBuilderCache.ToString();
             }
+            /// <summary>
+            /// 字段合并；
+            /// </summary>
+            /// <param name="strings">字段数组</param>
+            /// <returns></returns>
+            public static string Combine(params string[] strings)
+            {
+                if (strings == null)
+                    throw new ArgumentNullException("Combine is invalid.");
+                StringBuilderCache.Length = 0;
+                int length = strings.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    StringBuilderCache.Append(strings[i]);
+                }
+                return StringBuilderCache.ToString();
+            }
             public static void ClearStringBuilder()
             {
                 StringBuilderCache.Clear();

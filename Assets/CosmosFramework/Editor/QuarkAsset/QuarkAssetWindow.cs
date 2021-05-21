@@ -10,21 +10,16 @@ namespace Cosmos.CosmosEditor
     {
         enum AssetInfoBar : int
         {
-            FastDevelopMode = 0,
+            AssetDatabaseMode = 0,
             AssetBundleMode = 1
         }
         int selectedBar = 0;
-        string[] barArray = new string[] { "FastDevelopMode", "AssetBundleMode" };
+        string[] barArray = new string[] { "AssetDatabaseBuilder", "AssetBundleBuilder" };
         public static int FilterLength { get; private set; }
-      static  FastDevelopTab fastDevelopTab = new FastDevelopTab();
-        static AssetBundleTab assetBundleTab = new AssetBundleTab();
-        public static string[] IncludeDirectories { get { return fastDevelopTab.IncludeDirectories; } }
-
-        //GUIContent fastDevelopContent = new GUIContent("FastDevelopMode");
-        //GUIContent assetBundleContent = new GUIContent("AssetBundleMode");
-        //bool fastDevelopMode;
-        //bool assetBundleMode;
-
+        static AssetDatabaseTab assetDatabaseTab = new AssetDatabaseTab();
+        static AssetBundleBuildTab assetBundleTab = new AssetBundleBuildTab();
+        internal static WindowTabData WindowTabData { get; private set; }
+        internal const string QuarkAssetWindowTabDataFileName = "QuarkAssetWindowTabData.json";
         public QuarkAssetWindow()
         {
             this.titleContent = new GUIContent("QuarkAsset");
@@ -43,30 +38,34 @@ namespace Cosmos.CosmosEditor
         }
         private void OnEnable()
         {
-            fastDevelopTab.OnEnable();
+            try
+            {
+                WindowTabData = CosmosEditorUtility.GetData<WindowTabData>(QuarkAssetWindowTabDataFileName);
+            }
+            catch
+            {
+                WindowTabData = new WindowTabData();
+            }
+            if (WindowTabData.IncludeDirectories == null)
+                WindowTabData.IncludeDirectories = new List<string>();
+            assetDatabaseTab.OnEnable();
             assetBundleTab.OnEnable();
         }
         private void OnDisable()
         {
-            fastDevelopTab.OnDisable();
+            assetDatabaseTab.OnDisable();
             assetBundleTab.OnDisable();
+            CosmosEditorUtility.SaveData(QuarkAssetWindowTabDataFileName, WindowTabData);
         }
         private void OnGUI()
         {
-            //var style = EditorStyles.toolbarButton;
             selectedBar = GUILayout.Toolbar(selectedBar, barArray);
-            //EditorGUILayout.BeginHorizontal(EditorStyles.toolbar, GUILayout.Height(EditorStyles.toolbar.fixedHeight), GUILayout.ExpandWidth(true));
-            //{
-            //    fastDevelopMode = GUILayout.Toggle(fastDevelopMode, fastDevelopContent, style, GUILayout.Width(style.CalcSize(fastDevelopContent).x));
-            //    assetBundleMode = GUILayout.Toggle(assetBundleMode, assetBundleContent, style, GUILayout.Width(style.CalcSize(assetBundleContent).x));
-            //}
-            //EditorGUILayout.EndHorizontal();
             GUILayout.Space(16);
             var bar = (AssetInfoBar)selectedBar;
             switch (bar)
             {
-                case AssetInfoBar.FastDevelopMode:
-                    fastDevelopTab.OnGUI();
+                case AssetInfoBar.AssetDatabaseMode:
+                    assetDatabaseTab.OnGUI();
                     break;
                 case AssetInfoBar.AssetBundleMode:
                     assetBundleTab.OnGUI();

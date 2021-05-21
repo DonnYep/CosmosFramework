@@ -1,0 +1,10 @@
+ManifestFileVersion: 0
+CRC: 1659710466
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: assets_examples_resources_audio
+      Dependencies: {}
+    Info_1:
+      Name: inventoryitem
+      Dependencies: {}

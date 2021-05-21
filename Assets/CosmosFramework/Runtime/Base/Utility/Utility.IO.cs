@@ -139,6 +139,34 @@ namespace Cosmos
                     directory.Delete();
                 }
             }
+            /// <summary>
+            /// 拷贝文件夹；
+            /// </summary>
+            /// <param name="sourceDirName">原始文件夹</param>
+            /// <param name="destDirName">目标文件夹</param>
+            public static void DirectoryCopy(string sourceDirName, string destDirName)
+            {
+                DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+                if (!dir.Exists)
+                {
+                    throw new DirectoryNotFoundException(
+                        "Source directory does not exist or could not be found: "
+                        + sourceDirName);
+                }
+                DirectoryInfo[] dirs = dir.GetDirectories();
+                Directory.CreateDirectory(destDirName);
+                FileInfo[] files = dir.GetFiles();
+                foreach (FileInfo file in files)
+                {
+                    string tempPath = Path.Combine(destDirName, file.Name);
+                    file.CopyTo(tempPath, false);
+                }
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string tempPath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, tempPath);
+                }
+            }
             public static void DeleteFile(string fileFullPath)
             {
                 if (File.Exists(fileFullPath))

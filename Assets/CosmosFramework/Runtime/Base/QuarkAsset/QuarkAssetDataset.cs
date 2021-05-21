@@ -11,12 +11,10 @@ namespace Cosmos.QuarkAsset
     [Serializable]
     public class QuarkAssetDataset : DatasetBase
     {
-        public QuarkAssetLoadMode QuarkAssetLoadMode;
         public int QuarkAssetCount;
         public List<QuarkAssetObject> QuarkAssetObjectList;
         public override void Dispose()
         {
-            QuarkAssetLoadMode = QuarkAssetLoadMode.None;
             QuarkAssetCount = 0;
             QuarkAssetObjectList?.Clear();
         }

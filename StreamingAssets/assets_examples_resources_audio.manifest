@@ -1,0 +1,20 @@
+ManifestFileVersion: 0
+CRC: 444974356
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f8e75b3506e11073af129070a62cba31
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/Examples/Resources/Audio/Audio01.mp3
+- Assets/Examples/Resources/Audio/Roundabout.mp3
+- Assets/Examples/Resources/Audio/Audio00.mp3
+- Assets/Examples/Resources/Audio/Audio02.mp3
+- Assets/Examples/Resources/Audio/AmbientAudio.mp3
+Dependencies: []
