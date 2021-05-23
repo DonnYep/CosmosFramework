@@ -11,11 +11,17 @@ namespace Cosmos.Test
     [DefaultExecutionOrder(1100)]
     public class Entry : MonoBehaviour
     {
+        [SerializeField] bool loadDefaultHelper;
+        [SerializeField] bool launchModule;
         private void Awake()
         {
-            CosmosEntry.LaunchAppDomainHelpers();
-            CosmosEntry.LaunchAppDomainModules();
-            CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
+            if (loadDefaultHelper)
+                CosmosEntry.LaunchAppDomainHelpers();
+            if (launchModule)
+            {
+                CosmosEntry.LaunchAppDomainModules();
+                CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
+            }
         }
     }
 }

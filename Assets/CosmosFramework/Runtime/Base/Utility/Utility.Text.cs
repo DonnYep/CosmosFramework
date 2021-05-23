@@ -116,7 +116,7 @@ namespace Cosmos
             /// <param name="removeEmptyEntries">是否返回分割后数组中的空元素</param>
             /// <param name="subStringIndex">分割后数组的序号</param>
             /// <returns>分割后的字段</returns>
-            public static string StringSplit(string fullString, String[] separator, bool removeEmptyEntries, int subStringIndex)
+            public static string StringSplit(string fullString, string[] separator, bool removeEmptyEntries, int subStringIndex)
             {
                 string[] stringArray = null;
                 if (removeEmptyEntries)
@@ -134,7 +134,7 @@ namespace Cosmos
             /// <param name="count">要返回的子字符串的最大数量</param>
             /// <param name="removeEmptyEntries">是否移除空实体</param>
             /// <returns>分割后的字段</returns>
-            public static string StringSplit(string fullString, String[] separator, int count, bool removeEmptyEntries)
+            public static string StringSplit(string fullString, string[] separator, int count, bool removeEmptyEntries)
             {
                 string[] stringArray = null;
                 if (removeEmptyEntries)
@@ -149,7 +149,7 @@ namespace Cosmos
             /// <param name="fullString">分割字符串</param>
             /// <param name="separator">new string[]{"."}</param>
             /// <returns>分割后的字段数组</returns>
-            public static string[] StringSplit(string fullString, String[] separator)
+            public static string[] StringSplit(string fullString, string[] separator)
             {
                 string[] stringArray = null;
                 stringArray = fullString.Split(separator, StringSplitOptions.None);

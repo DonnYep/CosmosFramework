@@ -44,6 +44,7 @@ namespace Cosmos.QuarkAsset
             }
             return asset;
         }
+        
         public static GameObject LoadPrefab(string assetName, string assetExtension = null)
         {
             return LoadAssetByName<GameObject>(assetName, assetExtension);
