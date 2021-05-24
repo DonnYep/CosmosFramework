@@ -11,5 +11,6 @@ namespace Cosmos.QuarkAsset
         public string AssetPath;
         public string AssetType;
         public string AssetGuid;
+        public static QuarkAssetObject None { get { return new QuarkAssetObject(); } }
     }
 }

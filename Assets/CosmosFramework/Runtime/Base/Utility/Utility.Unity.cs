@@ -450,61 +450,14 @@ namespace Cosmos
             public static bool IsWifi { get { return Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork; } }
             public static bool NetAvailable { get { return Application.internetReachability != NetworkReachability.NotReachable; } }
             /// <summary>
-            /// Unity方法；
-            /// 合并地址,返回Unity的绝对路径；
-            /// 当前环境为：UNITY_STANDALONE_WIN；
-            /// 跨平台地址未编写；
+            /// 判断是否是路径；
+            /// 需要注意根目录下的文件可能不带/或\符号！
             /// </summary>
-            /// <param name="relativePath">相对路径</param>
-            /// <returns>返回绝对路径</returns>
-            public static string CombineAppAbsolutePath(params string[] relativePath)
+            /// <param name="path">路径str</param>
+            /// <returns>是否是路径</returns>
+            public static bool IsPath(string path)
             {
-                Utility.Text.ClearStringBuilder();
-                for (int i = 0; i < relativePath.Length; i++)
-                {
-                    Utility.Text.StringBuilderCache.Append(relativePath[i] + "/");
-                }
-                return Application.dataPath + "/" + Utility.Text.StringBuilderCache.ToString();
-            }
-            /// <summary>
-            /// Unity方法；
-            ///  合并地址,返回持久化数据的绝对路径；
-            /// 跨平台地址未编写；
-            /// </summary>
-            /// <param name="relativePath">相对路径</param>
-            /// <returns>返回绝对路径</returns>
-            public static string CombineAppPersistentPath(params string[] relativePath)
-            {
-                Utility.Text.ClearStringBuilder();
-                for (int i = 0; i < relativePath.Length; i++)
-                {
-                    Utility.Text.StringBuilderCache.Append(relativePath[i] + "/");
-                }
-                return Application.persistentDataPath + "/" + Utility.Text.StringBuilderCache.ToString();
-            }
-            /// <summary>
-            /// Unity方法；
-            /// 合并地址,返回绝对路径；
-            /// 当前环境为：UNITY_STANDALONE_WIN；
-            /// 跨平台地址未编写；
-            /// </summary>
-            /// <param name="fileFullName">文件的完整名称（包括文件扩展名）</param>
-            /// <param name="relativePath">相对路径</param>
-            /// <returns></returns>
-            // TODO 跨平台地址未编写
-            public static string CombineAppAbsoluteFilePath(string fileFullName, params string[] relativePath)
-            {
-                return CombineAppAbsolutePath(relativePath) + fileFullName;
-            }
-            /// <summary>
-            ///  Unity方法；
-            /// 分解App绝对路径，返回相对路径；
-            /// </summary>
-            /// <param name="absolutePath">绝对路径</param>
-            /// <returns>相对路径</returns>
-            public static string DecomposeAppAbsolutePath(string absolutePath)
-            {
-                return absolutePath.Remove(0, Application.dataPath.Length);
+                return path.Contains("\\") || path.Contains("/");
             }
             /// <summary>
             /// 保存截屏到持久化路径；

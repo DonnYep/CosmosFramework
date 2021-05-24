@@ -44,12 +44,11 @@ namespace Cosmos.QuarkAsset
             }
             return asset;
         }
-        
         public static GameObject LoadPrefab(string assetName, string assetExtension = null)
         {
             return LoadAssetByName<GameObject>(assetName, assetExtension);
         }
-        public static GameObject Instantiate<T>(string assetName, string assetExtension = null)
+        public static GameObject Instantiate(string assetName, string assetExtension = null)
         {
             var go = LoadAssetByName<GameObject>(assetName, assetExtension);
             return GameObject.Instantiate(go);
@@ -72,26 +71,15 @@ namespace Cosmos.QuarkAsset
             if (assetDict == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
             if (assetDict.TryGetValue(assetName, out var lnk))
-            {
-                if (!string.IsNullOrEmpty(assetExtension))
-                {
-                    foreach (var assetObj in lnk)
-                    {
-                        if (assetObj.AssetExtension.Equals(assetExtension))
-                        {
-                            quarkAssetObject = assetObj;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    quarkAssetObject = lnk.First.Value;
-                }
-            }
+                quarkAssetObject = GetQuarkAssetObject<T>(lnk, assetExtension);
 #if UNITY_EDITOR
-            var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetObject.AssetGuid);
-            return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(guid2path);
+            if (!string.IsNullOrEmpty(quarkAssetObject.AssetGuid))
+            {
+                var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetObject.AssetGuid);
+                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(guid2path);
+            }
+            else
+                return null;
 #else
             return null;
 #endif
@@ -108,6 +96,46 @@ namespace Cosmos.QuarkAsset
 #else
             return null;
 #endif
+        }
+        static QuarkAssetObject GetQuarkAssetObject<T>(LinkedList<QuarkAssetObject> lnk, string assetExtension = null)
+            where T : UnityEngine.Object
+        {
+            var assetType = typeof(T).ToString();
+            QuarkAssetObject quarkAssetObject = new QuarkAssetObject();
+            var tempObj = lnk.First.Value;
+            if (tempObj.AssetType!=assetType)
+            {
+                foreach (var assetObj in lnk)
+                {
+                    if (assetObj.AssetType==assetType)
+                    {
+                        if (!string.IsNullOrEmpty(assetExtension))
+                        {
+                            if (assetObj.AssetExtension==assetExtension)
+                            {
+                                quarkAssetObject = assetObj;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            quarkAssetObject = assetObj;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(assetExtension))
+                {
+                    quarkAssetObject = tempObj.AssetExtension==assetExtension == true ? tempObj : QuarkAssetObject.None;
+                }
+                else
+                {
+                    quarkAssetObject = tempObj;
+                }
+            }
+            return quarkAssetObject;
         }
     }
 }

@@ -63,6 +63,7 @@ namespace Cosmos
         //当前注册的模块总数
         static int moduleCount = 0;
         internal static int ModuleCount { get { return moduleCount; } }
+        internal static bool PrintModulePreparatory { get; set; } = true;
         internal static GameObject InstanceObject
         {
             get
@@ -321,7 +322,8 @@ namespace Cosmos
                 try
                 {
                     module.OnPreparatory();
-                    Utility.Debug.LogInfo($"Module :{module} is OnPreparatory");
+                    if (PrintModulePreparatory)
+                        Utility.Debug.LogInfo($"Module :{module} is OnPreparatory");
                 }
                 catch (Exception e)
                 {

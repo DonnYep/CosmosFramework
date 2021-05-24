@@ -10,8 +10,7 @@ namespace Cosmos.Test
     {
         void Start()
         {
-            CosmosEntry.ResourceManager.AddOrUpdateBuildInLoadHelper(Resource.ResourceLoadMode.QuarkAsset, new QuarkAssetLoaderHelper());
-            CosmosEntry.ResourceManager.SwitchBuildInLoadMode(Resource.ResourceLoadMode.QuarkAsset);
+            QuarkUtility.QuarkAssetLoadMode = QuarkAssetLoadMode.AssetDataBase;
             var go = CosmosEntry.ResourceManager.LoadPrefab(new AssetInfo() { AssetName= "YBot_LM_Local" },true);
             if (go == null)
                 UnityEngine. Debug.LogError("go null");
@@ -24,7 +23,9 @@ namespace Cosmos.Test
             }
             if (GUILayout.Button("OpenCaptureFolder", GUILayout.Width(256), GUILayout.Height(64)))
             {
-                //UnityEditor.EditorUtility.RevealInFinder(Application.persistentDataPath);
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.RevealInFinder(Application.persistentDataPath);
+#endif
             }
         }
     }

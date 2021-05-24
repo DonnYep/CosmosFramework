@@ -29,6 +29,7 @@ namespace Cosmos.Resource
             buildInChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
             buildInChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourceLoader()));
             buildInChannelDict.Add(ResourceLoadMode.AssetBundle, new ResourceLoadChannel(ResourceLoadMode.AssetBundle.ToString(), new AssetBundleLoader()));
+            buildInChannelDict.Add(ResourceLoadMode.QuarkAsset, new ResourceLoadChannel(ResourceLoadMode.QuarkAsset.ToString(), new QuarkAssetLoader()));
             currentResourceLoadMode = ResourceLoadMode.Resource;
             currentDefaultLoadHelper = buildInChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
         }

@@ -547,6 +547,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36405f6fe0f5daf4d97f0601c42845b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  launchAppDomainModules: 1
+  printModulePreparatory: 0
+  ResourceLoadMode: 0
+  loadDefaultHelper: 1
 --- !u!4 &1277566612
 Transform:
   m_ObjectHideFlags: 0

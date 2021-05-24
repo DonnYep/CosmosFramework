@@ -44,19 +44,19 @@ namespace Cosmos
         }
         public override void PlayAudio()
         {
-            audioManager.PlayMultipleAudio(AudioAttachTarget, AudioArgs);
+            AudioManager.PlayMultipleAudio(AudioAttachTarget, AudioArgs);
         }
         public override void StopAudio()
         {
-            audioManager.StopMultipleAudio(AudioAttachTarget);
+            AudioManager.StopMultipleAudio(AudioAttachTarget);
         }
         public override void PauseAudio()
         {
-            audioManager.PauseMultipleAudio(AudioAttachTarget);
+            AudioManager.PauseMultipleAudio(AudioAttachTarget);
         }
         public override void UnpauseAudio()
         {
-            audioManager.UnpauseMultipleAudio(AudioAttachTarget);
+            AudioManager.UnpauseMultipleAudio(AudioAttachTarget);
         }
     }
 }

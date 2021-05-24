@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using Cosmos.QuarkAsset;
+using System.Linq;
+
 namespace Cosmos.CosmosEditor
 {
     public class AssetBundleBuildTab
@@ -11,9 +13,9 @@ namespace Cosmos.CosmosEditor
         AssetBundleBuildTabData assetBundleTabData;
         const string AssetBundleTabDataFileName = "AssetBundleTabData.json";
         string streamingPath = "Assets/StreamingAssets";
-        Dictionary<string, List<string>> packageAssetMap;
+        const string quarkABBuildInfo = "BuildInfo.json";
         Dictionary<string, AssetImporter> importerCacheDict = new Dictionary<string, AssetImporter>();
-
+        QuarkAssetABBuildInfo abBuildInfo = new QuarkAssetABBuildInfo();
         public void Clear()
         {
         }
@@ -23,7 +25,6 @@ namespace Cosmos.CosmosEditor
         }
         public void OnEnable()
         {
-            packageAssetMap = new Dictionary<string, List<string>>();
             try
             {
                 assetBundleTabData = CosmosEditorUtility.GetData<AssetBundleBuildTabData>(AssetBundleTabDataFileName);
@@ -120,6 +121,8 @@ namespace Cosmos.CosmosEditor
         {
             SetBuildInfo();
             BuildPipeline.BuildAssetBundles(GetBuildFolder(), assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
+            RemoveUselessFile();
+            //WriteBuildInfo();
             ResetBuildInfo();
         }
         void SetBuildInfo()
@@ -128,7 +131,7 @@ namespace Cosmos.CosmosEditor
             if (assetBundleTabData.ClearFolders)
             {
                 var path = Utility.IO.Combine(CosmosEditorUtility.ApplicationPath(), assetBundleTabData.OutputPath);
-                var streamPath= Utility.IO.Combine(CosmosEditorUtility.ApplicationPath(), streamingPath);
+                var streamPath = Utility.IO.Combine(CosmosEditorUtility.ApplicationPath(), streamingPath);
                 if (Directory.Exists(path))
                 {
                     Utility.IO.DeleteFolder(path);
@@ -137,7 +140,7 @@ namespace Cosmos.CosmosEditor
                 {
                     Utility.IO.DeleteFolder(streamPath);
                 }
-                catch {}
+                catch { }
             }
             if (QuarkAssetWindow.WindowTabData.UnderAssetsDirectory)
             {
@@ -175,7 +178,7 @@ namespace Cosmos.CosmosEditor
 
             if (assetBundleTabData.CopyToStreamingAssets)
             {
-                var buildPath =Utility.IO.Combine( CosmosEditorUtility.ApplicationPath(),assetBundleTabData.OutputPath);
+                var buildPath = Utility.IO.Combine(CosmosEditorUtility.ApplicationPath(), assetBundleTabData.OutputPath);
                 if (Directory.Exists(buildPath))
                 {
                     if (!AssetDatabase.IsValidFolder(streamingPath))
@@ -189,16 +192,29 @@ namespace Cosmos.CosmosEditor
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
             AssetDatabase.RemoveUnusedAssetBundleNames();
         }
+        void RemoveUselessFile()
+        {
+            var buildPath = GetBuildPath();
+            Utility.IO.TraverseFolderFilePath(buildPath, (path) =>
+            {
+                var ext = Path.GetExtension(path);
+                if (ext == ".manifest")
+                {
+                    File.Delete(path);
+                }
+            });
+        }
+        void WriteBuildInfo()
+        {
+            var json = JsonUtility.ToJson(abBuildInfo);
+            var fullPath = Utility.IO.Combine(GetBuildPath(), quarkABBuildInfo);
+            Utility.IO.WriteTextFile(fullPath, json, false);
+            abBuildInfo.Dispose();
+        }
         void SetAssetBundleName(string path)
         {
             string name = string.Empty;
-            if (AssetDatabase.IsValidFolder(path))
-                name = path;
-            else
-            {
-                var obj = AssetDatabase.LoadAssetAtPath<Object>(path);
-                name = obj.name;
-            }
+            name = Utility.Text.Replace(path, new string[] { "\\", "/", "." }, "_");
             switch (assetBundleTabData.NameHashType)
             {
                 case AssetBundleHashType.DefaultName:
@@ -232,6 +248,17 @@ namespace Cosmos.CosmosEditor
                 importerCacheDict[path] = importer;
                 if (importer == null)
                     CosmosEditorUtility.LogError("AssetImporter is empty : " + path);
+                //if (!abBuildInfo.AssetDataMaps.TryGetValue(importer.assetPath, out var assetData))
+                //{
+                //    assetData = new QuarkAssetABBuildInfo.AssetData()
+                //    {
+                //        DependList = AssetDatabase.GetDependencies(importer.assetPath).ToList(),
+                //        Hash = AssetDatabase.AssetPathToGUID(importer.assetPath),
+                //        Id = abBuildInfo.AssetDataMaps.Count,
+                //        ABName =path
+                //    };
+                //    abBuildInfo.AssetDataMaps[importer.assetPath] = assetData;
+                //}
             }
             return importer;
         }

@@ -27,6 +27,18 @@ namespace Cosmos
                 }
                 return count;
             }
+            public static void TraverseFolderFilePath(string folderPath,Action<string> handler)
+            {
+                if (!Directory.Exists(folderPath))
+                    throw new IOException("Folder path is invalid ! ") ;
+                if (handler == null)
+                    throw new ArgumentNullException("Handler is invalid !");
+                var fileDirs= Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories);
+                foreach (var dir in fileDirs)
+                {
+                    handler.Invoke(dir);
+                }
+            }
             /// <summary>
             /// 遍历文件夹下的文件；
             /// </summary>
@@ -82,7 +94,7 @@ namespace Cosmos
                 {
                     for (int i = 1; i < paths.Length && isSame; i++)
                     {
-                        isSame = firstPath[index]==paths[i][index];
+                        isSame = firstPath[index] == paths[i][index];
                     }
                     if (isSame)
                         commonPath += firstPath[index];
@@ -99,7 +111,7 @@ namespace Cosmos
             /// <returns>合并的路径</returns>
             public static string Combine(params string[] paths)
             {
-                var resultPath= Path.Combine(paths);
+                var resultPath = Path.Combine(paths);
                 resultPath = resultPath.Replace("/", "\\");
                 return resultPath;
             }
@@ -113,7 +125,7 @@ namespace Cosmos
             /// <returns>合并的路径</returns>
             public static string Combine(string path1, string path2)
             {
-                var resultPath = Path.Combine(path1,path2);
+                var resultPath = Path.Combine(path1, path2);
                 resultPath = resultPath.Replace("/", "\\");
                 return resultPath;
             }
@@ -182,7 +194,7 @@ namespace Cosmos
             public static string ReadTextFileContent(string fullFilePath)
             {
                 if (!File.Exists(fullFilePath))
-                    Utility.Debug.LogError(new IOException("ReadTextFileContent path not exist !" + fullFilePath));
+                    throw new IOException("ReadTextFileContent path not exist !" + fullFilePath);
                 Utility.Text.ClearStringBuilder();
                 using (FileStream stream = File.Open(fullFilePath, FileMode.Open))
                 {
@@ -204,7 +216,7 @@ namespace Cosmos
             public static string ReadTextFileContent(string folderPath, string fileName)
             {
                 if (!Directory.Exists(folderPath))
-                    Utility.Debug.LogError(new IOException("ReadTextFileContent folder path not exist !" + folderPath));
+                    throw new IOException("ReadTextFileContent folder path not exist !" + folderPath);
                 return ReadTextFileContent(Path.Combine(folderPath, fileName));
             }
             /// <summary>

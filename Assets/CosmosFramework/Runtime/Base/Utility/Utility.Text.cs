@@ -26,14 +26,10 @@ namespace Cosmos
             /// <returns>格式化后的字符串</returns>
             public static string Format(string format, params object[] args)
             {
-                if (format == null)
-                {
+                if (string.IsNullOrEmpty(format))
                     throw new ArgumentNullException("Format is invalid.");
-                }
                 if (args == null)
-                {
                     throw new ArgumentNullException("Args is invalid.");
-                }
                 StringBuilderCache.Length = 0;
                 StringBuilderCache.AppendFormat(format, args);
                 return StringBuilderCache.ToString();
@@ -186,7 +182,7 @@ namespace Cosmos
             /// <param name="context">传入的内容</param>
             /// <param name="values">需要检测的字符数组</param>
             /// <returns>是否包含</returns>
-            public static bool StringContans(string context,string[] values)
+            public static bool StringContans(string context, string[] values)
             {
                 var length = values.Length;
                 for (int i = 0; i < length; i++)
@@ -204,10 +200,32 @@ namespace Cosmos
                     return false;
                 return true;
             }
-            public static void IsStringValid(string context,string exceptionContext)
+            public static void IsStringValid(string context, string exceptionContext)
             {
                 if (!string.IsNullOrEmpty(context))
                     throw new ArgumentNullException(exceptionContext);
+            }
+            /// <summary>
+            /// 多字符替换；
+            /// </summary>
+            /// <param name="context">需要修改的内容</param>
+            /// <param name="oldContext">需要修改的内容</param>
+            /// <param name="newContext">修改的新内容</param>
+            /// <returns>修改后的内容</returns>
+            public static string Replace(string context, string[] oldContext, string newContext)
+            {
+                if(string.IsNullOrEmpty(context))
+                    throw new ArgumentNullException("context is invalid.");
+                if(oldContext==null)
+                    throw new ArgumentNullException("oldContext is invalid.");
+                if (string.IsNullOrEmpty(newContext))
+                    throw new ArgumentNullException("newContext is invalid.");
+                var length = oldContext.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    context= context.Replace(oldContext[i], newContext);
+                }
+                return context;
             }
         }
     }

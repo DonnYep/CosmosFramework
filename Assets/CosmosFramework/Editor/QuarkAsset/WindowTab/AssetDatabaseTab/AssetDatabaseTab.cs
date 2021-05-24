@@ -49,7 +49,19 @@ namespace Cosmos.CosmosEditor
                 }
             });
             if (!WindowTabData.UnderAssetsDirectory)
+            {
+                GUILayout.BeginVertical("box");
+                GUILayout.Space(16);
+                CosmosEditorUtility.DrawHorizontalContext(() =>
+                {
+                    if (GUILayout.Button("ClearAssets" ))
+                    {
+                        includeDirectoriesOperation.Clear();
+                    }
+                });
                 includeDirectoriesOperation.OnGUI();
+                GUILayout.EndVertical();
+            }
         }
 
         #region AssetDataBaseMode

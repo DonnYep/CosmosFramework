@@ -96,7 +96,7 @@ namespace Cosmos.CosmosEditor
 		void DoToolbar()
 		{
 			GUILayout.BeginHorizontal(EditorStyles.toolbar);
-			GUILayout.Space(100);
+			GUILayout.Space(128);
 			GUILayout.FlexibleSpace();
 			treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
 			GUILayout.EndHorizontal();

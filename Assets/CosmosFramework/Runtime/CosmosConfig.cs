@@ -5,18 +5,20 @@ using Cosmos.QuarkAsset;
 using Cosmos.Resource;
 namespace Cosmos
 {
-    [DefaultExecutionOrder(-1000)]
+    [DefaultExecutionOrder(2000)]
     public class CosmosConfig : MonoBehaviour
     {
         [Header("Cosmos入口配置")]
-        [SerializeField]
-        ResourceLoadMode ResourceLoadMode;
-        private void Awake()
+        [SerializeField] protected bool launchAppDomainModules=true;
+        [SerializeField] protected bool printModulePreparatory = true;
+        [SerializeField] protected ResourceLoadMode ResourceLoadMode;
+        protected virtual void Awake()
         {
-            if (ResourceLoadMode != ResourceLoadMode.QuarkAsset)
-                CosmosEntry.ResourceManager.SwitchBuildInLoadMode(ResourceLoadMode);
-            else
+            CosmosEntry.PrintModulePreparatory = printModulePreparatory;
+            if (launchAppDomainModules)
             {
+                CosmosEntry.LaunchAppDomainModules();
+                CosmosEntry.ResourceManager.SwitchBuildInLoadMode(ResourceLoadMode);
             }
         }
     }

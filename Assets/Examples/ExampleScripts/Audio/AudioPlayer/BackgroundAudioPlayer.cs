@@ -14,19 +14,19 @@ namespace Cosmos {
         {
             var audio = SetAudioVariable(audioObject, audioDataSet);
             audioArgs.SetData(audio);
-            audioManager.PlayBackgroundAudio(audio);
+            AudioManager.PlayBackgroundAudio(audio);
         }
          public override void StopAudio()
         {
-            audioManager.StopBackgroundAudio();
+            AudioManager.StopBackgroundAudio();
         }
          public override void PauseAudio()
         {
-            audioManager.PauseBackgroundAudio();
+            AudioManager.PauseBackgroundAudio();
         }
          public override void UnpauseAudio()
         {
-            audioManager.UnpauseBackgroundAudio();
+            AudioManager.UnpauseBackgroundAudio();
         }
     }
 }

@@ -6,21 +6,27 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Cosmos.UI;
 using Cosmos.Mvvm;
+using Cosmos.Resource;
+
 namespace Cosmos.Test
 {
-    [DefaultExecutionOrder(1100)]
-    public class Entry : MonoBehaviour
+    /// <summary>
+    /// 配置测试类，仅用于案例部分；
+    /// </summary>
+    [DefaultExecutionOrder(2000)]
+    public class Entry : CosmosConfig
     {
-        [SerializeField] bool loadDefaultHelper;
-        [SerializeField] bool launchModule;
-        private void Awake()
+        [SerializeField] bool loadDefaultHelper=true;
+        protected override void Awake()
         {
             if (loadDefaultHelper)
                 CosmosEntry.LaunchAppDomainHelpers();
-            if (launchModule)
+            CosmosEntry.PrintModulePreparatory = printModulePreparatory;
+            if (launchAppDomainModules)
             {
                 CosmosEntry.LaunchAppDomainModules();
                 CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
+                CosmosEntry.ResourceManager.SwitchBuildInLoadMode(ResourceLoadMode);
             }
         }
     }

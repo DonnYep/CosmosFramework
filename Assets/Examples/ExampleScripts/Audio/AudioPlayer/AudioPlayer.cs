@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Cosmos{
     public abstract class AudioPlayer: MonoBehaviour
     {
-        protected IAudioManager audioManager;
+        protected IAudioManager AudioManager { get { return CosmosEntry.AudioManager; } }
         public virtual AudioDataset AudioDataSet { get; }
         public virtual AudioObject AudioObject { get; }
         public abstract void PlayAudio();
@@ -25,9 +25,6 @@ namespace Cosmos{
             audioVariable.AudioClip = DataSet.AudioClip;
             return audioVariable;
         }
-       protected virtual void Awake()
-        {
-            audioManager = GameManager.GetModule<IAudioManager>();
-        }
+       protected virtual void Awake(){}
     }
 }

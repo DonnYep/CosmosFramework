@@ -86,8 +86,15 @@ namespace Cosmos.CosmosEditor
             if (selectedNodes.Count >= 1)
             {
                 menu.AddItem(new GUIContent("Delete "), false, Delete, selectedNodes);
+                menu.AddItem(new GUIContent("DeleteAll "), false, DeleteAll);
             }
             menu.ShowAsContext();
+        }
+        
+        void DeleteAll()
+        {
+            pathList.Clear();
+            Reload();
         }
         void Delete(object context)
         {
