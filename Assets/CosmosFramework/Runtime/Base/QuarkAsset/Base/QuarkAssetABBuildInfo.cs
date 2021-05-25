@@ -6,18 +6,20 @@ using System.Threading.Tasks;
 
 namespace Cosmos.QuarkAsset
 {
+    [Serializable]
     public class QuarkAssetABBuildInfo:IDisposable
     {
+        [Serializable]
         public class AssetData
         {
-            public int Id;
-            public string ABName;
-            public int ReferenceCount = 0;
-            public string Hash;
-            public List<string> DependList;
+            public int Id { get; set; }
+            public string ABName { get; set; }
+            public int ReferenceCount { get; set; } = 0;
+            public string Hash { get; set; }
+            public List<string> DependList { get; set; }
         }
-        public string BuildTime;
-        public Dictionary<string, AssetData> AssetDataMaps = new Dictionary<string, AssetData>();
+        public string BuildTime { get; set; }
+        public Dictionary<string, AssetData> AssetDataMaps { get; set; } = new Dictionary<string, AssetData>();
         public void Dispose()
         {
             AssetDataMaps.Clear();

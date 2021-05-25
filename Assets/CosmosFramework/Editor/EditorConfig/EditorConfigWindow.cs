@@ -18,20 +18,20 @@ namespace Cosmos.CosmosEditor
         public static void OpenWindow()
         {
             var window = GetWindow<EditorConfigWindow>();
-            ((EditorWindow)window).maxSize = CosmosEditorUtility.CosmosMaxWinSize;
-            ((EditorWindow)window).minSize = CosmosEditorUtility.CosmosDevWinSize;
+            ((EditorWindow)window).maxSize = EditorUtilities.CosmosMaxWinSize;
+            ((EditorWindow)window).minSize = EditorUtilities.CosmosDevWinSize;
         }
         [InitializeOnLoadMethod]
         public static void LoadData()
         {
             try
             {
-                EditorConfigData = CosmosEditorUtility.GetData<EditorConfigData>(EditorConfigFileName);
+                EditorConfigData = EditorUtilities.GetData<EditorConfigData>(EditorConfigFileName);
             }
             catch
             {
                 EditorConfigData = new EditorConfigData();
-                CosmosEditorUtility.SaveData(EditorConfigFileName, EditorConfigData);
+                EditorUtilities.SaveData(EditorConfigFileName, EditorConfigData);
             }
         }
         static readonly string EditorConfigFileName = "EditorConfig.json";
@@ -49,7 +49,7 @@ namespace Cosmos.CosmosEditor
         }
         void DrawWindow()
         {
-            CosmosEditorUtility.DrawVerticalContext(() =>
+            EditorUtilities.DrawVerticalContext(() =>
             {
                 EditorGUILayout.Space();
                 GUI.color = Color.green;
@@ -60,7 +60,7 @@ namespace Cosmos.CosmosEditor
                 #endregion
                 GUI.color = Color.white;
                 EditorGUILayout.Space();
-                CosmosEditorUtility.DrawHorizontalContext(() =>
+                EditorUtilities.DrawHorizontalContext(() =>
                 {
                     if (GUILayout.Button("Reset"))
                     {
@@ -73,7 +73,7 @@ namespace Cosmos.CosmosEditor
         {
             try
             {
-                CosmosEditorUtility.SaveData(EditorConfigFileName, EditorConfigData == null ? new EditorConfigData() : EditorConfigData);
+                EditorUtilities.SaveData(EditorConfigFileName, EditorConfigData == null ? new EditorConfigData() : EditorConfigData);
             }
             catch{}
         }
@@ -81,12 +81,12 @@ namespace Cosmos.CosmosEditor
         {
             try
             {
-                EditorConfigData =CosmosEditorUtility.GetData<EditorConfigData>(EditorConfigFileName);
-                CosmosEditorUtility.LogInfo("重置 CosmosFramework EditorConfigData 成功");
+                EditorConfigData =EditorUtilities.GetData<EditorConfigData>(EditorConfigFileName);
+                EditorUtilities.Debug.LogInfo("重置 CosmosFramework EditorConfigData 成功");
             }
             catch (Exception e)
             {
-                CosmosEditorUtility.LogError("重置 CosmosFramework EditorConfigData 失败: " + e);
+                EditorUtilities.Debug.LogError("重置 CosmosFramework EditorConfigData 失败: " + e);
             }
         }
         #region ScriptHeader
@@ -148,7 +148,7 @@ namespace Cosmos.CosmosEditor
                 GUILayout.Space(128);
                 if (GUILayout.Button("设为默认", GUILayout.Height(32)))
                 {
-                    EditorConfigData.LogOutputDirectory = CosmosEditorUtility.GetDefaultLogOutputDirectory();
+                    EditorConfigData.LogOutputDirectory = EditorUtilities.GetDefaultLogOutputDirectory();
                 }
                 GUILayout.Space(8);
                 GUILayout.EndHorizontal();

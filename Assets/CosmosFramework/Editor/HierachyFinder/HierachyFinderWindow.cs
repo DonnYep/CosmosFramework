@@ -13,8 +13,8 @@ namespace Cosmos.CosmosEditor
         public static void OpenWindow()
         {
             var window = GetWindow<HierachyFinderWindow>();
-            ((EditorWindow)window).maxSize = CosmosEditorUtility.CosmosMaxWinSize;
-            ((EditorWindow)window).minSize = CosmosEditorUtility.CosmosDevWinSize;
+            ((EditorWindow)window).maxSize = EditorUtilities.CosmosMaxWinSize;
+            ((EditorWindow)window).minSize = EditorUtilities.CosmosDevWinSize;
         }
        public HierachyFinderWindow()
         {

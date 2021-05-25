@@ -64,7 +64,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="paths">路径</param>
             /// <returns>合并的路径</returns>
-            public static string PathCombine(params string[] paths)
+            public static string CombinePath(params string[] paths)
             {
                 var pathResult= Path.Combine(paths);
                 pathResult = pathResult.Replace("\\", "/");

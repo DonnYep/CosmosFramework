@@ -158,7 +158,7 @@ namespace Cosmos
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>生成的对象数组</returns>
-            public static K[] GetInstancesByAttribute<T, K>(bool inherit = false, System.Reflection.Assembly assembly = null)
+            public static K[] GetInstancesByAttribute<T, K>(bool inherit , System.Reflection.Assembly assembly = null)
     where T : Attribute
     where K : class
             {
@@ -196,7 +196,7 @@ namespace Cosmos
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>生成的对象数组</returns>
-            public static object[] GetInstancesByAttribute<T>(Type type, bool inherit = false, System.Reflection.Assembly assembly = null)
+            public static object[] GetInstancesByAttribute<T>(Type type, bool inherit , System.Reflection.Assembly assembly = null)
     where T : Attribute
             {
                 List<object> set = new List<object>();
@@ -232,7 +232,7 @@ namespace Cosmos
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>非抽象派生类数组</returns>
-            public static Type[] GetDerivedTypesByAttribute<T, K>(bool inherit = false, System.Reflection.Assembly assembly = null)
+            public static Type[] GetDerivedTypesByAttribute<T, K>(bool inherit , System.Reflection.Assembly assembly = null)
 where T : Attribute
 where K : class
             {
@@ -259,7 +259,7 @@ where K : class
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>非抽象派生类数组</returns>
-            public static Type[] GetDerivedTypesByAttribute<T>(Type type, bool inherit = false, System.Reflection.Assembly assembly = null)
+            public static Type[] GetDerivedTypesByAttribute<T>(Type type, bool inherit , System.Reflection.Assembly assembly = null)
     where T : Attribute
             {
                 List<Type> set = new List<Type>();

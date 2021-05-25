@@ -31,17 +31,17 @@ namespace Cosmos.CosmosEditor
         }
         void DrawFastDevelopTab()
         {
-            CosmosEditorUtility.DrawVerticalContext(() =>
+            EditorUtilities.DrawVerticalContext(() =>
             {
                 WindowTabData.UnderAssetsDirectory = EditorGUILayout.ToggleLeft("UnderAssetsDirectory", WindowTabData.UnderAssetsDirectory);
                 WindowTabData.GenerateAssetPathCode = EditorGUILayout.ToggleLeft("GenerateAssetPath", WindowTabData.GenerateAssetPathCode);
             });
             GUILayout.Space(16);
-            CosmosEditorUtility.DrawHorizontalContext(() =>
+            EditorUtilities.DrawHorizontalContext(() =>
             {
                 if (GUILayout.Button("Build"))
                 {
-                    CosmosEditorUtility.StartCoroutine(EnumBuildADBMode());
+                    EditorUtilities.Coroutine.StartCoroutine(EnumBuildADBMode());
                 }
                 if (GUILayout.Button("Clear"))
                 {
@@ -52,7 +52,7 @@ namespace Cosmos.CosmosEditor
             {
                 GUILayout.BeginVertical("box");
                 GUILayout.Space(16);
-                CosmosEditorUtility.DrawHorizontalContext(() =>
+                EditorUtilities.DrawHorizontalContext(() =>
                 {
                     if (GUILayout.Button("ClearAssets" ))
                     {
@@ -78,17 +78,17 @@ namespace Cosmos.CosmosEditor
             if (WindowTabData.GenerateAssetPathCode)
                 AssetDataBaseModeCreatePathScript();
             EditorUtility.SetDirty(QuarkAssetDataset);
-            CosmosEditorUtility.SaveData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName, WindowTabData);
+            EditorUtilities.SaveData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName, WindowTabData);
             yield return null;
-            CosmosEditorUtility.LogInfo("Quark asset  build done ");
+            EditorUtilities.Debug.LogInfo("Quark asset  build done ");
         }
         void ADBModeClear()
         {
             WindowTabData.IncludeDirectories?.Clear();
             includeDirectoriesOperation.Clear();
             QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance.Dispose();
-            CosmosEditorUtility.ClearData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName);
-            CosmosEditorUtility.LogInfo("Quark asset clear done ");
+            EditorUtilities.ClearData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName);
+            EditorUtilities.Debug.LogInfo("Quark asset clear done ");
         }
         void ADBModeNotUnderAssetsDirectoryBuild()
         {
@@ -125,7 +125,7 @@ namespace Cosmos.CosmosEditor
                     }
                     else if (File.Exists(dir))
                     {
-                        var fullPath = Utility.IO.Combine(CosmosEditorUtility.ApplicationPath(), dir);
+                        var fullPath = Utility.IO.Combine(EditorUtilities.ApplicationPath(), dir);
                         if (!fileSysInfoDict.ContainsKey(fullPath))
                         {
                             var fileInfo = new FileInfo(fullPath);
@@ -229,7 +229,7 @@ namespace Cosmos.CosmosEditor
             }
             str += "\n}";
             Utility.IO.OverwriteTextFile(Application.dataPath, "QuarkAssetDefine.cs", str);
-            CosmosEditorUtility.RefreshEditor();
+            EditorUtilities.RefreshEditor();
         }
         #endregion
     }

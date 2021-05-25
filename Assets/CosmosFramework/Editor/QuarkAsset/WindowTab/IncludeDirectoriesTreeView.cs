@@ -33,7 +33,7 @@ namespace Cosmos.CosmosEditor
             }
             catch (Exception e)
             {
-                CosmosEditorUtility.LogError(e);
+                EditorUtilities.Debug.LogError(e);
             }
         }
         public IncludeDirectoriesTreeView(TreeViewState treeViewState)
@@ -54,12 +54,12 @@ namespace Cosmos.CosmosEditor
         protected override void SingleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            CosmosEditorUtility.SelectionActiveObject(pathList[id]);
+            EditorUtilities.SelectionActiveObject(pathList[id]);
         }
         protected override void DoubleClickedItem(int id)
         {
             base.DoubleClickedItem(id);
-            CosmosEditorUtility.PingAndActiveObject(pathList[id]);
+            EditorUtilities.PingAndActiveObject(pathList[id]);
         }
         protected override TreeViewItem BuildRoot()
         {
@@ -109,7 +109,7 @@ namespace Cosmos.CosmosEditor
             }
             catch (Exception e)
             {
-                CosmosEditorUtility.LogError(e);
+                EditorUtilities.Debug.LogError(e);
             }
         }
     }

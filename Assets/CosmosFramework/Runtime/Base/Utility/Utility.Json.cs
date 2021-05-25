@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System;
+using System.Text;
+
 namespace Cosmos
 {
     public static partial class Utility
@@ -32,7 +34,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw new ArgumentNullException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
+                    throw new ArgumentException($"Can not convert to JSON with exception {exception}");
                 }
             }
             /// <summary>
@@ -42,7 +44,7 @@ namespace Cosmos
             /// <returns>序列化后的JSON流</returns>
             public static byte[] ToJsonData(object obj)
             {
-                return Utility.Converter.GetBytes(ToJson(obj));
+                return Encoding.UTF8.GetBytes(ToJson(obj));
             }
             /// <summary>
             /// 将JSON反序列化为泛型对象
@@ -60,7 +62,7 @@ namespace Cosmos
                 }
                 catch (System.Exception exception)
                 {
-                    throw new ArgumentException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
+                    throw new ArgumentException($"Can not convert to JSON with exception {exception}");
                 }
             }
             /// <summary>
@@ -81,7 +83,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw new ArgumentException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
+                    throw new ArgumentException($"Can not convert to JSON with exception {exception}");
                 }
             }
             /// <summary>
@@ -92,7 +94,7 @@ namespace Cosmos
             /// <returns>反序列化后的对象</returns>
             public static T ToObject<T>(byte[] jsonData)
             {
-                return ToObject<T>(Utility.Converter.GetString(jsonData));
+                return ToObject<T>(Encoding.UTF8.GetString(jsonData));
             }
         }
     }

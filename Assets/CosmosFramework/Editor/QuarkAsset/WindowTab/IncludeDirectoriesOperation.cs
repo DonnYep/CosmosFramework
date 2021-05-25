@@ -37,19 +37,19 @@ namespace Cosmos.CosmosEditor
 				DragAndDrop.AcceptDrag();
 				if (DragAndDrop.paths.Length == 0 && DragAndDrop.objectReferences.Length > 0)
 				{
-					CosmosEditorUtility.LogInfo("GameObject");
+					EditorUtilities.Debug.LogInfo("GameObject");
 					foreach (Object obj in DragAndDrop.objectReferences)
 					{
-						CosmosEditorUtility.LogInfo("- " + obj);
+						EditorUtilities.Debug.LogInfo("- " + obj);
 					}
 				}
 				// Object outside project. It mays from File Explorer (Finder in OSX).
 				else if (DragAndDrop.paths.Length > 0 && DragAndDrop.objectReferences.Length == 0)
 				{
-					CosmosEditorUtility.LogInfo("File");
+					EditorUtilities.Debug.LogInfo("File");
 					foreach (string path in DragAndDrop.paths)
 					{
-						CosmosEditorUtility.LogInfo("- " + path);
+						EditorUtilities.Debug.LogInfo("- " + path);
 					}
 				}
 				// Unity Assets including folder.
@@ -76,16 +76,16 @@ namespace Cosmos.CosmosEditor
 				// Log to make sure we cover all cases.
 				else
 				{
-					CosmosEditorUtility.LogInfo("Out of reach");
-					CosmosEditorUtility.LogInfo("Paths:");
+					EditorUtilities.Debug.LogInfo("Out of reach");
+					EditorUtilities.Debug.LogInfo("Paths:");
 					foreach (string path in DragAndDrop.paths)
 					{
-						CosmosEditorUtility.LogInfo("- " + path);
+						EditorUtilities.Debug.LogInfo("- " + path);
 					}
-					CosmosEditorUtility.LogInfo("ObjectReferences:");
+					EditorUtilities.Debug.LogInfo("ObjectReferences:");
 					foreach (Object obj in DragAndDrop.objectReferences)
 					{
-						CosmosEditorUtility.LogInfo("- " + obj);
+						EditorUtilities.Debug.LogInfo("- " + obj);
 					}
 				}
 			}
