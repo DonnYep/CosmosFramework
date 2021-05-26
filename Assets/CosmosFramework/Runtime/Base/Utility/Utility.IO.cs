@@ -11,6 +11,12 @@ namespace Cosmos
         public static class IO
         {
             /// <summary>
+            /// 标准的UTF-8是不含BOM的；
+            /// 构造的UTF8Encoding，排除掉UTF8-BOM的影响；
+            /// </summary>
+            static UTF8Encoding utf8Encoding=new UTF8Encoding(false);
+
+            /// <summary>
             /// 获取文件夹中的文件数量；
             /// </summary>
             /// <param name="folderPath">文件夹路径</param>
@@ -198,11 +204,9 @@ namespace Cosmos
                 Utility.Text.ClearStringBuilder();
                 using (FileStream stream = File.Open(fullFilePath, FileMode.Open))
                 {
-                    using (StreamReader reader = new StreamReader(stream))
+                    using (StreamReader reader = new StreamReader(stream, utf8Encoding))
                     {
                         Utility.Text.StringBuilderCache.Append(reader.ReadToEnd());
-                        reader.Close();
-                        stream.Close();
                     }
                 }
                 return Utility.Text.StringBuilderCache.ToString();
@@ -235,11 +239,10 @@ namespace Cosmos
                 using (FileStream stream = new FileStream(Path.Combine(filePath, fileName), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     stream.Position = stream.Length;
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    using (StreamWriter writer = new StreamWriter(stream, utf8Encoding))
                     {
                         writer.WriteLine(context);
-                        writer.Close();
-                        stream.Close();
+                        writer.Flush();
                     }
                 }
             }
@@ -256,11 +259,10 @@ namespace Cosmos
                 using (FileStream stream = new FileStream(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     stream.Position = stream.Length;
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    using (StreamWriter writer = new StreamWriter(stream, utf8Encoding))
                     {
                         writer.WriteLine(context);
-                        writer.Close();
-                        stream.Close();
+                        writer.Flush();
                     }
                 }
             }
@@ -282,11 +284,10 @@ namespace Cosmos
                 {
                     if (append)
                         stream.Position = stream.Length;
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    using (StreamWriter writer = new StreamWriter(stream, utf8Encoding))
                     {
                         writer.WriteLine(context);
-                        writer.Close();
-                        stream.Close();
+                        writer.Flush();
                     }
                 }
             }
@@ -305,11 +306,10 @@ namespace Cosmos
                 {
                     if (append)
                         stream.Position = stream.Length;
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    using (StreamWriter writer = new StreamWriter(stream, utf8Encoding))
                     {
                         writer.WriteLine(context);
-                        writer.Close();
-                        stream.Close();
+                        writer.Flush();
                     }
                 }
             }
@@ -329,11 +329,10 @@ namespace Cosmos
                 {
                     stream.Seek(0, SeekOrigin.Begin);
                     stream.SetLength(0);
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    using (StreamWriter writer = new StreamWriter(stream, utf8Encoding))
                     {
                         writer.WriteLine(context);
-                        writer.Close();
-                        stream.Close();
+                        writer.Flush();
                     }
                 }
             }
@@ -349,11 +348,10 @@ namespace Cosmos
                 {
                     stream.Seek(0, SeekOrigin.Begin);
                     stream.SetLength(0);
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
+                    using (StreamWriter writer = new StreamWriter(stream, utf8Encoding))
                     {
                         writer.WriteLine(context);
-                        writer.Close();
-                        stream.Close();
+                        writer.Flush();
                     }
                 }
             }

@@ -64,6 +64,7 @@ namespace Cosmos.CosmosEditor
             {
                 assetBundleTabData.ClearFolders = EditorGUILayout.ToggleLeft("ClearFolders", assetBundleTabData.ClearFolders);
                 assetBundleTabData.CopyToStreamingAssets = EditorGUILayout.ToggleLeft("CopyToStreamingAssets", assetBundleTabData.CopyToStreamingAssets);
+                assetBundleTabData.WithoutManifest = EditorGUILayout.ToggleLeft("WithoutManifest", assetBundleTabData.WithoutManifest);
             });
             GUILayout.Space(16);
             assetBundleTabData.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("CompressedFormat:", assetBundleTabData.BuildAssetBundleOptions);
@@ -207,6 +208,8 @@ namespace Cosmos.CosmosEditor
         }
         void RemoveUselessFile()
         {
+            if (!assetBundleTabData.WithoutManifest)
+                return;
             var buildPath = GetBuildPath();
             Utility.IO.TraverseFolderFilePath(buildPath, (path) =>
             {
@@ -268,7 +271,7 @@ namespace Cosmos.CosmosEditor
                         DependList = AssetDatabase.GetAssetBundleDependencies( abName,true).ToList(),
                         Hash = AssetDatabase.AssetPathToGUID(importer.assetPath),
                         Id = abBuildInfo.AssetDataMaps.Count,
-                        ABName = abName
+                        ABName = abName,
                     };
                     abBuildInfo.AssetDataMaps[importer.assetPath] = assetData;
                 }
