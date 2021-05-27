@@ -11,20 +11,30 @@ namespace Cosmos
         [SerializeField]
         protected bool mute = false;
         public bool Mute { get { return mute; } }
+
         [SerializeField]
         protected bool playOnAwake = false;
         public bool PlayOnAwake { get { return playOnAwake; } }
+
         [SerializeField]
         protected bool loop = false;
         public bool Loop { get { return loop; } }
+
         [SerializeField]
         [Range(0, 1)]
         protected  float volume = 1;
         public float Volume { get { return volume; } }
+
+        [SerializeField]
+        [Range(-1, 1)]
+        protected float stereoPan = 0;
+        public float StereoPan { get { return stereoPan; } }
+
         [SerializeField]
         [Range(0, 1)]
         protected float spatialBlend = 0;
         public float SpatialBlend { get { return spatialBlend; } }
+
         [SerializeField]
         [Range(-3, 3)]
         protected float speed = 1;

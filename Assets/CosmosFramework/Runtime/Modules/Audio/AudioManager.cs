@@ -285,6 +285,7 @@ namespace Cosmos.Audio
             audio.spatialBlend = args.SpatialBlend;
             audio.mute = args.Mute;
             audio.loop = args.Loop;
+            audio.panStereo= args.StereoPan;
         }
 
         /// <summary>

@@ -12,6 +12,7 @@ namespace Cosmos
         bool Mute { get; }
         bool PlayOnAwake { get; }
         bool Loop { get;  }
+        float StereoPan { get; }
         int Priority { get; }
         float Volume { get; }
         float SpatialBlend { get; }

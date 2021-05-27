@@ -17,6 +17,7 @@ namespace Cosmos{
         {
             audioVariable.Mute = DataSet.Mute;
             audioVariable.Volume = DataSet.Volume;
+            audioVariable.StereoPan= DataSet.StereoPan;
             audioVariable.Speed = DataSet.Speed;
             audioVariable.PlayOnAwake = DataSet.PlayOnAwake;
             audioVariable.SpatialBlend = DataSet.SpatialBlend;

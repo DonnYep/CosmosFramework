@@ -76,9 +76,6 @@ namespace Cosmos.CosmosEditor
             {
                 if (GUILayout.Button("Build"))
                 {
-                    //var abName = "Assets_ABTest_Prefab_Lab_prefab";
-                    //var strs = AssetDatabase.GetAssetBundleDependencies(abName.ToLower(), true);
-                    //Utility.Assert.Traverse(strs, str => EditorUtilities.Debug.LogInfo(str));
                     BuildAssetBundle();
                 }
                 if (GUILayout.Button("Reset"))
@@ -125,7 +122,7 @@ namespace Cosmos.CosmosEditor
         {
             SetBuildInfo();
             BuildPipeline.BuildAssetBundles(GetBuildFolder(), assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
-            RemoveUselessFile();
+            OperateManifest();
             WriteBuildInfo();
             ResetBuildInfo();
         }
@@ -166,7 +163,7 @@ namespace Cosmos.CosmosEditor
         }
         IEnumerator EnumBuild()
         {
-            EditorUtilities.TraverseAllFolderFile((file) =>
+            EditorUtilities.IO.TraverseAllFolderFile((file) =>
             {
                 if (!(file is MonoScript))
                 {
@@ -206,23 +203,40 @@ namespace Cosmos.CosmosEditor
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
             AssetDatabase.RemoveUnusedAssetBundleNames();
         }
-        void RemoveUselessFile()
+        void OperateManifest()
         {
-            if (!assetBundleTabData.WithoutManifest)
-                return;
-            var buildPath = GetBuildPath();
-            Utility.IO.TraverseFolderFilePath(buildPath, (path) =>
+            if (assetBundleTabData.WithoutManifest)
             {
-                var ext = Path.GetExtension(path);
-                if (ext == ".manifest")
+                var buildPath = GetBuildPath();
+                Utility.IO.TraverseFolderFilePath(buildPath, (path) =>
                 {
-                    File.Delete(path);
-                }
-            });
+                    var ext = Path.GetExtension(path);
+                    if (ext == ".manifest")
+                    {
+                        File.Delete(path);
+                    }
+                });
+            }
+            else
+            {
+                var buildPath = GetBuildPath();
+                var manifestUrlList = new List<string>();
+                Utility.IO.TraverseFolderFilePath(buildPath, (path) =>
+                {
+                    var ext = Path.GetExtension(path);
+                    if (ext == ".manifest")
+                    {
+                        manifestUrlList.Add(path);
+                    }
+                });
+
+
+
+            }
         }
         void WriteBuildInfo()
         {
-            var json = EditorUtilities.Json.ToJson(abBuildInfo,true);
+            var json = EditorUtilities.Json.ToJson(abBuildInfo, true);
             var fullPath = Utility.IO.Combine(GetBuildPath(), quarkABBuildInfo);
             Utility.IO.WriteTextFile(fullPath, json, false);
             abBuildInfo.Dispose();
@@ -264,12 +278,13 @@ namespace Cosmos.CosmosEditor
                 importer.assetBundleName = abName;
                 if (importer == null)
                     EditorUtilities.Debug.LogError("AssetImporter is empty : " + path);
+                else
                 if (!abBuildInfo.AssetDataMaps.TryGetValue(importer.assetPath, out var assetData))
                 {
                     assetData = new QuarkAssetABBuildInfo.AssetData()
                     {
-                        DependList = AssetDatabase.GetAssetBundleDependencies( abName,true).ToList(),
-                        Hash = AssetDatabase.AssetPathToGUID(importer.assetPath),
+                        DependList = AssetDatabase.GetAssetBundleDependencies(abName, true).ToList(),
+                        //Hash = AssetDatabase.AssetPathToGUID(importer.assetPath),
                         Id = abBuildInfo.AssetDataMaps.Count,
                         ABName = abName,
                     };

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Cosmos.QuarkAsset
 {
     [Serializable]
-    public class QuarkAssetABBuildInfo:IDisposable
+    public class QuarkAssetABBuildInfo
     {
         [Serializable]
         public class AssetData

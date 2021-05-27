@@ -15,6 +15,7 @@ namespace Cosmos
             mute = false;
             playOnAwake = false;
             loop = false;
+            stereoPan = 0;
             volume = 1;
             spatialBlend = 0;
             speed = 1;

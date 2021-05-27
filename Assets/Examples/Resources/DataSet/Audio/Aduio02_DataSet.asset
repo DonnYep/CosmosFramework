@@ -17,6 +17,7 @@ MonoBehaviour:
   playOnAwake: 0
   loop: 0
   volume: 1
+  stereoPan: 1
   spatialBlend: 0
   speed: 1
   audioClips:

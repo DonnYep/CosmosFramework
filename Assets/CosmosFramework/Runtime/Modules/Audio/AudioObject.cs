@@ -14,6 +14,7 @@ namespace Cosmos
         public bool Loop { get; set; }
         public int Priority { get; set; }
         public float Volume { get; set; }
+        public float StereoPan { get; set; }
         public float SpatialBlend { get; set; }
         public float Speed { get; set; }
         public virtual AudioClip AudioClip { get; set; }
@@ -25,6 +26,7 @@ namespace Cosmos
             Loop = false;
             Priority = 128;
             Volume = 1;
+            StereoPan = 0;
             SpatialBlend = 0;
             Speed = 1;
             AudioClip = null;

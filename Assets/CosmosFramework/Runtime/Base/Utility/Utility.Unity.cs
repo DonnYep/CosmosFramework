@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System.Collections;
+using UnityEngine.Networking;
 
 namespace Cosmos
 {
@@ -36,9 +37,6 @@ namespace Cosmos
             /// PlayerPrefs持久化前缀
             /// </summary>
             public const string Perfix = "Cosmos";
-            /// <summary>
-            /// 持久化数据层路径，可写入
-            /// </summary>
             public static readonly string PathURL =
 #if UNITY_ANDROID
         "jar:file://" + Application.dataPath + "!/assets/";
@@ -66,7 +64,7 @@ namespace Cosmos
             /// <returns>合并的路径</returns>
             public static string CombinePath(params string[] paths)
             {
-                var pathResult= Path.Combine(paths);
+                var pathResult = Path.Combine(paths);
                 pathResult = pathResult.Replace("\\", "/");
                 return pathResult;
             }
@@ -150,7 +148,7 @@ namespace Cosmos
                 {
                     throw new NotImplementedException($"Type :{type} is not iherit from Component !");
                 }
-                if(go==null)
+                if (go == null)
                     throw new ArgumentNullException($"GameObject is invalid !");
                 return go.GetOrAddComponent(type);
             }
@@ -547,9 +545,9 @@ namespace Cosmos
             {
                 return CoroutineHelper.StartCoroutine(handler);
             }
-            public static Coroutine StartCoroutine(Action handler,Action callback)
+            public static Coroutine StartCoroutine(Action handler, Action callback)
             {
-                return CoroutineHelper.StartCoroutine(handler,callback);
+                return CoroutineHelper.StartCoroutine(handler, callback);
             }
             /// <summary>
             /// 延时协程；
@@ -592,6 +590,127 @@ namespace Cosmos
             public static void StopCoroutine(Coroutine routine)
             {
                 CoroutineHelper.StopCoroutine(routine);
+            }
+            #endregion
+
+            #region UnityWebRequest
+            public static Coroutine DownloadTextAsync(string url, Action<float> progress, Action<string> downloadedCallback)
+            {
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(UnityWebRequest.Get(url), progress, (UnityWebRequest req) =>
+                 {
+                     downloadedCallback?.Invoke(req.downloadHandler.text);
+                 }));
+            }
+            public static Coroutine DownloadTextsAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<string[]> downloadedCallback)
+            {
+                var length = urls.Length;
+                var requests = new UnityWebRequest[length];
+                for (int i = 0; i < length; i++)
+                {
+                    requests[i] = UnityWebRequest.Get(urls[i]);
+                }
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(requests, overallProgress, progress, (reqs) =>
+                {
+                    var reqLength = reqs.Length;
+                    var texts = new string[reqLength];
+                    for (int i = 0; i < reqLength; i++)
+                    {
+                        texts[i] = reqs[i].downloadHandler.text;
+                    }
+                    downloadedCallback?.Invoke(texts);
+                }));
+            }
+            public static Coroutine DownloadTextureAsync(string url, Action<float> progress, Action<Texture2D> downloadedCallback)
+            {
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(UnityWebRequestTexture.GetTexture(url), progress, (UnityWebRequest req) =>
+                {
+                    Texture2D texture = DownloadHandlerTexture.GetContent(req);
+                    //var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                    downloadedCallback?.Invoke(texture);
+                }));
+            }
+            public static Coroutine DownloadTexturesAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<Texture2D[]> downloadedCallback)
+            {
+                var length = urls.Length;
+                var requests = new UnityWebRequest[length];
+                for (int i = 0; i < length; i++)
+                {
+                    requests[i] = UnityWebRequestTexture.GetTexture(urls[i]);
+                }
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(requests, overallProgress, progress, (reqs) =>
+                {
+                    var reqLength = reqs.Length;
+                    var textures = new Texture2D[reqLength];
+                    for (int i = 0; i < reqLength; i++)
+                    {
+                        textures[i] = DownloadHandlerTexture.GetContent(reqs[i]);
+                    }
+                    downloadedCallback?.Invoke(textures);
+                }));
+            }
+            public static Coroutine DownloadAudioAsync(string url, AudioType audioType, Action<float> progress, Action<AudioClip> downloadedCallback)
+            {
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(UnityWebRequestMultimedia.GetAudioClip(url, audioType), progress, (UnityWebRequest req) =>
+                {
+                    AudioClip clip = DownloadHandlerAudioClip.GetContent(req);
+                    downloadedCallback?.Invoke(clip);
+                }));
+            }
+            public static Coroutine DownloadAudiosAsync(IDictionary<string, AudioType> urlDict, Action<float> overallProgress, Action<float> progress, Action<AudioClip[]> downloadedCallback)
+            {
+                var length = urlDict.Count;
+                var requests = new UnityWebRequest[length];
+                var index = 0;
+                foreach (var url in urlDict)
+                {
+                    requests[index] = UnityWebRequestMultimedia.GetAudioClip(url.Key,url.Value);
+                    index++;
+                }
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(requests, overallProgress, progress, (reqs) =>
+                {
+                    var reqLength = reqs.Length;
+                    var audios= new AudioClip[reqLength];
+                    for (int i = 0; i < reqLength; i++)
+                    {
+                        audios[i] = DownloadHandlerAudioClip.GetContent(reqs[i]);
+                    }
+                    downloadedCallback?.Invoke(audios);
+                }));
+            }
+            static IEnumerator EnumUnityWebRequest(UnityWebRequest unityWebRequest, Action<float> progress, Action<UnityWebRequest> downloadedCallback)
+            {
+                using (UnityWebRequest request = unityWebRequest)
+                {
+                    request.SendWebRequest();
+                    while (!request.isDone)
+                    {
+                        progress?.Invoke(request.downloadProgress);
+                        yield return null;
+                    }
+                    if (!request.isNetworkError && !request.isHttpError)
+                    {
+                        if (request.isDone)
+                        {
+                            progress?.Invoke(1);
+                            downloadedCallback(request);
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"UnityWebRequest：{request.url } : {request.error } ！");
+                    }
+                }
+            }
+            static IEnumerator EnumUnityWebRequest(UnityWebRequest[] unityWebRequests, Action<float> overallProgress, Action<float> progress, Action<UnityWebRequest[]> downloadedCallback)
+            {
+                var length = unityWebRequests.Length;
+                var requestList = new List<UnityWebRequest>();
+                for (int i = 0; i < length; i++)
+                {
+                    overallProgress.Invoke((float)i / (float)length);
+                    yield return EnumUnityWebRequest(unityWebRequests[i], progress, (request) => { requestList.Add(request); });
+                }
+                downloadedCallback.Invoke(requestList.ToArray());
             }
             #endregion
         }

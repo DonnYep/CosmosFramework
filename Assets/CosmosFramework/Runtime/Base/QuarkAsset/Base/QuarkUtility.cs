@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+
 namespace Cosmos.QuarkAsset
 {
     public enum QuarkAssetLoadMode : byte
@@ -103,15 +104,15 @@ namespace Cosmos.QuarkAsset
             var assetType = typeof(T).ToString();
             QuarkAssetObject quarkAssetObject = new QuarkAssetObject();
             var tempObj = lnk.First.Value;
-            if (tempObj.AssetType!=assetType)
+            if (tempObj.AssetType != assetType)
             {
                 foreach (var assetObj in lnk)
                 {
-                    if (assetObj.AssetType==assetType)
+                    if (assetObj.AssetType == assetType)
                     {
                         if (!string.IsNullOrEmpty(assetExtension))
                         {
-                            if (assetObj.AssetExtension==assetExtension)
+                            if (assetObj.AssetExtension == assetExtension)
                             {
                                 quarkAssetObject = assetObj;
                                 break;
@@ -128,7 +129,7 @@ namespace Cosmos.QuarkAsset
             {
                 if (!string.IsNullOrEmpty(assetExtension))
                 {
-                    quarkAssetObject = tempObj.AssetExtension==assetExtension == true ? tempObj : QuarkAssetObject.None;
+                    quarkAssetObject = tempObj.AssetExtension == assetExtension == true ? tempObj : QuarkAssetObject.None;
                 }
                 else
                 {
