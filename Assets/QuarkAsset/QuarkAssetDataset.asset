@@ -13,8 +13,113 @@ MonoBehaviour:
   m_Name: QuarkAssetDataset
   m_EditorClassIdentifier: 
   objectName: NewScriptableObject
-  QuarkAssetCount: 63
+  QuarkAssetCount: 84
   QuarkAssetObjectList:
+  - AssetName: AmbientAudio
+    AssetExtension: .mp3
+    AssetPath: Assets/ABTest/Audio/AmbientAudio.mp3
+    AssetType: UnityEngine.AudioClip
+    AssetGuid: a27b52b9c33b18548ba1a35b3a75750c
+  - AssetName: Audio00
+    AssetExtension: .mp3
+    AssetPath: Assets/ABTest/Audio/Audio00.mp3
+    AssetType: UnityEngine.AudioClip
+    AssetGuid: 6e65d9045b51da0459fe793e287e5d56
+  - AssetName: Audio01
+    AssetExtension: .mp3
+    AssetPath: Assets/ABTest/Audio/Audio01.mp3
+    AssetType: UnityEngine.AudioClip
+    AssetGuid: cc4c42f0294276149bb7baa07b5ec345
+  - AssetName: New Material
+    AssetExtension: .mat
+    AssetPath: Assets/ABTest/Material/New Material.mat
+    AssetType: UnityEngine.Material
+    AssetGuid: d1c6a8b873dfcbb43a4d050b42ddaab9
+  - AssetName: AC
+    AssetExtension: .controller
+    AssetPath: Assets/ABTest/Model/AC.controller
+    AssetType: UnityEditor.Animations.AnimatorController
+    AssetGuid: 3c3efeb272cd9ca4d8e92c9e469f2711
+  - AssetName: Audio Source
+    AssetExtension: .prefab
+    AssetPath: Assets/ABTest/Prefab/Audio Source.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: ff93e58ecc2207d4f870b34b9d6fa0cd
+  - AssetName: Lab
+    AssetExtension: .prefab
+    AssetPath: Assets/ABTest/Prefab/Lab.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 02f86ae0014261a478d59d170da4028c
+  - AssetName: ABTest
+    AssetExtension: .unity
+    AssetPath: Assets/ABTest/Scene/ABTest.unity
+    AssetType: UnityEditor.SceneAsset
+    AssetGuid: d82a2810a7f96234993c2198c43b4464
+  - AssetName: Tex_5195
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5195.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: dec26c9b9866d0243a987189baf6b337
+  - AssetName: Tex_5196
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5196.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 1e34e557915db4a4f8f7a752c9531d8f
+  - AssetName: Tex_5197
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5197.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 6f8e0d25c9e876c4cb70e08cf0e045a6
+  - AssetName: Tex_5199
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5199.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: d28fb4b702176814d9732b67778b108c
+  - AssetName: Tex_5203
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5203.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 2bb1654c86a898c42828b88b4b4c6937
+  - AssetName: Tex_5205
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5205.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: a8a8e36d801f1924ba6938cf94a4c966
+  - AssetName: Tex_5206
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5206.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: da8a4983babec844f8705d4f58f70fd8
+  - AssetName: Tex_5207
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5207.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 268377231c605724ab7d718e346f6494
+  - AssetName: Tex_5208
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5208.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: dc937d9b4ed15c948a0678e27adf0d38
+  - AssetName: Tex_5209
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5209.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 5212c03c6382d5247bcb66c813ef5e19
+  - AssetName: Tex_5210
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5210.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 11810b65a0db1a64ab3637c8b61625ef
+  - AssetName: Tex_5211
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5211.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: ffc631fa0b8b774429731fcb1c533780
+  - AssetName: Tex_5212
+    AssetExtension: .png
+    AssetPath: Assets/ABTest/Texture/Tex_5212.png
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 0c6a7150c5c0ba248bfe339b605eca02
   - AssetName: Alpha_Body_Bule_MAT
     AssetExtension: .mat
     AssetPath: Assets/Examples/ActionPack/YBot/BaseActionPack/Alpha_Body_Bule_MAT.mat

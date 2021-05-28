@@ -226,12 +226,44 @@ namespace Cosmos.CosmosEditor
                     var ext = Path.GetExtension(path);
                     if (ext == ".manifest")
                     {
-                        manifestUrlList.Add(path);
+                        manifestUrlList.Add(path.Replace(".manifest", ""));
                     }
                 });
+                EditorUtilities.IO.DownloadAssetBundlesAsync(manifestUrlList.ToArray(), (percent) =>
+                {
+                    var per = percent * 100;
+                    EditorUtility.DisplayProgressBar("LoadManifest", $"当前进度 ：{per} %", percent);
+                }, null, (bundles) =>
+                {
+                    EditorUtility.ClearProgressBar();
+                    var length = bundles.Length;
+                    EditorUtilities.Debug.LogInfo("Bundle count : " + length);
 
-
-
+                    for (int i = 0; i < length; i++)
+                    {
+                        var bundleName = bundles[i].name;
+                        //EditorUtilities.Debug.LogInfo(bundleName);
+                        if (!string.IsNullOrEmpty(bundleName))
+                        {
+                            EditorUtilities.Debug.LogInfo(bundles[i].name);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                var assetBundleManifest = bundles[i].LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                                if (assetBundleManifest != null)
+                                {
+                                    EditorUtilities.Debug.LogInfo(assetBundleManifest.GetAssetBundleHash("AssetBundleManifest"));
+                                }
+                            }
+                            catch (System.Exception e)
+                            {
+                                EditorUtilities.Debug.LogError(e);
+                            }
+                        }
+                    }
+                });
             }
         }
         void WriteBuildInfo()
@@ -244,7 +276,7 @@ namespace Cosmos.CosmosEditor
         void SetAssetBundleName(string path)
         {
             string name = string.Empty;
-            name = Utility.Text.Replace(path, new string[] { "\\", "/", "." }, "_");
+            name = Utility.Text.Replace(path, new string[] { "\\", "/", "." ," "}, "_");
             string abName = string.Empty;
             switch (assetBundleTabData.NameHashType)
             {

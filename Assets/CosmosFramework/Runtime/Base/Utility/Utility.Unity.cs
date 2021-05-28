@@ -704,10 +704,11 @@ namespace Cosmos
             static IEnumerator EnumUnityWebRequest(UnityWebRequest[] unityWebRequests, Action<float> overallProgress, Action<float> progress, Action<UnityWebRequest[]> downloadedCallback)
             {
                 var length = unityWebRequests.Length;
+                var count = length - 1;
                 var requestList = new List<UnityWebRequest>();
                 for (int i = 0; i < length; i++)
                 {
-                    overallProgress.Invoke((float)i / (float)length);
+                    overallProgress?.Invoke((float)i / (float)count);
                     yield return EnumUnityWebRequest(unityWebRequests[i], progress, (request) => { requestList.Add(request); });
                 }
                 downloadedCallback.Invoke(requestList.ToArray());

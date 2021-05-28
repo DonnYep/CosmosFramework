@@ -71,7 +71,7 @@ namespace Cosmos.CosmosEditor
             }
             public static EditorCoroutine DownloadAssetBundleAsync(string url, Action<float> progress, Action<AssetBundle> downloadedCallback)
             {
-                return EditorUtilities.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequest.Get(url), progress, (UnityWebRequest req) =>
+                return EditorUtilities.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequestAssetBundle.GetAssetBundle(url), progress, (UnityWebRequest req) =>
                 {
                     AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(req);
                     if (bundle)
@@ -87,10 +87,11 @@ namespace Cosmos.CosmosEditor
             static IEnumerator EnumUnityWebRequest(string[] urls, Action<float> overallProgress, Action<float> progress, Action<AssetBundle[]> downloadedCallback)
             {
                 var length = urls.Length;
+                var count = length - 1;
                 var assetBundleList = new List<AssetBundle>();
                 for (int i = 0; i < length; i++)
                 {
-                    overallProgress.Invoke((float)i / (float)length);
+                    overallProgress?.Invoke((float)i / (float)count);
                     yield return DownloadAssetBundleAsync(urls[i], progress, (request) => { assetBundleList.Add(request); });
                 }
                 downloadedCallback.Invoke(assetBundleList.ToArray());
