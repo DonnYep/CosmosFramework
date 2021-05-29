@@ -11,6 +11,10 @@ namespace Cosmos.QuarkAsset
     [Serializable]
     public class QuarkAssetDataset : DatasetBase
     {
+        /// <summary>
+        /// 包含的路径；
+        /// </summary>
+        public List<string> IncludeDirectories;
         public int QuarkAssetCount;
         public List<QuarkAssetObject> QuarkAssetObjectList;
         public override void Dispose()

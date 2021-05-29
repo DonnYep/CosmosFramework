@@ -69,6 +69,27 @@ namespace Cosmos.CosmosEditor
                     }
                 }
             }
+            /// <summary>
+            /// 获取所有Asset目录下，除文件夹、CS脚本以外的资源路径；
+            /// </summary>
+            /// <returns></returns>
+            public static string[] GetAllBundleableFilePath()
+            {
+                var paths = AssetDatabase.GetAllAssetPaths();
+                List<string> pathList = new List<string>();
+                foreach (var path in paths)
+                {
+                    if (!AssetDatabase.IsValidFolder(path))
+                    {
+                        var file = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
+                        if (!(file is MonoScript))
+                        {
+                            pathList.Add(path);
+                        }
+                    }
+                }
+                return pathList.ToArray();
+            }
             public static EditorCoroutine DownloadAssetBundleAsync(string url, Action<float> progress, Action<AssetBundle> downloadedCallback)
             {
                 return EditorUtilities.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequestAssetBundle.GetAssetBundle(url), progress, (UnityWebRequest req) =>

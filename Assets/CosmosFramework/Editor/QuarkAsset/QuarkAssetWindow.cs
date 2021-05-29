@@ -46,8 +46,6 @@ namespace Cosmos.CosmosEditor
             {
                 WindowTabData = new WindowTabData();
             }
-            if (WindowTabData.IncludeDirectories == null)
-                WindowTabData.IncludeDirectories = new List<string>();
             assetDatabaseTab.OnEnable();
             assetBundleTab.OnEnable();
         }

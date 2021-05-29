@@ -18,6 +18,13 @@ namespace Cosmos.CosmosEditor
                 else
                     UnityEngine.Debug.Log($"<b><color={MessageColor.CYAN}>{"[EDITOR-INFO]-->>"}</color></b>{msg}", context as Object);
             }
+            public static void LogInfo(object msg, string msgColor, object context = null)
+            {
+                if (context == null)
+                    UnityEngine.Debug.Log($"<b><color={msgColor }>{"[EDITOR-INFO]-->>"}</color></b>{msg}");
+                else
+                    UnityEngine.Debug.Log($"<b><color={msgColor }>{"[EDITOR-INFO]-->>"}</color></b>{msg}", context as Object);
+            }
             public static void LogWarning(object msg, object context = null)
             {
                 if (context == null)

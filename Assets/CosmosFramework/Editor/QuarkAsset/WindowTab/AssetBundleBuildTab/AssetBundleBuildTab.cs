@@ -14,8 +14,13 @@ namespace Cosmos.CosmosEditor
         const string AssetBundleTabDataFileName = "AssetBundleTabData.json";
         string streamingPath = "Assets/StreamingAssets";
         const string quarkABBuildInfo = "BuildInfo.json";
+        const string quarkManifest = "Manifest.json";
         Dictionary<string, AssetImporter> importerCacheDict = new Dictionary<string, AssetImporter>();
         QuarkAssetABBuildInfo abBuildInfo = new QuarkAssetABBuildInfo();
+        QuarkAssetManifest quarkAssetManifest = new QuarkAssetManifest();
+        Dictionary<string, string> buildInfoCache = new Dictionary<string, string>();
+        QuarkAssetDataset QuarkAssetDataset { get { return QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance; } }
+
         public void Clear()
         {
         }
@@ -123,12 +128,10 @@ namespace Cosmos.CosmosEditor
             SetBuildInfo();
             BuildPipeline.BuildAssetBundles(GetBuildFolder(), assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
             OperateManifest();
-            WriteBuildInfo();
-            ResetBuildInfo();
         }
         void SetBuildInfo()
         {
-            EditorUtilities.Debug.LogInfo("开始打包");
+            EditorUtilities.Debug.LogInfo("Start build asset bundle");
             if (assetBundleTabData.ClearFolders)
             {
                 var path = Utility.IO.Combine(EditorUtilities.ApplicationPath(), assetBundleTabData.OutputPath);
@@ -149,38 +152,32 @@ namespace Cosmos.CosmosEditor
             }
             else
             {
-                var includeDirectroies = QuarkAssetWindow.WindowTabData.IncludeDirectories;
-                foreach (var dir in includeDirectroies)
-                {
-                    SetAssetBundleName(dir);
-                }
-                AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-                foreach (var map in abBuildInfo.AssetDataMaps)
-                {
-                    map.Value.DependList = AssetDatabase.GetAssetBundleDependencies(map.Value.ABName, true).ToList();
-                }
+                var dirs = QuarkAssetDataset.IncludeDirectories;
+                TraverseTargetDirectories(dirs.ToArray());
             }
         }
         IEnumerator EnumBuild()
         {
-            EditorUtilities.IO.TraverseAllFolderFile((file) =>
+            var dirs = EditorUtilities.IO.GetAllBundleableFilePath();
+            TraverseTargetDirectories(dirs);
+            yield return null;
+        }
+        void TraverseTargetDirectories(string[] dirs)
+        {
+            foreach (var dir in dirs)
             {
-                if (!(file is MonoScript))
-                {
-                    var dir = AssetDatabase.GetAssetPath(file);
-                    SetAssetBundleName(dir);
-                }
-            });
+                SetAssetBundleName(dir);
+            }
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
             foreach (var map in abBuildInfo.AssetDataMaps)
             {
                 map.Value.DependList = AssetDatabase.GetAssetBundleDependencies(map.Value.ABName, true).ToList();
+                buildInfoCache.TryAdd(map.Value.ABName, map.Key);
             }
-            yield return null;
         }
         void ResetBuildInfo()
         {
-            EditorUtilities.Debug.LogInfo("打包完成");
+            EditorUtilities.Debug.LogInfo("Asset bundle built done");
             foreach (var imp in importerCacheDict)
             {
                 imp.Value.assetBundleName = null; ;
@@ -205,66 +202,112 @@ namespace Cosmos.CosmosEditor
         }
         void OperateManifest()
         {
-            if (assetBundleTabData.WithoutManifest)
+            var buildPath = GetBuildPath();
+            var url = Utility.Unity.CombinePath(buildPath, assetBundleTabData.BuildTarget.ToString());
+            EditorUtilities.IO.DownloadAssetBundleAsync(url, (percent) =>
             {
-                var buildPath = GetBuildPath();
-                Utility.IO.TraverseFolderFilePath(buildPath, (path) =>
-                {
-                    var ext = Path.GetExtension(path);
-                    if (ext == ".manifest")
-                    {
-                        File.Delete(path);
-                    }
-                });
-            }
-            else
+                var per = percent * 100;
+                EditorUtility.DisplayProgressBar("LoadManifest", $"当前进度 ：{per} %", percent);
+            }, (mainBundle) =>
             {
-                var buildPath = GetBuildPath();
-                var manifestUrlList = new List<string>();
-                Utility.IO.TraverseFolderFilePath(buildPath, (path) =>
+                EditorUtility.ClearProgressBar();
+                var manifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                var abNames = manifest.GetAllAssetBundles();
+                Utility.Assert.Traverse(abNames, (ab) =>
                 {
-                    var ext = Path.GetExtension(path);
-                    if (ext == ".manifest")
+                    var hash = manifest.GetAssetBundleHash(ab);
+                    foreach (var adm in abBuildInfo.AssetDataMaps)
                     {
-                        manifestUrlList.Add(path.Replace(".manifest", ""));
-                    }
-                });
-                EditorUtilities.IO.DownloadAssetBundlesAsync(manifestUrlList.ToArray(), (percent) =>
-                {
-                    var per = percent * 100;
-                    EditorUtility.DisplayProgressBar("LoadManifest", $"当前进度 ：{per} %", percent);
-                }, null, (bundles) =>
-                {
-                    EditorUtility.ClearProgressBar();
-                    var length = bundles.Length;
-                    EditorUtilities.Debug.LogInfo("Bundle count : " + length);
-
-                    for (int i = 0; i < length; i++)
-                    {
-                        var bundleName = bundles[i].name;
-                        //EditorUtilities.Debug.LogInfo(bundleName);
-                        if (!string.IsNullOrEmpty(bundleName))
+                        if (adm.Value.ABName == ab)
                         {
-                            EditorUtilities.Debug.LogInfo(bundles[i].name);
+                            adm.Value.ABHash = hash.ToString();
                         }
-                        else
+                    }
+                });
+                SetManifestInfo(abNames);
+                switch (assetBundleTabData.NameHashType)
+                {
+                    case AssetBundleHashType.AppendHash:
                         {
-                            try
+                            var m_buildPath = GetBuildPath();
+                            Utility.IO.TraverseFolderFilePath(m_buildPath, (path) =>
                             {
-                                var assetBundleManifest = bundles[i].LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                                if (assetBundleManifest != null)
+                                var fileName = Path.GetFileName(path);
+                                var fileDir = Path.GetDirectoryName(path);
+                                EditorUtilities.Debug.LogInfo(fileDir);
+                                if (!fileName.Contains(".manifest"))
                                 {
-                                    EditorUtilities.Debug.LogInfo(assetBundleManifest.GetAssetBundleHash("AssetBundleManifest"));
+                                    if (buildInfoCache.TryGetValue(fileName, out var abKey))
+                                    {
+                                        abBuildInfo.AssetDataMaps.TryGetValue(abKey, out var ad);
+                                        var newFileName = fileName + "_" + ad.ABHash;
+                                        Utility.IO.RenameFile(path, newFileName);
+                                    }
                                 }
-                            }
-                            catch (System.Exception e)
-                            {
-                                EditorUtilities.Debug.LogError(e);
-                            }
+                            });
                         }
-                    }
-                });
+                        break;
+                    case AssetBundleHashType.HashInstead:
+                        {
+                            var m_buildPath = GetBuildPath();
+                            Utility.IO.TraverseFolderFilePath(m_buildPath, (path) =>
+                            {
+                                var fileName = Path.GetFileName(path);
+                                var fileDir = Path.GetDirectoryName(path);
+                                if (!fileName.Contains(".manifest"))
+                                {
+                                    if (buildInfoCache.TryGetValue(fileName, out var abKey))
+                                    {
+                                        abBuildInfo.AssetDataMaps.TryGetValue(abKey, out var ad);
+                                        var newFileName = ad.ABHash;
+                                        Utility.IO.RenameFile(path, newFileName);
+                                    }
+                                }
+                            });
+                        }
+                        break;
+                }
+                if (assetBundleTabData.WithoutManifest)
+                {
+                    var abBuildPath = GetBuildPath();
+                    Utility.IO.TraverseFolderFilePath(abBuildPath, (path) =>
+                    {
+                        var ext = Path.GetExtension(path);
+                        if (ext == ".manifest")
+                        {
+                            File.Delete(path);
+                        }
+                    });
+                }
+                WriteBuildInfo();
+                ResetBuildInfo();
+            });
+        }
+        void SetManifestInfo(string[] abNames)
+        {
+            var urls = new string[abNames.Length];
+            var length = urls.Length;
+            for (int i = 0; i < length; i++)
+            {
+                urls[i]= Utility.Unity.CombinePath(GetBuildPath(),abNames[i]);
             }
+            EditorUtilities.IO.DownloadAssetBundlesAsync(urls, percent =>
+            {
+                EditorUtility.DisplayProgressBar("AssetBundleLoading", $"{percent * 100} %", percent);
+            }, null, bundles => 
+            {
+                EditorUtility.ClearProgressBar();
+                foreach (var bundle in bundles)
+                {
+                    EditorUtilities.Debug.LogInfo(bundle.name, MessageColor.YELLOW);
+                    var allAssets = bundle.GetAllAssetNames();
+                    for (int i = 0; i < allAssets.Length; i++)
+                    {
+                        EditorUtilities.Debug.LogInfo(allAssets[i], MessageColor.GREEN);
+                    }
+                }
+            });
+
         }
         void WriteBuildInfo()
         {
@@ -272,36 +315,12 @@ namespace Cosmos.CosmosEditor
             var fullPath = Utility.IO.Combine(GetBuildPath(), quarkABBuildInfo);
             Utility.IO.WriteTextFile(fullPath, json, false);
             abBuildInfo.Dispose();
+            buildInfoCache.Clear();
         }
         void SetAssetBundleName(string path)
         {
-            string name = string.Empty;
-            name = Utility.Text.Replace(path, new string[] { "\\", "/", "." ," "}, "_");
             string abName = string.Empty;
-            switch (assetBundleTabData.NameHashType)
-            {
-                case AssetBundleHashType.DefaultName:
-                    {
-                        abName = name.ToLower();
-                    }
-                    break;
-                case AssetBundleHashType.AppendHash:
-                    {
-                        var hash = AssetDatabase.AssetPathToGUID(path);
-                        abName = Utility.Text.Combine(name.ToLower(), "_", hash);
-                    }
-                    break;
-                case AssetBundleHashType.HashInstead:
-                    {
-                        var hash = AssetDatabase.AssetPathToGUID(path);
-                        abName = hash;
-                    }
-                    break;
-            }
-            SetAssetImporter(path, abName);
-        }
-        AssetImporter SetAssetImporter(string path, string abName)
-        {
+            abName = Utility.Text.Replace(path, new string[] { "\\", "/", ".", " " }, "_").ToLower();
             AssetImporter importer = null;
             if (!importerCacheDict.TryGetValue(path, out importer))
             {
@@ -316,14 +335,12 @@ namespace Cosmos.CosmosEditor
                     assetData = new QuarkAssetABBuildInfo.AssetData()
                     {
                         DependList = AssetDatabase.GetAssetBundleDependencies(abName, true).ToList(),
-                        //Hash = AssetDatabase.AssetPathToGUID(importer.assetPath),
                         Id = abBuildInfo.AssetDataMaps.Count,
                         ABName = abName,
                     };
                     abBuildInfo.AssetDataMaps[importer.assetPath] = assetData;
                 }
             }
-            return importer;
         }
     }
 }

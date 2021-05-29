@@ -19,7 +19,7 @@ namespace Cosmos.Test
         {
             if (GUILayout.Button("CaptureScreenshot",GUILayout.Width(256),GUILayout.Height(64)))
             {
-                Utility.Unity.CaptureScreen2PersistentDataPath( "YBot_LM_Local.png");
+                Utility.Unity.CaptureScreenshot2PersistentDataPath( "YBot_LM_Local.png");
             }
             if (GUILayout.Button("OpenCaptureFolder", GUILayout.Width(256), GUILayout.Height(64)))
             {

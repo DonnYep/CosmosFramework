@@ -18,9 +18,9 @@ namespace Cosmos.CosmosEditor
         public bool UseDefaultPath=true;
         public bool ClearFolders;
         public bool CopyToStreamingAssets;
-        public bool WithoutManifest=true;
+        public bool WithoutManifest;
         public AssetBundleHashType  NameHashType;
-        public string EncryptionKey="QuarkAsset";
+        public string EncryptionKey= "AssetBundle";
         public BuildAssetBundleOptions BuildAssetBundleOptions= BuildAssetBundleOptions.ChunkBasedCompression;
     }
 }

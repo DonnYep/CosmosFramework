@@ -193,6 +193,25 @@ namespace Cosmos
                 }
             }
             /// <summary>
+            /// 重命名文件；
+            /// 第一个参数需要：盘符+地址+文件名+后缀；
+            /// 第二个参数仅需文件名+后缀名；
+            /// </summary>
+            /// <param name="oldFileFullPath">旧文件的完整路径，需要带后缀名</param>
+            /// <param name="newFileNamewithExtension">新的文件名，仅需文件名+后缀名</param>
+            public static void RenameFile(string oldFileFullPath,string newFileNamewithExtension)
+            {
+                if (!File.Exists(oldFileFullPath))
+                {
+                    using (FileStream fs = File.Create(oldFileFullPath)) { }
+                }
+                if (File.Exists(newFileNamewithExtension))
+                    File.Delete(newFileNamewithExtension);
+                var dirPath = Path.GetDirectoryName(oldFileFullPath);
+                var newFileName = Path.Combine(dirPath, newFileNamewithExtension);
+                File.Move(oldFileFullPath, newFileName);
+            }
+            /// <summary>
             /// 读取指定路径下某text类型文件的内容
             /// </summary>
             /// <param name="fullFilePath">文件的完整路径，包含文件名与扩展名</param>

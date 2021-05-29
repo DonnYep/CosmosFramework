@@ -37,7 +37,7 @@ namespace Cosmos
             /// PlayerPrefs持久化前缀
             /// </summary>
             public const string Perfix = "Cosmos";
-            public static readonly string PathURL =
+            public static readonly string StreamingAssetsPathURL =
 #if UNITY_ANDROID
         "jar:file://" + Application.dataPath + "!/assets/";
 #elif UNITY_IPHONE
@@ -47,18 +47,11 @@ namespace Cosmos
 #else
         string.Empty;  
 #endif
-            public static int Random(int min, int max)
-            {
-                return UnityEngine.Random.Range(min, max);
-            }
-            public static float Random(float min, float max)
-            {
-                return UnityEngine.Random.Range(min, max);
-            }
-
+            public static bool IsWifi { get { return Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork; } }
+            public static bool NetAvailable { get { return Application.internetReachability != NetworkReachability.NotReachable; } }
             /// <summary>
             /// 合并路径；
-            /// 获得的路径一致为/作为分割符；
+            /// 获得的路径将以 / 作为分割符；
             /// </summary>
             /// <param name="paths">路径</param>
             /// <returns>合并的路径</returns>
@@ -67,6 +60,14 @@ namespace Cosmos
                 var pathResult = Path.Combine(paths);
                 pathResult = pathResult.Replace("\\", "/");
                 return pathResult;
+            }
+            public static int Random(int min, int max)
+            {
+                return UnityEngine.Random.Range(min, max);
+            }
+            public static float Random(float min, float max)
+            {
+                return UnityEngine.Random.Range(min, max);
             }
             /// <summary>
             /// 是否约等于另一个浮点数
@@ -382,72 +383,6 @@ namespace Cosmos
                 return Parent(go.transform, parentNode);
             }
             /// <summary>
-            /// PlayerPrefs 是否存在key，否则报错显示信息
-            /// </summary>
-            /// <param name="key"></param>
-            /// <returns></returns>
-            public static bool HasPrefsKey(string key)
-            {
-                if (PlayerPrefs.HasKey(GetPrefsKey(key)))
-                    return true;
-                else
-                {
-                    Debug.LogError("PlayerPrefs key " + key + "  not exist!");
-                    return false;
-                }
-            }
-            /// <summary>
-            /// PlayerPrefs key
-            /// </summary>
-            /// <param name="key"></param>
-            /// <returns></returns>
-            public static string GetPrefsKey(string key)
-            {
-                Utility.Text.ClearStringBuilder();
-                return Utility.Text.Format(Perfix + "_" + key);
-            }
-            public static int GetPrefsInt(string key)
-            {
-                return PlayerPrefs.GetInt(GetPrefsKey(key));
-            }
-            public static string GetPrefsString(string key)
-            {
-                return PlayerPrefs.GetString(GetPrefsKey(key));
-            }
-            public static float GetPrefsFloat(string key)
-            {
-                return PlayerPrefs.GetFloat(GetPrefsKey(key));
-            }
-            public static void SetPrefsString(string key, string value)
-            {
-                string fullKey = GetPrefsKey(key);
-                PlayerPrefs.DeleteKey(fullKey);
-                PlayerPrefs.SetString(fullKey, value);
-            }
-            public static void SetPrefsInt(string key, int value)
-            {
-                string fullKey = GetPrefsKey(key);
-                PlayerPrefs.DeleteKey(fullKey);
-                PlayerPrefs.SetInt(fullKey, value);
-            }
-            public static void SetPrefsFloat(string key, int value)
-            {
-                string fullKey = GetPrefsKey(key);
-                PlayerPrefs.DeleteKey(fullKey);
-                PlayerPrefs.SetFloat(fullKey, value);
-            }
-            public static void RemovePrefsData(string key)
-            {
-                string fullKey = GetPrefsKey(key);
-                PlayerPrefs.DeleteKey(fullKey);
-            }
-            public static void RemoveAllPrefsData()
-            {
-                PlayerPrefs.DeleteAll();
-            }
-            public static bool IsWifi { get { return Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork; } }
-            public static bool NetAvailable { get { return Application.internetReachability != NetworkReachability.NotReachable; } }
-            /// <summary>
             /// 判断是否是路径；
             /// 需要注意根目录下的文件可能不带/或\符号！
             /// </summary>
@@ -457,11 +392,13 @@ namespace Cosmos
             {
                 return path.Contains("\\") || path.Contains("/");
             }
+
+            #region CaptureScreenshot
             /// <summary>
             /// 保存截屏到持久化路径；
             /// </summary>
             /// <param name="fileName">文件名，需要包含后缀</param>
-            public static void CaptureScreen2PersistentDataPath(string fileName)
+            public static void CaptureScreenshot2PersistentDataPath(string fileName)
             {
                 var fullPath = Path.Combine(Application.persistentDataPath, fileName);
                 ScreenCapture.CaptureScreenshot(fullPath);
@@ -471,7 +408,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="filePath">文件路径</param>
             /// <param name="fileName">文件名，需要包含后缀</param>
-            public static void CaptureScreen(string filePath, string fileName)
+            public static void CaptureScreenShot(string filePath, string fileName)
             {
                 var fullPath = Path.Combine(filePath, fileName);
                 ScreenCapture.CaptureScreenshot(fullPath);
@@ -531,6 +468,7 @@ namespace Cosmos
                 var sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), Vector2.zero);
                 return sprite;
             }
+            #endregion
 
             #region  Coroutine
             public static Coroutine StartCoroutine(Coroutine routine, Action callBack)
