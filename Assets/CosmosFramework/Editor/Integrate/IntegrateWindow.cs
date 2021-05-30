@@ -29,8 +29,8 @@ namespace Cosmos.CosmosEditor
         public static void OpenIntegrateWindow()
         {
             var window = GetWindow<IntegrateWindow>();
-            ((EditorWindow)window).maxSize = EditorUtilities.CosmosMaxWinSize;
-            ((EditorWindow)window).minSize = EditorUtilities.CosmosDevWinSize;
+            ((EditorWindow)window).maxSize = EditorUtil.CosmosMaxWinSize;
+            ((EditorWindow)window).minSize = EditorUtil.CosmosDevWinSize;
         }
         private void OnEnable()
         {

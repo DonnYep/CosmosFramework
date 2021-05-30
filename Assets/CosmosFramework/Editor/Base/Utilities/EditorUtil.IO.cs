@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Cosmos.CosmosEditor
 {
-    public static partial class EditorUtilities
+    public static partial class EditorUtil
     {
         public static class IO
         {
@@ -92,7 +92,7 @@ namespace Cosmos.CosmosEditor
             }
             public static EditorCoroutine DownloadAssetBundleAsync(string url, Action<float> progress, Action<AssetBundle> downloadedCallback)
             {
-                return EditorUtilities.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequestAssetBundle.GetAssetBundle(url), progress, (UnityWebRequest req) =>
+                return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequestAssetBundle.GetAssetBundle(url), progress, (UnityWebRequest req) =>
                 {
                     AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(req);
                     if (bundle)
@@ -103,7 +103,7 @@ namespace Cosmos.CosmosEditor
             }
             public static EditorCoroutine DownloadAssetBundlesAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<AssetBundle[]> downloadedCallback)
             {
-                return EditorUtilities.Coroutine.StartCoroutine(EnumUnityWebRequest(urls, overallProgress, progress, downloadedCallback));
+                return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequest(urls, overallProgress, progress, downloadedCallback));
             }
             static IEnumerator EnumUnityWebRequest(string[] urls, Action<float> overallProgress, Action<float> progress, Action<AssetBundle[]> downloadedCallback)
             {

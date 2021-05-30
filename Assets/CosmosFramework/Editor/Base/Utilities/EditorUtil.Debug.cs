@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace Cosmos.CosmosEditor
 {
-    public static partial class EditorUtilities
+    public static partial class EditorUtil
     {
         public static class Debug
         {

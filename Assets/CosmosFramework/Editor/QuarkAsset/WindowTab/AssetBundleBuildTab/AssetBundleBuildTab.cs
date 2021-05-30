@@ -26,18 +26,18 @@ namespace Cosmos.CosmosEditor
         }
         public void OnDisable()
         {
-            EditorUtilities.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
+            EditorUtil.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
         }
         public void OnEnable()
         {
             try
             {
-                assetBundleTabData = EditorUtilities.GetData<AssetBundleBuildTabData>(AssetBundleTabDataFileName);
+                assetBundleTabData = EditorUtil.GetData<AssetBundleBuildTabData>(AssetBundleTabDataFileName);
             }
             catch
             {
                 assetBundleTabData = new AssetBundleBuildTabData();
-                EditorUtilities.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
+                EditorUtil.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
             }
         }
         public void OnGUI()
@@ -48,7 +48,7 @@ namespace Cosmos.CosmosEditor
         {
             assetBundleTabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", assetBundleTabData.BuildTarget);
             assetBundleTabData.OutputPath = EditorGUILayout.TextField("OutputPath", assetBundleTabData.OutputPath);
-            EditorUtilities.DrawHorizontalContext(() =>
+            EditorUtil.DrawHorizontalContext(() =>
             {
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button("Browse", GUILayout.MaxWidth(92f)))
@@ -65,7 +65,7 @@ namespace Cosmos.CosmosEditor
                 }
             });
             GUILayout.Space(16);
-            EditorUtilities.DrawVerticalContext(() =>
+            EditorUtil.DrawVerticalContext(() =>
             {
                 assetBundleTabData.ClearFolders = EditorGUILayout.ToggleLeft("ClearFolders", assetBundleTabData.ClearFolders);
                 assetBundleTabData.CopyToStreamingAssets = EditorGUILayout.ToggleLeft("CopyToStreamingAssets", assetBundleTabData.CopyToStreamingAssets);
@@ -77,7 +77,7 @@ namespace Cosmos.CosmosEditor
             assetBundleTabData.NameHashType = (AssetBundleHashType)EditorGUILayout.EnumPopup("NameHashType", assetBundleTabData.NameHashType);
             GUILayout.Space(16);
 
-            EditorUtilities.DrawHorizontalContext(() =>
+            EditorUtil.DrawHorizontalContext(() =>
             {
                 if (GUILayout.Button("Build"))
                 {
@@ -86,7 +86,7 @@ namespace Cosmos.CosmosEditor
                 if (GUILayout.Button("Reset"))
                 {
                     assetBundleTabData = new AssetBundleBuildTabData();
-                    EditorUtilities.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
+                    EditorUtil.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
                 }
             });
         }
@@ -96,7 +96,7 @@ namespace Cosmos.CosmosEditor
             var newPath = EditorUtility.OpenFolderPanel("Bundle Folder", assetBundleTabData.OutputPath, string.Empty);
             if (!string.IsNullOrEmpty(newPath))
             {
-                var gamePath = EditorUtilities.ApplicationPath();
+                var gamePath = EditorUtil.ApplicationPath();
                 gamePath = gamePath.Replace("\\", "/");
                 if (newPath.StartsWith(gamePath) && newPath.Length > gamePath.Length)
                     newPath = newPath.Remove(0, gamePath.Length + 1);
@@ -111,7 +111,7 @@ namespace Cosmos.CosmosEditor
         }
         string GetBuildFolder()
         {
-            var path = Utility.IO.Combine(EditorUtilities.ApplicationPath(), assetBundleTabData.OutputPath);
+            var path = Utility.IO.Combine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -120,7 +120,7 @@ namespace Cosmos.CosmosEditor
         }
         string GetBuildPath()
         {
-            var path = Utility.IO.Combine(EditorUtilities.ApplicationPath(), assetBundleTabData.OutputPath);
+            var path = Utility.IO.Combine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
             return path;
         }
         void BuildAssetBundle()
@@ -131,11 +131,11 @@ namespace Cosmos.CosmosEditor
         }
         void SetBuildInfo()
         {
-            EditorUtilities.Debug.LogInfo("Start build asset bundle");
+            EditorUtil.Debug.LogInfo("Start build asset bundle");
             if (assetBundleTabData.ClearFolders)
             {
-                var path = Utility.IO.Combine(EditorUtilities.ApplicationPath(), assetBundleTabData.OutputPath);
-                var streamPath = Utility.IO.Combine(EditorUtilities.ApplicationPath(), streamingPath);
+                var path = Utility.IO.Combine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
+                var streamPath = Utility.IO.Combine(EditorUtil.ApplicationPath(), streamingPath);
                 if (Directory.Exists(path))
                 {
                     Utility.IO.DeleteFolder(path);
@@ -148,7 +148,7 @@ namespace Cosmos.CosmosEditor
             }
             if (QuarkAssetWindow.WindowTabData.UnderAssetsDirectory)
             {
-                EditorUtilities.Coroutine.StartCoroutine(EnumBuild());
+                EditorUtil.Coroutine.StartCoroutine(EnumBuild());
             }
             else
             {
@@ -158,7 +158,7 @@ namespace Cosmos.CosmosEditor
         }
         IEnumerator EnumBuild()
         {
-            var dirs = EditorUtilities.IO.GetAllBundleableFilePath();
+            var dirs = EditorUtil.IO.GetAllBundleableFilePath();
             TraverseTargetDirectories(dirs);
             yield return null;
         }
@@ -177,7 +177,7 @@ namespace Cosmos.CosmosEditor
         }
         void ResetBuildInfo()
         {
-            EditorUtilities.Debug.LogInfo("Asset bundle built done");
+            EditorUtil.Debug.LogInfo("Asset bundle built done");
             foreach (var imp in importerCacheDict)
             {
                 imp.Value.assetBundleName = null; ;
@@ -186,7 +186,7 @@ namespace Cosmos.CosmosEditor
 
             if (assetBundleTabData.CopyToStreamingAssets)
             {
-                var buildPath = Utility.IO.Combine(EditorUtilities.ApplicationPath(), assetBundleTabData.OutputPath);
+                var buildPath = Utility.IO.Combine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
                 if (Directory.Exists(buildPath))
                 {
                     if (!AssetDatabase.IsValidFolder(streamingPath))
@@ -204,7 +204,7 @@ namespace Cosmos.CosmosEditor
         {
             var buildPath = GetBuildPath();
             var url = Utility.Unity.CombinePath(buildPath, assetBundleTabData.BuildTarget.ToString());
-            EditorUtilities.IO.DownloadAssetBundleAsync(url, (percent) =>
+            EditorUtil.IO.DownloadAssetBundleAsync(url, (percent) =>
             {
                 var per = percent * 100;
                 EditorUtility.DisplayProgressBar("LoadManifest", $"当前进度 ：{per} %", percent);
@@ -234,7 +234,7 @@ namespace Cosmos.CosmosEditor
                             {
                                 var fileName = Path.GetFileName(path);
                                 var fileDir = Path.GetDirectoryName(path);
-                                EditorUtilities.Debug.LogInfo(fileDir);
+                                EditorUtil.Debug.LogInfo(fileDir);
                                 if (!fileName.Contains(".manifest"))
                                 {
                                     if (buildInfoCache.TryGetValue(fileName, out var abKey))
@@ -291,7 +291,7 @@ namespace Cosmos.CosmosEditor
             {
                 urls[i]= Utility.Unity.CombinePath(GetBuildPath(),abNames[i]);
             }
-            EditorUtilities.IO.DownloadAssetBundlesAsync(urls, percent =>
+            EditorUtil.IO.DownloadAssetBundlesAsync(urls, percent =>
             {
                 EditorUtility.DisplayProgressBar("AssetBundleLoading", $"{percent * 100} %", percent);
             }, null, bundles => 
@@ -299,11 +299,11 @@ namespace Cosmos.CosmosEditor
                 EditorUtility.ClearProgressBar();
                 foreach (var bundle in bundles)
                 {
-                    EditorUtilities.Debug.LogInfo(bundle.name, MessageColor.YELLOW);
+                    EditorUtil.Debug.LogInfo(bundle.name, MessageColor.YELLOW);
                     var allAssets = bundle.GetAllAssetNames();
                     for (int i = 0; i < allAssets.Length; i++)
                     {
-                        EditorUtilities.Debug.LogInfo(allAssets[i], MessageColor.GREEN);
+                        EditorUtil.Debug.LogInfo(allAssets[i], MessageColor.GREEN);
                     }
                 }
             });
@@ -311,7 +311,7 @@ namespace Cosmos.CosmosEditor
         }
         void WriteBuildInfo()
         {
-            var json = EditorUtilities.Json.ToJson(abBuildInfo, true);
+            var json = EditorUtil.Json.ToJson(abBuildInfo, true);
             var fullPath = Utility.IO.Combine(GetBuildPath(), quarkABBuildInfo);
             Utility.IO.WriteTextFile(fullPath, json, false);
             abBuildInfo.Dispose();
@@ -328,7 +328,7 @@ namespace Cosmos.CosmosEditor
                 importerCacheDict[path] = importer;
                 importer.assetBundleName = abName;
                 if (importer == null)
-                    EditorUtilities.Debug.LogError("AssetImporter is empty : " + path);
+                    EditorUtil.Debug.LogError("AssetImporter is empty : " + path);
                 else
                 if (!abBuildInfo.AssetDataMaps.TryGetValue(importer.assetPath, out var assetData))
                 {

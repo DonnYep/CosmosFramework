@@ -28,8 +28,8 @@ namespace Cosmos.CosmosEditor
         public static void OpenWindow()
         {
             var window = GetWindow<QuarkAssetWindow>();
-            ((EditorWindow)window).maxSize = EditorUtilities.CosmosMaxWinSize;
-            ((EditorWindow)window).minSize = EditorUtilities.CosmosDevWinSize;
+            ((EditorWindow)window).maxSize = EditorUtil.CosmosMaxWinSize;
+            ((EditorWindow)window).minSize = EditorUtil.CosmosDevWinSize;
         }
         [InitializeOnLoadMethod]
         static void InitData()
@@ -40,7 +40,7 @@ namespace Cosmos.CosmosEditor
         {
             try
             {
-                WindowTabData = EditorUtilities.GetData<WindowTabData>(QuarkAssetWindowTabDataFileName);
+                WindowTabData = EditorUtil.GetData<WindowTabData>(QuarkAssetWindowTabDataFileName);
             }
             catch
             {
@@ -53,7 +53,8 @@ namespace Cosmos.CosmosEditor
         {
             assetDatabaseTab.OnDisable();
             assetBundleTab.OnDisable();
-            EditorUtilities.SaveData(QuarkAssetWindowTabDataFileName, WindowTabData);
+            EditorUtil.SaveData(QuarkAssetWindowTabDataFileName, WindowTabData);
+            EditorUtility.SetDirty(QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance);
         }
         private void OnGUI()
         {

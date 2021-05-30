@@ -10,7 +10,7 @@ using System.Collections;
 #if UNITY_EDITOR
 namespace Cosmos.CosmosEditor
 {
-    public static partial class EditorUtilities
+    public static partial class EditorUtil
     {
         public const string CosmosFramework = "CosmosFramework";
         public static string LibraryPath

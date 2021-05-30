@@ -5,7 +5,7 @@ using System;
 using System.Text;
 namespace Cosmos.CosmosEditor
 {
-    public static partial class EditorUtilities
+    public static partial class EditorUtil
     {
         public static class Json
         {
