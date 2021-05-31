@@ -28,7 +28,7 @@ namespace Cosmos
             Data = data;
             return this;
         }
-        public override void Clear()
+        public override void Release()
         {
             Data = default(T);
         }

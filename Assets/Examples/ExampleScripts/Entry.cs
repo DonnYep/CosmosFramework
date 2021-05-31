@@ -16,18 +16,6 @@ namespace Cosmos.Test
     [DefaultExecutionOrder(2000)]
     public class Entry : CosmosConfig
     {
-        [SerializeField] bool loadDefaultHelper=true;
-        protected override void Awake()
-        {
-            if (loadDefaultHelper)
-                CosmosEntry.LaunchAppDomainHelpers();
-            CosmosEntry.PrintModulePreparatory = printModulePreparatory;
-            if (launchAppDomainModules)
-            {
-                CosmosEntry.LaunchAppDomainModules();
-                CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
-                CosmosEntry.ResourceManager.SwitchBuildInLoadMode(ResourceLoadMode);
-            }
-        }
+
     }
 }

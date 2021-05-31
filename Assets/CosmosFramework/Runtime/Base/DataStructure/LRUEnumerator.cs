@@ -21,7 +21,7 @@ namespace Cosmos {
         }
         public T Current {get{ return current; } }
         object IEnumerator.Current{get{return Current;}}
-        public void Clear()
+        public void Release()
         {
             index = -1;
             current = default(T);

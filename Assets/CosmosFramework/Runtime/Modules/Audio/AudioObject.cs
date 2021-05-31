@@ -19,7 +19,7 @@ namespace Cosmos
         public float Speed { get; set; }
         public virtual AudioClip AudioClip { get; set; }
         public GameObject MountObject { get; set; }
-        public void Clear()
+        public void Release()
         {
             Mute = false;
             PlayOnAwake = false;

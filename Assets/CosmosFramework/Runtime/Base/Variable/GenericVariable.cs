@@ -20,7 +20,7 @@ namespace Cosmos {
         {
             return value;
         }
-        public override void Clear()
+        public override void Release()
         {
             value = default(T);
         }

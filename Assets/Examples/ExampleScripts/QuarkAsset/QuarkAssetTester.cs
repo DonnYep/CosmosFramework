@@ -10,7 +10,7 @@ namespace Cosmos.Test
     {
         void Start()
         {
-            QuarkUtility.QuarkAssetLoadMode = QuarkAssetLoadMode.AssetDataBase;
+            QuarkUtility.QuarkAssetLoadMode = QuarkAssetLoadMode.AssetDatabase;
             var go = CosmosEntry.ResourceManager.LoadPrefab(new AssetInfo() { AssetName= "YBot_LM_Local" },true);
             if (go == null)
                 UnityEngine. Debug.LogError("go null");

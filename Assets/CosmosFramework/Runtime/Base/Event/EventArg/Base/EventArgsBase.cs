@@ -10,6 +10,6 @@ namespace Cosmos{
         /// <summary>
         /// 清空引用
         /// </summary>
-        public abstract void Clear();
+        public abstract void Release();
     }
 }

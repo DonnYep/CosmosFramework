@@ -9,13 +9,17 @@ namespace Cosmos
     public class CosmosConfig : MonoBehaviour
     {
         [Header("Cosmos入口配置")]
-        [SerializeField] protected bool launchAppDomainModules=true;
-        [SerializeField] protected bool printModulePreparatory = true;
-        [SerializeField] protected ResourceLoadMode ResourceLoadMode;
+        public bool LaunchAppDomainModules=true;
+        public bool PrintModulePreparatory = true;
+        public bool LoadDefaultHelper = true;
+        public ResourceLoadMode ResourceLoadMode;
+        public QuarkAssetLoadMode QuarkAssetLoadMode;
         protected virtual void Awake()
         {
-            CosmosEntry.PrintModulePreparatory = printModulePreparatory;
-            if (launchAppDomainModules)
+            if (LoadDefaultHelper)
+                CosmosEntry.LaunchAppDomainHelpers();
+            CosmosEntry.PrintModulePreparatory = PrintModulePreparatory;
+            if (LaunchAppDomainModules)
             {
                 CosmosEntry.LaunchAppDomainModules();
                 CosmosEntry.ResourceManager.SwitchBuildInLoadMode(ResourceLoadMode);

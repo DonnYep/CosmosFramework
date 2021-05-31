@@ -308,7 +308,7 @@ GameObject:
   - component: {fileID: 1961765605}
   - component: {fileID: 1961765604}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Entry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -326,7 +326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab45fec522bd45e43bd0b73272f2c049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  imgPath: 
+  manifestName: Manifest.json
 --- !u!114 &1961765605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,10 +339,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36405f6fe0f5daf4d97f0601c42845b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  launchAppDomainModules: 1
-  printModulePreparatory: 0
-  ResourceLoadMode: 0
-  loadDefaultHelper: 1
+  LaunchAppDomainModules: 1
+  PrintModulePreparatory: 0
+  LoadDefaultHelper: 1
+  ResourceLoadMode: 2
+  QuarkAssetLoadMode: 1
 --- !u!4 &1961765606
 Transform:
   m_ObjectHideFlags: 0

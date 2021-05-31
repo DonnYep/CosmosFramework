@@ -6,6 +6,6 @@ namespace  Cosmos{
         /// <summary>
         /// 清空引用
         /// </summary>
-        void Clear();
+        void Release();
     }
 }

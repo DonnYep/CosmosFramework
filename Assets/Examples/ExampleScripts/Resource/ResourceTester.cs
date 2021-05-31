@@ -34,7 +34,7 @@ public class ResourceUnitCube : IBehaviour, IReference
 {
     public GameObject ResPrefab { get; set; }
 
-    public void Clear()
+    public void Release()
     {
         Utility.Debug.LogInfo("ResoureceUnitCube IReference Clear ! ", MessageColor.INDIGO);
     }
@@ -52,7 +52,7 @@ public class ResourceUnitSphere : IBehaviour, IReference
 {
     public GameObject ResPrefab { get; set; }
 
-    public void Clear()
+    public void Release()
     {
         Utility.Debug.LogInfo(" ResoureceUnitSphere IReference Clear ! ", MessageColor.INDIGO);
     }

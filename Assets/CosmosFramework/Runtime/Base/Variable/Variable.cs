@@ -25,6 +25,6 @@ namespace Cosmos
         /// 重置变量;
         /// 空虚函数；
         /// </summary>
-        public abstract void Clear();
+        public abstract void Release();
     }
 }

@@ -77,7 +77,7 @@ namespace Cosmos.FSM{
             }
             return fsm;
         }
-        public void Clear()
+        public void Release()
         {
             if (currentState != null)
             {
@@ -277,7 +277,7 @@ namespace Cosmos.FSM{
         public void Renewal()
         {
             if (data != null)
-                data.Clear();
+                data.Release();
         }
 
         #endregion

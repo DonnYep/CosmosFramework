@@ -44,7 +44,7 @@ namespace Cosmos.Entity
         /// <summary>
         /// 引用池回收；
         /// </summary>
-        public void Clear() 
+        public void Release() 
         {
             ParentEntity = null;
             childEntities.Clear();

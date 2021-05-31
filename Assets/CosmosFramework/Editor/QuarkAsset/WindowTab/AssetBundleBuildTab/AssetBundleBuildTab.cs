@@ -18,6 +18,9 @@ namespace Cosmos.CosmosEditor
         Dictionary<string, AssetImporter> importerCacheDict = new Dictionary<string, AssetImporter>();
         QuarkAssetABBuildInfo abBuildInfo = new QuarkAssetABBuildInfo();
         QuarkAssetManifest quarkAssetManifest = new QuarkAssetManifest();
+        /// <summary>
+        /// Key:ABName ; Value: ABPath
+        /// </summary>
         Dictionary<string, string> buildInfoCache = new Dictionary<string, string>();
         QuarkAssetDataset QuarkAssetDataset { get { return QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance; } }
 
@@ -72,6 +75,7 @@ namespace Cosmos.CosmosEditor
                 assetBundleTabData.WithoutManifest = EditorGUILayout.ToggleLeft("WithoutManifest", assetBundleTabData.WithoutManifest);
             });
             GUILayout.Space(16);
+            GUILayout.Label("CompressedFormat  建议使用默认模式，并且请勿与NameHashType的其他类型混用，会导致AB包名混乱！");
             assetBundleTabData.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("CompressedFormat:", assetBundleTabData.BuildAssetBundleOptions);
             assetBundleTabData.EncryptionKey = EditorGUILayout.TextField("EncryptionKey", assetBundleTabData.EncryptionKey);
             assetBundleTabData.NameHashType = (AssetBundleHashType)EditorGUILayout.EnumPopup("NameHashType", assetBundleTabData.NameHashType);
@@ -237,9 +241,9 @@ namespace Cosmos.CosmosEditor
                                 EditorUtil.Debug.LogInfo(fileDir);
                                 if (!fileName.Contains(".manifest"))
                                 {
-                                    if (buildInfoCache.TryGetValue(fileName, out var abKey))
+                                    if (buildInfoCache.TryGetValue(fileName, out var abPath))
                                     {
-                                        abBuildInfo.AssetDataMaps.TryGetValue(abKey, out var ad);
+                                        abBuildInfo.AssetDataMaps.TryGetValue(abPath, out var ad);
                                         var newFileName = fileName + "_" + ad.ABHash;
                                         Utility.IO.RenameFile(path, newFileName);
                                     }
@@ -256,9 +260,9 @@ namespace Cosmos.CosmosEditor
                                 var fileDir = Path.GetDirectoryName(path);
                                 if (!fileName.Contains(".manifest"))
                                 {
-                                    if (buildInfoCache.TryGetValue(fileName, out var abKey))
+                                    if (buildInfoCache.TryGetValue(fileName, out var abPath))
                                     {
-                                        abBuildInfo.AssetDataMaps.TryGetValue(abKey, out var ad);
+                                        abBuildInfo.AssetDataMaps.TryGetValue(abPath, out var ad);
                                         var newFileName = ad.ABHash;
                                         Utility.IO.RenameFile(path, newFileName);
                                     }
@@ -279,8 +283,6 @@ namespace Cosmos.CosmosEditor
                         }
                     });
                 }
-                WriteBuildInfo();
-                ResetBuildInfo();
             });
         }
         void SetManifestInfo(string[] abNames)
@@ -289,23 +291,32 @@ namespace Cosmos.CosmosEditor
             var length = urls.Length;
             for (int i = 0; i < length; i++)
             {
-                urls[i]= Utility.Unity.CombinePath(GetBuildPath(),abNames[i]);
+                urls[i] = Utility.Unity.CombinePath(GetBuildPath(), abNames[i]);
             }
             EditorUtil.IO.DownloadAssetBundlesAsync(urls, percent =>
             {
                 EditorUtility.DisplayProgressBar("AssetBundleLoading", $"{percent * 100} %", percent);
-            }, null, bundles => 
+            }, null, bundles =>
             {
                 EditorUtility.ClearProgressBar();
-                foreach (var bundle in bundles)
+                quarkAssetManifest.ManifestDict.Clear();
+                var bundleLength = bundles.Length;
+                for (int i = 0; i < bundleLength; i++)
                 {
-                    EditorUtil.Debug.LogInfo(bundle.name, MessageColor.YELLOW);
-                    var allAssets = bundle.GetAllAssetNames();
-                    for (int i = 0; i < allAssets.Length; i++)
+                    var bundleName = bundles[i].name;
+                    var manifest = new QuarkAssetManifest.ManifestItem();
+                    manifest.Assets = bundles[i].GetAllAssetNames();
+                    //EditorUtil.Debug.LogInfo(bundleName, MessageColor.YELLOW);
+                    if (buildInfoCache.TryGetValue(bundleName, out var abPath))
                     {
-                        EditorUtil.Debug.LogInfo(allAssets[i], MessageColor.GREEN);
+                        abBuildInfo.AssetDataMaps.TryGetValue(abPath, out var assetData);
+                        manifest.Hash = assetData.ABHash;
+                        manifest.ABName = assetData.ABName;
+                        quarkAssetManifest.ManifestDict.TryAdd(bundleName, manifest);
                     }
                 }
+                WriteBuildInfo();
+                ResetBuildInfo();
             });
 
         }
@@ -316,6 +327,10 @@ namespace Cosmos.CosmosEditor
             Utility.IO.WriteTextFile(fullPath, json, false);
             abBuildInfo.Dispose();
             buildInfoCache.Clear();
+
+            var manifestJson = EditorUtil.Json.ToJson(quarkAssetManifest);
+            var manifestPath = Utility.IO.Combine(GetBuildPath(), quarkManifest);
+            Utility.IO.WriteTextFile(manifestPath, manifestJson, false);
         }
         void SetAssetBundleName(string path)
         {

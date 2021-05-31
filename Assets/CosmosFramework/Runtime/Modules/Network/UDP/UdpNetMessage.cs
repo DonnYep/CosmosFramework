@@ -213,7 +213,7 @@ namespace Cosmos
         {
             return IsFull == true ? Buffer : EncodeMessage();
         }
-        public void Clear()
+        public void Release()
         {
             Len = 0;
             Conv = 0;

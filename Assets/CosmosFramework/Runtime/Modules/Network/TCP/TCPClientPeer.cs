@@ -12,7 +12,7 @@ namespace Cosmos
 
         public bool Available { get; private set; }
 
-        public void Clear()
+        public void Release()
         {
         }
         public void OnActive()

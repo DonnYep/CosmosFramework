@@ -19,7 +19,7 @@ namespace Cosmos
         /// 是否是完整报文
         /// </summary>
         public bool IsFull { get; private set; }
-        public void Clear()
+        public void Release()
         {
         }
         public  bool DecodeMessage(byte[] buffer)

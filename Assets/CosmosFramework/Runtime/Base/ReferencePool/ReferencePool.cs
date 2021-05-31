@@ -153,7 +153,7 @@ namespace Cosmos
                 throw new ArgumentNullException("Reference type is invalid !");
             if (!referencePoolDict.TryGetValue(type, out var pool))
             {
-                pool = new ReferPool<IReference>(type, () => { return Activator.CreateInstance(type) as IReference; }, (t) => { t.Clear(); });
+                pool = new ReferPool<IReference>(type, () => { return Activator.CreateInstance(type) as IReference; }, (t) => { t.Release(); });
                 referencePoolDict.Add(type, pool);
             }
             return pool;

@@ -248,7 +248,7 @@ namespace Cosmos.Network
             return result;
         }
 
-        public void Clear()
+        public void Release()
         {
             Available = false;
             Conv = 0;
@@ -258,7 +258,7 @@ namespace Cosmos.Network
             latestPollingTime = 0;
             sendMessageHandler = null;
             sndMsgDict.Clear();
-            Heartbeat.Clear();
+            Heartbeat.Release();
         }
         /// <summary>
         /// 处理报文序号

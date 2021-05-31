@@ -314,7 +314,7 @@ namespace Cosmos.Data
 
                 return Utility.Text.Format("[{0}] {1}", nodeData.Type.Name, nodeData.ToString());
             }
-            public void Clear()
+            public void Release()
             {
                 nodeName = null;
                 nodeParent = null;

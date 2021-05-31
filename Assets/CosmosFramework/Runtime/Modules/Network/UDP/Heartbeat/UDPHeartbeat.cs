@@ -82,7 +82,7 @@ namespace Cosmos
             Available = false;
             Conv = 0;
         }
-        public void Clear()
+        public void Release()
         {
             OnDeactive();
             UnavailableHandler = null;
