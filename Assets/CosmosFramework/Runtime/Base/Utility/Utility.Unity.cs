@@ -33,10 +33,6 @@ namespace Cosmos
                     return coroutineHelper;
                 }
             }
-            /// <summary>
-            /// PlayerPrefs持久化前缀
-            /// </summary>
-            public const string Perfix = "Cosmos";
             public static readonly string StreamingAssetsPathURL =
 #if UNITY_ANDROID
         "jar:file://" + Application.dataPath + "!/assets/";
@@ -49,18 +45,6 @@ namespace Cosmos
 #endif
             public static bool IsWifi { get { return Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork; } }
             public static bool NetAvailable { get { return Application.internetReachability != NetworkReachability.NotReachable; } }
-            /// <summary>
-            /// 合并路径；
-            /// 获得的路径将以 / 作为分割符；
-            /// </summary>
-            /// <param name="paths">路径</param>
-            /// <returns>合并的路径</returns>
-            public static string CombinePath(params string[] paths)
-            {
-                var pathResult = Path.Combine(paths);
-                pathResult = pathResult.Replace("\\", "/");
-                return pathResult;
-            }
             public static int Random(int min, int max)
             {
                 return UnityEngine.Random.Range(min, max);
@@ -542,12 +526,12 @@ namespace Cosmos
             public static Coroutine DownloadTextsAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<string[]> downloadedCallback)
             {
                 var length = urls.Length;
-                var requests = new UnityWebRequest[length];
+                var requests = new List<UnityWebRequest>();
                 for (int i = 0; i < length; i++)
                 {
-                    requests[i] = UnityWebRequest.Get(urls[i]);
+                    requests.Add(UnityWebRequest.Get(urls[i]));
                 }
-                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(requests, overallProgress, progress, (reqs) =>
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequests(requests.ToArray(), overallProgress, progress, (reqs) =>
                 {
                     var reqLength = reqs.Length;
                     var texts = new string[reqLength];
@@ -570,12 +554,12 @@ namespace Cosmos
             public static Coroutine DownloadTexturesAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<Texture2D[]> downloadedCallback)
             {
                 var length = urls.Length;
-                var requests = new UnityWebRequest[length];
+                var requests = new List<UnityWebRequest>();
                 for (int i = 0; i < length; i++)
                 {
-                    requests[i] = UnityWebRequestTexture.GetTexture(urls[i]);
+                    requests.Add(UnityWebRequestTexture.GetTexture(urls[i]));
                 }
-                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(requests, overallProgress, progress, (reqs) =>
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequests(requests.ToArray(), overallProgress, progress, (reqs) =>
                 {
                     var reqLength = reqs.Length;
                     var textures = new Texture2D[reqLength];
@@ -597,22 +581,50 @@ namespace Cosmos
             public static Coroutine DownloadAudiosAsync(IDictionary<string, AudioType> urlDict, Action<float> overallProgress, Action<float> progress, Action<AudioClip[]> downloadedCallback)
             {
                 var length = urlDict.Count;
-                var requests = new UnityWebRequest[length];
-                var index = 0;
+                var requests = new List<UnityWebRequest>();
                 foreach (var url in urlDict)
                 {
-                    requests[index] = UnityWebRequestMultimedia.GetAudioClip(url.Key,url.Value);
-                    index++;
+                    requests.Add( UnityWebRequestMultimedia.GetAudioClip(url.Key, url.Value));
                 }
-                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(requests, overallProgress, progress, (reqs) =>
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequests(requests.ToArray(), overallProgress, progress, (reqs) =>
                 {
                     var reqLength = reqs.Length;
-                    var audios= new AudioClip[reqLength];
+                    var audios = new AudioClip[reqLength];
                     for (int i = 0; i < reqLength; i++)
                     {
                         audios[i] = DownloadHandlerAudioClip.GetContent(reqs[i]);
                     }
                     downloadedCallback?.Invoke(audios);
+                }));
+            }
+            public static Coroutine DownloadAssetBundleAsync(string url, Action<float> progress, Action<AssetBundle> downloadedCallback)
+            {
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(UnityWebRequestAssetBundle.GetAssetBundle(url), progress, (UnityWebRequest req) =>
+                {
+                    AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(req);
+                    if (bundle)
+                    {
+                        downloadedCallback?.Invoke(bundle);
+                    }
+                }));
+            }
+            public static Coroutine DownloadAssetBundlesAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<AssetBundle[]> downloadedCallback)
+            {
+                var length = urls.Length;
+                var requests = new List<UnityWebRequest>();
+                for (int i = 0; i < length; i++)
+                {
+                    requests.Add(UnityWebRequestAssetBundle.GetAssetBundle(urls[i]));
+                }
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequests(requests.ToArray(), overallProgress, progress, (reqs) =>
+                {
+                    var reqLength = reqs.Length;
+                    var assetbundles = new AssetBundle[reqLength];
+                    for (int i = 0; i < reqLength; i++)
+                    {
+                        assetbundles[i] = DownloadHandlerAssetBundle.GetContent(reqs[i]);
+                    }
+                    downloadedCallback?.Invoke(assetbundles);
                 }));
             }
             static IEnumerator EnumUnityWebRequest(UnityWebRequest unityWebRequest, Action<float> progress, Action<UnityWebRequest> downloadedCallback)
@@ -639,7 +651,7 @@ namespace Cosmos
                     }
                 }
             }
-            static IEnumerator EnumUnityWebRequest(UnityWebRequest[] unityWebRequests, Action<float> overallProgress, Action<float> progress, Action<UnityWebRequest[]> downloadedCallback)
+            static IEnumerator EnumUnityWebRequests(UnityWebRequest[] unityWebRequests, Action<float> overallProgress, Action<float> progress, Action<UnityWebRequest[]> downloadedCallback)
             {
                 var length = unityWebRequests.Length;
                 var count = length - 1;

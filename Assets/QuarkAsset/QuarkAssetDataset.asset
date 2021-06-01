@@ -21,6 +21,8 @@ MonoBehaviour:
   - Assets/Examples/AssetBundleTest/Prefab/Audio Source.prefab
   - Assets/Examples/AssetBundleTest/Texture
   - Assets/Examples/AssetBundleTest/Scene
+  - Assets/Examples/AssetBundleTest/Text/Schema.txt
+  - Assets/Examples/AssetBundleTest/Text/Schema.json
   QuarkAssetCount: 85
   QuarkAssetObjectList:
   - AssetName: Alpha_Body_Bule_MAT

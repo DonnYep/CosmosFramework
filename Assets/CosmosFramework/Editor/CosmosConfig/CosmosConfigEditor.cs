@@ -7,7 +7,7 @@ using Cosmos.Resource;
 using System;
 namespace Cosmos.CosmosEditor
 {
-    [CustomEditor(typeof(CosmosConfig),true)]
+    [CustomEditor(typeof(CosmosConfig), true)]
     public class CosmosConfigEditor : Editor
     {
         SerializedObject targetObject;
@@ -20,7 +20,7 @@ namespace Cosmos.CosmosEditor
         public override void OnInspectorGUI()
         {
             targetObject.Update();
-            cosmosConfig.LoadDefaultHelper= EditorGUILayout.Toggle("LoadDefaultHelper", cosmosConfig.LoadDefaultHelper);
+            cosmosConfig.LoadDefaultHelper = EditorGUILayout.Toggle("LoadDefaultHelper", cosmosConfig.LoadDefaultHelper);
             cosmosConfig.LaunchAppDomainModules = EditorGUILayout.Toggle("LaunchAppDomainModules", cosmosConfig.LaunchAppDomainModules);
             if (cosmosConfig.LaunchAppDomainModules)
             {
@@ -30,7 +30,17 @@ namespace Cosmos.CosmosEditor
             switch (cosmosConfig.ResourceLoadMode)
             {
                 case ResourceLoadMode.QuarkAsset:
-                    cosmosConfig.QuarkAssetLoadMode = (QuarkAssetLoadMode)EditorGUILayout.EnumPopup("QuarkAssetLoadMode", cosmosConfig.QuarkAssetLoadMode);
+                    {
+                        cosmosConfig.QuarkAssetLoadMode = (QuarkAssetLoadMode)EditorGUILayout.EnumPopup("QuarkAssetLoadMode", cosmosConfig.QuarkAssetLoadMode);
+                        switch (cosmosConfig.QuarkAssetLoadMode)
+                        {
+                            case QuarkAssetLoadMode.BuiltAssetBundle:
+                                {
+                                    cosmosConfig.QuarkAssetBundleUrl = EditorGUILayout.TextField("QuarkAssetBundleUrl", cosmosConfig.QuarkAssetBundleUrl);
+                                }
+                                break;
+                        }
+                    }
                     break;
             }
             targetObject.ApplyModifiedProperties();

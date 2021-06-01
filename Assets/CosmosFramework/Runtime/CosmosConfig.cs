@@ -14,6 +14,7 @@ namespace Cosmos
         public bool LoadDefaultHelper = true;
         public ResourceLoadMode ResourceLoadMode;
         public QuarkAssetLoadMode QuarkAssetLoadMode;
+        public string QuarkAssetBundleUrl="StreamingAssets";
         protected virtual void Awake()
         {
             if (LoadDefaultHelper)

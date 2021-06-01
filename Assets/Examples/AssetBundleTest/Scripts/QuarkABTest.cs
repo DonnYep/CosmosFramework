@@ -10,17 +10,11 @@ using System.Net;
 
 public class QuarkABTest : MonoBehaviour
 {
-    QuarkAssetABLoader quarkAssetABLoader = new QuarkAssetABLoader(Application.streamingAssetsPath);
-    [SerializeField] string manifestName= "Manifest.json";
-    QuarkAssetManifest quarkAssetManifest;
+    QuarkABLoader quarkAssetABLoader;
     void Start()
     {
-        var url = Utility.Unity.CombinePath(Utility.Unity.StreamingAssetsPathURL, manifestName);
-        Utility.Debug.LogInfo(url);
-
-        Utility.Unity.DownloadTextAsync(url, null, json => 
-        {
-            Utility.Debug.LogInfo(json);
-        });
+        quarkAssetABLoader = new QuarkABLoader(Utility.Unity.StreamingAssetsPathURL);
+        quarkAssetABLoader.LoadBuildInfo();
+        quarkAssetABLoader.LoadManifest();
     }
 }

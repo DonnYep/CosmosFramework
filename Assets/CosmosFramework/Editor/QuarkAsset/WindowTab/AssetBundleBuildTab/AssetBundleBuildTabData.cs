@@ -18,6 +18,7 @@ namespace Cosmos.CosmosEditor
         public bool UseDefaultPath=true;
         public bool ClearFolders;
         public bool CopyToStreamingAssets;
+        public string StreamingAssetsPath = "Assets/StreamingAssets";
         public bool WithoutManifest;
         public AssetBundleHashType  NameHashType;
         public string EncryptionKey= "AssetBundle";

@@ -19,12 +19,12 @@ namespace Cosmos
         }
         public T LoadAsset<T>(AssetInfo info) where T : UnityEngine.Object
         {
-            return QuarkUtility.LoadAssetByName<T>(info.AssetName);
+            return QuarkUtility.LoadAsset<T>(info.AssetName);
         }
         public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
         {
             isLoading = true;
-            return Utility.Unity.StartCoroutine(() => QuarkUtility.LoadAssetByName<T>(info.AssetName), () => { isLoading = false; }); ;
+            return Utility.Unity.StartCoroutine(() => QuarkUtility.LoadAsset<T>(info.AssetName), () => { isLoading = false; }); ;
         }
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
         {

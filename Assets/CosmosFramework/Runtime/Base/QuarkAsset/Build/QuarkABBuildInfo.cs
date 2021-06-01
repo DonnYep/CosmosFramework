@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Cosmos.QuarkAsset
 {
     [Serializable]
-    public class QuarkAssetABBuildInfo
+    public class QuarkABBuildInfo
     {
         [Serializable]
         public class AssetData
@@ -33,7 +33,7 @@ namespace Cosmos.QuarkAsset
             /// </summary>
             public List<string> DependList { get; set; }
         }
-        public QuarkAssetABBuildInfo()
+        public QuarkABBuildInfo()
         {
             AssetDataMaps = new Dictionary<string, AssetData>();
         }

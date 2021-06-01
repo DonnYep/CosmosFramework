@@ -167,6 +167,12 @@ namespace Cosmos
                 }
                 return count;
             }
+            public static int StringLength(string context)
+            {
+                if (string.IsNullOrEmpty(context))
+                    throw new ArgumentNullException("context is invalid.");
+                return context.Length;
+            }
             /// <summary>
             /// 获取内容在UTF8编码下的字节长度；
             /// </summary>

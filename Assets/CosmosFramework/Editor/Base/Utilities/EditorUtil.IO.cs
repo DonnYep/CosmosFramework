@@ -103,9 +103,9 @@ namespace Cosmos.CosmosEditor
             }
             public static EditorCoroutine DownloadAssetBundlesAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<AssetBundle[]> downloadedCallback)
             {
-                return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequest(urls, overallProgress, progress, downloadedCallback));
+                return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequests(urls, overallProgress, progress, downloadedCallback));
             }
-            static IEnumerator EnumUnityWebRequest(string[] urls, Action<float> overallProgress, Action<float> progress, Action<AssetBundle[]> downloadedCallback)
+            static IEnumerator EnumUnityWebRequests(string[] urls, Action<float> overallProgress, Action<float> progress, Action<AssetBundle[]> downloadedCallback)
             {
                 var length = urls.Length;
                 var count = length - 1;

@@ -9,6 +9,10 @@ namespace Cosmos.CosmosEditor
 {
     public static partial class EditorUtil
     {
+        /// <summary>
+        /// EditorCoroutine 嵌套协程无法识别 yield return IEnumerator；
+        /// 嵌套协程尽量使用yield return EditorCoroutine；
+        /// </summary>
         public static class Coroutine
         {
             public static EditorCoroutine StartCoroutine(IEnumerator coroutine)

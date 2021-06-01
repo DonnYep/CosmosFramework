@@ -16,7 +16,7 @@ namespace Cosmos.QuarkAsset
         /// </summary>
         public List<string> IncludeDirectories;
         public int QuarkAssetCount;
-        public List<QuarkAssetObject> QuarkAssetObjectList;
+        public List<QuarkAssetDatabaseObject> QuarkAssetObjectList;
         public override void Dispose()
         {
             QuarkAssetCount = 0;

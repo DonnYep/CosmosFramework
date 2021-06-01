@@ -20,7 +20,7 @@ namespace Cosmos
         public UnityDebugHelper()
         {
             var path = defaultLogPath;
-            logFullPath = Utility.IO.Combine(path, logFolderName);
+            logFullPath = Utility.IO.PathCombine(path, logFolderName);
             Utility.IO.CreateFolder(logFullPath);
             UnityEngine.Application.logMessageReceived += UnityLog;
         }
@@ -35,7 +35,7 @@ namespace Cosmos
                 logName = logFileName;
             if (string.IsNullOrEmpty(logFullPath))
             {
-                this.logFullPath = Utility.IO.Combine(defaultLogPath, logFolderName);
+                this.logFullPath = Utility.IO.PathCombine(defaultLogPath, logFolderName);
             }
             else
                 this.logFullPath = logFileName;
@@ -61,7 +61,7 @@ namespace Cosmos
                 logFileName = Utility.Text.Append(logName, ".log");
             }
             string path = Directory.GetParent(UnityEngine.Application.dataPath).FullName;
-            logFullPath = Utility.IO.Combine(path, logFolderName);
+            logFullPath = Utility.IO.PathCombine(path, logFolderName);
             Utility.IO.CreateFolder(logFullPath);
             UnityEngine.Application.logMessageReceived += UnityLog;
         }

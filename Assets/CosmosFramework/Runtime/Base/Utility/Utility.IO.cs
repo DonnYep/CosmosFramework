@@ -77,7 +77,7 @@ namespace Cosmos
             }
             public static void CreateFolder(string path, string folderName)
             {
-                var fullPath = Combine(path, folderName);
+                var fullPath = PathCombine(path, folderName);
                 var dir = new DirectoryInfo(fullPath);
                 if (!dir.Exists)
                 {
@@ -109,31 +109,29 @@ namespace Cosmos
                 return commonPath;
             }
             /// <summary>
-            /// 合并地址；
-            /// 纯 .NET方法；
+            /// 标准 Windows 文件路径地址合并；
             /// 返回结果示例：Resources\JsonData\
             /// </summary>
             /// <param name="paths">路径params</param>
             /// <returns>合并的路径</returns>
-            public static string Combine(params string[] paths)
+            public static string PathCombine(params string[] paths)
             {
                 var resultPath = Path.Combine(paths);
                 resultPath = resultPath.Replace("/", "\\");
                 return resultPath;
             }
             /// <summary>
-            /// 合并地址；
-            /// 纯 .NET方法；
-            /// 参考示例：Resources\JsonData\data.json
+            /// 合并路径；
+            /// web类型地址合并， 获得的路径将以 / 作为分割符；
+            /// 返回结果示例：github.com/DonnYep/CosmosFramework
             /// </summary>
-            /// <param name="path1">路径1</param>
-            /// <param name="path2">路径2</param>
+            /// <param name="paths">路径</param>
             /// <returns>合并的路径</returns>
-            public static string Combine(string path1, string path2)
+            public static string WebPathCombine(params string[] paths)
             {
-                var resultPath = Path.Combine(path1, path2);
-                resultPath = resultPath.Replace("/", "\\");
-                return resultPath;
+                var pathResult = Path.Combine(paths);
+                pathResult = pathResult.Replace("\\", "/");
+                return pathResult;
             }
             /// <summary>
             /// 删除文件夹下的所有文件以及文件夹

@@ -21,7 +21,7 @@ namespace Cosmos.CosmosEditor
                 {
                     var editorPath = new DirectoryInfo(Application.dataPath);
                     var rootPath = editorPath.Parent.FullName + "/Library/";
-                    libraryPath = Utility.IO.Combine(rootPath, CosmosFramework);
+                    libraryPath = Utility.IO.PathCombine(rootPath, CosmosFramework);
                 }
                 return libraryPath;
             }
@@ -85,13 +85,13 @@ namespace Cosmos.CosmosEditor
         }
         public static string GetDataJson(string fileName)
         {
-            var filePath = Utility.IO.Combine(LibraryPath, fileName);
+            var filePath = Utility.IO.PathCombine(LibraryPath, fileName);
             var cfgStr = Utility.IO.ReadTextFileContent(filePath);
             return cfgStr.ToString();
         }
         public static void ClearData(string fileName)
         {
-            var filePath = Utility.IO.Combine(LibraryPath, fileName);
+            var filePath = Utility.IO.PathCombine(LibraryPath, fileName);
             Utility.IO.DeleteFile(filePath);
         }
         public static string GetDefaultLogOutputDirectory()

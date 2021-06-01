@@ -326,7 +326,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab45fec522bd45e43bd0b73272f2c049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  manifestName: Manifest.json
 --- !u!114 &1961765605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -343,7 +342,8 @@ MonoBehaviour:
   PrintModulePreparatory: 0
   LoadDefaultHelper: 1
   ResourceLoadMode: 2
-  QuarkAssetLoadMode: 1
+  QuarkAssetLoadMode: 2
+  QuarkAssetBundleUrl: StreamingAssets
 --- !u!4 &1961765606
 Transform:
   m_ObjectHideFlags: 0

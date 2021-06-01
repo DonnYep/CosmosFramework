@@ -19,7 +19,7 @@ namespace Cosmos.Test
             InventoryDataSet = CosmosEntry.ResourceManager.LoadAsset<InventoryDataSet>(new AssetInfo() {ResourcePath= dataSetPath });
             if (InventoryDataSet != null)
                 Utility.Debug.LogInfo("InventoryDataSet数据加载成功", MessageColor.ORANGE);
-            jsonFilePath = Utility.Unity.CombinePath(Application.persistentDataPath, "Inventory");
+            jsonFilePath = Utility.IO.WebPathCombine(Application.persistentDataPath, "Inventory");
             Utility.Debug.LogInfo(jsonFilePath, MessageColor.ORANGE);
         }
         public override void OnRemove() { }

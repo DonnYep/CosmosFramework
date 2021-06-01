@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Cosmos.QuarkAsset
 {
     [Serializable]
-    public class QuarkAssetManifest
+    public class QuarkManifest
     {
         [Serializable]
         public class ManifestItem
@@ -28,7 +28,7 @@ namespace Cosmos.QuarkAsset
         /// </summary>
         public Dictionary<string, ManifestItem> ManifestDict { get; set; }
 
-        public QuarkAssetManifest()
+        public QuarkManifest()
         {
             ManifestDict = new Dictionary<string, ManifestItem>();
         }

@@ -5,8 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Cosmos.QuarkAsset
 {
+    /// <summary>
+    /// Quark基于AB的对象；
+    /// 用于Built后AB资源的寻址；
+    /// </summary>
     [Serializable]
-    public class QuarkAssetABObject
+    public class QuarkAssetBundleObject
     {
         /// <summary>
         ///  资源的名称；
@@ -28,6 +32,6 @@ namespace Cosmos.QuarkAsset
         /// 资源所在的AB包的名称；
         /// </summary>
         public string AssetBundleName { get; set; }
-        public static QuarkAssetABObject None { get { return new QuarkAssetABObject(); } }
+        public static QuarkAssetBundleObject None { get { return new QuarkAssetBundleObject(); } }
     }
 }

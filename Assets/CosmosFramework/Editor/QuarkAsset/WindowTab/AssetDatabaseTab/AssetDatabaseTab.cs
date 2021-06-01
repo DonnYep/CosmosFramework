@@ -95,7 +95,7 @@ namespace Cosmos.CosmosEditor
             EditorUtility.ClearProgressBar();
             var count = Utility.IO.FolderFileCount(Application.dataPath);
             int currentBuildIndex = 0;
-            List<QuarkAssetObject> quarkAssetList = new List<QuarkAssetObject>();
+            List<QuarkAssetDatabaseObject> quarkAssetList = new List<QuarkAssetDatabaseObject>();
             quarkAssetList?.Clear();
             int currentDirIndex = 0;
             var dirs = QuarkAssetDataset.IncludeDirectories;
@@ -125,7 +125,7 @@ namespace Cosmos.CosmosEditor
                     }
                     else if (File.Exists(dir))
                     {
-                        var fullPath = Utility.IO.Combine(EditorUtil.ApplicationPath(), dir);
+                        var fullPath = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), dir);
                         if (!fileSysInfoDict.ContainsKey(fullPath))
                         {
                             var fileInfo = new FileInfo(fullPath);
@@ -154,7 +154,7 @@ namespace Cosmos.CosmosEditor
                             var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
                             var assetName = file.Name.Replace(file.Extension, string.Empty);
                             var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
-                            var assetObj = new QuarkAssetObject()
+                            var assetObj = new QuarkAssetDatabaseObject()
                             {
                                 AssetExtension = file.Extension,
                                 AssetName = assetName,
@@ -176,7 +176,7 @@ namespace Cosmos.CosmosEditor
             EditorUtility.ClearProgressBar();
             var count = Utility.IO.FolderFileCount(Application.dataPath);
             int currentBuildIndex = 0;
-            List<QuarkAssetObject> quarkAssetList = new List<QuarkAssetObject>();
+            List<QuarkAssetDatabaseObject> quarkAssetList = new List<QuarkAssetDatabaseObject>();
             quarkAssetList?.Clear();
             string path = Application.dataPath;
             Utility.IO.TraverseFolderFile(path, (file) =>
@@ -199,7 +199,7 @@ namespace Cosmos.CosmosEditor
                         assetPath = assetPath.Replace("\\", "/");
                         var assetName = file.Name.Replace(file.Extension, string.Empty);
                         var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
-                        var assetObj = new QuarkAssetObject()
+                        var assetObj = new QuarkAssetDatabaseObject()
                         {
                             AssetExtension = file.Extension,
                             AssetName = assetName,
