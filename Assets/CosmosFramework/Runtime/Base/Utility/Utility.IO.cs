@@ -4,6 +4,8 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System;
+using System.Security.Cryptography;
+
 namespace Cosmos
 {
     public static partial class Utility
@@ -14,7 +16,7 @@ namespace Cosmos
             /// 标准的UTF-8是不含BOM的；
             /// 构造的UTF8Encoding，排除掉UTF8-BOM的影响；
             /// </summary>
-            static UTF8Encoding utf8Encoding=new UTF8Encoding(false);
+            static UTF8Encoding utf8Encoding = new UTF8Encoding(false);
 
             /// <summary>
             /// 获取文件夹中的文件数量；
@@ -33,13 +35,13 @@ namespace Cosmos
                 }
                 return count;
             }
-            public static void TraverseFolderFilePath(string folderPath,Action<string> handler)
+            public static void TraverseFolderFilePath(string folderPath, Action<string> handler)
             {
                 if (!Directory.Exists(folderPath))
-                    throw new IOException("Folder path is invalid ! ") ;
+                    throw new IOException("Folder path is invalid ! ");
                 if (handler == null)
                     throw new ArgumentNullException("Handler is invalid !");
-                var fileDirs= Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories);
+                var fileDirs = Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories);
                 foreach (var dir in fileDirs)
                 {
                     handler.Invoke(dir);
@@ -197,7 +199,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="oldFileFullPath">旧文件的完整路径，需要带后缀名</param>
             /// <param name="newFileNamewithExtension">新的文件名，仅需文件名+后缀名</param>
-            public static void RenameFile(string oldFileFullPath,string newFileNamewithExtension)
+            public static void RenameFile(string oldFileFullPath, string newFileNamewithExtension)
             {
                 if (!File.Exists(oldFileFullPath))
                 {
@@ -210,16 +212,34 @@ namespace Cosmos
                 File.Move(oldFileFullPath, newFileName);
             }
             /// <summary>
+            /// 不适用Text类型！；
+            /// 读取二进制文件，返回byte array；
+            /// </summary>
+            /// <param name="fileFullPath">文件的完整路径</param>
+            /// <returns>文件被读取的二进制</returns>
+            public static byte[] ReadBinaryFile(string fileFullPath)
+            {
+                if (!File.Exists(fileFullPath))
+                    throw new IOException("ReadBinaryFile path not exist !" + fileFullPath);
+                using (FileStream stream = File.Open(fileFullPath, FileMode.Open))
+                {
+                    using (BinaryReader reader = new BinaryReader(stream, utf8Encoding))
+                    {
+                        return reader.ReadBytes((int)stream.Length);
+                    }
+                }
+            }
+            /// <summary>
             /// 读取指定路径下某text类型文件的内容
             /// </summary>
-            /// <param name="fullFilePath">文件的完整路径，包含文件名与扩展名</param>
+            /// <param name="fileFullPath">文件的完整路径，包含文件名与扩展名</param>
             /// <returns>指定文件的包含的内容</returns>
-            public static string ReadTextFileContent(string fullFilePath)
+            public static string ReadTextFileContent(string fileFullPath)
             {
-                if (!File.Exists(fullFilePath))
-                    throw new IOException("ReadTextFileContent path not exist !" + fullFilePath);
+                if (!File.Exists(fileFullPath))
+                    throw new IOException("ReadTextFileContent path not exist !" + fileFullPath);
                 Utility.Text.ClearStringBuilder();
-                using (FileStream stream = File.Open(fullFilePath, FileMode.Open))
+                using (FileStream stream = File.Open(fileFullPath, FileMode.Open))
                 {
                     using (StreamReader reader = new StreamReader(stream, utf8Encoding))
                     {
@@ -326,6 +346,23 @@ namespace Cosmos
                     using (StreamWriter writer = new StreamWriter(stream, utf8Encoding))
                     {
                         writer.WriteLine(context);
+                        writer.Flush();
+                    }
+                }
+            }
+            /// <summary>
+            /// 不适用Text类型！；
+            /// 写入二进制类型文件；
+            /// </summary>
+            /// <param name="context">文件内容</param>
+            /// <param name="fileFullPath">文件完整路径，带后缀名</param>
+            public static void WriteBinaryFile(byte[] context, string fileFullPath)
+            {
+                using (FileStream stream = File.Open(fileFullPath, FileMode.Create))
+                {
+                    using (BinaryWriter writer = new BinaryWriter(stream))
+                    {
+                        writer.Write(context);
                         writer.Flush();
                     }
                 }

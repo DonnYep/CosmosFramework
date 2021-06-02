@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace Cosmos.QuarkAsset
+namespace Cosmos.Quark 
 {
     public enum QuarkAssetLoadMode : byte
     {

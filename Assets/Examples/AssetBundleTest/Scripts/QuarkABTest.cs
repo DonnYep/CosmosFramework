@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cosmos.QuarkAsset;
+using Cosmos.Quark;
 using Cosmos;
 using System;
 using System.IO;

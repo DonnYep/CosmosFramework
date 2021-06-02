@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-namespace Cosmos.QuarkAsset
+namespace Cosmos.Quark 
 {
     /// <summary>
     /// Quark基于AssetDatabase的对象；

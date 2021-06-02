@@ -14,9 +14,10 @@ namespace Cosmos
         /// </summary>
         public static class Encryption
         {
-            public  enum GUIDFormat
+            static UTF8Encoding utf8Encoding = new UTF8Encoding(false);
+            public enum GUIDFormat
             {
-                N,D,B,P,X
+                N, D, B, P, X
             }
             public static string GUID(GUIDFormat format)
             {
@@ -71,39 +72,6 @@ namespace Cosmos
                 return Convert.ToBase64String(cryptString);
             }
             /// <summary>
-            /// DES加密
-            /// </summary>
-            /// <param name="strData">数据</param>
-            /// <param name="strKey">密钥</param>
-            /// <param name="iv">初向量</param>
-            /// <returns>DES加密后的数据</returns>
-            public static string DESEncrypt(string strData,string strKey,byte[] iv)
-            {
-                string strResult = "";
-                try
-                {
-                    using (DESCryptoServiceProvider desc = new DESCryptoServiceProvider())
-                    {
-                        byte[] key = Encoding.UTF8.GetBytes(strKey);
-                        byte[] data = Encoding.UTF8.GetBytes(strData);
-                        using (MemoryStream ms = new MemoryStream())
-                        {
-                            using (CryptoStream cs = new CryptoStream(ms, desc.CreateEncryptor(key, iv), CryptoStreamMode.Write))
-                            {
-                                cs.Write(data, 0, data.Length);
-                                cs.FlushFinalBlock();
-                                strResult = Convert.ToBase64String(ms.ToArray());
-                                return strResult;
-                            }
-                        }
-                    }
-                }
-                catch 
-                {
-                    return strResult;
-                }
-            }
-            /// <summary>
             /// 生成 8 位密钥
             /// Data Encryption Standard
             /// initialization vector
@@ -138,38 +106,6 @@ namespace Cosmos
                 return result;
             }
             /// <summary>
-            /// DES解密
-            /// Data Encryption Standard
-            /// </summary>
-            /// <param name="encrpytedStr">被加密的数据</param>
-            /// <param name="strKey">密钥</param>
-            /// <returns></returns>
-            public static string DESDecrypt(string encrpytedStr,string strKey,byte[] iv)
-            {
-                string strResut="";
-                try
-                {
-                    using (DESCryptoServiceProvider desc=new DESCryptoServiceProvider())
-                    {
-                        byte[] key = Encoding.UTF8.GetBytes(strKey);
-                        byte[] data = Convert.FromBase64String(encrpytedStr);
-                        using (MemoryStream ms=new MemoryStream())
-                        {
-                            using (CryptoStream cs = new CryptoStream(ms, desc.CreateDecryptor(key, iv), CryptoStreamMode.Write))
-                            {
-                                cs.Write(data, 0, data.Length);
-                                cs.FlushFinalBlock();
-                                return Encoding.UTF8.GetString(ms.ToArray());
-                            }
-                        }
-                    }
-                }
-                catch 
-                {
-                    return strResut;
-                }
-            }
-            /// <summary>
             /// 加密算法HmacSHA256  
             /// </summary>
             /// <param name="encrpytedStr">被加密的数据</param>
@@ -184,6 +120,125 @@ namespace Cosmos
                     encrpytedResult = Convert.ToBase64String(hashMsg);
                 }
                 return encrpytedResult;
+            }
+            /// <summary>
+            /// AES对称加密Binary类型内容;
+            /// 密钥的byte长度必须是16, 24, 32；
+            /// </summary>
+            /// <param name="context">需要解密的数组</param>
+            /// <param name="key">对称密码</param>
+            /// <returns>加密后的byte array</returns>
+            public static byte[] AESEncryptBinary(byte[] context, byte[] key)
+            {
+                if (context == null)
+                    throw new ArgumentNullException("context is invalid !");
+                if (key == null)
+                    throw new ArgumentNullException("key is invalid !");
+                using (var aes = new AesCryptoServiceProvider() { Key = key, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7 })
+                {
+                    aes.GenerateIV();
+                    var iv = aes.IV;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        ms.Write(iv, 0, iv.Length);
+                        using (CryptoStream cryptoStream = new CryptoStream(ms, aes.CreateEncryptor(aes.Key, iv), CryptoStreamMode.Write))
+                        using (var writer = new BinaryWriter(cryptoStream))
+                        {
+                            writer.Write(context);
+                            cryptoStream.FlushFinalBlock();
+                        }
+                        return ms.ToArray();
+                    }
+                }
+            }
+            /// <summary>
+            /// AES对称解密Binary类型内容;
+            /// 密钥的byte长度必须是16, 24, 32；
+            /// </summary>
+            /// <param name="context">需要解密的数组</param>
+            /// <param name="key">对称密码,</param>
+            /// <returns>解密后的byte array</returns>
+            public static byte[] AESDecryptBinary(byte[] context, byte[] key)
+            {
+                if (context == null)
+                    throw new ArgumentNullException("context is invalid !");
+                if (key == null)
+                    throw new ArgumentNullException("key is invalid !");
+                using (var aes = new AesCryptoServiceProvider() { Key = key, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7 })
+                {
+                    var iv = new byte[16];
+                    Array.Copy(context, 0, iv, 0, iv.Length);
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (CryptoStream cryptoStream = new CryptoStream(ms, aes.CreateDecryptor(aes.Key, iv), CryptoStreamMode.Write))
+                        using (BinaryWriter writer = new BinaryWriter(cryptoStream))
+                        {
+                            writer.Write(context, iv.Length, context.Length - iv.Length);
+                        }
+                        return ms.ToArray();
+                    }
+                }
+            }
+            /// <summary>
+            /// AES对称加密Text类型内容;
+            /// 密钥的byte长度必须是16, 24, 32；
+            /// </summary>
+            /// <param name="context">需要加密的内容</param>
+            /// <param name="key">密钥</param>
+            /// <returns>加密后的密钥</returns>
+            public static string AESEncryptText(string context, byte[] key)
+            {
+                if (string.IsNullOrEmpty(context))
+                    throw new ArgumentNullException("context is invalid ! ");
+                if (key == null)
+                    throw new ArgumentNullException("key is invalid ! ");
+                using (var aes = new AesCryptoServiceProvider())
+                {
+                    var iv = aes.IV;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        ms.Write(iv, 0, iv.Length);
+                        using (var cryptStream = new CryptoStream(ms, aes.CreateEncryptor(key, aes.IV), CryptoStreamMode.Write))
+                        {
+                            using (StreamWriter writer = new StreamWriter(cryptStream))
+                            {
+                                writer.Write(context);
+                            }
+                        }
+                        var buf = ms.ToArray();
+                        return Convert.ToBase64String(buf, 0, buf.Length);
+                    }
+                }
+            }
+            /// <summary>
+            /// AES对称解密Text类型内容；
+            /// 密钥的byte长度必须是16, 24, 32；
+            /// </summary>
+            /// <param name="context">需要解密的内容</param>
+            /// <param name="key">密钥</param>
+            /// <returns>解密后的内容</returns>
+            public static string AESDecryptText(string context, byte[] key)
+            {
+                if (string.IsNullOrEmpty(context))
+                    throw new ArgumentNullException("context is invalid ! ");
+                if (key == null)
+                    throw new ArgumentNullException("key is invalid ! ");
+                var bytes = Convert.FromBase64String(context);
+                using (var aes = new AesCryptoServiceProvider())
+                {
+                    using (MemoryStream ms = new MemoryStream(bytes))
+                    {
+                        var iv = new byte[16];
+                        ms.Read(iv, 0, 16);
+                        using (var cryptStream = new CryptoStream(ms, aes.CreateDecryptor(key, iv), CryptoStreamMode.Read))
+                        {
+                            using (StreamReader reader = new StreamReader(cryptStream))
+                            {
+                                return reader.ReadToEnd();
+                            }
+                        }
+                    }
+                }
             }
         }
     }

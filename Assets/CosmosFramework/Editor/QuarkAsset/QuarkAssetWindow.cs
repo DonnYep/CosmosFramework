@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
-using Cosmos.QuarkAsset;
+using Cosmos.Quark;
 namespace Cosmos.CosmosEditor
 {
     public class QuarkAssetWindow : EditorWindow

@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
+using System.Text;
+
 public class EncryptionTester : MonoBehaviour
 {
+    string aesKey = "1416515516116166";
     void Start()
     {
-        var iv = Utility.Encryption.GenerateIV("尤格索托斯");
-        string str = Utility.Encryption.DESEncrypt("尤格索托斯", "12345678",iv);
+        var key = Encoding.UTF8.GetBytes(aesKey);
+        string str = Utility.Encryption.AESDecryptText("尤格索托斯", key);
         Utility.Debug.LogInfo(str);
-        Utility.Debug.LogInfo(Utility.Encryption.DESDecrypt(str, "12345678",iv));
-        var result = Utility.Encryption.GenerateIV("尤格索托斯");
-        for (int i = 0; i < result.Length; i++)
-        {
-            Utility.Debug.LogInfo(result[i].ToString("X2"),MessageColor.PURPLE);
-        }
+        Utility.Debug.LogInfo(Utility.Encryption.AESDecryptText(str, key));
+        //for (int i = 0; i < result.Length; i++)
+        //{
+        //    Utility.Debug.LogInfo(result[i].ToString("X2"),MessageColor.PURPLE);
+        //}
     }
 }

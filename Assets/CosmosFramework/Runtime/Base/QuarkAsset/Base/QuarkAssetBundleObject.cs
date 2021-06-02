@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace Cosmos.QuarkAsset
+namespace Cosmos.Quark
 {
     /// <summary>
     /// Quark基于AB的对象；

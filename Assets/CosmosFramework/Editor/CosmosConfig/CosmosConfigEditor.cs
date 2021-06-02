@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using Cosmos.QuarkAsset;
+using Cosmos.Quark;
 using Cosmos.Resource;
 using System;
 namespace Cosmos.CosmosEditor

@@ -345,7 +345,5 @@ namespace Cosmos
             loadDoneCallback?.Invoke();
             _isLoading = false;
         }
-
-
     }
 }
