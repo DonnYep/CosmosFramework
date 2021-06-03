@@ -212,6 +212,17 @@ namespace Cosmos
                 File.Move(oldFileFullPath, newFileName);
             }
             /// <summary>
+            /// 读取文件内容到byte数组，不作binary或者text转换；
+            /// </summary>
+            /// <param name="fileFullPath">文件的完整路径，包括后缀名等</param>
+            /// <returns>读取到的文件byte数组</returns>
+            public static byte[] ReadFile(string fileFullPath)
+            {
+                if (!File.Exists(fileFullPath))
+                    throw new IOException("File full path is invalid ! ");
+                return File.ReadAllBytes(fileFullPath);
+            }
+            /// <summary>
             /// 不适用Text类型！；
             /// 读取二进制文件，返回byte array；
             /// </summary>
@@ -366,6 +377,15 @@ namespace Cosmos
                         writer.Flush();
                     }
                 }
+            }
+            /// <summary>
+            /// 将byte数组写成文件，不作binary或者text转换；
+            /// </summary>
+            /// <param name="context">需要写入的数据byte数组</param>
+            /// <param name="fileFullPath">文件的完整路径，包括后缀名等</param>
+            public static void WriteFile(byte[]context,string fileFullPath)
+            {
+                File.WriteAllBytes(fileFullPath,context);
             }
             /// <summary>
             /// 完全覆写；

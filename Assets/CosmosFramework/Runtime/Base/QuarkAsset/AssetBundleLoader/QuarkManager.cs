@@ -33,9 +33,9 @@ namespace Cosmos.Quark
         public string RemoteAssetBundleUrl { get { return remoteAssetBundleUrl; } set { remoteAssetBundleUrl = value; } }
 
         //名字相同，但是HASH不同，则认为资源有作修改，需要加入到下载队列中；
-        HashSet<string> downloadable = new HashSet<string>();
+        List<string> downloadable = new  List<string>();
         //本地有但是远程没有，则标记为可删除的文件，并加入到可删除队列；
-        HashSet<string> deletable = new HashSet<string>();
+        List <string> deletable = new List<string>();
 
 
         public void SetBuiltAssetBundleMap(Dictionary<string, LinkedList<QuarkAssetBundleObject>> lnkDict)
@@ -114,10 +114,18 @@ namespace Cosmos.Quark
                     deletable.Add(localMF.Key);
                 }
             }
+            downloadable.TrimExcess();
+            deletable.TrimExcess();
         }
         IEnumerator DownloadAssetBundle()
         {
-            yield return Utility.Unity.DownloadAssetBundlesAsync(downloadable.ToArray(), null, null, assetBundles => 
+            var downloadableUrl = new string[downloadable.Count];
+            var length = downloadableUrl.Length;
+            for (int i = 0; i < length; i++)
+            {
+                downloadableUrl[i] = Utility.IO.WebPathCombine(remoteAssetBundleUrl, downloadable[i]);
+            }
+            yield return Utility.Unity.DownloadAssetBundlesAsync(downloadableUrl, null, null, assetBundles => 
             { 
                 //TODO
             });

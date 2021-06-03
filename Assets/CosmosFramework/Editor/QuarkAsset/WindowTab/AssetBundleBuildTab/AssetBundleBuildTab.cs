@@ -54,20 +54,30 @@ namespace Cosmos.CosmosEditor
             EditorUtil.DrawHorizontalContext(() =>
             {
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Browse", GUILayout.MaxWidth(92f)))
+                if (GUILayout.Button("Browse", GUILayout.MaxWidth(128f)))
                 {
                     BrowseForFolder();
                 }
-                if (GUILayout.Button("Reset", GUILayout.MaxWidth(92f)))
+                if (GUILayout.Button("Reset", GUILayout.MaxWidth(128f)))
                 {
                     ResetPath();
                 }
-                if (GUILayout.Button("OpenFolder", GUILayout.MaxWidth(92f)))
+
+            });
+            GUILayout.Space(16);
+            EditorUtil.DrawHorizontalContext(() =>
+            {
+                if (GUILayout.Button("OpenOutputPath"))
                 {
                     EditorUtility.RevealInFinder(GetBuildFolder());
                 }
+                if (GUILayout.Button("OpenPersistentPath"))
+                {
+                    EditorUtility.RevealInFinder(Application.persistentDataPath);
+                }
             });
             GUILayout.Space(16);
+
             EditorUtil.DrawVerticalContext(() =>
             {
 
@@ -202,8 +212,8 @@ namespace Cosmos.CosmosEditor
                 {
                     if (!AssetDatabase.IsValidFolder(assetBundleTabData.StreamingAssetsPath))
                     {
-                        var folderName = assetBundleTabData.StreamingAssetsPath.Remove(0, AssetsStringLength+1);
-                        AssetDatabase.CreateFolder("Assets",folderName);
+                        var folderName = assetBundleTabData.StreamingAssetsPath.Remove(0, AssetsStringLength + 1);
+                        AssetDatabase.CreateFolder("Assets", folderName);
                     }
                     var streamingAssetPath = Utility.IO.PathCombine(Application.dataPath, "StreamingAssets");
                     Utility.IO.DirectoryCopy(buildPath, streamingAssetPath);

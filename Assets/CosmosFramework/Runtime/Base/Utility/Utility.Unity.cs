@@ -584,7 +584,7 @@ namespace Cosmos
                 var requests = new List<UnityWebRequest>();
                 foreach (var url in urlDict)
                 {
-                    requests.Add( UnityWebRequestMultimedia.GetAudioClip(url.Key, url.Value));
+                    requests.Add(UnityWebRequestMultimedia.GetAudioClip(url.Key, url.Value));
                 }
                 return Utility.Unity.StartCoroutine(EnumUnityWebRequests(requests.ToArray(), overallProgress, progress, (reqs) =>
                 {
@@ -625,6 +625,36 @@ namespace Cosmos
                         assetbundles[i] = DownloadHandlerAssetBundle.GetContent(reqs[i]);
                     }
                     downloadedCallback?.Invoke(assetbundles);
+                }));
+            }
+            public static Coroutine DownloadAssetBundleBytesAsync(string url, Action<float> progress, Action<byte[]> downloadedCallback)
+            {
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequest(UnityWebRequest.Get(url), progress, (UnityWebRequest req) =>
+                {
+                    var bundleBytes = req.downloadHandler.data;
+                    if (bundleBytes != null)
+                    {
+                        downloadedCallback?.Invoke(bundleBytes);
+                    }
+                }));
+            }
+            public static Coroutine DownloadAssetBundlesBytesAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<IList<byte[]>> downloadedCallback)
+            {
+                var length = urls.Length;
+                var requests = new List<UnityWebRequest>();
+                for (int i = 0; i < length; i++)
+                {
+                    requests.Add(UnityWebRequest.Get(urls[i]));
+                }
+                return Utility.Unity.StartCoroutine(EnumUnityWebRequests(requests.ToArray(), overallProgress, progress, (reqs) =>
+                {
+                    var reqLength = reqs.Length;
+                    var bundleByteList = new List<byte[]>();
+                    for (int i = 0; i < reqLength; i++)
+                    {
+                        bundleByteList.Add (reqs[i].downloadHandler.data);
+                    }
+                    downloadedCallback?.Invoke(bundleByteList);
                 }));
             }
             static IEnumerator EnumUnityWebRequest(UnityWebRequest unityWebRequest, Action<float> progress, Action<UnityWebRequest> downloadedCallback)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 namespace Cosmos
@@ -182,6 +184,40 @@ namespace Cosmos
                 {
                     var result = srcValue * (int)Math.Pow(10, length - len);
                     return result;
+                }
+            }
+            /// <summary>
+            /// 将对象序列化为byte数组；
+            /// </summary>
+            /// <param name="obj">需要序列化的对象</param>
+            /// <returns>序列化后的byte数组</returns>
+            public static byte[] SerializeToByteArray(object obj)
+            {
+                if (obj == null)
+                    throw new ArgumentNullException("Object is invalid ! ");
+                using (var ms = new MemoryStream())
+                {
+                    var formatter = new BinaryFormatter();
+                    formatter.Serialize(ms, obj);
+                    return ms.ToArray();
+                }
+            }
+            /// <summary>
+            /// 将byte数组反序列化为object；
+            /// </summary>
+            /// <param name="context">需要被反序列化的byte数组</param>
+            /// <returns>反序列化后的object对象</returns>
+            public static object DeserializeToObject(byte[] context) 
+            {
+                if (context == null)
+                    throw new ArgumentNullException("Context is invalid ! ");
+                using (var ms= new MemoryStream())
+                {
+                    var formatter= new BinaryFormatter();
+                    ms.Write(context, 0, context.Length);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    var obj = formatter.Deserialize(ms);
+                    return obj;
                 }
             }
         }
