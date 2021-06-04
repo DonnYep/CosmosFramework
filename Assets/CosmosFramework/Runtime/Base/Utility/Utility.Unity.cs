@@ -379,49 +379,6 @@ namespace Cosmos
 
             #region CaptureScreenshot
             /// <summary>
-            /// 保存截屏到持久化路径；
-            /// </summary>
-            /// <param name="fileName">文件名，需要包含后缀</param>
-            public static void CaptureScreenshot2PersistentDataPath(string fileName)
-            {
-                var fullPath = Path.Combine(Application.persistentDataPath, fileName);
-                ScreenCapture.CaptureScreenshot(fullPath);
-            }
-            /// <summary>
-            /// 保存截屏；
-            /// </summary>
-            /// <param name="filePath">文件路径</param>
-            /// <param name="fileName">文件名，需要包含后缀</param>
-            public static void CaptureScreenShot(string filePath, string fileName)
-            {
-                var fullPath = Path.Combine(filePath, fileName);
-                ScreenCapture.CaptureScreenshot(fullPath);
-            }
-            /// <summary>
-            /// 通过相机截取屏幕
-            /// </summary>
-            /// <param name="camera">目标相机</param>
-            /// <param name="fileName">文件的完整名，路径/文件名.后缀名</param>
-            public static void CaptureScreenshotByCamera(Camera camera, string fileName)
-            {
-                var oldRenderTexture = camera.targetTexture;
-                RenderTexture renderTexture;
-                renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
-                camera.targetTexture = renderTexture;
-                camera.Render();
-                Texture2D texture2D = new Texture2D(renderTexture.width, renderTexture.height);
-                RenderTexture.active = renderTexture;
-                texture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
-                texture2D.Apply();
-                byte[] bytes = texture2D.EncodeToPNG();
-                texture2D.Compress(false);
-                texture2D.Apply();
-                RenderTexture.active = null;
-                camera.targetTexture = oldRenderTexture;
-                var fullPath = System.IO.Path.Combine(Application.persistentDataPath, fileName);
-                System.IO.File.WriteAllBytes(fullPath, bytes);
-            }
-            /// <summary>
             /// 通过相机截取屏幕并转换为Texture2D
             /// </summary>
             /// <param name="camera">目标相机</param>

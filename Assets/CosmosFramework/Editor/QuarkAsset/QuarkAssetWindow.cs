@@ -20,6 +20,8 @@ namespace Cosmos.CosmosEditor
         static AssetBundleBuildTab assetBundleTab = new AssetBundleBuildTab();
         internal static WindowTabData WindowTabData { get; private set; }
         internal const string QuarkAssetWindowTabDataFileName = "QuarkAssetWindowTabData.json";
+        Vector2 m_ScrollPos;
+
         public QuarkAssetWindow()
         {
             this.titleContent = new GUIContent("QuarkAsset");
@@ -28,8 +30,8 @@ namespace Cosmos.CosmosEditor
         public static void OpenWindow()
         {
             var window = GetWindow<QuarkAssetWindow>();
-            ((EditorWindow)window).maxSize = EditorUtil.CosmosMaxWinSize;
-            ((EditorWindow)window).minSize = EditorUtil.CosmosDevWinSize;
+            //((EditorWindow)window).maxSize = EditorUtil.CosmosMaxWinSize;
+            //((EditorWindow)window).minSize = EditorUtil.CosmosDevWinSize;
         }
         [InitializeOnLoadMethod]
         static void InitData()
@@ -61,6 +63,7 @@ namespace Cosmos.CosmosEditor
             selectedBar = GUILayout.Toolbar(selectedBar, barArray);
             GUILayout.Space(16);
             var bar = (AssetInfoBar)selectedBar;
+            m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
             switch (bar)
             {
                 case AssetInfoBar.AssetDatabaseMode:
@@ -70,6 +73,7 @@ namespace Cosmos.CosmosEditor
                     assetBundleTab.OnGUI();
                     break;
             }
+            EditorGUILayout.EndScrollView();
         }
     }
 }

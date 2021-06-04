@@ -90,6 +90,9 @@ namespace Cosmos.CosmosEditor
                 }
                 return pathList.ToArray();
             }
+
+
+          
             public static EditorCoroutine DownloadAssetBundleAsync(string url, Action<float> progress, Action<AssetBundle> downloadedCallback)
             {
                 return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequestAssetBundle.GetAssetBundle(url), progress, (UnityWebRequest req) =>
@@ -105,6 +108,21 @@ namespace Cosmos.CosmosEditor
             {
                 return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequests(urls, overallProgress, progress, downloadedCallback));
             }
+            public static EditorCoroutine DownloadAssetBundleBytesAsync(string url, Action<float> progress, Action<byte[]> downloadedCallback)
+            {
+                return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequest.Get(url), progress, (UnityWebRequest req) =>
+                {
+                    var bundleBytes = req.downloadHandler.data;
+                    if (bundleBytes != null)
+                    {
+                        downloadedCallback?.Invoke(bundleBytes);
+                    }
+                }));
+            }
+            public static EditorCoroutine DownloadAssetBundlesBytesAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<IList<byte[]>> downloadedCallback)
+            {
+                return EditorUtil.Coroutine.StartCoroutine(EnumBytesUnityWebRequests(urls, overallProgress, progress, downloadedCallback));
+            }
             static IEnumerator EnumUnityWebRequests(string[] urls, Action<float> overallProgress, Action<float> progress, Action<AssetBundle[]> downloadedCallback)
             {
                 var length = urls.Length;
@@ -116,6 +134,18 @@ namespace Cosmos.CosmosEditor
                     yield return DownloadAssetBundleAsync(urls[i], progress, (request) => { assetBundleList.Add(request); });
                 }
                 downloadedCallback.Invoke(assetBundleList.ToArray());
+            }
+            static IEnumerator EnumBytesUnityWebRequests(string[] urls, Action<float> overallProgress, Action<float> progress, Action<IList<byte[]>> downloadedCallback)
+            {
+                var length = urls.Length;
+                var count = length - 1;
+                var assetBundleList = new List<byte[]>();
+                for (int i = 0; i < length; i++)
+                {
+                    overallProgress?.Invoke((float)i / (float)count);
+                    yield return DownloadAssetBundleBytesAsync(urls[i], progress, (request) => { assetBundleList.Add(request); });
+                }
+                downloadedCallback.Invoke(assetBundleList);
             }
             static IEnumerator EnumUnityWebRequest(UnityWebRequest unityWebRequest, Action<float> progress, Action<UnityWebRequest> downloadedCallback)
             {

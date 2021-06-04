@@ -21,7 +21,8 @@ namespace Cosmos.CosmosEditor
         public string StreamingAssetsPath = "Assets/StreamingAssets";
         public bool WithoutManifest;
         public AssetBundleHashType  NameHashType;
-        public string EncryptionKey= "AssetBundle";
+        public bool UseAESEncryption = false;
+        public string AESEncryptionKey= "QuarkAssetBundle";
         public BuildAssetBundleOptions BuildAssetBundleOptions= BuildAssetBundleOptions.ChunkBasedCompression;
     }
 }

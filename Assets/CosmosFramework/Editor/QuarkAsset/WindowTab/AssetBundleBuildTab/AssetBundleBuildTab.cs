@@ -5,6 +5,7 @@ using UnityEditor;
 using System.IO;
 using Cosmos.Quark;
 using System.Linq;
+using System.Text;
 
 namespace Cosmos.CosmosEditor
 {
@@ -49,6 +50,7 @@ namespace Cosmos.CosmosEditor
         }
         void DrawAssetBundleTab()
         {
+
             assetBundleTabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", assetBundleTabData.BuildTarget);
             assetBundleTabData.OutputPath = EditorGUILayout.TextField("OutputPath", assetBundleTabData.OutputPath);
             EditorUtil.DrawHorizontalContext(() =>
@@ -94,8 +96,17 @@ namespace Cosmos.CosmosEditor
             GUILayout.Space(16);
             GUILayout.Label("CompressedFormat  建议使用默认模式，并且请勿与NameHashType的其他类型混用，会导致AB包名混乱！");
             assetBundleTabData.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("CompressedFormat:", assetBundleTabData.BuildAssetBundleOptions);
-            assetBundleTabData.EncryptionKey = EditorGUILayout.TextField("EncryptionKey", assetBundleTabData.EncryptionKey);
             assetBundleTabData.NameHashType = (AssetBundleHashType)EditorGUILayout.EnumPopup("NameHashType", assetBundleTabData.NameHashType);
+
+            GUILayout.Space(16);
+
+            assetBundleTabData.UseAESEncryption = EditorGUILayout.ToggleLeft("UseAESEncryption", assetBundleTabData.UseAESEncryption);
+            if (assetBundleTabData.UseAESEncryption)
+            {
+                GUILayout.Space(16);
+                assetBundleTabData.AESEncryptionKey = EditorGUILayout.TextField("AESEncryptionKey", assetBundleTabData.AESEncryptionKey);
+
+            }
             GUILayout.Space(16);
 
             EditorUtil.DrawHorizontalContext(() =>
@@ -247,48 +258,38 @@ namespace Cosmos.CosmosEditor
                     }
                 });
                 SetManifestInfo(abNames);
-                switch (assetBundleTabData.NameHashType)
+
+                var m_buildPath = GetBuildPath();
+                var abPaths = new List<string>();
+                Utility.IO.TraverseFolderFilePath(m_buildPath, (path) =>
                 {
-                    case AssetBundleHashType.AppendHash:
+                    var fileName = Path.GetFileName(path);
+                    var fileDir = Path.GetDirectoryName(path);
+                    //EditorUtil.Debug.LogInfo(fileDir);
+                    if (!fileName.Contains(".manifest"))
+                    {
+                        if (buildInfoCache.TryGetValue(fileName, out var abPath))
                         {
-                            var m_buildPath = GetBuildPath();
-                            Utility.IO.TraverseFolderFilePath(m_buildPath, (path) =>
+                            abBuildInfo.AssetDataMaps.TryGetValue(abPath, out var ad);
+                            switch (assetBundleTabData.NameHashType)
                             {
-                                var fileName = Path.GetFileName(path);
-                                var fileDir = Path.GetDirectoryName(path);
-                                EditorUtil.Debug.LogInfo(fileDir);
-                                if (!fileName.Contains(".manifest"))
-                                {
-                                    if (buildInfoCache.TryGetValue(fileName, out var abPath))
+                                case AssetBundleHashType.AppendHash:
                                     {
-                                        abBuildInfo.AssetDataMaps.TryGetValue(abPath, out var ad);
                                         var newFileName = fileName + "_" + ad.ABHash;
                                         Utility.IO.RenameFile(path, newFileName);
                                     }
-                                }
-                            });
-                        }
-                        break;
-                    case AssetBundleHashType.HashInstead:
-                        {
-                            var m_buildPath = GetBuildPath();
-                            Utility.IO.TraverseFolderFilePath(m_buildPath, (path) =>
-                            {
-                                var fileName = Path.GetFileName(path);
-                                var fileDir = Path.GetDirectoryName(path);
-                                if (!fileName.Contains(".manifest"))
-                                {
-                                    if (buildInfoCache.TryGetValue(fileName, out var abPath))
+                                    break;
+                                case AssetBundleHashType.HashInstead:
                                     {
-                                        abBuildInfo.AssetDataMaps.TryGetValue(abPath, out var ad);
                                         var newFileName = ad.ABHash;
                                         Utility.IO.RenameFile(path, newFileName);
                                     }
-                                }
-                            });
+                                    break;
+                            }
+                            abPaths.Add(path);
                         }
-                        break;
-                }
+                    }
+                });
                 if (assetBundleTabData.WithoutManifest)
                 {
                     var abBuildPath = GetBuildPath();
@@ -301,6 +302,7 @@ namespace Cosmos.CosmosEditor
                         }
                     });
                 }
+                EncryptAB(abPaths.ToArray());
             });
         }
         void SetManifestInfo(string[] abNames)
@@ -373,6 +375,32 @@ namespace Cosmos.CosmosEditor
                     };
                     abBuildInfo.AssetDataMaps[importer.assetPath] = assetData;
                 }
+            }
+        }
+        /// <summary>
+        /// 对AB进行加密；
+        /// </summary>
+        /// <param name="paths">AB的地址</param>
+        void EncryptAB(string[] paths)
+        {
+            if (assetBundleTabData.UseAESEncryption)
+            {
+                var aseByteKey = Encoding.UTF8.GetBytes(assetBundleTabData.AESEncryptionKey);
+                EditorUtil.IO.DownloadAssetBundlesBytesAsync(paths, percent =>
+                {
+                    var per = percent * 100;
+                    EditorUtility.DisplayProgressBar("AB加密中", $"当前进度 ：{per} %", percent);
+                }
+                , null, byteList =>
+                {
+                    EditorUtility.ClearProgressBar();
+                    var length = byteList.Count;
+                    for (int i = 0; i < length; i++)
+                    {
+                        var encryptedBytes = Utility.Encryption.AESEncryptBinary(byteList[i], aseByteKey);
+                        File.WriteAllBytes(paths[i], encryptedBytes);
+                    }
+                });
             }
         }
     }
