@@ -25,6 +25,8 @@ namespace Cosmos.CosmosEditor
         Dictionary<string, string> buildInfoCache = new Dictionary<string, string>();
         QuarkAssetDataset QuarkAssetDataset { get { return QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance; } }
 
+        List<string> abPaths = new List<string>();
+
         public void Clear()
         {
         }
@@ -50,49 +52,50 @@ namespace Cosmos.CosmosEditor
         }
         void DrawAssetBundleTab()
         {
-
             assetBundleTabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", assetBundleTabData.BuildTarget);
             assetBundleTabData.OutputPath = EditorGUILayout.TextField("OutputPath", assetBundleTabData.OutputPath);
-            EditorUtil.DrawHorizontalContext(() =>
-            {
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Browse", GUILayout.MaxWidth(128f)))
-                {
-                    BrowseForFolder();
-                }
-                if (GUILayout.Button("Reset", GUILayout.MaxWidth(128f)))
-                {
-                    ResetPath();
-                }
 
-            });
-            GUILayout.Space(16);
-            EditorUtil.DrawHorizontalContext(() =>
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Browse", GUILayout.MaxWidth(128f)))
             {
-                if (GUILayout.Button("OpenOutputPath"))
-                {
-                    EditorUtility.RevealInFinder(GetBuildFolder());
-                }
-                if (GUILayout.Button("OpenPersistentPath"))
-                {
-                    EditorUtility.RevealInFinder(Application.persistentDataPath);
-                }
-            });
+                BrowseForFolder();
+            }
+            if (GUILayout.Button("Reset", GUILayout.MaxWidth(128f)))
+            {
+                ResetPath();
+            }
+            GUILayout.EndHorizontal();
+
             GUILayout.Space(16);
 
-            EditorUtil.DrawVerticalContext(() =>
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("OpenOutputPath"))
             {
+                EditorUtility.RevealInFinder(GetBuildFolder());
+            }
+            if (GUILayout.Button("OpenPersistentPath"))
+            {
+                EditorUtility.RevealInFinder(Application.persistentDataPath);
+            }
+            GUILayout.EndHorizontal();
 
-                assetBundleTabData.WithoutManifest = EditorGUILayout.ToggleLeft("WithoutManifest", assetBundleTabData.WithoutManifest);
+            GUILayout.Space(16);
 
-                assetBundleTabData.ClearFolders = EditorGUILayout.ToggleLeft("ClearFolders", assetBundleTabData.ClearFolders);
-                assetBundleTabData.CopyToStreamingAssets = EditorGUILayout.ToggleLeft("CopyToStreamingAssets", assetBundleTabData.CopyToStreamingAssets);
-                if (assetBundleTabData.CopyToStreamingAssets)
-                {
-                    GUILayout.Space(16);
-                    assetBundleTabData.StreamingAssetsPath = EditorGUILayout.TextField("StreamingAssets", assetBundleTabData.StreamingAssetsPath);
-                }
-            });
+
+            GUILayout.BeginVertical();
+            assetBundleTabData.WithoutManifest = EditorGUILayout.ToggleLeft("WithoutManifest", assetBundleTabData.WithoutManifest);
+
+            assetBundleTabData.ClearFolders = EditorGUILayout.ToggleLeft("ClearFolders", assetBundleTabData.ClearFolders);
+            assetBundleTabData.CopyToStreamingAssets = EditorGUILayout.ToggleLeft("CopyToStreamingAssets", assetBundleTabData.CopyToStreamingAssets);
+            if (assetBundleTabData.CopyToStreamingAssets)
+            {
+                GUILayout.Space(16);
+                assetBundleTabData.StreamingAssetsPath = EditorGUILayout.TextField("StreamingAssets", assetBundleTabData.StreamingAssetsPath);
+            }
+            GUILayout.EndVertical();
+
+
             GUILayout.Space(16);
             GUILayout.Label("CompressedFormat  建议使用默认模式，并且请勿与NameHashType的其他类型混用，会导致AB包名混乱！");
             assetBundleTabData.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("CompressedFormat:", assetBundleTabData.BuildAssetBundleOptions);
@@ -104,23 +107,24 @@ namespace Cosmos.CosmosEditor
             if (assetBundleTabData.UseAESEncryption)
             {
                 GUILayout.Space(16);
+                var aesKeyLength = Encoding.UTF8.GetBytes(assetBundleTabData.AESEncryptionKey).Length;
+                EditorGUILayout.LabelField($"密钥长度须为16，24，32，当前密钥长度：{aesKeyLength}");
                 assetBundleTabData.AESEncryptionKey = EditorGUILayout.TextField("AESEncryptionKey", assetBundleTabData.AESEncryptionKey);
 
             }
             GUILayout.Space(16);
 
-            EditorUtil.DrawHorizontalContext(() =>
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Build"))
             {
-                if (GUILayout.Button("Build"))
-                {
-                    BuildAssetBundle();
-                }
-                if (GUILayout.Button("Reset"))
-                {
-                    assetBundleTabData = new AssetBundleBuildTabData();
-                    EditorUtil.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
-                }
-            });
+                BuildAssetBundle();
+            }
+            if (GUILayout.Button("Reset"))
+            {
+                assetBundleTabData = new AssetBundleBuildTabData();
+                EditorUtil.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
+            }
+            GUILayout.EndHorizontal();
         }
         void BrowseForFolder()
         {
@@ -258,9 +262,8 @@ namespace Cosmos.CosmosEditor
                     }
                 });
                 SetManifestInfo(abNames);
-
+                abPaths.Clear();
                 var m_buildPath = GetBuildPath();
-                var abPaths = new List<string>();
                 Utility.IO.TraverseFolderFilePath(m_buildPath, (path) =>
                 {
                     var fileName = Path.GetFileName(path);
@@ -271,22 +274,29 @@ namespace Cosmos.CosmosEditor
                         if (buildInfoCache.TryGetValue(fileName, out var abPath))
                         {
                             abBuildInfo.AssetDataMaps.TryGetValue(abPath, out var ad);
+                            string newFileName = string.Empty;
                             switch (assetBundleTabData.NameHashType)
                             {
+                                case AssetBundleHashType.DefaultName:
+                                    {
+                                        newFileName = fileName;
+                                    }
+                                    break;
                                 case AssetBundleHashType.AppendHash:
                                     {
-                                        var newFileName = fileName + "_" + ad.ABHash;
+                                        newFileName = fileName + "_" + ad.ABHash;
                                         Utility.IO.RenameFile(path, newFileName);
                                     }
                                     break;
                                 case AssetBundleHashType.HashInstead:
                                     {
-                                        var newFileName = ad.ABHash;
+                                        newFileName = ad.ABHash;
                                         Utility.IO.RenameFile(path, newFileName);
                                     }
                                     break;
                             }
-                            abPaths.Add(path);
+                           var editedName= Path.Combine(fileDir, fileName);
+                            abPaths.Add(editedName);
                         }
                     }
                 });
@@ -389,7 +399,7 @@ namespace Cosmos.CosmosEditor
                 EditorUtil.IO.DownloadAssetBundlesBytesAsync(paths, percent =>
                 {
                     var per = percent * 100;
-                    EditorUtility.DisplayProgressBar("AB加密中", $"当前进度 ：{per} %", percent);
+                    EditorUtility.DisplayProgressBar("AB加密加载", $"当前进度 ：{per} %", percent);
                 }
                 , null, byteList =>
                 {
@@ -400,6 +410,7 @@ namespace Cosmos.CosmosEditor
                         var encryptedBytes = Utility.Encryption.AESEncryptBinary(byteList[i], aseByteKey);
                         File.WriteAllBytes(paths[i], encryptedBytes);
                     }
+                    GUIUtility.ExitGUI();
                 });
             }
         }

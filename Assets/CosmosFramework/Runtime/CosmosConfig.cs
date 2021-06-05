@@ -14,7 +14,8 @@ namespace Cosmos
         public bool LoadDefaultHelper = true;
         public ResourceLoadMode ResourceLoadMode;
         public QuarkAssetLoadMode QuarkAssetLoadMode;
-        public string QuarkAssetBundleUrl = "StreamingAssets";
+        public string QuarkRemoteUrl = "RemoteUrl";
+        public string QuarkLocalUrl = "LocalUrl";
         protected virtual void Awake()
         {
             if (LoadDefaultHelper)
@@ -30,7 +31,8 @@ namespace Cosmos
                     switch (QuarkAssetLoadMode)
                     {
                         case QuarkAssetLoadMode.BuiltAssetBundle:
-                            QuarkManager.Instance.LocalAssetBundleUrl = QuarkAssetBundleUrl;
+                            QuarkManager.Instance.RemoteAssetBundleUrl = QuarkRemoteUrl;
+                            QuarkManager.Instance.LocalAssetBundleUrl = QuarkLocalUrl;
                             break;
                     }
                 }

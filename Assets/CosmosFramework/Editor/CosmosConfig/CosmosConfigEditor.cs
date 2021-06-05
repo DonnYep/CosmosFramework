@@ -36,7 +36,8 @@ namespace Cosmos.CosmosEditor
                         {
                             case QuarkAssetLoadMode.BuiltAssetBundle:
                                 {
-                                    cosmosConfig.QuarkAssetBundleUrl = EditorGUILayout.TextField("QuarkAssetBundleUrl", cosmosConfig.QuarkAssetBundleUrl);
+                                    cosmosConfig.QuarkRemoteUrl = EditorGUILayout.TextField("QuarkRemoteUrl", cosmosConfig.QuarkRemoteUrl);
+                                    cosmosConfig.QuarkLocalUrl= EditorGUILayout.TextField("QuarkLocalUrl", cosmosConfig.QuarkLocalUrl);
                                 }
                                 break;
                         }

@@ -90,6 +90,11 @@ MonoBehaviour:
     AssetPath: Assets/Examples/AssetBundleTest/Scene/ABTest.unity
     AssetType: UnityEditor.SceneAsset
     AssetGuid: d82a2810a7f96234993c2198c43b4464
+  - AssetName: Schema
+    AssetExtension: .txt
+    AssetPath: Assets/Examples/AssetBundleTest/Text/Schema.txt
+    AssetType: UnityEngine.TextAsset
+    AssetGuid: 0b431cf38179a64488b25f7f19147c02
   - AssetName: Tex_5195
     AssetExtension: .png
     AssetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
@@ -445,8 +450,3 @@ MonoBehaviour:
     AssetPath: Assets/Examples/Upgrade/Upgrade.unity
     AssetType: UnityEditor.SceneAsset
     AssetGuid: 21e51af37be3b62419a162ecf3228dae
-  - AssetName: ReadMe
-    AssetExtension: .txt
-    AssetPath: Assets/Examples/ReadMe.txt
-    AssetType: UnityEngine.TextAsset
-    AssetGuid: 2507c62a1247e894ab714c2207d81f04

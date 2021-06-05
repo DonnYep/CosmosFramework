@@ -12,13 +12,6 @@ using UnityEngine.Networking;
 public class QuarkABTest : MonoBehaviour
 {
     QuarkABLoader quarkAssetABLoader;
-    //[TextArea]
-    //[SerializeField] string srcUrl;
-    //[TextArea]
-    //[SerializeField] string encryptUrl;
-    //[TextArea]
-    //[SerializeField] string decryptUrl;
-    [SerializeField] string aseKey = "123456789ABCDEFG";
     void Start()
     {
 

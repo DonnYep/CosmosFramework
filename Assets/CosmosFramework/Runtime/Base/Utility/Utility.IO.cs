@@ -205,10 +205,10 @@ namespace Cosmos
                 {
                     using (FileStream fs = File.Create(oldFileFullPath)) { }
                 }
-                if (File.Exists(newFileNamewithExtension))
-                    File.Delete(newFileNamewithExtension);
                 var dirPath = Path.GetDirectoryName(oldFileFullPath);
                 var newFileName = Path.Combine(dirPath, newFileNamewithExtension);
+                if (File.Exists(newFileName))
+                    File.Delete(newFileName);
                 File.Move(oldFileFullPath, newFileName);
             }
             /// <summary>

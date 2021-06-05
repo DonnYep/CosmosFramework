@@ -26,6 +26,8 @@ namespace Cosmos.Quark
         /// </summary>
         Dictionary<string, AssetBundle> assetBundleDict;
         readonly string manifestFileName = "Manifest.json";
+        readonly string buildInfoFileName = "BuildInfo.json";
+
         string localAssetBundleUrl;
         public string LocalAssetBundleUrl { get { return localAssetBundleUrl; } set { localAssetBundleUrl = value; } }
 
@@ -33,9 +35,9 @@ namespace Cosmos.Quark
         public string RemoteAssetBundleUrl { get { return remoteAssetBundleUrl; } set { remoteAssetBundleUrl = value; } }
 
         //名字相同，但是HASH不同，则认为资源有作修改，需要加入到下载队列中；
-        List<string> downloadable = new  List<string>();
+        List<string> downloadable = new List<string>();
         //本地有但是远程没有，则标记为可删除的文件，并加入到可删除队列；
-        List <string> deletable = new List<string>();
+        List<string> deletable = new List<string>();
 
 
         public void SetBuiltAssetBundleMap(Dictionary<string, LinkedList<QuarkAssetBundleObject>> lnkDict)
@@ -68,8 +70,27 @@ namespace Cosmos.Quark
             }
             return asset;
         }
-
-        IEnumerator CheckLatestManifest()
+        /// <summary>
+        /// 检测 local与Remote之间manifest的差异；
+        /// 若存在差异，回调中传入ture；
+        /// 若不存在差异，回调中传入false；
+        /// </summary>
+        /// <param name="updatableCallback">是否可更新回调</param>
+        public Coroutine CheckLatestManifestAsync(Action<bool> updatableCallback)
+        {
+            return Utility.Unity.StartCoroutine(EnumCheckLatestManifest(updatableCallback));
+        }
+        /// <summary>
+        /// 异步下载AB资源；
+        /// </summary>
+        /// <param name="overallProgress">下载的整体进度</param>
+        /// <param name="progress">单个资源下载的进度</param>
+        /// <returns>协程对象</returns>
+        public Coroutine DownloadAssetBundlesAsync(Action<float> overallProgress, Action<float> progress)
+        {
+            return Utility.Unity.StartCoroutine(EnumDownloadAssetBundle(overallProgress, progress));
+        }
+        IEnumerator EnumCheckLatestManifest(Action<bool> updatableCallback)
         {
             QuarkManifest localManifest = null;
             QuarkManifest remoteManifest = null;
@@ -95,7 +116,7 @@ namespace Cosmos.Quark
                 throw new ArgumentNullException("RemoteManifestUrl is invalid ! ");
             foreach (var remoteMF in remoteManifest.ManifestDict)
             {
-                if(localManifest.ManifestDict.TryGetValue(remoteMF.Key,out var localMF))
+                if (localManifest.ManifestDict.TryGetValue(remoteMF.Key, out var localMF))
                 {
                     if (localMF.Hash != remoteMF.Value.Hash)
                     {
@@ -116,18 +137,34 @@ namespace Cosmos.Quark
             }
             downloadable.TrimExcess();
             deletable.TrimExcess();
+            if (downloadable.Count > 0 || deletable.Count > 0)
+                updatableCallback.Invoke(true);
+            else
+                updatableCallback.Invoke(false);
         }
-        IEnumerator DownloadAssetBundle()
+        IEnumerator EnumDownloadAssetBundle(Action<float> overallProgress, Action<float> progress)
         {
-            var downloadableUrl = new string[downloadable.Count];
-            var length = downloadableUrl.Length;
-            for (int i = 0; i < length; i++)
+            var downloadableAssetUrls = new string[downloadable.Count];
+            var downloadLength = downloadableAssetUrls.Length;
+            for (int i = 0; i < downloadLength; i++)
             {
-                downloadableUrl[i] = Utility.IO.WebPathCombine(remoteAssetBundleUrl, downloadable[i]);
+                downloadableAssetUrls[i] = Utility.IO.WebPathCombine(remoteAssetBundleUrl, downloadable[i]);
             }
-            yield return Utility.Unity.DownloadAssetBundlesAsync(downloadableUrl, null, null, assetBundles => 
-            { 
-                //TODO
+            //删除本地多余的资源；
+            var deleteLength = deletable.Count;
+            for (int i = 0; i < deleteLength; i++)
+            {
+                var deleteFilePath = Utility.IO.WebPathCombine(localAssetBundleUrl, deletable[i]);
+                Utility.IO.DeleteFile(deleteFilePath);
+            }
+            yield return Utility.Unity.DownloadAssetBundlesBytesAsync(downloadableAssetUrls, overallProgress, progress, bundleBytes =>
+            {
+                var bundleLength = bundleBytes.Count;
+                for (int i = 0; i < bundleLength; i++)
+                {
+                    var cachePath = Utility.IO.WebPathCombine(localAssetBundleUrl, downloadable[i]);
+                    Utility.IO.WriteFile(bundleBytes[i], cachePath);
+                }
             });
         }
         T LoadAssetFromABByName<T>(string assetPath, string assetExtension = null)
