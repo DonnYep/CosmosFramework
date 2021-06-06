@@ -59,7 +59,7 @@ namespace Cosmos.CosmosEditor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Browse", GUILayout.MaxWidth(128f)))
             {
-                BrowseForFolder();
+                BrowseFolder();
             }
             if (GUILayout.Button("Reset", GUILayout.MaxWidth(128f)))
             {
@@ -126,7 +126,7 @@ namespace Cosmos.CosmosEditor
             }
             GUILayout.EndHorizontal();
         }
-        void BrowseForFolder()
+        void BrowseFolder()
         {
             assetBundleTabData.UseDefaultPath = false;
             var newPath = EditorUtility.OpenFolderPanel("Bundle Folder", assetBundleTabData.OutputPath, string.Empty);

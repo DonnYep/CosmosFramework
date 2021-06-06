@@ -28,22 +28,52 @@ namespace Cosmos.Quark
         readonly string manifestFileName = "Manifest.json";
         readonly string buildInfoFileName = "BuildInfo.json";
 
-        string localAssetBundleUrl;
-        public string LocalAssetBundleUrl { get { return localAssetBundleUrl; } set { localAssetBundleUrl = value; } }
+        public QuarkAssetLoadMode QuarkAssetLoadMode { get; set; }
 
-        string remoteAssetBundleUrl;
-        public string RemoteAssetBundleUrl { get { return remoteAssetBundleUrl; } set { remoteAssetBundleUrl = value; } }
+        /// <summary>
+        /// 本地缓存的地址；
+        /// </summary>
+        public string LocalUrl { get; set; }
+        /// <summary>
+        /// 远端存储的地址；
+        /// </summary>
+        public string RemoteUrl { get; set; }
 
         //名字相同，但是HASH不同，则认为资源有作修改，需要加入到下载队列中；
         List<string> downloadable = new List<string>();
         //本地有但是远程没有，则标记为可删除的文件，并加入到可删除队列；
         List<string> deletable = new List<string>();
 
-
-        public void SetBuiltAssetBundleMap(Dictionary<string, LinkedList<QuarkAssetBundleObject>> lnkDict)
+        #region BuiltAssetBundle
+        /// <summary>
+        /// 对Manifest进行编码；
+        /// </summary>
+        /// <param name="manifest">unityWebRequest获取的Manifest文件对象</param>
+        public void SetBuiltAssetBundleModeData(QuarkManifest manifest)
         {
+            var lnkDict = new Dictionary<string, LinkedList<QuarkAssetBundleObject>>();
+            foreach (var mf in manifest.ManifestDict)
+            {
+                var assetPaths = mf.Value.Assets;
+                var length = assetPaths.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    var qab = GetAssetBundleObject(mf.Value.ABName, assetPaths[i]);
+                    if (!lnkDict.TryGetValue(qab.AssetName, out var lnkList))
+                    {
+                        lnkList = new LinkedList<QuarkAssetBundleObject>();
+                        lnkList.AddLast(qab);
+                        lnkDict.Add(qab.AssetName, lnkList);
+                    }
+                    else
+                    {
+                        lnkList.AddLast(qab);
+                    }
+                }
+            }
             builtAssetBundleMap = lnkDict;
         }
+        #endregion
         public T[] LoadAllAsset<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
         {
             T[] asset = null;
@@ -90,49 +120,89 @@ namespace Cosmos.Quark
         {
             return Utility.Unity.StartCoroutine(EnumDownloadAssetBundle(overallProgress, progress));
         }
+        static QuarkAssetBundleObject GetAssetBundleObject(string abName, string assetName)
+        {
+            var qab = new QuarkAssetBundleObject()
+            {
+                AssetBundleName = abName,
+                AssetPath = assetName,
+            };
+            var strs = Utility.Text.StringSplit(assetName, new string[] { "/" });
+            var nameWithExt = strs[strs.Length - 1];
+            var splits = Utility.Text.StringSplit(nameWithExt, new string[] { "." });
+            qab.AssetExtension = Utility.Text.Combine(".", splits[splits.Length - 1]);
+            qab.AssetName = nameWithExt.Replace(qab.AssetExtension, "");
+            return qab;
+        }
         IEnumerator EnumCheckLatestManifest(Action<bool> updatableCallback)
         {
             QuarkManifest localManifest = null;
             QuarkManifest remoteManifest = null;
-            if (!string.IsNullOrEmpty(localAssetBundleUrl))
+            if (!string.IsNullOrEmpty(LocalUrl))
             {
-                var localManifestUrl = Utility.IO.WebPathCombine(localAssetBundleUrl, manifestFileName);
+                var localManifestUrl = Utility.IO.WebPathCombine(LocalUrl, manifestFileName);
                 yield return Utility.Unity.DownloadTextAsync(localManifestUrl, null, manifestText =>
                  {
-                     localManifest = Utility.Json.ToObject<QuarkManifest>(manifestText);
+                     try
+                     {
+                         localManifest = Utility.Json.ToObject<QuarkManifest>(manifestText);
+                     }
+                     catch { }
                  });
             }
             else
                 throw new ArgumentNullException("LocalAssetBundleUrl is invalid ! ");
-            if (!string.IsNullOrEmpty(remoteAssetBundleUrl))
+            if (!string.IsNullOrEmpty(RemoteUrl))
             {
-                var remoteManifestUrl = Utility.IO.WebPathCombine(remoteAssetBundleUrl, manifestFileName);
+                var remoteManifestUrl = Utility.IO.WebPathCombine(RemoteUrl, manifestFileName);
                 yield return Utility.Unity.DownloadTextAsync(remoteManifestUrl, null, manifestText =>
                  {
-                     remoteManifest = Utility.Json.ToObject<QuarkManifest>(manifestText);
+                     try
+                     {
+                         remoteManifest = Utility.Json.ToObject<QuarkManifest>(manifestText);
+                     }
+                     catch { }
                  });
             }
             else
                 throw new ArgumentNullException("RemoteManifestUrl is invalid ! ");
-            foreach (var remoteMF in remoteManifest.ManifestDict)
+
+            if (localManifest != null)
             {
-                if (localManifest.ManifestDict.TryGetValue(remoteMF.Key, out var localMF))
+                //若本地的Manifest不为空，远端的Manifest不为空，则对比二者之间的差异；
+                //远端有本地没有，则缓存至downloadable；
+                //远端没有本地有，则缓存至deleteable；
+                if (remoteManifest != null)
                 {
-                    if (localMF.Hash != remoteMF.Value.Hash)
+                    foreach (var remoteMF in remoteManifest.ManifestDict)
                     {
-                        downloadable.Add(remoteMF.Value.ABName);
+                        if (localManifest.ManifestDict.TryGetValue(remoteMF.Key, out var localMF))
+                        {
+                            if (localMF.Hash != remoteMF.Value.Hash)
+                            {
+                                downloadable.Add(remoteMF.Value.ABName);
+                            }
+                        }
+                        else
+                        {
+                            downloadable.Add(remoteMF.Value.ABName);
+                        }
+                    }
+                    foreach (var localMF in localManifest.ManifestDict)
+                    {
+                        if (!remoteManifest.ManifestDict.ContainsKey(localMF.Key))
+                        {
+                            deletable.Add(localMF.Key);
+                        }
                     }
                 }
-                else
-                {
-                    downloadable.Add(remoteMF.Value.ABName);
-                }
             }
-            foreach (var localMF in localManifest.ManifestDict)
+            else
             {
-                if (!remoteManifest.ManifestDict.ContainsKey(localMF.Key))
+                //若本地的Manifest为空，远端的Manifest不为空，则将需要下载的资源url缓存到downloadable;
+                if (remoteManifest != null)
                 {
-                    deletable.Add(localMF.Key);
+                    downloadable.AddRange(remoteManifest.ManifestDict.Keys.ToList());
                 }
             }
             downloadable.TrimExcess();
@@ -148,13 +218,13 @@ namespace Cosmos.Quark
             var downloadLength = downloadableAssetUrls.Length;
             for (int i = 0; i < downloadLength; i++)
             {
-                downloadableAssetUrls[i] = Utility.IO.WebPathCombine(remoteAssetBundleUrl, downloadable[i]);
+                downloadableAssetUrls[i] = Utility.IO.WebPathCombine(RemoteUrl, downloadable[i]);
             }
             //删除本地多余的资源；
             var deleteLength = deletable.Count;
             for (int i = 0; i < deleteLength; i++)
             {
-                var deleteFilePath = Utility.IO.WebPathCombine(localAssetBundleUrl, deletable[i]);
+                var deleteFilePath = Utility.IO.WebPathCombine(LocalUrl, deletable[i]);
                 Utility.IO.DeleteFile(deleteFilePath);
             }
             yield return Utility.Unity.DownloadAssetBundlesBytesAsync(downloadableAssetUrls, overallProgress, progress, bundleBytes =>
@@ -162,7 +232,7 @@ namespace Cosmos.Quark
                 var bundleLength = bundleBytes.Count;
                 for (int i = 0; i < bundleLength; i++)
                 {
-                    var cachePath = Utility.IO.WebPathCombine(localAssetBundleUrl, downloadable[i]);
+                    var cachePath = Utility.IO.WebPathCombine(LocalUrl, downloadable[i]);
                     Utility.IO.WriteFile(bundleBytes[i], cachePath);
                 }
             });
@@ -195,11 +265,11 @@ where T : UnityEngine.Object
             }
             return null;
         }
-        IEnumerator LoadAssetBundleAsync(QuarkAssetBundleObject qabObject)
+        IEnumerator EnumLoadAssetBundleAsync(QuarkAssetBundleObject qabObject)
         {
             if (!assetBundleDict.TryGetValue(qabObject.AssetBundleName, out var assetBundle))
             {
-                var url = Utility.IO.WebPathCombine(localAssetBundleUrl, qabObject.AssetBundleName);
+                var url = Utility.IO.WebPathCombine(LocalUrl, qabObject.AssetBundleName);
                 yield return Utility.Unity.DownloadAssetBundleAsync(url, null, ab =>
                 {
                     assetBundleDict.TryAdd(qabObject.AssetBundleName, ab);
@@ -207,9 +277,5 @@ where T : UnityEngine.Object
                 });
             }
         }
-        //IEnumerator LoadManifest()
-        //{
-
-        //}
     }
 }

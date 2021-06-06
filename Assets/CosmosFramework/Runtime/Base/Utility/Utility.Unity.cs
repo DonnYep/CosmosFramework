@@ -603,13 +603,13 @@ namespace Cosmos
                 {
                     requests.Add(UnityWebRequest.Get(urls[i]));
                 }
-                return Utility.Unity.StartCoroutine(EnumUnityWebRequests(requests.ToArray(), overallProgress, progress, (reqs) =>
+                return Utility.Unity.StartCoroutine(EnumBytesUnityWebRequests(requests.ToArray(), overallProgress, progress, (reqs) =>
                 {
-                    var reqLength = reqs.Length;
+                    var reqLength = reqs.Count;
                     var bundleByteList = new List<byte[]>();
                     for (int i = 0; i < reqLength; i++)
                     {
-                        bundleByteList.Add (reqs[i].downloadHandler.data);
+                        bundleByteList.Add(reqs[i]);
                     }
                     downloadedCallback?.Invoke(bundleByteList);
                 }));
@@ -634,7 +634,7 @@ namespace Cosmos
                     }
                     else
                     {
-                        throw new ArgumentException($"UnityWebRequest：{request.url } : {request.error } ！");
+                        //throw new ArgumentException($"UnityWebRequest：{request.url } : {request.error } ！");
                     }
                 }
             }
@@ -649,6 +649,18 @@ namespace Cosmos
                     yield return EnumUnityWebRequest(unityWebRequests[i], progress, (request) => { requestList.Add(request); });
                 }
                 downloadedCallback.Invoke(requestList.ToArray());
+            }
+            static IEnumerator EnumBytesUnityWebRequests(UnityWebRequest[] unityWebRequests, Action<float> overallProgress, Action<float> progress, Action< IList< byte[]>> downloadedCallback)
+            {
+                var length = unityWebRequests.Length;
+                var count = length - 1;
+                var requestBytesList = new List<byte[]>();
+                for (int i = 0; i < length; i++)
+                {
+                    overallProgress?.Invoke((float)i / (float)count);
+                    yield return EnumUnityWebRequest(unityWebRequests[i], progress, (request) => { requestBytesList.Add(request.downloadHandler.data); });
+                }
+                downloadedCallback.Invoke(requestBytesList);
             }
             #endregion
         }

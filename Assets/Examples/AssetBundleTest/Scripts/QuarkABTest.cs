@@ -11,23 +11,35 @@ using UnityEngine.Networking;
 
 public class QuarkABTest : MonoBehaviour
 {
+    [TextArea]
+    [SerializeField] string remoteUrl;
+    [TextArea]
+    [SerializeField] string localUrl;
     QuarkABLoader quarkAssetABLoader;
     void Start()
     {
-
-        //Cosmos.Utility.Unity.DownloadAssetBundleAsync(srcUrl, null, (bundleBytes) =>
-        //{
-        //    var keyBytes = Encoding.UTF8.GetBytes(aseKey);
-        //    var encryptBundleBytes = Cosmos.Utility.Encryption.AESEncryptBinary(bundleBytes, keyBytes);
-        //    File.WriteAllBytes(encryptUrl, encryptBundleBytes);
-
-        //    var decryptBundleBytes = Cosmos.Utility.Encryption.AESDecryptBinary(encryptBundleBytes, keyBytes);
-        //    File.WriteAllBytes(decryptUrl, decryptBundleBytes);
-        //});
-        //Cosmos.Utility.Unity.StartCoroutine(downloadAsset());
-        //quarkAssetABLoader = new QuarkABLoader(Utility.Unity.StreamingAssetsPathURL);
-        //quarkAssetABLoader.LoadBuildInfo();
-        //quarkAssetABLoader.LoadManifest();
+        
+        if (!string.IsNullOrEmpty(localUrl)&&!string.IsNullOrEmpty(remoteUrl))
+        {
+            if (Directory.Exists(remoteUrl)&&Directory.Exists(localUrl))
+            {
+                QuarkManager.Instance.RemoteUrl = remoteUrl;
+                QuarkManager.Instance.LocalUrl= localUrl;
+                QuarkManager.Instance.CheckLatestManifestAsync((result) => 
+                {
+                    if (result)
+                    {
+                        QuarkManager.Instance.DownloadAssetBundlesAsync((overallProgress)=>
+                        {
+                            Cosmos.Utility.Debug.LogInfo($"download overallProgress progress{overallProgress*100} %");
+                        },progress=> 
+                        {
+                            Cosmos.Utility.Debug.LogInfo($"download individual progress{progress* 100} %",MessageColor.YELLOW);
+                        });
+                    }
+                });
+            }
+        }
 
     }
 }

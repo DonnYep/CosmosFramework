@@ -29,7 +29,7 @@ namespace Cosmos.Quark
                 Utility.Debug.LogInfo("LoadBuildInfo Done");
             });
         }
-        public void LoadManifest()
+        public void LoadManifest(Action<string> loadDoneCallback=null)
         {
             var manifestUrl = Utility.IO.WebPathCombine(URL, manifestName);
             Utility.Unity.DownloadTextAsync(manifestUrl, null, json =>
@@ -37,9 +37,10 @@ namespace Cosmos.Quark
                 quarkAssetManifest = Utility.Json.ToObject<QuarkManifest>(json);
                 if (quarkAssetManifest != null)
                 {
-                    QuarkUtility.SetBuiltAssetBundleModeData(quarkAssetManifest);
+                    QuarkManager.Instance.SetBuiltAssetBundleModeData(quarkAssetManifest);
                     Utility.Debug.LogInfo("LoadManifest Done");
                 }
+                loadDoneCallback?.Invoke(json);
             });
         }
         public void LoadAssetBundle(string assetBundleName)
