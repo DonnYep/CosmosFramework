@@ -8,12 +8,14 @@ namespace Cosmos
 {
     public struct SceneInfo: ISceneInfo
     {
-        public string SceneName { get; private set; }
-        public bool Additive { get; private set; }
+        readonly string sceneName;
+        readonly bool additive;
+        public string SceneName { get { return sceneName; } }
+        public bool Additive { get { return additive; } }
         public SceneInfo(string sceneName,bool addtive)
         {
-            SceneName = sceneName;
-            Additive = addtive;
+            this.sceneName = sceneName;
+            additive = addtive;
         }
         public SceneInfo(string sceneName):this(sceneName,false){}
     }

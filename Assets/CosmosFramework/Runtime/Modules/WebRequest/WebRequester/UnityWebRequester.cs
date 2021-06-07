@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Cosmos.Download
+namespace Cosmos.WebRequest
 {
     /// <summary>
-    /// 下载模块；
+    /// Unity封装的WebRequest；
     /// </summary>
-    //[Module]
-    public class DownloadManager: Module, IDownloadManager
+    public class UnityWebRequester:IWebRequester
     {
         #region UnityWebRequest
         public static Coroutine DownloadTextAsync(string url, Action<float> progress, Action<string> downloadedCallback)

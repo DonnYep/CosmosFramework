@@ -43,8 +43,6 @@ namespace Cosmos
 #else
         string.Empty;  
 #endif
-            public static bool IsWifi { get { return Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork; } }
-            public static bool NetAvailable { get { return Application.internetReachability != NetworkReachability.NotReachable; } }
             public static int Random(int min, int max)
             {
                 return UnityEngine.Random.Range(min, max);

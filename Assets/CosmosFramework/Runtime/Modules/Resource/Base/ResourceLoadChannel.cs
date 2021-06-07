@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Cosmos.Resource
 {
-    public class ResourceLoadChannel : IResourceLoadChannel
+    /// <summary>
+    /// 资源加载通道；
+    /// </summary>
+    public class ResourceLoadChannel 
     {
         readonly IResourceLoadHelper m_ResourceLoadHelper;
         readonly string m_ChannelName;

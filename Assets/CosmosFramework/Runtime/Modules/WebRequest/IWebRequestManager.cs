@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-namespace Cosmos.Download
+namespace Cosmos
 {
-    public class DownloadInfo : IReference
+    public interface IWebRequestManager : IModuleManager
     {
-        public void Release()
-        {
-        }
+
     }
 }

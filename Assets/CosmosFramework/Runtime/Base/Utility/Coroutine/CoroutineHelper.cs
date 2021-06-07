@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Cosmos
 {
     [DisallowMultipleComponent]
-    internal class CoroutineHelper:MonoBehaviour,ICoroutineHelper
+    public class CoroutineHelper:MonoBehaviour,ICoroutineHelper
     {
         public Coroutine PredicateCoroutine(Func<bool> handler, Action callBack)
         {

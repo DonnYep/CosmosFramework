@@ -35,6 +35,14 @@ namespace Cosmos
                 }
                 return count;
             }
+            /// <summary>
+            /// 遍历文件夹下的所有文件地址；
+            /// </summary>
+            /// <param name="folderPath">文件夹路径</param>
+            /// <param name="handler">遍历到一个文件时的处理的函数</param>
+            /// <exception cref="IOException">
+            /// Folder path is invalid
+            /// </exception>
             public static void TraverseFolderFilePath(string folderPath, Action<string> handler)
             {
                 if (!Directory.Exists(folderPath))
@@ -52,6 +60,9 @@ namespace Cosmos
             /// </summary>
             /// <param name="folderPath">文件夹路径</param>
             /// <param name="handler">遍历到一个文件时的处理的函数</param>
+            /// <exception cref="IOException">
+            /// Folder path is invalid
+            /// </exception>
             public static void TraverseFolderFile(string folderPath, Action<FileSystemInfo> handler)
             {
                 DirectoryInfo d = new DirectoryInfo(folderPath);
