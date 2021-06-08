@@ -20,22 +20,22 @@ namespace Cosmos.Resource
         #region Properties
         ResourceLoadMode currentResourceLoadMode;
         public ResourceLoadMode CurrentResourceLoadMode { get { return currentResourceLoadMode; } }
-        Dictionary<ResourceLoadMode, ResourceLoadChannel> buildInChannelDict;
+        Dictionary<ResourceLoadMode, ResourceLoadChannel> builtInChannelDict;
         IResourceLoadHelper currentDefaultLoadHelper;
         #endregion
         #region Methods
         public override void OnInitialization()
         {
-            buildInChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
-            buildInChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourceLoader()));
-            buildInChannelDict.Add(ResourceLoadMode.AssetBundle, new ResourceLoadChannel(ResourceLoadMode.AssetBundle.ToString(), new AssetBundleLoader()));
-            buildInChannelDict.Add(ResourceLoadMode.QuarkAsset, new ResourceLoadChannel(ResourceLoadMode.QuarkAsset.ToString(), new QuarkAssetLoader()));
+            builtInChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
+            builtInChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourceLoader()));
+            builtInChannelDict.Add(ResourceLoadMode.AssetBundle, new ResourceLoadChannel(ResourceLoadMode.AssetBundle.ToString(), new AssetBundleLoader()));
+            builtInChannelDict.Add(ResourceLoadMode.QuarkAsset, new ResourceLoadChannel(ResourceLoadMode.QuarkAsset.ToString(), new QuarkAssetLoader()));
             currentResourceLoadMode = ResourceLoadMode.Resource;
-            currentDefaultLoadHelper = buildInChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
+            currentDefaultLoadHelper = builtInChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
         }
         public void SwitchBuildInLoadMode(ResourceLoadMode resourceLoadMode)
         {
-            if (buildInChannelDict.TryGetValue(resourceLoadMode, out var channel))
+            if (builtInChannelDict.TryGetValue(resourceLoadMode, out var channel))
             {
                 this.currentResourceLoadMode = resourceLoadMode;
                 currentDefaultLoadHelper = channel.ResourceLoadHelper;
@@ -55,24 +55,24 @@ namespace Cosmos.Resource
         {
             if (Utility.Assert.IsNull(loadHelper))
                 throw new ArgumentNullException($"IResourceLoadHelper is invalid !");
-            if(buildInChannelDict.TryGetValue(resourceLoadMode, out var channel))
+            if(builtInChannelDict.TryGetValue(resourceLoadMode, out var channel))
             {
                 if (channel.ResourceLoadHelper.IsLoading)
                 {
                     Utility.Unity.PredicateCoroutine(() => channel.ResourceLoadHelper.IsLoading, () =>
                     {
-                        buildInChannelDict[resourceLoadMode]=new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
+                        builtInChannelDict[resourceLoadMode]=new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
                     });
                 }
                 else
-                    buildInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
+                    builtInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
             }
             else
-                buildInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
+                builtInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
         }
         public IResourceLoadHelper PeekBuildInLoadHelper(ResourceLoadMode resourceLoadMode)
         {
-            buildInChannelDict.TryGetValue(resourceLoadMode, out var channel);
+            builtInChannelDict.TryGetValue(resourceLoadMode, out var channel);
             return channel.ResourceLoadHelper;
         }
         /// <summary>

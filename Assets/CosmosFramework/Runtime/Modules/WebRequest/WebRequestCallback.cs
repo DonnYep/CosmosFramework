@@ -11,26 +11,26 @@ namespace Cosmos
     /// </summary>
     public class WebRequestCallback : IReference
     {
-        Action<object> startCallback;
-        Action<float> updateCallback;
-        Action<object> successCallback;
-        Action<object> failureCallback;
+        EventHandler<WebRequestStartEventArgs> startCallback;
+        EventHandler<WebRequestUpdateEventArgs> updateCallback;
+        EventHandler<WebRequestSuccessEventArgs> successCallback;
+        EventHandler<WebRequestFailureEventArgs> failureCallback;
         /// <summary>
         /// 请求开始回调；
         /// </summary>
-        public Action<object> StartCallback { get { return startCallback; } }
+        public EventHandler<WebRequestStartEventArgs> StartCallback { get { return startCallback; } }
         /// <summary>
         /// 请求执行中回调；
         /// </summary>
-        public Action<float> UpdateCallback { get { return updateCallback; } }
+        public EventHandler<WebRequestUpdateEventArgs> UpdateCallback { get { return updateCallback; } }
         /// <summary>
         /// 请求成功回调；
         /// </summary>
-        public Action<object> SuccessCallback { get { return successCallback; } }
+        public EventHandler<WebRequestSuccessEventArgs> SuccessCallback { get { return successCallback; } }
         /// <summary>
         /// 请求失败回调；
         /// </summary>
-        public Action<object> FailureCallback { get { return failureCallback; } }
+        public EventHandler<WebRequestFailureEventArgs> FailureCallback { get { return failureCallback; } }
         public WebRequestCallback () { }
         public void Release()
         {
@@ -39,7 +39,8 @@ namespace Cosmos
             successCallback = null; ;
             failureCallback = null; ;
         }
-        public static WebRequestCallback Create(Action<object> startCallback, Action<float> updateCallback, Action<object> successCallback, Action<object> failureCallback)
+        public static WebRequestCallback Create(EventHandler<WebRequestStartEventArgs> startCallback, EventHandler<WebRequestUpdateEventArgs> updateCallback,
+            EventHandler<WebRequestSuccessEventArgs> successCallback, EventHandler<WebRequestFailureEventArgs> failureCallback)
         {
             var webRequest = ReferencePool.Accquire<WebRequestCallback>();
             webRequest.startCallback = startCallback;
@@ -47,6 +48,10 @@ namespace Cosmos
             webRequest.successCallback = successCallback;
             webRequest.failureCallback = failureCallback;
             return webRequest;
+        }
+        public static void Release(WebRequestCallback webRequestCallback)
+        {
+            ReferencePool.Release(webRequestCallback);
         }
     }
 }

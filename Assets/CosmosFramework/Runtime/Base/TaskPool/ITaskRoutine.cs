@@ -13,6 +13,7 @@ namespace Cosmos
     public interface ITaskRoutine<T>
         where T :TaskBase
     {
+        void Initialize();
         T Task { get; }
         TaskStartStatus Start(T task);
         void Refresh(float elapseSeconds, float realElapseSeconds);

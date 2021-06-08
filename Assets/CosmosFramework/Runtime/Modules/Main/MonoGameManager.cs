@@ -96,13 +96,13 @@ namespace Cosmos
         private void FixedUpdate()
         {
             GameManager.OnFixRefresh();
+            GameManager.OnElapseRefresh(Utility.Time.MillisecondNow());
         }
         private void Update()
         {
             if (IsPause)
                 return;
             GameManager.OnRefresh();
-            GameManager.OnElapseRefresh(Utility.Time.MillisecondNow());
         }
         private void LateUpdate()
         {

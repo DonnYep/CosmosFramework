@@ -14,7 +14,7 @@ namespace Cosmos
         /// <summary>
         /// 等待开始；
         /// </summary>
-        ReadyToStart=0x0,
+        Prepare = 0x0,
         /// <summary>
         /// 执行中；
         /// </summary>

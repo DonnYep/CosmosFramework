@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
+    /// <summary>
+    /// 任务开始时的状态；
+    /// </summary>
     public enum TaskStartStatus : byte
     {
         /// <summary>
