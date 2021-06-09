@@ -215,7 +215,7 @@ namespace Cosmos
             runningTasksLnk.Clear();
             return taskCount;
         }
-        public void Refresh(float elapseSeconds, float realElapseSeconds)
+        public void OnRefresh(float elapseSeconds, float realElapseSeconds)
         {
             if (paused)
                 return;

@@ -407,6 +407,12 @@ namespace Cosmos
                 var sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), Vector2.zero);
                 return sprite;
             }
+            public static Texture2D BytesToTexture2D(byte[] bytes, int width, int height)
+            {
+                Texture2D texture2D = new Texture2D(width,height);
+                texture2D.LoadImage(bytes);
+                return texture2D;
+            }
             #endregion
 
             #region  Coroutine

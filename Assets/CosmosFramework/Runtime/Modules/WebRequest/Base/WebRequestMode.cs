@@ -8,7 +8,7 @@ namespace Cosmos.WebRequest
 {
     public enum WebRequestMode : byte
     {
-        UnityWebRequest=0x0,
-        HttpWebRequest = 0x1
+        UnityWebRequest = 0x0,
+        WebClient = 0x1
     }
 }

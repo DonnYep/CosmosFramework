@@ -3,25 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace Cosmos.WebRequest
+
+namespace Cosmos
 {
-    public interface IWebRequestManager : IModuleManager
+    /// <summary>
+    /// 请求代理类接口，区分webclient与unityWebRequest；
+    /// </summary>
+    public interface IWebRequestAgent
     {
-        /// <summary>
-        /// 当前web请求模式；
-        /// </summary>
-        WebRequestMode CurrentWebRequestMode { get; }
-        /// <summary>
-        /// 网络状态是否可用；
-        /// </summary>
-        bool NetworkReachable { get ; }
-        /// <summary>
-        ///切换网络请求模式；
-        /// </summary>
-        /// <see cref="WebRequestMode"></see>
-        /// <param name="webRequestMode">Web请求模式</param>
-        /// <returns>是否切换成功</returns>
-        bool ChangeWebRequestMode(WebRequestMode webRequestMode);
         /// <summary>
         /// 异步下载资源；
         /// 注意，返回值类型可以是Task与Coroutine任意一种表示异步的引用对象；

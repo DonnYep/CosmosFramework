@@ -12,7 +12,7 @@ namespace Cosmos.WebRequest
     public class WebRequestChannel
     {
         readonly string channelName;
-        readonly IWebRequester webRequester;
+        readonly IWebRequestAgent webRequestHelper;
         string description;
         /// <summary>
         /// 通道名称；
@@ -21,15 +21,15 @@ namespace Cosmos.WebRequest
         /// <summary>
         /// 请求器；
         /// </summary>
-        public IWebRequester WebRequester { get { return webRequester; } }
+        public IWebRequestAgent WebRequestHelper { get { return webRequestHelper; } }
         /// <summary>
         /// 通道描述；
         /// </summary>
         public string Description { get { return description; } set { description = value; } }
-        public WebRequestChannel(string channelName, IWebRequester webRequester)
+        public WebRequestChannel(string channelName, IWebRequestAgent webRequestHelper)
         {
             this.channelName= channelName;
-            this. webRequester = webRequester;
+            this. webRequestHelper = webRequestHelper;
         }
     }
 }
