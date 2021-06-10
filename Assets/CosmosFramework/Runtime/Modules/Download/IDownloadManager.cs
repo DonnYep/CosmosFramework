@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos.WebRequest
+namespace Cosmos.Download
 {
-    public enum WebRequestMode : byte
+    public interface IDownloadManager:IModuleManager
     {
-        UnityWebRequest = 0x0,
-        WebClient = 0x1
+
     }
 }

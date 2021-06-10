@@ -48,7 +48,7 @@ namespace Cosmos
             if (type == null)
                 throw new ArgumentNullException("TypeNamePair : Type is invalid");
             var typeName = type.FullName;
-            return string.IsNullOrEmpty(_string) ? typeName : Utility.Text.Format("{0}.{1}", typeName, _string);
+            return string.IsNullOrEmpty(_string) ? typeName : $"{typeName}.{_string}";
         }
     }
 }

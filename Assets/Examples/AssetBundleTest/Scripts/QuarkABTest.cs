@@ -16,9 +16,21 @@ public class QuarkABTest : MonoBehaviour
     [TextArea]
     [SerializeField] string localUrl;
     QuarkABLoader quarkAssetABLoader;
+    [SerializeField]
+    bool toggle;
+    float time=0;
     void Start()
     {
-        
+
+        FutureTaskMonitor.Instance.Initiate();
+        FutureTask task = FutureTask.Create(() => 
+        {
+            return toggle==true;
+        });
+        task.Completed += () => { Cosmos.Utility.Debug.LogInfo(task.Description); };
+        task.Polling += () => Cosmos.Utility.Debug.LogInfo("Polling");
+        task.Description = "延迟测试";
+        Cosmos.Utility.Debug.LogInfo("开始测试延时");
         //if (!string.IsNullOrEmpty(localUrl)&&!string.IsNullOrEmpty(remoteUrl))
         //{
         //    if (Directory.Exists(remoteUrl)&&Directory.Exists(localUrl))
@@ -41,5 +53,11 @@ public class QuarkABTest : MonoBehaviour
         //    }
         //}
 
+    }
+    private void Update()
+    {
+        time += Time.deltaTime;
+        if (time >= 3)
+            toggle = true;
     }
 }

@@ -7,21 +7,12 @@ using UnityEngine;
 
 namespace Cosmos.WebRequest
 {
-    public interface IWebRequestManager : IModuleManager
+    public interface IWebRequestHelper
     {
         /// <summary>
-        /// Uniform Resource Locator；
+        /// 是否正在加载；
         /// </summary>
-        string URL { get; set; }
-        /// <summary>
-        /// 网络状态是否可用；
-        /// </summary>
-        bool NetworkReachable { get ; }
-        /// <summary>
-        /// 设置WebRequestHelper；
-        /// </summary>
-        /// <param name="webRequestHelper">自定义实现的WebRequestHelper</param>
-        void SetWebRequestHelper(IWebRequestHelper webRequestHelper);
+        bool IsLoading { get; }
         /// <summary>
         /// 异步请求文件流；
         /// </summary>
