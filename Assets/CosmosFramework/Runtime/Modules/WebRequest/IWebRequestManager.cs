@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Cosmos.WebRequest;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Cosmos.WebRequest
+namespace Cosmos
 {
     public interface IWebRequestManager : IModuleManager
     {
@@ -21,7 +22,8 @@ namespace Cosmos.WebRequest
         /// 设置WebRequestHelper；
         /// </summary>
         /// <param name="webRequestHelper">自定义实现的WebRequestHelper</param>
-        void SetWebRequestHelper(IWebRequestHelper webRequestHelper);
+        /// <param name="callback">完成切换回调</param>
+        void SetHelperAsync(IWebRequestHelper webRequestHelper, Action callback);
         /// <summary>
         /// 异步请求文件流；
         /// </summary>

@@ -53,6 +53,7 @@ namespace Cosmos
         public static IEntityManager EntityManager { get { return GameManager.GetModule<IEntityManager>(); } }
         public static IEventManager EventManager { get { return GameManager.GetModule<IEventManager>(); } }
         public static ISceneManager SceneManager { get { return GameManager.GetModule<ISceneManager>(); } }
+        public static IWebRequestManager WebRequestManager{ get { return GameManager.GetModule<IWebRequestManager>(); } }
 
         public static GameObject AudioMount { get { return GameManager.GetModuleMount<IAudioManager>(); } }
         public static GameObject ControllerMount { get { return GameManager.GetModuleMount<IControllerManager>(); } }

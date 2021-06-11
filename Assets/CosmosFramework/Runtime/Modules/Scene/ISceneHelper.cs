@@ -13,6 +13,10 @@ namespace Cosmos
     /// </summary>
     public interface ISceneHelper
     {
+        /// <summary>
+        /// 是否正在加载；
+        /// </summary>
+        bool IsLoading { get; }
         void LoadScene(ISceneInfo sceneInfo);
         IEnumerator LoadSceneAsync(ISceneInfo sceneInfo,Action startLoadCallback,Action<float> progressCallback, Action loadedCallback = null);
         IEnumerator LoadSceneAsync(ISceneInfo sceneInfo, Action startLoadCallback, Action<float> progressCallback, Func<bool> loadedPredicate, Action loadedCallback = null);

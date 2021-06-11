@@ -15,9 +15,25 @@ namespace Cosmos.Scene
         {
             sceneHelper = new DefaultSceneHelper();
         }
-        public void SetHelper(ISceneHelper sceneHelper)
+        /// <summary>
+        /// 异步设置场景加载helper；
+        /// </summary>
+        /// <param name="sceneHelper">自定义实现的ISceneHelper</param>
+        /// <param name="callback">完成切换回调</param>
+        public void SetHelperAsync(ISceneHelper sceneHelper, Action callback)
         {
-            this.sceneHelper = sceneHelper;
+            if (sceneHelper != null)
+            {
+                this.sceneHelper = sceneHelper;
+                callback?.Invoke();
+            }
+            else
+            {
+                FutureTask.Detection(() =>
+               {
+                   return sceneHelper.IsLoading == false;
+               }, (t) => { this.sceneHelper = sceneHelper; callback?.Invoke(); });
+            }
         }
         /// <summary>
         /// 同步加载场景

@@ -9,10 +9,15 @@ using UnityEngine.Networking;
 
 namespace Cosmos.WebRequest
 {
-    /// <summary>
-    /// 下载模块；
-    /// </summary>
-    //[Module]
+    //================================================
+    //1、WebRequest用于加载AssetBundle资源。资源状态可以是Remote的，
+    // 也可以是Local下persistentDataPath的；
+    //2、内置已经实现了一个默认的WebRequest帮助类对象；模块初始化时会
+    // 自动加载并将默认的helper设置为此模块的默认加载helper；
+    //3、helper可以自行实现并且切换，切换模块的状态是异步的，内部由
+    // FutureTask进行异步状态的检测。
+    //================================================
+    [Module]
     public class WebRequestManager : Module, IWebRequestManager
     {
         IWebRequestHelper webRequestHelper;
@@ -34,23 +39,26 @@ namespace Cosmos.WebRequest
         /// 设置WebRequestHelper；
         /// </summary>
         /// <param name="webRequestHelper">自定义实现的WebRequestHelper</param>
-        public void SetWebRequestHelper(IWebRequestHelper webRequestHelper)
+        /// <param name="callback">完成切换回调</param>
+        public void SetHelperAsync(IWebRequestHelper webRequestHelper,Action callback)
         {
             if (webRequestHelper != null)
             {
                 if (!webRequestHelper.IsLoading)
+                {
                     this.webRequestHelper = webRequestHelper;
+                    callback?.Invoke();
+                }
                 else
                 {
-                    //Utility.Unity.PredicateCoroutine(() => webRequestHelper.IsLoading, () =>
-                    //{
-                    //    this.webRequestHelper = webRequestHelper;
-                    //});
-
-                    //这里需要异步等待一个任务；协程等待协程会阻塞，因此使用自己实现的任务池进行监控；
-                    //error
+                    //这里使用了FutureTask进行异步检测，当IsLoading结束，则更换webRequestHelper；
+                    //FutureTask不会因协程阻塞而暂停；
+                    FutureTask.Detection(() =>
+                    {
+                        return webRequestHelper.IsLoading == false;
+                    }, (t) => { this.webRequestHelper = webRequestHelper; callback?.Invoke(); });
                 }
-              
+
             }
             else
                 this.webRequestHelper = webRequestHelper;
@@ -87,7 +95,7 @@ namespace Cosmos.WebRequest
         /// <returns>协程对象</returns>
         public Coroutine RequestAudioAsync(string uri, AudioType audioType, WebRequestCallback webRequestCallback, Action<AudioClip> resultCallback)
         {
-            return webRequestHelper.RequestAudioAsync(uri, audioType, webRequestCallback,resultCallback);
+            return webRequestHelper.RequestAudioAsync(uri, audioType, webRequestCallback, resultCallback);
         }
         /// <summary>
         /// 异步请求Audio；
@@ -130,7 +138,7 @@ namespace Cosmos.WebRequest
         /// <returns>协程对象</returns>
         public Coroutine RequestTextAsync(string uri, WebRequestCallback webRequestCallback, Action<string> resultCallback)
         {
-            return webRequestHelper.RequestTextAsync(uri, webRequestCallback,resultCallback);
+            return webRequestHelper.RequestTextAsync(uri, webRequestCallback, resultCallback);
         }
         /// <summary>
         /// 异步请求Text；

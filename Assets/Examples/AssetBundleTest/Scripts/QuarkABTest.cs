@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Net;
-using UnityEngine.Networking;
 
 public class QuarkABTest : MonoBehaviour
 {
@@ -18,46 +17,28 @@ public class QuarkABTest : MonoBehaviour
     QuarkABLoader quarkAssetABLoader;
     [SerializeField]
     bool toggle;
-    float time=0;
+    [SerializeField]
+    float waitTime = 6;
+    [SerializeField]
+    float time = 0;
     void Start()
     {
-
-        FutureTaskMonitor.Instance.Initiate();
-        FutureTask task = FutureTask.Create(() => 
-        {
-            return toggle==true;
-        });
-        task.Completed += () => { Cosmos.Utility.Debug.LogInfo(task.Description); };
-        task.Polling += () => Cosmos.Utility.Debug.LogInfo("Polling");
-        task.Description = "延迟测试";
-        Cosmos.Utility.Debug.LogInfo("开始测试延时");
-        //if (!string.IsNullOrEmpty(localUrl)&&!string.IsNullOrEmpty(remoteUrl))
-        //{
-        //    if (Directory.Exists(remoteUrl)&&Directory.Exists(localUrl))
-        //    {
-        //        QuarkManager.Instance.RemoteUrl = remoteUrl;
-        //        QuarkManager.Instance.LocalUrl= localUrl;
-        //        QuarkManager.Instance.CheckLatestManifestAsync((result) => 
-        //        {
-        //            if (result)
-        //            {
-        //                QuarkManager.Instance.DownloadAssetBundlesAsync((overallProgress)=>
-        //                {
-        //                    Cosmos.Utility.Debug.LogInfo($"download overallProgress progress{overallProgress*100} %");
-        //                },progress=> 
-        //                {
-        //                    Cosmos.Utility.Debug.LogInfo($"download individual progress{progress* 100} %",MessageColor.YELLOW);
-        //                });
-        //            }
-        //        });
-        //    }
-        //}
-
+        FutureTask.Detection(() =>
+       {
+           return toggle == true;
+       }, (t) => { Utility.Debug.LogInfo("Polling"); }, (t) =>
+          {
+              Utility.Debug.LogInfo(t.Description + " ---异步状态结束");
+          }, "延迟测试");
+        Utility.Debug.LogInfo("开始测试延时");
     }
     private void Update()
     {
         time += Time.deltaTime;
-        if (time >= 3)
+        if (time >= waitTime)
+        {
             toggle = true;
+            time = waitTime;
+        }
     }
 }

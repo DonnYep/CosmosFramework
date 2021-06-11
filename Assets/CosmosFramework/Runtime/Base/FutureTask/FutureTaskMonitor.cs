@@ -6,38 +6,26 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public class FutureTaskMonitor : Singleton<FutureTaskMonitor>
+    internal class FutureTaskMonitor : MonoSingleton<FutureTaskMonitor>
     {
         DateTime previousTimeSinceStartup;
         Dictionary<int, FutureTask> futureTaskDict = new Dictionary<int, FutureTask>();
         List<FutureTask> futureTaskCache = new List<FutureTask>();
-        bool isPause;
+        bool isPause=false;
         public bool IsPause { get { return isPause; } set { isPause = value; } }
-        public void Initiate()
-        {
-            GameManager.RefreshHandler += OnRefresh;
-            isPause = false;
-        }
         public void Termination()
         {
             isPause = true;
-            try
-            {
-                GameManager.RefreshHandler -= OnRefresh;
-            }
-            catch { }
         }
-        public bool HasFutureTask(int futureTaskId)
+        internal bool HasFutureTask(int futureTaskId)
         {
             return futureTaskDict.ContainsKey(futureTaskId);
         }
-        public FutureTaskInfo GetFutureTaskInfo(int futureTaskId)
+        internal FutureTaskInfo GetFutureTaskInfo(int futureTaskId)
         {
             if( futureTaskDict.TryGetValue(futureTaskId, out var futureTask))
             {
-                FutureTaskInfo info = new FutureTaskInfo();
-                info.ElapseTime = futureTask.ElapseTime;
-                info.FutureTaskId= futureTask.FutureTaskId;
+                FutureTaskInfo info = new FutureTaskInfo(futureTask.FutureTaskId,futureTask.ElapsedTime, futureTask.Description);
                 return info;
             }
             return FutureTaskInfo.None;
@@ -73,12 +61,24 @@ namespace Cosmos
             {
                 var futureTask = futureTaskCache[i];
                 futureTask.OnRefresh(deltaTime);
-                if (futureTask.IsPause)
+                if (!futureTask.Available)
                 {
                     futureTask.OnComplete();
                     RemoveFutureTask(futureTask.FutureTaskId);
                 }
             }
+        }
+        protected override void Awake()
+        {
+            base.Awake();
+            gameObject.hideFlags = UnityEngine.HideFlags.HideInHierarchy;
+            DontDestroyOnLoad(gameObject);
+        }
+        private void Update()
+        {
+            if (isPause)
+                return;
+            OnRefresh();
         }
     }
 }
