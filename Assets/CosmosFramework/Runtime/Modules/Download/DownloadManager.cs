@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos.Download
 {
-    public class DownloadManager : Module, IDownloadManager
+    internal class DownloadManager : Module, IDownloadManager
     {
         Action<DownloadStartEventArgs> downloadStart;
         Action<DownloadSuccessEventArgs> downloadUpdate;

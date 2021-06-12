@@ -9,10 +9,10 @@ using System.Collections;
 
 namespace Cosmos.Download
 {
-    public class UnityDownloadAgentHelper //: IDownloadAgentHelper
+    public class UnityDownloadAgentHelper : IDownloadAgentHelper
     {
         Action<DownloadStartEventArgs> downloadStart;
-        Action<DownloadSuccessEventArgs> downloadUpdate;
+        Action<DownloadUpdateEventArgs> downloadUpdate;
         Action<DownloadSuccessEventArgs> downloadSuccess;
         Action<DownloadFailureEventArgs> downloadFailure;
         public event Action<DownloadStartEventArgs> DownloadStart
@@ -20,7 +20,7 @@ namespace Cosmos.Download
             add { downloadStart += value; }
             remove { downloadStart -= value; }
         }
-        public event Action<DownloadSuccessEventArgs> DownloadUpdate
+        public event Action<DownloadUpdateEventArgs> DownloadUpdate
         {
             add { downloadUpdate += value; }
             remove { downloadUpdate -= value; }
@@ -35,44 +35,51 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-
-
-        //public object DownloadFileAsync(string uri, object customeData)
-        //{
-        //    return Utility.Unity.StartCoroutine(EnumDownloadWebRequest(UnityWebRequest.Get(uri)));
-            
-        //}
-
-        //public object DownloadFileAsync(string uri, long startPosition, object customeData)
-        //{
-        //    return Utility.Unity.StartCoroutine(EnumDownloadWebRequest(UnityWebRequest.Get(uri)));
-        //}
-        //IEnumerator EnumDownloadWebRequest(UnityWebRequest unityWebRequest)
-        //{
-        //    using (UnityWebRequest request = unityWebRequest)
-        //    {
-        //        downloadStart?.Invoke(null);
-        //        request.SendWebRequest();
-        //        while (!request.isDone)
-        //        {
-        //            downloadUpdate?.Invoke(request.downloadProgress);
-        //            yield return null;
-        //        }
-        //        if (!request.isNetworkError && !request.isHttpError)
-        //        {
-        //            if (request.isDone)
-        //            {
-        //                downloadUpdate?.Invoke(1);
-        //                downloadSuccess?.Invoke(request.downloadHandler.data);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            downloadFailure?.Invoke(request.error);
-        //        }
-        //    }
-        //}
-        //IEnumerator EnumBytesUnityWebRequests(UnityWebRequest[] unityWebRequests, DownloadMultipleCallback downloadCallback)
+        public object DownloadFileAsync(DownloadTask downloadTask, object customeData)
+        {
+            return Utility.Unity.StartCoroutine(EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData));
+        }
+        public object DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
+        {
+            return Utility.Unity.StartCoroutine(EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri),downloadTask.DownloadPath,customeData));
+        }
+        IEnumerator EnumDownloadWebRequest(UnityWebRequest unityWebRequest,string downloadPath,object customeData)
+        {
+            using (UnityWebRequest request = unityWebRequest)
+            {
+                var startEventArgs= DownloadStartEventArgs.Create(request.url, downloadPath, customeData);
+                downloadStart?.Invoke(startEventArgs);
+                DownloadStartEventArgs.Release(startEventArgs);
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    var percentage =(int) request.downloadProgress*100;
+                    var updateEventArgs = DownloadUpdateEventArgs.Create(request.url, downloadPath, percentage,customeData);
+                    downloadUpdate?.Invoke(updateEventArgs);
+                    DownloadUpdateEventArgs.Release(updateEventArgs);
+                    yield return null;
+                }
+                if (!request.isNetworkError && !request.isHttpError)
+                {
+                    if (request.isDone)
+                    {
+                        var updateEventArgs = DownloadUpdateEventArgs.Create(request.url, downloadPath, 100, customeData);
+                        downloadUpdate?.Invoke(updateEventArgs);
+                        var successEventArgs = DownloadSuccessEventArgs.Create(request.url, downloadPath, request.downloadHandler.data, customeData);
+                        downloadSuccess?.Invoke(successEventArgs);
+                        DownloadUpdateEventArgs.Release(updateEventArgs);
+                        DownloadSuccessEventArgs.Release(successEventArgs);
+                    }
+                }
+                else
+                {
+                    var failureEventArgs = DownloadFailureEventArgs.Create(request.url, downloadPath, request.error, customeData);
+                    downloadFailure?.Invoke(failureEventArgs);
+                    DownloadFailureEventArgs.Release(failureEventArgs);
+                }
+            }
+        }
+        //IEnumerator EnumBytesUnityWebRequests(UnityWebRequest[] unityWebRequests)
         //{
         //    var length = unityWebRequests.Length;
         //    var count = length - 1;

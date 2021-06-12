@@ -12,57 +12,21 @@ namespace Cosmos
     {
         readonly string logFullPath;
         readonly string logFileName = "CosmosFrameworkClient.log";
-        readonly string logFolderName = "Log";
         readonly string defaultLogPath = Directory.GetParent(UnityEngine.Application.dataPath).FullName;
         /// <summary>
-        /// 默认构造，使用默认地址与默认log名称
+        /// UnityDebugHelper无参构造，不输出log信息到log文件；
         /// </summary>
-        public UnityDebugHelper()
-        {
-            var path = defaultLogPath;
-            logFullPath = Utility.IO.PathCombine(path, logFolderName);
-            Utility.IO.CreateFolder(logFullPath);
-            UnityEngine.Application.logMessageReceived += UnityLog;
-        }
+        public UnityDebugHelper() { }
         /// <summary>
-        /// unitylog构造
+        /// UnityDebugHelper构造；
         /// </summary>
-        /// <param name="logName">无后缀文件名</param>
-        /// <param name="logFullPath">log绝对路径</param>
-        public UnityDebugHelper(string logName, string logFullPath)
+        /// <param name="logFullPath">log输出的完整路径</param>
+        public UnityDebugHelper(string logFullPath)
         {
-            if (string.IsNullOrEmpty(logName))
-                logName = logFileName;
             if (string.IsNullOrEmpty(logFullPath))
-            {
-                this.logFullPath = Utility.IO.PathCombine(defaultLogPath, logFolderName);
-            }
-            else
-                this.logFullPath = logFileName;
-            Utility.IO.CreateFolder(this.logFullPath);
-            UnityEngine.Application.logMessageReceived += UnityLog;
-        }
-        /// <summary>
-        /// log构造
-        /// </summary>
-        /// <param name="logName">无后缀文件名</param>
-        public UnityDebugHelper(string logName)
-        {
-            if (string.IsNullOrEmpty(logName))
-            {
-                logName = logFileName;
-            }
-            if (logName.EndsWith(".log"))
-            {
-                logFileName = logName;
-            }
-            else
-            {
-                logFileName = Utility.Text.Append(logName, ".log");
-            }
-            string path = Directory.GetParent(UnityEngine.Application.dataPath).FullName;
-            logFullPath = Utility.IO.PathCombine(path, logFolderName);
-            Utility.IO.CreateFolder(logFullPath);
+                throw new ArgumentNullException("LogFullPath is invalid !");
+            this.logFullPath = logFullPath;
+            Utility.IO.WriteTextFile(logFullPath, "Head");
             UnityEngine.Application.logMessageReceived += UnityLog;
         }
         public void LogInfo(object msg, object context)

@@ -9,7 +9,7 @@ namespace Cosmos.Download
     public class DownloadAgent
     {
         Action<DownloadStartEventArgs> downloadStart;
-        Action<DownloadSuccessEventArgs> downloadUpdate;
+        Action<DownloadUpdateEventArgs> downloadUpdate;
         Action<DownloadSuccessEventArgs> downloadSuccess;
         Action<DownloadFailureEventArgs> downloadFailure;
         public event Action<DownloadStartEventArgs> DownloadStart
@@ -17,7 +17,7 @@ namespace Cosmos.Download
             add { downloadStart += value; }
             remove { downloadStart -= value; }
         }
-        public event Action<DownloadSuccessEventArgs> DownloadUpdate
+        public event Action<DownloadUpdateEventArgs> DownloadUpdate
         {
             add { downloadUpdate += value; }
             remove { downloadUpdate -= value; }

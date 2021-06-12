@@ -7,35 +7,70 @@ using System.Net;
 
 namespace Cosmos.Download
 {
-    public class WebClientDownloadAgentHelper//:IDownloadAgentHelper
+    public class WebClientDownloadAgentHelper:IDownloadAgentHelper
     {
-        //public FutureTask DownloadFileAsync(string uri, DownloadCallback downloadCallback)
-        //{
-        //    using (WebClient webClient = new WebClient())
-        //    {
-        //        try
-        //        {
-        //            downloadCallback.StartCallback?.Invoke();
-        //            var task = webClient.DownloadDataTaskAsync(uri);
-        //            webClient.DownloadProgressChanged += (sender, eventArgs) =>
-        //            {
-        //                var progress = eventArgs.ProgressPercentage;
-        //                var percentage = (float)progress / 100f;
-        //                downloadCallback.UpdateCallback.Invoke(percentage);
-        //            };
-        //            webClient.DownloadDataCompleted += (sender, eventArgs) =>
-        //            {
-        //                downloadCallback.SuccessCallback.Invoke(eventArgs.Result);
-        //            };
-        //            var futureTask = FutureTask.Create(task);
-        //            return futureTask;
-        //        }
-        //        catch (Exception exception)
-        //        {
-        //            downloadCallback.FailureCallback(exception.ToString());
-        //            throw exception;
-        //        }
-        //    }
-        //}
+        Action<DownloadStartEventArgs> downloadStart;
+        Action<DownloadUpdateEventArgs> downloadUpdate;
+        Action<DownloadSuccessEventArgs> downloadSuccess;
+        Action<DownloadFailureEventArgs> downloadFailure;
+        public event Action<DownloadStartEventArgs> DownloadStart
+        {
+            add { downloadStart += value; }
+            remove { downloadStart -= value; }
+        }
+        public event Action<DownloadUpdateEventArgs> DownloadUpdate
+        {
+            add { downloadUpdate += value; }
+            remove { downloadUpdate -= value; }
+        }
+        public event Action<DownloadSuccessEventArgs> DownloadSuccess
+        {
+            add { downloadSuccess += value; }
+            remove { downloadSuccess -= value; }
+        }
+        public event Action<DownloadFailureEventArgs> DownloadFailure
+        {
+            add { downloadFailure += value; }
+            remove { downloadFailure -= value; }
+        }
+        public object DownloadFileAsync(DownloadTask downloadTask, object customeData)
+        {
+            using (WebClient webClient = new WebClient())
+            {
+                try
+                {
+                    var startEventArgs = DownloadStartEventArgs.Create(downloadTask.Uri, downloadTask.DownloadPath, customeData);
+                    downloadStart?.Invoke(startEventArgs);
+                    DownloadStartEventArgs.Release(startEventArgs);
+
+                    var task = webClient.DownloadDataTaskAsync(downloadTask.Uri);
+                    webClient.DownloadProgressChanged += (sender, eventArgs) =>
+                    {
+                        var progress = eventArgs.ProgressPercentage;
+                        var updateEventArgs = DownloadUpdateEventArgs.Create(downloadTask.Uri, downloadTask.DownloadPath, progress, customeData);
+                        downloadUpdate?.Invoke(updateEventArgs);
+                        DownloadUpdateEventArgs.Release(updateEventArgs);
+                    };
+                    webClient.DownloadDataCompleted += (sender, eventArgs) =>
+                    {
+                        var successEventArgs = DownloadSuccessEventArgs.Create(downloadTask.Uri, downloadTask.DownloadPath, eventArgs.Result, customeData);
+                        downloadSuccess?.Invoke(successEventArgs);
+                        DownloadSuccessEventArgs.Release(successEventArgs);
+                    };
+                    return task;
+                }
+                catch (Exception exception)
+                {
+                    var failureEventArgs = DownloadFailureEventArgs.Create(downloadTask.Uri, null, exception.ToString(), customeData);
+                    downloadFailure?.Invoke(failureEventArgs);
+                    DownloadFailureEventArgs.Release(failureEventArgs);
+                    throw exception;
+                }
+            }
+        }
+        public object DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
+        {
+            return null;
+        }
     }
 }

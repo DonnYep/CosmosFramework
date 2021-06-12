@@ -18,7 +18,7 @@ namespace Cosmos.WebRequest
     // FutureTask进行异步状态的检测。
     //================================================
     [Module]
-    public class WebRequestManager : Module, IWebRequestManager
+    internal class WebRequestManager : Module, IWebRequestManager
     {
         IWebRequestHelper webRequestHelper;
         string _url;
