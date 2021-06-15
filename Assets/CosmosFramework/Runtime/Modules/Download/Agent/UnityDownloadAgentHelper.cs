@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Net;
 using UnityEngine.Networking;
 using System.Collections;
-
 namespace Cosmos.Download
 {
     public class UnityDownloadAgentHelper : IDownloadAgentHelper
@@ -35,26 +34,26 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-        public object DownloadFileAsync(DownloadTask downloadTask, object customeData)
+        public IEnumerator DownloadFileAsync(DownloadTask downloadTask, object customeData)
         {
-            return Utility.Unity.StartCoroutine(EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData));
+            return EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
         }
-        public object DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
+        public IEnumerator DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
         {
-            return Utility.Unity.StartCoroutine(EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri),downloadTask.DownloadPath,customeData));
+            return EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
         }
-        IEnumerator EnumDownloadWebRequest(UnityWebRequest unityWebRequest,string downloadPath,object customeData)
+        IEnumerator EnumDownloadWebRequest(UnityWebRequest unityWebRequest, string downloadPath, object customeData)
         {
             using (UnityWebRequest request = unityWebRequest)
             {
-                var startEventArgs= DownloadStartEventArgs.Create(request.url, downloadPath, customeData);
+                var startEventArgs = DownloadStartEventArgs.Create(request.url, downloadPath, customeData);
                 downloadStart?.Invoke(startEventArgs);
                 DownloadStartEventArgs.Release(startEventArgs);
                 request.SendWebRequest();
                 while (!request.isDone)
                 {
-                    var percentage =(int) request.downloadProgress*100;
-                    var updateEventArgs = DownloadUpdateEventArgs.Create(request.url, downloadPath, percentage,customeData);
+                    var percentage = (int)request.downloadProgress * 100;
+                    var updateEventArgs = DownloadUpdateEventArgs.Create(request.url, downloadPath, percentage, customeData);
                     downloadUpdate?.Invoke(updateEventArgs);
                     DownloadUpdateEventArgs.Release(updateEventArgs);
                     yield return null;

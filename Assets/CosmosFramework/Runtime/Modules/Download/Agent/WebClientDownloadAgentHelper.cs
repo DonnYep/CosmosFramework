@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using System.Collections;
 
 namespace Cosmos.Download
 {
-    public class WebClientDownloadAgentHelper:IDownloadAgentHelper
+    public class WebClientDownloadAgentHelper : IDownloadAgentHelper
     {
         Action<DownloadStartEventArgs> downloadStart;
         Action<DownloadUpdateEventArgs> downloadUpdate;
@@ -33,7 +34,7 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-        public object DownloadFileAsync(DownloadTask downloadTask, object customeData)
+        public IEnumerator DownloadFileAsync(DownloadTask downloadTask, object customeData)
         {
             using (WebClient webClient = new WebClient())
             {
@@ -43,7 +44,7 @@ namespace Cosmos.Download
                     downloadStart?.Invoke(startEventArgs);
                     DownloadStartEventArgs.Release(startEventArgs);
 
-                    var task = webClient.DownloadDataTaskAsync(downloadTask.Uri);
+                    Task task = webClient.DownloadDataTaskAsync(downloadTask.Uri);
                     webClient.DownloadProgressChanged += (sender, eventArgs) =>
                     {
                         var progress = eventArgs.ProgressPercentage;
@@ -57,7 +58,7 @@ namespace Cosmos.Download
                         downloadSuccess?.Invoke(successEventArgs);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                     };
-                    return task;
+                    return task.AsCoroutine();
                 }
                 catch (Exception exception)
                 {
@@ -68,7 +69,7 @@ namespace Cosmos.Download
                 }
             }
         }
-        public object DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
+        public IEnumerator DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
         {
             return null;
         }

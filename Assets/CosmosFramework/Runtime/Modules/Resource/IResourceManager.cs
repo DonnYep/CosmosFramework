@@ -33,7 +33,6 @@ namespace Cosmos
         /// <param name="resourceLoadMode">加载模式</param>
         /// <param name="loadHelper">加载帮助对象</param>
         void AddOrUpdateBuildInLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper);
-        IResourceLoadHelper PeekBuildInLoadHelper(ResourceLoadMode resourceLoadMode);
         /// <summary>
         /// 使用默认加载模式；
         /// 特性无效！；

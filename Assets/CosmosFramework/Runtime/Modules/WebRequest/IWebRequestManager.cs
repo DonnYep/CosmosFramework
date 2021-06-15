@@ -22,8 +22,7 @@ namespace Cosmos
         /// 设置WebRequestHelper；
         /// </summary>
         /// <param name="webRequestHelper">自定义实现的WebRequestHelper</param>
-        /// <param name="callback">完成切换回调</param>
-        void SetHelperAsync(IWebRequestHelper webRequestHelper, Action callback);
+        void SetHelperAsync(IWebRequestHelper webRequestHelper);
         /// <summary>
         /// 异步请求文件流；
         /// </summary>

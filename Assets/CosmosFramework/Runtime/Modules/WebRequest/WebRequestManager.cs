@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-
 namespace Cosmos.WebRequest
 {
     //================================================
@@ -39,29 +38,11 @@ namespace Cosmos.WebRequest
         /// 设置WebRequestHelper；
         /// </summary>
         /// <param name="webRequestHelper">自定义实现的WebRequestHelper</param>
-        /// <param name="callback">完成切换回调</param>
-        public void SetHelperAsync(IWebRequestHelper webRequestHelper,Action callback)
+        public async void SetHelperAsync(IWebRequestHelper webRequestHelper)
         {
             if (webRequestHelper != null)
-            {
-                if (!webRequestHelper.IsLoading)
-                {
-                    this.webRequestHelper = webRequestHelper;
-                    callback?.Invoke();
-                }
-                else
-                {
-                    //这里使用了FutureTask进行异步检测，当IsLoading结束，则更换webRequestHelper；
-                    //FutureTask不会因协程阻塞而暂停；
-                    FutureTask.Detection(() =>
-                    {
-                        return webRequestHelper.IsLoading == false;
-                    }, (t) => { this.webRequestHelper = webRequestHelper; callback?.Invoke(); });
-                }
-
-            }
-            else
-                this.webRequestHelper = webRequestHelper;
+                await new WaitUntil(() => { return webRequestHelper.IsLoading == false; });
+            this.webRequestHelper = webRequestHelper;
         }
         /// <summary>
         /// 异步请求AssetBundle；

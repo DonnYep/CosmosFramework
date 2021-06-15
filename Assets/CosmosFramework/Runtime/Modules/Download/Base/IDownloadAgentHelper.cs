@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,21 +22,19 @@ namespace Cosmos.Download
         event Action<DownloadFailureEventArgs> DownloadFailure;
         /// <summary>
         /// 异步下载资源；
-        /// FutureTask结构体是作为Wrapper将异步对象进行地址缓存；
         /// </summary>
         /// <param name="downloadTask">下载任务</param>
         /// <param name="customeData">用户自定义的数据</param>
         /// <returns>表示异步的引用对象</returns>
-        object DownloadFileAsync(DownloadTask downloadTask,object customeData);
+        IEnumerator DownloadFileAsync(DownloadTask downloadTask,object customeData);
         /// <summary>
         /// 异步下载资源；
-        /// FutureTask结构体是作为Wrapper将异步对象进行地址缓存；
         /// </summary>
         /// <see cref="FutureTask"></see>
         /// <param name="downloadTask">下载任务</param>
         /// <param name="startPosition">上次下载到的位置</param>
         /// <param name="customeData">用户自定义的数据</param>
         /// <returns>表示异步的引用对象</returns>
-        object DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData);
+        IEnumerator DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData);
     }
 }

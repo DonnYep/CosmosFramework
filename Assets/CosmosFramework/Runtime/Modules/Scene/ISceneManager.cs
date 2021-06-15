@@ -14,8 +14,7 @@ namespace Cosmos
         /// 异步设置场景加载helper；
         /// </summary>
         /// <param name="sceneHelper">自定义实现的ISceneHelper</param>
-        /// <param name="callback">完成切换回调</param>
-        void SetHelperAsync(ISceneHelper sceneHelper, Action callback);
+        void SetHelperAsync(ISceneHelper sceneHelper);
         /// <summary>
         /// 同步加载场景
         /// </summary>

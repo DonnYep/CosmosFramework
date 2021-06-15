@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 /// <summary>
 /// 此静态类为扩展方法工具类；
 /// </summary>
-public static class NetCoreExtend
+public static class NetCoreExtensions
 {
 #if UNITY_5_3_OR_NEWER
     /// <summary>

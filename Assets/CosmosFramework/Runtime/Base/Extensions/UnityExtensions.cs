@@ -7,7 +7,7 @@ namespace Cosmos
     /// <summary>
     /// 组件扩展脚本，封装的一些常用的功能函数
     /// </summary>
-    public static class UnityExtend
+    public static class UnityExtensions
     {
         public static void ResetWorldTransform(this Transform trans)
         {

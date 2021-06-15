@@ -51,29 +51,13 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="resourceLoadMode">加载模式</param>
         /// <param name="loadHelper">加载帮助对象</param>
-        public void AddOrUpdateBuildInLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper)
+        public async void AddOrUpdateBuildInLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper)
         {
             if (Utility.Assert.IsNull(loadHelper))
                 throw new ArgumentNullException($"IResourceLoadHelper is invalid !");
-            if(builtInChannelDict.TryGetValue(resourceLoadMode, out var channel))
-            {
-                if (channel.ResourceLoadHelper.IsLoading)
-                {
-                    Utility.Unity.PredicateCoroutine(() => channel.ResourceLoadHelper.IsLoading, () =>
-                    {
-                        builtInChannelDict[resourceLoadMode]=new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
-                    });
-                }
-                else
-                    builtInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
-            }
-            else
-                builtInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
-        }
-        public IResourceLoadHelper PeekBuildInLoadHelper(ResourceLoadMode resourceLoadMode)
-        {
-            builtInChannelDict.TryGetValue(resourceLoadMode, out var channel);
-            return channel.ResourceLoadHelper;
+            if (builtInChannelDict.TryGetValue(resourceLoadMode, out var channel))
+                await new WaitUntil(() => channel.ResourceLoadHelper.IsLoading == false);
+            builtInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
         }
         /// <summary>
         /// 使用默认加载模式；
