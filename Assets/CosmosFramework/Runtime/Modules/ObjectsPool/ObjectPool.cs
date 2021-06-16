@@ -69,7 +69,7 @@ namespace Cosmos.ObjectPool
         int expireTime;
         int capacity;
         int releaseInterval = 5;
-        public void OnElapseRefresh(long msNow)
+        public void OnElapseRefresh(float deltatime)
         {
             if (expireTime <= 0)
                 return;

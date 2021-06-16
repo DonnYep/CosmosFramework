@@ -7,22 +7,21 @@ using System.Runtime.CompilerServices;
 
  namespace Cosmos
 {
-    public partial class CoroutineAwaiter<T> : INotifyCompletion
+    public partial class CoroutineAwaiter<T> : Awaiter<T>
     {
         Action continuation;
-        bool _isCompleted;
+        bool isCompleted;
         public T Instruction { get; protected set; }
         public AwaitableEnumerator Coroutine { get; private set; }
-        public bool IsCompleted
+        public override bool IsCompleted
         {
             get
             {
-                return _isCompleted;
+                return isCompleted;
             }
             protected set
             {
-                _isCompleted = value;
-
+                isCompleted = value;
                 if (value && continuation != null)
                 {
                     continuation();
@@ -37,21 +36,13 @@ using System.Runtime.CompilerServices;
             Coroutine = new AwaitableEnumerator(this);
             CoroutineAwaiterMonitor.Instance.StartAwaitableCoroutine(this);
         }
-        public T GetResult()
+        public override T GetResult()
         {
             return Instruction;
         }
-        public void OnCompleted(Action continuation)
+        public override void OnCompleted(Action continuation)
         {
-            ProcessOnCompleted(continuation);
-        }
-        /// <summary>
-        /// 执行处理OnCompleted；
-        /// </summary>
-        /// <param name="continuation">OnCompleted的回调</param>
-        protected virtual void ProcessOnCompleted(Action continuation)
-        {
-            this.continuation= continuation;
+            this.continuation = continuation;
         }
     }
 }

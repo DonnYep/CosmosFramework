@@ -12,6 +12,8 @@ namespace Cosmos
     {
         /// <summary>
         /// Uniform Resource Locator；
+        /// 资源所在的地址，需要手动赋值；
+        /// 此地址可以是本地持久化地址，亦可是Remote Web地址；
         /// </summary>
         string URL { get; set; }
         /// <summary>

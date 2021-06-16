@@ -20,7 +20,8 @@ public class AxisSubscriber : ControllerBase<AxisSubscriber>
     Slider slider;
     Text text;
     IInputManager inputManager;
-    protected override void RefreshHandler()
+    [TickRefresh]
+    protected void RefreshHandler()
     {
         switch (key)
         {

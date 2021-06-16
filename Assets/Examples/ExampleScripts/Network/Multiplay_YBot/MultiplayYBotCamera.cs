@@ -63,7 +63,8 @@ namespace Cosmos
             originalRot = transform.rotation.eulerAngles;
             inputManager = GameManager.GetModule<IInputManager>();
         }
-        protected override void RefreshHandler()
+        [TickRefresh]
+        protected  void RefreshHandler()
         {
             yaw = -inputManager.GetAxis(InputAxisType._MouseX);
             pitch = inputManager.GetAxis(InputAxisType._MouseY);

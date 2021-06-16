@@ -12,6 +12,7 @@ namespace Cosmos
     //[DefaultExecutionOrder(-1000)]
     public sealed class MonoGameManager: MonoSingleton<MonoGameManager>
     {
+        DateTime previousTimeSinceStartup;
         public bool IsPause { get; private set; }
         public bool Pause
         {
@@ -45,6 +46,7 @@ namespace Cosmos
         {
             base.Awake();
             DontDestroyOnLoad(this.gameObject);
+            previousTimeSinceStartup = DateTime.Now;
         }
         public int ModuleCount { get { return GameManager.ModuleCount; } }
         /// <summary>
@@ -95,17 +97,24 @@ namespace Cosmos
         }
         private void FixedUpdate()
         {
+            if (IsPause)
+                return;
             GameManager.OnFixRefresh();
-            GameManager.OnElapseRefresh(Utility.Time.MillisecondNow());
         }
         private void Update()
         {
+            float deltaTime = (float)(DateTime.Now.Subtract(previousTimeSinceStartup).TotalMilliseconds / 1000.0f);
+            previousTimeSinceStartup = DateTime.Now;
+
             if (IsPause)
                 return;
             GameManager.OnRefresh();
+            GameManager.OnElapseRefresh(deltaTime);
         }
         private void LateUpdate()
         {
+            if (IsPause)
+                return;
             GameManager.OnLateRefresh ();
         }
         private void OnApplicationQuit()

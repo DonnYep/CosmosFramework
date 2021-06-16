@@ -35,11 +35,6 @@ namespace Cosmos.Entity
             objectPoolManager = GameManager.GetModule<IObjectPoolManager>();
             resourceManager = GameManager.GetModule<IResourceManager>();
         }
-        public override void OnRefresh()
-        {
-            if (IsPause)
-                return;
-        }
         public void SetHelper(IEntityHelper helper)
         {
             this.entityHelper = helper;

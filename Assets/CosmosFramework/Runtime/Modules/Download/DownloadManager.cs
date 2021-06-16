@@ -39,7 +39,7 @@ namespace Cosmos.Download
             foreach (var uri in uris)
             {
                 var t = DownloadTask.Create(uri, task.DownloadPath, task.Timeout);
-                await downloadAgentHelper.DownloadFileAsync(null, null);
+               await downloadAgentHelper.DownloadFileAsync(null, null);
             }
         }
     }

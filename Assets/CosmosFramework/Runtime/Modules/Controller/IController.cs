@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Cosmos
 {
-    public interface  IController:IOperable,IControllable,IRefreshable
+    public interface  IController:IOperable,IControllable
     {
         string ControllerName { get; set; }
     }

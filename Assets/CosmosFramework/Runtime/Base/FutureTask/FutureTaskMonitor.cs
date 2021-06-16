@@ -63,7 +63,7 @@ namespace Cosmos
                 futureTask.OnRefresh(deltaTime);
                 if (!futureTask.Available)
                 {
-                    futureTask.OnComplete();
+                    futureTask.OnCompleted();
                     RemoveFutureTask(futureTask.FutureTaskId);
                 }
             }

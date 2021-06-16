@@ -20,15 +20,17 @@ namespace Cosmos.WebRequest
     internal class WebRequestManager : Module, IWebRequestManager
     {
         IWebRequestHelper webRequestHelper;
-        string _url;
+        string url;
         /// <summary>
         /// 网络状态是否可用；
         /// </summary>
         public bool NetworkReachable { get { return Application.internetReachability != NetworkReachability.NotReachable; } }
         /// <summary>
         /// Uniform Resource Locator；
+        /// 资源所在的地址，需要手动赋值；
+        /// 此地址可以是本地持久化地址，亦可是Remote Web地址；
         /// </summary>
-        public string URL { get { return _url; } set { _url = value; } }
+        public string URL { get { return url; } set { url = value; } }
         public override void OnPreparatory()
         {
             //初始化时会加载默认helper

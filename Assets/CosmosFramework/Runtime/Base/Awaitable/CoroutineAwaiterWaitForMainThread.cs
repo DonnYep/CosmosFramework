@@ -13,9 +13,9 @@ namespace Cosmos
         {
             Instruction = default(WaitForMainThread);
         }
-        protected override void ProcessOnCompleted(Action continuation)
+        public override void OnCompleted(Action continuation)
         {
-            base.ProcessOnCompleted(continuation);
+            base.OnCompleted(continuation);
             if (SynchronizationContext.Current != null)
             {
                 IsCompleted = true;

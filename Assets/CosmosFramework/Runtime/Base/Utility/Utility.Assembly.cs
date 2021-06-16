@@ -81,7 +81,7 @@ namespace Cosmos
             /// <typeparam name="T">任意类型的变量</typeparam>
             /// <param name="memberExperssion">变量的表达式</param>
             /// <returns>传入变量的名称</returns>
-            public static string GetGetPropertyNameName<T>(Expression<Func<T>> memberExperssion)
+            public static string GetPropertyName<T>(Expression<Func<T>> memberExperssion)
             {
                 MemberExpression me = (MemberExpression)memberExperssion.Body;
                 return me.Member.Name;
@@ -158,7 +158,7 @@ namespace Cosmos
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>生成的对象数组</returns>
-            public static K[] GetInstancesByAttribute<T, K>(bool inherit , System.Reflection.Assembly assembly = null)
+            public static K[] GetInstancesByAttribute<T, K>(bool inherit, System.Reflection.Assembly assembly = null)
     where T : Attribute
     where K : class
             {
@@ -196,7 +196,7 @@ namespace Cosmos
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>生成的对象数组</returns>
-            public static object[] GetInstancesByAttribute<T>(Type type, bool inherit , System.Reflection.Assembly assembly = null)
+            public static object[] GetInstancesByAttribute<T>(Type type, bool inherit, System.Reflection.Assembly assembly = null)
     where T : Attribute
             {
                 List<object> set = new List<object>();
@@ -232,7 +232,7 @@ namespace Cosmos
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>非抽象派生类数组</returns>
-            public static Type[] GetDerivedTypesByAttribute<T, K>(bool inherit , System.Reflection.Assembly assembly = null)
+            public static Type[] GetDerivedTypesByAttribute<T, K>(bool inherit, System.Reflection.Assembly assembly = null)
 where T : Attribute
 where K : class
             {
@@ -259,7 +259,7 @@ where K : class
             /// <param name="assembly">查询的程序集</param>
             /// <param name="inherit">是否检查基类特性</param>
             /// <returns>非抽象派生类数组</returns>
-            public static Type[] GetDerivedTypesByAttribute<T>(Type type, bool inherit , System.Reflection.Assembly assembly = null)
+            public static Type[] GetDerivedTypesByAttribute<T>(Type type, bool inherit, System.Reflection.Assembly assembly = null)
     where T : Attribute
             {
                 List<Type> set = new List<Type>();
@@ -422,7 +422,7 @@ where K : class
             /// <param name="type">实例对象类型</param>
             /// <param name="obj">实例对象</param>
             /// <param name="handler">遍历到一条字段执行的方法</param>
-            public static void TraverseInstanceAllFileds(Type type,object obj, Action<string, object> handler)
+            public static void TraverseInstanceAllFileds(Type type, object obj, Action<string, object> handler)
             {
                 if (type == null)
                     throw new ArgumentNullException("type is invalid");
@@ -509,6 +509,73 @@ where K : class
                     attributes.AddRange(atts);
                 }
                 return attributes.ToArray();
+            }
+            /// <summary>
+            /// 获取指定类型中，挂载了目标特性的方法信息；
+            /// </summary>
+            /// <typeparam name="T">查找的指定类型</typeparam>
+            /// <typeparam name="K">特性类型</typeparam>
+            /// <param name="inherit">是否是继承</param>
+            /// <returns>方法信息数组</returns>
+            public static MethodInfo[] GetTypeMethodsByAttribute<T, K>(bool inherit = false)
+                where T : class
+                where K : Attribute
+            {
+                return GetTypeMethodsByAttribute(typeof(T), typeof(K), inherit);
+            }
+            /// <summary>
+            ///  获取指定类型中，挂载了目标特性的方法信息；
+            /// </summary>
+            /// <param name="type">查找的指定类型</param>
+            /// <param name="attributeType">特性类型</param>
+            /// <param name="inherit">是否是继承</param>
+            /// <returns>方法信息数组</returns>
+            public static MethodInfo[] GetTypeMethodsByAttribute(Type type, Type attributeType, bool inherit = false)
+            {
+                if (type == null)
+                    throw new ArgumentNullException("Type is invalid !");
+                if (attributeType == null)
+                    throw new ArgumentNullException("AttributeType is invalid !");
+                //return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
+                //    Where(m => m.GetCustomAttributes(attributeType, inherit).Length > 0).ToArray();
+                var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+                var methodInfoList = new List<MethodInfo>();
+                var length = methods.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    var method = methods[i];
+                    var atts = method.GetCustomAttributes(attributeType, inherit);
+                    if (atts.Length > 0)
+                    {
+                        methodInfoList.Add(method);
+                    }
+                }
+                return methodInfoList.ToArray();
+            }
+            public static MethodInfo[] GetTypeMethodsByAttribute<T>(Type type,  bool inherit = false)
+                where T : Attribute
+            {
+                if (type == null)
+                    throw new ArgumentNullException("Type is invalid !");
+                //return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
+                //    Where(m => m.GetCustomAttributes(attributeType, inherit).Length > 0).ToArray();
+                var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+                var methodInfoList = new List<MethodInfo>();
+                var length = methods.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    var method = methods[i];
+                    var atts = method.GetCustomAttributes<T>(inherit);
+                    if (atts.Count()> 0)
+                    {
+                        methodInfoList.Add(method);
+                    }
+                }
+                foreach (var m in methods)
+                {
+                    UnityEngine.Debug.Log($"{type} :{ m}");
+                }
+                return methodInfoList.ToArray();
             }
         }
     }

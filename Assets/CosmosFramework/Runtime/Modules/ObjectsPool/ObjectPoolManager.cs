@@ -8,8 +8,8 @@ namespace Cosmos.ObjectPool
     {
         #region Properties
         Dictionary<TypeStringPair, IObjectPool> poolDict;
-        Action<long> elapseRefreshHandler;
-        event Action<long> ElapseRefreshHandler
+        Action<float> elapseRefreshHandler;
+        event Action<float> ElapseRefreshHandler
         {
             add { elapseRefreshHandler += value; }
             remove { elapseRefreshHandler -= value; }
@@ -26,9 +26,10 @@ namespace Cosmos.ObjectPool
         {
             resourceManager = GameManager.GetModule<IResourceManager>();
         }
-        public override void OnElapseRefresh(long msNow)
+        [ElapseRefresh]
+        void ElapseRefresh(float deltatime)
         {
-            elapseRefreshHandler?.Invoke(msNow);
+            elapseRefreshHandler?.Invoke(deltatime);
         }
 
         /// <summary>

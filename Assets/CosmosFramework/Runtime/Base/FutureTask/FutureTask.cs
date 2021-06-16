@@ -136,8 +136,7 @@ namespace Cosmos
         {
             return FutureTaskMonitor.Instance.GetFutureTaskInfo(futureTaskId);
         }
-
-        internal void OnComplete()
+        internal void OnCompleted()
         {
             completed?.Invoke(this);
         }

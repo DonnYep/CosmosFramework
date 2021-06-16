@@ -63,12 +63,6 @@ namespace Cosmos.Controller
         {
             controllerDict = new Dictionary<Type, ControllerPool>();
         }
-        public override void OnRefresh()
-        {
-            if (IsPause)
-                return;
-            ctrlPoolRefresh?.Invoke();
-        }
         /// <summary>
         /// 创建一个Controller
         /// </summary>
@@ -343,6 +337,13 @@ where T : Component, IController
             }
             currentControlMode = mode;
             callback?.Invoke();
+        }
+        [TickRefresh]
+        void TickRefresh()
+        {
+            if (IsPause)
+                return;
+            ctrlPoolRefresh?.Invoke();
         }
         #endregion
     }

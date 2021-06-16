@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos
 {
-    public interface IObjectPool : IElapesRefreshable
+    public interface IObjectPool 
     {
         int ExpireTime { get; set; }
         int ReleaseInterval { get; set; }
@@ -21,5 +21,6 @@ namespace Cosmos
         GameObject Spawn();
         void Despawn(object go);
         void ClearPool();
+        void OnElapseRefresh(float deltatime);
     }
 }

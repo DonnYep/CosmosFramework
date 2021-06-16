@@ -28,13 +28,13 @@ namespace Cosmos
         }
         public static event Action RefreshHandler
         {
-            add { GameManager.RefreshHandler += value; }
-            remove { GameManager.RefreshHandler -= value; }
+            add { GameManager.TickRefreshHandler += value; }
+            remove { GameManager.TickRefreshHandler -= value; }
         }
         /// <summary>
         /// 时间流逝轮询委托；
         /// </summary>
-        public static event Action<long> ElapseRefreshHandler
+        public static event Action<float> ElapseRefreshHandler
         {
             add { GameManager.ElapseRefreshHandler += value; }
             remove { GameManager.ElapseRefreshHandler -= value; }

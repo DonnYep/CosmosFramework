@@ -16,12 +16,12 @@ namespace Cosmos
             /// <summary>
             /// 计数器的CoroutineAwaiter目标；
             /// </summary>
-            CoroutineAwaiter<T> target;
+            CoroutineAwaiter<T> awaiter;
             IEnumerator nestedCoroutine;
             public object Current { get; private set; }
             public AwaitableEnumerator(CoroutineAwaiter<T> target)
             {
-                this.target = target;
+                this.awaiter = target;
                 nestedCoroutine = target.Instruction as IEnumerator;
             }
             public bool MoveNext()
@@ -30,21 +30,21 @@ namespace Cosmos
                 {
                     bool result = nestedCoroutine.MoveNext();
                     Current = nestedCoroutine.Current;
-                    target.IsCompleted = !result;
+                    awaiter.IsCompleted = !result;
                     return result;
                 }
                 if (Current == null)
                 {
-                    Current = target.Instruction;
+                    Current = awaiter.Instruction;
                     return true;
                 }
-                target.IsCompleted = true;
+                awaiter.IsCompleted = true;
                 return false;
             }
             public void Reset()
             {
                 Current = null;
-                target.IsCompleted = false;
+                awaiter.IsCompleted = false;
             }
         }
     }

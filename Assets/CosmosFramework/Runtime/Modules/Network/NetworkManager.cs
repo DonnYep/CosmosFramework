@@ -45,24 +45,7 @@ namespace Cosmos.Network
         #endregion
 
         public bool IsConnected { get; private set; }
-        public override void OnRefresh()
-        {
-            if (IsPause)
-                return;
-            //if (!IsConnected)
-            //    return;
-            switch (currentNetworkProtocolType)
-            {
-                case NetworkProtocolType.TCP:
-                    break;
-                case NetworkProtocolType.UDP:
-                    service?.OnRefresh();
-                    break;
-                case NetworkProtocolType.KCP:
-                    kcpClientService?.ServiceTick();
-                    break;
-            }
-        }
+
         public void SendNetworkMessage(byte[] data)
         {
             if (IsConnected)
@@ -160,6 +143,25 @@ namespace Cosmos.Network
                     break;
                 case NetworkProtocolType.KCP:
                     kcpClientService?.ServiceDisconnect();
+                    break;
+            }
+        }
+        [TickRefresh]
+        void TickRefresh()
+        {
+            if (IsPause)
+                return;
+            //if (!IsConnected)
+            //    return;
+            switch (currentNetworkProtocolType)
+            {
+                case NetworkProtocolType.TCP:
+                    break;
+                case NetworkProtocolType.UDP:
+                    service?.OnRefresh();
+                    break;
+                case NetworkProtocolType.KCP:
+                    kcpClientService?.ServiceTick();
                     break;
             }
         }

@@ -10,30 +10,38 @@ namespace Cosmos
     {
         Dictionary<string, IController> controllerDict;
         public int ControllerCount { get { return controllerDict.Count; } }
-        Action refresh;
-        event Action Refresh
-        {
-            add { refresh += value; }
-            remove { refresh -= value; }
-        }
+        Dictionary<IController, Action> controllerActionDict;
+        List<Action> actionCache;
         public ControllerPool()
         {
             controllerDict = new Dictionary<string, IController>();
+            controllerActionDict = new Dictionary<IController, Action>();
+            actionCache = new List<Action>();
         }
         public void OnRefresh()
         {
-            refresh?.Invoke();
+            var length = actionCache.Count;
+            if (length <= 0)
+                return;
+            for (int i = 0; i < length; i++)
+            {
+                actionCache[i].Invoke();
+            }
         }
         public bool AddController(IController controller)
         {
             if (controllerDict.TryAdd(controller.ControllerName, controller))
             {
-                Refresh += controller.OnRefresh;
+                TickRefreshAttribute.GetRefreshAction(controller,true, out var action);
+                if (action != null)
+                {
+                    controllerActionDict.Add(controller, action);
+                    actionCache.Add(action);
+                }
                 return true;
             }
             else
             {
-                //throw new ArgumentException("ControllerManager-->>" + "Controller : " + controller.ControllerName + " has  already registered");
                 Utility.Debug.LogError("ControllerManager-->>" + "Controller : " + controller.ControllerName + " has  already registered");
             }
             return false;
@@ -42,7 +50,8 @@ namespace Cosmos
         {
             if (controllerDict.Remove(controllerName, out var controller))
             {
-                Refresh -= controller.OnRefresh;
+                if (controllerActionDict.Remove(controller, out var action))
+                    actionCache.Remove(action);
                 return true;
             }
             else
@@ -53,7 +62,8 @@ namespace Cosmos
         {
             if (controllerDict.Remove(controller.ControllerName))
             {
-                Refresh -= controller.OnRefresh;
+                if (controllerActionDict.Remove(controller, out var action))
+                    actionCache.Remove(action);
                 return true;
             }
             else
@@ -67,7 +77,7 @@ namespace Cosmos
         public IController GetController(string controllerName)
         {
             controllerDict.TryGetValue(controllerName, out var controller);
-            return controller ;
+            return controller;
         }
         public T GetController<T>(Predicate<T> predicate)
             where T : Component, IController
@@ -95,12 +105,17 @@ namespace Cosmos
         public T CreateController<T>(GameObject go, string controllerName = null)
     where T : Component, IController
         {
-            T ctrl=default;
+            T ctrl = default;
             if (!HasController(controllerName))
             {
                 ctrl = go.GetOrAddComponent<T>();
                 ctrl.ControllerName = controllerName;
-                Refresh += ctrl.OnRefresh;
+                TickRefreshAttribute.GetRefreshAction(ctrl, true, out var action);
+                if (action != null)
+                {
+                    controllerActionDict.Add(ctrl, action);
+                    actionCache.Add(action);
+                }
             }
             else
                 Utility.Debug.LogError("ControllerManager-->>" + "Controller : " + ctrl.ControllerName + " has  already registered");
@@ -110,9 +125,11 @@ namespace Cosmos
         {
             if (controllerDict.TryRemove(controllerName, out var ctrl))
             {
-                Refresh -= ctrl.OnRefresh;
+                if (controllerActionDict.Remove(ctrl, out var action))
+                    actionCache.Remove(action);
                 GameObject.Destroy(ctrl as Component);
-            }else
+            }
+            else
                 Utility.Debug.LogError("ControllerManager-- >> " + "Controller: " + ctrl.ControllerName + "  has not registered");
         }
         /// <summary>
@@ -120,7 +137,8 @@ namespace Cosmos
         /// </summary>
         public void DestroyControllers()
         {
-            refresh = null;
+            controllerActionDict.Clear();
+            actionCache.Clear();
             foreach (var ctrl in controllerDict.Values)
             {
                 GameObject.Destroy(ctrl as Component);

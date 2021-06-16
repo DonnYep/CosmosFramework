@@ -30,10 +30,7 @@ namespace Cosmos.Audio
             multipleAudios = new List<AudioSource>();
             worldAudios = new Dictionary<GameObject, AudioSource>();
         }
-        public override void OnRefresh()
-        {
-            CheckAudioSources();
-        }
+
         bool mute = false;
         //整个AudioManager下的所有声音都设置位静音
         public bool Mute
@@ -256,6 +253,11 @@ namespace Cosmos.Audio
 
         }
         #endregion
+        [TickRefresh]
+        public void TickRefresh()
+        {
+            CheckAudioSources();
+        }
         AudioSource CreateBGMAudioSource(IAudio args)
         {
             GameObject go = new GameObject(args.AudioClip.name);

@@ -23,15 +23,15 @@ namespace Cosmos
             add { lateRefreshHandler += value; }
             remove { lateRefreshHandler -= value; }
         }
-        public static event Action RefreshHandler
+        public static event Action TickRefreshHandler
         {
-            add { refreshHandler += value; }
-            remove { refreshHandler -= value; }
+            add { tickRefreshHandler += value; }
+            remove { tickRefreshHandler -= value; }
         }
         /// <summary>
         /// 时间流逝轮询委托；
         /// </summary>
-        public static event Action<long> ElapseRefreshHandler
+        public static event Action<float> ElapseRefreshHandler
         {
             add { elapseRefreshHandler += value; }
             remove { elapseRefreshHandler -= value; }
@@ -39,8 +39,8 @@ namespace Cosmos
         internal static System.Reflection.Assembly[] Assemblies { get; private set; }
         static Action fixedRefreshHandler;
         static Action lateRefreshHandler;
-        static Action refreshHandler;
-        static Action<long> elapseRefreshHandler;
+        static Action tickRefreshHandler;
+        static Action<float> elapseRefreshHandler;
         /// <summary>
         /// 模块字典；
         /// key=>moduleType；value=>module
@@ -77,6 +77,25 @@ namespace Cosmos
             }
         }
         static GameObject instanceObject;
+
+
+        /// <summary>
+        /// 模块轮询字典缓存；
+        /// key=>module object ; value=>Action ;
+        /// </summary>
+        static Dictionary<object, Action> tickRefreshDict;
+        static Dictionary<object, Action> fixedRefreshDict;
+        static Dictionary<object, Action> lateRefreshDict;
+        static Dictionary<object, Action<float>> elapseRefreshDict;
+
+        /// <summary>
+        /// 模块初始化时的异常集合；
+        /// </summary>
+        static List<Exception> moduleInitExceptionList;
+        /// <summary>
+        /// 模块终止时的异常集合；
+        /// </summary>
+        static List<Exception> moduleTerminateExceptionList;
         #endregion
         #region Methods
         /// <summary>
@@ -160,17 +179,17 @@ namespace Cosmos
         {
             if (IsPause)
                 return;
-            refreshHandler?.Invoke();
+            tickRefreshHandler?.Invoke();
         }
         /// <summary>
         /// 时间流逝轮询;
         /// </summary>
-        /// <param name="msNow">utc毫秒当前时间</param>
-        internal static void OnElapseRefresh(long msNow)
+        /// <param name="realDeltaTime">物理世界的世界流逝单位时间</param>
+        internal static void OnElapseRefresh(float realDeltaTime)
         {
             if (IsPause)
                 return;
-            elapseRefreshHandler?.Invoke(msNow);
+            elapseRefreshHandler?.Invoke(realDeltaTime);
         }
         internal static void OnLateRefresh()
         {
@@ -191,6 +210,14 @@ namespace Cosmos
                 moduleDict = new Dictionary<Type, Module>();
                 moduleMountDict = new Dictionary<Type, GameObject>();
                 interfaceModuleDict = new Dictionary<Type, Type>();
+
+                tickRefreshDict = new Dictionary<object, Action>();
+                fixedRefreshDict = new Dictionary<object, Action>();
+                lateRefreshDict = new Dictionary<object, Action>();
+                elapseRefreshDict = new Dictionary<object, Action<float>>();
+                moduleInitExceptionList = new List<Exception>();
+                moduleTerminateExceptionList = new List<Exception>();
+
                 try
                 {
                     InstanceObject.gameObject.AddComponent<MonoGameManager>();
@@ -216,9 +243,14 @@ namespace Cosmos
             {
                 module.OnDeactive();
                 var m = moduleDict[type];
-                RefreshHandler -= module.OnRefresh;
-                FixedRefreshHandler -= module.OnFixRefresh;
-                LateRefreshHandler -= module.OnLateRefresh;
+                if (tickRefreshDict.Remove(module, out var tickAction))
+                    TickRefreshHandler -= tickAction;
+                if (fixedRefreshDict.Remove(module, out var fixedAction))
+                    FixedRefreshHandler -= fixedAction;
+                if (lateRefreshDict.Remove(module, out var lateAction))
+                    LateRefreshHandler -= lateAction;
+                if (elapseRefreshDict.Remove(module, out var elapseAction))
+                    ElapseRefreshHandler -= elapseAction;
                 moduleDict.Remove(type);
                 moduleCount--;
                 module.OnTermination();
@@ -241,7 +273,6 @@ namespace Cosmos
                     var type = modules[i].GetType();
                     if (typeof(IModuleManager).IsAssignableFrom(type))
                     {
-
                         if (!HasModule(type))
                         {
                             if (moduleDict.TryAdd(type, modules[i]))
@@ -258,7 +289,7 @@ namespace Cosmos
                             }
                         }
                         else
-                            throw new ArgumentException($"Module : {type} is already exist!");
+                            moduleInitExceptionList.Add(new ArgumentException($"Module : {type} is already exist!"));
                     }
                 }
             }
@@ -294,7 +325,7 @@ namespace Cosmos
                             }
                         }
                         else
-                            throw new ArgumentException($"Module : {type} is already exist!");
+                            moduleInitExceptionList.Add(new ArgumentException($"Module : {type} is already exist!"));
                     }
                 }
             }
@@ -310,7 +341,7 @@ namespace Cosmos
                 }
                 catch (Exception e)
                 {
-                    Utility.Debug.LogError(e);
+                    moduleInitExceptionList.Add(e);
                 }
             }
             PrepareModule();
@@ -327,7 +358,7 @@ namespace Cosmos
                 }
                 catch (Exception e)
                 {
-                    Utility.Debug.LogError(e);
+                    moduleInitExceptionList.Add(e);
                 }
             }
             AddRefreshListen();
@@ -336,10 +367,44 @@ namespace Cosmos
         {
             foreach (var module in moduleDict.Values)
             {
-                GameManager.RefreshHandler += module.OnRefresh;
-                GameManager.LateRefreshHandler += module.OnLateRefresh;
-                GameManager.FixedRefreshHandler += module.OnFixRefresh;
-                GameManager.ElapseRefreshHandler += module.OnElapseRefresh;
+                try
+                {
+                    TickRefreshAttribute.GetRefreshAction(module, true, out var tickAction);
+                    if (tickAction != null)
+                    {
+                        tickRefreshDict.Add(module, tickAction);
+                        TickRefreshHandler += tickAction;
+                    }
+                    LateRefreshAttribute.GetRefreshAction(module, true, out var lateAction);
+                    if (lateAction != null)
+                    {
+                        lateRefreshDict.Add(module, lateAction);
+                        LateRefreshHandler += lateAction;
+                    }
+                    FixedRefreshAttribute.GetRefreshAction(module, true, out var fixedAction);
+                    if (fixedAction != null)
+                    {
+                        fixedRefreshDict.Add(module, fixedAction);
+                        FixedRefreshHandler += fixedAction;
+                    }
+                    ElapseRefreshAttribute.GetRefreshAction(module, true, out var elapseAction);
+                    if (elapseAction != null)
+                    {
+                        elapseRefreshDict.Add(module, elapseAction);
+                        ElapseRefreshHandler += elapseAction;
+                    }
+                }
+                catch (Exception e)
+                {
+                    moduleInitExceptionList.Add(e);
+                }
+             
+            }
+            if (moduleInitExceptionList.Count > 0)
+            {
+                var arr = moduleInitExceptionList.ToArray();
+                moduleInitExceptionList.Clear();
+                throw new AggregateException(arr);
             }
         }
         static void OnDeactive()
@@ -352,7 +417,7 @@ namespace Cosmos
                 }
                 catch (Exception e)
                 {
-                    Utility.Debug.LogError(e);
+                    moduleTerminateExceptionList.Add(e);
                 }
             }
             OnTermination();
@@ -367,21 +432,27 @@ namespace Cosmos
                 }
                 catch (Exception e)
                 {
-                    Utility.Debug.LogError(e);
+                    moduleTerminateExceptionList.Add(e);
                 }
             }
-            RemoveRefreshListen();
-        }
-        static void RemoveRefreshListen()
-        {
-            foreach (var module in moduleDict.Values)
+            GameManager.tickRefreshHandler = null;
+            GameManager.lateRefreshHandler = null;
+            GameManager.fixedRefreshHandler = null;
+            GameManager.elapseRefreshHandler = null;
+
+            tickRefreshDict.Clear();
+            lateRefreshDict.Clear();
+            fixedRefreshDict.Clear();
+            elapseRefreshDict.Clear();
+
+            if (moduleTerminateExceptionList.Count > 0)
             {
-                GameManager.RefreshHandler -= module.OnRefresh;
-                GameManager.LateRefreshHandler -= module.OnLateRefresh;
-                GameManager.FixedRefreshHandler -= module.OnFixRefresh;
-                GameManager.ElapseRefreshHandler -= module.OnElapseRefresh;
+                var arr = moduleTerminateExceptionList.ToArray();
+                moduleInitExceptionList.Clear();
+                throw new AggregateException(arr);
             }
         }
+
         #endregion
     }
 }

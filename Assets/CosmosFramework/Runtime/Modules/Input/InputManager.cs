@@ -22,13 +22,7 @@ namespace Cosmos.Input
             base.OnTermination();
             _inputDevice?.OnShutdown();
         }
-        public override void OnRefresh()
-        {
-            if (IsPause)
-                return;
-            if (IsEnableInputDevice)
-                _inputDevice?.OnRun();
-        }
+
         public bool IsEnableInputDevice { get; set; } = true;
         VirtualInput inputModule = new VirtualInput();
         static InputDevice _inputDevice;
@@ -204,6 +198,14 @@ namespace Cosmos.Input
         public void SetAxis(string name, float value)
         {
             inputModule.SetAxis(name, value);
+        }
+        [TickRefresh]
+        internal void OnRefresh()
+        {
+            if (IsPause)
+                return;
+            if (IsEnableInputDevice)
+                _inputDevice?.OnRun();
         }
     }
 }

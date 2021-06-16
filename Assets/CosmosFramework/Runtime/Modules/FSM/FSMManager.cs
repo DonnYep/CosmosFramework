@@ -31,7 +31,8 @@ namespace Cosmos.FSM
             fsmSetDict = new Dictionary<Type, IFSMGroup>();
             fsmIndividualDict = new Dictionary<Type, FSMBase>(); 
         }
-        public override void OnRefresh()
+        [TickRefresh]
+        public void OnRefresh()
         {
             if (IsPause)
                 return;

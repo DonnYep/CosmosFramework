@@ -44,7 +44,8 @@ namespace Cosmos
                 return cameraCache;
             }
         }
-        protected override void RefreshHandler()
+        [TickRefresh]
+        protected  void RefreshHandler()
         {
             var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             if ((stateInfo.IsName("Attack_00") || stateInfo.IsName("Attack_01") || stateInfo.IsName("Attack_02")) && stateInfo.normalizedTime> 1f)
