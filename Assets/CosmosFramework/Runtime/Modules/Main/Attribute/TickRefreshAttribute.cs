@@ -13,15 +13,11 @@ namespace Cosmos
     public class TickRefreshAttribute:Attribute
     {
         static List<Exception> exceptionList = new List<Exception>();
-        public static void GetRefreshAction<T>(T obj,bool inherit,out Action action)
-            where T:class
+        public static void GetRefreshAction(object obj,bool inherit,out Action action)
         {
-            var type = typeof(T);
+            var type = obj.GetType();
             action=null;
-            //var refreshMethods = Utility.Assembly.GetTypeMethodsByAttribute(type, typeof( TickRefreshAttribute),inherit);
-            var refreshMethods = Utility.Assembly.GetTypeMethodsByAttribute<TickRefreshAttribute>(type, inherit);
-            //UnityEngine.Debug.Log($"{obj} {refreshMethods.Length}");
-
+            var refreshMethods = Utility.Assembly.GetTypeMethodsByAttribute(type, typeof(TickRefreshAttribute), inherit);
             if (refreshMethods != null)
             {
                 if (refreshMethods.Length > 1)

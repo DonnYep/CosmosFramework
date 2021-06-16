@@ -13,10 +13,9 @@ namespace Cosmos
     public class LateRefreshAttribute:Attribute
     {
         static List<Exception> exceptionList = new List<Exception>();
-        public static void GetRefreshAction<T>(T obj, bool inherit, out Action action)
-            where T : class
+        public static void GetRefreshAction(object obj, bool inherit, out Action action)
         {
-            var type = typeof(T);
+            var type = obj.GetType();
             action = null;
             var refreshMethods = Utility.Assembly.GetTypeMethodsByAttribute(type, typeof(LateRefreshAttribute), inherit);
             if (refreshMethods != null)

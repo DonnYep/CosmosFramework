@@ -13,10 +13,9 @@ namespace Cosmos
     public class ElapseRefreshAttribute:Attribute
     {
         static List<Exception> exceptionList = new List<Exception>();
-        public static void GetRefreshAction<T>(T obj, bool inherit, out Action<float> action)
-            where T : class
+        public static void GetRefreshAction(object obj, bool inherit, out Action<float> action)
         {
-            var type = typeof(T);
+            var type = obj.GetType();
             action = null;
             var refreshMethods = Utility.Assembly.GetTypeMethodsByAttribute(type, typeof(ElapseRefreshAttribute), inherit);
             if (refreshMethods != null)
@@ -26,8 +25,8 @@ namespace Cosmos
                 else if (refreshMethods.Length == 1)
                 {
                     var args = refreshMethods[0].GetParameters();
-                    if (args.Length > 0)
-                        exceptionList.Add(new MethodAccessException("ElapseRefreshAttribute target method must be no argument"));
+                    if (args.Length !=1)
+                        exceptionList.Add(new MethodAccessException("ElapseRefreshAttribute target method must be one argument"));
                     else
                     {
                         action = new Action<float>((deltatime) => refreshMethods[0].Invoke(obj, new object[] { deltatime}));

@@ -536,46 +536,23 @@ where K : class
                     throw new ArgumentNullException("Type is invalid !");
                 if (attributeType == null)
                     throw new ArgumentNullException("AttributeType is invalid !");
-                //return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
-                //    Where(m => m.GetCustomAttributes(attributeType, inherit).Length > 0).ToArray();
-                var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-                var methodInfoList = new List<MethodInfo>();
-                var length = methods.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    var method = methods[i];
-                    var atts = method.GetCustomAttributes(attributeType, inherit);
-                    if (atts.Length > 0)
-                    {
-                        methodInfoList.Add(method);
-                    }
-                }
-                return methodInfoList.ToArray();
+                return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
+                    Where(m => m.GetCustomAttributes(attributeType, inherit).Length > 0).ToArray();
             }
+            /// <summary>
+            /// 获取指定类型中，挂载了目标特性的方法信息；
+            /// </summary>
+            /// <typeparam name="T">特性类型</typeparam>
+            /// <param name="type">查找的指定类型</param>
+            /// <param name="inherit">是否是继承</param>
+            /// <returns>方法信息数组</returns>
             public static MethodInfo[] GetTypeMethodsByAttribute<T>(Type type,  bool inherit = false)
                 where T : Attribute
             {
                 if (type == null)
                     throw new ArgumentNullException("Type is invalid !");
-                //return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
-                //    Where(m => m.GetCustomAttributes(attributeType, inherit).Length > 0).ToArray();
-                var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-                var methodInfoList = new List<MethodInfo>();
-                var length = methods.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    var method = methods[i];
-                    var atts = method.GetCustomAttributes<T>(inherit);
-                    if (atts.Count()> 0)
-                    {
-                        methodInfoList.Add(method);
-                    }
-                }
-                foreach (var m in methods)
-                {
-                    UnityEngine.Debug.Log($"{type} :{ m}");
-                }
-                return methodInfoList.ToArray();
+                return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
+                    Where(m => m.GetCustomAttributes<T>(inherit).Count()> 0).ToArray();
             }
         }
     }
