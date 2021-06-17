@@ -5,12 +5,7 @@ namespace Cosmos
 {
     public interface IControllerManager:IModuleManager
     {
-        /// <summary>
-        /// 当前控制模式；
-        /// </summary>
-        ControlMode CurrentControlMode { get; }
         int ControllerTypeCount { get; }
-
         /// <summary>
         /// 创建一个Controller
         /// </summary>
@@ -111,11 +106,5 @@ namespace Cosmos
         /// <typeparam name="T">Controller名称</typeparam>
         void DestroyControllers<T>() where T : Component, IController;
         void DestroyControllers(Type type);
-        /// <summary>
-        /// 更改控制状态
-        /// </summary>
-        /// <param name="mode"></param>
-        /// <param name="callback">回调函数，与具体mode无关</param>
-        void SetControlMode(ControlMode mode, Action callback = null);
     }
 }

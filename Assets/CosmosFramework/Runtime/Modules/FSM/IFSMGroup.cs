@@ -15,7 +15,7 @@ namespace Cosmos.FSM
         /// 轮询更新间隔
         /// </summary>
         float RefreshInterval { get;}
-        List<FSMBase> FSMSet { get; }
+        List<FSMBase> FSMList { get; }
         void AddFSM(FSMBase fsm);
         void SetRefreshInterval(float interval);
         void DestoryFSM(Predicate<FSMBase> predicate);

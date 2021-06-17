@@ -13,7 +13,7 @@ namespace Cosmos.FSM
     {
         #region Properties
         List<FSMBase> fsmSet = new List<FSMBase>();
-        public List<FSMBase> FSMSet { get { return fsmSet; } }
+        public List<FSMBase> FSMList { get { return fsmSet; } }
         public bool IsPause { get;private set; }
         public float RefreshInterval { get; private set; }
         float coolTime = 0;

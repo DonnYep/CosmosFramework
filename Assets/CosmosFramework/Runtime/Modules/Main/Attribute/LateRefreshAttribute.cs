@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 namespace Cosmos
 {
     /// <summary>
-    /// 若在合法的Module中为指定方法挂载此特性，则此特性可以被Unity的LateUpdate方法轮询；
+    ///在指定可使用此特性的类中将此特性挂载于无参方法上，则被挂载的无参方法可以被Unity的LateUpdate方法轮询；
+    ///此特性在类方法中具有唯一性；
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class LateRefreshAttribute:Attribute
+    public class LateRefreshAttribute : Attribute
     {
         static List<Exception> exceptionList = new List<Exception>();
         public static void GetRefreshAction(object obj, bool inherit, out Action action)

@@ -536,7 +536,7 @@ where K : class
                     throw new ArgumentNullException("Type is invalid !");
                 if (attributeType == null)
                     throw new ArgumentNullException("AttributeType is invalid !");
-                return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
+                return type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
                     Where(m => m.GetCustomAttributes(attributeType, inherit).Length > 0).ToArray();
             }
             /// <summary>
@@ -546,13 +546,13 @@ where K : class
             /// <param name="type">查找的指定类型</param>
             /// <param name="inherit">是否是继承</param>
             /// <returns>方法信息数组</returns>
-            public static MethodInfo[] GetTypeMethodsByAttribute<T>(Type type,  bool inherit = false)
+            public static MethodInfo[] GetTypeMethodsByAttribute<T>(Type type, bool inherit = false)
                 where T : Attribute
             {
                 if (type == null)
                     throw new ArgumentNullException("Type is invalid !");
-                return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
-                    Where(m => m.GetCustomAttributes<T>(inherit).Count()> 0).ToArray();
+                return type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
+                    Where(m => m.GetCustomAttributes<T>(inherit).Count() > 0).ToArray();
             }
         }
     }

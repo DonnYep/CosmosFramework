@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace Cosmos
 {
     /// <summary>
-    /// 若在合法的Module中为指定方法挂载此特性，则此特性可以被Unity的Update方法轮询，并接收deltatime；
+    ///  在指定可使用此特性的类中将此特性挂载于无参方法上，则被挂载的单参方法可以被Unity的Update方法轮询，并接收float类型的 deltatime；
+    /// 此特性在类方法中具有唯一性；
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class ElapseRefreshAttribute:Attribute

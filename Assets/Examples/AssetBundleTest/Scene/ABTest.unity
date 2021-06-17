@@ -328,6 +328,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   remoteUrl: 
   localUrl: 
+  toggle: 0
+  waitTime: 6
+  time: 0
 --- !u!114 &1961765605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,7 +347,7 @@ MonoBehaviour:
   PrintModulePreparatory: 0
   LoadDefaultHelper: 1
   ResourceLoadMode: 2
-  QuarkAssetLoadMode: 2
+  QuarkAssetLoadMode: 1
   QuarkRemoteUrl: RemoteUrl
   QuarkLocalUrl: LocalUrl
 --- !u!4 &1961765606

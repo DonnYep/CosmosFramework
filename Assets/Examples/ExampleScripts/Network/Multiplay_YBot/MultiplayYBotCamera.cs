@@ -7,7 +7,7 @@ using System;
 
 namespace Cosmos
 {
-    public class MultiplayYBotCamera : ControllerBase<MultiplayYBotCamera>
+    public class MultiplayYBotCamera : MonoBehaviour//,ControllerBase<MultiplayYBotCamera>
     {
         [Range(0.5f,15)]
         [SerializeField]float distanceFromTarget=4;
@@ -57,23 +57,11 @@ namespace Cosmos
             transform.position = originalPos;
             transform.eulerAngles=originalRot;
         }
-        protected override void OnInitialization()
+        private void Awake()
         {
             originalPos = transform.position;
             originalRot = transform.rotation.eulerAngles;
             inputManager = GameManager.GetModule<IInputManager>();
-        }
-        [TickRefresh]
-        protected  void RefreshHandler()
-        {
-            yaw = -inputManager.GetAxis(InputAxisType._MouseX);
-            pitch = inputManager.GetAxis(InputAxisType._MouseY);
-            pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
-            if (inputManager.GetAxis(InputAxisType._MouseScrollWheel) != 0)
-                //Utility.Debug.LogInfo("MouseScrollWheel ", MessageColor.INDIGO);
-            distanceFromTarget -= inputManager.GetAxis(InputAxisType._MouseScrollWheel);
-            distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
-            HideMouse();
         }
         protected  void OnEnable()
         {
@@ -89,6 +77,18 @@ namespace Cosmos
             pitchSpeed = Mathf.Clamp(pitchSpeed, 0, 1000);
             cameraViewDamp = Mathf.Clamp(cameraViewDamp, 0, 1000);
             pitchMinMax = Utility.Unity.Clamp(pitchMinMax, new Vector2(-90, 0), new Vector2(0, 90));
+        }
+        [TickRefresh]
+        void TickRefresh()
+        {
+            yaw = -inputManager.GetAxis(InputAxisType._MouseX);
+            pitch = inputManager.GetAxis(InputAxisType._MouseY);
+            pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
+            if (inputManager.GetAxis(InputAxisType._MouseScrollWheel) != 0)
+                //Utility.Debug.LogInfo("MouseScrollWheel ", MessageColor.INDIGO);
+                distanceFromTarget -= inputManager.GetAxis(InputAxisType._MouseScrollWheel);
+            distanceFromTarget = Mathf.Clamp(distanceFromTarget, 0.5f, 10);
+            HideMouse();
         }
         void LateUpdateCamera()
         {

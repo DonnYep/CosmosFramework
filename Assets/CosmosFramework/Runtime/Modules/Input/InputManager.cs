@@ -200,7 +200,7 @@ namespace Cosmos.Input
             inputModule.SetAxis(name, value);
         }
         [TickRefresh]
-        internal void OnRefresh()
+        void OnRefresh()
         {
             if (IsPause)
                 return;

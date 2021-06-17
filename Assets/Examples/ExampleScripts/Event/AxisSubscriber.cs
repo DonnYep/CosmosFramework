@@ -11,7 +11,7 @@ public enum InputKey
     Vertical,
     Horizontal
 }
-public class AxisSubscriber : ControllerBase<AxisSubscriber>
+public class AxisSubscriber : MonoBehaviour// ControllerBase<AxisSubscriber>
 {
     [SerializeField]
     InputKey key;
@@ -20,8 +20,9 @@ public class AxisSubscriber : ControllerBase<AxisSubscriber>
     Slider slider;
     Text text;
     IInputManager inputManager;
+
     [TickRefresh]
-    protected void RefreshHandler()
+    void TickRefresh()
     {
         switch (key)
         {
@@ -35,7 +36,7 @@ public class AxisSubscriber : ControllerBase<AxisSubscriber>
         float textValue = slider.value - SliderOffset;
         text.text = Utility.Converter.Int(textValue).ToString();
     }
-    private void Start()
+    void Start()
     {
         slider = GetComponentInChildren<Slider>();
         text = GetComponentsInChildren<Text>()[1];

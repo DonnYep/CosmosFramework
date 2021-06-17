@@ -384,27 +384,20 @@ namespace Cosmos
             /// <returns>相机抓取的屏幕Texture2D</returns>
             public static Texture2D CameraScreenshotAsTextureRGB(Camera camera)
             {
-                var oldRenderTexture = camera.targetTexture;
-                RenderTexture renderTexture;
-                renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
-                camera.targetTexture = renderTexture;
-                camera.Render();
-                Texture2D texture2D = new Texture2D(renderTexture.width, renderTexture.height,TextureFormat.RGB565,false);
-                RenderTexture.active = renderTexture;
-                texture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
-                texture2D.Apply();
-                RenderTexture.active = null;
-                camera.targetTexture = oldRenderTexture;
-                return texture2D;
+                return CameraScreenshotAsTexture(camera, TextureFormat.RGB565);
             }
             public static Texture2D CameraScreenshotAsTextureRGBA(Camera camera)
+            {
+                return CameraScreenshotAsTexture(camera, TextureFormat.RGBA32);
+            }
+            public static Texture2D CameraScreenshotAsTexture(Camera camera, TextureFormat textureFormat)
             {
                 var oldRenderTexture = camera.targetTexture;
                 RenderTexture renderTexture;
                 renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
                 camera.targetTexture = renderTexture;
                 camera.Render();
-                Texture2D texture2D = new Texture2D(renderTexture.width, renderTexture.height,TextureFormat.RGBA32,false);
+                Texture2D texture2D = new Texture2D(renderTexture.width, renderTexture.height, textureFormat, false);
                 RenderTexture.active = renderTexture;
                 texture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
                 texture2D.Apply();
@@ -426,6 +419,12 @@ namespace Cosmos
             public static Sprite CameraScreenshotAsSpriteRGB(Camera camera)
             {
                 var texture2D = CameraScreenshotAsTextureRGB(camera);
+                var sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), Vector2.zero);
+                return sprite;
+            }
+            public static Sprite CameraScreenshotAsSprite(Camera camera, TextureFormat textureFormat)
+            {
+                var texture2D = CameraScreenshotAsTexture(camera, textureFormat);
                 var sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), Vector2.zero);
                 return sprite;
             }

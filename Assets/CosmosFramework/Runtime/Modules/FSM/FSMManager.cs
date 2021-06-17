@@ -31,24 +31,6 @@ namespace Cosmos.FSM
             fsmSetDict = new Dictionary<Type, IFSMGroup>();
             fsmIndividualDict = new Dictionary<Type, FSMBase>(); 
         }
-        [TickRefresh]
-        public void OnRefresh()
-        {
-            if (IsPause)
-                return;
-            if (fsmIndividualDict.Count > 0)
-                foreach (var fsm in fsmIndividualDict)
-                {
-                    fsm.Value.OnRefresh();
-                }
-            if (fsmSetDict.Count > 0)
-            {
-                foreach (var fsmPool in fsmSetDict.Values)
-                {
-                    fsmPool.OnRefresh();
-                }
-            }
-        }
         #endregion
         /// <summary>
         /// 为特定类型设置轮询间隔
@@ -165,7 +147,7 @@ namespace Cosmos.FSM
         {
             IFSMGroup fsmPool;
             fsmSetDict.TryGetValue(type, out fsmPool);
-            return fsmPool.FSMSet;
+            return fsmPool.FSMList;
         }
         /// <summary>
         /// 通过查找语句获得某一类型的状态机元素
@@ -256,20 +238,20 @@ namespace Cosmos.FSM
         /// </summary>
         /// <typeparam name="T">拥有者类型</typeparam>
         /// <param name="owner">拥有者</param>
-        /// <param name="Individual">是否为独立状态机</param>
+        /// <param name="individual">是否为独立状态机</param>
         /// <param name="states">状态</param>
         /// <returns>创建成功后的状态机</returns>
-        public IFSM<T> CreateFSM<T>(T owner, bool Individual, params FSMState<T>[] states)
+        public IFSM<T> CreateFSM<T>(T owner, bool individual, params FSMState<T>[] states)
            where T : class
         {
-            return CreateFSM(string.Empty, owner, Individual, states);
+            return CreateFSM(string.Empty, owner, individual, states);
         }
-        public IFSM<T> CreateFSM<T>(string name, T owner, bool Individual, params FSMState<T>[] states)
+        public IFSM<T> CreateFSM<T>(string name, T owner, bool individual, params FSMState<T>[] states)
            where T : class
         {
             Type type = typeof(T);
             FSM<T> fsm = default;
-            if (Individual)
+            if (individual)
             {
                 if (HasIndividualFSM(type))
                     throw new ArgumentException("FSMManager : FSM is exists" + type.ToString());
@@ -295,10 +277,10 @@ namespace Cosmos.FSM
             }
             return fsm;
         }
-        public IFSM<T> CreateFSM<T>(T owner, bool Individual, List<FSMState<T>> states)
+        public IFSM<T> CreateFSM<T>(T owner, bool individual, List<FSMState<T>> states)
            where T : class
         {
-            return CreateFSM(string.Empty, owner, Individual, states);
+            return CreateFSM(string.Empty, owner, individual, states);
         }
         /// <summary>
         /// 创建状态机；
@@ -307,15 +289,15 @@ namespace Cosmos.FSM
         /// <typeparam name="T">拥有者类型</typeparam>
         /// <param name="name">状态机名称</param>
         /// <param name="owner">拥有者</param>
-        /// <param name="Individual">是否为独立状态机</param>
+        /// <param name="individual">是否为独立状态机</param>
         /// <param name="states">状态</param>
         /// <returns>创建成功后的状态机</returns>
-        public IFSM<T> CreateFSM<T>(string name, T owner, bool Individual, List<FSMState<T>> states)
+        public IFSM<T> CreateFSM<T>(string name, T owner, bool individual, List<FSMState<T>> states)
            where T : class
         {
             Type type = typeof(T);
             FSM<T> fsm = default;
-            if (Individual)
+            if (individual)
             {
                 if (HasIndividualFSM(type))
                     throw new ArgumentException("FSMManager : FSM is exists" + type.ToString());
@@ -416,5 +398,23 @@ where T : class
             fsmSetDict.Clear();
         }
         #endregion
+        [TickRefresh]
+        void OnRefresh()
+        {
+            if (IsPause)
+                return;
+            if (fsmIndividualDict.Count > 0)
+                foreach (var fsm in fsmIndividualDict)
+                {
+                    fsm.Value.OnRefresh();
+                }
+            if (fsmSetDict.Count > 0)
+            {
+                foreach (var fsmPool in fsmSetDict.Values)
+                {
+                    fsmPool.OnRefresh();
+                }
+            }
+        }
     }
 }

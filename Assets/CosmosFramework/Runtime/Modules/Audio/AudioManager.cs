@@ -254,7 +254,7 @@ namespace Cosmos.Audio
         }
         #endregion
         [TickRefresh]
-        public void TickRefresh()
+        void TickRefresh()
         {
             CheckAudioSources();
         }

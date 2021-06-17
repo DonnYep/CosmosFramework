@@ -12,6 +12,15 @@ namespace Cosmos.Data
         private static readonly string[] PathSplitSeparator = new string[] { ".", "/", "\\" };
         private const string RootName = "<Root>";
         private DataNode rootNode;
+        /// 获取根数据结点。
+        /// </summary>
+        public IDataNode Root
+        {
+            get
+            {
+                return rootNode;
+            }
+        }
         #endregion
         #region Methods
         public override void OnActive()
@@ -33,15 +42,6 @@ namespace Cosmos.Data
                         Utility.Debug.LogError(e);
                     }
                 }
-            }
-        }
-        /// 获取根数据结点。
-        /// </summary>
-        public IDataNode Root
-        {
-            get
-            {
-                return rootNode;
             }
         }
         /// <summary>
@@ -236,7 +236,7 @@ namespace Cosmos.Data
         /// </summary>
         /// <param name="path">要切分的数据结点路径。</param>
         /// <returns>切分后的字符串数组。</returns>
-        private static string[] GetSplitedPath(string path)
+        string[] GetSplitedPath(string path)
         {
             if (string.IsNullOrEmpty(path))
             {

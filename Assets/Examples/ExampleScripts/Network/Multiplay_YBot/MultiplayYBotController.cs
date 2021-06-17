@@ -44,11 +44,18 @@ namespace Cosmos
                 return cameraCache;
             }
         }
+        public override void OnInitialization()
+        {
+            animator = GetComponentInChildren<Animator>();
+            CameraTarget = transform.Find("CameraTarget").transform;
+            CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
+            inputManager = CosmosEntry.InputManager;
+        }
         [TickRefresh]
-        protected  void RefreshHandler()
+        void TickRefresh()
         {
             var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            if ((stateInfo.IsName("Attack_00") || stateInfo.IsName("Attack_01") || stateInfo.IsName("Attack_02")) && stateInfo.normalizedTime> 1f)
+            if ((stateInfo.IsName("Attack_00") || stateInfo.IsName("Attack_01") || stateInfo.IsName("Attack_02")) && stateInfo.normalizedTime > 1f)
             {
                 hitCount = 0;
                 animator.SetInteger(attackIndexHash, 0);
@@ -59,25 +66,18 @@ namespace Cosmos
                 {
                     hitCount = 1;
                 }
-                else if(stateInfo.IsName("Attack_00") && hitCount == 1&&stateInfo.normalizedTime<0.7f)
+                else if (stateInfo.IsName("Attack_00") && hitCount == 1 && stateInfo.normalizedTime < 0.7f)
                 {
                     hitCount = 2;
                 }
-                else if(stateInfo.IsName("Attack_01") && hitCount == 2 && stateInfo.normalizedTime < 0.7f)
+                else if (stateInfo.IsName("Attack_01") && hitCount == 2 && stateInfo.normalizedTime < 0.7f)
                 {
                     hitCount = 3;
                 }
                 animator.SetInteger(attackIndexHash, hitCount);
             }
-            if (hitCount==0)
+            if (hitCount == 0)
                 MoveAndRot();
-        }
-        protected override void OnInitialization()
-        {
-            animator = GetComponentInChildren<Animator>();
-            CameraTarget = transform.Find("CameraTarget").transform;
-            CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
-            inputManager = CosmosEntry.InputManager;
         }
         void MoveAndRot()
         {
