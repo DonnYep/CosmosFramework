@@ -19,7 +19,6 @@ namespace Cosmos
     {
         Dictionary<TKey, List<Action<TValue>>> eventDict = new Dictionary<TKey, List<Action<TValue>>>();
         #region Sync
-
         public virtual void AddEventListener(TKey key, Action<TValue> handler)
         {
             if (eventDict.ContainsKey(key))

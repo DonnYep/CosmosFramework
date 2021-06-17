@@ -7,7 +7,7 @@ namespace Cosmos
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CapsuleCollider))]
-    public class MultiplayYBotController : ControllerBase<MultiplayYBotController>
+    public class MultiplayYBotController : MonoBehaviour// ControllerBase<MultiplayYBotController>
     {
         [SerializeField]
         [Range(0, 1)]
@@ -39,12 +39,12 @@ namespace Cosmos
             {
                 if (cameraCache == null)
                 {
-                    cameraCache = CosmosEntry.ControllerManager.GetController<MultiplayYBotCamera>(typeof(MultiplayYBotCamera).Name);
+                  //  cameraCache = CosmosEntry.ControllerManager.GetController<MultiplayYBotCamera>(typeof(MultiplayYBotCamera).Name);
                 }
                 return cameraCache;
             }
         }
-        public override void OnInitialization()
+        public void OnInitialization()
         {
             animator = GetComponentInChildren<Animator>();
             CameraTarget = transform.Find("CameraTarget").transform;

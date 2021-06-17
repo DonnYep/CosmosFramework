@@ -36,14 +36,13 @@ namespace Cosmos.Controller
             lateRefresh += ctrlIndividuals.LateRefresh;
             fixedRefresh += ctrlIndividuals.FixedRefresh;
         }
-        public Controller<T> CreateController<T>(string controllerName, T owner, bool individual)
+        public Controller<T> CreateController<T>(string controllerName, T owner, bool cluster)
             where T : class
         {
             var type = typeof(Controller<T>);
             Controller<T> controller = null;
-            if (individual)
+            if (!cluster)
             {
-
                 if (!ctrlIndividuals.HasController(type))
                 {
                     var ctrl = Controller<T>.Create(controllerName, owner);
