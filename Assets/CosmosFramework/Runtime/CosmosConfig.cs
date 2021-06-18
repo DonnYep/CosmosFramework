@@ -10,7 +10,7 @@ namespace Cosmos
     {
         [Header("Cosmos入口配置")]
         public bool LaunchAppDomainModules = true;
-        public bool PrintModulePreparatory = true;
+        public bool PrintModulePreparatory = false;
         public bool LoadDefaultHelper = true;
         public ResourceLoadMode ResourceLoadMode;
         public QuarkAssetLoadMode QuarkAssetLoadMode;

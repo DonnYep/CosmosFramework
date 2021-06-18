@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Object = UnityEngine.Object;
+using UnityEngine;
 using System;
 
 namespace Cosmos
@@ -10,7 +10,7 @@ namespace Cosmos
     /// 管理器对象都会通过这个对象的实例来调用，避免复杂化
     /// 可以理解为是一个Facade
     /// </summary>
-    public static partial class GameManager
+    public static class GameManager
     {
         #region Properties
         public static event Action FixedRefreshHandler

@@ -11,16 +11,24 @@ public enum InputKey
     Vertical,
     Horizontal
 }
-public class AxisSubscriber : MonoBehaviour// ControllerBase<AxisSubscriber>
+public class AxisSubscriber : MonoBehaviour
 {
     [SerializeField]
     InputKey key;
-    int sliderOffset;
     int SliderOffset { get { return Utility.Converter.Int(slider.maxValue / 2); } }
     Slider slider;
     Text text;
     IInputManager inputManager;
+    IController controller;
 
+    void Start()
+    {
+        slider = GetComponentInChildren<Slider>();
+        text = GetComponentsInChildren<Text>()[1];
+        inputManager = CosmosEntry.InputManager;
+        inputManager.SetInputDevice(new StandardInputDevice());
+        controller = CosmosEntry.ControllerManager.CreateController("AxisSubscriber", this);
+    }
     [TickRefresh]
     void TickRefresh()
     {
@@ -36,11 +44,14 @@ public class AxisSubscriber : MonoBehaviour// ControllerBase<AxisSubscriber>
         float textValue = slider.value - SliderOffset;
         text.text = Utility.Converter.Int(textValue).ToString();
     }
-    void Start()
+    private void OnEnable()
     {
-        slider = GetComponentInChildren<Slider>();
-        text = GetComponentsInChildren<Text>()[1];
-        inputManager = GameManager.GetModule<IInputManager>();
-        GameManager.GetModule<IInputManager>().SetInputDevice(new StandardInputDevice());
+        if (controller != null)
+            controller.Pause = false;
+    }
+    private void OnDisable()
+    {
+        if (controller != null)
+            controller.Pause = true;
     }
 }

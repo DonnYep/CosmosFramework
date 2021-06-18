@@ -94,7 +94,7 @@ namespace Cosmos.FSM{
         /// </summary>
         public  override  void  OnRefresh()
         {
-            if (IsPause)
+            if (Pause)
                 return;
             currentState?.Reason(this);
             currentState?.Action(this);

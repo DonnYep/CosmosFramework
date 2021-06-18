@@ -1,9 +1,6 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System;
-using Object = UnityEngine.Object;
-
 namespace Cosmos.Event
 {
     [Module]
@@ -121,9 +118,7 @@ namespace Cosmos.Event
         public bool HasEvent(string eventKey)
         {
             if (string.IsNullOrEmpty(eventKey))
-            {
                 throw new ArgumentNullException("EventKey is invalid !");
-            }
             if (eventDict.ContainsKey(eventKey))
                 return true;
             else

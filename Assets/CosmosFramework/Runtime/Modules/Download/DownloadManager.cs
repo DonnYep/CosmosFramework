@@ -42,5 +42,9 @@ namespace Cosmos.Download
                await downloadAgentHelper.DownloadFileAsync(null, null);
             }
         }
+        public async void DownloadFileAsync(DownloadTask downloadTask, object customeData)
+        {
+           await downloadAgentHelper.DownloadFileAsync(downloadTask, customeData);
+        }
     }
 }

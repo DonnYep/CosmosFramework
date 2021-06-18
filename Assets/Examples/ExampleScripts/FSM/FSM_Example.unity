@@ -635,7 +635,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 7683948}
-  refreshInterval: 0.5
+  refreshInterval: 0
   range: 10
   pauseDelay: 30
 --- !u!4 &1283498296
@@ -698,7 +698,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 7683948}
-  refreshInterval: 0.5
+  refreshInterval: 0
   range: 10
   pauseDelay: 30
 --- !u!1 &1516128596
@@ -823,10 +823,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36405f6fe0f5daf4d97f0601c42845b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  launchAppDomainModules: 1
-  printModulePreparatory: 0
+  LaunchAppDomainModules: 1
+  PrintModulePreparatory: 0
+  LoadDefaultHelper: 1
   ResourceLoadMode: 0
-  loadDefaultHelper: 1
+  QuarkAssetLoadMode: 0
+  QuarkRemoteUrl: RemoteUrl
+  QuarkLocalUrl: LocalUrl
 --- !u!4 &1632147168
 Transform:
   m_ObjectHideFlags: 0

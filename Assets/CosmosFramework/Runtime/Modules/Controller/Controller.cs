@@ -11,7 +11,7 @@ namespace Cosmos.Controller
     /// <see cref="LateRefreshAttribute"/>
     /// <see cref="FixedRefreshAttribute"/>
     /// </summary>
-    public class Controller<T> : IController
+    internal class Controller<T> : IController
         where T : class
     {
         static int controllerIndex = 0;
@@ -21,8 +21,8 @@ namespace Cosmos.Controller
         Action fixedRefreshHandler;
         Type ownerType;
         string controllerName;
-       public object Handle { get { return owner; } }
-       public Type HandleType { get { return ownerType; } }
+        public object Handle { get { return owner; } }
+        public Type HandleType { get { return ownerType; } }
         public string ControllerName
         {
             get
@@ -33,50 +33,54 @@ namespace Cosmos.Controller
                     return controllerName;
             }
         }
-        public bool IsPause { get; set; }
+        public bool Pause { get; set; }
         public int Id { get; private set; }
-        public void OnInitialization() { }
-        public void OnTermination() { }
+        public string GroupName { get; private set; }
         public void Release()
         {
             Id = 0;
             owner = null;
+            Pause = false;
             ownerType = null;
             controllerName = null;
             tickRefreshHandler = null;
             lateRefreshHandler = null;
-            fixedRefreshHandler=null;
+            fixedRefreshHandler = null;
         }
-        internal static Controller<T> Create(string controllerName,T owner)
+        internal static Controller<T> Create(string groupName, string controllerName, T owner)
         {
             var controller = ReferencePool.Accquire<Controller<T>>();
             controller.owner = owner;
-            controller.controllerName= controllerName;
-            controller.ownerType= typeof(T);
+            controller.controllerName = controllerName;
+            controller.ownerType = typeof(T);
+            controller.GroupName = groupName;
             TickRefreshAttribute.GetRefreshAction(owner, true, out var tickAction);
             LateRefreshAttribute.GetRefreshAction(owner, true, out var lateAction);
             FixedRefreshAttribute.GetRefreshAction(owner, true, out var fixedAction);
             controller.tickRefreshHandler = tickAction;
-            controller.lateRefreshHandler= lateAction;
-            controller.fixedRefreshHandler= fixedAction;
+            controller.lateRefreshHandler = lateAction;
+            controller.fixedRefreshHandler = fixedAction;
             controller.Id = controllerIndex++;
             return controller;
         }
-        internal void FixesRefrsh()
+        [FixedRefresh]
+        void FixesRefrsh()
         {
-            if (IsPause)
+            if (Pause)
                 return;
             fixedRefreshHandler?.Invoke();
         }
-        internal void LateRefrsh()
+        [LateRefresh]
+        void LateRefrsh()
         {
-            if (IsPause)
+            if (Pause)
                 return;
             lateRefreshHandler?.Invoke();
         }
-        internal void TickRefrsh()
+        [TickRefresh]
+        void TickRefrsh()
         {
-            if (IsPause)
+            if (Pause)
                 return;
             tickRefreshHandler?.Invoke();
         }

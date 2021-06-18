@@ -2,7 +2,7 @@
 using System;
 namespace Cosmos.FSM
 {
-    public abstract class FSMBase:IRefreshable,IControllable
+    public abstract class FSMBase:IRefreshable
     {
         string name;
         public string Name { get { return name; }
@@ -11,10 +11,8 @@ namespace Cosmos.FSM
         public abstract int FSMStateCount { get; }
         public abstract bool IsRunning { get; }
         public abstract string CurrentStateName { get; }
-        public bool IsPause { get;protected set; }
-        public void OnPause(){IsPause = true;}
+        public bool Pause { get;set; }
         public abstract void OnRefresh();
-        public void OnUnPause(){IsPause = false;}
         public abstract void Shutdown();
     }
 }

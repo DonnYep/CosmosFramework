@@ -14,7 +14,6 @@ public class FSMTester : MonoBehaviour
     [SerializeField] int pauseDelay=10;
     public int Range { get { return range; } }
     FSM<FSMTester> fsm;
-    List<FSMState<FSMTester>> stateList;
     IFSMManager fsmManager;
     private void OnValidate()
     {
@@ -25,17 +24,14 @@ public class FSMTester : MonoBehaviour
     }
     private void Start()
     {
-        fsmManager = GameManager.GetModule<IFSMManager>();
-        stateList = new List<FSMState<FSMTester>>();
+        fsmManager = CosmosEntry.FSMManager;
         var enterState = new EnterRangeState();
         var enterTrigger = new EnterTestTrigger();
         var exitState = new ExitRangeState();
         var exitTrigger = new ExitTestTrigger();
         exitState.AddTrigger(enterTrigger, enterState);
         enterState.AddTrigger(exitTrigger, exitState);
-        stateList.Add(exitState);
-        stateList.Add(enterState);
-        fsm = fsmManager.CreateFSM("FSMTester",this,false, stateList.ToArray()) as FSM<FSMTester>;
+        fsm = fsmManager.CreateFSM("FSMTester",this,false, exitState, enterState) as FSM<FSMTester>;
         fsmManager.SetFSMSetRefreshInterval<FSMTester>(refreshInterval);
         fsm.DefaultState = exitState;
         fsm.StartDefault();

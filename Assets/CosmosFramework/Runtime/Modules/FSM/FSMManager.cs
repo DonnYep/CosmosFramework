@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-using Cosmos;
 namespace Cosmos.FSM
 {
-    /// <summary>
-    /// fsmMgr设计成，轮询是在具体对象山给轮询的，fsmMgr作为一个Fsm的事件中心
-    /// </summary>
+    //================================================
+    //================================================
     [Module]
     internal sealed class FSMManager : Module, IFSMManager
     {
@@ -18,7 +16,7 @@ namespace Cosmos.FSM
         /// <summary>
         /// 状态机群组集合
         /// </summary>
-        Dictionary<Type, IFSMGroup> fsmSetDict;
+        Dictionary<Type, FSMGroup> fsmSetDict;
         List<FSMBase> fsmCache = new List<FSMBase>();
         public int FsmCount { get { return fsmIndividualDict.Count; } }
         #endregion
@@ -28,7 +26,7 @@ namespace Cosmos.FSM
         #region Module
         public override void OnInitialization()
         {
-            fsmSetDict = new Dictionary<Type, IFSMGroup>();
+            fsmSetDict = new Dictionary<Type, FSMGroup>();
             fsmIndividualDict = new Dictionary<Type, FSMBase>(); 
         }
         #endregion
@@ -145,7 +143,7 @@ namespace Cosmos.FSM
         /// <returns>状态机集合</returns>
         public List<FSMBase> GetFSMSet(Type type)
         {
-            IFSMGroup fsmPool;
+            FSMGroup fsmPool;
             fsmSetDict.TryGetValue(type, out fsmPool);
             return fsmPool.FSMList;
         }
@@ -246,6 +244,7 @@ namespace Cosmos.FSM
         {
             return CreateFSM(string.Empty, owner, individual, states);
         }
+        //cluster集群；
         public IFSM<T> CreateFSM<T>(string name, T owner, bool individual, params FSMState<T>[] states)
            where T : class
         {
@@ -372,7 +371,7 @@ where T : class
         /// <param name="predicate">查找条件</param>
         public void DestorySetElementFSM(Type type, Predicate<FSMBase> predicate)
         {
-            IFSMGroup fsmPool;
+            FSMGroup fsmPool;
             if (fsmSetDict.TryGetValue(type, out fsmPool))
             {
                 fsmPool.DestoryFSM(predicate);

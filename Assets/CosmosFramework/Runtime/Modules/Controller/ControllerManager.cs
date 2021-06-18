@@ -4,217 +4,330 @@ using System;
 
 namespace Cosmos.Controller
 {
-
-    /// <summary>
-    /// 控制器模块，主要针对于unity的生命周期；
-    /// </summary>
+    //================================================
+    //1、控制器模块用于生成需要执行unity生命周期的对象。被创建的对象可以
+    // 被unity的fixedupdate、lateupdate、update方法轮询；
+    //
+    //2、若控制器需要被轮询，则需要实现无参函数，并为需要被轮询的无参函数
+    //挂载 [TickRefresh] [FixedRefresh][LateRefresh] 特性；
+    //
+    //3、控制器被生成时拥有唯一Id，并可以被赋予组别；所有控制器都可以被
+    //命名，且名字可重复。若控制器有重名且无组别，则默认返回第一个被查询
+    //到的控制器；
+    //
+    //4、控制器需要由模块生成，并被模块释放；
+    //
+    //5、控制器模块已玉unity解耦
+    //================================================
     [Module]
-    internal sealed class ControllerManager : Module // , IControllerManager
+    internal sealed class ControllerManager : Module, IControllerManager
     {
         #region Properties
-        Dictionary<Type, ControllerGroup> ctrlGroupDict;
+        /// <summary>
+        /// key---标签名；value---组；
+        /// </summary>
+        Dictionary<string, ControllerGroup> controllerGroupDict;
+        /// <summary>
+        /// Controller在被创建时都会被分配一个唯一的ID；
+        /// 此字典为唯一ID对应Controller本身；
+        /// </summary>
+        Dictionary<int, IController> controllerIdDict;
 
-        ControllerIndividuals ctrlIndividuals;
-
-        Type controllerType = typeof(IController);
+        Dictionary<int, Action> tickActionDict;
+        Dictionary<int, Action> lateActionDict;
+        Dictionary<int, Action> fixedActionDict;
 
         Action tickRefresh;
         Action lateRefresh;
         Action fixedRefresh;
-
-        public int ControllerTypeCount
+        /// <summary>
+        /// 控制器组的数量；
+        /// </summary>
+        public int ControllerGroupCount
         {
-            get { return ctrlGroupDict.Count; }
+            get { return controllerGroupDict.Count; }
         }
         #endregion
 
         #region Methods
         public override void OnInitialization()
         {
-            ctrlGroupDict = new Dictionary<Type, ControllerGroup>();
-            tickRefresh += ctrlIndividuals.TickRefresh;
-            lateRefresh += ctrlIndividuals.LateRefresh;
-            fixedRefresh += ctrlIndividuals.FixedRefresh;
+            controllerGroupDict = new Dictionary<string, ControllerGroup>();
+            controllerIdDict = new Dictionary<int, IController>();
+
+            tickActionDict = new Dictionary<int, Action>();
+            lateActionDict = new Dictionary<int, Action>();
+            fixedActionDict = new Dictionary<int, Action>();
         }
-        public Controller<T> CreateController<T>(string controllerName, T owner, bool cluster)
+        /// <summary>
+        /// 创建一个controller；
+        /// </summary>
+        /// <typeparam name="T">持有者的类型</typeparam>
+        /// <param name="controllerName">被创建controller的名字</param>
+        /// <param name="owner">持有者对象</param>
+        /// <returns>被创建的controller</returns>
+        public IController CreateController<T>(string controllerName, T owner)
             where T : class
         {
-            var type = typeof(Controller<T>);
-            Controller<T> controller = null;
-            if (!cluster)
+            return CreateController(string.Empty, controllerName, owner);
+        }
+        /// <summary>
+        /// 创建一个具有组别属性的controller；
+        /// </summary>
+        /// <typeparam name="T">持有者的类型</typeparam>
+        /// <param name="groupName">controller所在的组的名称</param>
+        /// <param name="controllerName">被创建controller的名字</param>
+        /// <param name="owner">持有者对象</param>
+        /// <returns>被创建的controller</returns>
+        public IController CreateController<T>(string groupName, string controllerName, T owner)
+            where T : class
+        {
+            if (string.IsNullOrEmpty(controllerName))
+                throw new ArgumentNullException("ControllerName is invalid !"); ;
+            var controller = Controller<T>.Create(groupName, controllerName, owner);
+            AddRefresh(controller);
+            if (!string.IsNullOrEmpty(groupName))
             {
-                if (!ctrlIndividuals.HasController(type))
-                {
-                    var ctrl = Controller<T>.Create(controllerName, owner);
-                    ctrl.OnInitialization();
-                    ctrlIndividuals.AddController(type, ctrl);
-                }
-            }
-            else
-            {
-                if (!ctrlGroupDict.TryGetValue(type, out var group))
+                if (!controllerGroupDict.TryGetValue(groupName, out var group))
                 {
                     group = new ControllerGroup();
-                    ctrlGroupDict.Add(type, group);
-
-                    tickRefresh += group.TickRefresh;
-                    lateRefresh += group.LateRefresh;
-                    fixedRefresh += group.FixedRefresh;
+                    controllerGroupDict.Add(groupName, group);
                 }
                 group.AddController(controller);
             }
             return controller;
         }
-        public Controller<T> CreateController<T>(T owner, bool individual)
-    where T : class
+        /// <summary>
+        /// 是否存在controller组别；
+        /// </summary>
+        /// <param name="groupName"></param>
+        /// <returns></returns>
+        public bool HasControllerGroup(string groupName)
         {
-            return CreateController(string.Empty, owner, individual);
+            return controllerGroupDict.ContainsKey(groupName);
         }
         /// <summary>
         /// 是否存在指定类型，指定名称的Controller;
         /// </summary>
-        /// <typeparam name="T">Controller类型</typeparam>
         /// <param name="controllerId">ControllerId</param>
         /// <returns>是否存在</returns>
-        public bool HasController<T>(int controllerId)
-           where T : class
+        public bool HasController(int controllerId)
         {
-            if (ctrlGroupDict.TryGetValue(typeof(Controller<T>), out var ctrlPool))
+            return controllerIdDict.ContainsKey(controllerId);
+        }
+        /// <summary>
+        /// 是否存在指定名字的controller；
+        /// </summary>
+        /// <param name="controllerName">controller name</param>
+        /// <returns>是否存在</returns>
+        public bool HasController(string controllerName)
+        {
+            foreach (var controller in controllerIdDict)
             {
-                return ctrlPool.HasController(controllerId);
+                if (controller.Value.ControllerName == controllerName)
+                    return true;
             }
             return false;
         }
         /// <summary>
-        /// 是否存在指定类型，指定名称的Controller;
+        /// 通过Id获取controller；
         /// </summary>
-        /// <param name="type">Controller类型</param>
-        /// <param name="controllerName">Controller名称</param>
+        /// <param name="controllerId">controller id</param>
+        /// <param name="controller">返回的controller</param>
         /// <returns>是否存在</returns>
-        public bool HasController(Type type, int controllerId)
+        public bool GetController(int controllerId, out IController controller)
         {
-            if (!controllerType.IsAssignableFrom(type))
-                throw new NotImplementedException(type.ToString() + " : Not Implemented from IController");
-            if (!HasControllerType(type))
-                return false;
-            else
-                return ctrlGroupDict[type].HasController(controllerId);
+            return controllerIdDict.TryGetValue(controllerId, out controller);
         }
         /// <summary>
-        /// 是否存在指定类型的Controller
+        /// 通过Id获取controller；
         /// </summary>
-        /// <typeparam name="T">Controller类型</typeparam>
+        /// <param name="controllerName">controller name</param>
+        /// <param name="controller">返回的controller</param>
         /// <returns>是否存在</returns>
-        public bool HasControllerSet<T>()
-           where T : class
+        public bool GetController(string controllerName, out IController controller)
         {
-            return ctrlGroupDict.ContainsKey(typeof(Controller<T>));
-        }
-        public bool HasControllerType(Type type)
-        {
-            if (!controllerType.IsAssignableFrom(type))
-                throw new NotImplementedException(type.ToString() + " : Not Implemented IController");
-            return ctrlGroupDict.ContainsKey(type);
-        }
-        /// <summary>
-        /// 获得目标类型的指定名称的Controller;
-        /// </summary>
-        /// <typeparam name="T">Controller类型</typeparam>
-        /// <param name="controllerName">Controller名称</param>
-        /// <returns>Controller对象</returns>
-        public IController GetElementController<T>(int controllerId)
-           where T : class
-        {
-            return GetElementController(typeof(Controller<T>), controllerId);
-        }
-        public IController GetElementController(Type type, int controllerId)
-        {
-            if (!controllerType.IsAssignableFrom(type))
-                throw new NotImplementedException(type.ToString() + " : Not Implemented IController");
-            bool result = ctrlGroupDict.TryGetValue(type, out var ctrlGroup);
-            if (!result)
-                throw new ArgumentNullException("ControllerManager " + "Controller Type : " + type.FullName + " has not registered");
-            return ctrlGroup.GetController(controllerId);
+            controller = null;
+            foreach (var c in controllerIdDict)
+            {
+                if (c.Value.ControllerName == controllerName)
+                {
+                    controller = c.Value;
+                    return true;
+                }
+            }
+            return false;
         }
         /// <summary>
-        /// 条件查找Controller
+        ///获得指定tag下所有的controller；
         /// </summary>
-        /// <typeparam name="T">Controller类型</typeparam>
-        /// <param name="predicate">条件委托</param>
-        /// <returns>Controller对象</returns>
-        public IController GetElementController<T>(Predicate<IController> predicate)
-           where T : class
+        /// <param name="groupName">组的名称</param>
+        /// <param name="controllers">返回的controller集合</param>
+        /// <returns>是否存在</returns>
+        public bool GetControllers(string groupName, out IController[] controllers)
         {
-            var key = typeof(Controller<T>);
-            bool result = ctrlGroupDict.TryGetValue(key, out var ctrlGroup);
-            if (!result)
-                throw new ArgumentNullException("ControllerManager " + "Controller Type : " + key.FullName + " has not registered");
-            return ctrlGroup.GetController(predicate);
+            controllers = null;
+            if (controllerGroupDict.TryGetValue(groupName, out var controllerGroup))
+            {
+                controllers = controllerGroup.GetAllControllers();
+                return true;
+            }
+            return false;
         }
         /// <summary>
         /// 条件查找所有符合的Controller
         /// </summary>
-        /// <typeparam name="T">Controller类型</typeparam>
-        /// <param name="predicate">条件委托</param>
-        /// <returns>Controller数组</returns>
-        public IController[] GetControllers<T>(Predicate<IController> predicate)
-           where T : class
+        /// <param name="groupName">组的名称</param>
+        /// <param name="predicate">查询条件</param>
+        /// <param name="controllers">返回的controller集合</param>
+        /// <returns>是否存在</returns>
+        public bool GetControllers(string groupName, Predicate<IController> predicate, out IController[] controllers)
         {
-            var key = typeof(Controller<T>);
-            bool result = ctrlGroupDict.TryGetValue(key, out var ctrlGroup);
-            if (!result)
-                throw new ArgumentNullException("ControllerManager " + "Controller Type : " + key.FullName + " has not registered");
-            return ctrlGroup.GetControllers(predicate);
-        }
-        public int GetControllerCount<T>()
-           where T : class
-        {
-            return GetControllerCount(typeof(Controller<T>));
+            controllers = null;
+            bool result = controllerGroupDict.TryGetValue(groupName, out var controllerGroup);
+            if (result)
+                controllers = controllerGroup.GetControllers(predicate);
+            return result;
         }
         /// <summary>
-        /// 获取指定类型ctrl的数量；
+        /// 获得指定tag的controller数量；
+        /// 若不存在tag，则返回负一；
         /// </summary>
-        /// <param name="type">目标类型</param>
+        /// <param name="groupName">组的名称</param>
         /// <returns>数量</returns>
-        public int GetControllerCount(Type type)
+        public int GetControllerGroupCount(string groupName)
         {
-            if (!controllerType.IsAssignableFrom(type))
-                throw new NotImplementedException(type.ToString() + " : Not Implemented IController");
-            if (ctrlGroupDict.ContainsKey(type))
-                return ctrlGroupDict[type].ControllerCount;
-            else
-                throw new ArgumentNullException("ControllerManager-->>" + "Controller Type: " + type.ToString() + "  has not  registered");
+            if (controllerGroupDict.TryGetValue(groupName, out var controllerGroup))
+                return controllerGroup.ControllerCount;
+            return -1;
         }
+        /// <summary>
+        /// 通过 tag释放controller组；
+        /// </summary>
+        /// <param name="groupName">需要释放的组</param>
+        public void ReleaseControllerGroup(string groupName)
+        {
+            if (controllerGroupDict.Remove(groupName, out var controllerGroup))
+            {
+                var ids = controllerGroup.ControllerIds;
+                controllerGroup.ClearControllers();
+                var length = ids.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    controllerIdDict.Remove(ids[i], out var controller);
+                    ReferencePool.Release(controller);
+                    RemoveRefresh(ids[i]);
+                }
+            }
+        }
+        /// <summary>
+        /// 释放指定id的controller；
+        /// </summary>
+        /// <param name="controllerId">controller id</param>
+        public void ReleaseController(int controllerId)
+        {
+            if (controllerIdDict.Remove(controllerId, out var controller))
+            {
+                var tag = controller.GroupName;
+                if (!string.IsNullOrEmpty(tag))
+                {
+                    if (controllerGroupDict.TryGetValue(tag, out var controllerGroup))
+                        controllerGroup.RemoveController(controllerId);
+                    if (controllerGroup.ControllerCount <= 0)
+                        controllerGroupDict.Remove(tag);
+                }
+                RemoveRefresh(controllerId);
+            }
+        }
+        /// <summary>
+        /// 释放指定名字的控制器；
+        /// </summary>
+        /// <param name="controllerName">controller name</param>
+        public void ReleaseController(string controllerName)
+        {
+            IController controller = null;
+            foreach (var c in controllerIdDict)
+            {
+                if (c.Value.ControllerName == controllerName)
+                {
+                    controller = c.Value;
+                    return;
+                }
+            }
+            if (controller != null)
+                ReleaseController(controller.Id);
+        }
+        /// <summary>
+        /// 释放所有controller；
+        /// </summary>
         public void ReleaseAllControllers()
         {
-            foreach (var ctrlGroup in ctrlGroupDict)
+            foreach (var controllerGroup in controllerGroupDict)
             {
-                ctrlGroup.Value.ClearControllers();
+                controllerGroup.Value.ClearControllers();
             }
-            ctrlGroupDict.Clear();
-            ctrlIndividuals.ClearControllers();
+            foreach (var controller in controllerIdDict)
+            {
+                ReferencePool.Release(controller.Value);
+            }
+            controllerGroupDict.Clear();
+            controllerIdDict.Clear();
+
+            tickRefresh = null;
+            fixedRefresh = null;
+            lateRefresh = null;
         }
         /// <summary>
-        /// 清理并销毁指定类型的Controller类型;
+        /// 暂停组中的所有controller的轮询；
         /// </summary>
-        /// <typeparam name="T">Controller名称</typeparam>
-        public void ReleaseControllerSet<T>()
-           where T : class
+        /// <param name="groupName">被暂停的组的名称</param>
+        public void PauseControllerGroup(string groupName)
         {
-            ReleaseControllerSet(typeof(Controller<T>));
-        }
-        public void ReleaseControllerSet(Type type)
-        {
-            if (!controllerType.IsAssignableFrom(type))
-                throw new NotImplementedException(type.ToString() + " : Not Implemented IController");
-            if (ctrlGroupDict.TryRemove(type, out var ctrlGroup))
+            if( controllerGroupDict.TryGetValue(groupName, out var controllerGroup)) 
             {
-                fixedRefresh -= ctrlGroup.FixedRefresh;
-                tickRefresh -= ctrlGroup.TickRefresh;
-                lateRefresh -= ctrlGroup.LateRefresh;
+                controllerGroup.PauseControllers();
             }
-            else
-                throw new ArgumentNullException("ControllerManager-->>" + "Controller Type: " + type.ToString() + "  has not  registered");
+        }
+        /// <summary>
+        /// 恢复组中的所有controller的轮询；
+        /// </summary>
+        /// <param name="groupName">被恢复的组的名称</param>
+        public void UnPauseControllerGroup(string groupName)
+        {
+            if (controllerGroupDict.TryGetValue(groupName, out var controllerGroup))
+            {
+                controllerGroup.UnPauseControllers();
+            }
+        }
+        void AddRefresh(IController controller)
+        {
+            TickRefreshAttribute.GetRefreshAction(controller, true, out var tickAction);
+            LateRefreshAttribute.GetRefreshAction(controller, true, out var lateAction);
+            FixedRefreshAttribute.GetRefreshAction(controller, true, out var fixedAction);
+            if (tickAction != null)
+            {
+                tickActionDict.Add(controller.Id, tickAction);
+                tickRefresh += tickAction;
+            }
+            if (lateAction != null)
+            {
+                lateActionDict.Add(controller.Id, lateAction);
+                lateRefresh += lateAction;
+            }
+            if (fixedAction != null)
+            {
+                fixedActionDict.Add(controller.Id, fixedAction);
+                fixedRefresh += fixedAction;
+            }
+        }
+        void RemoveRefresh(int controllerId)
+        {
+            if (tickActionDict.Remove(controllerId, out var tickAction))
+                tickRefresh -= tickAction;
+            if (lateActionDict.Remove(controllerId, out var lateAction))
+                lateRefresh += lateAction;
+            if (fixedActionDict.Remove(controllerId, out var fixedAction))
+                fixedRefresh += fixedAction;
         }
         [TickRefresh]
         void TickRefresh()
