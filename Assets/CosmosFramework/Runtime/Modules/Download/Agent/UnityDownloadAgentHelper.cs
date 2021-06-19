@@ -34,13 +34,13 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-        public IEnumerator DownloadFileAsync(DownloadTask downloadTask, object customeData)
+        public async Task DownloadFileAsync(DownloadTask downloadTask, object customeData)
         {
-            return EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
+             await EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
         }
-        public IEnumerator DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
+        public async Task DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
         {
-            return EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
+            await EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
         }
         IEnumerator EnumDownloadWebRequest(UnityWebRequest unityWebRequest, string downloadPath, object customeData)
         {

@@ -26,7 +26,7 @@ namespace Cosmos.Download
         /// <param name="downloadTask">下载任务</param>
         /// <param name="customeData">用户自定义的数据</param>
         /// <returns>表示异步的引用对象</returns>
-        IEnumerator DownloadFileAsync(DownloadTask downloadTask,object customeData);
+        Task DownloadFileAsync(DownloadTask downloadTask,object customeData);
         /// <summary>
         /// 异步下载资源；
         /// </summary>
@@ -35,6 +35,6 @@ namespace Cosmos.Download
         /// <param name="startPosition">上次下载到的位置</param>
         /// <param name="customeData">用户自定义的数据</param>
         /// <returns>表示异步的引用对象</returns>
-        IEnumerator DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData);
+        Task DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData);
     }
 }

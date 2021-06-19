@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Cosmos.Download
 {
+    //[Module]
     internal class DownloadManager : Module, IDownloadManager
     {
         Action<DownloadStartEventArgs> downloadStart;

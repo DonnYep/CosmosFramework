@@ -34,7 +34,7 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-        public IEnumerator DownloadFileAsync(DownloadTask downloadTask, object customeData)
+        public Task DownloadFileAsync(DownloadTask downloadTask, object customeData)
         {
             using (WebClient webClient = new WebClient())
             {
@@ -58,7 +58,7 @@ namespace Cosmos.Download
                         downloadSuccess?.Invoke(successEventArgs);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                     };
-                    return task.AsCoroutine();
+                    return task;
                 }
                 catch (Exception exception)
                 {
@@ -69,7 +69,7 @@ namespace Cosmos.Download
                 }
             }
         }
-        public IEnumerator DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
+        public Task DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
         {
             return null;
         }

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Cosmos
 {
-    public partial class CoroutineAwaiter<T>
+    public partial class CoroutineAwaiter<TInstruction>
     {
         /// <summary>
         /// 协程对象的计数器；
@@ -16,13 +16,13 @@ namespace Cosmos
             /// <summary>
             /// 计数器的CoroutineAwaiter目标；
             /// </summary>
-            CoroutineAwaiter<T> awaiter;
+            CoroutineAwaiter<TInstruction> awaiter;
             IEnumerator nestedCoroutine;
             public object Current { get; private set; }
-            public AwaitableEnumerator(CoroutineAwaiter<T> target)
+            public AwaitableEnumerator(CoroutineAwaiter<TInstruction> awaiter)
             {
-                this.awaiter = target;
-                nestedCoroutine = target.Instruction as IEnumerator;
+                this.awaiter = awaiter;
+                nestedCoroutine = awaiter.Instruction as IEnumerator;
             }
             public bool MoveNext()
             {
