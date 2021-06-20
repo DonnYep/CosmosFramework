@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace Cosmos.Download
 {
-    public class WebClientDownloadAgentHelper : IDownloadAgentHelper
+    public class WebClientDownloadHelper //: IDownloadHelper
     {
         Action<DownloadStartEventArgs> downloadStart;
         Action<DownloadUpdateEventArgs> downloadUpdate;
@@ -34,12 +34,15 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-        public Task DownloadFileAsync(DownloadTask downloadTask, object customeData)
+        public bool Downloading { get; private set; }
+
+        public Task DownloadFileAsync(DownloadInfo downloadTask, object customeData)
         {
             using (WebClient webClient = new WebClient())
             {
                 try
                 {
+                    Downloading = true;
                     var startEventArgs = DownloadStartEventArgs.Create(downloadTask.Uri, downloadTask.DownloadPath, customeData);
                     downloadStart?.Invoke(startEventArgs);
                     DownloadStartEventArgs.Release(startEventArgs);
@@ -54,6 +57,7 @@ namespace Cosmos.Download
                     };
                     webClient.DownloadDataCompleted += (sender, eventArgs) =>
                     {
+                        Downloading = true;
                         var successEventArgs = DownloadSuccessEventArgs.Create(downloadTask.Uri, downloadTask.DownloadPath, eventArgs.Result, customeData);
                         downloadSuccess?.Invoke(successEventArgs);
                         DownloadSuccessEventArgs.Release(successEventArgs);
@@ -62,6 +66,7 @@ namespace Cosmos.Download
                 }
                 catch (Exception exception)
                 {
+                    Downloading = false;
                     var failureEventArgs = DownloadFailureEventArgs.Create(downloadTask.Uri, null, exception.ToString(), customeData);
                     downloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
@@ -69,9 +74,14 @@ namespace Cosmos.Download
                 }
             }
         }
-        public Task DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
+        public Task DownloadFileAsync(DownloadInfo downloadTask, long startPosition, object customeData)
         {
             return null;
+        }
+
+        public void CancelDownload()
+        {
+
         }
     }
 }

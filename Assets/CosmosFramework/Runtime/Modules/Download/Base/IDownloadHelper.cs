@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 namespace Cosmos.Download
 {
     //================================================
-    //1、下载代理帮助类，接口中所包含的方法的返回值类型理应是Task或者
-    // Coroutine这类表示异步操作的状态对象。当前返回值类型为object，因为
-    // object可以兼容类类型的异步操作对象；
-    //2、接口中的下载方法目前只提供了单个文件的下载，多文件下载需要等待
-    //当前下载任务完成后，由系统分配下一个任务循环下载；
+    //1、下载帮助体只实现单文件下载，多文件下载需由downloader调度完成；
     //================================================
-    public interface IDownloadAgentHelper
+    public interface IDownloadHelper
     {
+        /// <summary>
+        /// 当前下载helper是否正在下载；
+        /// </summary>
+        bool Downloading { get; }
         event Action<DownloadStartEventArgs> DownloadStart;
         event Action<DownloadUpdateEventArgs> DownloadUpdate;
         event Action<DownloadSuccessEventArgs> DownloadSuccess;
@@ -26,7 +26,7 @@ namespace Cosmos.Download
         /// <param name="downloadTask">下载任务</param>
         /// <param name="customeData">用户自定义的数据</param>
         /// <returns>表示异步的引用对象</returns>
-        Task DownloadFileAsync(DownloadTask downloadTask,object customeData);
+        void DownloadFileAsync(DownloadInfo downloadTask, object customeData);
         /// <summary>
         /// 异步下载资源；
         /// </summary>
@@ -35,6 +35,12 @@ namespace Cosmos.Download
         /// <param name="startPosition">上次下载到的位置</param>
         /// <param name="customeData">用户自定义的数据</param>
         /// <returns>表示异步的引用对象</returns>
-        Task DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData);
+        void DownloadFileAsync(DownloadInfo downloadTask, long startPosition, object customeData);
+        /// <summary>
+        /// 停止当前正在下载的任务；
+        /// 默认会缓存已经下载到的进度，便于下次断点续下；
+        /// </summary>
+        /// <param name="clearDownloadedFile">是否清理已经下载的的文件</param>
+        void CancelDownload(bool clearDownloadedFile = false);
     }
 }

@@ -32,20 +32,6 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-
-        IDownloadAgentHelper downloadAgentHelper;
-        public async void DownLoadMultipleFiles(DownloadTasks task)
-        {
-            var uris = task.Uris;
-            foreach (var uri in uris)
-            {
-                var t = DownloadTask.Create(uri, task.DownloadPath, task.Timeout);
-               await downloadAgentHelper.DownloadFileAsync(null, null);
-            }
-        }
-        public async void DownloadFileAsync(DownloadTask downloadTask, object customeData)
-        {
-           await downloadAgentHelper.DownloadFileAsync(downloadTask, customeData);
-        }
+        Downloader Downloader;
     }
 }

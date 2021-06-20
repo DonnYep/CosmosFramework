@@ -8,12 +8,17 @@ using UnityEngine.Networking;
 using System.Collections;
 namespace Cosmos.Download
 {
-    public class UnityDownloadAgentHelper : IDownloadAgentHelper
+    /// <summary>
+    /// 使用UnityWebRequest下载的帮助体对象；
+    /// 帮助体对象只实现单文件下载，多文件下载需由downloader调度完成；
+    /// </summary>
+    public class UnityDownloadHelper : IDownloadHelper
     {
         Action<DownloadStartEventArgs> downloadStart;
         Action<DownloadUpdateEventArgs> downloadUpdate;
         Action<DownloadSuccessEventArgs> downloadSuccess;
         Action<DownloadFailureEventArgs> downloadFailure;
+
         public event Action<DownloadStartEventArgs> DownloadStart
         {
             add { downloadStart += value; }
@@ -34,34 +39,47 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-        public async Task DownloadFileAsync(DownloadTask downloadTask, object customeData)
-        {
-             await EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
-        }
-        public async Task DownloadFileAsync(DownloadTask downloadTask, long startPosition, object customeData)
+        public bool Downloading { get; private set; }
+        /// <summary>
+        /// 开始异步下载文件；
+        /// </summary>
+        /// <param name="downloadTask">下载任务</param>
+        /// <param name="customeData">自定义的数据</param>
+        public async void DownloadFileAsync(DownloadInfo downloadTask, object customeData)
         {
             await EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
         }
-        IEnumerator EnumDownloadWebRequest(UnityWebRequest unityWebRequest, string downloadPath, object customeData)
+        /// <summary>
+        /// 从断点开始继续下载；
+        /// </summary>
+        /// <param name="downloadTask">下载任务</param>
+        /// <param name="startPosition">中断的位置</param>
+        /// <param name="customeData">自定义数据类型</param>
+        public async  void DownloadFileAsync(DownloadInfo downloadTask, long startPosition, object customeData)
+        {
+            await EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
+        }
+        async Task EnumDownloadWebRequest(UnityWebRequest unityWebRequest, string downloadPath, object customeData)
         {
             using (UnityWebRequest request = unityWebRequest)
             {
+                Downloading = true;
                 var startEventArgs = DownloadStartEventArgs.Create(request.url, downloadPath, customeData);
                 downloadStart?.Invoke(startEventArgs);
                 DownloadStartEventArgs.Release(startEventArgs);
-                request.SendWebRequest();
+                await request.SendWebRequest();
                 while (!request.isDone)
                 {
                     var percentage = (int)request.downloadProgress * 100;
                     var updateEventArgs = DownloadUpdateEventArgs.Create(request.url, downloadPath, percentage, customeData);
                     downloadUpdate?.Invoke(updateEventArgs);
                     DownloadUpdateEventArgs.Release(updateEventArgs);
-                    yield return null;
                 }
                 if (!request.isNetworkError && !request.isHttpError)
                 {
                     if (request.isDone)
                     {
+                        Downloading = false;
                         var updateEventArgs = DownloadUpdateEventArgs.Create(request.url, downloadPath, 100, customeData);
                         downloadUpdate?.Invoke(updateEventArgs);
                         var successEventArgs = DownloadSuccessEventArgs.Create(request.url, downloadPath, request.downloadHandler.data, customeData);
@@ -72,25 +90,22 @@ namespace Cosmos.Download
                 }
                 else
                 {
+                    Downloading = false;
                     var failureEventArgs = DownloadFailureEventArgs.Create(request.url, downloadPath, request.error, customeData);
                     downloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
                 }
             }
         }
-        //IEnumerator EnumBytesUnityWebRequests(UnityWebRequest[] unityWebRequests)
-        //{
-        //    var length = unityWebRequests.Length;
-        //    var count = length - 1;
-        //    var requestBytesList = new List<byte[]>();
-        //    for (int i = 0; i < length; i++)
-        //    {
-        //        downloadCallback.UpdateCallback?.Invoke((float)i / (float)count);
-        //        yield return EnumDownloadWebRequest(unityWebRequests[i], downloadCallback);
-        //    }
-        //    downloadCallback.SuccessCallback.Invoke(requestBytesList);
-        //}
 
+        /// <summary>
+        /// 取消下载；
+        /// 默认会缓存已经下载到的进度，便于下次断点续下；
+        /// </summary>
+        /// <param name="clearDownloadedFile">是否清理已经下载的的文件</param>
+        public void CancelDownload(bool clearDownloadedFile = false)
+        {
 
+        }
     }
 }
