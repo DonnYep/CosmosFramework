@@ -8,16 +8,17 @@ namespace Cosmos.Download
 {
     public class Downloader
     {
-        public bool Downloading { get; private set; }
-        List<string> pendingURIs;
-        List<string> completedURIs;
-        List<string> downloadFailureURIs;
-        public List<string> PendingURIs { get { return pendingURIs; } }
-        public List<string> CompletedURIs { get { return completedURIs; } }
-        public List<string> DownloadFailureURIs { get { return downloadFailureURIs; } }
+        IDownloadHelper downloadHelper;
 
-        public string DownloadPath { get; private set; }
-        public float DownloadTimeout { get; private set; }
+        List<DownloadInfo> pendingInfos;
+        List<DownloadInfo> completedInfos;
+        List<DownloadInfo> failureInfos;
+
+        public List<DownloadInfo> PendingInfos { get { return pendingInfos; } }
+        public List<DownloadInfo> CompletedInfos { get { return completedInfos; } }
+        public List<DownloadInfo> FailureInfos { get { return failureInfos; } }
+
+        public bool Downloading { get { return downloadHelper.Downloading; } }
 
         Action<DownloadStartEventArgs> downloadStart;
         Action<DownloadUpdateEventArgs> downloadUpdate;
@@ -43,59 +44,49 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-
-        IDownloadHelper downloadHelper;
-
-        public Downloader()
+        public Downloader(IDownloadHelper helper) 
         {
-            pendingURIs = new List<string>();
-            completedURIs = new List<string>();
-            downloadFailureURIs = new List<string>();
-        }
-        public async void SetDownloadHelper(IDownloadHelper helper)
-        {
-            if (downloadHelper != null && downloadHelper.Downloading)
-            {
-                await new UnityEngine.WaitUntil(() => downloadHelper.Downloading == false);
-                downloadFailure = null;
-                downloadStart = null;
-                downloadSuccess = null;
-                downloadUpdate = null;
-                //downloadHelper.Release();
-            }
+            pendingInfos = new List<DownloadInfo>();
+            completedInfos = new List<DownloadInfo>();
+            failureInfos = new List<DownloadInfo>();
             this.downloadHelper = helper;
             downloadHelper.DownloadFailure += downloadFailure;
-            downloadHelper.DownloadStart+=downloadStart ;
-            downloadHelper.DownloadSuccess+=downloadSuccess;
-            downloadHelper.DownloadUpdate+=downloadUpdate;
+            downloadHelper.DownloadStart += downloadStart;
+            downloadHelper.DownloadSuccess += downloadSuccess;
+            downloadHelper.DownloadUpdate += downloadUpdate;
         }
         public void Download()
         {
-            if (!Downloading || pendingURIs.Count >= 0)
+            if (!Downloading || pendingInfos.Count >= 0)
             {
                 if (downloadHelper == null)
-                    throw new ArgumentNullException("DownloadAgentHelper is invalid ! ");
-                Downloading = true;
-                DownloadFilesAsync();
+                    throw new ArgumentNullException("DownloadHelper is invalid ! ");
+                var downloadInfo = pendingInfos[0];
+                DownloadFilesAsync(downloadInfo);
             }
         }
-        public async void DownloadFilesAsync()
-        {
-            var length = pendingURIs.Count;
-            var downloadTasks = new List<DownloadInfo>();
-            for (int i = 0; i < length; i++)
-            {
-                var downloadTask = new DownloadInfo (  pendingURIs[i] ,DownloadPath,DownloadTimeout);
-                downloadTasks.Add(downloadTask);
-            }
-            for (int i = 0; i < length; i++)
-            {
-               // await downloadHelper.DownloadFileAsync(downloadTasks[i], null);
-            }
-        }
-        public void TickRefresh()
+        public void CancelDownload(DownloadInfo downloadInfo)
         {
 
+        }
+        async void DownloadFilesAsync(DownloadInfo downloadInfo)
+        {
+            await downloadHelper.DownloadFileAsync(downloadInfo, null);
+            pendingInfos.RemoveAt(0);
+            if (pendingInfos.Count > 0)
+            {
+                var info = pendingInfos[0];
+                DownloadFilesAsync(info);
+            }
+        }
+        [TickRefresh]
+        void TickRefresh()
+        {
+            var length = pendingInfos.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var info = pendingInfos[i];
+            }
         }
     }
 }

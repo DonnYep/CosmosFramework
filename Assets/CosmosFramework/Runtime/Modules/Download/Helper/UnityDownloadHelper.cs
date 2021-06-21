@@ -40,14 +40,16 @@ namespace Cosmos.Download
             remove { downloadFailure -= value; }
         }
         public bool Downloading { get; private set; }
+        public DownloadInfo DownloadInfo { get; private set; }
         /// <summary>
         /// 开始异步下载文件；
         /// </summary>
         /// <param name="downloadTask">下载任务</param>
         /// <param name="customeData">自定义的数据</param>
-        public async void DownloadFileAsync(DownloadInfo downloadTask, object customeData)
+        public Task DownloadFileAsync(DownloadInfo downloadTask, object customeData)
         {
-            await EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
+            DownloadInfo = downloadTask;
+            return EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, downloadTask.Timeout, customeData);
         }
         /// <summary>
         /// 从断点开始继续下载；
@@ -55,15 +57,17 @@ namespace Cosmos.Download
         /// <param name="downloadTask">下载任务</param>
         /// <param name="startPosition">中断的位置</param>
         /// <param name="customeData">自定义数据类型</param>
-        public async  void DownloadFileAsync(DownloadInfo downloadTask, long startPosition, object customeData)
+        public Task DownloadFileAsync(DownloadInfo downloadTask, long startPosition, object customeData)
         {
-            await EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, customeData);
+            DownloadInfo = downloadTask;
+            return EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, downloadTask.Timeout,customeData);
         }
-        async Task EnumDownloadWebRequest(UnityWebRequest unityWebRequest, string downloadPath, object customeData)
+        async Task EnumDownloadWebRequest(UnityWebRequest unityWebRequest, string downloadPath, int timeout,object customeData)
         {
             using (UnityWebRequest request = unityWebRequest)
             {
                 Downloading = true;
+                request.timeout = timeout;
                 var startEventArgs = DownloadStartEventArgs.Create(request.url, downloadPath, customeData);
                 downloadStart?.Invoke(startEventArgs);
                 DownloadStartEventArgs.Release(startEventArgs);
@@ -97,7 +101,6 @@ namespace Cosmos.Download
                 }
             }
         }
-
         /// <summary>
         /// 取消下载；
         /// 默认会缓存已经下载到的进度，便于下次断点续下；
@@ -105,7 +108,23 @@ namespace Cosmos.Download
         /// <param name="clearDownloadedFile">是否清理已经下载的的文件</param>
         public void CancelDownload(bool clearDownloadedFile = false)
         {
-
+            if (!Downloading)
+                return;
+            if (DownloadInfo != null)
+            {
+                Downloading = false;
+                var failureEventArgs = DownloadFailureEventArgs.Create(DownloadInfo.Uri, DownloadInfo.DownloadPath, "CancelDownload", null);
+                downloadFailure?.Invoke(failureEventArgs);
+                DownloadFailureEventArgs.Release(failureEventArgs);
+                if (clearDownloadedFile)
+                {
+                    try
+                    {
+                        Utility.IO.DeleteFile(DownloadInfo.DownloadPath);
+                    }
+                    catch { }
+                }
+            }
         }
     }
 }
