@@ -69,6 +69,11 @@ namespace Cosmos.Download
         {
 
         }
+        public void AbortDownloader()
+        {
+
+            downloadHelper.ClearEvents();
+        }
         async void DownloadFilesAsync(DownloadInfo downloadInfo)
         {
             await downloadHelper.DownloadFileAsync(downloadInfo, null);

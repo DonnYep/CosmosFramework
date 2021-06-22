@@ -45,8 +45,16 @@ namespace Cosmos
                 return false;
 
         }
-        internal void OnRefresh()
+        protected override void Awake()
         {
+            base.Awake();
+            gameObject.hideFlags = UnityEngine.HideFlags.HideInHierarchy;
+            DontDestroyOnLoad(gameObject);
+        }
+        private void Update()
+        {
+            if (isPause)
+                return;
             float deltaTime = (float)(DateTime.Now.Subtract(previousTimeSinceStartup).TotalMilliseconds / 1000.0f);
             previousTimeSinceStartup = DateTime.Now;
             if (futureTaskDict.Count == 0)
@@ -67,18 +75,6 @@ namespace Cosmos
                     RemoveFutureTask(futureTask.FutureTaskId);
                 }
             }
-        }
-        protected override void Awake()
-        {
-            base.Awake();
-            gameObject.hideFlags = UnityEngine.HideFlags.HideInHierarchy;
-            DontDestroyOnLoad(gameObject);
-        }
-        private void Update()
-        {
-            if (isPause)
-                return;
-            OnRefresh();
         }
     }
 }

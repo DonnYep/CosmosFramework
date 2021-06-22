@@ -42,5 +42,9 @@ namespace Cosmos.Download
         /// </summary>
         /// <param name="clearDownloadedFile">是否清理已经下载的的文件</param>
         void CancelDownload(bool clearDownloadedFile = false);
+        /// <summary>
+        /// 清理监听的时间；
+        /// </summary>
+        void ClearEvents();
     }
 }

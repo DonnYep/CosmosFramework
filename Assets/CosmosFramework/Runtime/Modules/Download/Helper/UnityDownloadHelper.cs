@@ -60,9 +60,9 @@ namespace Cosmos.Download
         public Task DownloadFileAsync(DownloadInfo downloadTask, long startPosition, object customeData)
         {
             DownloadInfo = downloadTask;
-            return EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, downloadTask.Timeout,customeData);
+            return EnumDownloadWebRequest(UnityWebRequest.Get(downloadTask.Uri), downloadTask.DownloadPath, downloadTask.Timeout, customeData);
         }
-        async Task EnumDownloadWebRequest(UnityWebRequest unityWebRequest, string downloadPath, int timeout,object customeData)
+        async Task EnumDownloadWebRequest(UnityWebRequest unityWebRequest, string downloadPath, int timeout, object customeData)
         {
             using (UnityWebRequest request = unityWebRequest)
             {
@@ -125,6 +125,14 @@ namespace Cosmos.Download
                     catch { }
                 }
             }
+        }
+
+        public void ClearEvents()
+        {
+            downloadStart = null;
+            downloadUpdate = null;
+            downloadSuccess = null;
+            downloadFailure = null;
         }
     }
 }
