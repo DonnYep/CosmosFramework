@@ -71,7 +71,6 @@ namespace Cosmos.Download
         }
         public void AbortDownloader()
         {
-
             downloadHelper.ClearEvents();
         }
         async void DownloadFilesAsync(DownloadInfo downloadInfo)
@@ -91,6 +90,7 @@ namespace Cosmos.Download
             for (int i = 0; i < length; i++)
             {
                 var info = pendingInfos[i];
+
             }
         }
     }

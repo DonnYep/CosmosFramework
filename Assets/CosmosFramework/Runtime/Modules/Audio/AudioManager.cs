@@ -5,6 +5,7 @@ using System;
 
 namespace Cosmos.Audio
 {
+    //TODO AudioManager需要实现组别功能；
     [Module]
     internal sealed class AudioManager : Module, IAudioManager
     {

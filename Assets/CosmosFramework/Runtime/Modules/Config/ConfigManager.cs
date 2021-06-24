@@ -8,6 +8,7 @@ namespace Cosmos.Config
     /// 载入时候读取配置，例如声音大小，角色等
     /// </summary>
     [Module]
+    //TODO需要实现树状结构的数据配置功能；
     internal sealed class ConfigManager : Module, IConfigManager
     {
         Dictionary<string, ConfigData> configDataDict;
