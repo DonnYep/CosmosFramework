@@ -390,13 +390,16 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 将byte数组写成文件，不作binary或者text转换；
-            /// 支持覆写；
+            /// 将byte数组写成文件，不作binary或者text转换，且支持覆写；
+            /// 若写入时文件夹路径不存在，则创建文件夹；
             /// </summary>
             /// <param name="context">需要写入的数据byte数组</param>
             /// <param name="fileFullPath">文件的完整路径，包括后缀名等</param>
             public static void WriteFile(byte[] context, string fileFullPath)
             {
+               var folderPath= Path.GetDirectoryName(fileFullPath);
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
                 File.WriteAllBytes(fileFullPath, context);
             }
             /// <summary>

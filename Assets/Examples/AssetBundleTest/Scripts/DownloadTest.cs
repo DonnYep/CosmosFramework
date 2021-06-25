@@ -35,12 +35,15 @@ public class DownloadTest : MonoBehaviour
             return;
         if (!Directory.Exists(srcUri) || !Directory.Exists(downloadPath))
             return;
+        downloader.DownloadPath = downloadPath;
+        var len = srcUri.Length;
         Utility.IO.TraverseFolderFile(srcUri, (info) =>
         {
-            uriNameDict.TryAdd(info.FullName, info.Name);
+            var path = info.FullName;
+            var name = info.FullName.Remove(0,len+1);
+            uriNameDict.TryAdd(path, name);
         });
         srcCount = uriNameDict.Count;
-        downloader.DownloadPath = downloadPath;
         downloader.Download(uriNameDict);
     }
     void OnDownloadStart(DownloadStartEventArgs eventArgs)

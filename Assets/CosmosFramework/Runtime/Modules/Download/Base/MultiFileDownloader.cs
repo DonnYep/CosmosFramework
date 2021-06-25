@@ -81,7 +81,7 @@ namespace Cosmos.Download
                 return false;
             Downloading = true;
             startTime = DateTime.Now;
-             RecursiveDownload();
+            RecursiveDownload();
             return true;
         }
         public void CancelDownload()
@@ -101,7 +101,7 @@ namespace Cosmos.Download
             pendingURIs.RemoveAt(0);
             if (!stopDownload)
             {
-                await DownloadWebRequest(uri, fileDownloadPath, null);
+               await DownloadWebRequest(uri, fileDownloadPath, null);
                 RecursiveDownload();
             }
         }
@@ -137,7 +137,14 @@ namespace Cosmos.Download
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         completedURIs.Add(uri);
                         uriNameDict.Remove(uri);
-                        Utility.IO.WriteFile(request.downloadHandler.data, fileDownloadPath);
+                        try
+                        {
+                            Utility.IO.WriteFile(request.downloadHandler.data, fileDownloadPath);
+                        }
+                        catch
+                        {
+                            Utility.Debug.LogError(fileDownloadPath);
+                        }
                     }
                 }
                 else
