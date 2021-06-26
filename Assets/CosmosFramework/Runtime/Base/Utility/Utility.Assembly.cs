@@ -469,7 +469,7 @@ where K : class
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <param name="type">目标类型</param>
-            /// <param name="inherit">是否检查基类特性</param>
+            /// <param name="inherit">是否查找基类中的特性</param>
             /// <returns>特性数组</returns>
             public static T[] GetAttributes<T>(Type type, bool inherit = false)
                 where T : Attribute
@@ -482,7 +482,7 @@ where K : class
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <typeparam name="K">目标类型</typeparam>
-            /// <param name="inherit">是否检查基类特性</param>
+            /// <param name="inherit">是否查找基类中的特性</param>
             /// <returns>特性数组</returns>
             public static T[] GetAttributes<T, K>(bool inherit = false)
     where T : Attribute
@@ -495,7 +495,7 @@ where K : class
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <param name="assembly">目标程序集</param>
-            /// <param name="inherit">是否检查基类特性</param>
+            /// <param name="inherit">是否查找基类中的特性</param>
             /// <returns>特性数组</returns>
             public static T[] GetAttributesInAssembly<T>(System.Reflection.Assembly assembly, bool inherit = false)
                 where T : Attribute
@@ -515,7 +515,7 @@ where K : class
             /// </summary>
             /// <typeparam name="T">查找的指定类型</typeparam>
             /// <typeparam name="K">特性类型</typeparam>
-            /// <param name="inherit">是否是继承</param>
+            /// <param name="inherit">是否查找基类中的特性</param>
             /// <returns>方法信息数组</returns>
             public static MethodInfo[] GetTypeMethodsByAttribute<T, K>(bool inherit = false)
                 where T : class
@@ -528,7 +528,7 @@ where K : class
             /// </summary>
             /// <param name="type">查找的指定类型</param>
             /// <param name="attributeType">特性类型</param>
-            /// <param name="inherit">是否是继承</param>
+            /// <param name="inherit">是否查找基类中的特性</param>
             /// <returns>方法信息数组</returns>
             public static MethodInfo[] GetTypeMethodsByAttribute(Type type, Type attributeType, bool inherit = false)
             {
@@ -544,7 +544,7 @@ where K : class
             /// </summary>
             /// <typeparam name="T">特性类型</typeparam>
             /// <param name="type">查找的指定类型</param>
-            /// <param name="inherit">是否是继承</param>
+            /// <param name="inherit">是否查找基类中的特性</param>
             /// <returns>方法信息数组</returns>
             public static MethodInfo[] GetTypeMethodsByAttribute<T>(Type type, bool inherit = false)
                 where T : Attribute

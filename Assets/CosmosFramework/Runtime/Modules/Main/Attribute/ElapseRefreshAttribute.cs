@@ -14,6 +14,22 @@ namespace Cosmos
     public class ElapseRefreshAttribute:Attribute
     {
         static List<Exception> exceptionList = new List<Exception>();
+        /// <summary>
+        /// 获取轮询函数；
+        /// 默认查找对象基类中的此特性；
+        /// </summary>
+        /// <param name="obj">包含此特性的对象</param>
+        /// <param name="action">轮询委托</param>
+        public static void GetRefreshAction(object obj,  out Action<float> action)
+        {
+            GetRefreshAction(obj, true, out action);
+        }
+        /// <summary>
+        /// 获取轮询函数；
+        /// </summary>
+        /// <param name="obj">包含此特性的对象</param>
+        /// <param name="inherit">是否查找基类中的特性</param>
+        /// <param name="action">轮询委托</param>
         public static void GetRefreshAction(object obj, bool inherit, out Action<float> action)
         {
             var type = obj.GetType();

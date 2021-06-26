@@ -29,7 +29,6 @@ namespace Cosmos.Download
         Action<DownloadUpdateEventArgs> downloadUpdate;
         Action<DownloadSuccessEventArgs> downloadSuccess;
         Action<DownloadFailureEventArgs> downloadFailure;
-        Action<DownloadOverallEventArgs> downloadOverall;
         public event Action<DownloadStartEventArgs> DownloadStart
         {
             add { downloadStart += value; }
@@ -55,6 +54,7 @@ namespace Cosmos.Download
         List<string> pendingURIs = new List<string>();
         List<string> completedURIs = new List<string>();
         List<string> failureURIs = new List<string>();
+        Queue<DownloadedData> downloadedDataQueues = new Queue<DownloadedData>();
 
         public string DownloadPath { get; set; }
         public bool Downloading { get; set; }
@@ -137,14 +137,7 @@ namespace Cosmos.Download
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         completedURIs.Add(uri);
                         uriNameDict.Remove(uri);
-                        try
-                        {
-                            Utility.IO.WriteFile(request.downloadHandler.data, fileDownloadPath);
-                        }
-                        catch
-                        {
-                            Utility.Debug.LogError(fileDownloadPath);
-                        }
+                        downloadedDataQueues.Enqueue(new DownloadedData(request.downloadHandler.data, fileDownloadPath));
                     }
                 }
                 else
@@ -159,6 +152,25 @@ namespace Cosmos.Download
                         Utility.IO.DeleteFile(fileDownloadPath);
                     }
                 }
+            }
+        }
+        [TickRefresh]
+        async void WriteToLocal()
+        {
+            if (downloadedDataQueues.Count > 0)
+            {
+                var data = downloadedDataQueues.Dequeue();
+                await Task.Run(() =>
+                 {
+                     try
+                     {
+                         Utility.IO.WriteFile(data.Data, data.DownloadPath);
+                     }
+                     catch
+                     {
+                         Utility.Debug.LogError(data.DownloadPath);
+                     }
+                 });
             }
         }
     }

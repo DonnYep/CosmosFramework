@@ -5,6 +5,8 @@ using Cosmos.Download;
 using Cosmos;
 using System.IO;
 using UnityEngine.UI;
+using System;
+
 public class DownloadTest : MonoBehaviour
 {
     MultiFileDownloader downloader;
@@ -21,6 +23,8 @@ public class DownloadTest : MonoBehaviour
     Text uriText;
     int srcCount;
     int targetIndex = 1;
+    Action tickRefresh;
+    bool isDone = false;
     private void Awake()
     {
         downloader = new MultiFileDownloader();
@@ -40,17 +44,17 @@ public class DownloadTest : MonoBehaviour
         Utility.IO.TraverseFolderFile(srcUri, (info) =>
         {
             var path = info.FullName;
-            var name = info.FullName.Remove(0,len+1);
+            var name = info.FullName.Remove(0, len + 1);
             uriNameDict.TryAdd(path, name);
         });
         srcCount = uriNameDict.Count;
         downloader.Download(uriNameDict);
+        TickRefreshAttribute.GetRefreshAction(downloader, out tickRefresh);
     }
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
     {
         if (uriText != null)
             uriText.text = eventArgs.URI;
-
     }
     void OnDownloadUpdate(DownloadUpdateEventArgs eventArgs)
     {
@@ -63,14 +67,21 @@ public class DownloadTest : MonoBehaviour
         {
             slider.value = progress;
         }
+        if (progress == 100) isDone = true;
     }
     void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
     {
         Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.URI}");
         targetIndex++;
+
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
         Utility.Debug.LogInfo($"DownloadFailure {eventArgs.URI}");
+    }
+    void Update()
+    {
+        if (!isDone)
+            tickRefresh?.Invoke();
     }
 }
