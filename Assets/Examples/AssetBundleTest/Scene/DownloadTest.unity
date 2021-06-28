@@ -933,7 +933,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 967ac17b24e6bf942a5a376140fae915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  srcUri: 
+  srcUrl: 
+  resName: 
   downloadPath: 
   slider: {fileID: 615888858}
   text: {fileID: 1067874191}

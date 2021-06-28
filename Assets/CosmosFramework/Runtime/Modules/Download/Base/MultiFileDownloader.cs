@@ -155,7 +155,7 @@ namespace Cosmos.Download
             }
         }
         [TickRefresh]
-        async void WriteToLocal()
+        async void TickRefresh()
         {
             if (downloadedDataQueues.Count > 0)
             {
