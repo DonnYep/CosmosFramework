@@ -11,18 +11,12 @@ namespace Cosmos.Download
     public class WebClientDownloadHelper //: IDownloadHelper
     {
         Action<DownloadStartEventArgs> downloadStart;
-        Action<DownloadUpdateEventArgs> downloadUpdate;
         Action<DownloadSuccessEventArgs> downloadSuccess;
         Action<DownloadFailureEventArgs> downloadFailure;
         public event Action<DownloadStartEventArgs> DownloadStart
         {
             add { downloadStart += value; }
             remove { downloadStart -= value; }
-        }
-        public event Action<DownloadUpdateEventArgs> DownloadUpdate
-        {
-            add { downloadUpdate += value; }
-            remove { downloadUpdate -= value; }
         }
         public event Action<DownloadSuccessEventArgs> DownloadSuccess
         {
@@ -51,9 +45,9 @@ namespace Cosmos.Download
                     webClient.DownloadProgressChanged += (sender, eventArgs) =>
                     {
                         var progress = eventArgs.ProgressPercentage;
-                        var updateEventArgs = DownloadUpdateEventArgs.Create(downloadTask.Uri, downloadTask.DownloadPath, progress, customeData);
-                        downloadUpdate?.Invoke(updateEventArgs);
-                        DownloadUpdateEventArgs.Release(updateEventArgs);
+                        //var updateEventArgs = DownloadIndividualEventArgs.Create(downloadTask.Uri, downloadTask.DownloadPath, progress, customeData);
+                        //downloadUpdate?.Invoke(updateEventArgs);
+                        //DownloadIndividualEventArgs.Release(updateEventArgs);
                     };
                     webClient.DownloadDataCompleted += (sender, eventArgs) =>
                     {

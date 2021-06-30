@@ -18,7 +18,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="url">资源定位地址</param>
             /// <returns>目录字符串数组</returns>
-            public static string[] GetUrlRootDirectoryList(string url)
+            public static string[] GetUrlRootFiles(string url)
             {
                 if (string.IsNullOrEmpty(url))
                     throw new ArgumentNullException("URL is invalid !");
@@ -45,6 +45,10 @@ namespace Cosmos
                 }
                 return uris.ToArray();
             }
+            //public static void FTPServer(string url)
+            //{
+
+            //}
         }
     }
 }

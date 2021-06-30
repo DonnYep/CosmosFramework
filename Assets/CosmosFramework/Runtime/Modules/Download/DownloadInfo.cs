@@ -20,7 +20,8 @@ namespace Cosmos
         /// 任务过期时间，以秒为单位；
         /// </summary>
         public int Timeout { get; private set; }
-        public DownloadInfo(string uri, string downloadPath, int timeout)
+        public object CustomeData { get; private set; }
+        public DownloadInfo(string uri, string downloadPath, int timeout,object customeData=null)
         {
             Uri = uri;
             DownloadPath = downloadPath;
@@ -28,6 +29,7 @@ namespace Cosmos
                 Timeout = 0;
             else
                 Timeout = timeout;
+            CustomeData = customeData;
         }
         public void Release()
         {

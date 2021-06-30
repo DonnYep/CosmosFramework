@@ -21,7 +21,6 @@ namespace Cosmos.Download
         public bool Downloading { get { return downloadHelper.Downloading; } }
 
         Action<DownloadStartEventArgs> downloadStart;
-        Action<DownloadUpdateEventArgs> downloadUpdate;
         Action<DownloadSuccessEventArgs> downloadSuccess;
         Action<DownloadFailureEventArgs> downloadFailure;
         public event Action<DownloadStartEventArgs> DownloadStart
@@ -29,11 +28,7 @@ namespace Cosmos.Download
             add { downloadStart += value; }
             remove { downloadStart -= value; }
         }
-        public event Action<DownloadUpdateEventArgs> DownloadUpdate
-        {
-            add { downloadUpdate += value; }
-            remove { downloadUpdate -= value; }
-        }
+
         public event Action<DownloadSuccessEventArgs> DownloadSuccess
         {
             add { downloadSuccess += value; }
@@ -50,10 +45,6 @@ namespace Cosmos.Download
             completedInfos = new List<DownloadInfo>();
             failureInfos = new List<DownloadInfo>();
             this.downloadHelper = helper;
-            downloadHelper.DownloadFailure += downloadFailure;
-            downloadHelper.DownloadStart += downloadStart;
-            downloadHelper.DownloadSuccess += downloadSuccess;
-            downloadHelper.DownloadUpdate += downloadUpdate;
         }
         public void Download()
         {
@@ -75,7 +66,7 @@ namespace Cosmos.Download
         }
         async void DownloadFilesAsync(DownloadInfo downloadInfo)
         {
-            await downloadHelper.DownloadFileAsync(downloadInfo, null);
+            await downloadHelper.DownloadFileAsync(downloadInfo, 0);
             pendingInfos.RemoveAt(0);
             if (pendingInfos.Count > 0)
             {

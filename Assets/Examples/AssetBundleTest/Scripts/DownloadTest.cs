@@ -26,17 +26,19 @@ public class DownloadTest : MonoBehaviour
     [SerializeField]
     Text uriText;
     int srcCount;
-    int targetIndex = 1;
+    int targetIndex = 0;
     Action tickRefresh;
     bool isDone = false;
+    [SerializeField]
     private void Awake()
     {
         downloader = new MultiFileDownloader();
-        downloader.DownloadUpdate += OnDownloadUpdate;
         downloader.DownloadSuccess += OnDownloadSucess;
         downloader.DownloadFailure += OnDownloadFailure;
         downloader.DownloadStart += OnDownloadStart;
+        downloader.DownloadOverall += OnDownloadOverall; ;
     }
+
     void Start()
     {
         if (string.IsNullOrEmpty(srcUrl) || string.IsNullOrEmpty(downloadPath))
@@ -45,37 +47,44 @@ public class DownloadTest : MonoBehaviour
             return;
         downloader.DownloadPath = downloadPath;
         var len = srcUrl.Length;
-        //Utility.IO.TraverseFolderFile(srcUri, (info) =>
-        //{
-        //    var path = info.FullName;
-        //    var name = info.FullName.Remove(0, len + 1);
-        //    uriNameDict.TryAdd(path, name);
-        //});
+        Utility.IO.TraverseFolderFile(srcUrl, (info) =>
+        {
+            var path = info.FullName;
+            var name = info.FullName.Remove(0, len + 1);
+            uriNameDict.TryAdd(path, name);
+        });
         //var res = Utility.IO.WebPathCombine(srcUrl, resName);
         //Utility.Debug.LogInfo(res, MessageColor.YELLOW);
         //uriNameDict.Add(res, resName);
-        //srcCount = uriNameDict.Count;
-        //downloader.Download(uriNameDict);
-        //TickRefreshAttribute.GetRefreshAction(downloader, out tickRefresh);
+
+        srcCount = uriNameDict.Count;
+
+        downloader.Download(uriNameDict);
+        TickRefreshAttribute.GetRefreshAction(downloader, out tickRefresh);
+
+        //单位块的百分比长度；
+
+
+
         //PrintURIs();
-        var lst= Utility.Net.GetUrlRootDirectoryList(srcUrl);
-        Utility.Assert.Traverse(lst, (str) => Utility.Debug.LogInfo(str));
+        //var lst= Utility.Net.GetUrlRootFiles(srcUrl);
+        //Utility.Assert.Traverse(lst, (str) => Utility.Debug.LogInfo(str));
     }
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
     {
         if (uriText != null)
             uriText.text = eventArgs.URI;
     }
-    void OnDownloadUpdate(DownloadUpdateEventArgs eventArgs)
+    void OnDownloadOverall(DonwloadOverallEventArgs  eventArgs)
     {
-        var progress = (int)(100 * ((float)targetIndex / (float)srcCount));
+        var overallProgress = (float)Math.Round(eventArgs.OverallProgress, 1);
         if (text != null)
         {
-            text.text = progress + "%";
+            text.text = overallProgress+ "%";
         }
         if (slider != null)
         {
-            slider.value = progress;
+            slider.value = overallProgress;
         }
     }
     void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
@@ -83,39 +92,15 @@ public class DownloadTest : MonoBehaviour
         Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.URI}");
         targetIndex++;
         var progress = (int)(100 * ((float)targetIndex / (float)srcCount));
-           if (progress == 100) isDone = true;
+        if (progress == 100) isDone = true;
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
-        Utility.Debug.LogInfo($"DownloadFailure {eventArgs.URI}");
+        Utility.Debug.LogError($"DownloadFailure {eventArgs.URI}");
     }
     void Update()
     {
-        if (!isDone)
+        //if (!isDone)
             tickRefresh?.Invoke();
-    }
-    void PrintURIs()
-    {
-        string url = srcUrl;
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-        {
-            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-            {
-                string html = reader.ReadToEnd();
-                Regex regex = new Regex("<a href=\".*\">(?<name>.*)</a>");
-                MatchCollection matches = regex.Matches(html);
-                if (matches.Count > 0)
-                {
-                    foreach (Match match in matches)
-                    {
-                        if (match.Success)
-                        {
-                            Debug.Log(match.Groups["name"]);
-                        }
-                    }
-                }
-            }
-        }
     }
 }

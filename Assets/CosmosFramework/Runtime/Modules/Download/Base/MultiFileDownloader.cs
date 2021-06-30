@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
+using UnityEngine;
 
 namespace Cosmos.Download
 {
@@ -26,18 +27,13 @@ namespace Cosmos.Download
         /// </summary>
         #region events
         Action<DownloadStartEventArgs> downloadStart;
-        Action<DownloadUpdateEventArgs> downloadUpdate;
         Action<DownloadSuccessEventArgs> downloadSuccess;
         Action<DownloadFailureEventArgs> downloadFailure;
+        Action<DonwloadOverallEventArgs> downloadOverall;
         public event Action<DownloadStartEventArgs> DownloadStart
         {
             add { downloadStart += value; }
             remove { downloadStart -= value; }
-        }
-        public event Action<DownloadUpdateEventArgs> DownloadUpdate
-        {
-            add { downloadUpdate += value; }
-            remove { downloadUpdate -= value; }
         }
         public event Action<DownloadSuccessEventArgs> DownloadSuccess
         {
@@ -49,6 +45,11 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
+        public event Action<DonwloadOverallEventArgs> DownloadOverall
+        {
+            add { downloadOverall += value; }
+            remove { downloadOverall -= value; }
+        }
         #endregion
 
         List<string> pendingURIs = new List<string>();
@@ -58,7 +59,7 @@ namespace Cosmos.Download
 
         public string DownloadPath { get; set; }
         public bool Downloading { get; set; }
-        public bool DeleteFailureFile { get; private set; }
+        public bool DeleteFailureFile { get; set; }
         DateTime startTime;
         DateTime endTime;
         int timeout;
@@ -69,6 +70,14 @@ namespace Cosmos.Download
         /// key=> uri ; value=>fileName ;
         /// </summary>
         Dictionary<string, string> uriNameDict;
+
+        /// <summary>
+        /// 单位资源的百分比比率；
+        /// </summary>
+        float unitResRatio;
+
+        int currentDownloadIndex= 0;
+
         public bool Download(Dictionary<string, string> uriNameDict)
         {
             this.uriNameDict = uriNameDict;
@@ -76,7 +85,7 @@ namespace Cosmos.Download
                 throw new ArgumentNullException("UriNameDict  is invalid !");
             pendingURIs.AddRange(uriNameDict.Keys);
             DownloadCount = uriNameDict.Count;
-
+            unitResRatio= 100f / DownloadCount;
             if (pendingURIs.Count == 0 || Downloading)
                 return false;
             Downloading = true;
@@ -96,12 +105,13 @@ namespace Cosmos.Download
                 return;
             }
             string uri = pendingURIs[0];
+            currentDownloadIndex = DownloadCount - pendingURIs.Count;
             var fileName = uriNameDict[uri];
             var fileDownloadPath = Path.Combine(DownloadPath, fileName);
             pendingURIs.RemoveAt(0);
             if (!stopDownload)
             {
-               await DownloadWebRequest(uri, fileDownloadPath, null);
+                await DownloadWebRequest(uri, fileDownloadPath, null);
                 RecursiveDownload();
             }
         }
@@ -115,13 +125,11 @@ namespace Cosmos.Download
                 var startEventArgs = DownloadStartEventArgs.Create(request.url, fileDownloadPath, customeData);
                 downloadStart?.Invoke(startEventArgs);
                 DownloadStartEventArgs.Release(startEventArgs);
-                yield return request.SendWebRequest();
-                while (!request.isDone)
+                var operation = request.SendWebRequest();
+                while (!operation.isDone)
                 {
-                    var percentage = (int)(request.downloadProgress * 100);
-                    var updateEventArgs = DownloadUpdateEventArgs.Create(request.url, fileDownloadPath, percentage, customeData);
-                    downloadUpdate?.Invoke(updateEventArgs);
-                    DownloadUpdateEventArgs.Release(updateEventArgs);
+                    var individualPercentage =request.downloadProgress* 100;
+                    ProcessOverallProgress(uri, DownloadPath, request.downloadProgress,individualPercentage, customeData);
                     yield return null;
                 }
                 if (!request.isNetworkError && !request.isHttpError)
@@ -129,11 +137,9 @@ namespace Cosmos.Download
                     if (request.isDone)
                     {
                         Downloading = false;
-                        var updateEventArgs = DownloadUpdateEventArgs.Create(request.url, fileDownloadPath, 100, customeData);
-                        downloadUpdate?.Invoke(updateEventArgs);
                         var successEventArgs = DownloadSuccessEventArgs.Create(request.url, fileDownloadPath, request.downloadHandler.data, customeData);
                         downloadSuccess?.Invoke(successEventArgs);
-                        DownloadUpdateEventArgs.Release(updateEventArgs);
+                        ProcessOverallProgress(uri, DownloadPath, 1,100, customeData);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         completedURIs.Add(uri);
                         uriNameDict.Remove(uri);
@@ -153,6 +159,22 @@ namespace Cosmos.Download
                     }
                 }
             }
+        }
+        /// <summary>
+        /// 处理整体进度；
+        /// </summary>
+        /// <param name="uri">资源地址</param>
+        /// <param name="downloadPath">下载到本地的目录</param>
+        /// <param name="overallPercent">整体百分比进度</param>
+        /// <param name="individualPercent">资源个体百分比</param>
+        /// <param name="customeData">自定义用户数据</param>
+        void ProcessOverallProgress(string uri,string downloadPath,float overallPercent,float individualPercent, object customeData)
+        {
+            var overallIndexPercent = 100 * ((float)currentDownloadIndex / (float)DownloadCount);
+            var overallProgress =overallIndexPercent + (unitResRatio* overallPercent);
+            var eventArgs = DonwloadOverallEventArgs.Create(uri, downloadPath, overallProgress, individualPercent, customeData);
+            downloadOverall.Invoke(eventArgs);
+            DonwloadOverallEventArgs.Release(eventArgs);
         }
         [TickRefresh]
         async void TickRefresh()
