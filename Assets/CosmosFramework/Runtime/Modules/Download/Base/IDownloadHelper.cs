@@ -16,6 +16,12 @@ namespace Cosmos.Download
         /// 当前下载helper是否正在下载；
         /// </summary>
         bool Downloading { get; }
+
+        event Action DownloadStart;
+        event Action<string> DownloadFailure;
+        event Action<byte[]> DownloadSuccess;
+        event Action<float> DownloadUpdate;
+
         /// <summary>
         /// 异步下载资源；
         /// </summary>

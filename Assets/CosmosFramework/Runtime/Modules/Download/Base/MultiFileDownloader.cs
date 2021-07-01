@@ -30,6 +30,7 @@ namespace Cosmos.Download
         Action<DownloadSuccessEventArgs> downloadSuccess;
         Action<DownloadFailureEventArgs> downloadFailure;
         Action<DonwloadOverallEventArgs> downloadOverall;
+        Action<DownloadFinishEventArgs> downloadFinish;
         public event Action<DownloadStartEventArgs> DownloadStart
         {
             add { downloadStart += value; }
@@ -50,10 +51,15 @@ namespace Cosmos.Download
             add { downloadOverall += value; }
             remove { downloadOverall -= value; }
         }
+        public event Action<DownloadFinishEventArgs> DownloadFinish
+        {
+            add { downloadFinish += value; }
+            remove { downloadFinish -= value; }
+        }
         #endregion
 
         List<string> pendingURIs = new List<string>();
-        List<string> completedURIs = new List<string>();
+        List<string> successURIs = new List<string>();
         List<string> failureURIs = new List<string>();
         Queue<DownloadedData> downloadedDataQueues = new Queue<DownloadedData>();
 
@@ -66,32 +72,30 @@ namespace Cosmos.Download
         public int DownloadCount { get; private set; }
 
         bool stopDownload;
-        /// <summary>
-        /// key=> uri ; value=>fileName ;
-        /// </summary>
-        Dictionary<string, string> uriNameDict;
 
+        public string URL { get; private set; }
         /// <summary>
         /// 单位资源的百分比比率；
         /// </summary>
         float unitResRatio;
 
-        int currentDownloadIndex= 0;
+        int currentDownloadIndex = 0;
 
-        public bool Download(Dictionary<string, string> uriNameDict)
+        public void Download(string url, string[] downloadableList)
         {
-            this.uriNameDict = uriNameDict;
-            if (uriNameDict == null)
-                throw new ArgumentNullException("UriNameDict  is invalid !");
-            pendingURIs.AddRange(uriNameDict.Keys);
-            DownloadCount = uriNameDict.Count;
-            unitResRatio= 100f / DownloadCount;
+            if (string.IsNullOrEmpty(url))
+                throw new ArgumentNullException("URL is invalid !");
+            if (downloadableList == null)
+                throw new ArgumentNullException("Downloadable is invalid !");
+            URL = url;
+            pendingURIs.AddRange(downloadableList);
+            DownloadCount = downloadableList.Length;
+            unitResRatio = 100f / DownloadCount;
             if (pendingURIs.Count == 0 || Downloading)
-                return false;
+                return;
             Downloading = true;
             startTime = DateTime.Now;
             RecursiveDownload();
-            return true;
         }
         public void CancelDownload()
         {
@@ -102,16 +106,19 @@ namespace Cosmos.Download
             if (pendingURIs.Count == 0)
             {
                 endTime = DateTime.Now;
+                var eventArgs = DownloadFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), null);
+                downloadFinish?.Invoke(eventArgs);
+                DownloadFinishEventArgs.Release(eventArgs);
                 return;
             }
-            string uri = pendingURIs[0];
+            string downloadableUri = pendingURIs[0];
             currentDownloadIndex = DownloadCount - pendingURIs.Count;
-            var fileName = uriNameDict[uri];
-            var fileDownloadPath = Path.Combine(DownloadPath, fileName);
+            var fileDownloadPath = Path.Combine(DownloadPath, downloadableUri);
             pendingURIs.RemoveAt(0);
             if (!stopDownload)
             {
-                await DownloadWebRequest(uri, fileDownloadPath, null);
+                var remoteUri = Utility.IO.WebPathCombine(URL, downloadableUri);
+                await DownloadWebRequest(remoteUri, fileDownloadPath, null);
                 RecursiveDownload();
             }
         }
@@ -128,8 +135,8 @@ namespace Cosmos.Download
                 var operation = request.SendWebRequest();
                 while (!operation.isDone)
                 {
-                    var individualPercentage =request.downloadProgress* 100;
-                    ProcessOverallProgress(uri, DownloadPath, request.downloadProgress,individualPercentage, customeData);
+                    var individualProgress = request.downloadProgress * 100;
+                    ProcessOverallProgress(uri, DownloadPath, request.downloadProgress, individualProgress, customeData);
                     yield return null;
                 }
                 if (!request.isNetworkError && !request.isHttpError)
@@ -139,10 +146,9 @@ namespace Cosmos.Download
                         Downloading = false;
                         var successEventArgs = DownloadSuccessEventArgs.Create(request.url, fileDownloadPath, request.downloadHandler.data, customeData);
                         downloadSuccess?.Invoke(successEventArgs);
-                        ProcessOverallProgress(uri, DownloadPath, 1,100, customeData);
+                        ProcessOverallProgress(uri, DownloadPath, 1, 100, customeData);
                         DownloadSuccessEventArgs.Release(successEventArgs);
-                        completedURIs.Add(uri);
-                        uriNameDict.Remove(uri);
+                        successURIs.Add(uri);
                         downloadedDataQueues.Enqueue(new DownloadedData(request.downloadHandler.data, fileDownloadPath));
                     }
                 }
@@ -153,6 +159,7 @@ namespace Cosmos.Download
                     downloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
                     failureURIs.Add(uri);
+                    ProcessOverallProgress(uri, DownloadPath, 1, 100, customeData);
                     if (DeleteFailureFile)
                     {
                         Utility.IO.DeleteFile(fileDownloadPath);
@@ -168,10 +175,10 @@ namespace Cosmos.Download
         /// <param name="overallPercent">整体百分比进度</param>
         /// <param name="individualPercent">资源个体百分比</param>
         /// <param name="customeData">自定义用户数据</param>
-        void ProcessOverallProgress(string uri,string downloadPath,float overallPercent,float individualPercent, object customeData)
+        void ProcessOverallProgress(string uri, string downloadPath, float overallPercent, float individualPercent, object customeData)
         {
             var overallIndexPercent = 100 * ((float)currentDownloadIndex / (float)DownloadCount);
-            var overallProgress =overallIndexPercent + (unitResRatio* overallPercent);
+            var overallProgress = overallIndexPercent + (unitResRatio * overallPercent);
             var eventArgs = DonwloadOverallEventArgs.Create(uri, downloadPath, overallProgress, individualPercent, customeData);
             downloadOverall.Invoke(eventArgs);
             DonwloadOverallEventArgs.Release(eventArgs);

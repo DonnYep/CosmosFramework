@@ -8,6 +8,8 @@ using UnityEngine.UI;
 using System;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Text;
 
 public class DownloadTest : MonoBehaviour
 {
@@ -15,10 +17,7 @@ public class DownloadTest : MonoBehaviour
     [SerializeField]
     string srcUrl;
     [SerializeField]
-    string resName;
-    [SerializeField]
     string downloadPath;
-    Dictionary<string, string> uriNameDict = new Dictionary<string, string>();
     [SerializeField]
     Slider slider;
     [SerializeField]
@@ -28,7 +27,6 @@ public class DownloadTest : MonoBehaviour
     int srcCount;
     int targetIndex = 0;
     Action tickRefresh;
-    bool isDone = false;
     [SerializeField]
     private void Awake()
     {
@@ -36,9 +34,8 @@ public class DownloadTest : MonoBehaviour
         downloader.DownloadSuccess += OnDownloadSucess;
         downloader.DownloadFailure += OnDownloadFailure;
         downloader.DownloadStart += OnDownloadStart;
-        downloader.DownloadOverall += OnDownloadOverall; ;
+        downloader.DownloadOverall += OnDownloadOverall;
     }
-
     void Start()
     {
         if (string.IsNullOrEmpty(srcUrl) || string.IsNullOrEmpty(downloadPath))
@@ -47,40 +44,50 @@ public class DownloadTest : MonoBehaviour
             return;
         downloader.DownloadPath = downloadPath;
         var len = srcUrl.Length;
-        Utility.IO.TraverseFolderFile(srcUrl, (info) =>
+        List<string> downloadableUri = new List<string>();
+        var fileList = new List<string>();
+        if (Directory.Exists(srcUrl))
         {
-            var path = info.FullName;
-            var name = info.FullName.Remove(0, len + 1);
-            uriNameDict.TryAdd(path, name);
-        });
-        //var res = Utility.IO.WebPathCombine(srcUrl, resName);
-        //Utility.Debug.LogInfo(res, MessageColor.YELLOW);
-        //uriNameDict.Add(res, resName);
-
-        srcCount = uriNameDict.Count;
-
-        downloader.Download(uriNameDict);
-        TickRefreshAttribute.GetRefreshAction(downloader, out tickRefresh);
-
-        //单位块的百分比长度；
-
-
-
-        //PrintURIs();
-        //var lst= Utility.Net.GetUrlRootFiles(srcUrl);
-        //Utility.Assert.Traverse(lst, (str) => Utility.Debug.LogInfo(str));
+            Utility.IO.TraverseFolderFile(srcUrl, (info) =>
+            {
+                var path = info.FullName;
+                var name = info.FullName.Remove(0, len + 1);
+                downloadableUri.Add(name);
+            });
+        }
+        else
+        {
+            var result= Utility.Net.PingURI(srcUrl);
+            if (result)
+            {
+                Utility.Net.PingUrlFileList(srcUrl, fileList);
+                var length = fileList.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    var uri = fileList[i].Remove(0, len);
+                    downloadableUri.Add(uri);
+                    Utility.Debug.LogInfo(uri, MessageColor.YELLOW);
+                }
+            }
+        }
+        srcCount = downloadableUri.Count;
+        if (srcCount > 0)
+        {
+            downloader.Download(srcUrl, downloadableUri.ToArray());
+            TickRefreshAttribute.GetRefreshAction(downloader, out tickRefresh);
+        }
     }
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
     {
         if (uriText != null)
             uriText.text = eventArgs.URI;
     }
-    void OnDownloadOverall(DonwloadOverallEventArgs  eventArgs)
+    void OnDownloadOverall(DonwloadOverallEventArgs eventArgs)
     {
         var overallProgress = (float)Math.Round(eventArgs.OverallProgress, 1);
         if (text != null)
         {
-            text.text = overallProgress+ "%";
+            text.text = overallProgress + "%";
         }
         if (slider != null)
         {
@@ -91,8 +98,6 @@ public class DownloadTest : MonoBehaviour
     {
         Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.URI}");
         targetIndex++;
-        var progress = (int)(100 * ((float)targetIndex / (float)srcCount));
-        if (progress == 100) isDone = true;
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
@@ -101,6 +106,6 @@ public class DownloadTest : MonoBehaviour
     void Update()
     {
         //if (!isDone)
-            tickRefresh?.Invoke();
+        tickRefresh?.Invoke();
     }
 }

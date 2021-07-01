@@ -12,30 +12,36 @@ namespace Cosmos.Download
     /// </summary>
     public class DownloadAgent
     {
-        /// <summary>
-        /// key=> uri ; value=>fileName ;
-        /// </summary>
-        Dictionary<string, string> uriNameDict;
+        IDownloadFileListHelper downloadFileListHelper;
 
-        readonly string url;
-        readonly string downloadPath;
-        int TargetCount;
+        string url;
+
+        string downloadPath;
+
         bool isDone;
+
         public string URL { get { return url; } }
+
         public string DownloadPath { get { return downloadPath; } }
         /// <summary>
         /// 可下载资源的数量；
         /// </summary>
         public int DownloadableCount { get; private set; }
-        public bool Downloading { get; set; }
-        public DownloadAgent(string url,string downloadPath)
+        public bool Downloading { get; private set; }
+
+        public void SetHelper(IDownloadFileListHelper helper)
+        {
+            downloadFileListHelper = helper;
+        }
+        public void SetDownloadInfo(string url,string fileListContext,string downloadPath)
         {
             this.url = url;
-            this.downloadPath= downloadPath;
+            var fileList = downloadFileListHelper.ParseDownloadFileList(fileListContext);
+            this.downloadPath = downloadPath;
         }
-        public bool Download(Dictionary<string, string> uriNameDict)
+        public void StartDownload()
         {
-            return true;
+
         }
     }
 }
