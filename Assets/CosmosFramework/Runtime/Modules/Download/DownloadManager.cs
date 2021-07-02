@@ -8,19 +8,16 @@ namespace Cosmos.Download
     //[Module]
     internal class DownloadManager : Module, IDownloadManager
     {
+        #region events
         Action<DownloadStartEventArgs> downloadStart;
-        Action<DownloadSuccessEventArgs> downloadUpdate;
         Action<DownloadSuccessEventArgs> downloadSuccess;
         Action<DownloadFailureEventArgs> downloadFailure;
+        Action<DonwloadOverallEventArgs> downloadOverall;
+        Action<DownloadFinishEventArgs> downloadFinish;
         public event Action<DownloadStartEventArgs> DownloadStart
         {
             add { downloadStart += value; }
             remove { downloadStart -= value; }
-        }
-        public event Action<DownloadSuccessEventArgs> DownloadUpdate
-        {
-            add { downloadUpdate += value; }
-            remove { downloadUpdate -= value; }
         }
         public event Action<DownloadSuccessEventArgs> DownloadSuccess
         {
@@ -32,6 +29,17 @@ namespace Cosmos.Download
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-        Downloader Downloader;
+        public event Action<DonwloadOverallEventArgs> DownloadOverall
+        {
+            add { downloadOverall += value; }
+            remove { downloadOverall -= value; }
+        }
+        public event Action<DownloadFinishEventArgs> DownloadFinish
+        {
+            add { downloadFinish += value; }
+            remove { downloadFinish -= value; }
+        }
+        #endregion
+
     }
 }

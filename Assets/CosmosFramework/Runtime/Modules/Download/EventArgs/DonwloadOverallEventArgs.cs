@@ -24,22 +24,19 @@ namespace Cosmos
         /// 当前资源的下载缓存路径；
         /// </summary>
         public string DownloadPath { get; private set; }
-        public object CustomeData { get; private set; }
         public override void Release()
         {
             URI = null;
             DownloadPath = null;
-            CustomeData = null;
             OverallProgress = 0;
         }
-        public static DonwloadOverallEventArgs Create(string uri, string downloadPath, float overallProgress,float individualProgress, object customeData)
+        public static DonwloadOverallEventArgs Create(string uri, string downloadPath, float overallProgress,float individualProgress)
         {
             var eventArgs = ReferencePool.Accquire<DonwloadOverallEventArgs>();
             eventArgs.URI = uri;
             eventArgs.OverallProgress= overallProgress;
             eventArgs.DownloadPath = downloadPath;
             eventArgs.IndividualProgress= individualProgress;
-            eventArgs.CustomeData = customeData;
             return eventArgs;
         }
         public static void Release(DonwloadOverallEventArgs eventArgs)

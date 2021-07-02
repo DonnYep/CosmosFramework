@@ -10,19 +10,22 @@ namespace Cosmos.Download
     {
         public string[] SuccessURIs { get; private set; }
         public string[] FailureURIs { get; private set; }
-        public object CustomeData { get; private set; }
+        /// <summary>
+        /// 下载所使用的时间；
+        /// </summary>
+        public TimeSpan DownloadTimeSpan { get; private set; }
         public override void Release()
         {
             SuccessURIs = null;
             FailureURIs = null;
-            CustomeData = null;
+            DownloadTimeSpan = TimeSpan.Zero; ;
         }
-        public static DownloadFinishEventArgs Create(string[] successURIs , string[] failureURIs, object customeData)
+        public static DownloadFinishEventArgs Create(string[] successURIs , string[] failureURIs, TimeSpan timeSpan)
         {
             var eventArgs = ReferencePool.Accquire<DownloadFinishEventArgs>();
             eventArgs.SuccessURIs= successURIs;
             eventArgs.FailureURIs= failureURIs;
-            eventArgs.CustomeData = customeData;
+            eventArgs.DownloadTimeSpan = timeSpan;
             return eventArgs;
         }
         public static void Release(DownloadFinishEventArgs eventArgs)

@@ -13,7 +13,7 @@ using System.Text;
 
 public class DownloadTest : MonoBehaviour
 {
-    MultiFileDownloader downloader;
+    Downloader downloader;
     [SerializeField]
     string srcUrl;
     [SerializeField]
@@ -25,12 +25,9 @@ public class DownloadTest : MonoBehaviour
     [SerializeField]
     Text uriText;
     int srcCount;
-    int targetIndex = 0;
-    Action tickRefresh;
-    [SerializeField]
     private void Awake()
     {
-        downloader = new MultiFileDownloader();
+        downloader = new Downloader();
         downloader.DownloadSuccess += OnDownloadSucess;
         downloader.DownloadFailure += OnDownloadFailure;
         downloader.DownloadStart += OnDownloadStart;
@@ -42,7 +39,6 @@ public class DownloadTest : MonoBehaviour
             return;
         if (!Directory.Exists(downloadPath))
             return;
-        downloader.DownloadPath = downloadPath;
         var len = srcUrl.Length;
         List<string> downloadableUri = new List<string>();
         var fileList = new List<string>();
@@ -73,8 +69,7 @@ public class DownloadTest : MonoBehaviour
         srcCount = downloadableUri.Count;
         if (srcCount > 0)
         {
-            downloader.Download(srcUrl, downloadableUri.ToArray());
-            TickRefreshAttribute.GetRefreshAction(downloader, out tickRefresh);
+            downloader.Download(srcUrl, downloadPath, downloadableUri.ToArray());
         }
     }
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
@@ -97,7 +92,6 @@ public class DownloadTest : MonoBehaviour
     void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
     {
         Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.URI}");
-        targetIndex++;
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
@@ -105,7 +99,6 @@ public class DownloadTest : MonoBehaviour
     }
     void Update()
     {
-        //if (!isDone)
-        tickRefresh?.Invoke();
+        downloader.TickRefresh();
     }
 }

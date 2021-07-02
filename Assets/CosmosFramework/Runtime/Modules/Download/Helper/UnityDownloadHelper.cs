@@ -99,7 +99,7 @@ namespace Cosmos.Download
             if (DownloadInfo != null)
             {
                 Downloading = false;
-                var failureEventArgs = DownloadFailureEventArgs.Create(DownloadInfo.Uri, DownloadInfo.DownloadPath, "CancelDownload", null);
+                var failureEventArgs = DownloadFailureEventArgs.Create(DownloadInfo.Uri, DownloadInfo.DownloadPath, "CancelDownload");
                 DownloadFailureEventArgs.Release(failureEventArgs);
                 if (clearDownloadedFile)
                 {
