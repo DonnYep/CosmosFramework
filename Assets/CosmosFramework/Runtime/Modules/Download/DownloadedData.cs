@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    internal struct DownloadedData
+    public struct DownloadedData
     {
         public DownloadedData(byte[] data, string downloadPath)
         {

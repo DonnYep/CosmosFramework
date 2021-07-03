@@ -1,14 +1,25 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net;
-using System.Collections;
+using UnityEngine.Networking;
+using UnityEngine;
 
 namespace Cosmos.Download
 {
-    public class WebClientDownloadHelper : IDownloader
+    //================================================
+    //1、多文件下载器用于下载复数文件。文件下载成功、失败、下载中、下载
+    //开始、下载结束都带有委托事件；
+    //2、下载器成功下载到一个文件后，会将这个成功的文件写入本地。若下载
+    //中断，则保留当前写入的信息，下次连接网络时继续下载；
+    //================================================
+    /// <summary>
+    /// 文件下载器；
+    /// </summary>
+    public class DownloaderCore
     {
         #region events
         Action<DownloadStartEventArgs> downloadStart;
@@ -68,8 +79,6 @@ namespace Cosmos.Download
         /// </summary>
         public int DownloadTimeout { get; private set; }
 
-        WebClient webClient;
-
         List<string> pendingURIs = new List<string>();
         List<string> successURIs = new List<string>();
         List<string> failureURIs = new List<string>();
@@ -79,7 +88,7 @@ namespace Cosmos.Download
         DateTime downloadStartTime;
         DateTime downloadEndTime;
 
-        bool canDownload;
+        UnityWebRequest unityWebRequest;
         /// <summary>
         /// 单位资源的百分比比率；
         /// </summary>
@@ -88,6 +97,10 @@ namespace Cosmos.Download
         /// 当前下载的序号；
         /// </summary>
         int currentDownloadIndex = 0;
+        /// <summary>
+        /// 当前是否可下载；
+        /// </summary>
+        bool canDownload;
 
         /// <summary>
         /// 异步下载；
@@ -118,6 +131,7 @@ namespace Cosmos.Download
                 return;
             Downloading = true;
             downloadStartTime = DateTime.Now;
+            RecursiveDownload();
         }
         /// <summary>
         /// 下载轮询，需要由外部调用；
@@ -144,37 +158,72 @@ namespace Cosmos.Download
         /// </summary>
         public void AbortDownload()
         {
-
+            failureURIs.AddRange(pendingURIs);
+            pendingURIs.Clear();
+            var eventArgs = DownloadFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
+            downloadFinish?.Invoke(eventArgs);
+            DownloadFinishEventArgs.Release(eventArgs);
+            unityWebRequest?.Abort();
+            canDownload = false;
         }
-        void WebRequest(string uri, string fileDownloadPath)
+        async void RecursiveDownload()
         {
-            using (WebClient webClient = new WebClient())
+            if (pendingURIs.Count == 0)
             {
-                try
+                downloadEndTime = DateTime.Now;
+                var eventArgs = DownloadFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
+                downloadFinish?.Invoke(eventArgs);
+                DownloadFinishEventArgs.Release(eventArgs);
+                canDownload = false;
+                Downloading = false;
+                return;
+            }
+            string downloadableUri = pendingURIs[0];
+            currentDownloadIndex = DownloadableCount - pendingURIs.Count;
+            var fileDownloadPath = Path.Combine(DownloadPath, downloadableUri);
+            pendingURIs.RemoveAt(0);
+            if (canDownload)
+            {
+                var remoteUri = Utility.IO.WebPathCombine(URL, downloadableUri);
+                await DownloadWebRequest(remoteUri, fileDownloadPath);
+                RecursiveDownload();
+            }
+        }
+        IEnumerator DownloadWebRequest(string uri, string fileDownloadPath)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Get(uri))
+            {
+                Downloading = true;
+                unityWebRequest = request;
+                if (DownloadTimeout > 0)
+                    request.timeout = DownloadTimeout;
+                var startEventArgs = DownloadStartEventArgs.Create(request.url, fileDownloadPath);
+                downloadStart?.Invoke(startEventArgs);
+                DownloadStartEventArgs.Release(startEventArgs);
+                var operation = request.SendWebRequest();
+                while (!operation.isDone && canDownload)
                 {
-                    Downloading = true;
-                    this.webClient = webClient;
-                    var startEventArgs = DownloadStartEventArgs.Create(uri, fileDownloadPath);
-                    downloadStart?.Invoke(startEventArgs);
-                    DownloadStartEventArgs.Release(startEventArgs);
-                    webClient.DownloadDataTaskAsync(uri);
-                    webClient.DownloadProgressChanged += (sender, eventArgs) =>
-                    {
-                        ProcessOverallProgress(uri, DownloadPath, (float)eventArgs.ProgressPercentage / 100, eventArgs.ProgressPercentage);
-                    };
-                    webClient.DownloadDataCompleted += (sender, eventArgs) =>
+                    var individualProgress = request.downloadProgress * 100;
+                    ProcessOverallProgress(uri, DownloadPath, request.downloadProgress, individualProgress);
+                    yield return null;
+                }
+                if (!request.isNetworkError && !request.isHttpError && canDownload)
+                {
+                    if (request.isDone)
                     {
                         Downloading = false;
-                        var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath, eventArgs.Result);
+                        var successEventArgs = DownloadSuccessEventArgs.Create(request.url, fileDownloadPath, request.downloadHandler.data);
                         downloadSuccess?.Invoke(successEventArgs);
+                        ProcessOverallProgress(uri, DownloadPath, 1, 100);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         successURIs.Add(uri);
-                        downloadedDataQueue.Enqueue(new DownloadedData(eventArgs.Result, fileDownloadPath));
-                    };
+                        downloadedDataQueue.Enqueue(new DownloadedData(request.downloadHandler.data, fileDownloadPath));
+                    }
                 }
-                catch (Exception exception)
+                else
                 {
-                    var failureEventArgs = DownloadFailureEventArgs.Create(uri, fileDownloadPath, exception.ToString());
+                    Downloading = false;
+                    var failureEventArgs = DownloadFailureEventArgs.Create(request.url, fileDownloadPath, request.error);
                     downloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
                     failureURIs.Add(uri);

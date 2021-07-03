@@ -13,7 +13,7 @@ using System.Text;
 
 public class DownloadTest : MonoBehaviour
 {
-    Downloader downloader;
+    DownloaderCore downloader;
     [SerializeField]
     string srcUrl;
     [SerializeField]
@@ -27,13 +27,13 @@ public class DownloadTest : MonoBehaviour
     int srcCount;
     private void Awake()
     {
-        downloader = new Downloader();
+        downloader = new DownloaderCore();
         downloader.DownloadSuccess += OnDownloadSucess;
         downloader.DownloadFailure += OnDownloadFailure;
         downloader.DownloadStart += OnDownloadStart;
         downloader.DownloadOverall += OnDownloadOverall;
     }
-    void Start()
+    async void  Start()
     {
         if (string.IsNullOrEmpty(srcUrl) || string.IsNullOrEmpty(downloadPath))
             return;

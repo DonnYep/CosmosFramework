@@ -7,26 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 using UnityEngine;
+using System.Net;
 
 namespace Cosmos.Download
 {
-    //================================================
-    //1、多文件下载器用于下载复数文件。文件下载成功、失败、下载中、下载
-    //开始、下载结束都带有委托事件；
-    //2、下载器成功下载到一个文件后，会将这个成功的文件写入本地。若下载
-    //中断，则保留当前写入的信息，下次连接网络时继续下载；
-    //================================================
     /// <summary>
     /// 文件下载器；
     /// </summary>
-    public class Downloader
+    public abstract class Downloader
     {
         #region events
-        Action<DownloadStartEventArgs> downloadStart;
-        Action<DownloadSuccessEventArgs> downloadSuccess;
-        Action<DownloadFailureEventArgs> downloadFailure;
-        Action<DonwloadOverallEventArgs> downloadOverall;
-        Action<DownloadFinishEventArgs> downloadFinish;
+        protected Action<DownloadStartEventArgs> downloadStart;
+        protected Action<DownloadSuccessEventArgs> downloadSuccess;
+        protected Action<DownloadFailureEventArgs> downloadFailure;
+        protected Action<DonwloadOverallEventArgs> downloadOverall;
+        protected Action<DownloadFinishEventArgs> downloadFinish;
         public event Action<DownloadStartEventArgs> DownloadStart
         {
             add { downloadStart += value; }
@@ -57,11 +52,11 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载到本地的路径；
         /// </summary>
-        public string DownloadPath { get; private set; }
+        public string DownloadPath { get; protected set; }
         /// <summary>
         /// 是否正在下载；
         /// </summary>
-        public bool Downloading { get; private set; }
+        public bool Downloading { get; protected set; }
         /// <summary>
         /// 是否删除本地下载失败的文件；
         /// </summary>
@@ -69,39 +64,50 @@ namespace Cosmos.Download
         /// <summary>
         /// 可下载的资源总数；
         /// </summary>
-        public int DownloadableCount { get; private set; }
+        public int DownloadableCount { get; protected set; }
         /// <summary>
         /// 资源的地址；
         /// </summary>
-        public string URL { get; private set; }
+        public string URL { get; protected set; }
         /// <summary>
         /// 下载过期时间；
         /// </summary>
-        public int DownloadTimeout { get; private set; }
+        public float DownloadTimeout { get; protected set; }
 
-        List<string> pendingURIs = new List<string>();
-        List<string> successURIs = new List<string>();
-        List<string> failureURIs = new List<string>();
+        protected List<string> pendingURIs = new List<string>();
+        protected List<string> successURIs = new List<string>();
+        protected List<string> failureURIs = new List<string>();
 
-        Queue<DownloadedData> downloadedDataQueue = new Queue<DownloadedData>();
+        protected Queue<DownloadedData> downloadedDataQueue = new Queue<DownloadedData>();
 
-        DateTime downloadStartTime;
-        DateTime downloadEndTime;
+        protected DateTime downloadStartTime;
+        protected DateTime downloadEndTime;
 
-        UnityWebRequest unityWebRequest;
         /// <summary>
         /// 单位资源的百分比比率；
         /// </summary>
-        float unitResRatio;
+        protected float unitResRatio;
         /// <summary>
         /// 当前下载的序号；
         /// </summary>
-        int currentDownloadIndex = 0;
+        protected int currentDownloadIndex = 0;
         /// <summary>
         /// 当前是否可下载；
         /// </summary>
-        bool canDownload;
-
+        protected bool canDownload;
+        public virtual void InitDownloader(string url, string downloadPath,float timeout=0)
+        {
+            if (string.IsNullOrEmpty(url))
+                throw new ArgumentNullException("URL is invalid !");
+            if (string.IsNullOrEmpty(downloadPath))
+                throw new ArgumentNullException("DonwloadPath is invalid !");
+            DownloadPath = downloadPath;
+            URL = url;
+            if (timeout <= 0)
+                this.DownloadTimeout = 0;
+            else
+                this.DownloadTimeout = timeout;
+        }
         /// <summary>
         /// 异步下载；
         /// </summary>
@@ -109,21 +115,12 @@ namespace Cosmos.Download
         /// <param name="downloadPath">下载到本地的地址</param>
         /// <param name="downloadableList">可下载的文件列表</param>
         /// <param name="timeout">文件下载过期时间</param>
-        public void Download(string url, string downloadPath, string[] downloadableList, int timeout = 0)
+        public void Download(string[] downloadableList)
         {
-            if (string.IsNullOrEmpty(url))
-                throw new ArgumentNullException("URL is invalid !");
-            if (string.IsNullOrEmpty(downloadPath))
-                throw new ArgumentNullException("DonwloadPath is invalid !");
             if (downloadableList == null)
                 throw new ArgumentNullException("Downloadable is invalid !");
-            DownloadPath = downloadPath;
-            if (timeout <= 0)
-                this.DownloadTimeout = 0;
-            else
-                this.DownloadTimeout = timeout;
+            
             canDownload = true;
-            URL = url;
             pendingURIs.AddRange(downloadableList);
             DownloadableCount = downloadableList.Length;
             unitResRatio = 100f / DownloadableCount;
@@ -156,17 +153,39 @@ namespace Cosmos.Download
         /// <summary>
         /// 终止下载，谨慎使用；
         /// </summary>
-        public void AbortDownload()
+        public  void CancelDownload()
         {
             failureURIs.AddRange(pendingURIs);
             pendingURIs.Clear();
             var eventArgs = DownloadFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
             downloadFinish?.Invoke(eventArgs);
             DownloadFinishEventArgs.Release(eventArgs);
-            unityWebRequest?.Abort();
             canDownload = false;
+            CancelWebAsync();
         }
-        async void RecursiveDownload()
+        public virtual void Clear()
+        {
+            DownloadPath = string.Empty;
+            DownloadableCount = 0;
+            URL = string.Empty;
+            DownloadTimeout = 0;
+        }
+        /// <summary>
+        /// 处理整体进度；
+        /// individualPercent 为0~1；
+        /// </summary>
+        /// <param name="uri">资源地址</param>
+        /// <param name="downloadPath">下载到本地的目录</param>
+        /// <param name="individualPercent">资源个体百分比0~1</param>
+        protected void ProcessOverallProgress(string uri, string downloadPath, float individualPercent)
+        {
+            var overallIndexPercent = 100 * ((float)currentDownloadIndex / DownloadableCount);
+            var overallProgress = overallIndexPercent + (unitResRatio * (individualPercent));
+            var eventArgs = DonwloadOverallEventArgs.Create(uri, downloadPath, overallProgress, individualPercent);
+            downloadOverall.Invoke(eventArgs);
+            DonwloadOverallEventArgs.Release(eventArgs);
+        }
+        protected async void RecursiveDownload()
         {
             if (pendingURIs.Count == 0)
             {
@@ -185,70 +204,11 @@ namespace Cosmos.Download
             if (canDownload)
             {
                 var remoteUri = Utility.IO.WebPathCombine(URL, downloadableUri);
-                await DownloadWebRequest(remoteUri, fileDownloadPath);
+                await WebDownload(remoteUri, fileDownloadPath);
                 RecursiveDownload();
             }
         }
-        IEnumerator DownloadWebRequest(string uri, string fileDownloadPath)
-        {
-            using (UnityWebRequest request = UnityWebRequest.Get(uri))
-            {
-                Downloading = true;
-                unityWebRequest = request;
-                if (DownloadTimeout > 0)
-                    request.timeout = DownloadTimeout;
-                var startEventArgs = DownloadStartEventArgs.Create(request.url, fileDownloadPath);
-                downloadStart?.Invoke(startEventArgs);
-                DownloadStartEventArgs.Release(startEventArgs);
-                var operation = request.SendWebRequest();
-                while (!operation.isDone && canDownload)
-                {
-                    var individualProgress = request.downloadProgress * 100;
-                    ProcessOverallProgress(uri, DownloadPath, request.downloadProgress, individualProgress);
-                    yield return null;
-                }
-                if (!request.isNetworkError && !request.isHttpError && canDownload)
-                {
-                    if (request.isDone)
-                    {
-                        Downloading = false;
-                        var successEventArgs = DownloadSuccessEventArgs.Create(request.url, fileDownloadPath, request.downloadHandler.data);
-                        downloadSuccess?.Invoke(successEventArgs);
-                        ProcessOverallProgress(uri, DownloadPath, 1, 100);
-                        DownloadSuccessEventArgs.Release(successEventArgs);
-                        successURIs.Add(uri);
-                        downloadedDataQueue.Enqueue(new DownloadedData(request.downloadHandler.data, fileDownloadPath));
-                    }
-                }
-                else
-                {
-                    Downloading = false;
-                    var failureEventArgs = DownloadFailureEventArgs.Create(request.url, fileDownloadPath, request.error);
-                    downloadFailure?.Invoke(failureEventArgs);
-                    DownloadFailureEventArgs.Release(failureEventArgs);
-                    failureURIs.Add(uri);
-                    ProcessOverallProgress(uri, DownloadPath, 1, 100);
-                    if (DeleteFailureFile)
-                    {
-                        Utility.IO.DeleteFile(fileDownloadPath);
-                    }
-                }
-            }
-        }
-        /// <summary>
-        /// 处理整体进度；
-        /// </summary>
-        /// <param name="uri">资源地址</param>
-        /// <param name="downloadPath">下载到本地的目录</param>
-        /// <param name="overallPercent">整体百分比进度</param>
-        /// <param name="individualPercent">资源个体百分比</param>
-        void ProcessOverallProgress(string uri, string downloadPath, float overallPercent, float individualPercent)
-        {
-            var overallIndexPercent = 100 * ((float)currentDownloadIndex / (float)DownloadableCount);
-            var overallProgress = overallIndexPercent + (unitResRatio * overallPercent);
-            var eventArgs = DonwloadOverallEventArgs.Create(uri, downloadPath, overallProgress, individualPercent);
-            downloadOverall.Invoke(eventArgs);
-            DonwloadOverallEventArgs.Release(eventArgs);
-        }
+        protected abstract void CancelWebAsync();
+        protected abstract IEnumerator WebDownload(string uri, string fileDownloadPath);
     }
 }

@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.CosmosFramework.Runtime.Modules.Download.Base
+namespace Cosmos.Download
 {
-    class IDownloadHelper
+    public enum DownloaderMode:byte
     {
+        UnityWebRequest=0,
+        WebClient=1
     }
 }
