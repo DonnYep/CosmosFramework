@@ -48,31 +48,14 @@ namespace Cosmos.Download
             remove { downloadFinish -= value; }
         }
         #endregion
-
-        /// <summary>
-        /// 下载到本地的路径；
-        /// </summary>
-        public string DownloadPath { get; protected set; }
         /// <summary>
         /// 是否正在下载；
         /// </summary>
         public bool Downloading { get; protected set; }
         /// <summary>
-        /// 是否删除本地下载失败的文件；
-        /// </summary>
-        public bool DeleteFailureFile { get; set; }
-        /// <summary>
         /// 可下载的资源总数；
         /// </summary>
         public int DownloadableCount { get; protected set; }
-        /// <summary>
-        /// 资源的地址；
-        /// </summary>
-        public string URL { get; protected set; }
-        /// <summary>
-        /// 下载过期时间；
-        /// </summary>
-        public float DownloadTimeout { get; protected set; }
 
         protected List<string> pendingURIs = new List<string>();
         protected List<string> successURIs = new List<string>();
@@ -83,6 +66,7 @@ namespace Cosmos.Download
         protected DateTime downloadStartTime;
         protected DateTime downloadEndTime;
 
+        protected DownloadConfig downloadConfig;
         /// <summary>
         /// 单位资源的百分比比率；
         /// </summary>
@@ -95,35 +79,19 @@ namespace Cosmos.Download
         /// 当前是否可下载；
         /// </summary>
         protected bool canDownload;
-        public virtual void InitDownloader(string url, string downloadPath,float timeout=0)
+        public void SetDownloadConfig(DownloadConfig downloadConfig)
         {
-            if (string.IsNullOrEmpty(url))
-                throw new ArgumentNullException("URL is invalid !");
-            if (string.IsNullOrEmpty(downloadPath))
-                throw new ArgumentNullException("DonwloadPath is invalid !");
-            DownloadPath = downloadPath;
-            URL = url;
-            if (timeout <= 0)
-                this.DownloadTimeout = 0;
-            else
-                this.DownloadTimeout = timeout;
+            this.downloadConfig = downloadConfig;
+            pendingURIs.AddRange(downloadConfig.FileList);
+            DownloadableCount = downloadConfig.FileList.Length;
+            unitResRatio = 100f / DownloadableCount;
         }
         /// <summary>
-        /// 异步下载；
+        /// 启动下载；
         /// </summary>
-        /// <param name="url">资源地址</param>
-        /// <param name="downloadPath">下载到本地的地址</param>
-        /// <param name="downloadableList">可下载的文件列表</param>
-        /// <param name="timeout">文件下载过期时间</param>
-        public void Download(string[] downloadableList)
+        public void LaunchDownload()
         {
-            if (downloadableList == null)
-                throw new ArgumentNullException("Downloadable is invalid !");
-            
             canDownload = true;
-            pendingURIs.AddRange(downloadableList);
-            DownloadableCount = downloadableList.Length;
-            unitResRatio = 100f / DownloadableCount;
             if (pendingURIs.Count == 0 || !canDownload)
                 return;
             Downloading = true;
@@ -153,7 +121,7 @@ namespace Cosmos.Download
         /// <summary>
         /// 终止下载，谨慎使用；
         /// </summary>
-        public  void CancelDownload()
+        public void CancelDownload()
         {
             failureURIs.AddRange(pendingURIs);
             pendingURIs.Clear();
@@ -163,12 +131,15 @@ namespace Cosmos.Download
             canDownload = false;
             CancelWebAsync();
         }
-        public virtual void Clear()
+        public virtual void Reset()
         {
-            DownloadPath = string.Empty;
+            downloadStart=null;
+            downloadSuccess=null;
+             downloadFailure=null;
+             downloadOverall=null;
+            downloadFinish=null;
+            downloadConfig.Reset();
             DownloadableCount = 0;
-            URL = string.Empty;
-            DownloadTimeout = 0;
         }
         /// <summary>
         /// 处理整体进度；
@@ -199,11 +170,11 @@ namespace Cosmos.Download
             }
             string downloadableUri = pendingURIs[0];
             currentDownloadIndex = DownloadableCount - pendingURIs.Count;
-            var fileDownloadPath = Path.Combine(DownloadPath, downloadableUri);
+            var fileDownloadPath = Path.Combine(downloadConfig.DownloadPath, downloadableUri);
             pendingURIs.RemoveAt(0);
             if (canDownload)
             {
-                var remoteUri = Utility.IO.WebPathCombine(URL, downloadableUri);
+                var remoteUri = Utility.IO.WebPathCombine(downloadConfig.URL, downloadableUri);
                 await WebDownload(remoteUri, fileDownloadPath);
                 RecursiveDownload();
             }

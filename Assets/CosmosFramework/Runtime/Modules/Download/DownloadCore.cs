@@ -8,46 +8,60 @@ using System.Threading.Tasks;
 using UnityEngine.Networking;
 using UnityEngine;
 
-namespace Cosmos.Download
+namespace Cosmos
 {
     //================================================
     //1、多文件下载器用于下载复数文件。文件下载成功、失败、下载中、下载
     //开始、下载结束都带有委托事件；
-    //2、下载器成功下载到一个文件后，会将这个成功的文件写入本地。若下载
-    //中断，则保留当前写入的信息，下次连接网络时继续下载；
+    //2、支持本地写入文件，需要外部调用下载器的轮询方法；
     //================================================
     /// <summary>
-    /// 文件下载器；
+    /// 独立的文件下载器；
     /// </summary>
-    public class DownloaderCore
+    public class DownloadCore
     {
         #region events
-        Action<DownloadStartEventArgs> downloadStart;
-        Action<DownloadSuccessEventArgs> downloadSuccess;
-        Action<DownloadFailureEventArgs> downloadFailure;
-        Action<DonwloadOverallEventArgs> downloadOverall;
-        Action<DownloadFinishEventArgs> downloadFinish;
-        public event Action<DownloadStartEventArgs> DownloadStart
+        Action<string, string> downloadStart;
+        Action<string, string, byte[]> downloadSuccess;
+        Action<string, string, string> downloadFailure;
+        Action<string, string, float, float> downloadOverall;
+        Action<string[], string[], TimeSpan> downloadFinish;
+        /// <summary>
+        /// URL---DownloadPath
+        /// </summary>
+        public event Action<string, string> DownloadStart
         {
             add { downloadStart += value; }
             remove { downloadStart -= value; }
         }
-        public event Action<DownloadSuccessEventArgs> DownloadSuccess
+        /// <summary>
+        /// URL---DownloadPath---Data
+        /// </summary>
+        public event Action<string, string, byte[]> DownloadSuccess
         {
             add { downloadSuccess += value; }
             remove { downloadSuccess -= value; }
         }
-        public event Action<DownloadFailureEventArgs> DownloadFailure
+        /// <summary>
+        /// URL---DownloadPath---ErrorMessage
+        /// </summary>
+        public event Action<string, string, string> DownloadFailure
         {
             add { downloadFailure += value; }
             remove { downloadFailure -= value; }
         }
-        public event Action<DonwloadOverallEventArgs> DownloadOverall
+        /// <summary>
+        /// URL---DownloadPath---OverallProgress---IndividualProgress
+        /// </summary>
+        public event Action<string, string, float, float> DownloadOverall
         {
             add { downloadOverall += value; }
             remove { downloadOverall -= value; }
         }
-        public event Action<DownloadFinishEventArgs> DownloadFinish
+        /// <summary>
+        /// SuccessURIs---FailureURIs---TimeSpan
+        /// </summary>
+        public event Action<string[], string[], TimeSpan> DownloadFinish
         {
             add { downloadFinish += value; }
             remove { downloadFinish -= value; }
@@ -101,7 +115,6 @@ namespace Cosmos.Download
         /// 当前是否可下载；
         /// </summary>
         bool canDownload;
-
         /// <summary>
         /// 异步下载；
         /// </summary>
@@ -156,13 +169,11 @@ namespace Cosmos.Download
         /// <summary>
         /// 终止下载，谨慎使用；
         /// </summary>
-        public void AbortDownload()
+        public void CancelDownload()
         {
             failureURIs.AddRange(pendingURIs);
             pendingURIs.Clear();
-            var eventArgs = DownloadFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
-            downloadFinish?.Invoke(eventArgs);
-            DownloadFinishEventArgs.Release(eventArgs);
+            downloadFinish?.Invoke(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
             unityWebRequest?.Abort();
             canDownload = false;
         }
@@ -171,9 +182,7 @@ namespace Cosmos.Download
             if (pendingURIs.Count == 0)
             {
                 downloadEndTime = DateTime.Now;
-                var eventArgs = DownloadFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
-                downloadFinish?.Invoke(eventArgs);
-                DownloadFinishEventArgs.Release(eventArgs);
+                downloadFinish?.Invoke(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
                 canDownload = false;
                 Downloading = false;
                 return;
@@ -197,14 +206,11 @@ namespace Cosmos.Download
                 unityWebRequest = request;
                 if (DownloadTimeout > 0)
                     request.timeout = DownloadTimeout;
-                var startEventArgs = DownloadStartEventArgs.Create(request.url, fileDownloadPath);
-                downloadStart?.Invoke(startEventArgs);
-                DownloadStartEventArgs.Release(startEventArgs);
+                downloadStart?.Invoke(request.url, fileDownloadPath);
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
                 {
-                    var individualProgress = request.downloadProgress * 100;
-                    ProcessOverallProgress(uri, DownloadPath, request.downloadProgress, individualProgress);
+                    ProcessOverallProgress(uri, DownloadPath, request.downloadProgress);
                     yield return null;
                 }
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
@@ -212,10 +218,8 @@ namespace Cosmos.Download
                     if (request.isDone)
                     {
                         Downloading = false;
-                        var successEventArgs = DownloadSuccessEventArgs.Create(request.url, fileDownloadPath, request.downloadHandler.data);
-                        downloadSuccess?.Invoke(successEventArgs);
-                        ProcessOverallProgress(uri, DownloadPath, 1, 100);
-                        DownloadSuccessEventArgs.Release(successEventArgs);
+                        downloadSuccess?.Invoke(request.url, fileDownloadPath, request.downloadHandler.data);
+                        ProcessOverallProgress(uri, DownloadPath, 1);
                         successURIs.Add(uri);
                         downloadedDataQueue.Enqueue(new DownloadedData(request.downloadHandler.data, fileDownloadPath));
                     }
@@ -223,11 +227,9 @@ namespace Cosmos.Download
                 else
                 {
                     Downloading = false;
-                    var failureEventArgs = DownloadFailureEventArgs.Create(request.url, fileDownloadPath, request.error);
-                    downloadFailure?.Invoke(failureEventArgs);
-                    DownloadFailureEventArgs.Release(failureEventArgs);
+                    downloadFailure?.Invoke(request.url, fileDownloadPath, request.error);
                     failureURIs.Add(uri);
-                    ProcessOverallProgress(uri, DownloadPath, 1, 100);
+                    ProcessOverallProgress(uri, DownloadPath, 1);
                     if (DeleteFailureFile)
                     {
                         Utility.IO.DeleteFile(fileDownloadPath);
@@ -237,18 +239,16 @@ namespace Cosmos.Download
         }
         /// <summary>
         /// 处理整体进度；
+        /// individualPercent 0~1；
         /// </summary>
         /// <param name="uri">资源地址</param>
         /// <param name="downloadPath">下载到本地的目录</param>
-        /// <param name="overallPercent">整体百分比进度</param>
-        /// <param name="individualPercent">资源个体百分比</param>
-        void ProcessOverallProgress(string uri, string downloadPath, float overallPercent, float individualPercent)
+        /// <param name="individualPercent">资源个体百分比0~1</param>
+        void ProcessOverallProgress(string uri, string downloadPath, float individualPercent)
         {
-            var overallIndexPercent = 100 * ((float)currentDownloadIndex / (float)DownloadableCount);
-            var overallProgress = overallIndexPercent + (unitResRatio * overallPercent);
-            var eventArgs = DonwloadOverallEventArgs.Create(uri, downloadPath, overallProgress, individualPercent);
-            downloadOverall.Invoke(eventArgs);
-            DonwloadOverallEventArgs.Release(eventArgs);
+            var overallIndexPercent = 100 * ((float)currentDownloadIndex / DownloadableCount);
+            var overallProgress = overallIndexPercent + (unitResRatio * individualPercent);
+            downloadOverall.Invoke(uri, downloadPath, overallProgress, individualPercent * 100);
         }
     }
 }

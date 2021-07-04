@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 
 namespace Cosmos.Download
 {
-    public class UnityWebDownloader: Downloader
+    public class UnityWebDownloader : Downloader
     {
         UnityWebRequest unityWebRequest;
         protected override void CancelWebAsync()
@@ -21,8 +21,8 @@ namespace Cosmos.Download
             {
                 Downloading = true;
                 unityWebRequest = request;
-                var timeout = Convert.ToInt32(DownloadTimeout);
-                if (timeout> 0)
+                var timeout = Convert.ToInt32(downloadConfig.DownloadTimeout);
+                if (timeout > 0)
                     request.timeout = timeout;
                 var startEventArgs = DownloadStartEventArgs.Create(request.url, fileDownloadPath);
                 downloadStart?.Invoke(startEventArgs);
@@ -30,7 +30,7 @@ namespace Cosmos.Download
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
                 {
-                    ProcessOverallProgress(uri, DownloadPath, request.downloadProgress);
+                    ProcessOverallProgress(uri, downloadConfig.DownloadPath, request.downloadProgress);
                     yield return null;
                 }
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
@@ -40,7 +40,7 @@ namespace Cosmos.Download
                         Downloading = false;
                         var successEventArgs = DownloadSuccessEventArgs.Create(request.url, fileDownloadPath, request.downloadHandler.data);
                         downloadSuccess?.Invoke(successEventArgs);
-                        ProcessOverallProgress(uri, DownloadPath, 1);
+                        ProcessOverallProgress(uri, downloadConfig.DownloadPath, 1);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         successURIs.Add(uri);
                         downloadedDataQueue.Enqueue(new DownloadedData(request.downloadHandler.data, fileDownloadPath));
@@ -53,8 +53,8 @@ namespace Cosmos.Download
                     downloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
                     failureURIs.Add(uri);
-                    ProcessOverallProgress(uri, DownloadPath, 1);
-                    if (DeleteFailureFile)
+                    ProcessOverallProgress(uri, downloadConfig.DownloadPath, 1);
+                    if (downloadConfig.DeleteFailureFile)
                     {
                         Utility.IO.DeleteFile(fileDownloadPath);
                     }

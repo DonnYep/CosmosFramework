@@ -28,7 +28,7 @@ namespace Cosmos.Download
                     DownloadStartEventArgs.Release(startEventArgs);
                     webClient.DownloadProgressChanged += (sender, eventArgs) =>
                     {
-                        ProcessOverallProgress(uri, DownloadPath, (float)eventArgs.ProgressPercentage / 100);
+                        ProcessOverallProgress(uri, downloadConfig. DownloadPath, (float)eventArgs.ProgressPercentage / 100);
                     };
                     webClient.DownloadDataCompleted += (sender, eventArgs) =>
                     {
@@ -36,7 +36,7 @@ namespace Cosmos.Download
                         var resultData = eventArgs.Result;
                         var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath, resultData);
                         downloadSuccess?.Invoke(successEventArgs);
-                        ProcessOverallProgress(uri, DownloadPath, 1);
+                        ProcessOverallProgress(uri, downloadConfig.DownloadPath, 1);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         successURIs.Add(uri);
                         downloadedDataQueue.Enqueue(new DownloadedData(resultData, fileDownloadPath));
@@ -49,8 +49,8 @@ namespace Cosmos.Download
                     downloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
                     failureURIs.Add(uri);
-                    ProcessOverallProgress(uri, DownloadPath, 1);
-                    if (DeleteFailureFile)
+                    ProcessOverallProgress(uri, downloadConfig.DownloadPath, 1);
+                    if (downloadConfig.DeleteFailureFile)
                     {
                         Utility.IO.DeleteFile(fileDownloadPath);
                     }

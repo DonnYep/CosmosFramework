@@ -6,14 +6,10 @@ using Cosmos;
 using System.IO;
 using UnityEngine.UI;
 using System;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Text;
+
 
 public class DownloadTest : MonoBehaviour
 {
-    DownloaderCore downloader;
     [SerializeField]
     string srcUrl;
     [SerializeField]
@@ -25,15 +21,7 @@ public class DownloadTest : MonoBehaviour
     [SerializeField]
     Text uriText;
     int srcCount;
-    private void Awake()
-    {
-        downloader = new DownloaderCore();
-        downloader.DownloadSuccess += OnDownloadSucess;
-        downloader.DownloadFailure += OnDownloadFailure;
-        downloader.DownloadStart += OnDownloadStart;
-        downloader.DownloadOverall += OnDownloadOverall;
-    }
-    async void  Start()
+    void  Start()
     {
         if (string.IsNullOrEmpty(srcUrl) || string.IsNullOrEmpty(downloadPath))
             return;
@@ -69,7 +57,14 @@ public class DownloadTest : MonoBehaviour
         srcCount = downloadableUri.Count;
         if (srcCount > 0)
         {
-            downloader.Download(srcUrl, downloadPath, downloadableUri.ToArray());
+            var cfg = new DownloadConfig(srcUrl, downloadPath, downloadableUri.ToArray());
+            CosmosEntry.DownloadManager.DownloadSuccess += OnDownloadSucess;
+            CosmosEntry.DownloadManager.DownloadFailure += OnDownloadFailure;
+            CosmosEntry.DownloadManager.DownloadStart += OnDownloadStart;
+            CosmosEntry.DownloadManager.DownloadOverall += OnDownloadOverall;
+            CosmosEntry.DownloadManager.DownloadFinish+= OnDownloadFinish;
+            CosmosEntry.DownloadManager.SetDownloadConfig(cfg);
+            CosmosEntry.DownloadManager.LaunchDownload();
         }
     }
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
@@ -97,8 +92,8 @@ public class DownloadTest : MonoBehaviour
     {
         Utility.Debug.LogError($"DownloadFailure {eventArgs.URI}");
     }
-    void Update()
+    void OnDownloadFinish(DownloadFinishEventArgs eventArgs)
     {
-        downloader.TickRefresh();
+        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.DownloadTimeSpan}",MessageColor.GREEN);
     }
 }
