@@ -42,6 +42,10 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **Controller**：控制器模块。提供常用需要轮询(Update)对象的统一管理。
 
+- **WebRequest**：UnityWebRequest模块，可用于加载持久化资源、网络资源下载等需求。支持获取AssetBundle、AudioClip、Texture2D、string。当资源获取到后，用户可通过WebRequestCallback对资源进行操作；
+
+- **Download**：下载模块。支持资源从本地文件夹或者资源服务器对文件进行下载。文件数据从Remote端下载后，将会以byte流异步写入本地。支持实时下载实时写入；
+
 ## 内置数据、工具
 
 - **Utility**：提供了反射、算法、断言、转换、Debug富文本、IO、加密、Json、MessagePack、Time、Text、Unity协程、Unity组件等常用工具函数。
@@ -54,7 +58,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **Extensions**：静态扩展工具。提供unity的扩展以及.NETCore对unity.NET的扩展。
 
-- **Awaitable** ：Cosmos.Awaitable命名空间提供了async/await语法在unity环境中的支持。支持直接写 await new WaitUntil(()=>{}) 这类.NET的原生异步方法；
+- **Awaitable** ：此工具提供了async/await语法在unity环境中的支持。使用后可支持直接写 await new WaitUntil(()=>{}) 这类Unity的协程异步方法；
 
 - **EventCore** ：轻量级事件模块，可自定义监听的数据类型；
 
@@ -63,6 +67,8 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 - **Editor** ：Editor中提供了在Hierarchy常用检索对象、组件的方法，EditorConfig提供了代码生成是自动创建代码标头的功能；
 
 - **QuarkAsset** ：QuarkAsset是快速的资源管理方案。动态加载时资源无需放入Resources、StreamingAssets或打包成AB包进行加载，在Assets目录下的任意位置都可以被加载到。加载时可通过文件名+后缀进行完全限定，也可以通过指定路径加载。当前AB方案正在开发中；
+
+- **FutureTask**：异步任务检测，支持多线程与协程异步进度检测。检测函数需要传入Func<bool>格式的函数，当条件返回值为true时，异步检测结束；注意：FutureTask本身并不是协程，不能代替协程执行异步任务；
 
 ## 内置软件架构 MVVM
 
@@ -91,7 +97,7 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
 - 最新请使用 V1.1 版本，稳定版请使用V1.0。V0.1 已经停止维护。Master暂停维护。
 
-- 内置案例地址：Assets\Examples\ExampleScripts 。
+- 内置案例地址：Assets\Examples\ 。
 
 - 数据结构中，提供了池的的底层对象“Pool”，框架中的对象池与引用池皆为“Pool”作为底层实现；
 

@@ -13,13 +13,25 @@ namespace Cosmos
     //================================================
     //1、多文件下载器用于下载复数文件。文件下载成功、失败、下载中、下载
     //开始、下载结束都带有委托事件；
-    //2、支持本地写入文件，需要外部调用下载器的轮询方法；
+    //2、支持本地异步写入文件。写入时需要外部调用此对象的TickRefresh方法；
     //================================================
     /// <summary>
-    /// 独立的文件下载器；
+    /// 独立的文件下载器，单独一个脚本即可完成所需下载；
     /// </summary>
     public class DownloadCore
     {
+        class ResponseData
+        {
+            public ResponseData(string uri, byte[] data, string downloadPath)
+            {
+                URI = uri;
+                Data = data;
+                DownloadPath = downloadPath;
+            }
+            public string URI { get; private set; }
+            public byte[] Data { get; private set; }
+            public string DownloadPath { get; private set; }
+        }
         #region events
         Action<string, string> downloadStart;
         Action<string, string, byte[]> downloadSuccess;
@@ -97,7 +109,7 @@ namespace Cosmos
         List<string> successURIs = new List<string>();
         List<string> failureURIs = new List<string>();
 
-        Queue<DownloadedData> downloadedDataQueue = new Queue<DownloadedData>();
+        Dictionary<string, ResponseData> dataCacheDict = new Dictionary<string, ResponseData>();
 
         DateTime downloadStartTime;
         DateTime downloadEndTime;
@@ -151,11 +163,10 @@ namespace Cosmos
         /// </summary>
         public async void TickRefresh()
         {
-            if (!canDownload)
-                return;
-            if (downloadedDataQueue.Count > 0)
+            if (dataCacheDict.Count > 0)
             {
-                var data = downloadedDataQueue.Dequeue();
+                var data = dataCacheDict.First().Value;
+                dataCacheDict.Remove(data.URI);
                 await Task.Run(() =>
                 {
                     try
@@ -211,6 +222,8 @@ namespace Cosmos
                 while (!operation.isDone && canDownload)
                 {
                     ProcessOverallProgress(uri, DownloadPath, request.downloadProgress);
+                    var responseData = new ResponseData(uri, request.downloadHandler.data, fileDownloadPath);
+                    CacheResponseData(responseData);
                     yield return null;
                 }
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
@@ -221,7 +234,8 @@ namespace Cosmos
                         downloadSuccess?.Invoke(request.url, fileDownloadPath, request.downloadHandler.data);
                         ProcessOverallProgress(uri, DownloadPath, 1);
                         successURIs.Add(uri);
-                        downloadedDataQueue.Enqueue(new DownloadedData(request.downloadHandler.data, fileDownloadPath));
+                        var responseData = new ResponseData(uri, request.downloadHandler.data, fileDownloadPath);
+                        CacheResponseData(responseData);
                     }
                 }
                 else
@@ -249,6 +263,16 @@ namespace Cosmos
             var overallIndexPercent = 100 * ((float)currentDownloadIndex / DownloadableCount);
             var overallProgress = overallIndexPercent + (unitResRatio * individualPercent);
             downloadOverall.Invoke(uri, downloadPath, overallProgress, individualPercent * 100);
+        }
+        void CacheResponseData(ResponseData  responseData)
+        {
+            if (dataCacheDict.TryGetValue(responseData.URI, out var data))
+            {
+                if (data.Data.Length < responseData.Data.Length)
+                    dataCacheDict[responseData.URI] = responseData;
+            }
+            else
+                dataCacheDict.Add(responseData.URI, responseData);
         }
     }
 }

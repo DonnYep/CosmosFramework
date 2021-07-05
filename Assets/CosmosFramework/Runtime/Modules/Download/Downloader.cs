@@ -61,8 +61,6 @@ namespace Cosmos.Download
         protected List<string> successURIs = new List<string>();
         protected List<string> failureURIs = new List<string>();
 
-        protected Queue<DownloadedData> downloadedDataQueue = new Queue<DownloadedData>();
-
         protected DateTime downloadStartTime;
         protected DateTime downloadEndTime;
 
@@ -79,6 +77,15 @@ namespace Cosmos.Download
         /// 当前是否可下载；
         /// </summary>
         protected bool canDownload;
+        /// <summary>
+        /// 是否可写入本地；
+        /// </summary>
+        protected bool canWrite;
+        /// <summary>
+        /// 下载进度的缓存；
+        /// </summary>
+        Dictionary<string, DownloadedData> dataCacheDict = new Dictionary<string, DownloadedData>();
+
         public void SetDownloadConfig(DownloadConfig downloadConfig)
         {
             this.downloadConfig = downloadConfig;
@@ -97,17 +104,19 @@ namespace Cosmos.Download
             Downloading = true;
             downloadStartTime = DateTime.Now;
             RecursiveDownload();
+            canWrite = true;
         }
         /// <summary>
         /// 下载轮询，需要由外部调用；
         /// </summary>
         public async void TickRefresh()
         {
-            if (!canDownload)
+            if (!canWrite && !canDownload)
                 return;
-            if (downloadedDataQueue.Count > 0)
+            if (dataCacheDict.Count > 0)
             {
-                var data = downloadedDataQueue.Dequeue();
+                var data = dataCacheDict.First().Value;
+                dataCacheDict.Remove(data.URI);
                 await Task.Run(() =>
                 {
                     try
@@ -116,6 +125,7 @@ namespace Cosmos.Download
                     }
                     catch { }
                 });
+                canWrite = dataCacheDict.Count > 0 ? true : false;
             }
         }
         /// <summary>
@@ -133,13 +143,14 @@ namespace Cosmos.Download
         }
         public virtual void Reset()
         {
-            downloadStart=null;
-            downloadSuccess=null;
-             downloadFailure=null;
-             downloadOverall=null;
-            downloadFinish=null;
+            downloadStart = null;
+            downloadSuccess = null;
+            downloadFailure = null;
+            downloadOverall = null;
+            downloadFinish = null;
             downloadConfig.Reset();
             DownloadableCount = 0;
+            canWrite = false;
         }
         /// <summary>
         /// 处理整体进度；
@@ -181,5 +192,15 @@ namespace Cosmos.Download
         }
         protected abstract void CancelWebAsync();
         protected abstract IEnumerator WebDownload(string uri, string fileDownloadPath);
+        protected void CacheDownloadedData(DownloadedData downloadedData)
+        {
+            if (dataCacheDict.TryGetValue(downloadedData.URI, out var data))
+            {
+                if (data.Data.Length < downloadedData.Data.Length)
+                    dataCacheDict[downloadedData.URI] = downloadedData;
+            }
+            else
+                dataCacheDict.Add(downloadedData.URI, downloadedData);
+        }
     }
 }

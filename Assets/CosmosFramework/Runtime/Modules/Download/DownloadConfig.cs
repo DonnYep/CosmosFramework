@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Cosmos.Download
 {
+    /// <summary>
+    /// 下载模块的下载配置；
+    /// </summary>
     public class DownloadConfig
     {
         /// <summary>

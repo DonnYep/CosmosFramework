@@ -90,7 +90,7 @@ public class DownloadTest : MonoBehaviour
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
-        Utility.Debug.LogError($"DownloadFailure {eventArgs.URI}");
+        Utility.Debug.LogError($"DownloadFailure {eventArgs.URI}\n{eventArgs.ErrorMessage}");
     }
     void OnDownloadFinish(DownloadFinishEventArgs eventArgs)
     {

@@ -24,13 +24,15 @@ namespace Cosmos.Download
                 var timeout = Convert.ToInt32(downloadConfig.DownloadTimeout);
                 if (timeout > 0)
                     request.timeout = timeout;
-                var startEventArgs = DownloadStartEventArgs.Create(request.url, fileDownloadPath);
+                var startEventArgs = DownloadStartEventArgs.Create(uri, fileDownloadPath);
                 downloadStart?.Invoke(startEventArgs);
                 DownloadStartEventArgs.Release(startEventArgs);
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
                 {
                     ProcessOverallProgress(uri, downloadConfig.DownloadPath, request.downloadProgress);
+                    var downloadedData = new DownloadedData(uri, request.downloadHandler.data, fileDownloadPath);
+                    CacheDownloadedData(downloadedData);
                     yield return null;
                 }
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
@@ -38,18 +40,20 @@ namespace Cosmos.Download
                     if (request.isDone)
                     {
                         Downloading = false;
-                        var successEventArgs = DownloadSuccessEventArgs.Create(request.url, fileDownloadPath, request.downloadHandler.data);
+                        var downloadData = request.downloadHandler.data;
+                        var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath, downloadData);
                         downloadSuccess?.Invoke(successEventArgs);
                         ProcessOverallProgress(uri, downloadConfig.DownloadPath, 1);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         successURIs.Add(uri);
-                        downloadedDataQueue.Enqueue(new DownloadedData(request.downloadHandler.data, fileDownloadPath));
+                        var downloadedData = new DownloadedData(uri, request.downloadHandler.data, fileDownloadPath);
+                        CacheDownloadedData(downloadedData);
                     }
                 }
                 else
                 {
                     Downloading = false;
-                    var failureEventArgs = DownloadFailureEventArgs.Create(request.url, fileDownloadPath, request.error);
+                    var failureEventArgs = DownloadFailureEventArgs.Create(uri, fileDownloadPath, request.error);
                     downloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
                     failureURIs.Add(uri);
