@@ -62,7 +62,7 @@ public class DownloadTest : MonoBehaviour
             CosmosEntry.DownloadManager.DownloadFailure += OnDownloadFailure;
             CosmosEntry.DownloadManager.DownloadStart += OnDownloadStart;
             CosmosEntry.DownloadManager.DownloadOverall += OnDownloadOverall;
-            CosmosEntry.DownloadManager.DownloadFinish+= OnDownloadFinish;
+            CosmosEntry.DownloadManager.DownloadAndWriteFinish+= OnDownloadFinish;
             CosmosEntry.DownloadManager.SetDownloadConfig(cfg);
             CosmosEntry.DownloadManager.LaunchDownload();
         }
@@ -86,14 +86,14 @@ public class DownloadTest : MonoBehaviour
     }
     void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
     {
-        Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.URI}");
+      // Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.URI}");
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
         Utility.Debug.LogError($"DownloadFailure {eventArgs.URI}\n{eventArgs.ErrorMessage}");
     }
-    void OnDownloadFinish(DownloadFinishEventArgs eventArgs)
+    void OnDownloadFinish(DownloadAndWriteFinishEventArgs eventArgs)
     {
-        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.DownloadTimeSpan}",MessageColor.GREEN);
+        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.DownloadAndWriteTimeSpan}",MessageColor.GREEN);
     }
 }

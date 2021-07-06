@@ -31,7 +31,7 @@ namespace Cosmos.Download
                 while (!operation.isDone && canDownload)
                 {
                     ProcessOverallProgress(uri, downloadConfig.DownloadPath, request.downloadProgress);
-                    var downloadedData = new DownloadedData(uri, request.downloadHandler.data, fileDownloadPath);
+                    var downloadedData = new DownloadedData(uri, request.downloadHandler.data,fileDownloadPath);
                     CacheDownloadedData(downloadedData);
                     yield return null;
                 }

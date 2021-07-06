@@ -6,29 +6,32 @@ using System.Threading.Tasks;
 
 namespace Cosmos.Download
 {
-    public class DownloadFinishEventArgs : GameEventArgs
+    /// <summary>
+    /// 下载并写入完成事件；
+    /// </summary>
+    public class DownloadAndWriteFinishEventArgs : GameEventArgs
     {
         public string[] SuccessURIs { get; private set; }
         public string[] FailureURIs { get; private set; }
         /// <summary>
         /// 下载所使用的时间；
         /// </summary>
-        public TimeSpan DownloadTimeSpan { get; private set; }
+        public TimeSpan DownloadAndWriteTimeSpan { get; private set; }
         public override void Release()
         {
             SuccessURIs = null;
             FailureURIs = null;
-            DownloadTimeSpan = TimeSpan.Zero; ;
+            DownloadAndWriteTimeSpan = TimeSpan.Zero; 
         }
-        public static DownloadFinishEventArgs Create(string[] successURIs , string[] failureURIs, TimeSpan timeSpan)
+        public static DownloadAndWriteFinishEventArgs Create(string[] successURIs , string[] failureURIs, TimeSpan timeSpan)
         {
-            var eventArgs = ReferencePool.Accquire<DownloadFinishEventArgs>();
+            var eventArgs = ReferencePool.Accquire<DownloadAndWriteFinishEventArgs>();
             eventArgs.SuccessURIs= successURIs;
             eventArgs.FailureURIs= failureURIs;
-            eventArgs.DownloadTimeSpan = timeSpan;
+            eventArgs.DownloadAndWriteTimeSpan = timeSpan;
             return eventArgs;
         }
-        public static void Release(DownloadFinishEventArgs eventArgs)
+        public static void Release(DownloadAndWriteFinishEventArgs eventArgs)
         {
             ReferencePool.Release(eventArgs);
         }

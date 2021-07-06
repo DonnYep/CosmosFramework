@@ -10,11 +10,26 @@ namespace Cosmos
 {
     public interface IDownloadManager : IModuleManager
     {
+        /// <summary>
+        /// 下载开始事件；
+        /// </summary>
         event Action<DownloadStartEventArgs> DownloadStart;
+        /// <summary>
+        /// 单个资源下载成功事件；
+        /// </summary>
         event Action<DownloadSuccessEventArgs> DownloadSuccess;
+        /// <summary>
+        /// 单个资源下载失败事件；
+        /// </summary>
         event Action<DownloadFailureEventArgs> DownloadFailure;
+        /// <summary>
+        /// 下载整体进度事件；
+        /// </summary>
         event Action<DonwloadOverallEventArgs> DownloadOverall;
-        event Action<DownloadFinishEventArgs> DownloadFinish;
+        /// <summary>
+        /// 整体下载并写入完成事件
+        /// </summary>
+        event Action<DownloadAndWriteFinishEventArgs> DownloadAndWriteFinish;
         /// <summary>
         /// 下载模块配置；
         /// </summary>

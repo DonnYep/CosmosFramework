@@ -39,7 +39,7 @@ namespace Cosmos.Download
                         ProcessOverallProgress(uri, downloadConfig.DownloadPath, 1);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         successURIs.Add(uri);
-                        var downloadedData = new DownloadedData(uri, resultData, fileDownloadPath);
+                        var downloadedData = new DownloadedData(uri, resultData,fileDownloadPath);
                         CacheDownloadedData(downloadedData);
                     };
                 }

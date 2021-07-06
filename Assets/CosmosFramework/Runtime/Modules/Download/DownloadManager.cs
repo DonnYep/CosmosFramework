@@ -9,30 +9,45 @@ namespace Cosmos.Download
     internal class DownloadManager : Module, IDownloadManager
     {
         #region events
+        /// <summary>
+        /// 下载开始事件；
+        /// </summary>
         public event Action<DownloadStartEventArgs> DownloadStart
         {
             add { currentDownloader.DownloadStart += value; }
             remove { currentDownloader.DownloadStart -= value; }
         }
+        /// <summary>
+        /// 单个资源下载成功事件；
+        /// </summary>
         public event Action<DownloadSuccessEventArgs> DownloadSuccess
         {
             add { currentDownloader.DownloadSuccess += value; }
             remove { currentDownloader.DownloadSuccess -= value; }
         }
+        /// <summary>
+        /// 单个资源下载失败事件；
+        /// </summary>
         public event Action<DownloadFailureEventArgs> DownloadFailure
         {
             add { currentDownloader.DownloadFailure += value; }
             remove { currentDownloader.DownloadFailure -= value; }
         }
+        /// <summary>
+        /// 下载整体进度事件；
+        /// </summary>
         public event Action<DonwloadOverallEventArgs> DownloadOverall
         {
             add { currentDownloader.DownloadOverall += value; }
             remove { currentDownloader.DownloadOverall -= value; }
         }
-        public event Action<DownloadFinishEventArgs> DownloadFinish
+        /// <summary>
+        /// 整体下载并写入完成事件
+        /// </summary>
+        public event Action<DownloadAndWriteFinishEventArgs> DownloadAndWriteFinish
         {
-            add { currentDownloader.DownloadFinish += value; }
-            remove { currentDownloader.DownloadFinish -= value; }
+            add { currentDownloader.DownloadAndWriteFinish += value; }
+            remove { currentDownloader.DownloadAndWriteFinish -= value; }
         }
         #endregion
         /// <summary>

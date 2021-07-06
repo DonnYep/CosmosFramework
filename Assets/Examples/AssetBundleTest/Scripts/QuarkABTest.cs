@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos.Quark;
@@ -11,35 +10,27 @@ using System.Net;
 
 public class QuarkABTest : MonoBehaviour
 {
-    [TextArea]
     [SerializeField] string remoteUrl;
-    [TextArea]
     [SerializeField] string localUrl;
     QuarkABLoader quarkAssetABLoader;
-    [SerializeField]
-    bool toggle;
-    [SerializeField]
-    float waitTime = 6;
-    [SerializeField]
-    float time = 0;
+    Dictionary<int, string> testDict = new Dictionary<int, string>();
     void Start()
     {
-        FutureTask.Detection(() =>
-       {
-           return toggle == true;
-       }, (t) => { Utility.Debug.LogInfo("Polling"); }, (t) =>
-          {
-              Utility.Debug.LogInfo(t.Description + " ---异步状态结束");
-          }, "延迟测试");
-        Utility.Debug.LogInfo("开始测试延时");
-    }
-    private void Update()
-    {
-        time += Time.deltaTime;
-        if (time >= waitTime)
+        for (int i = 0; i < 6; i++)
         {
-            toggle = true;
-            time = waitTime;
+            testDict.Add(i, i.ToString());
+        }
+
+        //foreach (var  v in testDict)
+        //{
+        //    Utility.Debug.LogInfo(v.Value);
+        //}
+
+        var enumerator = testDict.GetEnumerator();
+        Utility.Debug.LogInfo(enumerator.Current.Value);
+        while (enumerator.MoveNext())
+        {
+            Utility.Debug.LogInfo(enumerator.Current.Value);
         }
     }
 }

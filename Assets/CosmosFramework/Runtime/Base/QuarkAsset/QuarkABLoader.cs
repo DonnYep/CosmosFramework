@@ -8,21 +8,27 @@ using UnityEngine;
 using UnityEngine.Networking;
 namespace Cosmos.Quark 
 {
+    /// <summary>
+    /// QuarkAssetBundle加载器；使用时需要注意持久化路径中包含所需资源；
+    /// </summary>
     public class QuarkABLoader
     {
         Dictionary<string, AssetBundle> assetBundleDict = new Dictionary<string, AssetBundle>();
-        public string URL { get; private set; }
+        /// <summary>
+        /// 本地持久化路径；
+        /// </summary>
+        public string PersistencePath { get; private set; }
         readonly string buildInfoFileName = "BuildInfo.json";
         readonly string manifestName = "Manifest.json";
         QuarkABBuildInfo buildInfo;
         QuarkManifest quarkAssetManifest;
-        public QuarkABLoader(string url)
+        public QuarkABLoader(string persistencePath)
         {
-            URL = url;
+            PersistencePath = persistencePath;
         }
         public void LoadBuildInfo()
         {
-            var buildInfoUrl = Utility.IO.WebPathCombine(URL, buildInfoFileName);
+            var buildInfoUrl = Utility.IO.WebPathCombine(PersistencePath, buildInfoFileName);
             Utility.Unity.DownloadTextAsync(buildInfoUrl, null, json =>
             {
                 buildInfo = Utility.Json.ToObject<QuarkABBuildInfo>(json);
@@ -31,7 +37,7 @@ namespace Cosmos.Quark
         }
         public void LoadManifest(Action<string> loadDoneCallback=null)
         {
-            var manifestUrl = Utility.IO.WebPathCombine(URL, manifestName);
+            var manifestUrl = Utility.IO.WebPathCombine(PersistencePath, manifestName);
             Utility.Unity.DownloadTextAsync(manifestUrl, null, json =>
             {
                 quarkAssetManifest = Utility.Json.ToObject<QuarkManifest>(json);
@@ -45,7 +51,7 @@ namespace Cosmos.Quark
         }
         public void LoadAssetBundle(string assetBundleName)
         {
-            var fullPath = Utility.IO.WebPathCombine(URL, assetBundleName);
+            var fullPath = Utility.IO.WebPathCombine(PersistencePath, assetBundleName);
             using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(fullPath))
             {
                 if (!request.isNetworkError && !request.isHttpError)

@@ -80,9 +80,6 @@ namespace Cosmos.Quark
             quarkAssetData = assetData;
             assetDatabaseMap = lnkDict;
         }
-
-
-
         public static T LoadAsset<T>(string assetName, string assetExtension = null)
             where T : UnityEngine.Object
         {

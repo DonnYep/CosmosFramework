@@ -23,6 +23,22 @@ namespace Cosmos.Quark
             public byte[] Data { get; private set; }
             public string DownloadPath { get; private set; }
         }
+        class ResponseWriteInfo
+        {
+            /// <summary>
+            /// 已经缓存的长度；
+            /// </summary>
+            public long CachedLength { get; private set; }
+            /// <summary>
+            /// 已经写入持久化本地的长度；
+            /// </summary>
+            public long WrittenLength { get; private set; }
+            public ResponseWriteInfo(long cachedLength, long writtenLength)
+            {
+                CachedLength = cachedLength;
+                WrittenLength = writtenLength;
+            }
+        }
         #region events
         Action<string, string> downloadStart;
         Action<string, string, byte[]> downloadSuccess;
@@ -102,6 +118,12 @@ namespace Cosmos.Quark
 
         Dictionary<string, ResponseData> dataCacheDict = new Dictionary<string, ResponseData>();
 
+        /// <summary>
+        /// URI===[[缓存的长度===写入本地的长度]]；
+        /// 数据写入记录；
+        /// </summary>
+        Dictionary<string, ResponseWriteInfo> dataWriteDict = new Dictionary<string, ResponseWriteInfo>();
+
         DateTime downloadStartTime;
         DateTime downloadEndTime;
 
@@ -118,6 +140,10 @@ namespace Cosmos.Quark
         /// 当前是否可下载；
         /// </summary>
         bool canDownload;
+        /// <summary>
+        /// 是否可写入本地；
+        /// </summary>
+        bool canWrite;
         /// <summary>
         /// 异步下载；
         /// </summary>
@@ -146,6 +172,7 @@ namespace Cosmos.Quark
             if (pendingURIs.Count == 0 || !canDownload)
                 return;
             Downloading = true;
+            canWrite = true;
             downloadStartTime = DateTime.Now;
             RecursiveDownload();
         }
@@ -154,18 +181,28 @@ namespace Cosmos.Quark
         /// </summary>
         public async void TickRefresh()
         {
+            if (!canWrite && !canDownload)
+                return;
             if (dataCacheDict.Count > 0)
             {
                 var data = dataCacheDict.First().Value;
                 dataCacheDict.Remove(data.URI);
-                await Task.Run(() =>
+                if (dataWriteDict.TryGetValue(data.URI, out var writeInfo))
                 {
-                    try
+                    if (writeInfo.CachedLength > writeInfo.WrittenLength)
                     {
-                        Utility.IO.WriteFile(data.Data, data.DownloadPath);
+                        await Task.Run(() =>
+                        {
+                            try
+                            {
+                                Utility.IO.WriteFile(data.Data, data.DownloadPath);
+                                dataWriteDict.AddOrUpdate(data.URI, new ResponseWriteInfo(writeInfo.CachedLength, writeInfo.CachedLength));
+                            }
+                            catch { }
+                        });
                     }
-                    catch { }
-                });
+                }
+                canWrite = dataCacheDict.Count > 0 ? true : false;
             }
         }
         /// <summary>
@@ -178,6 +215,16 @@ namespace Cosmos.Quark
             downloadFinish?.Invoke(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
             unityWebRequest?.Abort();
             canDownload = false;
+        }
+        public virtual void Reset()
+        {
+            downloadStart = null;
+            downloadSuccess = null;
+            downloadFailure = null;
+            downloadOverall = null;
+            downloadFinish = null;
+            DownloadableCount = 0;
+            canWrite = false;
         }
         async void RecursiveDownload()
         {
@@ -260,10 +307,25 @@ namespace Cosmos.Quark
             if (dataCacheDict.TryGetValue(responseData.URI, out var data))
             {
                 if (data.Data.Length < responseData.Data.Length)
+                {
                     dataCacheDict[responseData.URI] = responseData;
+                    //缓存新数据的长度，保留原来写入的长度；
+                    dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(responseData.Data.Length, data.Data.Length));
+                }
             }
             else
-                dataCacheDict.Add(responseData.URI, responseData);
+            {
+                if (!successURIs.Contains(responseData.URI))
+                {
+                    dataWriteDict.TryGetValue(responseData.URI, out var writeInfo);
+                    //旧缓存的长度小于新缓存的长度，则更换
+                    if (writeInfo.CachedLength < responseData.Data.Length)
+                    {
+                        dataCacheDict.Add(responseData.URI, responseData);
+                        dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(responseData.Data.Length, 0));
+                    }
+                }
+            }
         }
 
     }

@@ -17,11 +17,26 @@ namespace Cosmos.Download
     public abstract class Downloader
     {
         #region events
+        /// <summary>
+        /// 下载开始事件；
+        /// </summary>
         protected Action<DownloadStartEventArgs> downloadStart;
+        /// <summary>
+        /// 单个资源下载成功事件；
+        /// </summary>
         protected Action<DownloadSuccessEventArgs> downloadSuccess;
+        /// <summary>
+        /// 单个资源下载失败事件；
+        /// </summary>
         protected Action<DownloadFailureEventArgs> downloadFailure;
+        /// <summary>
+        /// 下载整体进度事件；
+        /// </summary>
         protected Action<DonwloadOverallEventArgs> downloadOverall;
-        protected Action<DownloadFinishEventArgs> downloadFinish;
+        /// <summary>
+        /// 整体下载并写入完成事件
+        /// </summary>
+        protected Action<DownloadAndWriteFinishEventArgs> downloadAndWriteFinish;
         public event Action<DownloadStartEventArgs> DownloadStart
         {
             add { downloadStart += value; }
@@ -42,10 +57,10 @@ namespace Cosmos.Download
             add { downloadOverall += value; }
             remove { downloadOverall -= value; }
         }
-        public event Action<DownloadFinishEventArgs> DownloadFinish
+        public event Action<DownloadAndWriteFinishEventArgs> DownloadAndWriteFinish
         {
-            add { downloadFinish += value; }
-            remove { downloadFinish -= value; }
+            add { downloadAndWriteFinish += value; }
+            remove { downloadAndWriteFinish -= value; }
         }
         #endregion
         /// <summary>
@@ -63,6 +78,9 @@ namespace Cosmos.Download
 
         protected DateTime downloadStartTime;
         protected DateTime downloadEndTime;
+
+        protected DateTime writeStartTime;
+        protected DateTime writeEndTime;
 
         protected DownloadConfig downloadConfig;
         /// <summary>
@@ -85,7 +103,19 @@ namespace Cosmos.Download
         /// 下载进度的缓存；
         /// </summary>
         Dictionary<string, DownloadedData> dataCacheDict = new Dictionary<string, DownloadedData>();
-
+        /// <summary>
+        /// URI===[[缓存的长度===写入本地的长度]]；
+        /// 数据写入记录；
+        /// </summary>
+        Dictionary<string, DownloadWriteInfo> dataWriteDict = new Dictionary<string, DownloadWriteInfo>();
+        /// <summary>
+        /// 遍历用的DownloadWriteInfo缓存；
+        /// </summary>
+        List<DownloadWriteInfo> writeInfoCache = new List<DownloadWriteInfo>();
+        /// <summary>
+        /// 未写入DownloadWriteInfo的缓存；
+        /// </summary>
+        List<DownloadWriteInfo> unwrittenCache = new List<DownloadWriteInfo>();
         public void SetDownloadConfig(DownloadConfig downloadConfig)
         {
             this.downloadConfig = downloadConfig;
@@ -117,14 +147,21 @@ namespace Cosmos.Download
             {
                 var data = dataCacheDict.First().Value;
                 dataCacheDict.Remove(data.URI);
-                await Task.Run(() =>
+                if (dataWriteDict.TryGetValue(data.URI, out var writeInfo))
                 {
-                    try
+                    if (writeInfo.CachedLength > writeInfo.WrittenLength)
                     {
-                        Utility.IO.WriteFile(data.Data, data.DownloadPath);
+                        await Task.Run(() =>
+                        {
+                            try
+                            {
+                                Utility.IO.WriteFile(data.Data, data.DownloadPath);
+                                dataWriteDict.AddOrUpdate(data.URI, new DownloadWriteInfo(writeInfo.CachedLength, writeInfo.CachedLength));
+                            }
+                            catch { }
+                        });
                     }
-                    catch { }
-                });
+                }
                 canWrite = dataCacheDict.Count > 0 ? true : false;
             }
         }
@@ -135,9 +172,9 @@ namespace Cosmos.Download
         {
             failureURIs.AddRange(pendingURIs);
             pendingURIs.Clear();
-            var eventArgs = DownloadFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
-            downloadFinish?.Invoke(eventArgs);
-            DownloadFinishEventArgs.Release(eventArgs);
+            var eventArgs = DownloadAndWriteFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
+            downloadAndWriteFinish?.Invoke(eventArgs);
+            DownloadAndWriteFinishEventArgs.Release(eventArgs);
             canDownload = false;
             CancelWebAsync();
         }
@@ -147,7 +184,7 @@ namespace Cosmos.Download
             downloadSuccess = null;
             downloadFailure = null;
             downloadOverall = null;
-            downloadFinish = null;
+            downloadAndWriteFinish = null;
             downloadConfig.Reset();
             DownloadableCount = 0;
             canWrite = false;
@@ -171,12 +208,33 @@ namespace Cosmos.Download
         {
             if (pendingURIs.Count == 0)
             {
-                downloadEndTime = DateTime.Now;
-                var eventArgs = DownloadFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
-                downloadFinish?.Invoke(eventArgs);
-                DownloadFinishEventArgs.Release(eventArgs);
                 canDownload = false;
                 Downloading = false;
+                //异步检测完成状态；
+                FutureTask.Detection(() =>
+                {
+                    unwrittenCache.Clear();
+                    writeInfoCache.Clear();
+                    writeInfoCache.AddRange(dataWriteDict.Values);
+                    var length = writeInfoCache.Count;
+                    for (int i = 0; i < length; i++)
+                    {
+                        if (writeInfoCache[i].CachedLength != writeInfoCache[i].WrittenLength)
+                        {
+                            unwrittenCache.Add(writeInfoCache[i]);
+                        }
+                    }
+                    return unwrittenCache.Count <= 0;
+                },
+                (ft) =>
+                {
+                    dataCacheDict.Clear();
+                    dataWriteDict.Clear();
+                    downloadEndTime = DateTime.Now;
+                    var eventArgs = DownloadAndWriteFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
+                    downloadAndWriteFinish?.Invoke(eventArgs);
+                    DownloadAndWriteFinishEventArgs.Release(eventArgs);
+                });
                 return;
             }
             string downloadableUri = pendingURIs[0];
@@ -194,13 +252,34 @@ namespace Cosmos.Download
         protected abstract IEnumerator WebDownload(string uri, string fileDownloadPath);
         protected void CacheDownloadedData(DownloadedData downloadedData)
         {
-            if (dataCacheDict.TryGetValue(downloadedData.URI, out var data))
+            if (dataWriteDict.TryGetValue(downloadedData.URI, out var writeInfo))
             {
-                if (data.Data.Length < downloadedData.Data.Length)
-                    dataCacheDict[downloadedData.URI] = downloadedData;
+                //旧缓存的长度小于新缓存的长度，则更换；
+                if (writeInfo.CachedLength < downloadedData.Data.Length)
+                {
+                    dataCacheDict.AddOrUpdate(downloadedData.URI, downloadedData);
+                    dataWriteDict.AddOrUpdate(downloadedData.URI, new DownloadWriteInfo(downloadedData.Data.Length, writeInfo.WrittenLength));
+                }
             }
             else
-                dataCacheDict.Add(downloadedData.URI, downloadedData);
+            {
+                dataCacheDict.AddOrUpdate(downloadedData.URI, downloadedData);
+                dataWriteDict.AddOrUpdate(downloadedData.URI, new DownloadWriteInfo(downloadedData.Data.Length, 0));
+            }
+
+            //if (dataCacheDict.TryGetValue(downloadedData.URI, out var data))
+            //{
+            //    if (data.Data.Length < downloadedData.Data.Length)
+            //    {
+            //        dataCacheDict[downloadedData.URI] = downloadedData;
+            //        //缓存新数据的长度，保留原来写入的长度；
+            //        dataWriteDict.AddOrUpdate(downloadedData.URI, new DownloadWriteInfo(downloadedData.Data.Length, data.Data.Length));
+            //    }
+            //}
+            //else
+            //{
+             
+            //}
         }
     }
 }
