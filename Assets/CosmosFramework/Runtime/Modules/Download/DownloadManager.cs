@@ -69,14 +69,14 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载器；
         /// </summary>
-        Downloader currentDownloader;
+        IDownloader currentDownloader;
         /// <summary>
         /// 下载器缓存；
         /// </summary>
-        Dictionary<DownloaderMode, Downloader> downloaderDict;
+        Dictionary<DownloaderMode, IDownloader> downloaderDict;
         public override void OnPreparatory()
         {
-            downloaderDict = new Dictionary<DownloaderMode, Downloader>();
+            downloaderDict = new Dictionary<DownloaderMode, IDownloader>();
             var unityWebDownloader = new UnityWebDownloader();
             var webClientDownloader = new WebClientDownloader();
             downloaderDict.Add(DownloaderMode.UnityWebRequest, unityWebDownloader);
@@ -84,7 +84,7 @@ namespace Cosmos.Download
             currentDownloader = unityWebDownloader;
         }
         /// <summary>
-        /// 切换下载模式；
+        /// 切换下载模式，切换下载器后会保留先前的的下载配置；
         /// 此操作为异步处理，当有个下载器正在下载时，等到下载器下载停止再切换；
         /// <see cref="Cosmos.Download. DownloaderMode"/>
         /// </summary>
@@ -100,12 +100,16 @@ namespace Cosmos.Download
                      currentDownloader.Release();
                      currentDownloader = downloaderDict[downloaderMode];
                      DownloaderMode = downloaderMode;
+                     if (DownloadConfig != null)
+                         currentDownloader.SetDownloadConfig(DownloadConfig);
                  });
             }
             else
             {
                 currentDownloader = downloaderDict[downloaderMode];
                 DownloaderMode = downloaderMode;
+                if (DownloadConfig != null)
+                    currentDownloader.SetDownloadConfig(DownloadConfig);
             }
         }
         /// <summary>
