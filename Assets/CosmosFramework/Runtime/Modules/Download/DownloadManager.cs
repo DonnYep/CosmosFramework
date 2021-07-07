@@ -97,7 +97,7 @@ namespace Cosmos.Download
             {
                 FutureTask.Detection(() => currentDownloader.Downloading, (ft) =>
                  {
-                     currentDownloader.Reset();
+                     currentDownloader.Release();
                      currentDownloader = downloaderDict[downloaderMode];
                      DownloaderMode = downloaderMode;
                  });
@@ -139,11 +139,6 @@ namespace Cosmos.Download
         public void ResetDownloadConfig()
         {
             DownloadConfig?.Reset();
-        }
-        [TickRefresh]
-        void TickRefresh()
-        {
-            currentDownloader?.TickRefresh();
         }
     }
 }

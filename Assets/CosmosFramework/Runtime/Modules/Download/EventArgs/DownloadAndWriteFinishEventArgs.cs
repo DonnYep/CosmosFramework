@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos.Download
+namespace Cosmos
 {
     /// <summary>
     /// 下载并写入完成事件；

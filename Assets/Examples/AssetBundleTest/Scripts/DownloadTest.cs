@@ -10,17 +10,11 @@ using System;
 
 public class DownloadTest : MonoBehaviour
 {
-    [SerializeField]
-    string srcUrl;
-    [SerializeField]
-    string downloadPath;
-    [SerializeField]
-    Slider slider;
-    [SerializeField]
-    Text text;
-    [SerializeField]
-    Text uriText;
-    int srcCount;
+    [SerializeField]string srcUrl;
+    [SerializeField]string downloadPath;
+    [SerializeField]Slider slider;
+    [SerializeField]Text text;
+    [SerializeField]Text uriText;
     void  Start()
     {
         if (string.IsNullOrEmpty(srcUrl) || string.IsNullOrEmpty(downloadPath))
@@ -37,6 +31,7 @@ public class DownloadTest : MonoBehaviour
                 var path = info.FullName;
                 var name = info.FullName.Remove(0, len + 1);
                 downloadableUri.Add(name);
+                Utility.Debug.LogInfo(name, MessageColor.YELLOW);
             });
         }
         else
@@ -54,8 +49,7 @@ public class DownloadTest : MonoBehaviour
                 }
             }
         }
-        srcCount = downloadableUri.Count;
-        if (srcCount > 0)
+        if (downloadableUri.Count > 0)
         {
             var cfg = new DownloadConfig(srcUrl, downloadPath, downloadableUri.ToArray());
             CosmosEntry.DownloadManager.DownloadSuccess += OnDownloadSucess;
@@ -86,7 +80,7 @@ public class DownloadTest : MonoBehaviour
     }
     void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
     {
-      // Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.URI}");
+       Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.URI}");
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
@@ -94,6 +88,10 @@ public class DownloadTest : MonoBehaviour
     }
     void OnDownloadFinish(DownloadAndWriteFinishEventArgs eventArgs)
     {
+        if (text != null)
+        {
+            text.text = "100%   Done";
+        }
         Utility.Debug.LogInfo($"DownloadFinish {eventArgs.DownloadAndWriteTimeSpan}",MessageColor.GREEN);
     }
 }

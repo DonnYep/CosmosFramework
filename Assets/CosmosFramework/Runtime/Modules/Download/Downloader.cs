@@ -96,10 +96,6 @@ namespace Cosmos.Download
         /// </summary>
         protected bool canDownload;
         /// <summary>
-        /// 是否可写入本地；
-        /// </summary>
-        protected bool canWrite;
-        /// <summary>
         /// 下载进度的缓存；
         /// </summary>
         Dictionary<string, DownloadedData> dataCacheDict = new Dictionary<string, DownloadedData>();
@@ -134,36 +130,6 @@ namespace Cosmos.Download
             Downloading = true;
             downloadStartTime = DateTime.Now;
             RecursiveDownload();
-            canWrite = true;
-        }
-        /// <summary>
-        /// 下载轮询，需要由外部调用；
-        /// </summary>
-        public async void TickRefresh()
-        {
-            if (!canWrite && !canDownload)
-                return;
-            if (dataCacheDict.Count > 0)
-            {
-                var data = dataCacheDict.First().Value;
-                dataCacheDict.Remove(data.URI);
-                if (dataWriteDict.TryGetValue(data.URI, out var writeInfo))
-                {
-                    if (writeInfo.CachedLength > writeInfo.WrittenLength)
-                    {
-                        await Task.Run(() =>
-                        {
-                            try
-                            {
-                                Utility.IO.WriteFile(data.Data, data.DownloadPath);
-                                dataWriteDict.AddOrUpdate(data.URI, new DownloadWriteInfo(writeInfo.CachedLength, writeInfo.CachedLength));
-                            }
-                            catch { }
-                        });
-                    }
-                }
-                canWrite = dataCacheDict.Count > 0 ? true : false;
-            }
         }
         /// <summary>
         /// 终止下载，谨慎使用；
@@ -177,8 +143,11 @@ namespace Cosmos.Download
             DownloadAndWriteFinishEventArgs.Release(eventArgs);
             canDownload = false;
             CancelWebAsync();
+            failureURIs.Clear();
+            successURIs.Clear();
+            pendingURIs.Clear();
         }
-        public virtual void Reset()
+        public virtual void Release()
         {
             downloadStart = null;
             downloadSuccess = null;
@@ -187,7 +156,6 @@ namespace Cosmos.Download
             downloadAndWriteFinish = null;
             downloadConfig.Reset();
             DownloadableCount = 0;
-            canWrite = false;
         }
         /// <summary>
         /// 处理整体进度；
@@ -234,6 +202,10 @@ namespace Cosmos.Download
                     var eventArgs = DownloadAndWriteFinishEventArgs.Create(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
                     downloadAndWriteFinish?.Invoke(eventArgs);
                     DownloadAndWriteFinishEventArgs.Release(eventArgs);
+                    //清理下载配置缓存；
+                    failureURIs.Clear();
+                    successURIs.Clear();
+                    pendingURIs.Clear();
                 });
                 return;
             }
@@ -250,36 +222,34 @@ namespace Cosmos.Download
         }
         protected abstract void CancelWebAsync();
         protected abstract IEnumerator WebDownload(string uri, string fileDownloadPath);
-        protected void CacheDownloadedData(DownloadedData downloadedData)
+        protected Task WriteDownloadedData(DownloadedData downloadedData)
         {
+            var cachedLenth = downloadedData.Data.Length;
             if (dataWriteDict.TryGetValue(downloadedData.URI, out var writeInfo))
             {
-                //旧缓存的长度小于新缓存的长度，则更换；
-                if (writeInfo.CachedLength < downloadedData.Data.Length)
+                //旧缓存的长度小于新缓存的长度，则更新长度；
+                if (writeInfo.CachedLength >= cachedLenth)
+                    return null;
+                dataCacheDict.AddOrUpdate(downloadedData.URI, downloadedData);
+                //缓存新数据的长度，保留原来写入的长度；
+                dataWriteDict.AddOrUpdate(downloadedData.URI, new DownloadWriteInfo(cachedLenth, writeInfo.WrittenLength));
+                return Task.Run(() =>
                 {
-                    dataCacheDict.AddOrUpdate(downloadedData.URI, downloadedData);
-                    dataWriteDict.AddOrUpdate(downloadedData.URI, new DownloadWriteInfo(downloadedData.Data.Length, writeInfo.WrittenLength));
-                }
+                    Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
+                    dataWriteDict.AddOrUpdate(downloadedData.URI, new DownloadWriteInfo(cachedLenth, cachedLenth));
+                });
             }
             else
             {
-                dataCacheDict.AddOrUpdate(downloadedData.URI, downloadedData);
-                dataWriteDict.AddOrUpdate(downloadedData.URI, new DownloadWriteInfo(downloadedData.Data.Length, 0));
+                dataCacheDict.Add(downloadedData.URI, downloadedData);
+                //缓存新数据长度，原始写入长度设置为0，表示为写入过；
+                dataWriteDict.Add(downloadedData.URI, new DownloadWriteInfo(cachedLenth, 0));
+                return Task.Run(() =>
+                {
+                    Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
+                    dataWriteDict.AddOrUpdate(downloadedData.URI, new DownloadWriteInfo(cachedLenth, cachedLenth));
+                });
             }
-
-            //if (dataCacheDict.TryGetValue(downloadedData.URI, out var data))
-            //{
-            //    if (data.Data.Length < downloadedData.Data.Length)
-            //    {
-            //        dataCacheDict[downloadedData.URI] = downloadedData;
-            //        //缓存新数据的长度，保留原来写入的长度；
-            //        dataWriteDict.AddOrUpdate(downloadedData.URI, new DownloadWriteInfo(downloadedData.Data.Length, data.Data.Length));
-            //    }
-            //}
-            //else
-            //{
-             
-            //}
         }
     }
 }

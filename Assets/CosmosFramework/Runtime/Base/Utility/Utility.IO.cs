@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace Cosmos
 {
@@ -390,7 +391,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 将byte数组写成文件，不作binary或者text转换，且支持覆写；
+            /// 将byte数组写成文件；
             /// 若写入时文件夹路径不存在，则创建文件夹；
             /// </summary>
             /// <param name="context">需要写入的数据byte数组</param>
@@ -400,7 +401,28 @@ namespace Cosmos
                var folderPath= Path.GetDirectoryName(fileFullPath);
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);
-                File.WriteAllBytes(fileFullPath, context);
+                using (BinaryWriter writer = new BinaryWriter(File.Open(fileFullPath, FileMode.OpenOrCreate)))
+                {
+                    writer.Write(context);
+                }
+            }
+            /// <summary>
+            /// 追加写入；
+            /// 将byte数组写成文件；
+            /// 若写入时文件夹路径不存在，则创建文件夹；
+            /// </summary>
+            /// <param name="context">需要写入的数据byte数组</param>
+            /// <param name="fileFullPath">文件的完整路径，包括后缀名等</param>
+            /// <param name="startPosition">追加写入的起始位置</param>
+            public static void WriteFile(byte[] context, string fileFullPath,int startPosition)
+            {
+                var folderPath = Path.GetDirectoryName(fileFullPath);
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+                using (BinaryWriter writer = new BinaryWriter(File.Open(fileFullPath, FileMode.OpenOrCreate)))
+                {
+                    writer.Write(context, startPosition, context.Length);
+                }
             }
             /// <summary>
             /// 完全覆写；

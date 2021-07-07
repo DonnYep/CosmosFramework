@@ -31,9 +31,8 @@ namespace Cosmos.Download
                 while (!operation.isDone && canDownload)
                 {
                     ProcessOverallProgress(uri, downloadConfig.DownloadPath, request.downloadProgress);
-                    var downloadedData = new DownloadedData(uri, request.downloadHandler.data,fileDownloadPath);
-                    CacheDownloadedData(downloadedData);
-                    yield return null;
+                    var downloadedData = new DownloadedData(uri, request.downloadHandler.data, fileDownloadPath);
+                    yield return WriteDownloadedData(downloadedData);
                 }
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
                 {
@@ -41,13 +40,13 @@ namespace Cosmos.Download
                     {
                         Downloading = false;
                         var downloadData = request.downloadHandler.data;
+                        var downloadedData = new DownloadedData(uri, request.downloadHandler.data, fileDownloadPath);
+                        yield return WriteDownloadedData(downloadedData);
                         var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath, downloadData);
                         downloadSuccess?.Invoke(successEventArgs);
                         ProcessOverallProgress(uri, downloadConfig.DownloadPath, 1);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         successURIs.Add(uri);
-                        var downloadedData = new DownloadedData(uri, request.downloadHandler.data, fileDownloadPath);
-                        CacheDownloadedData(downloadedData);
                     }
                 }
                 else

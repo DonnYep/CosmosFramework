@@ -22,13 +22,13 @@ namespace Cosmos.Download
                 try
                 {
                     Downloading = true;
-                    this. webClient = webClient;
+                    this.webClient = webClient;
                     var startEventArgs = DownloadStartEventArgs.Create(uri, fileDownloadPath);
                     downloadStart?.Invoke(startEventArgs);
                     DownloadStartEventArgs.Release(startEventArgs);
                     webClient.DownloadProgressChanged += (sender, eventArgs) =>
                     {
-                        ProcessOverallProgress(uri, downloadConfig. DownloadPath, (float)eventArgs.ProgressPercentage / 100);
+                        ProcessOverallProgress(uri, downloadConfig.DownloadPath, (float)eventArgs.ProgressPercentage / 100);
                     };
                     webClient.DownloadDataCompleted += (sender, eventArgs) =>
                     {
@@ -39,8 +39,8 @@ namespace Cosmos.Download
                         ProcessOverallProgress(uri, downloadConfig.DownloadPath, 1);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         successURIs.Add(uri);
-                        var downloadedData = new DownloadedData(uri, resultData,fileDownloadPath);
-                        CacheDownloadedData(downloadedData);
+                        var downloadedData = new DownloadedData(uri, resultData, fileDownloadPath);
+                        WriteDownloadedData(downloadedData);
                     };
                 }
                 catch (Exception exception)

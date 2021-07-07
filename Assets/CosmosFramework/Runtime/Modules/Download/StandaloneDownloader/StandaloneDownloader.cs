@@ -17,8 +17,10 @@ namespace Cosmos
     //================================================
     /// <summary>
     /// 独立的文件下载器，单独一个脚本即可完成所需下载；
+    /// 可随时删除；
     /// </summary>
-    public class DownloadCore
+    [Obsolete("作为独立的下载器，此类依旧依赖了除自身以外的工具方法。需要剔除依赖。未完成！")]
+    public class StandaloneDownloader
     {
         class ResponseData
         {
@@ -150,17 +152,13 @@ namespace Cosmos
         /// </summary>
         bool canDownload;
         /// <summary>
-        /// 是否可写入本地；
-        /// </summary>
-        bool canWrite;
-        /// <summary>
         /// 异步下载；
         /// </summary>
         /// <param name="url">资源地址</param>
         /// <param name="downloadPath">下载到本地的地址</param>
         /// <param name="downloadableList">可下载的文件列表</param>
         /// <param name="timeout">文件下载过期时间</param>
-        public void Download(string url, string downloadPath, string[] downloadableList, int timeout = 0)
+        public void SetDownloadConfig(string url, string downloadPath, string[] downloadableList, int timeout = 0)
         {
             if (string.IsNullOrEmpty(url))
                 throw new ArgumentNullException("URL is invalid !");
@@ -173,46 +171,22 @@ namespace Cosmos
                 this.DownloadTimeout = 0;
             else
                 this.DownloadTimeout = timeout;
-            canDownload = true;
             URL = url;
             pendingURIs.AddRange(downloadableList);
             DownloadableCount = downloadableList.Length;
             unitResRatio = 100f / DownloadableCount;
+        }
+        /// <summary>
+        /// 启动下载；
+        /// </summary>
+        public void LaunchDownload()
+        {
+            canDownload = true;
             if (pendingURIs.Count == 0 || !canDownload)
                 return;
             Downloading = true;
-            canWrite = true;
             downloadStartTime = DateTime.Now;
             RecursiveDownload();
-        }
-        /// <summary>
-        /// 下载轮询，需要由外部调用；
-        /// </summary>
-        public async void TickRefresh()
-        {
-            if (!canWrite && !canDownload)
-                return;
-            if (dataCacheDict.Count > 0)
-            {
-                var data = dataCacheDict.First().Value;
-                dataCacheDict.Remove(data.URI);
-                if (dataWriteDict.TryGetValue(data.URI, out var writeInfo))
-                {
-                    if (writeInfo.CachedLength > writeInfo.WrittenLength)
-                    {
-                        await Task.Run(() =>
-                        {
-                            try
-                            {
-                                Utility.IO.WriteFile(data.Data, data.DownloadPath);
-                                dataWriteDict.AddOrUpdate(data.URI, new ResponseWriteInfo(writeInfo.CachedLength, writeInfo.CachedLength));
-                            }
-                            catch { }
-                        });
-                    }
-                }
-                canWrite = dataCacheDict.Count > 0 ? true : false;
-            }
         }
         /// <summary>
         /// 终止下载，谨慎使用；
@@ -233,9 +207,8 @@ namespace Cosmos
             downloadOverall = null;
             downloadFinish = null;
             DownloadableCount = 0;
-            canWrite = false;
         }
-        async void RecursiveDownload()
+         IEnumerator RecursiveDownload()
         {
             if (pendingURIs.Count == 0)
             {
@@ -243,7 +216,7 @@ namespace Cosmos
                 downloadFinish?.Invoke(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
                 canDownload = false;
                 Downloading = false;
-                return;
+                yield break;
             }
             string downloadableUri = pendingURIs[0];
             currentDownloadIndex = DownloadableCount - pendingURIs.Count;
@@ -251,8 +224,8 @@ namespace Cosmos
             pendingURIs.RemoveAt(0);
             if (canDownload)
             {
-                var remoteUri = Utility.IO.WebPathCombine(URL, downloadableUri);
-                await DownloadWebRequest(remoteUri, fileDownloadPath);
+                var remoteUri = WebPathCombine(URL, downloadableUri);
+                yield return DownloadWebRequest(remoteUri, fileDownloadPath);
                 RecursiveDownload();
             }
         }
@@ -270,19 +243,18 @@ namespace Cosmos
                 {
                     ProcessOverallProgress(uri, DownloadPath, request.downloadProgress);
                     var responseData = new ResponseData(uri, request.downloadHandler.data, fileDownloadPath);
-                    CacheResponseData(responseData);
-                    yield return null;
+                    yield return WriteResponseData(responseData);
                 }
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
                 {
                     if (request.isDone)
                     {
                         Downloading = false;
+                        var responseData = new ResponseData(uri, request.downloadHandler.data, fileDownloadPath);
+                        yield return WriteResponseData(responseData);
                         downloadSuccess?.Invoke(request.url, fileDownloadPath, request.downloadHandler.data);
                         ProcessOverallProgress(uri, DownloadPath, 1);
                         successURIs.Add(uri);
-                        var responseData = new ResponseData(uri, request.downloadHandler.data, fileDownloadPath);
-                        CacheResponseData(responseData);
                     }
                 }
                 else
@@ -293,7 +265,7 @@ namespace Cosmos
                     ProcessOverallProgress(uri, DownloadPath, 1);
                     if (DeleteFailureFile)
                     {
-                        Utility.IO.DeleteFile(fileDownloadPath);
+                        DeleteFile(fileDownloadPath);
                     }
                 }
             }
@@ -311,30 +283,56 @@ namespace Cosmos
             var overallProgress = overallIndexPercent + (unitResRatio * individualPercent);
             downloadOverall.Invoke(uri, downloadPath, overallProgress, individualPercent * 100);
         }
-        void CacheResponseData(ResponseData  responseData)
+        Task WriteResponseData(ResponseData responseData)
         {
-            if (dataCacheDict.TryGetValue(responseData.URI, out var data))
+            var cachedLenth = responseData.Data.Length;
+            if (dataWriteDict.TryGetValue(responseData.URI, out var writeInfo))
             {
-                if (data.Data.Length < responseData.Data.Length)
+                if (writeInfo.CachedLength < cachedLenth)
+                    return null;
+                dataCacheDict[responseData.URI] = responseData;
+                //缓存新数据的长度，保留原来写入的长度；
+                dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, writeInfo.WrittenLength));
+                return Task.Run(() =>
                 {
-                    dataCacheDict[responseData.URI] = responseData;
-                    //缓存新数据的长度，保留原来写入的长度；
-                    dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(responseData.Data.Length, data.Data.Length));
-                }
+                    Utility.IO.WriteFile(responseData.Data, responseData.DownloadPath);
+                    dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, cachedLenth));
+                });
             }
             else
             {
-                if (!successURIs.Contains(responseData.URI))
+                dataCacheDict.Add(responseData.URI, responseData);
+                dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, 0));
+                return Task.Run(() =>
                 {
-                    dataWriteDict.TryGetValue(responseData.URI, out var writeInfo);
-                    //旧缓存的长度小于新缓存的长度，则更换
-                    if (writeInfo.CachedLength < responseData.Data.Length)
-                    {
-                        dataCacheDict.Add(responseData.URI, responseData);
-                        dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(responseData.Data.Length, 0));
-                    }
-                }
+                    Utility.IO.WriteFile(responseData.Data, responseData.DownloadPath);
+                    dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, cachedLenth));
+                });
             }
+        }
+
+        void WriteFile(byte[] context, string fileFullPath)
+        {
+            var folderPath = Path.GetDirectoryName(fileFullPath);
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+            using (BinaryWriter writer = new BinaryWriter(File.Open(fileFullPath, FileMode.OpenOrCreate)))
+            {
+                writer.Write(context);
+            }
+        }
+        void DeleteFile(string fileFullPath)
+        {
+            if (File.Exists(fileFullPath))
+            {
+                File.Delete(fileFullPath);
+            }
+        }
+        string WebPathCombine(params string[] paths)
+        {
+            var pathResult = Path.Combine(paths);
+            pathResult = pathResult.Replace("\\", "/");
+            return pathResult;
         }
     }
 }
