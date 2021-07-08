@@ -21,45 +21,13 @@ public class DownloadTest : MonoBehaviour
             return;
         if (!Directory.Exists(downloadPath))
             return;
-        var len = srcUrl.Length;
-        List<string> downloadableUri = new List<string>();
-        var fileList = new List<string>();
-        if (Directory.Exists(srcUrl))
-        {
-            Utility.IO.TraverseFolderFile(srcUrl, (info) =>
-            {
-                var path = info.FullName;
-                var name = info.FullName.Remove(0, len + 1);
-                downloadableUri.Add(name);
-                Utility.Debug.LogInfo(name, MessageColor.YELLOW);
-            });
-        }
-        else
-        {
-            var result= Utility.Net.PingURI(srcUrl);
-            if (result)
-            {
-                Utility.Net.PingUrlFileList(srcUrl, fileList);
-                var length = fileList.Count;
-                for (int i = 0; i < length; i++)
-                {
-                    var uri = fileList[i].Remove(0, len);
-                    downloadableUri.Add(uri);
-                    Utility.Debug.LogInfo(uri, MessageColor.YELLOW);
-                }
-            }
-        }
-        if (downloadableUri.Count > 0)
-        {
-            var cfg = new DownloadConfig(srcUrl, downloadPath, downloadableUri.ToArray());
-            CosmosEntry.DownloadManager.DownloadSuccess += OnDownloadSucess;
-            CosmosEntry.DownloadManager.DownloadFailure += OnDownloadFailure;
-            CosmosEntry.DownloadManager.DownloadStart += OnDownloadStart;
-            CosmosEntry.DownloadManager.DownloadOverall += OnDownloadOverall;
-            CosmosEntry.DownloadManager.DownloadAndWriteFinish+= OnDownloadFinish;
-            CosmosEntry.DownloadManager.SetDownloadConfig(cfg);
-            CosmosEntry.DownloadManager.LaunchDownload();
-        }
+        CosmosEntry.DownloadManager.DownloadSuccess += OnDownloadSucess;
+        CosmosEntry.DownloadManager.DownloadFailure += OnDownloadFailure;
+        CosmosEntry.DownloadManager.DownloadStart += OnDownloadStart;
+        CosmosEntry.DownloadManager.DownloadOverall += OnDownloadOverall;
+        CosmosEntry.DownloadManager.DownloadAndWriteFinish += OnDownloadFinish;
+        CosmosEntry.DownloadManager.AddUrlDownload(srcUrl, downloadPath);
+        CosmosEntry.DownloadManager.LaunchDownload();
     }
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
     {

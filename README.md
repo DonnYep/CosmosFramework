@@ -44,7 +44,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **WebRequest**：UnityWebRequest模块，可用于加载持久化资源、网络资源下载等需求。支持获取AssetBundle、AudioClip、Texture2D、string。当资源获取到后，用户可通过WebRequestCallback对资源进行操作；
 
-- **Download**：下载模块。支持资源从本地文件夹或者资源服务器对文件进行下载。文件数据从Remote端下载后，将会以byte流异步写入本地。支持实时下载实时写入；
+- **Download**：下载模块。支持localhost本地文件下载与http文件下载。文件下载时以byte流异步增量写入本地。下载中支持动态添加、移除下载任务；
 
 ## 内置数据、工具
 

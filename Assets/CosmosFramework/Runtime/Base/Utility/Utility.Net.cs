@@ -58,12 +58,12 @@ namespace Cosmos
             ///使用HttpWebRequest Ping并遍历url的文件列表；
             /// </summary>
             /// <param name="url">资源定位地址</param>
-            /// <param name="fileList">返回的文件列表</param>
-            public static void PingUrlFileList(string url, List<string> fileList)
+            /// <param name="uris">返回的文件地址数组</param>
+            public static void PingUrlFileList(string url, ref List<string> uris)
             {
                 if (string.IsNullOrEmpty(url))
                     throw new ArgumentNullException("URL is invalid !");
-                if (fileList == null)
+                if (uris == null)
                     throw new ArgumentNullException("FileList is invalid !");
                 HttpWebRequest request = (HttpWebRequest)System.Net.WebRequest.Create(url);
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
@@ -85,11 +85,11 @@ namespace Cosmos
                                         var uriListPath = Utility.IO.WebPathCombine(url, remoteUri);
                                         if (remoteUri.EndsWith("/"))
                                         {
-                                            PingUrlFileList(uriListPath, fileList);
+                                            PingUrlFileList(uriListPath,ref uris);
                                         }
                                         else
                                         {
-                                            fileList.Add(uriListPath);
+                                            uris.Add(uriListPath);
                                         }
                                     }
                                 }

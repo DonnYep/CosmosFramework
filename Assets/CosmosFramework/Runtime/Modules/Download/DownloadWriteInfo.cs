@@ -19,6 +19,7 @@ namespace Cosmos.Download
         /// 已经写入持久化本地的长度；
         /// </summary>
         public long WrittenLength { get; private set; }
+        public static DownloadWriteInfo None { get { return new DownloadWriteInfo(0, 0); } }
         /// <summary>
         /// 下载写入信息的构造函数；
         /// </summary>

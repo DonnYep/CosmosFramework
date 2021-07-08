@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-
 namespace Cosmos
 {
     public static partial class Utility
@@ -186,13 +182,38 @@ namespace Cosmos
             /// </summary>
             public static T[] FindAll<T>(T[] array, Predicate<T> handler)
             {
-                List<T> list = new List<T>();
+                var srcArray = new T[array.Length];
+                int srcIdx = 0;
                 for (int i = 0; i < array.Length; i++)
                 {
                     if (handler(array[i]))
-                        list.Add(array[i]);
+                    {
+                        srcArray[srcIdx] = array[i];
+                        srcIdx++;
+                    }
                 }
-                return list.ToArray();
+                var dstArray = new T[srcIdx];
+                Array.Copy(srcArray, dstArray, dstArray.Length);
+                return dstArray;
+            }
+            /// <summary>
+            /// 变换数组，返回与原数组相等长度的新数组；
+            /// 新数组中会包含空元素，得到后需要二次处理；
+            /// </summary>
+            /// <typeparam name="T">原始数组的类型</typeparam>
+            /// <typeparam name="K">变换后的数组类型</typeparam>
+            /// <param name="array">原始数组</param>
+            /// <param name="handler">执行函数</param>
+            /// <returns>变换后的数组</returns>
+            public static K[] ConvertArray<T, K>(T[] array, Func<T, K> handler)
+            {
+                var length = array.Length;
+                var dstArray = new K[length];
+                for (int i = 0; i < length; i++)
+                {
+                    dstArray[i] = handler.Invoke(array[i]);
+                }
+                return dstArray;
             }
             /// <summary>
             /// 泛型二分查找，需要传入升序数组
@@ -353,6 +374,7 @@ namespace Cosmos
             {
                 return !Convert.ToBoolean(value & 0x1);
             }
+  
         }
     }
 }

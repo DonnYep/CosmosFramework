@@ -42,7 +42,7 @@ public class QuarkABTest : MonoBehaviour
             var result = Utility.Net.PingURI(srcUrl);
             if (result)
             {
-                Utility.Net.PingUrlFileList(srcUrl, fileList);
+                Utility.Net.PingUrlFileList(srcUrl,ref fileList);
                 var length = fileList.Count;
                 for (int i = 0; i < length; i++)
                 {

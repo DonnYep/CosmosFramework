@@ -32,18 +32,36 @@ namespace Cosmos.Download
         /// </summary>
         event Action<DownloadAndWriteFinishEventArgs> DownloadAndWriteFinish;
         /// <summary>
+        /// 是否删除本地下载失败的文件；
+        /// </summary>
+        bool DeleteFailureFile { get; set; }
+        /// <summary>
+        /// 任务过期时间，以秒为单位；
+        /// </summary>
+        float DownloadTimeout { get; set; }
+        /// <summary>
         /// 是否正在下载；
         /// </summary>
         bool Downloading { get;  }
         /// <summary>
         /// 可下载的资源总数；
         /// </summary>
-        int DownloadableCount { get;  }
+        int DownloadingCount { get;  }
+        ///// <summary>
+        ///// 添加下载文件列表；
+        ///// </summary>
+        ///// <param name="uris">资源地址</param>
+        //void AddDownloadUris(string[] uris);
+        void AddUriDownload(string uri, string downloadPath);
         /// <summary>
-        /// 为下载器进行配置；
+        /// 移除URI下载；
         /// </summary>
-        /// <param name="downloadConfig">下载配置数据</param>
-        void SetDownloadConfig(DownloadConfig downloadConfig);
+        /// <param name="uri">统一资源名称</param>
+        void RemoveUriDownload(string uri);
+        /// <summary>
+        /// 移除所有下载；
+        /// </summary>
+        void RemoveAllDownload();
         /// <summary>
         /// 启动下载；
         /// </summary>
