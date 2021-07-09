@@ -62,7 +62,7 @@ namespace Cosmos
         /// 设置下载资源地址帮助体；
         /// </summary>
         /// <param name="helper">帮助体对象</param>
-        void SetIUriHelper(IDownloadUrlHelper helper);
+        void SetIUrlHelper(IDownloadUrlHelper helper);
         /// <summary>
         /// 添加URI下载；
         /// </summary>

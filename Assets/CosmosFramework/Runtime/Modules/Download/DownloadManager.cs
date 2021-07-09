@@ -162,7 +162,7 @@ namespace Cosmos.Download
         /// 设置下载资源地址帮助体；
         /// </summary>
         /// <param name="helper">帮助体对象</param>
-        public void SetIUriHelper(IDownloadUrlHelper helper)
+        public void SetIUrlHelper(IDownloadUrlHelper helper)
         {
             this.downloadUrlHelper = helper;
         }
