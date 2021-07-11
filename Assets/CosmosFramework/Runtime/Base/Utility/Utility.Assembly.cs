@@ -554,6 +554,18 @@ where K : class
                 return type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
                     Where(m => m.GetCustomAttributes<T>(inherit).Count() > 0).ToArray();
             }
+            public static void InvokeMethod<T>(T obj, string methodName ,object[] parameters)
+            {
+                if (obj == null)
+                    throw new NullReferenceException("Obj is invalid !");
+                if (string.IsNullOrEmpty(methodName))
+                    throw new ArgumentNullException("MethodName is invalid !");
+                var type = typeof(T);
+                var method = type.GetMethod(methodName,BindingFlags.Public| BindingFlags.Instance| BindingFlags.Static| BindingFlags.NonPublic);
+                if (method == null)
+                    throw new NullReferenceException($"Type : {type} method {methodName} is invalid !");
+                method.Invoke(obj,null);
+            }
         }
     }
 }

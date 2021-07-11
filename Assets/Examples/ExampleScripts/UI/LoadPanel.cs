@@ -9,7 +9,7 @@ using Cosmos.Scene;
 /// 按钮按下载入的脚本
 /// 流程：载入loading场景，loading场景通过Utility.Globle.TargetLevel参数自动在初始化时候异步加载目标场景。
 /// </summary>
-public class LoadPanel : UIResidentForm
+public class LoadPanel : UIForm
 {
     InputField inputTargetLevel;
     InputField inputLoadLevel;
@@ -17,14 +17,14 @@ public class LoadPanel : UIResidentForm
 
     protected override void OnInitialization()
     {
-        GetUIForm<Button>("BtnLoad").onClick.AddListener(LoadClick);
-        inputLoadLevel = GetUIForm<InputField>("InputLoadLevel");
-        inputTargetLevel = GetUIForm<InputField>("InputTargetLevel");
+        GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
+        inputLoadLevel = GetUIPanel<InputField>("InputLoadLevel");
+        inputTargetLevel = GetUIPanel<InputField>("InputTargetLevel");
         sceneManager = GameManager.GetModule<ISceneManager>();
     }
     protected override void OnTermination()
     {
-        GetUIForm<Button>("BtnLoad").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnLoad").onClick.RemoveAllListeners();
     }
     void LoadClick()
     {

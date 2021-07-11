@@ -9,8 +9,8 @@ namespace Cosmos.Test
     /// <summary>
     /// 仅测试
     /// </summary>
-    [UIAsset(nameof(InventoryPanel), "UI/InventoryPanel")]
-    public class InventoryPanel : UIResidentForm
+    [UIAsset(nameof(InventoryPanel), "Example","UI/InventoryPanel")]
+    public class InventoryPanel : UIForm
     {
         Text txtDescription;
         MED_Inventory med_Inventory;
@@ -27,14 +27,22 @@ namespace Cosmos.Test
         }
         protected override void OnInitialization()
         {
-            GetUIForm<Button>("BtnLoad").onClick.AddListener(LoadClick);
-            GetUIForm<Button>("BtnQuit").onClick.AddListener(QuitClick);
-            GetUIForm<Button>("BtnSave").onClick.AddListener(SaveClick);
-            GetUIForm<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
+            GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
+            GetUIPanel<Button>("BtnQuit").onClick.AddListener(QuitClick);
+            GetUIPanel<Button>("BtnSave").onClick.AddListener(SaveClick);
+            GetUIPanel<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
 
             MVVM.Dispatch(MVVMDefine.CMD_Inventory);
             slotContext = gameObject.GetComponentInChildren<SlotContext>();
-            txtDescription = GetUIForm<Text>("TxtDescription");
+            txtDescription = GetUIPanel<Text>("TxtDescription");
+        }
+        protected override void OnHide()
+        {
+            Utility.Debug.LogInfo($"{UIFormName} OnHide");
+        }
+        protected override void OnShow()
+        {
+            Utility.Debug.LogInfo($"{UIFormName} OnShow");
         }
         private void Start()
         {
@@ -51,7 +59,7 @@ namespace Cosmos.Test
         }
         void QuitClick()
         {
-            HideUIForm();
+            UIManager.HideUIForm(UIFormName);
         }
         void UpdateClick()
         {

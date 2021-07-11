@@ -4,24 +4,32 @@ using UnityEngine;
 using Cosmos.UI;
 using UnityEngine.UI;
 using Cosmos;
-[UIAsset(nameof(WelcomePanel), "UI/WelcomePanel" )]
-public class WelcomePanel : UITemporaryForm
+[UIAsset(nameof(WelcomePanel), "Example", "UI/WelcomePanel" )]
+public class WelcomePanel : UIForm
 {
     Text info;
     InputField inputMsg;
     protected override void OnInitialization()
     {
-        GetUIForm<Button>("BtnShowInfo").onClick.AddListener(ShowInfo);
-        GetUIForm<Button>("BtnHideInfo").onClick.AddListener(HideInfo);
-        GetUIForm<Button>("BtnQuit").onClick.AddListener(Quit);
-        info = GetUIForm<Image>("TxtInfo").transform.Find("Info").GetComponent<Text>();
-        inputMsg = GetUIForm<InputField>("InputMsg");
+        GetUIPanel<Button>("BtnShowInfo").onClick.AddListener(ShowInfo);
+        GetUIPanel<Button>("BtnHideInfo").onClick.AddListener(HideInfo);
+        GetUIPanel<Button>("BtnQuit").onClick.AddListener(Quit);
+        info = GetUIPanel<Image>("TxtInfo").transform.Find("Info").GetComponent<Text>();
+        inputMsg = GetUIPanel<InputField>("InputMsg");
     }
     protected override void OnTermination()
     {
-        GetUIForm<Button>("BtnShowInfo").onClick.RemoveAllListeners();
-        GetUIForm<Button>("BtnHideInfo").onClick.RemoveAllListeners();
-        GetUIForm<Button>("BtnQuit").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnShowInfo").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnHideInfo").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
+    }
+    protected override void OnHide()
+    {
+        Utility.Debug.LogInfo($"{UIFormName} OnHide");
+    }
+    protected override void OnShow()
+    {
+        Utility.Debug.LogInfo($"{UIFormName} OnShow");
     }
     void ShowInfo()
     {
@@ -33,6 +41,6 @@ public class WelcomePanel : UITemporaryForm
     }
     void Quit()
     {
-        HideUIForm();
+        UIManager.CloseUIForm(UIFormName);
     }
 }

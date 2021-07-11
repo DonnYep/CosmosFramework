@@ -4,19 +4,27 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
-[UIAsset(nameof(StatusPanel), "UI/StatusPanel")]
-public class StatusPanel : UIResidentForm
+[UIAsset(nameof(StatusPanel), "Example", "UI/StatusPanel")]
+public class StatusPanel : UIForm
 {
     protected override void OnInitialization()
     {
-        GetUIForm<Button>("BtnQuit").onClick.AddListener(QuitClick);
+        GetUIPanel<Button>("BtnQuit").onClick.AddListener(QuitClick);
     }
     protected override void OnTermination()
     {
-        GetUIForm<Button>("BtnQuit").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
+    }
+    protected override void OnHide()
+    {
+        Utility.Debug.LogInfo($"{UIFormName} OnHide");
+    }
+    protected override void OnShow()
+    {
+        Utility.Debug.LogInfo($"{UIFormName} OnShow");
     }
     void QuitClick()
     {
-        HideUIForm();
+        UIManager.HideUIForm(UIFormName);
     }
 }

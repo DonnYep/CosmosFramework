@@ -8,7 +8,7 @@ using Cosmos.Network;
 using System.IO;
 namespace Cosmos.Test
 {
-    public class MultiplayNetworkPanel : UIResidentForm
+    public class MultiplayNetworkPanel : UIForm
     {
         Button btnConnect;
         Button btnDisconnect;
@@ -16,11 +16,11 @@ namespace Cosmos.Test
 
         protected override void OnInitialization()
         {
-            btnConnect = GetUIForm<Button>("BtnConnect");
+            btnConnect = GetUIPanel<Button>("BtnConnect");
             btnConnect.onClick.AddListener(ConnectClick);
-            btnDisconnect = GetUIForm<Button>("BtnDisconnect");
+            btnDisconnect = GetUIPanel<Button>("BtnDisconnect");
             btnDisconnect.onClick.AddListener(DisconnectClick);
-            inputMsg = GetUIForm<InputField>("InputMsg");
+            inputMsg = GetUIPanel<InputField>("InputMsg");
         }
         void ConnectClick()
         {

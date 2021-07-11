@@ -8,9 +8,8 @@ using UnityEngine.UI;
 namespace Cosmos.UI
 {
     [DisallowMultipleComponent]
-    public abstract class UIFormBase : MonoBehaviour,IUIForm
+    public abstract class UIForm: MonoBehaviour
     {
-        public virtual bool IsTemporaryForm { get; protected set; }
         /// <summary>
         /// 设置 UIForm层级顺序 ；
         /// 默认优先级为100，取值区间为[0,10000]；
@@ -24,7 +23,7 @@ namespace Cosmos.UI
                     priority = 10000;
                 else if (value < 0)
                     priority = 0;
-                var peerComps = Utility.Unity.PeersComponet<UIFormBase>(transform);
+                var peerComps = Utility.Unity.PeersComponet<UIForm>(transform);
                 Utility.Unity.SortCompsByDescending(peerComps, (comp) => comp.Priority);
             }
         }
@@ -33,7 +32,7 @@ namespace Cosmos.UI
         /// <summary>
         /// UI的映射表，名字作为主键，具有一个list容器
         /// </summary>
-        Dictionary<string, List<UIBehaviour>> uiDict;
+        Dictionary<string, List<UIBehaviour>> uiPanelDict;
         /// <summary>
         /// 是否自动注册获取当前节点下的UIBehaviour对象
         /// </summary>
@@ -43,33 +42,39 @@ namespace Cosmos.UI
             get
             {
                 if (string.IsNullOrEmpty(uiFormName))
-                    uiFormName = GetComponent<UIFormBase>().GetType().Name;
+                    uiFormName = GetComponent<UIForm>().GetType().Name;
                 return uiFormName;
             }
         }
+        /// <summary>
+        /// 所属组的名称；
+        /// </summary>
+        public string GroupName { get; protected set; }
+
         string uiFormName;
+
+        public bool HasUIPanel(string name)
+        {
+            return uiPanelDict.ContainsKey(name);
+        }
         /// <summary>
         /// 被开启；
         /// </summary>
-        public abstract void ShowUIForm();
+        protected virtual void OnShow() { }
         /// <summary>
         /// 被关闭；
         /// </summary>
-        public abstract void HideUIForm();
-        public bool HasUIForm(string name)
-        {
-            return uiDict.ContainsKey(name);
-        }
+        protected virtual void OnHide() { }
         protected abstract void OnInitialization();
-        protected T GetUIForm<T>(string name)
+        protected T GetUIPanel<T>(string name)
             where T : UIBehaviour
         {
-            if (HasUIForm(name))
+            if (HasUIPanel(name))
             {
-                short listCount = (short)uiDict[name].Count;
+                short listCount = (short)uiPanelDict[name].Count;
                 for (short i = 0; i < listCount; i++)
                 {
-                    var result = uiDict[name][i] as T;
+                    var result = uiPanelDict[name][i] as T;
                     if (result != null)
                         return result;
                 }
@@ -89,13 +94,13 @@ namespace Cosmos.UI
             for (short i = 0; i < panelCount; i++)
             {
                 panelName = uiPanels[i].gameObject.name;
-                if (uiDict.ContainsKey(panelName))
+                if (uiPanelDict.ContainsKey(panelName))
                 {
-                    uiDict[panelName].Add(uiPanels[i]);
+                    uiPanelDict[panelName].Add(uiPanels[i]);
                 }
                 else
                 {
-                    uiDict.Add(panelName, new List<UIBehaviour>() { uiPanels[i] });
+                    uiPanelDict.Add(panelName, new List<UIBehaviour>() { uiPanels[i] });
                 }
             }
         }
@@ -113,13 +118,13 @@ namespace Cosmos.UI
             for (short i = 0; i < panelCount; i++)
             {
                 panelName = uiPanels[i].gameObject.name;
-                if (uiDict.ContainsKey(panelName))
+                if (uiPanelDict.ContainsKey(panelName))
                 {
-                    uiDict[panelName].Add(uiPanels[i]);
+                    uiPanelDict[panelName].Add(uiPanels[i]);
                 }
                 else
                 {
-                    uiDict.Add(panelName, new List<UIBehaviour>() { uiPanels[i] });
+                    uiPanelDict.Add(panelName, new List<UIBehaviour>() { uiPanels[i] });
                 }
             }
         }
@@ -127,10 +132,9 @@ namespace Cosmos.UI
         /// 空虚函数
         /// </summary>
         protected virtual void OnTermination() { }
-        protected virtual void SetUIFormActive(bool state) { gameObject.SetActive(state); }
         void Awake()
         {
-            uiDict = new Dictionary<string, List<UIBehaviour>>();
+            uiPanelDict = new Dictionary<string, List<UIBehaviour>>();
             if (autoGetUIComponents)
             {
                 GetUIComponents<Button>();
@@ -145,7 +149,7 @@ namespace Cosmos.UI
         void OnDestroy()
         {
             OnTermination();
-            uiDict?.Clear();
+            uiPanelDict?.Clear();
         }
     }
 }

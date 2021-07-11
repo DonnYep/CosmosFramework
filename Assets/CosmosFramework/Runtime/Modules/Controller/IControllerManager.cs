@@ -15,7 +15,7 @@ namespace Cosmos
     //
     //4、控制器需要由模块生成，并被模块释放；
     //
-    //5、控制器模块已玉unity解耦
+    //5、控制器模块已与unity解耦
     //================================================
     public interface IControllerManager:IModuleManager
     {

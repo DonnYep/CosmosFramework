@@ -12,15 +12,15 @@ namespace Cosmos
     /// </summary>
     public class DefaultUIFormHelper : IUIFormHelper
     {
-        public void CloseUIForm(UIFormBase uiForm)
+        public void CloseUIForm(UIForm uiForm)
         {
             MonoGameManager.KillObject(uiForm.gameObject);
         }
-        public void HideUIForm(UIFormBase uiForm)
+        public void HideUIForm(UIForm uiForm)
         {
             uiForm.gameObject.SetActive(false);
         }
-        public void ShowUIForm(UIFormBase uiForm)
+        public void ShowUIForm(UIForm uiForm)
         {
             uiForm.gameObject.SetActive(true);
         }

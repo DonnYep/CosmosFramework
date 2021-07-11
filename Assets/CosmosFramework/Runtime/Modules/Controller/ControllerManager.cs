@@ -17,7 +17,7 @@ namespace Cosmos.Controller
     //
     //4、控制器需要由模块生成，并被模块释放；
     //
-    //5、控制器模块已玉unity解耦
+    //5、控制器模块已与unity解耦
     //================================================
     [Module]
     internal sealed class ControllerManager : Module, IControllerManager
@@ -140,7 +140,7 @@ namespace Cosmos.Controller
             return controllerIdDict.TryGetValue(controllerId, out controller);
         }
         /// <summary>
-        /// 通过Id获取controller；
+        /// 通过名称获取controller；
         /// </summary>
         /// <param name="controllerName">controller name</param>
         /// <param name="controller">返回的controller</param>

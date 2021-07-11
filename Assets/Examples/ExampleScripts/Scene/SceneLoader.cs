@@ -7,20 +7,20 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Cosmos.Scene;
 
-public class SceneLoader : UIResidentForm
+public class SceneLoader : UIForm
 {
     InputField inputTargetLevel;
     ISceneManager sceneManager;
 
     protected override void OnInitialization()
     {
-        GetUIForm<Button>("BtnLoad").onClick.AddListener(LoadClick);
-        inputTargetLevel = GetUIForm<InputField>("InputTargetLevel");
+        GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
+        inputTargetLevel = GetUIPanel<InputField>("InputTargetLevel");
         sceneManager = GameManager.GetModule<ISceneManager>();
     }
     protected override void OnTermination()
     {
-        GetUIForm<Button>("BtnLoad").onClick.RemoveAllListeners();
+        GetUIPanel<Button>("BtnLoad").onClick.RemoveAllListeners();
     }
     void LoadClick()
     {

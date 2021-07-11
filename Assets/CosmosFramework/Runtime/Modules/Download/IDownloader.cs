@@ -47,11 +47,11 @@ namespace Cosmos.Download
         /// 可下载的资源总数；
         /// </summary>
         int DownloadingCount { get;  }
-        ///// <summary>
-        ///// 添加下载文件列表；
-        ///// </summary>
-        ///// <param name="uris">资源地址</param>
-        //void AddDownloadUris(string[] uris);
+        /// <summary>
+        /// 添加URI下载；
+        /// </summary>
+        /// <param name="uri">统一资源名称</param>
+        /// <param name="downloadPath">下载到地址的绝对路径</param>
         void AddUriDownload(string uri, string downloadPath);
         /// <summary>
         /// 移除URI下载；

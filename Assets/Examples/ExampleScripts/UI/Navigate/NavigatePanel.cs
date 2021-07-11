@@ -7,20 +7,22 @@ using Cosmos.UI;
 using Cosmos.Mvvm;
 namespace Cosmos.Test
 {
-    public class NavigatePanel : UIResidentForm
+    public class NavigatePanel : UIForm
     {
         WelcomePanel welcome;
         InventoryPanel inventory;
         SettingPanel setting;
         StorePanel store;
         StatusPanel status;
+        bool state;
         protected override void OnInitialization()
         {
-            GetUIForm<Button>("BtnWelcome").onClick.AddListener(WelcomeClick);
-            GetUIForm<Button>("BtnInventory").onClick.AddListener(InventoryClick);
-            GetUIForm<Button>("BtnStore").onClick.AddListener(StoreClick);
-            GetUIForm<Button>("BtnStatus").onClick.AddListener(StatusClick);
-            GetUIForm<Button>("BtnSetting").onClick.AddListener(SettingClick);
+            GetUIPanel<Button>("BtnWelcome").onClick.AddListener(WelcomeClick);
+            GetUIPanel<Button>("BtnInventory").onClick.AddListener(InventoryClick);
+            GetUIPanel<Button>("BtnStore").onClick.AddListener(StoreClick);
+            GetUIPanel<Button>("BtnStatus").onClick.AddListener(StatusClick);
+            GetUIPanel<Button>("BtnSetting").onClick.AddListener(SettingClick);
+            GetUIPanel<Button>("BtnOpGroup").onClick.AddListener(OperateGroup);
         }
         /// <summary>
         /// welcome panel 是临时类型，因此当panel存在时，点击移除，不存在时则载入
@@ -28,10 +30,15 @@ namespace Cosmos.Test
         void WelcomeClick()
         {
             if (welcome == null)
+            {
                 UIManager.OpenUIFormAsync<WelcomePanel>(panel =>
                 { panel.gameObject.SetActive(true); welcome = panel; });
+                return;
+            }
+            if (welcome.gameObject.activeSelf)
+                UIManager.HideUIForm(welcome.UIFormName);
             else
-                welcome.HideUIForm();
+                UIManager.ShowUIForm(welcome.UIFormName);
         }
         /// <summary>
         /// Invenmtory panel是常驻类型，若不存在，则载入；开启与关闭只进行显示与隐藏操作
@@ -45,9 +52,9 @@ namespace Cosmos.Test
                 return;
             }
             if (inventory.gameObject.activeSelf)
-                inventory.HideUIForm();
+                UIManager.HideUIForm(inventory.UIFormName);
             else
-                inventory.ShowUIForm();
+                UIManager.ShowUIForm(inventory.UIFormName);
         }
         void StoreClick()
         {
@@ -58,9 +65,9 @@ namespace Cosmos.Test
                 return;
             }
             if (store.gameObject.activeSelf)
-                store.HideUIForm();
+                UIManager.HideUIForm(store.UIFormName);
             else
-                store.ShowUIForm();
+                UIManager.ShowUIForm(store.UIFormName);
         }
         void SettingClick()
         {
@@ -71,9 +78,9 @@ namespace Cosmos.Test
                 return;
             }
             if (setting.gameObject.activeSelf)
-                setting.HideUIForm();
+                UIManager.HideUIForm(setting.UIFormName);
             else
-                setting.ShowUIForm();
+                UIManager.ShowUIForm(setting.UIFormName);
         }
         void StatusClick()
         {
@@ -84,9 +91,17 @@ namespace Cosmos.Test
                 return;
             }
             if (status.gameObject.activeSelf)
-                status.HideUIForm();
+                UIManager.HideUIForm(status.UIFormName);
             else
-                status.ShowUIForm();
+                UIManager.ShowUIForm(status.UIFormName);
+        }
+        void OperateGroup()
+        {
+            if (state)
+                UIManager.HideUIGroup("Example");
+            else
+                UIManager.ShowUIGroup("Example");
+            state = !state;
         }
     }
 }

@@ -8,7 +8,7 @@ using Cosmos.Scene;
 /// <summary>
 /// 显示进度的脚本
 /// </summary>
-public class LoadingScenePanel : UIResidentForm
+public class LoadingScenePanel : UIForm
 {
     Text txtProgress;
     Slider sldProgress;
@@ -16,8 +16,8 @@ public class LoadingScenePanel : UIResidentForm
 
     protected override void OnInitialization()
     {
-        txtProgress = GetUIForm<Text>("TxtProgress");
-        sldProgress = GetUIForm<Slider>("SldProgress");
+        txtProgress = GetUIPanel<Text>("TxtProgress");
+        sldProgress = GetUIPanel<Slider>("SldProgress");
         sceneManager = GameManager.GetModule<ISceneManager>();
         LoadLevel();
     }
