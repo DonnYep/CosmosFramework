@@ -50,15 +50,6 @@ namespace Cosmos.Controller
         #endregion
 
         #region Methods
-        public override void OnInitialization()
-        {
-            controllerGroupDict = new Dictionary<string, ControllerGroup>();
-            controllerIdDict = new Dictionary<int, IController>();
-
-            tickActionDict = new Dictionary<int, Action>();
-            lateActionDict = new Dictionary<int, Action>();
-            fixedActionDict = new Dictionary<int, Action>();
-        }
         /// <summary>
         /// 创建一个controller；
         /// </summary>
@@ -298,6 +289,15 @@ namespace Cosmos.Controller
             {
                 controllerGroup.UnPauseControllers();
             }
+        }
+        protected override void OnInitialization()
+        {
+            controllerGroupDict = new Dictionary<string, ControllerGroup>();
+            controllerIdDict = new Dictionary<int, IController>();
+
+            tickActionDict = new Dictionary<int, Action>();
+            lateActionDict = new Dictionary<int, Action>();
+            fixedActionDict = new Dictionary<int, Action>();
         }
         void AddRefresh(IController controller)
         {

@@ -12,21 +12,9 @@ namespace Cosmos.Input
     [Module]
     internal sealed class InputManager : Module, IInputManager
     {
-        public override void OnInitialization()
-        {
-            base.OnInitialization();
-            _inputDevice?.OnStart();
-        }
-        public override void OnTermination()
-        {
-            base.OnTermination();
-            _inputDevice?.OnShutdown();
-        }
-
         public bool IsEnableInputDevice { get; set; } = true;
         VirtualInput inputModule = new VirtualInput();
-        static InputDevice _inputDevice;
-
+        InputDevice _inputDevice;
         public void SetInputDevice(InputDevice inputDevice)
         {
             _inputDevice = inputDevice;
@@ -198,6 +186,16 @@ namespace Cosmos.Input
         public void SetAxis(string name, float value)
         {
             inputModule.SetAxis(name, value);
+        }
+        protected override void OnInitialization()
+        {
+            base.OnInitialization();
+            _inputDevice?.OnStart();
+        }
+        protected override void OnTermination()
+        {
+            base.OnTermination();
+            _inputDevice?.OnShutdown();
         }
         [TickRefresh]
         void OnRefresh()

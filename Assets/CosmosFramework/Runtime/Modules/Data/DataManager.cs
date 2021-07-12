@@ -23,27 +23,6 @@ namespace Cosmos.Data
         }
         #endregion
         #region Methods
-        public override void OnActive()
-        {
-            rootNode = DataNode.Create(RootName, null);
-            var assemblies = GameManager.Assemblies;
-            var length = assemblies.Length;
-            for (int i = 0; i < length; i++)
-            {
-                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IDataProvider>(assemblies[i]);
-                for (int j = 0; j < objs.Length; j++)
-                {
-                    try
-                    {
-                        objs[i]?.LoadData();
-                    }
-                    catch (Exception e)
-                    {
-                        Utility.Debug.LogError(e);
-                    }
-                }
-            }
-        }
         /// <summary>
         /// 根据类型获取数据结点的数据。
         /// </summary>
@@ -230,6 +209,27 @@ namespace Cosmos.Data
         public void ClearNodes()
         {
             rootNode.ClearNode();
+        }
+        protected override void OnActive()
+        {
+            rootNode = DataNode.Create(RootName, null);
+            var assemblies = GameManager.Assemblies;
+            var length = assemblies.Length;
+            for (int i = 0; i < length; i++)
+            {
+                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IDataProvider>(assemblies[i]);
+                for (int j = 0; j < objs.Length; j++)
+                {
+                    try
+                    {
+                        objs[i]?.LoadData();
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
+                }
+            }
         }
         /// <summary>
         /// 数据结点路径切分工具函数。

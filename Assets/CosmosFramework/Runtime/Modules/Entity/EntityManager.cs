@@ -25,21 +25,10 @@ namespace Cosmos.Entity
         IResourceManager resourceManager;
         #endregion
         #region Methods
-        public override void OnInitialization()
-        {
-            entityGroupDict = new Dictionary<string, EntityGroup>();
-            entityIdDict = new Dictionary<int, IEntity>();
-        }
-        public override void OnPreparatory()
-        {
-            objectPoolManager = GameManager.GetModule<IObjectPoolManager>();
-            resourceManager = GameManager.GetModule<IResourceManager>();
-        }
         public void SetHelper(IEntityHelper helper)
         {
             this.entityHelper = helper;
         }
-
         /// <summary>
         /// 注册EntityGroup (同步)；
         /// </summary>
@@ -481,6 +470,16 @@ namespace Cosmos.Entity
         public Coroutine AutoRegisterEntityGroupsAsync()
         {
             return Utility.Unity.StartCoroutine(EnumAutoRegisterEntityGroups());
+        }
+        protected override void OnInitialization()
+        {
+            entityGroupDict = new Dictionary<string, EntityGroup>();
+            entityIdDict = new Dictionary<int, IEntity>();
+        }
+        protected override void OnPreparatory()
+        {
+            objectPoolManager = GameManager.GetModule<IObjectPoolManager>();
+            resourceManager = GameManager.GetModule<IResourceManager>();
         }
         IEnumerator EnumAutoRegisterEntityGroups()
         {

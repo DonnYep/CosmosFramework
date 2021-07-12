@@ -80,24 +80,7 @@ namespace Cosmos.Hotfix
         Action hotfixReady;
         #endregion
         #region Methods
-        public override void OnInitialization()
-        {
-            FixedMethods = new Dictionary<HotfixMethodType, Dictionary<string, MethodInfo>>();
-            FixedDelegates = new Dictionary<HotfixMethodType, Dictionary<string, Delegate>>();
-        }
-        public override void OnPreparatory()
-        {
-            if (HotfixEnable)
-            {
-                IResourceManager resourceManager = GameManager.GetModule<IResourceManager>();
-                //if (resourceManager.LoadMode == ResourceLoadMode.Resource)
-                //{
-                //    throw new ArgumentException("HotfixManager-->>热更新初始化失败：热更新库不支持使用Resource加载模式！");
-                //}
-                //AssetInfo info = new AssetInfo(HotfixDllAssetBundleName, HotfixDllAssetsPath, "");
-                //resourceManager.LoadAssetAsync<TextAsset>(0,info, HotfixDllLoadDone, null);
-            }
-        }
+
         /// <summary>
         /// 设置热更新dll的ab包名称
         /// </summary>
@@ -197,7 +180,25 @@ namespace Cosmos.Hotfix
             if (del != null) return del as Func<T1, T2, T3, TResult>;
             else return action;
         }
-        private Delegate FixMethod(HotfixMethodType methodType, string targetName, Type type)
+        protected override void OnInitialization()
+        {
+            FixedMethods = new Dictionary<HotfixMethodType, Dictionary<string, MethodInfo>>();
+            FixedDelegates = new Dictionary<HotfixMethodType, Dictionary<string, Delegate>>();
+        }
+        protected override void OnPreparatory()
+        {
+            if (HotfixEnable)
+            {
+                IResourceManager resourceManager = GameManager.GetModule<IResourceManager>();
+                //if (resourceManager.LoadMode == ResourceLoadMode.Resource)
+                //{
+                //    throw new ArgumentException("HotfixManager-->>热更新初始化失败：热更新库不支持使用Resource加载模式！");
+                //}
+                //AssetInfo info = new AssetInfo(HotfixDllAssetBundleName, HotfixDllAssetsPath, "");
+                //resourceManager.LoadAssetAsync<TextAsset>(0,info, HotfixDllLoadDone, null);
+            }
+        }
+        Delegate FixMethod(HotfixMethodType methodType, string targetName, Type type)
         {
             if (!HotfixEnable)
             {
@@ -222,7 +223,7 @@ namespace Cosmos.Hotfix
                 }
             }
         }
-        private void HotfixDllLoadDone(TextAsset asset)
+        void HotfixDllLoadDone(TextAsset asset)
         {
             HotfixDll = asset;
             HotfixAssembly = Assembly.Load(HotfixDll.bytes, null);
@@ -234,7 +235,7 @@ namespace Cosmos.Hotfix
             SearchHotfixMethod();
             hotfixReady?.Invoke();
         }
-        private void SearchHotfixMethod()
+        void SearchHotfixMethod()
         {
             Type[] types = HotfixAssembly.GetTypes();
             for (int i = 0; i < types.Length; i++)
@@ -262,7 +263,7 @@ namespace Cosmos.Hotfix
                 FixedMethods[HotfixMethodType.Invalid].Clear();
             }
         }
-        private HotfixMethodType GetHotfixMethodType(MethodInfo method)
+        HotfixMethodType GetHotfixMethodType(MethodInfo method)
         {
             bool isVoid = method.ReturnType.Name == "Void";
             ParameterInfo[] pis = method.GetParameters();

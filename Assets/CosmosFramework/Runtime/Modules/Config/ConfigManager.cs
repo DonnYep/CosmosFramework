@@ -12,30 +12,6 @@ namespace Cosmos.Config
     internal sealed class ConfigManager : Module, IConfigManager
     {
         Dictionary<string, ConfigData> configDataDict;
-        public override void OnInitialization()
-        {
-            configDataDict = new Dictionary<string, ConfigData>();
-        }
-        public override void OnPreparatory()
-        {
-            var assemblies = GameManager.Assemblies;
-            var length = assemblies.Length;
-            for (int i = 0; i < length; i++)
-            {
-                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IConfigProvider>(assemblies[i]);
-                for (int j = 0; j < objs.Length; j++)
-                {
-                    try
-                    {
-                        objs[j].LoadConfig();
-                    }
-                    catch (Exception e)
-                    {
-                        Utility.Debug.LogError(e);
-                    }
-                }
-            }
-        }
         /// <summary>
         /// 增加指定全局配置项。
         /// </summary>
@@ -189,6 +165,30 @@ namespace Cosmos.Config
         public void RemoveAllConfig()
         {
             configDataDict.Clear();
+        }
+        protected override void OnInitialization()
+        {
+            configDataDict = new Dictionary<string, ConfigData>();
+        }
+        protected override void OnPreparatory()
+        {
+            var assemblies = GameManager.Assemblies;
+            var length = assemblies.Length;
+            for (int i = 0; i < length; i++)
+            {
+                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IConfigProvider>(assemblies[i]);
+                for (int j = 0; j < objs.Length; j++)
+                {
+                    try
+                    {
+                        objs[j].LoadConfig();
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
+                }
+            }
         }
     }
 }

@@ -23,13 +23,13 @@ public class WelcomePanel : UIForm
         GetUIPanel<Button>("BtnHideInfo").onClick.RemoveAllListeners();
         GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
     }
-    protected override void OnHide()
+    protected override void OnDeactive()
     {
-        Utility.Debug.LogInfo($"{UIFormName} OnHide");
+        Utility.Debug.LogInfo($"{UIFormName} OnDeactive");
     }
-    protected override void OnShow()
+    protected override void OnActive()
     {
-        Utility.Debug.LogInfo($"{UIFormName} OnShow");
+        Utility.Debug.LogInfo($"{UIFormName} OnActive");
     }
     void ShowInfo()
     {
@@ -41,6 +41,6 @@ public class WelcomePanel : UIForm
     }
     void Quit()
     {
-        UIManager.CloseUIForm(UIFormName);
+        UIManager.ReleaseUIForm(UIFormName);
     }
 }

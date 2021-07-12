@@ -116,18 +116,7 @@ namespace Cosmos.Download
         /// 下载器缓存；
         /// </summary>
         Dictionary<DownloaderMode, IDownloader> downloaderDict;
-        public override void OnPreparatory()
-        {
-            downloaderDict = new Dictionary<DownloaderMode, IDownloader>();
-            var unityWebDownloader = new UnityWebDownloader();
-            var webClientDownloader = new WebClientDownloader();
-            downloaderDict.Add(DownloaderMode.UnityWebRequest, unityWebDownloader);
-            downloaderDict.Add(DownloaderMode.WebClient, webClientDownloader);
-            downloader = unityWebDownloader;
-            downloader.DeleteFailureFile = deleteFailureFile;
-            downloader.DownloadTimeout = downloadTimeout;
-            downloadUrlHelper = new DefaultDownloadUrlHelper();
-        }
+
         /// <summary>
         /// 可以用，但是没必要；
         /// 切换下载模式，切换下载器后会保留先前的的下载配置；
@@ -240,6 +229,18 @@ namespace Cosmos.Download
         public void CancelDownload()
         {
             downloader.CancelDownload();
+        }
+        protected override void OnPreparatory()
+        {
+            downloaderDict = new Dictionary<DownloaderMode, IDownloader>();
+            var unityWebDownloader = new UnityWebDownloader();
+            var webClientDownloader = new WebClientDownloader();
+            downloaderDict.Add(DownloaderMode.UnityWebRequest, unityWebDownloader);
+            downloaderDict.Add(DownloaderMode.WebClient, webClientDownloader);
+            downloader = unityWebDownloader;
+            downloader.DeleteFailureFile = deleteFailureFile;
+            downloader.DownloadTimeout = downloadTimeout;
+            downloadUrlHelper = new DefaultDownloadUrlHelper();
         }
     }
 }

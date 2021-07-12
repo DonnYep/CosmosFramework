@@ -49,10 +49,8 @@ namespace Cosmos.UI
         /// <summary>
         /// 所属组的名称；
         /// </summary>
-        public string GroupName { get; protected set; }
-
+        public string GroupName { get; internal set; }
         string uiFormName;
-
         public bool HasUIPanel(string name)
         {
             return uiPanelDict.ContainsKey(name);
@@ -60,11 +58,11 @@ namespace Cosmos.UI
         /// <summary>
         /// 被开启；
         /// </summary>
-        protected virtual void OnShow() { }
+        protected virtual void OnActive() { }
         /// <summary>
         /// 被关闭；
         /// </summary>
-        protected virtual void OnHide() { }
+        protected virtual void OnDeactive() { }
         protected abstract void OnInitialization();
         protected T GetUIPanel<T>(string name)
             where T : UIBehaviour

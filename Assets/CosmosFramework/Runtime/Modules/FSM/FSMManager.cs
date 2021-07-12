@@ -22,14 +22,6 @@ namespace Cosmos.FSM
         #endregion
 
         #region Methods
-
-        #region Module
-        public override void OnInitialization()
-        {
-            fsmSetDict = new Dictionary<Type, FSMGroup>();
-            fsmIndividualDict = new Dictionary<Type, FSMBase>(); 
-        }
-        #endregion
         /// <summary>
         /// 为特定类型设置轮询间隔
         /// 若设置时间为小于等于0，则默认使用0；
@@ -397,6 +389,11 @@ where T : class
             fsmSetDict.Clear();
         }
         #endregion
+        protected override void OnInitialization()
+        {
+            fsmSetDict = new Dictionary<Type, FSMGroup>();
+            fsmIndividualDict = new Dictionary<Type, FSMBase>();
+        }
         [TickRefresh]
         void OnRefresh()
         {

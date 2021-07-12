@@ -18,19 +18,7 @@ namespace Cosmos.ObjectPool
         #endregion
 
         #region Methods
-        public override void OnInitialization()
-        {
-            poolDict = new Dictionary<TypeStringPair, IObjectPool>();
-        }
-        public override void OnPreparatory()
-        {
-            resourceManager = GameManager.GetModule<IResourceManager>();
-        }
-        [ElapseRefresh]
-        void ElapseRefresh(float deltatime)
-        {
-            elapseRefreshHandler?.Invoke(deltatime);
-        }
+
 
         /// <summary>
         /// 注册对象池（异步）;
@@ -414,7 +402,16 @@ namespace Cosmos.ObjectPool
             }
             poolDict.Clear();
         }
-
+        protected override void OnPreparatory()
+        {
+            poolDict = new Dictionary<TypeStringPair, IObjectPool>();
+            resourceManager = GameManager.GetModule<IResourceManager>();
+        }
+        [ElapseRefresh]
+        void ElapseRefresh(float deltatime)
+        {
+            elapseRefreshHandler?.Invoke(deltatime);
+        }
         #endregion
     }
 }

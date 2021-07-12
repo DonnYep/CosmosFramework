@@ -11,10 +11,7 @@ namespace Cosmos.Scene
     internal sealed class SceneManager : Module, ISceneManager
     {
         ISceneHelper sceneHelper;
-        public override void OnPreparatory()
-        {
-            sceneHelper = new DefaultSceneHelper();
-        }
+
         /// <summary>
         /// 异步设置场景加载helper；
         /// </summary>
@@ -248,6 +245,10 @@ namespace Cosmos.Scene
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return Utility.Unity.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, startUnloadCallback, null, unLoadedCallback));
+        }
+        protected override void OnPreparatory()
+        {
+            sceneHelper = new DefaultSceneHelper();
         }
     }
 }

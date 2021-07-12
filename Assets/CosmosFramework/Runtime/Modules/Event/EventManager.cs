@@ -7,10 +7,6 @@ namespace Cosmos.Event
     internal sealed class EventManager : Module, IEventManager
     {
         Dictionary<string, EventHandler<GameEventArgs>> eventDict;
-        public override void OnInitialization()
-        {
-            eventDict = new Dictionary<string, EventHandler<GameEventArgs>>();
-        }
         /// <summary>
         /// 添加事件
         /// </summary>
@@ -123,6 +119,10 @@ namespace Cosmos.Event
                 return true;
             else
                 return false;
+        }
+        protected override void OnInitialization()
+        {
+            eventDict = new Dictionary<string, EventHandler<GameEventArgs>>();
         }
     }
 }

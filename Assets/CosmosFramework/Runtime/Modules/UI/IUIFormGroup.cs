@@ -12,9 +12,9 @@ namespace Cosmos.UI
     {
         string UIGroupName { get; }
         int UIFormCount { get; }
-        void GetAllUIForm(ref IList<UIForm> result);
-        void GetUIForms(Predicate<UIForm> predicate, ref IList<UIForm> result);
-        bool HasUIForm(string uiName);
+        UIForm[] GetAllUIForm();
+        UIForm[] GetUIForms(Predicate<UIForm> predicate);
+        bool HasUIForm(string uiFormName);
         bool AddUIForm(UIForm uiForm);
         bool RemoveUIForm(UIForm uiForm);
     }

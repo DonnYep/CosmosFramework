@@ -24,14 +24,6 @@ namespace Cosmos.Audio
         //轮询间距，按照update渲染的5秒计算，不使用真实时间
         internal const short _Interval = 5;
         float coolTime = 0;
-        #region Methods
-        public override void OnInitialization()
-        {
-            multipleAudio = new Dictionary<GameObject, List<AudioSource>>();
-            multipleAudios = new List<AudioSource>();
-            worldAudios = new Dictionary<GameObject, AudioSource>();
-        }
-
         bool mute = false;
         //整个AudioManager下的所有声音都设置位静音
         public bool Mute
@@ -62,6 +54,7 @@ namespace Cosmos.Audio
                 }
             }
         }
+        #region Methods
         #region backGroundAudio
         /// <summary>
         /// 播放背景音乐，唯一的
@@ -254,6 +247,12 @@ namespace Cosmos.Audio
 
         }
         #endregion
+        protected override void OnInitialization()
+        {
+            multipleAudio = new Dictionary<GameObject, List<AudioSource>>();
+            multipleAudios = new List<AudioSource>();
+            worldAudios = new Dictionary<GameObject, AudioSource>();
+        }
         [TickRefresh]
         void TickRefresh()
         {

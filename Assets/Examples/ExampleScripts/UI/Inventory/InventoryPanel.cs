@@ -36,11 +36,11 @@ namespace Cosmos.Test
             slotContext = gameObject.GetComponentInChildren<SlotContext>();
             txtDescription = GetUIPanel<Text>("TxtDescription");
         }
-        protected override void OnHide()
+        protected override void OnDeactive()
         {
             Utility.Debug.LogInfo($"{UIFormName} OnHide");
         }
-        protected override void OnShow()
+        protected override void OnActive()
         {
             Utility.Debug.LogInfo($"{UIFormName} OnShow");
         }
@@ -59,7 +59,7 @@ namespace Cosmos.Test
         }
         void QuitClick()
         {
-            UIManager.HideUIForm(UIFormName);
+            UIManager.DeactiveUIForm(UIFormName);
         }
         void UpdateClick()
         {

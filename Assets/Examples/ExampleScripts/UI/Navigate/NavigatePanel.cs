@@ -36,9 +36,9 @@ namespace Cosmos.Test
                 return;
             }
             if (welcome.gameObject.activeSelf)
-                UIManager.HideUIForm(welcome.UIFormName);
+                UIManager.DeactiveUIForm(welcome.UIFormName);
             else
-                UIManager.ShowUIForm(welcome.UIFormName);
+                UIManager.ActiveUIForm(welcome.UIFormName);
         }
         /// <summary>
         /// Invenmtory panel是常驻类型，若不存在，则载入；开启与关闭只进行显示与隐藏操作
@@ -52,9 +52,9 @@ namespace Cosmos.Test
                 return;
             }
             if (inventory.gameObject.activeSelf)
-                UIManager.HideUIForm(inventory.UIFormName);
+                UIManager.DeactiveUIForm(inventory.UIFormName);
             else
-                UIManager.ShowUIForm(inventory.UIFormName);
+                UIManager.ActiveUIForm(inventory.UIFormName);
         }
         void StoreClick()
         {
@@ -65,9 +65,9 @@ namespace Cosmos.Test
                 return;
             }
             if (store.gameObject.activeSelf)
-                UIManager.HideUIForm(store.UIFormName);
+                UIManager.DeactiveUIForm(store.UIFormName);
             else
-                UIManager.ShowUIForm(store.UIFormName);
+                UIManager.ActiveUIForm(store.UIFormName);
         }
         void SettingClick()
         {
@@ -78,9 +78,9 @@ namespace Cosmos.Test
                 return;
             }
             if (setting.gameObject.activeSelf)
-                UIManager.HideUIForm(setting.UIFormName);
+                UIManager.DeactiveUIForm(setting.UIFormName);
             else
-                UIManager.ShowUIForm(setting.UIFormName);
+                UIManager.ActiveUIForm(setting.UIFormName);
         }
         void StatusClick()
         {
@@ -91,16 +91,16 @@ namespace Cosmos.Test
                 return;
             }
             if (status.gameObject.activeSelf)
-                UIManager.HideUIForm(status.UIFormName);
+                UIManager.DeactiveUIForm(status.UIFormName);
             else
-                UIManager.ShowUIForm(status.UIFormName);
+                UIManager.ActiveUIForm(status.UIFormName);
         }
         void OperateGroup()
         {
             if (state)
-                UIManager.HideUIGroup("Example");
+                UIManager.ActiveUIGroup("Example");
             else
-                UIManager.ShowUIGroup("Example");
+                UIManager.DeactiveUIGroup("Example");
             state = !state;
         }
     }

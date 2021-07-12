@@ -12,19 +12,13 @@ namespace Cosmos
     {
         public bool IsPause { get; protected set; }
         #region Methods
-        /// <summary>
-        /// 空虚函数;
-        /// </summary>
-        public virtual void OnInitialization(){}
-        /// <summary>
-        /// 空虚函数，停止模块
-        /// </summary>
-        public virtual void OnTermination(){}
-        public virtual void OnActive() { }
-        public virtual void OnPreparatory() { }
-        public virtual void OnPause() { IsPause = true; }
-        public virtual void OnUnPause() { IsPause = false; }
-        public virtual void OnDeactive(){}
+        protected virtual void OnInitialization(){}
+        protected virtual void OnTermination(){}
+        protected virtual void OnActive() { }
+        protected virtual void OnPreparatory() { }
+        protected virtual void OnPause() { IsPause = true; }
+        protected virtual void OnUnPause() { IsPause = false; }
+        protected virtual void OnDeactive(){}
         #endregion
     }
 }

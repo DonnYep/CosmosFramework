@@ -31,11 +31,6 @@ namespace Cosmos.WebRequest
         /// 此地址可以是本地持久化地址，亦可是Remote Web地址；
         /// </summary>
         public string URL { get { return url; } set { url = value; } }
-        public override void OnPreparatory()
-        {
-            //初始化时会加载默认helper
-            webRequestHelper = new DefaultWebRequestHelper();
-        }
         /// <summary>
         /// 设置WebRequestHelper；
         /// </summary>
@@ -155,6 +150,11 @@ namespace Cosmos.WebRequest
         public Coroutine RequestTextureAsync(Uri uri, WebRequestCallback webRequestCallback, Action<Texture2D> resultCallback)
         {
             return webRequestHelper.RequestTextureAsync(uri, webRequestCallback, resultCallback);
+        }
+        protected override void OnPreparatory()
+        {
+            //初始化时会加载默认helper
+            webRequestHelper = new DefaultWebRequestHelper();
         }
     }
 }

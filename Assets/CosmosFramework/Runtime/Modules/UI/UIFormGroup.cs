@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos.UI
 {
-    internal class UIFormGroup// : IUIFormGroup
+    internal class UIFormGroup : IUIFormGroup
     {
         public string UIGroupName { get; }
         Dictionary<string, UIForm> uiFormDict;
@@ -42,11 +42,17 @@ namespace Cosmos.UI
         }
         public bool AddUIForm(UIForm uiForm)
         {
-            return uiFormDict.TryAdd(uiForm.UIFormName, uiForm);
+            var result= uiFormDict.TryAdd(uiForm.UIFormName, uiForm);
+            if (result)
+                uiForm.GroupName = UIGroupName;
+            return result;
         }
         public bool RemoveUIForm(UIForm uiForm)
         {
-            return uiFormDict.TryAdd(uiForm.UIFormName, uiForm);
+            var result = uiFormDict.TryAdd(uiForm.UIFormName, uiForm);
+            if (result)
+                uiForm.GroupName = string.Empty;
+            return result;
         }
     }
 }

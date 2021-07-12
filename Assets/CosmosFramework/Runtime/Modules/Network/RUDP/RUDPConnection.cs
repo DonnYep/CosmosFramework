@@ -141,7 +141,7 @@ namespace RUDP
                     sq.Pending.RemoveAll(x => x.Seq == ack.sequence);
             }
             else
-                Console.WriteLine($"[{GetType()}] RAW RECV: [{Encoding.ASCII.GetString(data, 0, length)}]");
+                Debug($"[{GetType()}] RAW RECV: [{Encoding.ASCII.GetString(data, 0, length)}]");
         }
 
         public void Send(string data)

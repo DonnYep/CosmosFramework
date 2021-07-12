@@ -15,16 +15,16 @@ public class StorePanel : UIForm
     {
         GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
     }
-    protected override void OnHide()
+    protected override void OnDeactive()
     {
-        Utility.Debug.LogInfo($"{UIFormName} OnHide");
+        Utility.Debug.LogInfo($"{UIFormName} OnDeactive");
     }
-    protected override void OnShow()
+    protected override void OnActive()
     {
-        Utility.Debug.LogInfo($"{UIFormName} OnShow");
+        Utility.Debug.LogInfo($"{UIFormName} OnActive");
     }
     void QuitClick()
     {
-        UIManager.HideUIForm(UIFormName);
+        UIManager.DeactiveUIForm(UIFormName);
     }
 }

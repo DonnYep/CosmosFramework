@@ -8,19 +8,15 @@ using System.Threading.Tasks;
 namespace Cosmos
 {
     /// <summary>
-    /// 默认提供的Helper
+    /// 默认提供的ui动效Helper
     /// </summary>
-    public class DefaultUIFormHelper : IUIFormHelper
+    public class DefaultUIFormHelper : IUIFormMotionHelper
     {
-        public void CloseUIForm(UIForm uiForm)
-        {
-            MonoGameManager.KillObject(uiForm.gameObject);
-        }
-        public void HideUIForm(UIForm uiForm)
+        public void DeactiveUIForm(UIForm uiForm)
         {
             uiForm.gameObject.SetActive(false);
         }
-        public void ShowUIForm(UIForm uiForm)
+        public void ActiveUIForm(UIForm uiForm)
         {
             uiForm.gameObject.SetActive(true);
         }

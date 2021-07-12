@@ -24,15 +24,6 @@ namespace Cosmos.Resource
         IResourceLoadHelper currentDefaultLoadHelper;
         #endregion
         #region Methods
-        public override void OnInitialization()
-        {
-            builtInChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
-            builtInChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourceLoader()));
-            builtInChannelDict.Add(ResourceLoadMode.AssetBundle, new ResourceLoadChannel(ResourceLoadMode.AssetBundle.ToString(), new AssetBundleLoader()));
-            builtInChannelDict.Add(ResourceLoadMode.QuarkAsset, new ResourceLoadChannel(ResourceLoadMode.QuarkAsset.ToString(), new QuarkAssetLoader()));
-            currentResourceLoadMode = ResourceLoadMode.Resource;
-            currentDefaultLoadHelper = builtInChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
-        }
         public void SwitchBuildInLoadMode(ResourceLoadMode resourceLoadMode)
         {
             if (builtInChannelDict.TryGetValue(resourceLoadMode, out var channel))
@@ -249,6 +240,15 @@ namespace Cosmos.Resource
         public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
         {
             currentDefaultLoadHelper.UnLoadAllAsset(unloadAllLoadedObjects);
+        }
+        protected override void OnInitialization()
+        {
+            builtInChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
+            builtInChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourceLoader()));
+            builtInChannelDict.Add(ResourceLoadMode.AssetBundle, new ResourceLoadChannel(ResourceLoadMode.AssetBundle.ToString(), new AssetBundleLoader()));
+            builtInChannelDict.Add(ResourceLoadMode.QuarkAsset, new ResourceLoadChannel(ResourceLoadMode.QuarkAsset.ToString(), new QuarkAssetLoader()));
+            currentResourceLoadMode = ResourceLoadMode.Resource;
+            currentDefaultLoadHelper = builtInChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
         }
         #endregion
     }
