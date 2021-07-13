@@ -42,16 +42,17 @@ namespace Cosmos.UI
         }
         public bool AddUIForm(IUIForm uiForm)
         {
+            //TODO需要设置最高Type级别，即第一继承IUIForm的Type；
             var result = uiFormDict.TryAdd(uiForm.UIFormName, uiForm);
             if (result)
-                Utility.Assembly.SetPropertyValue(uiForm, "UIGroupName", UIGroupName);
+                Utility.Assembly.SetPropertyValue(uiForm.GetType().BaseType,uiForm, "UIGroupName", UIGroupName);
             return result;
         }
         public bool RemoveUIForm(IUIForm uiForm)
         {
             var result = uiFormDict.TryAdd(uiForm.UIFormName, uiForm);
             if (result)
-                Utility.Assembly.SetPropertyValue(uiForm, "UIGroupName", string.Empty);
+                Utility.Assembly.SetPropertyValue(uiForm.GetType().BaseType,uiForm, "UIGroupName", string.Empty);
             return result;
         }
     }
