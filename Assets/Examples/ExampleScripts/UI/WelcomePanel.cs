@@ -9,27 +9,13 @@ public class WelcomePanel : UIForm
 {
     Text info;
     InputField inputMsg;
-    protected override void OnInitialization()
+    protected override void Awake()
     {
-        GetUIPanel<Button>("BtnShowInfo").onClick.AddListener(ShowInfo);
-        GetUIPanel<Button>("BtnHideInfo").onClick.AddListener(HideInfo);
-        GetUIPanel<Button>("BtnQuit").onClick.AddListener(Quit);
-        info = GetUIPanel<Image>("TxtInfo").transform.Find("Info").GetComponent<Text>();
-        inputMsg = GetUIPanel<InputField>("InputMsg");
-    }
-    protected override void OnTermination()
-    {
-        GetUIPanel<Button>("BtnShowInfo").onClick.RemoveAllListeners();
-        GetUIPanel<Button>("BtnHideInfo").onClick.RemoveAllListeners();
-        GetUIPanel<Button>("BtnQuit").onClick.RemoveAllListeners();
-    }
-    protected override void OnDeactive()
-    {
-        Utility.Debug.LogInfo($"{UIFormName} OnDeactive");
-    }
-    protected override void OnActive()
-    {
-        Utility.Debug.LogInfo($"{UIFormName} OnActive");
+        GetUILable<Button>("BtnShowInfo").onClick.AddListener(ShowInfo);
+        GetUILable<Button>("BtnHideInfo").onClick.AddListener(HideInfo);
+        GetUILable<Button>("BtnQuit").onClick.AddListener(Quit);
+        info = GetUILable<Image>("TxtInfo").transform.Find("Info").GetComponent<Text>();
+        inputMsg = GetUILable<InputField>("InputMsg");
     }
     void ShowInfo()
     {

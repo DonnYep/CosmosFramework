@@ -13,19 +13,19 @@ public class AlgorithmTester : MonoBehaviour
     public string[] strList;
     public void BinarySearch()
     {
-        Utility.Algorithm.SortByAscend( list, (v) => v,0,list.Length-1);
+        Utility.Algorithm.SortByAscend(ref list, (v) => v,0,list.Length-1);
         var result = Utility.Algorithm.BinarySearch(list, target, (v) => v);
         Utility.Debug.LogInfo("BinarySearch result index>>" + result);
     }
     public void StrBinarySearch()
     {
-        Utility.Algorithm.SortByAscend( strList, (v) => v);
+        Utility.Algorithm.SortByAscend( ref strList, (v) => v);
         var result = Utility.Algorithm.BinarySearch(strList, strTarget, (v) => v);
         Utility.Debug.LogInfo("BinarySearch result index>>" + result);
     }
     public void Sort()
     {
-        Utility.Algorithm.SortByDescend(list, (v)=>v,0, list.Length-1);
+        Utility.Algorithm.SortByDescend(ref list, (v)=>v,0, list.Length-1);
     }
     public void Max()
     {

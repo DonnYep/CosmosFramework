@@ -3,20 +3,17 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Cosmos.Resource;
 namespace Cosmos.UI
 {
     [Module]
     internal sealed class UIManager : Module, IUIManager
     {
         #region Properties
-        const string onActiveFunc = "OnActive";
-        const string onDeactiveFunc = "OnDeactive";
         /// <summary>
         /// UI 根对象；
         /// </summary>
-        public GameObject UIRoot { get; private set; }
-        Type uiFromBaseType = typeof(UIForm);
+        public Transform UIRoot { get; private set; }
+        Type uiFromBaseType = typeof(IUIForm);
         /// <summary>
         /// UI动效帮助体；
         /// </summary>
@@ -26,7 +23,6 @@ namespace Cosmos.UI
         /// </summary>
         IUIFormAssetHelper uiFormAssetHelper;
 
-        List<UIForm> peerFormCache;
         /// <summary>
         /// UIGroupName===UIGroup；
         /// </summary>
@@ -34,7 +30,7 @@ namespace Cosmos.UI
         /// <summary>
         /// UIFormName===UIForm；
         /// </summary>
-        Dictionary<string, UIForm> uiFormDict;
+        Dictionary<string, IUIForm> uiFormDict;
         #endregion
         #region Methods
 
@@ -43,12 +39,12 @@ namespace Cosmos.UI
         /// </summary>
         /// <param name="uiRoot">传入的UIRoot</param>
         /// <param name="destroyOldOne">销毁旧的uiRoot对象</param>
-        public void SetUIRoot(GameObject uiRoot, bool destroyOldOne = false)
+        public void SetUIRoot(Transform uiRoot, bool destroyOldOne = false)
         {
             if (destroyOldOne)
-                GameObject.Destroy(UIRoot);
+                GameObject.Destroy(UIRoot.gameObject);
             var mountGo = GameManager.GetModuleMount<IUIManager>();
-            uiRoot.transform.SetParent(mountGo.transform);
+            uiRoot.SetParent(mountGo.transform);
             UIRoot = uiRoot;
         }
         /// <summary>
@@ -73,7 +69,7 @@ namespace Cosmos.UI
         /// <typeparam name="T">目标组件的type类型</typeparam>
         /// <returns>生成的UI对象Comp</returns>
         public T OpenUIForm<T>()
-            where T : UIForm
+            where T : class, IUIForm
         {
             return OpenUIForm(typeof(T)) as T;
         }
@@ -82,7 +78,7 @@ namespace Cosmos.UI
         /// </summary>
         /// <param name="uiType">目标组件的type类型</param>
         /// <returns>生成的UI对象Comp</returns>
-        public UIForm OpenUIForm(Type uiType)
+        public IUIForm OpenUIForm(Type uiType)
         {
             var attribute = GetTypeAttribute(uiType);
             var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.UIGroupName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
@@ -95,7 +91,7 @@ namespace Cosmos.UI
         /// <param name="assetInfo">传入的assetInfo对象</param>
         /// <returns>生成的UI对象Comp</returns>
         public T OpenUIForm<T>(UIAssetInfo assetInfo)
-            where T : UIForm
+            where T : class, IUIForm
         {
             return OpenUIForm(assetInfo, typeof(T)) as T;
         }
@@ -105,9 +101,9 @@ namespace Cosmos.UI
         /// <param name="assetInfo">目标组件的type类型</param>
         /// <param name="uiType">传入的assetInfo对象</param>
         /// <returns>生成的UI对象Comp</returns>
-        public UIForm OpenUIForm(UIAssetInfo assetInfo, Type uiType)
+        public IUIForm OpenUIForm(UIAssetInfo assetInfo, Type uiType)
         {
-            UIForm uiForm = null;
+            IUIForm uiForm = null;
             CheckUIAssetInfoValid(assetInfo, uiType);
             if (HasUIForm(assetInfo.UIAssetName))
             {
@@ -135,9 +131,7 @@ namespace Cosmos.UI
             {
                 uiForm = uiFormAssetHelper.InstanceUIForm(assetInfo, uiType);
                 uiFormDict.Add(uiForm.UIFormName, uiForm);
-                uiForm.transform.SetParent(UIRoot.transform);
-                (uiForm.transform as RectTransform).ResetRectTransform();
-                SortUIForm(uiForm);
+                uiFormAssetHelper.AttachTo(uiForm, UIRoot);
                 return uiForm;
             }
         }
@@ -148,7 +142,7 @@ namespace Cosmos.UI
         /// <param name="callback">加载成功的回调。若失败，则不执行</param>
         /// <returns>协程对象</returns>
         public Coroutine OpenUIFormAsync<T>(Action<T> callback = null)
-    where T : UIForm
+    where T : class, IUIForm
         {
 
             Type uiType = typeof(T);
@@ -173,7 +167,7 @@ namespace Cosmos.UI
         /// <param name="uiType">目标组件的type类型</param>
         /// <param name="callback">加载完成后的回调</param>
         /// <returns>协程对象</returns>
-        public Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<UIForm> callback = null)
+        public Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback = null)
         {
             CheckUIAssetInfoValid(assetInfo, uiType);
             if (HasUIForm(assetInfo.UIAssetName))
@@ -184,8 +178,7 @@ namespace Cosmos.UI
             else
                 return uiFormAssetHelper.InstanceUIFormAsync(assetInfo, uiType, uiForm =>
                 {
-                    uiForm.transform.SetParent(UIRoot.transform);
-                    (uiForm.transform as RectTransform).ResetRectTransform();
+                    uiFormAssetHelper.AttachTo(uiForm, UIRoot);
                     callback?.Invoke(uiForm);
                     uiFormDict.Add(assetInfo.UIAssetName, uiForm);
                     if (!string.IsNullOrEmpty(assetInfo.UIGroupName))
@@ -197,7 +190,6 @@ namespace Cosmos.UI
                         }
                         group.AddUIForm(uiForm);
                     }
-                    SortUIForm(uiForm);
                 });
         }
         /// <summary>
@@ -208,7 +200,7 @@ namespace Cosmos.UI
         /// <param name="callback">加载完成后的回调</param>
         /// <returns>协程对象</returns>
         public Coroutine OpenUIFormAsync<T>(UIAssetInfo assetInfo, Action<T> callback = null)
-            where T : UIForm
+            where T : class, IUIForm
         {
             var type = typeof(T);
             CheckUIAssetInfoValid(assetInfo, type);
@@ -226,7 +218,7 @@ namespace Cosmos.UI
         /// <param name="uiType">带有UIAssetAttribute特性的panel类</param>
         /// <param name="callback">加载成功的回调。若失败，则不执行</param>
         /// <returns>协程对象</returns>
-        public Coroutine OpenUIFormAsync(Type uiType, Action<UIForm> callback = null)
+        public Coroutine OpenUIFormAsync(Type uiType, Action<IUIForm> callback = null)
         {
             var attribute = GetTypeAttribute(uiType);
             if (string.IsNullOrEmpty(attribute.UIAssetName))
@@ -251,12 +243,12 @@ namespace Cosmos.UI
         {
             CheckUIFormValid(uiFormName);
             uiFormDict.Remove(uiFormName, out var uiForm);
-            if (!string.IsNullOrEmpty(uiForm.GroupName))
+            if (!string.IsNullOrEmpty(uiForm.UIGroupName))
             {
-                uiGroupDict.TryGetValue(uiForm.GroupName, out var group);
+                uiGroupDict.TryGetValue(uiForm.UIGroupName, out var group);
                 group?.RemoveUIForm(uiForm);
                 if (group.UIFormCount <= 0)
-                    uiGroupDict.Remove(uiForm.GroupName);
+                    uiGroupDict.Remove(uiForm.UIGroupName);
             }
             uiFormAssetHelper.ReleaseUIForm(uiForm);
         }
@@ -270,7 +262,7 @@ namespace Cosmos.UI
             if (HasUIForm(uiFormName))
             {
                 uiFormDict.TryGetValue(uiFormName, out var uiForm);
-                DeactiveUIForm(uiForm);
+                uiFormMotionHelper.DeactiveUIForm(uiForm);
             }
         }
         /// <summary>
@@ -283,7 +275,7 @@ namespace Cosmos.UI
             if (HasUIForm(uiFormName))
             {
                 uiFormDict.TryGetValue(uiFormName, out var uiForm);
-                ActiveUIForm(uiForm);
+                uiFormMotionHelper.ActiveUIForm(uiForm);
             }
         }
         /// <summary>
@@ -294,7 +286,7 @@ namespace Cosmos.UI
         {
             if (uiGroupDict.TryGetValue(uiGroupName, out var group))
             {
-                UIForm[] uiFormArray = group.GetAllUIForm();
+                var uiFormArray = group.GetAllUIForm();
                 var length = uiFormArray.Length;
                 for (int i = 0; i < length; i++)
                     uiFormAssetHelper.ReleaseUIForm(uiFormArray[i]);
@@ -309,10 +301,10 @@ namespace Cosmos.UI
         {
             if (uiGroupDict.TryGetValue(uiGroupName, out var group))
             {
-                UIForm[] uiFormArray = group.GetAllUIForm();
+                var uiFormArray = group.GetAllUIForm();
                 var length = uiFormArray.Length;
                 for (int i = 0; i < length; i++)
-                    DeactiveUIForm(uiFormArray[i]);
+                    uiFormMotionHelper.DeactiveUIForm(uiFormArray[i]);
             }
         }
         /// <summary>
@@ -323,10 +315,10 @@ namespace Cosmos.UI
         {
             if (uiGroupDict.TryGetValue(uiGroupName, out var group))
             {
-                UIForm[] uiFormArray = group.GetAllUIForm();
+                var uiFormArray = group.GetAllUIForm();
                 var length = uiFormArray.Length;
                 for (int i = 0; i < length; i++)
-                    ActiveUIForm(uiFormArray[i]);
+                    uiFormMotionHelper.ActiveUIForm(uiFormArray[i]);
             }
         }
         /// <summary>
@@ -346,14 +338,14 @@ namespace Cosmos.UI
         /// 获取UIForm；
         /// </summary>
         public T PeekUIForm<T>(string uiFormName)
-            where T : UIForm
+            where T : class, IUIForm
         {
             return PeekUIForm(uiFormName) as T;
         }
         /// <summary>
         /// 获取UIForm；
         /// </summary>
-        public UIForm PeekUIForm(string uiFormName)
+        public IUIForm PeekUIForm(string uiFormName)
         {
             CheckUIFormValid(uiFormName);
             uiFormDict.TryGetValue(uiFormName, out var uiForm);
@@ -365,7 +357,7 @@ namespace Cosmos.UI
         /// <param name="uiGroupName">UI组的名字</param>
         /// <param name="handler">条件委托</param>
         /// <returns>符合条件的UIForm</returns>
-        public UIForm[] FindUIForms(string uiGroupName, Predicate<UIForm> handler)
+        public IUIForm[] FindUIForms(string uiGroupName, Predicate<IUIForm> handler)
         {
             if (string.IsNullOrEmpty(uiGroupName))
                 throw new ArgumentNullException("UIGroupName is invalid !");
@@ -381,22 +373,21 @@ namespace Cosmos.UI
         /// </summary>
         /// <param name="handler">条件委托</param>
         /// <returns>符合条件的UIForm</returns>
-        public UIForm[] FindtUIForms(Predicate<UIForm> handler)
+        public IUIForm[] FindtUIForms(Predicate<IUIForm> handler)
         {
             if (handler == null)
                 throw new ArgumentNullException("Handler is invalid !");
-            UIForm[] src = new UIForm[uiFormDict.Count];
+            var dst = new IUIForm[uiFormDict.Count];
             int idx = 0;
             foreach (var uiForm in uiFormDict.Values)
             {
                 if (handler.Invoke(uiForm))
                 {
-                    src[idx] = uiForm;
+                    dst[idx] = uiForm;
                     idx++;
                 }
             }
-            UIForm[] dst = new UIForm[idx];
-            Array.Copy(src, dst, dst.Length);
+            Array.Resize(ref dst, idx);
             return dst;
         }
         /// <summary>
@@ -415,7 +406,7 @@ namespace Cosmos.UI
                 uiGroupDict.Add(uiGroupName, group);
             }
             var uiForm = uiFormDict[uiFormName];
-            if (!string.IsNullOrEmpty(uiForm.GroupName))
+            if (!string.IsNullOrEmpty(uiForm.UIGroupName))
             {
                 if (uiGroupDict.TryGetValue(uiGroupName, out var latestGroup))
                     latestGroup.RemoveUIForm(uiForm);
@@ -430,17 +421,16 @@ namespace Cosmos.UI
         {
             CheckUIFormValid(uiFormName);
             var uiForm = uiFormDict[uiFormName];
-            if (!string.IsNullOrEmpty(uiForm.GroupName))
+            if (!string.IsNullOrEmpty(uiForm.UIGroupName))
             {
-                if (uiGroupDict.TryGetValue(uiForm.GroupName, out var group))
+                if (uiGroupDict.TryGetValue(uiForm.UIGroupName, out var group))
                     group.RemoveUIForm(uiForm);
             }
         }
         protected override void OnPreparatory()
         {
-            peerFormCache = new List<UIForm>();
             uiGroupDict = new Dictionary<string, IUIFormGroup>();
-            uiFormDict = new Dictionary<string, UIForm>();
+            uiFormDict = new Dictionary<string, IUIForm>();
             uiFormMotionHelper = new DefaultUIFormHelper();
             uiFormAssetHelper = new DefaultUIFormAssetHelper();
         }
@@ -454,16 +444,6 @@ namespace Cosmos.UI
                 throw new ArgumentException("UIFormName is invalid !");
             if (!uiFormDict.ContainsKey(uiFormName))
                 throw new ArgumentNullException($"UI  { uiFormName} is not existed or registered !");
-        }
-        void DeactiveUIForm(UIForm uiForm)
-        {
-            uiFormMotionHelper.DeactiveUIForm(uiForm);
-            Utility.Assembly.InvokeMethod(uiForm, onDeactiveFunc, null);
-        }
-        void ActiveUIForm(UIForm uiForm)
-        {
-            uiFormMotionHelper.ActiveUIForm(uiForm);
-            Utility.Assembly.InvokeMethod(uiForm, onActiveFunc, null);
         }
         void CheckUIAssetInfoValid(UIAssetInfo assetInfo, Type uiType)
         {
@@ -484,22 +464,6 @@ namespace Cosmos.UI
             if (attribute == null)
                 throw new ArgumentNullException($"Type:{uiType} has no UIAssetAttribute");
             return attribute;
-        }
-        void SortUIForm(UIForm uiForm)
-        {
-            //return;
-            //peerFormCache.Clear();
-            //var peers = Utility.Unity.Peers(uiForm.transform);
-            //var length = peers.Length;
-            //for (int i = 0; i < length; i++)
-            //{
-            //    if (uiDict.TryGetValue(peers[i].UI out var uiFormComp))
-            //    {
-            //        peerFormCache.Add(uiFormComp);
-            //    }
-            //}
-            //if (peerFormCache.Count > 0)
-            //    Utility.Unity.SortCompsByAscending(peerFormCache.ToArray(), (form) => form.Priority);
         }
         #endregion
 

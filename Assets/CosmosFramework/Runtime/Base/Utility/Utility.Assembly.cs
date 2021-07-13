@@ -436,6 +436,20 @@ where K : class
                     handler.Invoke(f.Name, f.GetValue(obj));
                 }
             }
+            public static void TraverseInstanceAllProperties(Type type, object obj, Action<string, object> handler)
+            {
+                if (type == null)
+                    throw new ArgumentNullException("type is invalid");
+                if (obj == null)
+                    throw new ArgumentNullException("obj is invalid");
+                if (handler == null)
+                    throw new ArgumentNullException("handler is invalid");
+                var properties= type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public |  BindingFlags.Static);
+                foreach (var p in properties)
+                {
+                    handler.Invoke(p.Name, p.GetValue(obj));
+                }
+            }
             /// <summary>
             /// 遍历type类型上的非对象字段；
             /// 包含静态、常量、属性等；
@@ -554,17 +568,59 @@ where K : class
                 return type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
                     Where(m => m.GetCustomAttributes<T>(inherit).Count() > 0).ToArray();
             }
-            public static void InvokeMethod<T>(T obj, string methodName ,object[] parameters=null)
+            public static void InvokeMethod(object obj, string methodName ,object[] parameters=null)
             {
                 if (obj == null)
                     throw new NullReferenceException("Obj is invalid !");
                 if (string.IsNullOrEmpty(methodName))
                     throw new ArgumentNullException("MethodName is invalid !");
-                var type = typeof(T);
-                var method = type.GetMethod(methodName,BindingFlags.Public| BindingFlags.Instance| BindingFlags.Static| BindingFlags.NonPublic);
+                Type type = obj.GetType();
+                var method = type.BaseType.GetMethod(methodName,BindingFlags.Public| BindingFlags.Instance| BindingFlags.Static| BindingFlags.NonPublic);
                 if (method == null)
                     throw new NullReferenceException($"Type : {type} can not find method : {methodName} !");
                 method.Invoke(obj,parameters);
+            }
+            public static void SetPropertyValue(object instance, string propertyName, object newValue)
+            {
+                Type type = instance.GetType();
+                PropertyInfo prop = type.BaseType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic );
+                prop.SetValue(instance, newValue, null);
+            }
+            public static void SetFieldValue(object obj, string fieldName, object value)
+            {
+                if (obj == null)
+                    throw new NullReferenceException("Obj is invalid !");
+                if (string.IsNullOrEmpty(fieldName))
+                    throw new ArgumentNullException("FieldName is invalid !");
+                Type type = obj.GetType();
+                var field = type.BaseType.GetField(fieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic );
+                if (field == null)
+                    throw new NullReferenceException($"Type : {type} can not find field: {fieldName} !");
+                field.SetValue(obj, value);
+            }
+            public static object GetPropertyValue(object obj, string propertyName)
+            {
+                if (obj == null)
+                    throw new NullReferenceException("Obj is invalid !");
+                if (string.IsNullOrEmpty(propertyName))
+                    throw new ArgumentNullException("PropertyName is invalid !");
+                Type type = obj.GetType();
+                var property = type.BaseType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic );
+                if (property == null)
+                    throw new NullReferenceException($"Type : {type} can not find property: {propertyName} !");
+                return property.GetValue(obj);
+            }
+            public static object GetFieldValue( object obj, string fieldName)
+            {
+                if (obj == null)
+                    throw new NullReferenceException("Obj is invalid !");
+                if (string.IsNullOrEmpty(fieldName))
+                    throw new ArgumentNullException("FieldName is invalid !");
+                Type type = obj.GetType();
+                var field = type.BaseType.GetField(fieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic );
+                if (field == null)
+                    throw new NullReferenceException($"Type : {type} can not find field: {fieldName} !");
+                return field.GetValue(obj);
             }
         }
     }

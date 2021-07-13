@@ -19,7 +19,7 @@ namespace Cosmos
             /// <param name="handler">排序条件</param>
             /// <param name="start">起始位</param>
             /// <param name="end">结束位</param>
-            public static void SortByDescend<T, K>(T[] array, Func<T, K> handler, int start, int end)
+            public static void SortByDescend<T, K>(ref T[] array, Func<T, K> handler, int start, int end)
                 where K : IComparable<K>
             {
                 if (array == null)
@@ -43,8 +43,8 @@ namespace Cosmos
                     }
                 }
                 Swap(array, storeIndex, end);
-                SortByDescend(array, handler, start, storeIndex - 1);
-                SortByDescend(array, handler, storeIndex + 1, end);
+                SortByDescend(ref array, handler, start, storeIndex - 1);
+                SortByDescend(ref array, handler, storeIndex + 1, end);
             }
             /// <summary>
             /// 快速排序：升序
@@ -55,7 +55,7 @@ namespace Cosmos
             /// <param name="handler">排序条件</param>
             /// <param name="start">起始位</param>
             /// <param name="end">结束位</param>
-            public static void SortByAscend<T, K>(T[] array, Func<T, K> handler, int start, int end)
+            public static void SortByAscend<T, K>(ref T[] array, Func<T, K> handler, int start, int end)
                 where K : IComparable<K>
             {
                 if (array == null)
@@ -79,8 +79,8 @@ namespace Cosmos
                     }
                 }
                 Swap(array, storeIndex, end);
-                SortByAscend(array, handler, start, storeIndex - 1);
-                SortByAscend(array, handler, storeIndex + 1, end);
+                SortByAscend(ref array, handler, start, storeIndex - 1);
+                SortByAscend(ref array, handler, storeIndex + 1, end);
             }
             /// <summary>
             /// 冒泡排序：升序
@@ -89,7 +89,7 @@ namespace Cosmos
             /// <typeparam name="K">比较类型</typeparam>
             /// <param name="array">需要排序的数组对象</param>
             /// <param name="handler">排序条件</param>
-            public static void SortByAscend<T, K>(T[] array, Func<T, K> handler)
+            public static void SortByAscend<T, K>(ref T[] array, Func<T, K> handler)
                 where K : IComparable<K>
             {
                 for (int i = 0; i < array.Length; i++)
@@ -112,7 +112,7 @@ namespace Cosmos
             /// <typeparam name="K">比较类型</typeparam>
             /// <param name="array">需要排序的数组对象</param>
             /// <param name="handler">排序条件</param>
-            public static void SortByDescend<T, K>(T[] array, Func<T, K> handler)
+            public static void SortByDescend<T, K>(ref T[] array, Func<T, K> handler)
                 where K : IComparable<K>
             {
                 for (int i = 0; i < array.Length; i++)
@@ -182,18 +182,17 @@ namespace Cosmos
             /// </summary>
             public static T[] FindAll<T>(T[] array, Predicate<T> handler)
             {
-                var srcArray = new T[array.Length];
-                int srcIdx = 0;
+                var dstArray = new T[array.Length];
+                int idx = 0;
                 for (int i = 0; i < array.Length; i++)
                 {
                     if (handler(array[i]))
                     {
-                        srcArray[srcIdx] = array[i];
-                        srcIdx++;
+                        dstArray[idx] = array[i];
+                        idx++;
                     }
                 }
-                var dstArray = new T[srcIdx];
-                Array.Copy(srcArray, dstArray, dstArray.Length);
+                Array.Resize(ref dstArray, idx);
                 return dstArray;
             }
             /// <summary>
@@ -374,7 +373,7 @@ namespace Cosmos
             {
                 return !Convert.ToBoolean(value & 0x1);
             }
-  
+
         }
     }
 }

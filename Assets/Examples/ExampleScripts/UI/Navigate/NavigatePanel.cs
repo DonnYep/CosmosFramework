@@ -15,14 +15,14 @@ namespace Cosmos.Test
         StorePanel store;
         StatusPanel status;
         bool state;
-        protected override void OnInitialization()
+        protected override void Awake()
         {
-            GetUIPanel<Button>("BtnWelcome").onClick.AddListener(WelcomeClick);
-            GetUIPanel<Button>("BtnInventory").onClick.AddListener(InventoryClick);
-            GetUIPanel<Button>("BtnStore").onClick.AddListener(StoreClick);
-            GetUIPanel<Button>("BtnStatus").onClick.AddListener(StatusClick);
-            GetUIPanel<Button>("BtnSetting").onClick.AddListener(SettingClick);
-            GetUIPanel<Button>("BtnOpGroup").onClick.AddListener(OperateGroup);
+            GetUILable<Button>("BtnWelcome").onClick.AddListener(WelcomeClick);
+            GetUILable<Button>("BtnInventory").onClick.AddListener(InventoryClick);
+            GetUILable<Button>("BtnStore").onClick.AddListener(StoreClick);
+            GetUILable<Button>("BtnStatus").onClick.AddListener(StatusClick);
+            GetUILable<Button>("BtnSetting").onClick.AddListener(SettingClick);
+            GetUILable<Button>("BtnOpGroup").onClick.AddListener(OperateGroup);
         }
         /// <summary>
         /// welcome panel 是临时类型，因此当panel存在时，点击移除，不存在时则载入

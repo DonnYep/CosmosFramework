@@ -149,7 +149,7 @@ namespace Cosmos
             }
             public static T Add<T>(Transform go, string subNode) where T : Component
             {
-                var childGo = Child(go, subNode);
+                var childGo = FindChild(go, subNode);
                 var comp = Add<T>(childGo);
                 return comp;
             }
@@ -181,14 +181,14 @@ namespace Cosmos
                     GameObject.Destroy(go.GetChild(i).gameObject);
                 }
             }
-            public static GameObject Child(Transform go, string subNode)
+            public static Transform FindChild(Transform go, string subNode)
             {
                 var trans = go.GetComponentsInChildren<Transform>();
                 var length = trans.Length;
                 for (int i = 1; i < length; i++)
                 {
                     if (trans[i].name.Equals(subNode))
-                        return trans[i].gameObject;
+                        return trans[i];
                 }
                 return null;
             }
@@ -198,23 +198,38 @@ namespace Cosmos
             /// <param name="go">目标对象</param>
             /// <param name="subNode">子级别目标对象名称</param>
             /// <returns>名字符合的对象数组</returns>
-            public static GameObject[] Childs(Transform go, string subNode)
+            public static Transform[] FindChilds(Transform go, string subNode)
             {
                 var trans = go.GetComponentsInChildren<Transform>();
-                List<GameObject> subGos = new List<GameObject>();
                 var length = trans.Length;
+                var dst = new Transform[length];
+                int idx = 0;
                 for (int i = 0; i < length; i++)
                 {
                     if (trans[i].name.Contains(subNode))
                     {
-                        subGos.Add(trans[i].gameObject);
+                        dst[idx] = trans[i];
+                        idx++;
                     }
                 }
-                return subGos.ToArray();
+                Array.Resize(ref dst, idx);
+                return dst;
             }
-            public static GameObject Child(GameObject go, string subNode)
+            public static T ChildComp<T>(Transform go, string subNode)
+      where T : Component
             {
-                return Child(go.transform, subNode);
+                var child = FindChild(go, subNode);
+                if (child == null)
+                    return null;
+                return child.GetComponent<T>();
+            }
+            public static T ParentComp<T>(Transform go, string parentNode)
+where T : Component
+            {
+                var parent = Parent(go, parentNode);
+                if (parent == null)
+                    return null;
+                return parent.GetComponent<T>();
             }
             /// <summary>
             /// 查找目标场景中的目标对象
@@ -247,37 +262,24 @@ namespace Cosmos
             /// <param name="go">同级别当前对象</param>
             /// <param name="subNode">同级别目标对象名称</param>
             /// <returns>查找到的目标对象</returns>
-            public static GameObject Peer(Transform go, string subNode)
+            public static Transform Peer(Transform go, string peerNode)
             {
-                Transform tran = go.parent.Find(subNode);
-                if (tran != null)
-                    return tran.gameObject;
-                else
+                Transform tran = go.parent.Find(peerNode);
+                if (tran == null)
                     return null;
+                return tran;
             }
             /// <summary>
             /// 查找同级别其他对象；
-            /// 略耗性能；
             /// </summary>
             /// <param name="go">同级别当前对象</param>
             /// <returns>当前级别下除此对象的其他同级的对象</returns>
-            public static GameObject[] Peers(Transform go)
+            public static Transform[] Peers(Transform go)
             {
                 Transform parentTrans = go.parent;
                 var childTrans = parentTrans.GetComponentsInChildren<Transform>();
                 var length = childTrans.Length;
-                List<GameObject> peersGo = new List<GameObject>();
-                if (length > 0)
-                {
-                    for (int i = 0; i < length; i++)
-                    {
-                        if (childTrans[i].parent == parentTrans && childTrans[i] != go)
-                        {
-                            peersGo.Add(childTrans[i].gameObject);
-                        }
-                    }
-                }
-                return peersGo.Count > 0 ? peersGo.ToArray() : null;
+                return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != go);
             }
             /// <summary>
             /// 查找同级别下所有目标组件；
@@ -317,7 +319,7 @@ namespace Cosmos
                 where K : IComparable<K>
                 where T : Component
             {
-                Utility.Algorithm.SortByAscend(comps, handler);
+                Utility.Algorithm.SortByAscend(ref comps, handler);
                 var length = comps.Length;
                 for (int i = 0; i < length; i++)
                 {
@@ -335,35 +337,17 @@ namespace Cosmos
         where K : IComparable<K>
         where T : Component
             {
-                Utility.Algorithm.SortByDescend(comps, handler);
+                Utility.Algorithm.SortByDescend(ref comps, handler);
                 var length = comps.Length;
                 for (int i = 0; i < length; i++)
                 {
                     comps[i].transform.SetSiblingIndex(i);
                 }
             }
-            public static GameObject[] Peers(GameObject go)
-            {
-                return Peers(go.transform);
-            }
-            /// <summary>
-            /// 查找同级别
-            /// </summary>
-            /// <param name="go">同级别当前对象</param>
-            /// <param name="subNode">同级别目标对象名称</param>
-            /// <returns></returns>
-            public static GameObject Peer(GameObject go, string subNode)
-            {
-                return Peer(go.transform, subNode);
-            }
-            public static GameObject Parent(Transform go, string parentNode)
+            public static Transform Parent(Transform go, string parentNode)
             {
                 var par = go.GetComponentsInParent<Transform>();
-                return Algorithm.Find(par, p => p.gameObject.name == parentNode).gameObject;
-            }
-            public static GameObject Parent(GameObject go, string parentNode)
-            {
-                return Parent(go.transform, parentNode);
+                return Algorithm.Find(par, p => p.gameObject.name == parentNode);
             }
             /// <summary>
             /// 判断是否是路径；
@@ -430,7 +414,7 @@ namespace Cosmos
             }
             public static Texture2D BytesToTexture2D(byte[] bytes, int width, int height)
             {
-                Texture2D texture2D = new Texture2D(width,height);
+                Texture2D texture2D = new Texture2D(width, height);
                 texture2D.LoadImage(bytes);
                 return texture2D;
             }
@@ -675,7 +659,7 @@ namespace Cosmos
                 }
                 downloadedCallback.Invoke(requestList.ToArray());
             }
-            static IEnumerator EnumBytesUnityWebRequests(UnityWebRequest[] unityWebRequests, Action<float> overallProgress, Action<float> progress, Action< IList< byte[]>> downloadedCallback)
+            static IEnumerator EnumBytesUnityWebRequests(UnityWebRequest[] unityWebRequests, Action<float> overallProgress, Action<float> progress, Action<IList<byte[]>> downloadedCallback)
             {
                 var length = unityWebRequests.Length;
                 var count = length - 1;

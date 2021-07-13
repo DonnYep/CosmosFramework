@@ -76,6 +76,54 @@ namespace Cosmos
             }
             return component;
         }
+        public static T GetComponentInParent<T>(this GameObject gameObject,string parentName)
+            where T :Component
+        {
+            return GetComponentInParent<T>(gameObject.transform,parentName);
+        }
+        public static T GetComponentInParent<T>(this Transform transform, string parentName)
+    where T : Component
+        {
+            var parent = transform.GetComponentsInParent<Transform>();
+            var length = parent.Length;
+            Transform parentTrans = null;
+            for (int i = 0; i < length; i++)
+            {
+                if (parent[i].name == parentName)
+                {
+                    parentTrans = parent[i];
+                    break;
+                }
+            }
+            if (parentTrans == null)
+                return null;
+            var comp = parentTrans.GetComponent<T>();
+            return comp;
+        }
+        public static T GetComponentInChildren<T>(this GameObject gameObject, string childName)
+            where T :Component
+        {
+            return GetComponentInChildren<T>(gameObject.transform, childName);
+        }
+        public static T GetComponentInChildren<T>(this Transform  transform, string childName)
+    where T : Component
+        {
+            var childs = transform.GetComponentsInChildren<Transform>();
+            var length = childs.Length;
+            Transform childTrans = null;
+            for (int i = 0; i < length; i++)
+            {
+                if (childs[i].name == childName)
+                {
+                    childTrans = childs[i];
+                    break;
+                }
+            }
+            if (childTrans == null)
+                return null;
+            var comp = childTrans.GetComponent<T>();
+            return comp;
+        }
         public static Vector2 ConvertToVector2(this Vector3 vector3)
         {
             return new Vector2(vector3.x, vector3.z);

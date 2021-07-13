@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Cosmos
 {
@@ -12,13 +13,13 @@ namespace Cosmos
     /// </summary>
     public class DefaultUIFormHelper : IUIFormMotionHelper
     {
-        public void DeactiveUIForm(UIForm uiForm)
+        public void DeactiveUIForm(IUIForm uiForm)
         {
-            uiForm.gameObject.SetActive(false);
+            uiForm.Handle.CastTo<GameObject>().SetActive(false);
         }
-        public void ActiveUIForm(UIForm uiForm)
+        public void ActiveUIForm(IUIForm uiForm)
         {
-            uiForm.gameObject.SetActive(true);
+            uiForm.Handle.CastTo<GameObject>().SetActive(true);
         }
     }
 }

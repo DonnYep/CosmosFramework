@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,49 +10,48 @@ namespace Cosmos.UI
     internal class UIFormGroup : IUIFormGroup
     {
         public string UIGroupName { get; }
-        Dictionary<string, UIForm> uiFormDict;
+        Dictionary<string, IUIForm> uiFormDict;
         public int UIFormCount { get { return uiFormDict.Count; } }
         public UIFormGroup(string uiGroupName)
         {
             UIGroupName = uiGroupName;
-            uiFormDict = new Dictionary<string, UIForm>();
+            uiFormDict = new Dictionary<string, IUIForm>();
         }
-        public UIForm[] GetAllUIForm()
+        public IUIForm[] GetAllUIForm()
         {
             return uiFormDict.Values.ToArray();
         }
-        public UIForm[] GetUIForms(Predicate<UIForm> predicate)
+        public IUIForm[] GetUIForms(Predicate<IUIForm> predicate)
         {
-            UIForm[] src = new UIForm[UIFormCount];
+            var dst = new IUIForm[UIFormCount];
             int idx = 0;
             foreach (var uiForm in uiFormDict.Values)
             {
                 if (predicate.Invoke(uiForm))
                 {
-                    src[idx] = uiForm;
+                    dst[idx] = uiForm;
                     idx++;
                 }
             }
-            UIForm[] dst = new UIForm[idx];
-            Array.Copy(src, dst, dst.Length);
+            Array.Resize(ref dst, idx);
             return dst;
         }
         public bool HasUIForm(string uiFormName)
         {
             return uiFormDict.ContainsKey(uiFormName);
         }
-        public bool AddUIForm(UIForm uiForm)
-        {
-            var result= uiFormDict.TryAdd(uiForm.UIFormName, uiForm);
-            if (result)
-                uiForm.GroupName = UIGroupName;
-            return result;
-        }
-        public bool RemoveUIForm(UIForm uiForm)
+        public bool AddUIForm(IUIForm uiForm)
         {
             var result = uiFormDict.TryAdd(uiForm.UIFormName, uiForm);
             if (result)
-                uiForm.GroupName = string.Empty;
+                Utility.Assembly.SetPropertyValue(uiForm, "UIGroupName", UIGroupName);
+            return result;
+        }
+        public bool RemoveUIForm(IUIForm uiForm)
+        {
+            var result = uiFormDict.TryAdd(uiForm.UIFormName, uiForm);
+            if (result)
+                Utility.Assembly.SetPropertyValue(uiForm, "UIGroupName", string.Empty);
             return result;
         }
     }

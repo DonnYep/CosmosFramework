@@ -14,10 +14,10 @@ public class LoadingScenePanel : UIForm
     Slider sldProgress;
     ISceneManager sceneManager;
 
-    protected override void OnInitialization()
+    protected override void Awake()
     {
-        txtProgress = GetUIPanel<Text>("TxtProgress");
-        sldProgress = GetUIPanel<Slider>("SldProgress");
+        txtProgress = GetUILable<Text>("TxtProgress");
+        sldProgress = GetUILable<Slider>("SldProgress");
         sceneManager = GameManager.GetModule<ISceneManager>();
         LoadLevel();
     }

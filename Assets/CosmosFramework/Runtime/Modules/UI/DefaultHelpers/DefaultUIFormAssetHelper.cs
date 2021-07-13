@@ -12,7 +12,7 @@ namespace Cosmos.UI
     {
         IResourceManager ResourceManager { get { return CosmosEntry.ResourceManager; } }
         Type uiFromBaseType = typeof(UIForm);
-        public UIForm InstanceUIForm(UIAssetInfo assetInfo, Type uiType)
+        public IUIForm InstanceUIForm(UIAssetInfo assetInfo, Type uiType)
         {
             if (assetInfo == null)
                 throw new ArgumentNullException("UIAssetInfo is invalid !");
@@ -24,7 +24,7 @@ namespace Cosmos.UI
             var comp = panel.GetOrAddComponent(uiType) as UIForm;
             return comp;
         }
-        public Coroutine InstanceUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<UIForm> doneCallback)
+        public Coroutine InstanceUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> doneCallback)
         {
             if (assetInfo == null)
                 throw new ArgumentNullException("UIAssetInfo is invalid !");
@@ -39,9 +39,26 @@ namespace Cosmos.UI
                 doneCallback?.Invoke(comp);
             }, null, true);
         }
-        public void ReleaseUIForm(UIForm uiForm)
+        public void ReleaseUIForm(IUIForm uiForm)
         {
-            GameObject.Destroy(uiForm);
+            GameObject.Destroy(uiForm.Handle.CastTo<GameObject>());
+        }
+        public void AttachTo(IUIForm src, IUIForm dst)
+        {
+            var srcTrans = src.Handle.CastTo<GameObject>().transform;
+            var dstTrans=dst.Handle.CastTo<GameObject>().transform;
+            srcTrans.SetParent(dstTrans);
+            (srcTrans as RectTransform).ResetRectTransform();
+        }
+        public void DetachFrom(IUIForm src, IUIForm dst)
+        {
+            dst.Handle.CastTo<GameObject>().transform.SetParent(null);
+        }
+        public void AttachTo(IUIForm src,  Transform dst)
+        {
+           var trans= src.Handle.CastTo<GameObject>().transform;
+            trans.SetParent(dst);
+            (trans as RectTransform).ResetRectTransform();
         }
     }
 }

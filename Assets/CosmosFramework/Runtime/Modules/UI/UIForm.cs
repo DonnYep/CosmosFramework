@@ -7,9 +7,22 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 namespace Cosmos.UI
 {
+    /// <summary>
+    /// 严格定义上，Panel是lable的容器。lable是作为组件存在，例如Text、Image等
+    /// </summary>
     [DisallowMultipleComponent]
-    public abstract class UIForm: MonoBehaviour
+    public abstract class UIForm : MonoBehaviour, IUIForm
     {
+        struct UILableInfo
+        {
+            public UILableInfo(Type uIType, UIBehaviour uIBehaviour)
+            {
+                UIType = uIType;
+                UIBehaviour = uIBehaviour;
+            }
+            public Type UIType { get; private set; }
+            public UIBehaviour UIBehaviour { get; private set; }
+        }
         /// <summary>
         /// 设置 UIForm层级顺序 ；
         /// 默认优先级为100，取值区间为[0,10000]；
@@ -28,16 +41,8 @@ namespace Cosmos.UI
             }
         }
         protected int priority = 100;
-        protected IUIManager UIManager { get { return GameManager.GetModule<IUIManager>(); } }
-        /// <summary>
-        /// UI的映射表，名字作为主键，具有一个list容器
-        /// </summary>
-        Dictionary<string, List<UIBehaviour>> uiPanelDict;
-        /// <summary>
-        /// 是否自动注册获取当前节点下的UIBehaviour对象
-        /// </summary>
-        protected bool autoGetUIComponents = true;
-        public virtual string UIFormName
+        public object Handle { get { return gameObject; } }
+        public string UIFormName
         {
             get
             {
@@ -45,109 +50,63 @@ namespace Cosmos.UI
                     uiFormName = GetComponent<UIForm>().GetType().Name;
                 return uiFormName;
             }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                    uiFormName = value;
+            }
         }
+        public string UIGroupName { get; private set; }
+        protected IUIManager UIManager { get { return CosmosEntry.UIManager; } }
         /// <summary>
-        /// 所属组的名称；
+        /// Name===[Lnk=== UILableInfo]；
         /// </summary>
-        public string GroupName { get; internal set; }
+        Dictionary<string, LinkedList<UILableInfo>> uiLableDict
+            = new Dictionary<string, LinkedList<UILableInfo>>();
         string uiFormName;
-        public bool HasUIPanel(string name)
+        protected virtual void Awake() { }
+        protected virtual void OnDestroy() { }
+        protected bool HasLable<T>(string lableName)
         {
-            return uiPanelDict.ContainsKey(name);
+            if (uiLableDict.ContainsKey(lableName))
+                return true;
+            var go = Utility.Unity.FindChild(transform, lableName);
+            var comp = go.GetComponent<T>();
+            if (comp != null)
+                return true;
+            return false;
         }
         /// <summary>
-        /// 被开启；
+        /// 获取标签控件；
+        /// 预先查询已经缓存的控件数据，若不存在，则动态获取缓存并返回；
         /// </summary>
-        protected virtual void OnActive() { }
-        /// <summary>
-        /// 被关闭；
-        /// </summary>
-        protected virtual void OnDeactive() { }
-        protected abstract void OnInitialization();
-        protected T GetUIPanel<T>(string name)
+        /// <typeparam name="T">控件类型</typeparam>
+        /// <param name="lableName">控件名</param>
+        /// <returns>控件组件</returns>
+        protected T GetUILable<T>(string lableName)
             where T : UIBehaviour
         {
-            if (HasUIPanel(name))
+            T comp = null;
+            if (uiLableDict.ContainsKey(lableName))
             {
-                short listCount = (short)uiPanelDict[name].Count;
-                for (short i = 0; i < listCount; i++)
+                Type type = typeof(T);
+                var lnk = uiLableDict[lableName];
+                foreach (var info in lnk)
                 {
-                    var result = uiPanelDict[name][i] as T;
-                    if (result != null)
-                        return result;
+                    if (info.UIType == type)
+                        return info.UIBehaviour as T;
                 }
             }
-            return null;
-        }
-        /// <summary>
-        /// 获取默认节点下的UIBehaviour；
-        /// </summary>
-        /// <typeparam name="T">目标类型</typeparam>
-        protected void GetUIComponents<T>()
-            where T : UIBehaviour
-        {
-            T[] uiPanels = GetComponentsInChildren<T>();
-            string panelName;
-            short panelCount = (short)uiPanels.Length;
-            for (short i = 0; i < panelCount; i++)
+            else
             {
-                panelName = uiPanels[i].gameObject.name;
-                if (uiPanelDict.ContainsKey(panelName))
-                {
-                    uiPanelDict[panelName].Add(uiPanels[i]);
-                }
-                else
-                {
-                    uiPanelDict.Add(panelName, new List<UIBehaviour>() { uiPanels[i] });
-                }
+                comp = gameObject.GetComponentInChildren<T>(lableName);
+                if (comp == null)
+                    return null;
+                var lnk = new LinkedList<UILableInfo>();
+                lnk.AddLast(new UILableInfo(typeof(T), comp));
+                uiLableDict.Add(lableName, lnk);
             }
-        }
-        /// <summary>
-        /// 获取指定节点下的UI组件
-        /// </summary>
-        /// <typeparam name="T">UGUI目标类型</typeparam>
-        /// <param name="root">目标节点</param>
-        protected void GetUIComponents<T>(Transform root)
-            where T : UIBehaviour
-        {
-            T[] uiPanels = root.GetComponentsInChildren<T>();
-            string panelName;
-            short panelCount = (short)uiPanels.Length;
-            for (short i = 0; i < panelCount; i++)
-            {
-                panelName = uiPanels[i].gameObject.name;
-                if (uiPanelDict.ContainsKey(panelName))
-                {
-                    uiPanelDict[panelName].Add(uiPanels[i]);
-                }
-                else
-                {
-                    uiPanelDict.Add(panelName, new List<UIBehaviour>() { uiPanels[i] });
-                }
-            }
-        }
-        /// <summary>
-        /// 空虚函数
-        /// </summary>
-        protected virtual void OnTermination() { }
-        void Awake()
-        {
-            uiPanelDict = new Dictionary<string, List<UIBehaviour>>();
-            if (autoGetUIComponents)
-            {
-                GetUIComponents<Button>();
-                GetUIComponents<Text>();
-                GetUIComponents<Slider>();
-                GetUIComponents<ScrollRect>();
-                GetUIComponents<Image>();
-                GetUIComponents<InputField>();
-            }
-            OnInitialization();
-        }
-        void OnDestroy()
-        {
-            OnTermination();
-            uiPanelDict?.Clear();
+            return comp;
         }
     }
 }

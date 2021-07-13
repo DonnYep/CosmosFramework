@@ -11,15 +11,11 @@ public class ReSceneLoader : UIForm
     InputField inputTargetLevel;
     ISceneManager sceneManager;
 
-    protected override void OnInitialization()
+    protected override void Awake()
     {
-        GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
-        inputTargetLevel = GetUIPanel<InputField>("InputTargetLevel");
+        GetUILable<Button>("BtnLoad").onClick.AddListener(LoadClick);
+        inputTargetLevel = GetUILable<InputField>("InputTargetLevel");
         sceneManager = GameManager.GetModule<ISceneManager>();
-    }
-    protected override void OnTermination()
-    {
-        GetUIPanel<Button>("BtnLoad").onClick.RemoveAllListeners();
     }
     void LoadClick()
     {

@@ -14,13 +14,13 @@ namespace Cosmos.Test
         Button btnDisconnect;
         InputField inputMsg;
 
-        protected override void OnInitialization()
+        protected override void Awake()
         {
-            btnConnect = GetUIPanel<Button>("BtnConnect");
+            btnConnect = GetUILable<Button>("BtnConnect");
             btnConnect.onClick.AddListener(ConnectClick);
-            btnDisconnect = GetUIPanel<Button>("BtnDisconnect");
+            btnDisconnect = GetUILable<Button>("BtnDisconnect");
             btnDisconnect.onClick.AddListener(DisconnectClick);
-            inputMsg = GetUIPanel<InputField>("InputMsg");
+            inputMsg = GetUILable<InputField>("InputMsg");
         }
         void ConnectClick()
         {

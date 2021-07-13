@@ -15,10 +15,10 @@ namespace Cosmos
         /// <summary>
         /// 激活；
         /// </summary>
-        void ActiveUIForm(UIForm uiForm);
+        void ActiveUIForm(IUIForm uiForm);
         /// <summary>
         /// 失活；
         /// </summary>
-        void DeactiveUIForm(UIForm uiForm);
+        void DeactiveUIForm(IUIForm uiForm);
     }
 }

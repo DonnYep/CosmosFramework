@@ -25,24 +25,16 @@ namespace Cosmos.Test
             SlotContext.UpdateSlot(invDataSet);
             SlotContext.UpdateItem(invDataSet);
         }
-        protected override void OnInitialization()
+        protected override void Awake()
         {
-            GetUIPanel<Button>("BtnLoad").onClick.AddListener(LoadClick);
-            GetUIPanel<Button>("BtnQuit").onClick.AddListener(QuitClick);
-            GetUIPanel<Button>("BtnSave").onClick.AddListener(SaveClick);
-            GetUIPanel<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
+            GetUILable<Button>("BtnLoad").onClick.AddListener(LoadClick);
+            GetUILable<Button>("BtnQuit").onClick.AddListener(QuitClick);
+            GetUILable<Button>("BtnSave").onClick.AddListener(SaveClick);
+            GetUILable<Button>("BtnUpdate").onClick.AddListener(UpdateClick);
 
             MVVM.Dispatch(MVVMDefine.CMD_Inventory);
             slotContext = gameObject.GetComponentInChildren<SlotContext>();
-            txtDescription = GetUIPanel<Text>("TxtDescription");
-        }
-        protected override void OnDeactive()
-        {
-            Utility.Debug.LogInfo($"{UIFormName} OnHide");
-        }
-        protected override void OnActive()
-        {
-            Utility.Debug.LogInfo($"{UIFormName} OnShow");
+            txtDescription = GetUILable<Text>("TxtDescription");
         }
         private void Start()
         {
