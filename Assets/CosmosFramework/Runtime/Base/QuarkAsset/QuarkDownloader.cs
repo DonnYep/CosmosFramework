@@ -86,37 +86,38 @@ namespace Cosmos.Quark
             remove { downloadFinish -= value; }
         }
         #endregion
+        public string DownloadPath { get; private set; }
+        public string URL { get; private set; }
+        public int DownloadTimeout { get; private set; }
+        public bool DeleteFailureFile { get; set; }
+
         /// <summary>
         /// 是否正在下载；
         /// </summary>
         public bool Downloading { get; private set; }
         /// <summary>
-        /// 可下载的资源总数；
+        /// 下载中的资源总数；
         /// </summary>
-        public int DownloadableCount { get; private set; }
+        public int DownloadingCount { get { return pendingURIs.Count; } }
 
         List<string> pendingURIs = new List<string>();
         List<string> successURIs = new List<string>();
         List<string> failureURIs = new List<string>();
-
-        Dictionary<string, ResponseData> dataCacheDict = new Dictionary<string, ResponseData>();
 
         /// <summary>
         /// URI===[[缓存的长度===写入本地的长度]]；
         /// 数据写入记录；
         /// </summary>
         Dictionary<string, ResponseWriteInfo> dataWriteDict = new Dictionary<string, ResponseWriteInfo>();
-
         DateTime downloadStartTime;
         DateTime downloadEndTime;
 
         UnityWebRequest unityWebRequest;
 
-        QuarkDownloadConfig downloadConfig;
         /// <summary>
         /// 单位资源的百分比比率；
         /// </summary>
-        float unitResRatio;
+        float UnitResRatio { get { return 100f / downloadCount; } }
         /// <summary>
         /// 当前下载的序号；
         /// </summary>
@@ -125,12 +126,41 @@ namespace Cosmos.Quark
         /// 当前是否可下载；
         /// </summary>
         bool canDownload;
-        public void SetDownloadConfig(QuarkDownloadConfig downloadConfig)
+        /// <summary>
+        /// 下载任务数量；
+        /// </summary>
+        int downloadCount = 0;
+        public void InitDownloader(string url, string downloadPath)
         {
-            this.downloadConfig = downloadConfig;
-            pendingURIs.AddRange(downloadConfig.FileList);
-            DownloadableCount = downloadConfig.FileList.Length;
-            unitResRatio = 100f / DownloadableCount;
+            this.URL = url;
+            this.DownloadPath = downloadPath;
+        }
+        /// <summary>
+        /// 移除下载文件；
+        /// </summary>
+        /// <param name="fileName">文件名</param>
+        public void RemoveDownloadFile(string fileName)
+        {
+            if (pendingURIs.Remove(fileName))
+                downloadCount--;
+        }
+        /// <summary>
+        /// 添加下载文件；
+        /// </summary>
+        /// <param name="fileName">文件名</param>
+        public void AddDownloadFile(string fileName)
+        {
+            pendingURIs.Add(fileName);
+            downloadCount++;
+        }
+        /// <summary>
+        /// 添加多个下载文件
+        /// </summary>
+        /// <param name="fileList">文件列表</param>
+        public void AddDownloadFiles(string[] fileList)
+        {
+            pendingURIs.AddRange(fileList);
+            downloadCount += fileList.Length;
         }
         /// <summary>
         /// 启动下载；
@@ -139,22 +169,27 @@ namespace Cosmos.Quark
         {
             canDownload = true;
             if (pendingURIs.Count == 0 || !canDownload)
+            {
+                canDownload = false;
                 return;
+            }
             Downloading = true;
             downloadStartTime = DateTime.Now;
-            //RecursiveDownload();
-            Utility.Unity.StartCoroutine(EnumWebRequest());
+            Utility.Unity.StartCoroutine(DownloadMultipleFiles());
+        }
+        /// <summary>
+        /// 移除所有下载；
+        /// </summary>
+        public void RemoveAllDownload()
+        {
+            OnCancelDownload();
         }
         /// <summary>
         /// 终止下载，谨慎使用；
         /// </summary>
         public void CancelDownload()
         {
-            failureURIs.AddRange(pendingURIs);
-            pendingURIs.Clear();
-            downloadFinish?.Invoke(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
-            unityWebRequest?.Abort();
-            canDownload = false;
+            OnCancelDownload();
         }
         public void Release()
         {
@@ -163,87 +198,69 @@ namespace Cosmos.Quark
             downloadFailure = null;
             downloadOverall = null;
             downloadFinish = null;
-            downloadConfig.Reset();
-            DownloadableCount = 0;
+            downloadCount = 0;
         }
-        IEnumerator EnumWebRequest()
+        IEnumerator DownloadMultipleFiles()
         {
-            var length = pendingURIs.Count;
-            for (int i = 0; i < length; i++)
+            while (pendingURIs.Count > 0)
             {
-                currentDownloadIndex = i;
-                var fileDownloadPath = Path.Combine(downloadConfig.DownloadPath, pendingURIs[i]);
-                var remoteUri = Utility.IO.WebPathCombine(downloadConfig.URL, pendingURIs[i]);
-                yield return DownloadWebRequest(remoteUri, fileDownloadPath);
+                var uri = pendingURIs.RemoveFirst();
+                currentDownloadIndex = downloadCount - pendingURIs.Count - 1;
+                var fileDownloadPath = Path.Combine(DownloadPath, uri);
+                var remoteUri = Utility.IO.WebPathCombine(URL, uri);
+                yield return DownloadSingleFile(remoteUri, fileDownloadPath);
             }
-            canDownload = false;
-            Downloading = false;
-            downloadEndTime = DateTime.Now;
-            downloadFinish?.Invoke(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
+            OnDownloadedPendingFiles();
         }
-        IEnumerator DownloadWebRequest(string uri, string fileDownloadPath)
+        IEnumerator DownloadSingleFile(string uri, string downloadPath)
         {
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
                 Downloading = true;
                 unityWebRequest = request;
-                var timeout = Convert.ToInt32(downloadConfig.DownloadTimeout);
+                var timeout = Convert.ToInt32(DownloadTimeout);
                 if (timeout > 0)
                     request.timeout = timeout;
-                downloadStart?.Invoke(uri, fileDownloadPath);
+                downloadStart?.Invoke(uri, downloadPath);
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
                 {
-                    ProcessOverallProgress(uri, downloadConfig.DownloadPath, request.downloadProgress);
-                    var responseData = new ResponseData(uri, request.downloadHandler.data, fileDownloadPath);
-                    yield return WriteResponseData(responseData);
+                    OnFileDownloading(uri, DownloadPath, request.downloadProgress);
+                    var responseData = new ResponseData(uri, request.downloadHandler.data, downloadPath);
+                    yield return OnDownloadedData(responseData);
                 }
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
                 {
                     if (request.isDone)
                     {
                         Downloading = false;
-                        var responseData = new ResponseData(uri, request.downloadHandler.data, fileDownloadPath);
-                        yield return WriteResponseData(responseData);
-                        downloadSuccess?.Invoke(uri, fileDownloadPath, request.downloadHandler.data);
-                        ProcessOverallProgress(uri, downloadConfig.DownloadPath, 1);
+                        var responseData = new ResponseData(uri, request.downloadHandler.data, downloadPath);
+                        yield return OnDownloadedData(responseData);
+                        downloadSuccess?.Invoke(uri, downloadPath, request.downloadHandler.data);
+                        OnFileDownloading(uri, DownloadPath, 1);
                         successURIs.Add(uri);
                     }
                 }
                 else
                 {
                     Downloading = false;
-                    downloadFailure?.Invoke(request.url, fileDownloadPath, request.error);
+                    downloadFailure?.Invoke(request.url, downloadPath, request.error);
                     failureURIs.Add(uri);
-                    ProcessOverallProgress(uri, downloadConfig.DownloadPath, 1);
-                    if (downloadConfig.DeleteFailureFile)
+                    OnFileDownloading(uri, DownloadPath, 1);
+                    if (DeleteFailureFile)
                     {
-                        Utility.IO.DeleteFile(fileDownloadPath);
+                        Utility.IO.DeleteFile(downloadPath);
                     }
                 }
             }
         }
-        /// <summary>
-        /// 处理整体进度；
-        /// individualPercent 0~1；
-        /// </summary>
-        /// <param name="uri">资源地址</param>
-        /// <param name="downloadPath">下载到本地的目录</param>
-        /// <param name="individualPercent">资源个体百分比0~1</param>
-        void ProcessOverallProgress(string uri, string downloadPath, float individualPercent)
-        {
-            var overallIndexPercent = 100 * ((float)currentDownloadIndex / DownloadableCount);
-            var overallProgress = overallIndexPercent + (unitResRatio * individualPercent);
-            downloadOverall.Invoke(uri, downloadPath, overallProgress, individualPercent * 100);
-        }
-        Task WriteResponseData(ResponseData responseData)
+        Task OnDownloadedData(ResponseData responseData)
         {
             var cachedLenth = responseData.Data.Length;
             if (dataWriteDict.TryGetValue(responseData.URI, out var writeInfo))
             {
                 if (writeInfo.CachedLength >= cachedLenth)
                     return null;
-                dataCacheDict[responseData.URI] = responseData;
                 //缓存新数据的长度，保留原来写入的长度；
                 dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, writeInfo.WrittenLength));
                 return Task.Run(() =>
@@ -254,7 +271,6 @@ namespace Cosmos.Quark
             }
             else
             {
-                dataCacheDict.Add(responseData.URI, responseData);
                 dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, 0));
                 return Task.Run(() =>
                 {
@@ -263,7 +279,7 @@ namespace Cosmos.Quark
                 });
             }
         }
-        //IEnumerator WriteResponseData(ResponseData responseData)
+        //IEnumerator OnDownloadedData(ResponseData responseData)
         //{
         //    var cachedLenth = responseData.Data.Length;
         //    if (dataWriteDict.TryGetValue(responseData.URI, out var writeInfo))
@@ -286,5 +302,38 @@ namespace Cosmos.Quark
         //    }
         //    yield return null;
         //}
+        /// <summary>
+        /// 处理整体进度；
+        /// individualPercent 0~1；
+        /// </summary>
+        /// <param name="uri">资源地址</param>
+        /// <param name="downloadPath">下载到本地的目录</param>
+        /// <param name="individualPercent">资源个体百分比0~1</param>
+        void OnFileDownloading(string uri, string downloadPath, float individualPercent)
+        {
+            var overallIndexPercent = 100 * ((float)currentDownloadIndex / downloadCount);
+            var overallProgress = overallIndexPercent + (UnitResRatio * individualPercent);
+            downloadOverall.Invoke(uri, downloadPath, overallProgress, individualPercent * 100);
+        }
+        void OnDownloadedPendingFiles()
+        {
+            canDownload = false;
+            Downloading = false;
+            downloadEndTime = DateTime.Now;
+            downloadFinish?.Invoke(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
+            pendingURIs.Clear();
+            failureURIs.Clear();
+            successURIs.Clear();
+            downloadCount = 0;
+        }
+        void OnCancelDownload()
+        {
+            unityWebRequest?.Abort();
+            downloadCount = 0;
+            pendingURIs.Clear();
+            failureURIs.Clear();
+            successURIs.Clear();
+            canDownload = false;
+        }
     }
 }

@@ -238,10 +238,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36405f6fe0f5daf4d97f0601c42845b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  launchAppDomainModules: 1
-  printModulePreparatory: 0
+  LaunchAppDomainModules: 1
+  PrintModulePreparatory: 0
+  LoadDefaultHelper: 1
   ResourceLoadMode: 2
-  loadDefaultHelper: 1
+  QuarkAssetLoadMode: 1
+  QuarkRemoteUrl: RemoteUrl
+  QuarkLocalUrl: LocalUrl
 --- !u!4 &590850387
 Transform:
   m_ObjectHideFlags: 0

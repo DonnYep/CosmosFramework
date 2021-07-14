@@ -16,7 +16,6 @@ public class QuarkABTest : MonoBehaviour
     [SerializeField]Slider slider;
     [SerializeField]Text text;
     [SerializeField]Text uriText;
-    //QuarkABLoader quarkAssetABLoader;
     QuarkDownloader quarkDownloader;
     void Start()
     {
@@ -55,8 +54,8 @@ public class QuarkABTest : MonoBehaviour
         if (downloadableUri.Count > 0)
         {
             quarkDownloader = new QuarkDownloader();
-            var cfg = new QuarkDownloadConfig(srcUrl, downloadPath, downloadableUri.ToArray());
-            quarkDownloader.SetDownloadConfig(cfg);
+            quarkDownloader.InitDownloader(srcUrl,downloadPath);
+            quarkDownloader.AddDownloadFiles(downloadableUri.ToArray());
             quarkDownloader.DownloadFinish += OnDownloadFinish;
             quarkDownloader.DownloadOverall += OnDownloadOverall;
             quarkDownloader.DownloadStart+= OnDownloadStart;

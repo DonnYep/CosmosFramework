@@ -373,7 +373,32 @@ namespace Cosmos
             {
                 return !Convert.ToBoolean(value & 0x1);
             }
-
+            /// <summary>
+            /// 数组去重；
+            /// </summary>
+            /// <typeparam name="T">可比数据类型</typeparam>
+            /// <param name="array">源数据</param>
+            /// <returns>去重后的数据</returns>
+            public static T[] Distinct<T>(T[] array)
+                where T:IComparable
+            {
+                var length = array.Length;
+                T[] dst = new T[length];
+                T temp = array[0];
+                int idx = 0;
+                for (int i = 0; i < length; i++)
+                {
+                    if (temp.CompareTo(array[i]) != 0)
+                    {
+                        temp = array[i];
+                        dst[idx] = temp;
+                        idx++;
+                        continue;
+                    }
+                }
+                Array.Resize(ref dst, idx);
+                return dst;
+            }
         }
     }
 }

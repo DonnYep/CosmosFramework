@@ -259,6 +259,7 @@ MonoBehaviour:
   - FQU
   - "\u6D2A\u90FD\u62C9\u65AF"
   - "\u667A\u5229"
+  distinctList: 
 --- !u!4 &411735170
 Transform:
   m_ObjectHideFlags: 0
@@ -316,6 +317,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 411735169}
+        m_MethodName: Distinct
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &411735172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,6 +340,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36405f6fe0f5daf4d97f0601c42845b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LaunchAppDomainModules: 1
+  PrintModulePreparatory: 0
+  LoadDefaultHelper: 1
+  ResourceLoadMode: 0
+  QuarkAssetLoadMode: 0
+  QuarkRemoteUrl: RemoteUrl
+  QuarkLocalUrl: LocalUrl
 --- !u!1 &785259324
 GameObject:
   m_ObjectHideFlags: 0

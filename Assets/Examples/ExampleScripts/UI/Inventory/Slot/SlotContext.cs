@@ -6,7 +6,6 @@ namespace Cosmos.Test
 {
     public class SlotContext : MonoBehaviour
     {
-        string slotItemName = "Slot";
         GameObject slotPrefab;
         List<Slot> slotList = new List<Slot>();
         IResourceManager resourceManager;
