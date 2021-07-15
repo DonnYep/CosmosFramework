@@ -217,7 +217,7 @@ namespace Cosmos.Data
             var length = assemblies.Length;
             for (int i = 0; i < length; i++)
             {
-                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IDataProvider>(assemblies[i]);
+                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementerAttribute, IDataProvider>(assemblies[i]);
                 for (int j = 0; j < objs.Length; j++)
                 {
                     try

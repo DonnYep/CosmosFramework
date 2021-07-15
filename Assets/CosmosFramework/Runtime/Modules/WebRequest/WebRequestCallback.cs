@@ -11,45 +11,45 @@ namespace Cosmos
     /// </summary>
     public class WebRequestCallback : IReference
     {
-        Action startCallback;
-        Action<float> updateCallback;
-        Action<byte[]> successCallback;
-        Action<string> failureCallback;
+        Action onStartCallback;
+        Action<float> onUpdateCallback;
+        Action<byte[]> onSuccessCallback;
+        Action<string> onFailureCallback;
         /// <summary>
         /// 请求开始回调；
         /// </summary>
-        public Action StartCallback { get { return startCallback; } }
+        public Action OnStartCallback { get { return onStartCallback; } }
         /// <summary>
         /// 请求执行中回调；
         /// Progress value 0~1;
         /// </summary>
-        public Action<float> UpdateCallback { get { return updateCallback; } }
+        public Action<float> OnUpdateCallback { get { return onUpdateCallback; } }
         /// <summary>
         /// 请求成功回调；
         /// Response bytes array;
         /// </summary>
-        public Action<byte[]> SuccessCallback { get { return successCallback; } }
+        public Action<byte[]> OnSuccessCallback { get { return onSuccessCallback; } }
         /// <summary>
         /// 请求失败回调；
         /// ErrorMessage;
         /// </summary>
-        public Action<string> FailureCallback { get { return failureCallback; } }
+        public Action<string> OnFailureCallback { get { return onFailureCallback; } }
         public WebRequestCallback () { }
         public void Release()
         {
-            startCallback=null;
-            updateCallback = null;;
-            successCallback = null; ;
-            failureCallback = null; ;
+            onStartCallback=null;
+            onUpdateCallback = null;;
+            onSuccessCallback = null; ;
+            onFailureCallback = null; ;
         }
-        public static WebRequestCallback Create(Action startCallback, Action<float> updateCallback,
-            Action<byte[]> successCallback, Action<string> failureCallback)
+        public static WebRequestCallback Create(Action onStartCallback, Action<float> onUpdateCallback,
+            Action<byte[]> onSuccessCallback, Action<string> onFailureCallback)
         {
             var webRequest = ReferencePool.Accquire<WebRequestCallback>();
-            webRequest.startCallback = startCallback;
-            webRequest.updateCallback = updateCallback;
-            webRequest.successCallback = successCallback;
-            webRequest.failureCallback = failureCallback;
+            webRequest.onStartCallback = onStartCallback;
+            webRequest.onUpdateCallback = onUpdateCallback;
+            webRequest.onSuccessCallback = onSuccessCallback;
+            webRequest.onFailureCallback = onFailureCallback;
             return webRequest;
         }
         public static void Release(WebRequestCallback webRequestCallback)

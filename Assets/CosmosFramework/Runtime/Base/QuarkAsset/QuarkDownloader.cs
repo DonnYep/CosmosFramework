@@ -9,11 +9,18 @@ using UnityEngine.Networking;
 
 namespace Cosmos.Quark
 {
+    /// <summary>
+    /// Quark资源下载器；
+    /// 资源被下载到本地持久化路径后，再由Qurk加载器进行资源加载；
+    /// </summary>
     public class QuarkDownloader
     {
-        class ResponseData
+        /// <summary>
+        /// 网络下载反馈的数据；
+        /// </summary>
+        class DownloadedData
         {
-            public ResponseData(string uri, byte[] data, string downloadPath)
+            public DownloadedData(string uri, byte[] data, string downloadPath)
             {
                 URI = uri;
                 Data = data;
@@ -23,7 +30,7 @@ namespace Cosmos.Quark
             public byte[] Data { get; private set; }
             public string DownloadPath { get; private set; }
         }
-        class ResponseWriteInfo
+        class DataWrittenInfo
         {
             /// <summary>
             /// 已经缓存的长度；
@@ -33,57 +40,57 @@ namespace Cosmos.Quark
             /// 已经写入持久化本地的长度；
             /// </summary>
             public long WrittenLength { get; private set; }
-            public ResponseWriteInfo(long cachedLength, long writtenLength)
+            public DataWrittenInfo(long cachedLength, long writtenLength)
             {
                 CachedLength = cachedLength;
                 WrittenLength = writtenLength;
             }
         }
         #region events
-        Action<string, string> downloadStart;
-        Action<string, string, byte[]> downloadSuccess;
-        Action<string, string, string> downloadFailure;
-        Action<string, string, float, float> downloadOverall;
-        Action<string[], string[], TimeSpan> downloadFinish;
+        Action<string, string> onDownloadStart;
+        Action<string, string, byte[]> onDownloadSuccess;
+        Action<string, string, string> onDownloadFailure;
+        Action<string, string, float, float> onDownloadOverall;
+        Action<string[], string[], TimeSpan> onDownloadFinish;
         /// <summary>
         /// URL---DownloadPath
         /// </summary>
-        public event Action<string, string> DownloadStart
+        public event Action<string, string> OnDownloadStart
         {
-            add { downloadStart += value; }
-            remove { downloadStart -= value; }
+            add { onDownloadStart += value; }
+            remove { onDownloadStart -= value; }
         }
         /// <summary>
         /// URL---DownloadPath---Data
         /// </summary>
-        public event Action<string, string, byte[]> DownloadSuccess
+        public event Action<string, string, byte[]> OnDownloadSuccess
         {
-            add { downloadSuccess += value; }
-            remove { downloadSuccess -= value; }
+            add { onDownloadSuccess += value; }
+            remove { onDownloadSuccess -= value; }
         }
         /// <summary>
         /// URL---DownloadPath---ErrorMessage
         /// </summary>
-        public event Action<string, string, string> DownloadFailure
+        public event Action<string, string, string> OnDownloadFailure
         {
-            add { downloadFailure += value; }
-            remove { downloadFailure -= value; }
+            add { onDownloadFailure += value; }
+            remove { onDownloadFailure -= value; }
         }
         /// <summary>
         /// URL---DownloadPath---OverallProgress(0~100%)---IndividualProgress(0~100%)
         /// </summary>
-        public event Action<string, string, float, float> DownloadOverall
+        public event Action<string, string, float, float> OnDownloadOverall
         {
-            add { downloadOverall += value; }
-            remove { downloadOverall -= value; }
+            add { onDownloadOverall += value; }
+            remove { onDownloadOverall -= value; }
         }
         /// <summary>
         /// SuccessURIs---FailureURIs---TimeSpan
         /// </summary>
-        public event Action<string[], string[], TimeSpan> DownloadFinish
+        public event Action<string[], string[], TimeSpan> OnDownloadFinish
         {
-            add { downloadFinish += value; }
-            remove { downloadFinish -= value; }
+            add { onDownloadFinish += value; }
+            remove { onDownloadFinish -= value; }
         }
         #endregion
         public string DownloadPath { get; private set; }
@@ -108,7 +115,7 @@ namespace Cosmos.Quark
         /// URI===[[缓存的长度===写入本地的长度]]；
         /// 数据写入记录；
         /// </summary>
-        Dictionary<string, ResponseWriteInfo> dataWriteDict = new Dictionary<string, ResponseWriteInfo>();
+        Dictionary<string, DataWrittenInfo> dataWriteDict = new Dictionary<string, DataWrittenInfo>();
         DateTime downloadStartTime;
         DateTime downloadEndTime;
 
@@ -175,7 +182,7 @@ namespace Cosmos.Quark
             }
             Downloading = true;
             downloadStartTime = DateTime.Now;
-            Utility.Unity.StartCoroutine(DownloadMultipleFiles());
+            Utility.Unity.StartCoroutine(EnumDownloadMultipleFiles());
         }
         /// <summary>
         /// 移除所有下载；
@@ -193,14 +200,14 @@ namespace Cosmos.Quark
         }
         public void Release()
         {
-            downloadStart = null;
-            downloadSuccess = null;
-            downloadFailure = null;
-            downloadOverall = null;
-            downloadFinish = null;
+            onDownloadStart = null;
+            onDownloadSuccess = null;
+            onDownloadFailure = null;
+            onDownloadOverall = null;
+            onDownloadFinish = null;
             downloadCount = 0;
         }
-        IEnumerator DownloadMultipleFiles()
+        IEnumerator EnumDownloadMultipleFiles()
         {
             while (pendingURIs.Count > 0)
             {
@@ -208,11 +215,11 @@ namespace Cosmos.Quark
                 currentDownloadIndex = downloadCount - pendingURIs.Count - 1;
                 var fileDownloadPath = Path.Combine(DownloadPath, uri);
                 var remoteUri = Utility.IO.WebPathCombine(URL, uri);
-                yield return DownloadSingleFile(remoteUri, fileDownloadPath);
+                yield return EnumDownloadSingleFile(remoteUri, fileDownloadPath);
             }
             OnDownloadedPendingFiles();
         }
-        IEnumerator DownloadSingleFile(string uri, string downloadPath)
+        IEnumerator EnumDownloadSingleFile(string uri, string downloadPath)
         {
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
@@ -221,12 +228,12 @@ namespace Cosmos.Quark
                 var timeout = Convert.ToInt32(DownloadTimeout);
                 if (timeout > 0)
                     request.timeout = timeout;
-                downloadStart?.Invoke(uri, downloadPath);
+                onDownloadStart?.Invoke(uri, downloadPath);
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
                 {
                     OnFileDownloading(uri, DownloadPath, request.downloadProgress);
-                    var responseData = new ResponseData(uri, request.downloadHandler.data, downloadPath);
+                    var responseData = new DownloadedData(uri, request.downloadHandler.data, downloadPath);
                     yield return OnDownloadedData(responseData);
                 }
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
@@ -234,9 +241,9 @@ namespace Cosmos.Quark
                     if (request.isDone)
                     {
                         Downloading = false;
-                        var responseData = new ResponseData(uri, request.downloadHandler.data, downloadPath);
+                        var responseData = new DownloadedData(uri, request.downloadHandler.data, downloadPath);
                         yield return OnDownloadedData(responseData);
-                        downloadSuccess?.Invoke(uri, downloadPath, request.downloadHandler.data);
+                        onDownloadSuccess?.Invoke(uri, downloadPath, request.downloadHandler.data);
                         OnFileDownloading(uri, DownloadPath, 1);
                         successURIs.Add(uri);
                     }
@@ -244,7 +251,7 @@ namespace Cosmos.Quark
                 else
                 {
                     Downloading = false;
-                    downloadFailure?.Invoke(request.url, downloadPath, request.error);
+                    onDownloadFailure?.Invoke(request.url, downloadPath, request.error);
                     failureURIs.Add(uri);
                     OnFileDownloading(uri, DownloadPath, 1);
                     if (DeleteFailureFile)
@@ -254,28 +261,28 @@ namespace Cosmos.Quark
                 }
             }
         }
-        Task OnDownloadedData(ResponseData responseData)
+        Task OnDownloadedData(DownloadedData downloadedData)
         {
-            var cachedLenth = responseData.Data.Length;
-            if (dataWriteDict.TryGetValue(responseData.URI, out var writeInfo))
+            var cachedLenth = downloadedData.Data.Length;
+            if (dataWriteDict.TryGetValue(downloadedData.URI, out var writeInfo))
             {
                 if (writeInfo.CachedLength >= cachedLenth)
                     return null;
                 //缓存新数据的长度，保留原来写入的长度；
-                dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, writeInfo.WrittenLength));
+                dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, writeInfo.WrittenLength));
                 return Task.Run(() =>
                 {
-                    Utility.IO.WriteFile(responseData.Data, responseData.DownloadPath);
-                    dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, cachedLenth));
+                    Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
+                    dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
                 });
             }
             else
             {
-                dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, 0));
+                dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, 0));
                 return Task.Run(() =>
                 {
-                    Utility.IO.WriteFile(responseData.Data, responseData.DownloadPath);
-                    dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, cachedLenth));
+                    Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
+                    dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
                 });
             }
         }
@@ -313,14 +320,14 @@ namespace Cosmos.Quark
         {
             var overallIndexPercent = 100 * ((float)currentDownloadIndex / downloadCount);
             var overallProgress = overallIndexPercent + (UnitResRatio * individualPercent);
-            downloadOverall.Invoke(uri, downloadPath, overallProgress, individualPercent * 100);
+            onDownloadOverall.Invoke(uri, downloadPath, overallProgress, individualPercent * 100);
         }
         void OnDownloadedPendingFiles()
         {
             canDownload = false;
             Downloading = false;
             downloadEndTime = DateTime.Now;
-            downloadFinish?.Invoke(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
+            onDownloadFinish?.Invoke(successURIs.ToArray(), failureURIs.ToArray(), downloadEndTime - downloadStartTime);
             pendingURIs.Clear();
             failureURIs.Clear();
             successURIs.Clear();

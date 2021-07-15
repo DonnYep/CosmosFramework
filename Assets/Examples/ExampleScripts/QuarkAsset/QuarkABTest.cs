@@ -56,11 +56,11 @@ public class QuarkABTest : MonoBehaviour
             quarkDownloader = new QuarkDownloader();
             quarkDownloader.InitDownloader(srcUrl,downloadPath);
             quarkDownloader.AddDownloadFiles(downloadableUri.ToArray());
-            quarkDownloader.DownloadFinish += OnDownloadFinish;
-            quarkDownloader.DownloadOverall += OnDownloadOverall;
-            quarkDownloader.DownloadStart+= OnDownloadStart;
-            quarkDownloader.DownloadSuccess+= OnDownloadSucess;
-            quarkDownloader.DownloadFailure+= OnDownloadFailure;
+            quarkDownloader.OnDownloadFinish += OnDownloadFinish;
+            quarkDownloader.OnDownloadOverall += OnDownloadOverall;
+            quarkDownloader.OnDownloadStart+= OnDownloadStart;
+            quarkDownloader.OnDownloadSuccess+= OnDownloadSucess;
+            quarkDownloader.OnDownloadFailure+= OnDownloadFailure;
             quarkDownloader.LaunchDownload();
         }
     }

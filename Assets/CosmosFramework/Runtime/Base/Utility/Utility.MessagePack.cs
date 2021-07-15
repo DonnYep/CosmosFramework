@@ -7,6 +7,15 @@ namespace Cosmos
     {
         public static class MessagePack
         {
+            public interface IMessagePackHelper
+            {
+                string ToJson<T>(T obj);
+                byte[] ToByteArray<T>(T obj);
+                T ToObject<T>(byte[] buffer);
+                T ToObject<T>(string json);
+                object ToObject(byte[] buffer, Type objectType);
+                object ToObject(string json, Type objectType);
+            }
             static IMessagePackHelper messagePackHelper = null;
             public static void SetHelper(IMessagePackHelper helper)
             {

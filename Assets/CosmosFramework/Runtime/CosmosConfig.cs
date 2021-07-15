@@ -31,8 +31,8 @@ namespace Cosmos
                     switch (QuarkAssetLoadMode)
                     {
                         case QuarkAssetLoadMode.BuiltAssetBundle:
-                            QuarkManager.Instance.RemoteUrl = QuarkRemoteUrl;
-                            QuarkManager.Instance.LocalUrl = QuarkLocalUrl;
+                            QuarkManager.Instance.URL = QuarkRemoteUrl;
+                            QuarkManager.Instance.DownloadPath = QuarkLocalUrl;
                             break;
                     }
                 }

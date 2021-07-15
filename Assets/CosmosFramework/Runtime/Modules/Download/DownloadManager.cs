@@ -20,42 +20,42 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载开始事件；
         /// </summary>
-        public event Action<DownloadStartEventArgs> DownloadStart
+        public event Action<DownloadStartEventArgs> OnDownloadStart
         {
-            add { downloader.DownloadStart += value; }
-            remove { downloader.DownloadStart -= value; }
+            add { downloader.OnDownloadStart += value; }
+            remove { downloader.OnDownloadStart -= value; }
         }
         /// <summary>
         /// 单个资源下载成功事件；
         /// </summary>
-        public event Action<DownloadSuccessEventArgs> DownloadSuccess
+        public event Action<DownloadSuccessEventArgs> OnDownloadSuccess
         {
-            add { downloader.DownloadSuccess += value; }
-            remove { downloader.DownloadSuccess -= value; }
+            add { downloader.OnDownloadSuccess += value; }
+            remove { downloader.OnDownloadSuccess -= value; }
         }
         /// <summary>
         /// 单个资源下载失败事件；
         /// </summary>
-        public event Action<DownloadFailureEventArgs> DownloadFailure
+        public event Action<DownloadFailureEventArgs> OnDownloadFailure
         {
-            add { downloader.DownloadFailure += value; }
-            remove { downloader.DownloadFailure -= value; }
+            add { downloader.OnDownloadFailure += value; }
+            remove { downloader.OnDownloadFailure -= value; }
         }
         /// <summary>
         /// 下载整体进度事件；
         /// </summary>
-        public event Action<DonwloadOverallEventArgs> DownloadOverall
+        public event Action<DonwloadOverallEventArgs> OnDownloadOverall
         {
-            add { downloader.DownloadOverall += value; }
-            remove { downloader.DownloadOverall -= value; }
+            add { downloader.OnDownloadOverall += value; }
+            remove { downloader.OnDownloadOverall -= value; }
         }
         /// <summary>
         /// 整体下载并写入完成事件
         /// </summary>
-        public event Action<DownloadAndWriteFinishEventArgs> DownloadAndWriteFinish
+        public event Action<DownloadAndWriteFinishEventArgs> OnDownloadAndWriteFinish
         {
-            add { downloader.DownloadAndWriteFinish += value; }
-            remove { downloader.DownloadAndWriteFinish -= value; }
+            add { downloader.OnDownloadAndWriteFinish += value; }
+            remove { downloader.OnDownloadAndWriteFinish -= value; }
         }
         #endregion
         /// <summary>

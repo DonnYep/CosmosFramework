@@ -21,11 +21,11 @@ public class DownloadTest : MonoBehaviour
             return;
         if (!Directory.Exists(downloadPath))
             return;
-        CosmosEntry.DownloadManager.DownloadSuccess += OnDownloadSucess;
-        CosmosEntry.DownloadManager.DownloadFailure += OnDownloadFailure;
-        CosmosEntry.DownloadManager.DownloadStart += OnDownloadStart;
-        CosmosEntry.DownloadManager.DownloadOverall += OnDownloadOverall;
-        CosmosEntry.DownloadManager.DownloadAndWriteFinish += OnDownloadFinish;
+        CosmosEntry.DownloadManager.OnDownloadSuccess += OnDownloadSucess;
+        CosmosEntry.DownloadManager.OnDownloadFailure += OnDownloadFailure;
+        CosmosEntry.DownloadManager.OnDownloadStart += OnDownloadStart;
+        CosmosEntry.DownloadManager.OnDownloadOverall += OnDownloadOverall;
+        CosmosEntry.DownloadManager.OnDownloadAndWriteFinish += OnDownloadFinish;
         CosmosEntry.DownloadManager.AddUrlDownload(srcUrl, downloadPath);
         CosmosEntry.DownloadManager.LaunchDownload();
     }

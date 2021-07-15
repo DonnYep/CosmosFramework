@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos
 {
-    public class JsonUtilityHelper : IJsonHelper
+    public class JsonUtilityHelper : Utility.Json.IJsonHelper
     {
         public string ToJson(object obj, bool prettyPrint = false)
         {

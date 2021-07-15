@@ -6,7 +6,7 @@ using LitJson;
 using System.Text;
 namespace Cosmos.CosmosEditor
 {
-    [ImplementProvider]
+    [Implementer]
     public class EditorLitJsonHelper : IEditorJsonHelper
     {
         StringBuilder stringBuilder = new StringBuilder();

@@ -8,7 +8,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 namespace Cosmos
 {
-    public class UnityDebugHelper : IDebugHelper
+    public class UnityDebugHelper : Utility.Debug.IDebugHelper
     {
         readonly string logFullPath;
         readonly string logFileName = "CosmosFrameworkClient.log";

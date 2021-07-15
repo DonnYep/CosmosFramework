@@ -100,7 +100,7 @@ namespace Cosmos.CosmosEditor
             [InitializeOnLoadMethod]
             static void AutoSetHelper()
             {
-                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IEditorJsonHelper>();
+                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, IEditorJsonHelper>();
                 if (helper != null)
                     SetHelper(helper);
             }

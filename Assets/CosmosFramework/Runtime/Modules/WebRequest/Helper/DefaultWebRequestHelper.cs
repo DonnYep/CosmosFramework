@@ -160,26 +160,26 @@ namespace Cosmos
         {
             using (UnityWebRequest request = unityWebRequest)
             {
-                webRequestCallback.StartCallback?.Invoke();
+                webRequestCallback.OnStartCallback?.Invoke();
                 IsLoading = true ;
                 request.SendWebRequest();
                 while (!request.isDone)
                 {
-                    webRequestCallback.UpdateCallback?.Invoke(request.downloadProgress);
+                    webRequestCallback.OnUpdateCallback?.Invoke(request.downloadProgress);
                     yield return null;
                 }
                 if (!request.isNetworkError && !request.isHttpError)
                 {
                     if (request.isDone)
                     {
-                        webRequestCallback.UpdateCallback?.Invoke(1);
-                        webRequestCallback.SuccessCallback?.Invoke(request.downloadHandler.data);
+                        webRequestCallback.OnUpdateCallback?.Invoke(1);
+                        webRequestCallback.OnSuccessCallback?.Invoke(request.downloadHandler.data);
                         doneCallback?.Invoke(request);
                     }
                 }
                 else
                 {
-                    webRequestCallback.FailureCallback?.Invoke(request.error);
+                    webRequestCallback.OnFailureCallback?.Invoke(request.error);
                 }
                 IsLoading = false;
             }

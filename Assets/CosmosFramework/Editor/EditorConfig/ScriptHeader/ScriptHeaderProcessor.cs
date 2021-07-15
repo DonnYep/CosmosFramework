@@ -23,7 +23,7 @@ namespace Cosmos.CosmosEditor
         static string providerAnnoTitle;
         static ScriptHeaderProcessor()
         {
-            provider = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IScriptHeaderProvider>();
+            provider = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, IScriptHeaderProvider>();
             providerAnnoTitle = provider?.HeaderContext;
         }
 
