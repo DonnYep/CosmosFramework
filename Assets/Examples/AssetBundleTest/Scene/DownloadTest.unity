@@ -983,8 +983,7 @@ MonoBehaviour:
   LaunchAppDomainModules: 1
   PrintModulePreparatory: 0
   LoadDefaultHelper: 1
-  ResourceLoadMode: 2
-  QuarkAssetLoadMode: 1
+  ResourceLoadMode: 0
   QuarkRemoteUrl: RemoteUrl
   QuarkLocalUrl: LocalUrl
 --- !u!4 &1961765606

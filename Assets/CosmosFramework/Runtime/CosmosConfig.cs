@@ -13,7 +13,7 @@ namespace Cosmos
         public bool PrintModulePreparatory = false;
         public bool LoadDefaultHelper = true;
         public ResourceLoadMode ResourceLoadMode;
-        public QuarkAssetLoadMode QuarkAssetLoadMode;
+        //public QuarkAssetLoadMode QuarkAssetLoadMode;
         public string QuarkRemoteUrl = "RemoteUrl";
         public string QuarkLocalUrl = "LocalUrl";
         protected virtual void Awake()
@@ -25,17 +25,17 @@ namespace Cosmos
             {
                 CosmosEntry.LaunchAppDomainModules();
                 CosmosEntry.ResourceManager.SwitchBuildInLoadMode(ResourceLoadMode);
-                if (ResourceLoadMode == ResourceLoadMode.QuarkAsset)
-                {
-                    QuarkUtility.QuarkAssetLoadMode = QuarkAssetLoadMode;
-                    switch (QuarkAssetLoadMode)
-                    {
-                        case QuarkAssetLoadMode.BuiltAssetBundle:
-                            QuarkManager.Instance.URL = QuarkRemoteUrl;
-                            QuarkManager.Instance.DownloadPath = QuarkLocalUrl;
-                            break;
-                    }
-                }
+                //if (ResourceLoadMode == ResourceLoadMode.QuarkAsset)
+                //{
+                //    QuarkManager.Instance.QuarkAssetLoadMode = QuarkAssetLoadMode;
+                //    switch (QuarkAssetLoadMode)
+                //    {
+                //        case QuarkAssetLoadMode.BuiltAssetBundle:
+                //            QuarkManager.Instance.URL = QuarkRemoteUrl;
+                //            QuarkManager.Instance.DownloadPath = QuarkLocalUrl;
+                //            break;
+                //    }
+                //}
             }
         }
     }

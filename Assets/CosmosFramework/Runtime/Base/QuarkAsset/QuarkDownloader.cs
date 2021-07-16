@@ -182,7 +182,7 @@ namespace Cosmos.Quark
             }
             Downloading = true;
             downloadStartTime = DateTime.Now;
-            Utility.Unity.StartCoroutine(EnumDownloadMultipleFiles());
+            QuarkUtility.Unity.StartCoroutine(EnumDownloadMultipleFiles());
         }
         /// <summary>
         /// 移除所有下载；

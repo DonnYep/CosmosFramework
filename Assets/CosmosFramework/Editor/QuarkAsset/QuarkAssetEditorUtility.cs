@@ -77,10 +77,10 @@ namespace Cosmos.CosmosEditor
         [RuntimeInitializeOnLoadMethod]
         static void InitQuarkAssetData()
         {
-            if (QuarkUtility.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
+            if (QuarkManager.Instance.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
             {
                 var quarkAssetData = QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance;
-                QuarkUtility.SetAssetDatabaseModeData(quarkAssetData);
+                QuarkManager.Instance.SetAssetDatabaseModeData(quarkAssetData);
             }
         }
     }

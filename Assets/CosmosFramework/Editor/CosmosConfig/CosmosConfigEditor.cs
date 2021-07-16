@@ -22,7 +22,7 @@ namespace Cosmos.CosmosEditor
             sp_LaunchAppDomainModules = targetObject.FindProperty("LaunchAppDomainModules");
             sp_PrintModulePreparatory = targetObject.FindProperty("PrintModulePreparatory");
             sp_ResourceLoadMode = targetObject.FindProperty("ResourceLoadMode");
-            sp_QuarkAssetLoadMode = targetObject.FindProperty("QuarkAssetLoadMode");
+            //sp_QuarkAssetLoadMode = targetObject.FindProperty("QuarkAssetLoadMode");
             sp_QuarkRemoteUrl = targetObject.FindProperty("QuarkRemoteUrl");
             sp_QuarkLocalUrl = targetObject.FindProperty("QuarkLocalUrl");
         }
@@ -38,20 +38,20 @@ namespace Cosmos.CosmosEditor
             sp_ResourceLoadMode.enumValueIndex = (byte)(ResourceLoadMode)EditorGUILayout.EnumPopup("ResourceLoadMode", (ResourceLoadMode)sp_ResourceLoadMode.enumValueIndex);
             switch ((ResourceLoadMode)sp_ResourceLoadMode.enumValueIndex)
             {
-                case ResourceLoadMode.QuarkAsset:
-                    {
-                        sp_QuarkAssetLoadMode.enumValueIndex = (byte)(QuarkAssetLoadMode)EditorGUILayout.EnumPopup("QuarkAssetLoadMode", (QuarkAssetLoadMode)sp_QuarkAssetLoadMode.enumValueIndex);
-                        switch ((QuarkAssetLoadMode)sp_QuarkAssetLoadMode.enumValueIndex)
-                        {
-                            case QuarkAssetLoadMode.BuiltAssetBundle:
-                                {
-                                    sp_QuarkRemoteUrl.stringValue = EditorGUILayout.TextField("QuarkRemoteUrl", sp_QuarkRemoteUrl.stringValue);
-                                    sp_QuarkLocalUrl.stringValue = EditorGUILayout.TextField("QuarkLocalUrl", sp_QuarkLocalUrl.stringValue);
-                                }
-                                break;
-                        }
-                    }
-                    break;
+                //case ResourceLoadMode.QuarkAsset:
+                //    {
+                //        sp_QuarkAssetLoadMode.enumValueIndex = (byte)(QuarkAssetLoadMode)EditorGUILayout.EnumPopup("QuarkAssetLoadMode", (QuarkAssetLoadMode)sp_QuarkAssetLoadMode.enumValueIndex);
+                //        switch ((QuarkAssetLoadMode)sp_QuarkAssetLoadMode.enumValueIndex)
+                //        {
+                //            case QuarkAssetLoadMode.BuiltAssetBundle:
+                //                {
+                //                    sp_QuarkRemoteUrl.stringValue = EditorGUILayout.TextField("QuarkRemoteUrl", sp_QuarkRemoteUrl.stringValue);
+                //                    sp_QuarkLocalUrl.stringValue = EditorGUILayout.TextField("QuarkLocalUrl", sp_QuarkLocalUrl.stringValue);
+                //                }
+                //                break;
+                //        }
+                //    }
+                //    break;
             }
             targetObject.ApplyModifiedProperties();
         }

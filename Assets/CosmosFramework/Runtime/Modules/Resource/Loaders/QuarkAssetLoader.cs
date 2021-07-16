@@ -19,12 +19,12 @@ namespace Cosmos
         }
         public T LoadAsset<T>(AssetInfo info) where T : UnityEngine.Object
         {
-            return QuarkUtility.LoadAsset<T>(info.AssetName);
+            return QuarkManager.Instance.LoadAsset<T>(info.AssetName);
         }
         public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
         {
             isLoading = true;
-            return Utility.Unity.StartCoroutine(() => QuarkUtility.LoadAsset<T>(info.AssetName), () => { isLoading = false; }); ;
+            return QuarkUtility.Unity.StartCoroutine(() => QuarkManager.Instance.LoadAsset<T>(info.AssetName), () => { isLoading = false; }); ;
         }
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
         {
@@ -32,11 +32,11 @@ namespace Cosmos
         }
         public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
         {
-            QuarkUtility.UnLoadAsset();
+            QuarkManager.Instance.UnLoadAsset();
         }
         public void UnLoadAsset(object customData, bool unloadAllLoadedObjects = false)
         {
-            QuarkUtility.UnLoadAsset();
+            QuarkManager.Instance.UnLoadAsset();
         }
     }
 }

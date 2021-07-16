@@ -10,6 +10,5 @@ namespace Cosmos.Resource
     {
         Resource = 0,
         AssetBundle = 1,
-        QuarkAsset = 2,
     }
 }

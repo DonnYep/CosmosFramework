@@ -26,7 +26,6 @@ namespace Cosmos.Quark
             remove { onComparedDifferences -= value; }
         }
 
-
         Dictionary<string, AssetBundle> assetBundleDict = new Dictionary<string, AssetBundle>();
         /// <summary>
         /// 本地持久化路径；
@@ -41,7 +40,7 @@ namespace Cosmos.Quark
         public void LoadBuildInfo()
         {
             var buildInfoUrl = Utility.IO.WebPathCombine(DownloadPath, QuarkConsts.BuildInfoFileName);
-            Utility.Unity.DownloadTextAsync(buildInfoUrl, null, json =>
+            QuarkUtility.Unity.DownloadTextAsync(buildInfoUrl, null, json =>
             {
                 buildInfo = Utility.Json.ToObject<QuarkABBuildInfo>(json);
                 Utility.Debug.LogInfo("LoadBuildInfo Done");
@@ -50,7 +49,7 @@ namespace Cosmos.Quark
         public void LoadManifest(Action<string> loadDoneCallback=null)
         {
             var manifestUrl = Utility.IO.WebPathCombine(DownloadPath, QuarkConsts.ManifestName);
-            Utility.Unity.DownloadTextAsync(manifestUrl, null, json =>
+            QuarkUtility.Unity.DownloadTextAsync(manifestUrl, null, json =>
             {
                 quarkAssetManifest = Utility.Json.ToObject<QuarkManifest>(json);
                 if (quarkAssetManifest != null)
@@ -64,7 +63,7 @@ namespace Cosmos.Quark
         public void LoadAssetBundle(string assetBundleName)
         {
             var fullPath = Utility.IO.WebPathCombine(DownloadPath, assetBundleName);
-            Utility.Unity.DownloadAssetBundleAsync(fullPath, null, ab => 
+            QuarkUtility.Unity.DownloadAssetBundleAsync(fullPath, null, ab => 
             {
                 assetBundleDict.Add(assetBundleName, ab);
             });
