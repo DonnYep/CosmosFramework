@@ -16,5 +16,9 @@ namespace Cosmos.Quark
         /// Quark自带的Manifest名称；
         /// </summary>
         public const string ManifestName = "Manifest.json";
+        /// <summary>
+        /// Quark旧的的Manifest名称；
+        /// </summary>
+        public const string ManifestOldName = "ManifestOld.json";
     }
 }

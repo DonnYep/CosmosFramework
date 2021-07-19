@@ -20,6 +20,7 @@ namespace Cosmos.Quark
     // 3、加载资源可直接通过资源名进行加载，无需通过相对地址或者完整路径
     //名。若文件资源相同，则可通过后缀名、相对于unity的assetType、以及完整
     //路径规避。
+    //4、Quark设计方向是插件化，即插即用，因此内置了很多常用工具函数；
     //================================================
     public class QuarkManager : Singleton<QuarkManager>
     {
@@ -39,40 +40,43 @@ namespace Cosmos.Quark
         /// </summary>
         Dictionary<string, string> assetBundleHashDict;
 
-
         /// <summary>
         /// Key : [ABName] ; Value : [AssetBundle]
         /// </summary>
         Dictionary<string, AssetBundle> assetBundleDict;
         public QuarkAssetLoadMode QuarkAssetLoadMode { get; set; }
+
         QuarkDownloader quarkDownloader;
+        QuarkComparator quarkComparator;
+
         /// <summary>
         /// 本地缓存的地址；
         /// </summary>
-        public string DownloadPath { get; set; }
+        public string DownloadPath { get; private set; }
         /// <summary>
         /// 远端存储的地址；
         /// </summary>
-        public string URL { get; set; }
+        public string URL { get; private set; }
 
         QuarkAssetDataset quarkAssetData;
         public QuarkAssetDataset QuarkAssetData { get { return quarkAssetData; } }
 
-
-
-        /// <summary>
-        /// Latest===Expired
-        /// </summary>
-        Action<string[], string[]> onComparedDifferences;
         /// <summary>
         /// Latest===Expired
         /// </summary>
         public event Action<string[], string[]> OnComparedDifferences
         {
-            add { OnComparedDifferences += value; }
-            remove { onComparedDifferences -= value; }
+            add { quarkComparator.OnComparedDifferences += value; }
+            remove { quarkComparator.OnComparedDifferences -= value; }
         }
-
+        /// <summary>
+        /// 比较失败，传入ErrorMessage；
+        /// </summary>
+        public event Action<string> OnComparedFailure
+        {
+            add { quarkComparator.OnComparedFailure += value; }
+            remove { quarkComparator.OnComparedFailure -= value; }
+        }
 
         /// <summary>
         /// URL---DownloadPath
@@ -115,16 +119,16 @@ namespace Cosmos.Quark
             remove { quarkDownloader.OnDownloadFinish -= value; }
         }
 
-        //名字相同，但是HASH不同，则认为资源有作修改，需要加入到下载队列中；
-        List<string> downloadable = new List<string>();
-        //本地有但是远程没有，则标记为可删除的文件，并加入到可删除队列；
-        List<string> deletable = new List<string>();
+        public void Init(string uri, string localPath)
+        {
+            quarkComparator = new QuarkComparator(uri, localPath);
+        }
 
         /// <summary>
         /// 对Manifest进行编码；
         /// </summary>
         /// <param name="manifest">unityWebRequest获取的Manifest文件对象</param>
-        public  void SetBuiltAssetBundleModeData(QuarkManifest manifest)
+        public void SetBuiltAssetBundleModeData(QuarkManifest manifest)
         {
             var lnkDict = new Dictionary<string, LinkedList<QuarkAssetBundleObject>>();
             foreach (var mf in manifest.ManifestDict)
@@ -221,126 +225,7 @@ namespace Cosmos.Quark
             }
             return asset;
         }
-        /// <summary>
-        /// 检测 local与Remote之间manifest的差异；
-        /// 若存在差异，回调中传入ture；
-        /// 若不存在差异，回调中传入false；
-        /// </summary>
-        /// <param name="updatableCallback">是否可更新回调</param>
-        public Coroutine CheckLatestManifestAsync()
-        {
-            return QuarkUtility.Unity.StartCoroutine(EnumCheckLatestManifest());
-        }
-        /// <summary>
-        /// 异步下载AB资源；
-        /// </summary>
-        /// <param name="overallProgress">下载的整体进度</param>
-        /// <param name="progress">单个资源下载的进度</param>
-        /// <returns>协程对象</returns>
-        public Coroutine DownloadAssetBundlesAsync(Action<float> overallProgress, Action<float> progress)
-        {
-            return QuarkUtility.Unity.StartCoroutine(EnumDownloadAssetBundle(overallProgress, progress));
-        }
-        IEnumerator EnumCheckLatestManifest()
-        {
-            QuarkManifest localManifest = null;
-            QuarkManifest remoteManifest = null;
-            if (!string.IsNullOrEmpty(DownloadPath))
-            {
-                var localManifestUrl = Utility.IO.WebPathCombine(DownloadPath, QuarkConsts.ManifestName);
-                yield return QuarkUtility.Unity.DownloadTextAsync(localManifestUrl, null, manifestText =>
-                 {
-                     try
-                     {
-                         localManifest = Utility.Json.ToObject<QuarkManifest>(manifestText);
-                     }
-                     catch { }
-                 });
-            }
-            else
-                throw new ArgumentNullException("LocalAssetBundleUrl is invalid ! ");
-            if (!string.IsNullOrEmpty(URL))
-            {
-                var remoteManifestUrl = Utility.IO.WebPathCombine(URL, QuarkConsts.ManifestName);
-                yield return QuarkUtility.Unity.DownloadTextAsync(remoteManifestUrl, null, manifestText =>
-                 {
-                     try
-                     {
-                         remoteManifest = Utility.Json.ToObject<QuarkManifest>(manifestText);
-                     }
-                     catch { }
-                 });
-            }
-            else
-                throw new ArgumentNullException("RemoteManifestUrl is invalid ! ");
 
-            if (localManifest != null)
-            {
-                //若本地的Manifest不为空，远端的Manifest不为空，则对比二者之间的差异；
-                //远端有本地没有，则缓存至downloadable；
-                //远端没有本地有，则缓存至deleteable；
-                if (remoteManifest != null)
-                {
-                    foreach (var remoteMF in remoteManifest.ManifestDict)
-                    {
-                        if (localManifest.ManifestDict.TryGetValue(remoteMF.Key, out var localMF))
-                        {
-                            if (localMF.Hash != remoteMF.Value.Hash)
-                            {
-                                downloadable.Add(remoteMF.Value.ABName);
-                            }
-                        }
-                        else
-                        {
-                            downloadable.Add(remoteMF.Value.ABName);
-                        }
-                    }
-                    foreach (var localMF in localManifest.ManifestDict)
-                    {
-                        if (!remoteManifest.ManifestDict.ContainsKey(localMF.Key))
-                        {
-                            deletable.Add(localMF.Key);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                //若本地的Manifest为空，远端的Manifest不为空，则将需要下载的资源url缓存到downloadable;
-                if (remoteManifest != null)
-                {
-                    downloadable.AddRange(remoteManifest.ManifestDict.Keys.ToList());
-                }
-            }
-            downloadable.TrimExcess();
-            deletable.TrimExcess();
-            onComparedDifferences?.Invoke(downloadable.ToArray(), deletable.ToArray());
-        }
-        IEnumerator EnumDownloadAssetBundle(Action<float> overallProgress, Action<float> progress)
-        {
-            var downloadableAssetUrls = new string[downloadable.Count];
-            var downloadLength = downloadableAssetUrls.Length;
-            for (int i = 0; i < downloadLength; i++)
-            {
-                downloadableAssetUrls[i] = Utility.IO.WebPathCombine(URL, downloadable[i]);
-            }
-            //删除本地多余的资源；
-            var deleteLength = deletable.Count;
-            for (int i = 0; i < deleteLength; i++)
-            {
-                var deleteFilePath = Utility.IO.WebPathCombine(DownloadPath, deletable[i]);
-                Utility.IO.DeleteFile(deleteFilePath);
-            }
-            yield return QuarkUtility.Unity.DownloadAssetBundlesBytesAsync(downloadableAssetUrls, overallProgress, progress, bundleBytes =>
-            {
-                var bundleLength = bundleBytes.Count;
-                for (int i = 0; i < bundleLength; i++)
-                {
-                    var cachePath = Utility.IO.WebPathCombine(DownloadPath, downloadable[i]);
-                    Utility.IO.WriteFile(bundleBytes[i], cachePath);
-                }
-            });
-        }
         T LoadAssetFromABByName<T>(string assetPath, string assetExtension = null)
 where T : UnityEngine.Object
         {
