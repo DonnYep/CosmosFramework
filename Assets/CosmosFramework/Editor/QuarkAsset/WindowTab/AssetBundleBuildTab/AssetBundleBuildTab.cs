@@ -352,6 +352,7 @@ namespace Cosmos.CosmosEditor
         }
         void WriteBuildInfo()
         {
+            abBuildInfo.BuildTime = System.DateTime.Now.ToString();
             var json = EditorUtil.Json.ToJson(abBuildInfo, true);
             var fullPath = Utility.IO.PathCombine(GetBuildPath(), quarkABBuildInfo);
             Utility.IO.WriteTextFile(fullPath, json, false);

@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Cosmos.Quark 
 {
+    /// <summary>
+    /// Quark asset bundle 打包信息；
+    /// 含ab包之间的依赖，hash等信息；
+    /// </summary>
     [Serializable]
     public class QuarkABBuildInfo
     {

@@ -48,6 +48,7 @@ namespace Cosmos.Quark
 
         QuarkDownloader quarkDownloader;
         QuarkComparator quarkComparator;
+        QuarkLoader quarkLoader;
 
         /// <summary>
         /// 本地缓存的地址；
@@ -62,22 +63,29 @@ namespace Cosmos.Quark
         public QuarkAssetDataset QuarkAssetData { get { return quarkAssetData; } }
 
         /// <summary>
-        /// Latest===Expired
+        /// 当检测到最新的；
         /// </summary>
-        public event Action<string[], string[]> OnComparedDifferences
+        Action<long> onDetectedLatest;
+        /// <summary>
+        /// 当检测失败；
+        /// </summary>
+        Action<string> onDetectedFailure;
+        /// <summary>
+        /// 当检测到最新的；
+        /// </summary>
+        public event Action<long> OnDetectedLatest
         {
-            add { quarkComparator.OnComparedDifferences += value; }
-            remove { quarkComparator.OnComparedDifferences -= value; }
+            add { onDetectedLatest += value; }
+            remove { onDetectedLatest -= value; }
         }
         /// <summary>
-        /// 比较失败，传入ErrorMessage；
+        /// 当检测失败；
         /// </summary>
-        public event Action<string> OnComparedFailure
+        public event Action<string> OnDetectedFailure
         {
-            add { quarkComparator.OnComparedFailure += value; }
-            remove { quarkComparator.OnComparedFailure -= value; }
+            add { onDetectedFailure += value; }
+            remove { onDetectedFailure -= value; }
         }
-
         /// <summary>
         /// URL---DownloadPath
         /// </summary>
@@ -119,11 +127,22 @@ namespace Cosmos.Quark
             remove { quarkDownloader.OnDownloadFinish -= value; }
         }
 
-        public void Init(string uri, string localPath)
+        public void Initiate(string uri, string localPath)
         {
+            this.URL = uri;
+            this.DownloadPath = localPath;
             quarkComparator = new QuarkComparator(uri, localPath);
+            quarkDownloader.InitDownloader(uri, localPath);
+            quarkComparator.Initiate(OnCompareSuccess, OnCompareFailure);
         }
-
+        public void CompareManifest()
+        {
+            quarkComparator.CompareLocalAndRemoteManifest();
+        }
+        public void LaunchDownload()
+        {
+            quarkDownloader.LaunchDownload();
+        }
         /// <summary>
         /// 对Manifest进行编码；
         /// </summary>
@@ -186,191 +205,12 @@ namespace Cosmos.Quark
         #endregion
         public T[] LoadAllAsset<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
         {
-            T[] asset = null;
-            if (assetBundleDict.ContainsKey(assetBundleName))
-            {
-                asset = assetBundleDict[assetBundleName].LoadAllAssets<T>();
-                if (asset == null)
-                {
-                    throw new ArgumentNullException($"AB包 {assetBundleName} 中不存在资源 {assetName} ！");
-                }
-            }
-            return asset;
+            return quarkLoader.LoadAllAsset<T>(assetBundleName, assetName);
         }
         public T LoadAsset<T>(string assetName, string assetExtension = null)
     where T : UnityEngine.Object
         {
-            T asset = null;
-            var isPath = IsPath(assetName);
-            switch (QuarkAssetLoadMode)
-            {
-                case QuarkAssetLoadMode.AssetDatabase:
-                    {
-#if UNITY_EDITOR
-                        if (isPath)
-                            asset = AssetDatabaseLoadAssetByPath<T>(assetName);
-                        else
-                            asset = AssetDatabaseLoadAssetByName<T>(assetName, assetExtension);
-#endif
-                    }
-                    break;
-                case QuarkAssetLoadMode.BuiltAssetBundle:
-                    {
-                        if (isPath)
-                            asset = BuiltAssetBundleLoadAssetByPath<T>(assetName);
-                        else
-                            asset = BuiltAssetBundleLoadAssetByName<T>(assetName, assetExtension);
-                    }
-                    break;
-            }
-            return asset;
-        }
-
-        T LoadAssetFromABByName<T>(string assetPath, string assetExtension = null)
-where T : UnityEngine.Object
-        {
-            if (string.IsNullOrEmpty(assetPath))
-                throw new ArgumentNullException("Asset name is invalid!");
-            QuarkAssetBundleObject abObject = QuarkAssetBundleObject.None;
-            if (builtAssetBundleMap.TryGetValue(assetPath, out var lnkList))
-            {
-                if (!string.IsNullOrEmpty(assetExtension))
-                {
-                    abObject = lnkList.First.Value;
-                }
-                else
-                {
-                    foreach (var obj in lnkList)
-                    {
-                        if (obj.AssetExtension == assetExtension)
-                        {
-                            abObject = obj;
-                            break;
-                        }
-                    }
-                }
-                //TODO Get AssetBundle
-                // var assetBundle = LoadAssetBundle(abObject);
-            }
-            return null;
-        }
-        IEnumerator EnumLoadAssetBundleAsync(QuarkAssetBundleObject qabObject)
-        {
-            if (!assetBundleDict.TryGetValue(qabObject.AssetBundleName, out var assetBundle))
-            {
-                var url = Utility.IO.WebPathCombine(DownloadPath, qabObject.AssetBundleName);
-                yield return QuarkUtility.Unity.DownloadAssetBundleAsync(url, null, ab =>
-                {
-                    assetBundleDict.TryAdd(qabObject.AssetBundleName, ab);
-                    assetBundle = ab;
-                });
-            }
-        }
-#if UNITY_EDITOR
-        T AssetDatabaseLoadAssetByName<T>(string assetName, string assetExtension = null)
-            where T : UnityEngine.Object
-        {
-            if (string.IsNullOrEmpty(assetName))
-                throw new ArgumentNullException("Asset name is invalid!");
-            QuarkAssetDatabaseObject quarkAssetDatabaseObject = new QuarkAssetDatabaseObject();
-            if (assetDatabaseMap == null)
-                throw new Exception("QuarkAsset 未执行 build 操作！");
-            if (assetDatabaseMap.TryGetValue(assetName, out var lnk))
-                quarkAssetDatabaseObject = GetAssetDatabaseObject<T>(lnk, assetExtension);
-            if (!string.IsNullOrEmpty(quarkAssetDatabaseObject.AssetGuid))
-            {
-                var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetDatabaseObject.AssetGuid);
-                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(guid2path);
-            }
-            else
-                return null;
-        }
-        T AssetDatabaseLoadAssetByPath<T>(string assetPath)
-       where T : UnityEngine.Object
-        {
-            if (string.IsNullOrEmpty(assetPath))
-                throw new ArgumentNullException("Asset name is invalid!");
-            if (assetDatabaseMap == null)
-                throw new Exception("QuarkAsset 未执行 build 操作！");
-            return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
-        }
-#endif
-        T BuiltAssetBundleLoadAssetByName<T>(string assetPath, string assetExtension = null)
-where T : UnityEngine.Object
-        {
-            if (string.IsNullOrEmpty(assetPath))
-                throw new ArgumentNullException("Asset name is invalid!");
-            QuarkAssetBundleObject abObject = QuarkAssetBundleObject.None;
-            if (builtAssetBundleMap.TryGetValue(assetPath, out var lnkList))
-            {
-                if (!string.IsNullOrEmpty(assetExtension))
-                {
-                    abObject = lnkList.First.Value;
-                }
-                else
-                {
-                    foreach (var obj in lnkList)
-                    {
-                        if (obj.AssetExtension == assetExtension)
-                        {
-                            abObject = obj;
-                            break;
-                        }
-                    }
-                }
-
-                //TODO Get AssetBundle
-
-            }
-            return null;
-        }
-        T BuiltAssetBundleLoadAssetByPath<T>(string assetPath)
- where T : UnityEngine.Object
-        {
-            if (string.IsNullOrEmpty(assetPath))
-                throw new ArgumentNullException("Asset name is invalid!");
-
-            return null;
-        }
-        QuarkAssetDatabaseObject GetAssetDatabaseObject<T>(LinkedList<QuarkAssetDatabaseObject> lnk, string assetExtension = null)
-    where T : UnityEngine.Object
-        {
-            var assetType = typeof(T).ToString();
-            QuarkAssetDatabaseObject quarkAssetObject = new QuarkAssetDatabaseObject();
-            var tempObj = lnk.First.Value;
-            if (tempObj.AssetType != assetType)
-            {
-                foreach (var assetObj in lnk)
-                {
-                    if (assetObj.AssetType == assetType)
-                    {
-                        if (!string.IsNullOrEmpty(assetExtension))
-                        {
-                            if (assetObj.AssetExtension == assetExtension)
-                            {
-                                quarkAssetObject = assetObj;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            quarkAssetObject = assetObj;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(assetExtension))
-                {
-                    quarkAssetObject = tempObj.AssetExtension == assetExtension == true ? tempObj : QuarkAssetDatabaseObject.None;
-                }
-                else
-                {
-                    quarkAssetObject = tempObj;
-                }
-            }
-            return quarkAssetObject;
+            return quarkLoader.LoadAsset<T>(assetName, assetExtension);
         }
         QuarkAssetBundleObject GetAssetBundleObject(string abName, string assetName)
         {
@@ -386,9 +226,33 @@ where T : UnityEngine.Object
             qab.AssetName = nameWithExt.Replace(qab.AssetExtension, "");
             return qab;
         }
-        bool IsPath(string context)
+        /// <summary>
+        /// 获取比较manifest成功；
+        /// </summary>
+        /// <param name="latest">最新的</param>
+        /// <param name="expired">过期的</param>
+        /// <param name="size">整体文件大小</param>
+        void OnCompareSuccess(string[] latest, string[] expired, long size)
         {
-            return context.Contains("Assets/");
+            quarkDownloader.AddDownloadFiles(latest);
+            onDetectedLatest?.Invoke(size);
+            var length = expired.Length;
+            for (int i = 0; i < length; i++)
+            {
+                try
+                {
+                    Utility.IO.DeleteFile(Utility.IO.PathCombine(DownloadPath, expired[i]));
+                }
+                catch { }
+            }
+        }
+        /// <summary>
+        /// 当比较失败；
+        /// </summary>
+        /// <param name="errorMessage">错误信息</param>
+        void OnCompareFailure(string errorMessage)
+        {
+            onDetectedFailure?.Invoke(errorMessage);
         }
     }
 }

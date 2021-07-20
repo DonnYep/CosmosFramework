@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Cosmos.Quark 
 {
+    /// <summary>
+    /// Quark ab文件的清单；
+    /// 含每个ab包中所包含的文件信息，ab的hash等；
+    /// </summary>
     [Serializable]
     public class QuarkManifest
     {

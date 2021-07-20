@@ -108,6 +108,10 @@ namespace Cosmos.Download
         /// </summary>
         IDownloader downloader;
         /// <summary>
+        /// 下载请求器，专门用于获取文件大小；
+        /// </summary>
+        IDownloadRequester downloadRequester;
+        /// <summary>
         /// 下载资源地址帮助体；用于解析URL中的文件列表；
         /// 支持localhost地址与http地址；
         /// </summary>
@@ -151,9 +155,17 @@ namespace Cosmos.Download
         /// 设置下载资源地址帮助体；
         /// </summary>
         /// <param name="helper">帮助体对象</param>
-        public void SetIUrlHelper(IDownloadUrlHelper helper)
+        public void SetUrlHelper(IDownloadUrlHelper helper)
         {
             this.downloadUrlHelper = helper;
+        }
+        /// <summary>
+        /// 设置资源请求帮助体；
+        /// </summary>
+        /// <param name="helper">帮助体对象</param>
+        public void SetRequesterHelper(IDownloadRequester helper)
+        {
+            this.downloadRequester = helper;
         }
         /// <summary>
         /// 添加URI下载；
@@ -218,6 +230,33 @@ namespace Cosmos.Download
             downloader.RemoveAllDownload();
         }
         /// <summary>
+        /// 获取URI单个文件的大小；
+        /// 若获取到，则回调传入正确的数值，否则就传入-1；
+        /// </summary>
+        /// <param name="uri">统一资源名称</param>
+        /// <param name="callback">回调</param>
+        public void GetUriFileSizeAsync(string uri, Action<long> callback)
+        {
+            if (string.IsNullOrEmpty(uri))
+                throw new ArgumentNullException("URI is invalid !");
+            if (callback == null)
+                throw new ArgumentNullException("Callback is invalid !");
+            downloadRequester.GetUriFileSizeAsync(uri, callback);
+        }
+        /// <summary>
+        /// 获取一个URL地址下的所有文件的总和大小；
+        /// 若获取到，则回调传入正确的数值，否则就传入-1；
+        /// </summary>
+        /// <param name="url">统一资源定位符</param>
+        /// <param name="callback">回调</param>
+        public void GetUrlFilesSizeAsync(string url, Action<long> callback)
+        {
+            if (string.IsNullOrEmpty(url))
+                throw new ArgumentNullException("URL is invalid !");
+            var relUris = downloadUrlHelper.ParseUrlToRelativeUris(url);
+            downloadRequester.GetUriFilesSizeAsync(relUris, callback);
+        }
+        /// <summary>
         /// 设置完成下载配置后启动下载；
         public void LaunchDownload()
         {
@@ -241,6 +280,7 @@ namespace Cosmos.Download
             downloader.DeleteFailureFile = deleteFailureFile;
             downloader.DownloadTimeout = downloadTimeout;
             downloadUrlHelper = new DefaultDownloadUrlHelper();
+            downloadRequester = new DefaultDownloadRequester();
         }
     }
 }

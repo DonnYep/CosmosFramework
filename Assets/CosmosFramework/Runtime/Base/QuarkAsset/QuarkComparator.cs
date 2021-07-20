@@ -16,27 +16,11 @@ namespace Cosmos.Quark
         /// <summary>
         /// 比较失败，传入ErrorMessage；
         /// </summary>
-        Action<string> onComparedFailure;
+        Action<string> onCompareFailure;
         /// <summary>
-        /// Latest===Expired
+        /// Latest===Expired==OverallSize(需要下载的大小)
         /// </summary>
-        Action<string[], string[]> onComparedDifferences;
-        /// <summary>
-        /// Latest===Expired
-        /// </summary>
-        public event Action<string[], string[]> OnComparedDifferences
-        {
-            add { OnComparedDifferences += value; }
-            remove { onComparedDifferences -= value; }
-        }
-        /// <summary>
-        /// 比较失败，传入ErrorMessage；
-        /// </summary>
-        public event Action<string> OnComparedFailure
-        {
-            add { onComparedFailure += value; }
-            remove { onComparedFailure -= value; }
-        }
+        Action<string[], string[], long> onCompareSuccess;
         //名字相同，但是HASH不同，则认为资源有作修改，需要加入到最新队列中；
         List<string> latest = new List<string>();
         //本地有但是远程没有，则标记为可过期文件；
@@ -54,6 +38,11 @@ namespace Cosmos.Quark
         {
             URL = url;
             LocalPath = localPath;
+        }
+        public void Initiate(Action<string[], string[], long> onCompareSuccess, Action<string> onCompareFailure)
+        {
+            this.onCompareSuccess = onCompareSuccess;
+            this.onCompareFailure = onCompareFailure;
         }
         public void LoadBuildInfo()
         {
@@ -78,8 +67,8 @@ namespace Cosmos.Quark
             expired.Clear();
             LocalPath = string.Empty;
             URL = string.Empty;
-            onComparedDifferences = null;
-            onComparedFailure = null;
+            onCompareSuccess = null;
+            onCompareFailure = null;
         }
         IEnumerator EnumDownloadManifest(string uri)
         {
@@ -101,7 +90,7 @@ namespace Cosmos.Quark
         }
         void OnUriManifestFailure(string errorMessage)
         {
-            onComparedFailure?.Invoke(errorMessage);
+            onCompareFailure?.Invoke(errorMessage);
         }
         void OnUriManifestSuccess(string manifestContext)
         {
@@ -109,9 +98,9 @@ namespace Cosmos.Quark
             var localManifestContext = Utility.IO.ReadTextFileContent(localManifestPath);
             QuarkManifest localManifest = null;
             QuarkManifest remoteManifest = null;
-            try{localManifest = Utility.Json.ToObject<QuarkManifest>(localManifestContext);}
+            try { localManifest = Utility.Json.ToObject<QuarkManifest>(localManifestContext); }
             catch { }
-            try{remoteManifest = Utility.Json.ToObject<QuarkManifest>(manifestContext);}
+            try { remoteManifest = Utility.Json.ToObject<QuarkManifest>(manifestContext); }
             catch { }
             if (localManifest != null)
             {
@@ -151,9 +140,40 @@ namespace Cosmos.Quark
                     latest.AddRange(remoteManifest.ManifestDict.Keys.ToList());
                 }
             }
-            onComparedDifferences?.Invoke(latest.ToArray(), expired.ToArray());
+            var latesetArray = latest.ToArray();
+            var expiredArray = expired.ToArray();
             latest.Clear();
             expired.Clear();
+            QuarkUtility.Unity.StartCoroutine(EnumGetMultiFilesSize(latest.ToArray(), size =>
+            {
+                onCompareSuccess?.Invoke(latesetArray, expiredArray, size);
+            }));
+        }
+        IEnumerator EnumGetMultiFilesSize(string[] uris, Action<long> callback)
+        {
+            long overallSize = 0;
+            var length = uris.Length;
+            for (int i = 0; i < length; i++)
+            {
+                yield return EnumGetFileSize(uris[i], size =>
+                {
+                    if (size >= 0)
+                        overallSize += size;
+                });
+            }
+            callback?.Invoke(overallSize);
+        }
+        IEnumerator EnumGetFileSize(string uri, Action<long> callback)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Head(uri))
+            {
+                yield return request.SendWebRequest();
+                string size = request.GetResponseHeader("Content-Length");
+                if (request.isNetworkError || request.isHttpError)
+                    callback?.Invoke(-1);
+                else
+                    callback?.Invoke(Convert.ToInt64(size));
+            }
         }
     }
 }
