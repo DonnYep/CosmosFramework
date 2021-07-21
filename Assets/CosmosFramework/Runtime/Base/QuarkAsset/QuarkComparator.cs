@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,8 @@ namespace Cosmos.Quark
         /// </summary>
         public string URL { get; private set; }
         QuarkABBuildInfo buildInfo;
+        QuarkManifest localManifest = null;
+        QuarkManifest remoteManifest = null;
         public QuarkComparator(string url, string localPath)
         {
             URL = url;
@@ -50,8 +53,8 @@ namespace Cosmos.Quark
             QuarkUtility.Unity.DownloadTextAsync(buildInfoUrl, null, json =>
             {
                 buildInfo = Utility.Json.ToObject<QuarkABBuildInfo>(json);
-                Utility.Debug.LogInfo("LoadBuildInfo Done");
-            });
+                //Utility.Debug.LogInfo("LoadBuildInfo Done");
+            }, null);
         }
         /// <summary>
         /// 比较remote与local的manifest文件；
@@ -94,10 +97,14 @@ namespace Cosmos.Quark
         }
         void OnUriManifestSuccess(string manifestContext)
         {
+
             var localManifestPath = Utility.IO.WebPathCombine(LocalPath, QuarkConsts.ManifestName);
-            var localManifestContext = Utility.IO.ReadTextFileContent(localManifestPath);
-            QuarkManifest localManifest = null;
-            QuarkManifest remoteManifest = null;
+            string localManifestContext = string.Empty;
+            try
+            {
+                localManifestContext = Utility.IO.ReadTextFileContent(localManifestPath);
+            }
+            catch { }
             try { localManifest = Utility.Json.ToObject<QuarkManifest>(localManifestContext); }
             catch { }
             try { remoteManifest = Utility.Json.ToObject<QuarkManifest>(manifestContext); }
@@ -144,10 +151,14 @@ namespace Cosmos.Quark
             var expiredArray = expired.ToArray();
             latest.Clear();
             expired.Clear();
-            QuarkUtility.Unity.StartCoroutine(EnumGetMultiFilesSize(latest.ToArray(), size =>
+
+            QuarkUtility.Unity.StartCoroutine(EnumGetMultiFilesSize(latesetArray, size =>
             {
                 onCompareSuccess?.Invoke(latesetArray, expiredArray, size);
             }));
+
+            var localNewManifestPath = Utility.IO.PathCombine(LocalPath, QuarkConsts.ManifestName);
+            Utility.IO.OverwriteTextFile(localNewManifestPath, manifestContext);
         }
         IEnumerator EnumGetMultiFilesSize(string[] uris, Action<long> callback)
         {
@@ -155,7 +166,8 @@ namespace Cosmos.Quark
             var length = uris.Length;
             for (int i = 0; i < length; i++)
             {
-                yield return EnumGetFileSize(uris[i], size =>
+                var uri = Path.Combine(URL, uris[i]);
+                yield return EnumGetFileSize(uri, size =>
                 {
                     if (size >= 0)
                         overallSize += size;

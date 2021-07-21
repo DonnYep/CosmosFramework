@@ -13,7 +13,6 @@ namespace Cosmos.Quark
     {
         [SerializeField] string url;
         [SerializeField] string downloadPath;
-        [SerializeField] int downloadTimeout;
         static QuarkConfig instance;
         public static QuarkConfig Instance
         {
@@ -34,6 +33,11 @@ namespace Cosmos.Quark
          void Awake()
         {
             instance = this;
+            if (string.IsNullOrEmpty(url))
+                throw new ArgumentNullException("URL is invalid !");
+            if(string.IsNullOrEmpty(downloadPath))
+                throw new ArgumentNullException("DownloadPath is invalid !");
+            QuarkManager.Instance.Initiate(url, downloadPath);
         }
     }
 }

@@ -21,35 +21,18 @@ namespace Cosmos.Quark
     //名。若文件资源相同，则可通过后缀名、相对于unity的assetType、以及完整
     //路径规避。
     //4、Quark设计方向是插件化，即插即用，因此内置了很多常用工具函数；
+    //
+    //5、使用流程：1>先初始化调用Initiate函数;
+    //                        2>比较远端与本地的文件清单，调用CompareManifest；
+    //                        3>下载差异文件，调用LaunchDownload；
     //================================================
     public class QuarkManager : Singleton<QuarkManager>
     {
-        QuarkManifest quarkManifest;
-        /// <summary>
-        /// AssetDataBase模式下资源的映射字典；
-        /// Key : AssetName---Value :  Lnk [QuarkAssetObject]
-        /// </summary>
-        Dictionary<string, LinkedList<QuarkAssetDatabaseObject>> assetDatabaseMap;
-        /// <summary>
-        /// BuiltAssetBundle 模式下资源的映射；
-        /// Key : ABName---Value :  Lnk [QuarkAssetABObject]
-        /// </summary>` 
-        Dictionary<string, LinkedList<QuarkAssetBundleObject>> builtAssetBundleMap;
-        /// <summary>
-        /// Key:[ABName] ; Value : [ABHash]
-        /// </summary>
-        Dictionary<string, string> assetBundleHashDict;
-
-        /// <summary>
-        /// Key : [ABName] ; Value : [AssetBundle]
-        /// </summary>
-        Dictionary<string, AssetBundle> assetBundleDict;
         public QuarkAssetLoadMode QuarkAssetLoadMode { get; set; }
 
         QuarkDownloader quarkDownloader;
         QuarkComparator quarkComparator;
         QuarkLoader quarkLoader;
-
         /// <summary>
         /// 本地缓存的地址；
         /// </summary>
@@ -58,14 +41,12 @@ namespace Cosmos.Quark
         /// 远端存储的地址；
         /// </summary>
         public string URL { get; private set; }
-
         QuarkAssetDataset quarkAssetData;
         public QuarkAssetDataset QuarkAssetData { get { return quarkAssetData; } }
-
         /// <summary>
         /// 当检测到最新的；
         /// </summary>
-        Action<long> onDetectedLatest;
+        Action<long> onDetectedSuccess;
         /// <summary>
         /// 当检测失败；
         /// </summary>
@@ -73,10 +54,10 @@ namespace Cosmos.Quark
         /// <summary>
         /// 当检测到最新的；
         /// </summary>
-        public event Action<long> OnDetectedLatest
+        public event Action<long> OnDetectedSuccess
         {
-            add { onDetectedLatest += value; }
-            remove { onDetectedLatest -= value; }
+            add { onDetectedSuccess += value; }
+            remove { onDetectedSuccess -= value; }
         }
         /// <summary>
         /// 当检测失败；
@@ -89,7 +70,7 @@ namespace Cosmos.Quark
         /// <summary>
         /// URL---DownloadPath
         /// </summary>
-        public event Action<string, string> DownloadStart
+        public event Action<string, string> OnDownloadStart
         {
             add { quarkDownloader.OnDownloadStart += value; }
             remove { quarkDownloader.OnDownloadStart -= value; }
@@ -97,7 +78,7 @@ namespace Cosmos.Quark
         /// <summary>
         /// URL---DownloadPath---Data
         /// </summary>
-        public event Action<string, string, byte[]> DownloadSuccess
+        public event Action<string, string, byte[]> OnDownloadSuccess
         {
             add { quarkDownloader.OnDownloadSuccess += value; }
             remove { quarkDownloader.OnDownloadSuccess -= value; }
@@ -105,7 +86,7 @@ namespace Cosmos.Quark
         /// <summary>
         /// URL---DownloadPath---ErrorMessage
         /// </summary>
-        public event Action<string, string, string> DownloadFailure
+        public event Action<string, string, string> OnDownloadFailure
         {
             add { quarkDownloader.OnDownloadFailure += value; }
             remove { quarkDownloader.OnDownloadFailure -= value; }
@@ -113,7 +94,7 @@ namespace Cosmos.Quark
         /// <summary>
         /// URL---DownloadPath---OverallProgress(0~100%)---IndividualProgress(0~100%)
         /// </summary>
-        public event Action<string, string, float, float> DownloadOverall
+        public event Action<string, string, float, float> OnDownloadOverall
         {
             add { quarkDownloader.OnDownloadOverall += value; }
             remove { quarkDownloader.OnDownloadOverall -= value; }
@@ -121,110 +102,73 @@ namespace Cosmos.Quark
         /// <summary>
         /// SuccessURIs---FailureURIs---TimeSpan
         /// </summary>
-        public event Action<string[], string[], TimeSpan> DownloadFinish
+        public event Action<string[], string[], TimeSpan> OnDownloadFinish
         {
             add { quarkDownloader.OnDownloadFinish += value; }
             remove { quarkDownloader.OnDownloadFinish -= value; }
         }
 
-        public void Initiate(string uri, string localPath)
+        /// <summary>
+        /// 初始化，传入资源定位符与本地持久化路径；
+        /// </summary>
+        /// <param name="url">统一资源定位符</param>
+        /// <param name="localPath">本地持久化地址</param>
+        public void Initiate(string url, string localPath)
         {
-            this.URL = uri;
+            this.URL = url;
             this.DownloadPath = localPath;
-            quarkComparator = new QuarkComparator(uri, localPath);
-            quarkDownloader.InitDownloader(uri, localPath);
+            quarkComparator = new QuarkComparator(url, localPath);
+            quarkDownloader = new QuarkDownloader();
+            quarkLoader = new QuarkLoader(localPath);
+            quarkDownloader.InitDownloader(url, localPath);
             quarkComparator.Initiate(OnCompareSuccess, OnCompareFailure);
         }
+        /// <summary>
+        /// 比较远程与本地的文件清单；
+        /// </summary>
         public void CompareManifest()
         {
             quarkComparator.CompareLocalAndRemoteManifest();
         }
+        /// <summary>
+        /// 启动下载；
+        /// </summary>
         public void LaunchDownload()
         {
             quarkDownloader.LaunchDownload();
         }
         /// <summary>
+        /// 用于Built assetbundle模式；
         /// 对Manifest进行编码；
         /// </summary>
         /// <param name="manifest">unityWebRequest获取的Manifest文件对象</param>
         public void SetBuiltAssetBundleModeData(QuarkManifest manifest)
         {
-            var lnkDict = new Dictionary<string, LinkedList<QuarkAssetBundleObject>>();
-            foreach (var mf in manifest.ManifestDict)
-            {
-                var assetPaths = mf.Value.Assets;
-                var length = assetPaths.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    var qab = GetAssetBundleObject(mf.Value.ABName, assetPaths[i]);
-                    if (!lnkDict.TryGetValue(qab.AssetName, out var lnkList))
-                    {
-                        lnkList = new LinkedList<QuarkAssetBundleObject>();
-                        lnkList.AddLast(qab);
-                        lnkDict.Add(qab.AssetName, lnkList);
-                    }
-                    else
-                    {
-                        lnkList.AddLast(qab);
-                    }
-                }
-            }
-            builtAssetBundleMap = lnkDict;
+            quarkLoader.SetBuiltAssetBundleModeData(manifest);
         }
         /// <summary>
+        /// 用于Editor开发模式；
         /// 对QuarkAssetDataset进行编码
         /// </summary>
         /// <param name="assetData">QuarkAssetDataset对象</param>
         public void SetAssetDatabaseModeData(QuarkAssetDataset assetData)
         {
-            var lnkDict = new Dictionary<string, LinkedList<QuarkAssetDatabaseObject>>();
-            var length = assetData.QuarkAssetObjectList.Count;
-            for (int i = 0; i < length; i++)
-            {
-                var name = assetData.QuarkAssetObjectList[i].AssetName;
-                if (!lnkDict.TryGetValue(name, out var lnkList))
-                {
-                    var lnk = new LinkedList<QuarkAssetDatabaseObject>();
-                    lnk.AddLast(assetData.QuarkAssetObjectList[i]);
-                    lnkDict.Add(name, lnk);
-                }
-                else
-                {
-                    lnkList.AddLast(assetData.QuarkAssetObjectList[i]);
-                }
-            }
-            quarkAssetData = assetData;
-            assetDatabaseMap = lnkDict;
+            quarkLoader.SetAssetDatabaseModeData(assetData);
         }
-
         public void UnLoadAsset()
         {
         }
 
         #region BuiltAssetBundle
         #endregion
-        public T[] LoadAllAsset<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
+        public Coroutine LoadAllAssetAsync<T>(string assetBundleName, Action<T[]> callback) where T : UnityEngine.Object
         {
-            return quarkLoader.LoadAllAsset<T>(assetBundleName, assetName);
+            return quarkLoader.LoadAllAssetAsync<T>(assetBundleName, callback);
         }
         public T LoadAsset<T>(string assetName, string assetExtension = null)
     where T : UnityEngine.Object
         {
             return quarkLoader.LoadAsset<T>(assetName, assetExtension);
-        }
-        QuarkAssetBundleObject GetAssetBundleObject(string abName, string assetName)
-        {
-            var qab = new QuarkAssetBundleObject()
-            {
-                AssetBundleName = abName,
-                AssetPath = assetName,
-            };
-            var strs = Utility.Text.StringSplit(assetName, new string[] { "/" });
-            var nameWithExt = strs[strs.Length - 1];
-            var splits = Utility.Text.StringSplit(nameWithExt, new string[] { "." });
-            qab.AssetExtension = Utility.Text.Combine(".", splits[splits.Length - 1]);
-            qab.AssetName = nameWithExt.Replace(qab.AssetExtension, "");
-            return qab;
         }
         /// <summary>
         /// 获取比较manifest成功；
@@ -235,7 +179,7 @@ namespace Cosmos.Quark
         void OnCompareSuccess(string[] latest, string[] expired, long size)
         {
             quarkDownloader.AddDownloadFiles(latest);
-            onDetectedLatest?.Invoke(size);
+            onDetectedSuccess?.Invoke(size);
             var length = expired.Length;
             for (int i = 0; i < length; i++)
             {

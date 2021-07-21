@@ -224,8 +224,9 @@ namespace Cosmos
             /// 转换byte长度到对应单位；
             /// </summary>
             /// <param name="bytes">byte长度</param>
+            /// <param name="decimals">保留的小数长度</param>
             /// <returns>格式化后的单位</returns>
-            public static string FormatBytesSize(long bytes)
+            public static string FormatBytesSize(long bytes, int decimals=2)
             {
                 string[] Suffix = { "Byte", "KB", "MB", "GB", "TB" };
                 int i = 0;
@@ -233,7 +234,7 @@ namespace Cosmos
                 if (bytes > 1024)
                     for (i = 0; (bytes / 1024) > 0; i++, bytes /= 1024)
                         dblSByte = bytes / 1024.0;
-                return String.Format("{0:0.##}{1}", dblSByte, Suffix[i]);
+                return $"{Math.Round( dblSByte, decimals)}{Suffix[i]}";
             }
         }
     }
