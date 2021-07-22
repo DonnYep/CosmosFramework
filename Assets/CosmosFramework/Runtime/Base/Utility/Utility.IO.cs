@@ -530,6 +530,24 @@ namespace Cosmos
                 File.WriteAllText(fileFullPath, string.Empty);
                 return true;
             }
+            /// <summary>
+            /// 获取文件大小；
+            /// 若文件存在，则返回正确的大小；若不存在，则返回-1；
+            /// </summary>
+            /// <param name="filePath">文件地址</param>
+            /// <returns>文件long类型的长度</returns>
+            public static long GetFileSize(string filePath)
+            {
+                if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+                {
+                    return -1;
+                }
+                else if (File.Exists(filePath)) 
+                {
+                    return new FileInfo(filePath).Length;
+                }
+                return -1;
+            }
         }
     }
 }

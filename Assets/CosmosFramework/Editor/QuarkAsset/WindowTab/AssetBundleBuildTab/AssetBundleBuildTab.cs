@@ -17,7 +17,7 @@ namespace Cosmos.CosmosEditor
         const string quarkABBuildInfo = "BuildInfo.json";
         const string quarkManifest = "Manifest.json";
         Dictionary<string, AssetImporter> importerCacheDict = new Dictionary<string, AssetImporter>();
-        QuarkABBuildInfo abBuildInfo = new QuarkABBuildInfo();
+        QuarkBuildInfo abBuildInfo = new QuarkBuildInfo();
         QuarkManifest quarkAssetManifest = new QuarkManifest();
         /// <summary>
         /// Key:ABName ; Value: ABPath
@@ -295,7 +295,7 @@ namespace Cosmos.CosmosEditor
                                     }
                                     break;
                             }
-                           var editedName= Path.Combine(fileDir, fileName);
+                            var editedName = Path.Combine(fileDir, fileName);
                             abPaths.Add(editedName);
                         }
                     }
@@ -343,6 +343,7 @@ namespace Cosmos.CosmosEditor
                         manifest.Hash = assetData.ABHash;
                         manifest.ABName = assetData.ABName;
                         quarkAssetManifest.ManifestDict.TryAdd(bundleName, manifest);
+                        manifest.ABFileSize = Utility.IO.GetFileSize(urls[i]);
                     }
                 }
                 WriteBuildInfo();
@@ -378,7 +379,7 @@ namespace Cosmos.CosmosEditor
                 else
                 if (!abBuildInfo.AssetDataMaps.TryGetValue(importer.assetPath, out var assetData))
                 {
-                    assetData = new QuarkABBuildInfo.AssetData()
+                    assetData = new QuarkBuildInfo.AssetData()
                     {
                         DependList = AssetDatabase.GetAssetBundleDependencies(abName, true).ToList(),
                         Id = abBuildInfo.AssetDataMaps.Count,

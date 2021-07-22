@@ -15,6 +15,7 @@ public class QuarkDownloadMonitorPanel : MonoBehaviour
     [SerializeField] Text txtDownloadingUri;
     [SerializeField] CanvasGroup canvasGroup;
     [SerializeField] GameObject imgBG;
+    [SerializeField] QuarkLoadAssetPanel quarkLoadAssetPanel;
     bool downloadDone = false;
     bool isDisable = false;
     public void StartDownload()
@@ -69,7 +70,8 @@ public class QuarkDownloadMonitorPanel : MonoBehaviour
     {
         if (txtProgress != null)
         {
-            txtProgress.text = "资源下载已完成，点击任意键继续！";
+            txtDownloadingUri.text = "资源下载已完成";
+            txtProgress.text = "点击任意键继续！";
         }
         Utility.Debug.LogInfo($"DownloadFinish {timeSpan}", MessageColor.GREEN);
         downloadDone = true;
@@ -87,6 +89,7 @@ public class QuarkDownloadMonitorPanel : MonoBehaviour
             canvasGroup.interactable = false;
             isDisable = true;
             imgBG?.SetActive(false);
+            quarkLoadAssetPanel?.OnUpdateDone();
         }
     }
 }

@@ -165,6 +165,11 @@ namespace Cosmos.Quark
         {
             return quarkLoader.LoadAllAssetAsync<T>(assetBundleName, callback);
         }
+        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false)
+where T : UnityEngine.Object
+        {
+            return quarkLoader.LoadAssetAsync<T>(assetName, callback, instantiate);
+        }
         public T LoadAsset<T>(string assetName, string assetExtension = null)
     where T : UnityEngine.Object
         {
@@ -178,17 +183,18 @@ namespace Cosmos.Quark
         /// <param name="size">整体文件大小</param>
         void OnCompareSuccess(string[] latest, string[] expired, long size)
         {
-            quarkDownloader.AddDownloadFiles(latest);
-            onDetectedSuccess?.Invoke(size);
             var length = expired.Length;
             for (int i = 0; i < length; i++)
             {
                 try
                 {
-                    Utility.IO.DeleteFile(Utility.IO.PathCombine(DownloadPath, expired[i]));
+                    var expiredPath = Utility.IO.PathCombine(DownloadPath, expired[i]);
+                    Utility.IO.DeleteFile(expiredPath);
                 }
                 catch { }
             }
+            quarkDownloader.AddDownloadFiles(latest);
+            onDetectedSuccess?.Invoke(size);
         }
         /// <summary>
         /// 当比较失败；

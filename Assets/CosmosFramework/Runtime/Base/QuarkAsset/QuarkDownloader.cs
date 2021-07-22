@@ -261,54 +261,52 @@ namespace Cosmos.Quark
                 }
             }
         }
-        Task OnDownloadedData(DownloadedData downloadedData)
+        //Task OnDownloadedData(DownloadedData downloadedData)
+        //{
+        //    var cachedLenth = downloadedData.Data.Length;
+        //    if (dataWriteDict.TryGetValue(downloadedData.URI, out var writeInfo))
+        //    {
+        //        if (writeInfo.CachedLength >= cachedLenth)
+        //            return null;
+        //        //缓存新数据的长度，保留原来写入的长度；
+        //        dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, writeInfo.WrittenLength));
+        //        return Task.Run(() =>
+        //        {
+        //            Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
+        //            dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
+        //        });
+        //    }
+        //    else
+        //    {
+        //        dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, 0));
+        //        return Task.Run(() =>
+        //        {
+        //            Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
+        //            dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
+        //        });
+        //    }
+        //}
+        IEnumerator OnDownloadedData(DownloadedData downloadedData)
         {
             var cachedLenth = downloadedData.Data.Length;
             if (dataWriteDict.TryGetValue(downloadedData.URI, out var writeInfo))
             {
-                if (writeInfo.CachedLength >= cachedLenth)
-                    return null;
-                //缓存新数据的长度，保留原来写入的长度；
-                dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, writeInfo.WrittenLength));
-                return Task.Run(() =>
+                if (writeInfo.CachedLength < cachedLenth)
                 {
+                    //缓存新数据的长度，保留原来写入的长度；
+                    dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, writeInfo.WrittenLength));
                     Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
                     dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
-                });
+                }
             }
             else
             {
                 dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, 0));
-                return Task.Run(() =>
-                {
-                    Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
-                    dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
-                });
+                Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
+                dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
             }
+            yield return null;
         }
-        //IEnumerator OnDownloadedData(ResponseData responseData)
-        //{
-        //    var cachedLenth = responseData.Data.Length;
-        //    if (dataWriteDict.TryGetValue(responseData.URI, out var writeInfo))
-        //    {
-        //        if (writeInfo.CachedLength < cachedLenth)
-        //        {
-        //            dataCacheDict[responseData.URI] = responseData;
-        //            //缓存新数据的长度，保留原来写入的长度；
-        //            dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, writeInfo.WrittenLength));
-        //            Utility.IO.WriteFile(responseData.Data, responseData.DownloadPath);
-        //            dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, cachedLenth));
-        //        }
-        //    }
-        //    else
-        //    {
-        //        dataCacheDict.Add(responseData.URI, responseData);
-        //        dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, 0));
-        //        Utility.IO.WriteFile(responseData.Data, responseData.DownloadPath);
-        //        dataWriteDict.AddOrUpdate(responseData.URI, new ResponseWriteInfo(cachedLenth, cachedLenth));
-        //    }
-        //    yield return null;
-        //}
         /// <summary>
         /// 处理整体进度；
         /// individualPercent 0~1；

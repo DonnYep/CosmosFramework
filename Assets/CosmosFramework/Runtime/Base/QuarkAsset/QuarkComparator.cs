@@ -34,9 +34,10 @@ namespace Cosmos.Quark
         /// 远程资源地址；
         /// </summary>
         public string URL { get; private set; }
-        QuarkABBuildInfo buildInfo;
+        QuarkBuildInfo buildInfo;
         QuarkManifest localManifest = null;
         QuarkManifest remoteManifest = null;
+
         public QuarkComparator(string url, string localPath)
         {
             URL = url;
@@ -52,7 +53,7 @@ namespace Cosmos.Quark
             var buildInfoUrl = Utility.IO.WebPathCombine(LocalPath, QuarkConsts.BuildInfoFileName);
             QuarkUtility.Unity.DownloadTextAsync(buildInfoUrl, null, json =>
             {
-                buildInfo = Utility.Json.ToObject<QuarkABBuildInfo>(json);
+                buildInfo = Utility.Json.ToObject<QuarkBuildInfo>(json);
                 //Utility.Debug.LogInfo("LoadBuildInfo Done");
             }, null);
         }
@@ -97,9 +98,10 @@ namespace Cosmos.Quark
         }
         void OnUriManifestSuccess(string manifestContext)
         {
-
             var localManifestPath = Utility.IO.WebPathCombine(LocalPath, QuarkConsts.ManifestName);
             string localManifestContext = string.Empty;
+            long overallSize = 0;
+
             try
             {
                 localManifestContext = Utility.IO.ReadTextFileContent(localManifestPath);
@@ -122,7 +124,27 @@ namespace Cosmos.Quark
                         {
                             if (localMF.Hash != remoteMF.Value.Hash)
                             {
-                                latest.Add(remoteMF.Value.ABName);
+                                overallSize += remoteMF.Value.ABFileSize;
+                                var abName = remoteMF.Value.ABName;
+                                latest.Add(abName);
+                                expired.Add(abName);
+                            }
+                            else
+                            {
+                                //默认ab包文件名等于ab包名环境下测试；
+                                var abFilePath = Utility.IO.WebPathCombine(LocalPath, localMF.ABName);
+                                var localSize = Utility.IO.GetFileSize(abFilePath);
+                                var remoteSize = remoteMF.Value.ABFileSize;
+                                if (remoteSize != localSize)
+                                {
+                                    //var differenceValue = remoteSize - localSize;
+                                    overallSize += remoteSize;
+                                    latest.Add(remoteMF.Value.ABName);
+                                    if (remoteSize < localSize)
+                                    {
+                                        expired.Add(remoteMF.Value.ABName);
+                                    }
+                                }
                             }
                         }
                         else
@@ -145,47 +167,25 @@ namespace Cosmos.Quark
                 if (remoteManifest != null)
                 {
                     latest.AddRange(remoteManifest.ManifestDict.Keys.ToList());
+                    foreach (var item in remoteManifest.ManifestDict.Values)
+                    {
+                        overallSize += item.ABFileSize;
+                    }
                 }
+            }
+            if (latest.Count > 0|| expired.Count>0)
+            {
+                latest.Add(QuarkConsts.BuildInfoFileName);
+                expired.Add(QuarkConsts.BuildInfoFileName);
             }
             var latesetArray = latest.ToArray();
             var expiredArray = expired.ToArray();
+            onCompareSuccess?.Invoke(latesetArray, expiredArray, overallSize);
             latest.Clear();
             expired.Clear();
-
-            QuarkUtility.Unity.StartCoroutine(EnumGetMultiFilesSize(latesetArray, size =>
-            {
-                onCompareSuccess?.Invoke(latesetArray, expiredArray, size);
-            }));
-
             var localNewManifestPath = Utility.IO.PathCombine(LocalPath, QuarkConsts.ManifestName);
             Utility.IO.OverwriteTextFile(localNewManifestPath, manifestContext);
-        }
-        IEnumerator EnumGetMultiFilesSize(string[] uris, Action<long> callback)
-        {
-            long overallSize = 0;
-            var length = uris.Length;
-            for (int i = 0; i < length; i++)
-            {
-                var uri = Path.Combine(URL, uris[i]);
-                yield return EnumGetFileSize(uri, size =>
-                {
-                    if (size >= 0)
-                        overallSize += size;
-                });
-            }
-            callback?.Invoke(overallSize);
-        }
-        IEnumerator EnumGetFileSize(string uri, Action<long> callback)
-        {
-            using (UnityWebRequest request = UnityWebRequest.Head(uri))
-            {
-                yield return request.SendWebRequest();
-                string size = request.GetResponseHeader("Content-Length");
-                if (request.isNetworkError || request.isHttpError)
-                    callback?.Invoke(-1);
-                else
-                    callback?.Invoke(Convert.ToInt64(size));
-            }
+            QuarkManager.Instance.SetBuiltAssetBundleModeData(remoteManifest);
         }
     }
 }

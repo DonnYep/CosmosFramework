@@ -17,12 +17,12 @@ MonoBehaviour:
   - Assets/Examples/AssetBundleTest/Audio
   - Assets/Examples/AssetBundleTest/Material
   - Assets/Examples/AssetBundleTest/Model
-  - Assets/Examples/AssetBundleTest/Prefab/Lab.prefab
-  - Assets/Examples/AssetBundleTest/Prefab/Audio Source.prefab
   - Assets/Examples/AssetBundleTest/Texture
   - Assets/Examples/AssetBundleTest/Scene
-  - Assets/Examples/AssetBundleTest/Text/Schema.txt
-  - Assets/Examples/AssetBundleTest/Text/Schema.json
+  - Assets/Examples/AssetBundleTest/Photo
+  - Assets/Examples/AssetBundleTest/Prefab
+  - Assets/Examples/AssetBundleTest/Text
+  - Assets/Examples/AssetBundleTest/Video
   QuarkAssetCount: 85
   QuarkAssetObjectList:
   - AssetName: Alpha_Body_Bule_MAT

@@ -17,7 +17,7 @@ public class QuarkCheckManifestPanel : MonoBehaviour
     {
         btnDownload?.onClick.AddListener(DownloadClick);
         btnCancel?.onClick.AddListener(CancelClick);
-        QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess; ;
+        QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess; 
         QuarkManager.Instance.OnDetectedFailure += OnDetectedFailure;
         QuarkManager.Instance.CompareManifest();
     }
