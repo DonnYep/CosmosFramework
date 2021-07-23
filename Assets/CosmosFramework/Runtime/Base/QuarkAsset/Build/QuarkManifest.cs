@@ -28,8 +28,9 @@ namespace Cosmos.Quark
             public long ABFileSize { get; set; }
             /// <summary>
             /// Assets根目录下的相对路径数组；
+            /// AssetPath===AssetName(case sensitivity)
             /// </summary>
-            public string[] Assets { get; set; }
+            public Dictionary<string, string> Assets { get; set; }
         }
         /// <summary>
         /// Key:ABName;Value:Manifest;

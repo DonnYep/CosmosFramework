@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Cosmos.Quark
 {
@@ -15,7 +16,6 @@ namespace Cosmos.Quark
         /// Key:[ABName] ; Value : [ABHash]
         /// </summary>
         Dictionary<string, string> assetBundleHashDict;
-
         QuarkAssetDataset quarkAssetData;
         /// <summary>
         /// 存储ab包中包含的资源信息；
@@ -29,15 +29,16 @@ namespace Cosmos.Quark
         /// <summary>
         /// Key : [ABName] ; Value : [AssetBundle]
         /// </summary>
-        Dictionary<string, AssetBundle> assetBundleDict;
+        Dictionary<string, AssetBundle> assetBundleDict = new Dictionary<string, AssetBundle>();
         /// <summary>
         /// AssetDataBase模式下资源的映射字典；
         /// Key : AssetName---Value :  Lnk [QuarkAssetObject]
         /// </summary>
-        Dictionary<string, LinkedList<QuarkAssetDatabaseObject>> assetDatabaseMap;
+        Dictionary<string, LinkedList<QuarkAssetDatabaseObject>> assetDatabaseMap
+            = new Dictionary<string, LinkedList<QuarkAssetDatabaseObject>>();
         /// <summary>
         /// BuiltAssetBundle 模式下资源的映射；
-        /// Key : ABName---Value :  Lnk [QuarkAssetABObject]
+        /// Key : AssetName---Value :  Lnk [QuarkAssetABObject]
         /// </summary>` 
         Dictionary<string, LinkedList<QuarkAssetBundleObject>> builtAssetBundleMap;
         public QuarkAssetLoadMode QuarkAssetLoadMode { get; set; }
@@ -54,20 +55,21 @@ namespace Cosmos.Quark
             var lnkDict = new Dictionary<string, LinkedList<QuarkAssetBundleObject>>();
             foreach (var mf in manifest.ManifestDict)
             {
-                var assetPaths = mf.Value.Assets;
-                var length = assetPaths.Length;
-                for (int i = 0; i < length; i++)
+                var assets = mf.Value.Assets;
+                if (assets == null)
+                    continue;
+                foreach (var a in assets)
                 {
-                    var qab = GetAssetBundleObject(mf.Value.ABName, assetPaths[i]);
-                    if (!lnkDict.TryGetValue(qab.AssetName, out var lnkList))
+                    var abObject = GetAssetBundleObject(mf.Value.ABName, a.Key, a.Value);
+                    if (!lnkDict.TryGetValue(abObject.AssetName, out var lnkList))
                     {
                         lnkList = new LinkedList<QuarkAssetBundleObject>();
-                        lnkList.AddLast(qab);
-                        lnkDict.Add(qab.AssetName, lnkList);
+                        lnkList.AddLast(abObject);
+                        lnkDict.Add(abObject.AssetName, lnkList);
                     }
                     else
                     {
-                        lnkList.AddLast(qab);
+                        lnkList.AddLast(abObject);
                     }
                 }
             }
@@ -121,12 +123,12 @@ namespace Cosmos.Quark
             else
             {
                 var localFullPath = Path.Combine(assetBundleName, LocalPath);
-                return QuarkUtility.Unity.DownloadAssetBundleAsync(localFullPath, null, ab =>
-                {
-                    assetBundleDict.Add(assetBundleName, ab);
-                    asset = assetBundleDict[assetBundleName].LoadAllAssets<T>();
-                    callback?.Invoke(asset);
-                }, errorMessage => { callback?.Invoke(null); });
+                return QuarkUtility.Unity.StartCoroutine(EnumRequestAssetBundle(localFullPath, ab =>
+               {
+                   assetBundleDict.Add(assetBundleName, ab);
+                   asset = assetBundleDict[assetBundleName].LoadAllAssets<T>();
+                   callback?.Invoke(asset);
+               }, errorMessage => { callback?.Invoke(null); }));
             }
         }
         public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false)
@@ -135,54 +137,13 @@ namespace Cosmos.Quark
             CheckBuildInfo();
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, callback, instantiate));
         }
-        // todo
-        public IEnumerator EnumLoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false)
-            where T : UnityEngine.Object
-        {
-            T asset = null;
-            string assetBundleName = string.Empty;
-            foreach (var manifest in quarkManifest.ManifestDict)
-            {
-                var assets = manifest.Value.Assets;
-                var length = assets.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    if (assets[i] == assetName)
-                    {
-                        assetBundleName = manifest.Value.ABName;
-                        break;
-                    }
-                }
-            }
-            Utility.Debug.LogInfo($"Quark 加载 ab step 0：{assetBundleName}");
 
-            if (string.IsNullOrEmpty(assetBundleName))
-            {
-                callback.Invoke(asset);
-                yield break;
-            }
-            yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
-
-            if (assetBundleDict.ContainsKey(assetBundleName))
-            {
-                asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
-                if (asset != null)
-                {
-                    if (instantiate)
-                    {
-                        asset = GameObject.Instantiate(asset);
-                    }
-                }
-            }
-            if (asset != null)
-                callback.Invoke(asset);
-        }
         public T LoadAsset<T>(string assetName, string assetExtension = null)
 where T : UnityEngine.Object
         {
             CheckBuildInfo();
             T asset = null;
-            var isPath = IsPath(assetName);
+            var isPath = assetName.Contains("Assets/");
             switch (QuarkAssetLoadMode)
             {
                 case QuarkAssetLoadMode.AssetDatabase:
@@ -228,50 +189,7 @@ where T : UnityEngine.Object
             assetBundleHashDict.Clear();
             AssetBundle.UnloadAllAssetBundles(unloadAllLoadedObjects);
         }
-        T LoadAssetFromABByName<T>(string assetPath, string assetExtension = null)
-where T : UnityEngine.Object
-        {
-            if (string.IsNullOrEmpty(assetPath))
-                throw new ArgumentNullException("Asset name is invalid!");
-            QuarkAssetBundleObject abObject = QuarkAssetBundleObject.None;
-            if (builtAssetBundleMap.TryGetValue(assetPath, out var lnkList))
-            {
-                if (!string.IsNullOrEmpty(assetExtension))
-                {
-                    abObject = lnkList.First.Value;
-                }
-                else
-                {
-                    foreach (var obj in lnkList)
-                    {
-                        if (obj.AssetExtension == assetExtension)
-                        {
-                            abObject = obj;
-                            break;
-                        }
-                    }
-                }
-                if (!assetBundleDict.TryGetValue(abObject.AssetBundleName, out var bundle))
-                {
 
-                }
-                //TODO Get AssetBundle
-                // var assetBundle = LoadAssetBundle(abObject);
-            }
-            return null;
-        }
-        IEnumerator EnumLoadAssetBundleAsync(QuarkAssetBundleObject qabObject)
-        {
-            if (!assetBundleDict.TryGetValue(qabObject.AssetBundleName, out var assetBundle))
-            {
-                var url = Utility.IO.WebPathCombine(LocalPath, qabObject.AssetBundleName);
-                yield return QuarkUtility.Unity.DownloadAssetBundleAsync(url, null, ab =>
-                {
-                    assetBundleDict.TryAdd(qabObject.AssetBundleName, ab);
-                    assetBundle = ab;
-                }, null);
-            }
-        }
 #if UNITY_EDITOR
         T AssetDatabaseLoadAssetByName<T>(string assetName, string assetExtension = null)
             where T : UnityEngine.Object
@@ -379,56 +297,60 @@ where T : UnityEngine.Object
             }
             return quarkAssetObject;
         }
-        QuarkAssetBundleObject GetAssetBundleObject(string abName, string assetName)
+        QuarkAssetBundleObject GetAssetBundleObject(string abName, string assetPath, string assetName)
         {
-            var qab = new QuarkAssetBundleObject()
+            var abObject = new QuarkAssetBundleObject()
             {
                 AssetBundleName = abName,
-                AssetPath = assetName,
+                AssetPath = assetPath,
             };
-            var strs = Utility.Text.StringSplit(assetName, new string[] { "/" });
+            var strs = Utility.Text.StringSplit(assetPath, new string[] { "/" });
             var nameWithExt = strs[strs.Length - 1];
             var splits = Utility.Text.StringSplit(nameWithExt, new string[] { "." });
-            qab.AssetExtension = Utility.Text.Combine(".", splits[splits.Length - 1]);
-            qab.AssetName = nameWithExt.Replace(qab.AssetExtension, "");
-            return qab;
+            abObject.AssetExtension = Utility.Text.Combine(".", splits[splits.Length - 1]);
+            abObject.AssetName = assetName;
+            return abObject;
         }
-        bool IsPath(string context)
-        {
-            return context.Contains("Assets/");
-        }
-
         IEnumerator EnumLoadDependenciesAssetBundleAsync(string assetBundleName)
         {
-            Utility.Debug.LogInfo($"Quark 加载 ab step1：{assetBundleName}");
-
             if (quarkBuildInfo != null)
             {
-                if (quarkBuildInfo.AssetDataMaps.TryGetValue(assetBundleName, out var buildInfo))
+                if (!assetBundleDict.ContainsKey(assetBundleName))
                 {
-                    Utility.Debug.LogInfo($"Quark 加载 ab step2：{assetBundleName}");
-                    if (!assetBundleDict.ContainsKey(assetBundleName))
+                    var abPath = Path.Combine(LocalPath, assetBundleName);
+                    yield return EnumRequestAssetBundle(abPath, ab =>
+                   {
+                       assetBundleDict.TryAdd(assetBundleName, ab);
+                   }, null);
+                }
+                QuarkBuildInfo.AssetData buildInfo = null;
+                foreach (var item in quarkBuildInfo.AssetDataMaps)
+                {
+                    if (item.Value.ABName == assetBundleName)
                     {
-                        var abPath = Path.Combine(LocalPath, assetBundleName);
-                        yield return QuarkUtility.Unity.DownloadAssetBundleAsync(abPath, null, ab =>
-                        {
-                            assetBundleDict.TryAdd(assetBundleName, ab);
-                        }, null);
+                        buildInfo = item.Value;
+                        break;
                     }
+                }
+                if (buildInfo != null)
+                {
                     var dependList = buildInfo.DependList;
                     var length = dependList.Count;
                     for (int i = 0; i < length; i++)
                     {
                         var dependentABName = dependList[i];
-                        var abPath = Path.Combine(LocalPath, dependentABName);
-                        yield return QuarkUtility.Unity.DownloadAssetBundleAsync(abPath, null, ab =>
+                        if (!assetBundleDict.ContainsKey(dependentABName))
                         {
-                            assetBundleDict.TryAdd(dependentABName, ab);
-                        }, null);
+                            var abPath = Path.Combine(LocalPath, dependentABName);
+                            Utility.Debug.LogInfo($"加载 {assetBundleName} 的依赖AB包：{dependentABName}");
+                            yield return  EnumRequestAssetBundle(abPath, ab =>
+                            {
+                                assetBundleDict.TryAdd(dependentABName, ab);
+                            }, null);
+                        }
                     }
                 }
             }
-            yield return null;
         }
         void CheckBuildInfo()
         {
@@ -445,6 +367,67 @@ where T : UnityEngine.Object
                     Utility.Debug.LogInfo(e);
                 }
             }
+        }
+        IEnumerator EnumRequestAssetBundle(string uri, Action<AssetBundle> doneCallback, Action<string> failureCallback)
+        {
+            //UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(uri);
+
+            using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(uri))
+            {
+                yield return request.SendWebRequest();
+                if (request.isNetworkError || request.isHttpError)
+                {
+                    failureCallback?.Invoke(request.error);
+                }
+                else
+                {
+                    try
+                    {
+                        AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(request);
+                        doneCallback?.Invoke(bundle);
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
+                }
+            }
+
+        }
+        IEnumerator EnumLoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false)
+    where T : UnityEngine.Object
+        {
+            T asset = null;
+            string assetBundleName = string.Empty;
+            if (builtAssetBundleMap.TryGetValue(assetName, out var abObject))
+            {
+                assetBundleName = abObject.First.Value.AssetBundleName;
+            }
+            else
+            {
+                Utility.Debug.LogError($"资源中不存在：{assetName}");
+                yield break;
+            }
+            if (string.IsNullOrEmpty(assetBundleName))
+            {
+                callback.Invoke(asset);
+                yield break;
+            }
+            yield return QuarkUtility.Unity.StartCoroutine( EnumLoadDependenciesAssetBundleAsync(assetBundleName));
+
+            if (assetBundleDict.ContainsKey(assetBundleName))
+            {
+                asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
+                if (asset != null)
+                {
+                    if (instantiate)
+                    {
+                        asset = GameObject.Instantiate(asset);
+                    }
+                }
+            }
+            if (asset != null)
+                callback.Invoke(asset);
         }
     }
 }

@@ -24,9 +24,12 @@ namespace Cosmos.CosmosEditor
         /// </summary>
         Dictionary<string, string> buildInfoCache = new Dictionary<string, string>();
         QuarkAssetDataset QuarkAssetDataset { get { return QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance; } }
-
+        AssetDatabaseTab assetDatabaseTab;
         List<string> abPaths = new List<string>();
-
+        public void SetAssetDatabaseTab(AssetDatabaseTab assetDatabaseTab)
+        {
+            this.assetDatabaseTab = assetDatabaseTab;
+        }
         public void Clear()
         {
         }
@@ -47,10 +50,6 @@ namespace Cosmos.CosmosEditor
             }
         }
         public void OnGUI()
-        {
-            DrawAssetBundleTab();
-        }
-        void DrawAssetBundleTab()
         {
             assetBundleTabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", assetBundleTabData.BuildTarget);
             assetBundleTabData.OutputPath = EditorGUILayout.TextField("OutputPath", assetBundleTabData.OutputPath);
@@ -110,14 +109,13 @@ namespace Cosmos.CosmosEditor
                 var aesKeyLength = Encoding.UTF8.GetBytes(assetBundleTabData.AESEncryptionKey).Length;
                 EditorGUILayout.LabelField($"密钥长度须为16，24，32，当前密钥长度：{aesKeyLength}");
                 assetBundleTabData.AESEncryptionKey = EditorGUILayout.TextField("AESEncryptionKey", assetBundleTabData.AESEncryptionKey);
-
             }
             GUILayout.Space(16);
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Build"))
             {
-                BuildAssetBundle();
+               EditorUtil.Coroutine.StartCoroutine(EnumBuildAssetBundle());
             }
             if (GUILayout.Button("Reset"))
             {
@@ -159,12 +157,19 @@ namespace Cosmos.CosmosEditor
             var path = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
             return path;
         }
-        void BuildAssetBundle()
+        IEnumerator EnumBuildAssetBundle()
         {
+            yield return assetDatabaseTab.EnumUpdateADBMode();
             SetBuildInfo();
             BuildPipeline.BuildAssetBundles(GetBuildFolder(), assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
             OperateManifest();
         }
+        //void BuildAssetBundle()
+        //{
+        //    SetBuildInfo();
+        //    BuildPipeline.BuildAssetBundles(GetBuildFolder(), assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
+        //    OperateManifest();
+        //}
         void SetBuildInfo()
         {
             EditorUtil.Debug.LogInfo("Start build asset bundle");
@@ -323,6 +328,8 @@ namespace Cosmos.CosmosEditor
             {
                 urls[i] = Utility.IO.WebPathCombine(GetBuildPath(), abNames[i]);
             }
+            //assetPath===assetName；这里统一使用unity的地址格式；
+            var assetObjsDict = QuarkAssetDataset.QuarkAssetObjectList.ToDictionary((obj) => { return obj.AssetPath.ToLower().Replace("\\", "/"); });
             EditorUtil.IO.DownloadAssetBundlesAsync(urls, percent =>
             {
                 EditorUtility.DisplayProgressBar("AssetBundleLoading", $"{percent * 100} %", percent);
@@ -335,7 +342,18 @@ namespace Cosmos.CosmosEditor
                 {
                     var bundleName = bundles[i].name;
                     var manifest = new QuarkManifest.ManifestItem();
-                    manifest.Assets = bundles[i].GetAllAssetNames();
+                    manifest.Assets = new Dictionary<string, string>();
+                    var bundleAssets = bundles[i].GetAllAssetNames();
+                    {
+                        var bundleAssetLength = bundleAssets.Length;
+                        for (int j = 0; j < bundleAssetLength; j++)
+                        {
+                            if (assetObjsDict.TryGetValue(bundleAssets[j], out var assetObj))
+                            {
+                                manifest.Assets.TryAdd(bundleAssets[j], assetObj.AssetName);
+                            }
+                        }
+                    }
                     //EditorUtil.Debug.LogInfo(bundleName, MessageColor.YELLOW);
                     if (buildInfoCache.TryGetValue(bundleName, out var abPath))
                     {
@@ -359,7 +377,6 @@ namespace Cosmos.CosmosEditor
             Utility.IO.WriteTextFile(fullPath, json, false);
             abBuildInfo.Dispose();
             buildInfoCache.Clear();
-
             var manifestJson = EditorUtil.Json.ToJson(quarkAssetManifest);
             var manifestPath = Utility.IO.PathCombine(GetBuildPath(), quarkManifest);
             Utility.IO.WriteTextFile(manifestPath, manifestJson, false);
@@ -374,6 +391,7 @@ namespace Cosmos.CosmosEditor
                 importer = AssetImporter.GetAtPath(path);
                 importerCacheDict[path] = importer;
                 importer.assetBundleName = abName;
+                //importer.assetBundleVariant = "bytes";
                 if (importer == null)
                     EditorUtil.Debug.LogError("AssetImporter is empty : " + path);
                 else
@@ -384,7 +402,9 @@ namespace Cosmos.CosmosEditor
                         DependList = AssetDatabase.GetAssetBundleDependencies(abName, true).ToList(),
                         Id = abBuildInfo.AssetDataMaps.Count,
                         ABName = abName,
+                        //ABName = abName+".bytes",
                     };
+
                     abBuildInfo.AssetDataMaps[importer.assetPath] = assetData;
                 }
             }

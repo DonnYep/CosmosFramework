@@ -107,6 +107,7 @@ namespace Cosmos.Quark
                 localManifestContext = Utility.IO.ReadTextFileContent(localManifestPath);
             }
             catch { }
+
             try { localManifest = Utility.Json.ToObject<QuarkManifest>(localManifestContext); }
             catch { }
             try { remoteManifest = Utility.Json.ToObject<QuarkManifest>(manifestContext); }

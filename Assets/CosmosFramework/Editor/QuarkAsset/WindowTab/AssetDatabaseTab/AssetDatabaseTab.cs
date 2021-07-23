@@ -29,6 +29,10 @@ namespace Cosmos.CosmosEditor
         {
             DrawFastDevelopTab();
         }
+        public EditorCoroutine EnumUpdateADBMode()
+        {
+            return EditorUtil.Coroutine.StartCoroutine( EnumBuildADBMode());
+        }
         void DrawFastDevelopTab()
         {
             EditorUtil.DrawVerticalContext(() =>

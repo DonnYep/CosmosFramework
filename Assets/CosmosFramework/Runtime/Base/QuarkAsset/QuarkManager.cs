@@ -29,7 +29,6 @@ namespace Cosmos.Quark
     public class QuarkManager : Singleton<QuarkManager>
     {
         public QuarkAssetLoadMode QuarkAssetLoadMode { get; set; }
-
         QuarkDownloader quarkDownloader;
         QuarkComparator quarkComparator;
         QuarkLoader quarkLoader;

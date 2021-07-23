@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using Cosmos.Quark;
+using System;
+
 namespace Cosmos.CosmosEditor
 {
     public class QuarkAssetWindow : EditorWindow
@@ -50,6 +52,7 @@ namespace Cosmos.CosmosEditor
             }
             assetDatabaseTab.OnEnable();
             assetBundleTab.OnEnable();
+            assetBundleTab.SetAssetDatabaseTab(assetDatabaseTab);
         }
         private void OnDisable()
         {
@@ -74,6 +77,11 @@ namespace Cosmos.CosmosEditor
                     break;
             }
             EditorGUILayout.EndScrollView();
+        }
+        void OnStartAssetBundleBuild(Action callback)
+        {
+
+
         }
     }
 }

@@ -766,6 +766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   url: http://39.174.37.118:8000/resource/StandaloneWindows/
   downloadPath: H:\JieyouGame\CosmosFramework\AssetBundles\QuarkDownloadPath
+  quarkAssetLoadMode: 2
 --- !u!1 &613508358
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,6 +13,8 @@ namespace Cosmos.Quark
     {
         [SerializeField] string url;
         [SerializeField] string downloadPath;
+        [SerializeField] QuarkAssetLoadMode quarkAssetLoadMode;
+        public QuarkAssetLoadMode QuarkAssetLoadMode { get { return quarkAssetLoadMode; } }
         static QuarkConfig instance;
         public static QuarkConfig Instance
         {
@@ -37,6 +39,7 @@ namespace Cosmos.Quark
                 throw new ArgumentNullException("URL is invalid !");
             if(string.IsNullOrEmpty(downloadPath))
                 throw new ArgumentNullException("DownloadPath is invalid !");
+            QuarkManager.Instance.QuarkAssetLoadMode = quarkAssetLoadMode;
             QuarkManager.Instance.Initiate(url, downloadPath);
         }
     }
