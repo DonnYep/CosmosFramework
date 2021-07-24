@@ -241,6 +241,7 @@ namespace Cosmos.CosmosEditor
             }
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
             AssetDatabase.RemoveUnusedAssetBundleNames();
+            System.GC.Collect();
         }
         void OperateManifest()
         {
@@ -318,6 +319,7 @@ namespace Cosmos.CosmosEditor
                     });
                 }
                 EncryptAB(abPaths.ToArray());
+                mainBundle.Unload(true);
             });
         }
         void SetManifestInfo(string[] abNames)
@@ -363,6 +365,7 @@ namespace Cosmos.CosmosEditor
                         quarkAssetManifest.ManifestDict.TryAdd(bundleName, manifest);
                         manifest.ABFileSize = Utility.IO.GetFileSize(urls[i]);
                     }
+                    bundles[i].Unload(true);
                 }
                 WriteBuildInfo();
                 ResetBuildInfo();
@@ -432,7 +435,7 @@ namespace Cosmos.CosmosEditor
                         var encryptedBytes = Utility.Encryption.AESEncryptBinary(byteList[i], aseByteKey);
                         File.WriteAllBytes(paths[i], encryptedBytes);
                     }
-                    GUIUtility.ExitGUI();
+                    //GUIUtility.ExitGUI();
                 });
             }
         }

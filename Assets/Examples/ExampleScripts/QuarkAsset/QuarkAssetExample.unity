@@ -843,8 +843,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 613508358}
-  m_LocalRotation: {x: -0.024064282, y: 0.95346564, z: -0.07913722, w: -0.2899336}
-  m_LocalPosition: {x: 2.1192997, y: 1.7518225, z: 3.5448947}
+  m_LocalRotation: {x: -0.062313147, y: 0.93358463, z: -0.29064396, w: -0.20015746}
+  m_LocalPosition: {x: 1.9675698, y: 3.9709537, z: 4.516761}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1583,6 +1583,9 @@ MonoBehaviour:
   btnUnload: {fileID: 1408041204}
   iptAssetName: {fileID: 307117637}
   canvasGroup: {fileID: 959857131}
+  startPos: {x: 4, y: 0, z: 0}
+  row: 4
+  dist: 2
 --- !u!1 &1001224804
 GameObject:
   m_ObjectHideFlags: 0

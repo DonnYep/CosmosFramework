@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnityEngine;
+using UnityEditor;
+using Unity.EditorCoroutines.Editor;
 
 namespace Cosmos.CosmosEditor
 {
@@ -17,15 +16,15 @@ namespace Cosmos.CosmosEditor
         {
             public static EditorCoroutine StartCoroutine(IEnumerator coroutine)
             {
-                return EditorCoroutineCore.StartCoroutine(coroutine);
+                return EditorCoroutineUtility.StartCoroutineOwnerless(coroutine);
             }
             public static void StopCoroutine(EditorCoroutine coroutine)
             {
-                EditorCoroutineCore.StopCoroutine(coroutine);
+                EditorCoroutineUtility.StopCoroutine(coroutine);
             }
             public static void StopCoroutine(IEnumerator coroutine)
             {
-                EditorCoroutineCore.StopCoroutine(coroutine);
+                EditorCoroutineUtility.StartCoroutineOwnerless(coroutine);
             }
         }
     }

@@ -96,7 +96,7 @@ namespace Cosmos.Quark
         {
             onCompareFailure?.Invoke(errorMessage);
         }
-        void OnUriManifestSuccess(string manifestContext)
+        void OnUriManifestSuccess(string remoteManifestContext)
         {
             var localManifestPath = Utility.IO.WebPathCombine(LocalPath, QuarkConsts.ManifestName);
             string localManifestContext = string.Empty;
@@ -110,7 +110,7 @@ namespace Cosmos.Quark
 
             try { localManifest = Utility.Json.ToObject<QuarkManifest>(localManifestContext); }
             catch { }
-            try { remoteManifest = Utility.Json.ToObject<QuarkManifest>(manifestContext); }
+            try { remoteManifest = Utility.Json.ToObject<QuarkManifest>(remoteManifestContext); }
             catch { }
             if (localManifest != null)
             {
@@ -150,6 +150,7 @@ namespace Cosmos.Quark
                         }
                         else
                         {
+                            overallSize += remoteMF.Value.ABFileSize;
                             latest.Add(remoteMF.Value.ABName);
                         }
                     }
@@ -185,7 +186,7 @@ namespace Cosmos.Quark
             latest.Clear();
             expired.Clear();
             var localNewManifestPath = Utility.IO.PathCombine(LocalPath, QuarkConsts.ManifestName);
-            Utility.IO.OverwriteTextFile(localNewManifestPath, manifestContext);
+            Utility.IO.OverwriteTextFile(localNewManifestPath, remoteManifestContext);
             QuarkManager.Instance.SetBuiltAssetBundleModeData(remoteManifest);
         }
     }

@@ -12,6 +12,11 @@ public class QuarkLoadAssetPanel : MonoBehaviour
     [SerializeField] Button btnUnload;
     [SerializeField] InputField iptAssetName;
     [SerializeField] CanvasGroup canvasGroup;
+    [SerializeField] Vector3 startPos=new Vector3(-2,0,0);
+    [SerializeField] int rowElementCount=4;
+    [SerializeField] int dist = 2;
+    int currentRow;
+    int currentColumn = 0;
     GameObject objectRoot;
     public void OnUpdateDone()
     {
@@ -32,8 +37,18 @@ public class QuarkLoadAssetPanel : MonoBehaviour
         var assetName = iptAssetName?.text;
         if (!string.IsNullOrEmpty(assetName))
         {
-            Utility.Debug.LogInfo("加载：" + assetName);
-            QuarkManager.Instance.LoadAssetAsync<GameObject>(assetName, (go) => { go.transform.SetParent(objectRoot.transform); }, true);
+            Utility.Debug.LogInfo("从AB中请求资源：" + assetName);
+            QuarkManager.Instance.LoadAssetAsync<GameObject>(assetName, (go) =>
+            {
+                go.transform.SetParent(objectRoot.transform);
+                currentRow++;
+                go.transform.position = startPos - new Vector3(dist*currentRow, 0, currentColumn * 2);
+                if (currentRow >= rowElementCount)
+                {
+                    currentColumn++;
+                    currentRow = 0;
+                }
+            }, true);
         }
     }
     void OnUnloadClick()
@@ -44,7 +59,6 @@ public class QuarkLoadAssetPanel : MonoBehaviour
             Utility.Debug.LogInfo("功能未实现");
         }
     }
-
     void OnDetectedSuccess(long size)
     {
         if (size <= 0)

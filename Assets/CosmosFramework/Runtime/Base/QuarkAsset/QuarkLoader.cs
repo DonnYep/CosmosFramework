@@ -311,6 +311,74 @@ where T : UnityEngine.Object
             abObject.AssetName = assetName;
             return abObject;
         }
+
+        void CheckBuildInfo()
+        {
+            if (quarkBuildInfo == null)
+            {
+                try
+                {
+                    var buildInfoPath = Path.Combine(LocalPath, QuarkConsts.BuildInfoFileName);
+                    var buildInfoContext = Utility.IO.ReadTextFileContent(buildInfoPath);
+                    quarkBuildInfo = Utility.Json.ToObject<QuarkBuildInfo>(buildInfoContext);
+                }
+                catch (Exception e)
+                {
+                    Utility.Debug.LogError(e);
+                }
+            }
+        }
+        IEnumerator EnumRequestAssetBundle(string uri, Action<AssetBundle> doneCallback, Action<string> failureCallback)
+        {
+            using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(uri))
+            {
+                yield return request.SendWebRequest();
+                if (request.isNetworkError || request.isHttpError)
+                {
+                    failureCallback?.Invoke(request.error);
+                }
+                else
+                {
+                    AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(request);
+                    doneCallback?.Invoke(bundle);
+                }
+            }
+        }
+        IEnumerator EnumLoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false)
+    where T : UnityEngine.Object
+        {
+            T asset = null;
+            string assetBundleName = string.Empty;
+            if (builtAssetBundleMap.TryGetValue(assetName, out var abObject))
+            {
+                assetBundleName = abObject.First.Value.AssetBundleName;
+            }
+            else
+            {
+                Utility.Debug.LogError($"资源中不存在：{assetName}");
+                yield break;
+            }
+            if (string.IsNullOrEmpty(assetBundleName))
+            {
+                callback?.Invoke(asset);
+                yield break;
+            }
+            yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
+
+            if (assetBundleDict.ContainsKey(assetBundleName))
+            {
+                asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
+                if (asset != null)
+                {
+                    if (instantiate)
+                    {
+                        asset = GameObject.Instantiate(asset);
+                    }
+                }
+            }
+            if (asset != null)
+                callback?.Invoke(asset);
+        }
         IEnumerator EnumLoadDependenciesAssetBundleAsync(string assetBundleName)
         {
             if (quarkBuildInfo != null)
@@ -319,9 +387,9 @@ where T : UnityEngine.Object
                 {
                     var abPath = Path.Combine(LocalPath, assetBundleName);
                     yield return EnumRequestAssetBundle(abPath, ab =>
-                   {
-                       assetBundleDict.TryAdd(assetBundleName, ab);
-                   }, null);
+                    {
+                        assetBundleDict.TryAdd(assetBundleName, ab);
+                    }, null);
                 }
                 QuarkBuildInfo.AssetData buildInfo = null;
                 foreach (var item in quarkBuildInfo.AssetDataMaps)
@@ -343,7 +411,7 @@ where T : UnityEngine.Object
                         {
                             var abPath = Path.Combine(LocalPath, dependentABName);
                             Utility.Debug.LogInfo($"加载 {assetBundleName} 的依赖AB包：{dependentABName}");
-                            yield return  EnumRequestAssetBundle(abPath, ab =>
+                            yield return EnumRequestAssetBundle(abPath, ab =>
                             {
                                 assetBundleDict.TryAdd(dependentABName, ab);
                             }, null);
@@ -351,83 +419,6 @@ where T : UnityEngine.Object
                     }
                 }
             }
-        }
-        void CheckBuildInfo()
-        {
-            if (quarkBuildInfo == null)
-            {
-                try
-                {
-                    var buildInfoPath = Path.Combine(LocalPath, QuarkConsts.BuildInfoFileName);
-                    var buildInfoContext = Utility.IO.ReadTextFileContent(buildInfoPath);
-                    quarkBuildInfo = Utility.Json.ToObject<QuarkBuildInfo>(buildInfoContext);
-                }
-                catch (Exception e)
-                {
-                    Utility.Debug.LogInfo(e);
-                }
-            }
-        }
-        IEnumerator EnumRequestAssetBundle(string uri, Action<AssetBundle> doneCallback, Action<string> failureCallback)
-        {
-            //UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(uri);
-
-            using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(uri))
-            {
-                yield return request.SendWebRequest();
-                if (request.isNetworkError || request.isHttpError)
-                {
-                    failureCallback?.Invoke(request.error);
-                }
-                else
-                {
-                    try
-                    {
-                        AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(request);
-                        doneCallback?.Invoke(bundle);
-                    }
-                    catch (Exception e)
-                    {
-                        Utility.Debug.LogError(e);
-                    }
-                }
-            }
-
-        }
-        IEnumerator EnumLoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false)
-    where T : UnityEngine.Object
-        {
-            T asset = null;
-            string assetBundleName = string.Empty;
-            if (builtAssetBundleMap.TryGetValue(assetName, out var abObject))
-            {
-                assetBundleName = abObject.First.Value.AssetBundleName;
-            }
-            else
-            {
-                Utility.Debug.LogError($"资源中不存在：{assetName}");
-                yield break;
-            }
-            if (string.IsNullOrEmpty(assetBundleName))
-            {
-                callback.Invoke(asset);
-                yield break;
-            }
-            yield return QuarkUtility.Unity.StartCoroutine( EnumLoadDependenciesAssetBundleAsync(assetBundleName));
-
-            if (assetBundleDict.ContainsKey(assetBundleName))
-            {
-                asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
-                if (asset != null)
-                {
-                    if (instantiate)
-                    {
-                        asset = GameObject.Instantiate(asset);
-                    }
-                }
-            }
-            if (asset != null)
-                callback.Invoke(asset);
         }
     }
 }

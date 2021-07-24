@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine;
+using Unity.EditorCoroutines.Editor;
 
 namespace Cosmos.CosmosEditor
 {
@@ -91,8 +92,6 @@ namespace Cosmos.CosmosEditor
                 return pathList.ToArray();
             }
 
-
-          
             public static EditorCoroutine DownloadAssetBundleAsync(string url, Action<float> progress, Action<AssetBundle> downloadedCallback)
             {
                 return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequestAssetBundle.GetAssetBundle(url), progress, (UnityWebRequest req) =>

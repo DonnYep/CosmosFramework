@@ -17,13 +17,11 @@ MonoBehaviour:
   - Assets/Examples/AssetBundleTest/Audio
   - Assets/Examples/AssetBundleTest/Material
   - Assets/Examples/AssetBundleTest/Model
-  - Assets/Examples/AssetBundleTest/Texture
-  - Assets/Examples/AssetBundleTest/Scene
   - Assets/Examples/AssetBundleTest/Photo
   - Assets/Examples/AssetBundleTest/Prefab
   - Assets/Examples/AssetBundleTest/Text
-  - Assets/Examples/AssetBundleTest/Video
-  QuarkAssetCount: 36
+  - Assets/Examples/AssetBundleTest/Texture
+  QuarkAssetCount: 43
   QuarkAssetObjectList:
   - AssetName: AmbientAudio
     AssetExtension: .mp3
@@ -65,11 +63,116 @@ MonoBehaviour:
     AssetPath: Assets\Examples\AssetBundleTest\Material\RedMat.mat
     AssetType: UnityEngine.Material
     AssetGuid: d1c6a8b873dfcbb43a4d050b42ddaab9
-  - AssetName: LM_IdleRandom
+  - AssetName: LM_XBotIdle
     AssetExtension: .anim
-    AssetPath: Assets\Examples\AssetBundleTest\Model\LM_IdleRandom.anim
+    AssetPath: Assets\Examples\AssetBundleTest\Model\LM_XBotIdle.anim
+    AssetType: UnityEngine.AnimationClip
+    AssetGuid: 87c0853246554e9488467f7766988d47
+  - AssetName: LM_XBotWalking
+    AssetExtension: .anim
+    AssetPath: Assets\Examples\AssetBundleTest\Model\LM_XBotWalking.anim
+    AssetType: UnityEngine.AnimationClip
+    AssetGuid: 085e5aa65f5a03d4bb50519168ea8ba2
+  - AssetName: LM_YBotIdle
+    AssetExtension: .anim
+    AssetPath: Assets\Examples\AssetBundleTest\Model\LM_YBotIdle.anim
     AssetType: UnityEngine.AnimationClip
     AssetGuid: 1a21c686d5ccfab4a9d8437f84888bd7
+  - AssetName: LM_YBotWalk
+    AssetExtension: .anim
+    AssetPath: Assets\Examples\AssetBundleTest\Model\LM_YBotWalk.anim
+    AssetType: UnityEngine.AnimationClip
+    AssetGuid: d4376250d1dd14c499136c9dc16ef84c
+  - AssetName: CB1024
+    AssetExtension: .tga
+    AssetPath: Assets\Examples\AssetBundleTest\Photo\CB1024.tga
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 9f27d685deb3d7f4cb3821e2f5e23685
+  - AssetName: CB2048
+    AssetExtension: .tga
+    AssetPath: Assets\Examples\AssetBundleTest\Photo\CB2048.tga
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 2f0badb80fc00ff4cbd58530eb619dc8
+  - AssetName: CheckBoard_2048
+    AssetExtension: .jpg
+    AssetPath: Assets\Examples\AssetBundleTest\Photo\CheckBoard_2048.jpg
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 0e3849890faadeb4b9167c3d3a3c496a
+  - AssetName: Grid2048
+    AssetExtension: .psd
+    AssetPath: Assets\Examples\AssetBundleTest\Photo\Grid2048.psd
+    AssetType: UnityEngine.Texture2D
+    AssetGuid: 51d6f0242df93ba41a181740af589fe3
+  - AssetName: AC_XBot_Idle
+    AssetExtension: .controller
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\XBot\AC_XBot_Idle.controller
+    AssetType: UnityEditor.Animations.AnimatorController
+    AssetGuid: a18843d35b737c743998c05a9ea0b752
+  - AssetName: AC_XBot_Walking
+    AssetExtension: .controller
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\XBot\AC_XBot_Walking.controller
+    AssetType: UnityEditor.Animations.AnimatorController
+    AssetGuid: 587cd805e865b4d418119fc084422f63
+  - AssetName: XBot_Idle
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\XBot\XBot_Idle.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 81b1e67c4aa6f6845a8d183a3fd6e029
+  - AssetName: XBot_Walking
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\XBot\XBot_Walking.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 91469ef38e8cb674bbead3426c14095d
+  - AssetName: AC_YBot_Idle
+    AssetExtension: .controller
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\YBot\AC_YBot_Idle.controller
+    AssetType: UnityEditor.Animations.AnimatorController
+    AssetGuid: d2a7361b7f635d9429e14abbd53d8e17
+  - AssetName: AC_YBot_Walking
+    AssetExtension: .controller
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\YBot\AC_YBot_Walking.controller
+    AssetType: UnityEditor.Animations.AnimatorController
+    AssetGuid: 2c680063f3912db4aa02673a28563e64
+  - AssetName: YBot_Idle
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\YBot\YBot_Idle.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 7b6ca4b6b82b2b045bd5beb2e58b6a18
+  - AssetName: YBot_Walking
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\YBot\YBot_Walking.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 9e925d118539ac64b9c27e7493e9eee1
+  - AssetName: AudioSource
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\AudioSource.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: ff93e58ecc2207d4f870b34b9d6fa0cd
+  - AssetName: Capsule
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\Capsule.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 4f36292e3156a8b41b04d4e36a303106
+  - AssetName: Cube
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\Cube.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 55b9f4ca15a627f47bb9e866082a1a39
+  - AssetName: Cylinder
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\Cylinder.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: b8b167ef7b0b1a24384a1c6bd2ebe66c
+  - AssetName: Label
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\Label.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 02f86ae0014261a478d59d170da4028c
+  - AssetName: Sphere
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\Sphere.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 7f961a5f385a12347b5300cc7d814eb5
   - AssetName: Tex_5195
     AssetExtension: .png
     AssetPath: Assets\Examples\AssetBundleTest\Texture\Tex_5195.png
@@ -135,73 +238,3 @@ MonoBehaviour:
     AssetPath: Assets\Examples\AssetBundleTest\Texture\Tex_5212.png
     AssetType: UnityEngine.Texture2D
     AssetGuid: 0c6a7150c5c0ba248bfe339b605eca02
-  - AssetName: DownloadTest
-    AssetExtension: .unity
-    AssetPath: Assets\Examples\AssetBundleTest\Scene\DownloadTest.unity
-    AssetType: UnityEditor.SceneAsset
-    AssetGuid: 48a23647f8310614ebfe2b675f02ea5d
-  - AssetName: CB1024
-    AssetExtension: .tga
-    AssetPath: Assets\Examples\AssetBundleTest\Photo\CB1024.tga
-    AssetType: UnityEngine.Texture2D
-    AssetGuid: 9f27d685deb3d7f4cb3821e2f5e23685
-  - AssetName: CB2048
-    AssetExtension: .tga
-    AssetPath: Assets\Examples\AssetBundleTest\Photo\CB2048.tga
-    AssetType: UnityEngine.Texture2D
-    AssetGuid: 2f0badb80fc00ff4cbd58530eb619dc8
-  - AssetName: CheckBoard_2048
-    AssetExtension: .jpg
-    AssetPath: Assets\Examples\AssetBundleTest\Photo\CheckBoard_2048.jpg
-    AssetType: UnityEngine.Texture2D
-    AssetGuid: 0e3849890faadeb4b9167c3d3a3c496a
-  - AssetName: Grid2048
-    AssetExtension: .psd
-    AssetPath: Assets\Examples\AssetBundleTest\Photo\Grid2048.psd
-    AssetType: UnityEngine.Texture2D
-    AssetGuid: 51d6f0242df93ba41a181740af589fe3
-  - AssetName: AC_YBot
-    AssetExtension: .controller
-    AssetPath: Assets\Examples\AssetBundleTest\Prefab\YBot\AC_YBot.controller
-    AssetType: UnityEditor.Animations.AnimatorController
-    AssetGuid: 2c680063f3912db4aa02673a28563e64
-  - AssetName: YBot
-    AssetExtension: .prefab
-    AssetPath: Assets\Examples\AssetBundleTest\Prefab\YBot\YBot.prefab
-    AssetType: UnityEngine.GameObject
-    AssetGuid: 8fd388c1b54d6774fbeffb056173840c
-  - AssetName: AudioSource
-    AssetExtension: .prefab
-    AssetPath: Assets\Examples\AssetBundleTest\Prefab\AudioSource.prefab
-    AssetType: UnityEngine.GameObject
-    AssetGuid: ff93e58ecc2207d4f870b34b9d6fa0cd
-  - AssetName: Capsule
-    AssetExtension: .prefab
-    AssetPath: Assets\Examples\AssetBundleTest\Prefab\Capsule.prefab
-    AssetType: UnityEngine.GameObject
-    AssetGuid: 4f36292e3156a8b41b04d4e36a303106
-  - AssetName: Cube
-    AssetExtension: .prefab
-    AssetPath: Assets\Examples\AssetBundleTest\Prefab\Cube.prefab
-    AssetType: UnityEngine.GameObject
-    AssetGuid: 55b9f4ca15a627f47bb9e866082a1a39
-  - AssetName: Cylinder
-    AssetExtension: .prefab
-    AssetPath: Assets\Examples\AssetBundleTest\Prefab\Cylinder.prefab
-    AssetType: UnityEngine.GameObject
-    AssetGuid: b8b167ef7b0b1a24384a1c6bd2ebe66c
-  - AssetName: Label
-    AssetExtension: .prefab
-    AssetPath: Assets\Examples\AssetBundleTest\Prefab\Label.prefab
-    AssetType: UnityEngine.GameObject
-    AssetGuid: 02f86ae0014261a478d59d170da4028c
-  - AssetName: Sphere
-    AssetExtension: .prefab
-    AssetPath: Assets\Examples\AssetBundleTest\Prefab\Sphere.prefab
-    AssetType: UnityEngine.GameObject
-    AssetGuid: 7f961a5f385a12347b5300cc7d814eb5
-  - AssetName: XBot
-    AssetExtension: .prefab
-    AssetPath: Assets\Examples\AssetBundleTest\Prefab\XBot.prefab
-    AssetType: UnityEngine.GameObject
-    AssetGuid: 91469ef38e8cb674bbead3426c14095d
