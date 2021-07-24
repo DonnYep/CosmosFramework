@@ -21,6 +21,7 @@ MonoBehaviour:
   - Assets/Examples/AssetBundleTest/Prefab
   - Assets/Examples/AssetBundleTest/Text
   - Assets/Examples/AssetBundleTest/Texture
+  - Assets/Examples/AssetBundleTest/Video
   QuarkAssetCount: 43
   QuarkAssetObjectList:
   - AssetName: AmbientAudio

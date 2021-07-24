@@ -765,7 +765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   url: http://39.174.37.118:8000/resource/StandaloneWindows/
-  downloadPath: H:\JieyouGame\CosmosFramework\AssetBundles\QuarkDownloadPath
+  downloadPath: 
   quarkAssetLoadMode: 2
 --- !u!1 &613508358
 GameObject:
@@ -1584,7 +1584,7 @@ MonoBehaviour:
   iptAssetName: {fileID: 307117637}
   canvasGroup: {fileID: 959857131}
   startPos: {x: 4, y: 0, z: 0}
-  row: 4
+  rowElementCount: 4
   dist: 2
 --- !u!1 &1001224804
 GameObject:
