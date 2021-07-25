@@ -174,10 +174,8 @@ namespace Cosmos.Download
         /// <param name="downloadPath">下载到地址的绝对路径</param>
         public void AddUriDownload(string uri, string downloadPath)
         {
-            if (string.IsNullOrEmpty(uri))
-                throw new ArgumentNullException("URI is invalid !");
-            if (string.IsNullOrEmpty(downloadPath))
-                throw new ArgumentNullException("DownloadPath is invalid !");
+            Utility.Text.IsStringValid(uri, "URI is invalid !");
+            Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
             downloader.AddUriDownload(uri, downloadPath);
         }
         /// <summary>
@@ -187,10 +185,8 @@ namespace Cosmos.Download
         /// <param name="downloadRootPath">下载到地址的根目录</param>
         public void AddUrlDownload(string url, string downloadRootPath)
         {
-            if (string.IsNullOrEmpty(url))
-                throw new ArgumentNullException("URL is invalid !");
-            if (string.IsNullOrEmpty(downloadRootPath))
-                throw new ArgumentNullException("DownloadRootPath is invalid !");
+            Utility.Text.IsStringValid(url, "DownloadPath is invalid !");
+            Utility.Text.IsStringValid(downloadRootPath, "DownloadRootPath is invalid !");
             var relUris = downloadUrlHelper.ParseUrlToRelativeUris(url);
             var length = relUris.Length;
             for (int i = 0; i < length; i++)
@@ -206,8 +202,7 @@ namespace Cosmos.Download
         /// <param name="uri">统一资源名称</param>
         public void RemoveUriDownload(string uri)
         {
-            if (string.IsNullOrEmpty(uri))
-                throw new ArgumentNullException("URI is invalid !");
+            Utility.Text.IsStringValid(uri, "URI is invalid !");
             downloader.RemoveUriDownload(uri);
         }
         /// <summary>
@@ -237,8 +232,7 @@ namespace Cosmos.Download
         /// <param name="callback">回调</param>
         public void GetUriFileSizeAsync(string uri, Action<long> callback)
         {
-            if (string.IsNullOrEmpty(uri))
-                throw new ArgumentNullException("URI is invalid !");
+            Utility.Text.IsStringValid(uri, "URI is invalid !");
             if (callback == null)
                 throw new ArgumentNullException("Callback is invalid !");
             downloadRequester.GetUriFileSizeAsync(uri, callback);
@@ -251,8 +245,7 @@ namespace Cosmos.Download
         /// <param name="callback">回调</param>
         public void GetUrlFilesSizeAsync(string url, Action<long> callback)
         {
-            if (string.IsNullOrEmpty(url))
-                throw new ArgumentNullException("URL is invalid !");
+            Utility.Text.IsStringValid(url, "URL is invalid !");
             var relUris = downloadUrlHelper.ParseUrlToRelativeUris(url);
             downloadRequester.GetUriFilesSizeAsync(relUris, callback);
         }

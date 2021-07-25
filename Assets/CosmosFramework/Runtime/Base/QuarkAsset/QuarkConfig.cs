@@ -35,10 +35,8 @@ namespace Cosmos.Quark
          void Awake()
         {
             instance = this;
-            if (string.IsNullOrEmpty(url))
-                throw new ArgumentNullException("URL is invalid !");
-            if(string.IsNullOrEmpty(downloadPath))
-                throw new ArgumentNullException("DownloadPath is invalid !");
+            Utility.Text.IsStringValid(url, "URI is invalid !");
+            Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
             QuarkManager.Instance.QuarkAssetLoadMode = quarkAssetLoadMode;
             QuarkManager.Instance.Initiate(url, downloadPath);
         }

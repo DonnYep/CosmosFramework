@@ -764,7 +764,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 435fb9601448fe144854aeece9140fde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: http://39.174.37.118:8000/resource/StandaloneWindows/
+  url: 
   downloadPath: 
   quarkAssetLoadMode: 2
 --- !u!1 &613508358

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cosmos
 {
     /// <summary>
-    /// 声音对象
+    /// 声音对象；
     /// </summary>
     public class AudioObject : IAudio
     {
@@ -19,6 +19,12 @@ namespace Cosmos
         public float Speed { get; set; }
         public virtual AudioClip AudioClip { get; set; }
         public GameObject MountObject { get; set; }
+
+
+        public bool IsPlaying { get; set; }
+        public string AudioName { get; set; }
+
+
         public void Release()
         {
             Mute = false;
