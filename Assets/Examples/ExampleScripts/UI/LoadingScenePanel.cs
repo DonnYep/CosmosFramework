@@ -12,19 +12,17 @@ public class LoadingScenePanel : UIForm
 {
     Text txtProgress;
     Slider sldProgress;
-    ISceneManager sceneManager;
-
     protected override void Awake()
     {
         txtProgress = GetUILable<Text>("TxtProgress");
         sldProgress = GetUILable<Slider>("SldProgress");
-        sceneManager = GameManager.GetModule<ISceneManager>();
         LoadLevel();
     }
     void LoadLevel()
     {
         sldProgress.value = 0;
-            sceneManager.LoadSceneAsync(new SceneInfo( LevelLoadInfo.TargetLevel), UpdateSlider);
+        Utility.Debug.LogInfo(LevelLoadInfo.TargetLevel,MessageColor.YELLOW);
+        CosmosEntry.SceneManager.LoadSceneAsync(new SceneInfo(LevelLoadInfo.TargetLevel), UpdateSlider);
     }
     void UpdateSlider(float value)
     {

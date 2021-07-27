@@ -735,7 +735,7 @@ MonoBehaviour:
   LaunchAppDomainModules: 1
   PrintModulePreparatory: 0
   LoadDefaultHelper: 1
-  ResourceLoadMode: 0
+  ResourceLoadMode: 1
   QuarkRemoteUrl: RemoteUrl
   QuarkLocalUrl: LocalUrl
 --- !u!4 &590850387
@@ -766,7 +766,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   url: 
   downloadPath: 
-  quarkAssetLoadMode: 2
+  quarkAssetLoadMode: 1
+  useAbsPath: 0
 --- !u!1 &613508358
 GameObject:
   m_ObjectHideFlags: 0

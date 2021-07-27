@@ -16,6 +16,18 @@ namespace Cosmos.Test
     [DefaultExecutionOrder(2000)]
     public class Entry : CosmosConfig
     {
-
+        static Entry instance;
+        public static Entry Instance { get { return instance; } }
+        protected override void Awake()
+        {
+            if (instance != null)
+                GameObject.Destroy(gameObject);
+            else
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+                base.Awake();
+            }
+        }
     }
 }

@@ -208,7 +208,7 @@ namespace Cosmos
             }
             public static void IsStringValid(string context, string exceptionContext)
             {
-                if (!string.IsNullOrEmpty(context))
+                if (string.IsNullOrEmpty(context))
                     throw new ArgumentNullException(exceptionContext);
             }
             /// <summary>

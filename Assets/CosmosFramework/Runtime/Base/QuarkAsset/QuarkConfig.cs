@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using System.IO;
 namespace Cosmos.Quark
 {
     /// <summary>
@@ -14,6 +15,7 @@ namespace Cosmos.Quark
         [SerializeField] string url;
         [SerializeField] string downloadPath;
         [SerializeField] QuarkAssetLoadMode quarkAssetLoadMode;
+        [SerializeField] bool useAbsPath;
         public QuarkAssetLoadMode QuarkAssetLoadMode { get { return quarkAssetLoadMode; } }
         static QuarkConfig instance;
         public static QuarkConfig Instance
@@ -35,10 +37,24 @@ namespace Cosmos.Quark
          void Awake()
         {
             instance = this;
-            Utility.Text.IsStringValid(url, "URI is invalid !");
-            Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
             QuarkManager.Instance.QuarkAssetLoadMode = quarkAssetLoadMode;
-            QuarkManager.Instance.Initiate(url, downloadPath);
+            switch (quarkAssetLoadMode)
+            {
+                case QuarkAssetLoadMode.AssetDatabase:
+                    break;
+                case QuarkAssetLoadMode.BuiltAssetBundle:
+                    {
+                        Utility.Text.IsStringValid(url, "URI is invalid !");
+                        Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
+                        if (Utility.Net.PingURI(url))
+                        {
+                            if (!Directory.Exists(downloadPath))
+                                Directory.CreateDirectory(downloadPath);
+                            QuarkManager.Instance.Initiate(url, downloadPath);
+                        }
+                    }
+                    break;
+            }
         }
     }
 }

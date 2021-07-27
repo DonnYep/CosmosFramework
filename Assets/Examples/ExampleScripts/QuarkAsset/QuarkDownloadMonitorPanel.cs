@@ -31,7 +31,7 @@ public class QuarkDownloadMonitorPanel : MonoBehaviour
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
         isDisable = true;
-        imgBG?.SetActive(false);
+        imgBG.SetActive(false);
     }
     void Start()
     {
@@ -40,6 +40,11 @@ public class QuarkDownloadMonitorPanel : MonoBehaviour
         QuarkManager.Instance.OnDownloadStart += OnDownloadStart;
         QuarkManager.Instance.OnDownloadSuccess += OnDownloadSucess;
         QuarkManager.Instance.OnDownloadFailure += OnDownloadFailure;
+        if (QuarkManager.Instance.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
+        {
+            HasNoLatest();
+            Debug.Log(nameof(HasNoLatest));
+        }
     }
     void OnDownloadStart(string uri, string downloadPath)
     {

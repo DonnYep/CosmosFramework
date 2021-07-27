@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Cosmos;
 using UnityEngine;
-
+using Cosmos.Quark.Loader;
 namespace Cosmos.Quark
 {
     //================================================
@@ -31,17 +31,7 @@ namespace Cosmos.Quark
         public QuarkAssetLoadMode QuarkAssetLoadMode { get; set; }
         QuarkDownloader quarkDownloader;
         QuarkComparator quarkComparator;
-        QuarkLoader quarkLoader;
-        /// <summary>
-        /// 本地缓存的地址；
-        /// </summary>
-        public string DownloadPath { get; private set; }
-        /// <summary>
-        /// 远端存储的地址；
-        /// </summary>
-        public string URL { get; private set; }
-        QuarkAssetDataset quarkAssetData;
-        public QuarkAssetDataset QuarkAssetData { get { return quarkAssetData; } }
+        Dictionary<QuarkAssetLoadMode, IQuarkAssetLoader> quarkLoaderDict;
         /// <summary>
         /// 当检测到最新的；
         /// </summary>
@@ -50,6 +40,15 @@ namespace Cosmos.Quark
         /// 当检测失败；
         /// </summary>
         Action<string> onDetectedFailure;
+        public QuarkManager()
+        {
+            quarkComparator = new QuarkComparator();
+            quarkDownloader = new QuarkDownloader();
+            quarkComparator.Initiate(OnCompareSuccess, OnCompareFailure);
+            quarkLoaderDict = new Dictionary<QuarkAssetLoadMode, IQuarkAssetLoader>();
+            quarkLoaderDict[QuarkAssetLoadMode.AssetDatabase] = new QuarkAssetDatabaseLoader();
+            quarkLoaderDict[QuarkAssetLoadMode.BuiltAssetBundle] = new QuarkAssetBundleLoader();
+        }
         /// <summary>
         /// 当检测到最新的；
         /// </summary>
@@ -106,28 +105,22 @@ namespace Cosmos.Quark
             add { quarkDownloader.OnDownloadFinish += value; }
             remove { quarkDownloader.OnDownloadFinish -= value; }
         }
-
         /// <summary>
         /// 初始化，传入资源定位符与本地持久化路径；
         /// </summary>
         /// <param name="url">统一资源定位符</param>
-        /// <param name="localPath">本地持久化地址</param>
-        public void Initiate(string url, string localPath)
+        /// <param name="persistentPath">本地持久化地址</param>
+        public void Initiate(string url, string persistentPath)
         {
-            this.URL = url;
-            this.DownloadPath = localPath;
-            quarkComparator = new QuarkComparator(url, localPath);
-            quarkDownloader = new QuarkDownloader();
-            quarkLoader = new QuarkLoader(localPath);
-            quarkDownloader.InitDownloader(url, localPath);
-            quarkComparator.Initiate(OnCompareSuccess, OnCompareFailure);
+            QuarkDataProxy.PersistentPath = persistentPath;
+            QuarkDataProxy.URL = url;
         }
         /// <summary>
-        /// 比较远程与本地的文件清单；
+        /// 检查更新；
         /// </summary>
-        public void CompareManifest()
+        public void CheckForUpdates()
         {
-            quarkComparator.CompareLocalAndRemoteManifest();
+            quarkComparator.CheckForUpdates();
         }
         /// <summary>
         /// 启动下载；
@@ -137,13 +130,15 @@ namespace Cosmos.Quark
             quarkDownloader.LaunchDownload();
         }
         /// <summary>
-        /// 用于Built assetbundle模式；
         /// 对Manifest进行编码；
+        /// 用于Built assetbundle模式；
         /// </summary>
         /// <param name="manifest">unityWebRequest获取的Manifest文件对象</param>
         public void SetBuiltAssetBundleModeData(QuarkManifest manifest)
         {
-            quarkLoader.SetBuiltAssetBundleModeData(manifest);
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode.BuiltAssetBundle, out var loader))
+                loader.SetLoaderData(manifest);
+            QuarkDataProxy.QuarkManifest = manifest;
         }
         /// <summary>
         /// 用于Editor开发模式；
@@ -152,27 +147,46 @@ namespace Cosmos.Quark
         /// <param name="assetData">QuarkAssetDataset对象</param>
         public void SetAssetDatabaseModeData(QuarkAssetDataset assetData)
         {
-            quarkLoader.SetAssetDatabaseModeData(assetData);
+            if (quarkLoaderDict.TryGetValue( QuarkAssetLoadMode.AssetDatabase, out var loader))
+                loader.SetLoaderData(assetData);
         }
-        public void UnLoadAsset()
+        public T LoadAsset<T>(string assetName, string assetExtension = null)
+where T : UnityEngine.Object
         {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.LoadAsset<T>(assetName, assetExtension);
+            return null;
         }
-
-        #region BuiltAssetBundle
-        #endregion
-        public Coroutine LoadAllAssetAsync<T>(string assetBundleName, Action<T[]> callback) where T : UnityEngine.Object
+        public T LoadAsset<T>(string assetName, string assetExtension, bool instantiate = false)
+where T : UnityEngine.Object
         {
-            return quarkLoader.LoadAllAssetAsync<T>(assetBundleName, callback);
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.LoadAsset<T>(assetName, assetExtension, instantiate);
+            return null;
         }
         public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false)
 where T : UnityEngine.Object
         {
-            return quarkLoader.LoadAssetAsync<T>(assetName, callback, instantiate);
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                loader.LoadAssetAsync(assetName, callback,instantiate);
+            return null;
         }
-        public T LoadAsset<T>(string assetName, string assetExtension = null)
-    where T : UnityEngine.Object
+        public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false)
+where T : UnityEngine.Object
         {
-            return quarkLoader.LoadAsset<T>(assetName, assetExtension);
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                loader.LoadAssetAsync(assetName, assetExtension,callback, instantiate);
+            return null;
+        }
+        public void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                loader.UnLoadAllAssetBundle(unloadAllLoadedObjects);
+        }
+        public void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                loader.UnLoadAssetBundle(assetBundleName, unloadAllLoadedObjects);
         }
         /// <summary>
         /// 获取比较manifest成功；
@@ -187,7 +201,7 @@ where T : UnityEngine.Object
             {
                 try
                 {
-                    var expiredPath = Utility.IO.PathCombine(DownloadPath, expired[i]);
+                    var expiredPath = Utility.IO.PathCombine(QuarkDataProxy.PersistentPath, expired[i]);
                     Utility.IO.DeleteFile(expiredPath);
                 }
                 catch { }

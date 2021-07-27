@@ -26,8 +26,7 @@ namespace Cosmos
         {
             IsLoading = true;
             startLoadCallback?.Invoke();
-            AsyncOperation ao;
-            ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName, (LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
+            var ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName, (LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
             while (!ao.isDone)
             {
                 progressCallback?.Invoke(ao.progress);

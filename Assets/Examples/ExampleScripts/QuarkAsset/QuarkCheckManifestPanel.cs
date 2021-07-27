@@ -17,9 +17,12 @@ public class QuarkCheckManifestPanel : MonoBehaviour
     {
         btnDownload?.onClick.AddListener(DownloadClick);
         btnCancel?.onClick.AddListener(CancelClick);
-        QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess; 
+        QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess;
         QuarkManager.Instance.OnDetectedFailure += OnDetectedFailure;
-        QuarkManager.Instance.CompareManifest();
+        if (QuarkManager.Instance.QuarkAssetLoadMode == QuarkAssetLoadMode.BuiltAssetBundle)
+        {
+            QuarkManager.Instance.CheckForUpdates();
+        }
     }
     void OnDetectedFailure(string errorMessage)
     {
@@ -31,10 +34,6 @@ public class QuarkCheckManifestPanel : MonoBehaviour
     }
     void OnDetectedSuccess(long size)
     {
-        if (size <= 0)
-        {
-
-        }
         if (txtDownloadInfo != null)
         {
             if (size <= 0)

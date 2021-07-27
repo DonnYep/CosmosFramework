@@ -13,19 +13,16 @@ public class LoadPanel : UIForm
 {
     InputField inputTargetLevel;
     InputField inputLoadLevel;
-    ISceneManager sceneManager;
-
     protected override void Awake()
     {
         GetUILable<Button>("BtnLoad").onClick.AddListener(LoadClick);
         inputLoadLevel = GetUILable<InputField>("InputLoadLevel");
         inputTargetLevel = GetUILable<InputField>("InputTargetLevel");
-        sceneManager = GameManager.GetModule<ISceneManager>();
     }
     void LoadClick()
     {
         LevelLoadInfo.TargetLevel = inputTargetLevel.text;
         string loadingLevel = inputLoadLevel.text;
-        sceneManager.LoadSceneAsync(new SceneInfo( loadingLevel), () => Utility.Debug.LogInfo("Scene load Done"));
+        CosmosEntry.SceneManager.LoadSceneAsync(new SceneInfo( loadingLevel), () => Utility.Debug.LogInfo("Scene load Done"));
     }
 }

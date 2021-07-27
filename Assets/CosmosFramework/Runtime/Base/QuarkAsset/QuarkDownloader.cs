@@ -93,8 +93,8 @@ namespace Cosmos.Quark
             remove { onDownloadFinish -= value; }
         }
         #endregion
-        public string DownloadPath { get; private set; }
-        public string URL { get; private set; }
+        public string PersistentPath { get { return QuarkDataProxy.PersistentPath; } }
+        public string URL { get { return QuarkDataProxy.URL; } }
         public int DownloadTimeout { get; private set; }
         public bool DeleteFailureFile { get; set; }
 
@@ -137,11 +137,6 @@ namespace Cosmos.Quark
         /// 下载任务数量；
         /// </summary>
         int downloadCount = 0;
-        public void InitDownloader(string url, string downloadPath)
-        {
-            this.URL = url;
-            this.DownloadPath = downloadPath;
-        }
         /// <summary>
         /// 移除下载文件；
         /// </summary>
@@ -213,7 +208,7 @@ namespace Cosmos.Quark
             {
                 var uri = pendingURIs.RemoveFirst();
                 currentDownloadIndex = downloadCount - pendingURIs.Count - 1;
-                var fileDownloadPath = Path.Combine(DownloadPath, uri);
+                var fileDownloadPath = Path.Combine(PersistentPath, uri);
                 var remoteUri = Utility.IO.WebPathCombine(URL, uri);
                 yield return EnumDownloadSingleFile(remoteUri, fileDownloadPath);
             }
@@ -232,7 +227,7 @@ namespace Cosmos.Quark
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
                 {
-                    OnFileDownloading(uri, DownloadPath, request.downloadProgress);
+                    OnFileDownloading(uri, PersistentPath, request.downloadProgress);
                     var responseData = new DownloadedData(uri, request.downloadHandler.data, downloadPath);
                     yield return OnDownloadedData(responseData);
                 }
@@ -244,7 +239,7 @@ namespace Cosmos.Quark
                         var responseData = new DownloadedData(uri, request.downloadHandler.data, downloadPath);
                         yield return OnDownloadedData(responseData);
                         onDownloadSuccess?.Invoke(uri, downloadPath, request.downloadHandler.data);
-                        OnFileDownloading(uri, DownloadPath, 1);
+                        OnFileDownloading(uri, PersistentPath, 1);
                         successURIs.Add(uri);
                     }
                 }
@@ -253,7 +248,7 @@ namespace Cosmos.Quark
                     Downloading = false;
                     onDownloadFailure?.Invoke(request.url, downloadPath, request.error);
                     failureURIs.Add(uri);
-                    OnFileDownloading(uri, DownloadPath, 1);
+                    OnFileDownloading(uri, PersistentPath, 1);
                     if (DeleteFailureFile)
                     {
                         Utility.IO.DeleteFile(downloadPath);

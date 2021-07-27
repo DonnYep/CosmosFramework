@@ -12,8 +12,8 @@ public class QuarkLoadAssetPanel : MonoBehaviour
     [SerializeField] Button btnUnload;
     [SerializeField] InputField iptAssetName;
     [SerializeField] CanvasGroup canvasGroup;
-    [SerializeField] Vector3 startPos=new Vector3(-2,0,0);
-    [SerializeField] int rowElementCount=4;
+    [SerializeField] Vector3 startPos = new Vector3(-2, 0, 0);
+    [SerializeField] int rowElementCount = 4;
     [SerializeField] int dist = 2;
     int currentRow;
     int currentColumn = 0;
@@ -28,9 +28,10 @@ public class QuarkLoadAssetPanel : MonoBehaviour
     {
         btnLoad?.onClick.AddListener(OnLoadClick);
         btnUnload?.onClick.AddListener(OnUnloadClick);
-        QuarkManager.Instance.QuarkAssetLoadMode = QuarkAssetLoadMode.BuiltAssetBundle;
         QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess;
         objectRoot = new GameObject("ObjectRoot");
+        if (QuarkManager.Instance.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
+            OnUpdateDone();
     }
     void OnLoadClick()
     {
@@ -42,7 +43,7 @@ public class QuarkLoadAssetPanel : MonoBehaviour
             {
                 go.transform.SetParent(objectRoot.transform);
                 currentRow++;
-                go.transform.position = startPos - new Vector3(dist*currentRow, 0, currentColumn * 2);
+                go.transform.position = startPos - new Vector3(dist * currentRow, 0, currentColumn * 2);
                 if (currentRow >= rowElementCount)
                 {
                     currentColumn++;
