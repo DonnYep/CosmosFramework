@@ -23,7 +23,7 @@ namespace Cosmos.CosmosEditor
         /// Key:ABName ; Value: ABPath
         /// </summary>
         Dictionary<string, string> buildInfoCache = new Dictionary<string, string>();
-        QuarkAssetDataset QuarkAssetDataset { get { return QuarkAssetEditorUtility.Dataset.QuarkAssetDatasetInstance; } }
+        QuarkAssetDataset quarkAssetDataset;
         AssetDatabaseTab assetDatabaseTab;
         List<string> abPaths = new List<string>();
         public void SetAssetDatabaseTab(AssetDatabaseTab assetDatabaseTab)
@@ -32,6 +32,11 @@ namespace Cosmos.CosmosEditor
         }
         public void Clear()
         {
+           // quarkAssetDataset = null;
+        }
+        public void SetQuarkAssetDataset(QuarkAssetDataset dataset)
+        {
+            quarkAssetDataset = dataset;
         }
         public void OnDisable()
         {
@@ -115,7 +120,10 @@ namespace Cosmos.CosmosEditor
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Build"))
             {
-               EditorUtil.Coroutine.StartCoroutine(EnumBuildAssetBundle());
+                if (quarkAssetDataset != null)
+                    EditorUtil.Coroutine.StartCoroutine(EnumBuildAssetBundle());
+                else
+                    EditorUtil.Debug.LogError("QuarkAssetDataset is invalid !");
             }
             if (GUILayout.Button("Reset"))
             {
@@ -193,7 +201,7 @@ namespace Cosmos.CosmosEditor
             }
             else
             {
-                var dirs = QuarkAssetDataset.IncludeDirectories;
+                var dirs = quarkAssetDataset.IncludeDirectories;
                 TraverseTargetDirectories(dirs.ToArray());
             }
         }
@@ -331,7 +339,7 @@ namespace Cosmos.CosmosEditor
                 urls[i] = Utility.IO.WebPathCombine(GetBuildPath(), abNames[i]);
             }
             //assetPath===assetName；这里统一使用unity的地址格式；
-            var assetObjsDict = QuarkAssetDataset.QuarkAssetObjectList.ToDictionary((obj) => { return obj.AssetPath.ToLower().Replace("\\", "/"); });
+            var assetObjsDict = quarkAssetDataset.QuarkAssetObjectList.ToDictionary((obj) => { return obj.AssetPath.ToLower().Replace("\\", "/"); });
             EditorUtil.IO.DownloadAssetBundlesAsync(urls, percent =>
             {
                 EditorUtility.DisplayProgressBar("AssetBundleLoading", $"{percent * 100} %", percent);

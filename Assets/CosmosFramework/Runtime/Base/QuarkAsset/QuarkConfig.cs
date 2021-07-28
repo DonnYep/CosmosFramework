@@ -10,13 +10,12 @@ namespace Cosmos.Quark
     /// <summary>
     /// Quark配置脚本，挂载到物体上配置即可；
     /// </summary>
-    public class QuarkConfig:MonoBehaviour
+    public class QuarkConfig : MonoBehaviour
     {
-        [SerializeField] string url;
-        [SerializeField] string downloadPath;
-        [SerializeField] QuarkAssetLoadMode quarkAssetLoadMode;
-        [SerializeField] bool useAbsPath;
-        public QuarkAssetLoadMode QuarkAssetLoadMode { get { return quarkAssetLoadMode; } }
+        public string url;
+        public string downloadPath;
+        public QuarkAssetLoadMode QuarkAssetLoadMode;
+        public QuarkAssetDataset QuarkAssetDataset;
         static QuarkConfig instance;
         public static QuarkConfig Instance
         {
@@ -28,19 +27,23 @@ namespace Cosmos.Quark
                     if (instance == null)
                     {
                         var go = new GameObject(typeof(QuarkConfig).Name);
-                        instance= go.AddComponent<QuarkConfig>();
+                        instance = go.AddComponent<QuarkConfig>();
                     }
                 }
                 return instance;
             }
         }
-         void Awake()
+        void Awake()
         {
             instance = this;
-            QuarkManager.Instance.QuarkAssetLoadMode = quarkAssetLoadMode;
-            switch (quarkAssetLoadMode)
+            QuarkManager.Instance.QuarkAssetLoadMode = QuarkAssetLoadMode;
+            switch (QuarkAssetLoadMode)
             {
                 case QuarkAssetLoadMode.AssetDatabase:
+                    {
+                        if (QuarkAssetDataset != null)
+                            QuarkManager.Instance.SetAssetDatabaseModeData(QuarkAssetDataset);
+                    }
                     break;
                 case QuarkAssetLoadMode.BuiltAssetBundle:
                     {

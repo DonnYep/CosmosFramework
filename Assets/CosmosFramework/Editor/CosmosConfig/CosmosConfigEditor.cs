@@ -14,18 +14,6 @@ namespace Cosmos.CosmosEditor
         CosmosConfig cosmosConfig;
         SerializedProperty sp_LoadDefaultHelper, sp_LaunchAppDomainModules, sp_PrintModulePreparatory,
            sp_ResourceLoadMode, sp_QuarkAssetLoadMode, sp_QuarkRemoteUrl, sp_QuarkLocalUrl;
-        private void OnEnable()
-        {
-            cosmosConfig = target as CosmosConfig;
-            targetObject = new SerializedObject(cosmosConfig);
-            sp_LoadDefaultHelper = targetObject.FindProperty("LoadDefaultHelper");
-            sp_LaunchAppDomainModules = targetObject.FindProperty("LaunchAppDomainModules");
-            sp_PrintModulePreparatory = targetObject.FindProperty("PrintModulePreparatory");
-            sp_ResourceLoadMode = targetObject.FindProperty("ResourceLoadMode");
-            //sp_QuarkAssetLoadMode = targetObject.FindProperty("QuarkAssetLoadMode");
-            sp_QuarkRemoteUrl = targetObject.FindProperty("QuarkRemoteUrl");
-            sp_QuarkLocalUrl = targetObject.FindProperty("QuarkLocalUrl");
-        }
         public override void OnInspectorGUI()
         {
             targetObject.Update();
@@ -54,6 +42,18 @@ namespace Cosmos.CosmosEditor
                 //    break;
             }
             targetObject.ApplyModifiedProperties();
+        }
+        private void OnEnable()
+        {
+            cosmosConfig = target as CosmosConfig;
+            targetObject = new SerializedObject(cosmosConfig);
+            sp_LoadDefaultHelper = targetObject.FindProperty("LoadDefaultHelper");
+            sp_LaunchAppDomainModules = targetObject.FindProperty("LaunchAppDomainModules");
+            sp_PrintModulePreparatory = targetObject.FindProperty("PrintModulePreparatory");
+            sp_ResourceLoadMode = targetObject.FindProperty("ResourceLoadMode");
+            //sp_QuarkAssetLoadMode = targetObject.FindProperty("QuarkAssetLoadMode");
+            sp_QuarkRemoteUrl = targetObject.FindProperty("QuarkRemoteUrl");
+            sp_QuarkLocalUrl = targetObject.FindProperty("QuarkLocalUrl");
         }
     }
 }

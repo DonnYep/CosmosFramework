@@ -766,8 +766,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   url: 
   downloadPath: 
-  quarkAssetLoadMode: 1
-  useAbsPath: 0
+  QuarkAssetLoadMode: 1
+  QuarkAssetDataset: {fileID: 11400000, guid: 29ea0d5dd19db424bbf8f18d041c7126, type: 2}
 --- !u!1 &613508358
 GameObject:
   m_ObjectHideFlags: 0

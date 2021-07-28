@@ -13,5 +13,9 @@ namespace Cosmos.CosmosEditor
         /// 是否生成路径地址代码；
         /// </summary>
         public bool GenerateAssetPathCode;
+        /// <summary>
+        /// QuarkAssetDataset对象在Assets目录下的相对路径；
+        /// </summary>
+        public string QuarkAssetDatasetPath;
     }
 }
