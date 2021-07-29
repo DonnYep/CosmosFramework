@@ -383,12 +383,12 @@ namespace Cosmos.CosmosEditor
         void WriteBuildInfo()
         {
             abBuildInfo.BuildTime = System.DateTime.Now.ToString();
-            var json = EditorUtil.Json.ToJson(abBuildInfo, true);
+            var json = QuarkUtility.Json.ToJson(abBuildInfo, true);
             var fullPath = Utility.IO.PathCombine(GetBuildPath(), quarkABBuildInfo);
             Utility.IO.WriteTextFile(fullPath, json, false);
             abBuildInfo.Dispose();
             buildInfoCache.Clear();
-            var manifestJson = EditorUtil.Json.ToJson(quarkAssetManifest);
+            var manifestJson = QuarkUtility.Json.ToJson(quarkAssetManifest);
             var manifestPath = Utility.IO.PathCombine(GetBuildPath(), quarkManifest);
             Utility.IO.WriteTextFile(manifestPath, manifestJson, false);
         }

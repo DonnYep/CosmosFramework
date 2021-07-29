@@ -91,9 +91,9 @@ namespace Cosmos.Quark
             }
             catch { }
 
-            try { localManifest = Utility.Json.ToObject<QuarkManifest>(localManifestContext); }
+            try { localManifest = QuarkUtility.Json.ToObject<QuarkManifest>(localManifestContext); }
             catch { }
-            try { remoteManifest = Utility.Json.ToObject<QuarkManifest>(remoteManifestContext); }
+            try { remoteManifest = QuarkUtility.Json.ToObject<QuarkManifest>(remoteManifestContext); }
             catch { }
             if (localManifest != null)
             {
@@ -193,7 +193,7 @@ namespace Cosmos.Quark
                         callback();
                         try
                         {
-                            QuarkDataProxy.QuarkBuildInfo= Utility.Json.ToObject<QuarkBuildInfo>(buildInfoContext);
+                            QuarkDataProxy.QuarkBuildInfo= QuarkUtility.Json.ToObject<QuarkBuildInfo>(buildInfoContext);
                         }
                         catch (Exception e)
                         {

@@ -11,7 +11,6 @@ namespace Cosmos.CosmosEditor
 {
     public class EditorConfigWindow : EditorWindow
     {
-        static bool isDebugMode;
         static bool logPathExists = false;
         public static EditorConfigData EditorConfigData { get; private set; }
         [MenuItem("Window/Cosmos/EditorConfig")]
@@ -55,7 +54,7 @@ namespace Cosmos.CosmosEditor
                 GUI.color = Color.green;
                 EditorGUILayout.HelpBox("log日志输出。", MessageType.None, true);
                 #region CustomDrawEditor
-                DrawDebug();
+                //DrawDebug();
                 DrawScriptHeader();
                 #endregion
                 GUI.color = Color.white;

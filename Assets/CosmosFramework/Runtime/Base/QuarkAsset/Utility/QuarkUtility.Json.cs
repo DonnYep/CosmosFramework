@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
-using System;
-using System.Text;
+using UnityEngine;
 using LitJson;
+using System.Text;
+using System;
 
-namespace Cosmos.CosmosEditor
+namespace Cosmos.Quark
 {
-    public static partial class EditorUtil
+    public partial class QuarkUtility
     {
         public static class Json
         {

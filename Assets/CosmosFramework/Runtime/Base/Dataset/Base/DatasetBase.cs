@@ -24,7 +24,6 @@ namespace Cosmos
         /// 仅仅在Editor模式下使用
         /// </summary>
         public virtual void Preview() { }
-
         /// <summary>
         /// 执行对象中的函数
         /// </summary>
