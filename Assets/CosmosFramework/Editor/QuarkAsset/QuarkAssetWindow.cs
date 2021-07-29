@@ -58,7 +58,7 @@ namespace Cosmos.CosmosEditor
                 {
                     quarkAssetDataset = AssetDatabase.LoadAssetAtPath<QuarkAssetDataset>(WindowTabData.QuarkAssetDatasetPath);
                 }
-                catch{}
+                catch { }
             }
         }
         private void OnDisable()
@@ -72,7 +72,7 @@ namespace Cosmos.CosmosEditor
                     var path = AssetDatabase.GetAssetPath(quarkAssetDataset);
                     WindowTabData.QuarkAssetDatasetPath = path;
                 }
-                catch{}
+                catch { }
             }
             else
             {
@@ -91,6 +91,7 @@ namespace Cosmos.CosmosEditor
             {
                 assetDatabaseTab.SetQuarkAssetDataset(quarkAssetDataset);
                 assetBundleTab.SetQuarkAssetDataset(quarkAssetDataset);
+                CheckAssetDatasetDirPath();
             }
             else
             {
@@ -130,6 +131,22 @@ namespace Cosmos.CosmosEditor
             dataset.Init();
             EditorUtil.Debug.LogInfo("QuarkAssetDataset is created");
             return dataset;
+        }
+        void CheckAssetDatasetDirPath()
+        {
+            var dirs = quarkAssetDataset.IncludeDirectories.ToArray();
+            if (dirs == null || dirs.Length <= 0)
+                return;
+            var length = dirs.Length;
+            for (int i = 0; i < length; i++)
+            {
+                var dirPath = dirs[i];
+                var path = Path.Combine(Directory.GetCurrentDirectory(), dirPath);
+                if (!Directory.Exists(path)&& !File.Exists(path))
+                {
+                    quarkAssetDataset.IncludeDirectories.Remove(dirPath);
+                }
+            }
         }
     }
 }

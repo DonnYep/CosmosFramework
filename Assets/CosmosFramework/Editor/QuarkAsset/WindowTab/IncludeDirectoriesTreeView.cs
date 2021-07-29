@@ -13,6 +13,16 @@ namespace Cosmos.CosmosEditor
     {
         List<string> pathList = new List<string>();
         public List<string> PathList { get { return pathList; } set { pathList = value; Reload(); } }
+        bool canRender = false;
+        public void EnableRender()
+        {
+            canRender = true;
+        }
+        public void DisableRender()
+        {
+            canRender = false;
+            Reload();
+        }
         public void Clear()
         {
             pathList.Clear();
@@ -41,6 +51,7 @@ namespace Cosmos.CosmosEditor
         {
             Reload();
         }
+
         //protected override void RowGUI(RowGUIArgs args)
         //{
         //    Color old = GUI.color;
@@ -65,10 +76,13 @@ namespace Cosmos.CosmosEditor
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
             var allItems = new List<TreeViewItem>();
-            for (int i = 0; i < pathList.Count; i++)
+            if (canRender)
             {
-                var item = new TreeViewItem { id = i, depth = 1, displayName = pathList[i] };
-                allItems.Add(item);
+                for (int i = 0; i < pathList.Count; i++)
+                {
+                    var item = new TreeViewItem { id = i, depth = 1, displayName = pathList[i] };
+                    allItems.Add(item);
+                }
             }
             SetupParentsAndChildrenFromDepths(root, allItems);
             return root;
@@ -90,7 +104,7 @@ namespace Cosmos.CosmosEditor
             }
             menu.ShowAsContext();
         }
-        
+
         void DeleteAll()
         {
             pathList.Clear();

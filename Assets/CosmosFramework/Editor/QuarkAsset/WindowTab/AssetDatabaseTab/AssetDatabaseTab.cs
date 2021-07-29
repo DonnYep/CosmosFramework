@@ -17,20 +17,16 @@ namespace Cosmos.CosmosEditor
         IncludeDirectoriesOperation includeDirectoriesOperation = new IncludeDirectoriesOperation();
         WindowTabData WindowTabData { get { return QuarkAssetWindow.WindowTabData; } }
         QuarkAssetDataset quarkAssetDataset;
-        List<string> folderPaths = new List<string>();
         public void Clear()
         {
+            includeDirectoriesOperation.DisableRender();
             quarkAssetDataset = null;
-            folderPaths.Clear();
-            includeDirectoriesOperation.FolderPath.Clear();
-            includeDirectoriesOperation.Clear();
         }
         public void SetQuarkAssetDataset(QuarkAssetDataset dataset)
         {
             quarkAssetDataset = dataset;
-            folderPaths.Clear();
-            folderPaths.AddRange(dataset.IncludeDirectories);
-            includeDirectoriesOperation.FolderPath = folderPaths;
+            includeDirectoriesOperation.FolderPath = dataset.IncludeDirectories;
+            includeDirectoriesOperation.EnableRender();
         }
         public void OnDisable()
         {
