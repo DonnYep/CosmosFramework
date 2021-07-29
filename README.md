@@ -114,3 +114,5 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 - KCP地址：https://github.com/skywind3000/kcp
 
 - 服务器版本的KCP与客户端版本的KCP皆为参考自Mirror。Mirror地址:https://github.com/vis2k/Mirror
+
+- 部分模块演示请观看视频：https://www.bilibili.com/video/BV1x741157eR
