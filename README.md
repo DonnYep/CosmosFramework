@@ -54,8 +54,16 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **DataStructure**：常用数据结构。链表、双向链表、二叉树、LRU、线程锁等数据结构。
 
-- **Behaviour**：内置生命周期函数。生命周期优先级为：OnInitialization > OnActive > OnPreparatory > OnFixRefresh > OnRefresh > OnLateRefresh > OnDeactive > OnTermination。此生命周期可参考Unity的MONO生命周期。需要注意，此内置生命周期适用于原生模块与自定义模块，相对于Unity生命周期是独立的。
-
+- **Behaviour**：内置生命周期函数，此生命周期可参考Unity的MONO生命周期。需要注意，此内置生命周期适用于原生模块与自定义模块，相对于Unity生命周期是独立的。生命周期优先级依次为：
+    - OnInitialization
+    - OnActive
+    - OnPreparatory
+    - OnFixRefresh
+    - OnRefresh
+    - OnLateRefresh
+    - OnDeactive
+    - OnTermination
+    
 - **Extensions**：静态扩展工具。提供unity的扩展以及.NETCore对unity.NET的扩展。
 
 - **Awaitable** ：此工具提供了async/await语法在unity环境中的支持。使用后可支持直接写 await new WaitUntil(()=>{}) 这类Unity的协程异步方法；
@@ -74,9 +82,9 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - MVVM是基于PureMVC改进的更适于理解的软件架构。对Command、Mediator、Proxy注册使用基本与PureMVC相同。
     框架提供了基于特性更加简洁的注册方式：
-    1、MVVMCommandAttribute，对应Command，即C或MV层；
-    2、MVVMMediatorAttribute，对应Mediator，即V层；
-    3、MVVMProxyAttribute，对应Proxy，即M层；
+    - 1、MVVMCommandAttribute，对应Command，即C或MV层；
+    - 2、MVVMMediatorAttribute，对应Mediator，即V层；
+    - 3、MVVMProxyAttribute，对应Proxy，即M层；
     自动注册只需在入口调用MVVM.RegisterAttributedMVVM()方法即可。
 
 - 需要注意，MVVM.RegisterAttributedMVVM()方法需要传入对应的程序集。目前已经验证跨程序集反射MVVM成员是可行且稳定的。
@@ -84,9 +92,9 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 ## 注意事项
 
 - 自定义模块请参考原生模块的写法：
-    1、继承自Module，并打上ModuleAttribute的特性。
-    2、自定义一个与模块类名相同的接口，此接口派生自IModuleManager。
-    3、在此接口写入需要开放给外部调用的方法属性等。
+    - 1、继承自Module，并打上ModuleAttribute的特性。
+    - 2、自定义一个与模块类名相同的接口，此接口派生自IModuleManager。
+    - 3、在此接口写入需要开放给外部调用的方法属性等。
 
 - 部分带有Helper的模块可由使用者进行自定义实现，也可使用提供的Default对象；
 
@@ -103,8 +111,11 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
 ## 其他
 
-- V1.1_UPM可以通过UnityPackageManager进行加载。
-加载时请填入：https://github.com/DonnYep/CosmosFramework.git#V1.1_UPM
+- V1.1_UPM可以通过UnityPackageManager进行加载。加载时请填入：https://github.com/DonnYep/CosmosFramework.git#V1.1_UPM
+
+- 手动加载V1.1_UPM方式：
+   - 方式1：选择V1.1（默认分支）,选择Assets/CosmosFramework文件夹，拷贝到工程的Packages目录下。
+   - 方式2：选择V1.1_UPM分支，将里面的内容拷贝到工程的Packages目录下。
 
 - MVVM的纯C#版本：https://github.com/DonnYep/CosmosMVVM
 
