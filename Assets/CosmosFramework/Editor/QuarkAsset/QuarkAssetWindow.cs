@@ -10,6 +10,7 @@ namespace Cosmos.CosmosEditor
 {
     public class QuarkAssetWindow : EditorWindow
     {
+        static QuarkAssetWindow instance;
         enum AssetInfoBar : int
         {
             AssetDatabaseMode = 0,
@@ -25,9 +26,21 @@ namespace Cosmos.CosmosEditor
         QuarkAssetDataset quarkAssetDataset;
         Vector2 m_ScrollPos;
 
+        bool isExistedInvoked;
+        bool isEmptyInvoked;
+        int latestDirCount = 0;
+
         public QuarkAssetWindow()
         {
             this.titleContent = new GUIContent("QuarkAsset");
+        }
+        public void OnLoad()
+        {
+            if (quarkAssetDataset != null)
+            {
+                OnAsginQuarkDataset();
+            }
+            Debug.Log("OnLoad");
         }
         [MenuItem("Window/Cosmos/QuarkAsset")]
         public static void OpenWindow()
@@ -38,6 +51,9 @@ namespace Cosmos.CosmosEditor
         static void InitData()
         {
             FilterLength = Application.dataPath.Length - 6;
+        }
+        private void Awake()
+        {
         }
         private void OnEnable()
         {
@@ -89,14 +105,30 @@ namespace Cosmos.CosmosEditor
             quarkAssetDataset = (QuarkAssetDataset)EditorGUILayout.ObjectField("QuarkAssetDataset", quarkAssetDataset, typeof(QuarkAssetDataset), false);
             if (quarkAssetDataset != null)
             {
-                assetDatabaseTab.SetQuarkAssetDataset(quarkAssetDataset);
-                assetBundleTab.SetQuarkAssetDataset(quarkAssetDataset);
-                CheckAssetDatasetDirPath();
+                QuarkEditorDataProxy.CanRender = true;
+                if (!isExistedInvoked)
+                {
+                    OnAsginQuarkDataset();
+                    isExistedInvoked = true;
+                    isEmptyInvoked = false;
+                }
+                if (latestDirCount != quarkAssetDataset.IncludeDirectories.Count)
+                {
+                    OnDirChanged();
+                    latestDirCount = quarkAssetDataset.IncludeDirectories.Count;
+                }
             }
             else
             {
-                assetDatabaseTab.Clear();
-                assetBundleTab.Clear();
+                QuarkEditorDataProxy.CanRender = false;
+                if (!isEmptyInvoked)
+                {
+                    OnClearQuarkDataset();
+                    isEmptyInvoked = true;
+                    isExistedInvoked = false;
+                    latestDirCount = 0;
+                    OnDirChanged();
+                }
             }
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
@@ -132,20 +164,43 @@ namespace Cosmos.CosmosEditor
             EditorUtil.Debug.LogInfo("QuarkAssetDataset is created");
             return dataset;
         }
+        void OnAsginQuarkDataset()
+        {
+            assetDatabaseTab.SetQuarkAssetDataset(quarkAssetDataset);
+            assetBundleTab.SetQuarkAssetDataset(quarkAssetDataset);
+            EditorUtil.Debug.LogInfo("OnAsginQuarkDataset");
+        }
+        void OnClearQuarkDataset()
+        {
+            assetDatabaseTab.Clear();
+            assetBundleTab.Clear();
+            EditorUtil.Debug.LogInfo("OnClearQuarkDataset");
+        }
+        void OnDirChanged()
+        {
+            CheckAssetDatasetDirPath();
+            EditorUtil.Debug.LogInfo("OnDirChanged", MessageColor.BLUE);
+        }
         void CheckAssetDatasetDirPath()
         {
+            if (quarkAssetDataset == null)
+                return;
             var dirs = quarkAssetDataset.IncludeDirectories.ToArray();
             if (dirs == null || dirs.Length <= 0)
                 return;
             var length = dirs.Length;
+            string[] newDir = new string[length];
             for (int i = 0; i < length; i++)
             {
                 var dirPath = dirs[i];
                 var path = Path.Combine(Directory.GetCurrentDirectory(), dirPath);
-                if (!Directory.Exists(path)&& !File.Exists(path))
-                {
-                    quarkAssetDataset.IncludeDirectories.Remove(dirPath);
-                }
+                var hash = AssetDatabase.AssetPathToGUID(dirPath);
+                //var hashToDir= AssetDatabase.GUIDToAssetPath(hash);
+
+                //if (!Directory.Exists(path)&& !File.Exists(path))
+                //{
+                //    quarkAssetDataset.IncludeDirectories.Remove(dirPath);
+                //}
             }
         }
     }

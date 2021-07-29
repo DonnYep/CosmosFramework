@@ -13,14 +13,13 @@ namespace Cosmos.CosmosEditor
     {
         List<string> pathList = new List<string>();
         public List<string> PathList { get { return pathList; } set { pathList = value; Reload(); } }
-        bool canRender = false;
+        bool canRender { get { return QuarkEditorDataProxy.CanRender; } }
         public void EnableRender()
         {
-            canRender = true;
+            Reload();
         }
         public void DisableRender()
         {
-            canRender = false;
             Reload();
         }
         public void Clear()
@@ -51,7 +50,11 @@ namespace Cosmos.CosmosEditor
         {
             Reload();
         }
-
+        public override void OnGUI(Rect rect)
+        {
+            base.OnGUI(rect);
+            Debug.Log(canRender);
+        }
         //protected override void RowGUI(RowGUIArgs args)
         //{
         //    Color old = GUI.color;
