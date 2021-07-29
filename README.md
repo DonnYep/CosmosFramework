@@ -85,7 +85,8 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
     - 1、MVVMCommandAttribute，对应Command，即C或MV层；
     - 2、MVVMMediatorAttribute，对应Mediator，即V层；
     - 3、MVVMProxyAttribute，对应Proxy，即M层；
-    自动注册只需在入口调用MVVM.RegisterAttributedMVVM()方法即可。
+    
+- MVVM自动注册只需在入口调用MVVM.RegisterAttributedMVVM()方法即可。
 
 - 需要注意，MVVM.RegisterAttributedMVVM()方法需要传入对应的程序集。目前已经验证跨程序集反射MVVM成员是可行且稳定的。
 
