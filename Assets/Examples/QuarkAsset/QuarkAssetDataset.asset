@@ -13,15 +13,23 @@ MonoBehaviour:
   m_Name: QuarkAssetDataset
   m_EditorClassIdentifier: 
   objectName: NewScriptableObject
-  IncludeDirectories:
-  - Assets/Examples/AssetBundleTest/Audio
-  - Assets/Examples/AssetBundleTest/Material
-  - Assets/Examples/AssetBundleTest/Model
-  - Assets/Examples/AssetBundleTest/Photo
-  - Assets/Examples/AssetBundleTest/Prefab
-  - Assets/Examples/AssetBundleTest/Text
-  - Assets/Examples/AssetBundleTest/Texture
-  - Assets/Examples/AssetBundleTest/Video
+  DirHashPairs:
+  - Dir: Assets/Examples/AssetBundleTest/Audio
+    Hash: 12778af4cb8833e46b38d87bf137c135
+  - Dir: Assets/Examples/AssetBundleTest/Material
+    Hash: 96a2e79d37647ce4f879a50f3c51cead
+  - Dir: Assets/Examples/AssetBundleTest/Model
+    Hash: 34f1fc1c949f5f945a4682304c61dd14
+  - Dir: Assets/Examples/AssetBundleTest/Photo
+    Hash: 58a60d87288d45645ac1744d07d3c664
+  - Dir: Assets/Examples/AssetBundleTest/Prefab
+    Hash: ab1e77ea0dc162743b999fb21ad88f1d
+  - Dir: Assets/Examples/AssetBundleTest/Text
+    Hash: f0b176288f6484a4db31bed880118d43
+  - Dir: Assets/Examples/AssetBundleTest/Texture
+    Hash: 6b66c76bfcd1e5c48bc51efeb19eddf9
+  - Dir: Assets/Examples/AssetBundleTest/Video
+    Hash: c027f3e3efab58e418761894535c4491
   QuarkAssetCount: 43
   QuarkAssetObjectList:
   - AssetName: AmbientAudio

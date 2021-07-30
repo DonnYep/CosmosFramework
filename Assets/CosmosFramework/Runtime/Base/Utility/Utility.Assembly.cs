@@ -574,7 +574,8 @@ where K : class
             /// <param name="obj">目标对象</param>
             /// <param name="methodName">方法名</param>
             /// <param name="parameters">方法参数</param>
-            public static void InvokeMethod(object obj, string methodName, object[] parameters = null)
+            /// <returns>返回值</returns>
+            public static object InvokeMethod(object obj, string methodName, object[] parameters = null)
             {
                 if (obj == null)
                     throw new NullReferenceException("Obj is invalid !");
@@ -584,7 +585,7 @@ where K : class
                 var method = type.BaseType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic);
                 if (method == null)
                     throw new NullReferenceException($"Type : {type} can not find method : {methodName} !");
-                method.Invoke(obj, parameters);
+                return method.Invoke(obj, parameters);
             }
             /// <summary>
             /// 执行方法；
@@ -593,7 +594,8 @@ where K : class
             /// <param name="obj">目标对象</param>
             /// <param name="methodName">方法名</param>
             /// <param name="parameters">方法参数</param>
-            public static void InvokeMethod(Type type, object obj, string methodName, object[] parameters = null)
+            /// <returns>返回值</returns>
+            public static object InvokeMethod(Type type, object obj, string methodName, object[] parameters = null)
             {
                 if (type == null)
                     throw new ArgumentNullException("Type is invalid !");
@@ -604,7 +606,7 @@ where K : class
                 var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic);
                 if (method == null)
                     throw new NullReferenceException($"Type : {type} can not find method : {methodName} !");
-                method.Invoke(obj, parameters);
+                return method.Invoke(obj, parameters);
             }
             /// <summary>
             /// 设置对象属性值；

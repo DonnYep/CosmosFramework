@@ -14,18 +14,19 @@ namespace Cosmos.Quark
         /// <summary>
         /// 包含的路径；
         /// </summary>
-        public List<string> IncludeDirectories;
+        public List<QuarkDirHashPair> DirHashPairs;
         public int QuarkAssetCount;
         public List<QuarkAssetDatabaseObject> QuarkAssetObjectList;
         public void Init()
         {
-            IncludeDirectories = new List<string>();
+            DirHashPairs = new List<QuarkDirHashPair>();
             QuarkAssetObjectList = new List<QuarkAssetDatabaseObject>();
         }
         public override void Dispose()
         {
             QuarkAssetCount = 0;
             QuarkAssetObjectList?.Clear();
+            DirHashPairs.Clear();
         }
     }
 }

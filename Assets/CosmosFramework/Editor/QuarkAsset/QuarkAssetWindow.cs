@@ -54,6 +54,7 @@ namespace Cosmos.CosmosEditor
         }
         private void Awake()
         {
+            EditorUtil.Debug.LogInfo("Awake", MessageColor.DARKCYAN);
         }
         private void OnEnable()
         {
@@ -103,6 +104,7 @@ namespace Cosmos.CosmosEditor
             selectedBar = GUILayout.Toolbar(selectedBar, barArray);
             GUILayout.Space(16);
             quarkAssetDataset = (QuarkAssetDataset)EditorGUILayout.ObjectField("QuarkAssetDataset", quarkAssetDataset, typeof(QuarkAssetDataset), false);
+            QuarkEditorDataProxy.QuarkAssetDataset = quarkAssetDataset;
             if (quarkAssetDataset != null)
             {
                 QuarkEditorDataProxy.CanRender = true;
@@ -112,10 +114,10 @@ namespace Cosmos.CosmosEditor
                     isExistedInvoked = true;
                     isEmptyInvoked = false;
                 }
-                if (latestDirCount != quarkAssetDataset.IncludeDirectories.Count)
+                if (latestDirCount != quarkAssetDataset.DirHashPairs.Count)
                 {
                     OnDirChanged();
-                    latestDirCount = quarkAssetDataset.IncludeDirectories.Count;
+                    latestDirCount = quarkAssetDataset.DirHashPairs.Count;
                 }
             }
             else
@@ -166,26 +168,25 @@ namespace Cosmos.CosmosEditor
         }
         void OnAsginQuarkDataset()
         {
-            assetDatabaseTab.SetQuarkAssetDataset(quarkAssetDataset);
-            assetBundleTab.SetQuarkAssetDataset(quarkAssetDataset);
-            EditorUtil.Debug.LogInfo("OnAsginQuarkDataset");
+            assetDatabaseTab.Reload();
+            //EditorUtil.Debug.LogInfo("OnAsginQuarkDataset");
         }
         void OnClearQuarkDataset()
         {
-            assetDatabaseTab.Clear();
-            assetBundleTab.Clear();
-            EditorUtil.Debug.LogInfo("OnClearQuarkDataset");
+            QuarkEditorDataProxy.QuarkAssetDataset = null;
+            assetDatabaseTab.Reload();
+            //EditorUtil.Debug.LogInfo("OnClearQuarkDataset");
         }
         void OnDirChanged()
         {
             CheckAssetDatasetDirPath();
-            EditorUtil.Debug.LogInfo("OnDirChanged", MessageColor.BLUE);
+            //EditorUtil.Debug.LogInfo("OnDirChanged", MessageColor.BLUE);
         }
         void CheckAssetDatasetDirPath()
         {
             if (quarkAssetDataset == null)
                 return;
-            var dirs = quarkAssetDataset.IncludeDirectories.ToArray();
+            var dirs = quarkAssetDataset.DirHashPairs.ToArray();
             if (dirs == null || dirs.Length <= 0)
                 return;
             var length = dirs.Length;
@@ -193,8 +194,8 @@ namespace Cosmos.CosmosEditor
             for (int i = 0; i < length; i++)
             {
                 var dirPath = dirs[i];
-                var path = Path.Combine(Directory.GetCurrentDirectory(), dirPath);
-                var hash = AssetDatabase.AssetPathToGUID(dirPath);
+                //var path = Path.Combine(Directory.GetCurrentDirectory(), dirPath);
+                //var hash = AssetDatabase.AssetPathToGUID(dirPath);
                 //var hashToDir= AssetDatabase.GUIDToAssetPath(hash);
 
                 //if (!Directory.Exists(path)&& !File.Exists(path))

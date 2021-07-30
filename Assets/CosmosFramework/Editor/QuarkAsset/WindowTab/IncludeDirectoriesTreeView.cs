@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cosmos.Quark;
+using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,13 +14,8 @@ namespace Cosmos.CosmosEditor
     public class IncludeDirectoriesTreeView : TreeView
     {
         List<string> pathList = new List<string>();
-        public List<string> PathList { get { return pathList; } set { pathList = value; Reload(); } }
         bool canRender { get { return QuarkEditorDataProxy.CanRender; } }
         public void EnableRender()
-        {
-            Reload();
-        }
-        public void DisableRender()
         {
             Reload();
         }
@@ -29,21 +26,56 @@ namespace Cosmos.CosmosEditor
         }
         public void AddPath(string path)
         {
-            if (!pathList.Contains(path))
+            if (QuarkEditorDataProxy.QuarkAssetDataset == null)
+                return;
+            var dirHashPairs = QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs;
+            var length = dirHashPairs.Count;
+            bool existed = false;
+            for (int i = 0; i < length; i++)
+            {
+                if (dirHashPairs[i].Dir == path)
+                {
+                    existed = true;
+                    break;
+                }
+            }
+            if (!existed)
+            {
+                var hash = AssetDatabase.AssetPathToGUID(path);
+                var pair = new QuarkDirHashPair(hash, path);
+                QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs.Add(pair);
                 pathList.Add(path);
+            }
             Reload();
         }
         public void RemovePath(string path)
         {
             try
             {
-                pathList.Remove(path);
-                Reload();
+                if (QuarkEditorDataProxy.QuarkAssetDataset == null)
+                    return;
+                var dirHashPairs = QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs;
+                var length = dirHashPairs.Count;
+                int removeindex = -1;
+                for (int i = 0; i < length; i++)
+                {
+                    if (dirHashPairs[i].Dir == path)
+                    {
+                        removeindex = i;
+                        break;
+                    }
+                }
+                if (removeindex != -1)
+                {
+                    QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs.RemoveAt(removeindex);
+                    pathList.Remove(path);
+                }
             }
             catch (Exception e)
             {
                 EditorUtil.Debug.LogError(e);
             }
+            Reload();
         }
         public IncludeDirectoriesTreeView(TreeViewState treeViewState)
             : base(treeViewState)
@@ -53,7 +85,53 @@ namespace Cosmos.CosmosEditor
         public override void OnGUI(Rect rect)
         {
             base.OnGUI(rect);
-            Debug.Log(canRender);
+            try
+            {
+                if (QuarkEditorDataProxy.QuarkAssetDataset == null)
+                    return;
+                if (QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs.Count <= 0)
+                    return;
+                var dirHashPairs = QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs;
+                var dirHashCount = dirHashPairs.Count;
+                int removeCount = 0;
+                int[] removeIndexArray = new int[dirHashCount];
+                for (int i = 0; i < dirHashCount; i++)
+                {
+                    var srcHash = dirHashPairs[i].Hash;
+                    var srcDir = dirHashPairs[i].Dir;
+                    var newPath = AssetDatabase.GUIDToAssetPath(srcHash);
+                    var newHash = AssetDatabase.AssetPathToGUID(srcDir);
+                    if (newPath != dirHashPairs[i].Dir)
+                    {
+                        if (!string.IsNullOrEmpty(newPath))
+                            dirHashPairs[i] = new QuarkDirHashPair(srcHash, newPath);
+                    }
+                    else
+                    {
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(),srcDir);
+                        if (!File.Exists(filePath) && !Directory.Exists(filePath))
+                        {
+                            if (!File.Exists(filePath) && !Directory.Exists(filePath))
+                            {
+                                removeIndexArray[removeCount] = i;
+                                removeCount++;
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < removeCount; i++)
+                {
+                    QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs.RemoveAt(removeIndexArray[i]);
+                }
+                var dirs = QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs.ToArray();
+                pathList.Clear();
+                pathList.AddRange(Utility.Converter.ConvertArray(dirs, d => d.Dir));
+            }
+            catch (Exception e)
+            {
+                EditorUtil.Debug.LogError($"OnGUI :{e}");
+            }
+            Reload();
         }
         //protected override void RowGUI(RowGUIArgs args)
         //{

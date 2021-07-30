@@ -16,17 +16,10 @@ namespace Cosmos.CosmosEditor
     {
         IncludeDirectoriesOperation includeDirectoriesOperation = new IncludeDirectoriesOperation();
         WindowTabData WindowTabData { get { return QuarkAssetWindow.WindowTabData; } }
-        QuarkAssetDataset quarkAssetDataset;
-        public void Clear()
+        QuarkAssetDataset quarkAssetDataset { get { return QuarkEditorDataProxy.QuarkAssetDataset; } }
+        public void Reload()
         {
-            includeDirectoriesOperation.DisableRender();
-            quarkAssetDataset = null;
-        }
-        public void SetQuarkAssetDataset(QuarkAssetDataset dataset)
-        {
-            quarkAssetDataset = dataset;
-            includeDirectoriesOperation.FolderPath = dataset.IncludeDirectories;
-            includeDirectoriesOperation.EnableRender();
+            includeDirectoriesOperation.Reload();
         }
         public void OnDisable()
         {
@@ -104,7 +97,6 @@ namespace Cosmos.CosmosEditor
         }
         void ADBModeClear()
         {
-            quarkAssetDataset.IncludeDirectories?.Clear();
             includeDirectoriesOperation.Clear();
             quarkAssetDataset.Dispose();
             EditorUtil.ClearData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName);
@@ -118,15 +110,16 @@ namespace Cosmos.CosmosEditor
             List<QuarkAssetDatabaseObject> quarkAssetList = new List<QuarkAssetDatabaseObject>();
             quarkAssetList?.Clear();
             int currentDirIndex = 0;
-            var dirs = quarkAssetDataset.IncludeDirectories;
+            var dirs = quarkAssetDataset.DirHashPairs;
+            var dirHashPair = quarkAssetDataset.DirHashPairs.ToArray();
             Dictionary<string, FileSystemInfo> fileSysInfoDict = new Dictionary<string, FileSystemInfo>();
             if (dirs != null)
             {
                 foreach (var dir in dirs)
                 {
-                    if (Directory.Exists(dir))
+                    if (Directory.Exists(dir.Dir))
                     {
-                        Utility.IO.TraverseFolderFile(dir, (file) =>
+                        Utility.IO.TraverseFolderFile(dir.Dir, (file) =>
                         {
                             currentDirIndex++;
                             if (currentDirIndex < dirs.Count)
@@ -143,9 +136,9 @@ namespace Cosmos.CosmosEditor
                             }
                         });
                     }
-                    else if (File.Exists(dir))
+                    else if (File.Exists(dir.Dir))
                     {
-                        var fullPath = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), dir);
+                        var fullPath = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), dir.Dir);
                         if (!fileSysInfoDict.ContainsKey(fullPath))
                         {
                             var fileInfo = new FileInfo(fullPath);
@@ -189,7 +182,8 @@ namespace Cosmos.CosmosEditor
             }
             quarkAssetDataset.QuarkAssetObjectList = quarkAssetList;
             quarkAssetDataset.QuarkAssetCount = quarkAssetList.Count;
-            quarkAssetDataset.IncludeDirectories = includeDirectoriesOperation.FolderPath;
+            quarkAssetDataset.DirHashPairs.Clear();
+            quarkAssetDataset.DirHashPairs .AddRange( dirHashPair);
         }
         void ADBModeUnderAssetsDirectoryBuild()
         {
@@ -197,6 +191,7 @@ namespace Cosmos.CosmosEditor
             var count = Utility.IO.FolderFileCount(Application.dataPath);
             int currentBuildIndex = 0;
             List<QuarkAssetDatabaseObject> quarkAssetList = new List<QuarkAssetDatabaseObject>();
+            var dirHashPair = quarkAssetDataset.DirHashPairs.ToArray();
             quarkAssetList?.Clear();
             string path = Application.dataPath;
             Utility.IO.TraverseFolderFile(path, (file) =>
@@ -233,7 +228,8 @@ namespace Cosmos.CosmosEditor
             });
             quarkAssetDataset.QuarkAssetObjectList = quarkAssetList;
             quarkAssetDataset.QuarkAssetCount = quarkAssetList.Count;
-            quarkAssetDataset.IncludeDirectories = includeDirectoriesOperation.FolderPath;
+            quarkAssetDataset.DirHashPairs.Clear();
+            quarkAssetDataset.DirHashPairs.AddRange(dirHashPair);
         }
         void AssetDataBaseModeCreatePathScript()
         {

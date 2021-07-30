@@ -23,20 +23,12 @@ namespace Cosmos.CosmosEditor
         /// Key:ABName ; Value: ABPath
         /// </summary>
         Dictionary<string, string> buildInfoCache = new Dictionary<string, string>();
-        QuarkAssetDataset quarkAssetDataset;
+        QuarkAssetDataset quarkAssetDataset { get { return QuarkEditorDataProxy.QuarkAssetDataset; } }
         AssetDatabaseTab assetDatabaseTab;
         List<string> abPaths = new List<string>();
         public void SetAssetDatabaseTab(AssetDatabaseTab assetDatabaseTab)
         {
             this.assetDatabaseTab = assetDatabaseTab;
-        }
-        public void Clear()
-        {
-           // quarkAssetDataset = null;
-        }
-        public void SetQuarkAssetDataset(QuarkAssetDataset dataset)
-        {
-            quarkAssetDataset = dataset;
         }
         public void OnDisable()
         {
@@ -201,8 +193,9 @@ namespace Cosmos.CosmosEditor
             }
             else
             {
-                var dirs = quarkAssetDataset.IncludeDirectories;
-                TraverseTargetDirectories(dirs.ToArray());
+                var dirHashPairs= quarkAssetDataset.DirHashPairs;
+                var dirs= Utility.Converter.ConvertArray(dirHashPairs.ToArray(), (d) => d.Dir);
+                TraverseTargetDirectories(dirs);
             }
         }
         IEnumerator EnumBuild()

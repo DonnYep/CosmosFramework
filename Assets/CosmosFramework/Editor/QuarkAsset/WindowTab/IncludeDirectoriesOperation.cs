@@ -12,14 +12,10 @@ namespace Cosmos.CosmosEditor
 		TreeViewState treeViewState;
 		SearchField searchField;
 
-		public List<string> FolderPath { get { return treeView.PathList; }set { treeView.PathList = value; } }
-		public void EnableRender()
+		//public List<string> FolderPath { get { return treeView.PathList; }set { treeView.PathList = value; } }
+		public void Reload()
         {
-			treeView.EnableRender();
-		}
-		public void DisableRender()
-        {
-			treeView.DisableRender();
+			treeView.Reload();
 		}
 		public void Clear()
         {
