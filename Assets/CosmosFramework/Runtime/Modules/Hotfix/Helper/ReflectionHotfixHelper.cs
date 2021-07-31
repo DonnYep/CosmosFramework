@@ -6,14 +6,24 @@ using System.Threading.Tasks;
 using System.Reflection;
 namespace Cosmos.Hotfix
 {
-    public class DefaultReflectionHelper : IHotfixHelper
+    public class ReflectionHotfixHelper : IHotfixHelper
     {
         Assembly assembly;
         Dictionary<string, MethodInfo> methodDict = new Dictionary<string, MethodInfo>();
         Dictionary<string, Type> strTypeDict = new Dictionary<string, Type>();
+
         public void SetAssembly(byte[] dllBytes, byte[] pdbBytes)
         {
             assembly = Assembly.Load(dllBytes, pdbBytes);
+        }
+        /// <summary>
+        /// 获取类型；
+        /// </summary>
+        /// <param name="typeName">Type类型名</param>
+        /// <returns>type类型的引用</returns>
+        public object LoadType(string typeName)
+        {
+            return assembly.GetType(typeName);
         }
         public object InstanceObject(string typeName, params object[] parameters)
         {

@@ -35,7 +35,7 @@ namespace Cosmos.Hotfix
         }
         protected override void OnPreparatory()
         {
-            hotfixHelper = new DefaultReflectionHelper();
+            hotfixHelper = new ReflectionHotfixHelper();
         }
         #endregion
     }

@@ -47,16 +47,7 @@ namespace Cosmos.CosmosEditor
         {
             var window = GetWindow<QuarkAssetWindow>();
         }
-        [InitializeOnLoadMethod]
-        static void InitData()
-        {
-            FilterLength = Application.dataPath.Length - 6;
-        }
-        private void Awake()
-        {
-            EditorUtil.Debug.LogInfo("Awake", MessageColor.DARKCYAN);
-        }
-        private void OnEnable()
+        void OnEnable()
         {
             try
             {
@@ -78,7 +69,7 @@ namespace Cosmos.CosmosEditor
                 catch { }
             }
         }
-        private void OnDisable()
+        void OnDisable()
         {
             assetDatabaseTab.OnDisable();
             assetBundleTab.OnDisable();
@@ -99,7 +90,7 @@ namespace Cosmos.CosmosEditor
             if (quarkAssetDataset != null)
                 EditorUtility.SetDirty(quarkAssetDataset);
         }
-        private void OnGUI()
+        void OnGUI()
         {
             selectedBar = GUILayout.Toolbar(selectedBar, barArray);
             GUILayout.Space(16);
@@ -203,6 +194,11 @@ namespace Cosmos.CosmosEditor
                 //    quarkAssetDataset.IncludeDirectories.Remove(dirPath);
                 //}
             }
+        }
+        [InitializeOnLoadMethod]
+        static void InitData()
+        {
+            FilterLength = Application.dataPath.Length - 6;
         }
     }
 }
