@@ -746,7 +746,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 590850385}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.28262448, y: 1.0306287, z: -0.039354682}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -764,8 +764,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 435fb9601448fe144854aeece9140fde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: 
-  downloadPath: 
+  Url: 
+  DownloadPath: 
+  PingUrl: 0
   QuarkAssetLoadMode: 1
   QuarkAssetDataset: {fileID: 11400000, guid: 29ea0d5dd19db424bbf8f18d041c7126, type: 2}
 --- !u!1 &613508358

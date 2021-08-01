@@ -12,8 +12,9 @@ namespace Cosmos.Quark
     /// </summary>
     public class QuarkConfig : MonoBehaviour
     {
-        public string url;
-        public string downloadPath;
+        public string Url;
+        public string DownloadPath;
+        public bool PingUrl;
         public QuarkAssetLoadMode QuarkAssetLoadMode;
         public QuarkAssetDataset QuarkAssetDataset;
         static QuarkConfig instance;
@@ -47,13 +48,22 @@ namespace Cosmos.Quark
                     break;
                 case QuarkAssetLoadMode.BuiltAssetBundle:
                     {
-                        Utility.Text.IsStringValid(url, "URI is invalid !");
-                        Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
-                        if (Utility.Net.PingURI(url))
+                        Utility.Text.IsStringValid(Url, "URI is invalid !");
+                        Utility.Text.IsStringValid(DownloadPath, "DownloadPath is invalid !");
+                        if (PingUrl)
                         {
-                            if (!Directory.Exists(downloadPath))
-                                Directory.CreateDirectory(downloadPath);
-                            QuarkManager.Instance.Initiate(url, downloadPath);
+                            if (Utility.Net.PingURI(Url))
+                            {
+                                if (!Directory.Exists(DownloadPath))
+                                    Directory.CreateDirectory(DownloadPath);
+                                QuarkManager.Instance.Initiate(Url, DownloadPath);
+                            }
+                        }
+                        else
+                        {
+                            if (!Directory.Exists(DownloadPath))
+                                Directory.CreateDirectory(DownloadPath);
+                            QuarkManager.Instance.Initiate(Url, DownloadPath);
                         }
                     }
                     break;

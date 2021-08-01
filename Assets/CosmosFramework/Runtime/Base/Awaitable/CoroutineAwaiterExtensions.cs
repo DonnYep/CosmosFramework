@@ -11,6 +11,10 @@ namespace Cosmos
 {
     public static class CoroutineAwaiterExtensions
     {
+        public static CoroutineAwaiter<Coroutine> GetAwaiter(this Coroutine coroutine)
+        {
+            return new CoroutineAwaiter<Coroutine>(coroutine);
+        }
         public static CoroutineAwaiter<IEnumerator> GetAwaiter(this IEnumerator coroutine)
         {
             return new CoroutineAwaiter<IEnumerator>(coroutine);

@@ -16,7 +16,7 @@ namespace Cosmos.CosmosEditor
         public BuildTarget BuildTarget= BuildTarget.StandaloneWindows;
         public string OutputPath= "AssetBundles/StandaloneWindows";
         public bool UseDefaultPath=true;
-        public bool ClearFolders;
+        public bool ClearOutputFolders;
         public bool CopyToStreamingAssets;
         public string StreamingAssetsPath = "Assets/StreamingAssets";
         public bool WithoutManifest;

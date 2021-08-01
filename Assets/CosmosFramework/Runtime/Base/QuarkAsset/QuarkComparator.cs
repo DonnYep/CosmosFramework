@@ -160,16 +160,24 @@ namespace Cosmos.Quark
             }
             var latesetArray = latest.ToArray();
             var expiredArray = expired.ToArray();
-            if (latest.Count > 0|| expired.Count>0)
+            var uriBuildInfoPath = Utility.IO.WebPathCombine(URL, QuarkConsts.BuildInfoFileName);
+            if (latest.Count > 0 || expired.Count > 0)
             {
-                var uriBuildInfoPath = Utility.IO.WebPathCombine(URL, QuarkConsts.BuildInfoFileName);
-                QuarkUtility.Unity.StartCoroutine(EnumDownloadBuildInfo(uriBuildInfoPath, () => 
+                QuarkUtility.Unity.StartCoroutine(EnumDownloadBuildInfo(uriBuildInfoPath, () =>
                 {
                     onCompareSuccess?.Invoke(latesetArray, expiredArray, overallSize);
                 }));
             }
             else
             {
+                var localBuildInfoPath = Utility.IO.PathCombine(PersistentPath, QuarkConsts.BuildInfoFileName);
+                string localBuildInfoContext = string.Empty;
+                try
+                {
+                    localBuildInfoContext = Utility.IO.ReadTextFileContent(localBuildInfoPath);
+                    QuarkDataProxy.QuarkBuildInfo = QuarkUtility.Json.ToObject<QuarkBuildInfo>(localBuildInfoContext);
+                }
+                catch { }
                 onCompareSuccess?.Invoke(latesetArray, expiredArray, overallSize);
             }
             latest.Clear();
@@ -178,7 +186,7 @@ namespace Cosmos.Quark
             Utility.IO.OverwriteTextFile(localNewManifestPath, remoteManifestContext);
             QuarkManager.Instance.SetBuiltAssetBundleModeData(remoteManifest);
         }
-        IEnumerator EnumDownloadBuildInfo(string uri,Action callback)
+        IEnumerator EnumDownloadBuildInfo(string uri, Action callback)
         {
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
@@ -193,7 +201,7 @@ namespace Cosmos.Quark
                         callback();
                         try
                         {
-                            QuarkDataProxy.QuarkBuildInfo= QuarkUtility.Json.ToObject<QuarkBuildInfo>(buildInfoContext);
+                            QuarkDataProxy.QuarkBuildInfo = QuarkUtility.Json.ToObject<QuarkBuildInfo>(buildInfoContext);
                         }
                         catch (Exception e)
                         {

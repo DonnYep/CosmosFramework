@@ -25,7 +25,8 @@ namespace Cosmos.Quark.Loader
         /// BuiltAssetBundle 模式下资源的映射；
         /// Key : AssetName---Value :  Lnk [QuarkAssetABObject]
         /// </summary>` 
-        Dictionary<string, LinkedList<QuarkAssetBundleObject>> builtAssetBundleMap;
+        Dictionary<string, LinkedList<QuarkAssetBundleObject>> builtAssetBundleMap
+            = new Dictionary<string, LinkedList<QuarkAssetBundleObject>>();
         public void SetLoaderData(object customeData)
         {
             SetBuiltAssetBundleModeData(customeData as QuarkManifest);
@@ -125,7 +126,7 @@ where T : UnityEngine.Object
         {
             T asset = null;
             string assetBundleName = string.Empty;
-            
+
             if (builtAssetBundleMap.TryGetValue(assetName, out var abObject))
             {
                 if (string.IsNullOrEmpty(assetExtension))
@@ -231,7 +232,7 @@ where T : UnityEngine.Object
         /// <param name="manifest">unityWebRequest获取的Manifest文件对象</param>
         void SetBuiltAssetBundleModeData(QuarkManifest manifest)
         {
-            var lnkDict = new Dictionary<string, LinkedList<QuarkAssetBundleObject>>();
+            //var lnkDict = new Dictionary<string, LinkedList<QuarkAssetBundleObject>>();
             foreach (var mf in manifest.ManifestDict)
             {
                 var assets = mf.Value.Assets;
@@ -240,11 +241,11 @@ where T : UnityEngine.Object
                 foreach (var a in assets)
                 {
                     var abObject = GetAssetBundleObject(mf.Value.ABName, a.Key, a.Value);
-                    if (!lnkDict.TryGetValue(abObject.AssetName, out var lnkList))
+                    if (!builtAssetBundleMap.TryGetValue(abObject.AssetName, out var lnkList))
                     {
                         lnkList = new LinkedList<QuarkAssetBundleObject>();
                         lnkList.AddLast(abObject);
-                        lnkDict.Add(abObject.AssetName, lnkList);
+                        builtAssetBundleMap.Add(abObject.AssetName, lnkList);
                     }
                     else
                     {
@@ -252,7 +253,6 @@ where T : UnityEngine.Object
                     }
                 }
             }
-            builtAssetBundleMap = lnkDict;
         }
     }
 }

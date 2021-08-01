@@ -10,7 +10,7 @@ namespace Cosmos.CosmosEditor
     {
         SerializedObject targetObject;
         QuarkConfig quarkConfig;
-        SerializedProperty sp_QuarkAssetLoadMode,sp_QuarkAssetDataset,sp_url,sp_downloadPath;
+        SerializedProperty sp_QuarkAssetLoadMode,sp_QuarkAssetDataset,sp_Url,sp_DownloadPath, sp_PingUrl;
         public override void OnInspectorGUI()
         {
             targetObject.Update();
@@ -24,8 +24,9 @@ namespace Cosmos.CosmosEditor
                     break;
                 case QuarkAssetLoadMode.BuiltAssetBundle:
                     {
-                        sp_url.stringValue = EditorGUILayout.TextField("Url",sp_url.stringValue);
-                        sp_downloadPath.stringValue = EditorGUILayout.TextField("DownloadPath",sp_downloadPath.stringValue);
+                        sp_PingUrl.boolValue = EditorGUILayout.Toggle("PingUrl", sp_PingUrl.boolValue);
+                        sp_Url.stringValue = EditorGUILayout.TextField("Url",sp_Url.stringValue);
+                        sp_DownloadPath.stringValue = EditorGUILayout.TextField("DownloadPath",sp_DownloadPath.stringValue);
                     }
                     break;
             }
@@ -37,8 +38,9 @@ namespace Cosmos.CosmosEditor
             targetObject = new SerializedObject(quarkConfig);
             sp_QuarkAssetLoadMode = targetObject.FindProperty("QuarkAssetLoadMode");
             sp_QuarkAssetDataset = targetObject.FindProperty("QuarkAssetDataset");
-            sp_url= targetObject.FindProperty("url");
-            sp_downloadPath= targetObject.FindProperty("downloadPath");
+            sp_Url= targetObject.FindProperty("Url");
+            sp_DownloadPath= targetObject.FindProperty("DownloadPath");
+            sp_PingUrl= targetObject.FindProperty("PingUrl");
         }
     }
 }

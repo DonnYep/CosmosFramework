@@ -82,7 +82,7 @@ namespace Cosmos.CosmosEditor
             GUILayout.BeginVertical();
             assetBundleTabData.WithoutManifest = EditorGUILayout.ToggleLeft("WithoutManifest", assetBundleTabData.WithoutManifest);
 
-            assetBundleTabData.ClearFolders = EditorGUILayout.ToggleLeft("ClearFolders", assetBundleTabData.ClearFolders);
+            assetBundleTabData.ClearOutputFolders = EditorGUILayout.ToggleLeft("ClearOutputFolders", assetBundleTabData.ClearOutputFolders);
             assetBundleTabData.CopyToStreamingAssets = EditorGUILayout.ToggleLeft("CopyToStreamingAssets", assetBundleTabData.CopyToStreamingAssets);
             if (assetBundleTabData.CopyToStreamingAssets)
             {
@@ -173,19 +173,19 @@ namespace Cosmos.CosmosEditor
         void SetBuildInfo()
         {
             EditorUtil.Debug.LogInfo("Start build asset bundle");
-            if (assetBundleTabData.ClearFolders)
+            if (assetBundleTabData.ClearOutputFolders)
             {
                 var path = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
-                var streamPath = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.StreamingAssetsPath);
+                //var streamPath = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.StreamingAssetsPath);
                 if (Directory.Exists(path))
                 {
                     Utility.IO.DeleteFolder(path);
                 }
-                try
-                {
-                    Utility.IO.DeleteFolder(streamPath);
-                }
-                catch { }
+                //try
+                //{
+                //    Utility.IO.DeleteFolder(streamPath);
+                //}
+                //catch { }
             }
             if (QuarkAssetWindow.WindowTabData.UnderAssetsDirectory)
             {
