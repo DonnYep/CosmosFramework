@@ -159,10 +159,10 @@ namespace Cosmos.CosmosEditor
                     {
                         EditorUtility.ClearProgressBar();
                     }
-                    var projLength = QuarkAssetConst.Extensions.Length;
+                    var projLength = QuarkConsts.Extensions.Length;
                     for (int i = 0; i < projLength; i++)
                     {
-                        if (QuarkAssetConst.Extensions[i].Equals(file.Extension))
+                        if (QuarkConsts.Extensions[i].Equals(file.Extension))
                         {
                             var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
                             var assetName = file.Name.Replace(file.Extension, string.Empty);
@@ -205,10 +205,10 @@ namespace Cosmos.CosmosEditor
                 {
                     EditorUtility.ClearProgressBar();
                 }
-                var length = QuarkAssetConst.Extensions.Length;
+                var length = QuarkConsts.Extensions.Length;
                 for (int i = 0; i < length; i++)
                 {
-                    if (QuarkAssetConst.Extensions[i].Equals(file.Extension))
+                    if (QuarkConsts.Extensions[i].Equals(file.Extension))
                     {
                         var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
                         assetPath = assetPath.Replace("\\", "/");

@@ -9,8 +9,11 @@ namespace Cosmos
     public interface IHotfixManager:IModuleManager
     {
         void SetHelper(IHotfixHelper helper);
+        object PeekType(string typeName);
         void InitHotfixAssembly(byte[] dllBytes, byte[] pdbBytes);
-        object InstanceObject(string typeName, params object[] parameters);
-        object InvokeMethod(string type, string methodName, object instance, params object[] parameters);
+        object Instantiate(string typeName, params object[] parameters);
+        object InvokeMethod(object methodObject, object instance, params object[] parameters);
+        object InvokeMethod(string typeName, string methodName, object instance, params object[] parameters);
+        object InvokeGenericMethod(string typeName, string method, object[] genericArgs, object instance, params object[] parameters);
     }
 }

@@ -110,7 +110,7 @@ namespace Cosmos.Quark
         /// </summary>
         /// <param name="url">统一资源定位符</param>
         /// <param name="persistentPath">本地持久化地址</param>
-        public void Initiate(string url, string persistentPath)
+        internal void Initiate(string url, string persistentPath)
         {
             QuarkDataProxy.PersistentPath = persistentPath;
             QuarkDataProxy.URL = url;
@@ -118,7 +118,7 @@ namespace Cosmos.Quark
         /// <summary>
         /// 检查更新；
         /// </summary>
-        public void CheckForUpdates()
+        internal void CheckForUpdates()
         {
             quarkComparator.CheckForUpdates();
         }
@@ -134,7 +134,7 @@ namespace Cosmos.Quark
         /// 用于Built assetbundle模式；
         /// </summary>
         /// <param name="manifest">unityWebRequest获取的Manifest文件对象</param>
-        public void SetBuiltAssetBundleModeData(QuarkManifest manifest)
+        internal void SetBuiltAssetBundleModeData(QuarkManifest manifest)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode.BuiltAssetBundle, out var loader))
                 loader.SetLoaderData(manifest);
@@ -145,45 +145,44 @@ namespace Cosmos.Quark
         /// 对QuarkAssetDataset进行编码
         /// </summary>
         /// <param name="assetData">QuarkAssetDataset对象</param>
-        public void SetAssetDatabaseModeData(QuarkAssetDataset assetData)
+        internal void SetAssetDatabaseModeData(QuarkAssetDataset assetData)
         {
-            if (quarkLoaderDict.TryGetValue( QuarkAssetLoadMode.AssetDatabase, out var loader))
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode.AssetDatabase, out var loader))
                 loader.SetLoaderData(assetData);
         }
-        public T LoadAsset<T>(string assetName, string assetExtension = null)
-where T : UnityEngine.Object
-        {
-            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                return loader.LoadAsset<T>(assetName, assetExtension);
-            return null;
-        }
-        public T LoadAsset<T>(string assetName, string assetExtension, bool instantiate = false)
+        internal T LoadAsset<T>(string assetName, string assetExtension, bool instantiate = false)
 where T : UnityEngine.Object
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
                 return loader.LoadAsset<T>(assetName, assetExtension, instantiate);
             return null;
         }
-        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false)
+        internal Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.LoadScenetAsync(sceneName, progress, callback, additive);
+            return null;
+        }
+        internal Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false)
 where T : UnityEngine.Object
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.LoadAssetAsync(assetName, callback,instantiate);
+                loader.LoadAssetAsync(assetName, callback, instantiate);
             return null;
         }
-        public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false)
+        internal Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false)
 where T : UnityEngine.Object
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.LoadAssetAsync(assetName, assetExtension,callback, instantiate);
+                loader.LoadAssetAsync(assetName, assetExtension, callback, instantiate);
             return null;
         }
-        public void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
+        internal void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
                 loader.UnLoadAllAssetBundle(unloadAllLoadedObjects);
         }
-        public void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        internal void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
                 loader.UnLoadAssetBundle(assetBundleName, unloadAllLoadedObjects);

@@ -33,7 +33,6 @@ namespace Cosmos.UI
         Dictionary<string, IUIForm> uiFormDict;
         #endregion
         #region Methods
-
         /// <summary>
         /// 设置UI根节点
         /// </summary>
@@ -440,8 +439,7 @@ namespace Cosmos.UI
         /// <param name="uiFormName">UI资源的名称</param>
         void CheckUIFormValid(string uiFormName)
         {
-            if (string.IsNullOrEmpty(uiFormName))
-                throw new ArgumentException("UIFormName is invalid !");
+            Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
             if (!uiFormDict.ContainsKey(uiFormName))
                 throw new ArgumentNullException($"UI  { uiFormName} is not existed or registered !");
         }
@@ -466,6 +464,5 @@ namespace Cosmos.UI
             return attribute;
         }
         #endregion
-
     }
 }

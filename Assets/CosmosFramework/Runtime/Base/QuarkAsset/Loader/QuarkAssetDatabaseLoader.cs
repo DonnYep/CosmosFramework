@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Cosmos.Quark.Loader
 {
@@ -25,10 +26,6 @@ namespace Cosmos.Quark.Loader
         public void SetLoaderData(object customeData)
         {
             SetAssetDatabaseModeData(customeData as QuarkAssetDataset);
-        }
-        public T LoadAsset<T>(string assetName, bool instantiate = false) where T : UnityEngine.Object
-        {
-            return LoadAsset<T>(assetName, string.Empty, instantiate);
         }
         public T LoadAsset<T>(string assetName, string assetExtension, bool instantiate = false) where T : UnityEngine.Object
         {
@@ -54,6 +51,10 @@ namespace Cosmos.Quark.Loader
                 return null;
 #endif
         }
+        public Coroutine LoadScenetAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progress, callback, additive));
+        }
         public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, string.Empty, callback, instantiate));
@@ -75,6 +76,18 @@ namespace Cosmos.Quark.Loader
             var asset = LoadAsset<T>(assetName, assetExtension, instantiate);
             yield return null;
             callback?.Invoke(asset);
+        }
+        IEnumerator EnumLoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive)
+        {
+            LoadSceneMode loadSceneMode = additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
+            var ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+            while (!ao.isDone)
+            {
+                progress.Invoke(ao.progress);
+                yield return null;
+            }
+            progress.Invoke(1);
+            callback.Invoke();
         }
         QuarkAssetDatabaseObject GetAssetDatabaseObject<T>(LinkedList<QuarkAssetDatabaseObject> lnk, string assetExtension = null)
 where T : UnityEngine.Object
@@ -141,5 +154,7 @@ where T : UnityEngine.Object
             quarkAssetData = assetData;
             assetDatabaseMap = lnkDict;
         }
+
+
     }
 }

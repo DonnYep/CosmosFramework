@@ -16,10 +16,10 @@ namespace Cosmos.CosmosEditor
         public BuildTarget BuildTarget= BuildTarget.StandaloneWindows;
         public string OutputPath= "AssetBundles/StandaloneWindows";
         public bool UseDefaultPath=true;
-        public bool ClearOutputFolders;
+        public bool ClearOutputFolders=true;
         public bool CopyToStreamingAssets;
         public string StreamingAssetsPath = "Assets/StreamingAssets";
-        public bool WithoutManifest;
+        public bool WithoutManifest=true;
         public AssetBundleHashType  NameHashType;
         public bool UseAESEncryption = false;
         public string AESEncryptionKey= "QuarkAssetBundle";

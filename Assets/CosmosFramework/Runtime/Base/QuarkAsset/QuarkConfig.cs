@@ -65,6 +65,7 @@ namespace Cosmos.Quark
                                 Directory.CreateDirectory(DownloadPath);
                             QuarkManager.Instance.Initiate(Url, DownloadPath);
                         }
+                        QuarkManager.Instance.CheckForUpdates();
                     }
                     break;
             }

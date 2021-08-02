@@ -39,7 +39,7 @@ public class QuarkLoadAssetPanel : MonoBehaviour
         if (!string.IsNullOrEmpty(assetName))
         {
             Utility.Debug.LogInfo("从AB中请求资源：" + assetName);
-            QuarkManager.Instance.LoadAssetAsync<GameObject>(assetName, (go) =>
+            QuarkResources.LoadPrefabAsync(assetName, (go) =>
             {
                 go.transform.SetParent(objectRoot.transform);
                 currentRow++;

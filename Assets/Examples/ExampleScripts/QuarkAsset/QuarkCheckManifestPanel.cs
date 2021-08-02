@@ -19,10 +19,6 @@ public class QuarkCheckManifestPanel : MonoBehaviour
         btnCancel?.onClick.AddListener(CancelClick);
         QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess;
         QuarkManager.Instance.OnDetectedFailure += OnDetectedFailure;
-        if (QuarkManager.Instance.QuarkAssetLoadMode == QuarkAssetLoadMode.BuiltAssetBundle)
-        {
-            QuarkManager.Instance.CheckForUpdates();
-        }
     }
     void OnDetectedFailure(string errorMessage)
     {

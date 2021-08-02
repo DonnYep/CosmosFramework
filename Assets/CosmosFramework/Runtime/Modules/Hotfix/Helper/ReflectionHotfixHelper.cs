@@ -12,9 +12,10 @@ namespace Cosmos.Hotfix
         Dictionary<string, MethodInfo> methodDict = new Dictionary<string, MethodInfo>();
         Dictionary<string, Type> strTypeDict = new Dictionary<string, Type>();
 
-        public void SetAssembly(byte[] dllBytes, byte[] pdbBytes)
+        public IHotfixHelper SetAssembly(byte[] dllBytes, byte[] pdbBytes)
         {
             assembly = Assembly.Load(dllBytes, pdbBytes);
+            return this;
         }
         /// <summary>
         /// 获取类型；
@@ -25,7 +26,7 @@ namespace Cosmos.Hotfix
         {
             return assembly.GetType(typeName);
         }
-        public object InstanceObject(string typeName, params object[] parameters)
+        public object Instantiate(string typeName, params object[] parameters)
         {
             object instance;
             if (parameters == null)
@@ -33,6 +34,11 @@ namespace Cosmos.Hotfix
             else
                 instance = assembly.CreateInstance(typeName, true, BindingFlags.Default, null, parameters, null, null);
             return instance;
+        }
+        public object InvokeMethod(object methodObject, object instance, params object[] parameters)
+        {
+            MethodInfo method = (MethodInfo)methodObject;
+            return method.Invoke(instance, parameters);
         }
         public object InvokeMethod(string typeName, string methodName, object instance, params object[] parameters)
         {
@@ -49,6 +55,10 @@ namespace Cosmos.Hotfix
                     return method.Invoke(instance, parameters);
                 }
             }
+            return null;
+        }
+        public object InvokeGenericMethod(string type, string method, object[] genericArgs, object instance, params object[] parameters)
+        {
             return null;
         }
     }

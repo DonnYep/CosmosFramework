@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 namespace Cosmos.Quark.Loader
 {
@@ -31,40 +32,31 @@ namespace Cosmos.Quark.Loader
         {
             SetBuiltAssetBundleModeData(customeData as QuarkManifest);
         }
-        public T LoadAsset<T>(string assetName, bool instantiate = false) where T : UnityEngine.Object
-        {
-            T asset = null;
-            string assetBundleName = string.Empty;
-            if (builtAssetBundleMap.TryGetValue(assetName, out var abObject))
-            {
-                assetBundleName = abObject.First.Value.AssetBundleName;
-                if (assetBundleDict.ContainsKey(assetBundleName))
-                {
-                    asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
-                    if (asset != null)
-                    {
-                        if (instantiate)
-                        {
-                            asset = GameObject.Instantiate(asset);
-                        }
-                    }
-                }
-            }
-            return asset;
-        }
         public T LoadAsset<T>(string assetName, string assetExtension, bool instantiate = false) where T : UnityEngine.Object
         {
             T asset = null;
             string assetBundleName = string.Empty;
+
             if (builtAssetBundleMap.TryGetValue(assetName, out var abObject))
             {
-                foreach (var ab in abObject)
+                if (string.IsNullOrEmpty(assetExtension))
                 {
-                    if (ab.AssetExtension == assetExtension)
+                    assetBundleName = abObject.First.Value.AssetBundleName;
+                }
+                else
+                {
+                    foreach (var ab in abObject)
                     {
-                        assetBundleName = ab.AssetBundleName;
-                        break;
+                        if (ab.AssetExtension == assetExtension)
+                        {
+                            assetBundleName = ab.AssetBundleName;
+                            break;
+                        }
                     }
+                }
+                if (string.IsNullOrEmpty(assetBundleName))
+                {
+                    return null;
                 }
                 if (assetBundleDict.ContainsKey(assetBundleName))
                 {
@@ -87,6 +79,10 @@ namespace Cosmos.Quark.Loader
         public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, assetExtension, callback, instantiate));
+        }
+        public Coroutine LoadScenetAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progress, callback, additive));
         }
         public void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
@@ -147,7 +143,7 @@ where T : UnityEngine.Object
             }
             else
             {
-                Utility.Debug.LogError($"资源中不存在：{assetName}");
+                Utility.Debug.LogError($"asset：{assetName} not existed !");
                 yield break;
             }
             if (string.IsNullOrEmpty(assetBundleName))
@@ -202,7 +198,6 @@ where T : UnityEngine.Object
                         if (!assetBundleDict.ContainsKey(dependentABName))
                         {
                             var abPath = Path.Combine(PersistentPath, dependentABName);
-                            Utility.Debug.LogInfo($"加载 {assetBundleName} 的依赖AB包：{dependentABName}");
                             yield return EnumDownloadAssetBundle(abPath, ab =>
                             {
                                 assetBundleDict.TryAdd(dependentABName, ab);
@@ -211,6 +206,34 @@ where T : UnityEngine.Object
                     }
                 }
             }
+        }
+        IEnumerator EnumLoadSceneAsync(string sceneName, Action<float> loadingCallback, Action callback, bool additive)
+        {
+            string assetBundleName = string.Empty;
+            if (builtAssetBundleMap.TryGetValue(sceneName, out var abObject))
+            {
+                assetBundleName = abObject.First.Value.AssetBundleName;
+            }
+            else
+            {
+                Utility.Debug.LogError($"Scene：{sceneName} not existed !");
+                yield break;
+            }
+            if (string.IsNullOrEmpty(assetBundleName))
+            {
+                callback?.Invoke();
+                yield break;
+            }
+            yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
+            LoadSceneMode loadSceneMode = additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
+            var operation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+            while (!operation.isDone)
+            {
+                loadingCallback?.Invoke(operation.progress);
+                yield return null;
+            }
+            loadingCallback?.Invoke(1);
+            callback?.Invoke();
         }
         QuarkAssetBundleObject GetAssetBundleObject(string abName, string assetPath, string assetName)
         {
@@ -232,7 +255,6 @@ where T : UnityEngine.Object
         /// <param name="manifest">unityWebRequest获取的Manifest文件对象</param>
         void SetBuiltAssetBundleModeData(QuarkManifest manifest)
         {
-            //var lnkDict = new Dictionary<string, LinkedList<QuarkAssetBundleObject>>();
             foreach (var mf in manifest.ManifestDict)
             {
                 var assets = mf.Value.Assets;
@@ -254,5 +276,7 @@ where T : UnityEngine.Object
                 }
             }
         }
+
+
     }
 }

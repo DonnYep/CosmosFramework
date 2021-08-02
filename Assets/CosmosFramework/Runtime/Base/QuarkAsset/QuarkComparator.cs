@@ -161,6 +161,11 @@ namespace Cosmos.Quark
             var latesetArray = latest.ToArray();
             var expiredArray = expired.ToArray();
             var uriBuildInfoPath = Utility.IO.WebPathCombine(URL, QuarkConsts.BuildInfoFileName);
+            latest.Clear();
+            expired.Clear();
+            var localNewManifestPath = Utility.IO.PathCombine(PersistentPath, QuarkConsts.ManifestName);
+            Utility.IO.OverwriteTextFile(localNewManifestPath, remoteManifestContext);
+            QuarkManager.Instance.SetBuiltAssetBundleModeData(remoteManifest);
             if (latest.Count > 0 || expired.Count > 0)
             {
                 QuarkUtility.Unity.StartCoroutine(EnumDownloadBuildInfo(uriBuildInfoPath, () =>
@@ -180,11 +185,6 @@ namespace Cosmos.Quark
                 catch { }
                 onCompareSuccess?.Invoke(latesetArray, expiredArray, overallSize);
             }
-            latest.Clear();
-            expired.Clear();
-            var localNewManifestPath = Utility.IO.PathCombine(PersistentPath, QuarkConsts.ManifestName);
-            Utility.IO.OverwriteTextFile(localNewManifestPath, remoteManifestContext);
-            QuarkManager.Instance.SetBuiltAssetBundleModeData(remoteManifest);
         }
         IEnumerator EnumDownloadBuildInfo(string uri, Action callback)
         {

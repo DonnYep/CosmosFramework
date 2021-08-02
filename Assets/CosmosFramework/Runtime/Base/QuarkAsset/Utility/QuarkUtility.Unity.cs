@@ -14,6 +14,13 @@ namespace Cosmos.Quark
         public static class Unity
         {
             #region UnityWebRequest
+            public static Coroutine DownloadBytesAsync(string url, Action<float> progress, Action<byte[]> downloadedCallback, Action<string> failureCallback)
+            {
+                return StartCoroutine(EnumUnityWebRequest(UnityWebRequest.Get(url), progress, (UnityWebRequest req) =>
+                {
+                    downloadedCallback?.Invoke(req.downloadHandler.data);
+                }, failureCallback));
+            }
             public static Coroutine DownloadTextAsync(string url, Action<float> progress, Action<string> downloadedCallback, Action<string> failureCallback)
             {
                 return StartCoroutine(EnumUnityWebRequest(UnityWebRequest.Get(url), progress, (UnityWebRequest req) =>
