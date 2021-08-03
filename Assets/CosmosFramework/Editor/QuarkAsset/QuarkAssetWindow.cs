@@ -10,7 +10,6 @@ namespace Cosmos.CosmosEditor
 {
     public class QuarkAssetWindow : EditorWindow
     {
-        static QuarkAssetWindow instance;
         enum AssetInfoBar : int
         {
             AssetDatabaseMode = 0,
@@ -33,14 +32,6 @@ namespace Cosmos.CosmosEditor
         public QuarkAssetWindow()
         {
             this.titleContent = new GUIContent("QuarkAsset");
-        }
-        public void OnLoad()
-        {
-            if (quarkAssetDataset != null)
-            {
-                OnAsginQuarkDataset();
-            }
-            Debug.Log("OnLoad");
         }
         [MenuItem("Window/Cosmos/QuarkAsset")]
         public static void OpenWindow()

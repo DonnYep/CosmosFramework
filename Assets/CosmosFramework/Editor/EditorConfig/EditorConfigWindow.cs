@@ -147,7 +147,7 @@ namespace Cosmos.CosmosEditor
                 GUILayout.Space(128);
                 if (GUILayout.Button("设为默认", GUILayout.Height(32)))
                 {
-                    EditorConfigData.LogOutputDirectory = EditorUtil.GetDefaultLogOutputDirectory();
+                    EditorConfigData.LogOutputDirectory = Directory.GetCurrentDirectory();/*  EditorUtil.GetDefaultLogOutputDirectory();*/
                 }
                 GUILayout.Space(8);
                 GUILayout.EndHorizontal();

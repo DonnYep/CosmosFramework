@@ -20,6 +20,8 @@ namespace Cosmos.CosmosEditor
         {
             this.titleContent = new GUIContent("HierachyFinder");
         }
+        Vector2 m_ScrollPos;
+
         Vector2 scriptScrollPos;
         MonoScript scriptObj;
         Transform root;
@@ -51,7 +53,8 @@ namespace Cosmos.CosmosEditor
 
         private void OnGUI()
         {
-            selectedBar = GUILayout.Toolbar(selectedBar, barArray, GUILayout.Height(24));
+            m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
+            selectedBar = GUILayout.Toolbar(selectedBar, barArray);
             GUILayout.Space(16);
             switch (selectedBar)
             {
@@ -71,28 +74,28 @@ namespace Cosmos.CosmosEditor
                     DrawFindMissingComponet();
                     break;
             }
+            EditorGUILayout.EndScrollView();
         }
         void DrawMonoReference()
         {
-            GUILayout.BeginVertical("box");
+            GUILayout.BeginVertical();
             EditorGUILayout.HelpBox("查找一个脚本在Hierarchy中的引用，这个类必须是继承Mono", MessageType.Info);
-            GUILayout.Space(8);
+            GUILayout.Space(16);
             scriptObj = (MonoScript)EditorGUILayout.ObjectField("SourceScript", scriptObj, typeof(MonoScript), true);
-            GUILayout.Space(8);
             root = (Transform)EditorGUILayout.ObjectField("Root", root, typeof(Transform), true);
-            GUILayout.Space(8);
+            GUILayout.Space(16);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Find", GUILayout.Height(32)))
+            if (GUILayout.Button("Find"))
             {
                 ClearReference();
                 FindTarget(root);
             }
-            GUILayout.Space(64);
-            if (GUILayout.Button("Clear", GUILayout.Height(32)))
+            if (GUILayout.Button("Clear"))
             {
                 ClearReference();
             }
             GUILayout.EndHorizontal();
+            GUILayout.Space(16);
             GUILayout.Label("ReferenceCountInScene: " + ResultCount);
             if (result.Count > 0)
             {
@@ -108,49 +111,50 @@ namespace Cosmos.CosmosEditor
         }
        void DrawGetChild()
         {
-            GUILayout.BeginVertical("box");
+            GUILayout.BeginVertical();
             EditorGUILayout.HelpBox("查找一个对象拥有的子物体以及孙物体总数", MessageType.Info);
+            GUILayout.Space(16);
             findChildRoot = (Transform)EditorGUILayout.ObjectField("GetChildRoot", findChildRoot, typeof(Transform), true);
-            GUILayout.Space(8);
+            GUILayout.Space(16);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Find", GUILayout.Height(32)))
+            if (GUILayout.Button("Find"))
             {
                 ClearChild();
                 GetChild(findChildRoot);
             }
-            GUILayout.Space(64);
-            if (GUILayout.Button("Clear", GUILayout.Height(32)))
+            if (GUILayout.Button("Clear"))
             {
                 ClearChild();
             }
             GUILayout.EndHorizontal();
+            GUILayout.Space(16);
             GUILayout.Label("ChildCount: " + childCount);
             GUILayout.EndVertical();
         }
        void DrawMonoCount()
         {
-            GUILayout.BeginVertical("box");
+            GUILayout.BeginVertical();
             EditorGUILayout.HelpBox("查找对象上子物体以及孙物体所有挂载的mono脚本", MessageType.Info);
+            GUILayout.Space(16);
             findMonoRoot = (Transform)EditorGUILayout.ObjectField("GetMonoRoot", findMonoRoot, typeof(Transform), true);
-            GUILayout.Space(8);
+            GUILayout.Space(16);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Find", GUILayout.Height(32)))
+            if (GUILayout.Button("Find"))
             {
                 monoChildTrans.Clear();
                 monoObjCount = 0;
                 monoResult.Clear();
                 GetMonoCount(findMonoRoot);
             }
-            GUILayout.Space(64);
-            if (GUILayout.Button("Clear", GUILayout.Height(32)))
+            if (GUILayout.Button("Clear"))
             {
                 monoObjCount = 0;
                 monoResult.Clear();
                 monoChildTrans.Clear();
             }
             GUILayout.EndHorizontal();
+            GUILayout.Space(16);
             GUILayout.Label("MonoCount: " + monoObjCount);
-
             if (monoResult.Count > 0)
             {
                 monoScrollPos = EditorGUILayout.BeginScrollView(monoScrollPos);
@@ -164,30 +168,29 @@ namespace Cosmos.CosmosEditor
         }
         void DrawFindTransformByName()
         {
-            GUILayout.BeginVertical("box");
+            GUILayout.BeginVertical();
             EditorGUILayout.HelpBox("查找对象上所有与输入字段匹配的对象", MessageType.Info);
-            GUILayout.Space(8);
-            findTransName = EditorGUILayout.TextField(" find name", findTransName);
-            GUILayout.Space(8);
+            GUILayout.Space(16);
+            findTransName = EditorGUILayout.TextField("Find name", findTransName);
             findTransByNameRoot = (Transform)EditorGUILayout.ObjectField("GetMonoRoot", findTransByNameRoot, typeof(Transform), true);
-            GUILayout.Space(8);
             nameCaseSensitive = EditorGUILayout.Toggle("CaseSensitive", nameCaseSensitive);
+            GUILayout.Space(16);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Find", GUILayout.Height(32)))
+            if (GUILayout.Button("Find"))
             {
                 matchedTrans.Clear();
                 nameSubTrans.Clear();
                 nameMatchedCount = 0;
                 MatchingName(findTransByNameRoot, findTransName);
             }
-            GUILayout.Space(64);
-            if (GUILayout.Button("Clear", GUILayout.Height(32)))
+            if (GUILayout.Button("Clear"))
             {
                 matchedTrans.Clear();
                 nameSubTrans.Clear();
                 nameMatchedCount = 0;
             }
             GUILayout.EndHorizontal();
+            GUILayout.Space(16);
             GUILayout.Label("MonoCount: " +nameMatchedCount);
             if (matchedTrans.Count > 0)
             {
@@ -202,26 +205,26 @@ namespace Cosmos.CosmosEditor
         }
         void DrawFindMissingComponet()
         {
-            GUILayout.BeginVertical("box");
+            GUILayout.BeginVertical();
             EditorGUILayout.HelpBox("查找对象上子物体以及孙物体所有丢失组件的对象", MessageType.Info);
-           findMissingRoot = (Transform)EditorGUILayout.ObjectField("FindMissingRoot", findMissingRoot, typeof(Transform), true);
-            GUILayout.Space(8);
+            GUILayout.Space(16);
+            findMissingRoot = (Transform)EditorGUILayout.ObjectField("FindMissingRoot", findMissingRoot, typeof(Transform), true);
+            GUILayout.Space(16);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Find", GUILayout.Height(32)))
+            if (GUILayout.Button("Find"))
             {
                 missCompTransCount = 0;
                 missingCompTrans.Clear();
                 FindMissingCompsIncludeRoot(findMissingRoot);
             }
-            GUILayout.Space(64);
-            if (GUILayout.Button("Clear", GUILayout.Height(32)))
+            if (GUILayout.Button("Clear"))
             {
                 missingCompTrans.Clear();
                 missCompTransCount = 0;
             }
             GUILayout.EndHorizontal();
+            GUILayout.Space(16);
             GUILayout.Label("MissingCount: " + missCompTransCount);
-
             if (missingCompTrans.Count > 0)
             {
                findMissingCompScroll = EditorGUILayout.BeginScrollView(findMissingCompScroll);
@@ -380,8 +383,6 @@ namespace Cosmos.CosmosEditor
                
             }
         }
-
-
         void FindMissingCompsIncludeRoot(Transform root)
         {
             var rootComps = root.GetComponents<Component>();

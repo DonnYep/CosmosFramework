@@ -4,20 +4,12 @@ using System;
 namespace Cosmos.CosmosEditor
 {
     [Serializable]
-    public class EditorConfigData : IDisposable
+    public class EditorConfigData 
     {
-        public bool ConsoleDebugLog;
-        public bool OutputDebugLog;
-        public string LogOutputDirectory;
-        public bool EnableScriptHeader;
-        public string HeaderAuthor;
-        public void Dispose()
-        {
-            ConsoleDebugLog = false;
-            OutputDebugLog = false;
-            LogOutputDirectory = null;
-            EnableScriptHeader = false;
-            HeaderAuthor = null;
-        }
+        public bool ConsoleDebugLog { get; set; }
+        public bool OutputDebugLog { get; set; }
+        public string LogOutputDirectory { get; set; }
+        public bool EnableScriptHeader { get; set; }
+        public string HeaderAuthor { get; set; }
     }
 }

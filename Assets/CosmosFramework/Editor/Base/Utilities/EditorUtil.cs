@@ -69,36 +69,21 @@ namespace Cosmos.CosmosEditor
         public static void SaveData<T>(string fileName, T editorData)
             where T : class, new()
         {
-            var json = JsonUtility.ToJson(editorData, true);
-            SaveDataJson(fileName, json);
-        }
-        public static void SaveDataJson(string fileName, string context)
-        {
-            Utility.IO.OverwriteTextFile(LibraryPath, fileName, context);
+            var json = EditorUtil. Json.ToJson(editorData, true);
+            Utility.IO.OverwriteTextFile(LibraryPath, fileName, json);
         }
         public static T GetData<T>(string fileName)
             where T : class, new()
         {
-            var json = GetDataJson(fileName);
-            var obj = JsonUtility.FromJson<T>(json);
-            return obj;
-        }
-        public static string GetDataJson(string fileName)
-        {
             var filePath = Utility.IO.PathCombine(LibraryPath, fileName);
-            var cfgStr = Utility.IO.ReadTextFileContent(filePath);
-            return cfgStr.ToString();
+            var json= Utility.IO.ReadTextFileContent(filePath);
+            var obj = EditorUtil.Json.ToObject<T>(json);
+            return obj;
         }
         public static void ClearData(string fileName)
         {
             var filePath = Utility.IO.PathCombine(LibraryPath, fileName);
             Utility.IO.DeleteFile(filePath);
-        }
-        public static string GetDefaultLogOutputDirectory()
-        {
-            DirectoryInfo info = new DirectoryInfo(Application.dataPath);
-            string path = info.Parent.FullName;
-            return path;
         }
         public static void DrawVerticalContext(Action context)
         {

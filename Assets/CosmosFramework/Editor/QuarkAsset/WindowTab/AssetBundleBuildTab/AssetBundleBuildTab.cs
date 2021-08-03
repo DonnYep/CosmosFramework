@@ -193,8 +193,8 @@ namespace Cosmos.CosmosEditor
             }
             else
             {
-                var dirHashPairs= quarkAssetDataset.DirHashPairs;
-                var dirs= Utility.Converter.ConvertArray(dirHashPairs.ToArray(), (d) => d.Dir);
+                var dirHashPairs = quarkAssetDataset.DirHashPairs;
+                var dirs = Utility.Converter.ConvertArray(dirHashPairs.ToArray(), (d) => d.Dir);
                 TraverseTargetDirectories(dirs);
             }
         }
