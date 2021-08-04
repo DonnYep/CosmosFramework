@@ -178,7 +178,6 @@ namespace Cosmos.UI
                 return uiFormAssetHelper.InstanceUIFormAsync(assetInfo, uiType, uiForm =>
                 {
                     uiFormAssetHelper.AttachTo(uiForm, UIRoot);
-                    callback?.Invoke(uiForm);
                     uiFormDict.Add(assetInfo.UIAssetName, uiForm);
                     if (!string.IsNullOrEmpty(assetInfo.UIGroupName))
                     {
@@ -189,6 +188,7 @@ namespace Cosmos.UI
                         }
                         group.AddUIForm(uiForm);
                     }
+                    callback?.Invoke(uiForm);
                 });
         }
         /// <summary>
@@ -322,15 +322,14 @@ namespace Cosmos.UI
         }
         /// <summary>
         /// 是否存在UI;
-        /// <see cref=" UIForm",>
+        /// <see cref=" IUIForm",>
         /// UIForm.UIName
         /// </summary>
         /// <param name="uiFormName">UI资源的名称</param>
         /// <returns>存在的结果</returns>
         public bool HasUIForm(string uiFormName)
         {
-            if (string.IsNullOrEmpty(uiFormName))
-                throw new ArgumentException("UIFormName is invalid !");
+            Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
             return uiFormDict.ContainsKey(uiFormName);
         }
         /// <summary>
@@ -358,8 +357,7 @@ namespace Cosmos.UI
         /// <returns>符合条件的UIForm</returns>
         public IUIForm[] FindUIForms(string uiGroupName, Predicate<IUIForm> handler)
         {
-            if (string.IsNullOrEmpty(uiGroupName))
-                throw new ArgumentNullException("UIGroupName is invalid !");
+            Utility.Text.IsStringValid(uiGroupName, "UIGroupName is invalid !");
             if (handler == null)
                 throw new ArgumentNullException("Handler is invalid !");
             if (uiGroupDict.TryGetValue(uiGroupName, out var group))

@@ -87,14 +87,23 @@ namespace Cosmos.UI
             where T : UIBehaviour
         {
             T comp = null;
-            if (uiLableDict.ContainsKey(lableName))
+            if (uiLableDict.TryGetValue(lableName, out var lnk))
             {
                 Type type = typeof(T);
-                var lnk = uiLableDict[lableName];
                 foreach (var info in lnk)
                 {
                     if (info.UIType == type)
-                        return info.UIBehaviour as T;
+                    {
+                        comp = info.UIBehaviour as T;
+                        return comp;
+                    }
+                }
+                if (comp == null)
+                {
+                    comp = gameObject.GetComponentInChildren<T>(lableName);
+                    if (comp == null)
+                        return null;
+                    lnk.AddLast(new UILableInfo(typeof(T), comp));
                 }
             }
             else
@@ -102,7 +111,7 @@ namespace Cosmos.UI
                 comp = gameObject.GetComponentInChildren<T>(lableName);
                 if (comp == null)
                     return null;
-                var lnk = new LinkedList<UILableInfo>();
+                lnk = new LinkedList<UILableInfo>();
                 lnk.AddLast(new UILableInfo(typeof(T), comp));
                 uiLableDict.Add(lableName, lnk);
             }

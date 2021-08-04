@@ -6,7 +6,7 @@ namespace Cosmos{
     /// <summary>
     /// 标准输入设备，这里是PC
     /// </summary>
-    public class StandardInputDevice : InputDevice
+    public class StandardInputHelper : IInputHelper
     {
         /// <summary>
         /// 鼠标左键双击时间间隔
@@ -20,7 +20,7 @@ namespace Cosmos{
         /// UpperLower轴线值
         /// </summary>
         float upperLowerValue = 0;
-        public override void OnStart()
+        public void OnStart()
         {
             GameManager.GetModule<IInputManager>().RegisterVirtualButton(InputButtonType._MouseLeft);
            GameManager.GetModule<IInputManager>().RegisterVirtualButton(InputButtonType._MouseRight);
@@ -35,7 +35,7 @@ namespace Cosmos{
            GameManager.GetModule<IInputManager>().RegisterVirtualAxis(InputAxisType._Vertical);
            GameManager.GetModule<IInputManager>().RegisterVirtualAxis(InputAxisType._UpperLower);
         }
-        public override void OnRun()
+        public void OnRun()
         {
             if (UnityEngine.Input.GetKeyDown(KeyCode.LeftShift))GameManager.GetModule<IInputManager>().SetButtonDown(InputButtonType._LeftShift);
             else if(UnityEngine.Input.GetKeyUp(KeyCode.LeftShift))GameManager.GetModule<IInputManager>().SetButtonUp(InputButtonType._LeftShift);
@@ -74,7 +74,7 @@ namespace Cosmos{
             else upperLowerValue = 0;
            GameManager.GetModule<IInputManager>().SetVirtualMousePosition(UnityEngine.Input.mousePosition);
         }
-        public override void OnShutdown()
+        public void OnShutdown()
         {
            GameManager.GetModule<IInputManager>().DeregisterVirtualButton(InputButtonType._MouseLeft);
            GameManager.GetModule<IInputManager>().DeregisterVirtualButton(InputButtonType._MouseRight);

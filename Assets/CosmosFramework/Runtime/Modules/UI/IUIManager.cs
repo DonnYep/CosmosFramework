@@ -115,7 +115,7 @@ namespace Cosmos
         void ActiveUIGroup(string uiGroupName);
         /// <summary>
         /// 是否存在UI;
-        /// <see cref=" UIForm",>
+        /// <see cref=" IUIForm",>
         /// UIForm.UIName
         /// </summary>
         /// <param name="uiFormName">UI资源的名称</param>

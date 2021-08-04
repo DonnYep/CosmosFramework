@@ -8,10 +8,10 @@ using UnityEngine;
 
 namespace Cosmos
 {
-    public interface IInputManager:IModuleManager
+    public interface IInputManager : IModuleManager
     {
         bool IsEnableInputDevice { get; set; }
-        void SetInputDevice(InputDevice inputDevice);
+        void SetInputHelper(IInputHelper inputDevice);
         /// <summary>
         /// 虚拟轴线是否存在
         /// </summary>

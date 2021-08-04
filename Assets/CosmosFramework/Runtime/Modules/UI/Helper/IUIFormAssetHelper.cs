@@ -17,6 +17,11 @@ namespace Cosmos.UI
         /// <param name="src">挂载到其他对象</param>
         /// <param name="dst">被其他对象挂载</param>
         void AttachTo(IUIForm src, IUIForm dst);
+        /// <summary>
+        /// 附加UIForm到一个对象上；
+        /// </summary>
+        /// <param name="src">挂载到其他对象</param>
+        /// <param name="dst">被其他对象挂载</param>
         void AttachTo(IUIForm src, Transform dst);
         /// <summary>
         /// 移除挂载；

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Cosmos.Input;
 namespace Cosmos.Test
 {
     [RequireComponent(typeof(Rigidbody))]

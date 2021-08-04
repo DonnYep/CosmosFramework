@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Cosmos.Input{
 
-    public interface IInputDevice
+    public interface IInputHelper
     {
         /// <summary>
         /// 设备启动

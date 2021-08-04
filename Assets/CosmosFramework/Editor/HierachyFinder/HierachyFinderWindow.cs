@@ -380,7 +380,6 @@ namespace Cosmos.CosmosEditor
                         matchedTrans.Add(nameSubTrans[i]);
                     }
                 }
-               
             }
         }
         void FindMissingCompsIncludeRoot(Transform root)

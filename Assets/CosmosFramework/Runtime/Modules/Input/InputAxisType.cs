@@ -1,5 +1,5 @@
 ﻿
-namespace Cosmos
+namespace Cosmos.Input
 {
     /// <summary>
     /// 输入轴线类型

@@ -88,10 +88,10 @@ namespace Cosmos.CosmosEditor
             {
                 ADBModeNotUnderAssetsDirectoryBuild();
             }
-            if (WindowTabData.GenerateAssetPathCode)
-                AssetDataBaseModeCreatePathScript();
             EditorUtility.SetDirty(quarkAssetDataset);
             EditorUtil.SaveData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName, WindowTabData);
+            if (WindowTabData.GenerateAssetPathCode)
+                AssetDataBaseModeCreatePathScript();
             yield return null;
             EditorUtil.Debug.LogInfo("Quark asset  build done ");
         }
@@ -99,6 +99,7 @@ namespace Cosmos.CosmosEditor
         {
             includeDirectoriesOperation.Clear();
             quarkAssetDataset.Dispose();
+            EditorUtility.SetDirty(quarkAssetDataset);
             EditorUtil.ClearData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName);
             EditorUtil.Debug.LogInfo("Quark asset clear done ");
         }
@@ -245,7 +246,7 @@ namespace Cosmos.CosmosEditor
             }
             str += "\n}";
             Utility.IO.OverwriteTextFile(Application.dataPath, "QuarkAssetDefine.cs", str);
-            EditorUtil.RefreshEditor();
+            AssetDatabase.Refresh();
         }
         #endregion
     }

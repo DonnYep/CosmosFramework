@@ -31,20 +31,15 @@ namespace Cosmos.CosmosEditor
         static readonly Vector2 cosmosMaxWinSize = new Vector2(768f, 768f);
         public static Vector2 CosmosDevWinSize { get { return cosmosDevWinSize; } }
         public static Vector2 CosmosMaxWinSize { get { return cosmosMaxWinSize; } }
-        /// <summary>
-        /// 刷新unity编辑器；
-        /// </summary>
-        public static void RefreshEditor()
-        {
-            UnityEditor.AssetDatabase.Refresh();
-        }
+
         /// <summary>
         ///获取项目的目录，即Assets文件夹的上一层； 
         /// </summary>
         public static string ApplicationPath()
         {
-            var dirInfo = new DirectoryInfo(Application.dataPath);
-            return dirInfo.Parent.FullName;
+            return Directory.GetCurrentDirectory();
+            //var dirInfo = new DirectoryInfo(Application.dataPath);
+            //return dirInfo.Parent.FullName;
             //return Path.GetFullPath(".");
         }
         public static T[] GetAllAssets<T>(string path) where T : class
@@ -69,14 +64,14 @@ namespace Cosmos.CosmosEditor
         public static void SaveData<T>(string fileName, T editorData)
             where T : class, new()
         {
-            var json = EditorUtil. Json.ToJson(editorData, true);
+            var json = EditorUtil.Json.ToJson(editorData, true);
             Utility.IO.OverwriteTextFile(LibraryPath, fileName, json);
         }
         public static T GetData<T>(string fileName)
             where T : class, new()
         {
             var filePath = Utility.IO.PathCombine(LibraryPath, fileName);
-            var json= Utility.IO.ReadTextFileContent(filePath);
+            var json = Utility.IO.ReadTextFileContent(filePath);
             var obj = EditorUtil.Json.ToObject<T>(json);
             return obj;
         }
@@ -123,6 +118,41 @@ namespace Cosmos.CosmosEditor
         {
             var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
             Selection.activeObject = obj;
+        }
+        /// <summary>
+        /// 添加单个宏；此宏不能由分号结尾；
+        /// </summary>
+        /// <param name="define">宏定义</param>
+        /// <returns>是否添加成功</returns>
+        public static bool AddSymbol(string define)
+        {
+            string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            List<string> allDefines = definesString.Split(';').ToList();
+            if (allDefines.Contains(define))
+                return false;
+            allDefines.Add(define);
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(
+                EditorUserBuildSettings.selectedBuildTargetGroup,
+                string.Join(";", allDefines.ToArray()));
+            return true;
+        }
+        /// <summary>
+        /// 移除单个宏；此宏不能由分号结尾；
+        /// </summary>
+        /// <param name="define">宏定义</param>
+        /// <returns>是否移除成功</returns>
+        public static bool RemoveSymbol(string define)
+        {
+            //Symbols.Remove(define);
+            string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            List<string> allDefines = definesString.Split(';').ToList();
+            if (!allDefines.Contains(define))
+                return false;
+            allDefines.Remove(define);
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(
+                EditorUserBuildSettings.selectedBuildTargetGroup,
+                string.Join(";", allDefines.ToArray()));
+            return true;
         }
     }
 }

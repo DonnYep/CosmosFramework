@@ -11,8 +11,6 @@ namespace Cosmos
     public class UnityDebugHelper : Utility.Debug.IDebugHelper
     {
         readonly string logFullPath;
-        readonly string logFileName = "CosmosFrameworkClient.log";
-        readonly string defaultLogPath = Directory.GetParent(UnityEngine.Application.dataPath).FullName;
         /// <summary>
         /// UnityDebugHelper无参构造，不输出log信息到log文件；
         /// </summary>
@@ -23,8 +21,7 @@ namespace Cosmos
         /// <param name="logFullPath">log输出的完整路径</param>
         public UnityDebugHelper(string logFullPath)
         {
-            if (string.IsNullOrEmpty(logFullPath))
-                throw new ArgumentNullException("LogFullPath is invalid !");
+            Utility.Text.IsStringValid(logFullPath, "LogFullPath is invalid !");
             this.logFullPath = logFullPath;
             Utility.IO.WriteTextFile(logFullPath, "Head");
             UnityEngine.Application.logMessageReceived += UnityLog;
@@ -111,7 +108,7 @@ namespace Cosmos
                     }
                     break;
             }
-            Utility.IO.AppendWriteTextFile(logFullPath, logFileName, str);
+            Utility.IO.AppendWriteTextFile(logFullPath, str);
         }
     }
 }

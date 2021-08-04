@@ -11,7 +11,7 @@ namespace Cosmos.UI
     public class DefaultUIFormAssetHelper : IUIFormAssetHelper
     {
         IResourceManager ResourceManager { get { return CosmosEntry.ResourceManager; } }
-        Type uiFromBaseType = typeof(UIForm);
+        Type uiFromBaseType = typeof(IUIForm);
         public IUIForm InstanceUIForm(UIAssetInfo assetInfo, Type uiType)
         {
             if (assetInfo == null)
@@ -21,7 +21,7 @@ namespace Cosmos.UI
             if (string.IsNullOrEmpty(assetInfo.UIAssetName))
                 throw new ArgumentException("UIFormName is invalid !");
             var panel = ResourceManager.LoadPrefab(assetInfo);
-            var comp = panel.GetOrAddComponent(uiType) as UIForm;
+            var comp = panel.GetOrAddComponent(uiType) as IUIForm;
             return comp;
         }
         public Coroutine InstanceUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> doneCallback)
@@ -35,7 +35,7 @@ namespace Cosmos.UI
             return ResourceManager.LoadPrefabAsync(assetInfo, go =>
             {
                 go.transform.ResetLocalTransform();
-                var comp = go.GetOrAddComponent(uiType) as UIForm;
+                var comp = go.GetOrAddComponent(uiType) as IUIForm;
                 doneCallback?.Invoke(comp);
             }, null, true);
         }

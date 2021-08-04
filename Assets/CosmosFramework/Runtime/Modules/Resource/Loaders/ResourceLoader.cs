@@ -12,7 +12,6 @@ namespace Cosmos
     {
         public bool IsLoading { get { return isLoading; } }
         bool isLoading = false;
-
         public T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object
         {
             var asset = Resources.LoadAll<T>(info.ResourcePath);

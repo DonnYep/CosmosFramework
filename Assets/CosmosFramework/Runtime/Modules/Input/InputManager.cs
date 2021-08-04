@@ -14,10 +14,12 @@ namespace Cosmos.Input
     {
         public bool IsEnableInputDevice { get; set; } = true;
         VirtualInput inputModule = new VirtualInput();
-        InputDevice _inputDevice;
-        public void SetInputDevice(InputDevice inputDevice)
+        IInputHelper inputHelper;
+        public void SetInputHelper(IInputHelper helper)
         {
-            _inputDevice = inputDevice;
+            inputHelper?.OnShutdown();
+            inputHelper = helper;
+            inputHelper?.OnStart();
         }
         /// <summary>
         /// 虚拟轴线是否存在
@@ -69,7 +71,6 @@ namespace Cosmos.Input
         {
             inputModule.DeregisterVirtualAxis(name);
         }
-
         /// <summary>
         /// 鼠标位置
         /// </summary>
@@ -187,15 +188,10 @@ namespace Cosmos.Input
         {
             inputModule.SetAxis(name, value);
         }
-        protected override void OnInitialization()
-        {
-            base.OnInitialization();
-            _inputDevice?.OnStart();
-        }
         protected override void OnTermination()
         {
             base.OnTermination();
-            _inputDevice?.OnShutdown();
+            inputHelper?.OnShutdown();
         }
         [TickRefresh]
         void OnRefresh()
@@ -203,7 +199,7 @@ namespace Cosmos.Input
             if (IsPause)
                 return;
             if (IsEnableInputDevice)
-                _inputDevice?.OnRun();
+                inputHelper?.OnRun();
         }
     }
 }

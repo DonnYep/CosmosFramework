@@ -4,10 +4,10 @@ using UnityEngine;
 using Cosmos.Input;
 namespace Cosmos
 {
-    public class MobileInputDevice : InputDevice
+    public class MobileInputHelper : IInputHelper
     {
         IInputManager inputManager;
-        public override void OnStart()
+        public void OnStart()
         {
             inputManager.RegisterVirtualButton(InputButtonType._MouseLeft);
             inputManager.RegisterVirtualButton(InputButtonType._MouseRight);
@@ -20,7 +20,7 @@ namespace Cosmos
             inputManager.RegisterVirtualAxis(InputAxisType._Vertical);
             inputManager.RegisterVirtualAxis(InputAxisType._UpperLower);
         }
-        public override void OnRun()
+        public void OnRun()
         {
             if (UnityEngine.Input.touchCount == 1 && UnityEngine.Input.GetTouch(0).phase == TouchPhase.Began)
                 inputManager.SetButtonDown(InputButtonType._MouseLeft);
@@ -41,7 +41,7 @@ namespace Cosmos
             else
                 inputManager.SetVirtualMousePosition(Vector3.zero);
         }
-        public override void OnShutdown()
+        public void OnShutdown()
         {
             inputManager.DeregisterVirtualButton(InputButtonType._MouseLeft);
             inputManager.DeregisterVirtualButton(InputButtonType._MouseRight);
@@ -54,7 +54,5 @@ namespace Cosmos
             inputManager.DeregisterVirtualAxis(InputAxisType._Vertical);
             inputManager.DeregisterVirtualAxis(InputAxisType._UpperLower);
         }
-
- 
     }
 }

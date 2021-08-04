@@ -48,7 +48,7 @@ namespace Cosmos
         {
             animator = GetComponentInChildren<Animator>();
             CameraTarget = transform.Find("CameraTarget").transform;
-            CosmosEntry.InputManager.SetInputDevice(new StandardInputDevice());
+            CosmosEntry.InputManager.SetInputHelper(new StandardInputHelper());
             inputManager = CosmosEntry.InputManager;
         }
         [TickRefresh]
