@@ -7,11 +7,11 @@ using System.Threading;
 
 namespace Cosmos
 {
-    public class CoroutineAwaiterWaitForMainThread:CoroutineAwaiter<WaitForMainThread>
+    public class WaitForMainThreadAwaiter:CoroutineAwaiter<WaitForMainThreadAwaiter>
     {
-        public CoroutineAwaiterWaitForMainThread()
+        public WaitForMainThreadAwaiter()
         {
-            Instruction = default(WaitForMainThread);
+            Instruction = default(WaitForMainThreadAwaiter);
         }
         public override void OnCompleted(Action continuation)
         {

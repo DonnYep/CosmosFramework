@@ -66,9 +66,9 @@ namespace Cosmos.CosmosEditor
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("ChooseAssembly", GUILayout.MaxWidth(128f)))
+            if (GUILayout.Button("BrowseAssembly", GUILayout.MaxWidth(128f)))
             {
-                hotfixWindowData.CompiledAssemblyPath = EditorUtility.OpenFilePanel("ChooseAssembly", Directory.GetCurrentDirectory(), "dll");
+                hotfixWindowData.CompiledAssemblyPath = EditorUtility.OpenFilePanel("BrowseAssembly", Directory.GetCurrentDirectory(), "dll");
             }
             if (GUILayout.Button("ResetRelativePath", GUILayout.MaxWidth(128f)))
             {
@@ -102,80 +102,8 @@ namespace Cosmos.CosmosEditor
 
             GUILayout.Space(16);
 
-            hotfixWindowData.DllCRLFoldout = EditorGUILayout.Foldout(hotfixWindowData.DllCRLFoldout, "Dll CLR Bind");
-            if (hotfixWindowData.DllCRLFoldout)
-            {
-
-                hotfixWindowData.CRLBindGeneratePath= EditorGUILayout.TextField("CRLBindGeneratePath", hotfixWindowData.CRLBindGeneratePath );
-                GUILayout.BeginHorizontal();
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Browse", GUILayout.MaxWidth(128f)))
-                {
-                    hotfixWindowData.CRLBindGeneratePath= EditorUtility.OpenFilePanel("ChooseGeneratePath", Directory.GetCurrentDirectory(), "dll");
-                }
-                GUILayout.EndHorizontal();
-                GUILayout.BeginVertical();
-
-                GUILayout.Space(16);
-
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Enable"))
-                {
-                    EditorUtil.AddSymbol(CosmosHotfixSymbol);
-                }
-                if (GUILayout.Button("Disable"))
-                {
-                    EditorUtil.RemoveSymbol(CosmosHotfixSymbol);
-                }
-                GUILayout.EndHorizontal();
-
-#if COSMOS_HOTFIX
-                GUILayout.BeginHorizontal();
-
-                if (GUILayout.Button("GenerateCLR"))
-                {
-                    GenerateCLRBindingByAnalysis();
-                }
-                if (GUILayout.Button("Reset"))
-                {
-
-                }
-                GUILayout.EndVertical();
-#endif
-                GUILayout.EndHorizontal();
-            }
             EditorGUILayout.EndScrollView();
         }
-        private static List<string> Symbols = new List<string>();
-        public static void AddSymbols(string define)
-        {
-            Symbols.Add(define);
-            string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
-            List<string> allDefines = definesString.Split(';').ToList();
-            allDefines.AddRange(Symbols.Except(allDefines));
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                EditorUserBuildSettings.selectedBuildTargetGroup,
-                string.Join(";", allDefines.ToArray()));
-        }
-
-#if CosmosHotfixSymbol
-         void GenerateCLRBindingByAnalysis()
-        {
-            //用新的分析热更dll调用引用来生成绑定代码
-            ILRuntime.Runtime.Enviorment.AppDomain domain = new ILRuntime.Runtime.Enviorment.AppDomain();
-            using (System.IO.FileStream fs = new System.IO.FileStream(hotfixWindowData.CompiledAssemblyPath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-            {
-                domain.LoadAssembly(fs);
-
-                //Crossbind Adapter is needed to generate the correct binding code
-                InitILRuntime(domain);
-                ILRuntime.Runtime.CLRBinding.BindingCodeGenerator.GenerateBindingCode(domain, hotfixWindowData.CRLBindGeneratePath);
-            }
-
-            AssetDatabase.Refresh();
-        }
-#endif
-
         static bool LoadHotfixAssembly()
         {
             bool result = false;

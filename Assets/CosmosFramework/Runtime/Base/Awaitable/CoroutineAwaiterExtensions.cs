@@ -11,10 +11,6 @@ namespace Cosmos
 {
     public static class CoroutineAwaiterExtensions
     {
-        public static CoroutineAwaiter<Coroutine> GetAwaiter(this Coroutine coroutine)
-        {
-            return new CoroutineAwaiter<Coroutine>(coroutine);
-        }
         public static CoroutineAwaiter<IEnumerator> GetAwaiter(this IEnumerator coroutine)
         {
             return new CoroutineAwaiter<IEnumerator>(coroutine);
@@ -63,11 +59,6 @@ namespace Cosmos
         {
             return new CoroutineAwaiter<CustomYieldInstruction>(customYieldInstruction);
         }
-        public static CoroutineAwaiterWaitForMainThread GetAwaiter(this WaitForMainThread waitForMainThread)
-        {
-            return new CoroutineAwaiterWaitForMainThread();
-        }
     }
     public struct WaitForNextFrame { }
-    public struct WaitForMainThread { }
 }

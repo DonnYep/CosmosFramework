@@ -110,7 +110,7 @@ namespace Cosmos.UI
                 ActiveUIForm(assetInfo.UIAssetName);
                 return uiForm;
             }
-            if (string.IsNullOrEmpty(assetInfo.UIGroupName))
+            if (!string.IsNullOrEmpty(assetInfo.UIGroupName))
             {
                 if (!uiGroupDict.TryGetValue(assetInfo.UIGroupName, out var group))
                 {

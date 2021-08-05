@@ -7,11 +7,11 @@ using System.Runtime.CompilerServices;
 
  namespace Cosmos
 {
-    public partial class CoroutineAwaiter<TInstruction> : Awaiter<TInstruction>
+    public partial class CoroutineAwaiter<T> : Awaiter<T>
     {
         Action continuation;
         bool isCompleted;
-        public TInstruction Instruction { get; protected set; }
+        public T Instruction { get; protected set; }
         public AwaitableEnumerator Coroutine { get; private set; }
         public override bool IsCompleted
         {
@@ -30,13 +30,13 @@ using System.Runtime.CompilerServices;
             }
         }
         public CoroutineAwaiter() { }
-        public CoroutineAwaiter(TInstruction instruction) 
+        public CoroutineAwaiter(T instruction) 
         {
             Instruction = instruction;
             Coroutine = new AwaitableEnumerator(this);
             CoroutineAwaiterMonitor.Instance.StartAwaitableCoroutine(this);
         }
-        public override TInstruction GetResult()
+        public override T GetResult()
         {
             return Instruction;
         }

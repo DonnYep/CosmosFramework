@@ -34,16 +34,6 @@ namespace Cosmos
                     return coroutineHelper;
                 }
             }
-            public static readonly string StreamingAssetsPathURL =
-#if UNITY_ANDROID
-        "jar:file://" + Application.dataPath + "!/assets/";
-#elif UNITY_IPHONE
-        Application.dataPath + "/Raw/";  
-#elif UNITY_STANDALONE_WIN || UNITY_EDITOR
-        "file://" + Application.dataPath + "/StreamingAssets/";
-#else
-        string.Empty;  
-#endif
             public static int Random(int min, int max)
             {
                 return UnityEngine.Random.Range(min, max);

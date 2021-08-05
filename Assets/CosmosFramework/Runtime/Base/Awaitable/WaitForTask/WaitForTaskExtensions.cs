@@ -8,6 +8,11 @@ namespace Cosmos
 {
     public static class WaitForTaskExtensions
     {
+        public struct WaitForMainThread { }
+        public static WaitForMainThreadAwaiter GetAwaiter(this WaitForMainThread waitForMainThread)
+        {
+            return new WaitForMainThreadAwaiter();
+        }
         public static WaitForTask AsCoroutine(this Task task)
         {
             if (task == null)

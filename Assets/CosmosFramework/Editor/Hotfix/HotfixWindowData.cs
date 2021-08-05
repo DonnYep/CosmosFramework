@@ -29,14 +29,6 @@ namespace Cosmos.CosmosEditor
         /// 开启自动加载；
         /// </summary>
         public bool AutoLoadHotfixCode { get; set; }
-        /// <summary>
-        /// Dll CRL绑定Foldout；
-        /// </summary>
-        public bool DllCRLFoldout { get; set; }
-        /// <summary>
-        /// CRLBind生成路径；
-        /// </summary>
-        public string CRLBindGeneratePath { get; set; }
         public HotfixWindowData()
         {
             AutoLoadHotfixCode = false;

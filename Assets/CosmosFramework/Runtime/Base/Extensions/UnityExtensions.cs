@@ -38,11 +38,11 @@ namespace Cosmos
         {
             return time.ToString("yyyy/MM/dd HH:mm:ss");
         }
-        public static RectTransform RectTransform(this  GameObject go)
+        public static RectTransform RectTransform(this GameObject go)
         {
             return go.GetComponent<RectTransform>();
         }
-        public static T CastTo<T>(this object source)where T:class
+        public static T CastTo<T>(this object source) where T : class
         {
             return source as T;
         }
@@ -76,10 +76,10 @@ namespace Cosmos
             }
             return component;
         }
-        public static T GetComponentInParent<T>(this GameObject gameObject,string parentName)
-            where T :Component
+        public static T GetComponentInParent<T>(this GameObject gameObject, string parentName)
+            where T : Component
         {
-            return GetComponentInParent<T>(gameObject.transform,parentName);
+            return GetComponentInParent<T>(gameObject.transform, parentName);
         }
         public static T GetComponentInParent<T>(this Transform transform, string parentName)
     where T : Component
@@ -101,11 +101,11 @@ namespace Cosmos
             return comp;
         }
         public static T GetComponentInChildren<T>(this GameObject gameObject, string childName)
-            where T :Component
+            where T : Component
         {
             return GetComponentInChildren<T>(gameObject.transform, childName);
         }
-        public static T GetComponentInChildren<T>(this Transform  transform, string childName)
+        public static T GetComponentInChildren<T>(this Transform transform, string childName)
     where T : Component
         {
             var childs = transform.GetComponentsInChildren<Transform>();
@@ -246,7 +246,6 @@ namespace Cosmos
             v.y += deltaValue;
             transform.localScale = v;
         }
-
         /// <summary>
         /// 增加相对尺寸的 z 分量。
         /// </summary>
@@ -273,6 +272,32 @@ namespace Cosmos
             {
                 transform.rotation = Quaternion.LookRotation(vector.normalized, Vector3.up);
             }
+        }
+        public static Sprite ConvertToSprite(this Texture2D texture)
+        {
+            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+            return sprite;
+        }
+        public static Texture2D Clone(this Texture2D texture)
+        {
+            Texture2D newTex;
+            newTex = new Texture2D(texture.width, texture.height);
+            Color[] colors = texture.GetPixels(0, 0, texture.width, texture.height);
+            newTex.SetPixels(colors);
+            newTex.Apply();
+            return newTex;
+        }
+        public static Texture2D ConvertToSprite(this Sprite sprite)
+        {
+            var newTex = new Texture2D((int)sprite.rect.width, (int)sprite.rect.height);
+            var pixels = sprite.texture.GetPixels(
+                (int)sprite.textureRect.x,
+                (int)sprite.textureRect.y,
+                (int)sprite.textureRect.width,
+                (int)sprite.textureRect.height);
+            newTex.SetPixels(pixels);
+            newTex.Apply();
+            return newTex;
         }
     }
 }
