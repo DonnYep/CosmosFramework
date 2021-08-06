@@ -13,10 +13,6 @@ namespace Cosmos.CosmosEditor
 		SearchField searchField;
 
 		//public List<string> FolderPath { get { return treeView.PathList; }set { treeView.PathList = value; } }
-		public void Reload()
-        {
-			treeView.Reload();
-		}
 		public void Clear()
         {
 			treeView.Clear();
@@ -29,7 +25,7 @@ namespace Cosmos.CosmosEditor
 			searchField = new SearchField();
 			searchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
 		}
-        public void OnGUI()
+        public void OnGUI(Rect rect)
 		{
 			if (UnityEngine.Event.current.type == EventType.DragUpdated)
 			{
@@ -41,7 +37,7 @@ namespace Cosmos.CosmosEditor
 				DragAndDrop.AcceptDrag();
 				if (DragAndDrop.paths.Length == 0 && DragAndDrop.objectReferences.Length > 0)
 				{
-					EditorUtil.Debug.LogInfo("GameObject");
+					//EditorUtil.Debug.LogInfo("GameObject");
 					foreach (Object obj in DragAndDrop.objectReferences)
 					{
 						EditorUtil.Debug.LogInfo("- " + obj);
@@ -50,7 +46,7 @@ namespace Cosmos.CosmosEditor
 				// Object outside project. It mays from File Explorer (Finder in OSX).
 				else if (DragAndDrop.paths.Length > 0 && DragAndDrop.objectReferences.Length == 0)
 				{
-					EditorUtil.Debug.LogInfo("File");
+					//EditorUtil.Debug.LogInfo("File");
 					foreach (string path in DragAndDrop.paths)
 					{
 						EditorUtil.Debug.LogInfo("- " + path);
@@ -107,7 +103,7 @@ namespace Cosmos.CosmosEditor
 		}
 		void DoTreeView()
 		{
-			Rect rect = GUILayoutUtility.GetRect(0, 100000, 0, 100000);
+			Rect rect = GUILayoutUtility.GetRect(0,8192, 0,8192);
 			treeView.OnGUI(rect);
 		}
 	}

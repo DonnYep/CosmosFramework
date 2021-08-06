@@ -8,20 +8,20 @@ using System;
 /// </summary>
 [CreateAssetMenu(fileName = "NewInventory", menuName = "CosmosFramework/Implement/InventoryDataSet/Inventory")]
 [Serializable]
-public class InventoryDataSet : DatasetBase
+public class InventoryDataset : DatasetBase
 {
     [SerializeField]
      int inventoryCapacity = 0;
     public int InventoryCapacity { get { return inventoryCapacity; } set { inventoryCapacity = value; } }
     [SerializeField]
-    List<ItemDataSet> itemDataSets = new List<ItemDataSet>();
-    public List<ItemDataSet> ItemDataSets { get { return itemDataSets; } set { itemDataSets = value; } }
+    List<ItemDataset> itemDataSets = new List<ItemDataset>();
+    public List<ItemDataset> ItemDataSets { get { return itemDataSets; } set { itemDataSets = value; } }
     public override void Dispose()
     {
         itemDataSets.Clear();
         inventoryCapacity = 0;
     }
-    public void AddItemDataSet(ItemDataSet item)
+    public void AddItemDataSet(ItemDataset item)
     {
         if(itemDataSets.Contains(item))
         {

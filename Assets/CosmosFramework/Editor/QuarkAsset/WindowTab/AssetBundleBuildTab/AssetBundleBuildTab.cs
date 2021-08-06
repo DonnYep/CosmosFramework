@@ -46,7 +46,7 @@ namespace Cosmos.CosmosEditor
                 EditorUtil.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
             }
         }
-        public void OnGUI()
+        public void OnGUI(Rect rect)
         {
             assetBundleTabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", assetBundleTabData.BuildTarget);
             assetBundleTabData.OutputPath = EditorGUILayout.TextField("OutputPath", assetBundleTabData.OutputPath);

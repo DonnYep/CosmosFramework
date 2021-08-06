@@ -12,11 +12,11 @@ namespace Cosmos.Test
     {
         string dataSetPath = "DataSet/Inventory/Inventory_DataSet";
         string jsonFilePath;
-        public InventoryDataSet InventoryDataSet { get; private set; }
+        public InventoryDataset InventoryDataSet { get; private set; }
         public override string ProxyName { get; protected set; } = MVVMDefine.PRX_Inventory;
         public override void OnRegister()
         {
-            InventoryDataSet = CosmosEntry.ResourceManager.LoadAsset<InventoryDataSet>(new AssetInfo() {ResourcePath= dataSetPath });
+            InventoryDataSet = CosmosEntry.ResourceManager.LoadAsset<InventoryDataset>(new AssetInfo() {ResourcePath= dataSetPath });
             if (InventoryDataSet != null)
                 Utility.Debug.LogInfo("InventoryDataSet数据加载成功", MessageColor.ORANGE);
             jsonFilePath = Utility.IO.WebPathCombine(Application.persistentDataPath, "Inventory");

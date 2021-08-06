@@ -17,27 +17,24 @@ namespace Cosmos.CosmosEditor
         IncludeDirectoriesOperation includeDirectoriesOperation = new IncludeDirectoriesOperation();
         WindowTabData WindowTabData { get { return QuarkAssetWindow.WindowTabData; } }
         QuarkAssetDataset quarkAssetDataset { get { return QuarkEditorDataProxy.QuarkAssetDataset; } }
-        public void Reload()
-        {
-            includeDirectoriesOperation.Reload();
-        }
+        Rect position;
         public void OnDisable()
         {
         }
         public void OnEnable()
         {
-            //includeDirectoriesOperation.FolderPath = QuarkAssetDataset.IncludeDirectories;
             includeDirectoriesOperation.OnEnable();
         }
-        public void OnGUI()
+        public void OnGUI(Rect rect)
         {
-            DrawFastDevelopTab();
+            position = rect;
+            DrawFastDevelopTab(rect);
         }
         public EditorCoroutine EnumUpdateADBMode()
         {
             return EditorUtil.Coroutine.StartCoroutine(EnumBuildADBMode());
         }
-        void DrawFastDevelopTab()
+        void DrawFastDevelopTab(Rect rect)
         {
             EditorUtil.DrawVerticalContext(() =>
             {
@@ -56,20 +53,30 @@ namespace Cosmos.CosmosEditor
                     ADBModeClear();
                 }
             });
+
+            GUILayout.Space(16);
+            GUILayout.BeginHorizontal();
+
+            //GUILayout.BeginVertical("box",GUILayout.MaxWidth(rect.width * 0.382f));
+            GUILayout.BeginVertical("box");
+
+            if (GUILayout.Button("ClearAssets"))
+            {
+                includeDirectoriesOperation.Clear();
+            }
             if (!WindowTabData.UnderAssetsDirectory)
             {
-                GUILayout.BeginVertical("box");
-                GUILayout.Space(16);
-                EditorUtil.DrawHorizontalContext(() =>
-                {
-                    if (GUILayout.Button("ClearAssets"))
-                    {
-                        includeDirectoriesOperation.Clear();
-                    }
-                });
-                includeDirectoriesOperation.OnGUI();
-                GUILayout.EndVertical();
+                includeDirectoriesOperation.OnGUI(rect);
             }
+            GUILayout.EndVertical();
+
+
+            //GUILayout.BeginVertical();
+            //GUILayout.Label("AssetObject List：");
+            //GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
+
         }
 
         #region AssetDataBaseMode
@@ -163,14 +170,15 @@ namespace Cosmos.CosmosEditor
                     var projLength = QuarkConsts.Extensions.Length;
                     for (int i = 0; i < projLength; i++)
                     {
-                        if (QuarkConsts.Extensions[i].Equals(file.Extension))
+                        var lowerExtension = file.Extension.ToLower();
+                        if (QuarkConsts.Extensions[i].Equals(lowerExtension))
                         {
                             var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
                             var assetName = file.Name.Replace(file.Extension, string.Empty);
                             var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
                             var assetObj = new QuarkAssetDatabaseObject()
                             {
-                                AssetExtension = file.Extension,
+                                AssetExtension = lowerExtension,
                                 AssetName = assetName,
                                 AssetPath = assetPath,
                                 AssetType = type.ToString(),
@@ -181,9 +189,13 @@ namespace Cosmos.CosmosEditor
                     }
                 }
             }
-            quarkAssetDataset.QuarkAssetObjectList = quarkAssetList;
-            quarkAssetDataset.QuarkAssetCount = quarkAssetList.Count;
+            var arr = quarkAssetList.ToArray();
+            Utility.Algorithm.SortByAscend(arr, d => d.AssetName);
+            quarkAssetDataset.QuarkAssetObjectList.Clear();
+            quarkAssetDataset.QuarkAssetObjectList.AddRange(arr);
+            quarkAssetDataset.QuarkAssetCount = arr.Length;
             quarkAssetDataset.DirHashPairs.Clear();
+            Utility.Algorithm.SortByAscend(dirHashPair, d => d.Dir);
             quarkAssetDataset.DirHashPairs .AddRange( dirHashPair);
         }
         void ADBModeUnderAssetsDirectoryBuild()
@@ -209,7 +221,8 @@ namespace Cosmos.CosmosEditor
                 var length = QuarkConsts.Extensions.Length;
                 for (int i = 0; i < length; i++)
                 {
-                    if (QuarkConsts.Extensions[i].Equals(file.Extension))
+                    var lowerExtension = file.Extension.ToLower();
+                    if (QuarkConsts.Extensions[i].Equals(lowerExtension))
                     {
                         var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
                         assetPath = assetPath.Replace("\\", "/");
@@ -217,7 +230,7 @@ namespace Cosmos.CosmosEditor
                         var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
                         var assetObj = new QuarkAssetDatabaseObject()
                         {
-                            AssetExtension = file.Extension,
+                            AssetExtension = lowerExtension,
                             AssetName = assetName,
                             AssetPath = assetPath,
                             AssetType = type.ToString(),
@@ -227,9 +240,13 @@ namespace Cosmos.CosmosEditor
                     }
                 }
             });
-            quarkAssetDataset.QuarkAssetObjectList = quarkAssetList;
-            quarkAssetDataset.QuarkAssetCount = quarkAssetList.Count;
+            var arr = quarkAssetList.ToArray();
+            Utility.Algorithm.SortByAscend(arr, d => d.AssetName);
+            quarkAssetDataset.QuarkAssetObjectList.Clear();
+            quarkAssetDataset.QuarkAssetObjectList.AddRange(arr);
+            quarkAssetDataset.QuarkAssetCount = arr.Length;
             quarkAssetDataset.DirHashPairs.Clear();
+            Utility.Algorithm.SortByAscend(dirHashPair, d => d.Dir);
             quarkAssetDataset.DirHashPairs.AddRange(dirHashPair);
         }
         void AssetDataBaseModeCreatePathScript()

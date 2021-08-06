@@ -14,11 +14,7 @@ namespace Cosmos.CosmosEditor
     public class IncludeDirectoriesTreeView : TreeView
     {
         List<string> pathList = new List<string>();
-        bool canRender { get { return QuarkEditorDataProxy.CanRender; } }
-        public void EnableRender()
-        {
-            Reload();
-        }
+        bool canRender { get { return QuarkEditorDataProxy.QuarkAssetDataset != null; } }
         public void Clear()
         {
             pathList.Clear();
@@ -84,12 +80,11 @@ namespace Cosmos.CosmosEditor
         }
         public override void OnGUI(Rect rect)
         {
-            base.OnGUI(rect);
+            if (UnityEngine.Event.current.type == EventType.Repaint)
+                DefaultStyles.backgroundOdd.Draw(rect, false, false, false, false);
             try
             {
                 if (QuarkEditorDataProxy.QuarkAssetDataset == null)
-                    return;
-                if (QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs.Count <= 0)
                     return;
                 var dirHashPairs = QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs;
                 var dirHashCount = dirHashPairs.Count;
@@ -108,7 +103,7 @@ namespace Cosmos.CosmosEditor
                     }
                     else
                     {
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(),srcDir);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), srcDir);
                         if (!File.Exists(filePath) && !Directory.Exists(filePath))
                         {
                             if (!File.Exists(filePath) && !Directory.Exists(filePath))
@@ -132,17 +127,8 @@ namespace Cosmos.CosmosEditor
                 EditorUtil.Debug.LogError($"OnGUI :{e}");
             }
             Reload();
+            base.OnGUI(rect);
         }
-        //protected override void RowGUI(RowGUIArgs args)
-        //{
-        //    Color old = GUI.color;
-        //    if (args.row % 2 == 0)
-        //        GUI.color = Color.cyan;
-        //    else
-        //        GUI.color = Color.yellow;
-        //    base.RowGUI(args);
-        //    GUI.color = old;
-        //}
         protected override void SingleClickedItem(int id)
         {
             base.SingleClickedItem(id);
@@ -185,7 +171,6 @@ namespace Cosmos.CosmosEditor
             }
             menu.ShowAsContext();
         }
-
         void DeleteAll()
         {
             pathList.Clear();

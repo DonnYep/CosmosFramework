@@ -5,6 +5,7 @@ using UnityEditor;
 using System.IO;
 using Cosmos.Quark;
 using System;
+using System.Runtime.InteropServices;
 
 namespace Cosmos.CosmosEditor
 {
@@ -24,10 +25,6 @@ namespace Cosmos.CosmosEditor
         internal const string QuarkAssetWindowTabDataFileName = "QuarkAssetWindowTabData.json";
         QuarkAssetDataset quarkAssetDataset;
         Vector2 m_ScrollPos;
-
-        bool isExistedInvoked;
-        bool isEmptyInvoked;
-        int latestDirCount = 0;
 
         public QuarkAssetWindow()
         {
@@ -87,33 +84,6 @@ namespace Cosmos.CosmosEditor
             GUILayout.Space(16);
             quarkAssetDataset = (QuarkAssetDataset)EditorGUILayout.ObjectField("QuarkAssetDataset", quarkAssetDataset, typeof(QuarkAssetDataset), false);
             QuarkEditorDataProxy.QuarkAssetDataset = quarkAssetDataset;
-            if (quarkAssetDataset != null)
-            {
-                QuarkEditorDataProxy.CanRender = true;
-                if (!isExistedInvoked)
-                {
-                    OnAsginQuarkDataset();
-                    isExistedInvoked = true;
-                    isEmptyInvoked = false;
-                }
-                if (latestDirCount != quarkAssetDataset.DirHashPairs.Count)
-                {
-                    OnDirChanged();
-                    latestDirCount = quarkAssetDataset.DirHashPairs.Count;
-                }
-            }
-            else
-            {
-                QuarkEditorDataProxy.CanRender = false;
-                if (!isEmptyInvoked)
-                {
-                    OnClearQuarkDataset();
-                    isEmptyInvoked = true;
-                    isExistedInvoked = false;
-                    latestDirCount = 0;
-                    OnDirChanged();
-                }
-            }
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("CreateDataset", GUILayout.MaxWidth(128f)))
@@ -127,10 +97,10 @@ namespace Cosmos.CosmosEditor
             switch (bar)
             {
                 case AssetInfoBar.AssetDatabaseMode:
-                    assetDatabaseTab.OnGUI();
+                    assetDatabaseTab.OnGUI(position);
                     break;
                 case AssetInfoBar.AssetBundleMode:
-                    assetBundleTab.OnGUI();
+                    assetBundleTab.OnGUI(position);
                     break;
             }
             EditorGUILayout.EndScrollView();
@@ -147,44 +117,6 @@ namespace Cosmos.CosmosEditor
             dataset.Init();
             EditorUtil.Debug.LogInfo("QuarkAssetDataset is created");
             return dataset;
-        }
-        void OnAsginQuarkDataset()
-        {
-            assetDatabaseTab.Reload();
-            //EditorUtil.Debug.LogInfo("OnAsginQuarkDataset");
-        }
-        void OnClearQuarkDataset()
-        {
-            QuarkEditorDataProxy.QuarkAssetDataset = null;
-            assetDatabaseTab.Reload();
-            //EditorUtil.Debug.LogInfo("OnClearQuarkDataset");
-        }
-        void OnDirChanged()
-        {
-            CheckAssetDatasetDirPath();
-            //EditorUtil.Debug.LogInfo("OnDirChanged", MessageColor.BLUE);
-        }
-        void CheckAssetDatasetDirPath()
-        {
-            if (quarkAssetDataset == null)
-                return;
-            var dirs = quarkAssetDataset.DirHashPairs.ToArray();
-            if (dirs == null || dirs.Length <= 0)
-                return;
-            var length = dirs.Length;
-            string[] newDir = new string[length];
-            for (int i = 0; i < length; i++)
-            {
-                var dirPath = dirs[i];
-                //var path = Path.Combine(Directory.GetCurrentDirectory(), dirPath);
-                //var hash = AssetDatabase.AssetPathToGUID(dirPath);
-                //var hashToDir= AssetDatabase.GUIDToAssetPath(hash);
-
-                //if (!Directory.Exists(path)&& !File.Exists(path))
-                //{
-                //    quarkAssetDataset.IncludeDirectories.Remove(dirPath);
-                //}
-            }
         }
         [InitializeOnLoadMethod]
         static void InitData()

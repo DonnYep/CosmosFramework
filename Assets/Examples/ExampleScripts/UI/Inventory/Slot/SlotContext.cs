@@ -9,7 +9,7 @@ namespace Cosmos.Test
         GameObject slotPrefab;
         List<Slot> slotList = new List<Slot>();
         IResourceManager resourceManager;
-        public void UpdateDataSet(InventoryDataSet invDataSet)
+        public void UpdateDataSet(InventoryDataset invDataSet)
         {
             var slots = GetComponentsInChildren<Slot>();
             for (int i = 0; i < slots.Length; i++)
@@ -17,7 +17,7 @@ namespace Cosmos.Test
                 invDataSet.ItemDataSets[i] = slots[i].GetDateSet();
             }
         }
-        public void UpdateSlot(InventoryDataSet invDataSet)
+        public void UpdateSlot(InventoryDataset invDataSet)
         {
             if (slotList.Count == 0)
             {
@@ -52,7 +52,7 @@ namespace Cosmos.Test
                 }
             }
         }
-        public void UpdateItem(InventoryDataSet invDataSet)
+        public void UpdateItem(InventoryDataset invDataSet)
         {
             for (int i = 0; i < invDataSet.ItemDataSets.Count; i++)
             {

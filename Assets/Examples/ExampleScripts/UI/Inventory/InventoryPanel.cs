@@ -20,7 +20,7 @@ namespace Cosmos.Test
         {
             txtDescription.text = desc;
         }
-        public void UpdateSlotItem(InventoryDataSet invDataSet)
+        public void UpdateSlotItem(InventoryDataset invDataSet)
         {
             SlotContext.UpdateSlot(invDataSet);
             SlotContext.UpdateItem(invDataSet);

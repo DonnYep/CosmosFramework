@@ -5,14 +5,14 @@ using UnityEngine;
 using UnityEditor;
 #endif
 #if UNITY_EDITOR
-[CustomEditor(typeof(ItemDataSet),true)]
-public class ItemDataSetEditor : Editor
+[CustomEditor(typeof(ItemDataset),true)]
+public class ItemDatasetEditor : Editor
 {
     SerializedObject targetObject;
-    ItemDataSet itemDataSet;
+    ItemDataset itemDataSet;
     private void OnEnable()
     {
-        itemDataSet = target as ItemDataSet;
+        itemDataSet = target as ItemDataset;
         targetObject = new SerializedObject(itemDataSet);
     }
     public override void OnInspectorGUI()

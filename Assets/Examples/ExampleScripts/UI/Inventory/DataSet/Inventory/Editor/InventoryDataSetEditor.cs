@@ -7,14 +7,14 @@ using UnityEditor;
 #endif
 #if UNITY_EDITOR
 
-[CustomEditor(typeof(InventoryDataSet))]
-public class InventoryDataSetEditor : Editor
+[CustomEditor(typeof(InventoryDataset))]
+public class InventoryDatasetEditor : Editor
 {
-    InventoryDataSet inventoryDataSet;
+    InventoryDataset inventoryDataSet;
     SerializedObject targetObject;
     private void OnEnable()
     {
-        inventoryDataSet = target as InventoryDataSet;
+        inventoryDataSet = target as InventoryDataset;
         targetObject = new SerializedObject(inventoryDataSet);
     }
     public override void OnInspectorGUI()

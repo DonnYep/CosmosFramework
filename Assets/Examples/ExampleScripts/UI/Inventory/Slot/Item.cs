@@ -11,8 +11,8 @@ namespace Cosmos.Test
     {
         Image imgItem;
         Text txtNumber;
-        ItemDataSet itemDataSet;
-        public ItemDataSet ItemDataSet { get { return itemDataSet; } }
+        ItemDataset itemDataSet;
+        public ItemDataset ItemDataSet { get { return itemDataSet; } }
         Transform previouseParent;
         Transform dragParent;
         MED_Inventory med_Inventory;
@@ -63,7 +63,7 @@ namespace Cosmos.Test
             }
             med_Inventory.FlushDataSet();
         }
-        public void SetItem(ItemDataSet item)
+        public void SetItem(ItemDataset item)
         {
             if (item == null)
             {

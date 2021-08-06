@@ -22,7 +22,7 @@ public class FSMTester : MonoBehaviour
         if (pauseDelay < 0)
             pauseDelay = 0;
     }
-    private void Start()
+    private async void Start()
     {
         fsmManager = CosmosEntry.FSMManager;
         var enterState = new EnterRangeState();
@@ -35,6 +35,7 @@ public class FSMTester : MonoBehaviour
         fsmManager.SetFSMSetRefreshInterval<FSMTester>(refreshInterval);
         fsm.DefaultState = exitState;
         fsm.StartDefault();
-        Utility.Unity.DelayCoroutine(pauseDelay, () => { fsmManager.PauseFSMSet<FSMTester>(); });
+        await new WaitForSeconds(pauseDelay);
+        fsmManager.PauseFSMSet<FSMTester>();
     }
 }

@@ -100,63 +100,6 @@ namespace Cosmos
                 value.y = (float)Math.Round(value.y, decimals);
                 return value;
             }
-            public static T Get<T>(Transform go) where T : Component
-            {
-                return go.GetComponent<T>();
-            }
-            /// <summary>
-            /// 添加目标组件；默认不移除组件;
-            /// 若removeExistComp为true，则移除已经存在的，并重新赋予；
-            /// </summary>
-            /// <typeparam name="T">目标组件</typeparam>
-            /// <param name="go">目标对象</param>
-            /// <param name="removeExistComp">是否移除已经存在的组件</param>
-            /// <returns>返回添加的目标组件</returns>
-            public static T Add<T>(GameObject go) where T : Component
-            {
-                return go.GetOrAddComponent<T>();
-            }
-            public static Component Add(Type type, GameObject go)
-            {
-                if (!typeof(Component).IsAssignableFrom(type))
-                {
-                    throw new NotImplementedException($"Type :{type} is not iherit from Component !");
-                }
-                if (go == null)
-                    throw new ArgumentNullException($"GameObject is invalid !");
-                return go.GetOrAddComponent(type);
-            }
-            /// <summary>
-            /// 添加目标组件；默认不移除组件;
-            /// 若removeExistComp为true，则移除已经存在的，并重新赋予；
-            /// </summary>
-            /// <typeparam name="T">目标组件</typeparam>
-            /// <param name="go">目标对象</param>
-            /// <returns>返回添加的目标组件</returns>
-            public static T Add<T>(Transform go) where T : Component
-            {
-                return Add<T>(go.gameObject);
-            }
-            public static T Add<T>(Transform go, string subNode) where T : Component
-            {
-                var childGo = FindChild(go, subNode);
-                var comp = Add<T>(childGo);
-                return comp;
-            }
-            /// <summary>
-            /// 实例化对象；
-            /// 默认不移除原本就存在的T组件对象，若默认参数未true，则会移除本就存在的组件，再重新添加；
-            /// </summary>
-            /// <typeparam name="T">mono脚本</typeparam>
-            /// <param name="spawnItem">生成的对象</param>
-            /// <returns>返回生成成功后的组件对象</returns>
-            public static T Instantiate<T>(GameObject spawnItem) where T : Component
-            {
-                if (spawnItem == null)
-                    throw new ArgumentNullException("ObjectSpawner : spawnItem not exist !");
-                var go = GameObject.Instantiate(spawnItem);
-                return Add<T>(go);
-            }
             /// <summary>
             /// 删除父节点下的子对象；
             /// </summary>
@@ -309,7 +252,7 @@ where T : Component
                 where K : IComparable<K>
                 where T : Component
             {
-                Utility.Algorithm.SortByAscend(ref comps, handler);
+                Utility.Algorithm.SortByAscend(comps, handler);
                 var length = comps.Length;
                 for (int i = 0; i < length; i++)
                 {
@@ -327,7 +270,7 @@ where T : Component
         where K : IComparable<K>
         where T : Component
             {
-                Utility.Algorithm.SortByDescend(ref comps, handler);
+                Utility.Algorithm.SortByDescend(comps, handler);
                 var length = comps.Length;
                 for (int i = 0; i < length; i++)
                 {
