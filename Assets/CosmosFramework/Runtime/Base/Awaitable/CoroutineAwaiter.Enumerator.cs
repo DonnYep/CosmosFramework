@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace Cosmos
+namespace Cosmos.Awaitable
 {
     public partial class CoroutineAwaiter<T>
     {

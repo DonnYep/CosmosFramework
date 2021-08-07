@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 
- namespace Cosmos
+ namespace Cosmos.Awaitable
 {
     public partial class CoroutineAwaiter<T> : Awaiter<T>
     {

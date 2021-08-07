@@ -166,7 +166,7 @@ namespace Cosmos.Quark
             var localNewManifestPath = Utility.IO.PathCombine(PersistentPath, QuarkConsts.ManifestName);
             Utility.IO.OverwriteTextFile(localNewManifestPath, remoteManifestContext);
             QuarkManager.Instance.SetBuiltAssetBundleModeData(remoteManifest);
-            if (latest.Count > 0 || expired.Count > 0)
+            if (latesetArray.Length> 0 || expiredArray.Length> 0)
             {
                 QuarkUtility.Unity.StartCoroutine(EnumDownloadBuildInfo(uriBuildInfoPath, () =>
                 {
@@ -176,13 +176,15 @@ namespace Cosmos.Quark
             else
             {
                 var localBuildInfoPath = Utility.IO.PathCombine(PersistentPath, QuarkConsts.BuildInfoFileName);
-                string localBuildInfoContext = string.Empty;
                 try
                 {
-                    localBuildInfoContext = Utility.IO.ReadTextFileContent(localBuildInfoPath);
+                    var localBuildInfoContext = Utility.IO.ReadTextFileContent(localBuildInfoPath);
                     QuarkDataProxy.QuarkBuildInfo = QuarkUtility.Json.ToObject<QuarkBuildInfo>(localBuildInfoContext);
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    Utility.Debug.LogError(e);
+                }
                 onCompareSuccess?.Invoke(latesetArray, expiredArray, overallSize);
             }
         }
@@ -198,7 +200,6 @@ namespace Cosmos.Quark
                         var localNewBuildInfoPath = Utility.IO.PathCombine(PersistentPath, QuarkConsts.BuildInfoFileName);
                         var buildInfoContext = request.downloadHandler.text;
                         Utility.IO.OverwriteTextFile(localNewBuildInfoPath, buildInfoContext);
-                        callback();
                         try
                         {
                             QuarkDataProxy.QuarkBuildInfo = QuarkUtility.Json.ToObject<QuarkBuildInfo>(buildInfoContext);
@@ -207,6 +208,7 @@ namespace Cosmos.Quark
                         {
                             Utility.Debug.LogError(e);
                         }
+                        callback();
                     }
                 }
             }

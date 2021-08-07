@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-
+using Cosmos.Awaitable;
 namespace Cosmos
 {
     public static class CoroutineAwaiterExtensions

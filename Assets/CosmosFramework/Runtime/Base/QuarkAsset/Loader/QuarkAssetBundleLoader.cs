@@ -146,13 +146,13 @@ where T : UnityEngine.Object
                 Utility.Debug.LogError($"asset：{assetName} not existed !");
                 yield break;
             }
+
             if (string.IsNullOrEmpty(assetBundleName))
             {
                 callback?.Invoke(asset);
                 yield break;
             }
             yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
-
             if (assetBundleDict.ContainsKey(assetBundleName))
             {
                 asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
