@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos
+namespace Cosmos.Awaitable
 {
     public static class WaitForTaskExtensions
     {

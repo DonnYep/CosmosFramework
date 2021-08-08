@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 
-namespace Cosmos
+namespace Cosmos.Awaitable
 {
     public  abstract class Awaiter<T> : INotifyCompletion
     {

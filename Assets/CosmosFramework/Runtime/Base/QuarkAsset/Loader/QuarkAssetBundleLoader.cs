@@ -130,6 +130,7 @@ where T : UnityEngine.Object
                 Utility.Debug.LogError($"asset：{assetName} not existed !");
                 yield break;
             }
+
             if (string.IsNullOrEmpty(assetBundleName))
             {
                 callback?.Invoke(asset);

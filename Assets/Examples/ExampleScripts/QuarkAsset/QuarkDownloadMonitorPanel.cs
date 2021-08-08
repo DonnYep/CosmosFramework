@@ -33,13 +33,16 @@ public class QuarkDownloadMonitorPanel : MonoBehaviour
         isDisable = true;
         imgBG.SetActive(false);
     }
-    void Start()
+    private void Awake()
     {
         QuarkManager.Instance.OnDownloadFinish += OnDownloadFinish;
         QuarkManager.Instance.OnDownloadOverall += OnDownloadOverall;
         QuarkManager.Instance.OnDownloadStart += OnDownloadStart;
         QuarkManager.Instance.OnDownloadSuccess += OnDownloadSucess;
         QuarkManager.Instance.OnDownloadFailure += OnDownloadFailure;
+    }
+    void Start()
+    {
         if (QuarkManager.Instance.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
         {
             HasNoLatest();

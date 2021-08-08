@@ -13,12 +13,16 @@ public class QuarkCheckManifestPanel : MonoBehaviour
     [SerializeField] CanvasGroup canvasGroup;
     [SerializeField] QuarkDownloadMonitorPanel monitorPanel;
     bool canDownload = false;
+    private void Awake()
+    {
+        QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess;
+        QuarkManager.Instance.OnDetectedFailure += OnDetectedFailure;
+    }
     void Start()
     {
         btnDownload?.onClick.AddListener(DownloadClick);
         btnCancel?.onClick.AddListener(CancelClick);
-        QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess;
-        QuarkManager.Instance.OnDetectedFailure += OnDetectedFailure;
+
     }
     void OnDetectedFailure(string errorMessage)
     {

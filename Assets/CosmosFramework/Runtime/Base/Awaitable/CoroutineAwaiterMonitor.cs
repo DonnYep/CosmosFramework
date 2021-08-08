@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cosmos
+namespace Cosmos.Awaitable
 {
     internal class CoroutineAwaiterMonitor : MonoSingleton<CoroutineAwaiterMonitor>
     {

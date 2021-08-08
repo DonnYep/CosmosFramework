@@ -24,11 +24,14 @@ public class QuarkLoadAssetPanel : MonoBehaviour
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
     }
+    private void Awake()
+    {
+        QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess;
+    }
     void Start()
     {
         btnLoad?.onClick.AddListener(OnLoadClick);
         btnUnload?.onClick.AddListener(OnUnloadClick);
-        QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess;
         objectRoot = new GameObject("ObjectRoot");
         if (QuarkManager.Instance.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
             OnUpdateDone();
