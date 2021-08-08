@@ -101,22 +101,6 @@ namespace Cosmos.Quark.Loader
                 assetBundleDict.Remove(assetBundleName);
             }
         }
-        IEnumerator EnumDownloadAssetBundle(string uri, Action<AssetBundle> doneCallback, Action<string> failureCallback)
-        {
-            using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(uri))
-            {
-                yield return request.SendWebRequest();
-                if (request.isNetworkError || request.isHttpError)
-                {
-                    failureCallback?.Invoke(request.error);
-                }
-                else
-                {
-                    AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(request);
-                    doneCallback?.Invoke(bundle);
-                }
-            }
-        }
         IEnumerator EnumLoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false)
 where T : UnityEngine.Object
         {
@@ -152,7 +136,6 @@ where T : UnityEngine.Object
                 yield break;
             }
             yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
-
             if (assetBundleDict.ContainsKey(assetBundleName))
             {
                 asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
@@ -176,6 +159,7 @@ where T : UnityEngine.Object
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
                     yield return EnumDownloadAssetBundle(abPath, ab =>
                     {
+                        //Utility.Debug.LogInfo("assetBundleName : "+assetBundleName, MessageColor.NAVY);
                         assetBundleDict.TryAdd(assetBundleName, ab);
                     }, null);
                 }
@@ -195,16 +179,35 @@ where T : UnityEngine.Object
                     for (int i = 0; i < length; i++)
                     {
                         var dependentABName = dependList[i];
+                        //Utility.Debug.LogInfo("dependentABName : " + dependentABName, MessageColor.ORANGE);
                         if (!assetBundleDict.ContainsKey(dependentABName))
                         {
                             var abPath = Path.Combine(PersistentPath, dependentABName);
                             yield return EnumDownloadAssetBundle(abPath, ab =>
                             {
+                                //Utility.Debug.LogInfo("dependentABName : " + dependentABName, MessageColor.FUCHSIA);
                                 assetBundleDict.TryAdd(dependentABName, ab);
                             }, null);
                         }
                     }
                 }
+            }
+        }
+        IEnumerator EnumDownloadAssetBundle(string uri, Action<AssetBundle> doneCallback, Action<string> failureCallback)
+        {
+            using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(uri))
+            {
+                yield return request.SendWebRequest();
+                if (request.isNetworkError || request.isHttpError)
+                {
+                    failureCallback?.Invoke(request.error);
+                }
+                else
+                {
+                    AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(request);
+                    doneCallback?.Invoke(bundle);
+                }
+                yield return null;
             }
         }
         IEnumerator EnumLoadSceneAsync(string sceneName, Action<float> loadingCallback, Action callback, bool additive)
