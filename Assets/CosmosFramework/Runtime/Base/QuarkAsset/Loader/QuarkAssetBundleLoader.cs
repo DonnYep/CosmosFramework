@@ -28,6 +28,12 @@ namespace Cosmos.Quark.Loader
         /// </summary>` 
         Dictionary<string, LinkedList<QuarkAssetBundleObject>> builtAssetBundleMap
             = new Dictionary<string, LinkedList<QuarkAssetBundleObject>>();
+
+        /// <summary>
+        /// Hash===QuarkObjectInfo
+        /// </summary>
+        Dictionary<int, QuarkObjectInfo> hashQuarkObjectInfoDict = new Dictionary<int, QuarkObjectInfo>();
+
         public void SetLoaderData(object customeData)
         {
             SetBuiltAssetBundleModeData(customeData as QuarkManifest);
@@ -36,19 +42,21 @@ namespace Cosmos.Quark.Loader
         {
             T asset = null;
             string assetBundleName = string.Empty;
-
-            if (builtAssetBundleMap.TryGetValue(assetName, out var abObject))
+            QuarkAssetBundleObject abObject = null;
+            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
             {
                 if (string.IsNullOrEmpty(assetExtension))
                 {
-                    assetBundleName = abObject.First.Value.AssetBundleName;
+                    abObject = abLnk.First.Value;
+                    assetBundleName = abObject.AssetBundleName;
                 }
                 else
                 {
-                    foreach (var ab in abObject)
+                    foreach (var ab in abLnk)
                     {
                         if (ab.AssetExtension == assetExtension)
                         {
+                            abObject = ab;
                             assetBundleName = ab.AssetBundleName;
                             break;
                         }
@@ -63,6 +71,7 @@ namespace Cosmos.Quark.Loader
                     asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
                     if (asset != null)
                     {
+                        IncrementQuarkObjectInfo(abObject);
                         if (instantiate)
                         {
                             asset = GameObject.Instantiate(asset);
@@ -101,25 +110,57 @@ namespace Cosmos.Quark.Loader
                 assetBundleDict.Remove(assetBundleName);
             }
         }
+
+        public QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        {
+            QuarkAssetBundleObject abObject = null;
+            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
+            {
+                if (string.IsNullOrEmpty(assetExtension))
+                {
+                    abObject = abLnk.First.Value;
+                }
+                else
+                {
+                    foreach (var ab in abLnk)
+                    {
+                        if (ab.AssetExtension == assetExtension)
+                        {
+                            abObject = ab;
+                            break;
+                        }
+                    }
+                }
+                return hashQuarkObjectInfoDict[abObject.GetHashCode()];
+            }
+            return QuarkObjectInfo.None;
+        }
+        public QuarkObjectInfo[] GetAllInfos()
+        {
+            return hashQuarkObjectInfoDict.Values.ToArray();
+        }
         IEnumerator EnumLoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false)
 where T : UnityEngine.Object
         {
             T asset = null;
             string assetBundleName = string.Empty;
+            QuarkAssetBundleObject abObject = null;
 
-            if (builtAssetBundleMap.TryGetValue(assetName, out var abObject))
+            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
             {
                 if (string.IsNullOrEmpty(assetExtension))
                 {
-                    assetBundleName = abObject.First.Value.AssetBundleName;
+                    abObject = abLnk.First.Value;
+                    assetBundleName = abObject.AssetBundleName;
                 }
                 else
                 {
-                    foreach (var obj in abObject)
+                    foreach (var ab in abLnk)
                     {
-                        if (obj.AssetExtension == assetExtension)
+                        if (ab.AssetExtension == assetExtension)
                         {
-                            assetBundleName = obj.AssetBundleName;
+                            abObject = ab;
+                            assetBundleName = ab.AssetBundleName;
                             break;
                         }
                     }
@@ -142,6 +183,7 @@ where T : UnityEngine.Object
                 asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
                 if (asset != null)
                 {
+                    IncrementQuarkObjectInfo(abObject);
                     if (instantiate)
                     {
                         asset = GameObject.Instantiate(asset);
@@ -277,9 +319,32 @@ where T : UnityEngine.Object
                     {
                         lnkList.AddLast(abObject);
                     }
+                    var info = QuarkObjectInfo.Create(abObject.AssetName, abObject.AssetBundleName, abObject.AssetExtension, 0);
+                    info.ABObjectHash = abObject.GetHashCode();
+                    hashQuarkObjectInfoDict.Add(info.ABObjectHash, info);
                 }
             }
         }
+        /// <summary>
+        /// 增加一个引用计数；
+        /// </summary>
+        void IncrementQuarkObjectInfo(QuarkAssetBundleObject abObject)
+        {
+            var hashCode = abObject.GetHashCode();
+            var info = hashQuarkObjectInfoDict[hashCode];
+            hashQuarkObjectInfoDict[hashCode] = info++;
+        }
+        /// <summary>
+        /// 减少一个引用计数；
+        /// </summary>
+        /// <param name="abObject"></param>
+        void DecrementQuarkObjectInfo(QuarkAssetBundleObject abObject)
+        {
+            var hashCode = abObject.GetHashCode();
+            var info = hashQuarkObjectInfoDict[hashCode];
+            hashQuarkObjectInfoDict[hashCode] = info--;
+        }
+
 
 
     }

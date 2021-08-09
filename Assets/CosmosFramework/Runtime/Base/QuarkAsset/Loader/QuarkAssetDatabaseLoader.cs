@@ -11,7 +11,6 @@ namespace Cosmos.Quark.Loader
 {
     public class QuarkAssetDatabaseLoader : IQuarkAssetLoader
     {
-        QuarkAssetDataset quarkAssetData;
         /// <summary>
         /// AssetDataBase模式下资源的映射字典；
         /// Key : AssetName---Value :  Lnk [QuarkAssetObject]
@@ -19,10 +18,11 @@ namespace Cosmos.Quark.Loader
         Dictionary<string, LinkedList<QuarkAssetDatabaseObject>> assetDatabaseMap
             = new Dictionary<string, LinkedList<QuarkAssetDatabaseObject>>();
 
-        public void Initiate(string url, string localPath)
-        {
+        /// <summary>
+        /// Hash===QuarkObjectInfo
+        /// </summary>
+        Dictionary<int, QuarkObjectInfo> hashQuarkObjectInfoDict = new Dictionary<int, QuarkObjectInfo>();
 
-        }
         public void SetLoaderData(object customeData)
         {
             SetAssetDatabaseModeData(customeData as QuarkAssetDataset);
@@ -70,6 +70,34 @@ namespace Cosmos.Quark.Loader
         public void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
             Utility.Debug.LogInfo("AssetDatabase Mode UnLoadAllAsset");
+        }
+        public QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        {
+            QuarkAssetDatabaseObject abObject = QuarkAssetDatabaseObject.None;
+            if (assetDatabaseMap.TryGetValue(assetName, out var abLnk))
+            {
+                if (string.IsNullOrEmpty(assetExtension))
+                {
+                    abObject = abLnk.First.Value;
+                }
+                else
+                {
+                    foreach (var ab in abLnk)
+                    {
+                        if (ab.AssetExtension == assetExtension)
+                        {
+                            abObject = ab;
+                            break;
+                        }
+                    }
+                }
+                return hashQuarkObjectInfoDict[abObject.GetHashCode()];
+            }
+            return QuarkObjectInfo.None;
+        }
+        public QuarkObjectInfo[] GetAllInfos()
+        {
+            return hashQuarkObjectInfoDict.Values.ToArray();
         }
         IEnumerator EnumLoadAsssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object
         {
@@ -139,22 +167,42 @@ where T : UnityEngine.Object
             var length = assetData.QuarkAssetObjectList.Count;
             for (int i = 0; i < length; i++)
             {
-                var name = assetData.QuarkAssetObjectList[i].AssetName;
-                if (!lnkDict.TryGetValue(name, out var lnkList))
+                var adObject = assetData.QuarkAssetObjectList[i];
+                if (!lnkDict.TryGetValue(adObject.AssetName, out var lnkList))
                 {
                     var lnk = new LinkedList<QuarkAssetDatabaseObject>();
                     lnk.AddLast(assetData.QuarkAssetObjectList[i]);
-                    lnkDict.Add(name, lnk);
+                    lnkDict.Add(adObject.AssetName, lnk);
                 }
                 else
                 {
                     lnkList.AddLast(assetData.QuarkAssetObjectList[i]);
                 }
+            var info = QuarkObjectInfo.Create(adObject.AssetName, null, adObject.AssetExtension, 0);
+            info.ABObjectHash = adObject.GetHashCode();
+            hashQuarkObjectInfoDict.Add(info.ABObjectHash, info);
             }
-            quarkAssetData = assetData;
             assetDatabaseMap = lnkDict;
         }
+        /// <summary>
+        /// 增加一个引用计数；
+        /// </summary>
+        void IncrementQuarkObjectInfo(QuarkAssetBundleObject abObject)
+        {
+            var hashCode = abObject.GetHashCode();
+            var info = hashQuarkObjectInfoDict[hashCode];
+            hashQuarkObjectInfoDict[hashCode] = info++;
+        }
 
-
+        /// <summary>
+        /// 减少一个引用计数；
+        /// </summary>
+        /// <param name="abObject"></param>
+        void DecrementQuarkObjectInfo(QuarkAssetBundleObject abObject)
+        {
+            var hashCode = abObject.GetHashCode();
+            var info = hashQuarkObjectInfoDict[hashCode];
+            hashQuarkObjectInfoDict[hashCode] = info--;
+        }
     }
 }

@@ -19,5 +19,7 @@ namespace Cosmos.Quark.Loader
         Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object;
         void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false);
         void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false);
+        QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object;
+        QuarkObjectInfo[] GetAllInfos();
     }
 }

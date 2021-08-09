@@ -51,5 +51,13 @@ where T : UnityEngine.Object
         {
             QuarkManager.Instance.UnLoadAssetBundle(assetBundleName, unloadAllLoadedObjects);
         }
+         public static QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        {
+            return QuarkManager.Instance.GetInfo<T>(assetName,assetExtension);
+        }
+        public static QuarkObjectInfo[] GetAllInfos()
+        {
+            return QuarkManager.Instance.GetAllInfos();
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace Cosmos.Quark
     /// 用于Built后AB资源的寻址；
     /// </summary>
     [Serializable]
-    public class QuarkAssetBundleObject
+    internal class QuarkAssetBundleObject
     {
         /// <summary>
         ///  资源的名称；

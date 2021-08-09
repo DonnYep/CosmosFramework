@@ -187,6 +187,18 @@ where T : UnityEngine.Object
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
                 loader.UnLoadAssetBundle(assetBundleName, unloadAllLoadedObjects);
         }
+        internal QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                loader.GetInfo<T>(assetName, assetExtension);
+            return QuarkObjectInfo.None;
+        }
+        internal QuarkObjectInfo[] GetAllInfos()
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                loader.GetAllInfos();
+            return new QuarkObjectInfo[0];
+        }
         /// <summary>
         /// 获取比较manifest成功；
         /// </summary>
