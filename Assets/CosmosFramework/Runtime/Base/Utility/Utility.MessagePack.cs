@@ -9,110 +9,259 @@ namespace Cosmos
         {
             public interface IMessagePackHelper
             {
-                string ToJson<T>(T obj);
-                byte[] ToByteArray<T>(T obj);
-                T ToObject<T>(byte[] buffer);
-                T ToObject<T>(string json);
-                object ToObject(byte[] buffer, Type objectType);
-                object ToObject(string json, Type objectType);
+                /// <summary>
+                /// 序列化对象到二进制；
+                /// </summary>
+                /// <typeparam name="T">mp标记的对象类型</typeparam>
+                /// <param name="obj">mp对象</param>
+                /// <returns>序列化后的对象</returns>
+                byte[] Serialize<T>(T obj);
+                /// <summary>
+                /// 反序列化二进制到对象；
+                /// </summary>
+                /// <typeparam name="T">mp标记的对象类型</typeparam>
+                /// <param name="bytes">需要反序列化的数组</param>
+                /// <returns>反序列化后的对象</returns>
+                T Deserialize<T>(byte[] bytes);
+                /// <summary>
+                /// 反序列化二进制到对象；
+                /// </summary>
+                /// <param name="bytes">需要反序列化的数组</param>
+                /// <param name="type">mp标记的对象类型</param>
+                /// <returns>反序列化后的对象</returns>
+                object Deserialize(byte[] bytes, Type type);
+                /// <summary>
+                /// byte[]转json字符串；
+                /// </summary>
+                /// <param name="jsonBytes">需要被转换成json的byte数组</param>
+                /// <returns>转换后的json</returns>
+                string BytesToJson(byte[] jsonBytes);
+                /// <summary>
+                /// json字符串转byte[]；
+                /// </summary>
+                /// <param name="json">需要被转换成bytes的json</param>
+                /// <returns>转换后的bytes</returns>
+                byte[] JsonToBytes(string json);
+                /// <summary>
+                /// json字符串反序列化成对象；
+                /// </summary>
+                /// <typeparam name="T">mp标记的对象类型</typeparam>
+                /// <param name="json">需要被转换的json</param>
+                /// <returns>反序列化后的对象</returns>
+                T DeserializeJson<T>(string json);
+                /// <summary>
+                /// json字符串反序列化成对象；
+                /// </summary>
+                /// <param name="json">需要被转换的json</param>
+                /// <param name="type">mp标记的对象类型</param>
+                /// <returns>反序列化后的对象</returns>
+                object DeserializeJson(string json, Type type);
+                /// <summary>
+                /// 对象序列化成json字符串；
+                /// </summary>
+                /// <typeparam name="T">mp标记的对象类型</typeparam>
+                /// <param name="obj">mp对象</param>
+                /// <returns>转换后的json<</returns>
+                string SerializeToJson<T>(T obj);
+                /// <summary>
+                /// 对象序列化成json的bytes；
+                /// </summary>
+                /// <typeparam name="T">mp标记的对象类型</typeparam>
+                /// <param name="obj">mp对象</param>
+                /// <returns>转换后的bytes</returns>
+                byte[] SerializeToJsonBytes<T>(T obj);
             }
             static IMessagePackHelper messagePackHelper = null;
             public static void SetHelper(IMessagePackHelper helper)
             {
                 messagePackHelper = helper;
             }
-            public static void ClearHelper()
-            {
-                messagePackHelper = null;
-            }
-            public static string ToJson<T>(T obj)
-            {
-                if (messagePackHelper == null)
-                {
-                    throw new ArgumentNullException("messagePackHelper is invalid");
-                }
-                try
-                {
-                    return messagePackHelper.ToJson(obj);
-                }
-                catch (Exception exception)
-                {
-                    throw new ArgumentNullException(Utility.Text.Format("Can not convert to JSON with exception '{0}", exception.ToString()), exception);
-                }
-            }
-            public static byte[] ToByteArray(object obj)
+
+            /// <summary>
+            /// 序列化对象到二进制；
+            /// </summary>
+            /// <typeparam name="T">mp标记的对象类型</typeparam>
+            /// <param name="obj">mp对象</param>
+            /// <returns>序列化后的对象</returns>
+            public static byte[] Serialize<T>(T obj)
             {
                 if (messagePackHelper == null)
                 {
-                    throw new ArgumentNullException("messagePackHelper is invalid");
+                    throw new ArgumentNullException("MessagePackHelper is invalid");
                 }
                 try
                 {
-                    return messagePackHelper.ToByteArray(obj);
+                    return messagePackHelper.Serialize(obj);
                 }
                 catch (Exception exception)
                 {
-                    throw new ArgumentNullException(Utility.Text.Format("Can not convert to ByteArray with exception '{0}", exception.ToString()), exception);
+                    throw exception;
                 }
             }
-            public static T ToObject<T>(byte[] buffer)
+            /// <summary>
+            /// 反序列化二进制到对象；
+            /// </summary>
+            /// <typeparam name="T">mp标记的对象类型</typeparam>
+            /// <param name="bytes">需要反序列化的数组</param>
+            /// <returns>反序列化后的对象</returns>
+            public static T Deserialize<T>(byte[] bytes)
             {
                 if (messagePackHelper == null)
                 {
-                    throw new ArgumentNullException("messagePackHelper is invalid");
+                    throw new ArgumentNullException("MessagePackHelper is invalid");
                 }
                 try
                 {
-                    return messagePackHelper.ToObject<T>(buffer);
+                    return messagePackHelper.Deserialize<T>(bytes);
                 }
                 catch (Exception exception)
                 {
-                    throw new ArgumentNullException(Utility.Text.Format("Can not convert to ByteArray with exception '{0}", exception.ToString()), exception);
+                    throw exception;
                 }
             }
-            public static T ToObject<T>(string json)
+            /// <summary>
+            /// 反序列化二进制到对象；
+            /// </summary>
+            /// <param name="bytes">需要反序列化的数组</param>
+            /// <param name="type">mp标记的对象类型</param>
+            /// <returns>反序列化后的对象</returns>
+            public static object Deserialize(byte[] bytes, Type type)
             {
                 if (messagePackHelper == null)
                 {
-                    throw new ArgumentNullException("messagePackHelper is invalid");
+                    throw new ArgumentNullException("MessagePackHelper is invalid");
                 }
                 try
                 {
-                    return messagePackHelper.ToObject<T>(json);
+                    return messagePackHelper.Deserialize(bytes, type);
                 }
                 catch (Exception exception)
                 {
-                    throw new ArgumentNullException(Utility.Text.Format("Can not convert to ByteArray with exception '{0}", exception.ToString()), exception);
+                    throw exception;
                 }
             }
-            public static object ToObject(byte[] buffer, Type objectType)
+            /// <summary>
+            /// byte[]转json字符串；
+            /// </summary>
+            /// <param name="jsonBytes">需要被转换成json的byte数组</param>
+            /// <returns>转换后的json</returns>
+            public static string BytesToJson(byte[] jsonBytes)
             {
                 if (messagePackHelper == null)
                 {
-                    throw new ArgumentNullException("messagePackHelper is invalid");
+                    throw new ArgumentNullException("MessagePackHelper is invalid");
                 }
                 try
                 {
-                    return messagePackHelper.ToObject(buffer, objectType);
+                    return messagePackHelper.BytesToJson(jsonBytes);
                 }
                 catch (Exception exception)
                 {
-                    throw new ArgumentNullException(Utility.Text.Format("Can not convert to ByteArray with exception '{0}", exception.ToString()), exception);
+                    throw exception;
                 }
             }
-            public static object ToObject(string json, Type objectType)
+            /// <summary>
+            /// json字符串转byte[]；
+            /// </summary>
+            /// <param name="json">需要被转换成bytes的json</param>
+            /// <returns>转换后的bytes</returns>
+            public static byte[] JsonToBytes(string json)
             {
                 if (messagePackHelper == null)
                 {
-                    throw new ArgumentNullException("messagePackHelper is invalid");
+                    throw new ArgumentNullException("MessagePackHelper is invalid");
                 }
                 try
                 {
-                    return messagePackHelper.ToObject(json, objectType);
+                    return messagePackHelper.JsonToBytes(json);
                 }
                 catch (Exception exception)
                 {
-                    throw new ArgumentNullException(Utility.Text.Format("Can not convert to ByteArray with exception '{0}", exception.ToString()), exception);
+                    throw exception;
+                }
+            }
+            /// <summary>
+            /// json字符串反序列化成对象；
+            /// </summary>
+            /// <typeparam name="T">mp标记的对象类型</typeparam>
+            /// <param name="json">需要被转换的json</param>
+            /// <returns>反序列化后的对象</returns>
+            public static T DeserializeJson<T>(string json)
+            {
+                if (messagePackHelper == null)
+                {
+                    throw new ArgumentNullException("MessagePackHelper is invalid");
+                }
+                try
+                {
+                    return messagePackHelper.DeserializeJson<T>(json);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
+            }
+            /// <summary>
+            /// json字符串反序列化成对象；
+            /// </summary>
+            /// <param name="json">需要被转换的json</param>
+            /// <param name="type">mp标记的对象类型</param>
+            /// <returns>反序列化后的对象</returns>
+            public static object DeserializeJson(string json, Type type)
+            {
+                if (messagePackHelper == null)
+                {
+                    throw new ArgumentNullException("MessagePackHelper is invalid");
+                }
+                try
+                {
+                    return messagePackHelper.DeserializeJson(json, type);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
+            }
+            /// <summary>
+            /// 对象序列化成json字符串；
+            /// </summary>
+            /// <typeparam name="T">mp标记的对象类型</typeparam>
+            /// <param name="obj">mp对象</param>
+            /// <returns>转换后的json<</returns>
+            public static string SerializeToJson<T>(T obj)
+            {
+                if (messagePackHelper == null)
+                {
+                    throw new ArgumentNullException("MessagePackHelper is invalid");
+                }
+                try
+                {
+                    return messagePackHelper.SerializeToJson<T>(obj);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
+            }
+            /// <summary>
+            /// 对象序列化成json的bytes；
+            /// </summary>
+            /// <typeparam name="T">mp标记的对象类型</typeparam>
+            /// <param name="obj">mp对象</param>
+            /// <returns>转换后的bytes</returns>
+            public static byte[] SerializeToJsonBytes<T>(T obj)
+            {
+                if (messagePackHelper == null)
+                {
+                    throw new ArgumentNullException("MessagePackHelper is invalid");
+                }
+                try
+                {
+                    return messagePackHelper.SerializeToJsonBytes<T>(obj);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
                 }
             }
         }
