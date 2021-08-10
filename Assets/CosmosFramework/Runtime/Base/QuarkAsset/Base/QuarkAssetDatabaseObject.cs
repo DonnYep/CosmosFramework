@@ -8,7 +8,7 @@ namespace Cosmos.Quark
     /// 在Editor模式用作寻址；
     /// </summary>
     [Serializable]
-    public struct QuarkAssetDatabaseObject
+    public class QuarkAssetDatabaseObject
     {
         /// <summary>
         ///  资源的名称；
@@ -30,6 +30,5 @@ namespace Cosmos.Quark
         /// 资源在unity中的GUID；
         /// </summary>
         public string AssetGuid;
-        public static QuarkAssetDatabaseObject None { get { return new QuarkAssetDatabaseObject(); } }
     }
 }

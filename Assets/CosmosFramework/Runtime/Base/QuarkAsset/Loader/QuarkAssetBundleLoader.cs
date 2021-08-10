@@ -337,15 +337,11 @@ where T : UnityEngine.Object
         /// <summary>
         /// 减少一个引用计数；
         /// </summary>
-        /// <param name="abObject"></param>
         void DecrementQuarkObjectInfo(QuarkAssetBundleObject abObject)
         {
             var hashCode = abObject.GetHashCode();
             var info = hashQuarkObjectInfoDict[hashCode];
             hashQuarkObjectInfoDict[hashCode] = info--;
         }
-
-
-
     }
 }

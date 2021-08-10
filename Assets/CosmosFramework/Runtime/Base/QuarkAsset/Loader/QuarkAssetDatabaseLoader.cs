@@ -32,12 +32,12 @@ namespace Cosmos.Quark.Loader
 #if UNITY_EDITOR
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
-            QuarkAssetDatabaseObject quarkAssetDatabaseObject = new QuarkAssetDatabaseObject();
+            QuarkAssetDatabaseObject quarkAssetDatabaseObject = null;
             if (assetDatabaseMap == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
             if (assetDatabaseMap.TryGetValue(assetName, out var lnk))
                 quarkAssetDatabaseObject = GetAssetDatabaseObject<T>(lnk, assetExtension);
-            if (!string.IsNullOrEmpty(quarkAssetDatabaseObject.AssetGuid))
+            if (quarkAssetDatabaseObject!=null)
             {
                 var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetDatabaseObject.AssetGuid);
                 var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(guid2path);
@@ -73,7 +73,7 @@ namespace Cosmos.Quark.Loader
         }
         public QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
-            QuarkAssetDatabaseObject abObject = QuarkAssetDatabaseObject.None;
+            QuarkAssetDatabaseObject abObject = null;
             if (assetDatabaseMap.TryGetValue(assetName, out var abLnk))
             {
                 if (string.IsNullOrEmpty(assetExtension))
@@ -120,40 +120,21 @@ namespace Cosmos.Quark.Loader
         QuarkAssetDatabaseObject GetAssetDatabaseObject<T>(LinkedList<QuarkAssetDatabaseObject> lnk, string assetExtension = null)
 where T : UnityEngine.Object
         {
-            var assetType = typeof(T).ToString();
-            QuarkAssetDatabaseObject quarkAssetObject = new QuarkAssetDatabaseObject();
-            var tempObj = lnk.First.Value;
-            if (tempObj.AssetType != assetType)
+            QuarkAssetDatabaseObject quarkAssetObject = null;
+            if (!string.IsNullOrEmpty(assetExtension))
             {
-                foreach (var assetObj in lnk)
+                foreach (var adObject in lnk)
                 {
-                    if (assetObj.AssetType == assetType)
+                    if (adObject.AssetExtension == assetExtension)
                     {
-                        if (!string.IsNullOrEmpty(assetExtension))
-                        {
-                            if (assetObj.AssetExtension == assetExtension)
-                            {
-                                quarkAssetObject = assetObj;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            quarkAssetObject = assetObj;
-                        }
+                        quarkAssetObject = adObject;
+                        break;
                     }
                 }
             }
             else
             {
-                if (!string.IsNullOrEmpty(assetExtension))
-                {
-                    quarkAssetObject = tempObj.AssetExtension == assetExtension == true ? tempObj : QuarkAssetDatabaseObject.None;
-                }
-                else
-                {
-                    quarkAssetObject = tempObj;
-                }
+                quarkAssetObject = lnk.First.Value;
             }
             return quarkAssetObject;
         }
@@ -163,31 +144,29 @@ where T : UnityEngine.Object
         /// <param name="assetData">QuarkAssetDataset对象</param>
         void SetAssetDatabaseModeData(QuarkAssetDataset assetData)
         {
-            var lnkDict = new Dictionary<string, LinkedList<QuarkAssetDatabaseObject>>();
             var length = assetData.QuarkAssetObjectList.Count;
             for (int i = 0; i < length; i++)
             {
                 var adObject = assetData.QuarkAssetObjectList[i];
-                if (!lnkDict.TryGetValue(adObject.AssetName, out var lnkList))
+                if (!assetDatabaseMap.TryGetValue(adObject.AssetName, out var lnkList))
                 {
                     var lnk = new LinkedList<QuarkAssetDatabaseObject>();
                     lnk.AddLast(assetData.QuarkAssetObjectList[i]);
-                    lnkDict.Add(adObject.AssetName, lnk);
+                    assetDatabaseMap.Add(adObject.AssetName, lnk);
                 }
                 else
                 {
                     lnkList.AddLast(assetData.QuarkAssetObjectList[i]);
                 }
-            var info = QuarkObjectInfo.Create(adObject.AssetName, null, adObject.AssetExtension, 0);
-            info.ABObjectHash = adObject.GetHashCode();
-            hashQuarkObjectInfoDict.Add(info.ABObjectHash, info);
+                var info = QuarkObjectInfo.Create(adObject.AssetName, null, adObject.AssetExtension, 0);
+                info.ABObjectHash = adObject.GetHashCode();
+                hashQuarkObjectInfoDict.Add(info.ABObjectHash, info);
             }
-            assetDatabaseMap = lnkDict;
         }
         /// <summary>
         /// 增加一个引用计数；
         /// </summary>
-        void IncrementQuarkObjectInfo(QuarkAssetBundleObject abObject)
+        void IncrementQuarkObjectInfo(QuarkAssetDatabaseObject abObject)
         {
             var hashCode = abObject.GetHashCode();
             var info = hashQuarkObjectInfoDict[hashCode];
@@ -197,8 +176,7 @@ where T : UnityEngine.Object
         /// <summary>
         /// 减少一个引用计数；
         /// </summary>
-        /// <param name="abObject"></param>
-        void DecrementQuarkObjectInfo(QuarkAssetBundleObject abObject)
+        void DecrementQuarkObjectInfo(QuarkAssetDatabaseObject abObject)
         {
             var hashCode = abObject.GetHashCode();
             var info = hashQuarkObjectInfoDict[hashCode];

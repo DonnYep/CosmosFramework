@@ -32,6 +32,5 @@ namespace Cosmos.Quark
         /// 资源所在的AB包的名称；
         /// </summary>
         public string AssetBundleName { get; set; }
-        public static QuarkAssetBundleObject None { get { return new QuarkAssetBundleObject(); } }
     }
 }
