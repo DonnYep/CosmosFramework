@@ -17,14 +17,15 @@ public class SliderEventDispatcher : MonoBehaviour
     private void Start()
     {
         slider = GetComponentInChildren<Slider>();
-        uch =ReferencePool.Accquire<LogicEventArgs<Slider>>().SetData(slider);
+        uch = ReferencePool.Accquire<LogicEventArgs<Slider>>().SetData(slider);
         eventManager = GameManager.GetModule<IEventManager>();
     }
     Slider slider;
     public void DispatchEvent()
     {
-        uch.Data.maxValue = slider.maxValue;
-        uch.Data.value = slider.value;
+        var data = uch.GetData();
+        data.maxValue = slider.maxValue;
+        data.value = slider.value;
         eventManager.DispatchEvent(eventKey, null, uch);
     }
     public void DeregisterEvent()

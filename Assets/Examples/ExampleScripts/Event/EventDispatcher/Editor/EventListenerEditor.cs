@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Cosmos;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 #if UNITY_EDITOR
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor
 {
     [CustomEditor(typeof(EventListener))]
-    public class EventListenerEditor : Editor
+    public class EventListenerEditor : UnityEditor.Editor
     {
         SerializedObject targetObject;
         EventListener eventListener;

@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Cosmos;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-namespace Cosmos
+namespace CosmosEditor
 {
 #if UNITY_EDITOR
     [CustomEditor(typeof(StringContent))]
-    public class StringContentEditor : Editor
+    public class StringContentEditor : UnityEditor.Editor
     {
         StringContent stringContent;
         SerializedObject targetObject;
@@ -17,7 +18,7 @@ namespace Cosmos
         {
             stringContent = target as StringContent;
             targetObject = new SerializedObject(stringContent);
-       }
+        }
         /// <summary>
         /// 限制数组长度
         /// </summary>
@@ -46,11 +47,11 @@ namespace Cosmos
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Preview", GUILayout.Height(20)))
             {
-               stringContent.Preview();
+                stringContent.Preview();
             }
             if (GUILayout.Button("Dispose", GUILayout.Height(20)))
             {
-                var canReset =UnityEditor. EditorUtility.DisplayDialog("Reset ScriptableObject", "You will reset ScriptableObject Properties", "Reset", "Cancel");
+                var canReset = UnityEditor.EditorUtility.DisplayDialog("Reset ScriptableObject", "You will reset ScriptableObject Properties", "Reset", "Cancel");
                 if (canReset)
                     stringContent.Dispose();
             }

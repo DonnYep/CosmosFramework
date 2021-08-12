@@ -208,6 +208,7 @@ namespace kcp
         bool ReceiveNextReliable(out KcpHeader header, out ArraySegment<byte> message)
         {
             int msgSize = kcp.PeekSize();
+            message = default;
             if (msgSize > 0)
             {
                 // only allow receiving up to buffer sized messages.

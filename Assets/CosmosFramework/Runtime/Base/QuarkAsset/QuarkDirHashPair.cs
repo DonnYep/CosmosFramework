@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos.Quark
+namespace Quark.Asset
 {
     [Serializable]
     public struct QuarkDirHashPair:IEquatable<QuarkDirHashPair>

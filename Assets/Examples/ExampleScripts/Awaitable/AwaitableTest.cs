@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
-using Cosmos.Quark;
 public class AwaitableTest : MonoBehaviour
 {
     private async void Start()

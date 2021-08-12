@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using System.IO;
-namespace Cosmos.Quark
+using Quark.Asset;
+using Cosmos;
+
+namespace Quark
 {
     /// <summary>
     /// Quark配置脚本，挂载到物体上配置即可；
@@ -48,6 +51,7 @@ namespace Cosmos.Quark
                     break;
                 case QuarkAssetLoadMode.BuiltAssetBundle:
                     {
+                       //var downloadPath =  Path.Combine( Application.persistentDataPath,"DownloadPath");
                         Utility.Text.IsStringValid(Url, "URI is invalid !");
                         Utility.Text.IsStringValid(DownloadPath, "DownloadPath is invalid !");
                         if (PingUrl)

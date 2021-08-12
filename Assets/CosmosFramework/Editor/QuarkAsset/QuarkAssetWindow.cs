@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
-using Cosmos.Quark;
+using Quark;
 using System;
 using System.Runtime.InteropServices;
+using Quark.Asset;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor.Quark
 {
     public class QuarkAssetWindow : EditorWindow
     {

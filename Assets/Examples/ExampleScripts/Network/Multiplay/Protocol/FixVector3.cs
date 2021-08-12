@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-#if UNITY_EDITOR || UNITY_STANDALONE
 using UnityEngine;
-#endif
 namespace Cosmos.Test
 {
     [Serializable]
@@ -18,7 +16,6 @@ namespace Cosmos.Test
         public int X { get; set; }
         public int Y { get; set; }
         public int Z { get; set; }
-# if UNITY_EDITOR||UNITY_STANDALONE
         public static FixVector3 SetVector(Vector3 vector)
         {
             var X = Mathf.FloorToInt(vector.x * 1000);
@@ -30,7 +27,6 @@ namespace Cosmos.Test
         {
             return new Vector3((float)X / 1000, (float)Y / 1000, (float)Z / 1000);
         }
-#endif
         public override string ToString()
         {
             return $"X:{X} ; Y:{Y} ; Z:{Z}";

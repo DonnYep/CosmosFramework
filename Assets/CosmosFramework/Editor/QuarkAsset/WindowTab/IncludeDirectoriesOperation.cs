@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.IMGUI.Controls;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor.Quark
 {
     public class IncludeDirectoriesOperation
 	{

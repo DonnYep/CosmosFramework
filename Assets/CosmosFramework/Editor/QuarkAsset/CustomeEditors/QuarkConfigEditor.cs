@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using Cosmos.Quark;
-namespace Cosmos.CosmosEditor
+using Quark;
+using Quark.Asset;
+
+namespace CosmosEditor.Quark
 {
     [CustomEditor(typeof(QuarkConfig), true)]
-    public class QuarkConfigEditor : Editor
+    public class QuarkConfigEditor : UnityEditor.Editor
     {
         SerializedObject targetObject;
         QuarkConfig quarkConfig;
-        SerializedProperty sp_QuarkAssetLoadMode,sp_QuarkAssetDataset,sp_Url,sp_DownloadPath, sp_PingUrl;
+        SerializedProperty sp_QuarkAssetLoadMode, sp_QuarkAssetDataset, sp_Url, sp_DownloadPath, sp_PingUrl;
         public override void OnInspectorGUI()
         {
             targetObject.Update();
@@ -19,14 +21,14 @@ namespace Cosmos.CosmosEditor
             {
                 case QuarkAssetLoadMode.AssetDatabase:
                     {
-                        sp_QuarkAssetDataset.objectReferenceValue = EditorGUILayout.ObjectField("QuarkAssetDataset",(QuarkAssetDataset)sp_QuarkAssetDataset.objectReferenceValue,typeof(QuarkAssetDataset),false);
+                        sp_QuarkAssetDataset.objectReferenceValue = EditorGUILayout.ObjectField("QuarkAssetDataset", (QuarkAssetDataset)sp_QuarkAssetDataset.objectReferenceValue, typeof(QuarkAssetDataset), false);
                     }
                     break;
                 case QuarkAssetLoadMode.BuiltAssetBundle:
                     {
                         sp_PingUrl.boolValue = EditorGUILayout.Toggle("PingUrl", sp_PingUrl.boolValue);
-                        sp_Url.stringValue = EditorGUILayout.TextField("Url",sp_Url.stringValue);
-                        sp_DownloadPath.stringValue = EditorGUILayout.TextField("DownloadPath",sp_DownloadPath.stringValue);
+                        sp_Url.stringValue = EditorGUILayout.TextField("Url", sp_Url.stringValue);
+                        sp_DownloadPath.stringValue = EditorGUILayout.TextField("DownloadPath", sp_DownloadPath.stringValue);
                     }
                     break;
             }
@@ -38,9 +40,9 @@ namespace Cosmos.CosmosEditor
             targetObject = new SerializedObject(quarkConfig);
             sp_QuarkAssetLoadMode = targetObject.FindProperty("QuarkAssetLoadMode");
             sp_QuarkAssetDataset = targetObject.FindProperty("QuarkAssetDataset");
-            sp_Url= targetObject.FindProperty("Url");
-            sp_DownloadPath= targetObject.FindProperty("DownloadPath");
-            sp_PingUrl= targetObject.FindProperty("PingUrl");
+            sp_Url = targetObject.FindProperty("Url");
+            sp_DownloadPath = targetObject.FindProperty("DownloadPath");
+            sp_PingUrl = targetObject.FindProperty("PingUrl");
         }
     }
 }

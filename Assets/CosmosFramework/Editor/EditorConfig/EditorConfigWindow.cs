@@ -7,7 +7,7 @@ using System;
 using UnityEditor;
 #endif
 # if UNITY_EDITOR
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor.Config
 {
     public class EditorConfigWindow : EditorWindow
     {

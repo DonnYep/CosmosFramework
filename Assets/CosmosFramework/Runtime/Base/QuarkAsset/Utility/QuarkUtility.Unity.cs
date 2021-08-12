@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Cosmos;
 using UnityEngine;
 using UnityEngine.Networking;
-namespace Cosmos.Quark
+namespace Quark
 {
     public partial class QuarkUtility
     {

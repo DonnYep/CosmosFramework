@@ -6,8 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Cosmos;
 using UnityEngine;
-using Cosmos.Quark.Loader;
-namespace Cosmos.Quark
+using Quark.Asset;
+using Quark.Networking;
+using Quark.Loader;
+using System.IO;
+
+namespace Quark
 {
     //================================================
     //1、QuarkAsset是一款unity资源管理的解决方案。摒弃了Resources原生的
@@ -212,7 +216,7 @@ where T : UnityEngine.Object
             {
                 try
                 {
-                    var expiredPath = Utility.IO.PathCombine(QuarkDataProxy.PersistentPath, expired[i]);
+                    var expiredPath = Path.Combine(QuarkDataProxy.PersistentPath, expired[i]);
                     Utility.IO.DeleteFile(expiredPath);
                 }
                 catch { }

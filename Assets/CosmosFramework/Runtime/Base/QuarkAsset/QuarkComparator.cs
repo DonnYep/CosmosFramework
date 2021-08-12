@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quark.Asset;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-namespace Cosmos.Quark
+using Cosmos;
+using Utility = Cosmos.Utility;
+namespace Quark.Networking
 {
     /// <summary>
     /// Quark Manifest比较器；
@@ -82,7 +85,7 @@ namespace Cosmos.Quark
         }
         void OnUriManifestSuccess(string remoteManifestContext)
         {
-            var localManifestPath = Utility.IO.WebPathCombine(PersistentPath, QuarkConsts.ManifestName);
+            var localManifestPath = Path.Combine(PersistentPath, QuarkConsts.ManifestName);
             string localManifestContext = string.Empty;
             long overallSize = 0;
             try
@@ -116,7 +119,7 @@ namespace Cosmos.Quark
                             else
                             {
                                 //默认ab包文件名等于ab包名环境下测试；
-                                var abFilePath = Utility.IO.WebPathCombine(PersistentPath, localMF.ABName);
+                                var abFilePath = Path.Combine(PersistentPath, localMF.ABName);
                                 var localSize = Utility.IO.GetFileSize(abFilePath);
                                 var remoteSize = remoteMF.Value.ABFileSize;
                                 if (remoteSize != localSize)
@@ -160,10 +163,10 @@ namespace Cosmos.Quark
             }
             var latesetArray = latest.ToArray();
             var expiredArray = expired.ToArray();
-            var uriBuildInfoPath = Utility.IO.WebPathCombine(URL, QuarkConsts.BuildInfoFileName);
+            var uriBuildInfoPath = Path.Combine(URL, QuarkConsts.BuildInfoFileName);
             latest.Clear();
             expired.Clear();
-            var localNewManifestPath = Utility.IO.PathCombine(PersistentPath, QuarkConsts.ManifestName);
+            var localNewManifestPath = Path.Combine(PersistentPath, QuarkConsts.ManifestName);
             Utility.IO.OverwriteTextFile(localNewManifestPath, remoteManifestContext);
             QuarkManager.Instance.SetBuiltAssetBundleModeData(remoteManifest);
             if (latesetArray.Length> 0 || expiredArray.Length> 0)
@@ -175,7 +178,7 @@ namespace Cosmos.Quark
             }
             else
             {
-                var localBuildInfoPath = Utility.IO.PathCombine(PersistentPath, QuarkConsts.BuildInfoFileName);
+                var localBuildInfoPath = Path.Combine(PersistentPath, QuarkConsts.BuildInfoFileName);
                 try
                 {
                     var localBuildInfoContext = Utility.IO.ReadTextFileContent(localBuildInfoPath);
@@ -197,7 +200,7 @@ namespace Cosmos.Quark
                 {
                     if (request.isDone)
                     {
-                        var localNewBuildInfoPath = Utility.IO.PathCombine(PersistentPath, QuarkConsts.BuildInfoFileName);
+                        var localNewBuildInfoPath = Path.Combine(PersistentPath, QuarkConsts.BuildInfoFileName);
                         var buildInfoContext = request.downloadHandler.text;
                         Utility.IO.OverwriteTextFile(localNewBuildInfoPath, buildInfoContext);
                         try

@@ -8,18 +8,18 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 namespace Cosmos
 {
-    public class UnityDebugHelper : Utility.Debug.IDebugHelper
+    public class StandaloneDebugHelper : Utility.Debug.IDebugHelper
     {
         readonly string logFullPath;
         /// <summary>
         /// UnityDebugHelper无参构造，不输出log信息到log文件；
         /// </summary>
-        public UnityDebugHelper() { }
+        public StandaloneDebugHelper() { }
         /// <summary>
         /// UnityDebugHelper构造；
         /// </summary>
         /// <param name="logFullPath">log输出的完整路径</param>
-        public UnityDebugHelper(string logFullPath)
+        public StandaloneDebugHelper(string logFullPath)
         {
             Utility.Text.IsStringValid(logFullPath, "LogFullPath is invalid !");
             this.logFullPath = logFullPath;

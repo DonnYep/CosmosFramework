@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cosmos;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 #if UNITY_EDITOR
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor
 {
-    [CustomEditor(typeof (MutiEventDispatcher))]
-    public class MutiEventDispatcherEditor : Editor
+    [CustomEditor(typeof(MutiEventDispatcher))]
+    public class MutiEventDispatcherEditor : UnityEditor.Editor
     {
         SerializedObject targetObject;
         MutiEventDispatcher mutiEventDispatcher;
@@ -29,7 +30,7 @@ namespace Cosmos.CosmosEditor
         {
 
         }
-      
+
         bool CanDraw()
         {
             if (stringContentResult.Content.Length == 0)
@@ -41,7 +42,7 @@ namespace Cosmos.CosmosEditor
         {
             targetObject.Update();
             //TODO解算二进制
-            selectedIndexs = EditorGUILayout.MaskField("EventKeys",selectedIndexs,new string[] { "AAA","BBB","CCC","DDD","EEE","FFF","GGG"});
+            selectedIndexs = EditorGUILayout.MaskField("EventKeys", selectedIndexs, new string[] { "AAA", "BBB", "CCC", "DDD", "EEE", "FFF", "GGG" });
             Utility.Debug.LogInfo("selectedIndexs>>" + selectedIndexs);
             var byteResult = Utility.Converter.ConvertToString(selectedIndexs);
             Utility.Debug.LogInfo("byteResult>>" + byteResult);

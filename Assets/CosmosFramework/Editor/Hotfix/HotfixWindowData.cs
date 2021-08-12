@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor.Hotfix
 {
     [Serializable]
     public class HotfixWindowData

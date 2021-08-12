@@ -16,8 +16,6 @@ MonoBehaviour:
   DirHashPairs:
   - Dir: Assets/Examples/AssetBundleTest/Audio
     Hash: 12778af4cb8833e46b38d87bf137c135
-  - Dir: Assets/Examples/AssetBundleTest/Hotfix
-    Hash: 266b3228ebf6baa4e845ce2165d4edf6
   - Dir: Assets/Examples/AssetBundleTest/Material
     Hash: 96a2e79d37647ce4f879a50f3c51cead
   - Dir: Assets/Examples/AssetBundleTest/Model

@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using Cosmos;
 #if UNITY_EDITOR
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor
 {
     public static partial class EditorUtil
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEditor;
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor.Quark
 {
     internal enum AssetBundleHashType : byte
     {

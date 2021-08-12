@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quark.Asset;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -8,8 +9,10 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using Cosmos;
+using Utility = Cosmos.Utility;
 
-namespace Cosmos.Quark.Loader
+namespace Quark.Loader
 {
     public class QuarkAssetBundleLoader : IQuarkAssetLoader
     {
@@ -174,6 +177,7 @@ where T : UnityEngine.Object
 
             if (string.IsNullOrEmpty(assetBundleName))
             {
+                Utility.Debug.LogError($"AssetBundle：{assetBundleName} not existed !");
                 callback?.Invoke(asset);
                 yield break;
             }
@@ -200,11 +204,24 @@ where T : UnityEngine.Object
                 if (!assetBundleDict.ContainsKey(assetBundleName))
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
-                    yield return EnumDownloadAssetBundle(abPath, ab =>
+                    Utility.Debug.LogInfo(abPath);
+
+                    try
                     {
-                        //Utility.Debug.LogInfo("assetBundleName : "+assetBundleName, MessageColor.NAVY);
-                        assetBundleDict.TryAdd(assetBundleName, ab);
-                    }, null);
+                        AssetBundle abBin = AssetBundle.LoadFromFile(abPath);
+                        assetBundleDict.TryAdd(assetBundleName, abBin);
+                        //Utility.Debug.LogInfo("LoadAB : " + abPath, MessageColor.DARKBLUE);
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
+                    //yield return EnumDownloadAssetBundle(abPath, ab =>
+                    //{
+                    //    Utility.Debug.LogInfo("assetBundleName : " + assetBundleName, MessageColor.NAVY);
+                    //    assetBundleDict.TryAdd(assetBundleName, ab);
+                    //    Utility.Debug.LogInfo("LoadAB : " + abPath, MessageColor.DARKBLUE);
+                    //}, null);
                 }
                 QuarkBuildInfo.AssetData buildInfo = null;
                 foreach (var item in QuarkBuildInfo.AssetDataMaps)
@@ -226,14 +243,26 @@ where T : UnityEngine.Object
                         if (!assetBundleDict.ContainsKey(dependentABName))
                         {
                             var abPath = Path.Combine(PersistentPath, dependentABName);
-                            yield return EnumDownloadAssetBundle(abPath, ab =>
+
+                            try
                             {
+                                AssetBundle abBin = AssetBundle.LoadFromFile(abPath);
+                                assetBundleDict.TryAdd(assetBundleName, abBin);
                                 //Utility.Debug.LogInfo("dependentABName : " + dependentABName, MessageColor.FUCHSIA);
-                                assetBundleDict.TryAdd(dependentABName, ab);
-                            }, null);
+                            }
+                            catch (Exception e)
+                            {
+                                Utility.Debug.LogError(e);
+                            }
+                            //yield return EnumDownloadAssetBundle(abPath, ab =>
+                            //{
+                            //    Utility.Debug.LogInfo("dependentABName : " + dependentABName, MessageColor.FUCHSIA);
+                            //    assetBundleDict.TryAdd(dependentABName, ab);
+                            //}, (str) => { Utility.Debug.LogError(str); });
                         }
                     }
                 }
+                yield return null;
             }
         }
         IEnumerator EnumDownloadAssetBundle(string uri, Action<AssetBundle> doneCallback, Action<string> failureCallback)

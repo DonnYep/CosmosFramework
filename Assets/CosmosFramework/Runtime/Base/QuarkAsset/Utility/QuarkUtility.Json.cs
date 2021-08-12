@@ -5,7 +5,7 @@ using LitJson;
 using System.Text;
 using System;
 
-namespace Cosmos.Quark
+namespace Quark
 {
     public partial class QuarkUtility
     {

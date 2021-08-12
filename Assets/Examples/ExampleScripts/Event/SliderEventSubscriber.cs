@@ -27,8 +27,9 @@ public class SliderEventSubscriber : MonoBehaviour
     void Handler(object sender, GameEventArgs arg)
     {
         uch = arg as LogicEventArgs<Slider>;
-        slider.maxValue = uch.Data.maxValue;
-        slider.value = uch.Data.value;
+        var data = uch.GetData();
+        slider.maxValue = data.maxValue;
+        slider.value = data.value;
         var dispatcher = Utility.Converter.ConvertToObject<GameObject>(sender);
     }
 

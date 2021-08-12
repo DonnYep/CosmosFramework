@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Cosmos;
-using Cosmos.Quark;
+using Quark;
 using UnityEditor;
 using UnityEngine;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor.Quark
 {
     public static partial class QuarkAssetEditorUtility
     {

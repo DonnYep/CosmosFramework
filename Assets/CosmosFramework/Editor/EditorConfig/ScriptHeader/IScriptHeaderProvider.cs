@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor.Config
 {
 
     /// <summary>

@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
 [Implementer]
-public class UnityDebugHelperImpl : UnityDebugHelper
+public class UnityDebugHelperImpl : StandaloneDebugHelper
 {
 }

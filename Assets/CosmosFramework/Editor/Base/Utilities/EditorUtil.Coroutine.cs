@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using Unity.EditorCoroutines.Editor;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor
 {
     public static partial class EditorUtil
     {
@@ -14,6 +14,10 @@ namespace Cosmos.CosmosEditor
         /// </summary>
         public static class Coroutine
         {
+            /// <summary>
+            /// EditorCoroutine 嵌套协程无法识别 yield return IEnumerator；
+            /// 嵌套协程尽量使用yield return EditorCoroutine；
+            /// </summary>
             public static EditorCoroutine StartCoroutine(IEnumerator coroutine)
             {
                 return EditorCoroutineUtility.StartCoroutineOwnerless(coroutine);

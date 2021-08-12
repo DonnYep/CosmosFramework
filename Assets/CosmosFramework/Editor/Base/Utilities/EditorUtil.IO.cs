@@ -9,7 +9,7 @@ using UnityEngine.Networking;
 using UnityEngine;
 using Unity.EditorCoroutines.Editor;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor
 {
     public static partial class EditorUtil
     {

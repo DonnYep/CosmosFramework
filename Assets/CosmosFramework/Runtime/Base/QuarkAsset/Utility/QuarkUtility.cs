@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace Cosmos.Quark 
+namespace Quark
 {
     public partial class QuarkUtility
     {

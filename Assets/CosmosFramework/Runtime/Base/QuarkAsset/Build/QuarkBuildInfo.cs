@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cosmos.Quark 
+namespace Quark.Asset
 {
     /// <summary>
     /// Quark asset bundle 打包信息；

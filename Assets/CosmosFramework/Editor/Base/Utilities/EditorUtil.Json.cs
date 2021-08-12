@@ -5,7 +5,7 @@ using System;
 using System.Text;
 using LitJson;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor
 {
     public static partial class EditorUtil
     {

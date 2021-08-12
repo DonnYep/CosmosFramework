@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-# if UNITY_EDITOR
+using Cosmos;
+#if UNITY_EDITOR
 using UnityEditor;
 #endif
 # if UNITY_EDITOR
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor
 {
     public class HierachyFinderWindow : EditorWindow{
         [MenuItem("Window/Cosmos/HierachyFinder")]

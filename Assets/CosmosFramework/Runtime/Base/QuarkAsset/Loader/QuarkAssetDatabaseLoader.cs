@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quark.Asset;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
-namespace Cosmos.Quark.Loader
+using Cosmos;
+namespace Quark.Loader
 {
     public class QuarkAssetDatabaseLoader : IQuarkAssetLoader
     {

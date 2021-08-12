@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-namespace Cosmos.Quark
+using Cosmos;
+
+namespace Quark.Asset
 {
     /// <summary>
     /// QuarkAssetDataset用于在Editor Runtime快速开发时使用；

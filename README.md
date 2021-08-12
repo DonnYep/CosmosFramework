@@ -74,11 +74,11 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **Editor** ：Editor中提供了在Hierarchy常用检索对象、组件的方法，EditorConfig提供了代码生成是自动创建代码标头的功能；
 
-- **QuarkAsset** ：QuarkAsset是快速的资源管理方案。动态加载时资源无需放入Resources、StreamingAssets或打包成AB包进行加载，在Assets目录下的任意位置都可以被加载到。加载时可通过文件名+后缀进行完全限定，也可以通过指定路径加载。当前AB方案正在开发中；
+- **QuarkAsset** ：QuarkAsset是快速的资源管理方案。动态加载时资源无需放入Resources、StreamingAssets或打包成AB包进行加载，在Assets目录下的任意位置都可以被加载到。加载时可通过文件名+后缀进行完全限定，也可以通过指定路径加载。
 
 - **FutureTask**：异步任务检测，支持多线程与协程异步进度检测。检测函数需要传入Func<bool>格式的函数，当条件返回值为true时，异步检测结束；注意：FutureTask本身并不是协程，不能代替协程执行异步任务；
 
-## 内置软件架构 MVVM
+## 内置架构 MVVM
 
 - MVVM是基于PureMVC改进的更适于理解的软件架构。对Command、Mediator、Proxy注册使用基本与PureMVC相同。
     框架提供了基于特性更加简洁的注册方式：
@@ -99,8 +99,6 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - 部分带有Helper的模块可由使用者进行自定义实现，也可使用提供的Default对象；
 
-- 框架的AB方案正在开发中；
-
 - 框架提供第三方适配，如Utility.Json，用户可自定义任意JSON方案。框架建议使用的高速传输协议为MessagePack，包含适配方案。
 MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
@@ -120,8 +118,7 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
 - MVVM的纯C#版本：https://github.com/DonnYep/CosmosMVVM
 
-- CosmosFramework的服务器版本：https://github.com/DonnYep/CosmosFramework4Server 
-服务器版本已提供可靠UDP协议，并集成了KCP协议。TCP持续更新中。内置模块与Unity客户端类似，内置类型都为线程安全类型。
+- CosmosEngine服务器：https://github.com/DonnYep/CosmosEngine
 
 - KCP地址：https://github.com/skywind3000/kcp
 

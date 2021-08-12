@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
-using Cosmos.Quark;
 using System.Linq;
 using System.Text;
-
-namespace Cosmos.CosmosEditor
+using Quark.Asset;
+using Quark;
+using Cosmos;
+namespace CosmosEditor.Quark
 {
     public class AssetBundleBuildTab
     {
@@ -395,6 +396,7 @@ namespace Cosmos.CosmosEditor
                 importer = AssetImporter.GetAtPath(path);
                 importerCacheDict[path] = importer;
                 importer.assetBundleName = abName;
+                //EditorUtil.Debug.LogInfo(importer.assetBundleName);
                 //importer.assetBundleVariant = "bytes";
                 if (importer == null)
                     EditorUtil.Debug.LogError("AssetImporter is empty : " + path);

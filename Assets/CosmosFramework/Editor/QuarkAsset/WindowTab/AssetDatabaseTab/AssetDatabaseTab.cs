@@ -1,4 +1,6 @@
-﻿using Cosmos.Quark;
+﻿using Cosmos;
+using Quark;
+using Quark.Asset;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +12,7 @@ using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor.Quark
 {
     public class AssetDatabaseTab
     {

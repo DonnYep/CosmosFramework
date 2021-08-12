@@ -1,4 +1,4 @@
-﻿namespace Cosmos.Quark
+﻿namespace Quark.Asset
 {
     public class QuarkConsts
     {

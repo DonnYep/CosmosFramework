@@ -1,4 +1,4 @@
-﻿using Cosmos.Quark;
+﻿using Quark;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using Quark.Asset;
+using Cosmos;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor.Quark
 {
     public class IncludeDirectoriesTreeView : TreeView
     {

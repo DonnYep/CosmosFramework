@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cosmos;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 #if UNITY_EDITOR
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor
 {
     [CustomEditor(typeof(EventDispatcher))]
-    public class EventDispatcherEditor:Editor
+    public class EventDispatcherEditor : UnityEditor.Editor
     {
         SerializedObject targetObject;
         EventDispatcher eventDispatcher;
@@ -18,7 +19,7 @@ namespace Cosmos.CosmosEditor
         /// </summary>
         SerializedProperty keyContentDataSet, selectedKeyContent, previousSelectedIndex;
         StringContent stringContentResult;
-        int selectedIndex=0 ;
+        int selectedIndex = 0;
         int contentSize = -1;
 
         int[] OptionValues { get { return optionValues.ToArray(); } }

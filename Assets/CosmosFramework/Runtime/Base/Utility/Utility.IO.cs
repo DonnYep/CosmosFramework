@@ -91,7 +91,7 @@ namespace Cosmos
             }
             public static void CreateFolder(string path, string folderName)
             {
-                var fullPath = PathCombine(path, folderName);
+                var fullPath = Path.Combine(path, folderName);
                 var dir = new DirectoryInfo(fullPath);
                 if (!dir.Exists)
                 {
@@ -398,7 +398,7 @@ namespace Cosmos
             /// <param name="fileFullPath">文件的完整路径，包括后缀名等</param>
             public static void WriteFile(byte[] context, string fileFullPath)
             {
-               var folderPath= Path.GetDirectoryName(fileFullPath);
+                var folderPath = Path.GetDirectoryName(fileFullPath);
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);
                 using (BinaryWriter writer = new BinaryWriter(File.Open(fileFullPath, FileMode.OpenOrCreate)))
@@ -414,7 +414,7 @@ namespace Cosmos
             /// <param name="context">需要写入的数据byte数组</param>
             /// <param name="fileFullPath">文件的完整路径，包括后缀名等</param>
             /// <param name="startPosition">追加写入的起始位置</param>
-            public static void WriteFile(byte[] context, string fileFullPath,int startPosition)
+            public static void WriteFile(byte[] context, string fileFullPath, int startPosition)
             {
                 var folderPath = Path.GetDirectoryName(fileFullPath);
                 if (!Directory.Exists(folderPath))
@@ -542,7 +542,7 @@ namespace Cosmos
                 {
                     return -1;
                 }
-                else if (File.Exists(filePath)) 
+                else if (File.Exists(filePath))
                 {
                     return new FileInfo(filePath).Length;
                 }

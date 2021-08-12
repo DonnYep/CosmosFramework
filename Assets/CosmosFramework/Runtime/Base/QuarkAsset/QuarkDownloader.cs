@@ -6,8 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
+using Quark.Asset;
+using Utility = Cosmos.Utility;
 
-namespace Cosmos.Quark
+namespace Quark.Networking
 {
     /// <summary>
     /// Quark资源下载器；

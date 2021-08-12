@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Cosmos.Quark;
+using Quark;
 using Cosmos;
 using System;
 

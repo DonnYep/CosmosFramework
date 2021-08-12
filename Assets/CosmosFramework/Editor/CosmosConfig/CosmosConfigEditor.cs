@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using Cosmos.Quark;
+using Quark;
 using Cosmos.Resource;
 using System;
-namespace Cosmos.CosmosEditor
+using Cosmos;
+
+namespace CosmosEditor
 {
     [CustomEditor(typeof(CosmosConfig), true)]
-    public class CosmosConfigEditor : Editor
+    public class CosmosConfigEditor : UnityEditor.Editor
     {
         SerializedObject targetObject;
         CosmosConfig cosmosConfig;

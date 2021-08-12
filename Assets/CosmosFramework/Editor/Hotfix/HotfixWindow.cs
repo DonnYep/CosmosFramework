@@ -6,8 +6,9 @@ using UnityEditor;
 using System.IO;
 using System;
 using System.Linq;
+using Cosmos;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor.Hotfix
 {
     public class HotfixWindow : EditorWindow
     {

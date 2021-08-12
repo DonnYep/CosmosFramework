@@ -70,6 +70,7 @@ namespace Cosmos
         public static GameObject EntityMount { get { return GameManager.GetModuleMount<IEntityManager>(); } }
         public static GameObject EventMount { get { return GameManager.GetModuleMount<IEventManager>(); } }
         public static GameObject SceneMount { get { return GameManager.GetModuleMount<ISceneManager>(); } }
+
         /// <summary>
         /// 启动当前AppDomain下的helper
         /// </summary>
@@ -135,7 +136,6 @@ namespace Cosmos
         {
             GameManager.InitAppDomainModule();
         }
-
         /// <summary>
         /// 初始化目标程序集下的Module；
         /// 注意：初始化尽量只执行一次！！！
@@ -144,6 +144,10 @@ namespace Cosmos
         public static void LaunchAssemblyModules(params System.Reflection.Assembly[] assemblies)
         {
             GameManager.InitAssemblyModule(assemblies);
+        }
+        public static void ReleaseLaunchedModules()
+        {
+            GameManager.Dispose();
         }
     }
 }

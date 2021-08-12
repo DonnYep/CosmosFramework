@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
-namespace Cosmos.CosmosEditor
+namespace CosmosEditor
 {
     enum Mode
     {
