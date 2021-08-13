@@ -14,19 +14,19 @@ namespace Cosmos
         bool isLoading = false;
         public T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object
         {
-            var asset = Resources.LoadAll<T>(info.ResourcePath);
+            var asset = Resources.LoadAll<T>(info.AssetPath);
             if (asset == null)
             {
-                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
+                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.AssetPath}！");
             }
             return asset;
         }
         public T LoadAsset<T>(AssetInfo info) where T : UnityEngine.Object
         {
-            var asset = Resources.Load<T>(info.ResourcePath);
+            var asset = Resources.Load<T>(info.AssetPath);
             if (asset == null)
             {
-                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
+                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.AssetPath}！");
             }
             return asset;
         }
@@ -50,7 +50,7 @@ namespace Cosmos
             where T : UnityEngine.Object
         {
             UnityEngine.Object asset = null;
-            ResourceRequest request = Resources.LoadAsync<T>(info.ResourcePath);
+            ResourceRequest request = Resources.LoadAsync<T>(info.AssetPath);
             isLoading = true;
             while (!request.isDone)
             {
@@ -60,7 +60,7 @@ namespace Cosmos
             asset = request.asset;
             if (asset == null)
             {
-                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.ResourcePath }！");
+                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.AssetPath}！");
             }
             else
             {

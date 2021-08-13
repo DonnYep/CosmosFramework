@@ -90,7 +90,7 @@ namespace Cosmos.Resource
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
             {
-                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath);
                 return LoadPrefab(info, instantiate);
             }
             else
@@ -111,7 +111,7 @@ namespace Cosmos.Resource
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
             {
-                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath);
                 return LoadPrefab(info, instantiate);
             }
             else
@@ -165,7 +165,7 @@ namespace Cosmos.Resource
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
             {
-                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath);
                 return LoadPrefabAsync(info, loadDoneCallback, loadingCallback, instantiate);
             }
             else

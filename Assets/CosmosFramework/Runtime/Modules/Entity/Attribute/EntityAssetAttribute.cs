@@ -6,13 +6,13 @@ namespace Cosmos
     [AttributeUsage(AttributeTargets.Class,AllowMultiple =true,Inherited =false)]
     public class EntityAssetAttribute : AssetAttribute
     {
-        public EntityAssetAttribute(string entityGroupName, string assetBundleName, string assetPath, string resourcePath)
-            :base(assetBundleName,assetPath,resourcePath)
+        public EntityAssetAttribute(string entityGroupName, string assetBundleName, string assetPath)
+            :base(assetBundleName,assetPath)
         {
             this.EntityGroupName = entityGroupName;
         }
-        public EntityAssetAttribute(string entityGroupName, string resourcePath)
-    : base(string.Empty,string.Empty, resourcePath)
+        public EntityAssetAttribute(string entityGroupName, string assetPath)
+    : base(string.Empty,assetPath)
         {
             this.EntityGroupName = entityGroupName;
         }

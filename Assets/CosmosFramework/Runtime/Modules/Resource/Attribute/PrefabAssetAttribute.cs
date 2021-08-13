@@ -8,6 +8,6 @@ namespace Cosmos
     public class PrefabAssetAttribute : AssetAttribute
     {
         public PrefabAssetAttribute(string resourcePath) : base(resourcePath){}
-        public PrefabAssetAttribute(string assetBundleName, string assetPath, string resourcePath) : base(assetBundleName, assetPath, resourcePath){}
+        public PrefabAssetAttribute(string assetBundleName, string assetPath) : base(assetBundleName, assetPath){}
     }
 }

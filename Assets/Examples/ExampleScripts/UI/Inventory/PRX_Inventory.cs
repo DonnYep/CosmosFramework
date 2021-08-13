@@ -16,7 +16,7 @@ namespace Cosmos.Test
         public override string ProxyName { get; protected set; } = MVVMDefine.PRX_Inventory;
         public override void OnRegister()
         {
-            InventoryDataSet = CosmosEntry.ResourceManager.LoadAsset<InventoryDataset>(new AssetInfo() {ResourcePath= dataSetPath });
+            InventoryDataSet = CosmosEntry.ResourceManager.LoadAsset<InventoryDataset>(new AssetInfo(dataSetPath));
             if (InventoryDataSet != null)
                 Utility.Debug.LogInfo("InventoryDataSet数据加载成功", MessageColor.ORANGE);
             jsonFilePath = Utility.IO.WebPathCombine(Application.persistentDataPath, "Inventory");

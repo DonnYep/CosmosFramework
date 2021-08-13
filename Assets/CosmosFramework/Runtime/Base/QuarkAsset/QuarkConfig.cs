@@ -15,11 +15,51 @@ namespace Quark
     /// </summary>
     public class QuarkConfig : MonoBehaviour
     {
+        /// <summary>
+        /// 资源所在URI；
+        /// </summary>
         public string Url;
-        public string DownloadPath;
+        /// <summary>
+        /// 是否去ping uri地址；
+        /// </summary>
         public bool PingUrl;
+        /// <summary>
+        /// 加载模式，分别为Editor与Build；
+        /// </summary>
         public QuarkAssetLoadMode QuarkAssetLoadMode;
+        /// <summary>
+        /// QuarkAssetLoadMode 下AssetDatabase模式所需的寻址数据；
+        /// <see cref="Quark.QuarkAssetLoadMode"/>
+        /// </summary>
         public QuarkAssetDataset QuarkAssetDataset;
+        /// <summary>
+        /// 持久化路径类型；
+        /// </summary>
+        public QuarkPersistentPathType QuarkPersistentPathType;
+        /// <summary>
+        /// 使用持久化的相对路径；
+        /// </summary>
+        public bool UsePersistentRelativePath;
+        /// <summary>
+        /// 持久化路径下的相对地址；
+        /// </summary>
+        public string PersistentRelativePath;
+        /// <summary>
+        /// 对称加密密钥；
+        /// </summary>
+        public string AESEncryptionKey;
+        /// <summary>
+        /// QuarkPersistentPathType 枚举下的自定义持久化路径；
+        /// <see cref=" Quark.QuarkPersistentPathType"/>
+        /// </summary>
+        public string CustomePersistentPath;
+
+
+        /// <summary>
+        /// 配置的路径都整合到此字段；
+        /// </summary>
+        string downloadPath;
+
         static QuarkConfig instance;
         public static QuarkConfig Instance
         {
@@ -41,6 +81,7 @@ namespace Quark
         {
             instance = this;
             QuarkManager.Instance.QuarkAssetLoadMode = QuarkAssetLoadMode;
+            QuarkManager.Instance.AESEncryptionKey = AESEncryptionKey;
             switch (QuarkAssetLoadMode)
             {
                 case QuarkAssetLoadMode.AssetDatabase:
@@ -51,24 +92,37 @@ namespace Quark
                     break;
                 case QuarkAssetLoadMode.BuiltAssetBundle:
                     {
-                       //var downloadPath =  Path.Combine( Application.persistentDataPath,"DownloadPath");
+                        //var downloadPath =  Path.Combine( Application.persistentDataPath,"DownloadPath");
                         Utility.Text.IsStringValid(Url, "URI is invalid !");
-                        Utility.Text.IsStringValid(DownloadPath, "DownloadPath is invalid !");
                         if (PingUrl)
                         {
-                            if (Utility.Net.PingURI(Url))
+                            if (!Utility.Net.PingURI(Url))
+                                return;
+                        }
+                        if (QuarkPersistentPathType != QuarkPersistentPathType.CustomePersistentPath)
+                        {
+                            switch (QuarkPersistentPathType)
                             {
-                                if (!Directory.Exists(DownloadPath))
-                                    Directory.CreateDirectory(DownloadPath);
-                                QuarkManager.Instance.Initiate(Url, DownloadPath);
+                                case QuarkPersistentPathType.PersistentDataPath:
+                                    downloadPath = Application.persistentDataPath;
+                                    break;
+                                case QuarkPersistentPathType.StreamingAssets:
+                                    downloadPath = Application.streamingAssetsPath;
+                                    break;
+                            }
+                            if (UsePersistentRelativePath)
+                            {
+                                downloadPath = Path.Combine(downloadPath, PersistentRelativePath);
                             }
                         }
                         else
                         {
-                            if (!Directory.Exists(DownloadPath))
-                                Directory.CreateDirectory(DownloadPath);
-                            QuarkManager.Instance.Initiate(Url, DownloadPath);
+                            downloadPath = CustomePersistentPath;
                         }
+                        Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
+                        if (!Directory.Exists(downloadPath))
+                            Directory.CreateDirectory(downloadPath);
+                        QuarkManager.Instance.Initiate(Url, downloadPath);
                         QuarkManager.Instance.CheckForUpdates();
                     }
                     break;

@@ -80,7 +80,7 @@ namespace Cosmos.UI
         public IUIForm OpenUIForm(Type uiType)
         {
             var attribute = GetTypeAttribute(uiType);
-            var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.UIGroupName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+            var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath) { UIGroupName = attribute.UIGroupName };
             return OpenUIForm(assetInfo, uiType);
         }
         /// <summary>
@@ -155,7 +155,7 @@ namespace Cosmos.UI
             }
             else
             {
-                var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.UIGroupName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+                var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath) { UIGroupName = attribute.UIGroupName };
                 return OpenUIFormAsync(assetInfo, typeof(T), uiForm => { callback?.Invoke(uiForm as T); });
             }
         }
@@ -229,7 +229,7 @@ namespace Cosmos.UI
             }
             else
             {
-                var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.UIGroupName, attribute.AssetBundleName, attribute.AssetPath, attribute.ResourcePath);
+                var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath) { UIGroupName = attribute.UIGroupName };
                 return OpenUIFormAsync(assetInfo, uiType, callback);
             }
         }

@@ -6,22 +6,15 @@
     public class UIAssetInfo : AssetInfo
     {
         readonly string uiAssetName;
-        readonly string uiGroupName;
         public string UIAssetName { get { return uiAssetName; } }
-        public string UIGroupName{ get { return uiGroupName; } }
-        public UIAssetInfo(string uiAssetName)
+        public string UIGroupName{ get; set; }
+        public UIAssetInfo(string uiAssetName,string assetPath):base(assetPath)
         {
             this.uiAssetName= uiAssetName;
         }
-        public UIAssetInfo(string uiAssetName,string uiGroupName)
+        public UIAssetInfo(string uiAssetName, string assetBundleName, string assetPath) : base(assetBundleName, assetPath)
         {
             this.uiAssetName = uiAssetName;
-            this.uiGroupName= uiGroupName;
-        }
-        public UIAssetInfo(string uiAssetName, string uiGroupName, string assetBundleName, string assetPath,  string resourcePath) : base(assetBundleName, assetPath, resourcePath)
-        {
-            this.uiAssetName = uiAssetName;
-            this.uiGroupName = uiGroupName;
         }
     }
 }

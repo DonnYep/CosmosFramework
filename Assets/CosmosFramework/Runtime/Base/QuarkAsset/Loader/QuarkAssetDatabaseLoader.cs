@@ -37,7 +37,7 @@ namespace Quark.Loader
             if (assetDatabaseMap == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
             if (assetDatabaseMap.TryGetValue(assetName, out var lnk))
-                quarkAssetDatabaseObject = GetAssetDatabaseObject<T>(lnk, assetExtension);
+                quarkAssetDatabaseObject = GetAssetDatabaseObject(lnk, assetExtension);
             if (quarkAssetDatabaseObject!=null)
             {
                 var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetDatabaseObject.AssetGuid);
@@ -118,8 +118,7 @@ namespace Quark.Loader
             progress.Invoke(1);
             callback.Invoke();
         }
-        QuarkAssetDatabaseObject GetAssetDatabaseObject<T>(LinkedList<QuarkAssetDatabaseObject> lnk, string assetExtension = null)
-where T : UnityEngine.Object
+        QuarkAssetDatabaseObject GetAssetDatabaseObject(LinkedList<QuarkAssetDatabaseObject> lnk, string assetExtension = null)
         {
             QuarkAssetDatabaseObject quarkAssetObject = null;
             if (!string.IsNullOrEmpty(assetExtension))

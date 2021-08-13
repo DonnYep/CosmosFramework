@@ -10,7 +10,7 @@ namespace Cosmos.Test
         private void Start()
         {
             Utility.Json.SetHelper(new JsonUtilityHelper());
-            var mianUICanvas = CosmosEntry.ResourceManager.LoadPrefabAsync(new AssetInfo(null, null, "UI/MainUICanvas"), go =>
+            var mianUICanvas = CosmosEntry.ResourceManager.LoadPrefabAsync(new AssetInfo(null, "UI/MainUICanvas"), go =>
              {
                  CosmosEntry.UIManager.SetUIRoot(go.transform);
              }, null, true);

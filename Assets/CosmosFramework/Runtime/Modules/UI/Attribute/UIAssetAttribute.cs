@@ -19,7 +19,7 @@ namespace Cosmos
             this.UIGroupName = uiGroupName;
         }
         public UIAssetAttribute(string uiAssetName, string assetBundleName, string assetPath, string resourcePath)
-            : base(assetBundleName, assetPath, resourcePath)
+            : base(assetBundleName, assetPath)
         {
             this.UIAssetName = uiAssetName;
         }

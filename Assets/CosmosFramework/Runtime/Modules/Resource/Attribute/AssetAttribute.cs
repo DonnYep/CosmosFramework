@@ -11,22 +11,14 @@ namespace Cosmos
         /// </summary>
         public string AssetBundleName { get; private set; }
         /// <summary>
-        /// 基于AB包的资源的路径
+        /// AB包地址、Resource地址或其他路径地址；
         /// </summary>
         public string AssetPath { get; private set; }
-        /// <summary>
-        /// 基于Resource的资源路径
-        /// </summary>
-        public string ResourcePath { get; private set; }
-        public AssetAttribute(string assetBundleName, string assetPath, string resourcePath)
+        public AssetAttribute(string assetBundleName, string assetPath)
         {
             AssetBundleName = assetBundleName;
             AssetPath = assetPath;
-            ResourcePath = resourcePath;
         }
-        public AssetAttribute(string resourcePath) : this(null, null, resourcePath)
-        {
-            ResourcePath = resourcePath;
-        }
+        public AssetAttribute(string assetPath) : this(null,assetPath){}
     }
 }

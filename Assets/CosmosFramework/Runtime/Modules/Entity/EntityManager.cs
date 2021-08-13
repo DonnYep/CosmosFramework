@@ -74,7 +74,7 @@ namespace Cosmos.Entity
                 if (!HasEntityGroup(attributes[i].EntityGroupName))
                 {
                     var att = attributes[i];
-                    var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath, att.ResourcePath) {  UseObjectPool=att.UseObjectPool};
+                    var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath) {  UseObjectPool=att.UseObjectPool};
                     RegisterEntityGroup(entityAssetInfo);
                 }
             }
@@ -497,7 +497,7 @@ namespace Cosmos.Entity
                 var ea = entityAttributes[i];
                 if (!HasEntityGroup(ea.EntityGroupName))
                 {
-                    var entityAssetInfo = new EntityAssetInfo(ea.EntityGroupName, ea.AssetBundleName, ea.AssetPath, ea.ResourcePath);
+                    var entityAssetInfo = new EntityAssetInfo(ea.EntityGroupName, ea.AssetBundleName, ea.AssetPath);
                     RegisterEntityGroup(entityAssetInfo);
                 }
             }
@@ -520,7 +520,7 @@ namespace Cosmos.Entity
                 if (!HasEntityGroup(attributes[i].EntityGroupName))
                 {
                     var att = attributes[i];
-                    var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath, att.ResourcePath);
+                    var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath);
                     resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
                     {
                         var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);

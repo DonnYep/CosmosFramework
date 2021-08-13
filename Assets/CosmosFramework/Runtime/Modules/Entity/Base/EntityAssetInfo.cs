@@ -9,19 +9,19 @@ namespace Cosmos
     /// <summary>
     /// 实体资源信息；
     /// </summary>
-    public class EntityAssetInfo: AssetInfo
+    public class EntityAssetInfo : AssetInfo
     {
-        public EntityAssetInfo(string entityGroupName,  string assetBundleName, string assetPath, string resourcePath) :
-            base(assetBundleName, assetPath, resourcePath) 
-        {
-            this.EntityGroupName = entityGroupName;
-        }
-        public EntityAssetInfo(string entityGroupName) 
-        {
-            this.EntityGroupName = entityGroupName;
-        }
-        public EntityAssetInfo() { }
-        public string EntityGroupName { get; set; }
+        readonly string entityGroupName;
+        public string EntityGroupName { get { return entityGroupName; } }
         public bool UseObjectPool { get; set; }
+        public EntityAssetInfo(string entityGroupName, string assetBundleName, string assetPath) :
+            base(assetBundleName, assetPath)
+        {
+            this.entityGroupName = entityGroupName;
+        }
+        public EntityAssetInfo(string entityGroupName, string assetPath) : base(assetPath)
+        {
+            this.entityGroupName = entityGroupName;
+        }
     }
 }

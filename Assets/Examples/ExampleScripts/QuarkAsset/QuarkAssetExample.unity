@@ -765,10 +765,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Url: 
-  DownloadPath: 
   PingUrl: 0
-  QuarkAssetLoadMode: 1
+  QuarkAssetLoadMode: 2
   QuarkAssetDataset: {fileID: 11400000, guid: e4ef4e912cff6e24f8901a67d27afba9, type: 2}
+  QuarkPersistentPathType: 0
+  UsePersistentRelativePath: 1
+  PersistentRelativePath: DownloadPath
+  AESEncryptionKey: 
+  CustomePersistentPath: 
 --- !u!1 &613508358
 GameObject:
   m_ObjectHideFlags: 0
