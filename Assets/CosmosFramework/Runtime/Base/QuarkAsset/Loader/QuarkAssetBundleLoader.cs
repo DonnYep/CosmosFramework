@@ -46,6 +46,7 @@ namespace Quark.Loader
             T asset = null;
             string assetBundleName = string.Empty;
             QuarkAssetBundleObject abObject = null;
+            AssetBundle assetBundle = null;
             if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
             {
                 if (string.IsNullOrEmpty(assetExtension))
@@ -71,6 +72,7 @@ namespace Quark.Loader
                 }
                 if (assetBundleDict.ContainsKey(assetBundleName))
                 {
+                    assetBundle = assetBundleDict[assetBundleName];
                     asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
                     if (asset != null)
                     {
@@ -78,6 +80,56 @@ namespace Quark.Loader
                         if (instantiate)
                         {
                             asset = GameObject.Instantiate(asset);
+                        }
+                    }
+                }
+                else
+                {
+                    var abPath = Path.Combine(PersistentPath, assetBundleName);
+                    assetBundle= AssetBundle.LoadFromFile(abPath);
+                    assetBundleDict.TryAdd(assetBundleName, assetBundle);
+
+                    QuarkBuildInfo.AssetData buildInfo = null;
+                    foreach (var item in QuarkBuildInfo.AssetDataMaps)
+                    {
+                        if (item.Value.ABName == assetBundleName)
+                        {
+                            buildInfo = item.Value;
+                            break;
+                        }
+                    }
+                    if (buildInfo != null)
+                    {
+                        var dependList = buildInfo.DependList;
+                        var length = dependList.Count;
+                        for (int i = 0; i < length; i++)
+                        {
+                            var dependentABName = dependList[i];
+                            if (!assetBundleDict.ContainsKey(dependentABName))
+                            {
+                                var dependentABPath = Path.Combine(PersistentPath, dependentABName);
+                                try
+                                {
+                                    AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath);
+                                    assetBundleDict.TryAdd(dependentABName, abBin);
+                                }
+                                catch (Exception e)
+                                {
+                                    Utility.Debug.LogError(e);
+                                }
+                            }
+                        }
+                        if (assetBundle != null)
+                        {
+                            asset = assetBundle.LoadAsset<T>(assetName);
+                            if (asset != null)
+                            {
+                                IncrementQuarkObjectInfo(abObject);
+                                if (instantiate)
+                                {
+                                    asset = GameObject.Instantiate(asset);
+                                }
+                            }
                         }
                     }
                 }
@@ -205,7 +257,6 @@ where T : UnityEngine.Object
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
                     Utility.Debug.LogInfo(abPath);
-
                     try
                     {
                         AssetBundle abBin = AssetBundle.LoadFromFile(abPath);
@@ -247,7 +298,7 @@ where T : UnityEngine.Object
                             try
                             {
                                 AssetBundle abBin = AssetBundle.LoadFromFile(abPath);
-                                assetBundleDict.TryAdd(assetBundleName, abBin);
+                                assetBundleDict.TryAdd(dependentABName, abBin);
                                 //Utility.Debug.LogInfo("dependentABName : " + dependentABName, MessageColor.FUCHSIA);
                             }
                             catch (Exception e)
