@@ -25,6 +25,5 @@ namespace Cosmos
             this.assetBundleName = string.IsNullOrEmpty(assetBundleName) ? assetBundleName : assetBundleName.ToLower();
             this.assetPath = assetPath;
         }
-
     }
 }

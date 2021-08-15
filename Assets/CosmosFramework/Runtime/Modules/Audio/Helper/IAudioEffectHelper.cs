@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Cosmos.Audio
 {
-    public interface IAudioPlayHelper
+    public interface IAudioEffectHelper
     {
-
+        void OnStart();
+        void OnPlaying();
+        void OnEnd();
     }
 }

@@ -5,354 +5,148 @@ using System;
 
 namespace Cosmos.Audio
 {
-    //TODO AudioManager需要实现组别功能；
     [Module]
-    internal sealed class AudioManager : Module, IAudioManager
+    internal sealed class AudioManager : Module//, IAudioManager
     {
-        #region Properties
-        //背景音乐，新BGM覆盖旧的
-        AudioSource backgroundAduio;
-        //单一不重复音效，全局只播放一个，新的单通道会覆盖旧的单通道音效，例如NPC
-        AudioSource singleAudio;
-        //多通道音效，多用于技能、UI
-        Dictionary<GameObject, List<AudioSource>> multipleAudio;
-        //放着先，到时候再说-->>
-        List<AudioSource> multipleAudios;
-        //世界音效，为3D背景音乐、3D技能音效对白等设计
-        Dictionary<GameObject, AudioSource> worldAudios;
-        #endregion
-        //轮询间距，按照update渲染的5秒计算，不使用真实时间
-        internal const short _Interval = 5;
-        float coolTime = 0;
-        bool mute = false;
-        //整个AudioManager下的所有声音都设置位静音
-        public bool Mute
-        {
-            get { return mute; }
-            set
-            {
-                if (mute != value)
-                {
-                    mute = value;
-                    backgroundAduio.mute = mute;
-                    singleAudio.mute = mute;
-                    for (int i = 0; i < multipleAudios.Count; i++)
-                    {
-                        multipleAudios[i].mute = mute;
-                    }
-                    foreach (var audio in worldAudios)
-                    {
-                        audio.Value.mute = mute;
-                    }
-                    foreach (var audio in multipleAudio)
-                    {
-                        for (int i = 0; i < audio.Value.Count; i++)
-                        {
-                            audio.Value[i].mute = mute;
-                        }
-                    }
-                }
-            }
-        }
-        #region Methods
-        #region backGroundAudio
         /// <summary>
-        /// 播放背景音乐，唯一的
+        /// AduioGroupName===AudioGroup ;
         /// </summary>
-        /// <param name="clip"></param>
-        /// <param name="args"></param>
-        public void PlayBackgroundAudio(IAudio  audio)
-        {
-            if (backgroundAduio == null)
-            {
-                backgroundAduio = CreateBGMAudioSource(audio);
-                backgroundAduio.clip = audio.AudioClip;
-                backgroundAduio.Play();
-            }
-            else
-            {
-                if (backgroundAduio.isPlaying)
-                {
-                    backgroundAduio.Stop();
-                }
-                backgroundAduio.clip = audio.AudioClip;
-                SetAudioProperties(ref backgroundAduio, audio);
-                backgroundAduio.Play();
-            }
-        }
-        public void PauseBackgroundAudio()
-        {
-            if (backgroundAduio != null)
-                backgroundAduio.Pause();
-            else
-                Utility.Debug.LogError("BackgroundAudio  not exist!");
-        }
-        public void UnpauseBackgroundAudio()
-        {
-            if (backgroundAduio != null)
-                backgroundAduio.UnPause();
-            else
-                Utility.Debug.LogError("BackgroundAudio  not exist!");
-        }
-        public void StopBackgroundAudio()
-        {
-            if (backgroundAduio != null)
-                backgroundAduio.Stop();
-            else
-                Utility.Debug.LogError("BackgroundAudio  not exist!");
-        }
-        #endregion
-        #region worldAudio
+        Dictionary<string, AudioGroup> audioGroupDict;
         /// <summary>
-        /// 播放世界音效
-        /// 可用在3D环境声音以及特效爆炸等上
+        /// AudioName===AudioObject ;
         /// </summary>
-        /// <param name="attachTarget">audioSource挂载的对象</param>
-        /// <param name="clip">音频</param>
-        /// <param name="args">具体参数</param>
-        public void PlayWorldAudio(GameObject attachTarget, IAudio audio)
+        Dictionary<string, IAudioObject> audioObjectDict;
+
+        IAudioAssetHelper audioAssetHelper;
+
+        IAudioEffectHelper audioEffectHelper;
+
+        IAudioPlayHelper audioPlayHelper;
+
+        AudioGroupPool audioGroupPool;
+
+        public bool Mute { get; set; }
+
+        public bool SetAuidoGroup(string audioName, string audioGroupName)
         {
-            if (worldAudios.ContainsKey(attachTarget))
+            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
+            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
+            if (audioObjectDict.TryGetValue(audioName, out var audio))
             {
-                AudioSource audioSrc = worldAudios[attachTarget];
-                if (audioSrc.isPlaying)
-                    audioSrc.Stop();
-                SetAudioProperties(ref audioSrc, audio);
-                audioSrc.clip = audio.AudioClip;
-                audioSrc.Play();
-            }
-            else
-            {
-                AudioSource audioSrc = AttachAudioSource(attachTarget, audio);
-                worldAudios.Add(attachTarget, audioSrc);
-                audioSrc.clip = audio.AudioClip;
-                audioSrc.Play();
-            }
-        }
-        public void PauseWorldAudio(GameObject attachTargset)
-        {
-            if (worldAudios.ContainsKey(attachTargset))
-            {
-                AudioSource audio = worldAudios[attachTargset];
-                audio.Pause();
-            }
-            else
-                throw new ArgumentNullException("AudioManager\n" + "World" + attachTargset.name + "\n is unregistered");
-        }
-        public void UnpauseWorldAudio(GameObject attachTargset)
-        {
-            if (worldAudios.ContainsKey(attachTargset))
-            {
-                AudioSource audio = worldAudios[attachTargset];
-                audio.UnPause();
-            }
-            else
-                throw new ArgumentNullException("AudioManager\n" + "World" + attachTargset.name + "\n is unregistered");
-        }
-        public void StopWorldAudio(GameObject attachTargset)
-        {
-            if (worldAudios.ContainsKey(attachTargset))
-            {
-                AudioSource audio = worldAudios[attachTargset];
-                audio.Stop();
-            }
-            else
-                throw new ArgumentNullException("AudioManager\n" + "World" + attachTargset.name + "\n is unregistered");
-        }
-        public void StopAllWorldAudio()
-        {
-            foreach (var audio in worldAudios)
-            {
-                if (audio.Value.isPlaying)
+                if (!audioGroupDict.TryGetValue(audioGroupName, out var group))
                 {
-                    audio.Value.Stop();
+                    group = new AudioGroup();
+                    group.AudioGroupName = audioGroupName;
+                    audioGroupDict.Add(audioGroupName, group);
+                }
+                return group.AddAudio(audioName, audio);
+            }
+            return false;
+        }
+        public Coroutine RegisterAudioAsync(AudioAssetInfo audioAssetInfo, Action<IAudioObject> callback)
+        {
+            return audioAssetHelper.LoadAudioAsync(audioAssetInfo, callback);
+        }
+        public IAudioObject RegisterAudio(AudioAssetInfo audioAssetInfo)
+        {
+            Utility.Text.IsStringValid(audioAssetInfo.AudioName, "AudioName is invalid !");
+            var audioName = audioAssetInfo.AudioName;
+            var audioGroupName = audioAssetInfo.AudioGroupName;
+            if (audioObjectDict.TryGetValue(audioName, out var audioObject))
+                return audioObject;
+            audioObject = audioAssetHelper.LoadAudio(audioAssetInfo);
+            if (audioObject != null)
+            {
+                audioObjectDict.Add(audioName, audioObject);
+                if (!string.IsNullOrEmpty(audioGroupName))
+                {
+                    if(!audioGroupDict.TryGetValue(audioGroupName,out var group))
+                    {
+                        group = audioGroupPool.Spawn();
+                        group.AudioGroupName = audioGroupName;
+                        audioGroupDict.Add(audioGroupName, group);
+                    }
+                    group.AddAudio(audioName, audioObject);
                 }
             }
+            return audioObject;
         }
-        #endregion
-        #region MultipleAudio
-        public void PlayMultipleAudio(GameObject attachTargset, IAudio[]  audios)
+        public void ClearAudioGroup(string audioGroupName)
         {
-            if (multipleAudio.ContainsKey(attachTargset))
+            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
+            if (audioGroupDict.TryGetValue(audioGroupName, out var group))
             {
-                var audioSrcs = multipleAudio[attachTargset];
-                short audioSrcCount = (short)audioSrcs.Count;
-                short audiosCount = (short)audios.Length;
-                short differenceValue = (short)(audiosCount - audioSrcCount);
-                //补齐差值
-                for (short i = 0; i < differenceValue; i++)
-                {
-                    AudioSource audio = AttachAudioSource(attachTargset);
-                    multipleAudio[attachTargset].Add(audio);
-                }
-                for (short i = 0; i < audiosCount; i++)
-                {
-                    var audio = multipleAudio[attachTargset][i];
-                    if (audio.isPlaying)
-                        audio.Stop();
-                    SetAudioProperties(ref audio, audios[i]);
-                    audio.clip = audios[i].AudioClip;
-                    audio.Play();
-                }
-            }
-            else
-            {
-                multipleAudio.Add(attachTargset, new List<AudioSource>());
-                var length = audios.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    AudioSource audio = AttachAudioSource(attachTargset, audios[i]);
-                    audio.clip = audios[i].AudioClip;
-                    audio.Play();
-                    multipleAudio[attachTargset].Add(audio);
-                }
+                group.RemoveAllAudios();
             }
         }
-        public void PauseMultipleAudio(GameObject attachTargset)
+        public bool HasAudio(string audioName)
         {
-            if (multipleAudio.ContainsKey(attachTargset))
-            {
-                for (short i = 0; i < multipleAudio[attachTargset].Count; i++)
-                {
-                    multipleAudio[attachTargset][i].Pause();
-                }
-            }
-            else
-                throw new ArgumentNullException("AudioManager\n" + "Multiple" + attachTargset.name + "\n is unregistered");
+            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
+            return audioObjectDict.ContainsKey(audioName);
         }
-        public void UnpauseMultipleAudio(GameObject attachTargset)
+        public bool HasAudioGroup(string audioGroupName)
         {
-            if (multipleAudio.ContainsKey(attachTargset))
-            {
-                for (short i = 0; i < multipleAudio[attachTargset].Count; i++)
-                {
-                    multipleAudio[attachTargset][i].UnPause();
-                }
-            }
-            else
-                throw new ArgumentNullException("AudioManager\n" + "Multiple" + attachTargset.name + "\n is unregistered");
+            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
+            return audioGroupDict.ContainsKey(audioGroupName);
+        }
+        public void PalyAudioGroup(string audioGroup)
+        {
 
         }
-        public void StopMultipleAudio(GameObject attachTargset)
+        public void PalyAudio(string audioName, AudioParams audioParams)
         {
-            if (multipleAudio.ContainsKey(attachTargset))
-            {
-                for (short i = 0; i < multipleAudio[attachTargset].Count; i++)
-                {
-                    multipleAudio[attachTargset][i].Stop();
-                }
-            }
-            else
-                throw new ArgumentNullException("AudioManager\n" + "Multiple" + attachTargset.name + "\n is unregistered");
 
         }
-        #endregion
+        public void PalyAudio(string audioName, string audioGroup, AudioParams audioParams)
+        {
+
+        }
+        public void PauseAudioGroup(string audioGroup)
+        {
+
+        }
+        public void PauseAudio(string audioName, AudioParams audioParams)
+        {
+
+        }
+        public void PauseAudio(string audioName, string audioGroup, AudioParams audioParams)
+        {
+
+        }
+        public void ResumeAudioGroup(string audioGroup)
+        {
+
+        }
+        public void ResumeAudio(string audioName, AudioParams audioParams)
+        {
+
+        }
+        public void ResumeAudio(string audioName, string audioGroup, AudioParams audioParams)
+        {
+
+        }
+        public void StopAudioGroup(string audioGroup)
+        {
+
+        }
+        public void StopAudio(string audioName)
+        {
+
+        }
+        public void StopAllAudios()
+        {
+
+        }
         protected override void OnInitialization()
         {
-            multipleAudio = new Dictionary<GameObject, List<AudioSource>>();
-            multipleAudios = new List<AudioSource>();
-            worldAudios = new Dictionary<GameObject, AudioSource>();
+            audioGroupDict = new Dictionary<string, AudioGroup>();
+            audioObjectDict = new Dictionary<string, IAudioObject>();
+            audioGroupPool = new AudioGroupPool();
+            audioAssetHelper = new DefaultAudioAssetHelper();
         }
         [TickRefresh]
         void TickRefresh()
         {
-            CheckAudioSources();
         }
-        AudioSource CreateBGMAudioSource(IAudio args)
-        {
-            GameObject go = new GameObject(args.AudioClip.name);
-            var mountGo = GameManager.GetModuleMount<IAudioManager>();
-            go.transform.SetParent(mountGo.transform);
-            go.transform.ResetLocalTransform();
-            AudioSource audio = go.AddComponent<AudioSource>();
-            SetAudioProperties(ref audio, args);
-            return audio;
-        }
-        AudioSource AttachAudioSource(GameObject targset, IAudio args)
-        {
-            AudioSource audio = targset.AddComponent<AudioSource>();
-            SetAudioProperties(ref audio, args);
-            return audio;
-        }
-        AudioSource AttachAudioSource(GameObject targset)
-        {
-            AudioSource audio = targset.AddComponent<AudioSource>();
-            return audio;
-        }
-        void SetAudioProperties(ref AudioSource audio, IAudio args)
-        {
-            audio.playOnAwake = args.PlayOnAwake;
-            audio.volume = args.Volume;
-            audio.pitch = args.Speed;
-            audio.spatialBlend = args.SpatialBlend;
-            audio.mute = args.Mute;
-            audio.loop = args.Loop;
-            audio.panStereo= args.StereoPan;
-        }
-
-        /// <summary>
-        /// 声音状态轮询，间隔一段时间后，销毁已经播放结束的声音组件
-        /// </summary>
-        void CheckAudioSources()
-        {
-            if (coolTime < _Interval)
-            {
-                coolTime += Time.deltaTime;
-            }
-            if (coolTime >= _Interval)
-            {
-                coolTime = 0;
-                ClearIdleWorldAudio();
-                ClearIdleMultipleAudio();
-            }
-        }
-        void ClearIdleWorldAudio()
-        {
-            HashSet<GameObject> removeSet = new HashSet<GameObject>();
-            foreach (var audio in worldAudios)
-            {
-                if (!audio.Value.isPlaying)
-                {
-                    removeSet.Add(audio.Key);
-                    GameObject.Destroy(audio.Value);
-                }
-            }
-            foreach (var item in removeSet)
-            {
-                worldAudios.Remove(item);
-            }
-        }
-        void ClearIdleMultipleAudio()
-        {
-            HashSet<GameObject> removeSet = new HashSet<GameObject>();
-            foreach (var audioList in multipleAudio)
-            {
-                HashSet<AudioSource> clips = new HashSet<AudioSource>();
-                if (audioList.Value.Count == 0)
-                {
-                    removeSet.Add(audioList.Key);
-                    return;
-                }
-                for (int i = 0; i < audioList.Value.Count; i++)
-                {
-                    if (!audioList.Value[i].isPlaying)
-                    {
-                        GameObject.Destroy(audioList.Value[i]);
-                        clips.Add(audioList.Value[i]);
-                    }
-                }
-                foreach (var item in clips)
-                {
-                    audioList.Value.Remove(item);
-                }
-                clips.Clear();
-            }
-            foreach (var item in removeSet)
-            {
-                multipleAudio.Remove(item);
-            }
-            removeSet.Clear();
-        }
-        #endregion
     }
 }
