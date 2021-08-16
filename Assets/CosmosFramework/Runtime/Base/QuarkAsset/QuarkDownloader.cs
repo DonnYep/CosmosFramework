@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using UnityEngine.Networking;
 using Quark.Asset;
 using Utility = Cosmos.Utility;
-
+using UnityEngine;
 namespace Quark.Networking
 {
     /// <summary>
@@ -302,7 +302,7 @@ namespace Quark.Networking
                 Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
                 dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
             }
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
         }
         /// <summary>
         /// 处理整体进度；

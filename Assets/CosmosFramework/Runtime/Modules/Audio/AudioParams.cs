@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,12 @@ namespace Cosmos.Audio
     /// <summary>
     /// 声音播放时的参数；
     /// </summary>
-    public sealed class AudioParams : IReference
+    public struct AudioParams
     {
+        /// <summary>
+        /// Audio开始播放时间，默认从0秒开始；
+        /// </summary>
         public float PlayTime { get; set; }
-        public bool PlayOnAwake { get; set; }
         /// <summary>
         /// 播放循环；
         /// </summary>
@@ -28,7 +31,7 @@ namespace Cosmos.Audio
         /// <summary>
         /// 播放速度；
         /// </summary>
-        public float Pitch  { get; set; }
+        public float Pitch { get; set; }
         /// <summary>
         /// 立体声左右声道；
         /// </summary>
@@ -40,7 +43,7 @@ namespace Cosmos.Audio
         /// <summary>
         /// 音频混响区域；
         /// </summary>
-        public float ReverbZoneMix{ get; set; }
+        public float ReverbZoneMix { get; set; }
         /// <summary>
         /// 多普勒等级。
         /// </summary>
@@ -53,10 +56,9 @@ namespace Cosmos.Audio
         /// 最大可听范围；
         /// </summary>
         public float MaxDistance { get; set; }
-        public AudioParams()
+        public void Reset()
         {
             PlayTime = 0;
-            PlayOnAwake = AudioConsts.PalyOnAwake;
             Loop = AudioConsts.Loop;
             Priority = AudioConsts.Priority;
             Volume = AudioConsts.Volume;
@@ -68,20 +70,20 @@ namespace Cosmos.Audio
             Spread = AudioConsts.Spread;
             MaxDistance = AudioConsts.MaxDistance;
         }
-        public void Release()
+        readonly static AudioParams m_Default = new AudioParams()
         {
-            PlayTime = 0;
-            PlayOnAwake= AudioConsts.PalyOnAwake;
-            Loop = AudioConsts.Loop;
-            Priority = AudioConsts.Priority;
-            Volume = AudioConsts.Volume;
-            Pitch = AudioConsts.Pitch;
-            StereoPan = AudioConsts.StereoPan;
-            SpatialBlend = AudioConsts.SpatialBlend;
-            ReverbZoneMix = AudioConsts.ReverbZoneMix;
-            DopplerLevel = AudioConsts.DopplerLevel;
-            Spread = AudioConsts.Spread;
-            MaxDistance = AudioConsts.MaxDistance;
-        }
+            PlayTime = 0,
+            Loop = AudioConsts.Loop,
+            Priority = AudioConsts.Priority,
+            Volume = AudioConsts.Volume,
+            Pitch = AudioConsts.Pitch,
+            StereoPan = AudioConsts.StereoPan,
+            SpatialBlend = AudioConsts.SpatialBlend,
+            ReverbZoneMix = AudioConsts.ReverbZoneMix,
+            DopplerLevel = AudioConsts.DopplerLevel,
+            Spread = AudioConsts.Spread,
+            MaxDistance = AudioConsts.MaxDistance
+        };
+        public  static AudioParams Default { get { return m_Default; } }
     }
 }
