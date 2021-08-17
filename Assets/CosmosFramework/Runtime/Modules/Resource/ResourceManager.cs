@@ -49,6 +49,8 @@ namespace Cosmos.Resource
             if (builtInChannelDict.TryGetValue(resourceLoadMode, out var channel))
                 await new WaitUntil(() => channel.ResourceLoadHelper.IsLoading == false);
             builtInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
+            if (currentResourceLoadMode== resourceLoadMode)
+                currentDefaultLoadHelper = loadHelper;
         }
         /// <summary>
         /// 使用默认加载模式；

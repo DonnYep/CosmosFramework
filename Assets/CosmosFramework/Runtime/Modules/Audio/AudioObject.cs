@@ -7,7 +7,7 @@ namespace Cosmos.Audio
     /// <summary>
     /// 声音对象；
     /// </summary>
-    public class AudioObject :IReference,IAudioObject
+    internal class AudioObject : IAudioObject,IReference
     {
         public string AudioName { get; set; }
         public virtual AudioClip AudioClip { get; set; }

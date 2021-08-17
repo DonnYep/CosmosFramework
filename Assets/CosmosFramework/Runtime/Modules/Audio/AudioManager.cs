@@ -6,28 +6,36 @@ namespace Cosmos.Audio
 {
     //================================================
     // 1、声音资源可设置组别，单体声音资源与组别的关系为一对多映射关系。
+    //
     // 2、注册的声音对象名都是唯一的，若重名，则覆写。命名时尽量安规则。
+    //
+    // 3、播放声音时传入的AudioPlayInfo拥有两个公共属性字段。若BindObject
+    // 不为空，则有限绑定，否则是WorldPosition；
     //================================================
     [Module]
-    internal sealed class AudioManager : Module//, IAudioManager
+    internal sealed class AudioManager : Module, IAudioManager
     {
         /// <summary>
         /// AduioGroupName===AudioGroup ;
         /// </summary>
-        Dictionary<string, AudioGroup> audioGroupDict;
+        Dictionary<string, IAudioGroup> audioGroupDict;
         /// <summary>
         /// AudioName===AudioObject ;
         /// </summary>
         Dictionary<string, IAudioObject> audioObjectDict;
-
+        /// <summary>
+        /// 声音资源加载帮助体；
+        /// </summary>
         IAudioAssetHelper audioAssetHelper;
-
+        /// <summary>
+        /// 声音播放帮助体；
+        /// </summary>
         IAudioPlayHelper audioPlayHelper;
-
+        /// <summary>
+        /// 声音组池；
+        /// </summary>
         AudioGroupPool audioGroupPool;
         Action<AudioRegistSuccessEventArgs> audioRegisterSuccess;
-
-
         Action<AudioRegistFailureEventArgs> audioRegisterFailure;
         /// <summary>
         /// 声音注册失败事件；
@@ -46,8 +54,26 @@ namespace Cosmos.Audio
             add { audioRegisterSuccess += value; }
             remove { audioRegisterSuccess -= value; }
         }
+        /// <summary>
+        /// 可播放的声音数量；
+        /// </summary>
         public int AudioCount { get { return audioObjectDict.Count; } }
+        /// <summary>
+        /// 静音；
+        /// </summary>
         public bool Mute { get { return audioPlayHelper.Mute; } set { audioPlayHelper.Mute = value; } }
+        public void SetAudioAssetHelper(IAudioAssetHelper helper)
+        {
+            if (helper == null)
+                throw new NullReferenceException("IAudioAssetHelper is invalid !");
+            this.audioAssetHelper = helper;
+        }
+        public void SetAudioPlayHelper(IAudioPlayHelper helper)
+        {
+            if (helper == null)
+                throw new NullReferenceException("IAudioPlayHelper  is invalid !");
+            this.audioPlayHelper = helper;
+        }
         public bool SetAuidoGroup(string audioName, string audioGroupName)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
@@ -71,30 +97,29 @@ namespace Cosmos.Audio
         /// </summary>
         public void RegistAudio(AudioAssetInfo audioAssetInfo)
         {
-            Utility.Text.IsStringValid(audioAssetInfo.AudioName, "AudioName is invalid !");
             var audioName = audioAssetInfo.AudioName;
             var audioGroupName = audioAssetInfo.AudioGroupName;
+            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
             audioAssetHelper.LoadAudioAsync(audioAssetInfo, audioObj =>
              {
                  if (audioObj != null)
                      OnAudioRegistSuccess(audioObj);
                  else
-                     OnAudioRegistFailure(audioAssetInfo.AudioName, audioAssetInfo.AudioGroupName);
+                     OnAudioRegistFailure(audioName, audioGroupName);
              });
         }
         /// <summary>
         /// 注销声音；
         /// </summary>
         /// <param name="audioName">声音名</param>
-        /// <returns>是否注销成功</returns>
-        public bool DeregisterAudio(string audioName)
+        public void DeregisterAudio(string audioName)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
             if (audioObjectDict.Remove(audioName, out var audioObject))
             {
                 var audioGroupName = audioObject.AudioGroupName;
                 if (string.IsNullOrEmpty(audioGroupName))
-                    return true;
+                    return ;
                 if (audioGroupDict.TryGetValue(audioGroupName, out var group))
                 {
                     group.RemoveAudio(audioName);
@@ -104,16 +129,10 @@ namespace Cosmos.Audio
                         audioGroupPool.Despawn(group);
                     }
                 }
-                return true;
             }
-            return false;
-        }
-        public void ClearAudioGroup(string audioGroupName)
-        {
-            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
-            if (audioGroupDict.TryGetValue(audioGroupName, out var group))
+            else
             {
-                group.RemoveAllAudios();
+                throw new ArgumentNullException($"IAudioObject {audioName} have not been registered ");
             }
         }
         public bool HasAudio(string audioName)
@@ -126,32 +145,22 @@ namespace Cosmos.Audio
             Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
             return audioGroupDict.ContainsKey(audioGroupName);
         }
-        public void PalyAudioGroup(string audioGroupName)
-        {
-            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
-            if (audioGroupDict.TryGetValue(audioGroupName, out var group))
-            {
-                var dict = group.AudioDict;
-                foreach (var obj in dict)
-                {
-                    audioPlayHelper.PlayAudio(obj.Value);
-                }
-            }
-            else
-            {
-                throw new NullReferenceException($"AudioGroup {audioGroupName} have not been registered ");
-            }
-        }
-        public void PalyAudio(string audioName, AudioParams audioParams,UnityEngine.Vector3 worldPosition)
+        /// <summary>
+        /// 播放声音；
+        /// </summary>
+        /// <param name="audioName">注册过的声音名</param>
+        /// <param name="audioParams">声音具体参数</param>
+        /// <param name="audioPlayInfo">声音播放时候的位置信息以及绑定对象等</param>
+        public void PalyAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
             if(audioObjectDict.TryGetValue(audioName,out var audioObject))
             {
-                audioPlayHelper.PlayAudio(audioObject,audioParams, worldPosition);
+                audioPlayHelper.PlayAudio(audioObject,audioParams, audioPlayInfo);
             }
             else
             {
-                throw new NullReferenceException("IAudioObject have not been registered ");
+                throw new ArgumentNullException($"Audio {audioName} have not been registered ");
             }
         }
         public void PauseAudioGroup(string audioGroupName)
@@ -167,7 +176,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new NullReferenceException($"AudioGroup {audioGroupName} have not been registered ");
+                throw new ArgumentNullException($"AudioGroup {audioGroupName} have not been registered ");
             }
         }
         public void PauseAudio(string audioName)
@@ -179,7 +188,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new NullReferenceException("IAudioObject have not been registered ");
+                throw new ArgumentNullException($"Audio {audioName} have not been registered ");
             }
         }
         public void UnPauseAudioGroup(string audioGroupName)
@@ -195,7 +204,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new NullReferenceException($"AudioGroup {audioGroupName} have not been registered ");
+                throw new ArgumentNullException($"AudioGroup {audioGroupName} have not been registered ");
             }
         }
         public void UnPauseAudio(string audioName)
@@ -223,7 +232,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new NullReferenceException($"AudioGroup {audioGroupName} have not been registered ");
+                throw new ArgumentNullException($"AudioGroup {audioGroupName} have not been registered ");
             }
         }
         public void StopAudio(string audioName)
@@ -235,7 +244,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new NullReferenceException("IAudioObject have not been registered ");
+                throw new ArgumentNullException($"Audio {audioName} have not been registered ");
             }
         }
         public void StopAllAudios()
@@ -252,18 +261,26 @@ namespace Cosmos.Audio
                 audioPlayHelper.PauseAudio(ao.Value);
             }
         }
+        public void ClearAudioGroup(string audioGroupName)
+        {
+            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
+            if (audioGroupDict.TryGetValue(audioGroupName, out var group))
+            {
+                group.RemoveAllAudios();
+            }
+        }
         protected override void OnInitialization()
         {
-            audioGroupDict = new Dictionary<string, AudioGroup>();
+            audioGroupDict = new Dictionary<string, IAudioGroup>();
             audioObjectDict = new Dictionary<string, IAudioObject>();
             audioGroupPool = new AudioGroupPool();
             audioAssetHelper = new DefaultAudioAssetHelper();
-            audioPlayHelper = new DefaultAudioPlayHepler();
+            audioPlayHelper = new DefaultAudioPlayHelper();
         }
-        //[TickRefresh]
+        [TickRefresh]
         void TickRefresh()
         {
-            
+            audioPlayHelper?.TickRefresh();
         }
         void OnAudioRegistFailure(string audioName, string audioGroupName)
         {
@@ -275,7 +292,7 @@ namespace Cosmos.Audio
         {
             var audioName = audioObject.AudioName;
             var audioGroupName = audioObject.AudioGroupName;
-            audioObjectDict.Add(audioName, audioObject);
+            audioObjectDict.AddOrUpdate(audioName, audioObject);
             if (!string.IsNullOrEmpty(audioGroupName))
             {
                 if (!audioGroupDict.TryGetValue(audioGroupName, out var group))

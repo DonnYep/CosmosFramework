@@ -12,7 +12,7 @@ namespace Cosmos.Audio
 
         public AudioSourcePool()
         {
-            audioSourcePool = new Pool<AudioSource>(OnGenerate, OnDespawn);
+            audioSourcePool = new Pool<AudioSource>(OnGenerate, OnSpawn,OnDespawn);
         }
         public void Despawn(AudioSource audioSource)
         {
@@ -28,10 +28,15 @@ namespace Cosmos.Audio
             go.transform.position = Vector3.zero;
             return go.AddComponent<AudioSource>();
         }
+        void OnSpawn(AudioSource audioSource)
+        {
+            audioSource.gameObject.SetActive(true);
+        }
         void OnDespawn(AudioSource audioSource)
         {
             audioSource.Reset();
             audioSource.transform.position = Vector3.zero;
+            audioSource.gameObject.SetActive(false);
         }
     }
 }

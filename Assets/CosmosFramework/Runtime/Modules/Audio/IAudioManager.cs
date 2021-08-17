@@ -1,8 +1,6 @@
 ﻿using Cosmos.Audio;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-
 namespace Cosmos
 {
     public interface IAudioManager :IModuleManager
@@ -16,8 +14,16 @@ namespace Cosmos
         /// 声音注册成功事件；
         /// </summary>
         event Action<AudioRegistSuccessEventArgs> AudioRegisterSuccess;
+        /// <summary>
+        /// 可播放的声音数量；
+        /// </summary>
         int AudioCount { get; }
+        /// <summary>
+        /// 静音；
+        /// </summary>
         bool Mute { get; set ;  }
+        void SetAudioAssetHelper(IAudioAssetHelper helper);
+        void SetAudioPlayHelper(IAudioPlayHelper helper);
         bool SetAuidoGroup(string audioName, string audioGroupName);
         /// <summary>
         ///注册声音；
@@ -28,13 +34,16 @@ namespace Cosmos
         /// 注销声音；
         /// </summary>
         /// <param name="audioName">声音名</param>
-        /// <returns>是否注销成功</returns>
-        bool DeregisterAudio(string audioName);
-        void ClearAudioGroup(string audioGroupName);
+        void DeregisterAudio(string audioName);
         bool HasAudio(string audioName);
         bool HasAudioGroup(string audioGroupName);
-        void PalyAudioGroup(string audioGroupName);
-        void PalyAudio(string audioName, AudioParams audioParams, UnityEngine.Vector3 worldPosition);
+        /// <summary>
+        /// 播放声音；
+        /// </summary>
+        /// <param name="audioName">注册过的声音名</param>
+        /// <param name="audioParams">声音具体参数</param>
+        /// <param name="audioPlayInfo">声音播放时候的位置信息以及绑定对象等</param>
+        void PalyAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo);
         void PauseAudioGroup(string audioGroupName);
         void PauseAudio(string audioName);
         void UnPauseAudioGroup(string audioGroupName);
@@ -43,5 +52,6 @@ namespace Cosmos
         void StopAudio(string audioName);
         void StopAllAudios();
         void PauseAllAudios();
+        void ClearAudioGroup(string audioGroupName);
     }
 }

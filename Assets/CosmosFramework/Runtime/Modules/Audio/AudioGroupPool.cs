@@ -9,18 +9,18 @@ namespace Cosmos.Audio
     /// <summary>
     /// 音效组池；
     /// </summary>
-    public class AudioGroupPool
+    internal class AudioGroupPool
     {
-        Pool<AudioGroup> audioGroupPool;
+        Pool<IAudioGroup> audioGroupPool;
         public AudioGroupPool()
         {
-            audioGroupPool = new Pool<AudioGroup>(() => { return new AudioGroup(); },ag=> { ag.Release(); });
+            audioGroupPool = new Pool<IAudioGroup>(() => { return new AudioGroup(); },ag=> { ag.Release(); });
         }
-        public void Despawn(AudioGroup audioGroup)
+        public void Despawn(IAudioGroup audioGroup)
         {
             audioGroupPool.Despawn(audioGroup);
         }
-        public AudioGroup Spawn()
+        public IAudioGroup Spawn()
         {
             return audioGroupPool.Spawn();
         }

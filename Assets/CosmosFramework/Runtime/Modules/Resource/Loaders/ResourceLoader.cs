@@ -17,7 +17,7 @@ namespace Cosmos
             var asset = Resources.LoadAll<T>(info.AssetPath);
             if (asset == null)
             {
-                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.AssetPath}！");
+                throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
             }
             return asset;
         }
@@ -26,7 +26,7 @@ namespace Cosmos
             var asset = Resources.Load<T>(info.AssetPath);
             if (asset == null)
             {
-                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.AssetPath}！");
+                throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
             }
             return asset;
         }
@@ -60,7 +60,7 @@ namespace Cosmos
             asset = request.asset;
             if (asset == null)
             {
-                throw new ArgumentNullException($"ResourceManager-->>加载资源失败：Resources文件夹中不存在资源 {info.AssetPath}！");
+                throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
             }
             else
             {

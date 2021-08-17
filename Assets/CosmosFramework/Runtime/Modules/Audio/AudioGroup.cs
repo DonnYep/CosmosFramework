@@ -11,7 +11,7 @@ namespace Cosmos.Audio
     /// 声音组；
     /// 这里声音组是一个容器，用于存储IAudioObject，逻辑由MGR执行；
     /// </summary>
-    public class AudioGroup
+    internal class AudioGroup: IAudioGroup
     {
         Dictionary<string, IAudioObject> audioDict = new Dictionary<string, IAudioObject>();
         public int AudioCount { get { return audioDict.Count; } }

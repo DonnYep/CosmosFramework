@@ -10,19 +10,20 @@ namespace Cosmos.Audio
     /// 声音播放代理对象；
     /// 派生自Mono，AudioSource代理；
     /// </summary>
-    public class DefaultAudioPlayHepler : IAudioPlayHelper
+    public class DefaultAudioPlayHelper : IAudioPlayHelper
     {
         AudioSourcePool pool;
         Dictionary<string, AudioSource> playingDict;
         Dictionary<string, AudioSource> pauseDict;
         List<string> deactiveCache;
-        DateTime latesetTime;
+        const string prefix = "SND-";
+        long latestTime;
         /// <summary>
         /// 间隔5秒；
         /// </summary>
         const int intervalSecond = 5;
         bool mute;
-        public bool Mute 
+        public bool Mute
         {
             get { return mute; }
             set
@@ -34,20 +35,27 @@ namespace Cosmos.Audio
                 }
             }
         }
-        public DefaultAudioPlayHepler()
+        public DefaultAudioPlayHelper()
         {
             pool = new AudioSourcePool();
             playingDict = new Dictionary<string, AudioSource>();
             pauseDict = new Dictionary<string, AudioSource>();
             deactiveCache = new List<string>();
-            latesetTime = DateTime.Now;
+            latestTime = Utility.Time.SecondNow();
         }
-        public void PlayAudio(IAudioObject audioObject, AudioParams audioParams,Vector3 wordPosition)
+        public void PlayAudio(IAudioObject audioObject, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
         {
             var audioSource = pool.Spawn();
-            audioSource.transform.SetParent(CosmosEntry.AudioMount.transform);
+            audioSource.name = prefix + audioObject.AudioName;
+            if (audioPlayInfo.BindObject == null)
+            {
+                audioSource.transform.SetParent(CosmosEntry.AudioMount.transform);
+                audioSource.transform.position = audioPlayInfo.WorldPosition;
+            }
+            else
+                audioSource.transform.SetParent(audioPlayInfo.BindObject);
             audioSource.clip = audioObject.AudioClip;
-            audioSource.loop = audioParams.Loop ;
+            audioSource.loop = audioParams.Loop;
             audioSource.priority = audioParams.Priority;
             audioSource.volume = audioParams.Volume;
             audioSource.pitch = audioParams.Pitch;
@@ -57,8 +65,8 @@ namespace Cosmos.Audio
             audioSource.dopplerLevel = audioParams.DopplerLevel;
             audioSource.spread = audioParams.Spread;
             audioSource.maxDistance = audioParams.MaxDistance;
-            audioSource.transform.position=wordPosition;
             audioSource.Play();
+            playingDict.AddOrUpdate(audioObject.AudioName, audioSource);
         }
         public void PauseAudio(IAudioObject audioObject)
         {
@@ -78,25 +86,26 @@ namespace Cosmos.Audio
         }
         public void StopAudio(IAudioObject audioObject)
         {
-            if(playingDict.TryGetValue(audioObject.AudioName,out var asObj))
+            if (playingDict.TryGetValue(audioObject.AudioName, out var asObj))
             {
                 asObj.Stop();
             }
         }
-        public void Update()
+        public void TickRefresh()
         {
-            if (latesetTime <DateTime.Now)
+            var now = Utility.Time.SecondNow();
+            if (latestTime > now)
             {
                 return;
             }
-            latesetTime += TimeSpan.FromSeconds(intervalSecond);
+            latestTime = now + intervalSecond;
             var activeLength = playingDict.Count;
             if (activeLength == 0)
                 return;
             deactiveCache.Clear();
             foreach (var ao in playingDict)
             {
-                if (!ao.Value.isPlaying)
+                if (!ao.Value.isPlaying || ao.Value == null)
                 {
                     deactiveCache.Add(ao.Key);
                 }
@@ -108,7 +117,11 @@ namespace Cosmos.Audio
             {
                 if (playingDict.Remove(deactiveCache[i], out var asObj))
                 {
-                    pool.Despawn(asObj);
+                    if (asObj != null)
+                    {
+                        asObj.name = prefix;
+                        pool.Despawn(asObj);
+                    }
                 }
             }
         }
