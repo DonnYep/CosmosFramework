@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public interface IDataManager :IModuleManager
+    public interface IDataNodeManager :IModuleManager
     {
         /// 获取根数据结点。
         /// </summary>

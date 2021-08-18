@@ -173,7 +173,9 @@ namespace CosmosEditor.Quark
                     for (int i = 0; i < projLength; i++)
                     {
                         var lowerExtension = file.Extension.ToLower();
-                        if (QuarkConsts.Extensions[i].Equals(lowerExtension))
+                        var quarkLowerExt = QuarkConsts.Extensions[i].ToLower();
+
+                        if (quarkLowerExt==lowerExtension)
                         {
                             var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
                             var assetName = file.Name.Replace(file.Extension, string.Empty);
@@ -224,7 +226,8 @@ namespace CosmosEditor.Quark
                 for (int i = 0; i < length; i++)
                 {
                     var lowerExtension = file.Extension.ToLower();
-                    if (QuarkConsts.Extensions[i].Equals(lowerExtension))
+                    var quarkLowerExt = QuarkConsts.Extensions[i].ToLower();
+                    if (quarkLowerExt==lowerExtension)
                     {
                         var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
                         assetPath = assetPath.Replace("\\", "/");

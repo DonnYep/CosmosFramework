@@ -45,6 +45,19 @@ namespace Cosmos.Audio
         }
         public void PlayAudio(IAudioObject audioObject, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
         {
+            if (playingDict.TryGetValue(audioObject.AudioName,out var playingAS))
+            {
+                playingAS.time = 0;
+                playingAS.Play();
+                return;
+            }
+            if(pauseDict.TryRemove(audioObject.AudioName,out var asObj))
+            {
+                playingDict.Add(audioObject.AudioName, asObj);
+                asObj.time = 0;
+                asObj.Play();
+                return;
+            }
             var audioSource = pool.Spawn();
             audioSource.name = prefix + audioObject.AudioName;
             if (audioPlayInfo.BindObject == null)
@@ -86,9 +99,17 @@ namespace Cosmos.Audio
         }
         public void StopAudio(IAudioObject audioObject)
         {
-            if (playingDict.TryGetValue(audioObject.AudioName, out var asObj))
+            if (pauseDict.Remove(audioObject.AudioName, out var asObj))
             {
                 asObj.Stop();
+                playingDict.Add(audioObject.AudioName, asObj);
+            }
+            else
+            {
+                if (playingDict.TryGetValue(audioObject.AudioName, out var asrc))
+                {
+                    asrc.Stop();
+                }
             }
         }
         public void TickRefresh()

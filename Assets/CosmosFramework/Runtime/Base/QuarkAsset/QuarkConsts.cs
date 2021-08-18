@@ -12,6 +12,7 @@
         public const string ManifestName = "Manifest.json";
         /// <summary>
         /// Quark可识别的文件后缀名；
+        /// 大小写不敏感；
         /// </summary>
         public static string[] Extensions { get { return extensions; } }
         readonly static string[] extensions = new string[]
@@ -21,7 +22,7 @@
         ".wav",".txt",".prefab",".xml",".shadervariants",".shader",".anim",
         ".unity",".mat",".mask",".overrideController",".tif",".spriteatlas",
         ".mp3",".ogg",".aiff",".tga",".dds",".bytes",".json",".asset",".mp4",
-        ".xls",".xlsx",".docx",".doc",".mov"
+        ".xls",".xlsx",".docx",".doc",".mov",".renderTexture"
         };
     }
 }

@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public interface IConfigProvider
+    public interface IConfigHelper
     {
-        void LoadConfig();
     }
 }

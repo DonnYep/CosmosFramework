@@ -162,26 +162,6 @@ namespace Cosmos.Config
         {
             configDataDict = new Dictionary<string, ConfigData>();
         }
-        protected override void OnPreparatory()
-        {
-            var assemblies = GameManager.Assemblies;
-            var length = assemblies.Length;
-            for (int i = 0; i < length; i++)
-            {
-                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementerAttribute, IConfigProvider>(assemblies[i]);
-                for (int j = 0; j < objs.Length; j++)
-                {
-                    try
-                    {
-                        objs[j].LoadConfig();
-                    }
-                    catch (Exception e)
-                    {
-                        Utility.Debug.LogError(e);
-                    }
-                }
-            }
-        }
         ConfigData? GetConfigData(string configName)
         {
             ConfigData data;

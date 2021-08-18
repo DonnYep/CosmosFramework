@@ -36,7 +36,10 @@ namespace Cosmos
             add { elapseRefreshHandler += value; }
             remove { elapseRefreshHandler -= value; }
         }
-        internal static System.Reflection.Assembly[] Assemblies { get; private set; }
+        /// <summary>
+        /// Runtime所包含的程序集；
+        /// </summary>
+        public static System.Reflection.Assembly[] Assemblies { get; private set; }
         static Action fixedRefreshHandler;
         static Action lateRefreshHandler;
         static Action tickRefreshHandler;

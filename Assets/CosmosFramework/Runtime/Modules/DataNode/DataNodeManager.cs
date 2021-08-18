@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Cosmos.Data
 {
     [Module]
-    internal sealed partial class DataManager : Module, IDataManager
+    internal sealed partial class DataNodeManager : Module, IDataNodeManager
     {
         #region Properties
         private static readonly string[] EmptyStringArray = new string[] { };
@@ -210,26 +210,9 @@ namespace Cosmos.Data
         {
             rootNode.ClearNode();
         }
-        protected override void OnActive()
+        protected override void OnInitialization()
         {
             rootNode = DataNode.Create(RootName, null);
-            var assemblies = GameManager.Assemblies;
-            var length = assemblies.Length;
-            for (int i = 0; i < length; i++)
-            {
-                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementerAttribute, IDataProvider>(assemblies[i]);
-                for (int j = 0; j < objs.Length; j++)
-                {
-                    try
-                    {
-                        objs[i]?.LoadData();
-                    }
-                    catch (Exception e)
-                    {
-                        Utility.Debug.LogError(e);
-                    }
-                }
-            }
         }
         /// <summary>
         /// 数据结点路径切分工具函数。

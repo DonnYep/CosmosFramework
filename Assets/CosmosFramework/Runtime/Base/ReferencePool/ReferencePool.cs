@@ -144,7 +144,7 @@ namespace Cosmos
                 throw new ArgumentNullException("Reference type is invalid !");
             if (!type.IsClass || type.IsAbstract)
                 throw new ArgumentException("Reference type is not a non-abstract class type !");
-            if (typeof(IReference).IsAssignableFrom(type))
+            if (!typeof(IReference).IsAssignableFrom(type))
                 throw new ArgumentException("Reference type is not inherit from IReference!");
         }
         static ReferPool<IReference> GetReferencePool(Type type)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos.Data
 {
-    internal sealed partial class DataManager
+    internal sealed partial class DataNodeManager
     {
         /// <summary>
         /// 数据结点。

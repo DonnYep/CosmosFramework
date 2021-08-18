@@ -49,7 +49,7 @@ namespace Cosmos
         public static IResourceManager ResourceManager { get { return GameManager.GetModule<IResourceManager>(); } }
         public static IUIManager UIManager { get { return GameManager.GetModule<IUIManager>(); } }
         public static IHotfixManager HotfixManager { get { return GameManager.GetModule<IHotfixManager>(); } }
-        public static IDataManager DataManager { get { return GameManager.GetModule<IDataManager>(); } }
+        public static IDataNodeManager DataManager { get { return GameManager.GetModule<IDataNodeManager>(); } }
         public static IEntityManager EntityManager { get { return GameManager.GetModule<IEntityManager>(); } }
         public static IEventManager EventManager { get { return GameManager.GetModule<IEventManager>(); } }
         public static ISceneManager SceneManager { get { return GameManager.GetModule<ISceneManager>(); } }
@@ -66,7 +66,7 @@ namespace Cosmos
         public static GameObject ResourceMount { get { return GameManager.GetModuleMount<IResourceManager>(); } }
         public static GameObject UIMount { get { return GameManager.GetModuleMount<IUIManager>(); } }
         public static GameObject HotfixMount { get { return GameManager.GetModuleMount<IHotfixManager>(); } }
-        public static GameObject DataMount { get { return GameManager.GetModuleMount<IDataManager>(); } }
+        public static GameObject DataMount { get { return GameManager.GetModuleMount<IDataNodeManager>(); } }
         public static GameObject EntityMount { get { return GameManager.GetModuleMount<IEntityManager>(); } }
         public static GameObject EventMount { get { return GameManager.GetModuleMount<IEventManager>(); } }
         public static GameObject SceneMount { get { return GameManager.GetModuleMount<ISceneManager>(); } }
