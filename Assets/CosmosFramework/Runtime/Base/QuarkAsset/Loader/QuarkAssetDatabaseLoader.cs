@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 using Cosmos;
 namespace Quark.Loader
 {
-    public class QuarkAssetDatabaseLoader : IQuarkAssetLoader
+    internal class QuarkAssetDatabaseLoader : IQuarkAssetLoader
     {
         /// <summary>
         /// AssetDataBase模式下资源的映射字典；
@@ -28,7 +28,7 @@ namespace Quark.Loader
         {
             SetAssetDatabaseModeData(customeData as QuarkAssetDataset);
         }
-        public T LoadAsset<T>(string assetName, string assetExtension, bool instantiate = false) where T : UnityEngine.Object
+        public T LoadAsset<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
 #if UNITY_EDITOR
             if (string.IsNullOrEmpty(assetName))
@@ -38,12 +38,10 @@ namespace Quark.Loader
                 throw new Exception("QuarkAsset 未执行 build 操作！");
             if (assetDatabaseMap.TryGetValue(assetName, out var lnk))
                 quarkAssetDatabaseObject = GetAssetDatabaseObject(lnk, assetExtension);
-            if (quarkAssetDatabaseObject!=null)
+            if (quarkAssetDatabaseObject != null)
             {
                 var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetDatabaseObject.AssetGuid);
                 var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(guid2path);
-                if (instantiate)
-                    return GameObject.Instantiate(asset);
                 return asset;
             }
             else
@@ -52,17 +50,25 @@ namespace Quark.Loader
                 return null;
 #endif
         }
+        public GameObject LoadPrefab(string assetName, string assetExtension, bool instantiate = false)
+        {
+            var resGGo = LoadAsset<GameObject>(assetName, assetExtension);
+            if (instantiate)
+                return GameObject.Instantiate(resGGo);
+            else
+                return resGGo;
+        }
+        public Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadPrefabtAsync(assetName, assetExtension, callback, instantiate));
+        }
         public Coroutine LoadScenetAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progress, callback, additive));
         }
-        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object
+        public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object
         {
-            return QuarkUtility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, string.Empty, callback, instantiate));
-        }
-        public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object
-        {
-            return QuarkUtility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, assetExtension, callback, instantiate));
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, assetExtension, callback));
         }
         public void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
@@ -100,11 +106,25 @@ namespace Quark.Loader
         {
             return hashQuarkObjectInfoDict.Values.ToArray();
         }
-        IEnumerator EnumLoadAsssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object
+        IEnumerator EnumLoadAsssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object
         {
-            var asset = LoadAsset<T>(assetName, assetExtension, instantiate);
+            var asset = LoadAsset<T>(assetName, assetExtension);
             yield return null;
             callback?.Invoke(asset);
+        }
+        IEnumerator EnumLoadPrefabtAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate)
+        {
+            var resGo= LoadAsset<GameObject>(assetName, assetExtension);
+            yield return null;
+            if (instantiate)
+            {
+                var go = GameObject.Instantiate(resGo);
+                callback?.Invoke(go);
+            }
+            else
+            {
+                callback?.Invoke(resGo);
+            }
         }
         IEnumerator EnumLoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive)
         {
@@ -182,5 +202,6 @@ namespace Quark.Loader
             var info = hashQuarkObjectInfoDict[hashCode];
             hashQuarkObjectInfoDict[hashCode] = info--;
         }
+
     }
 }

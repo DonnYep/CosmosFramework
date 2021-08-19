@@ -1,0 +1,503 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LockstepMath</name>
+    </assembly>
+    <members>
+        <member name="M:Lockstep.Math.LFloat.#ctor(System.Boolean,System.Int32)">
+            <summary>
+            传入的是正常数放大1000 的数值
+            </summary>
+            <param name="rawVal"></param>
+        </member>
+        <member name="M:Lockstep.Math.LFloat.#ctor(System.Boolean,System.Int64)">
+            <summary>
+            传入的是正常数放大1000 的数值
+            </summary>
+            <param name="rawVal"></param>
+        </member>
+        <member name="M:Lockstep.Math.LMatrix33.GetColumn(System.Int32)">
+            <summary>
+              <para>Get a column of the matrix.</para>
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:Lockstep.Math.LMatrix33.GetRow(System.Int32)">
+            <summary>
+              <para>Returns a row of the matrix.</para>
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:Lockstep.Math.LMatrix33.SetColumn(System.Int32,Lockstep.Math.LVector3)">
+            <summary>
+              <para>Sets a column of the matrix.</para>
+            </summary>
+            <param name="index"></param>
+            <param name="column"></param>
+        </member>
+        <member name="M:Lockstep.Math.LMatrix33.SetRow(System.Int32,Lockstep.Math.LVector3)">
+            <summary>
+              <para>Sets a row of the matrix.</para>
+            </summary>
+            <param name="index"></param>
+            <param name="row"></param>
+        </member>
+        <member name="F:Lockstep.Math.LVector2.ROTATE_CW_90">
+            <summary>
+            顺时针旋转90Deg 参数
+            </summary>
+        </member>
+        <member name="M:Lockstep.Math.LVector2.Rotate(Lockstep.Math.LVector2,System.Int32)">
+            <summary>
+            clockwise 顺时针旋转  
+            1表示顺时针旋转 90 degree
+            2表示顺时针旋转 180 degree
+            </summary>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.Mathf.Min(System.Int32,System.Int32)">
+            <summary>
+              <para>Returns the smallest of two or more values.</para>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <param name="values"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.Mathf.Max(System.Int32,System.Int32)">
+            <summary>
+              <para>Returns the largest of two or more values.</para>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <param name="values"></param>
+        </member>
+        <member name="P:Lockstep.Math.LVector2Int.x">
+            <summary>
+              <para>X component of the vector.</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector2Int.y">
+            <summary>
+              <para>Y component of the vector.</para>
+            </summary>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.Set(System.Int32,System.Int32)">
+            <summary>
+              <para>Set x and y components of an existing Vector2Int.</para>
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+        </member>
+        <member name="P:Lockstep.Math.LVector2Int.magnitude">
+            <summary>
+              <para>Returns the length of this vector (Read Only).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector2Int.sqrMagnitude">
+            <summary>
+              <para>Returns the squared length of this vector (Read Only).</para>
+            </summary>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.Distance(Lockstep.Math.LVector2Int,Lockstep.Math.LVector2Int)">
+            <summary>
+              <para>Returns the distance between a and b.</para>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.Min(Lockstep.Math.LVector2Int,Lockstep.Math.LVector2Int)">
+            <summary>
+              <para>Returns a vector that is made from the smallest components of two vectors.</para>
+            </summary>
+            <param name="lhs"></param>
+            <param name="rhs"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.Max(Lockstep.Math.LVector2Int,Lockstep.Math.LVector2Int)">
+            <summary>
+              <para>Returns a vector that is made from the largest components of two vectors.</para>
+            </summary>
+            <param name="lhs"></param>
+            <param name="rhs"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.Scale(Lockstep.Math.LVector2Int,Lockstep.Math.LVector2Int)">
+            <summary>
+              <para>Multiplies two vectors component-wise.</para>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.Scale(Lockstep.Math.LVector2Int)">
+            <summary>
+              <para>Multiplies every component of this vector by the same component of scale.</para>
+            </summary>
+            <param name="scale"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.Clamp(Lockstep.Math.LVector2Int,Lockstep.Math.LVector2Int)">
+            <summary>
+              <para>Clamps the Vector2Int to the bounds given by min and max.</para>
+            </summary>
+            <param name="min"></param>
+            <param name="max"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.Equals(System.Object)">
+            <summary>
+              <para>Returns true if the objects are equal.</para>
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.GetHashCode">
+            <summary>
+              <para>Gets the hash code for the Vector2Int.</para>
+            </summary>
+            <returns>
+              <para>The hash code of the Vector2Int.</para>
+            </returns>
+        </member>
+        <member name="M:Lockstep.Math.LVector2Int.ToString">
+            <summary>
+              <para>Returns a nicely formatted string for this vector.</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector2Int.zero">
+            <summary>
+              <para>Shorthand for writing Vector2Int (0, 0).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector2Int.one">
+            <summary>
+              <para>Shorthand for writing Vector2Int (1, 1).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector2Int.up">
+            <summary>
+              <para>Shorthand for writing Vector2Int (0, 1).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector2Int.down">
+            <summary>
+              <para>Shorthand for writing Vector2Int (0, -1).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector2Int.left">
+            <summary>
+              <para>Shorthand for writing Vector2Int (-1, 0).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector2Int.right">
+            <summary>
+              <para>Shorthand for writing Vector2Int (1, 0).</para>
+            </summary>
+        </member>
+        <member name="M:Lockstep.Math.LVector3.#ctor(System.Boolean,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            将这些值作为内部值 直接构造(高效) （仅用于内部实现，外部不建议使用）
+            </summary>
+        </member>
+        <member name="M:Lockstep.Math.LVector3.#ctor(System.Boolean,System.Int64,System.Int64,System.Int64)">
+            <summary>
+            将这些值作为内部值 直接构造(高效) （仅用于内部实现，外部不建议使用）
+            </summary>
+        </member>
+        <member name="T:Lockstep.Math.LVector3Int">
+            <summary>
+              <para>Representation of 3D vectors and points using integers.</para>
+            </summary>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.Mathf.Min(System.Int32,System.Int32)">
+            <summary>
+              <para>Returns the smallest of two or more values.</para>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <param name="values"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.Mathf.Max(System.Int32,System.Int32)">
+            <summary>
+              <para>Returns the largest of two or more values.</para>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <param name="values"></param>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.x">
+            <summary>
+              <para>X component of the vector.</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.y">
+            <summary>
+              <para>Y component of the vector.</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.z">
+            <summary>
+              <para>Z component of the vector.</para>
+            </summary>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.Set(System.Int32,System.Int32,System.Int32)">
+            <summary>
+              <para>Set x, y and z components of an existing Vector3Int.</para>
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="z"></param>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.magnitude">
+            <summary>
+              <para>Returns the length of this vector (Read Only).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.sqrMagnitude">
+            <summary>
+              <para>Returns the squared length of this vector (Read Only).</para>
+            </summary>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.Distance(Lockstep.Math.LVector3Int,Lockstep.Math.LVector3Int)">
+            <summary>
+              <para>Returns the distance between a and b.</para>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.Min(Lockstep.Math.LVector3Int,Lockstep.Math.LVector3Int)">
+            <summary>
+              <para>Returns a vector that is made from the smallest components of two vectors.</para>
+            </summary>
+            <param name="lhs"></param>
+            <param name="rhs"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.Max(Lockstep.Math.LVector3Int,Lockstep.Math.LVector3Int)">
+            <summary>
+              <para>Returns a vector that is made from the largest components of two vectors.</para>
+            </summary>
+            <param name="lhs"></param>
+            <param name="rhs"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.Scale(Lockstep.Math.LVector3Int,Lockstep.Math.LVector3Int)">
+            <summary>
+              <para>Multiplies two vectors component-wise.</para>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.Scale(Lockstep.Math.LVector3Int)">
+            <summary>
+              <para>Multiplies every component of this vector by the same component of scale.</para>
+            </summary>
+            <param name="scale"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.Clamp(Lockstep.Math.LVector3Int,Lockstep.Math.LVector3Int)">
+            <summary>
+              <para>Clamps the Vector3Int to the bounds given by min and max.</para>
+            </summary>
+            <param name="min"></param>
+            <param name="max"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.Equals(System.Object)">
+            <summary>
+              <para>Returns true if the objects are equal.</para>
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.GetHashCode">
+            <summary>
+              <para>Gets the hash code for the Vector3Int.</para>
+            </summary>
+            <returns>
+              <para>The hash code of the Vector3Int.</para>
+            </returns>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.ToString">
+            <summary>
+              <para>Returns a nicely formatted string for this vector.</para>
+            </summary>
+            <param name="format"></param>
+        </member>
+        <member name="M:Lockstep.Math.LVector3Int.ToString(System.String)">
+            <summary>
+              <para>Returns a nicely formatted string for this vector.</para>
+            </summary>
+            <param name="format"></param>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.zero">
+            <summary>
+              <para>Shorthand for writing Vector3Int (0, 0, 0).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.one">
+            <summary>
+              <para>Shorthand for writing Vector3Int (1, 1, 1).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.up">
+            <summary>
+              <para>Shorthand for writing Vector3Int (0, 1, 0).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.down">
+            <summary>
+              <para>Shorthand for writing Vector3Int (0, -1, 0).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.left">
+            <summary>
+              <para>Shorthand for writing Vector3Int (-1, 0, 0).</para>
+            </summary>
+        </member>
+        <member name="P:Lockstep.Math.LVector3Int.right">
+            <summary>
+              <para>Shorthand for writing Vector3Int (1, 0, 0).</para>
+            </summary>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.Angle(LockStepLMath.LQuaternion,LockStepLMath.LQuaternion)">
+            <summary>
+            夹角大小
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.AngleAxis(Lockstep.Math.LFloat,Lockstep.Math.LVector3)">
+            <summary>
+            轴向旋转
+            </summary>
+            <param name="angle"></param>
+            <param name="axis"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.Dot(LockStepLMath.LQuaternion,LockStepLMath.LQuaternion)">
+            <summary>
+            点乘
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.Euler(Lockstep.Math.LVector3)">
+            <summary>
+            欧拉角转四元数
+            </summary>
+            <param name="euler"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.Euler(Lockstep.Math.LFloat,Lockstep.Math.LFloat,Lockstep.Math.LFloat)">
+            <summary>
+            欧拉角转四元数
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="z"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.FromToRotation(Lockstep.Math.LVector3,Lockstep.Math.LVector3)">
+            <summary>
+            向量间的角度
+            </summary>
+            <param name="fromDirection"></param>
+            <param name="toDirection"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.Inverse(LockStepLMath.LQuaternion)">
+            <summary>
+            四元数的逆
+            </summary>
+            <param name="rotation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.Lerp(LockStepLMath.LQuaternion,LockStepLMath.LQuaternion,Lockstep.Math.LFloat)">
+            <summary>
+            线性插值
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.LerpUnclamped(LockStepLMath.LQuaternion,LockStepLMath.LQuaternion,Lockstep.Math.LFloat)">
+            <summary>
+            线性插值(无限制)
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.LookRotation(Lockstep.Math.LVector3)">
+            <summary>
+            注视旋转
+            </summary>
+            <param name="forward"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.LookRotation(Lockstep.Math.LVector3,Lockstep.Math.LVector3)">
+            <summary>
+            注视旋转
+            </summary>
+            <param name="forward"></param>
+            <param name="upwards"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.RotateTowards(LockStepLMath.LQuaternion,LockStepLMath.LQuaternion,Lockstep.Math.LFloat)">
+            <summary>
+            向目标角度旋转
+            </summary>
+            <param name="from"></param>
+            <param name="to"></param>
+            <param name="maxDegreesDelta"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.Slerp(LockStepLMath.LQuaternion,LockStepLMath.LQuaternion,Lockstep.Math.LFloat)">
+            <summary>
+            球形插值
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.SlerpUnclamped(LockStepLMath.LQuaternion,LockStepLMath.LQuaternion,Lockstep.Math.LFloat)">
+            <summary>
+            球形插值(无限制)
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.Set(Lockstep.Math.LFloat,Lockstep.Math.LFloat,Lockstep.Math.LFloat,Lockstep.Math.LFloat)">
+            <summary>
+            设置四元数
+            </summary>
+            <param name="new_x"></param>
+            <param name="new_y"></param>
+            <param name="new_z"></param>
+            <param name="new_w"></param>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.SetFromToRotation(Lockstep.Math.LVector3,Lockstep.Math.LVector3)">
+            <summary>
+            设置角度
+            </summary>
+            <param name="fromDirection"></param>
+            <param name="toDirection"></param>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.SetLookRotation(Lockstep.Math.LVector3)">
+            <summary>
+            设置注视旋转
+            </summary>
+            <param name="view"></param>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.SetLookRotation(Lockstep.Math.LVector3,Lockstep.Math.LVector3)">
+            <summary>
+            设置注视旋转
+            </summary>
+            <param name="view"></param>
+            <param name="up"></param>
+        </member>
+        <member name="M:LockStepLMath.LQuaternion.ToAngleAxis(Lockstep.Math.LFloat@,Lockstep.Math.LVector3@)">
+            <summary>
+            转换为角轴
+            </summary>
+            <param name="angle"></param>
+            <param name="axis"></param>
+        </member>
+    </members>
+</doc>

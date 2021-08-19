@@ -14,7 +14,7 @@ using Utility = Cosmos.Utility;
 
 namespace Quark.Loader
 {
-    public class QuarkAssetBundleLoader : IQuarkAssetLoader
+    internal class QuarkAssetBundleLoader : IQuarkAssetLoader
     {
         string PersistentPath { get { return QuarkDataProxy.PersistentPath; } }
         /// <summary>
@@ -41,7 +41,7 @@ namespace Quark.Loader
         {
             SetBuiltAssetBundleModeData(customeData as QuarkManifest);
         }
-        public T LoadAsset<T>(string assetName, string assetExtension, bool instantiate = false) where T : UnityEngine.Object
+        public T LoadAsset<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
             T asset = null;
             string assetBundleName = string.Empty;
@@ -77,16 +77,12 @@ namespace Quark.Loader
                     if (asset != null)
                     {
                         IncrementQuarkObjectInfo(abObject);
-                        if (instantiate)
-                        {
-                            asset = GameObject.Instantiate(asset);
-                        }
                     }
                 }
                 else
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
-                    assetBundle= AssetBundle.LoadFromFile(abPath);
+                    assetBundle = AssetBundle.LoadFromFile(abPath);
                     assetBundleDict.TryAdd(assetBundleName, assetBundle);
 
                     QuarkBuildInfo.AssetData buildInfo = null;
@@ -125,10 +121,6 @@ namespace Quark.Loader
                             if (asset != null)
                             {
                                 IncrementQuarkObjectInfo(abObject);
-                                if (instantiate)
-                                {
-                                    asset = GameObject.Instantiate(asset);
-                                }
                             }
                         }
                     }
@@ -136,13 +128,35 @@ namespace Quark.Loader
             }
             return asset;
         }
-        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object
+        public GameObject LoadPrefab(string assetName, string assetExtension, bool instantiate = false)
         {
-            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, string.Empty, callback, instantiate));
+            var resGo = LoadAsset<GameObject>(assetName, null);
+            if (instantiate)
+            {
+                var go = GameObject.Instantiate(resGo);
+                return go;
+            }
+            else
+                return resGo;
         }
-        public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object
+        public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object
         {
-            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, assetExtension, callback, instantiate));
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, assetExtension, callback));
+        }
+        public Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync<GameObject>(assetName, assetExtension, (resGo) =>
+            {
+                if (instantiate)
+                {
+                    var go = GameObject.Instantiate(resGo);
+                    callback.Invoke(go);
+                }
+                else
+                {
+                    callback.Invoke(resGo);
+                }
+            }));
         }
         public Coroutine LoadScenetAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
@@ -194,7 +208,7 @@ namespace Quark.Loader
         {
             return hashQuarkObjectInfoDict.Values.ToArray();
         }
-        IEnumerator EnumLoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false)
+        IEnumerator EnumLoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback)
 where T : UnityEngine.Object
         {
             T asset = null;
@@ -240,14 +254,9 @@ where T : UnityEngine.Object
                 if (asset != null)
                 {
                     IncrementQuarkObjectInfo(abObject);
-                    if (instantiate)
-                    {
-                        asset = GameObject.Instantiate(asset);
-                    }
                 }
             }
-            if (asset != null)
-                callback?.Invoke(asset);
+            callback?.Invoke(asset);
         }
         IEnumerator EnumLoadDependenciesAssetBundleAsync(string assetBundleName)
         {

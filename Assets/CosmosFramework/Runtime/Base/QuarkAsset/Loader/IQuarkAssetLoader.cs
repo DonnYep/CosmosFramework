@@ -14,10 +14,11 @@ namespace Quark.Loader
     public interface IQuarkAssetLoader
     {
         void SetLoaderData(object customeData);
-        T LoadAsset<T>(string assetName, string assetExtension, bool instantiate = false) where T : UnityEngine.Object;
+        T LoadAsset<T>(string assetName, string assetExtension) where T : UnityEngine.Object;
+        GameObject LoadPrefab(string assetName, string assetExtension, bool instantiate = false);
+        Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object;
+        Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false);
         Coroutine LoadScenetAsync(string sceneName, Action<float> progress, Action callback, bool additive = false);
-        Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object;
-        Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false) where T : UnityEngine.Object;
         void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false);
         void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false);
         QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object;

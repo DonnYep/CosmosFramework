@@ -155,31 +155,36 @@ namespace Quark
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode.AssetDatabase, out var loader))
                 loader.SetLoaderData(assetData);
         }
-        internal T LoadAsset<T>(string assetName, string assetExtension, bool instantiate = false)
+        internal T LoadAsset<T>(string assetName, string assetExtension)
 where T : UnityEngine.Object
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                return loader.LoadAsset<T>(assetName, assetExtension, instantiate);
+                return loader.LoadAsset<T>(assetName, assetExtension);
+            return null;
+        }
+        internal GameObject LoadPrefab(string assetName, string assetExtension, bool instantiate = false)
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.LoadPrefab(assetName, assetExtension, instantiate);
+            return null;
+        }
+        internal Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback)
+where T : UnityEngine.Object
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                loader.LoadAssetAsync(assetName, assetExtension, callback);
+            return null;
+        }
+        internal Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.LoadPrefabAsync(assetName, assetExtension, callback,instantiate );
             return null;
         }
         internal Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
                 return loader.LoadScenetAsync(sceneName, progress, callback, additive);
-            return null;
-        }
-        internal Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, bool instantiate = false)
-where T : UnityEngine.Object
-        {
-            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.LoadAssetAsync(assetName, callback, instantiate);
-            return null;
-        }
-        internal Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback, bool instantiate = false)
-where T : UnityEngine.Object
-        {
-            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.LoadAssetAsync(assetName, assetExtension, callback, instantiate);
             return null;
         }
         internal void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
