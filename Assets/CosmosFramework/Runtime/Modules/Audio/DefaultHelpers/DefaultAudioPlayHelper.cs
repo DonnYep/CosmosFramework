@@ -8,7 +8,7 @@ namespace Cosmos.Audio
 {
     /// <summary>
     /// 声音播放代理对象；
-    /// 派生自Mono，AudioSource代理；
+    /// AudioSource代理；
     /// </summary>
     public class DefaultAudioPlayHelper : IAudioPlayHelper
     {

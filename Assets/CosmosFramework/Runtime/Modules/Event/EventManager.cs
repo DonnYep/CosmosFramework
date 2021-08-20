@@ -4,26 +4,27 @@ using System;
 namespace Cosmos.Event
 {
     [Module]
-    internal sealed class EventManager : Module, IEventManager
+    internal sealed partial class EventManager : Module, IEventManager
     {
-        Dictionary<string, EventHandler<GameEventArgs>> eventDict;
+        Dictionary<string, EventNode> eventDict;
+        public int EventCount { get { return eventDict.Count; } }
         /// <summary>
         /// 添加事件
         /// </summary>
         /// <param name="eventKey">事件的key，可以是对象，字符</param>
         /// <param name="handler">事件处理者</param>
-        public void AddListener(string eventKey, EventHandler< GameEventArgs> handler)
+        public void AddListener(string eventKey, EventHandler<GameEventArgs> handler)
         {
             if (string.IsNullOrEmpty(eventKey))
                 throw new ArgumentNullException("EventKey is invalid !");
             if (eventDict.ContainsKey(eventKey))
             {
-                eventDict[eventKey] += handler;
+                eventDict[eventKey].EventHandler += handler;
             }
             else
             {
-                eventDict.TryAdd(eventKey, null);
-                eventDict[eventKey] += handler;
+                eventDict.TryAdd(eventKey, new EventNode());
+                eventDict[eventKey].EventHandler += handler;
             }
         }
         /// <summary>
@@ -35,10 +36,10 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
                 throw new ArgumentNullException("EventKey is invalid !");
-            if (eventDict.ContainsKey(eventKey))
+            if (eventDict.TryGetValue(eventKey, out var node))
             {
-                eventDict[eventKey] -= hander;
-                if (eventDict[eventKey] == null)
+                node.EventHandler -= hander;
+                if (node.ListenerCount <= 0)
                 {
                     eventDict.Remove(eventKey);
                 }
@@ -53,12 +54,9 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
                 throw new ArgumentNullException("EventKey is invalid !");
-            if (eventDict.ContainsKey(eventKey))
+            if (eventDict.TryGetValue(eventKey, out var node))
             {
-                if (eventDict[eventKey] != null)
-                {
-                    eventDict[eventKey](sender, args);
-                }
+                eventDict[eventKey].DispatchEvent(sender, args);
             }
             else
                 throw new ArgumentNullException($"EventKey {eventKey} has not  registered !");
@@ -66,15 +64,11 @@ namespace Cosmos.Event
         /// <summary>
         /// 注销并移除事件
         /// </summary>
-        public void DeregisterEvent(string eventKey)
+        public bool DeregisterEvent(string eventKey)
         {
             if (string.IsNullOrEmpty(eventKey))
                 throw new ArgumentNullException("EventKey is invalid !");
-            if (eventDict.ContainsKey(eventKey))
-            {
-                eventDict[eventKey] = null;
-                eventDict.Remove(eventKey);
-            }
+            return eventDict.Remove(eventKey);
         }
         /// <summary>
         /// 在事件中心注册一个空的事件
@@ -86,7 +80,7 @@ namespace Cosmos.Event
                 throw new ArgumentNullException("EventKey is invalid !");
             if (!eventDict.ContainsKey(eventKey))
             {
-                eventDict.TryAdd(eventKey, null);
+                eventDict.TryAdd(eventKey, new EventNode());
             }
         }
         /// <summary>
@@ -96,9 +90,9 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
                 throw new ArgumentNullException("EventKey is invalid !");
-            if (eventDict.ContainsKey(eventKey))
+            if (eventDict.TryGetValue(eventKey, out var node))
             {
-                eventDict[eventKey] = null;
+                node.Clear();
             }
         }
         /// <summary>
@@ -106,6 +100,10 @@ namespace Cosmos.Event
         /// </summary>
         public void ClearAllEvent()
         {
+            foreach (var node in eventDict)
+            {
+                node.Value.Clear();
+            }
             eventDict.Clear();
         }
         /// <summary>
@@ -115,14 +113,24 @@ namespace Cosmos.Event
         {
             if (string.IsNullOrEmpty(eventKey))
                 throw new ArgumentNullException("EventKey is invalid !");
-            if (eventDict.ContainsKey(eventKey))
-                return true;
-            else
-                return false;
+            return eventDict.ContainsKey(eventKey);
+        }
+        /// <summary>
+        /// 获取事件的信息；
+        /// </summary>
+        public EventInfo GetEventInfo(string eventKey)
+        {
+            if (string.IsNullOrEmpty(eventKey))
+                throw new ArgumentNullException("EventKey is invalid !");
+            if (eventDict.TryGetValue(eventKey, out var node))
+            {
+                return EventInfo.Create(eventKey, node.ListenerCount);
+            }
+            return EventInfo.Default;
         }
         protected override void OnInitialization()
         {
-            eventDict = new Dictionary<string, EventHandler<GameEventArgs>>();
+            eventDict = new Dictionary<string, EventNode>();
         }
     }
 }
