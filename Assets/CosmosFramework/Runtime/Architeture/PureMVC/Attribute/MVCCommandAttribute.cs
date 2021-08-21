@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-namespace Cosmos.Mvvm
+namespace PureMVC
 {
     [AttributeUsage(AttributeTargets.Class,AllowMultiple =true,Inherited =false)]
-    public class MVVMCommandAttribute : Attribute 
+    public class MVCCommandAttribute : Attribute 
     {
         public string ActionKey { get; private set; }
-        public MVVMCommandAttribute(string actionKey)
+        public MVCCommandAttribute(string actionKey)
         {
             ActionKey = actionKey;
         }

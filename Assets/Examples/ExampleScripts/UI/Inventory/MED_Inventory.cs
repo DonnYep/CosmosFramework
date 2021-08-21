@@ -3,23 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cosmos.Mvvm;
+using PureMVC;
+
 namespace Cosmos.Test
 {
+    /// <summary>
+    /// 一个Mediator持有一个panel 的ViewEntity；
+    /// </summary>
     public class MED_Inventory : Mediator
     {
-        public InventoryPanel InventoryPanel { get { return CosmosEntry.UIManager.PeekUIForm<InventoryPanel>("InventoryPanel"); } }
-        PRX_Inventory PRX_Inventory { get { return MVVM.PeekProxy<PRX_Inventory>(MVVMDefine.PRX_Inventory); } }
-        public override string MediatorName { get; protected set; }= MVVMDefine.MED_Inventory;
-        public override void HandleEvent(object sender, NotifyArgs notifyArgs){}
-        public void LoadInventoryJson()
+        public new const string NAME = "MED_Inventory";
+
+        InventoryPanel InventoryPanel;
+
+        public MED_Inventory():base(NAME)
         {
-            PRX_Inventory.LoadJson();
-            UpdateSlotItem();
+            EventKeys = new List<string>();
+            EventKeys.Add(MVCEventDefine.CMD_Inventory);
         }
-        public void SaveInventoryJson()
+        PRX_Inventory PRX_Inventory { get { return MVC.PeekProxy<PRX_Inventory>(PRX_Inventory.NAME); } }
+        public override void HandleEvent(INotifyArgs notifyArgs)
         {
-            PRX_Inventory.SaveJson();
+            var args= notifyArgs.CastTo<GameNotifyArgs>();
+            var cmd = (InvCmd)args.OpCode;
+            switch (cmd)
+            {
+                case InvCmd.Flush:
+                    {
+                        //刷新inventory的数据
+                        InventoryPanel.SlotContext.UpdateDataSet(PRX_Inventory.InventoryDataSet);
+                    }
+                    break;
+                case InvCmd.ShowDescription:
+                    {
+                        InventoryPanel.TxtDescription.text =Convert.ToString( args.NotifyData);
+                    }
+                    break;
+            }
+        }
+        public void Init (object viewEntity)
+        {
+            InventoryPanel = viewEntity.CastTo<InventoryPanel>();
+            InventoryPanel.BtnLoad.onClick.AddListener(LoadClick);
+            InventoryPanel.BtnQuit.onClick.AddListener(QuitClick);
+            InventoryPanel.BtnSave.onClick.AddListener(SaveClick);
+            InventoryPanel.BtnUpdate.onClick.AddListener(UpdateClick);
         }
         /// <summary>
         /// 更新inventory的slot与item中的信息；
@@ -28,20 +56,26 @@ namespace Cosmos.Test
         {
             InventoryPanel.UpdateSlotItem(PRX_Inventory.InventoryDataSet);
         }
-        /// <summary>
-        ///更新item描述
-        /// </summary>
-        /// <param name="desc">描述信息</param>
-        public void DisplayItemDesc(string desc)
+        public void UpdateSlots(InventoryDataset dataset)
         {
-            InventoryPanel.UpdataItemDescription(desc);
+            InventoryPanel.UpdateSlotItem(dataset);
         }
-        /// <summary>
-        /// 刷新inventory的数据
-        /// </summary>
-        public void FlushDataSet()
+        void QuitClick()
         {
-            InventoryPanel.SlotContext.UpdateDataSet(PRX_Inventory.InventoryDataSet);
+            CosmosEntry.UIManager.DeactiveUIForm(InventoryPanel.UIFormName);
+        }
+        void LoadClick()
+        {
+            PRX_Inventory.LoadJson();
+            InventoryPanel.UpdateSlotItem(PRX_Inventory.InventoryDataSet);
+        }
+        void UpdateClick()
+        {
+            InventoryPanel.UpdateSlotItem(PRX_Inventory.InventoryDataSet);
+        }
+        void SaveClick()
+        {
+            PRX_Inventory.SaveJson();
         }
     }
 }

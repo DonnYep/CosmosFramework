@@ -14,11 +14,11 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **Config**： 游戏常用配置模块。用户可在游戏初始化时读取配置文件，并缓存于配置模块。运行时在其他所需位置读取对应配置的数据。
 
-- **Event**： 事件中心模块。使用标准事件模型，提供了监听、移除、派发等常用事件功能。
+- **Event**： 事件中心模块。使用标准事件模型，提供了监听、移除、派发等常用事件功能。提供事件观测方法，可实时检测事件状态。
 
 - **FSM**： 有限状态机模块。对状态机进行创建、回收、管理。
 
-- **ObjectsPool**：对象池模块。提供常用的对象生成回收等功能。
+- **ObjectsPool**：对象池模块。提供常用的对象生成回收等功能。底层使用数据结构Pool进行实现。
 
 - **Resource**：资源加载模块。框架内部提供了Resources与AB两种加载模式，通过切换加载模式可变更当前默认的加载方式。资源加载模块亦提供了自定义加载通道。
 实现自定义加载通道时，须实现继承并实现IResourceLoadHelper接口，并将helper对象传入ResourceLoadChannel中。通过注册ResourceLoadChannel来使用自定义加载方案。
@@ -34,9 +34,9 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **Hotfix**：热更新模块。此模块适用于基于C#的热更方案。
 
-- **Network**：网络模块。当前模块提供了可靠的UDP协议，并集成了KCP协议。TCP协议持续更新中。
+- **Network**：网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP等，默认使用KCP协议。
 
-- **UI**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取等功能。
+- **UI**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取以及组别设置等。
 
 - **Main**：模块中心。自定义模块与扩展模块都存于此。自定义模块按照内置模块相同格式写入后，可享有完全同等与内置模块的生命周期与权限。几乎与内置模块无异。此主模块的内置轮询池：FixedRefreshHandler、LateRefreshHandler、RefreshHandler、ElapseRefreshHandler可对需要统一进行轮询管理的对象进行统一轮询，减少由于过多的Update等mono回调导致的新能损耗。
 
@@ -78,17 +78,19 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **FutureTask**：异步任务检测，支持多线程与协程异步进度检测。检测函数需要传入Func<bool>格式的函数，当条件返回值为true时，异步检测结束；注意：FutureTask本身并不是协程，不能代替协程执行异步任务；
 
-## 内置架构 MVVM
+## 内置架构 PureMVC
 
-- MVVM是基于PureMVC改进的更适于理解的软件架构。对Command、Mediator、Proxy注册使用基本与PureMVC相同。
+- 基于原始PureMVC改进的更适于理解的架构。对Command、Mediator、Proxy注册使用基本与PureMVC相同。
     框架提供了基于特性更加简洁的注册方式：
-    - 1、MVVMCommandAttribute，对应Command，即C或MV层；
-    - 2、MVVMMediatorAttribute，对应Mediator，即V层；
-    - 3、MVVMProxyAttribute，对应Proxy，即M层；
+    - 1、MVCCommandAttribute，对应Command，即C层；
+    - 2、MVCMediatorAttribute，对应Mediator，即V层；
+    - 3、MVCProxyAttribute，对应Proxy，即M层；
     
-- MVVM自动注册只需在入口调用MVVM.RegisterAttributedMVVM()方法即可。
+- MVC自动注册只需在入口调用MVC.RegisterAttributedMVC()方法即可。
 
-- 需要注意，MVVM.RegisterAttributedMVVM()方法需要传入对应的程序集。目前已经验证跨程序集反射MVVM成员是可行且稳定的。
+- 派生的代理类需要覆写构造函数，并传入NAME参数。
+
+- 需要注意，MVC.RegisterAttributedMVC()方法需要传入对应的程序集。目前已经验证跨程序集反射MVC成员是可行且稳定的。
 
 ## 注意事项
 
@@ -116,11 +118,11 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
    - 方式1：选择V1.1（默认分支）,选择Assets/CosmosFramework文件夹，拷贝到工程的Packages目录下。
    - 方式2：选择V1.1_UPM分支，将里面的内容拷贝到工程的Packages目录下。
 
-- MVVM的纯C#版本：https://github.com/DonnYep/CosmosMVVM
-
 - CosmosEngine服务器：https://github.com/DonnYep/CosmosEngine
 
 - KCP地址：https://github.com/skywind3000/kcp
+
+- PureMVC地址：https://github.com/DonnYep/PureMVC
 
 - 服务器版本的KCP与客户端版本的KCP皆为参考自Mirror。Mirror地址:https://github.com/vis2k/Mirror
 

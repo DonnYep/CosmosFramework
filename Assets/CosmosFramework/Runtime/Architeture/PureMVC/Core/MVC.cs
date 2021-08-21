@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
-namespace Cosmos.Mvvm
+namespace PureMVC
 {
-    /// <summary>
-    /// MVVM架构中，VM占有较大的逻辑比重，因此事件派发主要由VM进行控制；
-    /// </summary>
-    public static class MVVM
+    public class MVC
     {
-        #region ViewModel
+        #region Controller
         public static void RegisterCommand(string actionKey, Type cmdType)
         {
-            ViewModel.Instance.RegisterCommand(actionKey, cmdType);
+            Controller.Instance.RegisterCommand(actionKey, cmdType);
         }
         public static void RegisterCommand<T>(string actionKey)
             where T : Command
@@ -23,11 +19,11 @@ namespace Cosmos.Mvvm
         }
         public static void RemoveCommand(string actionKey)
         {
-            ViewModel.Instance.RemoveCommand(actionKey);
+            Controller.Instance.RemoveCommand(actionKey);
         }
         public static bool HasCommand(string actionKey)
         {
-            return ViewModel.Instance.HasCommand(actionKey);
+            return Controller.Instance.HasCommand(actionKey);
         }
         #endregion
         #region View
@@ -52,17 +48,13 @@ namespace Cosmos.Mvvm
         {
             View.Instance.RemoveMediator(mediatorName);
         }
-        public static void Dispatch(string actionKey)
+        public static void Dispatch(INotifyArgs notifyArgs)
         {
-            View.Instance.Dispatch(actionKey, null, null);
+            View.Instance.Dispatch(notifyArgs);
         }
-        public static void Dispatch(string actionKey, NotifyArgs notifyArgs)
+        public static void Dispatch(string notifyName)
         {
-            View.Instance.Dispatch(actionKey, null, notifyArgs);
-        }
-        public static void Dispatch(string actionKey, object sender, NotifyArgs notifyArgs)
-        {
-            View.Instance.Dispatch(actionKey, sender, notifyArgs);
+            View.Instance.Dispatch(new NotifyArgs(notifyName));
         }
         #endregion
         #region Model
@@ -93,31 +85,31 @@ namespace Cosmos.Mvvm
         }
         #endregion
         /// <summary>
-        /// 自动注册被标记的MVVM成员；
-        /// MVVMCommandAttribute;
-        /// MVVMProxyAttribute
-        /// MVVMMediatorAttribute
+        /// 自动注册被标记的PureMVC成员；
+        /// MVCCommandAttribute;
+        /// MVCProxyAttribute
+        /// MVCMediatorAttribute
         /// </summary>
         /// <param name="assembly">目标程序集</param>
-        public static void RegisterAttributedMVVM(Assembly assembly)
+        public static void RegisterAttributedMVC(Assembly assembly)
         {
-            var mediators = Utility.Assembly.GetInstancesByAttribute<MVVMMediatorAttribute, Mediator>(assembly);
+            var mediators = GetInstancesByAttribute<MVCMediatorAttribute, Mediator>(false, assembly);
             var medLength = mediators.Length;
             for (int i = 0; i < medLength; i++)
             {
                 RegisterMediator(mediators[i]);
             }
-            var proxies = Utility.Assembly.GetInstancesByAttribute<MVVMProxyAttribute, Proxy>(assembly);
+            var proxies = GetInstancesByAttribute<MVCProxyAttribute, Proxy>(false, assembly);
             var prxLength = proxies.Length;
             for (int i = 0; i < prxLength; i++)
             {
                 RegisterProxy(proxies[i]);
             }
-            var cmdTypes = Utility.Assembly.GetDerivedTypes<Command>(assembly);
+            var cmdTypes = GetDerivedTypes<Command>(assembly);
             var cmdLength = cmdTypes.Length;
             for (int i = 0; i < cmdLength; i++)
             {
-                var attributes = cmdTypes[i].GetCustomAttributes<MVVMCommandAttribute>().ToList();
+                var attributes = cmdTypes[i].GetCustomAttributes<MVCCommandAttribute>().ToList();
                 var attLength = attributes.Count();
                 if (attLength > 0)
                 {
@@ -127,6 +119,44 @@ namespace Cosmos.Mvvm
                     }
                 }
             }
+        }
+        static K[] GetInstancesByAttribute<T, K>(bool inherit = false, System.Reflection.Assembly assembly = null)
+             where T : Attribute
+             where K : class
+        {
+            List<K> set = new List<K>();
+            var types = GetDerivedTypes<K>(assembly);
+            int length = types.Length;
+            for (int i = 0; i < length; i++)
+            {
+                if (types[i].GetCustomAttributes<T>(inherit).Count() > 0)
+                {
+                    set.Add(Activator.CreateInstance(types[i]) as K);
+                }
+            }
+            return set.ToArray();
+        }
+        static Type[] GetDerivedTypes<T>(System.Reflection.Assembly assembly = null)
+            where T : class
+        {
+            Type type = typeof(T);
+            List<Type> set = new List<Type>();
+            Type[] types;
+            if (assembly == null)
+                types = type.Assembly.GetTypes();
+            else
+                types = assembly.GetTypes();
+            for (int i = 0; i < types.Length; i++)
+            {
+                if (type.IsAssignableFrom(types[i]))
+                {
+                    if (types[i].IsClass && !types[i].IsAbstract)
+                    {
+                        set.Add(types[i]);
+                    }
+                }
+            }
+            return set.ToArray();
         }
     }
 }

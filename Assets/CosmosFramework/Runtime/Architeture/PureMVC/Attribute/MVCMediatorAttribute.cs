@@ -1,8 +1,8 @@
 ﻿using System;
-namespace Cosmos.Mvvm
+namespace PureMVC
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-    public class MVVMMediatorAttribute:Attribute
+    public class MVCMediatorAttribute:Attribute
     {
     }
 }

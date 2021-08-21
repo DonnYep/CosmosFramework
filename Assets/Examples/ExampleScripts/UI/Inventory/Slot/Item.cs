@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using Cosmos.Mvvm;
+using PureMVC;
+
 using Cosmos.UI;
 namespace Cosmos.Test
 {
@@ -15,7 +16,6 @@ namespace Cosmos.Test
         public ItemDataset ItemDataSet { get { return itemDataSet; } }
         Transform previouseParent;
         Transform dragParent;
-        MED_Inventory med_Inventory;
         public Transform DragParent { get { return dragParent; } set { dragParent = value; } }
         string itemDescription;
         public Transform PreviouseParent { get { return previouseParent; } set { previouseParent = value; } }
@@ -61,7 +61,7 @@ namespace Cosmos.Test
                 transform.ResetLocalTransform();
                 GetComponent<CanvasGroup>().blocksRaycasts = true;
             }
-            med_Inventory.FlushDataSet();
+            MVC.Dispatch( new GameNotifyArgs(MVCEventDefine.CMD_Inventory) { OpCode =(byte) InvCmd.Flush });
         }
         public void SetItem(ItemDataset item)
         {
@@ -84,17 +84,16 @@ namespace Cosmos.Test
                 itemDescription = item.Description;
             }
         }
-        private void Awake()
+        void Awake()
         {
             GetComponent<Button>().onClick.AddListener(IItemClick);
             imgItem = GetComponent<Image>();
             txtNumber = GetComponentInChildren<Text>();
             PreviouseParent = transform.parent;
-             med_Inventory=MVVM.PeekMediator<MED_Inventory>(MVVMDefine.MED_Inventory);
         }
         void IItemClick()
         {
-            med_Inventory.DisplayItemDesc(itemDescription);
+            MVC.Dispatch(new GameNotifyArgs(MVCEventDefine.CMD_Inventory, itemDescription) { OpCode = (byte)InvCmd.ShowDescription });
         }
     }
 }

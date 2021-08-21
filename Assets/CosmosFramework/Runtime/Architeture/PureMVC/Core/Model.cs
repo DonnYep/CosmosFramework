@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-namespace Cosmos.Mvvm
+﻿using System.Collections.Generic;
+namespace PureMVC
 {
-    public class Model:ConcurrentSingleton<Model>
+    public class Model: MVCSingleton<Model>
     {
         protected Dictionary<string, Proxy> proxyDict;
 
@@ -40,7 +38,8 @@ namespace Cosmos.Mvvm
         {
             lock (locker)
             {
-                proxyDict.Remove(proxyName, out proxy);
+                proxy = proxyDict[proxyName];
+                proxyDict.Remove(proxyName);
             }
             proxy?.OnRemove();
         }

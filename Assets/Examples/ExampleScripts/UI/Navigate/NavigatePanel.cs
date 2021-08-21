@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
-using Cosmos.Mvvm;
+using PureMVC;
+
 namespace Cosmos.Test
 {
     public class NavigatePanel : UIForm

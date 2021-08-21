@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos.UI;
-using Cosmos.Mvvm;
+using PureMVC;
+
 namespace Cosmos.Test
 {
     public class UIEntry : Entry
@@ -14,8 +15,8 @@ namespace Cosmos.Test
              {
                  CosmosEntry.UIManager.SetUIRoot(go.transform);
              }, null, true);
-            MVVM.RegisterCommand<CMD_Navigate>(MVVMDefine.CMD_Navigate);
-            MVVM.Dispatch(MVVMDefine.CMD_Navigate);
+            PureMVC.MVC.RegisterCommand<CMD_Navigate>(MVCEventDefine.CMD_Navigate);
+            PureMVC.MVC.Dispatch(new GameNotifyArgs(MVCEventDefine.CMD_Navigate));
         }
     }
 }

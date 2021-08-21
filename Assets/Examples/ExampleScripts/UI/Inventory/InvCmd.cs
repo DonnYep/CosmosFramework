@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cosmos;
-namespace Cosmos.Mvvm
+
+namespace Cosmos.Test
 {
-    public abstract class NotifyArgs : EventArgs
+    public enum InvCmd : byte
     {
+        Flush = 0x0,
+        ShowDescription=0x1
     }
 }

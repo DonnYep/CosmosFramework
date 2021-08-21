@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Cosmos.UI;
-using Cosmos.Mvvm;
 using Cosmos.Resource;
 
 namespace Cosmos.Test

@@ -3,26 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cosmos.Mvvm;
+using PureMVC;
+
 using UnityEngine;
 
 namespace Cosmos.Test
 {
     public class PRX_Inventory : Proxy
     {
-        string dataSetPath = "DataSet/Inventory/Inventory_DataSet";
+        public new const string NAME = "PRX_Inventory";
+
+        string dataSetPath = "DataSet/Inventory/Inventory_Dataset";
         string jsonFilePath;
+
+        public PRX_Inventory() : base(NAME){}
+
         public InventoryDataset InventoryDataSet { get; private set; }
-        public override string ProxyName { get; protected set; } = MVVMDefine.PRX_Inventory;
         public override void OnRegister()
         {
             InventoryDataSet = CosmosEntry.ResourceManager.LoadAsset<InventoryDataset>(new AssetInfo(dataSetPath));
             if (InventoryDataSet != null)
-                Utility.Debug.LogInfo("InventoryDataSet数据加载成功", MessageColor.ORANGE);
+                Utility.Debug.LogInfo("InventoryDataset数据加载成功", MessageColor.ORANGE);
             jsonFilePath = Utility.IO.WebPathCombine(Application.persistentDataPath, "Inventory");
-            Utility.Debug.LogInfo(jsonFilePath, MessageColor.ORANGE);
         }
-        public override void OnRemove() { }
         public void SaveJson()
         {
             var json = JsonUtility.ToJson(InventoryDataSet);
