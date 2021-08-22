@@ -16,7 +16,7 @@ namespace Cosmos.Test
                  CosmosEntry.UIManager.SetUIRoot(go.transform);
              }, null, true);
             PureMVC.MVC.RegisterCommand<CMD_Navigate>(MVCEventDefine.CMD_Navigate);
-            PureMVC.MVC.Dispatch(new GameNotifyArgs(MVCEventDefine.CMD_Navigate));
+            PureMVC.MVC.Dispatch(MVCEventDefine.CMD_Navigate);
         }
     }
 }

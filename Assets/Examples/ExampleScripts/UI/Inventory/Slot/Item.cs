@@ -61,7 +61,7 @@ namespace Cosmos.Test
                 transform.ResetLocalTransform();
                 GetComponent<CanvasGroup>().blocksRaycasts = true;
             }
-            MVC.Dispatch( new GameNotifyArgs(MVCEventDefine.CMD_Inventory) { OpCode =(byte) InvCmd.Flush });
+            MVC.Dispatch(new NotifyArgs(MVCEventDefine.CMD_Inventory, new InvMsg(InvCmd.Flush)));
         }
         public void SetItem(ItemDataset item)
         {
@@ -93,7 +93,7 @@ namespace Cosmos.Test
         }
         void IItemClick()
         {
-            MVC.Dispatch(new GameNotifyArgs(MVCEventDefine.CMD_Inventory, itemDescription) { OpCode = (byte)InvCmd.ShowDescription });
+            MVC.Dispatch(new NotifyArgs(MVCEventDefine.CMD_Inventory, new InvMsg(InvCmd.ShowDescription, itemDescription)));
         }
     }
 }

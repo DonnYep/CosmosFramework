@@ -27,6 +27,6 @@ public class WelcomePanel : UIForm
     }
     void Quit()
     {
-        UIManager.ReleaseUIForm(UIFormName);
+        UIManager.DeactiveUIForm(UIFormName);
     }
 }

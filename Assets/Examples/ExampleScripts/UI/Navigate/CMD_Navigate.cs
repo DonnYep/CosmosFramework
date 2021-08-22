@@ -11,7 +11,6 @@ namespace Cosmos.Test
         public override void ExecuteCommand(INotifyArgs notifyArgs)
         {
             Utility.Debug.LogInfo($"Run {MVCEventDefine.CMD_Navigate}", MessageColor.RED);
-
             MVC.RegisterProxy(new PRX_Inventory());
             MVC.RegisterMediator(new MED_Inventory());
         }

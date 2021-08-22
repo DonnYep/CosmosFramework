@@ -16,7 +16,7 @@ namespace Cosmos.Test
 
         InventoryPanel InventoryPanel;
 
-        public MED_Inventory():base(NAME)
+        public MED_Inventory() : base(NAME)
         {
             EventKeys = new List<string>();
             EventKeys.Add(MVCEventDefine.CMD_Inventory);
@@ -24,8 +24,8 @@ namespace Cosmos.Test
         PRX_Inventory PRX_Inventory { get { return MVC.PeekProxy<PRX_Inventory>(PRX_Inventory.NAME); } }
         public override void HandleEvent(INotifyArgs notifyArgs)
         {
-            var args= notifyArgs.CastTo<GameNotifyArgs>();
-            var cmd = (InvCmd)args.OpCode;
+            var data = notifyArgs.NotifyData.CastTo<InvMsg>();
+            var cmd = data.InvCmd;
             switch (cmd)
             {
                 case InvCmd.Flush:
@@ -36,12 +36,12 @@ namespace Cosmos.Test
                     break;
                 case InvCmd.ShowDescription:
                     {
-                        InventoryPanel.TxtDescription.text =Convert.ToString( args.NotifyData);
+                        InventoryPanel.TxtDescription.text = Convert.ToString(data.Msg);
                     }
                     break;
             }
         }
-        public void Init (object viewEntity)
+        public void Init(object viewEntity)
         {
             InventoryPanel = viewEntity.CastTo<InventoryPanel>();
             InventoryPanel.BtnLoad.onClick.AddListener(LoadClick);

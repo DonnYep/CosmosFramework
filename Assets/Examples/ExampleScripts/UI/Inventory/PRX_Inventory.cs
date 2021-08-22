@@ -13,7 +13,7 @@ namespace Cosmos.Test
     {
         public new const string NAME = "PRX_Inventory";
 
-        string dataSetPath = "DataSet/Inventory/Inventory_Dataset";
+        string dataSetPath = "DataSet/Inventory/DefaultInventory_Dataset";
         string jsonFilePath;
 
         public PRX_Inventory() : base(NAME){}
@@ -22,14 +22,17 @@ namespace Cosmos.Test
         public override void OnRegister()
         {
             InventoryDataSet = CosmosEntry.ResourceManager.LoadAsset<InventoryDataset>(new AssetInfo(dataSetPath));
-            if (InventoryDataSet != null)
-                Utility.Debug.LogInfo("InventoryDataset数据加载成功", MessageColor.ORANGE);
+            //if (InventoryDataSet != null)
+            //    Utility.Debug.LogInfo("InventoryDataset数据加载成功", MessageColor.ORANGE);
             jsonFilePath = Utility.IO.WebPathCombine(Application.persistentDataPath, "Inventory");
         }
         public void SaveJson()
         {
             var json = JsonUtility.ToJson(InventoryDataSet);
             Utility.IO.OverwriteTextFile(jsonFilePath, "InventoryCache.json", json);
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(InventoryDataSet);
+#endif
             Utility.Debug.LogInfo("SaveJsonDataFromLocal");
         }
         public void LoadJson()
