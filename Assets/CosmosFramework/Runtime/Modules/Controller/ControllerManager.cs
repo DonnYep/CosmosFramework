@@ -47,6 +47,8 @@ namespace Cosmos.Controller
         {
             get { return controllerGroupDict.Count; }
         }
+        int controllerIndex = 0;
+
         #endregion
 
         #region Methods
@@ -76,6 +78,8 @@ namespace Cosmos.Controller
             if (string.IsNullOrEmpty(controllerName))
                 throw new ArgumentNullException("ControllerName is invalid !"); ;
             var controller = Controller<T>.Create(groupName, controllerName, owner);
+            controller.Id = controllerIndex++;
+            controllerIdDict.Add(controller.Id, controller);
             AddRefresh(controller);
             if (!string.IsNullOrEmpty(groupName))
             {

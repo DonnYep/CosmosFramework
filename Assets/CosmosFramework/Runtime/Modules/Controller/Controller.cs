@@ -14,7 +14,6 @@ namespace Cosmos.Controller
     internal class Controller<T> : IController
         where T : class
     {
-        static int controllerIndex = 0;
         T owner;
         Action tickRefreshHandler;
         Action lateRefreshHandler;
@@ -34,7 +33,7 @@ namespace Cosmos.Controller
             }
         }
         public bool Pause { get; set; }
-        public int Id { get; private set; }
+        public int Id { get; internal set; }
         public string GroupName { get; private set; }
         public void Release()
         {
@@ -60,7 +59,6 @@ namespace Cosmos.Controller
             controller.tickRefreshHandler = tickAction;
             controller.lateRefreshHandler = lateAction;
             controller.fixedRefreshHandler = fixedAction;
-            controller.Id = controllerIndex++;
             return controller;
         }
         [FixedRefresh]
