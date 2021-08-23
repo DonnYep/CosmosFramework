@@ -14,7 +14,7 @@ namespace PureMVC
             ProxyName = string.IsNullOrEmpty(proxyName) ? NAME : proxyName;
             Data = data;
         }
-        public abstract void OnRegister();
+        public virtual void OnRegister() { }
         public virtual void OnRemove() { }
     }
 }

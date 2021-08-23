@@ -137,6 +137,14 @@ namespace Cosmos.Resource
                 go = srcGo;
             return go;
         }
+        public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
+        {
+            return currentDefaultLoadHelper.LoadAssetWithSubAssets<T>(info);
+        }
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+        {
+            return currentDefaultLoadHelper.LoadAssetWithSubAssetsAsync<T>(info,loadDoneCallback, loadingCallback);
+        }
         /// <summary>
         /// 使用默认加载模式；
         /// 特性无效！；
@@ -251,6 +259,8 @@ namespace Cosmos.Resource
             currentResourceLoadMode = ResourceLoadMode.Resource;
             currentDefaultLoadHelper = builtInChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
         }
+
+
         #endregion
     }
 }

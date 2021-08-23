@@ -16,9 +16,12 @@ namespace Quark.Loader
         void SetLoaderData(object customeData);
         T LoadAsset<T>(string assetName, string assetExtension) where T : UnityEngine.Object;
         GameObject LoadPrefab(string assetName, string assetExtension, bool instantiate = false);
+        T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension) where T : UnityEngine.Object;
         Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object;
         Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false);
+        Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension,Action<T[]>callback) where T : UnityEngine.Object;
         Coroutine LoadScenetAsync(string sceneName, Action<float> progress, Action callback, bool additive = false);
+
         void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false);
         void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false);
         QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object;

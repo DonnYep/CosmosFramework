@@ -14,7 +14,9 @@ namespace Cosmos.Resource
         bool IsLoading { get; }
         T LoadAsset<T>(AssetInfo info)where T : UnityEngine.Object;
         T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object;
+        T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object;
         Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null)where T : UnityEngine.Object;
+        Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> loadingCallback = null) where T : UnityEngine.Object;
         /// <summary>
         /// 加载场景（异步）
         /// </summary>

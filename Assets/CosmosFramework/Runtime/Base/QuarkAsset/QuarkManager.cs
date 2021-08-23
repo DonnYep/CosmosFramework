@@ -168,6 +168,12 @@ where T : UnityEngine.Object
                 return loader.LoadPrefab(assetName, assetExtension, instantiate);
             return null;
         }
+        internal T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.LoadAssetWithSubAssets<T>(assetName, assetExtension);
+            return null;
+        }
         internal Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback)
 where T : UnityEngine.Object
         {
@@ -178,7 +184,13 @@ where T : UnityEngine.Object
         internal Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                return loader.LoadPrefabAsync(assetName, assetExtension, callback,instantiate );
+                return loader.LoadPrefabAsync(assetName, assetExtension, callback, instantiate);
+            return null;
+        }
+        internal Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.LoadAssetWithSubAssetsAsync(assetName, assetExtension, callback);
             return null;
         }
         internal Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
@@ -187,6 +199,7 @@ where T : UnityEngine.Object
                 return loader.LoadScenetAsync(sceneName, progress, callback, additive);
             return null;
         }
+        
         internal void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))

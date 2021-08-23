@@ -153,6 +153,26 @@ namespace Cosmos.Resource
                 go = srcGo;
             return go;
         }
+        public T[] LoadAssetWithSubAssets<T>(string channelName,AssetInfo info) where T : UnityEngine.Object
+        {
+            Utility.Text.IsStringValid(channelName, "channelName is invalid !");
+            if (channelDict.TryGetValue(channelName, out var channel))
+            {
+                return channel.ResourceLoadHelper.LoadAssetWithSubAssets<T>(info);
+            }
+            else
+                throw new ArgumentNullException($"channelName :{channelName} is invalid !");
+        }
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(string channelName,AssetInfo info, Action<T[]> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+        {
+            Utility.Text.IsStringValid(channelName, "channelName is invalid !");
+            if (channelDict.TryGetValue(channelName, out var channel))
+            {
+                return channel.ResourceLoadHelper.LoadAssetWithSubAssetsAsync<T>(info,loadDoneCallback,loadingCallback);
+            }
+            else
+                throw new ArgumentNullException($"channelName :{channelName} is invalid !");
+        }
         /// <summary>
         /// 使用自定义加载通道；
         /// 特性无效！；

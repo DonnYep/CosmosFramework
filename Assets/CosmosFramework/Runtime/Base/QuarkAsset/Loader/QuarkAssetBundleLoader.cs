@@ -139,6 +139,93 @@ namespace Quark.Loader
             else
                 return resGo;
         }
+        public T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        {
+            T[] assets = null;
+            string assetBundleName = string.Empty;
+            QuarkAssetBundleObject abObject = null;
+            AssetBundle assetBundle = null;
+            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
+            {
+                if (string.IsNullOrEmpty(assetExtension))
+                {
+                    abObject = abLnk.First.Value;
+                    assetBundleName = abObject.AssetBundleName;
+                }
+                else
+                {
+                    foreach (var ab in abLnk)
+                    {
+                        if (ab.AssetExtension == assetExtension)
+                        {
+                            abObject = ab;
+                            assetBundleName = ab.AssetBundleName;
+                            break;
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(assetBundleName))
+                {
+                    return null;
+                }
+                if (assetBundleDict.ContainsKey(assetBundleName))
+                {
+                    assetBundle = assetBundleDict[assetBundleName];
+                    assets = assetBundleDict[assetBundleName].LoadAssetWithSubAssets<T>(assetName);
+                    if (assets != null)
+                    {
+                        IncrementQuarkObjectInfo(abObject);
+                    }
+                }
+                else
+                {
+                    var abPath = Path.Combine(PersistentPath, assetBundleName);
+                    assetBundle = AssetBundle.LoadFromFile(abPath);
+                    assetBundleDict.TryAdd(assetBundleName, assetBundle);
+
+                    QuarkBuildInfo.AssetData buildInfo = null;
+                    foreach (var item in QuarkBuildInfo.AssetDataMaps)
+                    {
+                        if (item.Value.ABName == assetBundleName)
+                        {
+                            buildInfo = item.Value;
+                            break;
+                        }
+                    }
+                    if (buildInfo != null)
+                    {
+                        var dependList = buildInfo.DependList;
+                        var length = dependList.Count;
+                        for (int i = 0; i < length; i++)
+                        {
+                            var dependentABName = dependList[i];
+                            if (!assetBundleDict.ContainsKey(dependentABName))
+                            {
+                                var dependentABPath = Path.Combine(PersistentPath, dependentABName);
+                                try
+                                {
+                                    AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath);
+                                    assetBundleDict.TryAdd(dependentABName, abBin);
+                                }
+                                catch (Exception e)
+                                {
+                                    Utility.Debug.LogError(e);
+                                }
+                            }
+                        }
+                        if (assetBundle != null)
+                        {
+                            assets = assetBundle.LoadAssetWithSubAssets<T>(assetName);
+                            if (assets != null)
+                            {
+                                IncrementQuarkObjectInfo(abObject);
+                            }
+                        }
+                    }
+                }
+            }
+            return assets;
+        }
         public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, assetExtension, callback));
@@ -157,6 +244,10 @@ namespace Quark.Loader
                     callback.Invoke(resGo);
                 }
             }));
+        }
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, callback));
         }
         public Coroutine LoadScenetAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
@@ -207,6 +298,56 @@ namespace Quark.Loader
         public QuarkObjectInfo[] GetAllInfos()
         {
             return hashQuarkObjectInfoDict.Values.ToArray();
+        }
+        IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
+            where T : UnityEngine.Object
+        {
+            T[] assets = null;
+            string assetBundleName = string.Empty;
+            QuarkAssetBundleObject abObject = null;
+
+            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
+            {
+                if (string.IsNullOrEmpty(assetExtension))
+                {
+                    abObject = abLnk.First.Value;
+                    assetBundleName = abObject.AssetBundleName;
+                }
+                else
+                {
+                    foreach (var ab in abLnk)
+                    {
+                        if (ab.AssetExtension == assetExtension)
+                        {
+                            abObject = ab;
+                            assetBundleName = ab.AssetBundleName;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Utility.Debug.LogError($"asset：{assetName} not existed !");
+                yield break;
+            }
+
+            if (string.IsNullOrEmpty(assetBundleName))
+            {
+                Utility.Debug.LogError($"AssetBundle：{assetBundleName} not existed !");
+                callback?.Invoke(assets);
+                yield break;
+            }
+            yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
+            if (assetBundleDict.ContainsKey(assetBundleName))
+            {
+                assets = assetBundleDict[assetBundleName].LoadAssetWithSubAssets<T>(assetName);
+                if (assets != null)
+                {
+                    IncrementQuarkObjectInfo(abObject);
+                }
+            }
+            callback?.Invoke(assets);
         }
         IEnumerator EnumLoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback)
 where T : UnityEngine.Object
@@ -432,5 +573,7 @@ where T : UnityEngine.Object
             var info = hashQuarkObjectInfoDict[hashCode];
             hashQuarkObjectInfoDict[hashCode] = info--;
         }
+
+
     }
 }

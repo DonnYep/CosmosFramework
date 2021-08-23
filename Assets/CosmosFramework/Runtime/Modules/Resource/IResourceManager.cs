@@ -16,7 +16,7 @@ namespace Cosmos
     //3、自定义部分加载前需要进行通道注册，加载时需要指定通道名称；
     //4、默认提供两种加载模式，分别为 Resource与AssetBundle；
     //================================================
-    public interface IResourceManager: IModuleManager
+    public interface IResourceManager : IModuleManager
     {
         int ResourceLoadChannelCount { get; }
         ResourceLoadMode CurrentResourceLoadMode { get; }
@@ -52,6 +52,15 @@ namespace Cosmos
         /// <param name="info">资源信息标记</param>
         /// <returns>资源</returns>
         T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object;
+        /// <summary>
+        /// 使用默认加载模式；
+        /// 加载资源以及子资源；
+        /// 加载资源（同步）；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>资源数组</returns>
+        T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object;
         /// <summary>
         /// 使用默认加载模式；
         /// 特性加载:PrefabAssetAttribute！；
@@ -90,6 +99,17 @@ namespace Cosmos
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <returns>加载协程迭代器</returns>
         Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object;
+        /// <summary>
+        /// 使用默认加载模式；
+        /// 加载资源以及子资源；
+        /// 加载资源（同步）；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <param name="loadDoneCallback">加载完成事件</param>
+        /// <param name="loadingCallback">加载中事件</param>
+        /// <returns>加载协程迭代器</returns>
+        Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object;
         /// <summary>
         /// 使用默认加载模式；
         /// 特性加载:PrefabAssetAttribute！；
@@ -174,7 +194,7 @@ namespace Cosmos
         /// <param name="channelName">资源加载的通道</param>
         /// <param name="info">资源信息标记</param>
         /// <returns>资源</returns>
-        T LoadAsset<T>(string channelName, AssetInfo info)where T : UnityEngine.Object;
+        T LoadAsset<T>(string channelName, AssetInfo info) where T : UnityEngine.Object;
         /// <summary>
         /// 使用自定义加载通道；
         /// 特性无效！；
@@ -186,6 +206,16 @@ namespace Cosmos
         /// <param name="info">资源信息标记</param>
         /// <returns>资源</returns>
         T[] LoadAllAsset<T>(string channelName, AssetInfo info) where T : UnityEngine.Object;
+        /// <summary>
+        /// 使用自定义加载通道；
+        /// 加载资源以及子资源；
+        /// 加载资源（同步）；
+        /// </summary>
+        /// <param name="channelName">资源加载的通道</param>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>资源数组</returns>
+        T[] LoadAssetWithSubAssets<T>(string channelName, AssetInfo info) where T : UnityEngine.Object;
         /// <summary>
         /// 使用自定义加载通道；
         /// 特性加载:PrefabAssetAttribute！；
@@ -205,7 +235,7 @@ namespace Cosmos
         /// <param name="channelName">资源加载的通道</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        GameObject LoadPrefab<T>(string channelName, bool instantiate = false)where T : class;
+        GameObject LoadPrefab<T>(string channelName, bool instantiate = false) where T : class;
         /// <summary>
         /// 使用自定义加载通道；
         /// 特性无效！；
@@ -229,6 +259,18 @@ namespace Cosmos
         /// <returns>加载协程迭代器</returns>
         Coroutine LoadAssetAsync<T>(string channelName, AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null)
             where T : UnityEngine.Object;
+        /// <summary>
+        /// 使用自定义加载通道；
+        /// 加载资源以及子资源；
+        /// 加载资源（同步）；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="channelName">资源加载的通道</param>
+        /// <param name="info">资源信息标记</param>
+        /// <param name="loadDoneCallback">加载完成事件</param>
+        /// <param name="loadingCallback">加载中事件</param>
+        /// <returns>加载协程迭代器</returns>
+        Coroutine LoadAssetWithSubAssetsAsync<T>(string channelName, AssetInfo info, Action<T[]> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object;
         /// <summary>
         /// 使用自定义加载通道；
         /// 特性加载:PrefabAssetAttribute！；

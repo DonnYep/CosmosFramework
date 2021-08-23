@@ -474,8 +474,6 @@ namespace Cosmos
             /// <returns>是否写入成功</returns>
             public static bool WriterFormattedBinary(string fileFullPath, object context)
             {
-                if (!File.Exists(fileFullPath))
-                    File.Create(fileFullPath);
                 using (FileStream stream = new FileStream(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     BinaryFormatter formatter = new BinaryFormatter();

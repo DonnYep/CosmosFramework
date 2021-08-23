@@ -39,10 +39,13 @@ namespace PureMVC
                 mediator = mediatorDict[mediatorName];
                 mediatorDict.Remove(mediatorName);
                 var bindedKeys = mediator.EventKeys;
-                var length = bindedKeys.Count;
-                for (int i = 0; i < length; i++)
+                if (bindedKeys != null)
                 {
-                    Controller.Instance.RemoveListener(bindedKeys[i], mediator.HandleEvent);
+                    var length = bindedKeys.Count;
+                    for (int i = 0; i < length; i++)
+                    {
+                        Controller.Instance.RemoveListener(bindedKeys[i], mediator.HandleEvent);
+                    }
                 }
             }
             mediator.OnRemove();

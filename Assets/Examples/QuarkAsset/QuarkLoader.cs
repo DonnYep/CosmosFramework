@@ -26,12 +26,20 @@ public class QuarkLoader : IResourceLoadHelper
     }
     public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
     {
-        return QuarkResources.LoadSceneAsync(info.AssetPath, loadingCallback,loadDoneCallback);
+        return QuarkResources.LoadSceneAsync(info.AssetPath, loadingCallback, loadDoneCallback);
     }
     public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
     {
     }
     public void UnLoadAsset(object customData, bool unloadAllLoadedObjects = false)
     {
+    }
+    public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
+    {
+        return QuarkResources.LoadAssetWithSubAssets<T>(info.AssetPath);
+    }
+    public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+    {
+        return QuarkResources.LoadAssetWithSubAssetsAsync<T>(info.AssetPath, string.Empty, callback);
     }
 }

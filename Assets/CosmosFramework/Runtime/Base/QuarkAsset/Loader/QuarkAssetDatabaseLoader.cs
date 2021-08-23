@@ -58,6 +58,34 @@ namespace Quark.Loader
             else
                 return resGGo;
         }
+        public T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        {
+#if UNITY_EDITOR
+            if (string.IsNullOrEmpty(assetName))
+                throw new ArgumentNullException("Asset name is invalid!");
+            QuarkAssetDatabaseObject quarkAssetDatabaseObject = null;
+            if (assetDatabaseMap == null)
+                throw new Exception("QuarkAsset 未执行 build 操作！");
+            if (assetDatabaseMap.TryGetValue(assetName, out var lnk))
+                quarkAssetDatabaseObject = GetAssetDatabaseObject(lnk, assetExtension);
+            if (quarkAssetDatabaseObject != null)
+            {
+                var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetDatabaseObject.AssetGuid);
+                var assetObj = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(guid2path);
+                var length = assetObj.Length;
+                T[] assets = new T[length];
+                for (int i = 0; i < length; i++)
+                {
+                    assets[i] = assetObj[i] as T;
+                }
+                return assets;
+            }
+            else
+                return null;
+#else
+                return null;
+#endif
+        }
         public Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadPrefabtAsync(assetName, assetExtension, callback, instantiate));
@@ -65,6 +93,10 @@ namespace Quark.Loader
         public Coroutine LoadScenetAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progress, callback, additive));
+        }
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, callback));
         }
         public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object
         {
@@ -105,6 +137,13 @@ namespace Quark.Loader
         public QuarkObjectInfo[] GetAllInfos()
         {
             return hashQuarkObjectInfoDict.Values.ToArray();
+        }
+        IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
+    where T : UnityEngine.Object
+        {
+            var assets = LoadAssetWithSubAssets<T>(assetName, assetExtension);
+            yield return null;
+            callback?.Invoke(assets);
         }
         IEnumerator EnumLoadAsssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object
         {
@@ -202,6 +241,7 @@ namespace Quark.Loader
             var info = hashQuarkObjectInfoDict[hashCode];
             hashQuarkObjectInfoDict[hashCode] = info--;
         }
+
 
     }
 }

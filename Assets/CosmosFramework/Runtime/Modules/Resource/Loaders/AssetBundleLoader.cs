@@ -138,6 +138,24 @@ namespace Cosmos
                 assetBundleHashDict.Remove(assetBundleName);
             }
         }
+        public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
+        {
+            T[] assets = null;
+            if (assetBundleDict.ContainsKey(info.AssetBundleName))
+            {
+                assets = assetBundleDict[info.AssetBundleName].LoadAssetWithSubAssets<T>(info.AssetPath);
+                if (assets == null)
+                {
+                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
+                }
+            }
+            return assets;
+        }
+
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+        {
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(info, callback, loadingCallback));
+        }
         /// <summary>
         /// 异步加载依赖AB包
         /// </summary>
@@ -291,6 +309,33 @@ namespace Cosmos
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程迭代器</returns>
+        IEnumerator EnumLoadAssetWithSubAssets<T>(AssetInfoBase info, Action<T[]> loadDoneCallback, Action<float> loadingCallback)
+            where T : UnityEngine.Object
+        {
+            DateTime beginTime = DateTime.Now;
+            if (_isLoading)
+            {
+                yield return _loadWait;
+            }
+            _isLoading = true;
+            yield return LoadDependenciesAssetBundleAsync(info.AssetBundleName);
+            DateTime waitTime = DateTime.Now;
+            T[] assets = null;
+            yield return LoadAssetBundleAsync(info.AssetBundleName, loadingCallback);
+            if (assetBundleDict.ContainsKey(info.AssetBundleName))
+            {
+                assets = assetBundleDict[info.AssetBundleName].LoadAssetWithSubAssets<T>(info.AssetPath);
+                if (assets == null)
+                {
+                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
+                }
+            }
+            if (assets != null)
+            {
+                loadDoneCallback?.Invoke(assets);
+            }
+            _isLoading = false;
+        }
         IEnumerator EnumLoadAssetAsync<T>(AssetInfoBase info, Action<T> loadDoneCallback, Action<float> loadingCallback, bool instantiate = false)
             where T : UnityEngine.Object
         {
@@ -345,5 +390,7 @@ namespace Cosmos
             loadDoneCallback?.Invoke();
             _isLoading = false;
         }
+
+
     }
 }

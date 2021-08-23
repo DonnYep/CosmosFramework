@@ -30,6 +30,19 @@ namespace Cosmos
             }
             return asset;
         }
+        public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
+        {
+            var assets = Resources.LoadAll<T>(info.AssetPath);
+            if (assets == null)
+            {
+                throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
+            }
+            return assets;
+        }
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+        {
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(info, callback, loadingCallback));
+        }
         public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
         {
             return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(info, loadDoneCallback, loadingCallback));
@@ -45,6 +58,24 @@ namespace Cosmos
         public void UnLoadAsset(object customData, bool unloadAllLoadedObjects = false)
         {
             Resources.UnloadUnusedAssets();
+        }
+        IEnumerator EnumLoadAssetWithSubAssets<T>(AssetInfoBase info, Action<T[]> loadDoneCallback, Action<float> loadingCallback)
+            where T : UnityEngine.Object
+        {
+            T[] assets = null;
+            assets = Resources.LoadAll<T>(info.AssetPath);
+            isLoading = true;
+            yield return null;
+            loadingCallback?.Invoke(1);
+            if (assets == null)
+            {
+                throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
+            }
+            else
+            {
+                loadDoneCallback?.Invoke(assets);
+            }
+            isLoading = false;
         }
         IEnumerator EnumLoadAssetAsync<T>(AssetInfoBase info, Action<T> loadDoneCallback, Action<float> loadingCallback, bool instantiate = false)
             where T : UnityEngine.Object
@@ -75,5 +106,6 @@ namespace Cosmos
             }
             isLoading = false;
         }
+
     }
 }
