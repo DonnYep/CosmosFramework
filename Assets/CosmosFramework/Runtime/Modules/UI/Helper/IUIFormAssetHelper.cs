@@ -45,9 +45,9 @@ namespace Cosmos.UI
         /// <returns>实例化后的UIForm 对象</returns>
         IUIForm InstanceUIForm(UIAssetInfo assetInfo, Type uiType);
         /// <summary>
-        /// 释放UIForm；
+        /// 释放&关闭UIForm；
         /// </summary>
         /// <param name="uiForm">UIForm对象</param>
-        void ReleaseUIForm(IUIForm uiForm);
+        void CloseUIForm(IUIForm uiForm);
     }
 }

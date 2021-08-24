@@ -15,6 +15,7 @@ namespace Cosmos
         public static class Encryption
         {
             static UTF8Encoding utf8Encoding = new UTF8Encoding(false);
+            static StringBuilder stringBuilderCache = new StringBuilder(1024);
             public enum GUIDFormat
             {
                 N, D, B, P, X
@@ -33,12 +34,12 @@ namespace Cosmos
                 byte[] md5Bytes = Encoding.UTF8.GetBytes(strData);
                 MD5 md5 = new MD5CryptoServiceProvider();
                 byte[] cryptString = md5.ComputeHash(md5Bytes);
-                Utility.Text.StringBuilderCache.Clear();
+                stringBuilderCache.Clear();
                 for (int i = 4; i < 12; i++)
                 {
-                    Utility.Text.StringBuilderCache.Append(cryptString[i].ToString("X2"));
+                    stringBuilderCache.Append(cryptString[i].ToString("X2"));
                 }
-                return Utility.Text.StringBuilderCache.ToString();
+                return stringBuilderCache.ToString();
             }
             /// <summary>
             /// MD5加密，返回32位加密后的大写16进制字符
@@ -50,14 +51,14 @@ namespace Cosmos
                 byte[] md5Bytes = Encoding.UTF8.GetBytes(strData);
                 MD5 md5 = new MD5CryptoServiceProvider();
                 byte[] cryptString = md5.ComputeHash(md5Bytes);
-                Utility.Text.StringBuilderCache.Clear();
+                stringBuilderCache.Clear();
                 int length = cryptString.Length;
                 for (int i = 0; i < length; i++)
                 {
                     //X大写的16进制，x小写
-                    Utility.Text.StringBuilderCache.Append(cryptString[i].ToString("X2"));
+                    stringBuilderCache.Append(cryptString[i].ToString("X2"));
                 }
-                return Utility.Text.StringBuilderCache.ToString();
+                return stringBuilderCache.ToString();
             }
             /// <summary>
             /// Base64加密，返回24位加密后的字符

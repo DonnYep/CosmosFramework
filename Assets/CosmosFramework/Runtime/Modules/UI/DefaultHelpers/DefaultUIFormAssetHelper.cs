@@ -39,7 +39,7 @@ namespace Cosmos.UI
                 doneCallback?.Invoke(comp);
             }, null, true);
         }
-        public void ReleaseUIForm(IUIForm uiForm)
+        public void CloseUIForm(IUIForm uiForm)
         {
             GameObject.Destroy(uiForm.Handle.CastTo<GameObject>());
         }

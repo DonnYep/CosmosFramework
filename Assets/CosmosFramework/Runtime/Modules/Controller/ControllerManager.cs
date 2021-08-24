@@ -47,46 +47,40 @@ namespace Cosmos.Controller
         {
             get { return controllerGroupDict.Count; }
         }
-        int controllerIndex = 0;
-
         #endregion
 
         #region Methods
         /// <summary>
         /// 创建一个controller；
         /// </summary>
-        /// <typeparam name="T">持有者的类型</typeparam>
         /// <param name="controllerName">被创建controller的名字</param>
-        /// <param name="owner">持有者对象</param>
+        /// <param name="handle">持有者对象</param>
         /// <returns>被创建的controller</returns>
-        public IController CreateController<T>(string controllerName, T owner)
-            where T : class
+        public IController CreateController(string controllerName, object handle)
         {
-            return CreateController(string.Empty, controllerName, owner);
+            return CreateController(controllerName, string.Empty, handle);
         }
         /// <summary>
         /// 创建一个具有组别属性的controller；
         /// </summary>
-        /// <typeparam name="T">持有者的类型</typeparam>
-        /// <param name="groupName">controller所在的组的名称</param>
+        /// <param name="controllerGroupName">controller所在的组的名称</param>
         /// <param name="controllerName">被创建controller的名字</param>
-        /// <param name="owner">持有者对象</param>
+        /// <param name="handle">持有者对象</param>
         /// <returns>被创建的controller</returns>
-        public IController CreateController<T>(string groupName, string controllerName, T owner)
-            where T : class
+        public IController CreateController(string controllerName, string controllerGroupName, object handle)
         {
-            if (string.IsNullOrEmpty(controllerName))
-                throw new ArgumentNullException("ControllerName is invalid !"); ;
-            var controller = Controller<T>.Create(groupName, controllerName, owner);
-            controller.Id = controllerIndex++;
+            Utility.Text.IsStringValid(controllerName, "ControllerName is invalid !");
+            if (!IsReferenceType(handle))
+                throw new ArgumentException($"{handle} is not reference type");
+            var controller = Controller.Create(controllerName, controllerGroupName, handle);
             controllerIdDict.Add(controller.Id, controller);
             AddRefresh(controller);
-            if (!string.IsNullOrEmpty(groupName))
+            if (!string.IsNullOrEmpty(controllerGroupName))
             {
-                if (!controllerGroupDict.TryGetValue(groupName, out var group))
+                if (!controllerGroupDict.TryGetValue(controllerGroupName, out var group))
                 {
                     group = new ControllerGroup();
-                    controllerGroupDict.Add(groupName, group);
+                    controllerGroupDict.Add(controllerGroupName, group);
                 }
                 group.AddController(controller);
             }
@@ -95,11 +89,11 @@ namespace Cosmos.Controller
         /// <summary>
         /// 是否存在controller组别；
         /// </summary>
-        /// <param name="groupName"></param>
+        /// <param name="controllerGroupName"></param>
         /// <returns></returns>
-        public bool HasControllerGroup(string groupName)
+        public bool HasControllerGroup(string controllerGroupName)
         {
-            return controllerGroupDict.ContainsKey(groupName);
+            return controllerGroupDict.ContainsKey(controllerGroupName);
         }
         /// <summary>
         /// 是否存在指定类型，指定名称的Controller;
@@ -117,6 +111,7 @@ namespace Cosmos.Controller
         /// <returns>是否存在</returns>
         public bool HasController(string controllerName)
         {
+            Utility.Text.IsStringValid(controllerName, "ControllerName is invalid !");
             foreach (var controller in controllerIdDict)
             {
                 if (controller.Value.ControllerName == controllerName)
@@ -142,6 +137,7 @@ namespace Cosmos.Controller
         /// <returns>是否存在</returns>
         public bool GetController(string controllerName, out IController controller)
         {
+            Utility.Text.IsStringValid(controllerName, "ControllerName is invalid !");
             controller = null;
             foreach (var c in controllerIdDict)
             {
@@ -156,13 +152,14 @@ namespace Cosmos.Controller
         /// <summary>
         ///获得指定tag下所有的controller；
         /// </summary>
-        /// <param name="groupName">组的名称</param>
+        /// <param name="controllerGroupName">组的名称</param>
         /// <param name="controllers">返回的controller集合</param>
         /// <returns>是否存在</returns>
-        public bool GetControllers(string groupName, out IController[] controllers)
+        public bool GetControllers(string controllerGroupName, out IController[] controllers)
         {
+            Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
             controllers = null;
-            if (controllerGroupDict.TryGetValue(groupName, out var controllerGroup))
+            if (controllerGroupDict.TryGetValue(controllerGroupName, out var controllerGroup))
             {
                 controllers = controllerGroup.GetAllControllers();
                 return true;
@@ -172,14 +169,15 @@ namespace Cosmos.Controller
         /// <summary>
         /// 条件查找所有符合的Controller
         /// </summary>
-        /// <param name="groupName">组的名称</param>
+        /// <param name="controllerGroupName">组的名称</param>
         /// <param name="predicate">查询条件</param>
         /// <param name="controllers">返回的controller集合</param>
         /// <returns>是否存在</returns>
-        public bool GetControllers(string groupName, Predicate<IController> predicate, out IController[] controllers)
+        public bool GetControllers(string controllerGroupName, Predicate<IController> predicate, out IController[] controllers)
         {
+            Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
             controllers = null;
-            bool result = controllerGroupDict.TryGetValue(groupName, out var controllerGroup);
+            bool result = controllerGroupDict.TryGetValue(controllerGroupName, out var controllerGroup);
             if (result)
                 controllers = controllerGroup.GetControllers(predicate);
             return result;
@@ -188,21 +186,23 @@ namespace Cosmos.Controller
         /// 获得指定tag的controller数量；
         /// 若不存在tag，则返回负一；
         /// </summary>
-        /// <param name="groupName">组的名称</param>
+        /// <param name="controllerGroupName">组的名称</param>
         /// <returns>数量</returns>
-        public int GetControllerGroupCount(string groupName)
+        public int GetControllerGroupCount(string controllerGroupName)
         {
-            if (controllerGroupDict.TryGetValue(groupName, out var controllerGroup))
+            Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
+            if (controllerGroupDict.TryGetValue(controllerGroupName, out var controllerGroup))
                 return controllerGroup.ControllerCount;
             return -1;
         }
         /// <summary>
         /// 通过 tag释放controller组；
         /// </summary>
-        /// <param name="groupName">需要释放的组</param>
-        public void ReleaseControllerGroup(string groupName)
+        /// <param name="controllerGroupName">需要释放的组</param>
+        public void ReleaseControllerGroup(string controllerGroupName)
         {
-            if (controllerGroupDict.Remove(groupName, out var controllerGroup))
+            Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
+            if (controllerGroupDict.Remove(controllerGroupName, out var controllerGroup))
             {
                 var ids = controllerGroup.ControllerIds;
                 controllerGroup.ClearControllers();
@@ -210,8 +210,8 @@ namespace Cosmos.Controller
                 for (int i = 0; i < length; i++)
                 {
                     controllerIdDict.Remove(ids[i], out var controller);
-                    ReferencePool.Release(controller);
                     RemoveRefresh(ids[i]);
+                    Controller.Release(controller);
                 }
             }
         }
@@ -232,6 +232,7 @@ namespace Cosmos.Controller
                         controllerGroupDict.Remove(tag);
                 }
                 RemoveRefresh(controllerId);
+                Controller.Release(controller);
             }
         }
         /// <summary>
@@ -240,6 +241,7 @@ namespace Cosmos.Controller
         /// <param name="controllerName">controller name</param>
         public void ReleaseController(string controllerName)
         {
+            Utility.Text.IsStringValid(controllerName, "ControllerName is invalid !");
             IController controller = null;
             foreach (var c in controllerIdDict)
             {
@@ -263,7 +265,7 @@ namespace Cosmos.Controller
             }
             foreach (var controller in controllerIdDict)
             {
-                ReferencePool.Release(controller.Value);
+                Controller.Release(controller.Value);
             }
             controllerGroupDict.Clear();
             controllerIdDict.Clear();
@@ -275,10 +277,11 @@ namespace Cosmos.Controller
         /// <summary>
         /// 暂停组中的所有controller的轮询；
         /// </summary>
-        /// <param name="groupName">被暂停的组的名称</param>
-        public void PauseControllerGroup(string groupName)
+        /// <param name="controllerGroupName">被暂停的组的名称</param>
+        public void PauseControllerGroup(string controllerGroupName)
         {
-            if( controllerGroupDict.TryGetValue(groupName, out var controllerGroup)) 
+            Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
+            if (controllerGroupDict.TryGetValue(controllerGroupName, out var controllerGroup))
             {
                 controllerGroup.PauseControllers();
             }
@@ -286,10 +289,11 @@ namespace Cosmos.Controller
         /// <summary>
         /// 恢复组中的所有controller的轮询；
         /// </summary>
-        /// <param name="groupName">被恢复的组的名称</param>
-        public void UnPauseControllerGroup(string groupName)
+        /// <param name="controllerGroupName">被恢复的组的名称</param>
+        public void UnPauseControllerGroup(string controllerGroupName)
         {
-            if (controllerGroupDict.TryGetValue(groupName, out var controllerGroup))
+            Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
+            if (controllerGroupDict.TryGetValue(controllerGroupName, out var controllerGroup))
             {
                 controllerGroup.UnPauseControllers();
             }
@@ -355,5 +359,10 @@ namespace Cosmos.Controller
             fixedRefresh?.Invoke();
         }
         #endregion
+        bool IsReferenceType(object handle)
+        {
+            var type = handle.GetType();
+            return type.IsClass || type.IsInterface;
+        }
     }
 }

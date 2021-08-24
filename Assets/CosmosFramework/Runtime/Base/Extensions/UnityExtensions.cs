@@ -144,6 +144,43 @@ namespace Cosmos
             var comp = childTrans.GetComponent<T>();
             return comp;
         }
+        public static T GetComponentInPeer<T>(this Transform transform, string peerName)
+where T : Component
+        {
+            Transform tran = transform.parent.Find(peerName);
+            if (tran != null)
+            {
+                return tran.GetComponent<T>();
+            }
+            return null;
+        }
+        public static T[] GetComponentsInPeer<T>(this Transform transform, bool includeSrc = false)
+    where T : Component
+        {
+            Transform parentTrans = transform.parent;
+            var childTrans = parentTrans.GetComponentsInChildren<Transform>();
+            var length = childTrans.Length;
+            Transform[] trans;
+            if (!includeSrc)
+                trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
+            else
+                trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != transform);
+            var transLength = trans.Length;
+            T[] src = new T[transLength];
+            int idx = 0;
+            for (int i = 0; i < transLength; i++)
+            {
+                var comp = trans[i].GetComponent<T>();
+                if (comp != null)
+                {
+                    src[idx] = comp;
+                    idx++;
+                }
+            }
+            T[] dst = new T[idx];
+            Array.Copy(src, 0, dst, 0, idx);
+            return dst;
+        }
         public static Vector2 ConvertToVector2(this Vector3 vector3)
         {
             return new Vector2(vector3.x, vector3.z);

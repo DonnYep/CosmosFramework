@@ -193,7 +193,7 @@ where T : Component
             /// 查找同级别
             /// </summary>
             /// <param name="go">同级别当前对象</param>
-            /// <param name="subNode">同级别目标对象名称</param>
+            /// <param name="peerNode">同级别目标对象名称</param>
             /// <returns>查找到的目标对象</returns>
             public static Transform Peer(Transform go, string peerNode)
             {
@@ -206,13 +206,17 @@ where T : Component
             /// 查找同级别其他对象；
             /// </summary>
             /// <param name="go">同级别当前对象</param>
+            /// <param name="includeSrc">是否包含本身</param>
             /// <returns>当前级别下除此对象的其他同级的对象</returns>
-            public static Transform[] Peers(Transform go)
+            public static Transform[] Peers(Transform go, bool includeSrc = false)
             {
                 Transform parentTrans = go.parent;
                 var childTrans = parentTrans.GetComponentsInChildren<Transform>();
                 var length = childTrans.Length;
-                return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != go);
+                if (!includeSrc)
+                    return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != go);
+                else
+                    return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
             }
             /// <summary>
             /// 查找同级别下所有目标组件；
@@ -220,26 +224,33 @@ where T : Component
             /// </summary>
             /// <typeparam name="T">目标组件</typeparam>
             /// <param name="go">同级别当前对象</param>
-            /// <returns>当前级别下除此对象的其他同级的对象组件</returns>
-            public static T[] PeersComponet<T>(Transform go) where T : Component
+            /// <param name="includeSrc">包含当前对象</param>
+            /// <returns>同级别对象数组</returns>
+            public static T[] PeerComponets<T>(Transform go, bool includeSrc = false) where T : Component
             {
                 Transform parentTrans = go.parent;
                 var childTrans = parentTrans.GetComponentsInChildren<Transform>();
                 var length = childTrans.Length;
-                List<T> peerComps = new List<T>();
-                if (length > 0)
+                Transform[] trans;
+                if (!includeSrc)
+                    trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
+                else
+                    trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != go);
+                var transLength = trans.Length;
+                T[] src = new T[transLength];
+                int idx = 0;
+                for (int i = 0; i < transLength; i++)
                 {
-                    for (int i = 0; i < length; i++)
+                    var comp = trans[i].GetComponent<T>();
+                    if (comp != null)
                     {
-                        if (childTrans[i].parent == parentTrans && childTrans[i] != go)
-                        {
-                            var comps = childTrans[i].GetComponents<T>();
-                            if (comps != null)
-                                peerComps.AddRange(comps);
-                        }
+                        src[idx] = comp;
+                        idx++;
                     }
                 }
-                return peerComps.Count > 0 ? peerComps.ToArray() : null;
+                T[] dst = new T[idx];
+                Array.Copy(src, 0, dst, 0, idx);
+                return dst;
             }
             /// <summary>
             /// 对unity对象进行升序排序

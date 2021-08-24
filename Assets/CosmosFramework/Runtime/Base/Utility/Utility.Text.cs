@@ -7,17 +7,7 @@ namespace Cosmos
         public static class Text
         {
             [ThreadStatic]//每个静态类型字段对于每一个线程都是唯一的
-            static StringBuilder stringBuilderCache;
-            public static StringBuilder StringBuilderCache
-            {
-                get
-                {
-                    if (stringBuilderCache == null)
-                        stringBuilderCache = new StringBuilder(1024);
-                    return stringBuilderCache;
-                }
-                set { stringBuilderCache = value; }
-            }
+            static StringBuilder stringBuilderCache=new StringBuilder(1024);
             /// <summary>
             /// 格式化字符串。
             /// </summary>
@@ -30,9 +20,9 @@ namespace Cosmos
                     throw new ArgumentNullException("Format is invalid.");
                 if (args == null)
                     throw new ArgumentNullException("Args is invalid.");
-                StringBuilderCache.Length = 0;
-                StringBuilderCache.AppendFormat(format, args);
-                return StringBuilderCache.ToString();
+                stringBuilderCache.Length = 0;
+                stringBuilderCache.AppendFormat(format, args);
+                return stringBuilderCache.ToString();
             }
             /// <summary>
             /// 格式化字符串
@@ -50,9 +40,9 @@ namespace Cosmos
                 {
                     throw new ArgumentNullException("Arg is invalid.");
                 }
-                StringBuilderCache.Length = 0;
-                StringBuilderCache.AppendFormat(format, arg);
-                return StringBuilderCache.ToString();
+                stringBuilderCache.Length = 0;
+                stringBuilderCache.AppendFormat(format, arg);
+                return stringBuilderCache.ToString();
             }
             public static string Append(params object[] args)
             {
@@ -60,13 +50,13 @@ namespace Cosmos
                 {
                     throw new ArgumentNullException("Append is invalid.");
                 }
-                StringBuilderCache.Length = 0;
+                stringBuilderCache.Clear();
                 int length = args.Length;
                 for (int i = 0; i < length; i++)
                 {
-                    StringBuilderCache.Append(args[i]);
+                    stringBuilderCache.Append(args[i]);
                 }
-                return StringBuilderCache.ToString();
+                return stringBuilderCache.ToString();
             }
             /// <summary>
             /// 字段合并；
@@ -77,17 +67,13 @@ namespace Cosmos
             {
                 if (strings == null)
                     throw new ArgumentNullException("Combine is invalid.");
-                StringBuilderCache.Length = 0;
+                stringBuilderCache.Length = 0;
                 int length = strings.Length;
                 for (int i = 0; i < length; i++)
                 {
-                    StringBuilderCache.Append(strings[i]);
+                    stringBuilderCache.Append(strings[i]);
                 }
-                return StringBuilderCache.ToString();
-            }
-            public static void ClearStringBuilder()
-            {
-                StringBuilderCache.Clear();
+                return stringBuilderCache.ToString();
             }
             /// <summary>
             /// 是否是一串数字类型的string

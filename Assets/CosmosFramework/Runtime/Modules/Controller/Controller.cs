@@ -11,54 +11,60 @@ namespace Cosmos.Controller
     /// <see cref="LateRefreshAttribute"/>
     /// <see cref="FixedRefreshAttribute"/>
     /// </summary>
-    internal class Controller<T> : IController
-        where T : class
+    internal class Controller : IController
     {
-        T owner;
+        static int controllerIndex = 0;
+
         Action tickRefreshHandler;
         Action lateRefreshHandler;
         Action fixedRefreshHandler;
-        Type ownerType;
+        object handle;
+        Type handleType;
         string controllerName;
-        public object Handle { get { return owner; } }
-        public Type HandleType { get { return ownerType; } }
+        public object Handle { get { return handle; } }
+        public Type HandleType { get { return handleType; } }
         public string ControllerName
         {
             get
             {
                 if (string.IsNullOrEmpty(controllerName))
-                    return ownerType.Name;
+                    return handleType.Name;
                 else
                     return controllerName;
             }
         }
         public bool Pause { get; set; }
-        public int Id { get; internal set; }
+        public int Id { get; private set; }
         public string GroupName { get; private set; }
         public void Release()
         {
             Id = 0;
-            owner = null;
+            handle = null;
             Pause = false;
-            ownerType = null;
+            handleType = null;
             controllerName = null;
             tickRefreshHandler = null;
             lateRefreshHandler = null;
             fixedRefreshHandler = null;
         }
-        internal static Controller<T> Create(string groupName, string controllerName, T owner)
+        internal static void Release(IController controller)
         {
-            var controller = ReferencePool.Accquire<Controller<T>>();
-            controller.owner = owner;
+            ReferencePool.Release(controller);
+        }
+        internal static IController Create(string controllerName, string groupName, object handle)
+        {
+            var controller = ReferencePool.Accquire<Controller>();
+            controller.handle = handle;
             controller.controllerName = controllerName;
-            controller.ownerType = typeof(T);
+            controller.handleType = handle.GetType();
             controller.GroupName = groupName;
-            TickRefreshAttribute.GetRefreshAction(owner, true, out var tickAction);
-            LateRefreshAttribute.GetRefreshAction(owner, true, out var lateAction);
-            FixedRefreshAttribute.GetRefreshAction(owner, true, out var fixedAction);
+            TickRefreshAttribute.GetRefreshAction(handle, true, out var tickAction);
+            LateRefreshAttribute.GetRefreshAction(handle, true, out var lateAction);
+            FixedRefreshAttribute.GetRefreshAction(handle, true, out var fixedAction);
             controller.tickRefreshHandler = tickAction;
             controller.lateRefreshHandler = lateAction;
             controller.fixedRefreshHandler = fixedAction;
+            controller.Id = controllerIndex++;
             return controller;
         }
         [FixedRefresh]

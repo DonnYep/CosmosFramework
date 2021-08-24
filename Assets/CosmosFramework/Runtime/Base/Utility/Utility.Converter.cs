@@ -11,6 +11,7 @@ namespace Cosmos
     {
         public static class Converter
         {
+            static StringBuilder stringBuilderCache = new StringBuilder(1024);
             //TODO Converter 转换工具需要完善
             public static string GetString(byte[] value)
             {
@@ -138,12 +139,11 @@ namespace Cosmos
                 string hexString = string.Empty;
                 if (bytes != null)
                 {
-                    Utility.Text.ClearStringBuilder();
                     foreach (byte b in bytes)
                     {
-                        Utility.Text.StringBuilderCache.AppendFormat("{0:x2}", b);
+                        stringBuilderCache.AppendFormat("{0:x2}", b);
                     }
-                    hexString = Utility.Text.StringBuilderCache.ToString();
+                    hexString = stringBuilderCache.ToString();
                 }
                 return hexString;
             }

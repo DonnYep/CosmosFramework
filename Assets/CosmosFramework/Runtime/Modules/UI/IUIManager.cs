@@ -87,22 +87,38 @@ namespace Cosmos
         /// 此操作会释放UIForm对象；
         /// </summary>
         /// <param name="uiFormName">UI资源的名称</param>
-        void ReleaseUIForm(string uiFormName);
+        void CloseUIForm(string uiFormName);
         /// <summary>
-        /// 失活UIForm，并触发UIForm中的OnDeactive回调；
+        /// 关闭释放UIForm；
+        /// 此操作会释放UIForm对象；
+        /// </summary>
+        /// <param name="uiForm">open的UIForm</param>
+        void CloseUIForm(IUIForm uiForm);
+        /// <summary>
+        /// 失活UIForm;
         /// </summary>
         /// <param name="uiFormName">UI资源的名称</param>
         void DeactiveUIForm(string uiFormName);
         /// <summary>
-        /// 激活UIForm,并触发UIForm中的OnActive回调；
+        ///  失活UIForm；
+        /// </summary>
+        /// <param name="uiForm">UIForm对象</param>
+        void DeactiveUIForm(IUIForm uiForm);
+        /// <summary>
+        /// 激活UIForm;
         /// </summary>
         /// <param name="uiFormName">UI资源的名称</param>
         void ActiveUIForm(string uiFormName);
         /// <summary>
-        /// 释放整个组；
+        /// 激活UIForm；
+        /// </summary>
+        /// <param name="uiForm">UIForm对象</param>
+        void ActiveUIForm(IUIForm uiForm);
+        /// <summary>
+        /// 释放关闭整个组；
         /// </summary>
         /// <param name="uiGroupName">UI组的名字</param>
-        void ReleaseUIGroup(string uiGroupName);
+        void CloseUIGroup(string uiGroupName);
         /// <summary>
         /// 失活整个ui组；
         /// </summary>

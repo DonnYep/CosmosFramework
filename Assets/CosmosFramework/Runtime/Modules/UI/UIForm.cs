@@ -36,8 +36,8 @@ namespace Cosmos.UI
                     priority = 10000;
                 else if (value < 0)
                     priority = 0;
-                var peerComps = Utility.Unity.PeersComponet<UIForm>(transform);
-                Utility.Unity.SortCompsByDescending(peerComps, (comp) => comp.Priority);
+                var peerComps = Utility.Unity.PeerComponets<UIForm>(transform);
+                Utility.Unity.SortCompsByAscending(peerComps, (comp) => comp.Priority);
             }
         }
         protected int priority = 100;

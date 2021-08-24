@@ -261,15 +261,15 @@ namespace Cosmos
             {
                 if (!File.Exists(fileFullPath))
                     throw new IOException("ReadTextFileContent path not exist !" + fileFullPath);
-                Utility.Text.ClearStringBuilder();
+                string result = string.Empty;
                 using (FileStream stream = File.Open(fileFullPath, FileMode.Open))
                 {
                     using (StreamReader reader = new StreamReader(stream, utf8Encoding))
                     {
-                        Utility.Text.StringBuilderCache.Append(reader.ReadToEnd());
+                        result= Utility.Text.Append(reader.ReadToEnd());
                     }
                 }
-                return Utility.Text.StringBuilderCache.ToString();
+                return result;
             }
             /// <summary>
             /// 读取指定路径下某text类型文件的内容

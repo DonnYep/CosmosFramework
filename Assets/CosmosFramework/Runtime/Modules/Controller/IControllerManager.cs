@@ -17,7 +17,7 @@ namespace Cosmos
     //
     //5、控制器模块已与unity解耦
     //================================================
-    public interface IControllerManager:IModuleManager
+    public interface IControllerManager : IModuleManager
     {
         /// <summary>
         /// 控制器组的数量；
@@ -26,26 +26,24 @@ namespace Cosmos
         /// <summary>
         /// 创建一个controller；
         /// </summary>
-        /// <typeparam name="T">持有者的类型</typeparam>
         /// <param name="controllerName">被创建controller的名字</param>
-        /// <param name="owner">持有者对象</param>
+        /// <param name="handle">持有者对象</param>
         /// <returns>被创建的controller</returns>
-        IController CreateController<T>(string controllerName, T owner) where T : class;
+        IController CreateController(string controllerName, object handle);
         /// <summary>
         /// 创建一个具有组别属性的controller；
         /// </summary>
-        /// <typeparam name="T">持有者的类型</typeparam>
-        /// <param name="groupName">controller所在的组的名称</param>
+        /// <param name="controllerGroupName">controller所在的组的名称</param>
         /// <param name="controllerName">被创建controller的名字</param>
-        /// <param name="owner">持有者对象</param>
+        /// <param name="handle">handle对象</param>
         /// <returns>被创建的controller</returns>
-        IController CreateController<T>(string groupName, string controllerName, T owner) where T : class;
+        IController CreateController(string controllerGroupName, string controllerName, object handle);
         /// <summary>
         /// 是否存在controller组别；
         /// </summary>
-        /// <param name="groupName"></param>
+        /// <param name="controllerGroupName"></param>
         /// <returns></returns>
-        bool HasControllerGroup(string groupName);
+        bool HasControllerGroup(string controllerGroupName);
         /// <summary>
         /// 是否存在指定类型，指定名称的Controller;
         /// </summary>
@@ -75,30 +73,30 @@ namespace Cosmos
         /// <summary>
         ///获得指定tag下所有的controller；
         /// </summary>
-        /// <param name="groupName">组的名称</param>
+        /// <param name="controllerGroupName">组的名称</param>
         /// <param name="controllers">返回的controller集合</param>
         /// <returns>是否存在</returns>
-        bool GetControllers(string groupName, out IController[] controllers);
+        bool GetControllers(string controllerGroupName, out IController[] controllers);
         /// <summary>
         /// 条件查找所有符合的Controller
         /// </summary>
-        /// <param name="groupName">组的名称</param>
+        /// <param name="controllerGroupName">组的名称</param>
         /// <param name="predicate">查询条件</param>
         /// <param name="controllers">返回的controller集合</param>
         /// <returns>是否存在</returns>
-        bool GetControllers(string groupName, Predicate<IController> predicate, out IController[] controllers);
+        bool GetControllers(string controllerGroupName, Predicate<IController> predicate, out IController[] controllers);
         /// <summary>
         /// 获得指定tag的controller数量；
         /// 若不存在tag，则返回负一；
         /// </summary>
-        /// <param name="groupName">组的名称</param>
+        /// <param name="controllerGroupName">组的名称</param>
         /// <returns>数量</returns>
-        int GetControllerGroupCount(string groupName);
+        int GetControllerGroupCount(string controllerGroupName);
         /// <summary>
         /// 通过 tag释放controller组；
         /// </summary>
-        /// <param name="groupName">需要释放的组</param>
-        void ReleaseControllerGroup(string groupName);
+        /// <param name="controllerGroupName">需要释放的组</param>
+        void ReleaseControllerGroup(string controllerGroupName);
         /// <summary>
         /// 释放指定id的controller；
         /// </summary>
@@ -116,12 +114,12 @@ namespace Cosmos
         /// <summary>
         /// 暂停组中的所有controller的轮询；
         /// </summary>
-        /// <param name="groupName">被暂停的组的名称</param>
-        void PauseControllerGroup(string groupName);
+        /// <param name="controllerGroupName">被暂停的组的名称</param>
+        void PauseControllerGroup(string controllerGroupName);
         /// <summary>
         /// 恢复组中的所有controller的轮询；
         /// </summary>
-        /// <param name="groupName">被恢复的组的名称</param>
-        void UnPauseControllerGroup(string groupName);
+        /// <param name="controllerGroupName">被恢复的组的名称</param>
+        void UnPauseControllerGroup(string controllerGroupName);
     }
 }
