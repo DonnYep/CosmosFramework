@@ -262,8 +262,10 @@ namespace Cosmos.UI
                 throw new ArgumentNullException("UIForm is invalid.");
             var uiFormName = uiForm.UIFormName;
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            if (uiFormDict.Remove(uiFormName))
+            if (uiFormDict.Remove(uiFormName,out var srcUIForm))
             {
+                if(srcUIForm!=uiForm)
+                    throw new ArgumentException($"{uiFormName}'s ptr is not equal !");//指针不一致
                 if (!string.IsNullOrEmpty(uiForm.UIGroupName))
                 {
                     uiGroupDict.TryGetValue(uiForm.UIGroupName, out var group);
@@ -305,7 +307,7 @@ namespace Cosmos.UI
                 if (srcUIForm == uiForm)
                     uiFormMotionHelper.DeactiveUIForm(uiForm);
                 else
-                    throw new ArgumentException($"{uiFormName}'s ptr is inconformity !");//指针不一致
+                    throw new ArgumentException($"{uiFormName}'s ptr is not equal !");//指针不一致
             }
         }
         /// <summary>
@@ -324,7 +326,7 @@ namespace Cosmos.UI
                 if (srcUIForm == uiForm)
                     uiFormMotionHelper.ActiveUIForm(uiForm);
                 else
-                    throw new ArgumentException($"{uiFormName}'s ptr is inconformity !");//指针不一致
+                    throw new ArgumentException($"{uiFormName}'s ptr is not equal !");//指针不一致
             }
         }
         /// <summary>

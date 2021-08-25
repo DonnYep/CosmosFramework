@@ -73,7 +73,7 @@ namespace Cosmos
             {
                 if (instanceObject == null)
                 {
-                    instanceObject = new GameObject(typeof(GameManager).ToString());
+                    instanceObject = new GameObject("CosmosGameRoot");
                     Object.DontDestroyOnLoad(instanceObject);
                 }
                 return instanceObject;
@@ -153,7 +153,7 @@ namespace Cosmos
             var hasMount = moduleMountDict.TryGetValue(derivedType, out moduleMount);
             if (!hasMount)
             {
-                moduleMount = new GameObject(derivedType.Name + "Module-->>Container");
+                moduleMount = new GameObject(derivedType.Name + "-->>Container");
                 moduleMount.transform.SetParent(InstanceObject.transform);
                 if (!moduleMountDict.TryAdd(derivedType, moduleMount))
                 {
@@ -164,7 +164,7 @@ namespace Cosmos
             {
                 if (moduleMount == null)
                 {
-                    moduleMount = new GameObject(derivedType.Name + "Module-->>Container");
+                    moduleMount = new GameObject(derivedType.Name + "-->>Container");
                     moduleMount.transform.SetParent(InstanceObject.transform);
                 }
             }

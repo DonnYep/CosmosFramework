@@ -236,6 +236,32 @@ namespace Cosmos.Controller
             }
         }
         /// <summary>
+        /// 释放controller；
+        /// </summary>
+        /// <param name="controller">需要释放的controller对象</param>
+        public void ReleaseController(IController controller)
+        {
+            if (controller == null)
+                throw new ArgumentNullException("Controller is invaild !");
+            var controllerId = controller.Id;
+            if (controllerIdDict.TryGetValue(controllerId, out var srcCtrl))
+            {
+                if (controller != srcCtrl)
+                    throw new ArgumentException($"{controller}'s ptr is not equal !");//指针不一致
+                controllerIdDict.Remove(controllerId);
+                var tag = controller.GroupName;
+                if (!string.IsNullOrEmpty(tag))
+                {
+                    if (controllerGroupDict.TryGetValue(tag, out var controllerGroup))
+                        controllerGroup.RemoveController(controllerId);
+                    if (controllerGroup.ControllerCount <= 0)
+                        controllerGroupDict.Remove(tag);
+                }
+                RemoveRefresh(controllerId);
+                Controller.Release(controller);
+            }
+        }
+        /// <summary>
         /// 释放指定名字的控制器；
         /// </summary>
         /// <param name="controllerName">controller name</param>

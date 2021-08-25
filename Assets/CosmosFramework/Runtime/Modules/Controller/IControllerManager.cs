@@ -103,6 +103,11 @@ namespace Cosmos
         /// <param name="controllerId">controller id</param>
         void ReleaseController(int controllerId);
         /// <summary>
+        /// 释放controller；
+        /// </summary>
+        /// <param name="controller">需要释放的controller对象</param>
+        void ReleaseController(IController controller);
+        /// <summary>
         /// 释放指定名字的控制器；
         /// </summary>
         /// <param name="controllerName">controller name</param>
