@@ -580,7 +580,6 @@ MonoBehaviour:
   PrintModulePreparatory: 0
   LoadDefaultHelper: 1
   ResourceLoadMode: 0
-  QuarkAssetLoadMode: 0
   QuarkRemoteUrl: RemoteUrl
   QuarkLocalUrl: LocalUrl
 --- !u!4 &1445863190

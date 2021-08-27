@@ -33,23 +33,31 @@ namespace Cosmos
 
         IInputManager inputManager;
         MultiplayYBotCamera cameraCache;
+        IController ybotController;
         public MultiplayYBotCamera Camera
         {
             get
             {
                 if (cameraCache == null)
                 {
-                  //  cameraCache = CosmosEntry.ControllerManager.GetController<MultiplayYBotCamera>(typeof(MultiplayYBotCamera).Name);
+                    //cameraCache =
+                    CosmosEntry.ControllerManager.GetController("MultiplayYBotCamera", out var controller);
+                    cameraCache = controller.Handle.CastTo<MultiplayYBotCamera>();
                 }
                 return cameraCache;
             }
         }
-        public void OnInitialization()
+        void Awake()
         {
             animator = GetComponentInChildren<Animator>();
             CameraTarget = transform.Find("CameraTarget").transform;
             CosmosEntry.InputManager.SetInputHelper(new StandardInputHelper());
             inputManager = CosmosEntry.InputManager;
+            ybotController = CosmosEntry.ControllerManager.CreateController("MultiplayYBotController",this);
+        }
+        void OnDestroy()
+        {
+            CosmosEntry.ControllerManager.ReleaseController(ybotController);
         }
         [TickRefresh]
         void TickRefresh()

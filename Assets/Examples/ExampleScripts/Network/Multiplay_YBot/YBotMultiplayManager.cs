@@ -7,7 +7,7 @@ namespace Cosmos.Test
     public class YBotMultiplayManager : MultiplayManager
     {
         Dictionary<int, NetworkIdentity> netTransDict = new Dictionary<int, NetworkIdentity>();
-        MultiplayYBotCamera  multiplayerYBotCamera;
+        MultiplayYBotCamera multiplayerYBotCamera;
         NetworkIdentity authorityIdentity;
         float latestTime = 0;
 
@@ -29,7 +29,6 @@ namespace Cosmos.Test
         {
             if (!IsConnected)
                 return;
-
             var now = Time.time;
             if (latestTime <= now)
             {
@@ -44,7 +43,7 @@ namespace Cosmos.Test
             var go = GameObject.Instantiate(MultiplayManager.Instance.LocalPlayerPrefab);
             go.AddComponent<NetworkAnimator>();
             authorityIdentity = go.AddComponent<NetworkTransform>().NetworkIdentity;
-           var ctrlComp= go.AddComponent<MultiplayYBotController>();
+            var ctrlComp = go.AddComponent<MultiplayYBotController>();
             authorityIdentity.NetId = MultiplayManager.Instance.AuthorityConv;
             authorityIdentity.IsAuthority = true;
             multiplayerYBotCamera.SetCameraTarget(ctrlComp.CameraTarget);
@@ -68,7 +67,7 @@ namespace Cosmos.Test
         /// <summary>
         /// int表示Conv，string表示FixTransform的json
         /// </summary>
-        void OnPlayerInputHandler( FixTransportData[] inputDatas)
+        void OnPlayerInputHandler(FixTransportData[] inputDatas)
         {
             var length = inputDatas.Length;
             for (int i = 0; i < length; i++)

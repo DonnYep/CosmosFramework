@@ -27,7 +27,7 @@ namespace Cosmos
 
         Vector3 originalPos;
         Vector3 originalRot;
-
+        IController cameraController;
         public Vector3 PitchYaw { get; private set; }
         public Vector3 CameraForwordDirection()
         {
@@ -57,19 +57,24 @@ namespace Cosmos
             transform.position = originalPos;
             transform.eulerAngles=originalRot;
         }
-        private void Awake()
+        void Awake()
         {
             originalPos = transform.position;
             originalRot = transform.rotation.eulerAngles;
-            inputManager = GameManager.GetModule<IInputManager>();
+            inputManager = CosmosEntry.InputManager;
+            cameraController = CosmosEntry.ControllerManager.CreateController("MultiplayYBotCamera", this);
         }
-        protected  void OnEnable()
+        void OnEnable()
         {
             CosmosEntry.LateRefreshHandler+= LateUpdateCamera;
         }
-        protected void OnDisable()
+        void OnDisable()
         {
             CosmosEntry.LateRefreshHandler -= LateUpdateCamera;
+        }
+        void OnDestroy()
+        {
+            CosmosEntry.ControllerManager.ReleaseController(cameraController);
         }
         protected void OnValidate()
         {
