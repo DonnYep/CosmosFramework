@@ -150,6 +150,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36405f6fe0f5daf4d97f0601c42845b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LaunchAppDomainModules: 1
+  PrintModulePreparatory: 0
+  LoadDefaultHelper: 1
+  ResourceLoadMode: 0
+  QuarkRemoteUrl: RemoteUrl
+  QuarkLocalUrl: LocalUrl
 --- !u!4 &557414686
 Transform:
   m_ObjectHideFlags: 0
@@ -175,7 +181,6 @@ GameObject:
   - component: {fileID: 754058573}
   - component: {fileID: 754058572}
   - component: {fileID: 754058571}
-  - component: {fileID: 754058574}
   m_Layer: 0
   m_Name: LRU
   m_TagString: Untagged
@@ -195,6 +200,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2263b43581a0ab4abecff37d10c0706, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnItem: {fileID: 0}
+  index: 0
+  objectKey: LRUTester
+  deactiveObjectMount: {fileID: 0}
 --- !u!114 &754058572
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,20 +250,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &754058574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 754058570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e565c95dff02f3443b7d7411080caf8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnTransform: {fileID: 0}
-  poolDataSet: {fileID: 0}
 --- !u!1 &1803866288
 GameObject:
   m_ObjectHideFlags: 0

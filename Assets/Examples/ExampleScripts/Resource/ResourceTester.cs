@@ -10,17 +10,16 @@ using Cosmos.Resource;
 /// </summary>
 public class ResourceTester : MonoBehaviour
 {
-    IResourceManager resourceManager;
     void Start()
     {
-        resourceManager = GameManager.GetModule<IResourceManager>();
-        resourceManager.LoadPrefabAsync<ResourceUnitCube>((go)=> 
+        CosmosEntry.ResourceManager.LoadPrefabAsync<ResourceUnitCube>((go) =>
        {
            go.transform.position = new Vector3(3, 0, 0);
-       },null,true);
-        resourceManager.LoadPrefabAsync<ResourceMonoUnitTester>((monoGo)=> {
+       }, null, true);
+        CosmosEntry.ResourceManager.LoadPrefabAsync<ResourceMonoUnitTester>((monoGo) =>
+        {
             monoGo.transform.position = new Vector3(5, 0, 0);
-        },null,true);
+        }, null, true);
     }
     void LoadDone(ResourceUnitSphere resUnit, GameObject go)
     {

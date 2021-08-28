@@ -8,31 +8,31 @@ public class SliderEventDispatcher : MonoBehaviour
 {
     [SerializeField]
     string eventKey = "defaultEventKey";
-    public string EventKey { get { return eventKey; } }
-    public string DispatcherName { get { return gameObject.name; } }
     LogicEventArgs<Slider> uch;
-    [SerializeField]
-    string message;
     IEventManager eventManager;
-    private void Start()
+    Slider slider;
+    Button btn_Deregister;
+    void Start()
     {
         slider = GetComponentInChildren<Slider>();
         uch = ReferencePool.Accquire<LogicEventArgs<Slider>>().SetData(slider);
         eventManager = GameManager.GetModule<IEventManager>();
+        slider.onValueChanged.AddListener(DispatchEvent);
+        btn_Deregister = transform.Find("Btn_Deregister").GetComponent<Button>();
+        btn_Deregister.onClick.AddListener(DeregisterEvent);
     }
-    Slider slider;
-    public void DispatchEvent()
+    void DispatchEvent(float value)
     {
         var data = uch.GetData();
         data.maxValue = slider.maxValue;
-        data.value = slider.value;
+        data.value = value;
         eventManager.DispatchEvent(eventKey, null, uch);
     }
-    public void DeregisterEvent()
+    void DeregisterEvent()
     {
         eventManager.DeregisterEvent(eventKey);
     }
-    private void OnDestroy()
+    void OnDestroy()
     {
         ReferencePool.Release(uch);
     }
