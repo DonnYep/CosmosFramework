@@ -74,6 +74,7 @@ namespace Cosmos
                 if (instanceObject == null)
                 {
                     instanceObject = new GameObject("CosmosGameRoot");
+                    instanceObject.AddComponent<MonoGameManager>();
                     Object.DontDestroyOnLoad(instanceObject);
                 }
                 return instanceObject;
@@ -220,15 +221,6 @@ namespace Cosmos
                 elapseRefreshDict = new Dictionary<object, Action<float>>();
                 moduleInitExceptionList = new List<Exception>();
                 moduleTerminateExceptionList = new List<Exception>();
-
-                try
-                {
-                    InstanceObject.gameObject.AddComponent<MonoGameManager>();
-                }
-                catch (Exception e)
-                {
-                    Utility.Debug.LogError(e);
-                }
             }
         }
         internal static bool HasModule(Type type)
