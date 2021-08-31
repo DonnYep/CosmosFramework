@@ -157,9 +157,9 @@ namespace Quark
         void StreamingAssetsTab()
         {
             if (EnableRelativeBuildPath)
-            {
                 downloadPath = Path.Combine(Application.streamingAssetsPath, RelativeBuildPath);
-            }
+            else
+                downloadPath = Application.streamingAssetsPath;
             QuarkManager.Instance.Initiate(downloadPath, downloadPath);
             QuarkManager.Instance.CheckForUpdates();
         }

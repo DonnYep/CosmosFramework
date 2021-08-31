@@ -406,7 +406,7 @@ where T : UnityEngine.Object
                 if (!assetBundleDict.ContainsKey(assetBundleName))
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
-                    Utility.Debug.LogInfo(abPath);
+                   // Utility.Debug.LogInfo(abPath);
                     try
                     {
                         AssetBundle abBin = AssetBundle.LoadFromFile(abPath);
