@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Quark
 {
-    public enum QuarkPersistentPathType:byte
+    public enum QuarkLoadPath:byte
     {
         PersistentDataPath=0x0,
         StreamingAssets=0x1,
-        CustomePersistentPath = 0x2
+        Custome = 0x2
     }
 }

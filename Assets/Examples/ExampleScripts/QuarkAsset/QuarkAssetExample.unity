@@ -764,15 +764,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 435fb9601448fe144854aeece9140fde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  QuarkBuildPath: 0
+  EnableRelativeBuildPath: 0
+  RelativeBuildPath: BuildAB
   Url: 
   PingUrl: 0
   QuarkAssetLoadMode: 2
   QuarkAssetDataset: {fileID: 11400000, guid: e4ef4e912cff6e24f8901a67d27afba9, type: 2}
-  QuarkPersistentPathType: 0
-  UsePersistentRelativePath: 1
-  PersistentRelativePath: DownloadPath
+  QuarkLoadPath: 0
+  EnableRelativeLoadPath: 0
+  RelativeLoadPath: 
   AESEncryptionKey: 
-  CustomePersistentPath: 
+  CustomeLoadPath: 
 --- !u!1 &613508358
 GameObject:
   m_ObjectHideFlags: 0

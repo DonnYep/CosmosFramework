@@ -2,6 +2,14 @@
 {
     public class QuarkConsts
     {
+        public static string StreamingAssetPath
+#if UNITY_STANDALONE||UNITY_EDITOR
+            = UnityEngine.Application.streamingAssetsPath;
+#elif UNITY_ANDROID
+        UnityEngine.Application.dataPath + "!assets/";
+#elif UNITY_IOS||UNITY_IPHONE
+
+#endif
         /// <summary>
         /// Quark资源打包出来后信息表；
         /// </summary>
