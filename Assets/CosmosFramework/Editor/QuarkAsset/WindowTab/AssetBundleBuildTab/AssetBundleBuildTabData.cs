@@ -18,7 +18,7 @@ namespace CosmosEditor.Quark
         public bool UseDefaultPath { get; set; }
         public bool ClearOutputFolders { get; set; }
         public bool CopyToStreamingAssets { get; set; }
-        public string StreamingAssetsPath { get; set; }
+        public string StreamingRelativePath { get; set; }
         public bool WithoutManifest { get; set; }
         public AssetBundleHashType NameHashType { get; set; }
         public bool UseAESEncryption { get; set; }
@@ -32,7 +32,7 @@ namespace CosmosEditor.Quark
             UseDefaultPath = true;
             ClearOutputFolders = true;
             CopyToStreamingAssets = false;
-            StreamingAssetsPath = "Assets/StreamingAssets";
+            StreamingRelativePath = string.Empty;
             WithoutManifest = true;
             NameHashType = AssetBundleHashType.DefaultName;
             UseAESEncryption = false;

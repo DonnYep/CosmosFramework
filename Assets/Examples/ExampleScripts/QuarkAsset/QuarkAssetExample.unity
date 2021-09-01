@@ -765,8 +765,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   QuarkBuildPath: 0
-  EnableRelativeBuildPath: 0
-  RelativeBuildPath: 
+  EnableRelativeBuildPath: 1
+  RelativeBuildPath: Android
   Url: 
   PingUrl: 0
   QuarkAssetLoadMode: 2

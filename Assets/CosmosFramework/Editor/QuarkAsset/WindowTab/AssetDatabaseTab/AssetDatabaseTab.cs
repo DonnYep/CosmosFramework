@@ -169,11 +169,11 @@ namespace CosmosEditor.Quark
                     {
                         EditorUtility.ClearProgressBar();
                     }
-                    var projLength = QuarkConsts.Extensions.Length;
+                    var projLength = QuarkConstant.Extensions.Length;
                     for (int i = 0; i < projLength; i++)
                     {
                         var lowerExtension = file.Extension.ToLower();
-                        var quarkLowerExt = QuarkConsts.Extensions[i].ToLower();
+                        var quarkLowerExt = QuarkConstant.Extensions[i].ToLower();
 
                         if (quarkLowerExt==lowerExtension)
                         {
@@ -222,11 +222,11 @@ namespace CosmosEditor.Quark
                 {
                     EditorUtility.ClearProgressBar();
                 }
-                var length = QuarkConsts.Extensions.Length;
+                var length = QuarkConstant.Extensions.Length;
                 for (int i = 0; i < length; i++)
                 {
                     var lowerExtension = file.Extension.ToLower();
-                    var quarkLowerExt = QuarkConsts.Extensions[i].ToLower();
+                    var quarkLowerExt = QuarkConstant.Extensions[i].ToLower();
                     if (quarkLowerExt==lowerExtension)
                     {
                         var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);

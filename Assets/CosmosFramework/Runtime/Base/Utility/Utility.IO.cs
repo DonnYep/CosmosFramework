@@ -170,31 +170,35 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 拷贝文件夹；
+            /// 拷贝文件夹的内容到另一个文件夹；
             /// </summary>
-            /// <param name="sourceDirName">原始文件夹</param>
-            /// <param name="destDirName">目标文件夹</param>
-            public static void DirectoryCopy(string sourceDirName, string destDirName)
+            /// <param name="sourceDirectory">原始地址</param>
+            /// <param name="targetDirectory">目标地址</param>
+            public static void Copy(string sourceDirectory, string targetDirectory)
             {
-                DirectoryInfo dir = new DirectoryInfo(sourceDirName);
-                if (!dir.Exists)
+                DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
+                DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+                CopyAll(diSource, diTarget);
+            }
+            /// <summary>
+            /// 拷贝文件夹的内容到另一个文件夹；
+            /// </summary>
+            /// <param name="source">原始地址</param>
+            /// <param name="target">目标地址</param>
+            public static void CopyAll(DirectoryInfo source, DirectoryInfo target)
+            {
+                Directory.CreateDirectory(target.FullName);
+                //复制所有文件到新地址
+                foreach (FileInfo fi in source.GetFiles())
                 {
-                    throw new DirectoryNotFoundException(
-                        "Source directory does not exist or could not be found: "
-                        + sourceDirName);
+                    fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
                 }
-                DirectoryInfo[] dirs = dir.GetDirectories();
-                Directory.CreateDirectory(destDirName);
-                FileInfo[] files = dir.GetFiles();
-                foreach (FileInfo file in files)
+                //递归拷贝所有子目录
+                foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
                 {
-                    string tempPath = Path.Combine(destDirName, file.Name);
-                    file.CopyTo(tempPath, false);
-                }
-                foreach (DirectoryInfo subdir in dirs)
-                {
-                    string tempPath = Path.Combine(destDirName, subdir.Name);
-                    DirectoryCopy(subdir.FullName, tempPath);
+                    DirectoryInfo nextTargetSubDir =
+                        target.CreateSubdirectory(diSourceSubDir.Name);
+                    CopyAll(diSourceSubDir, nextTargetSubDir);
                 }
             }
             public static void DeleteFile(string fileFullPath)

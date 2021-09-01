@@ -70,14 +70,14 @@ namespace CosmosEditor.Quark
                         var useRelativePath = sp_EnableRelativeBuildPath.boolValue;
                         if (useRelativePath)
                         {
-                            sp_RelativeBuildPath.stringValue = EditorGUILayout.TextField("RelativeBuildPath", sp_RelativeBuildPath.stringValue);
+                            sp_RelativeBuildPath.stringValue = EditorGUILayout.TextField("RelativeBuildPath", sp_RelativeBuildPath.stringValue.Trim());
                         }
                     }
                     break;
                 case QuarkBuildPath.URL:
                     {
                         sp_PingUrl.boolValue = EditorGUILayout.Toggle("PingUrl", sp_PingUrl.boolValue);
-                        sp_Url.stringValue = EditorGUILayout.TextField("Url", sp_Url.stringValue);
+                        sp_Url.stringValue = EditorGUILayout.TextField("Url", sp_Url.stringValue.Trim());
                         EditorGUILayout.Space(16);
                     }
                     break;
@@ -100,12 +100,12 @@ namespace CosmosEditor.Quark
                 var useRelativePath = sp_EnableRelativeLoadPath.boolValue;
                 if (useRelativePath)
                 {
-                    sp_RelativeLoadPath.stringValue = EditorGUILayout.TextField("RelativeLoadPath", sp_RelativeLoadPath.stringValue);
+                    sp_RelativeLoadPath.stringValue = EditorGUILayout.TextField("RelativeLoadPath", sp_RelativeLoadPath.stringValue.Trim());
                 }
             }
             else
             {
-                sp_CustomeLoadPath.stringValue = EditorGUILayout.TextField("CustomeLoadPath", sp_CustomeLoadPath.stringValue);
+                sp_CustomeLoadPath.stringValue = EditorGUILayout.TextField("CustomeLoadPath", sp_CustomeLoadPath.stringValue.Trim());
             }
             EditorGUILayout.EndVertical();
 
@@ -118,7 +118,7 @@ namespace CosmosEditor.Quark
             if (aesKeyFoldout)
             {
                 EditorGUILayout.LabelField("Quark AES Key : ");
-                sp_AESEncryptionKey.stringValue = EditorGUILayout.TextField("AESEncryptionKey", sp_AESEncryptionKey.stringValue);
+                sp_AESEncryptionKey.stringValue = EditorGUILayout.TextField("AESEncryptionKey", sp_AESEncryptionKey.stringValue.Trim());
             }
         }
     }

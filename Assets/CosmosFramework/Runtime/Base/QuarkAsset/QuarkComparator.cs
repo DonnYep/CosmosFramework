@@ -51,8 +51,14 @@ namespace Quark.Networking
         /// </summary>
         public void CheckForUpdates()
         {
-            var uriManifestPath = Utility.IO.WebPathCombine(URL, QuarkConsts.ManifestName);
+            var uriManifestPath = Utility.IO.WebPathCombine(URL, QuarkConstant.ManifestName);
             QuarkUtility.Unity.StartCoroutine(EnumDownloadManifest(uriManifestPath));
+        }
+        public void LoadFromStreamingAssets()
+        {
+            var localManifestPath = Path.Combine(URL, QuarkConstant.ManifestName);
+            var uriBuildInfoPath = Path.Combine(URL, QuarkConstant.BuildInfoFileName);
+            QuarkUtility.Unity.StartCoroutine(EnumLoadStreamingAsset(localManifestPath, uriBuildInfoPath));
         }
         public void Clear()
         {
@@ -85,7 +91,7 @@ namespace Quark.Networking
         }
         void OnUriManifestSuccess(string remoteManifestContext)
         {
-            var localManifestPath = Path.Combine(PersistentPath, QuarkConsts.ManifestName);
+            var localManifestPath = Path.Combine(PersistentPath, QuarkConstant.ManifestName);
             string localManifestContext = string.Empty;
             long overallSize = 0;
             try
@@ -163,13 +169,13 @@ namespace Quark.Networking
             }
             var latesetArray = latest.ToArray();
             var expiredArray = expired.ToArray();
-            var uriBuildInfoPath = Path.Combine(URL, QuarkConsts.BuildInfoFileName);
+            var uriBuildInfoPath = Path.Combine(URL, QuarkConstant.BuildInfoFileName);
             latest.Clear();
             expired.Clear();
-            var localNewManifestPath = Path.Combine(PersistentPath, QuarkConsts.ManifestName);
+            var localNewManifestPath = Path.Combine(PersistentPath, QuarkConstant.ManifestName);
             Utility.IO.OverwriteTextFile(localNewManifestPath, remoteManifestContext);
             QuarkManager.Instance.SetBuiltAssetBundleModeData(remoteManifest);
-            if (latesetArray.Length> 0 || expiredArray.Length> 0)
+            if (latesetArray.Length > 0 || expiredArray.Length > 0)
             {
                 QuarkUtility.Unity.StartCoroutine(EnumDownloadBuildInfo(uriBuildInfoPath, () =>
                 {
@@ -178,7 +184,7 @@ namespace Quark.Networking
             }
             else
             {
-                var localBuildInfoPath = Path.Combine(PersistentPath, QuarkConsts.BuildInfoFileName);
+                var localBuildInfoPath = Path.Combine(PersistentPath, QuarkConstant.BuildInfoFileName);
                 try
                 {
                     var localBuildInfoContext = Utility.IO.ReadTextFileContent(localBuildInfoPath);
@@ -188,7 +194,7 @@ namespace Quark.Networking
                 {
                     Utility.Debug.LogError(e);
                 }
-                onCompareSuccess?.Invoke(latesetArray, expiredArray, overallSize);
+                onCompareSuccess?.Invoke(latesetArray, expiredArray, 0);
             }
         }
         IEnumerator EnumDownloadBuildInfo(string uri, Action callback)
@@ -200,7 +206,7 @@ namespace Quark.Networking
                 {
                     if (request.isDone)
                     {
-                        var localNewBuildInfoPath = Path.Combine(PersistentPath, QuarkConsts.BuildInfoFileName);
+                        var localNewBuildInfoPath = Path.Combine(PersistentPath, QuarkConstant.BuildInfoFileName);
                         var buildInfoContext = request.downloadHandler.text;
                         Utility.IO.OverwriteTextFile(localNewBuildInfoPath, buildInfoContext);
                         try
@@ -215,6 +221,49 @@ namespace Quark.Networking
                     }
                 }
             }
+        }
+        IEnumerator EnumLoadStreamingAsset(string manifestUri, string buildInfoUri)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Get(manifestUri))
+            {
+                yield return request.SendWebRequest();
+                if (!request.isNetworkError && !request.isHttpError)
+                {
+                    if (request.isDone)
+                    {
+                        var context = request.downloadHandler.text;
+                        try
+                        {
+                            localManifest = QuarkUtility.Json.ToObject<QuarkManifest>(context);
+                        }
+                        catch (Exception e)
+                        {
+                            Utility.Debug.LogError(e);
+                        }
+                    }
+                }
+            }
+            using (UnityWebRequest request = UnityWebRequest.Get(buildInfoUri))
+            {
+                yield return request.SendWebRequest();
+                if (!request.isNetworkError && !request.isHttpError)
+                {
+                    if (request.isDone)
+                    {
+                        var context = request.downloadHandler.text;
+                        try
+                        {
+                            QuarkDataProxy.QuarkBuildInfo = QuarkUtility.Json.ToObject<QuarkBuildInfo>(context);
+                        }
+                        catch (Exception e)
+                        {
+                            Utility.Debug.LogError(e);
+                        }
+                    }
+                }
+            }
+            QuarkManager.Instance.SetBuiltAssetBundleModeData(localManifest);
+            onCompareSuccess(new string[0], new string[0], 0);
         }
     }
 }

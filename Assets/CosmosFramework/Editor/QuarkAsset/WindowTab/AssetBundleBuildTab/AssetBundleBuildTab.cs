@@ -14,7 +14,6 @@ namespace CosmosEditor.Quark
     {
         AssetBundleBuildTabData assetBundleTabData;
         const string AssetBundleTabDataFileName = "AssetBundleTabData.json";
-        int AssetsStringLength = ("Assets").Length;
         const string quarkABBuildInfo = "BuildInfo.json";
         const string quarkManifest = "Manifest.json";
         Dictionary<string, AssetImporter> importerCacheDict = new Dictionary<string, AssetImporter>();
@@ -50,7 +49,7 @@ namespace CosmosEditor.Quark
         public void OnGUI(Rect rect)
         {
             assetBundleTabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", assetBundleTabData.BuildTarget);
-            assetBundleTabData.OutputPath = EditorGUILayout.TextField("OutputPath", assetBundleTabData.OutputPath);
+            assetBundleTabData.OutputPath = EditorGUILayout.TextField("OutputPath", assetBundleTabData.OutputPath.Trim());
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
@@ -88,7 +87,8 @@ namespace CosmosEditor.Quark
             if (assetBundleTabData.CopyToStreamingAssets)
             {
                 GUILayout.Space(16);
-                assetBundleTabData.StreamingAssetsPath = EditorGUILayout.TextField("StreamingAssets", assetBundleTabData.StreamingAssetsPath);
+                GUILayout.Label("Assets/StreamingAssets/ 下的相对路径地址，可选填 ");
+                assetBundleTabData.StreamingRelativePath = EditorGUILayout.TextField("StreamingRelativePath", assetBundleTabData.StreamingRelativePath.Trim());
             }
             GUILayout.EndVertical();
 
@@ -232,13 +232,8 @@ namespace CosmosEditor.Quark
                 var buildPath = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
                 if (Directory.Exists(buildPath))
                 {
-                    if (!AssetDatabase.IsValidFolder(assetBundleTabData.StreamingAssetsPath))
-                    {
-                        var folderName = assetBundleTabData.StreamingAssetsPath.Remove(0, AssetsStringLength + 1);
-                        AssetDatabase.CreateFolder("Assets", folderName);
-                    }
-                    var streamingAssetPath = Utility.IO.PathCombine(Application.dataPath, "StreamingAssets");
-                    Utility.IO.DirectoryCopy(buildPath, streamingAssetPath);
+                    var streamingAssetPath = Utility.IO.PathCombine(Application.streamingAssetsPath,  assetBundleTabData.StreamingRelativePath);
+                    Utility.IO.Copy(buildPath, streamingAssetPath);
                 }
             }
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);

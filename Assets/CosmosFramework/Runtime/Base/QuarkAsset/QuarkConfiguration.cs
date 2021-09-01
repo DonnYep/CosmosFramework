@@ -68,7 +68,6 @@ namespace Quark
         /// </summary>
         public string CustomeLoadPath;
 
-
         /// <summary>
         /// 配置的路径都整合到此字段；
         /// </summary>
@@ -156,12 +155,13 @@ namespace Quark
         }
         void StreamingAssetsTab()
         {
+            string streamingAssetPath = string.Empty;
             if (EnableRelativeBuildPath)
-                downloadPath = Path.Combine(Application.streamingAssetsPath, RelativeBuildPath);
+                streamingAssetPath = Path.Combine(Application.streamingAssetsPath, RelativeBuildPath);
             else
-                downloadPath = Application.streamingAssetsPath;
-            QuarkManager.Instance.Initiate(downloadPath, downloadPath);
-            QuarkManager.Instance.CheckForUpdates();
+                streamingAssetPath = Application.streamingAssetsPath;
+            QuarkManager.Instance.Initiate(streamingAssetPath, streamingAssetPath);
+            QuarkManager.Instance.LoadFromStreamingAssets();
         }
     }
 }

@@ -120,6 +120,10 @@ namespace Quark
             QuarkDataProxy.PersistentPath = persistentPath;
             QuarkDataProxy.URL = url;
         }
+        internal void LoadFromStreamingAssets()
+        {
+            quarkComparator.LoadFromStreamingAssets();
+        }
         /// <summary>
         /// 检查更新；
         /// </summary>
