@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.EventSystems;
+
 namespace Cosmos
 {
     /// <summary>
@@ -52,7 +54,7 @@ namespace Cosmos
         /// <typeparam name="T">要获取或增加的组件。</typeparam>
         /// <param name="gameObject">目标对象。</param>
         /// <returns>获取或增加的组件。</returns>
-        public static T GetOrAddComponent<T>(this Transform  transform) where T : Component
+        public static T GetOrAddComponent<T>(this Transform transform) where T : Component
         {
             return GetOrAddComponent<T>(transform.gameObject);
         }
@@ -62,7 +64,7 @@ namespace Cosmos
         /// <param name="gameObject">目标对象。</param>
         /// <param name="type">要获取或增加的组件类型。</param>
         /// <returns>获取或增加的组件。</returns>
-        public static Component GetOrAddComponent(this Transform  transform, Type type)
+        public static Component GetOrAddComponent(this Transform transform, Type type)
         {
             return GetOrAddComponent(transform.gameObject, type);
         }
@@ -97,7 +99,7 @@ namespace Cosmos
             return component;
         }
         public static T GetComponentInParent<T>(this GameObject gameObject, string parentName)
-            where T : Component
+where T : Component
         {
             return GetComponentInParent<T>(gameObject.transform, parentName);
         }
@@ -118,6 +120,34 @@ namespace Cosmos
             if (parentTrans == null)
                 return null;
             var comp = parentTrans.GetComponent<T>();
+            return comp;
+        }
+        public static T GetOrAddComponentInParent<T>(this GameObject gameObject, string parentName)
+    where T : Component
+        {
+            return GetOrAddComponentInParent<T>(gameObject.transform, parentName);
+        }
+        public static T GetOrAddComponentInParent<T>(this Transform transform, string parentName)
+    where T : Component
+        {
+            var parent = transform.GetComponentsInParent<Transform>();
+            var length = parent.Length;
+            Transform parentTrans = null;
+            for (int i = 0; i < length; i++)
+            {
+                if (parent[i].name == parentName)
+                {
+                    parentTrans = parent[i];
+                    break;
+                }
+            }
+            if (parentTrans == null)
+                return null;
+            var comp = parentTrans.GetComponent<T>();
+            if (comp == null)
+            {
+                comp = transform.gameObject.AddComponent<T>();
+            }
             return comp;
         }
         public static T GetComponentInChildren<T>(this GameObject gameObject, string childName)
@@ -144,8 +174,39 @@ namespace Cosmos
             var comp = childTrans.GetComponent<T>();
             return comp;
         }
-        public static T GetComponentInPeer<T>(this Transform transform, string peerName)
+        public static T GetOrAddComponentInChildren<T>(this GameObject gameObject, string childName)
+    where T : Component
+        {
+            return GetOrAddComponentInChildren<T>(gameObject.transform, childName);
+        }
+        public static T GetOrAddComponentInChildren<T>(this Transform transform, string childName)
+    where T : Component
+        {
+            var childs = transform.GetComponentsInChildren<Transform>();
+            var length = childs.Length;
+            Transform childTrans = null;
+            for (int i = 0; i < length; i++)
+            {
+                if (childs[i].name == childName)
+                {
+                    childTrans = childs[i];
+                    break;
+                }
+            }
+            if (childTrans == null)
+                return null;
+            var comp = childTrans.GetComponent<T>();
+            if (comp == null)
+                comp = childTrans.gameObject.AddComponent<T>();
+            return comp;
+        }
+        public static T GetComponentInPeer<T>(this GameObject gameObject, string peerName)
 where T : Component
+        {
+            return GetComponentInPeer<T>(gameObject.transform, peerName);
+        }
+        public static T GetComponentInPeer<T>(this Transform transform, string peerName)
+    where T : Component
         {
             Transform tran = transform.parent.Find(peerName);
             if (tran != null)
@@ -154,8 +215,26 @@ where T : Component
             }
             return null;
         }
-        public static T[] GetComponentsInPeer<T>(this Transform transform, bool includeSrc = false)
+        public static T GetOrAddComponentInPeer<T>(this GameObject gameObject, string peerName)
+where T : Component
+        {
+            return GetOrAddComponentInPeer<T>(gameObject.transform, peerName);
+        }
+        public static T GetOrAddComponentInPeer<T>(this Transform transform, string peerName)
     where T : Component
+        {
+            Transform tran = transform.parent.Find(peerName);
+            if (tran != null)
+            {
+                var comp = tran.GetComponent<T>();
+                if (comp == null)
+                    transform.gameObject.AddComponent<T>();
+                return comp;
+            }
+            return null;
+        }
+        public static T[] GetComponentsInPeer<T>(this Transform transform, bool includeSrc = false)
+where T : Component
         {
             Transform parentTrans = transform.parent;
             var childTrans = parentTrans.GetComponentsInChildren<Transform>();
