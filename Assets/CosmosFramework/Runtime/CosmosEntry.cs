@@ -134,6 +134,7 @@ namespace Cosmos
         /// </summary>
         public static void LaunchAppDomainModules()
         {
+            GameManager.InstanceObject.ToString();
             GameManager.InitAppDomainModule();
         }
         /// <summary>
@@ -143,6 +144,7 @@ namespace Cosmos
         /// <param name="assemblies">查询的目标程序集</param>
         public static void LaunchAssemblyModules(params System.Reflection.Assembly[] assemblies)
         {
+            GameManager.InstanceObject.ToString();
             GameManager.InitAssemblyModule(assemblies);
         }
         public static void ReleaseLaunchedModules()

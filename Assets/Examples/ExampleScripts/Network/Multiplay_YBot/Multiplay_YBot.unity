@@ -556,6 +556,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1445863190}
   - component: {fileID: 1445863192}
+  - component: {fileID: 1445863191}
   - component: {fileID: 1445863189}
   m_Layer: 0
   m_Name: Entry
@@ -573,7 +574,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1445863188}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36405f6fe0f5daf4d97f0601c42845b3, type: 3}
+  m_Script: {fileID: 11500000, guid: ab892e25c4938ae4295f586fc62f508a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   LaunchAppDomainModules: 1
@@ -596,6 +597,30 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1445863191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445863188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 435fb9601448fe144854aeece9140fde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  QuarkBuildPath: 0
+  EnableRelativeBuildPath: 0
+  RelativeBuildPath: 
+  Url: 
+  PingUrl: 0
+  QuarkAssetLoadMode: 1
+  QuarkAssetDataset: {fileID: 11400000, guid: e4ef4e912cff6e24f8901a67d27afba9, type: 2}
+  QuarkLoadPath: 0
+  EnableRelativeLoadPath: 0
+  RelativeLoadPath: 
+  AESEncryptionKey: 
+  CustomeLoadPath: 
 --- !u!114 &1445863192
 MonoBehaviour:
   m_ObjectHideFlags: 0

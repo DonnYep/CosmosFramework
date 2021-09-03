@@ -12,6 +12,10 @@ namespace Cosmos.Test
     {
         [SerializeField] float moveSpeed = 5;
         [SerializeField] float rotSpeed = 10;
+        private void Start()
+        {
+            CosmosEntry.InputManager.SetInputHelper(new StandardInputHelper());
+        }
         private void Update()
         {
             var h = CosmosEntry.InputManager.GetAxis(InputAxisType._Horizontal);

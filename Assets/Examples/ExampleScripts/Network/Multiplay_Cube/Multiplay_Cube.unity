@@ -527,6 +527,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1277566612}
   - component: {fileID: 1277566613}
+  - component: {fileID: 1277566614}
   - component: {fileID: 1277566611}
   m_Layer: 0
   m_Name: Entry
@@ -544,13 +545,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1277566610}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36405f6fe0f5daf4d97f0601c42845b3, type: 3}
+  m_Script: {fileID: 11500000, guid: 435fb9601448fe144854aeece9140fde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  launchAppDomainModules: 1
-  printModulePreparatory: 0
-  ResourceLoadMode: 0
-  loadDefaultHelper: 1
+  QuarkBuildPath: 0
+  EnableRelativeBuildPath: 0
+  RelativeBuildPath: 
+  Url: 
+  PingUrl: 0
+  QuarkAssetLoadMode: 1
+  QuarkAssetDataset: {fileID: 11400000, guid: e4ef4e912cff6e24f8901a67d27afba9, type: 2}
+  QuarkLoadPath: 0
+  EnableRelativeLoadPath: 0
+  RelativeLoadPath: 
+  AESEncryptionKey: 
+  CustomeLoadPath: 
 --- !u!4 &1277566612
 Transform:
   m_ObjectHideFlags: 0
@@ -583,6 +592,24 @@ MonoBehaviour:
     type: 3}
   remotePlayerPrefab: {fileID: 5105024973682037831, guid: 5d27a06608122f941923ebf3f0b1064c,
     type: 3}
+--- !u!114 &1277566614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1277566610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab892e25c4938ae4295f586fc62f508a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LaunchAppDomainModules: 1
+  PrintModulePreparatory: 0
+  LoadDefaultHelper: 1
+  ResourceLoadMode: 0
+  QuarkRemoteUrl: RemoteUrl
+  QuarkLocalUrl: LocalUrl
 --- !u!1 &1558106830
 GameObject:
   m_ObjectHideFlags: 0
