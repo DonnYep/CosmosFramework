@@ -12,23 +12,28 @@ public class LoadingScenePanel : UIForm
 {
     Text txtProgress;
     Slider sldProgress;
+    float currentProgress;
+
     protected override void Awake()
     {
         txtProgress = GetUILable<Text>("TxtProgress");
         sldProgress = GetUILable<Slider>("SldProgress");
         LoadLevel();
     }
+    void Update()
+    {
+        var percent = currentProgress * 100;
+        sldProgress.value = Mathf.Lerp(sldProgress.value, percent, Time.deltaTime);
+        txtProgress.text = (int)sldProgress.value + "%";
+    }
     void LoadLevel()
     {
         sldProgress.value = 0;
         Utility.Debug.LogInfo(LevelLoadInfo.TargetLevel,MessageColor.YELLOW);
-        CosmosEntry.SceneManager.LoadSceneAsync(new SceneInfo(LevelLoadInfo.TargetLevel), UpdateSlider);
+        CosmosEntry.SceneManager.LoadSceneAsync(new SceneInfo(LevelLoadInfo.TargetLevel), UpdateProgressValue);
     }
-    void UpdateSlider(float value)
+    void UpdateProgressValue(float value)
     {
-        sldProgress.value = value * 100;
-        txtProgress.text = (int)sldProgress.value + "%";
-        if (value >= 0.9)
-            sldProgress.value = 100;
+        currentProgress = value;
     }
 }

@@ -12,7 +12,7 @@ namespace Cosmos.Test
     {
         Button btnConnect;
         Button btnDisconnect;
-        InputField inputMsg;
+        InputField iptHost;
 
         protected override void Awake()
         {
@@ -20,10 +20,14 @@ namespace Cosmos.Test
             btnConnect.onClick.AddListener(ConnectClick);
             btnDisconnect = GetUILable<Button>("BtnDisconnect");
             btnDisconnect.onClick.AddListener(DisconnectClick);
-            inputMsg = GetUILable<InputField>("InputMsg");
+            iptHost = GetUILable<InputField>("IptHost");
         }
         void ConnectClick()
         {
+            var hostStr = iptHost.text;
+            var hosts = hostStr.Split(':');
+            MultiplayManager.Instance.IP = hosts[0];
+            MultiplayManager.Instance.Port= int.Parse( hosts[1]);
             MultiplayManager.Instance.Connect();
         }
         void DisconnectClick()

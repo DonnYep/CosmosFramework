@@ -10,9 +10,9 @@ namespace Cosmos.Test
     public class MultiplayManager : MonoSingleton<MultiplayManager>
     {
         [SerializeField] string ip = "127.0.0.1";
-        public string IP { get { return ip; } }
+        public string IP { get { return ip; }set { ip = value; } }
         [SerializeField] int port = 8531;
-        public int Port { get { return port; } }
+        public int Port { get { return port; } set { port = value; } }
         [SerializeField] GameObject localPlayerPrefab;
         public GameObject LocalPlayerPrefab { get { return localPlayerPrefab; } }
         [SerializeField] GameObject remotePlayerPrefab;

@@ -11,6 +11,10 @@ namespace Cosmos
     public interface IUIManager : IModuleManager
     {
         /// <summary>
+        /// UI根节点；
+        /// </summary>
+        Transform UIRoot { get; }
+        /// <summary>
         /// 设置UI根节点
         /// </summary>
         /// <param name="uiRoot">传入的UIRoot</param>
