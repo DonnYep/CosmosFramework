@@ -53,7 +53,7 @@ namespace Cosmos
             {
                 if (jsonHelper == null)
                 {
-                    throw new ArgumentNullException("JSON  warpper is invalid");
+                    throw new ArgumentNullException("Json  helper is invalid");
                 }
                 try
                 {
@@ -61,7 +61,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw new ArgumentException($"Can not convert to JSON with exception {exception}");
+                    throw new ArgumentException($"Can not convert to Json with exception {exception}");
                 }
             }
             /// <summary>
@@ -82,14 +82,14 @@ namespace Cosmos
             public static T ToObject<T>(string json)
             {
                 if (jsonHelper == null)
-                    throw new ArgumentNullException("JSON warpper is invalid");
+                    throw new ArgumentNullException("Json helper is invalid");
                 try
                 {
                     return jsonHelper.ToObject<T>(json);
                 }
                 catch (System.Exception exception)
                 {
-                    throw new ArgumentException($"Can not convert to JSON with exception {exception}");
+                    throw new ArgumentException($"Can not convert to Json with exception {exception}");
                 }
             }
             /// <summary>
@@ -101,7 +101,7 @@ namespace Cosmos
             public static object ToObject(string json, Type objectType)
             {
                 if (jsonHelper == null)
-                    throw new ArgumentNullException("JSON warpper is invalid");
+                    throw new ArgumentNullException("Json helper is invalid");
                 if (objectType == null)
                     throw new ArgumentNullException("Object type is invalid");
                 try
@@ -110,7 +110,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw new ArgumentException($"Can not convert to JSON with exception {exception}");
+                    throw new ArgumentException($"Can not convert to Json with exception {exception}");
                 }
             }
             /// <summary>

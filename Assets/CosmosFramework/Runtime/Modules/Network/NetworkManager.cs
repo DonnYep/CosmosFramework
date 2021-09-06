@@ -54,8 +54,9 @@ namespace Cosmos.Network
                 {
                     case NetworkProtocolType.TCP:
                         break;
-                    case NetworkProtocolType.UDP:
-                        //service?.OnRefresh();
+                    case NetworkProtocolType.RUDP:
+                        break;
+                    case NetworkProtocolType.SUDP:
                         break;
                     case NetworkProtocolType.KCP:
                         {
@@ -106,23 +107,12 @@ namespace Cosmos.Network
                     {
                     }
                     break;
-                case NetworkProtocolType.UDP:
+                case NetworkProtocolType.RUDP:
                     {
-                        //if (service == null)
-                        //{
-                        //    service = new UdpClientService();
-                        //    UdpClientService udp = service as UdpClientService;
-                        //    udp.OnConnect += OnConnectHandler;
-                        //    udp.OnDisconnect += OnDisconnectHandler;
-                        //    udp.OnReceiveData += OnReceiveDataHandler;
-                        //    heartbeat = new UDPHeartbeat();
-                        //    service.SetHeartbeat(heartbeat);
-                        //}
-
-                        //UdpClientService udpSrv = service as UdpClientService;
-                        //udpSrv.Connect(ip, port);
-
-                        //Utility.Debug.LogInfo("Try to connect to the server");
+                    }
+                    break;
+                case NetworkProtocolType.SUDP:
+                    {
                     }
                     break;
             }
@@ -138,16 +128,17 @@ namespace Cosmos.Network
             {
                 case NetworkProtocolType.TCP:
                     break;
-                case NetworkProtocolType.UDP:
-                    // service.Disconnect();
+                case NetworkProtocolType.RUDP:
+                    break;
+                case NetworkProtocolType.SUDP:
                     break;
                 case NetworkProtocolType.KCP:
                     kcpClientService?.ServiceDisconnect();
                     break;
             }
         }
-        [TickRefresh]
-        void TickRefresh()
+        [FixedRefresh]
+        void FixedRefresh()
         {
             if (IsPause)
                 return;
@@ -157,8 +148,9 @@ namespace Cosmos.Network
             {
                 case NetworkProtocolType.TCP:
                     break;
-                case NetworkProtocolType.UDP:
-                    service?.OnRefresh();
+                case NetworkProtocolType.RUDP:
+                    break;
+                case NetworkProtocolType.SUDP:
                     break;
                 case NetworkProtocolType.KCP:
                     kcpClientService?.ServiceTick();
