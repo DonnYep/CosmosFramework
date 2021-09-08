@@ -573,7 +573,5 @@ where T : UnityEngine.Object
             var info = hashQuarkObjectInfoDict[hashCode];
             hashQuarkObjectInfoDict[hashCode] = info--;
         }
-
-
     }
 }

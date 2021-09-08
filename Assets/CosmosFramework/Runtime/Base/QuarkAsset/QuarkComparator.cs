@@ -192,7 +192,7 @@ namespace Quark.Networking
                 }
                 catch (Exception e)
                 {
-                    Utility.Debug.LogError(e);
+                    throw e;
                 }
                 onCompareSuccess?.Invoke(latesetArray, expiredArray, 0);
             }
@@ -238,7 +238,7 @@ namespace Quark.Networking
                         }
                         catch (Exception e)
                         {
-                            Utility.Debug.LogError(e);
+                            throw e;
                         }
                     }
                 }
