@@ -5,37 +5,37 @@ using System.Linq;
 namespace Cosmos.QuadTree
 {
     /// <summary>
-    /// ËÄ²æÊ÷£»
+    /// å››å‰æ ‘ï¼›
     /// </summary>
-    /// <typeparam name="T">ËÄ²æÊ÷×Ô¶¨ÒåµÄÊı¾İÄ£ĞÍ</typeparam>
+    /// <typeparam name="T">å››å‰æ ‘è‡ªå®šä¹‰çš„æ•°æ®æ¨¡å‹</typeparam>
     public class QuadTree<T>
     {
         /// <summary>
-        ///µ±Ç°ËùÔÚµÄÇø¿é£»
+        ///å½“å‰æ‰€åœ¨çš„åŒºå—ï¼›
         /// </summary>
-        public QuadTreeRect Area { get; private set; }
+        public QuadRectangle Area { get; private set; }
         /// <summary>
-        /// µ±Ç°Ê÷½ÚµãµÄÎïÌå¶ÔÏó¼¯ºÏ£»
+        /// å½“å‰æ ‘èŠ‚ç‚¹çš„ç‰©ä½“å¯¹è±¡é›†åˆï¼›
         /// </summary>
         readonly HashSet<T> objectSet;
         /// <summary>
-        /// ËÄ²æÊ÷ÖĞ¶ÔÏóµÄÓĞĞ§±ß½ç»ñÈ¡½Ó¿Ú£»
+        /// å››å‰æ ‘ä¸­å¯¹è±¡çš„æœ‰æ•ˆè¾¹ç•Œè·å–æ¥å£ï¼›
         /// </summary>
         readonly IObjecRectangletBound<T> objectRectangleBound;
         /// <summary>
-        /// ÊÇ·ñ´æÔÚ×Ó½Úµã£»
+        /// æ˜¯å¦å­˜åœ¨å­èŠ‚ç‚¹ï¼›
         /// </summary>
         bool hasChildren;
         /// <summary>
-        /// µ±Ç°Éî¶È£»
+        /// å½“å‰æ·±åº¦ï¼›
         /// </summary>
         public int CurrentDepth { get; private set; }
         /// <summary>
-        /// ×î´óÉî¶È£»
+        /// æœ€å¤§æ·±åº¦ï¼›
         /// </summary>
         public int MaxDepth { get; private set; }
         /// <summary>
-        /// µ±Ç°RectµÄ¶ÔÏóÊıÁ¿£»
+        /// å½“å‰Rectçš„å¯¹è±¡æ•°é‡ï¼›
         /// </summary>
         public int ObjectCapacity { get; private set; }
         /// <summary>
@@ -56,7 +56,7 @@ namespace Cosmos.QuadTree
         QuadTree<T> treeBR;
         public QuadTree(float x, float y, float width, float height, IObjecRectangletBound<T> quadTreebound, int objectCapacity = 10, int maxDepth = 5, int currentDepth = 0)
         {
-            Area = new QuadTreeRect(x, y, width, height);
+            Area = new QuadRectangle(x, y, width, height);
             objectSet = new HashSet<T>();
             this.objectRectangleBound = quadTreebound;
             this.CurrentDepth = currentDepth;
@@ -67,7 +67,7 @@ namespace Cosmos.QuadTree
         public QuadTree(float width, float height, IObjecRectangletBound<T> objectBound, int maxObject = 10, int maxDepth = 5, int currentDepth = 0)
             : this(0, 0, width, height, objectBound, maxObject, maxDepth, currentDepth) { }
         /// <summary>
-        /// ÇĞ¸îËÄµÈ·Ö£»
+        /// åˆ‡å‰²å››ç­‰åˆ†ï¼›
         /// </summary>
         public bool Insert(T obj)
         {
@@ -92,13 +92,17 @@ namespace Cosmos.QuadTree
         }
         public void Quarter()
         {
-            if (CurrentDepth >= MaxDepth) return;
+            if (CurrentDepth > MaxDepth) return;
             int nextDepth = CurrentDepth + 1;
             hasChildren = true;
-            treeTL = new QuadTree<T>(Area.X, Area.Y, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
-            treeTR = new QuadTree<T>(Area.CenterX, Area.Y, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
-            treeBL = new QuadTree<T>(Area.X, Area.CenterY, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
-            treeBR = new QuadTree<T>(Area.CenterX, Area.CenterY, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
+            //treeTL = new QuadTree<T>(Area.X, Area.Y, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
+            //treeTR = new QuadTree<T>(Area.CenterX, Area.Y, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
+            //treeBL = new QuadTree<T>(Area.X, Area.CenterY, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
+            //treeBR = new QuadTree<T>(Area.CenterX, Area.CenterY, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
+            treeTR = new QuadTree<T>(Area.X + Area.HalfWidth * 0.5f, Area.Y + Area.HalfHeight * 0.5f, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
+            treeTL = new QuadTree<T>(Area.X - Area.HalfWidth * 0.5f, Area.Y + Area.HalfHeight * 0.5f, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
+            treeBL = new QuadTree<T>(Area.X - Area.HalfWidth * 0.5f, Area.Y - Area.HalfHeight * 0.5f, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
+            treeBR = new QuadTree<T>(Area.X + Area.HalfWidth * 0.5f, Area.Y - Area.HalfHeight * 0.5f, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
             foreach (var obj in objectSet)
             {
                 Insert(obj);
@@ -120,7 +124,6 @@ namespace Cosmos.QuadTree
             }
             objectSet.Clear();
             hasChildren = false;
-            Area.IsOverlapped = false;
         }
         public int Count()
         {
@@ -139,19 +142,19 @@ namespace Cosmos.QuadTree
             return count;
         }
         /// <summary>
-        /// »ñÈ¡Çø¿éÖĞµÄËùÓĞ¶ÔÏó£»
+        /// è·å–åŒºå—ä¸­çš„æ‰€æœ‰å¯¹è±¡ï¼›
         /// </summary>
-        /// <param name="rect">rectÇø¿é</param>
-        /// <returns>Çø¿éÖĞµÄËùÓĞ¶ÔÏó</returns>
-        public T[] FindObjects(QuadTreeRect rect)
+        /// <param name="rect">rectåŒºå—</param>
+        /// <returns>åŒºå—ä¸­çš„æ‰€æœ‰å¯¹è±¡</returns>
+        public T[] GetAreaObjects(QuadRectangle rect)
         {
             List<T> foundObjects = new List<T>();
             if (hasChildren)
             {
-                foundObjects.AddRange(treeTR.FindObjects(rect));
-                foundObjects.AddRange(treeTL.FindObjects(rect));
-                foundObjects.AddRange(treeBR.FindObjects(rect));
-                foundObjects.AddRange(treeBL.FindObjects(rect));
+                foundObjects.AddRange(treeTR.GetAreaObjects(rect));
+                foundObjects.AddRange(treeTL.GetAreaObjects(rect));
+                foundObjects.AddRange(treeBR.GetAreaObjects(rect));
+                foundObjects.AddRange(treeBL.GetAreaObjects(rect));
             }
             else
             {
@@ -165,16 +168,32 @@ namespace Cosmos.QuadTree
             return result.ToArray();
         }
         /// <summary>
-        /// »ñÈ¡¶ÔÏóËùÔÚÇø¿éÖĞËùÓĞÏàÍ¬Éî¶ÈµÄ¶ÔÏó£»
+        /// è·å–å¯¹è±¡æ‰€åœ¨åŒºå—ä¸­æ‰€æœ‰ç›¸åŒæ·±åº¦çš„å¯¹è±¡ï¼›
         /// </summary>
-        /// <param name="obj">Ê÷ÖĞµÄ¶ÔÏó</param>
-        /// <returns>ÏàÍ¬¼¶±ğµÄ¶ÔÏó</returns>
-        public T[] FindObjects(T obj)
+        /// <param name="go">æ ‘ä¸­çš„å¯¹è±¡</param>
+        /// <returns>ç›¸åŒçº§åˆ«çš„å¯¹è±¡</returns>
+        public T[] GetAreaObjects(T go)
         {
-            return FindObjects(new QuadTreeRect(objectRectangleBound.GetPositonX(obj), objectRectangleBound.GetPositonY(obj), objectRectangleBound.GetWidth(obj), objectRectangleBound.GetHeight(obj)));
+            return GetAreaObjects(new QuadRectangle(objectRectangleBound.GetCenterX(go), objectRectangleBound.GetCenterY(go), objectRectangleBound.GetWidth(go), objectRectangleBound.GetHeight(go)));
+        }
+        public T[] GetAllObjects()
+        {
+            List<T> foundObjects = new List<T>();
+            if (hasChildren)
+            {
+                foundObjects.AddRange(treeTR.GetAllObjects());
+                foundObjects.AddRange(treeTL.GetAllObjects());
+                foundObjects.AddRange(treeBR.GetAllObjects());
+                foundObjects.AddRange(treeBL.GetAllObjects());
+            }
+            else
+            {
+                foundObjects.AddRange(objectSet);
+            }
+            return foundObjects.ToArray();
         }
         /// <summary>
-        ///²åÈëÒ»¸ö¶ÔÏó¼¯ºÏ£» 
+        ///æ’å…¥ä¸€ä¸ªå¯¹è±¡é›†åˆï¼› 
         /// </summary>
         public void InsertRange(IEnumerable<T> objects)
         {
@@ -183,9 +202,32 @@ namespace Cosmos.QuadTree
                 Insert(obj);
             }
         }
-        public QuadTreeRect[] GetGrid()
+        public QuadRectangle GetObjectGrid(T go)
         {
-            List<QuadTreeRect> grid = new List<QuadTreeRect> { Area };
+            var rect = new QuadRectangle(objectRectangleBound.GetCenterX(go), objectRectangleBound.GetCenterY(go), objectRectangleBound.GetWidth(go), objectRectangleBound.GetHeight(go));
+            if (hasChildren)
+            {
+                var tlRect = treeTL.GetObjectGrid(go);
+                var trRect = treeTR.GetObjectGrid(go);
+                var blRect = treeBL.GetObjectGrid(go);
+                var brRect = treeBR.GetObjectGrid(go);
+                if (tlRect != QuadRectangle.Zero) return tlRect;
+                if (trRect != QuadRectangle.Zero) return trRect;
+                if (blRect != QuadRectangle.Zero) return blRect;
+                if (brRect != QuadRectangle.Zero) return brRect;
+            }
+            else
+            {
+                if (IsOverlapping(rect))
+                {
+                    return Area;
+                }
+            }
+            return QuadRectangle.Zero;
+        }
+        public QuadRectangle[] GetGrid()
+        {
+            List<QuadRectangle> grid = new List<QuadRectangle> { Area };
             if (hasChildren)
             {
                 grid.AddRange(treeTR.GetGrid());
@@ -196,31 +238,33 @@ namespace Cosmos.QuadTree
             return grid.ToArray();
         }
         /// <summary>
-        ///ÊÇ·ñÍêÈ«ÖØµş£» 
+        ///æ˜¯å¦å®Œå…¨é‡å ï¼› 
         /// </summary>
-        bool IsOverlapping(QuadTreeRect rect)
+        bool IsOverlapping(QuadRectangle rect)
         {
             if (rect.Right < Area.Left || rect.Left > Area.Right) return false;
-            if (rect.Top > Area.Bottom || rect.Bottom < Area.Top) return false;
-            Area.IsOverlapped = true;
+            if (rect.Top < Area.Bottom || rect.Bottom > Area.Top) return false;
             return true;
         }
+
         /// <summary>
-        /// ¶ÔÏóÊÇ·ñ´æÔÚÓÚµ±Ç°rectÖĞ£»
+        /// å¯¹è±¡æ˜¯å¦å­˜åœ¨äºå½“å‰rectä¸­ï¼›
         /// </summary>
         bool IsObjectInside(T go)
         {
-            var x = objectRectangleBound.GetPositonX(go);
-            var y = objectRectangleBound.GetPositonY(go);
+            var centerX = objectRectangleBound.GetCenterX(go);
+            var centerY = objectRectangleBound.GetCenterY(go);
             var width = objectRectangleBound.GetWidth(go);
             var height = objectRectangleBound.GetHeight(go);
-            var top = y + height * 0.5f;
-            var bottom = y - height * 0.5f;
-            var left = x - width * 0.5f;
-            var right = x + width * 0.5f;
-            if (top > Area.Bottom) return false;
-            if (bottom < Area.Top) return false;
-            if (left >Area.Right) return false;
+            var halfHeight = height * 0.5f;
+            var halfWidth = width * 0.5f;
+            var top = centerY + halfHeight;
+            var bottom = centerY - halfHeight;
+            var left = centerX - halfWidth;
+            var right = centerX + halfWidth;
+            if (top < Area.Bottom) return false;
+            if (bottom > Area.Top) return false;
+            if (left > Area.Right) return false;
             if (right < Area.Left) return false;
             return true;
         }

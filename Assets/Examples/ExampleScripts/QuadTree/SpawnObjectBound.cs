@@ -11,11 +11,11 @@ public class SpawnObjectBound : IObjecRectangletBound<ObjectSpawnInfo>
     {
         return 1;
     }
-    public float GetPositonX(ObjectSpawnInfo go)
+    public float GetCenterX(ObjectSpawnInfo go)
     {
         return go.Position.x;
     }
-    public float GetPositonY(ObjectSpawnInfo go)
+    public float GetCenterY(ObjectSpawnInfo go)
     {
         return go.Position.z;
     }

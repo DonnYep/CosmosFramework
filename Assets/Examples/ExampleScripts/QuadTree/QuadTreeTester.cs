@@ -5,61 +5,123 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Cosmos.QuadTree;
+using System.Collections;
+
 public class QuadTreeTester : MonoBehaviour
 {
     QuadTree<ObjectSpawnInfo> quadTree;
+    [SerializeField] Vector2 rectRange = new Vector2(400, 400);
     [SerializeField] GameObject resPrefab;
     [SerializeField] int objectCount = 30;
     [SerializeField] int maxObject = 4;
     [SerializeField] int maxDepth = 5;
     [SerializeField] GameObject supervisor;
-
+    [SerializeField] bool drawObjectGizmos;
     QuadObjectSpawner objectSapwner;
     List<ObjectSpawnInfo> objectInfos = new List<ObjectSpawnInfo>();
 
+    Dictionary<ObjectSpawnInfo, GameObject> infoGoDict = new Dictionary<ObjectSpawnInfo, GameObject>();
+
+    Dictionary<QuadRectangle, List<ObjectSpawnInfo>> rectSpawnInfoDict = new Dictionary<QuadRectangle, List<ObjectSpawnInfo>>();
+    QuadRectangle latestRect;
+
     void Awake()
     {
-        //quadTree = new QuadTree<ObjectSpawnInfo>(-200, -200, 400, 400, new UnityObjectBound(), maxObject, maxDepth);
-        quadTree = new QuadTree<ObjectSpawnInfo>(-200, -200, 400, 400, new SpawnObjectBound(), maxObject, maxDepth);
+        quadTree = new QuadTree<ObjectSpawnInfo>(0, 0, rectRange.x, rectRange.y, new SpawnObjectBound(), maxObject, maxDepth);
         objectSapwner = new QuadObjectSpawner(resPrefab);
     }
     void Start()
     {
         for (int i = 0; i < objectCount; i++)
         {
-            var position = new Vector3(UnityEngine.Random.Range(-200, 200), 1, UnityEngine.Random.Range(-200, 200));
+            var position = new Vector3(UnityEngine.Random.Range(-rectRange.x * 0.5f, rectRange.x * 0.5f), 1, UnityEngine.Random.Range(-rectRange.y * 0.5f, rectRange.y * 0.5f));
             var info = new ObjectSpawnInfo(position);
             objectInfos.Add(info);
-            var go= objectSapwner.Spawn();
-            go.transform.position = position;
-            go.transform.SetParent(transform);
-            quadTree.Insert(info);
+            if (!quadTree.Insert(info))
+            {
+                Debug.Log(info);
+            }
         }
+        var objs = quadTree.GetAllObjects();
+        var objLength = objs.Length;
+        for (int i = 0; i < objLength; i++)
+        {
+            var rect = quadTree.GetObjectGrid(objs[i]);
+            if (rect != null)
+            {
+                if (!rectSpawnInfoDict.TryGetValue(rect, out var infos))
+                {
+                    infos = new List<ObjectSpawnInfo>();
+                    rectSpawnInfoDict.Add(rect, infos);
+                }
+                infos.Add(objs[i]);
+            }
+        }
+        Debug.Log("实际生成数量："+ objLength);
     }
     void Update()
     {
-
+        var supGo = new ObjectSpawnInfo(supervisor.transform.position);
+        var currentRect = quadTree.GetObjectGrid(supGo);
+        if (currentRect != null)
+        {
+            //   Debug.Log($"[{currentRect.CenterX} , {currentRect.CenterY}]");
+            if (latestRect != currentRect)
+            {
+                if (rectSpawnInfoDict.TryGetValue(latestRect, out var newInfos))
+                {
+                    for (int i = 0; i < newInfos.Count; i++)
+                    {
+                        if (infoGoDict.TryGetValue(newInfos[i], out var go))
+                        {
+                            objectSapwner.Despawn(go);
+                            infoGoDict.Remove(newInfos[i]);
+                        }
+                    }
+                }
+                if (currentRect != QuadRectangle.Zero)
+                {
+                    if (rectSpawnInfoDict.TryGetValue(currentRect, out var latestInfos))
+                    {
+                        for (int i = 0; i < latestInfos.Count; i++)
+                        {
+                            if (!infoGoDict.TryGetValue(latestInfos[i], out var go))
+                            {
+                                go = objectSapwner.Spawn();
+                                go.transform.position = latestInfos[i].Position;
+                                go.transform.SetParent(transform);
+                                infoGoDict.Add(latestInfos[i], go);
+                            }
+                        }
+                    }
+                }
+                latestRect = currentRect;
+            }
+        }
     }
     void OnDrawGizmos()
     {
         if (Application.isPlaying)
         {
             var grid = quadTree.GetGrid();
-            HashSet<QuadTreeRect> hs = new HashSet<QuadTreeRect>(grid);
+            HashSet<QuadRectangle> hs = new HashSet<QuadRectangle>(grid);
             var grids = hs.ToArray();
             var length = grids.Length;
             for (int i = 0; i < length; i++)
             {
                 Gizmos.color = new Color(0.1f, 1, 1, 0.4f);
-                var pos = new Vector3(grids[i].CenterX, 0, grids[i].CenterY);
+                var pos = new Vector3(grids[i].X, 0, grids[i].Y);
                 var size = new Vector3(grids[i].Width, 5, grids[i].Height);
                 Gizmos.DrawWireCube(pos, size);
             }
-            var infos = quadTree.FindObjects(new ObjectSpawnInfo(supervisor.transform.position));
-            for (int i = 0; i < infos.Length; i++)
+            if (drawObjectGizmos)
             {
-                Gizmos.color = new Color(1, 0, 0.7f, 0.4f);
-                Gizmos.DrawWireSphere(infos[i].Position,3);
+                var infos = objectInfos;
+                for (int i = 0; i < infos.Count; i++)
+                {
+                    Gizmos.color = new Color(1, 0, 0.7f, 0.4f);
+                    Gizmos.DrawWireSphere(infos[i].Position, 3);
+                }
             }
         }
     }

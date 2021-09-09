@@ -141,12 +141,11 @@ namespace CosmosEditor.Quark
         void ResetPath()
         {
             assetBundleTabData.UseDefaultPath = true;
-            assetBundleTabData.OutputPath = "AssetBundles/";
-            assetBundleTabData.OutputPath += assetBundleTabData.BuildTarget.ToString();
+            assetBundleTabData.OutputPath = Path.Combine("AssetBundles", assetBundleTabData.BuildTarget.ToString());
         }
         string GetBuildFolder()
         {
-            var path = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
+            var path = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -155,57 +154,41 @@ namespace CosmosEditor.Quark
         }
         string GetBuildPath()
         {
-            var path = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
+            assetBundleTabData.OutputPath = Utility.IO.WebPathCombine(assetBundleTabData.OutputPath);
+            var path = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
             return path;
         }
         IEnumerator EnumBuildAssetBundle()
         {
             yield return assetDatabaseTab.EnumUpdateADBMode();
-            SetBuildInfo();
+            yield return SetBuildInfo();
             BuildPipeline.BuildAssetBundles(GetBuildFolder(), assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
             OperateManifest();
         }
-        //void BuildAssetBundle()
-        //{
-        //    SetBuildInfo();
-        //    BuildPipeline.BuildAssetBundles(GetBuildFolder(), assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
-        //    OperateManifest();
-        //}
-        void SetBuildInfo()
+        IEnumerator SetBuildInfo()
         {
             EditorUtil.Debug.LogInfo("Start build asset bundle");
             if (assetBundleTabData.ClearOutputFolders)
             {
                 var path = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
-                //var streamPath = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.StreamingAssetsPath);
                 if (Directory.Exists(path))
                 {
                     Utility.IO.DeleteFolder(path);
                 }
-                //try
-                //{
-                //    Utility.IO.DeleteFolder(streamPath);
-                //}
-                //catch { }
             }
             if (QuarkAssetWindow.WindowTabData.UnderAssetsDirectory)
             {
-                EditorUtil.Coroutine.StartCoroutine(EnumBuild());
+                var dirs = EditorUtil.IO.GetAllBundleableFilePath();
+                yield return EditorUtil.Coroutine.StartCoroutine(TraverseTargetDirectories(dirs));
             }
             else
             {
                 var dirHashPairs = quarkAssetDataset.DirHashPairs;
                 var dirs = Utility.Converter.ConvertArray(dirHashPairs.ToArray(), (d) => d.Dir);
-                TraverseTargetDirectories(dirs);
+                yield return EditorUtil.Coroutine.StartCoroutine(TraverseTargetDirectories(dirs));
             }
         }
-        IEnumerator EnumBuild()
-        {
-            var dirs = EditorUtil.IO.GetAllBundleableFilePath();
-            TraverseTargetDirectories(dirs);
-            yield return null;
-        }
-        void TraverseTargetDirectories(string[] dirs)
+        IEnumerator TraverseTargetDirectories(string[] dirs)
         {
             foreach (var dir in dirs)
             {
@@ -217,6 +200,7 @@ namespace CosmosEditor.Quark
                 map.Value.DependList = AssetDatabase.GetAssetBundleDependencies(map.Value.ABName, true).ToList();
                 buildInfoCache.TryAdd(map.Value.ABName, map.Key);
             }
+            yield return null;
         }
         void ResetBuildInfo()
         {
@@ -226,13 +210,15 @@ namespace CosmosEditor.Quark
                 imp.Value.assetBundleName = null; ;
             }
             importerCacheDict.Clear();
-
+        }
+        void CopyToStreamingAssets()
+        {
             if (assetBundleTabData.CopyToStreamingAssets)
             {
-                var buildPath = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
+                var buildPath = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
                 if (Directory.Exists(buildPath))
                 {
-                    var streamingAssetPath = Utility.IO.PathCombine(Application.streamingAssetsPath,  assetBundleTabData.StreamingRelativePath);
+                    var streamingAssetPath = Utility.IO.WebPathCombine(Application.streamingAssetsPath, assetBundleTabData.StreamingRelativePath);
                     Utility.IO.Copy(buildPath, streamingAssetPath);
                 }
             }
@@ -243,7 +229,16 @@ namespace CosmosEditor.Quark
         void OperateManifest()
         {
             var buildPath = GetBuildPath();
-            var url = Utility.IO.WebPathCombine(buildPath, assetBundleTabData.BuildTarget.ToString());
+            var paths= buildPath.Split('/');
+            var pathLength = paths.Length;
+            if (pathLength==0)
+            {
+                EditorUtil.Debug.LogError("Build path is invalid !");
+                return;
+            }
+            var targetFolder = paths[pathLength - 1];
+            EditorUtil.Debug.LogInfo(targetFolder);
+            var url = Utility.IO.WebPathCombine(buildPath, targetFolder);
             EditorUtil.IO.DownloadAssetBundleAsync(url, (percent) =>
             {
                 var per = percent * 100;
@@ -366,6 +361,7 @@ namespace CosmosEditor.Quark
                 }
                 WriteBuildInfo();
                 ResetBuildInfo();
+                CopyToStreamingAssets();
             });
 
         }

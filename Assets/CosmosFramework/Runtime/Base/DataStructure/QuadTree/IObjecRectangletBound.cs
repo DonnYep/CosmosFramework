@@ -10,13 +10,13 @@
         /// </summary>
         /// <param name="go">对象</param>
         /// <returns>位置数值</returns>
-        float GetPositonX(T go);
+        float GetCenterX(T go);
         /// <summary>
         /// 获取对象的Y的位置；
         /// </summary>
         /// <param name="go">对象</param>
         /// <returns>位置数值</returns>
-        float GetPositonY(T go);
+        float GetCenterY(T go);
         /// <summary>
         /// 获取对象的宽度；
         /// </summary>
