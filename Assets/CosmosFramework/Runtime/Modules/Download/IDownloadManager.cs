@@ -46,18 +46,12 @@ namespace Cosmos
         /// 下载中的资源总数；
         /// </summary>
         int DownloadingCount { get; }
+
         /// <summary>
-        /// 下载模式；
+        /// 设置或更新downloader;
         /// </summary>
-        DownloaderMode DownloaderMode { get;  }
-        /// <summary>
-        /// 可以用，但是没必要；
-        /// 切换下载模式，切换下载器后会保留先前的的下载配置；
-        /// 此操作为异步处理，当有个下载器正在下载时，等到下载器下载停止再切换；
-        /// <see cref="Cosmos.Download. DownloaderMode"/>
-        /// </summary>
-        /// <param name="downloaderMode">下载模式</param>
-        void SwitchDownloadMode(DownloaderMode downloaderMode);
+        /// <param name="newDownloader">下载器</param>
+        void SetOrUpdateDownloadHelper(IDownloader newDownloader);
         /// <summary>
         /// 设置下载资源地址帮助体；
         /// </summary>

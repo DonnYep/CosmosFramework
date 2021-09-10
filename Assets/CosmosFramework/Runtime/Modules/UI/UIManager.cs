@@ -489,7 +489,7 @@ namespace Cosmos.UI
                     group.RemoveUIForm(uiForm);
             }
         }
-        protected override void OnPreparatory()
+        protected override void OnInitialization()
         {
             uiGroupDict = new Dictionary<string, IUIFormGroup>();
             uiFormDict = new Dictionary<string, IUIForm>();

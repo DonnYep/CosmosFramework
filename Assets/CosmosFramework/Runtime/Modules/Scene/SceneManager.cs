@@ -246,7 +246,7 @@ namespace Cosmos.Scene
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return Utility.Unity.StartCoroutine(sceneHelper.UnLoadSceneAsync(sceneInfo, startUnloadCallback, null, unLoadedCallback));
         }
-        protected override void OnPreparatory()
+        protected override void OnInitialization()
         {
             sceneHelper = new DefaultSceneHelper();
         }

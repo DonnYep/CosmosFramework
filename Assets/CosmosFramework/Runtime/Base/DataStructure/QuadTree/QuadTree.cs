@@ -95,10 +95,6 @@ namespace Cosmos.QuadTree
             if (CurrentDepth > MaxDepth) return;
             int nextDepth = CurrentDepth + 1;
             hasChildren = true;
-            //treeTL = new QuadTree<T>(Area.X, Area.Y, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
-            //treeTR = new QuadTree<T>(Area.CenterX, Area.Y, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
-            //treeBL = new QuadTree<T>(Area.X, Area.CenterY, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
-            //treeBR = new QuadTree<T>(Area.CenterX, Area.CenterY, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
             treeTR = new QuadTree<T>(Area.X + Area.HalfWidth * 0.5f, Area.Y + Area.HalfHeight * 0.5f, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
             treeTL = new QuadTree<T>(Area.X - Area.HalfWidth * 0.5f, Area.Y + Area.HalfHeight * 0.5f, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);
             treeBL = new QuadTree<T>(Area.X - Area.HalfWidth * 0.5f, Area.Y - Area.HalfHeight * 0.5f, Area.HalfWidth, Area.HalfHeight, objectRectangleBound, ObjectCapacity, MaxDepth, nextDepth);

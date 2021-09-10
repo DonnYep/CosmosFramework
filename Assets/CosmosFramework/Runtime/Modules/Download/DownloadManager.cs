@@ -94,7 +94,6 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载模式；
         /// </summary>
-        public DownloaderMode DownloaderMode { get; private set; }
         /// <summary>
         /// 是否删除本地下载失败的文件；
         /// </summary>
@@ -116,39 +115,23 @@ namespace Cosmos.Download
         /// 支持localhost地址与http地址；
         /// </summary>
         IDownloadUrlHelper downloadUrlHelper;
-        /// <summary>
-        /// 下载器缓存；
-        /// </summary>
-        Dictionary<DownloaderMode, IDownloader> downloaderDict;
 
         /// <summary>
-        /// 可以用，但是没必要；
-        /// 切换下载模式，切换下载器后会保留先前的的下载配置；
-        /// 此操作为异步处理，当有个下载器正在下载时，等到下载器下载停止再切换；
-        /// <see cref="Cosmos.Download. DownloaderMode"/>
+        /// 设置或更新downloader;
         /// </summary>
-        /// <param name="downloaderMode">下载模式</param>
-        public void SwitchDownloadMode(DownloaderMode downloaderMode)
+        /// <param name="newDownloader">下载器</param>
+        public void SetOrUpdateDownloadHelper( IDownloader newDownloader)
         {
-            if (DownloaderMode == downloaderMode)
-                return;
-            if (downloader != null)
+            if (this.downloader != null)
             {
-                FutureTask.Detection(() => downloader.Downloading, (ft) =>
-                 {
-                     downloader.Release();
-                     downloader = downloaderDict[downloaderMode];
-                     DownloaderMode = downloaderMode;
-                     downloader.DeleteFailureFile = deleteFailureFile;
-                     downloader.DownloadTimeout = downloadTimeout;
-                 });
-            }
-            else
-            {
-                downloader = downloaderDict[downloaderMode];
-                DownloaderMode = downloaderMode;
-                downloader.DeleteFailureFile = deleteFailureFile;
-                downloader.DownloadTimeout = downloadTimeout;
+                this.downloader.CancelDownload();
+                FutureTask.Detection(() => this.downloader.Downloading, (ft) =>
+                {
+                    this.downloader.Release();
+                    this.downloader = newDownloader;
+                    this.downloader.DeleteFailureFile = deleteFailureFile;
+                    this.downloader.DownloadTimeout = downloadTimeout;
+                });
             }
         }
         /// <summary>
@@ -262,13 +245,9 @@ namespace Cosmos.Download
         {
             downloader.CancelDownload();
         }
-        protected override void OnPreparatory()
+        protected override void OnInitialization()
         {
-            downloaderDict = new Dictionary<DownloaderMode, IDownloader>();
             var unityWebDownloader = new UnityWebDownloader();
-            var webClientDownloader = new WebClientDownloader();
-            downloaderDict.Add(DownloaderMode.UnityWebRequest, unityWebDownloader);
-            downloaderDict.Add(DownloaderMode.WebClient, webClientDownloader);
             downloader = unityWebDownloader;
             downloader.DeleteFailureFile = deleteFailureFile;
             downloader.DownloadTimeout = downloadTimeout;
