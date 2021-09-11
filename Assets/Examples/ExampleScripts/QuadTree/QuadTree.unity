@@ -263,6 +263,7 @@ MonoBehaviour:
   maxObject: 20
   maxDepth: 5
   supervisor: {fileID: 1644205380}
+  drawGridGizmos: 1
   drawObjectGizmos: 0
 --- !u!1 &1445863188
 GameObject:

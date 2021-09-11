@@ -5,8 +5,7 @@ using System.Collections.Generic;
 namespace Cosmos
 {
     /// <summary>
-    /// CFramework下的简易单向链表
-    /// 复杂链表建议使用.NET的LinkedList
+    /// 单向链表,双向链表建议使用.NET的LinkedList
     /// </summary>
     public class TinyLinkedList<T> : IEnumerable<T>
     {
