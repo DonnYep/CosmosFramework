@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641335, b: 0.57481605, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -206,13 +206,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 229911205}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.39713123, y: 0.30997548, z: -0.14454393, w: 0.8516508}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 50, y: 40, z: 0}
 --- !u!1 &1094466981
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,12 +259,14 @@ MonoBehaviour:
   rectRange: {x: 400, y: 400}
   resPrefab: {fileID: 1920155239765684836, guid: 184f0255cec527046aa68378d47db811,
     type: 3}
-  objectCount: 20000
+  objectCount: 1000
   maxObject: 20
   maxDepth: 5
   supervisor: {fileID: 1644205380}
   drawGridGizmos: 1
-  drawObjectGizmos: 0
+  drawObjectGizmos: 1
+  runUpdate: 0
+  objectMoveSpeed: 5
 --- !u!1 &1445863188
 GameObject:
   m_ObjectHideFlags: 0

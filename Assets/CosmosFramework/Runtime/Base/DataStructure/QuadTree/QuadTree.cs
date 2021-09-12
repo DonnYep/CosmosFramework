@@ -10,9 +10,9 @@ namespace Cosmos.QuadTree
     /// <typeparam name="T">四叉树自定义的数据模型</typeparam>
     public class QuadTree<T>
     {
-        static QuadTreePool<QuadTree<T>> nodePool;
-        static QuadTreePool<List<T>> listPool;
-        static QuadTreePool<HashSet<T>> hashSetPool;
+        readonly static QuadTreePool<QuadTree<T>> nodePool;
+        readonly static QuadTreePool<List<T>> listPool;
+        readonly static QuadTreePool<HashSet<T>> hashSetPool;
         static QuadTree()
         {
             nodePool = new QuadTreePool<QuadTree<T>>(() => new QuadTree<T>(), node => { node.Release(); });
@@ -73,9 +73,6 @@ namespace Cosmos.QuadTree
         /// </summary>
         QuadTree<T> parent;
         /// <summary>
-        /// 最大深度；
-        /// </summary>
-        /// <summary>
         /// TopRight Quadrant1
         /// </summary>
         QuadTree<T> treeTR;
@@ -101,14 +98,14 @@ namespace Cosmos.QuadTree
                 treeBL.CheckObjectRect();
                 treeBR.CheckObjectRect();
 
-                var trCount = treeTR.Count();
-                var tlCount = treeTL.Count();
-                var brCount = treeBR.Count();
-                var blCount = treeBL.Count();
+                //var trCount = treeTR.Count();
+                //var tlCount = treeTL.Count();
+                //var brCount = treeBR.Count();
+                //var blCount = treeBL.Count();
 
-                var amount = trCount + tlCount + brCount + blCount;
-                if (amount < ObjectCapacity)
-                    CombineQuads();
+                //var amount = trCount + tlCount + brCount + blCount;
+                //if (amount ==0)
+                //    CombineQuads();
             }
             else
             {
@@ -129,7 +126,7 @@ namespace Cosmos.QuadTree
                     objectSet.Remove(obj);
                     //若父类不为空，并且符合包含规则，则添加入父类的区块中；
                     if (parent != null)
-                        InsertToParent(obj);
+                        parent.InsertToParent(obj);
                 }
                 listPool.Despawn(list);
             }
@@ -371,6 +368,7 @@ namespace Cosmos.QuadTree
         void CombineQuads()
         {
             hasChildren = false;
+            objectSet = hashSetPool.Spawn();
             Release(treeTL);
             Release(treeTR);
             Release(treeBL);
@@ -407,7 +405,7 @@ namespace Cosmos.QuadTree
                 treeBL = null;
             }
             hashSetPool.Despawn(objectSet);
-            hashSetPool = null;
+            objectSet = null;
             hasChildren = false;
             parent = null;
         }

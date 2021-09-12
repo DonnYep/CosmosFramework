@@ -19,6 +19,8 @@ public class QuadTreeTester : MonoBehaviour
     [SerializeField] GameObject supervisor;
     [SerializeField] bool drawGridGizmos;
     [SerializeField] bool drawObjectGizmos;
+    [SerializeField] bool runUpdate;
+    [SerializeField] float objectMoveSpeed = 5;
     QuadObjectSpawner objectSapwner;
     List<ObjectSpawnInfo> objectInfos = new List<ObjectSpawnInfo>();
 
@@ -28,7 +30,7 @@ public class QuadTreeTester : MonoBehaviour
     QuadRectangle latestRect;
     void Awake()
     {
-        DateTime startTime=DateTime.UtcNow;
+        DateTime startTime = DateTime.UtcNow;
         quadTree = QuadTree<ObjectSpawnInfo>.Create(0, 0, rectRange.x, rectRange.y, new SpawnObjectBound(), maxObject, maxDepth);
         objectSapwner = new QuadObjectSpawner(resPrefab);
         for (int i = 0; i < objectCount; i++)
@@ -59,11 +61,17 @@ public class QuadTreeTester : MonoBehaviour
     }
     void Update()
     {
+        DrawSpawnInfo();
+        if (!runUpdate)
+            return;
+        DrawObjectSpawn();
+    }
+    void DrawObjectSpawn()
+    {
         var supGo = new ObjectSpawnInfo(supervisor.transform.position);
         var currentRect = quadTree.GetObjectGrid(supGo);
         if (currentRect != null)
         {
-            //   Debug.Log($"[{currentRect.CenterX} , {currentRect.CenterY}]");
             if (latestRect != currentRect)
             {
                 if (rectSpawnInfoDict.TryGetValue(latestRect, out var newInfos))
@@ -96,6 +104,17 @@ public class QuadTreeTester : MonoBehaviour
                 latestRect = currentRect;
             }
         }
+    }
+    void DrawSpawnInfo()
+    {
+        for (int i = 0; i < objectCount; i++)
+        {
+            var valueX = UnityEngine.Random.Range(-10, 10);
+            var valueZ = UnityEngine.Random.Range(-10, 10);
+            var pos = new Vector3(valueX, 0, valueZ);
+            objectInfos[i].Position = Vector3.Lerp(objectInfos[i].Position, objectInfos[i].Position + pos, Time.deltaTime * objectMoveSpeed);
+        }
+        quadTree.CheckObjectRect();
     }
     void OnDrawGizmos()
     {
