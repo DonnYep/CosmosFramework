@@ -10,111 +10,86 @@ using System.Collections;
 
 public class QuadTreeTester : MonoBehaviour
 {
-    QuadTree<ObjectSpawnInfo> quadTree;
+    QuadTree<GameObject> quadTree;
     [SerializeField] Vector2 rectRange = new Vector2(400, 400);
+    [SerializeField] Vector2 rectRangeOffset = new Vector2(20, 20);
     [SerializeField] GameObject resPrefab;
     [SerializeField] int objectCount = 30;
     [SerializeField] int maxObject = 4;
     [SerializeField] int maxDepth = 5;
     [SerializeField] GameObject supervisor;
     [SerializeField] bool drawGridGizmos;
-    [SerializeField] bool drawObjectGizmos;
     [SerializeField] bool runUpdate;
     [SerializeField] float objectMoveSpeed = 5;
+    [SerializeField] Color gridGizmosColor = new Color(1, 1, 1, 1);
+    [SerializeField] Transform activeTrans;
+    [SerializeField] Transform deactiveTrans;
     QuadObjectSpawner objectSapwner;
-    List<ObjectSpawnInfo> objectInfos = new List<ObjectSpawnInfo>();
-
-    Dictionary<ObjectSpawnInfo, GameObject> infoGoDict = new Dictionary<ObjectSpawnInfo, GameObject>();
-
-    Dictionary<QuadRectangle, List<ObjectSpawnInfo>> rectSpawnInfoDict = new Dictionary<QuadRectangle, List<ObjectSpawnInfo>>();
-    QuadRectangle latestRect;
+    List<GameObject> objectInfos = new List<GameObject>();
     void Awake()
     {
         DateTime startTime = DateTime.UtcNow;
-        quadTree = QuadTree<ObjectSpawnInfo>.Create(0, 0, rectRange.x, rectRange.y, new SpawnObjectBound(), maxObject, maxDepth);
+        quadTree = QuadTree<GameObject>.Create(0, 0, rectRange.x, rectRange.y, new SpawnObjectBound(), maxObject, maxDepth);
+        quadTree.OnObjectOutQuadRectangle += OnObjectOutQuadRectangle;
         objectSapwner = new QuadObjectSpawner(resPrefab);
+        int index = 0;
         for (int i = 0; i < objectCount; i++)
         {
-            var position = new Vector3(UnityEngine.Random.Range(-rectRange.x * 0.5f, rectRange.x * 0.5f), 1, UnityEngine.Random.Range(-rectRange.y * 0.5f, rectRange.y * 0.5f));
-            var info = new ObjectSpawnInfo(position);
-            objectInfos.Add(info);
-            quadTree.Insert(info);
-        }
-        var objs = quadTree.GetAllObjects();
-        var objLength = objs.Length;
-        for (int i = 0; i < objLength; i++)
-        {
-            var rect = quadTree.GetObjectGrid(objs[i]);
-            if (rect != QuadRectangle.Zero)
+            var position = new Vector3(UnityEngine.Random.Range(-rectRange.x * 0.5f + rectRangeOffset.x, rectRange.x * 0.5f + rectRangeOffset.y), 1, UnityEngine.Random.Range(-rectRange.x * 0.5f + rectRangeOffset.x, rectRange.x * 0.5f + rectRangeOffset.y));
+            var info = objectSapwner.Spawn();
+            if (quadTree.Insert(info))
             {
-                if (!rectSpawnInfoDict.TryGetValue(rect, out var infos))
-                {
-                    infos = new List<ObjectSpawnInfo>();
-                    rectSpawnInfoDict.Add(rect, infos);
-                }
-                infos.Add(objs[i]);
+                index++;
+                info.name = resPrefab.name + index;
+                info.transform.SetParent(activeTrans);
+                info.transform.position = position;
+                objectInfos.Add(info);
+            }
+            else
+            {
+                Destroy(info);
             }
         }
-        Debug.Log("实际生成数量：" + objLength);
         DateTime endTime = DateTime.UtcNow;
+        Debug.Log(index);
         Debug.Log(endTime - startTime);
     }
+    void OnObjectOutQuadRectangle(GameObject obj)
+    {
+        obj.transform.SetParent(deactiveTrans);
+        if (objectInfos.Remove(obj))
+        {
+            //Utility.Debug.LogInfo(obj.name + "-Out");
+        }
+    }
+
     void Update()
     {
-        DrawSpawnInfo();
-        if (!runUpdate)
-            return;
-        DrawObjectSpawn();
-    }
-    void DrawObjectSpawn()
-    {
-        var supGo = new ObjectSpawnInfo(supervisor.transform.position);
-        var currentRect = quadTree.GetObjectGrid(supGo);
-        if (currentRect != null)
+        if (runUpdate)
         {
-            if (latestRect != currentRect)
-            {
-                if (rectSpawnInfoDict.TryGetValue(latestRect, out var newInfos))
-                {
-                    for (int i = 0; i < newInfos.Count; i++)
-                    {
-                        if (infoGoDict.TryGetValue(newInfos[i], out var go))
-                        {
-                            objectSapwner.Despawn(go);
-                            infoGoDict.Remove(newInfos[i]);
-                        }
-                    }
-                }
-                if (currentRect != QuadRectangle.Zero)
-                {
-                    if (rectSpawnInfoDict.TryGetValue(currentRect, out var latestInfos))
-                    {
-                        for (int i = 0; i < latestInfos.Count; i++)
-                        {
-                            if (!infoGoDict.TryGetValue(latestInfos[i], out var go))
-                            {
-                                go = objectSapwner.Spawn();
-                                go.transform.position = latestInfos[i].Position;
-                                go.transform.SetParent(transform);
-                                infoGoDict.Add(latestInfos[i], go);
-                            }
-                        }
-                    }
-                }
-                latestRect = currentRect;
-            }
+            DrawSpawnInfo();
+            quadTree.CheckObjectRect();
         }
     }
     void DrawSpawnInfo()
     {
-        for (int i = 0; i < objectCount; i++)
+        var objArr = objectInfos.ToArray();
+        var length = objArr.Length;
+        for (int i = 0; i < length; i++)
         {
             var valueX = UnityEngine.Random.Range(-10, 10);
             var valueZ = UnityEngine.Random.Range(-10, 10);
+            var symbol = UnityEngine.Random.Range(0, 16);
             var pos = new Vector3(valueX, 0, valueZ);
-            objectInfos[i].Position = Vector3.Lerp(objectInfos[i].Position, objectInfos[i].Position + pos, Time.deltaTime * objectMoveSpeed);
+            if (symbol % 2 == 0)
+            {
+                objArr[i].transform.position = Vector3.Lerp(objArr[i].transform.position, objArr[i].transform.position + pos, Time.deltaTime * objectMoveSpeed);
+            }
+            else
+            {
+                objArr[i].transform.position = Vector3.Lerp(objArr[i].transform.position, objArr[i].transform.position - pos, Time.deltaTime * objectMoveSpeed);
+            }
         }
-        quadTree.CheckObjectRect();
     }
     void OnDrawGizmos()
     {
@@ -128,19 +103,10 @@ public class QuadTreeTester : MonoBehaviour
                 var length = grids.Length;
                 for (int i = 0; i < length; i++)
                 {
-                    Gizmos.color = new Color(0.1f, 1, 1, 0.4f);
+                    Gizmos.color = gridGizmosColor;
                     var pos = new Vector3(grids[i].X, 0, grids[i].Y);
                     var size = new Vector3(grids[i].Width, 5, grids[i].Height);
                     Gizmos.DrawWireCube(pos, size);
-                }
-            }
-            if (drawObjectGizmos)
-            {
-                var infos = objectInfos;
-                for (int i = 0; i < infos.Count; i++)
-                {
-                    Gizmos.color = new Color(1, 0, 0.7f, 0.4f);
-                    Gizmos.DrawWireSphere(infos[i].Position, 1);
                 }
             }
         }

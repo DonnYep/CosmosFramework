@@ -4,23 +4,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
-public class SpawnObjectBound : IObjecRectangletBound<ObjectSpawnInfo>
+public class SpawnObjectBound : IObjecRectangletBound<GameObject>
 {
-    public float GetHeight(ObjectSpawnInfo go)
+    public float GetHeight(GameObject go)
     {
-        return 1;
+        return 0.5f;
     }
-    public float GetCenterX(ObjectSpawnInfo go)
+    public float GetCenterX(GameObject go)
     {
-        return go.Position.x;
+        return go.transform.position.x;
     }
-    public float GetCenterY(ObjectSpawnInfo go)
+    public float GetCenterY(GameObject go)
     {
-        return go.Position.z;
+        return go.transform.position.z;
     }
-    public float GetWidth(ObjectSpawnInfo go)
+    public float GetWidth(GameObject go)
     {
-        return 1;
+        return 0.5f;
     }
 }

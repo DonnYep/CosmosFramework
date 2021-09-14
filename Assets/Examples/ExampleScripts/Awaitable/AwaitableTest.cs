@@ -8,7 +8,7 @@ public class AwaitableTest : MonoBehaviour
     {
         Debug.Log("AwaitableTest >>> Before Coroutine Start");
         await StartCoroutine(EnumRun());
-        //await EnumRun();
+        await EnumRun();
         Debug.LogError("AwaitableTest >>> After Coroutine Start");
     }
     IEnumerator EnumRun()
