@@ -12,10 +12,9 @@ public class QuadTreeTester : MonoBehaviour
 {
     QuadTree<GameObject> quadTree;
     [SerializeField] Vector2 rectRange = new Vector2(400, 400);
-    [SerializeField] Vector2 rectRangeOffset = new Vector2(20, 20);
     [SerializeField] GameObject resPrefab;
     [SerializeField] int objectCount = 30;
-    [SerializeField] int maxObject = 4;
+    [SerializeField] int maxNodeObject = 4;
     [SerializeField] int maxDepth = 5;
     [SerializeField] GameObject supervisor;
     [SerializeField] bool drawGridGizmos;
@@ -26,23 +25,23 @@ public class QuadTreeTester : MonoBehaviour
     [SerializeField] Transform deactiveTrans;
     QuadObjectSpawner objectSapwner;
     List<GameObject> objectInfos = new List<GameObject>();
-    void Awake()
+    void Start()
     {
         DateTime startTime = DateTime.UtcNow;
-        quadTree = QuadTree<GameObject>.Create(0, 0, rectRange.x, rectRange.y, new SpawnObjectBound(), maxObject, maxDepth);
+        quadTree = QuadTree<GameObject>.Create(0, 0, rectRange.x, rectRange.y, new SpawnObjectBound(), maxNodeObject, maxDepth);
         quadTree.OnObjectOutQuadRectangle += OnObjectOutQuadRectangle;
         objectSapwner = new QuadObjectSpawner(resPrefab);
         int index = 0;
         for (int i = 0; i < objectCount; i++)
         {
-            var position = new Vector3(UnityEngine.Random.Range(-rectRange.x * 0.5f + rectRangeOffset.x, rectRange.x * 0.5f + rectRangeOffset.y), 1, UnityEngine.Random.Range(-rectRange.x * 0.5f + rectRangeOffset.x, rectRange.x * 0.5f + rectRangeOffset.y));
+            var position = new Vector3(UnityEngine.Random.Range(-rectRange.x * 0.5f, rectRange.x * 0.5f), 1, UnityEngine.Random.Range(-rectRange.y * 0.5f, rectRange.y * 0.5f));
             var info = objectSapwner.Spawn();
             if (quadTree.Insert(info))
             {
                 index++;
                 info.name = resPrefab.name + index;
-                info.transform.SetParent(activeTrans);
                 info.transform.position = position;
+                info.transform.SetParent(activeTrans);
                 objectInfos.Add(info);
             }
             else
@@ -65,10 +64,10 @@ public class QuadTreeTester : MonoBehaviour
 
     void Update()
     {
+        //quadTree.CheckObjectRect();
         if (runUpdate)
         {
             DrawSpawnInfo();
-            quadTree.CheckObjectRect();
         }
     }
     void DrawSpawnInfo()
@@ -108,6 +107,14 @@ public class QuadTreeTester : MonoBehaviour
                     var size = new Vector3(grids[i].Width, 5, grids[i].Height);
                     Gizmos.DrawWireCube(pos, size);
                 }
+            }
+            var objs= quadTree.GetAllObjects();
+            for (int i = 0; i < objs.Length; i++)
+            {
+                Gizmos.color = gridGizmosColor;
+                var pos = objs[i].transform.position;
+                var size = Vector3.one;
+                Gizmos.DrawWireCube(pos, size);
             }
         }
     }

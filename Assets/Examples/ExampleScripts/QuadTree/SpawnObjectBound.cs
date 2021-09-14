@@ -10,7 +10,7 @@ public class SpawnObjectBound : IObjecRectangletBound<GameObject>
 {
     public float GetHeight(GameObject go)
     {
-        return 0.5f;
+        return 1;
     }
     public float GetCenterX(GameObject go)
     {
@@ -22,6 +22,6 @@ public class SpawnObjectBound : IObjecRectangletBound<GameObject>
     }
     public float GetWidth(GameObject go)
     {
-        return 0.5f;
+        return 1;
     }
 }

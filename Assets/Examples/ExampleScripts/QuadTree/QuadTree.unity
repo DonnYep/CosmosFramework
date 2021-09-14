@@ -286,13 +286,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1627f2ffe9b6c2346a126e783ba21916, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rectRange: {x: 20, y: 20}
-  rectRangeOffset: {x: 1, y: -1}
+  rectRange: {x: 50, y: 50}
   resPrefab: {fileID: 1920155239765684836, guid: 184f0255cec527046aa68378d47db811,
     type: 3}
-  objectCount: 200
-  maxObject: 5
-  maxDepth: 10
+  objectCount: 40
+  maxNodeObject: 5
+  maxDepth: 5
   supervisor: {fileID: 1644205380}
   drawGridGizmos: 1
   runUpdate: 0
