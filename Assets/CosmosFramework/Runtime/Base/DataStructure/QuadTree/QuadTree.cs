@@ -76,7 +76,7 @@ namespace Cosmos.QuadTree
         /// <summary>
         /// 是否存在子节点；
         /// </summary>
-        bool hasChildren ;
+        bool hasChildren;
         /// <summary>
         /// 父节点；
         /// </summary>
@@ -131,8 +131,8 @@ namespace Cosmos.QuadTree
                     {
                         if (objectSet.Remove(obj))
                         {
-                            InsertToParent(obj);
                         }
+                        InsertToParent(obj);
                         //若父类不为空，并且符合包含规则，则添加入父类的区块中；
                     }
                 }
@@ -141,21 +141,7 @@ namespace Cosmos.QuadTree
         public bool Insert(T obj)
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
-
-            if (!IsObjectOverlapping(obj)) 
-            {
-                return false;
-            }
-            else
-            {
-                var x = objectRectangleBound.GetCenterX(obj);
-                var y = objectRectangleBound.GetCenterY(obj);
-                var width = objectRectangleBound.GetWidth(obj);
-                var height = objectRectangleBound.GetHeight(obj);
-                var goRect = new QuadRectangle(x, y, width, height);
-                Utility.Debug.LogInfo(goRect, MessageColor.BLUE);
-                Utility.Debug.LogInfo(Area, MessageColor.TEAL);
-            }
+            if (!IsObjectOverlapping(obj)) return false;
             if (hasChildren)
             {
                 if (treeTR.Insert(obj)) return true;
@@ -168,7 +154,7 @@ namespace Cosmos.QuadTree
             {
                 if (!objectSet.Add(obj))
                     return false;
-                if (objectSet.Count >= MaxNodeObject)
+                if (objectSet.Count > MaxNodeObject)
                 {
                     Quarter();
                 }
@@ -409,7 +395,12 @@ namespace Cosmos.QuadTree
             {
                 var obj = allObjs[i];
                 if (IsObjectOverlapping(obj))
-                    Insert(obj);
+                {
+                    if (!objectSet.Add(obj))
+                    {
+                        onObjectOutQuadRectangle?.Invoke(obj);
+                    }
+                }
                 else
                     InsertToParent(obj);
             }

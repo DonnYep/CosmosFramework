@@ -37,7 +37,7 @@ namespace Cosmos
         /// <summary>
         /// 通道接收消息事件
         /// </summary>
-        public Action<NetworkChannel,INetworkMessage> NetworkChannelOnReceive { get; set; }
+        public Action<NetworkChannel,byte[]> NetworkChannelOnReceive { get; set; }
         /// <summary>
         /// 通道关闭事件
         /// </summary>
@@ -144,18 +144,18 @@ namespace Cosmos
             sendDataBuffer.Add((msg));
             isCanSend = true;
         }
-        /// <summary>
-        /// 对消息进行编码
-        /// </summary>
-        /// <param name="message">消息体</param>
-        /// <returns>编码后的消息数组</returns>
-        public abstract byte[] EncodingMessage(INetworkMessage message);
-        /// <summary>
-        /// 接收网络消息，并对消息进行解码
-        /// </summary>
-        /// <param name="client">连接的客户端</param>
-        /// <returns>解码后的消息对象</returns>
-        public abstract INetworkMessage ReceiveMessage(Socket client);
+        ///// <summary>
+        ///// 对消息进行编码
+        ///// </summary>
+        ///// <param name="message">消息体</param>
+        ///// <returns>编码后的消息数组</returns>
+        //public abstract byte[] EncodingMessage(INetworkMessage message);
+        ///// <summary>
+        ///// 接收网络消息，并对消息进行解码
+        ///// </summary>
+        ///// <param name="client">连接的客户端</param>
+        ///// <returns>解码后的消息对象</returns>
+        //public abstract INetworkMessage ReceiveMessage(Socket client);
         /// <summary>
         /// 轮询事件发送网络消息
         /// </summary>

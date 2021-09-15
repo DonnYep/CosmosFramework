@@ -12,6 +12,7 @@ public class QuadTreeTester : MonoBehaviour
 {
     QuadTree<GameObject> quadTree;
     [SerializeField] Vector2 rectRange = new Vector2(400, 400);
+    [SerializeField] Vector2 randomPosRange = new Vector2(-10, 10);
     [SerializeField] GameObject resPrefab;
     [SerializeField] int objectCount = 30;
     [SerializeField] int maxNodeObject = 4;
@@ -36,11 +37,11 @@ public class QuadTreeTester : MonoBehaviour
         {
             var position = new Vector3(UnityEngine.Random.Range(-rectRange.x * 0.5f, rectRange.x * 0.5f), 1, UnityEngine.Random.Range(-rectRange.y * 0.5f, rectRange.y * 0.5f));
             var info = objectSapwner.Spawn();
+            info.transform.position = position;
             if (quadTree.Insert(info))
             {
                 index++;
                 info.name = resPrefab.name + index;
-                info.transform.position = position;
                 info.transform.SetParent(activeTrans);
                 objectInfos.Add(info);
             }
@@ -64,7 +65,7 @@ public class QuadTreeTester : MonoBehaviour
 
     void Update()
     {
-        //quadTree.CheckObjectRect();
+        quadTree.CheckObjectRect();
         if (runUpdate)
         {
             DrawSpawnInfo();
@@ -76,8 +77,8 @@ public class QuadTreeTester : MonoBehaviour
         var length = objArr.Length;
         for (int i = 0; i < length; i++)
         {
-            var valueX = UnityEngine.Random.Range(-10, 10);
-            var valueZ = UnityEngine.Random.Range(-10, 10);
+            var valueX = UnityEngine.Random.Range(randomPosRange.x, randomPosRange.y);
+            var valueZ = UnityEngine.Random.Range(randomPosRange.x, randomPosRange.y);
             var symbol = UnityEngine.Random.Range(0, 16);
             var pos = new Vector3(valueX, 0, valueZ);
             if (symbol % 2 == 0)
@@ -108,12 +109,12 @@ public class QuadTreeTester : MonoBehaviour
                     Gizmos.DrawWireCube(pos, size);
                 }
             }
-            var objs= quadTree.GetAllObjects();
+            var objs = quadTree.GetAllObjects();
             for (int i = 0; i < objs.Length; i++)
             {
                 Gizmos.color = gridGizmosColor;
                 var pos = objs[i].transform.position;
-                var size = Vector3.one;
+                var size = Vector3.one*0.5f;
                 Gizmos.DrawWireCube(pos, size);
             }
         }

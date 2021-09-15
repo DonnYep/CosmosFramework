@@ -287,15 +287,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rectRange: {x: 50, y: 50}
+  randomPosRange: {x: -10, y: 10}
   resPrefab: {fileID: 1920155239765684836, guid: 184f0255cec527046aa68378d47db811,
     type: 3}
-  objectCount: 40
-  maxNodeObject: 5
-  maxDepth: 5
+  objectCount: 400
+  maxNodeObject: 10
+  maxDepth: 20
   supervisor: {fileID: 1644205380}
   drawGridGizmos: 1
   runUpdate: 0
-  objectMoveSpeed: 3
+  objectMoveSpeed: 2
   gridGizmosColor: {r: 0, g: 1, b: 0.914711, a: 1}
   activeTrans: {fileID: 1304742435}
   deactiveTrans: {fileID: 108770194}

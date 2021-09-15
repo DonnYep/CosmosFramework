@@ -9,7 +9,7 @@ namespace Cosmos
     /// <summary>
     /// 网络模块定义的常量；
     /// </summary>
-    public class NetworkConsts
+    public class NetworkConstant
     {
         /// <summary>
         /// 秒级别；

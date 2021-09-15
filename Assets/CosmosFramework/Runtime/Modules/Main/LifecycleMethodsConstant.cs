@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public class LifecycleMethodsConst
+    public class LifecycleMethodsConstant
     {
         public const string OnInitialization = "OnInitialization";
         public const string OnTermination  = "OnTermination";

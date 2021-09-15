@@ -14,6 +14,9 @@ namespace Cosmos.Network
     [Module]
     internal sealed class NetworkManager : Module, INetworkManager
     {
+        Action onConnect;
+        Action onDisconnect;
+        Action<byte[]> onReceiveData;
         public event Action OnConnect
         {
             add { onConnect += value; }
@@ -29,26 +32,20 @@ namespace Cosmos.Network
             add { onReceiveData += value; }
             remove { onReceiveData -= value; }
         }
-        Action onConnect;
-        Action onDisconnect;
-        Action<byte[]> onReceiveData;
+  
         NetworkProtocolType currentNetworkProtocolType;
 
         bool clearCallbackWhenDisconnected = false;
-        #region UDP
-        INetworkService service;
-        IHeartbeat heartbeat;
-        #endregion
 
         #region KCP
         KcpClientService kcpClientService;
         #endregion
 
-        public bool IsConnected { get; private set; }
+        public bool IsConnect { get; private set; }
 
         public void SendNetworkMessage(byte[] data)
         {
-            if (IsConnected)
+            if (IsConnect)
             {
                 switch (currentNetworkProtocolType)
                 {
@@ -78,7 +75,7 @@ namespace Cosmos.Network
         public void Connect(string ip, ushort port, NetworkProtocolType protocolType)
         {
             OnUnPause();
-            if (IsConnected)
+            if (IsConnect)
             {
                 Utility.Debug.LogError("Network is Connected !");
                 return;
@@ -160,7 +157,7 @@ namespace Cosmos.Network
         void OnDisconnectHandler()
         {
             OnPause();
-            IsConnected = false;
+            IsConnect = false;
             Utility.Debug.LogInfo("Server Disconnected", MessageColor.RED);
             onDisconnect?.Invoke();
             if (clearCallbackWhenDisconnected)
@@ -172,13 +169,9 @@ namespace Cosmos.Network
         }
         void OnConnectHandler()
         {
-            IsConnected = true;
+            IsConnect = true;
             Utility.Debug.LogInfo("Server Connected ! ");
             onConnect?.Invoke();
-        }
-        void OnReceiveDataHandler(ArraySegment<byte> arrSeg)
-        {
-            //  onReceiveData?.Invoke(arrSeg);
         }
         void OnKCPReceiveDataHandler(ArraySegment<byte> arrSeg, byte channel)
         {

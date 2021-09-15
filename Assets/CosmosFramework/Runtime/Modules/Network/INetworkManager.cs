@@ -14,7 +14,7 @@ namespace Cosmos
         event Action OnDisconnect;
         event Action<byte[]> OnReceiveData;
         //long Conv { get; }
-        bool IsConnected { get; }
+        bool IsConnect { get; }
         void SendNetworkMessage(byte[] buffer);
         /// <summary>
         /// 与远程建立连接；

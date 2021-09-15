@@ -236,7 +236,7 @@ namespace Cosmos
             var type = module.GetType();
             if (HasModule(type))
             {
-                Utility.Assembly.InvokeMethod(module, LifecycleMethodsConst.OnDeactive);
+                Utility.Assembly.InvokeMethod(module, LifecycleMethodsConstant.OnDeactive);
                 var m = moduleDict[type];
                 if (tickRefreshDict.Remove(module, out var tickAction))
                     TickRefreshHandler -= tickAction;
@@ -248,7 +248,7 @@ namespace Cosmos
                     ElapseRefreshHandler -= elapseAction;
                 moduleDict.Remove(type);
                 moduleCount--;
-                Utility.Assembly.InvokeMethod(module, LifecycleMethodsConst.OnTermination);
+                Utility.Assembly.InvokeMethod(module, LifecycleMethodsConstant.OnTermination);
                 Utility.Debug.LogInfo($"Module :{module} is OnTermination", MessageColor.DARKBLUE);
             }
             else
@@ -274,7 +274,7 @@ namespace Cosmos
                             {
                                 try
                                 {
-                                    Utility.Assembly.InvokeMethod(modules[i], LifecycleMethodsConst.OnInitialization);
+                                    Utility.Assembly.InvokeMethod(modules[i], LifecycleMethodsConstant.OnInitialization);
                                     moduleCount++;
                                 }
                                 catch (Exception e)
@@ -310,7 +310,7 @@ namespace Cosmos
                             {
                                 try
                                 {
-                                    Utility.Assembly.InvokeMethod(modules[i], LifecycleMethodsConst.OnInitialization);
+                                    Utility.Assembly.InvokeMethod(modules[i], LifecycleMethodsConstant.OnInitialization);
                                     moduleCount++;
                                 }
                                 catch (Exception e)
@@ -332,7 +332,7 @@ namespace Cosmos
             {
                 try
                 {
-                    Utility.Assembly.InvokeMethod((module as Module), LifecycleMethodsConst.OnActive);
+                    Utility.Assembly.InvokeMethod((module as Module), LifecycleMethodsConstant.OnActive);
                 }
                 catch (Exception e)
                 {
@@ -347,7 +347,7 @@ namespace Cosmos
             {
                 try
                 {
-                    Utility.Assembly.InvokeMethod(module , LifecycleMethodsConst.OnPreparatory);
+                    Utility.Assembly.InvokeMethod(module , LifecycleMethodsConstant.OnPreparatory);
                     if (PrintModulePreparatory)
                         Utility.Debug.LogInfo($"Module :{module} is OnPreparatory");
                 }
@@ -408,7 +408,7 @@ namespace Cosmos
             {
                 try
                 {
-                    Utility.Assembly.InvokeMethod(module , LifecycleMethodsConst.OnDeactive);
+                    Utility.Assembly.InvokeMethod(module , LifecycleMethodsConstant.OnDeactive);
                 }
                 catch (Exception e)
                 {
@@ -423,7 +423,7 @@ namespace Cosmos
             {
                 try
                 {
-                    Utility.Assembly.InvokeMethod(module, LifecycleMethodsConst.OnTermination);
+                    Utility.Assembly.InvokeMethod(module, LifecycleMethodsConstant.OnTermination);
                 }
                 catch (Exception e)
                 {
