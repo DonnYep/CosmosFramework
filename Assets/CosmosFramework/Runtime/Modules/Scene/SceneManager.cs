@@ -7,6 +7,11 @@ using UnityEngine.Events;
 
 namespace Cosmos.Scene
 {
+    //================================================
+    /*
+     * 1、场景加载模块；
+     */
+    //================================================
     [Module]
     internal sealed class SceneManager : Module, ISceneManager
     {

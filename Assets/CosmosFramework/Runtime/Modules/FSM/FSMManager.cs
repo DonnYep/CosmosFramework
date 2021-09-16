@@ -4,6 +4,9 @@ using System;
 namespace Cosmos.FSM
 {
     //================================================
+    /*
+     * 1、状态机模块；
+     */
     //================================================
     [Module]
     internal sealed class FSMManager : Module, IFSMManager
@@ -52,7 +55,7 @@ namespace Cosmos.FSM
         /// </summary>
         /// <typeparam name="T">目标类型</typeparam>
         public void PauseFSMSet<T>()
-   where T : class
+    where T : class
         {
             Type type = typeof(T);
             PauseFSMSet(type);
@@ -89,7 +92,7 @@ namespace Cosmos.FSM
                 throw new ArgumentNullException("FSMManager：FSM Set not exist ! Type:" + type.ToString());
         }
         public FSMBase GetIndividualFSM<T>()
-   where T : class
+    where T : class
         {
             Type type = typeof(T).GetType();
             return GetIndividualFSM(type);
@@ -108,7 +111,7 @@ namespace Cosmos.FSM
         /// <typeparam name="T">拥有者</typeparam>
         /// <returns>元素数量</returns>
         public int GetFSMSetElementCount<T>()
-   where T : class
+    where T : class
         {
             return GetFSMSetElementCount(typeof(T));
         }
@@ -199,7 +202,7 @@ namespace Cosmos.FSM
             return fsmSetDict.ContainsKey(type);
         }
         public bool HasSetElementFSM<T>(Predicate<FSMBase> predicate)
-   where T : class
+    where T : class
         {
             return HasSetElementFSM(typeof(T), predicate);
         }
@@ -333,7 +336,7 @@ namespace Cosmos.FSM
             }
         }
         public void DestoryFSMSet<T>()
-where T : class
+    where T : class
         {
             DestoryFSMSet(typeof(T));
         }

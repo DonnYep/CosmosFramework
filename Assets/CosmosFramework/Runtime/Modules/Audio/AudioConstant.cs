@@ -3,7 +3,7 @@
     /// <summary>
     /// 声音模块常量；
     /// </summary>
-    public class AudioConsts
+    public class AudioConstant
     {
         public const bool PalyOnAwake = true;
         public const bool Loop = false;

@@ -5,6 +5,11 @@ using System.Collections.Generic;
 using System.Reflection;
 namespace Cosmos.UI
 {
+    //================================================
+    /*
+     * 1、UI模块；
+     */
+    //================================================
     [Module]
     internal sealed class UIManager : Module, IUIManager
     {

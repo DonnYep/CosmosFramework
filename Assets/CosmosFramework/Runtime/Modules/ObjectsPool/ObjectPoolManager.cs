@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System;
 namespace Cosmos.ObjectPool
 {
+    //================================================
+    /*
+     * 1、对象池；
+     */
+    //================================================
     [Module]
     internal sealed class ObjectPoolManager : Module , IObjectPoolManager
     {

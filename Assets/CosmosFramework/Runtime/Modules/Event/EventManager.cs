@@ -3,6 +3,11 @@ using System.Collections.Concurrent;
 using System;
 namespace Cosmos.Event
 {
+    //================================================
+    /*
+     * 1、事件中心；
+     */
+    //================================================
     [Module]
     internal sealed partial class EventManager : Module, IEventManager
     {

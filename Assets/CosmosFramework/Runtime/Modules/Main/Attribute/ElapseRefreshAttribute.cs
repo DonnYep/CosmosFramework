@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace Cosmos
 {
     /// <summary>
-    ///  在指定可使用此特性的类中将此特性挂载于无参方法上，则被挂载的单参方法可以被Unity的Update方法轮询，并接收float类型的 deltatime；
+    /// 在指定可使用此特性的类中将此特性挂载于无参方法上，则被挂载的单参方法可以被Unity的Update方法轮询，并接收float类型的 deltatime；
     /// 此特性在类方法中具有唯一性；
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class ElapseRefreshAttribute:Attribute
+    public class ElapseRefreshAttribute : Attribute
     {
         static List<Exception> exceptionList = new List<Exception>();
         /// <summary>
@@ -20,7 +20,7 @@ namespace Cosmos
         /// </summary>
         /// <param name="obj">包含此特性的对象</param>
         /// <param name="action">轮询委托</param>
-        public static void GetRefreshAction(object obj,  out Action<float> action)
+        public static void GetRefreshAction(object obj, out Action<float> action)
         {
             GetRefreshAction(obj, true, out action);
         }
@@ -42,11 +42,11 @@ namespace Cosmos
                 else if (refreshMethods.Length == 1)
                 {
                     var args = refreshMethods[0].GetParameters();
-                    if (args.Length !=1)
+                    if (args.Length != 1)
                         exceptionList.Add(new MethodAccessException("ElapseRefreshAttribute target method must be one argument"));
                     else
                     {
-                        action = new Action<float>((deltatime) => refreshMethods[0].Invoke(obj, new object[] { deltatime}));
+                        action = new Action<float>((deltatime) => refreshMethods[0].Invoke(obj, new object[] { deltatime }));
                     }
                 }
             }

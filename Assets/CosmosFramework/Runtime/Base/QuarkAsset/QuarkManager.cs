@@ -14,21 +14,24 @@ using System.IO;
 namespace Quark
 {
     //================================================
-    //1、QuarkAsset是一款unity资源管理的解决方案。摒弃了Resources原生的
-    // 加载模式，主要针对AssetBundle在Editor模式与Runtime模式加载方式的
-    //统一。
-    //
-    // 2、Editor模式下，加载方式主要依靠unity生成的gid进行资源寻址。通过
-    // gid可以忽略由于更改文件夹地址导致的加载失败问题。
-    //
-    // 3、加载资源可直接通过资源名进行加载，无需通过相对地址或者完整路径
-    //名。若文件资源相同，则可通过后缀名、相对于unity的assetType、以及完整
-    //路径规避。
-    //4、Quark设计方向是插件化，即插即用，因此内置了很多常用工具函数；
-    //
-    //5、使用流程：1>先初始化调用Initiate函数;
-    //                        2>比较远端与本地的文件清单，调用CompareManifest；
-    //                        3>下载差异文件，调用LaunchDownload；
+    /*
+    *1、QuarkAsset是一款unity资源管理的解决方案。摒弃了Resources原生的
+    * 加载模式，主要针对AssetBundle在Editor模式与Runtime模式加载方式的
+    * 统一。
+    * 
+    *2、Editor模式下，加载方式主要依靠unity生成的gid进行资源寻址。通过
+    * gid可以忽略由于更改文件夹地址导致的加载失败问题。
+    * 
+    *3、加载资源可直接通过资源名进行加载，无需通过相对地址或者完整路径
+    *名。若文件资源相同，则可通过后缀名、相对于unity的assetType、以及完整
+    *路径规避。
+    *
+    *4、Quark设计方向是插件化，即插即用，因此内置了很多常用工具函数；
+    *
+    *5、使用流程：1>先初始化调用Initiate函数;
+    *                        2>比较远端与本地的文件清单，调用CompareManifest；
+    *                        3>下载差异文件，调用LaunchDownload；
+    */
     //================================================
     public class QuarkManager : Singleton<QuarkManager>
     {
@@ -203,7 +206,7 @@ where T : UnityEngine.Object
                 return loader.LoadScenetAsync(sceneName, progress, callback, additive);
             return null;
         }
-        
+
         internal void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))

@@ -6,10 +6,11 @@ using System.Reflection;
 using UnityEngine;
 namespace Cosmos.Entity
 {
-    /// <summary>
-    /// 实例对象管理器；
-    /// 管理例如角色身上的Gadget
-    /// </summary>
+    //================================================
+    /*
+     * 1、实体对象管理模块。
+     */
+    //================================================
     [Module]
     internal class EntityManager : Module, IEntityManager
     {

@@ -59,30 +59,30 @@ namespace Cosmos.Audio
         public void Reset()
         {
             PlayTime = 0;
-            Loop = AudioConsts.Loop;
-            Priority = AudioConsts.Priority;
-            Volume = AudioConsts.Volume;
-            Pitch = AudioConsts.Pitch;
-            StereoPan = AudioConsts.StereoPan;
-            SpatialBlend = AudioConsts.SpatialBlend;
-            ReverbZoneMix = AudioConsts.ReverbZoneMix;
-            DopplerLevel = AudioConsts.DopplerLevel;
-            Spread = AudioConsts.Spread;
-            MaxDistance = AudioConsts.MaxDistance;
+            Loop = AudioConstant.Loop;
+            Priority = AudioConstant.Priority;
+            Volume = AudioConstant.Volume;
+            Pitch = AudioConstant.Pitch;
+            StereoPan = AudioConstant.StereoPan;
+            SpatialBlend = AudioConstant.SpatialBlend;
+            ReverbZoneMix = AudioConstant.ReverbZoneMix;
+            DopplerLevel = AudioConstant.DopplerLevel;
+            Spread = AudioConstant.Spread;
+            MaxDistance = AudioConstant.MaxDistance;
         }
         readonly static AudioParams m_Default = new AudioParams()
         {
             PlayTime = 0,
-            Loop = AudioConsts.Loop,
-            Priority = AudioConsts.Priority,
-            Volume = AudioConsts.Volume,
-            Pitch = AudioConsts.Pitch,
-            StereoPan = AudioConsts.StereoPan,
-            SpatialBlend = AudioConsts.SpatialBlend,
-            ReverbZoneMix = AudioConsts.ReverbZoneMix,
-            DopplerLevel = AudioConsts.DopplerLevel,
-            Spread = AudioConsts.Spread,
-            MaxDistance = AudioConsts.MaxDistance
+            Loop = AudioConstant.Loop,
+            Priority = AudioConstant.Priority,
+            Volume = AudioConstant.Volume,
+            Pitch = AudioConstant.Pitch,
+            StereoPan = AudioConstant.StereoPan,
+            SpatialBlend = AudioConstant.SpatialBlend,
+            ReverbZoneMix = AudioConstant.ReverbZoneMix,
+            DopplerLevel = AudioConstant.DopplerLevel,
+            Spread = AudioConstant.Spread,
+            MaxDistance = AudioConstant.MaxDistance
         };
         public  static AudioParams Default { get { return m_Default; } }
     }

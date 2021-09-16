@@ -7,11 +7,15 @@ using System.Threading.Tasks;
 namespace Cosmos
 {
     //================================================
-    //1、FutureTask是异步的监听器，，本身不具备异步逻辑处理功能。
-    //2、condition是FutureTask需要检测的条件。当返回值为true时，FutureTask
-    //表示这个异步完成了条件，并回收FutureTask；
-    //3、FutureTask带有Polling与Completed回调。异步可通过这两个回调进行
-    //状态检测；
+    /*
+     * 1、FutureTask是异步的监听器，，本身不具备异步逻辑处理功能。
+     * 
+     * 2、condition是FutureTask需要检测的条件。当返回值为true时，FutureTask
+    * 表示这个异步完成了条件，并回收FutureTask；
+    * 
+    *3、FutureTask带有Polling与Completed回调。异步可通过这两个回调进行
+    *状态检测；
+    */
     //================================================
     /// <summary>
     ///FutureTask是异步的监听器，包含异步完成时的检测，本身不具备异步逻辑处理功能；

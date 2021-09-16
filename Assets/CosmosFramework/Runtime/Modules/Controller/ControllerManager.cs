@@ -5,19 +5,21 @@ using System;
 namespace Cosmos.Controller
 {
     //================================================
-    //1、控制器模块用于生成需要执行unity生命周期的对象。被创建的对象可以
-    // 被unity的fixedupdate、lateupdate、update方法轮询；
-    //
-    //2、若控制器需要被轮询，则需要实现无参函数，并为需要被轮询的无参函数
-    //挂载 [TickRefresh] [FixedRefresh][LateRefresh] 特性；
-    //
-    //3、控制器被生成时拥有唯一Id，并可以被赋予组别；所有控制器都可以被
-    //命名，且名字可重复。若控制器有重名且无组别，则默认返回第一个被查询
-    //到的控制器；
-    //
-    //4、控制器需要由模块生成，并被模块释放；
-    //
-    //5、控制器模块已与unity解耦
+    /*
+    *1、控制器模块用于生成需要执行unity生命周期的对象。被创建的对象可以
+    * 被unity的fixedupdate、lateupdate、update方法轮询；
+    * 
+    * 2、若控制器需要被轮询，则需要实现无参函数，并为需要被轮询的无参函数
+    * 挂载 [TickRefresh] [FixedRefresh][LateRefresh] 特性；
+    * 
+    * 3、控制器被生成时拥有唯一Id，并可以被赋予组别；所有控制器都可以被
+    * 命名，且名字可重复。若控制器有重名且无组别，则默认返回第一个被查询
+    * 到的控制器；
+    * 
+    * 4、控制器需要由模块生成，并被模块释放；
+    * 
+    * 5、控制器模块已与unity解耦
+    */
     //================================================
     [Module]
     internal sealed class ControllerManager : Module, IControllerManager

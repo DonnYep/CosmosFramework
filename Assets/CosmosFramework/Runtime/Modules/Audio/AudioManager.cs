@@ -5,12 +5,14 @@ using System;
 namespace Cosmos.Audio
 {
     //================================================
-    // 1、声音资源可设置组别，单体声音资源与组别的关系为一对多映射关系。
-    //
-    // 2、注册的声音对象名都是唯一的，若重名，则覆写。命名时尽量安规则。
-    //
-    // 3、播放声音时传入的AudioPlayInfo拥有两个公共属性字段。若BindObject
-    // 不为空，则有限绑定，否则是WorldPosition；
+    /*
+     * 1、声音资源可设置组别，单体声音资源与组别的关系为一对多映射关系。
+     * 
+     * 2、注册的声音对象名都是唯一的，若重名，则覆写。命名时尽量安规则。
+     * 
+     * 3、播放声音时传入的AudioPlayInfo拥有两个公共属性字段。若BindObject
+     * 不为空，则有限绑定，否则是WorldPosition；
+     */
     //================================================
     [Module]
     internal sealed class AudioManager : Module, IAudioManager

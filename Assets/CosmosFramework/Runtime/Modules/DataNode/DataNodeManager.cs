@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 namespace Cosmos.Data
 {
+    //================================================
+    /*
+    *1、数据节点模块；
+    */
+    //================================================
     [Module]
     internal sealed partial class DataNodeManager : Module, IDataNodeManager
     {

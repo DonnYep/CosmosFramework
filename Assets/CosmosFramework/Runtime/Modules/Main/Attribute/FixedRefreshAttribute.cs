@@ -11,7 +11,7 @@ namespace Cosmos
     /// 此特性在类方法中具有唯一性；
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class FixedRefreshAttribute:Attribute
+    public class FixedRefreshAttribute : Attribute
     {
         static List<Exception> exceptionList = new List<Exception>();
         /// <summary>

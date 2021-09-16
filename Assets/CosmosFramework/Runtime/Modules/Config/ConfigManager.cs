@@ -4,11 +4,12 @@ using System;
 
 namespace Cosmos.Config
 {
-    /// <summary>
-    /// 载入时候读取配置，例如声音大小，角色等
-    /// </summary>
+    //================================================
+    /*
+     * 1、配置模块，用户存储初始化需存放的全局数据；
+    */
+    //================================================
     [Module]
-    //TODO需要实现树状结构的数据配置功能；
     internal sealed partial class ConfigManager : Module, IConfigManager
     {
         Dictionary<string, ConfigData> configDataDict;

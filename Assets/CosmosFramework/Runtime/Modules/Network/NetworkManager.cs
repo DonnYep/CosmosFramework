@@ -7,10 +7,11 @@ using kcp;
 
 namespace Cosmos.Network
 {
-    //TODO NetworkManager  这里使用了停等ARQ协议，目前未实现包组发送
-    /// <summary>
-    /// 此模块为客户端网络管理类
-    /// </summary>
+    //================================================
+    /*
+     * 1、网络模块，提供高速稳定可靠UDP服务；
+     */
+    //================================================
     [Module]
     internal sealed class NetworkManager : Module, INetworkManager
     {

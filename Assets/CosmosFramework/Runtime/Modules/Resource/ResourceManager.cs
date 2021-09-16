@@ -1,18 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Collections;
-using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 using System.Reflection;
 namespace Cosmos.Resource
 {
     //================================================
-    //1、资源加载模块分为内置部分与自定义部分；
-    //2、内置加载通道在初始化时自动被注册，通过SwitchBuildInLoadMode()
-    //方法进行通道切换；
-    //3、自定义部分加载前需要进行通道注册，加载时需要指定通道名称；
-    //4、默认提供两种加载模式，分别为 Resource与AssetBundle；
+    /*
+     * 1、资源加载模块分为内置部分与自定义部分；
+     * 
+     * 2、内置加载通道在初始化时自动被注册，通过SwitchBuildInLoadMode()
+    * 方法进行通道切换；
+    * 
+    * 3、自定义部分加载前需要进行通道注册，加载时需要指定通道名称；
+    * 
+    * 4、默认提供两种加载模式，分别为 Resource与AssetBundle；
+    */
     //================================================
     [Module]
     internal sealed partial class ResourceManager : Module, IResourceManager

@@ -6,6 +6,11 @@ using UnityEngine;
 
 namespace Cosmos
 {
+    //================================================
+    /*
+     * 1、热修复模块；
+     */
+    //================================================
     public interface IHotfixManager:IModuleManager
     {
         void SetHelper(IHotfixHelper helper);
