@@ -426,7 +426,7 @@ namespace CosmosEditor.Quark
                     var length = byteList.Count;
                     for (int i = 0; i < length; i++)
                     {
-                        var encryptedBytes = Utility.Encryption.AESEncryptBinary(byteList[i], aseByteKey);
+                        var encryptedBytes = Utility.Encryption.AESEncryptByteToByte(byteList[i], aseByteKey);
                         File.WriteAllBytes(paths[i], encryptedBytes);
                     }
                     //GUIUtility.ExitGUI();
