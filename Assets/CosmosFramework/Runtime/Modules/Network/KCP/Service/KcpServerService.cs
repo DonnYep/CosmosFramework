@@ -10,6 +10,7 @@ namespace kcp
     public class KcpServerService: KcpServiceBase
     {
         KcpServer server;
+        public KcpServer Server { get { return server; } }
         public event Action<int> OnServerConnected
         {
             add { onServerConnected += value; }

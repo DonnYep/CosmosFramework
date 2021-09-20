@@ -4,7 +4,7 @@ using UnityEngine;
 using kcp;
 using System;
 using System.Text;
-
+using Cosmos.Network;
 namespace Cosmos.Test
 {
     public class MultiplayManager : MonoSingleton<MultiplayManager>
@@ -17,7 +17,7 @@ namespace Cosmos.Test
         public GameObject LocalPlayerPrefab { get { return localPlayerPrefab; } }
         [SerializeField] GameObject remotePlayerPrefab;
         public GameObject RemotePlayerPrefab { get { return remotePlayerPrefab; } }
-
+        INetworkChannel networkChannel;
         OperationData authorityInputOpdata;
         Action onConnect;
         public event Action OnConnect
@@ -57,11 +57,18 @@ namespace Cosmos.Test
         FixTransportData fixTransportData;
         public void Connect()
         {
-            CosmosEntry.NetworkManager.Connect(IP, (ushort)Port);
+            networkChannel = new KCPClientChannel("KCP", IP, (ushort)Port);
+            networkChannel.OnReceiveData += OnReceiveDataHandler;
+            networkChannel.OnDisconnected += OnDisconnectHandler;
+            networkChannel.Connect();
+            CosmosEntry.NetworkManager.AddChannel(networkChannel);
+
+            //CosmosEntry.NetworkManager.Connect(IP, (ushort)Port);
         }
         public void Disconnect()
         {
-            CosmosEntry.NetworkManager.Disconnect();
+            networkChannel.Disconnect();
+            //CosmosEntry.NetworkManager.Disconnect();
         }
         public void SendAuthorityTransportData(FixTransportData transportData)
         {
@@ -69,11 +76,12 @@ namespace Cosmos.Test
             authorityInputOpdata.DataContract = Utility.Json.ToJson(fixTransportData);
             var json = Utility.Json.ToJson(authorityInputOpdata);
             var data = Encoding.UTF8.GetBytes(json);
-            CosmosEntry.NetworkManager.SendNetworkMessage(data);
+            networkChannel.SendMessage(data, 0);
+            //CosmosEntry.NetworkManager.SendNetworkMessage(data);
         }
         protected override void OnDestroy()
         {
-            CosmosEntry.NetworkManager.Disconnect();
+            networkChannel.Disconnect();
         }
         protected override void Awake()
         {
@@ -82,16 +90,17 @@ namespace Cosmos.Test
         }
         protected virtual void Start()
         {
-            CosmosEntry.NetworkManager.OnReceiveData += OnReceiveDataHandler;
-            CosmosEntry.NetworkManager.OnDisconnect += OnDisconnectHandler;
+
+            //CosmosEntry.NetworkManager.OnReceiveData += OnReceiveDataHandler;
+            //CosmosEntry.NetworkManager.OnDisconnect += OnDisconnectHandler;
         }
-        void OnReceiveDataHandler(byte[] buffer)
+        void OnReceiveDataHandler(int conv,byte[] buffer)
         {
             var json = Encoding.UTF8.GetString(buffer);
             var opData = Utility.Json.ToObject<OperationData>(json);
             ProcessHandler(opData);
         }
-        void OnDisconnectHandler()
+        void OnDisconnectHandler(int conv)
         {
             AuthorityConv = 0;
             onDisconnect?.Invoke();

@@ -3,183 +3,123 @@ using Cosmos;
 using System.Net;
 using System.Net.Sockets;
 using System;
+using System.Diagnostics;
+using System.Collections.Concurrent;
 using kcp;
+using System.Linq;
 
 namespace Cosmos.Network
 {
     //================================================
     /*
-     * 1、网络模块，提供高速稳定可靠UDP服务；
-     */
+    *1、网络模块的具体连接由通道实现，允许令实例对象作为同时作为服务器
+    *与客户端。客户端与服务器通道两条线并行，并且维护各自的逻辑；
+    *
+    *2、此模块线程安全；
+    */
     //================================================
     [Module]
-    internal sealed class NetworkManager : Module, INetworkManager
+    internal sealed partial class NetworkManager : Module, INetworkManager
     {
-        Action onConnect;
-        Action onDisconnect;
-        Action<byte[]> onReceiveData;
-        public event Action OnConnect
-        {
-            add { onConnect += value; }
-            remove { onConnect -= value; }
-        }
-        public event Action OnDisconnect
-        {
-            add { onDisconnect += value; }
-            remove { onDisconnect -= value; }
-        }
-        public event Action<byte[]> OnReceiveData
-        {
-            add { onReceiveData += value; }
-            remove { onReceiveData -= value; }
-        }
-  
-        NetworkProtocolType currentNetworkProtocolType;
-
-        bool clearCallbackWhenDisconnected = false;
-
-        #region KCP
-        KcpClientService kcpClientService;
-        #endregion
-
-        public bool IsConnect { get; private set; }
-
-        public void SendNetworkMessage(byte[] data)
-        {
-            if (IsConnect)
-            {
-                switch (currentNetworkProtocolType)
-                {
-                    case NetworkProtocolType.TCP:
-                        break;
-                    case NetworkProtocolType.RUDP:
-                        break;
-                    case NetworkProtocolType.SUDP:
-                        break;
-                    case NetworkProtocolType.KCP:
-                        {
-                            var arraySegment = new ArraySegment<byte>(data);
-                            kcpClientService?.ServiceSend(KcpChannel.Reliable, arraySegment);
-                        }
-                        break;
-                }
-            }
-            else
-                Utility.Debug.LogError("Can not send net message, no service");
-        }
         /// <summary>
-        /// 与远程建立连接；
+        /// ChannelName===INetworkChannel
         /// </summary>
-        /// <param name="ip">ip地址</param>
-        /// <param name="port">端口号</param>
-        /// <param name="protocolType">协议类型</param>
-        public void Connect(string ip, ushort port, NetworkProtocolType protocolType)
+        ConcurrentDictionary<NetworkChannelKey, INetworkChannel> channelDict;
+        public int NetworkChannelCount { get { return channelDict.Count; } }
+        public NetworkChannelKey[] NetworkChannelKeys { get { return channelDict.Keys.ToArray(); } }
+        public bool AddChannel(INetworkChannel channel)
         {
-            OnUnPause();
-            if (IsConnect)
+            var channelKey = channel.NetworkChannelKey;
+            return channelDict.TryAdd(channelKey, channel);
+        }
+        public bool AddChannel(NetworkChannelKey channelKey, INetworkChannel channel)
+        {
+            return channelDict.TryAdd(channelKey, channel);
+        }
+        public bool RemoveChannel(NetworkChannelKey channelKey, out INetworkChannel channel)
+        {
+            if (channelDict.TryRemove(channelKey, out channel))
             {
-                Utility.Debug.LogError("Network is Connected !");
-                return;
+                channel.AbortChannel();
+                return true;
             }
-            currentNetworkProtocolType = protocolType;
-            clearCallbackWhenDisconnected = false;
-            switch (protocolType)
+            return false;
+        }
+        public bool PeekChannel(NetworkChannelKey channelKey, out INetworkChannel channel)
+        {
+            return channelDict.TryGetValue(channelKey, out channel);
+        }
+        public bool HasChannel(NetworkChannelKey channelKey)
+        {
+            return channelDict.ContainsKey(channelKey);
+        }
+        public INetworkChannel[] PeekAllChannels()
+        {
+            return channelDict.Values.ToArray();
+        }
+        public NetworkChannelInfo GetChannelInfo(NetworkChannelKey channelKey)
+        {
+            if (channelDict.TryGetValue(channelKey, out var channel))
             {
-                case NetworkProtocolType.KCP:
-                    {
-                        KCPLog.Info = (s) => Utility.Debug.LogInfo(s);
-                        KCPLog.Warning = (s) => Utility.Debug.LogInfo(s, MessageColor.YELLOW);
-                        KCPLog.Error = (s) => Utility.Debug.LogError(s);
-                        var kcpClient = new KcpClientService();
-                        kcpClientService = kcpClient;
-                        kcpClientService.ServiceSetup();
-                        kcpClientService.OnClientDataReceived += OnKCPReceiveDataHandler;
-                        kcpClientService.OnClientConnected += OnConnectHandler;
-                        kcpClientService.OnClientDisconnected += OnDisconnectHandler;
-                        kcpClientService.ServiceUnpause();
-                        kcpClientService.Port = (ushort)port;
-                        kcpClientService.ServiceConnect(ip);
-                    }
-                    break;
-                case NetworkProtocolType.TCP:
-                    {
-                    }
-                    break;
-                case NetworkProtocolType.RUDP:
-                    {
-                    }
-                    break;
-                case NetworkProtocolType.SUDP:
-                    {
-                    }
-                    break;
+                var info = new NetworkChannelInfo();
+                info.IPAddress = channel.NetworkChannelKey.ChannelIPAddress;
+                info.Name = channel.NetworkChannelKey.ChannelName;
+                return info;
+            }
+            return NetworkChannelInfo.None;
+        }
+        public void SendNetworkMessage(NetworkChannelKey channelKey, NetworkReliableType reliableType, byte[] data, int connectionId)
+        {
+            if (channelDict.TryGetValue(channelKey, out var channel))
+            {
+                channel.SendMessage(reliableType, data, connectionId);
             }
         }
-        /// <summary>
-        /// 断开网络链接；
-        /// </summary>
-        /// <param name="clearCallbackWhenDisconnected">是否在断开连接后清空回调的监听</param>
-        public void Disconnect(bool clearCallbackWhenDisconnected = false)
+        public void Connect(NetworkChannelKey channelKey)
         {
-            this.clearCallbackWhenDisconnected = clearCallbackWhenDisconnected;
-            switch (currentNetworkProtocolType)
+            if (channelDict.TryGetValue(channelKey, out var channel))
             {
-                case NetworkProtocolType.TCP:
-                    break;
-                case NetworkProtocolType.RUDP:
-                    break;
-                case NetworkProtocolType.SUDP:
-                    break;
-                case NetworkProtocolType.KCP:
-                    kcpClientService?.ServiceDisconnect();
-                    break;
+                channel.Connect();
             }
         }
-        [FixedRefresh]
-        void FixedRefresh()
+        public void Disconnect(NetworkChannelKey channelKey, int connectionId)
+        {
+            if (channelDict.TryGetValue(channelKey, out var channel))
+            {
+                channel.Disconnect(connectionId);
+            }
+        }
+        public void AbortChannel(NetworkChannelKey channelKey)
+        {
+            if (channelDict.TryGetValue(channelKey, out var channel))
+            {
+                channel.AbortChannel();
+            }
+        }
+        protected override void OnInitialization()
+        {
+            IsPause = false;
+            channelDict = new ConcurrentDictionary<NetworkChannelKey, INetworkChannel>();
+        }
+        protected override void OnTermination()
+        {
+            foreach (var channel in channelDict)
+            {
+                channel.Value.AbortChannel();
+            }
+            channelDict.Clear();
+        }
+        [TickRefresh]
+        void OnRefresh()
         {
             if (IsPause)
                 return;
-            //if (!IsConnected)
-            //    return;
-            switch (currentNetworkProtocolType)
+            //foreach 时不允许操作字典对象，则转换成数组进行操作；
+            var channelArr = channelDict.Values.ToArray();
+            foreach (var channel in channelArr)
             {
-                case NetworkProtocolType.TCP:
-                    break;
-                case NetworkProtocolType.RUDP:
-                    break;
-                case NetworkProtocolType.SUDP:
-                    break;
-                case NetworkProtocolType.KCP:
-                    kcpClientService?.ServiceTick();
-                    break;
+                channel.TickRefresh();
             }
-        }
-        void OnDisconnectHandler()
-        {
-            OnPause();
-            IsConnect = false;
-            Utility.Debug.LogInfo("Server Disconnected", MessageColor.RED);
-            onDisconnect?.Invoke();
-            if (clearCallbackWhenDisconnected)
-            {
-                onConnect = null;
-                onDisconnect = null;
-                onReceiveData = null;
-            }
-        }
-        void OnConnectHandler()
-        {
-            IsConnect = true;
-            Utility.Debug.LogInfo("Server Connected ! ");
-            onConnect?.Invoke();
-        }
-        void OnKCPReceiveDataHandler(ArraySegment<byte> arrSeg, byte channel)
-        {
-            var rcvLen = arrSeg.Count;
-            var rcvData = new byte[rcvLen];
-            Array.Copy(arrSeg.Array, arrSeg.Offset, rcvData, 0, rcvLen);
-            onReceiveData?.Invoke(rcvData);
         }
     }
 }
