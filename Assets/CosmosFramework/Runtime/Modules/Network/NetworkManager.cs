@@ -53,6 +53,16 @@ namespace Cosmos.Network
         {
             return channelDict.ContainsKey(channelKey);
         }
+        public bool GetConnectionAddress(NetworkChannelKey channelKey, int conv, out string address)
+        {
+            address = string.Empty;
+            if (channelDict.TryGetValue(channelKey, out var networkChannel))
+            {
+                address = networkChannel.GetConnectionAddress(conv);
+                return true;
+            }
+            return false;
+        }
         public INetworkChannel[] PeekAllChannels()
         {
             return channelDict.Values.ToArray();

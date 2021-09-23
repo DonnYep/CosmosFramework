@@ -123,7 +123,7 @@ namespace Cosmos
         /// </summary>
         /// <param name="connectionId">连接Id</param>
         /// <returns></returns>
-        public string GetconnectionAddress(int connectionId)
+        public string GetConnectionAddress(int connectionId)
         {
             return kcpServerService.Server.GetClientAddress(connectionId);
         }

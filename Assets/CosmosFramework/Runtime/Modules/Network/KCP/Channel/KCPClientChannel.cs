@@ -126,7 +126,7 @@ namespace Cosmos
         /// </summary>
         /// <param name="connectionId">连接Id</param>
         /// <returns></returns>
-        public string GetconnectionAddress(int connectionId)
+        public string GetConnectionAddress(int connectionId)
         {
             //客户端通道仅返回本地地址；
             return System.Net.Dns.GetHostName();

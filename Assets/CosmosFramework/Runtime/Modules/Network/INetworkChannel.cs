@@ -83,6 +83,6 @@ namespace Cosmos.Network
         /// </summary>
         /// <param name="connectionId">连接Id</param>
         /// <returns></returns>
-        string GetconnectionAddress(int connectionId);
+        string GetConnectionAddress(int connectionId);
     }
 }

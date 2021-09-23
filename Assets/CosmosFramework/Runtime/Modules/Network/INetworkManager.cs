@@ -60,6 +60,14 @@ namespace Cosmos
         /// <returns></returns>
         bool HasChannel(NetworkChannelKey channelKey);
         /// <summary>
+        /// 获取指定通道的一个会话remote地址；
+        /// </summary>
+        /// <param name="channelKey">通道key</param>
+        /// <param name="conv">会话Id</param>
+        /// <param name="address">地址信息</param>
+        /// <returns>是否获取成功</returns>
+        bool GetConnectionAddress(NetworkChannelKey channelKey, int conv, out string address);
+        /// <summary>
         /// 获取所有存在的通道；
         /// </summary>
         /// <returns>通道数组</returns>
