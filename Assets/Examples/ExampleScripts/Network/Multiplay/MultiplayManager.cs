@@ -62,13 +62,12 @@ namespace Cosmos.Test
             networkChannel.OnDisconnected += OnDisconnectHandler;
             networkChannel.Connect();
             CosmosEntry.NetworkManager.AddChannel(networkChannel);
-
-            //CosmosEntry.NetworkManager.Connect(IP, (ushort)Port);
         }
         public void Disconnect()
         {
+            var key = networkChannel.NetworkChannelKey;
+            CosmosEntry.NetworkManager.RemoveChannel(key,out _);
             networkChannel.Disconnect();
-            //CosmosEntry.NetworkManager.Disconnect();
         }
         public void SendAuthorityTransportData(FixTransportData transportData)
         {
@@ -77,7 +76,6 @@ namespace Cosmos.Test
             var json = Utility.Json.ToJson(authorityInputOpdata);
             var data = Encoding.UTF8.GetBytes(json);
             networkChannel.SendMessage(data, 0);
-            //CosmosEntry.NetworkManager.SendNetworkMessage(data);
         }
         protected override void OnDestroy()
         {
@@ -90,9 +88,6 @@ namespace Cosmos.Test
         }
         protected virtual void Start()
         {
-
-            //CosmosEntry.NetworkManager.OnReceiveData += OnReceiveDataHandler;
-            //CosmosEntry.NetworkManager.OnDisconnect += OnDisconnectHandler;
         }
         void OnReceiveDataHandler(int conv,byte[] buffer)
         {
