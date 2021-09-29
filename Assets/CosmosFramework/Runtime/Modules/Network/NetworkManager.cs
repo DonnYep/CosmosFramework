@@ -40,7 +40,7 @@ namespace Cosmos.Network
         {
             if (channelDict.TryRemove(channelKey, out channel))
             {
-                channel.AbortChannel();
+                channel.Abort();
                 return true;
             }
             return false;
@@ -103,7 +103,7 @@ namespace Cosmos.Network
         {
             if (channelDict.TryGetValue(channelKey, out var channel))
             {
-                channel.AbortChannel();
+                channel.Abort();
             }
         }
         protected override void OnInitialization()
@@ -115,7 +115,7 @@ namespace Cosmos.Network
         {
             foreach (var channel in channelDict)
             {
-                channel.Value.AbortChannel();
+                channel.Value.Abort();
             }
             channelDict.Clear();
         }

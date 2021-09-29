@@ -73,7 +73,7 @@ namespace Cosmos.Network
         /// <summary>
         /// 弃用&销毁通道；
         /// </summary>
-        void AbortChannel();
+        void Abort();
         /// <summary>
         /// 轮询消息通道；
         /// </summary>

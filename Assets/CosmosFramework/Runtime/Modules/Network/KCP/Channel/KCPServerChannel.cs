@@ -81,7 +81,7 @@ namespace Cosmos
             kcpServerService.OnServerConnected += OnConnectedHandler;
             kcpServerService.ServiceConnect();
         }
-        public void AbortChannel()
+        public void Abort()
         {
             kcpServerService?.ServicePause();
             kcpServerService.OnServerDataReceived -= OnReceiveDataHandler;

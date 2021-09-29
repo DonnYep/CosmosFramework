@@ -10,7 +10,6 @@ namespace Cosmos.Awaitable
 {
     public class WaitForCoroutineAwaiter : INotifyCompletion
     {
-        bool isCompleted = false;
         Coroutine coroutine;
         Action continuation;
         public WaitForCoroutineAwaiter(Coroutine coroutine)
@@ -18,22 +17,7 @@ namespace Cosmos.Awaitable
             this.coroutine = coroutine;
             CoroutineAwaiterMonitor.Instance.StartCoroutine(EnumRun());
         }
-        public bool IsCompleted
-        {
-            get
-            {
-                return isCompleted; 
-            }
-           private set
-            {
-                isCompleted = value;
-                if (value && continuation != null)
-                {
-                    continuation();
-                    continuation = null;
-                }
-            }
-        }
+        public bool IsCompleted { get; private set; }
         public void GetResult() { }
         public void OnCompleted(Action continuation)
         {
@@ -43,6 +27,7 @@ namespace Cosmos.Awaitable
         {
             yield return coroutine;
             IsCompleted = true;
+            continuation?.Invoke();
         }
     }
 }

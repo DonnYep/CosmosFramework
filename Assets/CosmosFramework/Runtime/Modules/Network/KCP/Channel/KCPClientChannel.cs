@@ -94,7 +94,7 @@ namespace Cosmos
         {
             kcpClientService?.ServiceDisconnect();
         }
-        public void AbortChannel()
+        public void Abort()
         {
             kcpClientService?.ServiceDisconnect();
             onAbort?.Invoke();

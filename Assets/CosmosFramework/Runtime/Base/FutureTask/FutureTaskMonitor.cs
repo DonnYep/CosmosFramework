@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Cosmos
 {
     internal class FutureTaskMonitor : MonoSingleton<FutureTaskMonitor>
@@ -50,6 +49,7 @@ namespace Cosmos
             base.Awake();
             gameObject.hideFlags = UnityEngine.HideFlags.HideInHierarchy;
             DontDestroyOnLoad(gameObject);
+            previousTimeSinceStartup = DateTime.Now;
         }
         private void Update()
         {
