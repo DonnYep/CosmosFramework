@@ -18,7 +18,7 @@ namespace Cosmos.Test
         [SerializeField] GameObject remotePlayerPrefab;
         public GameObject RemotePlayerPrefab { get { return remotePlayerPrefab; } }
         INetworkChannel networkChannel;
-        OperationData authorityInputOpdata;
+        MultiplayData authorityInputOpdata;
         Action onConnect;
         public event Action OnConnect
         {
@@ -84,7 +84,7 @@ namespace Cosmos.Test
         protected override void Awake()
         {
             base.Awake();
-            authorityInputOpdata = new OperationData((byte)OperationCode.PlayerInput);
+            authorityInputOpdata = new MultiplayData((byte)OperationCode.PlayerInput);
         }
         protected virtual void Start()
         {
@@ -92,7 +92,7 @@ namespace Cosmos.Test
         void OnReceiveDataHandler(int conv,byte[] buffer)
         {
             var json = Encoding.UTF8.GetString(buffer);
-            var opData = Utility.Json.ToObject<OperationData>(json);
+            var opData = Utility.Json.ToObject<MultiplayData>(json);
             ProcessHandler(opData);
         }
         void OnDisconnectHandler(int conv)
@@ -101,7 +101,7 @@ namespace Cosmos.Test
             onDisconnect?.Invoke();
             IsConnected = false;
         }
-        void ProcessHandler(OperationData opData)
+        void ProcessHandler(MultiplayData opData)
         {
             var opCode = (OperationCode)opData.OperationCode;
             switch (opCode)

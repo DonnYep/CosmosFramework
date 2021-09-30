@@ -2,20 +2,17 @@ using Cosmos;
 using System;
 using System.Collections.Generic;
 using System.Text;
-/// <summary>
-/// 网络通讯用数据模型；
-/// </summary>
 namespace Cosmos.Test
 {
     [Serializable]
-    public class OperationData : IDisposable
+    public class MultiplayData : IDisposable
     {
         public byte OperationCode { get; set; }
         public ushort SubOperationCode { get; set; }
         public object DataContract { get; set; }
         public short ReturnCode { get; set; }
-        public OperationData() { }
-        public OperationData(byte operationCode)
+        public MultiplayData() { }
+        public MultiplayData(byte operationCode)
         {
             OperationCode = operationCode;
         }
