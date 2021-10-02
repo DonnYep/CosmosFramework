@@ -15,7 +15,7 @@ public class ReSceneLoader : UIForm
     {
         GetUILable<Button>("BtnLoad").onClick.AddListener(LoadClick);
         inputTargetLevel = GetUILable<InputField>("InputTargetLevel");
-        sceneManager = GameManager.GetModule<ISceneManager>();
+        sceneManager = CosmosEntry.SceneManager;
     }
     void LoadClick()
     {

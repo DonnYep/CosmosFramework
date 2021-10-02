@@ -13,7 +13,7 @@ public class SliderEventSubscriber : MonoBehaviour
     LogicEventArgs<Slider> uch;
     public void RegisterEvent()
     {
-        GameManager.GetModule<IEventManager>().AddListener(eventKey, Handler);
+        CosmosEntry.EventManager.AddListener(eventKey, Handler);
     }
     Slider slider;
     Text text;

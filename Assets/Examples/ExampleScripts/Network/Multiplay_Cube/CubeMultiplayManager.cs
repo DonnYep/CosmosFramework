@@ -28,7 +28,7 @@ namespace Cosmos.Test
             OnDisconnect += OnDisconnectHandler;
             OnPlayerInput += OnPlayerInputHandler;
         }
-        private void FixedUpdate()
+        private void Update()
         {
             if (!IsConnected)
                 return;

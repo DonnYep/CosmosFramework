@@ -47,7 +47,7 @@ namespace Cosmos.UI
         {
             if (destroyOldOne)
                 GameObject.Destroy(UIRoot.gameObject);
-            var mountGo = GameManager.GetModuleMount<IUIManager>();
+            var mountGo = MonoGameManager.Instance.GetModuleMount<IUIManager>();
             uiRoot.SetParent(mountGo.transform);
             UIRoot = uiRoot;
         }

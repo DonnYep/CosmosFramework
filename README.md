@@ -24,7 +24,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 实现自定义加载通道时，须实现继承并实现IResourceLoadHelper接口，并将helper对象传入ResourceLoadChannel中。通过注册ResourceLoadChannel来使用自定义加载方案。
 使用自定义加载通道时，第一个参数需要传入通道名(channelName)，剩余参数则与内置加载API相同。
 
-- **Scene**：场景加载模块。提供常用的异步、同步加载嵌入的场景功能。
+- **Scene**：场景加载模块。提供常用的异步、同步加载嵌入的场景功能。支持自定义实现加载方式。
 
 - **Data**：数据缓存模块。提供树状结构的数据缓存中心。
 
@@ -34,7 +34,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **Hotfix**：热更新模块。此模块适用于基于C#的热更方案。
 
-- **Network**：网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP等，默认使用KCP协议。
+- **Network**：网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可同时实现作为客户端(Client)以及服务器(Server)。支持async/await语法；
 
 - **UI**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取以及组别设置等。
 

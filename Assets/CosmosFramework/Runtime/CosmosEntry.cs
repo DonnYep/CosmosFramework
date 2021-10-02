@@ -1,13 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
 using System.Reflection;
-
 namespace Cosmos
 {
     public class CosmosEntry
     {
+        public int ModuleCount { get { return GameManager.ModuleCount; } }
         /// <summary>
         /// 在初始化时是否打印Module的debug信息；
         /// </summary>
@@ -39,37 +38,22 @@ namespace Cosmos
             add { GameManager.ElapseRefreshHandler += value; }
             remove { GameManager.ElapseRefreshHandler -= value; }
         }
-        public static IAudioManager AudioManager { get { return GameManager.GetModule<IAudioManager>(); } }
-        public static IControllerManager ControllerManager { get { return GameManager.GetModule<IControllerManager>(); } }
-        public static IFSMManager FSMManager { get { return GameManager.GetModule<IFSMManager>(); } }
-        public static IObjectPoolManager ObjectPoolManager { get { return GameManager.GetModule<IObjectPoolManager>(); } }
-        public static IConfigManager ConfigManager { get { return GameManager.GetModule<IConfigManager>(); } }
-        public static IInputManager InputManager { get { return GameManager.GetModule<IInputManager>(); } }
-        public static INetworkManager NetworkManager { get { return GameManager.GetModule<INetworkManager>(); } }
-        public static IResourceManager ResourceManager { get { return GameManager.GetModule<IResourceManager>(); } }
-        public static IUIManager UIManager { get { return GameManager.GetModule<IUIManager>(); } }
-        public static IHotfixManager HotfixManager { get { return GameManager.GetModule<IHotfixManager>(); } }
-        public static IDataNodeManager DataManager { get { return GameManager.GetModule<IDataNodeManager>(); } }
-        public static IEntityManager EntityManager { get { return GameManager.GetModule<IEntityManager>(); } }
-        public static IEventManager EventManager { get { return GameManager.GetModule<IEventManager>(); } }
-        public static ISceneManager SceneManager { get { return GameManager.GetModule<ISceneManager>(); } }
-        public static IWebRequestManager WebRequestManager { get { return GameManager.GetModule<IWebRequestManager>(); } }
-        public static IDownloadManager DownloadManager { get { return GameManager.GetModule<IDownloadManager>(); } }
-
-        public static GameObject AudioMount { get { return GameManager.GetModuleMount<IAudioManager>(); } }
-        public static GameObject ControllerMount { get { return GameManager.GetModuleMount<IControllerManager>(); } }
-        public static GameObject FSMMount { get { return GameManager.GetModuleMount<IFSMManager>(); } }
-        public static GameObject ObjectPoolMount { get { return GameManager.GetModuleMount<IObjectPoolManager>(); } }
-        public static GameObject ConfigMount { get { return GameManager.GetModuleMount<IConfigManager>(); } }
-        public static GameObject InputMount { get { return GameManager.GetModuleMount<IInputManager>(); } }
-        public static GameObject NetworkMount { get { return GameManager.GetModuleMount<INetworkManager>(); } }
-        public static GameObject ResourceMount { get { return GameManager.GetModuleMount<IResourceManager>(); } }
-        public static GameObject UIMount { get { return GameManager.GetModuleMount<IUIManager>(); } }
-        public static GameObject HotfixMount { get { return GameManager.GetModuleMount<IHotfixManager>(); } }
-        public static GameObject DataMount { get { return GameManager.GetModuleMount<IDataNodeManager>(); } }
-        public static GameObject EntityMount { get { return GameManager.GetModuleMount<IEntityManager>(); } }
-        public static GameObject EventMount { get { return GameManager.GetModuleMount<IEventManager>(); } }
-        public static GameObject SceneMount { get { return GameManager.GetModuleMount<ISceneManager>(); } }
+        public static IAudioManager AudioManager { get { return GetModule<IAudioManager>(); } }
+        public static IControllerManager ControllerManager { get { return GetModule<IControllerManager>(); } }
+        public static IFSMManager FSMManager { get { return GetModule<IFSMManager>(); } }
+        public static IObjectPoolManager ObjectPoolManager { get { return GetModule<IObjectPoolManager>(); } }
+        public static IConfigManager ConfigManager { get { return GetModule<IConfigManager>(); } }
+        public static IInputManager InputManager { get { return GetModule<IInputManager>(); } }
+        public static INetworkManager NetworkManager { get { return GetModule<INetworkManager>(); } }
+        public static IResourceManager ResourceManager { get { return GetModule<IResourceManager>(); } }
+        public static IUIManager UIManager { get { return GetModule<IUIManager>(); } }
+        public static IHotfixManager HotfixManager { get { return GetModule<IHotfixManager>(); } }
+        public static IDataNodeManager DataManager { get { return GetModule<IDataNodeManager>(); } }
+        public static IEntityManager EntityManager { get { return GetModule<IEntityManager>(); } }
+        public static IEventManager EventManager { get { return GetModule<IEventManager>(); } }
+        public static ISceneManager SceneManager { get { return GetModule<ISceneManager>(); } }
+        public static IWebRequestManager WebRequestManager { get { return GetModule<IWebRequestManager>(); } }
+        public static IDownloadManager DownloadManager { get { return GetModule<IDownloadManager>(); } }
 
         /// <summary>
         /// 启动当前AppDomain下的helper
@@ -134,7 +118,7 @@ namespace Cosmos
         /// </summary>
         public static void LaunchAppDomainModules()
         {
-            GameManager.InstanceObject.ToString();
+            MonoGameManager.Instance.ToString();
             GameManager.InitAppDomainModule();
         }
         /// <summary>
@@ -144,12 +128,16 @@ namespace Cosmos
         /// <param name="assemblies">查询的目标程序集</param>
         public static void LaunchAssemblyModules(params System.Reflection.Assembly[] assemblies)
         {
-            GameManager.InstanceObject.ToString();
+            MonoGameManager.Instance.ToString();
             GameManager.InitAssemblyModule(assemblies);
         }
         public static void ReleaseLaunchedModules()
         {
             GameManager.Dispose();
+        }
+        public static T GetModule<T>() where T : class, IModuleManager
+        {
+            return GameManager.GetModule<T>();
         }
     }
 }

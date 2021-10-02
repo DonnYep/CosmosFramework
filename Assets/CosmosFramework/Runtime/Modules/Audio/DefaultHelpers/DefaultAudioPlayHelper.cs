@@ -62,7 +62,7 @@ namespace Cosmos.Audio
             audioSource.name = prefix + audioObject.AudioName;
             if (audioPlayInfo.BindObject == null)
             {
-                audioSource.transform.SetParent(CosmosEntry.AudioMount.transform);
+                audioSource.transform.SetParent(CosmosEntry.AudioManager.Instance().transform);
                 audioSource.transform.position = audioPlayInfo.WorldPosition;
             }
             else

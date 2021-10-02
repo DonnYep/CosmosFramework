@@ -13,6 +13,11 @@ namespace Cosmos
     public sealed class MonoGameManager: MonoSingleton<MonoGameManager>
     {
         DateTime previousTimeSinceStartup;
+        /// <summary>
+        /// 模块-mount字典；
+        ///  key=>moduleType；value=>gameobject
+        /// </summary>
+        Dictionary<Type, GameObject> moduleMountDict;
         public bool IsPause { get; private set; }
         public bool Pause
         {
@@ -45,10 +50,40 @@ namespace Cosmos
         protected override void Awake()
         {
             base.Awake();
+            gameObject.name = "GameRoot";
             DontDestroyOnLoad(this.gameObject);
             previousTimeSinceStartup = DateTime.Now;
+            moduleMountDict = new Dictionary<Type, GameObject>();
         }
         public int ModuleCount { get { return GameManager.ModuleCount; } }
+
+        public GameObject GetModuleMount<T>() where T : class, IModuleManager
+        {
+            Type interfaceType = typeof(T);
+            var hasType = GameManager.HasModuleType<T>();
+            if (!hasType)
+                return null;
+            GameObject moduleMount;
+            var hasMount = moduleMountDict.TryGetValue(interfaceType, out moduleMount);
+            if (!hasMount)
+            {
+                moduleMount = new GameObject(interfaceType.Name + "-->>Container");
+                moduleMount.transform.SetParent(InstanceObject.transform);
+                if (!moduleMountDict.TryAdd(interfaceType, moduleMount))
+                {
+                    GameObject.Destroy(moduleMount);
+                }
+            }
+            else
+            {
+                if (moduleMount == null)
+                {
+                    moduleMount = new GameObject(interfaceType.Name + "-->>Container");
+                    moduleMount.transform.SetParent(InstanceObject.transform);
+                }
+            }
+            return moduleMount;
+        }
         /// <summary>
         /// 清除单个实例，有一个默认参数。
         /// 默认延迟为0，表示立刻删除、

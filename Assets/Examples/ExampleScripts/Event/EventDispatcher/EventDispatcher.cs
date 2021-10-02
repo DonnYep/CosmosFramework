@@ -17,14 +17,14 @@ namespace Cosmos
         public string DispatcherName { get { return this.gameObject.name; } }
         public void DispatchEvent()
         {
-            GameManager.GetModule<IEventManager>().DispatchEvent(EventKey, this, null);
+            CosmosEntry.EventManager.DispatchEvent(EventKey, this, null);
         }
         /// <summary>
         /// 注销事件，事件派发者注销这个Key所持有的所有事件
         /// </summary>
         public void DeregisterEvent()
         {
-            GameManager.GetModule<IEventManager>().DeregisterEvent(EventKey);
+            CosmosEntry.EventManager.DeregisterEvent(EventKey);
         }
     }
 }

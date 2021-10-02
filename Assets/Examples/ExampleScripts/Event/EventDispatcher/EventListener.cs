@@ -35,11 +35,11 @@ namespace Cosmos{
         /// </summary>
         public void Deregister()
         {
-            GameManager.GetModule<IEventManager>().RemoveListener(EventKey, Handler);
+           CosmosEntry.EventManager.RemoveListener(EventKey, Handler);
         }
         public void Register()
         {
-            GameManager.GetModule<IEventManager>().AddListener(EventKey, Handler);
+            CosmosEntry.EventManager.AddListener(EventKey, Handler);
         }
     }
 }

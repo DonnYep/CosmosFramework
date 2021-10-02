@@ -10,7 +10,7 @@ namespace Cosmos.Test
     public class MultiplayManager : MonoSingleton<MultiplayManager>
     {
         [SerializeField] string ip = "127.0.0.1";
-        public string IP { get { return ip; }set { ip = value; } }
+        public string IP { get { return ip; } set { ip = value; } }
         [SerializeField] int port = 8531;
         public int Port { get { return port; } set { port = value; } }
         [SerializeField] GameObject localPlayerPrefab;
@@ -53,7 +53,7 @@ namespace Cosmos.Test
             remove { onPlayerInput -= value; }
         }
         public int AuthorityConv { get; private set; }
-       public bool IsConnected { get; private set; }
+        public bool IsConnected { get; private set; }
         FixTransportData fixTransportData;
         public void Connect()
         {
@@ -66,7 +66,7 @@ namespace Cosmos.Test
         public void Disconnect()
         {
             var key = networkChannel.NetworkChannelKey;
-            CosmosEntry.NetworkManager.RemoveChannel(key,out _);
+            CosmosEntry.NetworkManager.RemoveChannel(key, out _);
             networkChannel.Disconnect();
         }
         public void SendAuthorityTransportData(FixTransportData transportData)
@@ -79,7 +79,8 @@ namespace Cosmos.Test
         }
         protected override void OnDestroy()
         {
-            networkChannel.Disconnect();
+            if (IsConnected)
+                networkChannel?.Disconnect();
         }
         protected override void Awake()
         {
@@ -89,7 +90,7 @@ namespace Cosmos.Test
         protected virtual void Start()
         {
         }
-        void OnReceiveDataHandler(int conv,byte[] buffer)
+        void OnReceiveDataHandler(int conv, byte[] buffer)
         {
             var json = Encoding.UTF8.GetString(buffer);
             var opData = Utility.Json.ToObject<MultiplayData>(json);
@@ -143,8 +144,8 @@ namespace Cosmos.Test
                     break;
                 case OperationCode.PlayerInput:
                     {
-                        var fixTransports= Utility.Json.ToObject<List< FixTransportData>>(Convert.ToString(opData.DataContract));
-                        if (fixTransports!= null)
+                        var fixTransports = Utility.Json.ToObject<List<FixTransportData>>(Convert.ToString(opData.DataContract));
+                        if (fixTransports != null)
                             onPlayerInput?.Invoke(fixTransports.ToArray());
                     }
                     break;
