@@ -7,7 +7,7 @@ namespace Cosmos
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CapsuleCollider))]
-    public class MultiplayYBotController : MonoBehaviour// ControllerBase<MultiplayYBotController>
+    public class MultiplayYBotController : MonoBehaviour
     {
         [SerializeField]
         [Range(0, 1)]

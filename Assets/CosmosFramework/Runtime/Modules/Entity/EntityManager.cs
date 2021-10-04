@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
+using System.Threading.Tasks;
 namespace Cosmos.Entity
 {
     //================================================
@@ -47,7 +47,7 @@ namespace Cosmos.Entity
                 var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
                 if (entityAssetInfo.UseObjectPool)
                 {
-                    var objectPool= objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
+                    var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
                     pool.SetObjectPool(objectPool);
                 }
                 entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, pool);
@@ -75,7 +75,7 @@ namespace Cosmos.Entity
                 if (!HasEntityGroup(attributes[i].EntityGroupName))
                 {
                     var att = attributes[i];
-                    var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath) {  UseObjectPool=att.UseObjectPool};
+                    var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath) { UseObjectPool = att.UseObjectPool };
                     RegisterEntityGroup(entityAssetInfo);
                 }
             }
@@ -85,7 +85,7 @@ namespace Cosmos.Entity
         /// 特性 EntityAssetAttribute 有效；
         /// </summary>
         /// <typeparam name="T">挂载EntityAssetAttribute特性的类型</typeparam>
-        public void RegisterEntityGroup<T>()where T:class
+        public void RegisterEntityGroup<T>() where T : class
         {
             RegisterEntityGroup(typeof(T));
         }
@@ -94,7 +94,7 @@ namespace Cosmos.Entity
         /// 注册EntityGroup (异步)；
         /// </summary>
         /// <param name="entityAssetInfo">实体对象信息</param>
-        public Coroutine RegisterEntityGroupAsync(EntityAssetInfo entityAssetInfo)
+        public async Task RegisterEntityGroupAsync(EntityAssetInfo entityAssetInfo)
         {
             if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
             {
@@ -103,7 +103,7 @@ namespace Cosmos.Entity
             var result = HasEntityGroup(entityAssetInfo.EntityGroupName);
             if (!result)
             {
-                return resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
+                await resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
                 {
                     var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
                     if (entityAssetInfo.UseObjectPool)
@@ -114,7 +114,6 @@ namespace Cosmos.Entity
                     entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, pool);
                 });
             }
-            return null;
         }
         /// <summary>
         /// 注册EntityGroup (异步)；
@@ -122,9 +121,9 @@ namespace Cosmos.Entity
         /// </summary>
         /// <param name="entityType">挂载EntityAssetAttribute特性的类型</param>
         /// <returns>协程对象</returns>
-        public Coroutine RegisterEntityGroupAsync(Type entityType)
+        public async Task RegisterEntityGroupAsync(Type entityType)
         {
-            return Utility.Unity.StartCoroutine( EnumRegisterEntityGroupAsync(entityType));
+            await EnumRegisterEntityGroupAsync(entityType);
         }
         /// <summary>
         /// 注册EntityGroup (异步)；
@@ -132,9 +131,9 @@ namespace Cosmos.Entity
         /// </summary>
         /// <typeparam name="T">挂载EntityAssetAttribute特性的类型</typeparam>
         /// <returns>协程对象</returns>
-        public Coroutine RegisterEntityGroupAsync<T>()where T:class
+        public async Task RegisterEntityGroupAsync<T>() where T : class
         {
-            return RegisterEntityGroupAsync(typeof(T));
+            await RegisterEntityGroupAsync(typeof(T));
         }
 
         /// <summary>
@@ -289,7 +288,7 @@ namespace Cosmos.Entity
                 object entityInstance = null;
                 if (entityGroup.ObjectPool != null)
                 {
-                    entityInstance= entityGroup.ObjectPool.Spawn();
+                    entityInstance = entityGroup.ObjectPool.Spawn();
                 }
                 else
                 {
@@ -468,9 +467,9 @@ namespace Cosmos.Entity
         /// 自动获取所有程序集中挂载EntityAssetAttribute的类，并注册EntityGroup (异步)；
         /// </summary>
         /// <returns>协程对象</returns>
-        public Coroutine AutoRegisterEntityGroupsAsync()
+        public async Task AutoRegisterEntityGroupsAsync()
         {
-            return Utility.Unity.StartCoroutine(EnumAutoRegisterEntityGroups());
+            await EnumAutoRegisterEntityGroups();
         }
         protected override void OnInitialization()
         {

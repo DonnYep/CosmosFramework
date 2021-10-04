@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Cosmos;
 namespace Cosmos.Download
 {
     //================================================
@@ -125,7 +124,7 @@ namespace Cosmos.Download
         /// 设置或更新downloader;
         /// </summary>
         /// <param name="newDownloader">下载器</param>
-        public void SetOrUpdateDownloadHelper( IDownloader newDownloader)
+        public void SetOrUpdateDownloadHelper(IDownloader newDownloader)
         {
             if (this.downloader != null)
             {

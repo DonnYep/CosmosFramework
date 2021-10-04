@@ -1,7 +1,6 @@
 ﻿using Cosmos.Resource;
 using System;
 using System.Collections.Generic;
-
 namespace Cosmos.Data
 {
     //================================================

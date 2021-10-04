@@ -7,7 +7,7 @@ using System;
 
 namespace Cosmos
 {
-    public class MultiplayYBotCamera : MonoBehaviour//,ControllerBase<MultiplayYBotCamera>
+    public class MultiplayYBotCamera : MonoBehaviour
     {
         [Range(0.5f,15)]
         [SerializeField]float distanceFromTarget=4;

@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Cosmos.Event;
 using System;
-
 namespace Cosmos.Input
 {
     //================================================

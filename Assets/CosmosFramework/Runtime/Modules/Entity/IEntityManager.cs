@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UnityEngine;
-
 namespace Cosmos
 {
     public interface IEntityManager:IModuleManager
@@ -31,22 +29,20 @@ namespace Cosmos
         /// 注册EntityGroup (异步)；
         /// </summary>
         /// <param name="entityAssetInfo">实体对象信息</param>
-        Coroutine RegisterEntityGroupAsync(EntityAssetInfo entityAssetInfo);
+        Task RegisterEntityGroupAsync(EntityAssetInfo entityAssetInfo);
 
         /// <summary>
         /// 注册EntityGroup (异步)；
         /// 特性 EntityAssetAttribute 有效；
         /// </summary>
         /// <param name="entityType">挂载EntityAssetAttribute特性的类型</param>
-        /// <returns>协程对象</returns>
-        Coroutine RegisterEntityGroupAsync(Type entityType);
+        Task RegisterEntityGroupAsync(Type entityType);
         /// <summary>
         /// 注册EntityGroup (异步)；
         /// 特性 EntityAssetAttribute 有效；
         /// </summary>
         /// <typeparam name="T">挂载EntityAssetAttribute特性的类型</typeparam>
-        /// <returns>协程对象</returns>
-        Coroutine RegisterEntityGroupAsync<T>() where T : class;
+        Task RegisterEntityGroupAsync<T>() where T : class;
 
         /// <summary>
         /// 注销EntityGroup；
@@ -166,7 +162,7 @@ namespace Cosmos
         /// 自动获取所有程序集中挂载EntityAssetAttribute的类，并注册EntityGroup (异步)；
         /// </summary>
         /// <returns>协程对象</returns>
-        Coroutine AutoRegisterEntityGroupsAsync();
+        Task AutoRegisterEntityGroupsAsync();
 
     }
 }
