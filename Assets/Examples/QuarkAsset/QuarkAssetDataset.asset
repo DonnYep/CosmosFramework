@@ -28,7 +28,7 @@ MonoBehaviour:
     Hash: f0b176288f6484a4db31bed880118d43
   - Dir: Assets/Examples/AssetBundleTest/Texture
     Hash: 6b66c76bfcd1e5c48bc51efeb19eddf9
-  QuarkAssetCount: 44
+  QuarkAssetCount: 45
   QuarkAssetObjectList:
   - AssetName: ABMapSchema
     AssetExtension: .json
@@ -55,6 +55,11 @@ MonoBehaviour:
     AssetPath: Assets\Examples\AssetBundleTest\Prefab\YBot\AC_YBot_Walking.controller
     AssetType: UnityEditor.Animations.AnimatorController
     AssetGuid: 2c680063f3912db4aa02673a28563e64
+  - AssetName: Alpha_Body_MAT
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\AssetBundleTest\Material\Alpha_Body_MAT.mat
+    AssetType: UnityEngine.Material
+    AssetGuid: 98c5a02202c201b48a03d55bcb14094f
   - AssetName: AmbientAudio
     AssetExtension: .mp3
     AssetPath: Assets\Examples\AssetBundleTest\Audio\AmbientAudio.mp3

@@ -68,18 +68,16 @@ namespace Cosmos
             if (!hasMount)
             {
                 moduleMount = new GameObject(interfaceType.Name + "-->>Container");
-                moduleMount.transform.SetParent(InstanceObject.transform);
-                if (!moduleMountDict.TryAdd(interfaceType, moduleMount))
-                {
-                    GameObject.Destroy(moduleMount);
-                }
+                moduleMount.transform.SetParent(transform);
+                moduleMountDict[interfaceType] = moduleMount;
             }
             else
             {
                 if (moduleMount == null)
                 {
                     moduleMount = new GameObject(interfaceType.Name + "-->>Container");
-                    moduleMount.transform.SetParent(InstanceObject.transform);
+                    moduleMount.transform.SetParent(transform);
+                    moduleMountDict[interfaceType] = moduleMount;
                 }
             }
             return moduleMount;

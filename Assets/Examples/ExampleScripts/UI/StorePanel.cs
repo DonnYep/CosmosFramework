@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.UI;
-[UIAsset(nameof(StorePanel), "Example", "UI/StorePanel" )]
+[UIAsset(nameof(StorePanel), "Example", "UI/StorePanel")]
 public class StorePanel : UIForm
 {
     protected override void Awake()

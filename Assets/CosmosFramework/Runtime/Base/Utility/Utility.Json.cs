@@ -69,7 +69,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="obj">目标对象</param>
             /// <returns>序列化后的JSON流</returns>
-            public static byte[] ToJsonData(object obj)
+            public static byte[] ToJsonBytes(object obj)
             {
                 return Encoding.UTF8.GetBytes(ToJson(obj));
             }
@@ -114,14 +114,24 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 将JSON流转换为对象
+            /// 将JSON Bytes流转换为对象
             /// </summary>
             /// <typeparam name="T">目标类型</typeparam>
             /// <param name="jsonData">JSON流</param>
             /// <returns>反序列化后的对象</returns>
-            public static T ToObject<T>(byte[] jsonData)
+            public static T BytesToObject<T>(byte[] jsonData)
             {
                 return ToObject<T>(Encoding.UTF8.GetString(jsonData));
+            }
+            /// <summary>
+            /// 将JSON Bytes流转换为对象
+            /// </summary>
+            /// <param name="jsonData">JSON流</param>
+            /// <param name="type">目标类型</param>
+            /// <returns>反序列化后的对象</returns>
+            public static object BytesToObject(byte[] jsonData,Type type)
+            {
+                return ToObject(Encoding.UTF8.GetString(jsonData),type);
             }
         }
     }
