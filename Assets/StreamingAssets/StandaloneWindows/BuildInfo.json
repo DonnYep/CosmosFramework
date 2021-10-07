@@ -1,0 +1,59 @@
+{
+    "BuildTime": "2021/10/7 9:52:09",
+    "AssetDataMaps": {
+        "Assets/Examples/AssetBundleTest/Audio": {
+            "Id": 0,
+            "ABName": "assets_examples_assetbundletest_audio",
+            "ABHash": "2b1ffbec546fb5e10d5a94cf4bd88771",
+            "ReferenceCount": 0,
+            "DependList": []
+        },
+        "Assets/Examples/AssetBundleTest/Material": {
+            "Id": 1,
+            "ABName": "assets_examples_assetbundletest_material",
+            "ABHash": "f431b2201bde9da314e9e2df25fa7627",
+            "ReferenceCount": 0,
+            "DependList": []
+        },
+        "Assets/Examples/AssetBundleTest/Model": {
+            "Id": 2,
+            "ABName": "assets_examples_assetbundletest_model",
+            "ABHash": "721076c880ca1fe9fd2bce7b7a7cc578",
+            "ReferenceCount": 0,
+            "DependList": []
+        },
+        "Assets/Examples/AssetBundleTest/Photo": {
+            "Id": 3,
+            "ABName": "assets_examples_assetbundletest_photo",
+            "ABHash": "24977681590046b41bfa199a95685f8f",
+            "ReferenceCount": 0,
+            "DependList": []
+        },
+        "Assets/Examples/AssetBundleTest/Prefab": {
+            "Id": 4,
+            "ABName": "assets_examples_assetbundletest_prefab",
+            "ABHash": "cd12d7e698f07fad609b8da275c8f92f",
+            "ReferenceCount": 0,
+            "DependList": [
+                "assets_examples_assetbundletest_audio",
+                "assets_examples_assetbundletest_material",
+                "assets_examples_assetbundletest_model",
+                "assets_examples_assetbundletest_texture"
+            ]
+        },
+        "Assets/Examples/AssetBundleTest/Text": {
+            "Id": 5,
+            "ABName": "assets_examples_assetbundletest_text",
+            "ABHash": "90a82b1e79a778b35dbf44a86a131e27",
+            "ReferenceCount": 0,
+            "DependList": []
+        },
+        "Assets/Examples/AssetBundleTest/Texture": {
+            "Id": 6,
+            "ABName": "assets_examples_assetbundletest_texture",
+            "ABHash": "335e12be24f1a6779aa285b96de89115",
+            "ReferenceCount": 0,
+            "DependList": []
+        }
+    }
+}

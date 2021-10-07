@@ -108,8 +108,6 @@ namespace CosmosEditor.Quark
                 sp_CustomeLoadPath.stringValue = EditorGUILayout.TextField("CustomeLoadPath", sp_CustomeLoadPath.stringValue.Trim());
             }
             EditorGUILayout.EndVertical();
-
-
         }
         void DrawAES()
         {
