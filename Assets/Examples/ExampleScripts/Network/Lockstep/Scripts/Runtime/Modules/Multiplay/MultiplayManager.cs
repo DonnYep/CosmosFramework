@@ -36,12 +36,12 @@ namespace Cosmos.Lockstep
             multiplayEntitiesAgent = new MultiplayEntitiesAgent();
             GameEntry.InputManager.SetInputHelper(new StandardInputHelper());
         }
-        void OnReceiveDataHandle(int conv, byte[] buffer)
+        void OnReceiveDataHandle(byte[] buffer)
         {
             var opData = MultiplayData.Deserialize(buffer);
             ProcessHandler(opData);
         }
-        void OnDisconnectHandle(int conv)
+        void OnDisconnectHandle()
         {
             AuthorityConv = 0;
             multiplayEntitiesAgent.OnMulitplayDisconnected();

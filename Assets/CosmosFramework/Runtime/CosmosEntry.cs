@@ -25,7 +25,7 @@ namespace Cosmos
             add { GameManager.LateRefreshHandler += value; }
             remove { GameManager.LateRefreshHandler -= value; }
         }
-        public static event Action RefreshHandler
+        public static event Action TickRefreshHandler
         {
             add { GameManager.TickRefreshHandler += value; }
             remove { GameManager.TickRefreshHandler -= value; }
@@ -48,7 +48,7 @@ namespace Cosmos
         public static IResourceManager ResourceManager { get { return GetModule<IResourceManager>(); } }
         public static IUIManager UIManager { get { return GetModule<IUIManager>(); } }
         public static IHotfixManager HotfixManager { get { return GetModule<IHotfixManager>(); } }
-        public static IDataNodeManager DataManager { get { return GetModule<IDataNodeManager>(); } }
+        public static IDataNodeManager DataNodeManager { get { return GetModule<IDataNodeManager>(); } }
         public static IEntityManager EntityManager { get { return GetModule<IEntityManager>(); } }
         public static IEventManager EventManager { get { return GetModule<IEventManager>(); } }
         public static ISceneManager SceneManager { get { return GetModule<ISceneManager>(); } }

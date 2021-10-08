@@ -13,20 +13,20 @@ namespace Cosmos.Lockstep
         public bool IsConnected { get; private set; }
         public string IP { get; private set; }
         public ushort Port { get; private set; }
-        Action<int> onConnected;
-        public event Action<int> OnConnected
+        Action onConnected;
+        public event Action OnConnected
         {
             add { onConnected += value; }
             remove { onConnected -= value; }
         }
-        Action<int> onDisconnected;
-        public event Action<int> OnDisconnected
+        Action onDisconnected;
+        public event Action OnDisconnected
         {
             add { onDisconnected += value; }
             remove { onDisconnected -= value; }
         }
-        Action<int, byte[]> onReceiveData;
-        public event Action<int, byte[]> OnReceiveData
+        Action<byte[]> onReceiveData;
+        public event Action<byte[]> OnReceiveData
         {
             add { onReceiveData += value; }
             remove { onReceiveData -= value; }
@@ -36,11 +36,9 @@ namespace Cosmos.Lockstep
         {
             if (IsConnected)
                 return;
-            networkChannel = new KCPClientChannel("KCP", ip, port);
-            if(CosmosEntry.NetworkManager.RemoveChannel(networkChannel.NetworkChannelKey,out var cnl))
-            {
-                cnl.Abort();
-            }
+            NetworkChannelKey channelKey = new NetworkChannelKey("Lockstep", $"{ip}:{port}");
+            CosmosEntry.NetworkManager.AbortChannel(channelKey);
+            networkChannel = new KCPClientChannel("Lockstep", ip, port);
             networkChannel.OnReceiveData += OnReceiveDataHandle;
             networkChannel.OnDisconnected += OnDisconnectedHandle;
             networkChannel.OnConnected += OnConnectedHandle;
@@ -64,17 +62,17 @@ namespace Cosmos.Lockstep
         }
         void OnReceiveDataHandle(int conv, byte[] data)
         {
-            onReceiveData?.Invoke(conv, data);
+            onReceiveData?.Invoke(data);
         }
         void OnDisconnectedHandle(int conv)
         {
             IsConnected = false;
-            onDisconnected?.Invoke(conv);
+            onDisconnected?.Invoke();
         }
         void OnConnectedHandle(int conv)
         {
             IsConnected = true;
-            onConnected?.Invoke(conv);
+            onConnected?.Invoke();
         }
     }
 }

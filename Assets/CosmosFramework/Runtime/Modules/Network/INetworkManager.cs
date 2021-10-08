@@ -57,7 +57,7 @@ namespace Cosmos
         /// 是否存在通道；
         /// </summary>
         /// <param name="channelKey">通道key</param>
-        /// <returns></returns>
+        /// <returns>是否存在通道</returns>
         bool HasChannel(NetworkChannelKey channelKey);
         /// <summary>
         /// 获取指定通道的一个会话remote地址；
@@ -92,17 +92,20 @@ namespace Cosmos
         /// 建立连接；
         /// </summary>
         /// <param name="channelKey">通道key</param>
-        void Connect(NetworkChannelKey channelKey);
+        /// <returns>是否存在key</returns>
+        bool Connect(NetworkChannelKey channelKey);
         /// <summary>
         /// 断开连接；
         /// </summary>
         /// <param name="channelKey">通道key</param>
         /// <param name="connectionId">连接的id</param>
-        void Disconnect(NetworkChannelKey channelKey, int connectionId);
+        /// <returns>是否存在key</returns>
+        bool Disconnect(NetworkChannelKey channelKey, int connectionId);
         /// <summary>
-        /// 弃用&终结端口；
+        /// 弃用&终结通道；
         /// </summary>
         /// <param name="channelKey">通道key</param>
-        void AbortChannel(NetworkChannelKey channelKey);
+        /// <returns>是否存在key</returns>
+        bool AbortChannel(NetworkChannelKey channelKey);
     }
 }

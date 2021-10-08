@@ -19,7 +19,7 @@ namespace Cosmos.Network
     */
     //================================================
     [Module]
-    internal sealed partial class NetworkManager : Module, INetworkManager
+    internal sealed class NetworkManager : Module, INetworkManager
     {
         /// <summary>
         /// ChannelName===INetworkChannel
@@ -85,26 +85,32 @@ namespace Cosmos.Network
                 channel.SendMessage(reliableType, data, connectionId);
             }
         }
-        public void Connect(NetworkChannelKey channelKey)
+        public bool Connect(NetworkChannelKey channelKey)
         {
             if (channelDict.TryGetValue(channelKey, out var channel))
             {
                 channel.Connect();
+                return true;
             }
+            return false;
         }
-        public void Disconnect(NetworkChannelKey channelKey, int connectionId)
+        public bool Disconnect(NetworkChannelKey channelKey, int connectionId)
         {
             if (channelDict.TryGetValue(channelKey, out var channel))
             {
                 channel.Disconnect(connectionId);
+                return true;
             }
+            return false;
         }
-        public void AbortChannel(NetworkChannelKey channelKey)
+        public bool AbortChannel(NetworkChannelKey channelKey)
         {
-            if (channelDict.TryGetValue(channelKey, out var channel))
+            if (channelDict.TryRemove(channelKey, out var channel))
             {
                 channel.Abort();
+                return true;
             }
+            return false;
         }
         protected override void OnInitialization()
         {

@@ -12,9 +12,9 @@ namespace Cosmos.Lockstep
         bool IsConnected { get; }
         string IP { get; }
         ushort Port { get; }
-        event Action<int> OnConnected;
-        event Action<int> OnDisconnected;
-        event Action<int, byte[]> OnReceiveData;
+        event Action OnConnected;
+        event Action OnDisconnected;
+        event Action<byte[]> OnReceiveData;
         void Connect(string ip, ushort port);
         void Disconnect();
         void SendMessage(byte[] data);
