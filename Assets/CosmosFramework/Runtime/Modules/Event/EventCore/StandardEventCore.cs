@@ -19,7 +19,6 @@ namespace Cosmos
     /// <typeparam name="TDerived">派生类的类型</typeparam>
     public class StandardEventCore<TKey, TValueA, TValueB, TDerived> : Singleton<TDerived>
             where TDerived : StandardEventCore<TKey, TValueA, TValueB, TDerived>, new()
-    where TValueB : class
     {
         protected Dictionary<TKey, List<Action<TValueA,TValueB>>> eventDict = new Dictionary<TKey, List<Action<TValueA,TValueB>>>();
         #region Sync
@@ -62,7 +61,7 @@ namespace Cosmos
         }
         public void Dispatch(TKey key, TValueA valueA)
         {
-            Dispatch(key, valueA, null);
+            Dispatch(key, valueA, default);
         }
         #endregion
         #region Async
@@ -114,7 +113,7 @@ namespace Cosmos
         }
         public async Task DispatchAsync(TKey key, TValueA valueA)
         {
-            await DispatchAsync(key, valueA, null);
+            await DispatchAsync(key, valueA, default);
         }
         #endregion
     }

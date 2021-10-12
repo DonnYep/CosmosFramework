@@ -80,7 +80,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 ## 内置架构 PureMVC
 
-- 基于原始PureMVC改进的更适于理解的架构。对Command、Mediator、Proxy注册使用基本与PureMVC相同。
+- 基于原始PureMVC改进的更适于理解的架构。
     框架提供了基于特性更加简洁的注册方式：
     - 1、MVCCommandAttribute，对应Command，即C层；
     - 2、MVCMediatorAttribute，对应Mediator，即V层；
@@ -90,7 +90,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - 派生的代理类需要覆写构造函数，并传入NAME参数。
 
-- 需要注意，MVC.RegisterAttributedMVC()方法需要传入对应的程序集。目前已经验证跨程序集反射MVC成员是可行且稳定的。
+- 需要注意，MVC.RegisterAttributedMVC()方法需要传入对应的程序集。支持多程序集反射。
 
 ## 注意事项
 
@@ -127,3 +127,6 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 - 服务器版本的KCP与客户端版本的KCP皆为参考自Mirror。Mirror地址:https://github.com/vis2k/Mirror
 
 - 部分模块演示请观看视频：https://www.bilibili.com/video/BV1x741157eR
+                        https://www.bilibili.com/video/BV17u411Z7Ni/
+
+
