@@ -11,6 +11,10 @@ namespace Cosmos
     /// </summary>
     public static class UnityExtensions
     {
+        public static T CastTo<T>(this object source) where T : class
+        {
+            return source as T;
+        }
         public static void ResetWorldTransform(this Transform trans)
         {
             trans.position = Vector3.zero;
@@ -31,49 +35,14 @@ namespace Cosmos
             trans.offsetMax = Vector2.zero;
             trans.offsetMin = Vector2.zero;
         }
-        /// <summary>
-        /// 转换为标准时间字符串（yyyy/MM/dd HH:mm:ss）
-        /// </summary>
-        /// <param name="time">时间对象</param>
-        /// <returns>字符串</returns>
-        public static string ToDefaultDateString(this DateTime time)
-        {
-            return time.ToString("yyyy/MM/dd HH:mm:ss");
-        }
         public static RectTransform RectTransform(this GameObject go)
         {
             return go.GetComponent<RectTransform>();
         }
-        public static T CastTo<T>(this object source) where T : class
-        {
-            return source as T;
-        }
-        /// <summary>
-        /// 获取或增加组件。
-        /// </summary>
-        /// <typeparam name="T">要获取或增加的组件。</typeparam>
-        /// <param name="gameObject">目标对象。</param>
-        /// <returns>获取或增加的组件。</returns>
         public static T GetOrAddComponent<T>(this Transform transform) where T : Component
         {
             return GetOrAddComponent<T>(transform.gameObject);
         }
-        /// <summary>
-        /// 获取或增加组件。
-        /// </summary>
-        /// <param name="gameObject">目标对象。</param>
-        /// <param name="type">要获取或增加的组件类型。</param>
-        /// <returns>获取或增加的组件。</returns>
-        public static Component GetOrAddComponent(this Transform transform, Type type)
-        {
-            return GetOrAddComponent(transform.gameObject, type);
-        }
-        /// <summary>
-        /// 获取或增加组件。
-        /// </summary>
-        /// <typeparam name="T">要获取或增加的组件。</typeparam>
-        /// <param name="gameObject">目标对象。</param>
-        /// <returns>获取或增加的组件。</returns>
         public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
         {
             T component = gameObject.GetComponent<T>();
@@ -83,12 +52,6 @@ namespace Cosmos
             }
             return component;
         }
-        /// <summary>
-        /// 获取或增加组件。
-        /// </summary>
-        /// <param name="gameObject">目标对象。</param>
-        /// <param name="type">要获取或增加的组件类型。</param>
-        /// <returns>获取或增加的组件。</returns>
         public static Component GetOrAddComponent(this GameObject gameObject, Type type)
         {
             Component component = gameObject.GetComponent(type);
@@ -97,6 +60,10 @@ namespace Cosmos
                 component = gameObject.AddComponent(type);
             }
             return component;
+        }
+        public static Component GetOrAddComponent(this Transform transform, Type type)
+        {
+            return GetOrAddComponent(transform.gameObject, type);
         }
         public static T GetComponentInParent<T>(this GameObject gameObject, string parentName)
 where T : Component
@@ -259,6 +226,23 @@ where T : Component
             T[] dst = new T[idx];
             Array.Copy(src, 0, dst, 0, idx);
             return dst;
+        }
+        public static T[] GetComponentsInPeer<T>(this GameObject gameObject, bool includeSrc = false)
+where T : Component
+        {
+            return GetComponentsInPeer<T>(gameObject.transform, includeSrc);
+        }
+        public static void DestroyAllChilds(this Transform transform)
+        {
+            var childCount = transform.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                GameObject.Destroy(transform.GetChild(i).gameObject);
+            }
+        }
+        public static void DestroyAllChilds(this GameObject gameObject)
+        {
+            DestroyAllChilds(gameObject.transform);
         }
         public static Vector2 ConvertToVector2(this Vector3 vector3)
         {
