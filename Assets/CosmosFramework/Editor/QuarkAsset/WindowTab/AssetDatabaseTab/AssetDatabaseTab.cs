@@ -91,11 +91,27 @@ namespace CosmosEditor.Quark
             }
             if (WindowTabData.UnderAssetsDirectory)
             {
-                ADBModeUnderAssetsDirectoryBuild();
+                try
+                {
+                    ADBModeUnderAssetsDirectoryBuild();
+                }
+                catch (Exception e)
+                {
+                    EditorUtility.ClearProgressBar();
+                    EditorUtil.Debug.LogError($"Asset is invaild : {e.Message}");
+                }
             }
             else
             {
-                ADBModeNotUnderAssetsDirectoryBuild();
+                try
+                {
+                    ADBModeNotUnderAssetsDirectoryBuild();
+                }
+                catch (Exception e)
+                {
+                    EditorUtility.ClearProgressBar();
+                    EditorUtil.Debug.LogError($"Asset is invaild : {e.Message}");
+                }
             }
             EditorUtility.SetDirty(quarkAssetDataset);
             EditorUtil.SaveData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName, WindowTabData);
@@ -175,7 +191,7 @@ namespace CosmosEditor.Quark
                         var lowerExtension = file.Extension.ToLower();
                         var quarkLowerExt = QuarkConstant.Extensions[i].ToLower();
 
-                        if (quarkLowerExt==lowerExtension)
+                        if (quarkLowerExt == lowerExtension)
                         {
                             var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
                             var assetName = file.Name.Replace(file.Extension, string.Empty);
@@ -200,7 +216,7 @@ namespace CosmosEditor.Quark
             quarkAssetDataset.QuarkAssetCount = arr.Length;
             quarkAssetDataset.DirHashPairs.Clear();
             Utility.Algorithm.SortByAscend(dirHashPair, d => d.Dir);
-            quarkAssetDataset.DirHashPairs .AddRange( dirHashPair);
+            quarkAssetDataset.DirHashPairs.AddRange(dirHashPair);
         }
         void ADBModeUnderAssetsDirectoryBuild()
         {
@@ -227,7 +243,7 @@ namespace CosmosEditor.Quark
                 {
                     var lowerExtension = file.Extension.ToLower();
                     var quarkLowerExt = QuarkConstant.Extensions[i].ToLower();
-                    if (quarkLowerExt==lowerExtension)
+                    if (quarkLowerExt == lowerExtension)
                     {
                         var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
                         assetPath = assetPath.Replace("\\", "/");
