@@ -262,20 +262,21 @@ where K : class
             public static Type[] GetDerivedTypesByAttribute<T>(Type type, bool inherit, System.Reflection.Assembly assembly = null)
     where T : Attribute
             {
-                List<Type> set = new List<Type>();
+                //List<Type> set = new List<Type>();
                 Type[] types = assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
-                {
-                    if (type.IsAssignableFrom(types[i]))
-                    {
-                        if (types[i].IsClass && !types[i].IsAbstract)
-                        {
-                            if (types[i].GetCustomAttributes<T>(inherit).Count() > 0)
-                                set.Add(types[i]);
-                        }
-                    }
-                }
-                return set.ToArray();
+                return types.Where(t => type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract && t.GetCustomAttributes<T>(inherit).Count() > 0).ToArray();
+                //for (int i = 0; i < types.Length; i++)
+                //{
+                //    if (type.IsAssignableFrom(types[i]))
+                //    {
+                //        if (types[i].IsClass && !types[i].IsAbstract)
+                //        {
+                //            if (types[i].GetCustomAttributes<T>(inherit).Count() > 0)
+                //                set.Add(types[i]);
+                //        }
+                //    }
+                //}
+                //return set.ToArray();
             }
             /// <summary>
             /// 获取某类型的第一个派生类；
@@ -325,23 +326,25 @@ where K : class
     where T : class
             {
                 Type type = typeof(T);
-                List<Type> set = new List<Type>();
+                //List<Type> set = new List<Type>();
                 Type[] types;
                 if (assembly == null)
                     types = type.Assembly.GetTypes();
                 else
                     types = assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
-                {
-                    if (type.IsAssignableFrom(types[i]))
-                    {
-                        if (types[i].IsClass && !types[i].IsAbstract)
-                        {
-                            set.Add(types[i]);
-                        }
-                    }
-                }
-                return set.ToArray();
+                return types.Where(t => type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract).ToArray();
+
+                //for (int i = 0; i < types.Length; i++)
+                //{
+                //    if (type.IsAssignableFrom(types[i]))
+                //    {
+                //        if (types[i].IsClass && !types[i].IsAbstract)
+                //        {
+                //            set.Add(types[i]);
+                //        }
+                //    }
+                //}
+                //return set.ToArray();
             }
             /// <summary>
             /// 获取某类型在指定程序集的所有派生类数组；
@@ -351,23 +354,25 @@ where K : class
             /// <returns>非抽象派生类</returns>
             public static Type[] GetDerivedTypes(Type type, System.Reflection.Assembly assembly = null)
             {
-                List<Type> set = new List<Type>();
+                //List<Type> set = new List<Type>();
                 Type[] types;
                 if (assembly == null)
                     types = type.Assembly.GetTypes();
                 else
                     types = assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
-                {
-                    if (type.IsAssignableFrom(types[i]))
-                    {
-                        if (types[i].IsClass && !types[i].IsAbstract)
-                        {
-                            set.Add(types[i]);
-                        }
-                    }
-                }
-                return set.ToArray();
+                return types.Where(t => type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract).ToArray();
+
+                //for (int i = 0; i < types.Length; i++)
+                //{
+                //    if (type.IsAssignableFrom(types[i]))
+                //    {
+                //        if (types[i].IsClass && !types[i].IsAbstract)
+                //        {
+                //            set.Add(types[i]);
+                //        }
+                //    }
+                //}
+                //return set.ToArray();
             }
             /// <summary>
             /// 将一个对象上的字段值赋予到另一个对象上名字相同的字段上；
@@ -550,6 +555,8 @@ where K : class
                     throw new ArgumentNullException("Type is invalid !");
                 if (attributeType == null)
                     throw new ArgumentNullException("AttributeType is invalid !");
+                if (!typeof(Attribute).IsAssignableFrom(attributeType))
+                    throw new NotImplementedException($"{ attributeType } is not inherit from Attribute!");
                 return type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
                     Where(m => m.GetCustomAttributes(attributeType, inherit).Length > 0).ToArray();
             }
@@ -567,6 +574,27 @@ where K : class
                     throw new ArgumentNullException("Type is invalid !");
                 return type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
                     Where(m => m.GetCustomAttributes<T>(inherit).Count() > 0).ToArray();
+            }
+            /// <summary>
+            /// 获取当前程序集下所有标记指定特效的方法信息；
+            /// </summary>
+            /// <typeparam name="T">特性类型</typeparam>
+            /// <param name="assembly">目标程序集</param>
+            /// <returns>方法信息数组</returns>
+            public static MethodInfo[] GetAssemblyMethodsByAttribute<T>(System.Reflection.Assembly assembly, bool inherit = false)
+                where T : Attribute
+            {
+                if (assembly == null)
+                    throw new ArgumentNullException("assembly is invalid !");
+                var types = assembly.GetTypes();
+                List<MethodInfo> methodSet = new List<MethodInfo>();
+                foreach (var t in types)
+                {
+                    var methods = t.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic).
+                                            Where(m => m.GetCustomAttributes<T>(inherit).Count() > 0).ToArray();
+                    methodSet.AddRange(methods);
+                }
+                return methodSet.ToArray();
             }
             /// <summary>
             /// 执行方法；

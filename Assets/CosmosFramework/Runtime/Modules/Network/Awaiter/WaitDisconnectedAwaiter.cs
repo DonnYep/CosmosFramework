@@ -5,16 +5,16 @@ namespace Cosmos.Network
     public class WaitDisconnectedAwaiter : INotifyCompletion
     {
         INetworkChannel networkChannel;
-        Action onDisconnected;
-        public WaitDisconnectedAwaiter(INetworkChannel networkChannel,int conv)
+        Action continuation;
+        public WaitDisconnectedAwaiter(INetworkChannel networkChannel, int conv)
         {
             this.networkChannel = networkChannel;
-            networkChannel.OnDisconnected+= OnDisconnected;
+            networkChannel.OnDisconnected += OnDisconnected;
             networkChannel.Disconnect(conv);
         }
-        public void OnCompleted(Action onDisconnected)
+        public void OnCompleted(Action continuation)
         {
-            this.onDisconnected = onDisconnected;
+            this.continuation = continuation;
         }
         public bool IsCompleted { get; private set; }
         public void GetResult() { }
@@ -24,7 +24,7 @@ namespace Cosmos.Network
         }
         void OnDisconnected(int conv)
         {
-            onDisconnected?.Invoke();
+            continuation?.Invoke();
             IsCompleted = true;
             networkChannel.OnConnected -= OnDisconnected;
         }

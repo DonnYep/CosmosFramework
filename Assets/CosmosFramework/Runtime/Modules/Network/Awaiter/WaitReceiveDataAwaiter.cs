@@ -5,16 +5,16 @@ namespace Cosmos.Network
     public class WaitReceiveDataAwaiter : INotifyCompletion
     {
         INetworkChannel networkChannel;
-        Action onConnected;
+        Action continuation;
         byte[] rcvData;
         public WaitReceiveDataAwaiter(INetworkChannel networkChannel)
         {
             this.networkChannel = networkChannel;
             networkChannel.OnReceiveData += OnReceiveData;
         }
-        public void OnCompleted(Action onConnected)
+        public void OnCompleted(Action continuation)
         {
-            this.onConnected = onConnected;
+            this.continuation = continuation;
         }
         public bool IsCompleted { get; private set; }
         public byte[] GetResult() { return rcvData; }
@@ -25,7 +25,7 @@ namespace Cosmos.Network
         void OnReceiveData(int conv, byte[] data)
         {
             rcvData = data;
-            onConnected?.Invoke();
+            continuation?.Invoke();
             IsCompleted = true;
             networkChannel.OnReceiveData -= OnReceiveData;
         }

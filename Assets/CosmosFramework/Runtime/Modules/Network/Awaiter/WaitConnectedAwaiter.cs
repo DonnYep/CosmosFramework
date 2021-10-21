@@ -5,18 +5,18 @@ namespace Cosmos.Network
     public class WaitConnectedAwaiter : INotifyCompletion
     {
         INetworkChannel networkChannel;
-        Action onConnected;
+        Action continuation;
         public WaitConnectedAwaiter(INetworkChannel networkChannel)
         {
             this.networkChannel = networkChannel;
             networkChannel.OnConnected += OnConnected;
             networkChannel.Connect();
         }
-        public void OnCompleted(Action onConnected)
+        public void OnCompleted(Action continuation)
         {
-            this.onConnected = onConnected;
+            this.continuation = continuation;
         }
-        public bool IsCompleted{ get;private set; }
+        public bool IsCompleted { get; private set; }
         public void GetResult() { }
         public WaitConnectedAwaiter GetAwaiter()
         {
@@ -24,7 +24,7 @@ namespace Cosmos.Network
         }
         void OnConnected(int conv)
         {
-            onConnected?.Invoke();
+            continuation?.Invoke();
             IsCompleted = true;
             networkChannel.OnConnected -= OnConnected;
         }

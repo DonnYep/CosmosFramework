@@ -5,16 +5,16 @@ namespace Cosmos.Network
     public class WaitAbortAwaiter : INotifyCompletion
     {
         INetworkChannel networkChannel;
-        Action onAbort;
+        Action continuation;
         public WaitAbortAwaiter(INetworkChannel networkChannel)
         {
             this.networkChannel = networkChannel;
-            networkChannel.OnAbort+= OnAbort;
+            networkChannel.OnAbort += OnAbort;
             networkChannel.Abort();
         }
-        public void OnCompleted(Action onAbort)
+        public void OnCompleted(Action continuation)
         {
-            this.onAbort = onAbort;
+            this.continuation = continuation;
         }
         public bool IsCompleted { get; private set; }
         public void GetResult() { }
@@ -24,9 +24,9 @@ namespace Cosmos.Network
         }
         void OnAbort()
         {
-            onAbort ?.Invoke();
+            continuation?.Invoke();
             IsCompleted = true;
-            networkChannel.OnAbort-= OnAbort;
+            networkChannel.OnAbort -= OnAbort;
         }
     }
 }
