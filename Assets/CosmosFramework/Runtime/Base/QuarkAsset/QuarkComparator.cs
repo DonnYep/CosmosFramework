@@ -238,7 +238,7 @@ namespace Quark.Networking
                         }
                         catch (Exception e)
                         {
-                            throw e;
+                            Utility.Debug.LogError(e);
                         }
                     }
                 }
@@ -261,6 +261,16 @@ namespace Quark.Networking
                         }
                     }
                 }
+            }
+            if (localManifest == null)
+            {
+                Utility.Debug.LogError("QuarkManifest is not existed !");
+                yield break;
+            }
+            if (QuarkDataProxy.QuarkBuildInfo == null)
+            {
+                Utility.Debug.LogError("QuarkBuildInfo is not existed !");
+                yield break;
             }
             QuarkManager.Instance.SetBuiltAssetBundleModeData(localManifest);
             onCompareSuccess(new string[0], new string[0], 0);
