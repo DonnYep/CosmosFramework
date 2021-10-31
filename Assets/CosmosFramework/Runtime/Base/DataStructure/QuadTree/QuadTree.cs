@@ -388,7 +388,7 @@ namespace Cosmos.QuadTree
             treeTL = null;
             treeBR = null;
             treeBL = null;
-
+            CurrentDepth--;
             for (int i = 0; i < length; i++)
             {
                 var obj = allObjs[i];
