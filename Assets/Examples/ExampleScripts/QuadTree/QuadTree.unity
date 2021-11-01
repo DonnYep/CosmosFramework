@@ -180,18 +180,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb9e5df9604a41740b04ba3772473e10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rectRange: {x: 50, y: 50}
+  rectRange: {x: 100, y: 100}
   randomPosRange: {x: -10, y: 10}
   resPrefab: {fileID: 1920155239765684836, guid: 184f0255cec527046aa68378d47db811,
     type: 3}
-  objectCount: 400
+  objectCount: 2000
   maxNodeObject: 5
   maxDepth: 10
   supervisor: {fileID: 1644205380}
-  drawGridGizmos: 1
+  drawGridGizmos: 0
+  drawObjectGridGizmos: 0
   runUpdate: 0
   objectMoveSpeed: 2
   gridGizmosColor: {r: 0, g: 0.99030876, b: 1, a: 1}
+  objectGizmosColor: {r: 1, g: 0.21226418, b: 0.7017327, a: 1}
   activeTrans: {fileID: 1304742435}
   deactiveTrans: {fileID: 108770194}
 --- !u!4 &162869165

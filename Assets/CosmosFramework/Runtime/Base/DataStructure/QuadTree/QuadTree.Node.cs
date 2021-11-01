@@ -91,7 +91,6 @@ namespace Cosmos.QuadTree
                     return false;
                 if (!HasChild)
                 {
-
                     return ObjectSet.Add(obj);
                 }
                 else
@@ -114,20 +113,15 @@ namespace Cosmos.QuadTree
                     var blNodes = TreeBLNode.NodeAreaGrids();
                     var brNodes = TreeBRNode.NodeAreaGrids();
 
-                    List<QuadRectangle> list = new List<QuadRectangle>();
-                    list.AddRange(trNodes);
-                    list.AddRange(tlNodes);
-                    list.AddRange(blNodes);
-                    list.AddRange(brNodes);
-                    return list.ToArray();
+                    var length = trNodes.Length + tlNodes.Length + blNodes.Length + brNodes.Length;
+                    var dstArr = new QuadRectangle[length];
 
-                    //var length = trNodes.Length + tlNodes.Length + blNodes.Length + brNodes.Length;
-                    //var dstArr = new QuadRectangle[length];
-                    //Array.Copy(trNodes, 0, dstArr, 0, trNodes.Length);
-                    //Array.Copy(tlNodes, 0, dstArr, trNodes.Length, tlNodes.Length);
-                    //Array.Copy(blNodes, 0, dstArr, tlNodes.Length, blNodes.Length);
-                    //Array.Copy(brNodes, 0, dstArr, blNodes.Length, brNodes.Length);
-                    //return dstArr;
+                    Array.Copy(trNodes, 0, dstArr, 0, trNodes.Length);
+                    Array.Copy(tlNodes, 0, dstArr, trNodes.Length, tlNodes.Length);
+                    Array.Copy(blNodes, 0, dstArr, tlNodes.Length+trNodes.Length, blNodes.Length);
+                    Array.Copy(brNodes, 0, dstArr, blNodes.Length+ tlNodes.Length + trNodes.Length, brNodes.Length);
+
+                    return dstArr;
                 }
             }
             public bool Remove(T obj, out Node node)
@@ -202,24 +196,21 @@ namespace Cosmos.QuadTree
                     var blObjects = TreeBLNode.Objects();
                     var brObjects = TreeBRNode.Objects();
 
-                    List<T> list = new List<T>();
-                    list.AddRange(trObjects);
-                    list.AddRange(tlObjects);
-                    list.AddRange(blObjects);
-                    list.AddRange(brObjects);
+                    var length = trObjects.Length + tlObjects.Length + blObjects.Length + brObjects.Length;
+                    var dstArr = new T[length];
+                    Array.Copy(trObjects, 0, dstArr, 0, trObjects.Length);
+                    Array.Copy(tlObjects, 0, dstArr, trObjects.Length, tlObjects.Length);
+                    Array.Copy(blObjects, 0, dstArr, tlObjects.Length+trObjects.Length, blObjects.Length);
+                    Array.Copy(brObjects, 0, dstArr, blObjects.Length+ tlObjects.Length + trObjects.Length, brObjects.Length);
 
-                    //var length = trObjects.Length + tlObjects.Length + blObjects.Length + brObjects.Length;
-                    //var objectDst = new T[length];
-                    //Array.Copy(trObjects, 0, objectDst, 0, trObjects.Length);
-                    //Array.Copy(tlObjects, 0, objectDst, trObjects.Length, tlObjects.Length);
-                    //Array.Copy(blObjects, 0, objectDst, tlObjects.Length, blObjects.Length);
-                    //Array.Copy(brObjects, 0, objectDst, blObjects.Length, brObjects.Length);
-                    var hashSet = new HashSet<T>();
-                    foreach (var obj in list)
-                    {
-                        hashSet.Add(obj);
-                    }
-                    return hashSet.ToArray();
+                    return dstArr;
+
+                    //var hashSet = new HashSet<T>();
+                    //foreach (var obj in dstArr)
+                    //{
+                    //    hashSet.Add(obj);
+                    //}
+                    //return hashSet.ToArray();
                 }
             }
             public void OnQuarter()

@@ -19,9 +19,11 @@ public class QuadTreeTester : MonoBehaviour
     [SerializeField] int maxDepth = 5;
     [SerializeField] GameObject supervisor;
     [SerializeField] bool drawGridGizmos;
+    [SerializeField] bool drawObjectGridGizmos;
     [SerializeField] bool runUpdate;
     [SerializeField] float objectMoveSpeed = 5;
     [SerializeField] Color gridGizmosColor = new Color(1, 1, 1, 1);
+    [SerializeField] Color objectGizmosColor = new Color(1, 1, 1, 1);
     [SerializeField] Transform activeTrans;
     [SerializeField] Transform deactiveTrans;
     QuadObjectSpawner objectSapwner;
@@ -110,13 +112,16 @@ public class QuadTreeTester : MonoBehaviour
                     Gizmos.DrawWireCube(pos, size);
                 }
             }
-            var objs = quadTree.GetAllObjects();
-            for (int i = 0; i < objs.Length; i++)
+            if (drawObjectGridGizmos)
             {
-                Gizmos.color = gridGizmosColor;
-                var pos = objs[i].transform.position;
-                var size = Vector3.one * 0.5f;
-                Gizmos.DrawWireCube(pos, size);
+                var objs = quadTree.GetAllObjects();
+                for (int i = 0; i < objs.Length; i++)
+                {
+                    Gizmos.color = objectGizmosColor;
+                    var pos = objs[i].transform.position;
+                    var size = Vector3.one * 0.5f;
+                    Gizmos.DrawWireCube(pos, size);
+                }
             }
         }
     }
