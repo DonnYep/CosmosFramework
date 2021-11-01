@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class SpawnObjectBound : IObjecRectangletBound<GameObject>
+public class SpawnObjectBound : IObjecBound<GameObject>
 {
     public float GetHeight(GameObject go)
     {

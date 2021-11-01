@@ -3,7 +3,7 @@
     /// <summary>
     ///在四叉树中对象的边界获取接口
     /// </summary>
-    public interface IObjecRectangletBound<in T>
+    public interface IObjecBound<in T>
     {
         /// <summary>
         /// 获取对象的X的位置；

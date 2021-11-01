@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using Cosmos.QuadTree;
-public class UnityObjectBound : IObjecRectangletBound<GameObject>
+public class UnityObjectBound : IObjecBound<GameObject>
 {
     public float GetHeight(GameObject go)
     {

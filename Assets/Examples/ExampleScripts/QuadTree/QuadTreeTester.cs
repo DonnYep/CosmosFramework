@@ -30,7 +30,7 @@ public class QuadTreeTester : MonoBehaviour
     {
         DateTime startTime = DateTime.UtcNow;
         quadTree = QuadTree<GameObject>.Create(0, 0, rectRange.x, rectRange.y, new SpawnObjectBound(), maxNodeObject, maxDepth);
-        quadTree.OnObjectOutQuadRectangle += OnObjectOutQuadRectangle;
+        quadTree.OnOutQuadBound += OnObjectOutQuadRectangle;
         objectSapwner = new QuadObjectSpawner(resPrefab);
         int index = 0;
         for (int i = 0; i < objectCount; i++)
@@ -38,15 +38,17 @@ public class QuadTreeTester : MonoBehaviour
             var position = new Vector3(UnityEngine.Random.Range(-rectRange.x * 0.5f, rectRange.x * 0.5f), 1, UnityEngine.Random.Range(-rectRange.y * 0.5f, rectRange.y * 0.5f));
             var info = objectSapwner.Spawn();
             info.transform.position = position;
-            if (quadTree.Insert(info))
+            try
             {
+                quadTree.Insert(info);
                 index++;
                 info.name = resPrefab.name + index;
                 info.transform.SetParent(activeTrans);
                 objectInfos.Add(info);
             }
-            else
+            catch (Exception e)
             {
+                Debug.LogError(e);
                 Destroy(info);
             }
         }
@@ -54,6 +56,7 @@ public class QuadTreeTester : MonoBehaviour
         Debug.Log(index);
         Debug.Log(endTime - startTime);
     }
+
     void OnObjectOutQuadRectangle(GameObject obj)
     {
         obj.transform.SetParent(deactiveTrans);
@@ -62,12 +65,11 @@ public class QuadTreeTester : MonoBehaviour
             //Utility.Debug.LogInfo(obj.name + "-Out");
         }
     }
-
     void Update()
     {
-        quadTree.CheckObjectRect();
         if (runUpdate)
         {
+            quadTree.CheckObjectBound();
             DrawSpawnInfo();
         }
     }
@@ -97,9 +99,8 @@ public class QuadTreeTester : MonoBehaviour
         {
             if (drawGridGizmos)
             {
-                var grid = quadTree.GetGrid();
-                HashSet<QuadRectangle> hs = new HashSet<QuadRectangle>(grid);
-                var grids = hs.ToArray();
+                var grids = quadTree.GetNodeGrids();
+                //Debug.Log(grids.Length);
                 var length = grids.Length;
                 for (int i = 0; i < length; i++)
                 {
@@ -114,7 +115,7 @@ public class QuadTreeTester : MonoBehaviour
             {
                 Gizmos.color = gridGizmosColor;
                 var pos = objs[i].transform.position;
-                var size = Vector3.one*0.5f;
+                var size = Vector3.one * 0.5f;
                 Gizmos.DrawWireCube(pos, size);
             }
         }

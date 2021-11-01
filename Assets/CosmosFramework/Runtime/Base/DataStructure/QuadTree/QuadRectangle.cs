@@ -52,6 +52,11 @@ namespace Cosmos.QuadTree
             return this.X == other.X && this.Y == other.Y &&
                   this.Width == other.Width && this.Height == other.Height;
         }
+        public override int GetHashCode()
+        {
+            var hashStr = $"{X}{Y}{Width}{Height}";
+            return hashStr.GetHashCode();
+        }
         public override string ToString()
         {
             return $"[ X:{X} ,Y:{Y} ],[ Width:{Width},Height:{Height} ]";
