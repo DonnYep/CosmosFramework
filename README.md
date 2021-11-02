@@ -1,6 +1,6 @@
 # CosmosFramework
 
-CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块、算法工具类等。自定义扩展模块享有与原生模块完全相同的权限与生命周期。
+CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰富的Unity方法扩展以及工具链。async/await语法支持，多网络通道支持。框架已做插件化，开发时放入Packages即可。
 
 ## Master、V0.1分支暂停维护，稳定版请使用V1.0，最新内容请切换到V1.1!
 
@@ -10,13 +10,13 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 ## 模块简介
 
-- **Audio**： 框架中的音效管理模块，提供游戏内音效的播放、暂停等常用功能。
+- **Audio**： 游戏音效模块。通过注册音效信息，播放时传入音效名即可自动加载音效资源播放。音效支持分组，且可整组播放。
 
 - **Config**： 游戏常用配置模块。用户可在游戏初始化时读取配置文件，并缓存于配置模块。运行时在其他所需位置读取对应配置的数据。
 
 - **Event**： 事件中心模块。使用标准事件模型，提供了监听、移除、派发等常用事件功能。提供事件观测方法，可实时检测事件状态。
 
-- **FSM**： 有限状态机模块。对状态机进行创建、回收、管理。
+- **FSM**： 有限状态机模块。完全抽象的有限状态机，可针对不同类型的拥有者做状态机实现。
 
 - **ObjectsPool**：对象池模块。提供常用的对象生成回收等功能。底层使用数据结构Pool进行实现。
 
@@ -52,7 +52,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 - **Singleton**：单例基类。提供了线程安全、非线程安全、MONO单例基类。
 
-- **DataStructure**：常用数据结构。链表、双向链表、二叉树、LRU、线程锁等数据结构。
+- **DataStructure**：常用数据结构。链表、双向链表、二叉树、四叉树、LRU、线程锁等数据结构。
 
 - **Behaviour**：内置生命周期函数，此生命周期可参考Unity的MONO生命周期。需要注意，此内置生命周期适用于原生模块与自定义模块，相对于Unity生命周期是独立的。生命周期优先级依次为：
     - OnInitialization
@@ -66,7 +66,37 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
     
 - **Extensions**：静态扩展工具。提供unity的扩展以及.NETCore对unity.NET的扩展。
 
-- **Awaitable** ：此工具提供了async/await语法在unity环境中的支持。使用后可支持直接写 await new WaitUntil(()=>{}) 这类Unity的协程异步方法；
+- **Awaitable** ：此工具提供了async/await语法在unity环境中的支持。可以像写c#原生异步一样,在Unity中写异步。支持Task异步，Task执行完成后会回到主线程，使用时按照正常格式写即可；
+代码参考：
+
+```CSharp
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Cosmos;
+public class AwaitableTest : MonoBehaviour
+{
+    private async void Start()
+    {
+        Debug.Log("AwaitableTest >>> Before Coroutine Start");
+        await StartCoroutine(EnumRun());
+        await new WaitForSeconds(3);
+        await EnumRun();
+        Debug.LogError("AwaitableTest >>> After Coroutine Start");
+        await EnumWait();
+    }
+    IEnumerator EnumRun()
+    {
+        yield return new WaitForSeconds(1);
+        Debug.Log("AwaitableTest >>> After IEnumerator EnumRun");
+    }
+    IEnumerator EnumWait()
+    {
+        yield return new WaitForSeconds(3);
+        Debug.Log("AwaitableTest >>> After IEnumerator EnumWait");
+    }
+}
+```
 
 - **EventCore** ：轻量级事件模块，可自定义监听的数据类型；
 
@@ -77,7 +107,7 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 - **QuarkAsset** ：QuarkAsset是快速的资源管理方案。动态加载时资源无需放入Resources、StreamingAssets或打包成AB包进行加载，在Assets目录下的任意位置都可以被加载到。加载时可通过文件名+后缀进行完全限定，也可以通过指定路径加载。
 
 - **FutureTask**：异步任务检测，支持多线程与协程异步进度检测。检测函数需要传入Func<bool>格式的函数，当条件返回值为true时，异步检测结束；注意：FutureTask本身并不是协程，不能代替协程执行异步任务；
-
+    
 ## 内置架构 PureMVC
 
 - 基于原始PureMVC改进的更适于理解的架构。
@@ -94,11 +124,57 @@ CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块
 
 ## 注意事项
 
-- 自定义模块请参考原生模块的写法：
-    - 1、继承自Module，并打上ModuleAttribute的特性。
-    - 2、自定义一个与模块类名相同的接口，此接口派生自IModuleManager。
-    - 3、在此接口写入需要开放给外部调用的方法属性等。
-
+- 自定义模块实现：
+    
+```csharp
+    using Cosmos;
+    public interface IMyManager : IModuleManager
+    {
+        //自定义一个接口，使自定义的接口继承自IModuleManager
+    }
+```
+    
+```csharp
+    using Cosmos;
+    [Module]
+    internal class MyManager :Module, IMyManager
+    {
+        //创建接口对应的类，继承自Module与IMyManager，并标记上[Module]特性
+        //完成以上步骤后，MyManager作为一个模块就被自动生成了。
+        //以此种方法定义的模块，被生成后等同于原生模块，享有完全相同的生命周期。
+    
+        [TickRefresh]
+        void TickRefresh()
+        {
+            //被标记上[TickRefresh]的方法将在Update中执行；
+        }
+        [LateRefresh]
+        void LateRefresh()
+        {
+            //被标记上[LateRefresh]的方法将在LateUpdate中执行；
+        }
+        [FixedRefresh]
+        void FixedRefresh()
+        {
+            //被标记上[FixedRefresh]的方法将在FixedUpdate中执行；
+        }
+    
+        //一个模块中只允许拥有一个#Refresh类函数。
+    }
+```
+ - 自定义模块入口实现：
+```csharp
+    using Cosmos;
+    public class MyEntry:Cosmos.CosmosEntry
+    {
+        //自定义实现一个类作为项目的模块入口，并继承自CosmosEntry。
+        //将自定义实现的模块按照以下格式写成静态属性，则整个游戏项目均可通过 MyEntry获取自定义以及原生的所有模块。
+        public static IMyManager MyManager { get { return GetModule<IMyManager>(); } }
+    }
+```
+- 项目启动：
+    将CosmosConfig挂载于合适的GameObject上，运行Unity。若CosmosConfig上的PrintModulePreparatory处于true状态，则控制台会显示初始化信息。  自此，项目启动完成。
+    
 - 部分带有Helper的模块可由使用者进行自定义实现，也可使用提供的Default对象；
 
 - 框架提供第三方适配，如Utility.Json，用户可自定义任意JSON方案。框架建议使用的高速传输协议为MessagePack，包含适配方案。
