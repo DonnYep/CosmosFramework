@@ -15,7 +15,7 @@ public class AxisSubscriber : MonoBehaviour
 {
     [SerializeField]
     InputKey key;
-    int SliderOffset { get { return Utility.Converter.Int(slider.maxValue / 2); } }
+    int SliderOffset { get { return (int)(slider.maxValue / 2); } }
     Slider slider;
     Text text;
     IInputManager inputManager;
@@ -42,7 +42,7 @@ public class AxisSubscriber : MonoBehaviour
                 break;
         }
         float textValue = slider.value - SliderOffset;
-        text.text = Utility.Converter.Int(textValue).ToString();
+        text.text = ((int)textValue).ToString();
     }
     private void OnEnable()
     {

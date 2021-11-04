@@ -184,7 +184,7 @@ namespace CosmosEditor.Quark
             else
             {
                 var dirHashPairs = quarkAssetDataset.DirHashPairs;
-                var dirs = Utility.Converter.ConvertArray(dirHashPairs.ToArray(), (d) => d.Dir);
+                var dirs = dirHashPairs.Select(d => d.Dir).ToArray();
                 yield return EditorUtil.Coroutine.StartCoroutine(TraverseTargetDirectories(dirs));
             }
         }

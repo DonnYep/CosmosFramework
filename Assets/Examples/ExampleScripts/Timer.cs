@@ -54,9 +54,9 @@ public class Timer : MonoBehaviour {
         {
             Utility.Unity.StopCoroutine(tempRoutine);
         }
-        IEnumerator EnumAction(object arg,Action handler)
+        IEnumerator EnumAction(float time,Action handler)
         {
-            yield return new WaitForSeconds(Utility.Converter.Float(arg));
+            yield return new WaitForSeconds(time);
             handler?.Invoke();
             if(loop)
                 tempRoutine = Utility.Unity.StartCoroutine(EnumAction(Interval, () => action.Invoke()));

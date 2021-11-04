@@ -30,7 +30,7 @@ public class SliderEventSubscriber : MonoBehaviour
         var data = uch.GetData();
         slider.maxValue = data.maxValue;
         slider.value = data.value;
-        var dispatcher = Utility.Converter.ConvertToObject<GameObject>(sender);
+        
     }
 
 }

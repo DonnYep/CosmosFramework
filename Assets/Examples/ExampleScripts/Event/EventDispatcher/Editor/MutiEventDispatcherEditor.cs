@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
+using System;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -44,9 +45,8 @@ namespace CosmosEditor
             //TODO解算二进制
             selectedIndexs = EditorGUILayout.MaskField("EventKeys", selectedIndexs, new string[] { "AAA", "BBB", "CCC", "DDD", "EEE", "FFF", "GGG" });
             Utility.Debug.LogInfo("selectedIndexs>>" + selectedIndexs);
-            var byteResult = Utility.Converter.ConvertToString(selectedIndexs);
+            var byteResult = Convert.ToString(selectedIndexs,2);
             Utility.Debug.LogInfo("byteResult>>" + byteResult);
-
             targetObject.ApplyModifiedProperties();
         }
     }

@@ -18,7 +18,7 @@ namespace Cosmos.QuadTree
             /// <summary>
             ///当前节点所在的区块；
             /// </summary>
-            public QuadRectangle Area;
+            public Rectangle Area;
             /// <summary>
             /// 父节点；
             /// </summary>
@@ -43,7 +43,7 @@ namespace Cosmos.QuadTree
             /// BottomRight Quadrant4
             /// </summary>
             public Node TreeBRNode;
-            public bool IsRectOverlapping(QuadRectangle rect)
+            public bool IsRectOverlapping(Rectangle rect)
             {
                 if (rect.Right < Area.Left || rect.Left > Area.Right) return false;
                 if (rect.Top < Area.Bottom || rect.Bottom > Area.Top) return false;
@@ -52,7 +52,7 @@ namespace Cosmos.QuadTree
             /// <summary>
             ///获得objBound所在节点的所有 T ; 
             /// </summary>
-            public T[] GetObjectsByRect(QuadRectangle objBound)
+            public T[] GetObjectsByRect(Rectangle objBound)
             {
                 if (!HasChild)
                 {
@@ -85,7 +85,7 @@ namespace Cosmos.QuadTree
                     return false;
                 }
             }
-            public bool Insert(QuadRectangle objBound, T obj)
+            public bool Insert(Rectangle objBound, T obj)
             {
                 if (!IsRectOverlapping(objBound))
                     return false;
@@ -102,10 +102,10 @@ namespace Cosmos.QuadTree
                     return false;
                 }
             }
-            public QuadRectangle[] NodeAreaGrids()
+            public Rectangle[] NodeAreaGrids()
             {
                 if (!HasChild)
-                    return new QuadRectangle[] { Area };
+                    return new Rectangle[] { Area };
                 else
                 {
                     var trNodes = TreeTRNode.NodeAreaGrids();
@@ -114,7 +114,7 @@ namespace Cosmos.QuadTree
                     var brNodes = TreeBRNode.NodeAreaGrids();
 
                     var length = trNodes.Length + tlNodes.Length + blNodes.Length + brNodes.Length;
-                    var dstArr = new QuadRectangle[length];
+                    var dstArr = new Rectangle[length];
 
                     Array.Copy(trNodes, 0, dstArr, 0, trNodes.Length);
                     Array.Copy(tlNodes, 0, dstArr, trNodes.Length, tlNodes.Length);
@@ -247,7 +247,7 @@ namespace Cosmos.QuadTree
             {
                 HasChild = false;
                 Parent = null;
-                Area = QuadRectangle.Zero;
+                Area = Rectangle.Zero;
                 NodeDepth = 0;
 
                 ObjectSet.Clear();

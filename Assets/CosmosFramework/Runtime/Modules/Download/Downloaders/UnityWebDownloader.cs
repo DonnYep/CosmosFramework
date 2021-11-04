@@ -335,8 +335,8 @@ namespace Cosmos.Download
             canDownload = false;
             Downloading = false;
             downloadEndTime = DateTime.Now;
-            var successUris = Utility.Converter.ConvertArray(successTasks.ToArray(), (t) => t.URI);
-            var failureUris = Utility.Converter.ConvertArray(failureTasks.ToArray(), (t) => t.URI);
+            var successUris = successTasks.Select(t=>t.URI).ToArray();
+            var failureUris = failureTasks.Select(t => t.URI).ToArray();
             var eventArgs = DownloadAndWriteFinishEventArgs.Create(successUris, failureUris, downloadEndTime - downloadStartTime);
             onDownloadAndWriteFinish?.Invoke(eventArgs);
             DownloadAndWriteFinishEventArgs.Release(eventArgs);

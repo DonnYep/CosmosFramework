@@ -122,7 +122,7 @@ namespace CosmosEditor.Quark
                 }
                 var dirs = QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs.ToArray();
                 pathList.Clear();
-                pathList.AddRange(Utility.Converter.ConvertArray(dirs, d => d.Dir));
+                pathList.AddRange(dirs.Select(d=>d.Dir));
             }
             catch (Exception e)
             {

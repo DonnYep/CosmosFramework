@@ -6,7 +6,7 @@ namespace Cosmos.QuadTree
     {
         public static QuadTree<T> Create(float x, float y, float width, float height, IObjecBound<T> quadTreebound, int nodeObjectCapacity = 10, int maxDepth = 5)
         {
-            var tree = new QuadTree<T>(new QuadRectangle(x, y, width, height), quadTreebound, nodeObjectCapacity, maxDepth);
+            var tree = new QuadTree<T>(new Rectangle(x, y, width, height), quadTreebound, nodeObjectCapacity, maxDepth);
             return tree;
         }
         Action<T> onOutQuadBound;
@@ -44,7 +44,7 @@ namespace Cosmos.QuadTree
         /// 树的最大深度；
         /// </summary>
         public int TreeMaxDepth { get; private set; }
-        public QuadTree(QuadRectangle rectArea, IObjecBound<T> boundHelper, int nodeObjectCapacity, int maxDepth)
+        public QuadTree(Rectangle rectArea, IObjecBound<T> boundHelper, int nodeObjectCapacity, int maxDepth)
         {
             NodeObjectCapacity = nodeObjectCapacity;
             objectRectangleBound = boundHelper;
@@ -73,11 +73,6 @@ namespace Cosmos.QuadTree
             }
             return false;
         }
-        public QuadRectangle GetObjectBound(T go)
-        {
-            var rect = new QuadRectangle(objectRectangleBound.GetCenterX(go), objectRectangleBound.GetCenterY(go), objectRectangleBound.GetWidth(go), objectRectangleBound.GetHeight(go));
-            return rect;
-        }
         public void CheckObjectBound()
         {
             objectRemoveCache.Clear();
@@ -104,7 +99,7 @@ namespace Cosmos.QuadTree
                 Insert(obj);
             }
         }
-        public QuadRectangle[] GetNodeGrids()
+        public Rectangle[] GetNodeGrids()
         {
             return rootNode.NodeAreaGrids();
         }
@@ -122,7 +117,7 @@ namespace Cosmos.QuadTree
             var objBound = GetObjectBound(obj);
             return rootNode.GetObjectsByRect(objBound);
         }
-        bool InsertObject(Node node, QuadRectangle objBound, T obj)
+        bool InsertObject(Node node, Rectangle objBound, T obj)
         {
             if (node.IsRectOverlapping(objBound))
             {
@@ -191,10 +186,10 @@ namespace Cosmos.QuadTree
             if (CurrentDepth < nextNodeDepth)
                 CurrentDepth = nextNodeDepth;
             var area = node.Area;
-            node.TreeTRNode = CreateNode(area.X + area.HalfWidth * 0.5f, area.Y + area.HalfHeight * 0.5f, area.HalfWidth, area.HalfHeight, node, nextNodeDepth);
-            node.TreeTLNode = CreateNode(area.X - area.HalfWidth * 0.5f, area.Y + area.HalfHeight * 0.5f, area.HalfWidth, area.HalfHeight, node, nextNodeDepth);
-            node.TreeBLNode = CreateNode(area.X - area.HalfWidth * 0.5f, area.Y - area.HalfHeight * 0.5f, area.HalfWidth, area.HalfHeight, node, nextNodeDepth);
-            node.TreeBRNode = CreateNode(area.X + area.HalfWidth * 0.5f, area.Y - area.HalfHeight * 0.5f, area.HalfWidth, area.HalfHeight, node, nextNodeDepth);
+            node.TreeTRNode = CreateNode(area.CenterX + area.HalfWidth * 0.5f, area.CenterY + area.HalfHeight * 0.5f, area.HalfWidth, area.HalfHeight, node, nextNodeDepth);
+            node.TreeTLNode = CreateNode(area.CenterX - area.HalfWidth * 0.5f, area.CenterY + area.HalfHeight * 0.5f, area.HalfWidth, area.HalfHeight, node, nextNodeDepth);
+            node.TreeBLNode = CreateNode(area.CenterX - area.HalfWidth * 0.5f, area.CenterY - area.HalfHeight * 0.5f, area.HalfWidth, area.HalfHeight, node, nextNodeDepth);
+            node.TreeBRNode = CreateNode(area.CenterX + area.HalfWidth * 0.5f, area.CenterY - area.HalfHeight * 0.5f, area.HalfWidth, area.HalfHeight, node, nextNodeDepth);
             var objects = node.Objects();
             node.HasChild = true;
             foreach (var obj in objects)
@@ -207,10 +202,15 @@ namespace Cosmos.QuadTree
         {
             return rootNode.PeekNode(obj, out node);
         }
+        Rectangle GetObjectBound(T go)
+        {
+            var rect = new Rectangle(objectRectangleBound.GetCenterX(go), objectRectangleBound.GetCenterY(go), objectRectangleBound.GetWidth(go), objectRectangleBound.GetHeight(go));
+            return rect;
+        }
         Node CreateNode(float x, float y, float width, float height, Node parent, int nodeDepth)
         {
             var node = new Node();
-            node.Area = new QuadRectangle(x, y, width, height);
+            node.Area = new Rectangle(x, y, width, height);
             node.Parent = parent;
             node.NodeDepth = nodeDepth;
             node.HasChild = false;

@@ -69,9 +69,9 @@ public class QuadTreeTester : MonoBehaviour
     }
     void Update()
     {
+        quadTree.CheckObjectBound();
         if (runUpdate)
         {
-            quadTree.CheckObjectBound();
             DrawSpawnInfo();
         }
     }
@@ -102,12 +102,11 @@ public class QuadTreeTester : MonoBehaviour
             if (drawGridGizmos)
             {
                 var grids = quadTree.GetNodeGrids();
-                //Debug.Log(grids.Length);
                 var length = grids.Length;
                 for (int i = 0; i < length; i++)
                 {
                     Gizmos.color = gridGizmosColor;
-                    var pos = new Vector3(grids[i].X, 0, grids[i].Y);
+                    var pos = new Vector3(grids[i].CenterX, 0, grids[i].CenterY);
                     var size = new Vector3(grids[i].Width, 5, grids[i].Height);
                     Gizmos.DrawWireCube(pos, size);
                 }
