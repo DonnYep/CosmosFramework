@@ -147,7 +147,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 219592241}
   m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: 0, y: 10, z: -5}
+  m_LocalPosition: {x: 0, y: 15, z: -8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1569567842}
@@ -325,10 +325,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f64294adb8fb844dbdfb50cdb34cfea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellSideLength: 25
+  cellSideLength: 64
   divided: 10
-  offset: {x: 35, y: -17}
-  bufferZoneBound: 5
+  offset: {x: -35, y: -17}
+  bufferZoneBound: 16
   cellZoneColor: {r: 0, g: 0.89716387, b: 1, a: 1}
   bufferZoneColor: {r: 1, g: 0, b: 0.745, a: 1}
   heightLightColor: {r: 1, g: 0.8296892, b: 0.36320752, a: 0.22745098}
@@ -571,7 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 285e68cea6be24d439847527de7be493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 50
+  moveSpeed: 10
 --- !u!1 &1661611821
 GameObject:
   m_ObjectHideFlags: 0

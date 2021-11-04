@@ -60,10 +60,10 @@ namespace Cosmos.Test
                 {
                     Gizmos.color = cellZoneColor;
                     var pos = new Vector3(rects[i, j].CenterX, 0, rects[i, j].CenterY);
-                    var size = new Vector3(squareGrid.CellSideLength, 2, squareGrid.CellSideLength);
+                    var size = new Vector3(squareGrid.CellSideLength, 6, squareGrid.CellSideLength);
                     Gizmos.DrawWireCube(pos, size);
                     Gizmos.color = bufferZoneColor;
-                    var cellSize = new Vector3(squareGrid.CellSideLength+bufferZoneBound*2, 2, squareGrid.CellSideLength+ bufferZoneBound*2);
+                    var cellSize = new Vector3(squareGrid.CellSideLength+bufferZoneBound*2, 8, squareGrid.CellSideLength+ bufferZoneBound*2);
                     Gizmos.DrawWireCube(pos, cellSize);
                 }
             }
@@ -74,7 +74,7 @@ namespace Cosmos.Test
                 {
                     var tmpSquare = bufferZoneSquares[i];
                     Gizmos.color = heightLightColor;
-                    var hlSize = new Vector3(tmpSquare.SideLength, 4, tmpSquare.SideLength);
+                    var hlSize = new Vector3(tmpSquare.SideLength, 1, tmpSquare.SideLength);
                     var hlPos = new Vector3(tmpSquare.CenterX, 0, tmpSquare.CenterY);
                     Gizmos.DrawCube(hlPos, hlSize);
                 }

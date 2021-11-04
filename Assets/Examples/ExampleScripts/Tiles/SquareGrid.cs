@@ -96,41 +96,36 @@ namespace Cosmos.Test
                 return new Square[0];
             var col = (int)((posX - OffsetX) / CellSideLength);
             var row = (int)((posY - OffsetY) / CellSideLength);
-            //if (col == 0 || row == 0)
-            //    return new Square[0];
-            if (col >0 &&col <CellSection&&row>0&&row<CellSection)
-            {
+            if (!IsOverlapping(posX, posY))
+                return new Square[0];
+            Square[] bufferZoneSquares = new Square[5];
+            bufferZoneSquares[0] = squareRects[col, row];
+            int idx = 1;
+            var leftCol = col - 1;
+            var rightCol = col + 1;
+            var upRow = row + 1;
+            var downRow = row - 1;
 
-            }
-            var leftSquare = squareRects[col - 1, row];
-            var rightSquare = squareRects[col + 1, row];
-            var topSquare = squareRects[col, row + 1];
-            var buttomSquare = squareRects[col, row - 1];
-            Square[] srcSquares = new Square[5];
-            int idx=1;
-            srcSquares[0]= squareRects[col, row];
-            if (IsOverlappingBufferZoneRange(leftSquare,posX,posY))
+            if (leftCol >= 0)
+                bufferZoneSquares[idx++] = squareRects[leftCol, row];
+            if (rightCol < CellSection)
+                bufferZoneSquares[idx++] = squareRects[rightCol, row];
+            if (upRow < CellSection)
+                bufferZoneSquares[idx++] = squareRects[col, upRow];
+            if (downRow >= 0)
+                bufferZoneSquares[idx++] = squareRects[col, downRow];
+            var srcSquares = new Square[idx];
+            int dstIdx = 0;
+            for (int i = 0; i < idx; i++)
             {
-                srcSquares[idx] = leftSquare;
-                idx++;
+                if (IsOverlappingBufferZoneRange(bufferZoneSquares[i], posX, posY))
+                {
+                    srcSquares[dstIdx] = bufferZoneSquares[i];
+                    dstIdx++;
+                }
             }
-            if (IsOverlappingBufferZoneRange(rightSquare, posX, posY))
-            {
-                srcSquares[idx] = rightSquare;
-                idx++;
-            }
-            if (IsOverlappingBufferZoneRange(topSquare, posX, posY))
-            {
-                srcSquares[idx] = topSquare;
-                idx++;
-            }
-            if (IsOverlappingBufferZoneRange(buttomSquare, posX, posY))
-            {
-                srcSquares[idx] = buttomSquare;
-                idx++;
-            }
-            var dstSquares = new Square[idx];
-            Array.Copy(srcSquares, 0, dstSquares, 0, dstSquares.Length);
+            var dstSquares = new Square[dstIdx];
+            Array.Copy(srcSquares, 0, dstSquares, 0, dstIdx);
             return dstSquares;
         }
         public Square[,] GetAllRectangle()
@@ -151,8 +146,8 @@ namespace Cosmos.Test
         }
         bool IsOverlappingBufferZoneRange(Square square, float posX, float posY)
         {
-            if (posX < square.Left- BufferZoneRange || posX > square.Right+ BufferZoneRange) return false;
-            if (posY < square.Bottom- BufferZoneRange || posY > square.Top+ BufferZoneRange) return false;
+            if (posX < square.Left - BufferZoneRange || posX > square.Right + BufferZoneRange) return false;
+            if (posY < square.Bottom - BufferZoneRange || posY > square.Top + BufferZoneRange) return false;
             return true;
         }
         void CreateRectangles(float offsetX, float offsetY)
