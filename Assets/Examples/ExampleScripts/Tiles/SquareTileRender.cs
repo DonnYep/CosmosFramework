@@ -12,22 +12,19 @@ namespace Cosmos.Test
         [SerializeField] uint divided;
 
         [SerializeField] Vector2 offset;
-        [SerializeField] float bufferZoneBound = 8;
+        [SerializeField] float cellBufferZoneBound = 8;
         [SerializeField] Color cellZoneColor;
         [SerializeField] Color bufferZoneColor;
         [SerializeField] Color heightLightColor;
         [SerializeField] Transform supervisor;
 
         SquareGrid squareGrid;
-        SquareGrid.Square renderRect;
-
-
         SquareGrid.Square[] bufferZoneSquares;
 
 
         private void Start()
         {
-            squareGrid = new SquareGrid(cellSideLength, divided, offset.x, offset.y,bufferZoneBound);
+            squareGrid = new SquareGrid(cellSideLength, divided, offset.x, offset.y,cellBufferZoneBound);
         }
         private void Update()
         {
@@ -39,7 +36,6 @@ namespace Cosmos.Test
         void UpdateSquare()
         {
             var pos = new Vector2(supervisor.position.x, supervisor.position.z);
-            renderRect = squareGrid.GetRectangle(pos.x, pos.y);
             bufferZoneSquares = squareGrid.GetRectanglesByBufferZone(pos.x, pos.y);
         }
         private void OnDrawGizmos()
@@ -63,7 +59,7 @@ namespace Cosmos.Test
                     var size = new Vector3(squareGrid.CellSideLength, 6, squareGrid.CellSideLength);
                     Gizmos.DrawWireCube(pos, size);
                     Gizmos.color = bufferZoneColor;
-                    var cellSize = new Vector3(squareGrid.CellSideLength+bufferZoneBound*2, 8, squareGrid.CellSideLength+ bufferZoneBound*2);
+                    var cellSize = new Vector3(squareGrid.CellSideLength+cellBufferZoneBound*2, 8, squareGrid.CellSideLength+ cellBufferZoneBound*2);
                     Gizmos.DrawWireCube(pos, cellSize);
                 }
             }

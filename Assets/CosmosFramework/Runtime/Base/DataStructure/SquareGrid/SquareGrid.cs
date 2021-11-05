@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-namespace Cosmos.Test
+namespace Cosmos
 {
     public struct SquareGrid
     {
@@ -82,6 +79,12 @@ namespace Cosmos.Test
             BufferZoneRange = bufferRange;
             CreateRectangles(offsetX, offsetY);
         }
+        /// <summary>
+        /// 获取当前位置所在的块；
+        /// </summary>
+        /// <param name="posX">位置X</param>
+        /// <param name="posY">位置Y</param>
+        /// <returns>位置所在的块</returns>
         public Square GetRectangle(float posX, float posY)
         {
             if (!IsOverlapping(posX, posY))
@@ -90,6 +93,12 @@ namespace Cosmos.Test
             var row = (posY - OffsetY) / CellSideLength;
             return squareRects[(int)col, (int)row];
         }
+        /// <summary>
+        /// 获取位置所在的所有缓冲区；
+        /// </summary>
+        /// <param name="posX">位置X</param>
+        /// <param name="posY">位置Y</param>
+        /// <returns>缓冲所属的块</returns>
         public Square[] GetRectanglesByBufferZone(float posX, float posY)
         {
             if (!IsOverlappingBufferZone(posX, posY))
@@ -98,40 +107,64 @@ namespace Cosmos.Test
             var row = (int)((posY - OffsetY) / CellSideLength);
             if (!IsOverlapping(posX, posY))
                 return new Square[0];
-            Square[] bufferZoneSquares = new Square[5];
-            bufferZoneSquares[0] = squareRects[col, row];
-            int idx = 1;
+            Square[] neighborSquares = new Square[9];
+
+            int idx = 0;
             var leftCol = col - 1;
             var rightCol = col + 1;
             var upRow = row + 1;
             var downRow = row - 1;
 
             if (leftCol >= 0)
-                bufferZoneSquares[idx++] = squareRects[leftCol, row];
+            {
+                neighborSquares[idx++] = squareRects[leftCol, row];
+                if (upRow < CellSection)
+                    neighborSquares[idx++] = squareRects[leftCol, upRow];
+                if (downRow >= 0)
+                    neighborSquares[idx++] = squareRects[leftCol, downRow];
+            }
             if (rightCol < CellSection)
-                bufferZoneSquares[idx++] = squareRects[rightCol, row];
+            {
+                neighborSquares[idx++] = squareRects[rightCol, row];
+                if (upRow < CellSection)
+                    neighborSquares[idx++] = squareRects[rightCol, upRow];
+                if (downRow >= 0)
+                    neighborSquares[idx++] = squareRects[rightCol, downRow];
+            }
             if (upRow < CellSection)
-                bufferZoneSquares[idx++] = squareRects[col, upRow];
+                neighborSquares[idx++] = squareRects[col, upRow];
             if (downRow >= 0)
-                bufferZoneSquares[idx++] = squareRects[col, downRow];
+                neighborSquares[idx++] = squareRects[col, downRow];
+
             var srcSquares = new Square[idx];
             int dstIdx = 0;
             for (int i = 0; i < idx; i++)
             {
-                if (IsOverlappingBufferZoneRange(bufferZoneSquares[i], posX, posY))
+                if (IsOverlappingCellBufferZone(neighborSquares[i], posX, posY))
                 {
-                    srcSquares[dstIdx] = bufferZoneSquares[i];
+                    srcSquares[dstIdx] = neighborSquares[i];
                     dstIdx++;
                 }
             }
-            var dstSquares = new Square[dstIdx];
-            Array.Copy(srcSquares, 0, dstSquares, 0, dstIdx);
+            var dstSquares = new Square[dstIdx+1];
+            dstSquares[0] = squareRects[col, row];
+            Array.Copy(srcSquares, 0, dstSquares, 1, dstIdx);
             return dstSquares;
         }
+        /// <summary>
+        /// 获取所有单元格方块；
+        /// </summary>
+        /// <returns>所有单元格方块</returns>
         public Square[,] GetAllRectangle()
         {
             return squareRects;
         }
+        /// <summary>
+        /// 是否与整个大方块重叠；
+        /// </summary>
+        /// <param name="posX">位置X</param>
+        /// <param name="posY">位置Y</param>
+        /// <returns>是否重叠</returns>
         public bool IsOverlapping(float posX, float posY)
         {
             if (posX < SquareLeft || posX > SquareRight) return false;
@@ -144,7 +177,7 @@ namespace Cosmos.Test
             if (posY < SquareBottom - BufferZoneRange || posY > SquareTop + BufferZoneRange) return false;
             return true;
         }
-        bool IsOverlappingBufferZoneRange(Square square, float posX, float posY)
+        bool IsOverlappingCellBufferZone(Square square, float posX, float posY)
         {
             if (posX < square.Left - BufferZoneRange || posX > square.Right + BufferZoneRange) return false;
             if (posY < square.Bottom - BufferZoneRange || posY > square.Top + BufferZoneRange) return false;
