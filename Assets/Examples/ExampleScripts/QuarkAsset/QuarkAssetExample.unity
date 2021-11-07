@@ -766,7 +766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   QuarkBuildPath: 0
   EnableRelativeBuildPath: 1
-  RelativeBuildPath: StandaloneWindows
+  RelativeBuildPath: Win
   Url: 
   PingUrl: 0
   QuarkAssetLoadMode: 1
