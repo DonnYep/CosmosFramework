@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Cosmos;
 using System.Collections;
-
-public class QuadTreeTester : MonoBehaviour
+using FixMath.NET;
+public class QuadTreeFix64Tester : MonoBehaviour
 {
-    QuadTree<GameObject> quadTree;
+    QuadTreeFix64<GameObject> quadTree;
     [SerializeField] Vector2 rectRange = new Vector2(400, 400);
     [SerializeField] Vector2 randomPosRange = new Vector2(-10, 10);
     [SerializeField] GameObject resPrefab;
@@ -30,7 +30,7 @@ public class QuadTreeTester : MonoBehaviour
     void Start()
     {
         DateTime startTime = DateTime.UtcNow;
-        quadTree = QuadTree<GameObject>.Create(0, 0, rectRange.x, rectRange.y, new SpawnObjectBound(), maxNodeObject, maxDepth);
+        quadTree = QuadTreeFix64<GameObject>.Create((Fix64)0, (Fix64)0, (Fix64)rectRange.x, (Fix64)rectRange.y, new SpawnObjectBoundFix64(), maxNodeObject, maxDepth);
         quadTree.OnOutQuadBound += OnObjectOutQuadRectangle;
         objectSapwner = new QuadObjectSpawner(resPrefab);
         int index = 0;
@@ -105,8 +105,8 @@ public class QuadTreeTester : MonoBehaviour
                 for (int i = 0; i < length; i++)
                 {
                     Gizmos.color = gridGizmosColor;
-                    var pos = new Vector3(grids[i].CenterX, 0, grids[i].CenterY);
-                    var size = new Vector3(grids[i].Width, 5, grids[i].Height);
+                    var pos = new Vector3((float)grids[i].CenterX, 0, (float)grids[i].CenterY);
+                    var size = new Vector3((float)grids[i].Width, 5, (float)grids[i].Height);
                     Gizmos.DrawWireCube(pos, size);
                 }
             }

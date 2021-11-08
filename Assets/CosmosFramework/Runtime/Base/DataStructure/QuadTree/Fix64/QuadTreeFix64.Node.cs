@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-namespace Cosmos.QuadTree
+namespace Cosmos
 {
-    public partial class QuadTree<T>
+    public partial class QuadTreeFix64<T>
     {
         class Node
         {
@@ -118,8 +118,8 @@ namespace Cosmos.QuadTree
 
                     Array.Copy(trNodes, 0, dstArr, 0, trNodes.Length);
                     Array.Copy(tlNodes, 0, dstArr, trNodes.Length, tlNodes.Length);
-                    Array.Copy(blNodes, 0, dstArr, tlNodes.Length+trNodes.Length, blNodes.Length);
-                    Array.Copy(brNodes, 0, dstArr, blNodes.Length+ tlNodes.Length + trNodes.Length, brNodes.Length);
+                    Array.Copy(blNodes, 0, dstArr, tlNodes.Length + trNodes.Length, blNodes.Length);
+                    Array.Copy(brNodes, 0, dstArr, blNodes.Length + tlNodes.Length + trNodes.Length, brNodes.Length);
 
                     return dstArr;
                 }
@@ -200,17 +200,9 @@ namespace Cosmos.QuadTree
                     var dstArr = new T[length];
                     Array.Copy(trObjects, 0, dstArr, 0, trObjects.Length);
                     Array.Copy(tlObjects, 0, dstArr, trObjects.Length, tlObjects.Length);
-                    Array.Copy(blObjects, 0, dstArr, tlObjects.Length+trObjects.Length, blObjects.Length);
-                    Array.Copy(brObjects, 0, dstArr, blObjects.Length+ tlObjects.Length + trObjects.Length, brObjects.Length);
-
+                    Array.Copy(blObjects, 0, dstArr, tlObjects.Length + trObjects.Length, blObjects.Length);
+                    Array.Copy(brObjects, 0, dstArr, blObjects.Length + tlObjects.Length + trObjects.Length, brObjects.Length);
                     return dstArr;
-
-                    //var hashSet = new HashSet<T>();
-                    //foreach (var obj in dstArr)
-                    //{
-                    //    hashSet.Add(obj);
-                    //}
-                    //return hashSet.ToArray();
                 }
             }
             public void OnQuarter()

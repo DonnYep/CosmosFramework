@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Cosmos.QuadTree
+namespace Cosmos
 {
     public partial class QuadTree<T>
     {

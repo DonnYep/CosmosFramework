@@ -1,4 +1,4 @@
-﻿using Cosmos.QuadTree;
+﻿using Cosmos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class SpawnObjectBound : IObjecBound<GameObject>
+public class SpawnObjectBound :QuadTree<GameObject> .IObjecBound
 {
     public float GetHeight(GameObject go)
     {

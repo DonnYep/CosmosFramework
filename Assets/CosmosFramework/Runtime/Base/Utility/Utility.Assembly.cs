@@ -262,21 +262,20 @@ where K : class
             public static Type[] GetDerivedTypesByAttribute<T>(Type type, bool inherit, System.Reflection.Assembly assembly = null)
     where T : Attribute
             {
-                //List<Type> set = new List<Type>();
+                List<Type> set = new List<Type>();
                 Type[] types = assembly.GetTypes();
-                return types.Where(t => type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract && t.GetCustomAttributes<T>(inherit).Count() > 0).ToArray();
-                //for (int i = 0; i < types.Length; i++)
-                //{
-                //    if (type.IsAssignableFrom(types[i]))
-                //    {
-                //        if (types[i].IsClass && !types[i].IsAbstract)
-                //        {
-                //            if (types[i].GetCustomAttributes<T>(inherit).Count() > 0)
-                //                set.Add(types[i]);
-                //        }
-                //    }
-                //}
-                //return set.ToArray();
+                for (int i = 0; i < types.Length; i++)
+                {
+                    if (type.IsAssignableFrom(types[i]))
+                    {
+                        if (types[i].IsClass && !types[i].IsAbstract)
+                        {
+                            if (types[i].GetCustomAttributes<T>(inherit).Count() > 0)
+                                set.Add(types[i]);
+                        }
+                    }
+                }
+                return set.ToArray();
             }
             /// <summary>
             /// 获取某类型的第一个派生类；
@@ -326,25 +325,23 @@ where K : class
     where T : class
             {
                 Type type = typeof(T);
-                //List<Type> set = new List<Type>();
+                List<Type> set = new List<Type>();
                 Type[] types;
                 if (assembly == null)
                     types = type.Assembly.GetTypes();
                 else
                     types = assembly.GetTypes();
-                return types.Where(t => type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract).ToArray();
-
-                //for (int i = 0; i < types.Length; i++)
-                //{
-                //    if (type.IsAssignableFrom(types[i]))
-                //    {
-                //        if (types[i].IsClass && !types[i].IsAbstract)
-                //        {
-                //            set.Add(types[i]);
-                //        }
-                //    }
-                //}
-                //return set.ToArray();
+                for (int i = 0; i < types.Length; i++)
+                {
+                    if (type.IsAssignableFrom(types[i]))
+                    {
+                        if (types[i].IsClass && !types[i].IsAbstract)
+                        {
+                            set.Add(types[i]);
+                        }
+                    }
+                }
+                return set.ToArray();
             }
             /// <summary>
             /// 获取某类型在指定程序集的所有派生类数组；
@@ -354,25 +351,23 @@ where K : class
             /// <returns>非抽象派生类</returns>
             public static Type[] GetDerivedTypes(Type type, System.Reflection.Assembly assembly = null)
             {
-                //List<Type> set = new List<Type>();
+                List<Type> set = new List<Type>();
                 Type[] types;
                 if (assembly == null)
                     types = type.Assembly.GetTypes();
                 else
                     types = assembly.GetTypes();
-                return types.Where(t => type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract).ToArray();
-
-                //for (int i = 0; i < types.Length; i++)
-                //{
-                //    if (type.IsAssignableFrom(types[i]))
-                //    {
-                //        if (types[i].IsClass && !types[i].IsAbstract)
-                //        {
-                //            set.Add(types[i]);
-                //        }
-                //    }
-                //}
-                //return set.ToArray();
+                for (int i = 0; i < types.Length; i++)
+                {
+                    if (type.IsAssignableFrom(types[i]))
+                    {
+                        if (types[i].IsClass && !types[i].IsAbstract)
+                        {
+                            set.Add(types[i]);
+                        }
+                    }
+                }
+                return set.ToArray();
             }
             /// <summary>
             /// 将一个对象上的字段值赋予到另一个对象上名字相同的字段上；
@@ -526,6 +521,28 @@ where K : class
                 {
                     var atts = GetAttributes<T>(types[i], inherit);
                     attributes.AddRange(atts);
+                }
+                return attributes.ToArray();
+            }
+            /// <summary>
+            /// 通过特性获取类；
+            /// </summary>
+            /// <typeparam name="T">查找的指定类型</typeparam>
+            /// <param name="assembly">目标程序集</param>
+            /// <param name="inherit">是否查找基类中的特性</param>
+            /// <returns>查找到的类型</returns>
+            public static Type[] GetTypesByAttribute<T>(System.Reflection.Assembly assembly, bool inherit = false)
+                where T : Attribute
+            {
+                var attributes = new List<Type>();
+                Type[] types = assembly.GetTypes();
+                var length = types.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    if (types[i].IsDefined(typeof(T), inherit))
+                    {
+                        attributes.Add(types[i]);
+                    }
                 }
                 return attributes.ToArray();
             }

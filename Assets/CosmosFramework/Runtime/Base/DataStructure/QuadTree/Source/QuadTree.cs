@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-namespace Cosmos.QuadTree
+namespace Cosmos
 {
     public partial class QuadTree<T>
     {
-        public static QuadTree<T> Create(float x, float y, float width, float height, IObjecBound<T> quadTreebound, int nodeObjectCapacity = 10, int maxDepth = 5)
+        public static QuadTree<T> Create(float x, float y, float width, float height, IObjecBound quadTreebound, int nodeObjectCapacity = 10, int maxDepth = 5)
         {
             var tree = new QuadTree<T>(new Rectangle(x, y, width, height), quadTreebound, nodeObjectCapacity, maxDepth);
             return tree;
@@ -27,7 +27,7 @@ namespace Cosmos.QuadTree
         /// <summary>
         /// 四叉树中对象的有效边界获取接口；
         /// </summary>
-        IObjecBound<T> objectRectangleBound;
+        IObjecBound objectRectangleBound;
         /// <summary>
         /// 一个节点最大的对象数量；
         /// </summary>
@@ -44,7 +44,7 @@ namespace Cosmos.QuadTree
         /// 树的最大深度；
         /// </summary>
         public int TreeMaxDepth { get; private set; }
-        public QuadTree(Rectangle rectArea, IObjecBound<T> boundHelper, int nodeObjectCapacity, int maxDepth)
+        private QuadTree(Rectangle rectArea, IObjecBound boundHelper, int nodeObjectCapacity, int maxDepth)
         {
             NodeObjectCapacity = nodeObjectCapacity;
             objectRectangleBound = boundHelper;
