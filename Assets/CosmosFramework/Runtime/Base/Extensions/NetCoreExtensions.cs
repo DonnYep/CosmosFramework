@@ -8,7 +8,6 @@ using System;
 /// </summary>
 public static class NetCoreExtensions
 {
-#if UNITY_5_3_OR_NEWER
     /// <summary>
     /// 字典扩展方法，来自移植.NetCore 2.2
     /// </summary>
@@ -123,9 +122,18 @@ public static class NetCoreExtensions
         list.RemoveAt(0);
         return result;
     }
-#endif
     public static bool Remove<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dict, TKey key)
     {
         return dict.TryRemove(key, out _);
+    }
+    public static TValue First<TValue>(this List<TValue> list)
+    {
+        var result = list[0];
+        return result;
+    }
+    public static TValue Last<TValue>(this List<TValue> list)
+    {
+        var result = list[list.Count - 1];
+        return result;
     }
 }

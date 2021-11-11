@@ -38,7 +38,8 @@ namespace Cosmos
             public static readonly Square Zero = new Square(Fix64.Zero, Fix64.Zero, Fix64.Zero);
             public static readonly Square One = new Square(Fix64.One, Fix64.One, Fix64.One);
         }
-        Square[,] squareRects;
+        Square[,] square2d;
+        Square[] square1d;
         public Fix64 CenterX { get; private set; }
         public Fix64 CenterY { get; private set; }
         public uint CellSection { get; private set; }
@@ -68,7 +69,7 @@ namespace Cosmos
 
             SquareSideLength = cellSideLength * (Fix64)cellSection;
             CellSideLength = cellSideLength;
-            squareRects = new Square[cellSection, cellSection];
+            square2d = new Square[cellSection, cellSection];
             HalfSideLength = SquareSideLength / (Fix64)2;
 
             CenterX = HalfSideLength + offsetX;
@@ -81,7 +82,9 @@ namespace Cosmos
             SquareBottom = CenterY - HalfSideLength;
 
             BufferZoneRange = bufferRange;
-            CreateRectangles(offsetX, offsetY);
+
+            square1d = new Square[CellSection * CellSection];
+            CreateSquare(offsetX, offsetY);
         }
         /// <summary>
         /// 获取与位置重合的块；
@@ -89,13 +92,13 @@ namespace Cosmos
         /// <param name="posX">位置X</param>
         /// <param name="posY">位置Y</param>
         /// <returns>位置所在的块</returns>
-        public Square GetRectangle(Fix64 posX, Fix64 posY)
+        public Square GetSquare(Fix64 posX, Fix64 posY)
         {
             if (!IsOverlapping(posX, posY))
                 return Square.Zero;
             var col = (posX - OffsetX) / CellSideLength;
             var row = (posY - OffsetY) / CellSideLength;
-            return squareRects[(int)col, (int)row];
+            return square2d[(int)col, (int)row];
         }
         /// <summary>
         /// 获取位置所在缓冲区所有重叠的块；
@@ -103,7 +106,7 @@ namespace Cosmos
         /// <param name="posX">位置X</param>
         /// <param name="posY">位置Y</param>
         /// <returns>缓冲所属的块</returns>
-        public Square[] GetRectangles(Fix64 posX, Fix64 posY)
+        public Square[] GetSquares(Fix64 posX, Fix64 posY)
         {
             if (!IsOverlappingBufferZone(posX, posY))
                 return new Square[0];
@@ -121,24 +124,24 @@ namespace Cosmos
 
             if (leftCol >= 0)
             {
-                neighborSquares[idx++] = squareRects[leftCol, row];
+                neighborSquares[idx++] = square2d[leftCol, row];
                 if (upRow < CellSection)
-                    neighborSquares[idx++] = squareRects[leftCol, upRow];
+                    neighborSquares[idx++] = square2d[leftCol, upRow];
                 if (downRow >= 0)
-                    neighborSquares[idx++] = squareRects[leftCol, downRow];
+                    neighborSquares[idx++] = square2d[leftCol, downRow];
             }
             if (rightCol < CellSection)
             {
-                neighborSquares[idx++] = squareRects[rightCol, row];
+                neighborSquares[idx++] = square2d[rightCol, row];
                 if (upRow < CellSection)
-                    neighborSquares[idx++] = squareRects[rightCol, upRow];
+                    neighborSquares[idx++] = square2d[rightCol, upRow];
                 if (downRow >= 0)
-                    neighborSquares[idx++] = squareRects[rightCol, downRow];
+                    neighborSquares[idx++] = square2d[rightCol, downRow];
             }
             if (upRow < CellSection)
-                neighborSquares[idx++] = squareRects[col, upRow];
+                neighborSquares[idx++] = square2d[col, upRow];
             if (downRow >= 0)
-                neighborSquares[idx++] = squareRects[col, downRow];
+                neighborSquares[idx++] = square2d[col, downRow];
 
             var srcSquares = new Square[idx];
             int dstIdx = 0;
@@ -151,17 +154,17 @@ namespace Cosmos
                 }
             }
             var dstSquares = new Square[dstIdx + 1];
-            dstSquares[0] = squareRects[col, row];
+            dstSquares[0] = square2d[col, row];
             Array.Copy(srcSquares, 0, dstSquares, 1, dstIdx);
             return dstSquares;
         }
         /// <summary>
-        /// 获取所有单元格方块；
+        /// 获取所有单元格方块
         /// </summary>
         /// <returns>所有单元格方块</returns>
-        public Square[,] GetAllRectangle()
+        public Square[] GetAllSquares()
         {
-            return squareRects;
+            return square1d;
         }
         /// <summary>
         /// 是否与整个大方块重叠；
@@ -187,7 +190,7 @@ namespace Cosmos
             if (posY < square.Bottom - BufferZoneRange || posY > square.Top + BufferZoneRange) return false;
             return true;
         }
-        void CreateRectangles(Fix64 offsetX, Fix64 offsetY)
+        void CreateSquare(Fix64 offsetX, Fix64 offsetY)
         {
             var centerOffsetX = CellSideLength / (Fix64)2 + offsetX;
             var centerOffsetY = CellSideLength / (Fix64)2 + offsetY;
@@ -195,7 +198,8 @@ namespace Cosmos
             {
                 for (int j = 0; j < CellSection; j++)
                 {
-                    squareRects[i, j] = new Square((Fix64)i * CellSideLength + centerOffsetX, (Fix64)j * CellSideLength + centerOffsetY, CellSideLength);
+                    square2d[i, j] = new Square((Fix64)i * CellSideLength + centerOffsetX, (Fix64)j * CellSideLength + centerOffsetY, CellSideLength);
+                    square1d[i * (CellSection - 1) + j] = square2d[i, j];
                 }
             }
         }
