@@ -198,7 +198,7 @@ namespace Cosmos
                 for (int j = 0; j < CellSection; j++)
                 {
                     square2d[i, j] = new Square(i * CellSideLength + centerOffsetX, j * CellSideLength + centerOffsetY, CellSideLength);
-                    square1d[i * (CellSection - 1) + j] = square2d[i, j];
+                    square1d[i * CellSection + j] = square2d[i, j];
                 }
             }
         }

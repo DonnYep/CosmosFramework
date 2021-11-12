@@ -36,7 +36,7 @@ namespace Cosmos.Test
         void UpdateSquare()
         {
             var pos = new Vector2(supervisor.position.x, supervisor.position.z);
-            bufferZoneSquares = squareGrid.GetRectangles(pos.x, pos.y);
+            bufferZoneSquares = squareGrid.GetSquares(pos.x, pos.y);
         }
         private void OnDrawGizmos()
         {
@@ -47,21 +47,17 @@ namespace Cosmos.Test
         }
         void DrawSquareGrid()
         {
-            var rects = squareGrid.GetAllRectangle();
-            var x = squareGrid.CellSection;
-            var y = squareGrid.CellSection;
-            for (int i = 0; i < x; i++)
+            var squares = squareGrid.GetAllSquares();
+            var slength = squares.Length;
+            for (int i = 0; i < slength; i++)
             {
-                for (int j = 0; j < y; j++)
-                {
-                    Gizmos.color = cellZoneColor;
-                    var pos = new Vector3(rects[i, j].CenterX, 0, rects[i, j].CenterY);
-                    var size = new Vector3(squareGrid.CellSideLength, 6, squareGrid.CellSideLength);
-                    Gizmos.DrawWireCube(pos, size);
-                    Gizmos.color = bufferZoneColor;
-                    var cellSize = new Vector3(squareGrid.CellSideLength+cellBufferZoneBound*2, 8, squareGrid.CellSideLength+ cellBufferZoneBound*2);
-                    Gizmos.DrawWireCube(pos, cellSize);
-                }
+                Gizmos.color = cellZoneColor;
+                var pos = new Vector3(squares[i].CenterX, 0, squares[i].CenterY);
+                var size = new Vector3(squareGrid.CellSideLength, 6, squareGrid.CellSideLength);
+                Gizmos.DrawWireCube(pos, size);
+                Gizmos.color = bufferZoneColor;
+                var cellSize = new Vector3(squareGrid.CellSideLength + cellBufferZoneBound * 2, 8, squareGrid.CellSideLength + cellBufferZoneBound * 2);
+                Gizmos.DrawWireCube(pos, cellSize);
             }
             if (true)
             {
