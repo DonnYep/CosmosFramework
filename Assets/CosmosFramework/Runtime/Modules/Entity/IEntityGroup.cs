@@ -12,14 +12,13 @@ namespace Cosmos
         string EntityGroupName { get; }
         int EntityCount { get; }
         object EntityAsset { get; }
-        IEntity EntityAssetRoot { get; }
+        IEntity EntityRoot { get; }
         IObjectPool ObjectPool { get; }
-        void SetObjectPool(IObjectPool objectPool);
         /// <summary>
         /// 为实体组赋予根节点；
         /// </summary>
         /// <param name="root">根节点</param>
-        void AssignAssetRoot(IEntity root);
+        void AssignEntityRoot(IEntity root);
         bool HasEntity(string entityName);
         bool HasEntity(int entityId);
         IEntity GetEntity(int entityId);

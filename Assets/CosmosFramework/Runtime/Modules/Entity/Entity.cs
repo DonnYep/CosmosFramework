@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Cosmos;
 using System;
 namespace Cosmos.Entity
 {
     /// <summary>
     /// 实体对象
     /// </summary>
-    internal sealed class Entity : IEntity,IReference
+    internal sealed class Entity : IEntity
     {
+        static Pool<Entity> entityPool = new Pool<Entity>(() => { return new Entity(); }, e => { e.Release(); });
         /// <summary>
         /// 实体id；
         /// </summary>
@@ -16,7 +16,7 @@ namespace Cosmos.Entity
         /// <summary>
         /// 实体名称；
         /// </summary>
-        public string EntityName { get; private  set; }
+        public string EntityName { get; private set; }
         /// <summary>
         /// 实体实例对象；
         /// </summary>
@@ -24,7 +24,7 @@ namespace Cosmos.Entity
         /// <summary>
         ///   实体所属的实体组;
         /// </summary>
-        public IEntityGroup EntityGroup { get;private  set; }
+        public IEntityGroup EntityGroup { get; private set; }
         /// <summary>
         /// 父实体对象；
         /// </summary>
@@ -36,7 +36,7 @@ namespace Cosmos.Entity
         /// <summary>
         /// 子实体集合；
         /// </summary>
-         List<IEntity> childEntities;
+        List<IEntity> childEntities;
         public Entity()
         {
             childEntities = new List<IEntity>();
@@ -44,7 +44,7 @@ namespace Cosmos.Entity
         /// <summary>
         /// 引用池回收；
         /// </summary>
-        public void Release() 
+        public void Release()
         {
             ParentEntity = null;
             childEntities.Clear();
@@ -61,45 +61,31 @@ namespace Cosmos.Entity
         /// 挂载到一个父类对象;
         /// </summary>
         /// <param name="parent">父类对象</param>
-        public void OnAttachTo(IEntity parent) 
+        public void SetParent(IEntity parent)
         {
             this.ParentEntity = parent;
         }
         /// <summary>
-        /// 挂载一个实体到此实体上;
-        /// </summary>
-        /// <param name="child">附加的子实体</param>
-        public void OnAttached(IEntity child)
-        {
-            childEntities.Add(child);
-        }
-        /// <summary>
         /// 从父类对象移除;
         /// </summary>
-        public void OnDetachFrom(IEntity parent) 
+        public void ClearParent()
         {
             this.ParentEntity = null;
         }
         /// <summary>
         /// 移除子对象;
         /// </summary>
-        public void OnDetached(IEntity child) 
+        public void RemoveChild(IEntity child)
         {
             childEntities.Remove(child);
         }
         /// <summary>
-        /// 设置实体数据；
+        /// 挂载一个实体到此实体上;
         /// </summary>
-        /// <param name="entityId">实体id</param>
-        /// <param name="entityName">实体名称</param>
-        /// <param name="entityAsset"> 实体实例对象</param>
-        /// <param name="entityGroup">实体所属的实体组</param>
-        public void SetEntity(int entityId, string entityName, object entityAsset, IEntityGroup entityGroup)
+        /// <param name="child">附加的子实体</param>
+        public void AddChild(IEntity child)
         {
-            this.EntityId = entityId;
-            this.EntityName = entityName;
-            this.EntityInstance = entityAsset;
-            this.EntityGroup = entityGroup;
+            childEntities.Add(child);
         }
         /// <summary>
         /// 获取一个子实体
@@ -116,6 +102,30 @@ namespace Cosmos.Entity
         public IEntity[] GetChildEntities()
         {
             return childEntities.ToArray();
+        }
+        /// <summary>
+        /// 设置实体数据；
+        /// </summary>
+        /// <param name="entityId">实体id</param>
+        /// <param name="entityName">实体名称</param>
+        /// <param name="entityAsset"> 实体实例对象</param>
+        /// <param name="entityGroup">实体所属的实体组</param>
+        void SetEntity(int entityId, string entityName, object entityAsset, IEntityGroup entityGroup)
+        {
+            this.EntityId = entityId;
+            this.EntityName = entityName;
+            this.EntityInstance = entityAsset;
+            this.EntityGroup = entityGroup;
+        }
+        public static Entity Create(int entityId, string entityName, object entityInstance, IEntityGroup entityGroup)
+        {
+            var entity = entityPool.Spawn();
+            entity.SetEntity(entityId, entityName, entityInstance, entityGroup);
+            return entity;
+        }
+        public static void Release(Entity entity)
+        {
+            entityPool.Despawn(entity);
         }
     }
 }

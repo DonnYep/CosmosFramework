@@ -8,7 +8,29 @@ namespace Cosmos.Entity
 {
     //================================================
     /*
+     * 使用步骤：
+     * 1. SetHelper 设置IEntityHelper 帮助体
+     * 2.注册实体组RegisterEntityGroup
+     * 3.ShowEntity，并接收返回值
+     * 4.DeactiveEntity，回收实体
+     * 5.注销实体组DeregisterEntityGroup
+     * 可选：
+     * 1.SetEntityGroupRoot设置根节点
+     * 2.DeactiveEntityGroup失活组
+     * 
+     * 
      * 1、实体对象管理模块。
+     * 
+     * 2、实体组表示为，一组使用同一个预制体资源的组别。
+     * 
+     * 3、独立实体表示为，一个拥有独立预制体资源的对象。
+     * 
+     * 4、若使用pool生成，则由对象池生成。
+     * 
+     * 5、若不使用pool，则IEntityHelper生成实体。
+     * 
+     * 6、实体对象被实例化后才会存在与此。若被回收，则清理实体相关缓存。
+     * 
      */
     //================================================
     [Module]
@@ -18,12 +40,16 @@ namespace Cosmos.Entity
         public int EntityGroupCount { get { return entityGroupDict.Count; } }
         IEntityHelper entityHelper;
         /// <summary>
-        /// 所有实体列表
+        /// 实体组；
         /// </summary>
         Dictionary<string, EntityGroup> entityGroupDict;
+        /// <summary>
+        /// 所有生成的实体，不论是归组或独立，都被记录在此；
+        /// </summary>
         Dictionary<int, IEntity> entityIdDict;
         IObjectPoolManager objectPoolManager;
         IResourceManager resourceManager;
+
         #endregion
         #region Methods
         public void SetHelper(IEntityHelper helper)
@@ -44,11 +70,11 @@ namespace Cosmos.Entity
             if (!result)
             {
                 var entityAsset = resourceManager.LoadPrefab(entityAssetInfo);
-                var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
+                var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
                 if (entityAssetInfo.UseObjectPool)
                 {
                     var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
-                    pool.SetObjectPool(objectPool);
+                    pool.AssignObjectPool(objectPool);
                 }
                 entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, pool);
             }
@@ -105,11 +131,11 @@ namespace Cosmos.Entity
             {
                 await resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
                 {
-                    var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
+                    var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
                     if (entityAssetInfo.UseObjectPool)
                     {
                         var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
-                        pool.SetObjectPool(objectPool);
+                        pool.AssignObjectPool(objectPool);
                     }
                     entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, pool);
                 });
@@ -215,50 +241,49 @@ namespace Cosmos.Entity
         {
             return entityIdDict.ContainsKey(entityId);
         }
+
         /// <summary>
-        /// 失活&移除实体组‘；
+        /// 为一个实体组设置根节点；
         /// </summary>
         /// <param name="entityGroupName">实体组名称</param>
-        public void DeactiveEntities(string entityGroupName)
+        /// <param name="root">根节点</param>
+        /// <returns>是否设置成功</returns>
+        public bool SetEntityGroupRoot(string entityGroupName, IEntity root)
         {
             if (string.IsNullOrEmpty(entityGroupName))
-            {
                 throw new ArgumentNullException("Entity group name is invalid.");
-            }
-            if (!HasEntityGroup(entityGroupName))
-            {
-                throw new ArgumentException($"Entity group {entityGroupName}  is not exist.");
-            }
-            entityGroupDict.TryGetValue(entityGroupName, out var group);
-            var childEntities = group.GetAllChildEntities();
-            group.ClearChildEntities();
-            if (group.ObjectPool != null)
-            {
-                var length = childEntities.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    group.ObjectPool.Despawn(childEntities[i].EntityInstance);
-                    ReferencePool.Release(childEntities[i].CastTo<Entity>());
-                }
-            }
-            else
-            {
-                var length = childEntities.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    entityHelper.DespawnEntityInstance(childEntities[i].EntityInstance);
-                    ReferencePool.Release(childEntities[i].CastTo<Entity>());
-                }
-            }
+            if (root == null)
+                throw new ArgumentNullException($"Root entity is invalidl.");
+            if (!entityGroupDict.TryGetValue(entityGroupName, out var entityGroup))
+                return false;
+            entityGroup.AssignEntityRoot(root);
+            return true;
+        }
+        /// <summary>
+        /// 为一个实体组设置根节点；
+        /// </summary>
+        /// <param name="entityGroupName">实体组名称</param>
+        /// <param name="root">根节点</param>
+        /// <returns>是否设置成功</returns>
+        public bool SetEntityGroupRoot(string entityGroupName, object root)
+        {
+            if (string.IsNullOrEmpty(entityGroupName))
+                throw new ArgumentNullException("Entity group name is invalid.");
+            if (root == null)
+                throw new ArgumentNullException($"Root entity is invalidl.");
+            if (!entityGroupDict.TryGetValue(entityGroupName, out var entityGroup))
+                return false;
+            entityGroup.AssignEntityRoot(root);
+            return true;
         }
         /// <summary>
         /// 激活&添加实体对象；
         /// </summary>
         /// <param name="entityId">自定义的实体Id</param>
-        /// <param name="entityName">实体名称</param>
-        /// <param name="entityGroupName">实体组名称</param>
-        /// <param name="entityRoot">实体对象的父节点</param>
-        public void ActiveEntity(int entityId, string entityName, string entityGroupName)
+        /// <param name="entityName">自定义实体名称</param>
+        /// <param name="entityGroupName">注册的实体组名称</param>
+        /// <returns>实体对象</returns>
+        public IEntity ShowEntity(int entityId, string entityName, string entityGroupName)
         {
             if (entityHelper == null)
             {
@@ -284,7 +309,6 @@ namespace Cosmos.Entity
             var entity = entityGroup.GetEntity(entityName);
             if (entity == null)
             {
-                entity = ReferencePool.Accquire<Entity>();
                 object entityInstance = null;
                 if (entityGroup.ObjectPool != null)
                 {
@@ -294,10 +318,61 @@ namespace Cosmos.Entity
                 {
                     entityInstance = entityHelper.SpanwEntityInstance(entityGroup.EntityAsset);
                 }
-                entity.SetEntity(entityId, entityName, entityInstance, entityGroup);
+                entity = Entity.Create(entityId, entityName, entityInstance, entityGroup);
                 entityGroup.AddEntity(entity);
             }
-            entityIdDict.TryAdd(entityId, entity);
+            entityIdDict.AddOrUpdate(entityId, entity);
+            return entity;
+        }
+        /// <summary>
+        ///  激活&添加实体对象；
+        /// </summary>
+        /// <param name="entityName">自定义实体名称</param>
+        /// <param name="entityGroupName">注册的实体组名称</param>
+        /// <returns>实体对象</returns>
+        public IEntity ShowEntity(string entityName, string entityGroupName)
+        {
+            if (entityHelper == null)
+            {
+                throw new ArgumentNullException("You must set entity helper first.");
+            }
+            if (string.IsNullOrEmpty(entityGroupName))
+            {
+                throw new ArgumentNullException("Entity group name is invalid.");
+            }
+            if (!HasEntityGroup(entityGroupName))
+            {
+                throw new ArgumentException($"Entity group {entityGroupName}  is not exist.");
+            }
+            entityGroupDict.TryGetValue(entityGroupName, out var entityGroup);
+            var entityId = GenerateEntityId();
+            var entity = entityGroup.GetEntity(entityId);
+            if (entity == null)
+            {
+                object entityInstance = null;
+                if (entityGroup.ObjectPool != null)
+                {
+                    entityInstance = entityGroup.ObjectPool.Spawn();
+                }
+                else
+                {
+                    entityInstance = entityHelper.SpanwEntityInstance(entityGroup.EntityAsset);
+                }
+                entity = Entity.Create(entityId, entityName, entityInstance, entityGroup);
+                entityGroup.AddEntity(entity);
+            }
+            entityIdDict.AddOrUpdate(entityId, entity);
+            return entity;
+        }
+        /// <summary>
+        /// 激活&添加实体对象；
+        ///  显示指定实体组的任意一个；
+        /// </summary>
+        /// <param name="entityGroupName">注册的实体组名称</param>
+        /// <returns>实体对象</returns>
+        public IEntity ShowEntity(string entityGroupName)
+        {
+            return ShowEntity(null, entityGroupName);
         }
         /// <summary>
         /// 失活&移除实体对象
@@ -314,15 +389,17 @@ namespace Cosmos.Entity
                 throw new ArgumentException($"Entity id '{entityId}' is not exist.");
             }
             entityIdDict.TryRemove(entityId, out var entity);
-            if (entity.EntityGroup.ObjectPool != null)
+            var entityGroup = entity.EntityGroup;
+            if (entityGroup != null)
             {
-                entity.EntityGroup.ObjectPool.Despawn(entity.EntityInstance);
+                entityGroup.ObjectPool.Despawn(entity.EntityInstance);
+                entityGroup.RemoveEntity(entity);
             }
             else
             {
                 entityHelper.DespawnEntityInstance(entity.EntityInstance);
             }
-            ReferencePool.Release(entity.CastTo<Entity>());
+            Entity.Release(entity.CastTo<Entity>());
         }
         /// <summary>
         /// 失活&移除实体对象
@@ -335,6 +412,43 @@ namespace Cosmos.Entity
                 throw new ArgumentNullException("Entity is invalid.");
             }
             DeactiveEntity(entity.EntityId);
+        }
+        /// <summary>
+        /// 失活&移除实体组；
+        /// 并不注销实体组；
+        /// </summary>
+        /// <param name="entityGroupName">实体组名称</param>
+        public void DeactiveEntityGroup(string entityGroupName)
+        {
+            if (string.IsNullOrEmpty(entityGroupName))
+            {
+                throw new ArgumentNullException("Entity group name is invalid.");
+            }
+            if (!HasEntityGroup(entityGroupName))
+            {
+                throw new ArgumentException($"Entity group {entityGroupName}  is not exist.");
+            }
+            entityGroupDict.TryGetValue(entityGroupName, out var group);
+            var childEntities = group.GetAllChildEntities();
+            group.ClearChildEntities();
+            if (group.ObjectPool != null)
+            {
+                var length = childEntities.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    group.ObjectPool.Despawn(childEntities[i].EntityInstance);
+                    Entity.Release(childEntities[i].CastTo<Entity>());
+                }
+            }
+            else
+            {
+                var length = childEntities.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    entityHelper.DespawnEntityInstance(childEntities[i].EntityInstance);
+                    Entity.Release(childEntities[i].CastTo<Entity>());
+                }
+            }
         }
 
         /// <summary>
@@ -361,8 +475,8 @@ namespace Cosmos.Entity
             var latestParentEntity = childEntity.ParentEntity;
             entityHelper.Attach(childEntity, parentEntity);
             entityHelper.Deatch(childEntity, latestParentEntity);
-            parentEntity.CastTo<Entity>().OnAttached(childEntity);
-            childEntity.CastTo<Entity>().OnAttachTo(parentEntity);
+            parentEntity.CastTo<Entity>().AddChild(childEntity);
+            childEntity.CastTo<Entity>().SetParent(parentEntity);
         }
         /// <summary>
         /// 挂载子实体到父实体；
@@ -409,8 +523,8 @@ namespace Cosmos.Entity
             entityIdDict.TryGetValue(childEntityId, out var childEntity);
             var parentEntity = childEntity.ParentEntity;
             entityHelper.Deatch(childEntity, parentEntity);
-            childEntity.CastTo<Entity>().OnDetachFrom(parentEntity);
-            parentEntity.CastTo<Entity>().OnDetached(childEntity);
+            childEntity.CastTo<Entity>().ClearParent();
+            parentEntity.CastTo<Entity>().RemoveChild(childEntity);
         }
         /// <summary>
         /// 解除子实体的挂载；
@@ -494,10 +608,10 @@ namespace Cosmos.Entity
             var attLength = entityAttributes.Count;
             for (int i = 0; i < attLength; i++)
             {
-                var ea = entityAttributes[i];
-                if (!HasEntityGroup(ea.EntityGroupName))
+                var attribute = entityAttributes[i];
+                if (!HasEntityGroup(attribute.EntityGroupName))
                 {
-                    var entityAssetInfo = new EntityAssetInfo(ea.EntityGroupName, ea.AssetBundleName, ea.AssetPath);
+                    var entityAssetInfo = new EntityAssetInfo(attribute.EntityGroupName, attribute.AssetBundleName, attribute.AssetPath);
                     RegisterEntityGroup(entityAssetInfo);
                 }
             }
@@ -523,17 +637,27 @@ namespace Cosmos.Entity
                     var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath);
                     resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
                     {
-                        var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset);
+                        var entityGroup = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
                         if (entityAssetInfo.UseObjectPool)
                         {
                             var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
-                            pool.SetObjectPool(objectPool);
+                            entityGroup.AssignObjectPool(objectPool);
                         }
-                        entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, pool);
+                        entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, entityGroup);
                     });
                 }
             }
             yield return null;
+        }
+
+        int GenerateEntityId()
+        {
+            var id = Utility.Algorithm.RandomRange(0, int.MaxValue);
+            while (entityIdDict.ContainsKey(id))
+            {
+                id = Utility.Algorithm.RandomRange(0, int.MaxValue);
+            }
+            return id;
         }
         #endregion
     }

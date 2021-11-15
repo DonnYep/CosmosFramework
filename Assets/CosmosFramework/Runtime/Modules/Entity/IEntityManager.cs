@@ -4,6 +4,32 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 namespace Cosmos
 {
+    //================================================
+    /*
+     * 使用步骤：
+     * 1. SetHelper 设置IEntityHelper 帮助体
+     * 2.注册实体组RegisterEntityGroup
+     * 3.ShowEntity，并接收返回值
+     * 4.DeactiveEntity，回收实体
+     * 5.注销实体组DeregisterEntityGroup
+     * 可选：
+     * 1.SetEntityGroupRoot设置根节点
+     * 2.DeactiveEntityGroup失活组
+     * 
+     * 1、实体对象管理模块。
+     * 
+     * 2、实体组表示为，一组使用同一个预制体资源的组别。
+     * 
+     * 3、独立实体表示为，一个拥有独立预制体资源的对象。
+     * 
+     * 4、若使用pool生成，则由对象池生成。
+     * 
+     * 5、若不使用pool，则IEntityHelper生成实体。
+     * 
+     * 6、实体对象被实例化后才会存在与此。若被回收，则清理实体相关缓存。
+     * 
+     */
+    //================================================
     public interface IEntityManager:IModuleManager
     {
         int EntityGroupCount { get; }
@@ -84,32 +110,59 @@ namespace Cosmos
         /// <returns>是否存在</returns>
         bool HasEntity(int entityId);
 
+
         /// <summary>
-        /// 失活&移除实体组‘；
+        /// 为一个实体组设置根节点；
         /// </summary>
         /// <param name="entityGroupName">实体组名称</param>
-        void DeactiveEntities(string entityGroupName);
+        /// <param name="root">根节点</param>
+        /// <returns>是否设置成功</returns>
+        bool SetEntityGroupRoot(string entityGroupName, IEntity root);
+        /// <summary>
+        /// 为一个实体组设置根节点；
+        /// </summary>
+        /// <param name="entityGroupName">实体组名称</param>
+        /// <param name="root">根节点</param>
+        /// <returns>是否设置成功</returns>
+        bool SetEntityGroupRoot(string entityGroupName, object root);
 
         /// <summary>
         /// 激活&添加实体对象；
         /// </summary>
         /// <param name="entityId">自定义的实体Id</param>
-        /// <param name="entityName">实体名称</param>
-        /// <param name="entityGroupName">实体组名称</param>
-        void ActiveEntity(int entityId, string entityName, string entityGroupName);
-
+        /// <param name="entityName">自定义实体名称</param>
+        /// <param name="entityGroupName">注册的实体组名称</param>
+        /// <returns>实体对象</returns>
+        IEntity ShowEntity(int entityId, string entityName, string entityGroupName);
+        /// <summary>
+        ///  激活&添加实体对象；
+        /// </summary>
+        /// <param name="entityName">自定义实体名称</param>
+        /// <param name="entityGroupName">注册的实体组名称</param>
+        /// <returns>实体对象</returns>
+        IEntity ShowEntity(string entityName, string entityGroupName);
+        /// <summary>
+        /// 激活&添加实体对象；
+        ///  显示指定实体组的任意一个；
+        /// </summary>
+        /// <param name="entityGroupName">注册的实体组名称</param>
+        /// <returns>实体对象</returns>
+        IEntity ShowEntity(string entityGroupName);
         /// <summary>
         /// 失活&移除实体对象
         /// </summary>
         /// <param name="entityId">实体Id</param>
         void DeactiveEntity(int entityId);
-
         /// <summary>
         /// 失活&移除实体对象
         /// </summary>
         /// <param name="entity">实体对象接口索引</param>
         void DeactiveEntity(IEntity entity);
-
+        /// <summary>
+        /// 失活&移除实体组；
+        /// </summary>
+        /// <param name="entityGroupName">实体组名称</param>
+        void DeactiveEntityGroup(string entityGroupName);
 
         /// <summary>
         /// 挂载子实体到父实体；
@@ -117,14 +170,12 @@ namespace Cosmos
         /// <param name="childEntityId">子实体Id</param>
         /// <param name="parentEntityId">父实体Id</param>
         void AttachEntity(int childEntityId, int parentEntityId);
-
         /// <summary>
         /// 挂载子实体到父实体；
         /// </summary>
         /// <param name="childEntityId">子实体Id</param>
         /// <param name="parentEntity">父实体</param>
         void AttachEntity(int childEntityId, IEntity parentEntity);
-
         /// <summary>
         /// 挂载子实体到父实体；
         /// </summary>

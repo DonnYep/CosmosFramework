@@ -17,9 +17,11 @@ namespace Cosmos
         /// </summary>
         /// <param name="entityAsset">实体资源</param>
         /// <returns>实体对象</returns>
-        object  SpanwEntityInstance(object entityAsset); 
-        void DespawnEntityInstance(object  entityInstance);
-        void Attach(IEntity childEntity,IEntity parent);
-        void Deatch(IEntity childEntity,IEntity parent);
+        object SpanwEntityInstance(object entityAsset);
+        void DespawnEntityInstance(object entityInstance);
+        void Attach(IEntity childEntity, IEntity parent);
+        void Attach(IEntity childEntity, object entityInstance);
+        void Deatch(IEntity childEntity, IEntity parent);
+        void Deatch(IEntity childEntity, object entityInstance);
     }
 }

@@ -8,7 +8,7 @@ namespace Cosmos.Entity
     /// <summary>
     /// 与unity耦合的实体对象，当前版本中使用的是此实体对象
     /// </summary>
-    public interface IEntity: IRefreshable
+    public interface IEntity
     {
         /// <summary>
         /// 实体id；
@@ -35,14 +35,6 @@ namespace Cosmos.Entity
         /// </summary>
         int ChildEntityCount { get; }
         /// <summary>
-        /// 设置实体数据；
-        /// </summary>
-        /// <param name="entityId">实体id</param>
-        /// <param name="entityName">实体名称</param>
-        /// <param name="entityAsset"> 实体实例对象</param>
-        /// <param name="entityGroup">实体所属的实体组</param>
-        void SetEntity(int entityId,string entityName,object entityAsset,IEntityGroup entityGroup);
-        /// <summary>
         /// 获取一个子实体
         /// </summary>
         /// <returns>获取的子实体</returns>
@@ -52,5 +44,6 @@ namespace Cosmos.Entity
         /// </summary>
         /// <returns>所有子实体的数组</returns>
         IEntity[] GetChildEntities();
+        void OnRefresh();
     }
 }
