@@ -23,7 +23,7 @@ namespace Cosmos.Entity
         /// </summary>
         object EntityInstance { get; }
         /// <summary>
-        /// 实体所属的实体组。
+        /// 实体所属的实体组
         /// </summary>
         IEntityGroup EntityGroup{get;}
         /// <summary>
@@ -31,16 +31,16 @@ namespace Cosmos.Entity
         /// </summary>
         IEntity ParentEntity { get; }
         /// <summary>
-        /// 子实体总数
+        /// 子实体总数；
         /// </summary>
         int ChildEntityCount { get; }
         /// <summary>
-        /// 获取一个子实体
+        /// 获取一个子实体；
         /// </summary>
         /// <returns>获取的子实体</returns>
         IEntity GetChildEntity();
         /// <summary>
-        /// 获取所有子实体
+        /// 获取所有子实体；
         /// </summary>
         /// <returns>所有子实体的数组</returns>
         IEntity[] GetChildEntities();

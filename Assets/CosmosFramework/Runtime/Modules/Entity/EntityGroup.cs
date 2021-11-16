@@ -138,7 +138,7 @@ namespace Cosmos.Entity
             RefreshHandler += entity.OnRefresh;
             var root = entityRootIsInstance == false ? EntityRoot : EntityRootInstance;
             if (root != null)
-                entityHelper.Deatch(entity, root);
+                entityHelper.AttachToParent(entity,root);
         }
         public void RemoveEntity(IEntity entity)
         {
@@ -146,12 +146,23 @@ namespace Cosmos.Entity
             RefreshHandler -= entity.OnRefresh;
             var root = entityRootIsInstance == false ? EntityRoot : EntityRootInstance;
             if (root != null)
-                entityHelper.Deatch(entity, root);
+                entityHelper.DeatchFromParent(entity);
         }
         public void ClearChildEntities()
         {
             entityLinkedList.Clear();
             refreshHandler = null;
+        }
+        public object Spawn()
+        {
+            var go= ObjectPool.Spawn();
+
+            
+            return go;
+        }
+        public void Despawn(object go)
+        {
+            ObjectPool.Despawn(go);
         }
     }
 }

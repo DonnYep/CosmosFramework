@@ -9,19 +9,18 @@ namespace Cosmos
     public interface IEntityHelper
     {
         /// <summary>
-        /// 实体对象的根节点；
-        /// </summary>
-        object EntityRoot { get; }
-        /// <summary>
         /// 实例化实体；
         /// </summary>
         /// <param name="entityAsset">实体资源</param>
         /// <returns>实体对象</returns>
-        object SpanwEntityInstance(object entityAsset);
-        void DespawnEntityInstance(object entityInstance);
-        void Attach(IEntity childEntity, IEntity parent);
-        void Attach(IEntity childEntity, object entityInstance);
-        void Deatch(IEntity childEntity, IEntity parent);
-        void Deatch(IEntity childEntity, object entityInstance);
+        object InstantiateEntity(object entityAsset);
+        /// <summary>
+        /// 释放实体；
+        /// </summary>
+        /// <param name="entityInstance">实体实例</param>
+        void ReleaseEntity(object entityInstance);
+        void AttachToParent(IEntity childEntity, IEntity parentEntity);
+        void AttachToParent(IEntity childEntity, object entityInstance);
+        void DeatchFromParent(IEntity entity);
     }
 }

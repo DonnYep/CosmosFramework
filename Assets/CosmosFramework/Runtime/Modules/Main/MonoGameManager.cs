@@ -57,7 +57,7 @@ namespace Cosmos
         }
         public int ModuleCount { get { return GameManager.ModuleCount; } }
 
-        public GameObject GetModuleMount<T>() where T : class, IModuleManager
+        public GameObject GetModuleInstance<T>() where T : class, IModuleManager
         {
             Type interfaceType = typeof(T);
             var hasType = GameManager.HasModuleType<T>();
@@ -67,7 +67,7 @@ namespace Cosmos
             var hasMount = moduleMountDict.TryGetValue(interfaceType, out moduleMount);
             if (!hasMount)
             {
-                moduleMount = new GameObject(interfaceType.Name + "-->>Container");
+                moduleMount = new GameObject(interfaceType.Name + "-->>Instance");
                 moduleMount.transform.SetParent(transform);
                 moduleMountDict[interfaceType] = moduleMount;
             }
@@ -75,7 +75,7 @@ namespace Cosmos
             {
                 if (moduleMount == null)
                 {
-                    moduleMount = new GameObject(interfaceType.Name + "-->>Container");
+                    moduleMount = new GameObject(interfaceType.Name + "-->>Instance");
                     moduleMount.transform.SetParent(transform);
                     moduleMountDict[interfaceType] = moduleMount;
                 }

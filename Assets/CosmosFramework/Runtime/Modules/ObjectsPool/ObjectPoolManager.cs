@@ -9,10 +9,10 @@ namespace Cosmos.ObjectPool
      */
     //================================================
     [Module]
-    internal sealed class ObjectPoolManager : Module , IObjectPoolManager
+    internal sealed class ObjectPoolManager : Module, IObjectPoolManager
     {
         #region Properties
-        Dictionary<TypeStringPair, IObjectPool> poolDict;
+        Dictionary<ObjectPoolKey, IObjectPool> poolDict;
         Action<float> elapseRefreshHandler;
         event Action<float> ElapseRefreshHandler
         {
@@ -34,16 +34,14 @@ namespace Cosmos.ObjectPool
         public Coroutine RegisterObjectPoolAsync(ObjectAssetInfo objectAssetInfo, Action<IObjectPool> onRegisterCallback = null)
         {
             if (objectAssetInfo == null)
-            {
                 throw new ArgumentNullException("objectAssetInfo is  invalid.");
-            }
             return resourceManager.LoadPrefabAsync(objectAssetInfo,
                 (spawnItem) =>
                 {
                     var objectKey = objectAssetInfo.ObjectKey;
                     if (!HasObjectPool(objectKey))
                     {
-                        var pool = new ObjectPool(spawnItem, objectKey);
+                        var pool = ObjectPool.Create(spawnItem, objectKey);
                         poolDict.TryAdd(objectKey, pool);
                         ElapseRefreshHandler += pool.OnElapseRefresh;
                         onRegisterCallback?.Invoke(pool);
@@ -60,14 +58,12 @@ namespace Cosmos.ObjectPool
         public IObjectPool RegisterObjectPool(ObjectAssetInfo objectAssetInfo)
         {
             if (objectAssetInfo == null)
-            {
                 throw new ArgumentNullException("objectAssetInfo is  invalid.");
-            }
             var objectKey = objectAssetInfo.ObjectKey;
             if (!HasObjectPool(objectKey))
             {
                 var spawnItem = resourceManager.LoadPrefab(objectAssetInfo);
-                var pool = new ObjectPool(spawnItem, objectKey);
+                var pool = ObjectPool.Create(spawnItem, objectKey);
                 poolDict.TryAdd(objectKey, pool);
                 ElapseRefreshHandler += pool.OnElapseRefresh;
                 return pool;
@@ -81,15 +77,13 @@ namespace Cosmos.ObjectPool
         /// <param name="objectKey">对象池key</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        public IObjectPool RegisterObjectPool(TypeStringPair objectKey, GameObject spawnItem)
+        public IObjectPool RegisterObjectPool(ObjectPoolKey objectKey, GameObject spawnItem)
         {
             if (objectKey == null)
-            {
                 throw new ArgumentNullException("objectKey is  invalid.");
-            }
             if (!HasObjectPool(objectKey))
             {
-                var pool = new ObjectPool(spawnItem, objectKey);
+                var pool = ObjectPool.Create(spawnItem, objectKey);
                 poolDict.TryAdd(objectKey, pool);
                 ElapseRefreshHandler += pool.OnElapseRefresh;
                 return pool;
@@ -107,14 +101,10 @@ namespace Cosmos.ObjectPool
         public IObjectPool RegisterObjectPool(Type objectType, string name, GameObject spawnItem)
         {
             if (objectType == null)
-            {
                 throw new ArgumentNullException("objectType is  invalid.");
-            }
             if (string.IsNullOrEmpty(name))
-            {
                 throw new ArgumentNullException("name is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType, name);
+            var objectKey = new ObjectPoolKey(objectType, name);
             return RegisterObjectPool(objectKey, spawnItem);
         }
         /// <summary>
@@ -126,10 +116,8 @@ namespace Cosmos.ObjectPool
         public IObjectPool RegisterObjectPool(Type objectType, GameObject spawnItem)
         {
             if (objectType == null)
-            {
                 throw new ArgumentNullException("objectType is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType);
+            var objectKey = new ObjectPoolKey(objectType);
             return RegisterObjectPool(objectKey, spawnItem);
         }
         /// <summary>
@@ -168,16 +156,14 @@ namespace Cosmos.ObjectPool
         /// 注销对象池;
         /// </summary>
         /// <param name="objectKey">对象池key</param>
-        public void DeregisterObjectPool(TypeStringPair objectKey)
+        public void DeregisterObjectPool(ObjectPoolKey objectKey)
         {
             if (objectKey == null)
-            {
                 throw new ArgumentNullException("objectKey is  invalid.");
-            }
             if (poolDict.Remove(objectKey, out var pool))
             {
                 ElapseRefreshHandler -= pool.OnElapseRefresh;
-                pool.ClearPool();
+                ObjectPool.Release(pool.CastTo<ObjectPool>());
             }
         }
         /// <summary>
@@ -188,14 +174,10 @@ namespace Cosmos.ObjectPool
         public void DeregisterObjectPool(Type objectType, string name)
         {
             if (objectType == null)
-            {
                 throw new ArgumentNullException("objectType is  invalid.");
-            }
             if (string.IsNullOrEmpty(name))
-            {
                 throw new ArgumentNullException("name is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType, name);
+            var objectKey = new ObjectPoolKey(objectType, name);
             DeregisterObjectPool(objectKey);
         }
         /// <summary>
@@ -205,10 +187,8 @@ namespace Cosmos.ObjectPool
         public void DeregisterObjectPool(Type objectType)
         {
             if (objectType == null)
-            {
                 throw new ArgumentNullException("objectType is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType);
+            var objectKey = new ObjectPoolKey(objectType);
             DeregisterObjectPool(objectKey);
         }
         /// <summary>
@@ -242,12 +222,10 @@ namespace Cosmos.ObjectPool
         /// </summary>
         /// <param name="objectKey">对象池key</param>
         /// <returns>对象池对象的接口</returns>
-        public IObjectPool GetObjectPool(TypeStringPair objectKey)
+        public IObjectPool GetObjectPool(ObjectPoolKey objectKey)
         {
             if (objectKey == null)
-            {
                 throw new ArgumentNullException("objectKey is  invalid.");
-            }
             var hasPool = poolDict.TryGetValue(objectKey, out var pool);
             if (hasPool)
             {
@@ -267,14 +245,10 @@ namespace Cosmos.ObjectPool
         public IObjectPool GetObjectPool(Type objectType, string name)
         {
             if (objectType == null)
-            {
                 throw new ArgumentNullException("objectType is  invalid.");
-            }
             if (string.IsNullOrEmpty(name))
-            {
                 throw new ArgumentNullException("name is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType, name);
+            var objectKey = new ObjectPoolKey(objectType, name);
             return GetObjectPool(objectKey);
         }
         /// <summary>
@@ -285,10 +259,8 @@ namespace Cosmos.ObjectPool
         public IObjectPool GetObjectPool(Type objectType)
         {
             if (objectType == null)
-            {
                 throw new ArgumentNullException("objectType is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType);
+            var objectKey = new ObjectPoolKey(objectType);
             return GetObjectPool(objectKey);
         }
         /// <summary>
@@ -325,12 +297,10 @@ namespace Cosmos.ObjectPool
         /// </summary>
         /// <param name="objectKey">对象池key</param>
         /// <returns>是否存在</returns>
-        public bool HasObjectPool(TypeStringPair objectKey)
+        public bool HasObjectPool(ObjectPoolKey objectKey)
         {
             if (objectKey == null)
-            {
                 throw new ArgumentNullException("objectKey is  invalid.");
-            }
             return poolDict.ContainsKey(objectKey);
         }
         /// <summary>
@@ -342,14 +312,10 @@ namespace Cosmos.ObjectPool
         public bool HasObjectPool(Type objectType, string name)
         {
             if (objectType == null)
-            {
                 throw new ArgumentNullException("type is is invalid");
-            }
             if (string.IsNullOrEmpty(name))
-            {
                 throw new ArgumentNullException("name is  invalid.");
-            }
-            var objectKey = new TypeStringPair(objectType, name);
+            var objectKey = new ObjectPoolKey(objectType, name);
             return poolDict.ContainsKey(objectKey);
         }
         /// <summary>
@@ -360,11 +326,8 @@ namespace Cosmos.ObjectPool
         public bool HasObjectPool(Type objectType)
         {
             if (objectType == null)
-            {
                 throw new ArgumentNullException("type is is invalid");
-            }
-
-            var objectKey = new TypeStringPair(objectType);
+            var objectKey = new ObjectPoolKey(objectType);
             return poolDict.ContainsKey(objectKey);
         }
         /// <summary>
@@ -409,7 +372,7 @@ namespace Cosmos.ObjectPool
         }
         protected override void OnPreparatory()
         {
-            poolDict = new Dictionary<TypeStringPair, IObjectPool>();
+            poolDict = new Dictionary<ObjectPoolKey, IObjectPool>();
             resourceManager = GameManager.GetModule<IResourceManager>();
         }
         [ElapseRefresh]

@@ -7,6 +7,9 @@ namespace Cosmos.ObjectPool
 {
     internal sealed class ObjectPool: IObjectPool
     {
+        static readonly Pool<ObjectPool> poolInctPool 
+            = new Pool<ObjectPool>(() => { return new ObjectPool(); }, p => { p.Release(); });
+
         public int ExpireTime
         {
             get { return expireTime; }
@@ -49,9 +52,9 @@ namespace Cosmos.ObjectPool
                 capacity = value;
             }
         }
-        public Type ObjectType { get { return objectKey.Type; } }
-        public string Name { get { return objectKey.String; } }
-        TypeStringPair objectKey;
+        public Type ObjectType { get { return objectKey.PoolType; } }
+        public string Name { get { return objectKey.PoolName; } }
+        ObjectPoolKey objectKey;
         /// <summary>
         /// 当前池对象中的数量
         /// </summary>
@@ -69,6 +72,7 @@ namespace Cosmos.ObjectPool
         int expireTime;
         int capacity;
         int releaseInterval = 5;
+        private ObjectPool() { }
         public void OnElapseRefresh(float deltatime)
         {
             if (expireTime <= 0)
@@ -95,7 +99,18 @@ namespace Cosmos.ObjectPool
         {
             pool.Clear();
         }
-        internal ObjectPool(GameObject spawnItem, TypeStringPair objectKey)
+        void Release()
+        {
+            releaseInterval = 5;
+            pool.Clear();
+            spawnItem = null;
+            onSpawn = null;
+            onDespawn = null;
+            capacity = 0;
+            expireTime = 0;
+            objectKey = ObjectPoolKey.None;
+        }
+        void Init(GameObject spawnItem, ObjectPoolKey objectKey)
         {
             this.spawnItem = spawnItem;
             pool = new Pool<GameObject>(capacity,
@@ -104,6 +119,16 @@ namespace Cosmos.ObjectPool
             (go) => { go.gameObject.SetActive(false); },
             (go) => { GameObject.Destroy(go); });
             this.objectKey = objectKey;
+        }
+        internal static ObjectPool Create(GameObject spawnItem, ObjectPoolKey objectKey)
+        {
+            var p= poolInctPool.Spawn();
+            p.Init(spawnItem, objectKey);
+            return p;
+        }
+        internal static void Release(ObjectPool objectPool)
+        {
+            poolInctPool.Despawn(objectPool);
         }
     }
 }

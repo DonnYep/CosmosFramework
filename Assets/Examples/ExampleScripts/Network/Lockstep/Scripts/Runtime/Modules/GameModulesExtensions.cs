@@ -11,7 +11,7 @@ namespace Cosmos.Lockstep
     {
         public static GameObject Instance(this IMultiplayManager multiplayManager)
         {
-            return MonoGameManager.Instance.GetModuleMount<IMultiplayManager>();
+            return MonoGameManager.Instance.GetModuleInstance<IMultiplayManager>();
         }
     }
 }

@@ -54,6 +54,8 @@ namespace Cosmos.Entity
         #region Methods
         public void SetHelper(IEntityHelper helper)
         {
+            if (helper == null)
+                throw new ArgumentNullException("Entity helper is valid !");
             this.entityHelper = helper;
         }
         /// <summary>
@@ -101,7 +103,7 @@ namespace Cosmos.Entity
                 if (!HasEntityGroup(attributes[i].EntityGroupName))
                 {
                     var att = attributes[i];
-                    var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath) { UseObjectPool = att.UseObjectPool };
+                    var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath,att.UseObjectPool) ;
                     RegisterEntityGroup(entityAssetInfo);
                 }
             }
@@ -310,15 +312,16 @@ namespace Cosmos.Entity
             if (entity == null)
             {
                 object entityInstance = null;
-                if (entityGroup.ObjectPool != null)
+                if (entityGroup.ObjectPool!=null)
                 {
                     entityInstance = entityGroup.ObjectPool.Spawn();
                 }
                 else
                 {
-                    entityInstance = entityHelper.SpanwEntityInstance(entityGroup.EntityAsset);
+                    entityInstance = entityHelper.InstantiateEntity(entityGroup.EntityAsset);
                 }
                 entity = Entity.Create(entityId, entityName, entityInstance, entityGroup);
+
                 entityGroup.AddEntity(entity);
             }
             entityIdDict.AddOrUpdate(entityId, entity);
@@ -356,7 +359,7 @@ namespace Cosmos.Entity
                 }
                 else
                 {
-                    entityInstance = entityHelper.SpanwEntityInstance(entityGroup.EntityAsset);
+                    entityInstance = entityHelper.InstantiateEntity(entityGroup.EntityAsset);
                 }
                 entity = Entity.Create(entityId, entityName, entityInstance, entityGroup);
                 entityGroup.AddEntity(entity);
@@ -381,25 +384,11 @@ namespace Cosmos.Entity
         public void DeactiveEntity(int entityId)
         {
             if (entityHelper == null)
-            {
                 throw new ArgumentNullException("You must set entity helper first.");
-            }
             if (!HasEntity(entityId))
-            {
                 throw new ArgumentException($"Entity id '{entityId}' is not exist.");
-            }
-            entityIdDict.TryRemove(entityId, out var entity);
-            var entityGroup = entity.EntityGroup;
-            if (entityGroup != null)
-            {
-                entityGroup.ObjectPool.Despawn(entity.EntityInstance);
-                entityGroup.RemoveEntity(entity);
-            }
-            else
-            {
-                entityHelper.DespawnEntityInstance(entity.EntityInstance);
-            }
-            Entity.Release(entity.CastTo<Entity>());
+            entityIdDict.Remove(entityId, out var entity);
+            DeactiveEntityObject(entity);
         }
         /// <summary>
         /// 失活&移除实体对象
@@ -408,9 +397,7 @@ namespace Cosmos.Entity
         public void DeactiveEntity(IEntity entity)
         {
             if (entity == null)
-            {
                 throw new ArgumentNullException("Entity is invalid.");
-            }
             DeactiveEntity(entity.EntityId);
         }
         /// <summary>
@@ -421,33 +408,15 @@ namespace Cosmos.Entity
         public void DeactiveEntityGroup(string entityGroupName)
         {
             if (string.IsNullOrEmpty(entityGroupName))
-            {
                 throw new ArgumentNullException("Entity group name is invalid.");
-            }
             if (!HasEntityGroup(entityGroupName))
-            {
                 throw new ArgumentException($"Entity group {entityGroupName}  is not exist.");
-            }
             entityGroupDict.TryGetValue(entityGroupName, out var group);
             var childEntities = group.GetAllChildEntities();
-            group.ClearChildEntities();
-            if (group.ObjectPool != null)
+            var length = childEntities.Length;
+            for (int i = 0; i < length; i++)
             {
-                var length = childEntities.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    group.ObjectPool.Despawn(childEntities[i].EntityInstance);
-                    Entity.Release(childEntities[i].CastTo<Entity>());
-                }
-            }
-            else
-            {
-                var length = childEntities.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    entityHelper.DespawnEntityInstance(childEntities[i].EntityInstance);
-                    Entity.Release(childEntities[i].CastTo<Entity>());
-                }
+                DeactiveEntityObject(childEntities[i]);
             }
         }
 
@@ -472,9 +441,8 @@ namespace Cosmos.Entity
             }
             entityIdDict.TryGetValue(childEntityId, out var childEntity);
             entityIdDict.TryGetValue(parentEntityId, out var parentEntity);
-            var latestParentEntity = childEntity.ParentEntity;
-            entityHelper.Attach(childEntity, parentEntity);
-            entityHelper.Deatch(childEntity, latestParentEntity);
+            entityHelper.DeatchFromParent(childEntity);
+            entityHelper.AttachToParent(childEntity, parentEntity);
             parentEntity.CastTo<Entity>().AddChild(childEntity);
             childEntity.CastTo<Entity>().SetParent(parentEntity);
         }
@@ -522,7 +490,7 @@ namespace Cosmos.Entity
             }
             entityIdDict.TryGetValue(childEntityId, out var childEntity);
             var parentEntity = childEntity.ParentEntity;
-            entityHelper.Deatch(childEntity, parentEntity);
+            entityHelper.DeatchFromParent(childEntity);
             childEntity.CastTo<Entity>().ClearParent();
             parentEntity.CastTo<Entity>().RemoveChild(childEntity);
         }
@@ -658,6 +626,25 @@ namespace Cosmos.Entity
                 id = Utility.Algorithm.RandomRange(0, int.MaxValue);
             }
             return id;
+        }
+        void DeactiveEntityObject(IEntity entity)
+        {
+            while (entity.ChildEntityCount > 0)
+            {
+                var childEntity = entity.GetChildEntity();
+                DeactiveEntity(childEntity);
+            }
+            var entityGroup = entity.EntityGroup;
+            if (entityGroup != null)
+            {
+                entityGroup.ObjectPool.Despawn(entity.EntityInstance);
+                entityGroup.RemoveEntity(entity);
+            }
+            else
+            {
+                entityHelper.ReleaseEntity(entity.EntityInstance);
+            }
+            Entity.Release(entity.CastTo<Entity>());
         }
         #endregion
     }

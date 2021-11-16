@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.ObjectPool;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,7 +29,7 @@ namespace Cosmos
         /// <param name="objectKey">对象池key</param>
         /// <param name="spawnItem">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
-        IObjectPool RegisterObjectPool(TypeStringPair objectKey, GameObject spawnItem);
+        IObjectPool RegisterObjectPool(ObjectPoolKey objectKey, GameObject spawnItem);
         /// <summary>
         /// 注册对象池（同步）;
         /// </summary>
@@ -71,7 +72,7 @@ namespace Cosmos
         /// 注销对象池;
         /// </summary>
         /// <param name="objectKey">对象池key</param>
-        void DeregisterObjectPool(TypeStringPair objectKey);
+        void DeregisterObjectPool(ObjectPoolKey objectKey);
 
         /// <summary>
         /// 注销对象池;
@@ -107,7 +108,7 @@ namespace Cosmos
         /// </summary>
         /// <param name="objectKey">对象池key</param>
         /// <returns>对象池对象的接口</returns>
-        IObjectPool GetObjectPool(TypeStringPair objectKey);
+        IObjectPool GetObjectPool(ObjectPoolKey objectKey);
         /// <summary>
         /// 获得对象池;
         /// </summary>
@@ -146,7 +147,7 @@ namespace Cosmos
         /// </summary>
         /// <param name="objectKey">对象池key</param>
         /// <returns>是否存在</returns>
-        bool HasObjectPool(TypeStringPair objectKey);
+        bool HasObjectPool(ObjectPoolKey objectKey);
         /// <summary>
         /// 是否存在对象池；
         /// </summary>

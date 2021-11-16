@@ -33,6 +33,7 @@ namespace Cosmos
     public interface IEntityManager:IModuleManager
     {
         int EntityGroupCount { get; }
+        void SetHelper(IEntityHelper helper);
         /// <summary>
         /// 注册EntityGroup (同步)；
         /// </summary>
@@ -109,7 +110,6 @@ namespace Cosmos
         /// <param name="entityId">自定义的实体id;</param>
         /// <returns>是否存在</returns>
         bool HasEntity(int entityId);
-
 
         /// <summary>
         /// 为一个实体组设置根节点；
