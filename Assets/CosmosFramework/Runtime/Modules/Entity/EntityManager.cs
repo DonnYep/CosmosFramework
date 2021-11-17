@@ -72,13 +72,14 @@ namespace Cosmos.Entity
             if (!result)
             {
                 var entityAsset = resourceManager.LoadPrefab(entityAssetInfo);
-                var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
+                var entityGroup= EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
                 if (entityAssetInfo.UseObjectPool)
                 {
                     var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
-                    pool.AssignObjectPool(objectPool);
+                    entityGroup.AssignObjectPool(objectPool);
+                    entityGroup.AssignEntityRoot(this.Instance());
                 }
-                entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, pool);
+                entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, entityGroup);
             }
         }
         /// <summary>
@@ -133,13 +134,14 @@ namespace Cosmos.Entity
             {
                 await resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
                 {
-                    var pool = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
+                    var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
                     if (entityAssetInfo.UseObjectPool)
                     {
-                        var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
-                        pool.AssignObjectPool(objectPool);
+                        var objectPool = objectPoolManager.RegisterObjectPool( entityAssetInfo.EntityGroupName, entityAsset);
+                        entityGroup.AssignObjectPool(objectPool);
+                        entityGroup.AssignEntityRoot(this.Instance());
                     }
-                    entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, pool);
+                    entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, entityGroup);
                 });
             }
         }
@@ -174,7 +176,10 @@ namespace Cosmos.Entity
             {
                 throw new ArgumentNullException("Entity group name is invalid.");
             }
-            entityGroupDict.Remove(entityGroupName);
+            entityGroupDict.Remove(entityGroupName,out var entityGroup);
+            objectPoolManager.DeregisterObjectPool(entityGroup.ObjectPool.ObjectKey);
+            EntityGroup.Release(entityGroup);
+
         }
         /// <summary>
         /// 注销EntityGroup;
@@ -605,7 +610,7 @@ namespace Cosmos.Entity
                     var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath);
                     resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
                     {
-                        var entityGroup = new EntityGroup(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
+                        var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
                         if (entityAssetInfo.UseObjectPool)
                         {
                             var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);

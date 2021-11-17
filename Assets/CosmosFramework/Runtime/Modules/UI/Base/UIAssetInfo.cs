@@ -1,4 +1,4 @@
-﻿namespace Cosmos
+﻿namespace Cosmos.UI
 {
     /// <summary>
     /// UI资源信息；

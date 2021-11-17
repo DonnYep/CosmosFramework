@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using System;
-using Cosmos.Event;
-using Object = UnityEngine.Object;
 namespace Cosmos.ObjectPool
 {
-    internal sealed class ObjectPool: IObjectPool
+    internal sealed class ObjectPool : IObjectPool
     {
-        static readonly Pool<ObjectPool> poolInctPool 
-            = new Pool<ObjectPool>(() => { return new ObjectPool(); }, p => { p.Release(); });
+        static readonly Pool<ObjectPool> poolInstPool
+            = new Pool<ObjectPool>
+            (
+                () => { return new ObjectPool(); },
+                p => { p.Release(); }
+            );
 
         public int ExpireTime
         {
@@ -52,9 +53,7 @@ namespace Cosmos.ObjectPool
                 capacity = value;
             }
         }
-        public Type ObjectType { get { return objectKey.PoolType; } }
-        public string Name { get { return objectKey.PoolName; } }
-        ObjectPoolKey objectKey;
+        public ObjectPoolKey ObjectKey { get; private set; }
         /// <summary>
         /// 当前池对象中的数量
         /// </summary>
@@ -62,13 +61,24 @@ namespace Cosmos.ObjectPool
         /// <summary>
         /// 生成的对象
         /// </summary>
-        GameObject spawnItem;
+        /// 
+        GameObject spawnAsset;
+
         Pool<GameObject> pool;
-        Action<GameObject> onSpawn;
-        Action<GameObject>  onDespawn;
-        /// <summary>
-        /// 对象生成后的过期时间；
-        /// </summary>
+
+        Action<GameObject> onObjectSpawn;
+        Action<GameObject> onObjectDespawn;
+        public event Action<GameObject> OnObjectSpawn
+        {
+            add { onObjectSpawn += value; }
+            remove { onObjectSpawn -= value; }
+        }
+         public event Action<GameObject> OnObjectDespawn
+        {
+            add { onObjectDespawn += value; }
+            remove { onObjectDespawn -= value; }
+        }
+
         int expireTime;
         int capacity;
         int releaseInterval = 5;
@@ -78,21 +88,22 @@ namespace Cosmos.ObjectPool
             if (expireTime <= 0)
                 return;
         }
-        public void SetCallback(Action<GameObject> onSpawn, Action<GameObject> onDespawn)
-        {
-            this.onDespawn = onDespawn;
-            this.onSpawn = onSpawn;
-        }
         public GameObject Spawn()
         {
-            var go= pool.Spawn();
-            onSpawn?.Invoke(go);
+            var go = pool.Spawn();
+            while (go==null)
+            {
+                pool.Spawn();
+            }
+            onObjectSpawn?.Invoke(go);
             return go;
         }
         public void Despawn(object obj)
         {
             var go = obj.CastTo<GameObject>();
-            onDespawn?.Invoke(go);
+            if (go == null)
+                return;
+            onObjectDespawn?.Invoke(go);
             pool.Despawn(go);
         }
         public void ClearPool()
@@ -103,32 +114,32 @@ namespace Cosmos.ObjectPool
         {
             releaseInterval = 5;
             pool.Clear();
-            spawnItem = null;
-            onSpawn = null;
-            onDespawn = null;
+            spawnAsset = null;
+            onObjectSpawn = null;
+            onObjectDespawn = null;
             capacity = 0;
             expireTime = 0;
-            objectKey = ObjectPoolKey.None;
+            ObjectKey = ObjectPoolKey.None;
         }
         void Init(GameObject spawnItem, ObjectPoolKey objectKey)
         {
-            this.spawnItem = spawnItem;
+            this.spawnAsset = spawnItem;
             pool = new Pool<GameObject>(capacity,
-            () => { return GameObject.Instantiate(this.spawnItem); },
+            () => { return GameObject.Instantiate(this.spawnAsset); },
             (go) => { go.gameObject.SetActive(true); },
             (go) => { go.gameObject.SetActive(false); },
             (go) => { GameObject.Destroy(go); });
-            this.objectKey = objectKey;
+            this.ObjectKey = objectKey;
         }
-        internal static ObjectPool Create(GameObject spawnItem, ObjectPoolKey objectKey)
+        internal static ObjectPool Create(object spawnAsset, ObjectPoolKey objectKey)
         {
-            var p= poolInctPool.Spawn();
-            p.Init(spawnItem, objectKey);
+            var p = poolInstPool.Spawn();
+            p.Init(spawnAsset.CastTo<GameObject>(), objectKey);
             return p;
         }
         internal static void Release(ObjectPool objectPool)
         {
-            poolInctPool.Despawn(objectPool);
+            poolInstPool.Despawn(objectPool);
         }
     }
 }

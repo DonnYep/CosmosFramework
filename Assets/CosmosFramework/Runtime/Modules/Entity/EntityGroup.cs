@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Cosmos.Entity
 {
     internal sealed class EntityGroup : IEntityGroup
     {
+        static readonly Pool<EntityGroup> entityGroupPool
+            = new Pool<EntityGroup>(() => { return new EntityGroup(); },g=> { g.Release(); });
+
         public string EntityGroupName { get; private set; }
         public int EntityCount { get { return entityLinkedList.Count; } }
-        LinkedList<IEntity> entityLinkedList;
         public object EntityAsset { get; private set; }
         public IEntity EntityRoot { get; private set; }
         public object EntityRootInstance { get; private set; }
+        public IObjectPool ObjectPool { get; private set; }
+
+        LinkedList<IEntity> entityLinkedList=new LinkedList<IEntity>();
         IEntityHelper entityHelper;
         Action refreshHandler;
         event Action RefreshHandler
@@ -21,7 +22,6 @@ namespace Cosmos.Entity
             add { refreshHandler += value; }
             remove { refreshHandler -= value; }
         }
-        public IObjectPool ObjectPool { get; private set; }
         /// <summary>
         /// 根节点是否是实体对象；
         /// </summary>
@@ -29,6 +29,8 @@ namespace Cosmos.Entity
         public void AssignObjectPool(IObjectPool objectPool)
         {
             this.ObjectPool = objectPool;
+            ObjectPool.OnObjectSpawn += go => { go.gameObject.SetActive(true); };
+            ObjectPool.OnObjectDespawn+= go => { go.gameObject.SetActive(false); };
         }
         /// <summary>
         /// 为实体组赋予根节点；
@@ -43,13 +45,6 @@ namespace Cosmos.Entity
         {
             EntityRootInstance = root;
             entityRootIsInstance = true;
-        }
-        public EntityGroup(string name, object entityAsset, IEntityHelper entityHelper)
-        {
-            EntityGroupName = name;
-            entityLinkedList = new LinkedList<IEntity>();
-            this.EntityAsset = entityAsset;
-            this.entityHelper = entityHelper;
         }
         public void OnRefresh()
         {
@@ -138,7 +133,7 @@ namespace Cosmos.Entity
             RefreshHandler += entity.OnRefresh;
             var root = entityRootIsInstance == false ? EntityRoot : EntityRootInstance;
             if (root != null)
-                entityHelper.AttachToParent(entity,root);
+                entityHelper.AttachToParent(entity, root);
         }
         public void RemoveEntity(IEntity entity)
         {
@@ -153,16 +148,28 @@ namespace Cosmos.Entity
             entityLinkedList.Clear();
             refreshHandler = null;
         }
-        public object Spawn()
+        void Release()
         {
-            var go= ObjectPool.Spawn();
-
-            
-            return go;
+            EntityGroupName = string.Empty;
+            entityLinkedList.Clear();
+            EntityAsset = null;
+            EntityRoot = null;
+            EntityRootInstance = null;
+            ObjectPool = null;
+            entityHelper = null;
+            refreshHandler = null;
         }
-        public void Despawn(object go)
+        internal static EntityGroup Create(string name, object entityAsset, IEntityHelper entityHelper)
         {
-            ObjectPool.Despawn(go);
+            var entityGroup = entityGroupPool.Spawn();
+            entityGroup .EntityGroupName = name;
+            entityGroup.EntityAsset = entityAsset;
+            entityGroup.entityHelper = entityHelper;
+            return entityGroup;
+        }
+        internal static void Release(EntityGroup entityGroup)
+        {
+            entityGroupPool.Despawn(entityGroup);
         }
     }
 }
