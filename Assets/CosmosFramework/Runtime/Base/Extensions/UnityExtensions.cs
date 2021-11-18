@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using UnityEngine.Events;
 
 namespace Cosmos
 {
@@ -434,6 +436,81 @@ where T : Component
             audioSource.dopplerLevel = 1;
             audioSource.spread = 0;
             audioSource.maxDistance = 500;
+        }
+
+        public static Button AddButtonClickListener(this Button button,UnityAction<BaseEventData> handle)
+        {
+            var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
+            if (handle == null)
+                throw new ArgumentNullException(nameof(handle));
+            EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == EventTriggerType.PointerClick);
+            if (entry == null)
+            {
+                entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick};
+                eventTrigger.triggers.Add(entry);
+            }
+            entry.callback.AddListener(handle);
+            return button;
+        }
+        public static Button AddButtonDownListener(this Button button, UnityAction<BaseEventData> handle)
+        {
+            var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
+            if (handle == null)
+                throw new ArgumentNullException(nameof(handle));
+            EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID ==  EventTriggerType.PointerDown);
+            if (entry == null)
+            {
+                entry = new EventTrigger.Entry { eventID =  EventTriggerType.PointerDown};
+                eventTrigger.triggers.Add(entry);
+            }
+            entry.callback.AddListener(handle);
+            return button;
+        }
+        public static Button AddButtonUpListener(this Button button,UnityAction<BaseEventData> handle)
+        {
+            var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
+            if (handle == null)
+                throw new ArgumentNullException(nameof(handle));
+            EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == EventTriggerType.PointerUp);
+            if (entry == null)
+            {
+                entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerUp };
+                eventTrigger.triggers.Add(entry);
+            }
+            entry.callback.AddListener(handle);
+            return button;
+        }
+        public static Button AddListener(this Button button, EventTriggerType triggerType,UnityAction<BaseEventData> handle)
+        {
+            var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
+            if (handle == null)
+                throw new ArgumentNullException(nameof(handle));
+            EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
+            if (entry == null)
+            {
+                entry = new EventTrigger.Entry { eventID = triggerType };
+                eventTrigger.triggers.Add(entry);
+            }
+            entry.callback.AddListener(handle);
+            return button;
+        }
+        public static Button RemoveListener(this Button button, EventTriggerType triggerType,UnityAction<BaseEventData> handle)
+        {
+            var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
+            if (handle == null)
+                throw new ArgumentNullException(nameof(handle));
+            EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
+            entry?.callback.RemoveListener(handle);
+            return button;
+        }
+        public static Button RemoveAllListeners(this Button  button, EventTriggerType triggerType)
+        {
+            var eventTrigger = button.GetComponent<EventTrigger>();
+            if (eventTrigger == null)
+                throw new ArgumentNullException(nameof(eventTrigger));
+            EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
+            entry?.callback.RemoveAllListeners();
+            return button;
         }
     }
 }
