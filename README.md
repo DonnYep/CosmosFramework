@@ -6,7 +6,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 ## 环境
 
-- Unity版本：2017及以上； .NET API版本：4.x。
+- Unity版本：2018及以上； .NET API版本：4.x。
 
 ## 模块简介
 
@@ -18,29 +18,27 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **FSM**： 有限状态机模块。完全抽象的有限状态机，可针对不同类型的拥有者做状态机实现。
 
-- **ObjectsPool**：对象池模块。提供常用的对象生成回收等功能。底层使用数据结构Pool进行实现。
+- **ObjectsPool**：对象池模块。提供常用的实体对象生成回收等功能。底层使用数据结构Pool进行实现。
 
-- **Resource**：资源加载模块。框架内部提供了Resources与AB两种加载模式，通过切换加载模式可变更当前默认的加载方式。资源加载模块亦提供了自定义加载通道。
-实现自定义加载通道时，须实现继承并实现IResourceLoadHelper接口，并将helper对象传入ResourceLoadChannel中。通过注册ResourceLoadChannel来使用自定义加载方案。
-使用自定义加载通道时，第一个参数需要传入通道名(channelName)，剩余参数则与内置加载API相同。
+- **Resource**：资源加载模块。内置提供了Resources与AB两种加载模式，通过切换加载模式可变更当前默认的加载方式。支持资源多通道自定义加载通道，可自定义适配其他类型的资源管理方案。
 
 - **Scene**：场景加载模块。提供常用的异步、同步加载嵌入的场景功能。支持自定义实现加载方式。
 
-- **Data**：数据缓存模块。提供树状结构的数据缓存中心。
+- **DataNode**：数据缓存模块。提供树状结构的数据缓存中心。
 
-- **Entity**：游戏实体模块。管理游戏运行时的实体对象。
+- **Entity**：游戏实体模块。管理游戏运行时的实体对象。实体支持组分类，通过传入资源地址可以直接管理资源实体对象的生成、回收等操作，内置对象池生成。
 
-- **Input**：输入适配模块。用于适配不同平台的输入方式。
+- **Input**：输入适配模块。通过虚拟按键模拟各个平台的输入，传入不同的输入适配器可适配不同平台的输入方式。
 
-- **Hotfix**：热更新模块。此模块适用于基于C#的热更方案。
+- **Hotfix**：热更新模块。此模块适用于基于C#的热更方案。（此方案未完善，未来将会使用MONO Interpreter 解释器执行热更新。）
 
 - **Network**：网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可同时实现作为客户端(Client)以及服务器(Server)。支持async/await语法；
 
-- **UI**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取以及组别设置等。
+- **UI**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取以及组别设置等。扩展方法对按钮等一些常用组件进行了扩展，无需手动实现按钮抬起、按下等接口实现即可监听。支持常用UIBehaiour类型的triggerEvent。
 
 - **Main**：模块中心。自定义模块与扩展模块都存于此。自定义模块按照内置模块相同格式写入后，可享有完全同等与内置模块的生命周期与权限。几乎与内置模块无异。此主模块的内置轮询池：FixedRefreshHandler、LateRefreshHandler、RefreshHandler、ElapseRefreshHandler可对需要统一进行轮询管理的对象进行统一轮询，减少由于过多的Update等mono回调导致的新能损耗。
 
-- **Controller**：控制器模块。提供常用需要轮询(Update)对象的统一管理。
+- **Controller**：控制器模块。使用此模块进行注册后，无需生成实体对象(GameObject)也可进行轮询管理。此模块提供Update轮询。
 
 - **WebRequest**：UnityWebRequest模块，可用于加载持久化资源、网络资源下载等需求。支持获取AssetBundle、AudioClip、Texture2D、string。当资源获取到后，用户可通过WebRequestCallback对资源进行操作；
 
@@ -180,7 +178,7 @@ public class AwaitableTest : MonoBehaviour
 - 框架提供第三方适配，如Utility.Json，用户可自定义任意JSON方案。框架建议使用的高速传输协议为MessagePack，包含适配方案。
 MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
-- 最新请使用 V1.1 版本，稳定版请使用V1.0。V0.1 已经停止维护。Master暂停维护。
+- 最新请使用 V1.1 版本，V0.1、1.0 停止维护。Master暂停维护。
 
 - 内置案例地址：Assets\Examples\ 。
 
@@ -188,9 +186,7 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
 ## 其他
 
-- V1.1_UPM可以通过UnityPackageManager进行加载。加载时请填入：https://github.com/DonnYep/CosmosFramework.git#V1.1_UPM
-
-- 手动加载V1.1_UPM方式：
+- V1.1支持UPM。手动加载V1.1_UPM方式：
    - 方式1：选择V1.1（默认分支）,选择Assets/CosmosFramework文件夹，拷贝到工程的Packages目录下。
    - 方式2：选择V1.1_UPM分支，将里面的内容拷贝到工程的Packages目录下。
 
@@ -202,7 +198,8 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
 - 服务器版本的KCP与客户端版本的KCP皆为参考自Mirror。Mirror地址:https://github.com/vis2k/Mirror
 
-- 部分模块演示请观看视频：https://www.bilibili.com/video/BV1x741157eR
-                        https://www.bilibili.com/video/BV17u411Z7Ni/
+- 部分模块演示请观看视频：
+    - https://www.bilibili.com/video/BV1x741157eR
+    - https://www.bilibili.com/video/BV17u411Z7Ni/
 
 
