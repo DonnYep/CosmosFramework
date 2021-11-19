@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -111,6 +112,38 @@ namespace Cosmos
                     var response =  client.GetAsync(url).Result;
                     return response.StatusCode == HttpStatusCode.OK;
                 }
+            }
+            /// <summary>
+            /// Get the IPv4 IP Address of the local computer
+            /// </summary>
+            /// <returns>IP Address</returns>
+            public static string GetLocalIPv4Address()
+            {
+                var host = Dns.GetHostEntry(Dns.GetHostName());
+                foreach (var ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        return ip.ToString();
+                    }
+                }
+                throw new Exception("No network adapters with an IPv4 address in the system!");
+            }
+            /// <summary>
+            /// Get the IPv6 IP Address of the local computer
+            /// </summary>
+            /// <returns>IP Address</returns>
+            public static string GetILocalIPv6Address()
+            {
+                var host = Dns.GetHostEntry(Dns.GetHostName());
+                foreach (var ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        return ip.ToString();
+                    }
+                }
+                throw new Exception("No network adapters with an IPv6 address in the system!");
             }
         }
     }
