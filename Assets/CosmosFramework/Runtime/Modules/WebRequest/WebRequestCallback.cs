@@ -45,7 +45,7 @@ namespace Cosmos
         public static WebRequestCallback Create(Action onStartCallback, Action<float> onUpdateCallback,
             Action<byte[]> onSuccessCallback, Action<string> onFailureCallback)
         {
-            var webRequest = ReferencePool.Accquire<WebRequestCallback>();
+            var webRequest = ReferencePool.Acquire<WebRequestCallback>();
             webRequest.onStartCallback = onStartCallback;
             webRequest.onUpdateCallback = onUpdateCallback;
             webRequest.onSuccessCallback = onSuccessCallback;

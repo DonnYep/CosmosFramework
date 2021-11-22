@@ -238,7 +238,7 @@ namespace Cosmos.FSM{
             if (states == null || states.Length < 1)
                 throw new ArgumentNullException("FSM owner is invalid");
             //从引用池获得同类
-            FSM<T> fsm = ReferencePool.Accquire<FSM<T>>();
+            FSM<T> fsm = ReferencePool.Acquire<FSM<T>>();
             fsm.Name = name;
             fsm.Owner = owner;
             fsm.IsDestoryed = false;
@@ -262,7 +262,7 @@ namespace Cosmos.FSM{
             if (states == null || states.Count < 1)
                 throw new ArgumentNullException("FSM owner is invalid");
             //从引用池获得同类
-            FSM<T> fsm = ReferencePool.Accquire<FSM<T>>();
+            FSM<T> fsm = ReferencePool.Acquire<FSM<T>>();
             fsm.Name = name;
             fsm.Owner = owner;
             fsm.IsDestoryed = false;

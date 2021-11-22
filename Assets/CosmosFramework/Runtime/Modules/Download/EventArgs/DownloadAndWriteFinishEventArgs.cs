@@ -25,7 +25,7 @@ namespace Cosmos
         }
         public static DownloadAndWriteFinishEventArgs Create(string[] successURIs , string[] failureURIs, TimeSpan timeSpan)
         {
-            var eventArgs = ReferencePool.Accquire<DownloadAndWriteFinishEventArgs>();
+            var eventArgs = ReferencePool.Acquire<DownloadAndWriteFinishEventArgs>();
             eventArgs.SuccessURIs= successURIs;
             eventArgs.FailureURIs= failureURIs;
             eventArgs.DownloadAndWriteTimeSpan = timeSpan;

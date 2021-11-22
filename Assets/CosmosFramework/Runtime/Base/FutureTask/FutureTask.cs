@@ -88,7 +88,7 @@ namespace Cosmos
         /// <returns>FutureTask异步检测对象</returns>
         public static FutureTask Detection(Func<bool> condition, Action<FutureTask> polling, Action<FutureTask> completed, string description = null)
         {
-            var futureTask = ReferencePool.Accquire<FutureTask>();
+            var futureTask = ReferencePool.Acquire<FutureTask>();
             futureTask.FutureTaskId = FutureTaskIndex++;
             futureTask.Condition = condition;
             futureTask.available = true;
@@ -107,7 +107,7 @@ namespace Cosmos
         /// <returns>FutureTask异步检测对象</returns>
         public static FutureTask Detection(Func<bool> condition, Action<FutureTask> completed, string description = null)
         {
-            var futureTask = ReferencePool.Accquire<FutureTask>();
+            var futureTask = ReferencePool.Acquire<FutureTask>();
             futureTask.FutureTaskId = FutureTaskIndex++;
             futureTask.Condition = condition;
             futureTask.available = true;
@@ -124,7 +124,7 @@ namespace Cosmos
         /// <returns>FutureTask异步检测对象</returns>
         public static FutureTask Detection(Func<bool> condition, string description = null)
         {
-            var futureTask = ReferencePool.Accquire<FutureTask>();
+            var futureTask = ReferencePool.Acquire<FutureTask>();
             futureTask.FutureTaskId = FutureTaskIndex++;
             futureTask.Condition = condition;
             futureTask.Description = description;

@@ -8,30 +8,30 @@ namespace Cosmos
         sealed class ReferPool<T>
             where T : class
         {
-            public int PoolAccquireCount { get { return poolAccquireCount; } }
-            public int AccquireCount { get { return accquireCount; } }
+            public int PoolAcquireCount { get { return poolAcquireCount; } }
+            public int AcquireCount { get { return acquireCount; } }
             public int ReleaseCount { get { return releaseCount; } }
             public int Count { get { return pool.Count; } }
             public Type ReferenceType { get { return referenceType; } }
             readonly Pool<T> pool;
             readonly Type referenceType;
-            int poolAccquireCount = 0;
-            int accquireCount = 0;
+            int poolAcquireCount = 0;
+            int acquireCount = 0;
             int releaseCount = 0;
             public ReferPool(Type type, Func<T> objectGenerator, Action<T> onRelease)
             {
                 referenceType = type;
                 pool = new Pool<T>(objectGenerator, onRelease);
             }
-            public T Accquire()
+            public T Acquire()
             {
-                poolAccquireCount++;
-                accquireCount++;
+                poolAcquireCount++;
+                acquireCount++;
                 return pool.Spawn();
             }
             public void Release(T obj)
             {
-                accquireCount--;
+                acquireCount--;
                 releaseCount++;
                 pool.Despawn(obj);
             }
@@ -54,14 +54,14 @@ namespace Cosmos
             }
             referencePoolDict.Clear();
         }
-        public static T Accquire<T>() where T : class, IReference, new()
+        public static T Acquire<T>() where T : class, IReference, new()
         {
-            return GetReferencePool(typeof(T)).Accquire() as T;
+            return GetReferencePool(typeof(T)).Acquire() as T;
         }
-        public static IReference Accquire(Type type)
+        public static IReference Acquire(Type type)
         {
-            CheckAccquireType(type);
-            return GetReferencePool(type).Accquire();
+            CheckAcquireType(type);
+            return GetReferencePool(type).Acquire();
         }
         public static void Release(IReference reference)
         {
@@ -100,7 +100,7 @@ namespace Cosmos
         /// <param name="type">目标类型</param>
         public static void RemovePool(Type type)
         {
-            CheckAccquireType(type);
+            CheckAcquireType(type);
             referencePoolDict.Remove(type, out var pool);
             pool?.Clear();
         }
@@ -119,13 +119,13 @@ namespace Cosmos
         {
             var type = typeof(T);
             var pool = GetReferencePool(type);
-            return new ReferencePoolInfo(type, pool.AccquireCount, pool.ReleaseCount, pool.PoolAccquireCount);
+            return new ReferencePoolInfo(type, pool.AcquireCount, pool.ReleaseCount, pool.PoolAcquireCount);
         }
         public static ReferencePoolInfo GetReferencePoolInfo(Type type)
         {
-            CheckAccquireType(type);
+            CheckAcquireType(type);
             var pool = GetReferencePool(type);
-            return new ReferencePoolInfo(type, pool.AccquireCount, pool.ReleaseCount, pool.PoolAccquireCount);
+            return new ReferencePoolInfo(type, pool.AcquireCount, pool.ReleaseCount, pool.PoolAcquireCount);
         }
         public static ReferencePoolInfo[] GetAllReferencePoolInfos()
         {
@@ -133,12 +133,12 @@ namespace Cosmos
             ReferencePoolInfo[] pools = new ReferencePoolInfo[Count];
             foreach (var pool in referencePoolDict.Values)
             {
-                pools[index++] = new ReferencePoolInfo (pool.ReferenceType, pool.AccquireCount, pool.ReleaseCount, pool.PoolAccquireCount);
+                pools[index++] = new ReferencePoolInfo (pool.ReferenceType, pool.AcquireCount, pool.ReleaseCount, pool.PoolAcquireCount);
             }
             return pools;
         }
 
-        static void CheckAccquireType(Type type)
+        static void CheckAcquireType(Type type)
         {
             if (type == null)
                 throw new ArgumentNullException("Reference type is invalid !");

@@ -19,7 +19,7 @@ namespace Cosmos.Audio
         }
         internal static AudioRegistSuccessEventArgs Create(string audioName, string audioGroupName,AudioClip audioClip)
         {
-            var eventArgs = ReferencePool.Accquire< AudioRegistSuccessEventArgs>();
+            var eventArgs = ReferencePool.Acquire< AudioRegistSuccessEventArgs>();
             eventArgs.AudioName = audioName;
             eventArgs.AudioGroupName = audioGroupName;
             eventArgs.AudioClip = audioClip;

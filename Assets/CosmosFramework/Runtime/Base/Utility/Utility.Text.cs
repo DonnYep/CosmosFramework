@@ -8,42 +8,6 @@ namespace Cosmos
         {
             [ThreadStatic]//每个静态类型字段对于每一个线程都是唯一的
             static StringBuilder stringBuilderCache=new StringBuilder(1024);
-            /// <summary>
-            /// 格式化字符串。
-            /// </summary>
-            /// <param name="format">字符串格式</param>
-            /// <param name="args">字符串参数</param>
-            /// <returns>格式化后的字符串</returns>
-            public static string Format(string format, params object[] args)
-            {
-                if (string.IsNullOrEmpty(format))
-                    throw new ArgumentNullException("Format is invalid.");
-                if (args == null)
-                    throw new ArgumentNullException("Args is invalid.");
-                stringBuilderCache.Length = 0;
-                stringBuilderCache.AppendFormat(format, args);
-                return stringBuilderCache.ToString();
-            }
-            /// <summary>
-            /// 格式化字符串
-            /// </summary>
-            /// <param name="format">需要格式化的字符串</param>
-            /// <param name="arg">额外的参数</param>
-            /// <returns></returns>
-            public static string Format(string format, object arg)
-            {
-                if (string.IsNullOrEmpty(format))
-                {
-                    throw new ArgumentNullException("Format is invalid.");
-                }
-                if (arg == null)
-                {
-                    throw new ArgumentNullException("Arg is invalid.");
-                }
-                stringBuilderCache.Length = 0;
-                stringBuilderCache.AppendFormat(format, arg);
-                return stringBuilderCache.ToString();
-            }
             public static string Append(params object[] args)
             {
                 if (args == null)

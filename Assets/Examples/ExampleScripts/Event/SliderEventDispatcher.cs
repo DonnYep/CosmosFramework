@@ -15,7 +15,7 @@ public class SliderEventDispatcher : MonoBehaviour
     void Start()
     {
         slider = GetComponentInChildren<Slider>();
-        uch = ReferencePool.Accquire<LogicEventArgs<Slider>>().SetData(slider);
+        uch = ReferencePool.Acquire<LogicEventArgs<Slider>>().SetData(slider);
         eventManager = CosmosEntry.EventManager;
         slider.onValueChanged.AddListener(DispatchEvent);
         btn_Deregister = transform.Find("Btn_Deregister").GetComponent<Button>();

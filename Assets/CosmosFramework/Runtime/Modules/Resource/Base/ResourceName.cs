@@ -55,7 +55,7 @@ namespace Cosmos
             {
                 if (m_CachedFullName == null)
                 {
-                    m_CachedFullName = m_Variant != null ? Utility.Text.Format($"{m_Name}.{m_Variant}.{m_Extension}") : Utility.Text.Format($"{m_Name}.{m_Extension}");
+                    m_CachedFullName = m_Variant != null ? $"{m_Name}.{m_Variant}.{m_Extension}" : $"{m_Name}.{m_Extension}";
                 }
                 return m_CachedFullName;
             }

@@ -39,7 +39,7 @@ namespace Cosmos.Data
                 {
                     throw new ArgumentException("Name of data node is invalid.");
                 }
-                DataNode node = ReferencePool.Accquire<DataNode>();
+                DataNode node = ReferencePool.Acquire<DataNode>();
                 node.nodeName = name;
                 node.nodeParent = parent;
                 return node;
@@ -299,7 +299,7 @@ namespace Cosmos.Data
             /// <returns>数据结点字符串。</returns>
             public override string ToString()
             {
-                return Utility.Text.Format("{0}: {1}", FullName, ToDataString());
+                return $"{FullName}: {ToDataString()}" ;
             }
             /// <summary>
             /// 获取数据字符串。
@@ -312,7 +312,7 @@ namespace Cosmos.Data
                     return "<Null>";
                 }
 
-                return Utility.Text.Format("[{0}] {1}", nodeData.Type.Name, nodeData.ToString());
+                return $"[{nodeData.Type.Name}] {nodeData}";
             }
             public void Release()
             {

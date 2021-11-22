@@ -19,7 +19,7 @@ namespace Cosmos
         }
         public static DownloadFailureEventArgs Create(string uri, string downloadPath, string errorMessage)
         {
-            var eventArgs = ReferencePool.Accquire<DownloadFailureEventArgs>();
+            var eventArgs = ReferencePool.Acquire<DownloadFailureEventArgs>();
             eventArgs.URI = uri;
             eventArgs.DownloadPath = downloadPath;
             eventArgs.ErrorMessage= errorMessage;

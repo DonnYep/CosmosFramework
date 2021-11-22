@@ -32,7 +32,7 @@ namespace Cosmos
         }
         public static DonwloadOverallEventArgs Create(string uri, string downloadPath, float overallProgress,float individualProgress)
         {
-            var eventArgs = ReferencePool.Accquire<DonwloadOverallEventArgs>();
+            var eventArgs = ReferencePool.Acquire<DonwloadOverallEventArgs>();
             eventArgs.URI = uri;
             eventArgs.OverallProgress= overallProgress;
             eventArgs.DownloadPath = downloadPath;

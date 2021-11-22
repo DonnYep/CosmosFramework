@@ -53,7 +53,7 @@ namespace Cosmos.Controller
         }
         internal static IController Create(string controllerName, string groupName, object handle)
         {
-            var controller = ReferencePool.Accquire<Controller>();
+            var controller = ReferencePool.Acquire<Controller>();
             controller.handle = handle;
             controller.controllerName = controllerName;
             controller.handleType = handle.GetType();

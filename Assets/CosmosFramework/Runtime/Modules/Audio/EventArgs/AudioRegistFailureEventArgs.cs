@@ -18,7 +18,7 @@ namespace Cosmos.Audio
         }
         internal static AudioRegistFailureEventArgs Create(string audioName,string audioGroupName)
         {
-            var eventArgs = ReferencePool.Accquire<AudioRegistFailureEventArgs>();
+            var eventArgs = ReferencePool.Acquire<AudioRegistFailureEventArgs>();
             eventArgs.AudioName = audioName;
             eventArgs.AudioGroupName = audioGroupName;
             return eventArgs;

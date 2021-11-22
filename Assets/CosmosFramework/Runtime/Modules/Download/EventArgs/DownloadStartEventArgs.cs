@@ -17,7 +17,7 @@ namespace Cosmos
         }
         public static DownloadStartEventArgs Create(string uri, string downloadPath)
         {
-            var eventArgs = ReferencePool.Accquire<DownloadStartEventArgs>();
+            var eventArgs = ReferencePool.Acquire<DownloadStartEventArgs>();
             eventArgs.URI = uri;
             eventArgs.DownloadPath = downloadPath;
             return eventArgs;
