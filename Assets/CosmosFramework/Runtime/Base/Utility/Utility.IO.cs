@@ -18,7 +18,14 @@ namespace Cosmos
             /// 构造的UTF8Encoding，排除掉UTF8-BOM的影响；
             /// </summary>
             static UTF8Encoding utf8Encoding = new UTF8Encoding(false);
-
+            /// <summary>
+            /// Get application absolute path;
+            /// </summary>
+            /// <returns>path</returns>
+            public static string ApplicationPath()
+            {
+                return Path.GetFullPath(".");
+            }
             /// <summary>
             /// 获取文件夹中的文件数量；
             /// </summary>

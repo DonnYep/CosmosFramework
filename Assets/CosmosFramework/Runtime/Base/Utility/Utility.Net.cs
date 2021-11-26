@@ -114,6 +114,19 @@ namespace Cosmos
                 }
             }
             /// <summary>
+            /// Get the  public IP Address of the computer
+            /// </summary>
+            /// <param name="timeoutMilliseconds">timeout</param>
+            /// <returns>public IP Address</returns>
+            public static string GetPublicIPAddress(int timeoutMilliseconds = 5000)
+            {
+                var client = new WebClient();
+                var task = client.DownloadStringTaskAsync("http://icanhazip.com");
+                if (task.Wait(timeoutMilliseconds) == false)
+                    return string.Empty;
+                return task.Result.Trim();
+            }
+            /// <summary>
             /// Get the IPv4 IP Address of the local computer
             /// </summary>
             /// <returns>IP Address</returns>
