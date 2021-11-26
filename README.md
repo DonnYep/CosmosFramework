@@ -32,7 +32,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **Hotfix**：热更新模块。此模块适用于基于C#的热更方案。（此方案未完善，未来将会使用MONO Interpreter 解释器执行热更新。）
 
-- **Network**：网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可同时实现作为客户端(Client)以及服务器(Server)。支持async/await语法；
+- **Network**：网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP、TCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可同时实现作为客户端(Client)以及服务器(Server)。支持async/await语法；
 
 - **UI**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取以及组别设置等。扩展方法对按钮等一些常用组件进行了扩展，无需手动实现按钮抬起、按下等接口实现即可监听。支持常用UIBehaiour类型的triggerEvent。
 
@@ -189,17 +189,21 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 - V1.1支持UPM。手动加载V1.1_UPM方式：
    - 方式1：选择V1.1（默认分支）,选择Assets/CosmosFramework文件夹，拷贝到工程的Packages目录下。
    - 方式2：选择V1.1_UPM分支，将里面的内容拷贝到工程的Packages目录下。
-
-- CosmosEngine服务器：https://github.com/DonnYep/CosmosEngine
-
-- KCP地址：https://github.com/skywind3000/kcp
-
-- PureMVC地址：https://github.com/DonnYep/PureMVC
-
-- 服务器版本的KCP与客户端版本的KCP皆为参考自Mirror。Mirror地址:https://github.com/vis2k/Mirror
-
+    
 - 部分模块演示请观看视频：
     - https://www.bilibili.com/video/BV1x741157eR
     - https://www.bilibili.com/video/BV17u411Z7Ni/
+    
+## Library link
 
+- CosmosEngine：https://github.com/DonnYep/CosmosEngine
 
+- KCP C:https://github.com/skywind3000/kcp
+    
+- KCP CSharp:https://github.com/vis2k/kcp2k
+    
+- TCP：https://github.com/vis2k/Telepathy
+
+- PureMVC：https://github.com/DonnYep/PureMVC
+
+- Mirror:https://github.com/vis2k/Mirror
