@@ -88,7 +88,7 @@ namespace Cosmos
                     var handlerSet = eventDict[key];
                     handlerSet.Remove(handler);
                     if (handlerSet.Count <= 0)
-                        eventDict.Remove(key);
+                        eventDict.TryRemove(key,out _);
                 }
             });
         }

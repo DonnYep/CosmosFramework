@@ -9,6 +9,8 @@ using UnityEngine.Networking;
 using Quark.Asset;
 using Utility = Cosmos.Utility;
 using UnityEngine;
+using Cosmos;
+
 namespace Quark.Networking
 {
     /// <summary>
