@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-namespace Cosmos.FSM{
+namespace Cosmos.FSM
+{
     //type.ToString()输出一个完全限定名，尝试使用反射机制获得对象
-    public sealed class FSM<T> : FSMBase,IFSM<T>,IReference
-        where T : class
+    internal sealed class FSM<T> : FSMBase, IFSM<T>, IReference
+         where T : class
     {
         #region Properties
         T owner;
@@ -25,11 +26,10 @@ namespace Cosmos.FSM{
         public override int FSMStateCount { get { return fsmStateDict.Count; } }
         public override bool IsRunning { get { return currentState != null; } }
         public override Type OwnerType { get { return typeof(T); } }
-        public override string CurrentStateName{get{return currentState != null ? currentState.GetType().FullName : string.Empty;}}
+        public override string CurrentStateName { get { return currentState != null ? currentState.GetType().FullName : "<NULL>"; } }
         #endregion
 
         #region Lifecycle
-
         public void Release()
         {
             if (currentState != null)
@@ -54,7 +54,7 @@ namespace Cosmos.FSM{
                 return;
             Type type = defaultState.GetType();
             if (!typeof(FSMState<T>).IsAssignableFrom(type))
-                throw new ArgumentException("State type is invalid" +type.FullName);
+                throw new ArgumentException("State type is invalid" + type.FullName);
             FSMState<T> state = GetState(type);
             if (state == null)
                 return;
@@ -79,7 +79,7 @@ namespace Cosmos.FSM{
             currentState.OnEnter(this);
         }
         public void Start<TState>()
-            where TState:FSMState<T>
+            where TState : FSMState<T>
         {
             if (IsRunning)
                 return;
@@ -92,7 +92,7 @@ namespace Cosmos.FSM{
         /// <summary>
         /// FSM轮询，由拥有者轮询调用
         /// </summary>
-        public  override  void  OnRefresh()
+        public override void OnRefresh()
         {
             if (Pause)
                 return;
@@ -104,13 +104,14 @@ namespace Cosmos.FSM{
             ReferencePool.Release(this);
         }
         #endregion
+
         #region State
         public bool HasState(Type stateType)
         {
             if (stateType == null)
                 throw new ArgumentNullException("State type is invalid !");
             if (!typeof(FSMState<T>).IsAssignableFrom(stateType))
-                throw new ArgumentException("State type is invalid !"  + stateType.FullName);
+                throw new ArgumentException("State type is invalid !" + stateType.FullName);
             return fsmStateDict.ContainsKey(stateType);
         }
         public bool HasState(FSMState<T> state)
@@ -153,7 +154,7 @@ namespace Cosmos.FSM{
             if (stateType == null)
                 throw new ArgumentNullException("State type is invaild !");
             if (!typeof(FSMState<T>).IsAssignableFrom(stateType))
-                throw new ArgumentNullException("State type is invaild !"  + stateType.FullName);
+                throw new ArgumentNullException("State type is invaild !" + stateType.FullName);
             FSMState<T> state = null;
             if (fsmStateDict.TryGetValue(stateType, out state))
                 return state;
@@ -176,6 +177,7 @@ namespace Cosmos.FSM{
             return states.ToArray();
         }
         #endregion
+
         #region Data
         public void SetData(string dataName, Variable data)
         {
@@ -257,7 +259,7 @@ namespace Cosmos.FSM{
             }
             return fsm;
         }
-        internal static FSM<T> Create(string name, T owner, List<FSMState<T>> states)
+        internal static FSM<T> Create(string name, T owner, IList<FSMState<T>> states)
         {
             if (states == null || states.Count < 1)
                 throw new ArgumentNullException("FSM owner is invalid");

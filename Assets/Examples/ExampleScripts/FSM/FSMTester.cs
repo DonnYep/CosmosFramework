@@ -13,7 +13,7 @@ public class FSMTester : MonoBehaviour
     [SerializeField] int range = 10;
     [SerializeField] int pauseDelay=10;
     public int Range { get { return range; } }
-    FSM<FSMTester> fsm;
+    IFSM<FSMTester> fsm;
     IFSMManager fsmManager;
     private void OnValidate()
     {
@@ -25,17 +25,15 @@ public class FSMTester : MonoBehaviour
     private async void Start()
     {
         fsmManager = CosmosEntry.FSMManager;
+
         var enterState = new EnterRangeState();
-        var enterTrigger = new EnterTestTrigger();
         var exitState = new ExitRangeState();
-        var exitTrigger = new ExitTestTrigger();
-        exitState.AddTrigger(enterTrigger, enterState);
-        enterState.AddTrigger(exitTrigger, exitState);
-        fsm = fsmManager.CreateFSM("FSMTester",this,false, exitState, enterState) as FSM<FSMTester>;
-        fsmManager.SetFSMSetRefreshInterval<FSMTester>(refreshInterval);
+
+        fsm = fsmManager.CreateFSM("FSMTester", this, false, exitState, enterState);
+        fsmManager.SetFSMGroupRefreshInterval<FSMTester>((int)(refreshInterval*1000));
         fsm.DefaultState = exitState;
         fsm.StartDefault();
         await new WaitForSeconds(pauseDelay);
-        fsmManager.PauseFSMSet<FSMTester>();
+        fsmManager.PauseFSMGroup<FSMTester>();
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnityEngine;
 namespace Cosmos.FSM
 {
     /// <summary>
@@ -12,11 +11,14 @@ namespace Cosmos.FSM
     internal class FSMGroup 
     {
         #region Properties
-        List<FSMBase> fsmSet = new List<FSMBase>();
-        public List<FSMBase> FSMList { get { return fsmSet; } }
+        List<FSMBase> fsmList = new List<FSMBase>();
+        public List<FSMBase> FSMList { get { return fsmList; } }
         public bool IsPause { get;private set; }
-        public float RefreshInterval { get; private set; }
-        float coolTime = 0;
+        public int RefreshInterval { get; private set; }
+        /// <summary>
+        /// 上一次刷新时间
+        /// </summary>
+        long latestTime = 0;
         #endregion
 
         #region Methods
@@ -24,73 +26,73 @@ namespace Cosmos.FSM
         public void OnUnPause(){ IsPause = false; }
         public void AddFSM(FSMBase fsm)
         {
-            if (!fsmSet.Contains(fsm))
-                fsmSet.Add(fsm);
+            if (!fsmList.Contains(fsm))
+                fsmList.Add(fsm);
             else
                 throw new ArgumentException(" FSM is exists" + fsm.OwnerType.ToString());
         }
         public void DestoryFSM(Predicate<FSMBase>predicate)
         {
-            var fsm= fsmSet.Find(predicate);
+            var fsm= fsmList.Find(predicate);
             if (fsm == null)
                 throw new ArgumentNullException("FSM not  exists" + predicate.ToString());
-            fsmSet.Remove(fsm);
+            fsmList.Remove(fsm);
             fsm.Shutdown();
         }
         public void DestoryFSM(FSMBase fsm)
         {
-            fsmSet.Remove(fsm);
+            fsmList.Remove(fsm);
             fsm.Shutdown();
         }
-        public void SetRefreshInterval(float interval)
+        public void SetRefreshInterval(int interval)
         {
             if (interval <= 0)
             {
-                Utility.Debug.LogError("FSM Refresh interval less than Zero, use Zero instead");
                 this.RefreshInterval = 0;
                 return;
             }
             this.RefreshInterval = interval;
+            latestTime = Utility.Time.MillisecondNow() + RefreshInterval;
         }
         public void OnRefresh()
         {
             if (IsPause)
                 return;
-            coolTime += Time.deltaTime;
-            if(coolTime>= RefreshInterval)
+            var msNow = Utility.Time.MillisecondNow();
+            if (latestTime <= msNow)
             {
-                int length = fsmSet.Count;
+                latestTime = msNow + RefreshInterval;
+                int length = fsmList.Count;
                 for (int i = 0; i < length; i++)
                 {
-                    fsmSet[i].OnRefresh();
+                    fsmList[i].OnRefresh();
                 }
-                coolTime = 0;
             }
         }
         public bool HasFSM(Predicate<FSMBase> predicate)
         {
-            return fsmSet.Find(predicate) == null;
+            return fsmList.Find(predicate) == null;
         }
         public bool HasFSM(FSMBase fsm)
         {
-            return fsmSet.Contains(fsm);
+            return fsmList.Contains(fsm);
         }
         public FSMBase GetFSM(Predicate<FSMBase> predicate)
         {
-            return fsmSet.Find(predicate);
+            return fsmList.Find(predicate);
         }
         public int GetFSMCount()
         {
-            return fsmSet.Count;
+            return fsmList.Count;
         }
         public void DestoryAllFSM()
         {
-            int length = fsmSet.Count;
+            int length = fsmList.Count;
             for (int i = 0; i < length; i++)
             {
-                fsmSet[i].Shutdown();
+                fsmList[i].Shutdown();
             }
-            fsmSet.Clear();
+            fsmList.Clear();
         }
         #endregion
     }

@@ -7,7 +7,8 @@ namespace Cosmos.FSM
     {
         #region Properties
         List<FSMTrigger<T>> triggerList = new List<FSMTrigger<T>>();
-        Dictionary<FSMTrigger<T>, FSMState<T>> triggerStateDict = new Dictionary<FSMTrigger<T>, FSMState<T>>();
+        Dictionary<FSMTrigger<T>, FSMState<T>> triggerStateDict 
+            = new Dictionary<FSMTrigger<T>, FSMState<T>>();
         public void AddTrigger(FSMTrigger<T> trans,FSMState<T> state)
         {
             if (triggerStateDict.ContainsKey(trans))
