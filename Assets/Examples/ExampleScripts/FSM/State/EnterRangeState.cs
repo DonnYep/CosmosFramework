@@ -19,7 +19,6 @@ public class EnterRangeState : FSMState<FSMTester>
     }
     public override void OnInitialization(IFSM<FSMTester> fsm)
     {
-        AddTrigger(new ExitTestTrigger(), new ExitRangeState());
         Utility.Debug.LogInfo("EnterRangeState OnInitialization", MessageColor.INDIGO);
     }
     public override void OnTermination(IFSM<FSMTester> fsm)

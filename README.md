@@ -1,6 +1,6 @@
 # CosmosFramework
 
-CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰富的Unity方法扩展以及工具链。async/await语法支持，多网络通道支持。框架已做插件化，开发时放入Packages即可。
+CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰富的Unity方法扩展以及工具链。async/await语法支持，多网络通道支持。框架已做插件化，建议开发时放入Packages目录。
 
 ## Master、V0.1、V1.0分支暂停维护。最新内容请切换到V1.1分支。
 
@@ -32,7 +32,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **Hotfix**：热更新模块。此模块适用于基于C#的热更方案。（此方案未完善，未来将会使用MONO Interpreter 解释器执行热更新。）
 
-- **Network**：网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP、TCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可同时实现作为客户端(Client)以及服务器(Server)。支持async/await语法；
+- **Network**：网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP、TCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可实现(Client-Server)模式。支持async/await语法；
 
 - **UI**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取以及组别设置等。扩展方法对按钮等一些常用组件进行了扩展，无需手动实现按钮抬起、按下等接口实现即可监听。支持常用UIBehaiour类型的triggerEvent。
 
@@ -50,7 +50,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **Singleton**：单例基类。提供了线程安全、非线程安全、MONO单例基类。
 
-- **DataStructure**：常用数据结构。链表、双向链表、二叉树、四叉树、LRU、线程锁等数据结构。
+- **DataStructure**：常用数据结构。链表、双向链表、双向字典、二叉树、四叉树、LRU、线程锁等数据结构。
 
 - **Behaviour**：内置生命周期函数，此生命周期可参考Unity的MONO生命周期。需要注意，此内置生命周期适用于原生模块与自定义模块，相对于Unity生命周期是独立的。生命周期优先级依次为：
     - OnInitialization
@@ -62,7 +62,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
     - OnDeactive
     - OnTermination
     
-- **Extensions**：静态扩展工具。提供unity的扩展以及.NETCore对unity.NET的扩展。
+- **Extensions**：静态扩展工具。提供Unity的扩展以及C# Collections 常用数据结构的原生扩展。
 
 - **Awaitable** ：此工具提供了async/await语法在unity环境中的支持。可以像写c#原生异步一样,在Unity中写异步。支持Task异步，Task执行完成后会回到主线程，使用时按照正常格式写即可；
 代码参考：
@@ -96,15 +96,21 @@ public class AwaitableTest : MonoBehaviour
 }
 ```
 
-- **EventCore** ：轻量级事件模块，可自定义监听的数据类型；
-
+- **EventCore** 完全抽象的事件数据结构。内含普通、标准与线程安全类型；
+```CSharp
+    //声明一个类，使其派生自EventCore，并做类型约束。
+    public class MyEventCore :EventCore<string,string, MyEventCore>{}
+    //实现后即可使用自定义的事件监听。
+```
 - **ReferencePool** ：全局引用池模块；
 
 - **Editor** ：Editor中提供了在Hierarchy常用检索对象、组件的方法，EditorConfig提供了代码生成是自动创建代码标头的功能；
 
-- **QuarkAsset** ：QuarkAsset是快速的资源管理方案。动态加载时资源无需放入Resources、StreamingAssets或打包成AB包进行加载，在Assets目录下的任意位置都可以被加载到。加载时可通过文件名+后缀进行完全限定，也可以通过指定路径加载。
+- **QuarkAsset** ：QuarkAsset是一套AssetBundle资源管理方案。 Editor模式与AB模式之间可快速切换，且无需考虑AB依赖问题。加载时无需传入完整地址，通过资源名称即可完成加载。若资源重名，则通过文件名+后缀进行完全限定加载。
 
 - **FutureTask**：异步任务检测，支持多线程与协程异步进度检测。检测函数需要传入Func<bool>格式的函数，当条件返回值为true时，异步检测结束；注意：FutureTask本身并不是协程，不能代替协程执行异步任务；
+
+- **Pool**：池。池的完全抽象数据结构。包含线程安全类型。框架中的对象池、引用池以及其他模块的缓存池都使用了“Pool”进行实现；
     
 ## 内置架构 PureMVC
 
@@ -181,8 +187,6 @@ MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 - 最新请使用 V1.1 版本，V0.1、1.0 停止维护。Master暂停维护。
 
 - 内置案例地址：Assets\Examples\ 。
-
-- 数据结构中，提供了池的的底层对象“Pool”，框架中的对象池与引用池皆为“Pool”作为底层实现；
 
 ## 其他
 

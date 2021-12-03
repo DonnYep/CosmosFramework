@@ -9,24 +9,24 @@ namespace Cosmos.FSM
         List<FSMTrigger<T>> triggerList = new List<FSMTrigger<T>>();
         Dictionary<FSMTrigger<T>, FSMState<T>> triggerStateDict 
             = new Dictionary<FSMTrigger<T>, FSMState<T>>();
-        public void AddTrigger(FSMTrigger<T> trans,FSMState<T> state)
+        public void AddTrigger(FSMTrigger<T> trigger,FSMState<T> state)
         {
-            if (triggerStateDict.ContainsKey(trans))
+            if (triggerStateDict.ContainsKey(trigger))
                 return;
-            triggerStateDict.Add(trans, state);
-            triggerList.Add(trans);
+            triggerStateDict.Add(trigger, state);
+            triggerList.Add(trigger);
         }
-        public void RemoveTrigger(FSMTrigger<T> trans)
+        public void RemoveTrigger(FSMTrigger<T> trigger)
         {
-            if (!triggerStateDict.ContainsKey(trans))
+            if (!triggerStateDict.ContainsKey(trigger))
                 return;
-            triggerStateDict.Remove(trans);
-            triggerList.Remove(trans);
+            triggerStateDict.Remove(trigger);
+            triggerList.Remove(trigger);
         }
-        public FSMState<T> GetTriggeredState(FSMTrigger<T> trans)
+        public FSMState<T> GetTriggeredState(FSMTrigger<T> trigger)
         {
-            if (triggerStateDict.ContainsKey(trans))
-                return triggerStateDict[trans];
+            if (triggerStateDict.ContainsKey(trigger))
+                return triggerStateDict[trigger];
             return null;
         }
         #endregion

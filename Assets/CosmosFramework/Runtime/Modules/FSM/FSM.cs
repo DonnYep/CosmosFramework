@@ -133,7 +133,6 @@ namespace Cosmos.FSM
             if (currentState == null)
                 throw new ArgumentNullException("Current state is invalid");
             FSMState<T> state = null;
-            //state = GetState(state.GetType());
             state = GetState(stateType);
             if (state == null)
                 throw new ArgumentNullException("FSM" + currentState.ToString() + " can not change state to " + state.ToString() + " which is not exist");

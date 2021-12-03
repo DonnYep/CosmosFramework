@@ -27,7 +27,13 @@ public class FSMTester : MonoBehaviour
         fsmManager = CosmosEntry.FSMManager;
 
         var enterState = new EnterRangeState();
+        var enterTrigger = new EnterTestTrigger();
+
         var exitState = new ExitRangeState();
+        var exitTrigger = new ExitTestTrigger();
+
+        exitState.AddTrigger(enterTrigger, enterState);
+        enterState.AddTrigger(exitTrigger, exitState);
 
         fsm = fsmManager.CreateFSM("FSMTester", this, false, exitState, enterState);
         fsmManager.SetFSMGroupRefreshInterval<FSMTester>((int)(refreshInterval*1000));
