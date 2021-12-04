@@ -12,7 +12,7 @@ namespace Cosmos.Lockstep
     */
     //================================================
     [Module]
-    public class MultiplayManager : Module,IMultiplayManager
+    public class MultiplayManager : Module, IMultiplayManager
     {
         public int AuthorityConv { get; private set; }
         MultiplayEntitiesAgent multiplayEntitiesAgent;
@@ -55,14 +55,14 @@ namespace Cosmos.Lockstep
                 case MultiplayOperationCode.SYN:
                     {
                         var messageDict = Utility.MessagePack.Deserialize<Dictionary<byte, object>>(opData.DataContract);
-                        var authorityConv = Utility.GetValue(messageDict, (byte)MultiplayParameterCode.AuthorityConv);
-                        var serverSyncInterval = Utility.GetValue(messageDict, (byte)MultiplayParameterCode.ServerSyncInterval);
+                        var authorityConv = messageDict.GetValue((byte)MultiplayParameterCode.AuthorityConv);
+                        var serverSyncInterval = messageDict.GetValue((byte)MultiplayParameterCode.ServerSyncInterval);
                         AuthorityConv = Convert.ToInt32(authorityConv);
                         MultiplayConstant.IntervalMS = Convert.ToInt32(serverSyncInterval);
 
                         multiplayEntitiesAgent.OnMulitplayConnected();
 
-                        var remoteConvsJson = Convert.ToString(Utility.GetValue(messageDict, (byte)MultiplayParameterCode.RemoteConvs));
+                        var remoteConvsJson = Convert.ToString(messageDict.GetValue((byte)MultiplayParameterCode.RemoteConvs));
                         var remoteConvs = Utility.Json.ToObject<List<int>>(remoteConvsJson);
                         if (remoteConvs != null)
                         {
@@ -77,7 +77,7 @@ namespace Cosmos.Lockstep
                     break;
                 case MultiplayOperationCode.PlayerEnter:
                     {
-                        var enterNetId = BitConverter.ToInt32(opData.DataContract,0);
+                        var enterNetId = BitConverter.ToInt32(opData.DataContract, 0);
                         multiplayEntitiesAgent.OnMulitplayPlayerEnter(enterNetId);
                     }
                     break;

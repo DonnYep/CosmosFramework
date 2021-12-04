@@ -92,5 +92,13 @@ namespace Cosmos
                 @this[key] = value = startValue;
             return value;
         }
+        public static TValue GetValue<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key)
+        {
+            TValue value = default(TValue);
+            bool isSuccess = @this.TryGetValue(key, out value);
+            if (isSuccess)
+                return value;
+            return value;
+        }
     }
 }

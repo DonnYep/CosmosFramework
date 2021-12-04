@@ -52,23 +52,7 @@ namespace Cosmos
         /// </summary>
         public const string INDIGO = "#4B0082";
     }
-    /// <summary>
-    /// 通用工具类：
-    /// 数组工具，反射工具，文字工具，加密工具，
-    /// 数学工具，持久化数据工具，Debug工具
-    /// </summary>
     public static partial class Utility
     {
-        /// <summary>
-        ///字典工具 
-        /// </summary>
-        public static K GetValue<T, K>(Dictionary<T, K> dict, T key)
-        {
-            K value = default(K);
-            bool isSuccess = dict.TryGetValue(key, out value);
-            if (isSuccess)
-                return value;
-            return value;
-        }
     }
 }
