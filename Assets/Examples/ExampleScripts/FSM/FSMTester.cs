@@ -22,7 +22,7 @@ public class FSMTester : MonoBehaviour
         if (pauseDelay < 0)
             pauseDelay = 0;
     }
-    private async void Start()
+    private /*async */ void Start()
     {
         fsmManager = CosmosEntry.FSMManager;
 
@@ -39,7 +39,7 @@ public class FSMTester : MonoBehaviour
         fsmManager.SetFSMGroupRefreshInterval<FSMTester>((int)(refreshInterval*1000));
         fsm.DefaultState = exitState;
         fsm.StartDefault();
-        await new WaitForSeconds(pauseDelay);
-        fsmManager.PauseFSMGroup<FSMTester>();
+        //await new WaitForSeconds(pauseDelay);
+        //fsmManager.PauseFSMGroup<FSMTester>();
     }
 }

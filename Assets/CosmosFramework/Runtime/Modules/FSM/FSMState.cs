@@ -31,10 +31,10 @@ namespace Cosmos.FSM
         }
         #endregion
         #region Lifecycle
-        public abstract void OnInitialization(IFSM<T> fsm);
+        public virtual void OnInitialization(IFSM<T> fsm) { }
         public abstract void OnEnter(IFSM<T> fsm);
         public abstract void OnExit(IFSM<T> fsm);
-        public abstract void OnTermination(IFSM<T> fsm);
+        public virtual void OnTermination(IFSM<T> fsm) { }
         public virtual void Reason(IFSM<T> fsm)
         {
             for (int i = 0; i < triggerList.Count; i++)

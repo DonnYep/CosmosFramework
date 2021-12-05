@@ -7,22 +7,21 @@ public class EnterRangeState : FSMState<FSMTester>
 {
     public override void Action(IFSM<FSMTester> fsm)
     {
-        Utility.Debug.LogInfo("EnterRangeState Action", MessageColor.INDIGO,fsm.Owner.gameObject);
     }
     public override void OnEnter(IFSM<FSMTester> fsm)
     {
-        Utility.Debug.LogInfo("EnterRangeState OnEnter", MessageColor.INDIGO);
+        var go = fsm.Owner.gameObject;
+        Utility.Debug.LogInfo($"{go.name} EnterRangeState OnEnter", go);
     }
     public override void OnExit(IFSM<FSMTester> fsm)
     {
-        Utility.Debug.LogInfo("EnterRangeState OnExit", MessageColor.INDIGO);
+        var go = fsm.Owner.gameObject;
+        Utility.Debug.LogInfo($"{go.name} EnterRangeState OnExit", go);
     }
     public override void OnInitialization(IFSM<FSMTester> fsm)
     {
-        Utility.Debug.LogInfo("EnterRangeState OnInitialization", MessageColor.INDIGO);
     }
     public override void OnTermination(IFSM<FSMTester> fsm)
     {
-        Utility.Debug.LogInfo("EnterRangeState OnTermination", MessageColor.INDIGO);
     }
 }

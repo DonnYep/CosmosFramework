@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 7683947}
   - component: {fileID: 7683946}
   - component: {fileID: 7683945}
+  - component: {fileID: 7683949}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -208,12 +209,26 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7683944}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.41, y: 1, z: -3.41}
+  m_LocalPosition: {x: 5, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7683949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7683944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45b1f98922e3c9246abf8f85ac5bd503, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: 20
+  moveSpeed: 8
 --- !u!1 &71839308
 GameObject:
   m_ObjectHideFlags: 0
@@ -616,7 +631,7 @@ GameObject:
   - component: {fileID: 1283498296}
   - component: {fileID: 1283498295}
   m_Layer: 0
-  m_Name: FSM00
+  m_Name: Object_B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -646,7 +661,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1283498294}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -15}
+  m_LocalPosition: {x: 0, y: 1, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 191903051}
@@ -664,7 +679,7 @@ GameObject:
   - component: {fileID: 1351048701}
   - component: {fileID: 1351048702}
   m_Layer: 0
-  m_Name: FSM01
+  m_Name: Object_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -678,7 +693,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1351048700}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 15}
+  m_LocalPosition: {x: 0, y: 1, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1516128597}
@@ -827,7 +842,6 @@ MonoBehaviour:
   PrintModulePreparatory: 0
   LoadDefaultHelper: 1
   ResourceLoadMode: 0
-  QuarkAssetLoadMode: 0
   QuarkRemoteUrl: RemoteUrl
   QuarkLocalUrl: LocalUrl
 --- !u!4 &1632147168
