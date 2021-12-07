@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
 using Cosmos.FSM;
-public class ExitTestTrigger : FSMTrigger<FSMTester>
+public class ExitTestTrigger : FSMTrigger<Transform>
 {
-    public override bool Handler(IFSM<FSMTester> fsm)
+    public override bool Handler(IFSM<Transform> fsm)
     {
-        //Utility.Debug.LogInfo("ExitTestTrigger", MessageColor.INDIGO, fsm.Owner.gameObject);
-        float distance = Vector3.Distance(fsm.Owner.transform.position, fsm.Owner.Target.position);
-        if (distance > fsm.Owner.Range)
+        float distance = Vector3.Distance(fsm.Owner.transform.position, FSMTester.Instance.Target.position);
+        if (distance > FSMTester.Instance.ObjectDetectionRange)
             return true;
         else
             return false;

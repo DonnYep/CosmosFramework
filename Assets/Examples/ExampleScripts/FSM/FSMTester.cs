@@ -5,24 +5,29 @@ using System;
 using Cosmos;
 using Cosmos.FSM;
 
-public class FSMTester : MonoBehaviour
+public class FSMTester : MonoSingleton<FSMTester>
 {
     [SerializeField] Transform target;
+    [SerializeField] Transform objectA;
+    [SerializeField] Transform objectB;
     public Transform Target { get { return target; } }
+    public Transform ObjectA { get { return objectA; } }
+    public Transform ObjectB { get { return objectB; } }
     [SerializeField] float refreshInterval = 1;
-    [SerializeField] int range = 10;
-    [SerializeField] int pauseDelay=10;
-    public int Range { get { return range; } }
-    IFSM<FSMTester> fsm;
+    [SerializeField] int objectDetectionRange = 10;
+    [SerializeField] int pauseDelay = 10;
+    public int ObjectDetectionRange { get { return objectDetectionRange; } }
+    IFSM<Transform> fsmA;
+    IFSM<Transform> fsmB;
     IFSMManager fsmManager;
     private void OnValidate()
     {
-        if (range <= 0)
-            range = 0;
+        if (objectDetectionRange <= 0)
+            objectDetectionRange = 0;
         if (pauseDelay < 0)
             pauseDelay = 0;
     }
-    private /*async */ void Start()
+    private void Start()
     {
         fsmManager = CosmosEntry.FSMManager;
 
@@ -35,11 +40,14 @@ public class FSMTester : MonoBehaviour
         exitState.AddTrigger(enterTrigger, enterState);
         enterState.AddTrigger(exitTrigger, exitState);
 
-        fsm = fsmManager.CreateFSM("FSMTester", this, false, exitState, enterState);
-        fsmManager.SetFSMGroupRefreshInterval<FSMTester>((int)(refreshInterval*1000));
-        fsm.DefaultState = exitState;
-        fsm.StartDefault();
-        //await new WaitForSeconds(pauseDelay);
-        //fsmManager.PauseFSMGroup<FSMTester>();
+        fsmA = fsmManager.CreateFSM("FSMTester", objectA, false, exitState, enterState);
+        fsmA.DefaultState = exitState;
+        fsmA.StartDefault();
+
+        fsmB = fsmManager.CreateFSM("FSMTester", ObjectB, false, exitState, enterState);
+        fsmB.DefaultState = enterState;
+        fsmB.StartDefault();
+
+        fsmManager.SetFSMGroupRefreshInterval<Transform>((int)(refreshInterval * 1000));
     }
 }
