@@ -438,6 +438,31 @@ where T : Component
             audioSource.maxDistance = 500;
         }
 
+
+        /// <summary>
+        /// 优化的设置SetActive方法，可以节约重复设置Active的开销
+        /// </summary>
+        public static void SetActiveOptimize(this GameObject go, bool isActive)
+        {
+            if (go.activeSelf != isActive)
+            {
+                go.SetActive(isActive);
+            }
+        }
+        /// <summary>
+        /// 获取动画组件切换进度
+        /// </summary>
+        public static float GetCrossFadeProgress(this Animator anim, int layer = 0)
+        {
+            if (anim.GetNextAnimatorStateInfo(layer).shortNameHash == 0)
+            {
+                return 1;
+            }
+
+            return anim.GetCurrentAnimatorStateInfo(layer).normalizedTime % 1;
+        }
+
+        #region UGUI
         public static Button AddButtonClickListener(this Button button,UnityAction<BaseEventData> handle)
         {
             var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
@@ -512,5 +537,6 @@ where T : Component
             entry?.callback.RemoveAllListeners();
             return button;
         }
+        #endregion
     }
 }

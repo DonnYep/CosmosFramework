@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 namespace Cosmos
 {
@@ -94,6 +97,20 @@ namespace Cosmos
                     for (i = 0; (bytes / 1024) > 0; i++, bytes /= 1024)
                         dblSByte = bytes / 1024.0;
                 return $"{Math.Round(dblSByte, decimals)}{suffix[i]}";
+            }
+            /// <summary>
+            /// object类型转换为bytes
+            /// </summary>
+            /// <param name="obj">对象</param>
+            /// <returns>byte数组</returns>
+            public static byte[] Object2Bytes(object obj)
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    var formatter = new BinaryFormatter();
+                    formatter.Serialize(ms, obj);
+                    return ms.GetBuffer();
+                }
             }
         }
     }

@@ -12,8 +12,6 @@ namespace Cosmos.FSM
         public T Owner { get { return owner; } private set { owner = value; } }
         FSMState<T> currentState;
         public FSMState<T> CurrentState { get { return currentState; } }
-        Variable data;
-        public Variable CurrentData { get { return data; } }
         bool isDestoryed;
         public bool IsDestoryed { get { return isDestoryed; } private set { isDestoryed = value; } }
         FSMState<T> defaultState;
@@ -22,7 +20,6 @@ namespace Cosmos.FSM
         /// state存储的类型为派生类
         /// </summary>
         Dictionary<Type, FSMState<T>> fsmStateDict = new Dictionary<Type, FSMState<T>>();
-        Dictionary<string, Variable> fsmDataDict = new Dictionary<string, Variable>();
         public override int FSMStateCount { get { return fsmStateDict.Count; } }
         public override bool IsRunning { get { return currentState != null; } }
         public override Type OwnerType { get { return typeof(T); } }
@@ -43,7 +40,6 @@ namespace Cosmos.FSM
             Name = null;
             IsDestoryed = true;
             fsmStateDict.Clear();
-            fsmDataDict.Clear();
             currentState = null;
         }
         public void StartDefault()
@@ -177,63 +173,6 @@ namespace Cosmos.FSM
         }
         #endregion
 
-        #region Data
-        public void SetData(string dataName, Variable data)
-        {
-            if (string.IsNullOrEmpty(dataName))
-                Utility.Debug.LogError("Data name is invalid !");
-            fsmDataDict[dataName] = data;
-        }
-        public void SetData<TData>(string dataName, TData data)
-            where TData : Variable
-        {
-            if (string.IsNullOrEmpty(dataName))
-                Utility.Debug.LogError("Data name is invalid !");
-            fsmDataDict[dataName] = data;
-        }
-        public Variable GetData(string dataName)
-        {
-            if (string.IsNullOrEmpty(dataName))
-                Utility.Debug.LogError("Data name is invalid !");
-            Variable data = null;
-            if (fsmDataDict.TryGetValue(dataName, out data))
-            {
-                return data;
-            }
-            return null;
-        }
-        public TData GetData<TData>(string dataName)
-            where TData : Variable
-        {
-            return (TData)GetData(dataName);
-        }
-        public bool HasData(string dataName)
-        {
-            if (string.IsNullOrEmpty(dataName))
-                Utility.Debug.LogError("Data name is invalid !");
-            return fsmDataDict.ContainsKey(dataName);
-        }
-        public void RemoveData(string dataName)
-        {
-            if (string.IsNullOrEmpty(dataName))
-            {
-                Utility.Debug.LogError("Data name is invalid !");
-                return;
-            }
-            if (fsmDataDict.ContainsKey(dataName))
-                fsmDataDict.Remove(dataName);
-            else
-                Utility.Debug.LogError("Fsm data :" + dataName + " not set !");
-        }
-        /// <summary>
-        /// 数据重启
-        /// </summary>
-        public void Renewal()
-        {
-            if (data != null)
-                data.Release();
-        }
-        #endregion
         internal static FSM<T> Create(string name, T owner, params FSMState<T>[] states)
         {
             if (states == null || states.Length < 1)
