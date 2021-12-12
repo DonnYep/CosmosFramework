@@ -1,16 +1,13 @@
 ﻿using System;
 using Cosmos;
 using Cosmos.Network;
-
-namespace Telepathy
+using Telepathy;
+namespace Cosmos
 {
-    public class TcpServerChannel
+    public class TcpServerChannel : INetworkServerChannel
     {
         public const int MaxMessageSize = 1 << 14;//1024*16
         Server server;
-        string ip;
-        int port;
-
         /// <summary>
         ///  check if the server is running
         /// </summary>
@@ -20,10 +17,11 @@ namespace Telepathy
             add { server.OnConnected += value; }
             remove { server.OnConnected -= value; }
         }
-        public event Action<int, ArraySegment<byte>> OnDataReceived
+        Action<int,byte[]> onDataReceived;
+        public event Action<int, byte[]> OnDataReceived
         {
-            add { server.OnData += value; }
-            remove { server.OnData -= value; }
+            add { onDataReceived += value; }
+            remove { onDataReceived -= value; }
         }
         public event Action<int> OnDisconnected
         {
@@ -31,25 +29,35 @@ namespace Telepathy
             remove { server.OnDisconnected -= value; }
         }
         public NetworkChannelKey NetworkChannelKey { get; private set; }
-        public TcpServerChannel(string channelName, string ip, int port)
+        public int Port { get; private set; }
+        public TcpServerChannel(string channelName, int port)
         {
-            NetworkChannelKey = new NetworkChannelKey(channelName, $"{ip}:{port}");
+            NetworkChannelKey = new NetworkChannelKey(channelName, $"localhost:{port}");
             server = new Server(MaxMessageSize);
-            Telepathy.Log.Info = (s) => Utility.Debug.LogInfo(s);
-            Telepathy.Log.Warning = (s) => Utility.Debug.LogWarning(s);
-            Telepathy.Log.Error = (s) => Utility.Debug.LogError(s);
-            this.ip = ip;
-            this.port = port;
+            Log.Info = (s) => Utility.Debug.LogInfo(s);
+            Log.Warning = (s) => Utility.Debug.LogWarning(s);
+            Log.Error = (s) => Utility.Debug.LogError(s);
+            this.Port = port;
         }
         public bool StartServer()
         {
-            return server.Start(port);
+            if(server.Start(Port))
+            {
+                server.OnData += OnReceiveDataHandler;
+                return true;
+            }
+            return false;
         }
         public bool Disconnect(int connectionId)
         {
-            return server.Disconnect(connectionId);
+            if(server.Disconnect(connectionId))
+            {
+                server.OnData -= OnReceiveDataHandler;
+                return true;
+            }
+            return false;
         }
-        public string GetClientAddress(int connectionId)
+        public string GetConnectionAddress(int connectionId)
         {
             return server.GetClientAddress(connectionId);
         }
@@ -65,6 +73,15 @@ namespace Telepathy
         public void StopServer()
         {
             server.Stop();
+        }
+        public void AbortChannne()
+        {
+            StopServer();
+            NetworkChannelKey = NetworkChannelKey.None;
+        }
+        void OnReceiveDataHandler(int conv, ArraySegment<byte> arrSeg)
+        {
+            onDataReceived?.Invoke(conv, arrSeg.Array);
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Cosmos.Network
     *与客户端。客户端与服务器通道两条线并行，并且维护各自的逻辑；
     *
     *2、此模块线程安全；
+    *
+    *3、网络模块只维护通道，具体操作需要根据通道本身作处理；
     */
     //================================================
     [Module]
@@ -36,11 +38,18 @@ namespace Cosmos.Network
         {
             return channelDict.TryAdd(channelKey, channel);
         }
+        public void AddOrUpdateChannel(INetworkChannel channel)
+        {
+            var channelKey = channel.NetworkChannelKey;
+            if(channelDict.Remove(channelKey,out var oldChannel))
+                oldChannel.AbortChannne();
+            channelDict.TryAdd(channelKey, channel);
+        }
         public bool RemoveChannel(NetworkChannelKey channelKey, out INetworkChannel channel)
         {
             if (channelDict.TryRemove(channelKey, out channel))
             {
-                channel.Abort();
+                channel.AbortChannne();
                 return true;
             }
             return false;
@@ -53,17 +62,7 @@ namespace Cosmos.Network
         {
             return channelDict.ContainsKey(channelKey);
         }
-        public bool GetConnectionAddress(NetworkChannelKey channelKey, int conv, out string address)
-        {
-            address = string.Empty;
-            if (channelDict.TryGetValue(channelKey, out var networkChannel))
-            {
-                address = networkChannel.GetConnectionAddress(conv);
-                return true;
-            }
-            return false;
-        }
-        public INetworkChannel[] PeekAllChannels()
+        public INetworkChannel[] GetAllChannels()
         {
             return channelDict.Values.ToArray();
         }
@@ -74,40 +73,16 @@ namespace Cosmos.Network
                 var info = new NetworkChannelInfo();
                 info.IPAddress = channel.NetworkChannelKey.ChannelIPAddress;
                 info.Name = channel.NetworkChannelKey.ChannelName;
+                info.ChannelType = channel.GetType();
                 return info;
             }
             return NetworkChannelInfo.None;
-        }
-        public void SendNetworkMessage(NetworkChannelKey channelKey, NetworkReliableType reliableType, byte[] data, int connectionId)
-        {
-            if (channelDict.TryGetValue(channelKey, out var channel))
-            {
-                channel.SendMessage(reliableType, data, connectionId);
-            }
-        }
-        public bool Connect(NetworkChannelKey channelKey)
-        {
-            if (channelDict.TryGetValue(channelKey, out var channel))
-            {
-                channel.Connect();
-                return true;
-            }
-            return false;
-        }
-        public bool Disconnect(NetworkChannelKey channelKey, int connectionId)
-        {
-            if (channelDict.TryGetValue(channelKey, out var channel))
-            {
-                channel.Disconnect(connectionId);
-                return true;
-            }
-            return false;
         }
         public bool AbortChannel(NetworkChannelKey channelKey)
         {
             if (channelDict.TryRemove(channelKey, out var channel))
             {
-                channel.Abort();
+                channel.AbortChannne();
                 return true;
             }
             return false;
@@ -121,7 +96,7 @@ namespace Cosmos.Network
         {
             foreach (var channel in channelDict)
             {
-                channel.Value.Abort();
+                channel.Value.AbortChannne();
             }
             channelDict.Clear();
         }
@@ -137,5 +112,7 @@ namespace Cosmos.Network
                 channel.TickRefresh();
             }
         }
+
+
     }
 }

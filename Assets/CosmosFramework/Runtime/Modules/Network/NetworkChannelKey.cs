@@ -19,6 +19,7 @@ namespace Cosmos.Network
         /// 示例127.0.0.1:80
         /// </summary>
         public string ChannelIPAddress { get { return channelIPAddress; } }
+        public static readonly NetworkChannelKey None = new NetworkChannelKey("<NULL>","<NULL>");
         public NetworkChannelKey(string channelName, string channelIPAddress)
         {
             if (string.IsNullOrEmpty(channelName))

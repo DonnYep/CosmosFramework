@@ -11,34 +11,26 @@ namespace Cosmos
     /*
     *1、ServerChannel启动后，接收并维护remote进入的连接;
     *
-    *2、当有请求进入并成功建立连接时，触发onConnected，分发参数分别为
+    *2、当有请求进入并成功建立连接时，触发OnConnected，分发参数分别为
     *NetworkChannelKey以及建立连接的conv;
     *
-    *3、当请求断开连接，触发onDisconnected，分发NetworkChannelKey以及
+    *3、当请求断开连接，触发OnDisconnected，分发NetworkChannelKey以及
     *断开连接的conv;
     *
-    *4、已连接对象发来数据时，触发onReceiveData，分发NetworkChannelKey
+    *4、已连接对象发来数据时，触发OnDataReceived，分发NetworkChannelKey
     *以及发送来数据的conv;
     */
     //================================================
     /// <summary>
     /// / KCP服务端通道；
     /// </summary>
-    public class KCPServerChannel : INetworkChannel
+    public class KCPServerChannel  :INetworkServerChannel
     {
-        string ip;
-        ushort port;
-        KcpServerService kcpServerService;
+        KcpServerService server;
         Action<int> onConnected;
         Action<int> onDisconnected;
-        Action<int, byte[]> onReceiveData;
-        Action onAbort;
+        Action<int, byte[]> onDataReceived;
 
-        public event Action OnAbort
-        {
-            add { onAbort += value; }
-            remove { onAbort -= value; }
-        }
         public event Action<int> OnConnected
         {
             add { onConnected += value; }
@@ -49,50 +41,51 @@ namespace Cosmos
             add { onDisconnected += value; }
             remove { onDisconnected -= value; }
         }
-        public event Action<int, byte[]> OnReceiveData
+        public event Action<int, byte[]> OnDataReceived
         {
-            add { onReceiveData += value; }
-            remove { onReceiveData -= value; }
+            add { onDataReceived += value; }
+            remove { onDataReceived -= value; }
         }
+        public int Port { get; private set; }
 
-        public bool IsConnect { get { return kcpServerService.Server.IsActive(); } }
+        public bool Active { get { return server.Server.IsActive(); } }
         public NetworkChannelKey NetworkChannelKey { get; private set; }
-        public KCPServerChannel(string channelName, string ip, ushort port)
+        public KCPServerChannel(string channelName, ushort port)
         {
-            NetworkChannelKey = new NetworkChannelKey(channelName, $"{ip}:{port}");
+            NetworkChannelKey = new NetworkChannelKey(channelName, $"localhost:{port}");
             KCPLog.Info = (s) => Utility.Debug.LogInfo(s);
             KCPLog.Warning = (s) => Utility.Debug.LogInfo(s, MessageColor.YELLOW);
             KCPLog.Error = (s) => Utility.Debug.LogError(s);
-            this.ip = ip;
-            this.port = port;
+            this.Port = port;
+            server = new KcpServerService();
+            server.Port = port;
         }
         /// <summary>
         /// 服务端启动服务器；
         /// </summary>
-        public void Connect()
+        public bool StartServer()
         {
-            kcpServerService = new KcpServerService();
-            kcpServerService.Port = port;
-            kcpServerService.ServiceSetup();
-            kcpServerService.ServiceUnpause();
-
-            kcpServerService.OnServerDataReceived += OnReceiveDataHandler;
-            kcpServerService.OnServerDisconnected += OnDisconnectedHandler;
-            kcpServerService.OnServerConnected += OnConnectedHandler;
-            kcpServerService.ServiceConnect();
+            if (Active)
+                return false;
+            server.ServiceSetup();
+            server.ServiceUnpause();
+            server.OnServerDataReceived += OnReceiveDataHandler;
+            server.OnServerDisconnected += OnDisconnectedHandler;
+            server.OnServerConnected += OnConnectedHandler;
+            server.ServiceConnect();
+            return true;
         }
-        public void Abort()
+        public void StopServer()
         {
-            kcpServerService?.ServicePause();
-            kcpServerService.OnServerDataReceived -= OnReceiveDataHandler;
-            kcpServerService.OnServerDisconnected -= OnDisconnectedHandler;
-            kcpServerService.OnServerConnected -= OnConnectedHandler;
-            kcpServerService?.ServerServiceStop();
-            onAbort?.Invoke();
+            server?.ServicePause();
+            server.OnServerDataReceived -= OnReceiveDataHandler;
+            server.OnServerDisconnected -= OnDisconnectedHandler;
+            server.OnServerConnected -= OnConnectedHandler;
+            server?.ServerServiceStop();
         }
         public void TickRefresh()
         {
-            kcpServerService?.ServiceTick();
+            server?.ServiceTick();
         }
         /// <summary>
         /// 与已经连接的connectionId断开连接；
@@ -100,7 +93,7 @@ namespace Cosmos
         /// <param name="connectionId">连接Id</param>
         public void Disconnect(int connectionId)
         {
-            kcpServerService?.ServiceDisconnect(connectionId);
+            server?.ServiceDisconnect(connectionId);
         }
         /// <summary>
         /// 发送数据到remote;
@@ -108,15 +101,18 @@ namespace Cosmos
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="connectionId">连接Id</param>
-        public void SendMessage(byte[] data, int connectionId)
+        public bool SendMessage( int connectionId,byte[] data)
         {
-            SendMessage(NetworkReliableType.Reliable, data, connectionId);
+            return SendMessage(NetworkReliableType.Reliable, connectionId,data);
         }
-        public void SendMessage(NetworkReliableType reliableType, byte[] data, int connectionId)
+        public bool SendMessage(NetworkReliableType reliableType, int connectionId, byte[] data )
         {
+            if (!Active)
+                return false;
             var segment = new ArraySegment<byte>(data);
             var byteType = (byte)reliableType;
-            kcpServerService?.ServiceSend((KcpChannel)byteType, segment, connectionId);
+            server?.ServiceSend((KcpChannel)byteType, segment, connectionId);
+            return true;
         }
         /// <summary>
         /// 获取连接Id的地址；
@@ -125,7 +121,12 @@ namespace Cosmos
         /// <returns></returns>
         public string GetConnectionAddress(int connectionId)
         {
-            return kcpServerService.Server.GetClientAddress(connectionId);
+            return server.Server.GetClientAddress(connectionId);
+        }
+        public void AbortChannne()
+        {
+            StopServer();
+            NetworkChannelKey = NetworkChannelKey.None;
         }
         void OnDisconnectedHandler(int conv)
         {
@@ -140,7 +141,9 @@ namespace Cosmos
             var rcvLen = arrSeg.Count;
             var rcvData = new byte[rcvLen];
             Array.Copy(arrSeg.Array, 1, rcvData, 0, rcvLen);
-            onReceiveData?.Invoke(conv, rcvData);
+            onDataReceived?.Invoke(conv, rcvData);
         }
+
+
     }
 }

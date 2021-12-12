@@ -4,13 +4,13 @@ namespace Cosmos.Network
 {
     public class WaitDisconnectedAwaiter : INotifyCompletion
     {
-        INetworkChannel networkChannel;
+        INetworkClientChannel channel;
         Action continuation;
-        public WaitDisconnectedAwaiter(INetworkChannel networkChannel, int conv)
+        public WaitDisconnectedAwaiter(INetworkClientChannel networkChannel)
         {
-            this.networkChannel = networkChannel;
+            this.channel = networkChannel;
             networkChannel.OnDisconnected += OnDisconnected;
-            networkChannel.Disconnect(conv);
+            networkChannel.Disconnect();
         }
         public void OnCompleted(Action continuation)
         {
@@ -22,11 +22,11 @@ namespace Cosmos.Network
         {
             return this;
         }
-        void OnDisconnected(int conv)
+        void OnDisconnected()
         {
             continuation?.Invoke();
             IsCompleted = true;
-            networkChannel.OnConnected -= OnDisconnected;
+            channel.OnConnected -= OnDisconnected;
         }
     }
 }

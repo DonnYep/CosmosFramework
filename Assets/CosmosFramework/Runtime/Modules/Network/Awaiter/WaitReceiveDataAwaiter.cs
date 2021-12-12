@@ -4,13 +4,13 @@ namespace Cosmos.Network
 {
     public class WaitReceiveDataAwaiter : INotifyCompletion
     {
-        INetworkChannel networkChannel;
+        INetworkClientChannel networkChannel;
         Action continuation;
         byte[] rcvData;
-        public WaitReceiveDataAwaiter(INetworkChannel networkChannel)
+        public WaitReceiveDataAwaiter(INetworkClientChannel networkChannel)
         {
             this.networkChannel = networkChannel;
-            networkChannel.OnReceiveData += OnReceiveData;
+            networkChannel.OnDataReceived += OnReceiveData;
         }
         public void OnCompleted(Action continuation)
         {
@@ -22,12 +22,12 @@ namespace Cosmos.Network
         {
             return this;
         }
-        void OnReceiveData(int conv, byte[] data)
+        void OnReceiveData(byte[] data)
         {
             rcvData = data;
             continuation?.Invoke();
             IsCompleted = true;
-            networkChannel.OnReceiveData -= OnReceiveData;
+            networkChannel.OnDataReceived-= OnReceiveData;
         }
     }
 }

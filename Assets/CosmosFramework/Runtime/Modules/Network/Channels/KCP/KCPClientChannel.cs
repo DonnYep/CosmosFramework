@@ -24,134 +24,114 @@ namespace Cosmos
     /// <summary>
     /// KCP客户端通道；
     /// </summary>
-    public class KCPClientChannel : INetworkChannel
+    public class KCPClientChannel : INetworkClientChannel
     {
-        string ip;
-        ushort port;
 
         KcpClientService kcpClientService;
-        Action<int> onConnected;
-        Action<int> onDisconnected;
-        Action<int, byte[]> onReceiveData;
-        Action onAbort;
-
-        public event Action OnAbort
-        {
-            add { onAbort += value; }
-            remove { onAbort -= value; }
-        }
-        public event Action<int> OnConnected
+        Action onConnected;
+        Action onDisconnected;
+        Action<byte[]> onDataReceived;
+        string channelName;
+        public event Action OnConnected
         {
             add { onConnected += value; }
             remove { onConnected -= value; }
         }
-        public event Action<int> OnDisconnected
+        public event Action OnDisconnected
         {
             add { onDisconnected += value; }
             remove { onDisconnected -= value; }
         }
-        public event Action<int, byte[]> OnReceiveData
+        public event Action<byte[]> OnDataReceived
         {
-            add { onReceiveData += value; }
-            remove { onReceiveData -= value; }
+            add { onDataReceived += value; }
+            remove { onDataReceived -= value; }
         }
         public NetworkProtocol NetworkProtocol { get; set; }
         public bool IsConnect { get; private set; }
         public NetworkChannelKey NetworkChannelKey { get; private set; }
-        public KCPClientChannel(string channelName, string ip, ushort port)
+
+        public int Port { get; private set; }
+        public string IPAddress { get; private set; }
+
+        public KCPClientChannel(string channelName)
         {
-            NetworkChannelKey = new NetworkChannelKey(channelName, $"{ip}:{port}");
+            this.channelName = channelName;
             KCPLog.Info = (s) => Utility.Debug.LogInfo(s);
             KCPLog.Warning = (s) => Utility.Debug.LogInfo(s, MessageColor.YELLOW);
             KCPLog.Error = (s) => Utility.Debug.LogError(s);
-            this.ip = ip;
-            this.port = port;
         }
-        public void Disconnect()
+        public void Connect(string ip, int port)
         {
-            kcpClientService?.ServiceDisconnect();
-        }
-        public void TickRefresh()
-        {
-            kcpClientService?.ServiceTick();
-        }
-        public void Connect()
-        {
+            this.IPAddress = ip;
+            this.Port = port;
+            NetworkChannelKey = new NetworkChannelKey(channelName, $"{ip}:{port}");
             kcpClientService = new KcpClientService();
             kcpClientService.ServiceSetup();
             kcpClientService.OnClientDataReceived += OnReceiveDataHandler;
             kcpClientService.OnClientConnected += OnConnectHandler;
             kcpClientService.OnClientDisconnected += OnDisconnectHandler;
             kcpClientService.ServiceUnpause();
-            kcpClientService.Port = port;
-            kcpClientService.ServiceConnect(ip);
+            kcpClientService.Port = (ushort)Port;
+            kcpClientService.ServiceConnect(IPAddress);
         }
-        /// <summary>
-        /// 断开与remote的连接；
-        /// </summary>
-        /// <param name="connectionId">可以忽略</param>
-        public void Disconnect(int connectionId = -1)
+        public void TickRefresh()
+        {
+            kcpClientService?.ServiceTick();
+        }
+        public void Disconnect()
         {
             kcpClientService?.ServiceDisconnect();
-        }
-        public void Abort()
-        {
-            kcpClientService?.ServiceDisconnect();
-            onAbort?.Invoke();
         }
         /// <summary>
         /// 发送数据到remote;
         /// 默认为可靠类型；
         /// </summary>
         /// <param name="data">数据</param>
-        /// <param name="connectionId">连接Id</param>
-        public void SendMessage(byte[] data, int connectionId = -1)
+        public bool SendMessage(byte[] data)
         {
-            SendMessage(NetworkReliableType.Reliable, data, connectionId);
+            return SendMessage(NetworkReliableType.Reliable, data);
         }
         /// <summary>
         ///发送消息到remote;
         /// </summary>
         /// <param name="reliableType">消息可靠类型</param>
         /// <param name="data">数据</param>
-        /// <param name="connectionId">可以忽略</param>
-        public void SendMessage(NetworkReliableType reliableType, byte[] data, int connectionId = -1)
+        public bool SendMessage(NetworkReliableType reliableType, byte[] data)
         {
+            if (!IsConnect)
+                return false;
             var arraySegment = new ArraySegment<byte>(data);
             var byteType = (byte)reliableType;
             kcpClientService?.ServiceSend((KcpChannel)byteType, arraySegment);
+            return true;
         }
-        /// <summary>
-        /// 获取连接Id的地址；
-        /// </summary>
-        /// <param name="connectionId">连接Id</param>
-        /// <returns></returns>
-        public string GetConnectionAddress(int connectionId)
+        public void AbortChannne()
         {
-            //客户端通道仅返回本地地址；
-            return System.Net.Dns.GetHostName();
+            Disconnect();
+            NetworkChannelKey = NetworkChannelKey.None;
         }
         void OnDisconnectHandler()
         {
             IsConnect = false;
             Utility.Debug.LogError($"{NetworkChannelKey} disconnected ! ");
-            onDisconnected?.Invoke(-1);
+            onDisconnected?.Invoke();
             onConnected = null;
             onDisconnected = null;
-            onReceiveData = null;
+            onDataReceived = null;
         }
         void OnConnectHandler()
         {
             IsConnect = true;
             Utility.Debug.LogWarning($"{NetworkChannelKey} connected ! ");
-            onConnected?.Invoke(-1);
+            onConnected?.Invoke();
         }
         void OnReceiveDataHandler(ArraySegment<byte> arrSeg, byte channel)
         {
             var rcvLen = arrSeg.Count;
             var rcvData = new byte[rcvLen];
             Array.Copy(arrSeg.Array, arrSeg.Offset, rcvData, 0, rcvLen);
-            onReceiveData?.Invoke(-1, rcvData);
+            onDataReceived?.Invoke(rcvData);
         }
     }
 }

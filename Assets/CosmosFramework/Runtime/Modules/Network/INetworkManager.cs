@@ -34,6 +34,11 @@ namespace Cosmos
         /// <returns>是否添加成功</returns>
         bool AddChannel(NetworkChannelKey channelKey, INetworkChannel channel);
         /// <summary>
+        /// 添加或更新通道；
+        /// </summary>
+        /// <param name="channel">通道</param>
+        void AddOrUpdateChannel(INetworkChannel channel);
+        /// <summary>
         /// 添加通道；
         /// </summary>
         /// <param name="channel">通道</param>
@@ -60,18 +65,10 @@ namespace Cosmos
         /// <returns>是否存在通道</returns>
         bool HasChannel(NetworkChannelKey channelKey);
         /// <summary>
-        /// 获取指定通道的一个会话remote地址；
-        /// </summary>
-        /// <param name="channelKey">通道key</param>
-        /// <param name="conv">会话Id</param>
-        /// <param name="address">地址信息</param>
-        /// <returns>是否获取成功</returns>
-        bool GetConnectionAddress(NetworkChannelKey channelKey, int conv, out string address);
-        /// <summary>
         /// 获取所有存在的通道；
         /// </summary>
         /// <returns>通道数组</returns>
-        INetworkChannel[] PeekAllChannels();
+        INetworkChannel[] GetAllChannels();
         /// <summary>
         /// 获取通道信息；
         /// 若通道存在，则返回具体的信息；若不存在，则返回NetworkChannelInfo.None
@@ -80,27 +77,6 @@ namespace Cosmos
         /// <param name="channelKey">通道key</param>
         /// <returns>通道的信息；</returns>
         NetworkChannelInfo GetChannelInfo(NetworkChannelKey channelKey);
-        /// <summary>
-        /// 发送消息；
-        /// </summary>
-        /// <param name="channelKey">通道key</param>
-        /// <param name="reliableType">消息可靠类型</param>
-        /// <param name="data">数据</param>
-        /// <param name="connectionId">连接的id</param>
-        void SendNetworkMessage(NetworkChannelKey channelKey, NetworkReliableType reliableType, byte[] data, int connectionId);
-        /// <summary>
-        /// 建立连接；
-        /// </summary>
-        /// <param name="channelKey">通道key</param>
-        /// <returns>是否存在key</returns>
-        bool Connect(NetworkChannelKey channelKey);
-        /// <summary>
-        /// 断开连接；
-        /// </summary>
-        /// <param name="channelKey">通道key</param>
-        /// <param name="connectionId">连接的id</param>
-        /// <returns>是否存在key</returns>
-        bool Disconnect(NetworkChannelKey channelKey, int connectionId);
         /// <summary>
         /// 弃用&终结通道；
         /// </summary>

@@ -31,19 +31,17 @@ namespace Cosmos.Lockstep
             add { onReceiveData += value; }
             remove { onReceiveData -= value; }
         }
-        INetworkChannel networkChannel;
+        KCPClientChannel networkChannel;
         public void Connect(string ip, ushort port)
         {
             if (IsConnected)
                 return;
-            NetworkChannelKey channelKey = new NetworkChannelKey("Lockstep", $"{ip}:{port}");
-            CosmosEntry.NetworkManager.AbortChannel(channelKey);
-            networkChannel = new KCPClientChannel("Lockstep", ip, port);
-            networkChannel.OnReceiveData += OnReceiveDataHandle;
+            networkChannel = new KCPClientChannel("Lockstep");
+            networkChannel.OnDataReceived+= OnReceiveDataHandle;
             networkChannel.OnDisconnected += OnDisconnectedHandle;
             networkChannel.OnConnected += OnConnectedHandle;
-            networkChannel.Connect();
-            CosmosEntry.NetworkManager.AddChannel(networkChannel);
+            networkChannel.Connect(ip,port);
+            CosmosEntry.NetworkManager.AddOrUpdateChannel(networkChannel);
             IP = ip;
             Port = port;
         }
@@ -58,18 +56,18 @@ namespace Cosmos.Lockstep
         {
             if (!IsConnected)
                 return;
-            networkChannel.SendMessage(data, 0);
+            networkChannel.SendMessage(data);
         }
-        void OnReceiveDataHandle(int conv, byte[] data)
+        void OnReceiveDataHandle(byte[] data)
         {
             onReceiveData?.Invoke(data);
         }
-        void OnDisconnectedHandle(int conv)
+        void OnDisconnectedHandle()
         {
             IsConnected = false;
             onDisconnected?.Invoke();
         }
-        void OnConnectedHandle(int conv)
+        void OnConnectedHandle()
         {
             IsConnected = true;
             onConnected?.Invoke();
