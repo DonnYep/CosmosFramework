@@ -24,13 +24,18 @@ namespace Cosmos
     /// <summary>
     /// / KCP服务端通道；
     /// </summary>
-    public class KCPServerChannel  :INetworkServerChannel
+    public class KCPServerChannel : INetworkServerChannel
     {
         KcpServerService server;
         Action<int> onConnected;
         Action<int> onDisconnected;
         Action<int, byte[]> onDataReceived;
-
+        Action onAbort;
+        public event Action OnAbort
+        {
+            add { onAbort += value; }
+            remove { onAbort -= value; }
+        }
         public event Action<int> OnConnected
         {
             add { onConnected += value; }
@@ -48,7 +53,15 @@ namespace Cosmos
         }
         public int Port { get; private set; }
 
-        public bool Active { get { return server.Server.IsActive(); } }
+        public bool Active
+        {
+            get
+            {
+                if (server.Server == null)
+                    return false;
+                return server.Server.IsActive();
+            }
+        }
         public NetworkChannelKey NetworkChannelKey { get; private set; }
         public KCPServerChannel(string channelName, ushort port)
         {
@@ -101,11 +114,11 @@ namespace Cosmos
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="connectionId">连接Id</param>
-        public bool SendMessage( int connectionId,byte[] data)
+        public bool SendMessage(int connectionId, byte[] data)
         {
-            return SendMessage(NetworkReliableType.Reliable, connectionId,data);
+            return SendMessage(NetworkReliableType.Reliable, connectionId, data);
         }
-        public bool SendMessage(NetworkReliableType reliableType, int connectionId, byte[] data )
+        public bool SendMessage(NetworkReliableType reliableType, int connectionId, byte[] data)
         {
             if (!Active)
                 return false;
@@ -127,6 +140,7 @@ namespace Cosmos
         {
             StopServer();
             NetworkChannelKey = NetworkChannelKey.None;
+            onAbort?.Invoke();
         }
         void OnDisconnectedHandler(int conv)
         {

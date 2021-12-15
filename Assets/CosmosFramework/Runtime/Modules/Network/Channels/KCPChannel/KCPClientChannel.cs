@@ -26,12 +26,17 @@ namespace Cosmos
     /// </summary>
     public class KCPClientChannel : INetworkClientChannel
     {
-
+        string channelName;
         KcpClientService kcpClientService;
         Action onConnected;
         Action onDisconnected;
         Action<byte[]> onDataReceived;
-        string channelName;
+        Action onAbort;
+        public event Action OnAbort
+        {
+            add { onAbort += value; }
+            remove { onAbort -= value; }
+        }
         public event Action OnConnected
         {
             add { onConnected += value; }
@@ -110,6 +115,7 @@ namespace Cosmos
         {
             Disconnect();
             NetworkChannelKey = NetworkChannelKey.None;
+            onAbort?.Invoke();
         }
         void OnDisconnectHandler()
         {

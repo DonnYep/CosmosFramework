@@ -21,11 +21,18 @@ namespace Cosmos
                 return true;
             }
         }
-        public static  bool Remove<TKey, TValue>(this IDictionary<TKey, TValue> @this,TKey key, out TValue value)
+        public static bool Remove<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, out TValue value)
         {
-            return @this.Remove(key,out value);
+            value = default;
+            if (@this.ContainsKey(key))
+            {
+                value = @this[key];
+                @this.Remove(key);
+                return true;
+            }
+            return false;
         }
-        public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key,out TValue value)
+        public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, out TValue value)
         {
             if (@this.ContainsKey(key))
             {

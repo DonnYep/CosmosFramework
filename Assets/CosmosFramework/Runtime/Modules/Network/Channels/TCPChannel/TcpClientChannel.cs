@@ -4,13 +4,19 @@ using Cosmos.Network;
 using Telepathy;
 namespace Cosmos
 {
-    public class TcpClientChannel: INetworkClientChannel
+    public class TcpClientChannel : INetworkClientChannel
     {
         public const int MaxMessageSize = 1 << 14;//1024*16
 
         Client client;
         string channelName;
         public bool IsConnect { get { return client.Connected; } }
+        Action onAbort;
+        public event Action OnAbort
+        {
+            add { onAbort += value; }
+            remove { onAbort -= value; }
+        }
         public event Action OnConnected
         {
             add { client.OnConnected += value; }
@@ -64,6 +70,8 @@ namespace Cosmos
         public void AbortChannne()
         {
             Disconnect();
+            NetworkChannelKey = NetworkChannelKey.None;
+            onAbort?.Invoke();
         }
         void OnReceiveDataHandler(ArraySegment<byte> arrSeg)
         {

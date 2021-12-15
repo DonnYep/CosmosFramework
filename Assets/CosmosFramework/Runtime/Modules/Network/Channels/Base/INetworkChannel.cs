@@ -21,6 +21,10 @@ namespace Cosmos.Network
         /// </summary>
         NetworkChannelKey NetworkChannelKey { get; }
         /// <summary>
+        /// 当通道被终止；
+        /// </summary>
+        event Action OnAbort;
+        /// <summary>
         /// 终结通道；
         /// </summary>
         void AbortChannne();

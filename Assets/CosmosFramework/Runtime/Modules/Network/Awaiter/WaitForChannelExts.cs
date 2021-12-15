@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 namespace Cosmos.Network
 {
-    public static class WaitForChannelExtensions
+    public static class WaitForChannelExts
     {
         public async static Task ConnectAsync(this INetworkClientChannel @this, string ip, int port)
         {

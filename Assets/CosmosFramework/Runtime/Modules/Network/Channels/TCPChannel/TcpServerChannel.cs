@@ -11,13 +11,19 @@ namespace Cosmos
         /// <summary>
         ///  check if the server is running
         /// </summary>
-        public bool Active{ get { return server.Active; } }
+        public bool Active { get { return server.Active; } }
+        Action onAbort;
+        public event Action OnAbort
+        {
+            add { onAbort += value; }
+            remove { onAbort -= value; }
+        }
         public event Action<int> OnConnected
         {
             add { server.OnConnected += value; }
             remove { server.OnConnected -= value; }
         }
-        Action<int,byte[]> onDataReceived;
+        Action<int, byte[]> onDataReceived;
         public event Action<int, byte[]> OnDataReceived
         {
             add { onDataReceived += value; }
@@ -41,7 +47,7 @@ namespace Cosmos
         }
         public bool StartServer()
         {
-            if(server.Start(Port))
+            if (server.Start(Port))
             {
                 server.OnData += OnReceiveDataHandler;
                 return true;
@@ -50,7 +56,7 @@ namespace Cosmos
         }
         public bool Disconnect(int connectionId)
         {
-            if(server.Disconnect(connectionId))
+            if (server.Disconnect(connectionId))
             {
                 server.OnData -= OnReceiveDataHandler;
                 return true;
@@ -78,6 +84,7 @@ namespace Cosmos
         {
             StopServer();
             NetworkChannelKey = NetworkChannelKey.None;
+            onAbort?.Invoke();
         }
         void OnReceiveDataHandler(int conv, ArraySegment<byte> arrSeg)
         {
