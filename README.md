@@ -1,3 +1,5 @@
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/DonnYep/CosmosFramework/blob/V1.1/LICENSE)
 # CosmosFramework
 
 CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰富的Unity方法扩展以及工具链。async/await语法支持，多网络通道支持。框架已做插件化，建议开发时放入Packages目录。
