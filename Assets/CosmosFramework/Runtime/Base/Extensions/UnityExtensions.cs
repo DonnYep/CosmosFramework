@@ -461,7 +461,48 @@ where T : Component
 
             return anim.GetCurrentAnimatorStateInfo(layer).normalizedTime % 1;
         }
-
+        public static void EnableImage(this Image image)
+        {
+            if (image != null)
+            {
+                var c = image.color;
+                image.color = new Color(c.r, c.g, c.b, 1);
+            }
+        }
+        public static void DisableImage(this Image image)
+        {
+            if (image != null)
+            {
+                var c = image.color;
+                image.sprite = null;
+                image.color = new Color(c.r, c.g, c.b, 0);
+            }
+        }
+        /// <summary>
+        /// 清除所有子节点
+        /// </summary>
+        public static void ClearChild(this Transform go)
+        {
+            if (go == null)
+                return;
+            for (int i = go.childCount - 1; i >= 0; i--)
+            {
+                GameObject.Destroy(go.GetChild(i).gameObject);
+            }
+        }
+        /// <summary>
+        /// 设置层级；
+        /// 此API会令对象下的所有子对象都被设置层级； 
+        /// </summary>
+        public static void SetLayer(this GameObject go, string layerName)
+        {
+            var layer = LayerMask.NameToLayer(layerName);
+            var trans = go.GetComponentsInChildren<Transform>(true);
+            foreach (Transform t in trans)
+            {
+                t.gameObject.layer = layer;
+            }
+        }
         #region UGUI
         public static Button AddButtonClickListener(this Button button,UnityAction<BaseEventData> handle)
         {
