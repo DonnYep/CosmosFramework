@@ -7,21 +7,31 @@ public class AStartManager : MonoBehaviour
     [SerializeField] int xSize = 20;
     [SerializeField] int ySize = 20;
     [SerializeField] float nodeSideLength = 1;
-    AStartGrid aStartGrid;
+    AStart aStartGrid;
     [SerializeField] GameObject player;
     [SerializeField] GameObject defaultTile;
     [SerializeField] GameObject hightlightTile;
     GameObject playerInst;
     Pool<GameObject> hightlightPool;
     List<GameObject> spawnedHightlightTiles;
+    GameObject defaultTileRoot;
+    GameObject hightligntTileRoot;
     void Awake()
     {
-        aStartGrid = new AStartGrid(0,0, xSize, ySize, nodeSideLength);
-        hightlightPool = new Pool<GameObject>(() => { return Instantiate(hightlightTile); },
+        defaultTileRoot = new GameObject("DefaultTileRoot");
+        hightligntTileRoot = new GameObject("HightligntTileRoot");
+        defaultTileRoot.transform.SetParent(transform);
+        hightligntTileRoot.transform.SetParent(transform);
+        defaultTileRoot.transform.ResetLocalTransform();
+        hightligntTileRoot.transform.ResetLocalTransform();
+
+        aStartGrid = new AStartEuclidean(0,0, xSize, ySize, nodeSideLength);
+        hightlightPool = new Pool<GameObject>(() => {  return Instantiate(hightlightTile,hightligntTileRoot.transform); },
             go => go.gameObject.SetActive(true),
             go => go.gameObject.SetActive(false)
             );
         spawnedHightlightTiles = new List<GameObject>();
+
     }
     void Start()
     {
@@ -31,7 +41,7 @@ public class AStartManager : MonoBehaviour
         var length = nodes.Count;
         for (int i = 0; i < length; i++)
         {
-            var go = GameObject.Instantiate(defaultTile, transform);
+            var go = GameObject.Instantiate(defaultTile, defaultTileRoot.transform);
             var pos = new Vector3(nodes[i].CenterX, transform.position.y, nodes[i].CenterY);
             go.transform.position = pos;
         }
@@ -47,12 +57,6 @@ public class AStartManager : MonoBehaviour
                 if (hit.collider.gameObject.name == "AStartQuad")
                 {
                     DrawPath(hit.transform.parent);
-                    //var hitPos = hit.collider.transform.parent.position;
-                    //var neighbors = aStartGrid.GetNeighboringNodes(hitPos.x, hitPos.z);
-                    //foreach (var n in neighbors)
-                    //{
-                    //    UnityEngine.Debug.Log($"Node :{n.CenterX},{n.CenterY}");
-                    //}
                 }
             }
         }
@@ -80,15 +84,6 @@ public class AStartManager : MonoBehaviour
             var pos = new Vector3(node.CenterX,transform.position.y,node.CenterY);
             go.transform.position = pos;
             spawnedHightlightTiles.Add(go);
-        }
-    }
-    private void OnDrawGizmos()
-    {
-        if (aStartGrid != null)
-        {
-            var gridPos = new Vector3(aStartGrid.GridCenterX, transform.position.y, aStartGrid.GridCenterY);
-            var gridSize = new Vector3(aStartGrid.GridWidth, 5, aStartGrid.GridHeight);
-            Gizmos.DrawWireCube(gridPos, gridSize);
         }
     }
 }

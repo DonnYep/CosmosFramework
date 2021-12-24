@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public partial class AStartGrid
+    public partial class AStart
     {
         public class Node
         {

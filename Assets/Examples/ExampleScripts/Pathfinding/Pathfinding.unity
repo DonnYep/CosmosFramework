@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90b378212f41ade478b7db78d58c0f8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xSize: 25
+  xSize: 45
   ySize: 25
   nodeSideLength: 1
   player: {fileID: 8875699777575971582, guid: 3f39281906681344d9f4575bbe5cf204, type: 3}

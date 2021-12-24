@@ -6,8 +6,12 @@ namespace Cosmos
     /// <summary>
     /// AStart 网格；
     /// </summary>
-    public partial class AStartGrid
+    public abstract partial class AStart
     {
+        readonly Queue<List<Node>> nodeListQueue= new Queue<List<Node>>();
+        /// <summary>
+        /// 二维节点数组；
+        /// </summary>
         Node[,] nodeArray;
         /// <summary>
         /// 单位节点的边长；
@@ -43,7 +47,7 @@ namespace Cosmos
         public int GridSizeY { get; private set; }
         public float GridOffsetX { get; private set; }
         public float GridOffsetY { get; private set; }
-        public AStartGrid(float gridCenterX, float gridCenterY, int xCount, int yCount, float nodeSideLength)
+        public AStart(float gridCenterX, float gridCenterY, int xCount, int yCount, float nodeSideLength)
         {
             GridCenterX = gridCenterX;
             GridCenterY = gridCenterY;
@@ -89,8 +93,8 @@ namespace Cosmos
             var dstNode = GetNode(dstPosX, dstPosY);
             if (srcNode == null || dstNode == null)
                 return null;
-            List<Node> openList = new List<Node>();
-            HashSet<Node> closedList = new HashSet<Node>();
+            List<Node> openList = SpawnNodeList();
+            List<Node> closedList = SpawnNodeList();
             openList.Add(srcNode);
             while (openList.Count > 0)
             {
@@ -109,7 +113,10 @@ namespace Cosmos
 
                 if (currentNode == dstNode)
                 {
-                    return GetFinalPath(srcNode, dstNode);
+                    var finalPath= GetFinalPath(srcNode, dstNode);
+                    DespawnNodeList(openList);
+                    DespawnNodeList(closedList);
+                    return finalPath;
                 }
                 var nodeNeighbors = GetNeighboringNodes(currentNode);
                 foreach (var neighborNode in nodeNeighbors)
@@ -118,11 +125,11 @@ namespace Cosmos
                     {
                         continue;
                     }
-                    int moveCost = currentNode.GCost + GetManhattanDistance(currentNode, neighborNode);
+                    int moveCost = currentNode.GCost + GetDistance(currentNode, neighborNode);
                     if (moveCost < neighborNode.GCost || !openList.Contains(neighborNode))
                     {
                         neighborNode.GCost = moveCost;
-                        neighborNode.HCost = GetManhattanDistance(neighborNode, dstNode);
+                        neighborNode.HCost = GetDistance(neighborNode, dstNode);
                         neighborNode.ParentNode = currentNode;
                         if (!openList.Contains(neighborNode))
                         {
@@ -131,6 +138,8 @@ namespace Cosmos
                     }
                 }
             }
+            DespawnNodeList(openList);
+            DespawnNodeList(closedList);
             return null;
         }
         public IList<Node> GetAllNodes()
@@ -177,6 +186,11 @@ namespace Cosmos
             Array.Copy(srcNodes, 0, dstNodes, 0, idx);
             return dstNodes;
         }
+        public void Clear()
+        {
+            nodeListQueue.Clear();
+        }
+        protected abstract int GetDistance(Node a, Node b);
         protected int GetManhattanDistance(Node a, Node b)
         {
             var x = Math.Abs(a.IndexX - b.IndexX);
@@ -200,7 +214,7 @@ namespace Cosmos
         }
         protected IList<Node> GetFinalPath(Node src, Node dst)
         {
-            List<Node> nodePath = new List<Node>();
+            var nodePath = SpawnNodeList();
             Node currentNode = dst;
             while (currentNode != src)
             {
@@ -208,7 +222,9 @@ namespace Cosmos
                 currentNode = currentNode.ParentNode;
             }
             nodePath.Reverse();
-            return nodePath;
+            var arr= nodePath.ToArray();
+            DespawnNodeList(nodePath);
+            return arr;
         }
         /// <summary>
         /// 创建节点；
@@ -231,6 +247,26 @@ namespace Cosmos
                     nodeArray[x, y] = new Node(x, y, nodeCenterX, nodeCenterY, nodeSideLength, false);
                 }
             }
+        }
+        List<Node> SpawnNodeList()
+        {
+            if (nodeListQueue.Count > 0)
+            {
+                var obj = nodeListQueue.Dequeue();
+                return obj;
+            }
+            else
+            {
+                var obj = new List<Node>();
+                return obj;
+            }
+        }
+        void DespawnNodeList(List<Node> lst)
+        {
+            if (lst == null)
+                return;
+            lst.Clear();
+            nodeListQueue.Enqueue(lst);
         }
     }
 }
