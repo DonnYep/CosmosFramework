@@ -1,14 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using FixMath.NET;
 namespace Cosmos
 {
-    /// <summary>
-    /// AStart 网格；
-    /// </summary>
-    public abstract partial class AStart
+    public abstract class AStartFix64
     {
-        readonly Queue<List<Node>> nodeListQueue= new Queue<List<Node>>();
+        public class Node
+        {
+            /// <summary>
+            /// 网格中X位的序号；
+            /// </summary>
+            public int IndexX { get; set; }
+            /// <summary>
+            /// 网格中Y位的序号；
+            /// </summary>
+            public int IndexY { get; set; }
+            /// <summary>
+            /// X坐标中心位置
+            /// </summary>
+            public Fix64 CenterX { get; set; }
+            /// <summary>
+            /// Y坐标中心位置
+            /// </summary>
+            public Fix64 CenterY { get; set; }
+            /// <summary>
+            /// 边长；
+            /// </summary>
+            public Fix64 SideLength { get; set; }
+            /// <summary>
+            /// 是否是障碍物；
+            /// </summary>
+            public bool IsObstacle { get; set; }
+            /// <summary>
+            /// 父节点；
+            /// </summary>
+            public Node ParentNode { get; set; }
+            /// <summary>
+            /// 与初始点的距离；
+            /// </summary>
+            public int GCost { get; set; }
+            /// <summary>
+            ///与终点的距离；
+            /// </summary>
+            public int HCost { get; set; }
+            /// <summary>
+            /// 距离的代价；
+            /// Manhattan or Euclidean distance；
+            /// </summary>
+            public int FCost { get { return GCost + HCost; } }
+            /// <summary>
+            /// 当前节点的代价；
+            /// </summary>
+            public int Cost { get; set; }
+            public Node(int indexX, int indexY, Fix64 centerX, Fix64 centerY, Fix64 sideLength, bool isObstacle)
+            {
+                IndexX = indexX;
+                IndexY = indexY;
+                CenterX = centerX;
+                CenterY = centerY;
+                SideLength = sideLength;
+                IsObstacle = isObstacle;
+            }
+        }
+        readonly Queue<List<Node>> nodeListQueue = new Queue<List<Node>>();
         /// <summary>
         /// 二维节点数组；
         /// </summary>
@@ -16,27 +73,27 @@ namespace Cosmos
         /// <summary>
         /// 单位节点的边长；
         /// </summary>
-        public float NodeSideLength { get; private set; }
+        public Fix64 NodeSideLength { get; private set; }
         /// <summary>
         /// 网格的X位置；
         /// </summary>
-        public float GridCenterX { get; private set; }
+        public Fix64 GridCenterX { get; private set; }
         /// <summary>
         /// 网格的Y位置；
         /// </summary>
-        public float GridCenterY { get; private set; }
-        public float GridTop { get; private set; }
-        public float GridBottom { get; private set; }
-        public float GridLeft { get; private set; }
-        public float GridRight { get; private set; }
+        public Fix64 GridCenterY { get; private set; }
+        public Fix64 GridTop { get; private set; }
+        public Fix64 GridBottom { get; private set; }
+        public Fix64 GridLeft { get; private set; }
+        public Fix64 GridRight { get; private set; }
         /// <summary>
         /// 网格宽；
         /// </summary>
-        public float GridWidth { get; private set; }
+        public Fix64 GridWidth { get; private set; }
         /// <summary>
         /// 网格高；
         /// </summary>
-        public float GridHeight { get; private set; }
+        public Fix64 GridHeight { get; private set; }
         /// <summary>
         /// 网格X轴节点数量；
         /// </summary>
@@ -45,9 +102,9 @@ namespace Cosmos
         /// 网格Y轴节点数量；
         /// </summary>
         public int GridSizeY { get; private set; }
-        public float GridOffsetX { get; private set; }
-        public float GridOffsetY { get; private set; }
-        public AStart(float gridCenterX, float gridCenterY, int xCount, int yCount, float nodeSideLength)
+        public Fix64 GridOffsetX { get; private set; }
+        public Fix64 GridOffsetY { get; private set; }
+        public AStartFix64(Fix64 gridCenterX, Fix64 gridCenterY, int xCount, int yCount, Fix64 nodeSideLength)
         {
             GridCenterX = gridCenterX;
             GridCenterY = gridCenterY;
@@ -56,14 +113,14 @@ namespace Cosmos
             GridSizeX = xCount;
             GridSizeY = yCount;
             NodeSideLength = nodeSideLength;
-            GridWidth = xCount * nodeSideLength;
-            GridHeight = yCount * nodeSideLength;
+            GridWidth = (Fix64)(xCount * (float)nodeSideLength);
+            GridHeight = (Fix64)(yCount * (float)nodeSideLength);
 
-            var halfWidth = GridWidth / 2;
-            var halfHeight = GridHeight / 2;
+            Fix64 halfWidth = (Fix64)((float)GridWidth / 2);
+            Fix64 halfHeight = (Fix64)((float)GridHeight / 2);
 
-            GridOffsetX = gridCenterX - halfWidth;
-            GridOffsetY = gridCenterY - halfHeight;
+            GridOffsetX = (Fix64)(gridCenterX - halfWidth);
+            GridOffsetY = (Fix64)(gridCenterY - halfHeight);
 
             GridLeft = gridCenterX - halfWidth;
             GridRight = gridCenterX + halfWidth;
@@ -73,13 +130,13 @@ namespace Cosmos
 
             CreateNodes(xCount, yCount, nodeSideLength);
         }
-        public bool IsOverlapping(float posX, float posY)
+        public bool IsOverlapping(Fix64 posX, Fix64 posY)
         {
             if (posX < GridLeft || posX > GridRight) return false;
             if (posY < GridBottom || posY > GridTop) return false;
             return true;
         }
-        public Node GetNode(float posX, float posY)
+        public Node GetNode(Fix64 posX, Fix64 posY)
         {
             if (!IsOverlapping(posX, posY))
                 return null;
@@ -87,7 +144,7 @@ namespace Cosmos
             var row = (posY - GridOffsetY) / NodeSideLength;
             return nodeArray[(int)col, (int)row];
         }
-        public IList<Node> FindPath(float srcPosX, float srcPosY, float dstPosX, float dstPosY)
+        public IList<Node> FindPath(Fix64 srcPosX, Fix64 srcPosY, Fix64 dstPosX, Fix64 dstPosY)
         {
             var srcNode = GetNode(srcPosX, srcPosY);
             var dstNode = GetNode(dstPosX, dstPosY);
@@ -113,7 +170,7 @@ namespace Cosmos
 
                 if (currentNode == dstNode)
                 {
-                    var finalPath= GetFinalPath(srcNode, dstNode);
+                    var finalPath = GetFinalPath(srcNode, dstNode);
                     DespawnNodeList(openList);
                     DespawnNodeList(closedList);
                     return finalPath;
@@ -153,7 +210,7 @@ namespace Cosmos
             }
             return nodes;
         }
-        public virtual IList<Node> GetNeighboringNodes(float posX, float posY)
+        public virtual IList<Node> GetNeighboringNodes(Fix64 posX, Fix64 posY)
         {
             var node = GetNode(posX, posY);
             return GetNeighboringNodes(node);
@@ -190,6 +247,14 @@ namespace Cosmos
         {
             nodeListQueue.Clear();
         }
+        public bool Equals(AStartFix64 other)
+        {
+            return other.NodeSideLength == NodeSideLength
+                && other.GridCenterX == GridCenterX
+                && other.GridCenterY == GridCenterY
+                && other.GridSizeX == GridSizeX
+                && other.GridSizeY == GridSizeY;
+        }
         protected abstract int GetDistance(Node a, Node b);
         protected int GetManhattanDistance(Node a, Node b)
         {
@@ -222,7 +287,7 @@ namespace Cosmos
                 currentNode = currentNode.ParentNode;
             }
             nodePath.Reverse();
-            var arr= nodePath.ToArray();
+            var arr = nodePath.ToArray();
             DespawnNodeList(nodePath);
             return arr;
         }
@@ -232,19 +297,20 @@ namespace Cosmos
         /// <param name="xCount">X轴数量</param>
         /// <param name="yCount">Y轴数量</param>
         /// <param name="nodeSideLength">节点的边长</param>
-        protected void CreateNodes(int xCount, int yCount, float nodeSideLength)
+        protected void CreateNodes(int xCount, int yCount, Fix64 nodeSideLength)
         {
-            var centerOffsetX = nodeSideLength / 2 + GridOffsetX;
-            var centerOffsetY = nodeSideLength / 2 + GridOffsetY;
+            var fNodeSideLength = (float)nodeSideLength;
+            var centerOffsetX = fNodeSideLength / 2 + (float)GridOffsetX;
+            var centerOffsetY = fNodeSideLength / 2 + (float)GridOffsetY;
             //笛卡尔二维坐标系；
             //Cartesian coordinates
             for (int y = 0; y < yCount; y++)
             {
                 for (int x = 0; x < xCount; x++)
                 {
-                    var nodeCenterX = nodeSideLength * x + centerOffsetX;
-                    var nodeCenterY = nodeSideLength * y + centerOffsetY;
-                    nodeArray[x, y] = new Node(x, y, nodeCenterX, nodeCenterY, nodeSideLength, false);
+                    var nodeCenterX = fNodeSideLength * x + centerOffsetX;
+                    var nodeCenterY = fNodeSideLength * y + centerOffsetY;
+                    nodeArray[x, y] = new Node(x, y, (Fix64)nodeCenterX, (Fix64)nodeCenterY, nodeSideLength, false);
                 }
             }
         }

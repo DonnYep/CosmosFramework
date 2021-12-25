@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FixMath.NET;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
-    public class AStartManhattan : AStart
+    public class AStartFix64Diagonal: AStartFix64
     {
-        public AStartManhattan(float gridCenterX, float gridCenterY, int xCount, int yCount, float nodeSideLength) 
+        public AStartFix64Diagonal(Fix64 gridCenterX, Fix64 gridCenterY, int xCount, int yCount, Fix64 nodeSideLength) 
             : base(gridCenterX, gridCenterY, xCount, yCount, nodeSideLength){}
-
         protected override int GetDistance(Node a, Node b)
         {
-            return GetManhattanDistance(a, b);
+            return GetDiagonalDistance(a, b);
         }
     }
 }
