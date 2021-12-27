@@ -4,7 +4,7 @@
 
 CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰富的Unity方法扩展以及工具链。async/await语法支持，多网络通道支持。框架已做插件化，建议开发时放入Packages目录。
 
-## Master、V0.1、V1.0分支暂停维护。最新内容请切换到V1.1分支。
+## Master、V0.1、V1.0分支停止维护。最新内容请切换到V1.1分支。
 
 ## 环境
 
@@ -52,7 +52,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **Singleton**：单例基类。提供了线程安全、非线程安全、MONO单例基类。
 
-- **DataStructure**：常用数据结构。链表、双向链表、双向字典、二叉树、四叉树、LRU、线程锁等数据结构。
+- **DataStructure**：常用数据结构。链表、双向链表、双向字典、二叉树、四叉树、AStart、LRU、线程锁等数据结构。
 
 - **Behaviour**：内置生命周期函数，此生命周期可参考Unity的MONO生命周期。需要注意，此内置生命周期适用于原生模块与自定义模块，相对于Unity生命周期是独立的。生命周期优先级依次为：
     - OnInitialization
@@ -71,7 +71,6 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 ```CSharp
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
 public class AwaitableTest : MonoBehaviour
