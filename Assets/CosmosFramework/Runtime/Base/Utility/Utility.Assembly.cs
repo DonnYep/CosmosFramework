@@ -28,7 +28,7 @@ namespace Cosmos
             /// <param name="type">类型</param>
             /// <returns>装箱后的对象</returns>
             public static T GetTypeInstance<T>(Type type)
-                where T : class, new()
+                where T : class
             {
                 return type.Assembly.CreateInstance(type.FullName) as T;
             }
@@ -247,7 +247,6 @@ where K : class
             /// <returns>非抽象派生类数组</returns>
             public static Type[] GetDerivedTypesByAttribute<T>(Type type, System.Reflection.Assembly assembly = null)
     where T : Attribute
-
             {
                 return GetDerivedTypesByAttribute<T>(type, false, assembly);
             }
@@ -262,20 +261,12 @@ where K : class
             public static Type[] GetDerivedTypesByAttribute<T>(Type type, bool inherit, System.Reflection.Assembly assembly = null)
     where T : Attribute
             {
-                List<Type> set = new List<Type>();
                 Type[] types = assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
+                return types.Where(t =>
                 {
-                    if (type.IsAssignableFrom(types[i]))
-                    {
-                        if (types[i].IsClass && !types[i].IsAbstract)
-                        {
-                            if (types[i].GetCustomAttributes<T>(inherit).Count() > 0)
-                                set.Add(types[i]);
-                        }
-                    }
-                }
-                return set.ToArray();
+                    return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract &&
+                    t.GetCustomAttributes<T>(inherit).Count() > 0;
+                }).ToArray();
             }
             /// <summary>
             /// 获取某类型的第一个派生类；
@@ -296,24 +287,15 @@ where K : class
             /// <returns>非抽象派生类</returns>
             public static Type GetDerivedType(Type type, System.Reflection.Assembly assembly = null)
             {
-                Type targetType = null;
                 Type[] types;
                 if (assembly == null)
                     types = type.Assembly.GetTypes();
                 else
                     types = assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
-                {
-                    if (type.IsAssignableFrom(types[i]))
-                    {
-                        if (types[i].IsClass && !types[i].IsAbstract)
-                        {
-                            targetType = types[i];
-                            return targetType;
-                        }
-                    }
-                }
-                return targetType;
+                var rstType = from t in types
+                              where type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract
+                              select t;
+                return rstType.FirstOrDefault();
             }
             /// <summary>
             /// 获取某类型在指定程序集的所有派生类数组；
@@ -325,23 +307,12 @@ where K : class
     where T : class
             {
                 Type type = typeof(T);
-                List<Type> set = new List<Type>();
                 Type[] types;
                 if (assembly == null)
                     types = type.Assembly.GetTypes();
                 else
                     types = assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
-                {
-                    if (type.IsAssignableFrom(types[i]))
-                    {
-                        if (types[i].IsClass && !types[i].IsAbstract)
-                        {
-                            set.Add(types[i]);
-                        }
-                    }
-                }
-                return set.ToArray();
+                return types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).ToArray();
             }
             /// <summary>
             /// 获取某类型在指定程序集的所有派生类数组；
@@ -351,23 +322,12 @@ where K : class
             /// <returns>非抽象派生类</returns>
             public static Type[] GetDerivedTypes(Type type, System.Reflection.Assembly assembly = null)
             {
-                List<Type> set = new List<Type>();
                 Type[] types;
                 if (assembly == null)
                     types = type.Assembly.GetTypes();
                 else
                     types = assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
-                {
-                    if (type.IsAssignableFrom(types[i]))
-                    {
-                        if (types[i].IsClass && !types[i].IsAbstract)
-                        {
-                            set.Add(types[i]);
-                        }
-                    }
-                }
-                return set.ToArray();
+                return types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).ToArray();
             }
             /// <summary>
             /// 将一个对象上的字段值赋予到另一个对象上名字相同的字段上；
