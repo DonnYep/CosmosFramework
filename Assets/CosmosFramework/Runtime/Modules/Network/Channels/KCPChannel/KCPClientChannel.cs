@@ -63,7 +63,7 @@ namespace Cosmos
         {
             this.channelName = channelName;
             KCPLog.Info = (s) => Utility.Debug.LogInfo(s);
-            KCPLog.Warning = (s) => Utility.Debug.LogInfo(s, MessageColor.YELLOW);
+            KCPLog.Warning = (s) => Utility.Debug.LogWarning(s);
             KCPLog.Error = (s) => Utility.Debug.LogError(s);
         }
         public void Connect(string ip, int port)
