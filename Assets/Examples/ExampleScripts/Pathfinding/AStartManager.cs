@@ -11,11 +11,14 @@ public class AStartManager : MonoBehaviour
     [SerializeField] GameObject player;
     [SerializeField] GameObject defaultTile;
     [SerializeField] GameObject hightlightTile;
+    [SerializeField] AStartDistanceType aStartDistanceType;
     GameObject playerInst;
     Pool<GameObject> hightlightPool;
     List<GameObject> spawnedHightlightTiles;
     GameObject defaultTileRoot;
     GameObject hightligntTileRoot;
+
+    Transform latestQuad;
     void Awake()
     {
         defaultTileRoot = new GameObject("DefaultTileRoot");
@@ -25,8 +28,19 @@ public class AStartManager : MonoBehaviour
         defaultTileRoot.transform.ResetLocalTransform();
         hightligntTileRoot.transform.ResetLocalTransform();
 
-        aStartGrid = new AStartEuclidean(0,0, xSize, ySize, nodeSideLength);
-        hightlightPool = new Pool<GameObject>(() => {  return Instantiate(hightlightTile,hightligntTileRoot.transform); },
+        switch (aStartDistanceType)
+        {
+            case AStartDistanceType.Euclidean:
+                aStartGrid = new AStartEuclidean(0, 0, xSize, ySize, nodeSideLength);
+                break;
+            case AStartDistanceType.Manhattan:
+                aStartGrid = new AStartManhattan(0, 0, xSize, ySize, nodeSideLength);
+                break;
+            case AStartDistanceType.Diagonal:
+                aStartGrid = new AStartDiagonal(0, 0, xSize, ySize, nodeSideLength);
+                break;
+        }
+        hightlightPool = new Pool<GameObject>(() => { return Instantiate(hightlightTile, hightligntTileRoot.transform); },
             go => go.gameObject.SetActive(true),
             go => go.gameObject.SetActive(false)
             );
@@ -48,6 +62,20 @@ public class AStartManager : MonoBehaviour
     }
     void Update()
     {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Vector3 mouse = Input.mousePosition;
+            Ray castPoint = Camera.main.ScreenPointToRay(mouse);
+            if (Physics.Raycast(castPoint, out var hit))
+            {
+                if (hit.collider.gameObject.name == "AStartQuad")
+                {
+                    playerInst.transform.position = hit.transform.parent.position;
+                    if (latestQuad != null)
+                        DrawPath(latestQuad);
+                }
+            }
+        }
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mouse = Input.mousePosition;
@@ -56,7 +84,8 @@ public class AStartManager : MonoBehaviour
             {
                 if (hit.collider.gameObject.name == "AStartQuad")
                 {
-                    DrawPath(hit.transform.parent);
+                    latestQuad = hit.transform.parent;
+                    DrawPath(latestQuad);
                 }
             }
         }
@@ -80,8 +109,8 @@ public class AStartManager : MonoBehaviour
         for (int i = 0; i < pathLength; i++)
         {
             var node = pathNodes[i];
-            var go= hightlightPool.Spawn();
-            var pos = new Vector3(node.CenterX,transform.position.y,node.CenterY);
+            var go = hightlightPool.Spawn();
+            var pos = new Vector3(node.CenterX, transform.position.y, node.CenterY);
             go.transform.position = pos;
             spawnedHightlightTiles.Add(go);
         }

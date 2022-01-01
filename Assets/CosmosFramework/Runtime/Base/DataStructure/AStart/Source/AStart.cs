@@ -6,13 +6,13 @@ namespace Cosmos
     /// <summary>
     /// AStart 网格；
     /// </summary>
-    public abstract partial class AStart:IEquatable<AStart>
+    public abstract partial class AStart : IEquatable<AStart>
     {
-        readonly Queue<List<Node>> nodeListQueue= new Queue<List<Node>>();
+        readonly Queue<List<Node>> nodeListQueue = new Queue<List<Node>>();
         /// <summary>
         /// 二维节点数组；
         /// </summary>
-        Node[,] nodeArray;
+        protected Node[,] nodeArray;
         /// <summary>
         /// 单位节点的边长；
         /// </summary>
@@ -100,10 +100,10 @@ namespace Cosmos
             {
                 var currentNode = openList[0];
                 var openLength = openList.Count;
-                for (int i = 1; i < openLength; i++)
+                for (int i = 0; i < openLength; i++)
                 {
                     var openNode = openList[i];
-                    if (openNode.FCost < currentNode.FCost || openNode.FCost == currentNode.FCost && openNode.HCost < currentNode.HCost)
+                    if (openNode.FCost <= currentNode.FCost && openNode.HCost < currentNode.HCost)
                     {
                         currentNode = openNode;
                     }
@@ -113,7 +113,7 @@ namespace Cosmos
 
                 if (currentNode == dstNode)
                 {
-                    var finalPath= GetFinalPath(srcNode, dstNode);
+                    var finalPath = GetFinalPath(srcNode, dstNode);
                     DespawnNodeList(openList);
                     DespawnNodeList(closedList);
                     return finalPath;
@@ -153,35 +153,36 @@ namespace Cosmos
             }
             return nodes;
         }
-        public virtual IList<Node> GetNeighboringNodes(float posX, float posY)
+        public IList<Node> GetNeighboringNodes(float posX, float posY)
         {
             var node = GetNode(posX, posY);
             return GetNeighboringNodes(node);
         }
         /// <summary>
-        /// 获取临近的节点；
-        /// 默认使用Square方格节点获取；
+        /// 获取临近除自身的九宫格节点；
         /// </summary>
         /// <param name="node">被查找的节点</param>
         /// <returns>目标节点数组</returns>
         public virtual IList<Node> GetNeighboringNodes(Node node)
         {
-            Node[] srcNodes = new Node[4];
-            var x = node.IndexX;
-            var y = node.IndexY;
-            var leftX = x - 1;
-            var rightX = x + 1;
-            var upY = y + 1;
-            var downY = y - 1;
+            var w = GridSizeX - 1;
+            var h = GridSizeY - 1;
+            Node[] srcNodes = new Node[8];
             int idx = 0;
-            if (leftX >= 0)
-                srcNodes[idx++] = nodeArray[leftX, y];
-            if (rightX <= GridSizeX - 1)
-                srcNodes[idx++] = nodeArray[rightX, y];
-            if (upY <= GridSizeY - 1)
-                srcNodes[idx++] = nodeArray[x, upY];
-            if (downY >= 0)
-                srcNodes[idx++] = nodeArray[x, downY];
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    if (y == 0 && x == 0)
+                        continue;
+                    int idxX = node.IndexX + x;
+                    int idxY = node.IndexY + y;
+                    if (idxX <= w && idxX >= 0 && idxY <= h && idxY >= 0)
+                    {
+                        srcNodes[idx++] = nodeArray[idxX, idxY];
+                    }
+                }
+            }
             var dstNodes = new Node[idx];
             Array.Copy(srcNodes, 0, dstNodes, 0, idx);
             return dstNodes;
@@ -192,10 +193,10 @@ namespace Cosmos
         }
         public bool Equals(AStart other)
         {
-            return other.NodeSideLength == NodeSideLength 
+            return other.NodeSideLength == NodeSideLength
                 && other.GridCenterX == GridCenterX
-                && other.GridCenterY == GridCenterY 
-                && other.GridSizeX == GridSizeX 
+                && other.GridCenterY == GridCenterY
+                && other.GridSizeX == GridSizeX
                 && other.GridSizeY == GridSizeY;
         }
         protected abstract int GetDistance(Node a, Node b);
@@ -216,9 +217,9 @@ namespace Cosmos
         }
         protected int GetEuclideanDistance(Node a, Node b)
         {
-            var x = a.IndexX - b.IndexX;
-            var y = a.IndexY - b.IndexY;
-            return (int)Math.Floor(Math.Sqrt(x * x + y * y)) * 10;
+            var x = Math.Abs(a.IndexX - b.IndexX);
+            var y = Math.Abs(a.IndexY - b.IndexY);
+            return (int)Math.Ceiling(Math.Sqrt(x * x + y * y) * 14);
         }
         protected IList<Node> GetFinalPath(Node src, Node dst)
         {
@@ -230,7 +231,7 @@ namespace Cosmos
                 currentNode = currentNode.ParentNode;
             }
             nodePath.Reverse();
-            var arr= nodePath.ToArray();
+            var arr = nodePath.ToArray();
             DespawnNodeList(nodePath);
             return arr;
         }

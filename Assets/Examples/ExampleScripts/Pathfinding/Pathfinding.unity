@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -158,6 +158,7 @@ MonoBehaviour:
     type: 3}
   hightlightTile: {fileID: 2705121455554562882, guid: 46d2195403306654fb46a68b33a7dfbb,
     type: 3}
+  aStartDistanceType: 2
 --- !u!4 &1151312092
 Transform:
   m_ObjectHideFlags: 0

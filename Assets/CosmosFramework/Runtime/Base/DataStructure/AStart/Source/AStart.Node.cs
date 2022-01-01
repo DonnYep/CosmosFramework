@@ -39,11 +39,11 @@ namespace Cosmos
             /// </summary>
             public Node ParentNode { get; set; }
             /// <summary>
-            /// 与初始点的距离；
+            /// 从起点到currentNode再到neighbourNode的距离=gCost
             /// </summary>
             public int GCost { get; set; }
             /// <summary>
-            ///与终点的距离；
+            ///网格到targetNode的距离
             /// </summary>
             public int HCost { get; set; }
             /// <summary>

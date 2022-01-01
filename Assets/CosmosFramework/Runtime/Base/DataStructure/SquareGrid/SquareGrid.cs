@@ -114,34 +114,21 @@ namespace Cosmos
             if (!IsOverlapping(posX, posY))
                 return new Square[0];
             Square[] neighborSquares = new Square[9];
-
             int idx = 0;
-            var leftCol = col - 1;
-            var rightCol = col + 1;
-            var upRow = row + 1;
-            var downRow = row - 1;
-
-            if (leftCol >= 0)
+            for (int x= -1; x<=1; x++)
             {
-                neighborSquares[idx++] = square2d[leftCol, row];
-                if (upRow < CellSection)
-                    neighborSquares[idx++] = square2d[leftCol, upRow];
-                if (downRow >= 0)
-                    neighborSquares[idx++] = square2d[leftCol, downRow];
+                for (int y = -1; y <=1; y++)
+                {
+                    if (y == 0 && x == 0)
+                        continue;
+                    int idxX = col+ x;
+                    int idxY = row+ y;
+                    if (idxX <= CellSection && idxX >= 0 && idxY <= CellSection && idxY >= 0)
+                    {
+                        neighborSquares[idx++] = square2d[idxX, idxY];
+                    }
+                }
             }
-            if (rightCol < CellSection)
-            {
-                neighborSquares[idx++] = square2d[rightCol, row];
-                if (upRow < CellSection)
-                    neighborSquares[idx++] = square2d[rightCol, upRow];
-                if (downRow >= 0)
-                    neighborSquares[idx++] = square2d[rightCol, downRow];
-            }
-            if (upRow < CellSection)
-                neighborSquares[idx++] = square2d[col, upRow];
-            if (downRow >= 0)
-                neighborSquares[idx++] = square2d[col, downRow];
-
             var srcSquares = new Square[idx];
             int dstIdx = 0;
             for (int i = 0; i < idx; i++)
