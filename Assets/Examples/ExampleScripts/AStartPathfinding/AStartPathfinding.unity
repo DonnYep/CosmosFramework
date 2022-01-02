@@ -158,7 +158,7 @@ MonoBehaviour:
     type: 3}
   hightlightTile: {fileID: 2705121455554562882, guid: 46d2195403306654fb46a68b33a7dfbb,
     type: 3}
-  aStartDistanceType: 2
+  aStartDistanceType: 0
 --- !u!4 &1151312092
 Transform:
   m_ObjectHideFlags: 0

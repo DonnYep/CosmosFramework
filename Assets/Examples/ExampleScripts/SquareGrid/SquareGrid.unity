@@ -333,6 +333,8 @@ MonoBehaviour:
   bufferZoneColor: {r: 1, g: 0, b: 0.745, a: 1}
   heightLightColor: {r: 1, g: 0.8296892, b: 0.36320752, a: 0.22745098}
   supervisor: {fileID: 1569567842}
+  squareTilePrefab: {fileID: 276915119676028204, guid: 321a395ed5796ac43805a4ea6d88c653,
+    type: 3}
 --- !u!4 &1205207498
 Transform:
   m_ObjectHideFlags: 0
@@ -374,8 +376,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1385536772}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 1569567842}
   m_RootOrder: 1
@@ -607,7 +609,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1102510157489628, guid: 6be8ba8fe2974fe49a41d52271340e4a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1102510157489628, guid: 6be8ba8fe2974fe49a41d52271340e4a, type: 3}
       propertyPath: m_StaticEditorFlags

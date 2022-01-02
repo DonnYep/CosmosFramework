@@ -6,7 +6,7 @@ namespace Cosmos
     /// </summary>
     public struct SquareGrid
     {
-        public struct Square
+        public struct Square : IEquatable<Square>
         {
             public float CenterX { get; private set; }
             public float CenterY { get; private set; }
@@ -36,6 +36,32 @@ namespace Cosmos
             }
             public static readonly Square Zero = new Square(0, 0, 0);
             public static readonly Square One = new Square(1, 1, 1);
+            public static bool operator ==(Square a, Square b)
+            {
+                return a.Equals(b);
+            }
+            public static bool operator !=(Square a, Square b)
+            {
+                return !a.Equals(b);
+            }
+            public override bool Equals(object obj)
+            {
+                return obj is Square && Equals((Square)obj);
+            }
+            public bool Equals(Square other)
+            {
+                return this.CenterX == other.CenterX && this.CenterY == other.CenterY &&
+                      this.SideLength == other.SideLength;
+            }
+            public override int GetHashCode()
+            {
+                var hashStr = $"{CenterX}{CenterY}{SideLength}";
+                return hashStr.GetHashCode();
+            }
+            public override string ToString()
+            {
+                return $"[ X:{CenterX} ,Y:{CenterY} ],[ SideLength:{SideLength} ]";
+            }
         }
         Square[,] square2d;
         Square[] square1d;
@@ -115,14 +141,14 @@ namespace Cosmos
                 return new Square[0];
             Square[] neighborSquares = new Square[9];
             int idx = 0;
-            for (int x= -1; x<=1; x++)
+            for (int x = -1; x <= 1; x++)
             {
-                for (int y = -1; y <=1; y++)
+                for (int y = -1; y <= 1; y++)
                 {
                     if (y == 0 && x == 0)
                         continue;
-                    int idxX = col+ x;
-                    int idxY = row+ y;
+                    int idxX = col + x;
+                    int idxY = row + y;
                     if (idxX <= CellSection && idxX >= 0 && idxY <= CellSection && idxY >= 0)
                     {
                         neighborSquares[idx++] = square2d[idxX, idxY];

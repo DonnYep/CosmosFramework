@@ -7,7 +7,7 @@ namespace Cosmos
 {
     public static class DictionaryExts
     {
-        public static Dictionary<TValue, TKey> Invert<TKey, TValue>(this IDictionary<TKey, TValue> @this)
+        public static IDictionary<TValue, TKey> Invert<TKey, TValue>(this IDictionary<TKey, TValue> @this)
         {
             return @this.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
         }

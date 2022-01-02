@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos.Test
 {
-    public class SquareGridRender: MonoBehaviour
+    public class SquareGridRender : MonoBehaviour
     {
         [SerializeField] float cellSideLength = 5;
         [SerializeField] uint divided;
@@ -18,13 +18,32 @@ namespace Cosmos.Test
         [SerializeField] Color heightLightColor;
         [SerializeField] Transform supervisor;
 
+        [SerializeField] GameObject squareTilePrefab;
         SquareGrid squareGrid;
-        SquareGrid.Square[] bufferZoneSquares;
 
+        GameObject normalTileRoot;
+        Dictionary<SquareGrid.Square, SquareTileComponent> squareTileDict
+            = new Dictionary<SquareGrid.Square, SquareTileComponent>();
 
+        List<SquareGrid.Square> highlightCache = new List<SquareGrid.Square>();
         private void Start()
         {
-            squareGrid = new SquareGrid(cellSideLength, divided, offset.x, offset.y,cellBufferZoneBound);
+            normalTileRoot = new GameObject("NormalTileRoot");
+            normalTileRoot.transform.SetParent(transform);
+            normalTileRoot.transform.ResetLocalTransform();
+
+            squareGrid = new SquareGrid(cellSideLength, divided, offset.x, offset.y, cellBufferZoneBound);
+
+            var squares = squareGrid.GetAllSquares();
+            var length = squareGrid.CellSection * squareGrid.CellSection;
+            for (int i = 0; i < length; i++)
+            {
+                var go = GameObject.Instantiate(squareTilePrefab, normalTileRoot.transform);
+                var pos = new Vector3(squares[i].CenterX, normalTileRoot.transform.position.y, squares[i].CenterY);
+                go.transform.position = pos;
+                var comp = go.AddComponent<SquareTileComponent>();
+                squareTileDict.Add(squares[i], comp);
+            }
         }
         private void Update()
         {
@@ -36,7 +55,12 @@ namespace Cosmos.Test
         void UpdateSquare()
         {
             var pos = new Vector2(supervisor.position.x, supervisor.position.z);
-            bufferZoneSquares = squareGrid.GetSquares(pos.x, pos.y);
+            highlightCache.Clear();
+            highlightCache.AddRange(squareGrid.GetSquares(pos.x, pos.y));
+            foreach (var st in squareTileDict)
+            {
+                st.Value.SquareTileHighlight(highlightCache.Contains(st.Key));
+            }
         }
         private void OnDrawGizmos()
         {
@@ -61,10 +85,10 @@ namespace Cosmos.Test
             }
             if (true)
             {
-                var length = bufferZoneSquares.Length;
+                var length = highlightCache.Count;
                 for (int i = 0; i < length; i++)
                 {
-                    var tmpSquare = bufferZoneSquares[i];
+                    var tmpSquare = highlightCache[i];
                     Gizmos.color = heightLightColor;
                     var hlSize = new Vector3(tmpSquare.SideLength, 1, tmpSquare.SideLength);
                     var hlPos = new Vector3(tmpSquare.CenterX, 0, tmpSquare.CenterY);

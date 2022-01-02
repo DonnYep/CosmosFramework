@@ -6,29 +6,30 @@ public class AStartManager : MonoBehaviour
 {
     [SerializeField] int xSize = 20;
     [SerializeField] int ySize = 20;
-    [SerializeField] float nodeSideLength = 1;
     AStart aStartGrid;
     [SerializeField] GameObject player;
     [SerializeField] GameObject defaultTile;
     [SerializeField] GameObject hightlightTile;
-    [SerializeField] AStartDistanceType aStartDistanceType;
+    [Header("距离公式类型")]
+    [SerializeField] AStartDistanceType distanceType;
+    float nodeSideLength = 1;
     GameObject playerInst;
-    Pool<GameObject> hightlightPool;
-    List<GameObject> spawnedHightlightTiles;
+    Pool<GameObject> highlightPool;
+    List<GameObject> spawnedHighlightTiles;
     GameObject defaultTileRoot;
-    GameObject hightligntTileRoot;
+    GameObject highligntTileRoot;
 
     Transform latestQuad;
     void Awake()
     {
         defaultTileRoot = new GameObject("DefaultTileRoot");
-        hightligntTileRoot = new GameObject("HightligntTileRoot");
+        highligntTileRoot = new GameObject("HighligntTileRoot");
         defaultTileRoot.transform.SetParent(transform);
-        hightligntTileRoot.transform.SetParent(transform);
+        highligntTileRoot.transform.SetParent(transform);
         defaultTileRoot.transform.ResetLocalTransform();
-        hightligntTileRoot.transform.ResetLocalTransform();
+        highligntTileRoot.transform.ResetLocalTransform();
 
-        switch (aStartDistanceType)
+        switch (distanceType)
         {
             case AStartDistanceType.Euclidean:
                 aStartGrid = new AStartEuclidean(0, 0, xSize, ySize, nodeSideLength);
@@ -40,11 +41,11 @@ public class AStartManager : MonoBehaviour
                 aStartGrid = new AStartDiagonal(0, 0, xSize, ySize, nodeSideLength);
                 break;
         }
-        hightlightPool = new Pool<GameObject>(() => { return Instantiate(hightlightTile, hightligntTileRoot.transform); },
+        highlightPool = new Pool<GameObject>(() => { return Instantiate(hightlightTile, highligntTileRoot.transform); },
             go => go.gameObject.SetActive(true),
             go => go.gameObject.SetActive(false)
             );
-        spawnedHightlightTiles = new List<GameObject>();
+        spawnedHighlightTiles = new List<GameObject>();
 
     }
     void Start()
@@ -101,18 +102,18 @@ public class AStartManager : MonoBehaviour
             return;
         }
         var pathLength = pathNodes.Count;
-        for (int i = 0; i < spawnedHightlightTiles.Count; i++)
+        for (int i = 0; i < spawnedHighlightTiles.Count; i++)
         {
-            hightlightPool.Despawn(spawnedHightlightTiles[i]);
+            highlightPool.Despawn(spawnedHighlightTiles[i]);
         }
-        spawnedHightlightTiles.Clear();
+        spawnedHighlightTiles.Clear();
         for (int i = 0; i < pathLength; i++)
         {
             var node = pathNodes[i];
-            var go = hightlightPool.Spawn();
+            var go = highlightPool.Spawn();
             var pos = new Vector3(node.CenterX, transform.position.y, node.CenterY);
             go.transform.position = pos;
-            spawnedHightlightTiles.Add(go);
+            spawnedHighlightTiles.Add(go);
         }
     }
 }
