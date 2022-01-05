@@ -6,7 +6,7 @@ public class AStartManager : MonoBehaviour
 {
     [SerializeField] int xSize = 20;
     [SerializeField] int ySize = 20;
-    AStart aStartGrid;
+    AStar aStartGrid;
     [SerializeField] GameObject player;
     [SerializeField] GameObject defaultTile;
     [SerializeField] GameObject hightlightTile;
@@ -32,13 +32,13 @@ public class AStartManager : MonoBehaviour
         switch (distanceType)
         {
             case AStartDistanceType.Euclidean:
-                aStartGrid = new AStartEuclidean(0, 0, xSize, ySize, nodeSideLength);
+                aStartGrid = new AStarEuclidean(0, 0, xSize, ySize, nodeSideLength);
                 break;
             case AStartDistanceType.Manhattan:
-                aStartGrid = new AStartManhattan(0, 0, xSize, ySize, nodeSideLength);
+                aStartGrid = new AStarManhattan(0, 0, xSize, ySize, nodeSideLength);
                 break;
             case AStartDistanceType.Diagonal:
-                aStartGrid = new AStartDiagonal(0, 0, xSize, ySize, nodeSideLength);
+                aStartGrid = new AStarDiagonal(0, 0, xSize, ySize, nodeSideLength);
                 break;
         }
         highlightPool = new Pool<GameObject>(() => { return Instantiate(hightlightTile, highligntTileRoot.transform); },

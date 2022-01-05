@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FixMath.NET;
 namespace Cosmos
 {
-    public abstract class AStartFix64
+    public abstract class AStarFix64
     {
         public class Node
         {
@@ -101,7 +101,7 @@ namespace Cosmos
         public int GridSizeY { get; private set; }
         public Fix64 GridOffsetX { get; private set; }
         public Fix64 GridOffsetY { get; private set; }
-        public AStartFix64(Fix64 gridCenterX, Fix64 gridCenterY, int xCount, int yCount, Fix64 nodeSideLength)
+        public AStarFix64(Fix64 gridCenterX, Fix64 gridCenterY, int xCount, int yCount, Fix64 nodeSideLength)
         {
             GridCenterX = gridCenterX;
             GridCenterY = gridCenterY;
@@ -246,7 +246,7 @@ namespace Cosmos
         {
             nodeListQueue.Clear();
         }
-        public bool Equals(AStartFix64 other)
+        public bool Equals(AStarFix64 other)
         {
             return other.NodeSideLength == NodeSideLength
                 && other.GridCenterX == GridCenterX

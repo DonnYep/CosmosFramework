@@ -1,12 +1,12 @@
-﻿using FixMath.NET;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
 namespace Cosmos
 {
-    public class AStartFix64Manhattan : AStartFix64
+    public class AStarManhattan : AStar
     {
-        public AStartFix64Manhattan(Fix64 gridCenterX, Fix64 gridCenterY, int xCount, int yCount, Fix64 nodeSideLength)
-            : base(gridCenterX, gridCenterY, xCount, yCount, nodeSideLength) { }
+        public AStarManhattan(float gridCenterX, float gridCenterY, int xCount, int yCount, float nodeSideLength) 
+            : base(gridCenterX, gridCenterY, xCount, yCount, nodeSideLength){}
         public override IList<Node> GetNeighboringNodes(Node node)
         {
             Node[] srcNodes = new Node[4];

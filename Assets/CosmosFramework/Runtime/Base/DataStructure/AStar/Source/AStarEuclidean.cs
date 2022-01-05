@@ -1,9 +1,8 @@
-﻿using FixMath.NET;
-namespace Cosmos
+﻿namespace Cosmos
 {
-    public class AStartFix64Euclidean: AStartFix64
+    public class AStarEuclidean : AStar
     {
-        public AStartFix64Euclidean(Fix64 gridCenterX, Fix64 gridCenterY, int xCount, int yCount, Fix64 nodeSideLength) 
+        public AStarEuclidean(float gridCenterX, float gridCenterY, int xCount, int yCount, float nodeSideLength)
             : base(gridCenterX, gridCenterY, xCount, yCount, nodeSideLength){}
         protected override int GetDistance(Node a, Node b)
         {

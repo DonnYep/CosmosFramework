@@ -1,8 +1,8 @@
 ﻿namespace Cosmos
 {
-    public class AStartDiagonal : AStart
+    public class AStarDiagonal : AStar
     {
-        public AStartDiagonal(float gridCenterX, float gridCenterY, int xCount, int yCount, float nodeSideLength)
+        public AStarDiagonal(float gridCenterX, float gridCenterY, int xCount, int yCount, float nodeSideLength)
             : base(gridCenterX, gridCenterY, xCount, yCount, nodeSideLength){}
         protected override int GetDistance(Node a, Node b)
         {

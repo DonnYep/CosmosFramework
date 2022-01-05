@@ -5,7 +5,7 @@ namespace Cosmos
     /// <summary>
     /// AStart 网格；
     /// </summary>
-    public abstract class AStart : IEquatable<AStart>
+    public abstract class AStar : IEquatable<AStar>
     {
         public class Node
         {
@@ -103,7 +103,7 @@ namespace Cosmos
         public int GridSizeY { get; private set; }
         public float GridOffsetX { get; private set; }
         public float GridOffsetY { get; private set; }
-        public AStart(float gridCenterX, float gridCenterY, int xCount, int yCount, float nodeSideLength)
+        public AStar(float gridCenterX, float gridCenterY, int xCount, int yCount, float nodeSideLength)
         {
             GridCenterX = gridCenterX;
             GridCenterY = gridCenterY;
@@ -247,7 +247,7 @@ namespace Cosmos
         {
             nodeListQueue.Clear();
         }
-        public bool Equals(AStart other)
+        public bool Equals(AStar other)
         {
             return other.NodeSideLength == NodeSideLength
                 && other.GridCenterX == GridCenterX
