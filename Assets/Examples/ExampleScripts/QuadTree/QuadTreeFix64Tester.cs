@@ -30,7 +30,7 @@ public class QuadTreeFix64Tester : MonoBehaviour
     void Start()
     {
         DateTime startTime = DateTime.UtcNow;
-        quadTree = QuadTreeFix64<GameObject>.Create((Fix64)0, (Fix64)0, (Fix64)rectRange.x, (Fix64)rectRange.y, new SpawnObjectBoundFix64(), maxNodeObject, maxDepth);
+        quadTree = new QuadTreeFix64<GameObject>((Fix64)0, (Fix64)0, (Fix64)rectRange.x, (Fix64)rectRange.y, new SpawnObjectBoundFix64(), maxNodeObject, maxDepth);
         quadTree.OnOutQuadBound += OnObjectOutQuadRectangle;
         objectSapwner = new QuadObjectSpawner(resPrefab);
         int index = 0;
@@ -100,7 +100,7 @@ public class QuadTreeFix64Tester : MonoBehaviour
         {
             if (drawGridGizmos)
             {
-                var grids = quadTree.GetNodeGrids();
+                var grids = quadTree.GetAreaGrids();
                 var length = grids.Length;
                 for (int i = 0; i < length; i++)
                 {

@@ -4,11 +4,6 @@ namespace Cosmos
 {
     public partial class QuadTree<T>
     {
-        public static QuadTree<T> Create(float x, float y, float width, float height, IObjecBound quadTreebound, int nodeObjectCapacity = 10, int maxDepth = 5)
-        {
-            var tree = new QuadTree<T>(new Rectangle(x, y, width, height), quadTreebound, nodeObjectCapacity, maxDepth);
-            return tree;
-        }
         Action<T> onOutQuadBound;
         public event Action<T> OnOutQuadBound
         {
@@ -44,13 +39,22 @@ namespace Cosmos
         /// 树的最大深度；
         /// </summary>
         public int TreeMaxDepth { get; private set; }
-        private QuadTree(Rectangle rectArea, IObjecBound boundHelper, int nodeObjectCapacity, int maxDepth)
+        public QuadTree(Rectangle rectArea, IObjecBound boundHelper, int nodeObjectCapacity = 10, int maxDepth = 5)
         {
             NodeObjectCapacity = nodeObjectCapacity;
             objectRectangleBound = boundHelper;
             TreeMaxDepth = maxDepth;
             rootNode = new Node();
             rootNode.Area = rectArea;
+            rootNode.NodeDepth = 0;
+        }
+        public QuadTree(float centerX, float centerY, float width, float height, IObjecBound boundHelper, int nodeObjectCapacity=10, int maxDepth=5)
+        {
+            NodeObjectCapacity = nodeObjectCapacity;
+            objectRectangleBound = boundHelper;
+            TreeMaxDepth = maxDepth;
+            rootNode = new Node();
+            rootNode.Area = new Rectangle(centerX, centerY, width, height);
             rootNode.NodeDepth = 0;
         }
         public bool Insert(T obj)
@@ -99,9 +103,19 @@ namespace Cosmos
                 Insert(obj);
             }
         }
-        public Rectangle[] GetNodeGrids()
+        public Rectangle[] GetAreaGrids()
         {
             return rootNode.NodeAreaGrids();
+        }
+        /// <summary>
+        /// 获取物体所在的区域网格；
+        /// </summary>
+        /// <param name="obj">对象</param>
+        /// <returns>网格数据</returns>
+        public Rectangle GetAreaGrid(T obj)
+        {
+            var objBound = GetObjectBound(obj);
+            return rootNode.NodeAreaGrid(objBound);
         }
         public T[] GetAllObjects()
         {

@@ -124,6 +124,25 @@ namespace Cosmos
                     return dstArr;
                 }
             }
+            public Rectangle NodeAreaGrid(Rectangle objBound)
+            {
+                if (!IsRectOverlapping(objBound))
+                    return Rectangle.Zero;
+                if (!HasChild)
+                    return Area;
+                else
+                {
+                    var trRect = TreeTRNode.NodeAreaGrid(objBound);
+                    if (trRect != Rectangle.Zero) return trRect;
+                    var tlRect = TreeTLNode.NodeAreaGrid(objBound);
+                    if (tlRect != Rectangle.Zero) return tlRect;
+                    var blRect = TreeBLNode.NodeAreaGrid(objBound);
+                    if (blRect != Rectangle.Zero) return blRect;
+                    var brRect = TreeBRNode.NodeAreaGrid(objBound);
+                    if (brRect != Rectangle.Zero) return brRect;
+                    return Rectangle.Zero;
+                }
+            }
             public bool Remove(T obj, out Node node)
             {
                 if (!HasChild)
