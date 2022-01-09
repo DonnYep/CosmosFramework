@@ -34,7 +34,7 @@ namespace Cosmos.Entity
      */
     //================================================
     [Module]
-    internal class EntityManager : Module, IEntityManager
+    internal partial class EntityManager : Module, IEntityManager
     {
         #region Properties
         public int EntityGroupCount { get { return entityGroupDict.Count; } }
@@ -49,7 +49,7 @@ namespace Cosmos.Entity
         Dictionary<int, IEntity> entityIdDict;
         IObjectPoolManager objectPoolManager;
         IResourceManager resourceManager;
-
+        IEntityGroupHelper defaultEntityGroupHelper;
         #endregion
         #region Methods
         public void SetHelper(IEntityHelper helper)
@@ -58,11 +58,20 @@ namespace Cosmos.Entity
                 throw new ArgumentNullException("Entity helper is valid !");
             this.entityHelper = helper;
         }
+        public void SetDefautEntityGroupHelper(IEntityGroupHelper entityGroupHelper)
+        {
+            if (entityGroupHelper == null)
+                throw new ArgumentNullException("EntityGroupHelper is valid !");
+            defaultEntityGroupHelper = entityGroupHelper;
+        }
         /// <summary>
         /// 注册EntityGroup (同步)；
+        /// 若传入的entityGroupHelper 为空，则使用默认的entityGroupHelper；
         /// </summary>
         /// <param name="entityAssetInfo">实体对象信息</param>
-        public void RegisterEntityGroup(EntityAssetInfo entityAssetInfo)
+        /// <param name="entityGroupHelper">实体组帮助体</param>
+        /// <returns>是否注册成功</returns>
+        public bool RegisterEntityGroup(EntityAssetInfo entityAssetInfo,IEntityGroupHelper entityGroupHelper=null)
         {
             if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
             {
@@ -72,58 +81,25 @@ namespace Cosmos.Entity
             if (!result)
             {
                 var entityAsset = resourceManager.LoadPrefab(entityAssetInfo);
-                var entityGroup= EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
+                entityGroupHelper = entityGroupHelper != null ? entityGroupHelper : defaultEntityGroupHelper;
+                var entityGroup= EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityGroupHelper);
                 if (entityAssetInfo.UseObjectPool)
                 {
                     var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
                     entityGroup.AssignObjectPool(objectPool);
-                    entityGroup.AssignEntityRoot(this.Instance());
                 }
                 entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, entityGroup);
             }
+            return !result;
         }
-        /// <summary>
-        /// 注册EntityGroup (同步)；
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <param name="entityType">挂载EntityAssetAttribute特性的类型</param>
-        public void RegisterEntityGroup(Type entityType)
-        {
-            if (entityType == null)
-            {
-                throw new ArgumentNullException("Entity type is invalid.");
-            }
-            var attributes = entityType.GetCustomAttributes<EntityAssetAttribute>().ToArray();
-            if (attributes.Length <= 0)
-            {
-                throw new ArgumentNullException($"Entity: type {entityType} attribute is invalid.");
-            }
-            var length = attributes.Length;
-            for (int i = 0; i < length; i++)
-            {
-                if (!HasEntityGroup(attributes[i].EntityGroupName))
-                {
-                    var att = attributes[i];
-                    var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath,att.UseObjectPool) ;
-                    RegisterEntityGroup(entityAssetInfo);
-                }
-            }
-        }
-        /// <summary>
-        /// 注册EntityGroup (同步)；
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <typeparam name="T">挂载EntityAssetAttribute特性的类型</typeparam>
-        public void RegisterEntityGroup<T>() where T : class
-        {
-            RegisterEntityGroup(typeof(T));
-        }
-
         /// <summary>
         /// 注册EntityGroup (异步)；
+        /// 若传入的entityGroupHelper 为空，则使用默认的entityGroupHelper；
         /// </summary>
         /// <param name="entityAssetInfo">实体对象信息</param>
-        public async Task RegisterEntityGroupAsync(EntityAssetInfo entityAssetInfo)
+        /// <param name="entityGroupHelper">实体组帮助体</param>
+        /// <returns>异步任务</returns>
+        public async Task RegisterEntityGroupAsync(EntityAssetInfo entityAssetInfo, IEntityGroupHelper entityGroupHelper = null)
         {
             if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
             {
@@ -134,36 +110,16 @@ namespace Cosmos.Entity
             {
                 await resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
                 {
-                    var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
+                    entityGroupHelper = entityGroupHelper != null ? entityGroupHelper : defaultEntityGroupHelper;
+                    var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityGroupHelper);
                     if (entityAssetInfo.UseObjectPool)
                     {
                         var objectPool = objectPoolManager.RegisterObjectPool( entityAssetInfo.EntityGroupName, entityAsset);
                         entityGroup.AssignObjectPool(objectPool);
-                        entityGroup.AssignEntityRoot(this.Instance());
                     }
                     entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, entityGroup);
                 });
             }
-        }
-        /// <summary>
-        /// 注册EntityGroup (异步)；
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <param name="entityType">挂载EntityAssetAttribute特性的类型</param>
-        /// <returns>协程对象</returns>
-        public async Task RegisterEntityGroupAsync(Type entityType)
-        {
-            await EnumRegisterEntityGroupAsync(entityType);
-        }
-        /// <summary>
-        /// 注册EntityGroup (异步)；
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <typeparam name="T">挂载EntityAssetAttribute特性的类型</typeparam>
-        /// <returns>协程对象</returns>
-        public async Task RegisterEntityGroupAsync<T>() where T : class
-        {
-            await RegisterEntityGroupAsync(typeof(T));
         }
 
         /// <summary>
@@ -180,37 +136,6 @@ namespace Cosmos.Entity
             objectPoolManager.DeregisterObjectPool(entityGroup.ObjectPool.ObjectKey);
             EntityGroup.Release(entityGroup);
 
-        }
-        /// <summary>
-        /// 注销EntityGroup;
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <typeparam name="T">挂载EntityAssetAttribute特性的类型</typeparam>
-        public void DeregisterEntityGroup<T>()
-        {
-            DeregisterEntityGroup(typeof(T));
-        }
-        /// <summary>
-        /// 注销EntityGroup;
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <param name="entityType">挂载EntityAssetAttribute特性的类型</param>
-        public void DeregisterEntityGroup(Type entityType)
-        {
-            if (entityType == null)
-            {
-                throw new ArgumentNullException("Entity type is invalid.");
-            }
-            var attributes = entityType.GetCustomAttributes<EntityAssetAttribute>().ToArray();
-            if (attributes.Length <= 0)
-            {
-                throw new ArgumentNullException($"Entity: type {entityType} attribute is invalid.");
-            }
-            var length = attributes.Length;
-            for (int i = 0; i < length; i++)
-            {
-                DeregisterEntityGroup(attributes[i].EntityGroupName);
-            }
         }
         /// <summary>
         /// 是否存在实体组；
@@ -250,40 +175,6 @@ namespace Cosmos.Entity
         }
 
         /// <summary>
-        /// 为一个实体组设置根节点；
-        /// </summary>
-        /// <param name="entityGroupName">实体组名称</param>
-        /// <param name="root">根节点</param>
-        /// <returns>是否设置成功</returns>
-        public bool SetEntityGroupRoot(string entityGroupName, IEntity root)
-        {
-            if (string.IsNullOrEmpty(entityGroupName))
-                throw new ArgumentNullException("Entity group name is invalid.");
-            if (root == null)
-                throw new ArgumentNullException($"Root entity is invalidl.");
-            if (!entityGroupDict.TryGetValue(entityGroupName, out var entityGroup))
-                return false;
-            entityGroup.AssignEntityRoot(root);
-            return true;
-        }
-        /// <summary>
-        /// 为一个实体组设置根节点；
-        /// </summary>
-        /// <param name="entityGroupName">实体组名称</param>
-        /// <param name="root">根节点</param>
-        /// <returns>是否设置成功</returns>
-        public bool SetEntityGroupRoot(string entityGroupName, object root)
-        {
-            if (string.IsNullOrEmpty(entityGroupName))
-                throw new ArgumentNullException("Entity group name is invalid.");
-            if (root == null)
-                throw new ArgumentNullException($"Root entity is invalidl.");
-            if (!entityGroupDict.TryGetValue(entityGroupName, out var entityGroup))
-                return false;
-            entityGroup.AssignEntityRoot(root);
-            return true;
-        }
-        /// <summary>
         /// 激活&添加实体对象；
         /// </summary>
         /// <param name="entityId">自定义的实体Id</param>
@@ -317,9 +208,10 @@ namespace Cosmos.Entity
             if (entity == null)
             {
                 object entityInstance = null;
-                if (entityGroup.ObjectPool!=null)
+                if (entityGroup.UseObjectPool)
                 {
                     entityInstance = entityGroup.ObjectPool.Spawn();
+                    entityGroup.EntityGroupHelper.OnEntitySpawn(entityInstance);
                 }
                 else
                 {
@@ -358,9 +250,10 @@ namespace Cosmos.Entity
             if (entity == null)
             {
                 object entityInstance = null;
-                if (entityGroup.ObjectPool != null)
+                if (entityGroup.UseObjectPool)
                 {
                     entityInstance = entityGroup.ObjectPool.Spawn();
+                    entityGroup.EntityGroupHelper.OnEntitySpawn(entityInstance);
                 }
                 else
                 {
@@ -550,14 +443,6 @@ namespace Cosmos.Entity
             DeatchChildEntities(parentEntity.EntityId);
         }
 
-        /// <summary>
-        /// 自动获取所有程序集中挂载EntityAssetAttribute的类，并注册EntityGroup (异步)；
-        /// </summary>
-        /// <returns>协程对象</returns>
-        public async Task AutoRegisterEntityGroupsAsync()
-        {
-            await EnumAutoRegisterEntityGroups();
-        }
         protected override void OnInitialization()
         {
             entityGroupDict = new Dictionary<string, EntityGroup>();
@@ -567,60 +452,7 @@ namespace Cosmos.Entity
         {
             objectPoolManager = GameManager.GetModule<IObjectPoolManager>();
             resourceManager = GameManager.GetModule<IResourceManager>();
-        }
-        IEnumerator EnumAutoRegisterEntityGroups()
-        {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var entityAttributes = new List<EntityAssetAttribute>();
-            var length = assemblies.Length;
-            for (int i = 0; i < length; i++)
-            {
-                var attributes = Utility.Assembly.GetAttributesInAssembly<EntityAssetAttribute>(assemblies[i]);
-                entityAttributes.AddRange(attributes);
-            }
-            var attLength = entityAttributes.Count;
-            for (int i = 0; i < attLength; i++)
-            {
-                var attribute = entityAttributes[i];
-                if (!HasEntityGroup(attribute.EntityGroupName))
-                {
-                    var entityAssetInfo = new EntityAssetInfo(attribute.EntityGroupName, attribute.AssetBundleName, attribute.AssetPath);
-                    RegisterEntityGroup(entityAssetInfo);
-                }
-            }
-            yield return null;
-        }
-        IEnumerator EnumRegisterEntityGroupAsync(Type entityType)
-        {
-            if (entityType == null)
-            {
-                throw new ArgumentNullException("Entity type is invalid.");
-            }
-            var attributes = entityType.GetCustomAttributes<EntityAssetAttribute>().ToArray();
-            if (attributes.Length <= 0)
-            {
-                throw new ArgumentNullException($"Entity: type {entityType} attribute is invalid.");
-            }
-            var length = attributes.Length;
-            for (int i = 0; i < length; i++)
-            {
-                if (!HasEntityGroup(attributes[i].EntityGroupName))
-                {
-                    var att = attributes[i];
-                    var entityAssetInfo = new EntityAssetInfo(att.EntityGroupName, att.AssetBundleName, att.AssetPath);
-                    resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
-                    {
-                        var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityHelper);
-                        if (entityAssetInfo.UseObjectPool)
-                        {
-                            var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
-                            entityGroup.AssignObjectPool(objectPool);
-                        }
-                        entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, entityGroup);
-                    });
-                }
-            }
-            yield return null;
+            defaultEntityGroupHelper = new DefaultEntityGroupHelper();
         }
 
         int GenerateEntityId()
@@ -639,10 +471,11 @@ namespace Cosmos.Entity
                 var childEntity = entity.GetChildEntity();
                 DeactiveEntity(childEntity);
             }
-            var entityGroup = entity.EntityGroup;
+            var entityGroup = (EntityGroup)entity.EntityGroup;
             if (entityGroup != null)
             {
                 entityGroup.ObjectPool.Despawn(entity.EntityInstance);
+                entityGroup.EntityGroupHelper.OnEntityDespawn(entity.EntityInstance);
                 entityGroup.RemoveEntity(entity);
             }
             else

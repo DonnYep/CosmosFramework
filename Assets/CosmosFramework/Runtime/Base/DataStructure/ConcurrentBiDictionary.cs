@@ -127,7 +127,23 @@ namespace Cosmos
             ((IDictionary)_firstToSecond).Add(key, value);
             ((IDictionary)_secondToFirst).Add(value, key);
         }
-
+        public bool TryAdd(TFirst key, TSecond value)
+        {
+            if (_firstToSecond.ContainsKey(key) || _secondToFirst.ContainsKey(value))
+                return false;
+            _firstToSecond.Add(key, value);
+            _secondToFirst.Add(value, key);
+            return true;
+        }
+        public void AddOrUpdate(TFirst key, TSecond value)
+        {
+            if (_firstToSecond.ContainsKey(key))
+                _firstToSecond.Remove(key);
+            if (_secondToFirst.ContainsKey(value))
+                _secondToFirst.Remove(value);
+            _firstToSecond.Add(key, value);
+            _secondToFirst.Add(value, key);
+        }
         void ICollection<KeyValuePair<TFirst, TSecond>>.Add(KeyValuePair<TFirst, TSecond> item)
         {
             _firstToSecond.Add(item);
@@ -146,7 +162,7 @@ namespace Cosmos
 
         public bool TryGetValue(TFirst key, out TSecond value)
         {
-            return _firstToSecond.TryGetValue(key, out value);
+            return _firstToSecond.TryGetValue(key, out value) && _secondToFirst.ContainsKey(value);
         }
 
         public bool Remove(TFirst key)
@@ -154,9 +170,13 @@ namespace Cosmos
             TSecond value;
             if (_firstToSecond.TryGetValue(key, out value))
             {
-                _firstToSecond.Remove(key);
-                _secondToFirst.Remove(value);
-                return true;
+                if (_secondToFirst.ContainsKey(value))
+                {
+                    _firstToSecond.Remove(key);
+                    _secondToFirst.Remove(value);
+                    return true;
+                }
+                return false;
             }
             else
                 return false;
@@ -210,7 +230,7 @@ namespace Cosmos
         {
             private readonly ConcurrentBiDictionary<TFirst, TSecond> _owner;
 
-            public ReverseDictionary(ConcurrentBiDictionary  <TFirst, TSecond> owner)
+            public ReverseDictionary(ConcurrentBiDictionary<TFirst, TSecond> owner)
             {
                 _owner = owner;
             }

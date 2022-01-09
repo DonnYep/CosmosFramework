@@ -73,7 +73,7 @@ namespace Cosmos.ObjectPool
             add { onObjectSpawn += value; }
             remove { onObjectSpawn -= value; }
         }
-         public event Action<GameObject> OnObjectDespawn
+        public event Action<GameObject> OnObjectDespawn
         {
             add { onObjectDespawn += value; }
             remove { onObjectDespawn -= value; }
@@ -91,7 +91,7 @@ namespace Cosmos.ObjectPool
         public GameObject Spawn()
         {
             var go = pool.Spawn();
-            while (go==null)
+            while (go == null)
             {
                 pool.Spawn();
             }

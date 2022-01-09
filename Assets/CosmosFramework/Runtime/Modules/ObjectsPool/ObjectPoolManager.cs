@@ -10,7 +10,6 @@ namespace Cosmos.ObjectPool
     [Module]
     internal sealed class ObjectPoolManager : Module, IObjectPoolManager
     {
-        //TODO ObjectPool对async/await语法支持
         #region Properties
         Dictionary<ObjectPoolKey, IObjectPool> poolDict;
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Cosmos.Entity;
-namespace Cosmos
+﻿namespace Cosmos.Entity
 {
     public interface IEntityHelper
     {
@@ -20,7 +14,6 @@ namespace Cosmos
         /// <param name="entityInstance">实体实例</param>
         void ReleaseEntity(object entityInstance);
         void AttachToParent(IEntity childEntity, IEntity parentEntity);
-        void AttachToParent(IEntity childEntity, object entityInstance);
         void DeatchFromParent(IEntity entity);
     }
 }

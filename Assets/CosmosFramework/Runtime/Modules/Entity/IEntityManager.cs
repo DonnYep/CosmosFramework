@@ -1,6 +1,4 @@
 ﻿using Cosmos.Entity;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 namespace Cosmos
 {
@@ -34,70 +32,36 @@ namespace Cosmos
     {
         int EntityGroupCount { get; }
         void SetHelper(IEntityHelper helper);
-        /// <summary>
-        /// 注册EntityGroup (同步)；
-        /// </summary>
-        /// <param name="entityAssetInfo">实体对象信息</param>
-        void RegisterEntityGroup(EntityAssetInfo entityAssetInfo);
-        /// <summary>
-        /// 注册EntityGroup (同步)；
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <param name="entityType">挂载EntityAssetAttribute特性的类型</param>
-        void RegisterEntityGroup(Type entityType);
-        /// <summary>
-        /// 注册EntityGroup (同步)；
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <typeparam name="T">挂载EntityAssetAttribute特性的类型</typeparam>
-        void RegisterEntityGroup<T>() where T : class;
+        void SetDefautEntityGroupHelper(IEntityGroupHelper entityGroupHelper);
 
         /// <summary>
-        /// 注册EntityGroup (异步)；
+        /// 注册EntityGroup (同步)；
+        /// 若传入的entityGroupHelper 为空，则使用默认的entityGroupHelper；
         /// </summary>
         /// <param name="entityAssetInfo">实体对象信息</param>
-        Task RegisterEntityGroupAsync(EntityAssetInfo entityAssetInfo);
-
+        /// <param name="entityGroupHelper">实体组帮助体</param>
+        /// <returns>是否注册成功</returns>
+        bool RegisterEntityGroup(EntityAssetInfo entityAssetInfo, IEntityGroupHelper entityGroupHelper = null);
         /// <summary>
         /// 注册EntityGroup (异步)；
-        /// 特性 EntityAssetAttribute 有效；
+        /// 若传入的entityGroupHelper 为空，则使用默认的entityGroupHelper；
         /// </summary>
-        /// <param name="entityType">挂载EntityAssetAttribute特性的类型</param>
-        Task RegisterEntityGroupAsync(Type entityType);
-        /// <summary>
-        /// 注册EntityGroup (异步)；
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <typeparam name="T">挂载EntityAssetAttribute特性的类型</typeparam>
-        Task RegisterEntityGroupAsync<T>() where T : class;
+        /// <param name="entityAssetInfo">实体对象信息</param>
+        /// <param name="entityGroupHelper">实体组帮助体</param>
+        /// <returns>异步任务</returns>
+        Task RegisterEntityGroupAsync(EntityAssetInfo entityAssetInfo, IEntityGroupHelper entityGroupHelper = null);
 
         /// <summary>
         /// 注销EntityGroup；
         /// </summary>
         /// <param name="entityGroupName">实体组名称</param>
         void DeregisterEntityGroup(string entityGroupName);
-
-        /// <summary>
-        /// 注销EntityGroup;
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <typeparam name="T">挂载EntityAssetAttribute特性的类型</typeparam>
-        void DeregisterEntityGroup<T>();
-
-        /// <summary>
-        /// 注销EntityGroup;
-        /// 特性 EntityAssetAttribute 有效；
-        /// </summary>
-        /// <param name="entityType">挂载EntityAssetAttribute特性的类型</param>
-       void DeregisterEntityGroup(Type entityType);
-
         /// <summary>
         /// 是否存在实体组；
         /// </summary>
         /// <param name="entityGroupName">实体组名称</param>
         /// <returns>是否存在</returns>
         bool HasEntityGroup(string entityGroupName);
-
         /// <summary>
         /// 获得实体组的实体资源；
         /// </summary>
@@ -110,21 +74,6 @@ namespace Cosmos
         /// <param name="entityId">自定义的实体id;</param>
         /// <returns>是否存在</returns>
         bool HasEntity(int entityId);
-
-        /// <summary>
-        /// 为一个实体组设置根节点；
-        /// </summary>
-        /// <param name="entityGroupName">实体组名称</param>
-        /// <param name="root">根节点</param>
-        /// <returns>是否设置成功</returns>
-        bool SetEntityGroupRoot(string entityGroupName, IEntity root);
-        /// <summary>
-        /// 为一个实体组设置根节点；
-        /// </summary>
-        /// <param name="entityGroupName">实体组名称</param>
-        /// <param name="root">根节点</param>
-        /// <returns>是否设置成功</returns>
-        bool SetEntityGroupRoot(string entityGroupName, object root);
 
         /// <summary>
         /// 激活&添加实体对象；
@@ -208,12 +157,6 @@ namespace Cosmos
         /// </summary>
         /// <param name="parentEntity">父实体</param>
         void DeatchChildEntities(IEntity parentEntity);
-
-        /// <summary>
-        /// 自动获取所有程序集中挂载EntityAssetAttribute的类，并注册EntityGroup (异步)；
-        /// </summary>
-        /// <returns>协程对象</returns>
-        Task AutoRegisterEntityGroupsAsync();
 
     }
 }

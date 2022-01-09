@@ -13,69 +13,83 @@ namespace Cosmos
     /// </summary>
     public static class UnityExtensions
     {
-        public static T CastTo<T>(this object source) where T : class
+        public static T As<T>(this object @this) where T : class
         {
-            return source as T;
+            return @this as T;
         }
-        public static void ResetWorldTransform(this Transform trans)
+        public static T CastTo<T>(this object @this) where T : class
         {
-            trans.position = Vector3.zero;
-            trans.rotation = Quaternion.Euler(Vector3.zero);
-            trans.localScale = Vector3.one;
+            return (T)@this;
         }
-        public static void ResetLocalTransform(this Transform trans)
+        /// <summary>
+        /// 设置并对其到父对象；
+        /// </summary>
+        public static void SetAlignParent(this Transform @this,Transform parent)
         {
-            trans.localPosition = Vector3.zero;
-            trans.localRotation = Quaternion.Euler(Vector3.zero);
-            trans.localScale = Vector3.one;
+            @this.SetParent(parent);
+            @this.localPosition = Vector3.zero;
+            @this.localRotation = Quaternion.Euler(Vector3.zero);
+            @this.localScale = Vector3.one;
         }
-        public static void ResetRectTransform(this RectTransform trans)
+        public static void ResetWorldTransform(this Transform @this)
         {
-            trans.localPosition = Vector3.zero;
-            trans.localRotation = Quaternion.Euler(Vector3.zero);
-            trans.localScale = Vector3.one;
-            trans.offsetMax = Vector2.zero;
-            trans.offsetMin = Vector2.zero;
+            @this.position = Vector3.zero;
+            @this.rotation = Quaternion.Euler(Vector3.zero);
+            @this.localScale = Vector3.one;
         }
-        public static RectTransform RectTransform(this GameObject go)
+        public static void ResetLocalTransform(this Transform @this)
         {
-            return go.GetComponent<RectTransform>();
+            @this.localPosition = Vector3.zero;
+            @this.localRotation = Quaternion.Euler(Vector3.zero);
+            @this.localScale = Vector3.one;
         }
-        public static T GetOrAddComponent<T>(this Transform transform) where T : Component
+        public static void ResetRectTransform(this RectTransform @this)
         {
-            return GetOrAddComponent<T>(transform.gameObject);
+            @this.localPosition = Vector3.zero;
+            @this.localRotation = Quaternion.Euler(Vector3.zero);
+            @this.localScale = Vector3.one;
+            @this.offsetMax = Vector2.zero;
+            @this.offsetMin = Vector2.zero;
         }
-        public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
+        public static RectTransform RectTransform(this GameObject @this)
         {
-            T component = gameObject.GetComponent<T>();
+            return @this.GetComponent<RectTransform>();
+        }
+        public static T GetOrAddComponent<T>(this Transform @this) where T : Component
+        {
+            return GetOrAddComponent<T>(@this.gameObject);
+        }
+        public static T GetOrAddComponent<T>(this GameObject @this) where T : Component
+        {
+            T component = @this.GetComponent<T>();
             if (component == null)
             {
-                component = gameObject.AddComponent<T>();
+                component = @this.AddComponent<T>();
             }
             return component;
         }
-        public static Component GetOrAddComponent(this GameObject gameObject, Type type)
+        public static Component GetOrAddComponent(this GameObject @this, Type type)
         {
-            Component component = gameObject.GetComponent(type);
+            Component component = @this.GetComponent(type);
             if (component == null)
             {
-                component = gameObject.AddComponent(type);
+                component = @this.AddComponent(type);
             }
             return component;
         }
-        public static Component GetOrAddComponent(this Transform transform, Type type)
+        public static Component GetOrAddComponent(this Transform @this, Type type)
         {
-            return GetOrAddComponent(transform.gameObject, type);
+            return GetOrAddComponent(@this.gameObject, type);
         }
-        public static T GetComponentInParent<T>(this GameObject gameObject, string parentName)
+        public static T GetComponentInParent<T>(this GameObject @this, string parentName)
 where T : Component
         {
-            return GetComponentInParent<T>(gameObject.transform, parentName);
+            return GetComponentInParent<T>(@this.transform, parentName);
         }
-        public static T GetComponentInParent<T>(this Transform transform, string parentName)
+        public static T GetComponentInParent<T>(this Transform @this, string parentName)
     where T : Component
         {
-            var parent = transform.GetComponentsInParent<Transform>();
+            var parent = @this.GetComponentsInParent<Transform>();
             var length = parent.Length;
             Transform parentTrans = null;
             for (int i = 0; i < length; i++)
@@ -91,15 +105,15 @@ where T : Component
             var comp = parentTrans.GetComponent<T>();
             return comp;
         }
-        public static T GetOrAddComponentInParent<T>(this GameObject gameObject, string parentName)
+        public static T GetOrAddComponentInParent<T>(this GameObject @this, string parentName)
     where T : Component
         {
-            return GetOrAddComponentInParent<T>(gameObject.transform, parentName);
+            return GetOrAddComponentInParent<T>(@this.transform, parentName);
         }
-        public static T GetOrAddComponentInParent<T>(this Transform transform, string parentName)
+        public static T GetOrAddComponentInParent<T>(this Transform @this, string parentName)
     where T : Component
         {
-            var parent = transform.GetComponentsInParent<Transform>();
+            var parent = @this.GetComponentsInParent<Transform>();
             var length = parent.Length;
             Transform parentTrans = null;
             for (int i = 0; i < length; i++)
@@ -115,19 +129,19 @@ where T : Component
             var comp = parentTrans.GetComponent<T>();
             if (comp == null)
             {
-                comp = transform.gameObject.AddComponent<T>();
+                comp = @this.gameObject.AddComponent<T>();
             }
             return comp;
         }
-        public static T GetComponentInChildren<T>(this GameObject gameObject, string childName)
+        public static T GetComponentInChildren<T>(this GameObject @this, string childName)
             where T : Component
         {
-            return GetComponentInChildren<T>(gameObject.transform, childName);
+            return GetComponentInChildren<T>(@this.transform, childName);
         }
-        public static T GetComponentInChildren<T>(this Transform transform, string childName)
+        public static T GetComponentInChildren<T>(this Transform @this, string childName)
     where T : Component
         {
-            var childs = transform.GetComponentsInChildren<Transform>();
+            var childs = @this.GetComponentsInChildren<Transform>();
             var length = childs.Length;
             Transform childTrans = null;
             for (int i = 0; i < length; i++)
@@ -143,15 +157,34 @@ where T : Component
             var comp = childTrans.GetComponent<T>();
             return comp;
         }
-        public static T GetOrAddComponentInChildren<T>(this GameObject gameObject, string childName)
-    where T : Component
+        public static T GetComponentInChildren<T>(this Component @this, string childName)
+where T : Component
         {
-            return GetOrAddComponentInChildren<T>(gameObject.transform, childName);
+            var childs = @this.GetComponentsInChildren<Transform>();
+            var length = childs.Length;
+            Transform childTrans = null;
+            for (int i = 0; i < length; i++)
+            {
+                if (childs[i].name == childName)
+                {
+                    childTrans = childs[i];
+                    break;
+                }
+            }
+            if (childTrans == null)
+                return null;
+            var comp = childTrans.GetComponent<T>();
+            return comp;
         }
-        public static T GetOrAddComponentInChildren<T>(this Transform transform, string childName)
+        public static T GetOrAddComponentInChildren<T>(this GameObject @this, string childName)
     where T : Component
         {
-            var childs = transform.GetComponentsInChildren<Transform>();
+            return GetOrAddComponentInChildren<T>(@this.transform, childName);
+        }
+        public static T GetOrAddComponentInChildren<T>(this Transform @this, string childName)
+    where T : Component
+        {
+            var childs = @this.GetComponentsInChildren<Transform>();
             var length = childs.Length;
             Transform childTrans = null;
             for (int i = 0; i < length; i++)
@@ -169,50 +202,50 @@ where T : Component
                 comp = childTrans.gameObject.AddComponent<T>();
             return comp;
         }
-        public static T GetComponentInPeer<T>(this GameObject gameObject, string peerName)
+        public static T GetComponentInPeer<T>(this GameObject @this, string peerName)
 where T : Component
         {
-            return GetComponentInPeer<T>(gameObject.transform, peerName);
+            return GetComponentInPeer<T>(@this.transform, peerName);
         }
-        public static T GetComponentInPeer<T>(this Transform transform, string peerName)
+        public static T GetComponentInPeer<T>(this Transform @this, string peerName)
     where T : Component
         {
-            Transform tran = transform.parent.Find(peerName);
+            Transform tran = @this.parent.Find(peerName);
             if (tran != null)
             {
                 return tran.GetComponent<T>();
             }
             return null;
         }
-        public static T GetOrAddComponentInPeer<T>(this GameObject gameObject, string peerName)
+        public static T GetOrAddComponentInPeer<T>(this GameObject @this, string peerName)
 where T : Component
         {
-            return GetOrAddComponentInPeer<T>(gameObject.transform, peerName);
+            return GetOrAddComponentInPeer<T>(@this.transform, peerName);
         }
-        public static T GetOrAddComponentInPeer<T>(this Transform transform, string peerName)
+        public static T GetOrAddComponentInPeer<T>(this Transform @this, string peerName)
     where T : Component
         {
-            Transform tran = transform.parent.Find(peerName);
+            Transform tran = @this.parent.Find(peerName);
             if (tran != null)
             {
                 var comp = tran.GetComponent<T>();
                 if (comp == null)
-                    transform.gameObject.AddComponent<T>();
+                    @this.gameObject.AddComponent<T>();
                 return comp;
             }
             return null;
         }
-        public static T[] GetComponentsInPeer<T>(this Transform transform, bool includeSrc = false)
+        public static T[] GetComponentsInPeer<T>(this Transform @this, bool includeSrc = false)
 where T : Component
         {
-            Transform parentTrans = transform.parent;
+            Transform parentTrans = @this.parent;
             var childTrans = parentTrans.GetComponentsInChildren<Transform>();
             var length = childTrans.Length;
             Transform[] trans;
             if (!includeSrc)
                 trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
             else
-                trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != transform);
+                trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);
             var transLength = trans.Length;
             T[] src = new T[transLength];
             int idx = 0;
@@ -229,312 +262,312 @@ where T : Component
             Array.Copy(src, 0, dst, 0, idx);
             return dst;
         }
-        public static T[] GetComponentsInPeer<T>(this GameObject gameObject, bool includeSrc = false)
+        public static T[] GetComponentsInPeer<T>(this GameObject @this, bool includeSrc = false)
 where T : Component
         {
-            return GetComponentsInPeer<T>(gameObject.transform, includeSrc);
+            return GetComponentsInPeer<T>(@this.transform, includeSrc);
         }
-        public static void DestroyAllChilds(this Transform transform)
+        public static void DestroyAllChilds(this Transform @this)
         {
-            var childCount = transform.childCount;
+            var childCount = @this.childCount;
             for (int i = 0; i < childCount; i++)
             {
-                GameObject.Destroy(transform.GetChild(i).gameObject);
+                GameObject.Destroy(@this.GetChild(i).gameObject);
             }
         }
-        public static void DestroyAllChilds(this GameObject gameObject)
+        public static void DestroyAllChilds(this GameObject @this)
         {
-            DestroyAllChilds(gameObject.transform);
+            DestroyAllChilds(@this.transform);
         }
-        public static Vector2 ConvertToVector2(this Vector3 vector3)
+        public static Vector2 ConvertToVector2(this Vector3 @this)
         {
-            return new Vector2(vector3.x, vector3.z);
+            return new Vector2(@this.x, @this.z);
         }
         /// <summary>
         ///返回 (x, 0, y)
         /// </summary>
-        public static Vector3 ConvertToVector3(this Vector2 vector2)
+        public static Vector3 ConvertToVector3(this Vector2 @this)
         {
-            return new Vector3(vector2.x, 0f, vector2.y);
+            return new Vector3(@this.x, 0f, @this.y);
         }
-        public static Vector3 ConvertToVector3(this Vector2 vector2, float y)
+        public static Vector3 ConvertToVector3(this Vector2 @this, float y)
         {
-            return new Vector3(vector2.x, y, vector2.y);
+            return new Vector3(@this.x, y, @this.y);
         }
-        public static void SetPositionX(this Transform transform, float newValue)
+        public static void SetPositionX(this Transform @this, float newValue)
         {
-            Vector3 v = transform.position;
+            Vector3 v = @this.position;
             v.x = newValue;
-            transform.position = v;
+            @this.position = v;
         }
-        public static void SetPositionY(this Transform transform, float newValue)
+        public static void SetPositionY(this Transform @this, float newValue)
         {
-            Vector3 v = transform.position;
+            Vector3 v = @this.position;
             v.y = newValue;
-            transform.position = v;
+            @this.position = v;
         }
-        public static void SetPositionZ(this Transform transform, float newValue)
+        public static void SetPositionZ(this Transform @this, float newValue)
         {
-            Vector3 v = transform.position;
+            Vector3 v = @this.position;
             v.z = newValue;
-            transform.position = v;
+            @this.position = v;
         }
-        public static void AddPositionX(this Transform transform, float deltaValue)
+        public static void AddPositionX(this Transform @this, float deltaValue)
         {
-            Vector3 v = transform.position;
+            Vector3 v = @this.position;
             v.x += deltaValue;
-            transform.position = v;
+            @this.position = v;
         }
-        public static void AddPositionY(this Transform transform, float deltaValue)
+        public static void AddPositionY(this Transform @this, float deltaValue)
         {
-            Vector3 v = transform.position;
+            Vector3 v = @this.position;
             v.y += deltaValue;
-            transform.position = v;
+            @this.position = v;
         }
-        public static void AddPositionZ(this Transform transform, float deltaValue)
+        public static void AddPositionZ(this Transform @this, float deltaValue)
         {
-            Vector3 v = transform.position;
+            Vector3 v = @this.position;
             v.z += deltaValue;
-            transform.position = v;
+            @this.position = v;
         }
-        public static void SetLocalPositionX(this Transform transform, float newValue)
+        public static void SetLocalPositionX(this Transform @this, float newValue)
         {
-            Vector3 v = transform.localPosition;
+            Vector3 v = @this.localPosition;
             v.x = newValue;
-            transform.localPosition = v;
+            @this.localPosition = v;
         }
-        public static void SetLocalPositionY(this Transform transform, float newValue)
+        public static void SetLocalPositionY(this Transform @this, float newValue)
         {
-            Vector3 v = transform.localPosition;
+            Vector3 v = @this.localPosition;
             v.y = newValue;
-            transform.localPosition = v;
+            @this.localPosition = v;
         }
-        public static void SetLocalPositionZ(this Transform transform, float newValue)
+        public static void SetLocalPositionZ(this Transform @this, float newValue)
         {
-            Vector3 v = transform.localPosition;
+            Vector3 v = @this.localPosition;
             v.z = newValue;
-            transform.localPosition = v;
+            @this.localPosition = v;
         }
-        public static void AddLocalPositionX(this Transform transform, float deltaValue)
+        public static void AddLocalPositionX(this Transform @this, float deltaValue)
         {
-            Vector3 v = transform.localPosition;
+            Vector3 v = @this.localPosition;
             v.x += deltaValue;
-            transform.localPosition = v;
+            @this.localPosition = v;
         }
-        public static void AddLocalPositionY(this Transform transform, float deltaValue)
+        public static void AddLocalPositionY(this Transform @this, float deltaValue)
         {
-            Vector3 v = transform.localPosition;
+            Vector3 v = @this.localPosition;
             v.y += deltaValue;
-            transform.localPosition = v;
+            @this.localPosition = v;
         }
-        public static void AddLocalPositionZ(this Transform transform, float deltaValue)
+        public static void AddLocalPositionZ(this Transform @this, float deltaValue)
         {
-            Vector3 v = transform.localPosition;
+            Vector3 v = @this.localPosition;
             v.z += deltaValue;
-            transform.localPosition = v;
+            @this.localPosition = v;
         }
-        public static void SetLocalScaleX(this Transform transform, float newValue)
+        public static void SetLocalScaleX(this Transform @this, float newValue)
         {
-            Vector3 v = transform.localScale;
+            Vector3 v = @this.localScale;
             v.x = newValue;
-            transform.localScale = v;
+            @this.localScale = v;
         }
-        public static void SetLocalScaleY(this Transform transform, float newValue)
+        public static void SetLocalScaleY(this Transform @this, float newValue)
         {
-            Vector3 v = transform.localScale;
+            Vector3 v = @this.localScale;
             v.y = newValue;
-            transform.localScale = v;
+            @this.localScale = v;
         }
-        public static void SetLocalScaleZ(this Transform transform, float newValue)
+        public static void SetLocalScaleZ(this Transform @this, float newValue)
         {
-            Vector3 v = transform.localScale;
+            Vector3 v = @this.localScale;
             v.z = newValue;
-            transform.localScale = v;
+            @this.localScale = v;
         }
-        public static void AddLocalScaleX(this Transform transform, float deltaValue)
+        public static void AddLocalScaleX(this Transform @this, float deltaValue)
         {
-            Vector3 v = transform.localScale;
+            Vector3 v = @this.localScale;
             v.x += deltaValue;
-            transform.localScale = v;
+            @this.localScale = v;
         }
         /// <summary>
         /// 增加相对尺寸的 y 分量。
         /// </summary>
-        /// <param name="transform"><see cref="Transform" /> 对象。</param>
+        /// <param name="this"><see cref="Transform" /> 对象。</param>
         /// <param name="deltaValue">y 分量增量。</param>
-        public static void AddLocalScaleY(this Transform transform, float deltaValue)
+        public static void AddLocalScaleY(this Transform @this, float deltaValue)
         {
-            Vector3 v = transform.localScale;
+            Vector3 v = @this.localScale;
             v.y += deltaValue;
-            transform.localScale = v;
+            @this.localScale = v;
         }
         /// <summary>
         /// 增加相对尺寸的 z 分量。
         /// </summary>
-        /// <param name="transform"><see cref="Transform" /> 对象。</param>
+        /// <param name="this"><see cref="Transform" /> 对象。</param>
         /// <param name="deltaValue">z 分量增量。</param>
-        public static void AddLocalScaleZ(this Transform transform, float deltaValue)
+        public static void AddLocalScaleZ(this Transform @this, float deltaValue)
         {
-            Vector3 v = transform.localScale;
+            Vector3 v = @this.localScale;
             v.z += deltaValue;
-            transform.localScale = v;
+            @this.localScale = v;
         }
         /// <summary>
         /// 二维空间下使 <see cref="Transform" /> 指向指向目标点的算法，使用世界坐标。
         /// </summary>
-        /// <param name="transform"><see cref="Transform" /> 对象。</param>
+        /// <param name="this"><see cref="Transform" /> 对象。</param>
         /// <param name="lookAtPoint2D">要朝向的二维坐标点。</param>
         /// <remarks>假定其 forward 向量为 <see cref="Vector3.up" />。</remarks>
-        public static void LookAt2D(this Transform transform, Vector2 lookAtPoint2D)
+        public static void LookAt2D(this Transform @this, Vector2 lookAtPoint2D)
         {
-            Vector3 vector = lookAtPoint2D.ConvertToVector3() - transform.position;
+            Vector3 vector = lookAtPoint2D.ConvertToVector3() - @this.position;
             vector.y = 0f;
 
             if (vector.magnitude > 0f)
             {
-                transform.rotation = Quaternion.LookRotation(vector.normalized, Vector3.up);
+                @this.rotation = Quaternion.LookRotation(vector.normalized, Vector3.up);
             }
         }
-        public static Sprite ConvertToSprite(this Texture2D texture)
+        public static Sprite ConvertToSprite(this Texture2D @this)
         {
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+            Sprite sprite = Sprite.Create(@this, new Rect(0, 0, @this.width, @this.height), Vector2.zero);
             return sprite;
         }
-        public static Texture2D Clone(this Texture2D texture)
+        public static Texture2D Clone(this Texture2D @this)
         {
             Texture2D newTex;
-            newTex = new Texture2D(texture.width, texture.height);
-            Color[] colors = texture.GetPixels(0, 0, texture.width, texture.height);
+            newTex = new Texture2D(@this.width, @this.height);
+            Color[] colors = @this.GetPixels(0, 0, @this.width, @this.height);
             newTex.SetPixels(colors);
             newTex.Apply();
             return newTex;
         }
-        public static Texture2D ConvertToSprite(this Sprite sprite)
+        public static Texture2D ConvertToSprite(this Sprite @this)
         {
-            var newTex = new Texture2D((int)sprite.rect.width, (int)sprite.rect.height);
-            var pixels = sprite.texture.GetPixels(
-                (int)sprite.textureRect.x,
-                (int)sprite.textureRect.y,
-                (int)sprite.textureRect.width,
-                (int)sprite.textureRect.height);
+            var newTex = new Texture2D((int)@this.rect.width, (int)@this.rect.height);
+            var pixels = @this.texture.GetPixels(
+                (int)@this.textureRect.x,
+                (int)@this.textureRect.y,
+                (int)@this.textureRect.width,
+                (int)@this.textureRect.height);
             newTex.SetPixels(pixels);
             newTex.Apply();
             return newTex;
         }
-        public static void Reset(this AudioSource audioSource)
+        public static void Reset(this AudioSource @this)
         {
-            audioSource.clip = null;
-            audioSource.mute = false;
-            audioSource.playOnAwake = true;
-            audioSource.loop = false;
-            audioSource.priority = 128;
-            audioSource.volume = 1;
-            audioSource.pitch = 1;
-            audioSource.panStereo = 0;
-            audioSource.spatialBlend = 0;
-            audioSource.reverbZoneMix = 1;
-            audioSource.dopplerLevel = 1;
-            audioSource.spread = 0;
-            audioSource.maxDistance = 500;
+            @this.clip = null;
+            @this.mute = false;
+            @this.playOnAwake = true;
+            @this.loop = false;
+            @this.priority = 128;
+            @this.volume = 1;
+            @this.pitch = 1;
+            @this.panStereo = 0;
+            @this.spatialBlend = 0;
+            @this.reverbZoneMix = 1;
+            @this.dopplerLevel = 1;
+            @this.spread = 0;
+            @this.maxDistance = 500;
         }
 
 
         /// <summary>
         /// 优化的设置SetActive方法，可以节约重复设置Active的开销
         /// </summary>
-        public static void SetActiveOptimize(this GameObject go, bool isActive)
+        public static void SetActiveOptimize(this GameObject @this, bool isActive)
         {
-            if (go.activeSelf != isActive)
+            if (@this.activeSelf != isActive)
             {
-                go.SetActive(isActive);
+                @this.SetActive(isActive);
             }
         }
         /// <summary>
         /// 获取动画组件切换进度
         /// </summary>
-        public static float GetCrossFadeProgress(this Animator anim, int layer = 0)
+        public static float GetCrossFadeProgress(this Animator @this, int layer = 0)
         {
-            if (anim.GetNextAnimatorStateInfo(layer).shortNameHash == 0)
+            if (@this.GetNextAnimatorStateInfo(layer).shortNameHash == 0)
             {
                 return 1;
             }
 
-            return anim.GetCurrentAnimatorStateInfo(layer).normalizedTime % 1;
+            return @this.GetCurrentAnimatorStateInfo(layer).normalizedTime % 1;
         }
-        public static void EnableImage(this Image image)
+        public static void EnableImage(this Image @this)
         {
-            if (image != null)
+            if (@this != null)
             {
-                var c = image.color;
-                image.color = new Color(c.r, c.g, c.b, 1);
+                var c = @this.color;
+                @this.color = new Color(c.r, c.g, c.b, 1);
             }
         }
-        public static void DisableImage(this Image image)
+        public static void DisableImage(this Image @this)
         {
-            if (image != null)
+            if (@this != null)
             {
-                var c = image.color;
-                image.sprite = null;
-                image.color = new Color(c.r, c.g, c.b, 0);
+                var c = @this.color;
+                @this.sprite = null;
+                @this.color = new Color(c.r, c.g, c.b, 0);
             }
         }
         /// <summary>
         /// 清除所有子节点
         /// </summary>
-        public static void ClearChild(this Transform go)
+        public static void ClearChild(this Transform @this)
         {
-            if (go == null)
+            if (@this == null)
                 return;
-            for (int i = go.childCount - 1; i >= 0; i--)
+            for (int i = @this.childCount - 1; i >= 0; i--)
             {
-                GameObject.Destroy(go.GetChild(i).gameObject);
+                GameObject.Destroy(@this.GetChild(i).gameObject);
             }
         }
         /// <summary>
         /// 设置层级；
         /// 此API会令对象下的所有子对象都被设置层级； 
         /// </summary>
-        public static void SetLayer(this GameObject go, string layerName)
+        public static void SetLayer(this GameObject  @this, string layerName)
         {
             var layer = LayerMask.NameToLayer(layerName);
-            var trans = go.GetComponentsInChildren<Transform>(true);
+            var trans = @this.GetComponentsInChildren<Transform>(true);
             foreach (Transform t in trans)
             {
                 t.gameObject.layer = layer;
             }
         }
         #region UGUI
-        public static Button AddButtonClickListener(this Button button,UnityAction<BaseEventData> handle)
+        public static Button AddButtonClickListener(this Button @this, UnityAction<BaseEventData> handle)
         {
-            var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
+            var eventTrigger = @this.transform.GetOrAddComponent<EventTrigger>();
             if (handle == null)
                 throw new ArgumentNullException(nameof(handle));
             EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == EventTriggerType.PointerClick);
             if (entry == null)
             {
-                entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick};
+                entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
                 eventTrigger.triggers.Add(entry);
             }
             entry.callback.AddListener(handle);
-            return button;
+            return @this;
         }
-        public static Button AddButtonDownListener(this Button button, UnityAction<BaseEventData> handle)
+        public static Button AddButtonDownListener(this Button @this, UnityAction<BaseEventData> handle)
         {
-            var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
+            var eventTrigger = @this.transform.GetOrAddComponent<EventTrigger>();
             if (handle == null)
                 throw new ArgumentNullException(nameof(handle));
-            EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID ==  EventTriggerType.PointerDown);
+            EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == EventTriggerType.PointerDown);
             if (entry == null)
             {
-                entry = new EventTrigger.Entry { eventID =  EventTriggerType.PointerDown};
+                entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerDown };
                 eventTrigger.triggers.Add(entry);
             }
             entry.callback.AddListener(handle);
-            return button;
+            return @this;
         }
-        public static Button AddButtonUpListener(this Button button,UnityAction<BaseEventData> handle)
+        public static Button AddButtonUpListener(this Button @this, UnityAction<BaseEventData> handle)
         {
-            var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
+            var eventTrigger = @this.transform.GetOrAddComponent<EventTrigger>();
             if (handle == null)
                 throw new ArgumentNullException(nameof(handle));
             EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == EventTriggerType.PointerUp);
@@ -544,11 +577,11 @@ where T : Component
                 eventTrigger.triggers.Add(entry);
             }
             entry.callback.AddListener(handle);
-            return button;
+            return @this;
         }
-        public static Button AddListener(this Button button, EventTriggerType triggerType,UnityAction<BaseEventData> handle)
+        public static Button AddListener(this Button @this, EventTriggerType triggerType, UnityAction<BaseEventData> handle)
         {
-            var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
+            var eventTrigger = @this.transform.GetOrAddComponent<EventTrigger>();
             if (handle == null)
                 throw new ArgumentNullException(nameof(handle));
             EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
@@ -558,25 +591,25 @@ where T : Component
                 eventTrigger.triggers.Add(entry);
             }
             entry.callback.AddListener(handle);
-            return button;
+            return @this;
         }
-        public static Button RemoveListener(this Button button, EventTriggerType triggerType,UnityAction<BaseEventData> handle)
+        public static Button RemoveListener(this Button @this, EventTriggerType triggerType, UnityAction<BaseEventData> handle)
         {
-            var eventTrigger = button.transform.GetOrAddComponent<EventTrigger>();
+            var eventTrigger = @this.transform.GetOrAddComponent<EventTrigger>();
             if (handle == null)
                 throw new ArgumentNullException(nameof(handle));
             EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
             entry?.callback.RemoveListener(handle);
-            return button;
+            return @this;
         }
-        public static Button RemoveAllListeners(this Button  button, EventTriggerType triggerType)
+        public static Button RemoveAllListeners(this Button @this, EventTriggerType triggerType)
         {
-            var eventTrigger = button.GetComponent<EventTrigger>();
+            var eventTrigger = @this.GetComponent<EventTrigger>();
             if (eventTrigger == null)
                 throw new ArgumentNullException(nameof(eventTrigger));
             EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
             entry?.callback.RemoveAllListeners();
-            return button;
+            return @this;
         }
         #endregion
     }

@@ -12,16 +12,13 @@ namespace Cosmos.Entity
         object EntityAsset { get; }
         IEntity EntityRoot { get; }
         IObjectPool ObjectPool { get; }
-        void AssignEntityRoot(IEntity root);
+        IEntityGroupHelper EntityGroupHelper { get; }
         bool HasEntity(string entityName);
         bool HasEntity(int entityId);
         IEntity GetEntity(int entityId);
         IEntity GetEntity(string entityName);
         IEntity[] GetEntities(string entityName);
         IEntity[] GetAllChildEntities();
-        void AddEntity(IEntity entity);
-        void RemoveEntity(IEntity entity);
         void ClearChildEntities();
-        void OnRefresh();
     }
 }
