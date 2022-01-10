@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Cosmos.UI;
-namespace Cosmos
+﻿namespace Cosmos.UI
 {
     /// <summary>
     /// UIForm动效接口；

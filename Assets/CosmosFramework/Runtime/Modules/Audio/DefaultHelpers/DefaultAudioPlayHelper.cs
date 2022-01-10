@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Cosmos.Audio;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-namespace Cosmos.Audio
+namespace Cosmos
 {
     /// <summary>
     /// 声音播放代理对象；

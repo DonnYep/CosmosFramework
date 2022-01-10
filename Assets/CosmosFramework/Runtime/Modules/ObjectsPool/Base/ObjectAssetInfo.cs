@@ -1,4 +1,5 @@
 ﻿using Cosmos.ObjectPool;
+using Cosmos.Resource;
 using System;
 
 namespace Cosmos

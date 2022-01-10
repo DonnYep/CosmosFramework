@@ -1,8 +1,6 @@
 ﻿using System;
-using Cosmos;
-using Cosmos.Network;
 using Telepathy;
-namespace Cosmos
+namespace Cosmos.Network
 {
     public class TcpClientChannel : INetworkClientChannel
     {

@@ -1,6 +1,5 @@
-﻿using Cosmos.ObjectPool;
-using System;
-namespace Cosmos
+﻿using System;
+namespace Cosmos.ObjectPool
 {
     public interface IObjectPoolManager: IModuleManager
     {

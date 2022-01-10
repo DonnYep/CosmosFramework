@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.IO;
 using System.Collections;
-using UnityEngine.Networking;
-using UnityEngine.Video;
 using UnityEngine.UI;
 
 namespace Cosmos

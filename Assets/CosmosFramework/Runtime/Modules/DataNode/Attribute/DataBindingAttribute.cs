@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Cosmos
+namespace Cosmos.Data
 {
     /// <summary>
     ///  数据绑定标记 

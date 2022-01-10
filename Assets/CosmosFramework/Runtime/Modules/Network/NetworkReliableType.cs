@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Cosmos.Network
+﻿namespace Cosmos.Network
 {
     /// <summary>
     /// 网络消息发送类型；

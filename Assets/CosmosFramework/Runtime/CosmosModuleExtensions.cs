@@ -1,4 +1,18 @@
-﻿using UnityEngine;
+﻿using Cosmos.Audio;
+using Cosmos.Config;
+using Cosmos.Controller;
+using Cosmos.Data;
+using Cosmos.Entity;
+using Cosmos.Event;
+using Cosmos.FSM;
+using Cosmos.Hotfix;
+using Cosmos.Input;
+using Cosmos.Network;
+using Cosmos.ObjectPool;
+using Cosmos.Resource;
+using Cosmos.Scene;
+using Cosmos.UI;
+using UnityEngine;
 namespace Cosmos
 {
     public static class CosmosModuleExtensions

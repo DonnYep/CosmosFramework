@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Cosmos
+﻿using System.Collections.Generic;
+namespace Cosmos.Data
 {
     /// <summary>
     /// 数据结点接口。

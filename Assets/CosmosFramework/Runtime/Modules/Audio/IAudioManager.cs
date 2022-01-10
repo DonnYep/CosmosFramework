@@ -1,7 +1,6 @@
 ﻿using Cosmos.Audio;
 using System;
-using System.Collections.Generic;
-namespace Cosmos
+namespace Cosmos.Audio
 {
     //================================================
     /*

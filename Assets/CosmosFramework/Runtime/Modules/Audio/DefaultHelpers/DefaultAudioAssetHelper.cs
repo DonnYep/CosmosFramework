@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Cosmos.Audio;
+using Cosmos.Resource;
+using System;
 using UnityEngine;
 
-namespace Cosmos.Audio
+namespace Cosmos
 {
     public class DefaultAudioAssetHelper : IAudioAssetHelper
     {

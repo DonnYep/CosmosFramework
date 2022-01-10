@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using System;
 namespace Cosmos
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]

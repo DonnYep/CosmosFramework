@@ -1,4 +1,6 @@
-﻿namespace Cosmos.UI
+﻿using Cosmos.Resource;
+
+namespace Cosmos.UI
 {
     /// <summary>
     /// UI资源信息；

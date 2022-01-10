@@ -1,11 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Cosmos.Audio
+﻿namespace Cosmos.Audio
 {
     /// <summary>
     /// 声音播放时的参数；

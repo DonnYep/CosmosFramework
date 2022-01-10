@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Cosmos.Resource;
+using Cosmos.UI;
+using System;
 using UnityEngine;
 
-namespace Cosmos.UI
+namespace Cosmos
 {
     public class DefaultUIFormAssetHelper : IUIFormAssetHelper
     {

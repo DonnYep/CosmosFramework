@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-using Cosmos.Resource;
 
-namespace Cosmos
+namespace Cosmos.Resource
 {
     public class AssetBundleLoader : IResourceLoadHelper
     {

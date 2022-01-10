@@ -1,7 +1,6 @@
-﻿using Cosmos.ObjectPool;
-using System;
+﻿using System;
 using UnityEngine;
-namespace Cosmos
+namespace Cosmos.ObjectPool
 {
     public interface IObjectPool 
     {

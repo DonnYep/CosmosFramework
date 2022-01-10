@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using Cosmos.ObjectPool;
+using Cosmos.Resource;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 namespace Cosmos.Entity
 {
@@ -453,6 +452,7 @@ namespace Cosmos.Entity
             objectPoolManager = GameManager.GetModule<IObjectPoolManager>();
             resourceManager = GameManager.GetModule<IResourceManager>();
             defaultEntityGroupHelper = new DefaultEntityGroupHelper();
+            entityHelper = new DefaultEntityHelper();
         }
 
         int GenerateEntityId()

@@ -1,11 +1,8 @@
-﻿using System;
+﻿using Cosmos.Download;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Cosmos.Download
+namespace Cosmos
 {
     /// <summary>
     ///若URL根目录为http://127.0.0.1:80/res/，文件地址为http://127.0.0.1:80/res/test.txt； 则test.txt即为FileList中的地址；

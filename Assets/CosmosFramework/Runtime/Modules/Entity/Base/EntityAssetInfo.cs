@@ -1,4 +1,6 @@
-﻿namespace Cosmos
+﻿using Cosmos.Resource;
+
+namespace Cosmos.Entity
 {
     /// <summary>
     /// 实体资源信息；

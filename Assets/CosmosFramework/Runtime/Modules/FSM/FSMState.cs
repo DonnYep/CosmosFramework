@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
+﻿using System.Collections.Generic;
 namespace Cosmos.FSM
 {
     public abstract class FSMState<T> where T:class

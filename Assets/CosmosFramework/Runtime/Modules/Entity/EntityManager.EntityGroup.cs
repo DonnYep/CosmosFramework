@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.ObjectPool;
+using System;
 using System.Collections.Generic;
 namespace Cosmos.Entity
 {

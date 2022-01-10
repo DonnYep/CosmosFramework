@@ -1,4 +1,4 @@
-﻿namespace Cosmos
+﻿namespace Cosmos.Resource
 {
     /// <summary>
     /// Unity资源信息类

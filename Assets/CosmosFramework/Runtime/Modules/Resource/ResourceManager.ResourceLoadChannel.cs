@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Collections;
-using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 using System.Reflection;
 namespace Cosmos.Resource
 {

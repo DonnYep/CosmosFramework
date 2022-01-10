@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Cosmos
+namespace Cosmos.Scene
 {
     /// <summary>
     /// 加载场景帮助类；

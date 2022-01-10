@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using Cosmos.Scene;
 namespace Cosmos
 {
     public class DefaultSceneHelper : ISceneHelper
@@ -18,15 +14,15 @@ namespace Cosmos
         public void LoadScene(ISceneInfo sceneInfo)
         {
             if (sceneInfo.Additive)
-                SceneManager.LoadScene(sceneInfo.SceneName, LoadSceneMode.Additive);
+                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneInfo.SceneName, LoadSceneMode.Additive);
             else
-                SceneManager.LoadScene(sceneInfo.SceneName);
+                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneInfo.SceneName);
         }
         public IEnumerator LoadSceneAsync(ISceneInfo sceneInfo, Action startLoadCallback, Action<float> progressCallback, Action loadedCallback = null)
         {
             IsLoading = true;
             startLoadCallback?.Invoke();
-            var ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName, (LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
+            var ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneInfo.SceneName, (LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
             while (!ao.isDone)
             {
                 progressCallback?.Invoke(ao.progress);
@@ -41,7 +37,7 @@ namespace Cosmos
             IsLoading = true;
             startLoadCallback?.Invoke();
             AsyncOperation ao;
-            ao = SceneManager.LoadSceneAsync(sceneInfo.SceneName, (LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
+            ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneInfo.SceneName, (LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
             ao.allowSceneActivation = false;
             while (!ao.isDone)
             {
@@ -62,7 +58,7 @@ namespace Cosmos
             IsLoading = true;
             startUnloadCallback?.Invoke();
             AsyncOperation ao;
-            ao = SceneManager.UnloadSceneAsync(sceneInfo.SceneName);
+            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneInfo.SceneName);
             while (!ao.isDone)
             {
                 progressCallback?.Invoke(ao.progress);
@@ -77,7 +73,7 @@ namespace Cosmos
             IsLoading = true;
             startUnloadCallback?.Invoke();
             AsyncOperation ao;
-            ao = SceneManager.UnloadSceneAsync(sceneInfo.SceneName);
+            ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneInfo.SceneName);
             while (!ao.isDone)
             {
                 progressCallback?.Invoke(ao.progress);

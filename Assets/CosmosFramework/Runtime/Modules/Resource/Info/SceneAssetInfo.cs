@@ -1,4 +1,4 @@
-﻿namespace Cosmos
+﻿namespace Cosmos.Resource
 {
     /// <summary>
     /// AB包中场景资源的信息；

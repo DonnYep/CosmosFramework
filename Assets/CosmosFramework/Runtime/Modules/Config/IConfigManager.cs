@@ -1,5 +1,4 @@
-﻿using Cosmos.Config;
-namespace Cosmos
+﻿namespace Cosmos.Config
 {
     public  interface IConfigManager: IModuleManager
     {

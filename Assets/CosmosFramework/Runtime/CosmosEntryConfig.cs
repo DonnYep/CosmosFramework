@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Quark;
+﻿using UnityEngine;
 using Cosmos.Resource;
 namespace Cosmos
 {

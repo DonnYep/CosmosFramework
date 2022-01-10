@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-namespace Cosmos
+﻿namespace Cosmos.Scene
 {
     public interface ISceneInfo
     {

@@ -150,7 +150,7 @@ namespace CosmosEditor.Quark
                             currentDirIndex++;
                             if (currentDirIndex < dirs.Count)
                             {
-                                EditorUtility.DisplayCancelableProgressBar("TraverseFolderFile", "Building", (float)currentDirIndex / (float)dirs.Count);
+                                EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "TraversingFolder", currentDirIndex / (float)dirs.Count);
                             }
                             else
                             {
@@ -179,7 +179,7 @@ namespace CosmosEditor.Quark
                     currentBuildIndex++;
                     if (currentBuildIndex < fileCount)
                     {
-                        EditorUtility.DisplayCancelableProgressBar("QuarkAssetDataset", "Building", (float)currentBuildIndex / (float)fileCount);
+                        EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "Building", currentBuildIndex / (float)fileCount);
                     }
                     else
                     {
@@ -210,13 +210,22 @@ namespace CosmosEditor.Quark
                 }
             }
             var arr = quarkAssetList.ToArray();
-            Utility.Algorithm.SortByAscend(arr, d => d.AssetName);
+
+            int arrIdx = 0;
+            var arrCount = arr.Length - 1;
+            SortByAscend(arr, d => d.AssetName, () => { EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "SavingAsset", arrIdx++ / (float)arrCount); });
+            EditorUtility.ClearProgressBar();
+
             quarkAssetDataset.QuarkAssetObjectList.Clear();
             quarkAssetDataset.QuarkAssetObjectList.AddRange(arr);
             quarkAssetDataset.QuarkAssetCount = arr.Length;
             quarkAssetDataset.DirHashPairs.Clear();
-            Utility.Algorithm.SortByAscend(dirHashPair, d => d.Dir);
+
+            int dirIdx = 0;
+            var dirCount = dirHashPair.Length - 1;
+            SortByAscend(dirHashPair, d => d.Dir, () => { EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "Saving", dirIdx++ / (float)dirCount); });
             quarkAssetDataset.DirHashPairs.AddRange(dirHashPair);
+            EditorUtility.ClearProgressBar();
         }
         void ADBModeUnderAssetsDirectoryBuild()
         {
@@ -232,7 +241,7 @@ namespace CosmosEditor.Quark
                 currentBuildIndex++;
                 if (currentBuildIndex < count)
                 {
-                    EditorUtility.DisplayCancelableProgressBar("QuarkAssetDataset", "Building", (float)currentBuildIndex / (float)count);
+                    EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "Building", currentBuildIndex / count);
                 }
                 else
                 {
@@ -262,13 +271,22 @@ namespace CosmosEditor.Quark
                 }
             });
             var arr = quarkAssetList.ToArray();
-            Utility.Algorithm.SortByAscend(arr, d => d.AssetName);
+
+            int arrIdx = 0;
+            var arrCount = arr.Length - 1;
+            SortByAscend(arr, d => d.AssetName, () => { EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "SavingAsset", arrIdx++ / (float)arrCount); });
+            EditorUtility.ClearProgressBar();
+
             quarkAssetDataset.QuarkAssetObjectList.Clear();
             quarkAssetDataset.QuarkAssetObjectList.AddRange(arr);
             quarkAssetDataset.QuarkAssetCount = arr.Length;
             quarkAssetDataset.DirHashPairs.Clear();
-            Utility.Algorithm.SortByAscend(dirHashPair, d => d.Dir);
+
+            int dirIdx = 0;
+            var dirCount = dirHashPair.Length - 1;
+            SortByAscend(dirHashPair, d => d.Dir, () => { EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "Saving", dirIdx++ / (float)dirCount); });
             quarkAssetDataset.DirHashPairs.AddRange(dirHashPair);
+            EditorUtility.ClearProgressBar();
         }
         void AssetDataBaseModeCreatePathScript()
         {
@@ -287,5 +305,24 @@ namespace CosmosEditor.Quark
             AssetDatabase.Refresh();
         }
         #endregion
+
+        void SortByAscend<T, K>(T[] array, Func<T, K> handler, Action progress)
+    where K : IComparable<K>
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                for (int j = 0; j < array.Length; j++)
+                {
+                    if (handler(array[i]).CompareTo(handler(array[j])) < 0)
+                    {
+                        T temp = array[i];
+                        array[i] = array[j];
+                        array[j] = temp;
+                    }
+                }
+                progress.Invoke();
+            }
+        }
     }
+
 }

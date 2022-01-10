@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
-using System.Text;
-using System.Reflection;
-namespace Cosmos
+﻿namespace Cosmos
 {
     public static class MessageColor
     {

@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.SceneManagement;
 using UnityEngine;
 
-namespace Cosmos
+namespace Cosmos.Scene
 {
     public interface ISceneManager : IModuleManager
     {

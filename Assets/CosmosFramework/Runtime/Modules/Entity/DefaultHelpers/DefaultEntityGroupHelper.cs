@@ -1,13 +1,16 @@
-﻿using UnityEngine;
-namespace Cosmos.Entity
+﻿using Cosmos.Entity;
+using UnityEngine;
+namespace Cosmos
 {
     public class DefaultEntityGroupHelper : IEntityGroupHelper
     {
         GameObject root = CosmosEntry.EntityManager.Instance();
-        GameObject activeRoot = new GameObject("ActiveEntities");
-        GameObject deactiveRoot = new GameObject("DeactiveEntities");
+        GameObject activeRoot;
+        GameObject deactiveRoot;
         public DefaultEntityGroupHelper()
         {
+            activeRoot = new GameObject("ActiveEntities");
+            deactiveRoot = new GameObject("DeactiveEntities");
             activeRoot.transform.SetAlignParent(root.transform);
             deactiveRoot.transform.SetAlignParent(root.transform);
         }

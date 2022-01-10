@@ -1,6 +1,5 @@
-﻿using Cosmos.Entity;
-using System.Threading.Tasks;
-namespace Cosmos
+﻿using System.Threading.Tasks;
+namespace Cosmos.Entity
 {
     //================================================
     /*

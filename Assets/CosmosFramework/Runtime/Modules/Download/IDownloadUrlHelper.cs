@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Cosmos.Download
+﻿namespace Cosmos.Download
 {
     /// <summary>
     /// 支持localhost地址与http地址；

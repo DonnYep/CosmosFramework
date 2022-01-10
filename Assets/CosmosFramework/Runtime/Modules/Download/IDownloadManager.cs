@@ -1,12 +1,5 @@
-﻿using Cosmos.Download;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Cosmos
+﻿using System;
+namespace Cosmos.Download
 {
     public interface IDownloadManager : IModuleManager
     {

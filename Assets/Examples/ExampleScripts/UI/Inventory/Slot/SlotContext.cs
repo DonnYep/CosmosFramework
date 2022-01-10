@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
+using Cosmos.Resource;
+
 namespace Cosmos.Test
 {
     public class SlotContext : MonoBehaviour
