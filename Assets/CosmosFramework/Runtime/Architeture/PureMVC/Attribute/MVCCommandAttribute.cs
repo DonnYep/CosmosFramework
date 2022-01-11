@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
+﻿using System;
 namespace PureMVC
 {
     [AttributeUsage(AttributeTargets.Class,AllowMultiple =true,Inherited =false)]

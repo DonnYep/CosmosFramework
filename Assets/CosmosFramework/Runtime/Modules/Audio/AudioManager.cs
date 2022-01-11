@@ -14,7 +14,7 @@ namespace Cosmos.Audio
      */
     //================================================
     [Module]
-    internal sealed class AudioManager : Module, IAudioManager
+    internal sealed partial class AudioManager : Module, IAudioManager
     {
         /// <summary>
         /// AduioGroupName===AudioGroup ;
@@ -23,7 +23,7 @@ namespace Cosmos.Audio
         /// <summary>
         /// AudioName===AudioObject ;
         /// </summary>
-        Dictionary<string, IAudioObject> audioObjectDict;
+        Dictionary<string, AudioObject> audioObjectDict;
         /// <summary>
         /// 声音资源加载帮助体；
         /// </summary>
@@ -103,7 +103,7 @@ namespace Cosmos.Audio
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
             audioAssetHelper.LoadAudioAsync(audioAssetInfo, audioObj =>
              {
-                 if (audioObj != null)
+                 if (audioObj != null && audioObj.AudioClip != null)
                      OnAudioRegistSuccess(audioObj);
                  else
                      OnAudioRegistFailure(audioName, audioGroupName);
@@ -120,7 +120,7 @@ namespace Cosmos.Audio
             {
                 var audioGroupName = audioObject.AudioGroupName;
                 if (string.IsNullOrEmpty(audioGroupName))
-                    return ;
+                    return;
                 if (audioGroupDict.TryGetValue(audioGroupName, out var group))
                 {
                     group.RemoveAudio(audioName);
@@ -155,9 +155,9 @@ namespace Cosmos.Audio
         public void PalyAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
-            if(audioObjectDict.TryGetValue(audioName,out var audioObject))
+            if (audioObjectDict.TryGetValue(audioName, out var audioObject))
             {
-                audioPlayHelper.PlayAudio(audioObject,audioParams, audioPlayInfo);
+                audioPlayHelper.PlayAudio(audioObject, audioParams, audioPlayInfo);
             }
             else
             {
@@ -223,7 +223,7 @@ namespace Cosmos.Audio
         public void StopAudioGroup(string audioGroupName)
         {
             Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
-            if(audioGroupDict.TryGetValue(audioGroupName,out var group))
+            if (audioGroupDict.TryGetValue(audioGroupName, out var group))
             {
                 var dict = group.AudioDict;
                 foreach (var obj in dict)
@@ -273,7 +273,7 @@ namespace Cosmos.Audio
         protected override void OnInitialization()
         {
             audioGroupDict = new Dictionary<string, IAudioGroup>();
-            audioObjectDict = new Dictionary<string, IAudioObject>();
+            audioObjectDict = new Dictionary<string, AudioObject>();
             audioGroupPool = new AudioGroupPool();
             audioAssetHelper = new DefaultAudioAssetHelper();
             audioPlayHelper = new DefaultAudioPlayHelper();
@@ -289,7 +289,7 @@ namespace Cosmos.Audio
             audioRegisterFailure?.Invoke(eventArgs);
             AudioRegistFailureEventArgs.Release(eventArgs);
         }
-        void OnAudioRegistSuccess(IAudioObject audioObject)
+        void OnAudioRegistSuccess(AudioObject audioObject)
         {
             var audioName = audioObject.AudioName;
             var audioGroupName = audioObject.AudioGroupName;

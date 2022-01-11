@@ -1,7 +1,4 @@
-﻿using System.IO;
-using UnityEngine;
-
-namespace Quark.Asset
+﻿namespace Quark.Asset
 {
     /// <summary>
     /// Quark常量；

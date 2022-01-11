@@ -20,7 +20,7 @@ namespace Cosmos.Controller
     */
     //================================================
     [Module]
-    internal sealed class ControllerManager : Module, IControllerManager
+    internal sealed partial class ControllerManager : Module, IControllerManager
     {
         #region Properties
         /// <summary>

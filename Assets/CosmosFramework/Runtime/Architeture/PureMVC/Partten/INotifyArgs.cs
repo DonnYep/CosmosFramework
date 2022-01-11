@@ -1,5 +1,4 @@
-﻿using System;
-namespace PureMVC
+﻿namespace PureMVC
 {
     public interface INotifyArgs
     {

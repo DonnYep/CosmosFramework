@@ -41,7 +41,7 @@ namespace Cosmos
             deactiveCache = new List<string>();
             latestTime = Utility.Time.SecondNow();
         }
-        public void PlayAudio(IAudioObject audioObject, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
+        public void PlayAudio(AudioObject audioObject, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
         {
             if (playingDict.TryGetValue(audioObject.AudioName,out var playingAS))
             {
@@ -79,7 +79,7 @@ namespace Cosmos
             audioSource.Play();
             playingDict.AddOrUpdate(audioObject.AudioName, audioSource);
         }
-        public void PauseAudio(IAudioObject audioObject)
+        public void PauseAudio(AudioObject audioObject)
         {
             if (playingDict.Remove(audioObject.AudioName, out var asObj))
             {
@@ -87,7 +87,7 @@ namespace Cosmos
                 asObj.Pause();
             }
         }
-        public void UnPauseAudio(IAudioObject audioObject)
+        public void UnPauseAudio(AudioObject audioObject)
         {
             if (pauseDict.Remove(audioObject.AudioName, out var asObj))
             {
@@ -95,7 +95,7 @@ namespace Cosmos
                 asObj.UnPause();
             }
         }
-        public void StopAudio(IAudioObject audioObject)
+        public void StopAudio(AudioObject audioObject)
         {
             if (pauseDict.Remove(audioObject.AudioName, out var asObj))
             {
@@ -145,7 +145,7 @@ namespace Cosmos
             }
         }
 
-        public void PlayAudio(IAudioObject audioObject)
+        public void PlayAudio(AudioObject audioObject)
         {
             throw new NotImplementedException();
         }

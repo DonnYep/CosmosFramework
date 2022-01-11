@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
 
- namespace Cosmos.Awaitable
+namespace Cosmos.Awaitable
 {
     public partial class CoroutineAwaiter<T> : Awaiter<T>
     {

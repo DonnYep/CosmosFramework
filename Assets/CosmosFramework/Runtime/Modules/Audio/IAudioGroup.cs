@@ -6,9 +6,9 @@ namespace Cosmos.Audio
     {
         string AudioGroupName { get; set; }
         int AudioCount { get; }
-        Dictionary<string, IAudioObject> AudioDict { get; }
+        Dictionary<string, AudioObject> AudioDict { get; }
         bool HasAudio(string audioName);
-        void AddOrUpdateAudio(string audioName, IAudioObject audio);
+        void AddOrUpdateAudio(string audioName, AudioObject audio);
         bool RemoveAudio(string audioName);
         void RemoveAllAudios();
         void Release();

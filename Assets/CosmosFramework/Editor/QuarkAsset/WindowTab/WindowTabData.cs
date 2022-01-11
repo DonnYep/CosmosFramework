@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-namespace CosmosEditor.Quark
+﻿namespace CosmosEditor.Quark
 {
     internal class WindowTabData
     {

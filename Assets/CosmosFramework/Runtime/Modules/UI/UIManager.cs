@@ -10,7 +10,7 @@ namespace Cosmos.UI
      */
     //================================================
     [Module]
-    internal sealed class UIManager : Module, IUIManager
+    internal  sealed  partial class UIManager : Module, IUIManager
     {
         #region Properties
         /// <summary>

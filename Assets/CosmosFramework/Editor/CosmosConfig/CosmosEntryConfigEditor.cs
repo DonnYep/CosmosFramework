@@ -1,10 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using Quark;
+﻿using UnityEditor;
 using Cosmos.Resource;
-using System;
 using Cosmos;
 
 namespace CosmosEditor

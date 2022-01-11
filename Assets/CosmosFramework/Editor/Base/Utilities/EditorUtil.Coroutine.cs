@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
-using UnityEditor;
+﻿using System.Collections;
 using Unity.EditorCoroutines.Editor;
 
 namespace CosmosEditor
