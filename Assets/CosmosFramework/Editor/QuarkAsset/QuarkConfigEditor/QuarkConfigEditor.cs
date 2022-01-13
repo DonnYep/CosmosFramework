@@ -4,11 +4,11 @@ using Quark.Asset;
 
 namespace CosmosEditor.Quark
 {
-    [CustomEditor(typeof(QuarkConfiguration), true)]
-    public class QuarkConfigurationEditor : UnityEditor.Editor
+    [CustomEditor(typeof(QuarkConfig), true)]
+    public class QuarkConfigEditor : UnityEditor.Editor
     {
         SerializedObject targetObject;
-        QuarkConfiguration quarkConfig;
+        QuarkConfig quarkConfig;
         SerializedProperty sp_QuarkAssetLoadMode, sp_QuarkAssetDataset, sp_Url, sp_PingUrl, sp_QuarkLoadPath,
             sp_AESEncryptionKey, sp_EnableRelativeLoadPath, sp_RelativeLoadPath, sp_CustomeLoadPath, sp_QuarkBuildPath,
             sp_EnableRelativeBuildPath, sp_RelativeBuildPath;
@@ -35,7 +35,7 @@ namespace CosmosEditor.Quark
         }
         private void OnEnable()
         {
-            quarkConfig = target as QuarkConfiguration;
+            quarkConfig = target as QuarkConfig;
             targetObject = new SerializedObject(quarkConfig);
             sp_QuarkAssetLoadMode = targetObject.FindProperty("QuarkAssetLoadMode");
             sp_QuarkAssetDataset = targetObject.FindProperty("QuarkAssetDataset");
@@ -54,7 +54,7 @@ namespace CosmosEditor.Quark
         void DrawBuildAssetBundleTab()
         {
             EditorGUILayout.Space(16);
-            EditorGUILayout.HelpBox("Asset bundle build path",MessageType.Info);
+            EditorGUILayout.HelpBox("Asset bundle build path", MessageType.Info);
 
             EditorGUILayout.BeginVertical("box");
             sp_QuarkBuildPath.enumValueIndex = (byte)(QuarkBuildPath)EditorGUILayout.EnumPopup("QuarkBuildPath", (QuarkBuildPath)sp_QuarkBuildPath.enumValueIndex);

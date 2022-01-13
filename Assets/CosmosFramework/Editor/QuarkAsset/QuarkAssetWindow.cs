@@ -12,11 +12,11 @@ namespace CosmosEditor.Quark
             AssetBundleMode = 1
         }
         int selectedBar = 0;
-        string[] barArray = new string[] { "AssetDatabaseBuilder", "AssetBundleBuilder" };
+        string[] barArray = new string[] { "AssetDatasetBuilder", "AssetBundleBuilder" };
         public static int FilterLength { get; private set; }
-        static AssetDatabaseTab assetDatabaseTab = new AssetDatabaseTab();
-        static AssetBundleBuildTab assetBundleTab = new AssetBundleBuildTab();
-        internal static WindowTabData WindowTabData { get; private set; }
+        static QuarkDatasetTab assetDatasetTab = new QuarkDatasetTab();
+        static QuarkAssetBundleTab assetBundleTab = new QuarkAssetBundleTab();
+        internal static QuarkWindowTabData WindowTabData { get; private set; }
         internal const string QuarkAssetWindowTabDataFileName = "QuarkAssetWindowTabData.json";
         QuarkAssetDataset quarkAssetDataset;
         Vector2 m_ScrollPos;
@@ -34,15 +34,15 @@ namespace CosmosEditor.Quark
         {
             try
             {
-                WindowTabData = EditorUtil.GetData<WindowTabData>(QuarkAssetWindowTabDataFileName);
+                WindowTabData = EditorUtil.GetData<QuarkWindowTabData>(QuarkAssetWindowTabDataFileName);
             }
             catch
             {
-                WindowTabData = new WindowTabData();
+                WindowTabData = new QuarkWindowTabData();
             }
-            assetDatabaseTab.OnEnable();
+            assetDatasetTab.OnEnable();
             assetBundleTab.OnEnable();
-            assetBundleTab.SetAssetDatabaseTab(assetDatabaseTab);
+            assetBundleTab.SetAssetDatasetTab(assetDatasetTab);
             if (!string.IsNullOrEmpty(WindowTabData.QuarkAssetDatasetPath))
             {
                 try
@@ -54,7 +54,7 @@ namespace CosmosEditor.Quark
         }
         void OnDisable()
         {
-            assetDatabaseTab.OnDisable();
+            assetDatasetTab.OnDisable();
             assetBundleTab.OnDisable();
             if (quarkAssetDataset != null)
             {
@@ -92,7 +92,7 @@ namespace CosmosEditor.Quark
             switch (bar)
             {
                 case AssetInfoBar.AssetDatabaseMode:
-                    assetDatabaseTab.OnGUI(position);
+                    assetDatasetTab.OnGUI(position);
                     break;
                 case AssetInfoBar.AssetBundleMode:
                     assetBundleTab.OnGUI(position);

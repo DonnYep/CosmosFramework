@@ -9,7 +9,7 @@ using Quark.Asset;
 
 namespace CosmosEditor.Quark
 {
-    public class IncludeDirectoriesTreeView : TreeView
+    public class QuarkDirectoriesTreeView : TreeView
     {
         List<string> pathList = new List<string>();
         bool canRender { get { return QuarkEditorDataProxy.QuarkAssetDataset != null; } }
@@ -71,7 +71,7 @@ namespace CosmosEditor.Quark
             }
             Reload();
         }
-        public IncludeDirectoriesTreeView(TreeViewState treeViewState)
+        public QuarkDirectoriesTreeView(TreeViewState treeViewState)
             : base(treeViewState)
         {
             Reload();
@@ -118,7 +118,7 @@ namespace CosmosEditor.Quark
                 }
                 var dirs = QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs.ToArray();
                 pathList.Clear();
-                pathList.AddRange(dirs.Select(d=>d.Dir));
+                pathList.AddRange(dirs.Select(d => d.Dir));
             }
             catch (Exception e)
             {

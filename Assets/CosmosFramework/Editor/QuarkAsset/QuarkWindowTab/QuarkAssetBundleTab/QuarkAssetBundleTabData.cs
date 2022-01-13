@@ -9,7 +9,7 @@ namespace CosmosEditor.Quark
         HashInstead = 2
     }
     [Serializable]
-    internal class AssetBundleBuildTabData
+    internal class QuarkAssetBundleTabData
     {
         public BuildTarget BuildTarget { get; set; }
         public string OutputPath { get; set; }
@@ -23,7 +23,7 @@ namespace CosmosEditor.Quark
         public string AESEncryptionKey { get; set; }
         public BuildAssetBundleOptions BuildAssetBundleOptions { get; set; }
 
-        public AssetBundleBuildTabData()
+        public QuarkAssetBundleTabData()
         {
             BuildTarget = BuildTarget.StandaloneWindows;
             OutputPath = "AssetBundles/StandaloneWindows";

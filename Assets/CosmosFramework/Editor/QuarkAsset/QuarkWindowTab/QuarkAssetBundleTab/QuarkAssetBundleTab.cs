@@ -10,9 +10,9 @@ using Quark;
 using Cosmos;
 namespace CosmosEditor.Quark
 {
-    public class AssetBundleBuildTab
+    public class QuarkAssetBundleTab
     {
-        AssetBundleBuildTabData assetBundleTabData;
+        QuarkAssetBundleTabData assetBundleTabData;
         const string AssetBundleTabDataFileName = "AssetBundleTabData.json";
         const string quarkABBuildInfo = "BuildInfo.json";
         const string quarkManifest = "Manifest.json";
@@ -24,11 +24,11 @@ namespace CosmosEditor.Quark
         /// </summary>
         Dictionary<string, string> buildInfoCache = new Dictionary<string, string>();
         QuarkAssetDataset quarkAssetDataset { get { return QuarkEditorDataProxy.QuarkAssetDataset; } }
-        AssetDatabaseTab assetDatabaseTab;
+        QuarkDatasetTab assetDatasetTab;
         List<string> abPaths = new List<string>();
-        public void SetAssetDatabaseTab(AssetDatabaseTab assetDatabaseTab)
+        public void SetAssetDatasetTab(QuarkDatasetTab assetDatasetTab)
         {
-            this.assetDatabaseTab = assetDatabaseTab;
+            this.assetDatasetTab = assetDatasetTab;
         }
         public void OnDisable()
         {
@@ -38,11 +38,11 @@ namespace CosmosEditor.Quark
         {
             try
             {
-                assetBundleTabData = EditorUtil.GetData<AssetBundleBuildTabData>(AssetBundleTabDataFileName);
+                assetBundleTabData = EditorUtil.GetData<QuarkAssetBundleTabData>(AssetBundleTabDataFileName);
             }
             catch
             {
-                assetBundleTabData = new AssetBundleBuildTabData();
+                assetBundleTabData = new QuarkAssetBundleTabData();
                 EditorUtil.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
             }
         }
@@ -120,7 +120,7 @@ namespace CosmosEditor.Quark
             }
             if (GUILayout.Button("Reset"))
             {
-                assetBundleTabData = new AssetBundleBuildTabData();
+                assetBundleTabData = new QuarkAssetBundleTabData();
                 EditorUtil.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
             }
             GUILayout.EndHorizontal();
@@ -160,7 +160,7 @@ namespace CosmosEditor.Quark
         }
         IEnumerator EnumBuildAssetBundle()
         {
-            yield return assetDatabaseTab.EnumUpdateADBMode();
+            yield return assetDatasetTab.EnumUpdateADBMode();
             yield return SetBuildInfo();
             BuildPipeline.BuildAssetBundles(GetBuildFolder(), assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
             OperateManifest();

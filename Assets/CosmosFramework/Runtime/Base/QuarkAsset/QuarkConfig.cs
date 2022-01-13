@@ -8,7 +8,7 @@ namespace Quark
     /// <summary>
     /// Quark配置脚本，挂载到物体上配置即可；
     /// </summary>
-    public class QuarkConfiguration : MonoBehaviour
+    public class QuarkConfig : MonoBehaviour
     {
         /// <summary>
         /// 
@@ -68,18 +68,18 @@ namespace Quark
         /// </summary>
         string downloadPath;
 
-        static QuarkConfiguration instance;
-        public static QuarkConfiguration Instance
+        static QuarkConfig instance;
+        public static QuarkConfig Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = GameObject.FindObjectOfType<QuarkConfiguration>();
+                    instance = GameObject.FindObjectOfType<QuarkConfig>();
                     if (instance == null)
                     {
-                        var go = new GameObject(typeof(QuarkConfiguration).Name);
-                        instance = go.AddComponent<QuarkConfiguration>();
+                        var go = new GameObject(typeof(QuarkConfig).Name);
+                        instance = go.AddComponent<QuarkConfig>();
                     }
                 }
                 return instance;
