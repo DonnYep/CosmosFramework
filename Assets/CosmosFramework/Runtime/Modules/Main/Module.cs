@@ -1,6 +1,5 @@
 ﻿namespace Cosmos
 {
-
     /// <summary>
     /// 模块的抽象基类；
     /// 外部可扩展；

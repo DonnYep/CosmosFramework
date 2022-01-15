@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
-
 namespace Cosmos
 {
     public class DefaultWebRequestHelper : IWebRequestHelper

@@ -1,5 +1,4 @@
 ﻿using Cosmos.Resource;
-
 namespace Cosmos.Audio
 {
     public class AudioAssetInfo : AssetInfo

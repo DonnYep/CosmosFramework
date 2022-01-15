@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
 namespace Cosmos.Input
 {
     public sealed class VirtualInput

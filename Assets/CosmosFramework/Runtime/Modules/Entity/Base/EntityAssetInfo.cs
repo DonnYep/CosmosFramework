@@ -1,5 +1,4 @@
 ﻿using Cosmos.Resource;
-
 namespace Cosmos.Entity
 {
     /// <summary>

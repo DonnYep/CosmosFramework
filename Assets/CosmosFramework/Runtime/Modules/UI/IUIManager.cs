@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-
 namespace Cosmos.UI
 {
     public interface IUIManager : IModuleManager

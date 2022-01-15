@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-
 namespace Cosmos.Input
 {
     public interface IInputManager : IModuleManager

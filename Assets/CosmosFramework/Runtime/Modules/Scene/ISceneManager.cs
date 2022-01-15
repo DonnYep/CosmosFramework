@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-
 namespace Cosmos.Scene
 {
     public interface ISceneManager : IModuleManager

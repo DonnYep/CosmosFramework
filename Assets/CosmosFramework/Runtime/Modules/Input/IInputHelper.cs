@@ -1,6 +1,5 @@
 ﻿namespace Cosmos.Input
 {
-
     public interface IInputHelper
     {
         /// <summary>

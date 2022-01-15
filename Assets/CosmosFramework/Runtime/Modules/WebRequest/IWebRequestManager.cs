@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-
 namespace Cosmos.WebRequest
 {
     public interface IWebRequestManager : IModuleManager

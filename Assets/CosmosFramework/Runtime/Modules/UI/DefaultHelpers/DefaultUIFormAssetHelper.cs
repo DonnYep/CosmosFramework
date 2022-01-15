@@ -2,7 +2,6 @@
 using Cosmos.UI;
 using System;
 using UnityEngine;
-
 namespace Cosmos
 {
     public class DefaultUIFormAssetHelper : IUIFormAssetHelper

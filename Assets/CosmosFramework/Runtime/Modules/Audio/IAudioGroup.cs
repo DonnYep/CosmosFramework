@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 namespace Cosmos.Audio
 {
     public interface IAudioGroup

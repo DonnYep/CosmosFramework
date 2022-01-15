@@ -12,10 +12,10 @@ namespace CosmosEditor.Quark
             AssetBundleMode = 1
         }
         int selectedBar = 0;
-        string[] barArray = new string[] { "AssetDatasetBuilder", "AssetBundleBuilder" };
+        string[] barArray = new string[] { "QuarkDatasetBuilder", "AssetBundleBuilder" };
         public static int FilterLength { get; private set; }
-        static QuarkDatasetTab assetDatasetTab = new QuarkDatasetTab();
-        static QuarkAssetBundleTab assetBundleTab = new QuarkAssetBundleTab();
+        static QuarkDatasetTab quarkDatasetTab = new QuarkDatasetTab();
+        static QuarkAssetBundleTab quarkAssetBundleTab = new QuarkAssetBundleTab();
         internal static QuarkWindowTabData WindowTabData { get; private set; }
         internal const string QuarkAssetWindowTabDataFileName = "QuarkAssetWindowTabData.json";
         QuarkAssetDataset quarkAssetDataset;
@@ -40,9 +40,9 @@ namespace CosmosEditor.Quark
             {
                 WindowTabData = new QuarkWindowTabData();
             }
-            assetDatasetTab.OnEnable();
-            assetBundleTab.OnEnable();
-            assetBundleTab.SetAssetDatasetTab(assetDatasetTab);
+            quarkDatasetTab.OnEnable();
+            quarkAssetBundleTab.OnEnable();
+            quarkAssetBundleTab.SetAssetDatasetTab(quarkDatasetTab);
             if (!string.IsNullOrEmpty(WindowTabData.QuarkAssetDatasetPath))
             {
                 try
@@ -54,8 +54,8 @@ namespace CosmosEditor.Quark
         }
         void OnDisable()
         {
-            assetDatasetTab.OnDisable();
-            assetBundleTab.OnDisable();
+            quarkDatasetTab.OnDisable();
+            quarkAssetBundleTab.OnDisable();
             if (quarkAssetDataset != null)
             {
                 try
@@ -92,10 +92,10 @@ namespace CosmosEditor.Quark
             switch (bar)
             {
                 case AssetInfoBar.AssetDatabaseMode:
-                    assetDatasetTab.OnGUI(position);
+                    quarkDatasetTab.OnGUI(position);
                     break;
                 case AssetInfoBar.AssetBundleMode:
-                    assetBundleTab.OnGUI(position);
+                    quarkAssetBundleTab.OnGUI(position);
                     break;
             }
             EditorGUILayout.EndScrollView();

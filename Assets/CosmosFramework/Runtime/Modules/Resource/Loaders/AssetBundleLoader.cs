@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-
 namespace Cosmos.Resource
 {
     public class AssetBundleLoader : IResourceLoadHelper

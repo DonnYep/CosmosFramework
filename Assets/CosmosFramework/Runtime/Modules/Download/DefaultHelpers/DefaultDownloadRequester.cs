@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using UnityEngine.Networking;
-
 namespace Cosmos
 {
     public class DefaultDownloadRequester : IDownloadRequester
