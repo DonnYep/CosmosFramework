@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Cosmos;
+﻿using UnityEngine;
 using Cosmos.Resource;
 using System;
-using Quark.Asset;
 using Quark;
 
 public class QuarkLoader : IResourceLoadHelper

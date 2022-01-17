@@ -22,17 +22,6 @@ namespace Cosmos
             {
                 CosmosEntry.LaunchAppDomainModules();
                 CosmosEntry.ResourceManager.SwitchBuildInLoadMode(ResourceLoadMode);
-                //if (ResourceLoadMode == ResourceLoadMode.QuarkAsset)
-                //{
-                //    QuarkManager.Instance.QuarkAssetLoadMode = QuarkAssetLoadMode;
-                //    switch (QuarkAssetLoadMode)
-                //    {
-                //        case QuarkAssetLoadMode.BuiltAssetBundle:
-                //            QuarkManager.Instance.URL = QuarkRemoteUrl;
-                //            QuarkManager.Instance.DownloadPath = QuarkLocalUrl;
-                //            break;
-                //    }
-                //}
             }
         }
     }

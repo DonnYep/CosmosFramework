@@ -38,7 +38,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **UI**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取以及组别设置等。扩展方法对按钮等一些常用组件进行了扩展，无需手动实现按钮抬起、按下等接口实现即可监听。支持常用UIBehaiour类型的triggerEvent。
 
-- **Main**：模块中心。自定义模块与扩展模块都存于此。自定义模块按照内置模块相同格式写入后，可享有完全同等与内置模块的生命周期与权限。几乎与内置模块无异。此主模块的内置轮询池：FixedRefreshHandler、LateRefreshHandler、RefreshHandler、ElapseRefreshHandler可对需要统一进行轮询管理的对象进行统一轮询，减少由于过多的Update等mono回调导致的新能损耗。
+- **Main**：模块中心。自定义模块与扩展模块都存于此。自定义模块按照内置模块相同格式写入后，可享有完全同等与内置模块的生命周期与权限。几乎与内置模块无异。此主模块的内置轮询池：FixedRefreshHandler、LateRefreshHandler、RefreshHandler、ElapseRefreshHandler可对需要统一进行轮询管理的对象进行统一轮询，减少由于过多的Update等mono回调导致的性能损耗。
 
 - **Controller**：控制器模块。使用此模块进行注册后，无需生成实体对象(GameObject)也可进行轮询管理。此模块提供Update轮询。
 
@@ -54,48 +54,9 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **DataStructure**：常用数据结构。链表、双向链表、双向字典、二叉树、四叉树、AStart、LRU、线程锁等数据结构。
 
-- **Behaviour**：内置生命周期函数，此生命周期可参考Unity的MONO生命周期。需要注意，此内置生命周期适用于原生模块与自定义模块，相对于Unity生命周期是独立的。生命周期优先级依次为：
-    - OnInitialization
-    - OnActive
-    - OnPreparatory
-    - OnFixRefresh
-    - OnRefresh
-    - OnLateRefresh
-    - OnDeactive
-    - OnTermination
-    
 - **Extensions**：静态扩展工具。提供Unity的扩展以及C# Collections 常用数据结构的原生扩展。
 
 - **Awaitable** ：此工具提供了async/await语法在unity环境中的支持。可以像写c#原生异步一样,在Unity中写异步。支持Task异步，Task执行完成后会回到主线程，使用时按照正常格式写即可；
-代码参考：
-
-```CSharp
-using System.Collections;
-using UnityEngine;
-using Cosmos;
-public class AwaitableTest : MonoBehaviour
-{
-    private async void Start()
-    {
-        Debug.Log("AwaitableTest >>> Before Coroutine Start");
-        await StartCoroutine(EnumRun());
-        await new WaitForSeconds(3);
-        await EnumRun();
-        Debug.LogError("AwaitableTest >>> After Coroutine Start");
-        await EnumWait();
-    }
-    IEnumerator EnumRun()
-    {
-        yield return new WaitForSeconds(1);
-        Debug.Log("AwaitableTest >>> After IEnumerator EnumRun");
-    }
-    IEnumerator EnumWait()
-    {
-        yield return new WaitForSeconds(3);
-        Debug.Log("AwaitableTest >>> After IEnumerator EnumWait");
-    }
-}
-```
 
 - **EventCore** 完全抽象的事件数据结构。内含普通、标准与线程安全类型；
 ```CSharp
@@ -129,54 +90,6 @@ public class AwaitableTest : MonoBehaviour
 
 ## 注意事项
 
-- 自定义模块实现：
-    
-```csharp
-    using Cosmos;
-    public interface IMyManager : IModuleManager
-    {
-        //自定义一个接口，使自定义的接口继承自IModuleManager
-    }
-```
-    
-```csharp
-    using Cosmos;
-    [Module]
-    internal class MyManager :Module, IMyManager
-    {
-        //创建接口对应的类，继承自Module与IMyManager，并标记上[Module]特性
-        //完成以上步骤后，MyManager作为一个模块就被自动生成了。
-        //以此种方法定义的模块，被生成后等同于原生模块，享有完全相同的生命周期。
-    
-        [TickRefresh]
-        void TickRefresh()
-        {
-            //被标记上[TickRefresh]的方法将在Update中执行；
-        }
-        [LateRefresh]
-        void LateRefresh()
-        {
-            //被标记上[LateRefresh]的方法将在LateUpdate中执行；
-        }
-        [FixedRefresh]
-        void FixedRefresh()
-        {
-            //被标记上[FixedRefresh]的方法将在FixedUpdate中执行；
-        }
-    
-        //一个模块中只允许拥有一个#Refresh类函数。
-    }
-```
- - 自定义模块入口实现：
-```csharp
-    using Cosmos;
-    public class MyEntry:Cosmos.CosmosEntry
-    {
-        //自定义实现一个类作为项目的模块入口，并继承自CosmosEntry。
-        //将自定义实现的模块按照以下格式写成静态属性，则整个游戏项目均可通过 MyEntry获取自定义以及原生的所有模块。
-        public static IMyManager MyManager { get { return GetModule<IMyManager>(); } }
-    }
-```
 - 项目启动：
     将CosmosConfig挂载于合适的GameObject上，运行Unity。若CosmosConfig上的PrintModulePreparatory处于true状态，则控制台会显示初始化信息。  自此，项目启动完成。
     
