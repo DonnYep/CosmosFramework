@@ -3,6 +3,7 @@
 # CosmosFramework
 
 CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰富的Unity方法扩展以及工具链。async/await语法支持，多网络通道支持。框架已做插件化，建议开发时放入Packages目录。
+* [CosmosFramework Wiki](https://github.com/DonnYep/CosmosFramework/wiki)<br/>
 
 ## Master、V0.1、V1.0分支停止维护。最新内容请切换到V1.1分支。
 
