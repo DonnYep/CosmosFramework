@@ -16,40 +16,9 @@ namespace Quark.Networking
     /// </summary>
     public class QuarkDownloader
     {
-        /// <summary>
-        /// 网络下载反馈的数据；
-        /// </summary>
-        class DownloadedData
-        {
-            public DownloadedData(string uri, byte[] data, string downloadPath)
-            {
-                URI = uri;
-                Data = data;
-                DownloadPath = downloadPath;
-            }
-            public string URI { get; private set; }
-            public byte[] Data { get; private set; }
-            public string DownloadPath { get; private set; }
-        }
-        class DataWrittenInfo
-        {
-            /// <summary>
-            /// 已经缓存的长度；
-            /// </summary>
-            public long CachedLength { get; private set; }
-            /// <summary>
-            /// 已经写入持久化本地的长度；
-            /// </summary>
-            public long WrittenLength { get; private set; }
-            public DataWrittenInfo(long cachedLength, long writtenLength)
-            {
-                CachedLength = cachedLength;
-                WrittenLength = writtenLength;
-            }
-        }
         #region events
         Action<string, string> onDownloadStart;
-        Action<string, string, byte[]> onDownloadSuccess;
+        Action<string, string> onDownloadSuccess;
         Action<string, string, string> onDownloadFailure;
         Action<string, string, float, float> onDownloadOverall;
         Action<string[], string[], TimeSpan> onDownloadFinish;
@@ -64,7 +33,7 @@ namespace Quark.Networking
         /// <summary>
         /// URL---DownloadPath---Data
         /// </summary>
-        public event Action<string, string, byte[]> OnDownloadSuccess
+        public event Action<string, string> OnDownloadSuccess
         {
             add { onDownloadSuccess += value; }
             remove { onDownloadSuccess -= value; }
@@ -112,11 +81,6 @@ namespace Quark.Networking
         List<string> successURIs = new List<string>();
         List<string> failureURIs = new List<string>();
 
-        /// <summary>
-        /// URI===[[缓存的长度===写入本地的长度]]；
-        /// 数据写入记录；
-        /// </summary>
-        Dictionary<string, DataWrittenInfo> dataWriteDict = new Dictionary<string, DataWrittenInfo>();
         DateTime downloadStartTime;
         DateTime downloadEndTime;
 
@@ -220,6 +184,7 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
                 Downloading = true;
+                request.downloadHandler = new DownloadHandlerFile(downloadPath);
                 unityWebRequest = request;
                 var timeout = Convert.ToInt32(DownloadTimeout);
                 if (timeout > 0)
@@ -229,17 +194,14 @@ namespace Quark.Networking
                 while (!operation.isDone && canDownload)
                 {
                     OnFileDownloading(uri, PersistentPath, request.downloadProgress);
-                    var responseData = new DownloadedData(uri, request.downloadHandler.data, downloadPath);
-                    yield return OnDownloadedData(responseData);
+                    yield return null;
                 }
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
                 {
                     if (request.isDone)
                     {
                         Downloading = false;
-                        var responseData = new DownloadedData(uri, request.downloadHandler.data, downloadPath);
-                        yield return OnDownloadedData(responseData);
-                        onDownloadSuccess?.Invoke(uri, downloadPath, request.downloadHandler.data);
+                        onDownloadSuccess?.Invoke(uri, downloadPath);
                         OnFileDownloading(uri, PersistentPath, 1);
                         successURIs.Add(uri);
                     }
@@ -256,52 +218,6 @@ namespace Quark.Networking
                     }
                 }
             }
-        }
-        //Task OnDownloadedData(DownloadedData downloadedData)
-        //{
-        //    var cachedLenth = downloadedData.Data.Length;
-        //    if (dataWriteDict.TryGetValue(downloadedData.URI, out var writeInfo))
-        //    {
-        //        if (writeInfo.CachedLength >= cachedLenth)
-        //            return null;
-        //        //缓存新数据的长度，保留原来写入的长度；
-        //        dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, writeInfo.WrittenLength));
-        //        return Task.Run(() =>
-        //        {
-        //            Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
-        //            dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
-        //        });
-        //    }
-        //    else
-        //    {
-        //        dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, 0));
-        //        return Task.Run(() =>
-        //        {
-        //            Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
-        //            dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
-        //        });
-        //    }
-        //}
-        IEnumerator OnDownloadedData(DownloadedData downloadedData)
-        {
-            var cachedLenth = downloadedData.Data.Length;
-            if (dataWriteDict.TryGetValue(downloadedData.URI, out var writeInfo))
-            {
-                if (writeInfo.CachedLength < cachedLenth)
-                {
-                    //缓存新数据的长度，保留原来写入的长度；
-                    dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, writeInfo.WrittenLength));
-                    Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
-                    dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
-                }
-            }
-            else
-            {
-                dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, 0));
-                Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
-                dataWriteDict.AddOrUpdate(downloadedData.URI, new DataWrittenInfo(cachedLenth, cachedLenth));
-            }
-            yield return new WaitForSeconds(0.1f);
         }
         /// <summary>
         /// 处理整体进度；

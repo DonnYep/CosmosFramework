@@ -66,7 +66,7 @@ public class QuarkDownloadMonitorPanel : MonoBehaviour
             slider.value = overallProgress;
         }
     }
-    void OnDownloadSucess(string uri, string downloadPath, byte[] data)
+    void OnDownloadSucess(string uri, string downloadPath)
     {
         Utility.Debug.LogInfo($"DownloadSuccess {uri}");
     }

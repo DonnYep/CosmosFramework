@@ -78,9 +78,9 @@ namespace Quark
             remove { quarkDownloader.OnDownloadStart -= value; }
         }
         /// <summary>
-        /// URL---DownloadPath---Data
+        /// URL---DownloadPath
         /// </summary>
-        public event Action<string, string, byte[]> OnDownloadSuccess
+        public event Action<string, string> OnDownloadSuccess
         {
             add { quarkDownloader.OnDownloadSuccess += value; }
             remove { quarkDownloader.OnDownloadSuccess -= value; }

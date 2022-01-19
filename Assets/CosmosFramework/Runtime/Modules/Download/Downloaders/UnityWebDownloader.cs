@@ -132,11 +132,7 @@ namespace Cosmos.Download
         /// 当前是否可下载；
         /// </summary>
         bool canDownload;
-        /// <summary>
-        /// URI===[[缓存的长度===写入本地的长度]]；
-        /// 数据写入记录；
-        /// </summary>
-        Dictionary<string, DownloadWrittenInfo> dataWrittenDict = new Dictionary<string, DownloadWrittenInfo>();
+
         /// <summary>
         /// 添加URI下载；
         /// </summary>
@@ -231,6 +227,7 @@ namespace Cosmos.Download
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
                 Downloading = true;
+                request.downloadHandler = new DownloadHandlerFile(downloadTask.DownloadPath);
                 unityWebRequest = request;
                 var timeout = Convert.ToInt32(downloadTimeout);
                 if (timeout > 0)
@@ -242,18 +239,15 @@ namespace Cosmos.Download
                 while (!operation.isDone && canDownload)
                 {
                     OnFileDownloading(uri, fileDownloadPath, request.downloadProgress);
-                    var downloadedData = new DownloadedData(uri, request.downloadHandler.data, fileDownloadPath);
-                    yield return OnDownloadedData(downloadedData);
+                    yield return null;
                 }
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
                 {
                     if (request.isDone)
                     {
                         Downloading = false;
-                        var downloadData = request.downloadHandler.data;
-                        var downloadedData = new DownloadedData(uri, request.downloadHandler.data, fileDownloadPath);
-                        yield return OnDownloadedData(downloadedData);
-                        var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath, downloadData);
+                        var downloadedData = new DownloadedData(uri,  fileDownloadPath);
+                        var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath);
                         onDownloadSuccess?.Invoke(successEventArgs);
                         OnFileDownloading(uri, fileDownloadPath, 1);
                         DownloadSuccessEventArgs.Release(successEventArgs);
@@ -273,38 +267,6 @@ namespace Cosmos.Download
                         Utility.IO.DeleteFile(fileDownloadPath);
                     }
                 }
-            }
-        }
-        /// <summary>
-        /// 当下载到一个文件；
-        /// </summary>
-        /// <param name="downloadedData">下载到的文件信息</param>
-        /// <returns>异步Task任务</returns>
-        Task OnDownloadedData(DownloadedData downloadedData)
-        {
-            var cachedLenth = downloadedData.Data.Length;
-            if (dataWrittenDict.TryGetValue(downloadedData.URI, out var writeInfo))
-            {
-                //旧缓存的长度小于新缓存的长度，则更新长度；
-                if (writeInfo.CachedLength >= cachedLenth)
-                    return null;
-                //缓存新数据的长度，保留原来写入的长度；
-                dataWrittenDict.AddOrUpdate(downloadedData.URI, new DownloadWrittenInfo(cachedLenth, writeInfo.WrittenLength));
-                return Task.Run(() =>
-                {
-                    Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
-                    dataWrittenDict.AddOrUpdate(downloadedData.URI, new DownloadWrittenInfo(cachedLenth, cachedLenth));
-                });
-            }
-            else
-            {
-                //缓存新数据长度，原始写入长度设置为0，表示为写入过；
-                dataWrittenDict.Add(downloadedData.URI, new DownloadWrittenInfo(cachedLenth, 0));
-                return Task.Run(() =>
-                {
-                    Utility.IO.WriteFile(downloadedData.Data, downloadedData.DownloadPath);
-                    dataWrittenDict.AddOrUpdate(downloadedData.URI, new DownloadWrittenInfo(cachedLenth, cachedLenth));
-                });
             }
         }
         /// <summary>
@@ -339,7 +301,6 @@ namespace Cosmos.Download
             failureTasks.Clear();
             successTasks.Clear();
             pendingTasks.Clear();
-            dataWrittenDict.Clear();
             downloadTaskCount = 0;
             pendingTaskDict.Clear();
         }
