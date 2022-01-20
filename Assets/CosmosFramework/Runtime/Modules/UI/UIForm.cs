@@ -67,7 +67,7 @@ namespace Cosmos.UI
         {
             if (uiLableDict.ContainsKey(lableName))
                 return true;
-            var go = Utility.Unity.FindChild(transform, lableName);
+            var go = transform.FindChildren(lableName);
             var comp = go.GetComponent<T>();
             if (comp != null)
                 return true;

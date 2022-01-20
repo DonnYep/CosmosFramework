@@ -95,58 +95,10 @@ namespace Cosmos
                 value.y = (float)Math.Round(value.y, decimals);
                 return value;
             }
-            /// <summary>
-            /// 删除父节点下的子对象；
-            /// </summary>
-            /// <param name="go">目标对象</param>
-            public static void DeleteChilds(Transform go)
-            {
-                var childCount = go.childCount;
-                if (childCount == 0)
-                    return;
-                for (int i = 0; i < childCount; i++)
-                {
-                    GameObject.Destroy(go.GetChild(i).gameObject);
-                }
-            }
-            public static Transform FindChild(Transform go, string subNode)
-            {
-                var trans = go.GetComponentsInChildren<Transform>();
-                var length = trans.Length;
-                for (int i = 1; i < length; i++)
-                {
-                    if (trans[i].name.Equals(subNode))
-                        return trans[i];
-                }
-                return null;
-            }
-            /// <summary>
-            /// 查找所有符合名称的子节点
-            /// </summary>
-            /// <param name="go">目标对象</param>
-            /// <param name="subNode">子级别目标对象名称</param>
-            /// <returns>名字符合的对象数组</returns>
-            public static Transform[] FindChilds(Transform go, string subNode)
-            {
-                var trans = go.GetComponentsInChildren<Transform>();
-                var length = trans.Length;
-                var dst = new Transform[length];
-                int idx = 0;
-                for (int i = 0; i < length; i++)
-                {
-                    if (trans[i].name.Contains(subNode))
-                    {
-                        dst[idx] = trans[i];
-                        idx++;
-                    }
-                }
-                Array.Resize(ref dst, idx);
-                return dst;
-            }
             public static T ChildComp<T>(Transform go, string subNode)
       where T : Component
             {
-                var child = FindChild(go, subNode);
+                var child = go.FindChildren( subNode);
                 if (child == null)
                     return null;
                 return child.GetComponent<T>();
@@ -460,7 +412,6 @@ where T : Component
                 target.SetActive(true);
                 return image;
             }
-
 
 
             #region CaptureScreenshot

@@ -265,6 +265,100 @@ where T : Component
         {
             return GetComponentsInPeer<T>(@this.transform, includeSrc);
         }
+        public static void DeleteChildrens(this Transform @this)
+        {
+            var childCount = @this.childCount;
+            if (childCount == 0)
+                return;
+            for (int i = 0; i < childCount; i++)
+            {
+                GameObject.Destroy(@this.GetChild(i).gameObject);
+            }
+        }
+        /// <summary>
+        /// 查找所有符合名称的子节点
+        /// </summary>
+        /// <param name="this">目标对象</param>
+        /// <param name="subNode">子级别目标对象名称</param>
+        /// <returns>名字符合的对象数组</returns>
+        public static Transform[] FindChildrens(this Transform @this, string subNode)
+        {
+            var trans = @this.GetComponentsInChildren<Transform>();
+            var length = trans.Length;
+            var dst = new Transform[length];
+            int idx = 0;
+            for (int i = 0; i < length; i++)
+            {
+                if (trans[i].name.Contains(subNode))
+                {
+                    dst[idx] = trans[i];
+                    idx++;
+                }
+            }
+            Array.Resize(ref dst, idx);
+            return dst;
+        }
+        public static Transform FindChildren(this Transform @this, string subNode)
+        {
+            var trans = @this.GetComponentsInChildren<Transform>();
+            var length = trans.Length;
+            for (int i = 1; i < length; i++)
+            {
+                if (trans[i].name.Equals(subNode))
+                    return trans[i];
+            }
+            return null;
+        }
+        /// <summary>
+        /// 查找同级别其他对象；
+        /// </summary>
+        /// <param name="@this">同级别当前对象</param>
+        /// <param name="includeSrc">是否包含本身</param>
+        /// <returns>当前级别下除此对象的其他同级的对象</returns>
+        public static Transform[] Peers(this Transform @this, bool includeSrc = false)
+        {
+            Transform parentTrans = @this.parent;
+            var childTrans = parentTrans.GetComponentsInChildren<Transform>();
+            var length = childTrans.Length;
+            if (!includeSrc)
+                return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);
+            else
+                return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
+        }
+        /// <summary>
+        /// 查找同级别下所有目标组件；
+        /// 略耗性能；
+        /// </summary>
+        /// <typeparam name="T">目标组件</typeparam>
+        /// <param name="this">同级别当前对象</param>
+        /// <param name="includeSrc">包含当前对象</param>
+        /// <returns>同级别对象数组</returns>
+        public static T[] PeerComponets<T>(this Transform @this, bool includeSrc = false) where T : Component
+        {
+            Transform parentTrans = @this.parent;
+            var childTrans = parentTrans.GetComponentsInChildren<Transform>();
+            var length = childTrans.Length;
+            Transform[] trans;
+            if (!includeSrc)
+                trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
+            else
+                trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);
+            var transLength = trans.Length;
+            T[] src = new T[transLength];
+            int idx = 0;
+            for (int i = 0; i < transLength; i++)
+            {
+                var comp = trans[i].GetComponent<T>();
+                if (comp != null)
+                {
+                    src[idx] = comp;
+                    idx++;
+                }
+            }
+            T[] dst = new T[idx];
+            Array.Copy(src, 0, dst, 0, idx);
+            return dst;
+        }
         public static void DestroyAllChilds(this Transform @this)
         {
             var childCount = @this.childCount;
