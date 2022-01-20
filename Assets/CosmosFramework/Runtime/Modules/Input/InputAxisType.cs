@@ -1,5 +1,4 @@
-﻿
-namespace Cosmos
+﻿namespace Cosmos
 {
     /// <summary>
     /// 输入轴线类型

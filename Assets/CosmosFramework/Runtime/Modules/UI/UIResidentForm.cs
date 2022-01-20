@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-namespace Cosmos.UI
+﻿namespace Cosmos.UI
 {
     /// <summary>
     /// 常驻UI

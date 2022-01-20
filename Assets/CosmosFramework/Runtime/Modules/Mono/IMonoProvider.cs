@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using Object = UnityEngine.Object;
-using System.Collections.Generic;
 
 namespace Cosmos.Mono
 {

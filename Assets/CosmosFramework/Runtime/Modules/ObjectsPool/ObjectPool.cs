@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using Cosmos.Event;
 using Object = UnityEngine.Object;
 namespace Cosmos.ObjectPool
 {

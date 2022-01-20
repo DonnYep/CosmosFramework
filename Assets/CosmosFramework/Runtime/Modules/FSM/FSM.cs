@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
-using Cosmos.Reference;
-namespace Cosmos.FSM{
+namespace Cosmos.FSM
+{
     //type.ToString()输出一个完全限定名，尝试使用反射机制获得对象
     public sealed class FSM<T> : FSMBase,IFSM<T>,IReference
         where T : class

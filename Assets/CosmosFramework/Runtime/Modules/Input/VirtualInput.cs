@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cosmos.Input{
+namespace Cosmos.Input
+{
     public sealed class VirtualInput
     {
         Dictionary<string, VirtualAxis> virtualAxes = new Dictionary<string, VirtualAxis>();

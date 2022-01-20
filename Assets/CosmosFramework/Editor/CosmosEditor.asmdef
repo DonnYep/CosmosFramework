@@ -1,0 +1,15 @@
+{
+    "name": "CosmosEditor",
+    "references": [
+        "GUID:c920503f8f9e7be47a128855578deee2"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

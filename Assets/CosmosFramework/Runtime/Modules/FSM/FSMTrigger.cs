@@ -1,5 +1,4 @@
-﻿using System.Collections;
-namespace Cosmos.FSM
+﻿namespace Cosmos.FSM
 {
     public abstract  class FSMTrigger<T>
         where T:class

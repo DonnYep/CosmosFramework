@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using System.Collections;
 namespace Cosmos
 {
     //1、使用out修饰符时，T只能作为返回值。此时泛型的实例是逆变的。意味着泛型类型参数可以从一个基类改为该类的派生类(父类可以转为子类)；

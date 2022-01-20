@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
-[ImplementProvider]
+[Implementer]
 public class UnityDebugHelperImpl : UnityDebugHelper
 {
 }

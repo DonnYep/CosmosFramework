@@ -17,7 +17,7 @@ namespace Cosmos
                     Array.Resize(ref content, 32);
             }
         }
-        public override void Reset()
+        public override void Dispose()
         {
             content = new string[]{ };
         }

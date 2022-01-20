@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using Cosmos.Event;
 namespace Cosmos.Mono
 {
     /// <summary>

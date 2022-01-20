@@ -5,7 +5,7 @@ using System;
 using Newtonsoft.Json;
 namespace Cosmos.Test
 {
-    [ImplementProvider]
+    [Implementer]
     public class NewtonjsonHelper : IJsonHelper
     {
         public string ToJson(object obj)

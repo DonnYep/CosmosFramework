@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
-using System.Reflection;
 
 namespace Cosmos
 {
@@ -73,7 +70,7 @@ namespace Cosmos
             var length = assemblies.Length;
             for (int i = 0; i < length; i++)
             {
-                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IDebugHelper>(assemblies[i]);
+                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, IDebugHelper>(assemblies[i]);
                 if (helper != null)
                 {
                     Utility.Debug.SetHelper(helper);
@@ -82,7 +79,7 @@ namespace Cosmos
             }
             for (int i = 0; i < length; i++)
             {
-                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IJsonHelper>(assemblies[i]);
+                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, IJsonHelper>(assemblies[i]);
                 if (helper != null)
                 {
                     Utility.Json.SetHelper(helper);
@@ -91,7 +88,7 @@ namespace Cosmos
             }
             for (int i = 0; i < length; i++)
             {
-                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IMessagePackHelper>(assemblies[i]);
+                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, IMessagePackHelper>(assemblies[i]);
                 if (helper != null)
                 {
                     Utility.MessagePack.SetHelper(helper);
@@ -105,17 +102,17 @@ namespace Cosmos
         /// <param name="assembly">查询的目标程序集</param>
         public static void LaunchAssemblyHelpers(System.Reflection.Assembly assembly)
         {
-            var debugHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IDebugHelper>(assembly);
+            var debugHelper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, IDebugHelper>(assembly);
             if (debugHelper!= null)
             {
                 Utility.Debug.SetHelper(debugHelper);
             }
-            var jsonHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IJsonHelper>(assembly);
+            var jsonHelper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, IJsonHelper>(assembly);
             if (jsonHelper!= null)
             {
                 Utility.Json.SetHelper(jsonHelper);
             }
-            var mpHelper = Utility.Assembly.GetInstanceByAttribute<ImplementProviderAttribute, IMessagePackHelper>(assembly);
+            var mpHelper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, IMessagePackHelper>(assembly);
             if (mpHelper != null)
             {
                 Utility.MessagePack.SetHelper(mpHelper);

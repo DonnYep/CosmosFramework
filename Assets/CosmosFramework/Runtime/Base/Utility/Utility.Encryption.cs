@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
+﻿using System;
 using System.Text;
-using System.Security;
 using System.Security.Cryptography;
 using System.IO;
 namespace Cosmos
@@ -21,6 +18,36 @@ namespace Cosmos
             public static string GUID(GUIDFormat format)
             {
                 return Guid.NewGuid().ToString(format.ToString());
+            }
+            /// <summary>
+            /// AES对称加密byte类型内容;
+            /// 密钥的byte长度必须是16, 24, 32；
+            /// </summary>
+            /// <param name="context">需要解密的数组</param>
+            /// <param name="key">对称密码</param>
+            /// <returns>加密后的内容</returns>
+            public static byte[] AESEncryptByteToByte(byte[] context, byte[] key)
+            {
+                if (context == null)
+                    throw new ArgumentNullException("context is invalid !");
+                if (key == null)
+                    throw new ArgumentNullException("key is invalid !");
+                using (var aes = new AesCryptoServiceProvider() { Key = key, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7 })
+                {
+                    aes.GenerateIV();
+                    var iv = aes.IV;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        ms.Write(iv, 0, iv.Length);
+                        using (CryptoStream cryptoStream = new CryptoStream(ms, aes.CreateEncryptor(aes.Key, iv), CryptoStreamMode.Write))
+                        using (var writer = new BinaryWriter(cryptoStream))
+                        {
+                            writer.Write(context);
+                            cryptoStream.FlushFinalBlock();
+                        }
+                        return ms.ToArray();
+                    }
+                }
             }
             /// <summary>
             /// MD5加密，返回16位加密后的大写16进制字符

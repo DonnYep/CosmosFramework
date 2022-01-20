@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
+﻿using System;
 namespace Cosmos
 {
     public static partial class Utility
@@ -19,6 +17,17 @@ namespace Cosmos
             {
                 if (obj == null)
                     throw new ArgumentNullException("object" + obj.ToString() + "isEmpty !");
+            }
+            public static void Traverse<T>(T[] array, Action<T> handler)
+            {
+                if (array == null)
+                    throw new ArgumentNullException("Array is invalid !");
+                if (handler == null)
+                    throw new ArgumentNullException("Handler is invalid !");
+                foreach (var e in array)
+                {
+                    handler.Invoke(e);
+                }
             }
             /// <summary>
             /// 判断不为空

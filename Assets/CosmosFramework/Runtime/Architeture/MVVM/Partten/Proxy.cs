@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-/// <summary>
+﻿/// <summary>
 /// 数据代理类
 /// </summary>
 namespace Cosmos.Mvvm

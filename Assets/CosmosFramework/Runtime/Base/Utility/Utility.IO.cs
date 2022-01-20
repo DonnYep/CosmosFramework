@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System;
@@ -29,6 +27,98 @@ namespace Cosmos
                     {
                         handler(fsInfo);
                     }
+                }
+            }
+            /// <summary>
+            /// 拷贝文件夹的内容到另一个文件夹；
+            /// </summary>
+            /// <param name="sourceDirectory">原始地址</param>
+            /// <param name="targetDirectory">目标地址</param>
+            public static void Copy(string sourceDirectory, string targetDirectory)
+            {
+                DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
+                DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+                CopyAll(diSource, diTarget);
+            }
+            /// <summary>
+            /// 拷贝文件夹的内容到另一个文件夹；
+            /// </summary>
+            /// <param name="source">原始地址</param>
+            /// <param name="target">目标地址</param>
+            public static void CopyAll(DirectoryInfo source, DirectoryInfo target)
+            {
+                Directory.CreateDirectory(target.FullName);
+                //复制所有文件到新地址
+                foreach (FileInfo fi in source.GetFiles())
+                {
+                    fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+                }
+                //递归拷贝所有子目录
+                foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+                {
+                    DirectoryInfo nextTargetSubDir =
+                        target.CreateSubdirectory(diSourceSubDir.Name);
+                    CopyAll(diSourceSubDir, nextTargetSubDir);
+                }
+            }
+            /// <summary>
+            /// 获取文件夹中的文件数量；
+            /// </summary>
+            /// <param name="folderPath">文件夹路径</param>
+            /// <returns>文件数量</returns>
+            public static int FolderFileCount(string folderPath)
+            {
+                int count = 0;
+                var files = Directory.GetFiles(folderPath); //String数组类型
+                count += files.Length;
+                var dirs = Directory.GetDirectories(folderPath);
+                foreach (var dir in dirs)
+                {
+                    count += FolderFileCount(dir);
+                }
+                return count;
+            }
+            /// <summary>
+            /// 重命名文件；
+            /// 第一个参数需要：盘符+地址+文件名+后缀；
+            /// 第二个参数仅需文件名+后缀名；
+            /// </summary>
+            /// <param name="oldFileFullPath">旧文件的完整路径，需要带后缀名</param>
+            /// <param name="newFileNamewithExtension">新的文件名，仅需文件名+后缀名</param>
+            public static void RenameFile(string oldFileFullPath, string newFileNamewithExtension)
+            {
+                if (!File.Exists(oldFileFullPath))
+                {
+                    using (FileStream fs = File.Create(oldFileFullPath)) { }
+                }
+                var dirPath = Path.GetDirectoryName(oldFileFullPath);
+                var newFileName = Path.Combine(dirPath, newFileNamewithExtension);
+                if (File.Exists(newFileName))
+                    File.Delete(newFileName);
+                File.Move(oldFileFullPath, newFileName);
+            }
+            /// <summary>
+            /// 标准 Windows 文件路径地址合并；
+            /// 返回结果示例：Resources\JsonData\
+            /// </summary>
+            /// <param name="paths">路径params</param>
+            /// <returns>合并的路径</returns>
+            public static string PathCombine(params string[] paths)
+            {
+                var resultPath = Path.Combine(paths);
+                resultPath = resultPath.Replace("/", "\\");
+                return resultPath;
+            }
+            public static void TraverseFolderFilePath(string folderPath, Action<string> handler)
+            {
+                if (!Directory.Exists(folderPath))
+                    throw new IOException("Folder path is invalid ! ");
+                if (handler == null)
+                    throw new ArgumentNullException("Handler is invalid !");
+                var fileDirs = Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories);
+                foreach (var dir in fileDirs)
+                {
+                    handler.Invoke(dir);
                 }
             }
             public static void CreateFolder(string path)
@@ -127,6 +217,24 @@ namespace Cosmos
                     }
                 }
                 return Utility.Text.StringBuilderCache.ToString();
+            }
+            public static long GetFileSize(string filePath)
+            {
+                if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+                {
+                    return -1;
+                }
+                else if (File.Exists(filePath))
+                {
+                    return new FileInfo(filePath).Length;
+                }
+                return -1;
+            }
+            public static string WebPathCombine(params string[] paths)
+            {
+                var pathResult = Path.Combine(paths);
+                pathResult = pathResult.Replace("\\", "/");
+                return pathResult;
             }
             /// <summary>
             /// 读取指定路径下某text类型文件的内容

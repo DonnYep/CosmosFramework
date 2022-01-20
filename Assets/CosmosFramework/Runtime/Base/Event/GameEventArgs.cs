@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
-namespace Cosmos
+﻿namespace Cosmos
 {
     /// <summary>
     /// 数据基类,具体实现类的基类

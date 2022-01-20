@@ -18,6 +18,34 @@ namespace Cosmos
                 }
                 set { stringBuilderCache = value; }
             }
+            public static bool IsStringValid(string context)
+            {
+                if (string.IsNullOrEmpty(context))
+                    return false;
+                return true;
+            }
+            public static void IsStringValid(string context, string exceptionContext)
+            {
+                if (string.IsNullOrEmpty(context))
+                    throw new ArgumentNullException(exceptionContext);
+            }
+            /// <summary>
+            /// 字段合并；
+            /// </summary>
+            /// <param name="strings">字段数组</param>
+            /// <returns></returns>
+            public static string Combine(params string[] strings)
+            {
+                if (strings == null)
+                    throw new ArgumentNullException("Combine is invalid.");
+                stringBuilderCache.Length = 0;
+                int length = strings.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    stringBuilderCache.Append(strings[i]);
+                }
+                return stringBuilderCache.ToString();
+            }
             /// <summary>
             /// 格式化字符串。
             /// </summary>
@@ -57,6 +85,28 @@ namespace Cosmos
                 StringBuilderCache.Length = 0;
                 StringBuilderCache.AppendFormat(format, arg);
                 return StringBuilderCache.ToString();
+            }
+            /// <summary>
+            /// 多字符替换；
+            /// </summary>
+            /// <param name="context">需要修改的内容</param>
+            /// <param name="oldContext">需要修改的内容</param>
+            /// <param name="newContext">修改的新内容</param>
+            /// <returns>修改后的内容</returns>
+            public static string Replace(string context, string[] oldContext, string newContext)
+            {
+                if (string.IsNullOrEmpty(context))
+                    throw new ArgumentNullException("context is invalid.");
+                if (oldContext == null)
+                    throw new ArgumentNullException("oldContext is invalid.");
+                if (string.IsNullOrEmpty(newContext))
+                    throw new ArgumentNullException("newContext is invalid.");
+                var length = oldContext.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    context = context.Replace(oldContext[i], newContext);
+                }
+                return context;
             }
             public static string Append(params object[] args)
             {

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Cosmos;
-using System;
+﻿using System.Collections.Generic;
 namespace Cosmos.Entity
 {
     /// <summary>

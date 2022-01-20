@@ -1,7 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-namespace Cosmos {
+namespace Cosmos
+{
     /// <summary>
     ///泛型变量；
     /// </summary>

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 
 namespace Cosmos.Config
@@ -21,7 +20,7 @@ namespace Cosmos.Config
             var length = assemblies.Length;
             for (int i = 0; i < length; i++)
             {
-                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementProviderAttribute, IConfigProvider>(assemblies[i]);
+                var objs = Utility.Assembly.GetInstancesByAttribute<ImplementerAttribute, IConfigProvider>(assemblies[i]);
                 for (int j = 0; j < objs.Length; j++)
                 {
                     try

@@ -12,7 +12,7 @@ namespace Cosmos
         [SerializeField]
         protected GameObject[] spawnObjects;
         public override GameObject SpawnObject { get { return spawnObjects[SpawnIndex()]; } }
-        public override void Reset()
+        public override void Dispose()
         {
             objectName = "NewObject";
             spawnObjects = null;

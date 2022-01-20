@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Cosmos.Input;
-namespace Cosmos{
+namespace Cosmos
+{
     /// <summary>
     /// 标准输入设备，这里是PC
     /// </summary>

@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-namespace Cosmos {
+﻿namespace Cosmos
+{
     public class AddressableAssetAttribute : AssetAttribute
     {
         public AddressableAssetAttribute(string addressablePath) : base(addressablePath){}

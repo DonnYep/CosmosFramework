@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
+using System;
 namespace Cosmos
 {
     /// <summary>
     /// 所有 ScriptableObject DatasetBase对象的基类
     /// </summary>
-    public abstract class DatasetBase : ScriptableObject
+    public abstract class DatasetBase : ScriptableObject,IDisposable
     {
         /// <summary>
         /// 所有对象共有的名称
@@ -18,7 +16,7 @@ namespace Cosmos
         /// <summary>
         /// 重置清空内容
         /// </summary>
-        public abstract void Reset();
+        public abstract void Dispose();
 
         /// <summary>
         /// 仅仅在Editor模式下使用
@@ -29,5 +27,7 @@ namespace Cosmos
         /// 执行对象中的函数
         /// </summary>
         public virtual void Execute() { }
+
+
     }
 }

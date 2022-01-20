@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-namespace Cosmos
+﻿namespace Cosmos
 {
     /// <summary>
     /// 网络消息接口

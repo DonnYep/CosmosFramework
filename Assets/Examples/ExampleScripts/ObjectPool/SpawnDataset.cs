@@ -10,7 +10,7 @@ namespace Cosmos
         [SerializeField]
         protected GameObject spawnObject;
         public override GameObject SpawnObject { get { return spawnObject; } }
-        public override void Reset()
+        public override void Dispose()
         {
             objectName = "NewObject";
             spawnObject = null;

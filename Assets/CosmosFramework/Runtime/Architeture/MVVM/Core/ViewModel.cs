@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
-using Cosmos;
 namespace Cosmos.Mvvm
 {
     /// <summary>

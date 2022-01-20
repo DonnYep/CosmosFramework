@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Cosmos.Data
+﻿namespace Cosmos.Data
 {
     /// <summary>
     /// 允许多派生；
