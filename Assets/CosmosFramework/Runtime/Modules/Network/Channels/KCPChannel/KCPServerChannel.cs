@@ -132,7 +132,7 @@ namespace Cosmos
         {
             return server.Server.GetClientAddress(connectionId);
         }
-        public void AbortChannne()
+        public void AbortChannnel()
         {
             StopServer();
             NetworkChannelKey = NetworkChannelKey.None;

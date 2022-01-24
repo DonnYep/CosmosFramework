@@ -65,7 +65,7 @@ namespace Cosmos.Network
             client.Disconnect();
             onDataReceived = null;
         }
-        public void AbortChannne()
+        public void AbortChannnel()
         {
             Disconnect();
             NetworkChannelKey = NetworkChannelKey.None;

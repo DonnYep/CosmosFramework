@@ -34,14 +34,14 @@ namespace Cosmos.Network
         {
             var channelKey = channel.NetworkChannelKey;
             if(channelDict.Remove(channelKey,out var oldChannel))
-                oldChannel.AbortChannne();
+                oldChannel.AbortChannnel();
             channelDict.TryAdd(channelKey, channel);
         }
         public bool RemoveChannel(NetworkChannelKey channelKey, out INetworkChannel channel)
         {
             if (channelDict.TryRemove(channelKey, out channel))
             {
-                channel.AbortChannne();
+                channel.AbortChannnel();
                 return true;
             }
             return false;
@@ -74,7 +74,7 @@ namespace Cosmos.Network
         {
             if (channelDict.TryRemove(channelKey, out var channel))
             {
-                channel.AbortChannne();
+                channel.AbortChannnel();
                 return true;
             }
             return false;
@@ -88,7 +88,7 @@ namespace Cosmos.Network
         {
             foreach (var channel in channelDict)
             {
-                channel.Value.AbortChannne();
+                channel.Value.AbortChannnel();
             }
             channelDict.Clear();
         }

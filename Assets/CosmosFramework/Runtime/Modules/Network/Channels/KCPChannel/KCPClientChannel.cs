@@ -108,7 +108,7 @@ namespace Cosmos
             kcpClientService?.ServiceSend((KcpChannel)byteType, arraySegment);
             return true;
         }
-        public void AbortChannne()
+        public void AbortChannnel()
         {
             Disconnect();
             NetworkChannelKey = NetworkChannelKey.None;

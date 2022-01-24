@@ -21,7 +21,7 @@ namespace Cosmos.Network
         /// <summary>
         /// 终结通道；
         /// </summary>
-        void AbortChannne();
+        void AbortChannnel();
         void TickRefresh();
     }
 }
