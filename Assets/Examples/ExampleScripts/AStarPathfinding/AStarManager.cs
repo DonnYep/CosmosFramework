@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
-public class AStartManager : MonoBehaviour
+public class AStarManager : MonoBehaviour
 {
     [SerializeField] int xSize = 20;
     [SerializeField] int ySize = 20;
@@ -11,7 +10,7 @@ public class AStartManager : MonoBehaviour
     [SerializeField] GameObject defaultTile;
     [SerializeField] GameObject hightlightTile;
     [Header("距离公式类型")]
-    [SerializeField] AStartDistanceType distanceType;
+    [SerializeField] AStarDistanceType distanceType;
     float nodeSideLength = 1;
     GameObject playerInst;
     Pool<GameObject> highlightPool;
@@ -31,13 +30,13 @@ public class AStartManager : MonoBehaviour
 
         switch (distanceType)
         {
-            case AStartDistanceType.Euclidean:
+            case AStarDistanceType.Euclidean:
                 aStartGrid = new AStarEuclidean(0, 0, xSize, ySize, nodeSideLength);
                 break;
-            case AStartDistanceType.Manhattan:
+            case AStarDistanceType.Manhattan:
                 aStartGrid = new AStarManhattan(0, 0, xSize, ySize, nodeSideLength);
                 break;
-            case AStartDistanceType.Diagonal:
+            case AStarDistanceType.Diagonal:
                 aStartGrid = new AStarDiagonal(0, 0, xSize, ySize, nodeSideLength);
                 break;
         }

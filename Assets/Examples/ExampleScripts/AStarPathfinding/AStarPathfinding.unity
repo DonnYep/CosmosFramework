@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 1151312092}
   - component: {fileID: 1151312091}
   m_Layer: 0
-  m_Name: AStartManager
+  m_Name: AStarManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,13 +152,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xSize: 45
   ySize: 25
-  nodeSideLength: 1
   player: {fileID: 8875699777575971582, guid: 3f39281906681344d9f4575bbe5cf204, type: 3}
   defaultTile: {fileID: 2445173472774728647, guid: d908d152b6ce97c438e4a29c26576920,
     type: 3}
   hightlightTile: {fileID: 2705121455554562882, guid: 46d2195403306654fb46a68b33a7dfbb,
     type: 3}
-  aStartDistanceType: 0
+  distanceType: 0
 --- !u!4 &1151312092
 Transform:
   m_ObjectHideFlags: 0
