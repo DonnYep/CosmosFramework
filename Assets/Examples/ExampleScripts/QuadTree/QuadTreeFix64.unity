@@ -180,8 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66bb4a2eb4f75e944952b72fb15ca3ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rectRange: {x: 100, y: 100}
-  randomPosRange: {x: -10, y: 10}
+  rectRange: {x: 150, y: 150}
   resPrefab: {fileID: 1920155239765684836, guid: 184f0255cec527046aa68378d47db811,
     type: 3}
   objectCount: 2000
@@ -189,11 +188,11 @@ MonoBehaviour:
   maxDepth: 10
   supervisor: {fileID: 1644205380}
   drawGridGizmos: 1
-  drawObjectGridGizmos: 1
-  runUpdate: 0
+  drawObjectGridGizmos: 0
+  runUpdate: 1
   objectMoveSpeed: 5
   gridGizmosColor: {r: 0, g: 0.99030876, b: 1, a: 1}
-  objectGizmosColor: {r: 0.71454114, g: 1, b: 0.5896226, a: 1}
+  objectGizmosColor: {r: 1, g: 0.88253635, b: 0.23113209, a: 1}
   activeTrans: {fileID: 1304742435}
   deactiveTrans: {fileID: 108770194}
 --- !u!4 &162869165

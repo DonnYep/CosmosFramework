@@ -39,6 +39,7 @@ namespace Cosmos
         /// 树的最大深度；
         /// </summary>
         public int TreeMaxDepth { get; private set; }
+        public Rectangle QuadTreeArea { get { return rootNode.Area; } }
         public QuadTree(Rectangle rectArea, IObjecBound boundHelper, int nodeObjectCapacity = 10, int maxDepth = 5)
         {
             NodeObjectCapacity = nodeObjectCapacity;
@@ -130,6 +131,11 @@ namespace Cosmos
             if (obj == null) throw new ArgumentNullException($"{nameof(obj)} is invalid !");
             var objBound = GetObjectBound(obj);
             return rootNode.GetObjectsByRect(objBound);
+        }
+        public bool IsOverlapping(T obj)
+        {
+            var objBound = GetObjectBound(obj);
+            return rootNode.IsRectOverlapping(objBound);
         }
         bool InsertObject(Node node, Rectangle objBound, T obj)
         {

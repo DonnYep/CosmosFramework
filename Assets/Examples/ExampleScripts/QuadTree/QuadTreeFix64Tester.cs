@@ -11,7 +11,6 @@ public class QuadTreeFix64Tester : MonoBehaviour
 {
     QuadTreeFix64<GameObject> quadTree;
     [SerializeField] Vector2 rectRange = new Vector2(400, 400);
-    [SerializeField] Vector2 randomPosRange = new Vector2(-10, 10);
     [SerializeField] GameObject resPrefab;
     [SerializeField] int objectCount = 30;
     [SerializeField] int maxNodeObject = 4;
@@ -26,7 +25,9 @@ public class QuadTreeFix64Tester : MonoBehaviour
     [SerializeField] Transform activeTrans;
     [SerializeField] Transform deactiveTrans;
     QuadObjectSpawner objectSapwner;
-    List<GameObject> objectInfos = new List<GameObject>();
+
+    List<ObjectEntity> objectEntities = new List<ObjectEntity>();
+    Dictionary<GameObject, ObjectEntity> goIdDict = new Dictionary<GameObject, ObjectEntity>();
     void Start()
     {
         DateTime startTime = DateTime.UtcNow;
@@ -36,21 +37,23 @@ public class QuadTreeFix64Tester : MonoBehaviour
         int index = 0;
         for (int i = 0; i < objectCount; i++)
         {
-            var position = new Vector3(UnityEngine.Random.Range(-rectRange.x * 0.5f, rectRange.x * 0.5f), 1, UnityEngine.Random.Range(-rectRange.y * 0.5f, rectRange.y * 0.5f));
-            var info = objectSapwner.Spawn();
-            info.transform.position = position;
+            var position = GetRandomPosition();
+            var inst = objectSapwner.Spawn();
+            inst.transform.position = position;
             try
             {
-                quadTree.Insert(info);
+                quadTree.Insert(inst);
                 index++;
-                info.name = resPrefab.name + index;
-                info.transform.SetParent(activeTrans);
-                objectInfos.Add(info);
+                inst.name = resPrefab.name + index;
+                inst.transform.SetParent(activeTrans);
+                var entity = new ObjectEntity() { Inst = inst, MovePos = GetRandomPosition() };
+                objectEntities.Add(entity);
+                goIdDict.Add(inst, entity);
             }
             catch (Exception e)
             {
                 Debug.LogError(e);
-                Destroy(info);
+                Destroy(inst);
             }
         }
         DateTime endTime = DateTime.UtcNow;
@@ -61,9 +64,9 @@ public class QuadTreeFix64Tester : MonoBehaviour
     void OnObjectOutQuadRectangle(GameObject obj)
     {
         obj.transform.SetParent(deactiveTrans);
-        if (objectInfos.Remove(obj))
+        if (goIdDict.Remove(obj, out var entity))
         {
-            //Utility.Debug.LogInfo(obj.name + "-Out");
+            objectEntities.Remove(entity);
         }
     }
     void Update()
@@ -74,24 +77,22 @@ public class QuadTreeFix64Tester : MonoBehaviour
             DrawSpawnInfo();
         }
     }
+    Vector3 GetRandomPosition()
+    {
+        var valueX = UnityEngine.Random.Range((float)quadTree.QuadTreeArea.Left, (float)quadTree.QuadTreeArea.Right);
+        var valueZ = UnityEngine.Random.Range((float)quadTree.QuadTreeArea.Top, (float)quadTree.QuadTreeArea.Bottom);
+        return new Vector3(valueX, 0, valueZ);
+    }
     void DrawSpawnInfo()
     {
-        var objArr = objectInfos.ToArray();
-        var length = objArr.Length;
+        var length = objectEntities.Count;
         for (int i = 0; i < length; i++)
         {
-            var valueX = UnityEngine.Random.Range(randomPosRange.x, randomPosRange.y);
-            var valueZ = UnityEngine.Random.Range(randomPosRange.x, randomPosRange.y);
-            var symbol = UnityEngine.Random.Range(0, 16);
-            var pos = new Vector3(valueX, 0, valueZ);
-            if (symbol % 2 == 0)
-            {
-                objArr[i].transform.position = Vector3.Lerp(objArr[i].transform.position, objArr[i].transform.position + pos, Time.deltaTime * objectMoveSpeed);
-            }
-            else
-            {
-                objArr[i].transform.position = Vector3.Lerp(objArr[i].transform.position, objArr[i].transform.position - pos, Time.deltaTime * objectMoveSpeed);
-            }
+            var inst = objectEntities[i].Inst;
+            var dir = objectEntities[i].MovePos - inst.transform.position;
+            inst.transform.forward = Vector3.Lerp(inst.transform.forward, dir, Time.deltaTime);
+            var dstPos = inst.transform.forward * Time.deltaTime * objectMoveSpeed + inst.transform.position;
+            inst.transform.position = dstPos;
         }
     }
     void OnDrawGizmos()
@@ -122,5 +123,10 @@ public class QuadTreeFix64Tester : MonoBehaviour
                 }
             }
         }
+    }
+    class ObjectEntity
+    {
+        public GameObject Inst;
+        public Vector3 MovePos;
     }
 }

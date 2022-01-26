@@ -106,7 +106,7 @@ namespace Cosmos
             SquareTop = CenterY + HalfSideLength;
             SquareBottom = CenterY - HalfSideLength;
 
-            BufferZoneRange = bufferRange;
+            BufferZoneRange = bufferRange >= 0 ? bufferRange : 0;
 
             square1d = new Square[CellSection * CellSection];
             CreateSquare(offsetX, offsetY);
@@ -168,6 +168,49 @@ namespace Cosmos
             var dstSquares = new Square[dstIdx + 1];
             dstSquares[0] = square2d[col, row];
             Array.Copy(srcSquares, 0, dstSquares, 1, dstIdx);
+            return dstSquares;
+        }
+        /// <summary>
+        /// 获取位置临近块；
+        /// 若level为0，则表示当前所在的块；若level为1，则获取九宫格；依此类推；
+        /// </summary>
+        /// <param name="posX">位置X</param>
+        /// <param name="posY">位置Y</param>
+        /// <param name="level">临近的层级</param>
+        /// <returns>获取到的临近地块</returns>
+        public Square[] GetNearbySquares(float posX, float posY, int level = 0)
+        {
+            if (!IsOverlapping(posX, posY))
+                return new Square[0];
+            var col = (int)((posX - OffsetX) / CellSideLength);
+            var row = (int)((posY - OffsetY) / CellSideLength);
+            if (!IsOverlapping(posX, posY))
+                return new Square[0];
+            level = level >= 0 ? level : 0;
+            if (level == 0)
+                return new Square[] { square2d[col, row] };
+            if (level == CellSection)
+                return square1d;
+            int sideCellCount = level * 2 + 1;
+            int squareCount = sideCellCount * sideCellCount;
+            Square[] neabySquares = new Square[squareCount+1];
+            int idx = 0;
+            for (int x = -level; x <= level; x++)
+            {
+                for (int y = -level; y <= level; y++)
+                {
+                    int idxX = col + x;
+                    int idxY = row + y;
+                    if (idxX < CellSection && idxX >= 0 && idxY <CellSection && idxY >= 0)
+                    {
+                        neabySquares[idx] = square2d[idxX, idxY];
+                        idx++;
+                    }
+                }
+            }
+            var dstSquares = new Square[idx];
+            dstSquares[0] = square2d[col, row];
+            Array.Copy(neabySquares, 0, dstSquares, 0, idx);
             return dstSquares;
         }
         /// <summary>
