@@ -66,15 +66,8 @@ namespace Cosmos
         }
         Square[,] square2d;
         Square[] square1d;
-        public Fix64 CenterX { get; private set; }
-        public Fix64 CenterY { get; private set; }
+        public Square SquareGridArea { get; private set; }
         public uint CellSection { get; private set; }
-        public Fix64 SquareSideLength { get; private set; }
-        public Fix64 SquareTop { get; private set; }
-        public Fix64 SquareBottom { get; private set; }
-        public Fix64 SquareLeft { get; private set; }
-        public Fix64 SquareRight { get; private set; }
-        public Fix64 HalfSideLength { get; private set; }
         public Fix64 CellSideLength { get; private set; }
         public Fix64 OffsetX { get; private set; }
         public Fix64 OffsetY { get; private set; }
@@ -93,21 +86,17 @@ namespace Cosmos
             this.OffsetX = offsetX;
             this.OffsetY = offsetY;
 
-            SquareSideLength = cellSideLength * (Fix64)cellSection;
+            var squareSideLength = cellSideLength * (Fix64)cellSection;
             CellSideLength = cellSideLength;
             square2d = new Square[cellSection, cellSection];
-            HalfSideLength = SquareSideLength / (Fix64)2;
+            var halfSideLength = squareSideLength / (Fix64)2;
 
-            CenterX = HalfSideLength + offsetX;
-            CenterY = HalfSideLength + offsetY;
-
-            SquareLeft = CenterX - HalfSideLength;
-            SquareRight = CenterX + HalfSideLength;
-
-            SquareTop = CenterY + HalfSideLength;
-            SquareBottom = CenterY - HalfSideLength;
+            var centerX = halfSideLength + offsetX;
+            var centerY = halfSideLength + offsetY;
 
             BufferZoneRange = bufferRange;
+
+            SquareGridArea = new Square(centerX, centerY, squareSideLength);
 
             square1d = new Square[CellSection * CellSection];
             CreateSquare(offsetX, offsetY);
@@ -230,14 +219,14 @@ namespace Cosmos
         /// <returns>是否重叠</returns>
         public bool IsOverlapping(Fix64 posX, Fix64 posY)
         {
-            if (posX < SquareLeft || posX > SquareRight) return false;
-            if (posY < SquareBottom || posY > SquareTop) return false;
+            if (posX < SquareGridArea.Left || posX > SquareGridArea.Right) return false;
+            if (posY < SquareGridArea.Bottom || posY > SquareGridArea.Top) return false;
             return true;
         }
         bool IsOverlappingBufferZone(Fix64 posX, Fix64 posY)
         {
-            if (posX < SquareLeft - BufferZoneRange || posX > SquareRight + BufferZoneRange) return false;
-            if (posY < SquareBottom - BufferZoneRange || posY > SquareTop + BufferZoneRange) return false;
+            if (posX < SquareGridArea.Left - BufferZoneRange || posX > SquareGridArea.Right + BufferZoneRange) return false;
+            if (posY < SquareGridArea.Bottom - BufferZoneRange || posY > SquareGridArea.Top + BufferZoneRange) return false;
             return true;
         }
         bool IsOverlappingCellBufferZone(Square square, Fix64 posX, Fix64 posY)

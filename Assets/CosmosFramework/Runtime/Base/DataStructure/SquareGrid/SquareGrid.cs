@@ -65,15 +65,8 @@ namespace Cosmos
         }
         Square[,] square2d;
         Square[] square1d;
-        public float CenterX { get; private set; }
-        public float CenterY { get; private set; }
+        public Square SquareGridArea { get; private set; }
         public uint CellSection { get; private set; }
-        public float SquareSideLength { get; private set; }
-        public float SquareTop { get; private set; }
-        public float SquareBottom { get; private set; }
-        public float SquareLeft { get; private set; }
-        public float SquareRight { get; private set; }
-        public float HalfSideLength { get; private set; }
         public float CellSideLength { get; private set; }
         public float OffsetX { get; private set; }
         public float OffsetY { get; private set; }
@@ -92,21 +85,17 @@ namespace Cosmos
             this.OffsetX = offsetX;
             this.OffsetY = offsetY;
 
-            SquareSideLength = cellSideLength * cellSection;
+            var squareSideLength = cellSideLength * cellSection;
             CellSideLength = cellSideLength;
             square2d = new Square[cellSection, cellSection];
-            HalfSideLength = SquareSideLength / 2;
+            var halfSideLength = squareSideLength / 2;
 
-            CenterX = HalfSideLength + offsetX;
-            CenterY = HalfSideLength + offsetY;
-
-            SquareLeft = CenterX - HalfSideLength;
-            SquareRight = CenterX + HalfSideLength;
-
-            SquareTop = CenterY + HalfSideLength;
-            SquareBottom = CenterY - HalfSideLength;
+            var centerX = halfSideLength + offsetX;
+            var centerY = halfSideLength + offsetY;
 
             BufferZoneRange = bufferRange >= 0 ? bufferRange : 0;
+
+            SquareGridArea = new Square(centerX, centerY, squareSideLength);
 
             square1d = new Square[CellSection * CellSection];
             CreateSquare(offsetX, offsetY);
@@ -193,7 +182,7 @@ namespace Cosmos
                 return square1d;
             int sideCellCount = level * 2 + 1;
             int squareCount = sideCellCount * sideCellCount;
-            Square[] neabySquares = new Square[squareCount+1];
+            Square[] neabySquares = new Square[squareCount + 1];
             int idx = 0;
             for (int x = -level; x <= level; x++)
             {
@@ -201,7 +190,7 @@ namespace Cosmos
                 {
                     int idxX = col + x;
                     int idxY = row + y;
-                    if (idxX < CellSection && idxX >= 0 && idxY <CellSection && idxY >= 0)
+                    if (idxX < CellSection && idxX >= 0 && idxY < CellSection && idxY >= 0)
                     {
                         neabySquares[idx] = square2d[idxX, idxY];
                         idx++;
@@ -229,14 +218,14 @@ namespace Cosmos
         /// <returns>是否重叠</returns>
         public bool IsOverlapping(float posX, float posY)
         {
-            if (posX < SquareLeft || posX > SquareRight) return false;
-            if (posY < SquareBottom || posY > SquareTop) return false;
+            if (posX < SquareGridArea.Left || posX > SquareGridArea.Right) return false;
+            if (posY < SquareGridArea.Bottom || posY > SquareGridArea.Top) return false;
             return true;
         }
         bool IsOverlappingBufferZone(float posX, float posY)
         {
-            if (posX < SquareLeft - BufferZoneRange || posX > SquareRight + BufferZoneRange) return false;
-            if (posY < SquareBottom - BufferZoneRange || posY > SquareTop + BufferZoneRange) return false;
+            if (posX < SquareGridArea.Left - BufferZoneRange || posX > SquareGridArea.Right + BufferZoneRange) return false;
+            if (posY < SquareGridArea.Bottom - BufferZoneRange || posY > SquareGridArea.Top + BufferZoneRange) return false;
             return true;
         }
         bool IsOverlappingCellBufferZone(Square square, float posX, float posY)

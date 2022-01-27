@@ -63,10 +63,6 @@ namespace Cosmos
         {
             if (obj == null) throw new ArgumentNullException($"{nameof(obj)} is invalid !");
             var objectBound = GetObjectBound(obj);
-            if (!rootNode.IsRectOverlapping(objectBound))
-            {
-                onOutQuadBound?.Invoke(obj);
-            }
             return InsertObject(rootNode, objectBound, obj);
         }
         public bool Remove(T obj)
@@ -93,6 +89,7 @@ namespace Cosmos
                     if (node.IsRectOverlapping(objBound))
                         continue;
                     Remove(obj);
+                    onOutQuadBound?.Invoke(obj);
                     objectRemoveCache.Add(obj);
                 }
                 else

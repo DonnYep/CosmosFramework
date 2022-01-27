@@ -1,29 +1,28 @@
-﻿using FixMath.NET;
-using System;
+﻿using System;
 namespace Cosmos
 {
-    public partial class QuadTreeFix64<T>
+    public partial class QuadTree<T>
     {
         public struct Rectangle : IEquatable<Rectangle>
         {
-            public Fix64 CenterX { get; set; }
-            public Fix64 CenterY { get; set; }
-            public Fix64 Width { get; set; }
-            public Fix64 Height { get; set; }
-            public Fix64 Top { get { return CenterY + HalfHeight; } }
-            public Fix64 Bottom { get { return CenterY - HalfHeight; } }
-            public Fix64 Left { get { return CenterX - HalfWidth; } }
-            public Fix64 Right { get { return CenterX + HalfWidth; } }
-            public Fix64 HalfWidth { get { return Width * (Fix64)0.5f; } }
-            public Fix64 HalfHeight { get { return Height * (Fix64)0.5f; } }
-            public Rectangle(Fix64 x, Fix64 y, Fix64 width, Fix64 height)
+            public float CenterX { get; set; }
+            public float CenterY { get; set; }
+            public float Width { get; set; }
+            public float Height { get; set; }
+            public float Top { get { return CenterY + HalfHeight; } }
+            public float Bottom { get { return CenterY - HalfHeight; } }
+            public float Left { get { return CenterX - HalfWidth; } }
+            public float Right { get { return CenterX + HalfWidth; } }
+            public float HalfWidth { get { return Width * 0.5f; } }
+            public float HalfHeight { get { return Height * 0.5f; } }
+            public Rectangle(float centerX, float centerY, float width, float height)
             {
-                CenterX = x;
-                CenterY = y;
+                CenterX = centerX;
+                CenterY = centerY;
                 Width = width;
                 Height = height;
             }
-            public bool Contains(Fix64 x, Fix64 y)
+            public bool Contains(float x, float y)
             {
                 if (x < Left || x > Right) return false;
                 if (y > Top || y < Bottom) return false;
@@ -55,8 +54,8 @@ namespace Cosmos
             {
                 return $"[ X:{CenterX} ,Y:{CenterY} ],[ Width:{Width},Height:{Height} ]";
             }
-            public static readonly Rectangle Zero = new Rectangle(Fix64.Zero, Fix64.Zero, Fix64.Zero, Fix64.Zero);
-            public static readonly Rectangle One = new Rectangle(Fix64.One, Fix64.One, Fix64.One, Fix64.One);
+            public static readonly Rectangle Zero = new Rectangle(0, 0, 0, 0);
+            public static readonly Rectangle One = new Rectangle(1, 1, 1, 1);
         }
     }
 }

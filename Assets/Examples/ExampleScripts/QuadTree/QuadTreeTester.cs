@@ -13,12 +13,18 @@ public class QuadTreeTester : MonoBehaviour
     [SerializeField] Vector2 rectRange = new Vector2(400, 400);
     [SerializeField] GameObject resPrefab;
     [SerializeField] int objectCount = 30;
+    /// <summary>
+    /// 每个节点能够包含最多的对象数量；
+    /// </summary>
     [SerializeField] int maxNodeObject = 4;
     [SerializeField] int maxDepth = 5;
-    [SerializeField] GameObject supervisor;
     [SerializeField] bool drawGridGizmos;
     [SerializeField] bool drawObjectGridGizmos;
     [SerializeField] bool runUpdate;
+    /// <summary>
+    /// 当对象出四叉树根节点范围时，移除这个对象；
+    /// </summary>
+    [SerializeField] bool removeWhenOutBound;
     [SerializeField] float objectMoveSpeed = 5;
     [SerializeField] Color gridGizmosColor = new Color(1, 1, 1, 1);
     [SerializeField] Color objectGizmosColor = new Color(1, 1, 1, 1);
@@ -45,7 +51,7 @@ public class QuadTreeTester : MonoBehaviour
                 index++;
                 inst.name = resPrefab.name + index;
                 inst.transform.SetParent(activeTrans);
-                var entity = new ObjectEntity() {  Inst = inst, MovePos = GetRandomPosition() };
+                var entity = new ObjectEntity() { Inst = inst, MovePos = GetRandomPosition() };
                 objectEntities.Add(entity);
                 goIdDict.Add(inst, entity);
             }
@@ -62,10 +68,24 @@ public class QuadTreeTester : MonoBehaviour
 
     void OnObjectOutQuadRectangle(GameObject obj)
     {
-        obj.transform.SetParent(deactiveTrans);
-        if (goIdDict.Remove(obj, out var entity))
+        if (removeWhenOutBound)
         {
-            objectEntities.Remove(entity);
+            if (!quadTree.IsOverlapping(obj))
+            {
+                obj.transform.SetParent(deactiveTrans);
+                if (goIdDict.Remove(obj, out var entity))
+                {
+                    objectEntities.Remove(entity);
+                }
+            }
+            else
+            {
+                quadTree.Insert(obj);
+            }
+        }
+        else
+        {
+            quadTree.Insert(obj);
         }
     }
     void Update()
@@ -82,9 +102,9 @@ public class QuadTreeTester : MonoBehaviour
         for (int i = 0; i < length; i++)
         {
             var inst = objectEntities[i].Inst;
-            var dir = objectEntities[i].MovePos- inst.transform.position;
+            var dir = objectEntities[i].MovePos - inst.transform.position;
             inst.transform.forward = Vector3.Lerp(inst.transform.forward, dir, Time.deltaTime);
-            var dstPos = inst.transform.forward * Time.deltaTime * objectMoveSpeed+ inst.transform.position;
+            var dstPos = inst.transform.forward * Time.deltaTime * objectMoveSpeed + inst.transform.position;
             inst.transform.position = dstPos;
         }
     }
@@ -106,7 +126,7 @@ public class QuadTreeTester : MonoBehaviour
                 {
                     Gizmos.color = gridGizmosColor;
                     var pos = new Vector3(grids[i].CenterX, 0, grids[i].CenterY);
-                    var size = new Vector3(grids[i].Width, 5, grids[i].Height);
+                    var size = new Vector3(grids[i].Width, 3, grids[i].Height);
                     Gizmos.DrawWireCube(pos, size);
                 }
             }

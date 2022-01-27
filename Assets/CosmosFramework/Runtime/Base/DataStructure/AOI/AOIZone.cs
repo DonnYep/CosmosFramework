@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cosmos
 {
     public partial class AOIZone<T>
         where T : IComparable
     {
-        public Square ZoneSquare { get; private set; }
+        public Rectangle ZoneSquare { get; private set; }
         /// <summary>
         /// 横向X的均等分数；
         /// </summary>
@@ -36,14 +33,18 @@ namespace Cosmos
         {
             this.OffsetX = offsetX;
             this.OffsetY = offsetY;
-         var   HalfSideLength = SquareSideLength / 2;
+            this.SquareSideLength = squareSideLentgh;
+            this.objectHelper = objectHelper;
+            var width = widthCount * squareSideLentgh;
+            var height = heightCount * squareSideLentgh;
+            var centerX = offsetX + width / 2;
+            var centerY = offsetY + height / 2;
+            ZoneSquare = new Rectangle(centerX, centerY, width, height);
+            CreateSquare(offsetX, offsetY);
+        }
+        public AOIZone(int cellSection, float squareSideLentgh, float offsetX, float offsetY, IObjectHelper objectHelper)
+            : this(cellSection, cellSection, squareSideLentgh, offsetX, offsetY, objectHelper) { }
 
-            CreateSquare(offsetX,offsetY);
-        }
-        public Square GetArea(T obj)
-        {
-            return Square.Zero;
-        }
         public bool IsOverlapping(T obj)
         {
             var posX = objectHelper.GetCenterX(obj);
@@ -56,6 +57,22 @@ namespace Cosmos
             if (posY < ZoneSquare.Bottom || posY > ZoneSquare.Top) return false;
             return true;
         }
+        //public bool Insert(T obj)
+        //{
+
+        //}
+        //public bool Remove(T obj)
+        //{
+
+        //}
+        //public bool Contains(T obj)
+        //{
+
+        //}
+        //public Rectangle GetArea(T obj)
+        //{
+        //    return Rectangle.Zero;
+        //}
         void CreateSquare(float offsetX, float offsetY)
         {
             var centerOffsetX = SquareSideLength / 2 + offsetX;

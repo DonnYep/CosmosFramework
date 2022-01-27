@@ -13,12 +13,18 @@ public class QuadTreeFix64Tester : MonoBehaviour
     [SerializeField] Vector2 rectRange = new Vector2(400, 400);
     [SerializeField] GameObject resPrefab;
     [SerializeField] int objectCount = 30;
+    /// <summary>
+    /// 每个节点能够包含最多的对象数量；
+    /// </summary>
     [SerializeField] int maxNodeObject = 4;
     [SerializeField] int maxDepth = 5;
-    [SerializeField] GameObject supervisor;
     [SerializeField] bool drawGridGizmos;
     [SerializeField] bool drawObjectGridGizmos;
     [SerializeField] bool runUpdate;
+    /// <summary>
+    /// 当对象出四叉树根节点范围时，移除这个对象；
+    /// </summary>
+    [SerializeField] bool removeWhenOutBound;
     [SerializeField] float objectMoveSpeed = 5;
     [SerializeField] Color gridGizmosColor = new Color(1, 1, 1, 1);
     [SerializeField] Color objectGizmosColor = new Color(1, 1, 1, 1);
@@ -63,10 +69,24 @@ public class QuadTreeFix64Tester : MonoBehaviour
 
     void OnObjectOutQuadRectangle(GameObject obj)
     {
-        obj.transform.SetParent(deactiveTrans);
-        if (goIdDict.Remove(obj, out var entity))
+        if (removeWhenOutBound)
         {
-            objectEntities.Remove(entity);
+            if (!quadTree.IsOverlapping(obj))
+            {
+                obj.transform.SetParent(deactiveTrans);
+                if (goIdDict.Remove(obj, out var entity))
+                {
+                    objectEntities.Remove(entity);
+                }
+            }
+            else
+            {
+                quadTree.Insert(obj);
+            }
+        }
+        else
+        {
+            quadTree.Insert(obj);
         }
     }
     void Update()

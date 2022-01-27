@@ -14,10 +14,10 @@ namespace Cosmos
         public Fix64 Right { get { return CenterX + HalfWidth; } }
         public Fix64 HalfWidth { get { return Width * (Fix64)0.5f; } }
         public Fix64 HalfHeight { get { return Height * (Fix64)0.5f; } }
-        public RectangleFix64(Fix64 x, Fix64 y, Fix64 width, Fix64 height)
+        public RectangleFix64(Fix64 centerX, Fix64 centerY, Fix64 width, Fix64 height)
         {
-            CenterX = x;
-            CenterY = y;
+            CenterX = centerX;
+            CenterY = centerY;
             Width = width;
             Height = height;
         }

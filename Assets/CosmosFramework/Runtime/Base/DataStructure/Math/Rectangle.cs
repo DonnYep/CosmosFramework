@@ -13,10 +13,10 @@ namespace Cosmos
         public float Right { get { return CenterX + HalfWidth; } }
         public float HalfWidth { get { return Width * 0.5f; } }
         public float HalfHeight { get { return Height * 0.5f; } }
-        public Rectangle(float x, float y, float width, float height)
+        public Rectangle(float centerX, float centerY, float width, float height)
         {
-            CenterX = x;
-            CenterY = y;
+            CenterX = centerX;
+            CenterY = centerY;
             Width = width;
             Height = height;
         }
