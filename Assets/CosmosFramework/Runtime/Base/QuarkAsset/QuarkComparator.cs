@@ -126,8 +126,8 @@ namespace Quark.Networking
                                 var remoteSize = remoteMF.Value.ABFileSize;
                                 if (remoteSize != localSize)
                                 {
-                                    //var differenceValue = remoteSize - localSize;
-                                    overallSize += remoteSize;
+                                    var remainSize = remoteSize - localSize;
+                                    overallSize += remainSize;
                                     latest.Add(remoteMF.Value.ABName);
                                     if (remoteSize < localSize)
                                     {

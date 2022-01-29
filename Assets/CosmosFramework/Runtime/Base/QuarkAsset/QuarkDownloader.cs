@@ -183,12 +183,17 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
                 Downloading = true;
-                request.downloadHandler = new DownloadHandlerFile(downloadPath);
+                request.downloadHandler = new DownloadHandlerFile(downloadPath,true);
                 unityWebRequest = request;
                 var timeout = Convert.ToInt32(DownloadTimeout);
                 if (timeout > 0)
                     request.timeout = timeout;
                 onDownloadStart?.Invoke(uri, downloadPath);
+
+                //增量下载实现
+                var fileInfo = new FileInfo(downloadPath);
+                request.SetRequestHeader("Range","bytes="+fileInfo.Length+"-");
+
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
                 {
@@ -216,6 +221,7 @@ namespace Quark.Networking
                         Utility.IO.DeleteFile(downloadPath);
                     }
                 }
+                unityWebRequest = null;
             }
         }
         /// <summary>

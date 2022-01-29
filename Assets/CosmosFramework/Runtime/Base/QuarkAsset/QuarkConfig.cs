@@ -158,5 +158,9 @@ namespace Quark
             QuarkManager.Instance.Initiate(streamingAssetPath, streamingAssetPath);
             QuarkManager.Instance.LoadFromStreamingAssets();
         }
+        private void OnDestroy()
+        {
+            QuarkManager.Instance.StopDownload();
+        }
     }
 }

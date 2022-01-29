@@ -53,7 +53,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **Singleton**：单例基类。提供了线程安全、非线程安全、MONO单例基类。
 
-- **DataStructure**：常用数据结构。链表、双向链表、双向字典、二叉树、四叉树、AStart、LRU、线程锁等数据结构。
+- **DataStructure**：常用数据结构。链表、双向链表、双向字典、二叉树、四叉树、AStar、LRU、线程锁等数据结构。
 
 - **Extensions**：静态扩展工具。提供Unity的扩展以及C# Collections 常用数据结构的原生扩展。
 
@@ -69,7 +69,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **Editor** ：Editor中提供了在Hierarchy常用检索对象、组件的方法，EditorConfig提供了代码生成是自动创建代码标头的功能；
 
-- **QuarkAsset** ：QuarkAsset是一套AssetBundle资源管理方案。 Editor模式与AB模式之间可快速切换，且无需考虑AB依赖问题。加载时无需传入完整地址，通过资源名称即可完成加载。若资源重名，则通过文件名+后缀进行完全限定加载。
+- **QuarkAsset** ：QuarkAsset是一套AssetBundle资源管理方案。 Editor模式与AB模式之间可快速切换，且无需考虑AB依赖问题。下载支持大文件断点续传。加载时无需传入完整地址，通过资源名称即可完成加载。若资源重名，则通过文件名+后缀进行完全限定加载。
 
 - **FutureTask**：异步任务检测，支持多线程与协程异步进度检测。检测函数需要传入Func<bool>格式的函数，当条件返回值为true时，异步检测结束；注意：FutureTask本身并不是协程，不能代替协程执行异步任务；
 

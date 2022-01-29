@@ -137,6 +137,10 @@ namespace Quark
         {
             quarkDownloader.LaunchDownload();
         }
+        public void StopDownload()
+        {
+            quarkDownloader.RemoveAllDownload();
+        }
         /// <summary>
         /// 对Manifest进行编码；
         /// 用于Built assetbundle模式；
