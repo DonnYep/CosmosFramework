@@ -11,6 +11,7 @@ using System;
 public class DownloadTest : MonoBehaviour
 {
     [SerializeField]string srcUrl;
+    [Header("文件下载到的绝对路径")]
     [SerializeField]string downloadPath;
     [SerializeField]Slider slider;
     [SerializeField]Text text;
@@ -28,6 +29,10 @@ public class DownloadTest : MonoBehaviour
         CosmosEntry.DownloadManager.OnDownloadAndWriteFinish += OnDownloadFinish;
         CosmosEntry.DownloadManager.AddUrlDownload(srcUrl, downloadPath);
         CosmosEntry.DownloadManager.LaunchDownload();
+    }
+    private void OnDestroy()
+    {
+        CosmosEntry.DownloadManager.CancelDownload();
     }
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
     {

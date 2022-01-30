@@ -87,7 +87,7 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载任务数量；
         /// </summary>
-        int downloadTaskCount=0;
+        int downloadTaskCount = 0;
         /// <summary>
         /// 挂起的下载任务；
         /// </summary>
@@ -154,7 +154,7 @@ namespace Cosmos.Download
         /// <param name="uri">统一资源名称</param>
         public void RemoveUriDownload(string uri)
         {
-            if (pendingTaskDict.Remove(uri, out var downloadTask ))
+            if (pendingTaskDict.Remove(uri, out var downloadTask))
             {
                 pendingTasks.Remove(downloadTask);
                 downloadTaskCount--;
@@ -210,7 +210,7 @@ namespace Cosmos.Download
             while (pendingTasks.Count > 0)
             {
                 var downloadTask = pendingTasks.RemoveFirst();
-                currentDownloadTaskIndex = downloadTaskCount- pendingTasks.Count-1;
+                currentDownloadTaskIndex = downloadTaskCount - pendingTasks.Count - 1;
                 yield return EnumDownloadSingleFile(downloadTask);
             }
             OnDownloadedPendingFiles();
@@ -246,7 +246,7 @@ namespace Cosmos.Download
                     if (request.isDone)
                     {
                         Downloading = false;
-                        var downloadedData = new DownloadedData(uri,  fileDownloadPath);
+                        var downloadedData = new DownloadedData(uri, fileDownloadPath);
                         var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath);
                         onDownloadSuccess?.Invoke(successEventArgs);
                         OnFileDownloading(uri, fileDownloadPath, 1);
@@ -266,6 +266,7 @@ namespace Cosmos.Download
                     {
                         Utility.IO.DeleteFile(fileDownloadPath);
                     }
+                    unityWebRequest = null;
                 }
             }
         }
@@ -292,7 +293,7 @@ namespace Cosmos.Download
             canDownload = false;
             Downloading = false;
             downloadEndTime = DateTime.Now;
-            var successUris = successTasks.Select(t=>t.URI).ToArray();
+            var successUris = successTasks.Select(t => t.URI).ToArray();
             var failureUris = failureTasks.Select(t => t.URI).ToArray();
             var eventArgs = DownloadAndWriteFinishEventArgs.Create(successUris, failureUris, downloadEndTime - downloadStartTime);
             onDownloadAndWriteFinish?.Invoke(eventArgs);
@@ -306,7 +307,7 @@ namespace Cosmos.Download
         }
         void OnCancelDownload()
         {
-            unityWebRequest.Abort();
+            unityWebRequest?.Abort();
             pendingTasks.Clear();
             pendingTaskDict.Clear();
             downloadTaskCount = 0;
