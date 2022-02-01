@@ -9,9 +9,9 @@ namespace CosmosEditor.Quark
     {
         SerializedObject targetObject;
         QuarkConfig quarkConfig;
-        SerializedProperty sp_QuarkAssetLoadMode, sp_QuarkAssetDataset, sp_Url, sp_PingUrl, sp_QuarkLoadPath,
-            sp_AESEncryptionKey, sp_EnableRelativeLoadPath, sp_RelativeLoadPath, sp_CustomeLoadPath, sp_QuarkBuildPath,
-            sp_EnableRelativeBuildPath, sp_RelativeBuildPath;
+        SerializedProperty sp_QuarkAssetLoadMode, sp_QuarkAssetDataset, sp_Url, sp_PingUrl, sp_QuarkBuildPath,
+            sp_AESEncryptionKey, sp_EnableRelativeLoadPath, sp_RelativeLoadPath, sp_CustomeAbsolutePath, 
+            sp_EnableRelativeBuildPath, sp_RelativeBuildPath, sp_QuarkDownloadedPath;
         bool aesKeyFoldout = false;
         public override void OnInspectorGUI()
         {
@@ -41,10 +41,10 @@ namespace CosmosEditor.Quark
             sp_QuarkAssetDataset = targetObject.FindProperty("QuarkAssetDataset");
             sp_Url = targetObject.FindProperty("Url");
             sp_PingUrl = targetObject.FindProperty("PingUrl");
-            sp_QuarkLoadPath = targetObject.FindProperty("QuarkLoadPath");
+            sp_QuarkDownloadedPath = targetObject.FindProperty("QuarkDownloadedPath");
             sp_AESEncryptionKey = targetObject.FindProperty("AESEncryptionKey");
             sp_EnableRelativeLoadPath = targetObject.FindProperty("EnableRelativeLoadPath");
-            sp_CustomeLoadPath = targetObject.FindProperty("CustomeLoadPath");
+            sp_CustomeAbsolutePath = targetObject.FindProperty("CustomeAbsolutePath");
             sp_RelativeLoadPath = targetObject.FindProperty("RelativeLoadPath");
 
             sp_QuarkBuildPath = targetObject.FindProperty("QuarkBuildPath");
@@ -56,7 +56,7 @@ namespace CosmosEditor.Quark
             EditorGUILayout.Space(16);
             EditorGUILayout.HelpBox("Asset bundle build path", MessageType.Info);
 
-            EditorGUILayout.BeginVertical("box");
+            EditorGUILayout.BeginVertical();
             sp_QuarkBuildPath.enumValueIndex = (byte)(QuarkBuildPath)EditorGUILayout.EnumPopup("QuarkBuildPath", (QuarkBuildPath)sp_QuarkBuildPath.enumValueIndex);
             var buildType = (QuarkBuildPath)sp_QuarkBuildPath.enumValueIndex;
             switch (buildType)
@@ -75,34 +75,26 @@ namespace CosmosEditor.Quark
                     {
                         sp_PingUrl.boolValue = EditorGUILayout.Toggle("PingUrl", sp_PingUrl.boolValue);
                         sp_Url.stringValue = EditorGUILayout.TextField("Url", sp_Url.stringValue.Trim());
-                        EditorGUILayout.Space(16);
+                        EditorGUILayout.BeginVertical();
+                        sp_QuarkDownloadedPath.enumValueIndex = (byte)(QuarkDownloadedPath)EditorGUILayout.EnumPopup("QuarkDownloadPath", (QuarkDownloadedPath)sp_QuarkDownloadedPath.enumValueIndex);
+                        var pathType = (QuarkDownloadedPath)sp_QuarkDownloadedPath.enumValueIndex;
+                        if (pathType != QuarkDownloadedPath.Custome)
+                        {
+                            sp_EnableRelativeLoadPath.boolValue = EditorGUILayout.Toggle("UseRelativeLoadPath", sp_EnableRelativeLoadPath.boolValue);
+                            var useRelativePath = sp_EnableRelativeLoadPath.boolValue;
+                            if (useRelativePath)
+                            {
+                                sp_RelativeLoadPath.stringValue = EditorGUILayout.TextField("RelativeLoadPath", sp_RelativeLoadPath.stringValue.Trim());
+                            }
+                        }
+                        else
+                        {
+                            sp_CustomeAbsolutePath.stringValue = EditorGUILayout.TextField("CustomeAbsolutePath", sp_CustomeAbsolutePath.stringValue.Trim());
+                        }
+                        EditorGUILayout.EndVertical();
+
                     }
                     break;
-            }
-            EditorGUILayout.EndVertical();
-
-            if (buildType == QuarkBuildPath.StreamingAssets)
-                return;
-
-            EditorGUILayout.Space(16);
-
-            EditorGUILayout.HelpBox("Asset bundle load path", MessageType.Info);
-
-            EditorGUILayout.BeginVertical("box");
-            sp_QuarkLoadPath.enumValueIndex = (byte)(QuarkLoadPath)EditorGUILayout.EnumPopup("QuarkLoadPath", (QuarkLoadPath)sp_QuarkLoadPath.enumValueIndex);
-            var pathType = (QuarkLoadPath)sp_QuarkLoadPath.enumValueIndex;
-            if (pathType != QuarkLoadPath.Custome)
-            {
-                sp_EnableRelativeLoadPath.boolValue = EditorGUILayout.Toggle("UseRelativeLoadPath", sp_EnableRelativeLoadPath.boolValue);
-                var useRelativePath = sp_EnableRelativeLoadPath.boolValue;
-                if (useRelativePath)
-                {
-                    sp_RelativeLoadPath.stringValue = EditorGUILayout.TextField("RelativeLoadPath", sp_RelativeLoadPath.stringValue.Trim());
-                }
-            }
-            else
-            {
-                sp_CustomeLoadPath.stringValue = EditorGUILayout.TextField("CustomeLoadPath", sp_CustomeLoadPath.stringValue.Trim());
             }
             EditorGUILayout.EndVertical();
         }

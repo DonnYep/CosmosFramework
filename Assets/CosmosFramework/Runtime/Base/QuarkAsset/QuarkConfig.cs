@@ -11,7 +11,7 @@ namespace Quark
     public class QuarkConfig : MonoBehaviour
     {
         /// <summary>
-        /// 
+        /// 资源存储地址；
         /// </summary>
         public QuarkBuildPath QuarkBuildPath;
         /// <summary>
@@ -42,9 +42,9 @@ namespace Quark
         /// </summary>
         public QuarkAssetDataset QuarkAssetDataset;
         /// <summary>
-        /// 持久化路径类型；
+        /// 资源下载到的地址；
         /// </summary>
-        public QuarkLoadPath QuarkLoadPath;
+        public QuarkDownloadedPath QuarkDownloadedPath;
         /// <summary>
         /// 使用持久化的相对路径；
         /// </summary>
@@ -59,9 +59,8 @@ namespace Quark
         public string AESEncryptionKey;
         /// <summary>
         /// QuarkPersistentPathType 枚举下的自定义持久化路径；
-        /// <see cref=" Quark.QuarkLoadPath"/>
         /// </summary>
-        public string CustomeLoadPath;
+        public string CustomeAbsolutePath;
 
         /// <summary>
         /// 配置的路径都整合到此字段；
@@ -122,15 +121,12 @@ namespace Quark
                 if (!Utility.Net.PingURI(Url))
                     return;
             }
-            if (QuarkLoadPath != QuarkLoadPath.Custome)
+            if (QuarkDownloadedPath != QuarkDownloadedPath.Custome)
             {
-                switch (QuarkLoadPath)
+                switch (QuarkDownloadedPath)
                 {
-                    case QuarkLoadPath.PersistentDataPath:
+                    case QuarkDownloadedPath.PersistentDataPath:
                         downloadPath = Application.persistentDataPath;
-                        break;
-                    case QuarkLoadPath.StreamingAssets:
-                        downloadPath = Application.streamingAssetsPath;
                         break;
                 }
                 if (EnableRelativeLoadPath)
@@ -140,7 +136,7 @@ namespace Quark
             }
             else
             {
-                downloadPath = CustomeLoadPath;
+                downloadPath = CustomeAbsolutePath;
             }
             Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
             if (!Directory.Exists(downloadPath))
