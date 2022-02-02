@@ -93,5 +93,10 @@ namespace Cosmos.WebRequest
         /// <param name="resultCallback">带结果的回调</param>
         /// <returns>协程对象</returns>
         Coroutine RequestAudioAsync(Uri uri, AudioType audioType, WebRequestCallback webRequestCallback, Action<AudioClip> resultCallback);
+        /// <summary>
+        /// 结束所有网络请求
+        /// </summary>
+        void AbortAllRequest();
+
     }
 }

@@ -256,5 +256,9 @@ namespace Cosmos.Download
             downloadUrlHelper = new DefaultDownloadUrlHelper();
             downloadRequester = new DefaultDownloadRequester();
         }
+        protected override void OnTermination()
+        {
+            downloader.CancelDownload();
+        }
     }
 }

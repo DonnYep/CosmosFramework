@@ -142,10 +142,21 @@ namespace Cosmos.WebRequest
         {
             return webRequestHelper.RequestTextureAsync(uri, webRequestCallback, resultCallback);
         }
-        protected override void OnPreparatory()
+        /// <summary>
+        /// 结束所有网络请求
+        /// </summary>
+        public void AbortAllRequest()
+        {
+            webRequestHelper.AbortAllRequest();
+        }
+        protected override void OnInitialization()
         {
             //初始化时会加载默认helper
             webRequestHelper = new DefaultWebRequestHelper();
+        }
+        protected override void OnTermination()
+        {
+            webRequestHelper.AbortAllRequest();
         }
     }
 }

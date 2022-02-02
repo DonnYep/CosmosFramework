@@ -11,6 +11,9 @@ namespace Cosmos
         /// 是否正在加载；
         /// </summary>
         public bool IsLoading { get; private set; }
+
+        UnityWebRequest currentRequest;
+
         /// <summary>
         /// 异步请求AssetBundle；
         /// </summary>
@@ -151,11 +154,16 @@ namespace Cosmos
                 resultCallback?.Invoke(texture);
             }));
         }
+        public void AbortAllRequest()
+        {
+            currentRequest.Abort();
+        }
         IEnumerator EnumRequestWebRequest(UnityWebRequest unityWebRequest, WebRequestCallback webRequestCallback, Action<UnityWebRequest> doneCallback)
         {
             using (UnityWebRequest request = unityWebRequest)
             {
                 webRequestCallback.OnStartCallback?.Invoke();
+                currentRequest = request;
                 IsLoading = true ;
                 request.SendWebRequest();
                 while (!request.isDone)
@@ -177,6 +185,7 @@ namespace Cosmos
                     webRequestCallback.OnFailureCallback?.Invoke(request.error);
                 }
                 IsLoading = false;
+                currentRequest = null;
             }
         }
     }

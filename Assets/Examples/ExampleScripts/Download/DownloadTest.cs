@@ -30,10 +30,6 @@ public class DownloadTest : MonoBehaviour
         CosmosEntry.DownloadManager.AddUrlDownload(srcUrl, downloadPath);
         CosmosEntry.DownloadManager.LaunchDownload();
     }
-    private void OnDestroy()
-    {
-        CosmosEntry.DownloadManager.CancelDownload();
-    }
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
     {
         if (uriText != null)
