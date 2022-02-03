@@ -135,6 +135,13 @@ namespace Cosmos.Audio
                 throw new ArgumentNullException($"IAudioObject {audioName} have not been registered ");
             }
         }
+        public void DeregisterAllAudios()
+        {
+            audioObjectDict.Clear();
+            audioGroupDict.Clear();
+            audioGroupPool.Clear();
+            audioPlayHelper.ClearAllAudio();
+        }
         public bool HasAudio(string audioName)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");

@@ -35,7 +35,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **Hotfix**：热更新模块。此模块适用于基于C#的热更方案。（此方案未完善，未来将会使用MONO Interpreter 解释器执行热更新。）
 
-- **Network**：网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP、TCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可实现(Client-Server)模式。支持async/await语法；
+- **Network**：网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP、TCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可实现(Client-Server)模式。支持async/await语法。
 
 - **UI**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取以及组别设置等。扩展方法对按钮等一些常用组件进行了扩展，无需手动实现按钮抬起、按下等接口实现即可监听。支持常用UIBehaiour类型的triggerEvent。
 
@@ -43,7 +43,7 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **Controller**：控制器模块。使用此模块进行注册后，无需生成实体对象(GameObject)也可进行轮询管理。此模块提供Update轮询。
 
-- **WebRequest**：UnityWebRequest模块，可用于加载持久化资源、网络资源下载等需求。支持获取AssetBundle、AudioClip、Texture2D、string。当资源获取到后，用户可通过WebRequestCallback对资源进行操作；
+- **WebRequest**：UnityWebRequest模块，可用于加载持久化资源、网络资源下载等需求。支持获取AssetBundle、AudioClip、Texture2D、string。当资源获取到后，用户可通过WebRequestCallback对资源进行操作。
 
 - **Download**：下载模块。支持localhost本地文件下载与http文件下载。文件下载时以byte流异步增量写入本地。下载中支持动态添加、移除下载任务；
 
@@ -57,23 +57,23 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
 
 - **Extensions**：静态扩展工具。提供Unity的扩展以及C# Collections 常用数据结构的原生扩展。
 
-- **Awaitable** ：此工具提供了async/await语法在unity环境中的支持。可以像写c#原生异步一样,在Unity中写异步。支持Task异步，Task执行完成后会回到主线程，使用时按照正常格式写即可；
+- **Awaitable** ：此工具提供了async/await语法在unity环境中的支持。可以像写c#原生异步一样,在Unity中写异步。支持Task异步，Task执行完成后会回到主线程，使用时按照正常格式写即可。
 
-- **EventCore** 完全抽象的事件数据结构。内含普通、标准与线程安全类型；
+- **EventCore** 完全抽象的事件数据结构。内含普通、标准与线程安全类型。
 ```CSharp
     //声明一个类，使其派生自EventCore，并做类型约束。
     public class MyEventCore :EventCore<string,string, MyEventCore>{}
     //实现后即可使用自定义的事件监听。
 ```
-- **ReferencePool** ：全局引用池模块；
+- **ReferencePool** ：全局引用池模块。
 
 - **Editor** ：Editor中提供了在Hierarchy常用检索对象、组件的方法，EditorConfig提供了代码生成是自动创建代码标头的功能；
 
-- **QuarkAsset** ：QuarkAsset是一套AssetBundle资源管理方案。 Editor模式与AB模式之间可快速切换，且无需考虑AB依赖问题。下载支持大文件断点续传。加载时无需传入完整地址，通过资源名称即可完成加载。若资源重名，则通过文件名+后缀进行完全限定加载。
+- **QuarkAsset** ：QuarkAsset是一套AssetBundle资源管理方案。 Editor模式与AB模式之间可快速切换，加载资源时自动处理AB依赖问题。下载支持大文件断点续传。加载时无需传入完整地址，通过资源名称即可完成加载。若资源重名，则通过文件名+后缀进行完全限定加载。
 
-- **FutureTask**：异步任务检测，支持多线程与协程异步进度检测。检测函数需要传入Func<bool>格式的函数，当条件返回值为true时，异步检测结束；注意：FutureTask本身并不是协程，不能代替协程执行异步任务；
+- **FutureTask**：异步任务检测，支持多线程与协程异步进度检测。检测函数需要传入Func<bool>格式的函数，当条件返回值为true时，异步检测结束；注意：FutureTask本身并不是协程，不能代替协程执行异步任务。暂不支持await/async语法。
 
-- **Pool**：池。池的完全抽象数据结构。包含线程安全类型。框架中的对象池、引用池以及其他模块的缓存池都使用了“Pool”进行实现；
+- **Pool**：池数据结构。包含线程安全与非线程安全类型。框架中的对象池、引用池以及其他模块的缓存池都使用了“Pool”进行实现。
     
 ## 内置架构 PureMVC
 
@@ -95,9 +95,6 @@ CosmosFramework是一款轻量级的Unity开发框架。模块完善，拥有丰
     将CosmosConfig挂载于合适的GameObject上，运行Unity。若CosmosConfig上的PrintModulePreparatory处于true状态，则控制台会显示初始化信息。  自此，项目启动完成。
     
 - 部分带有Helper的模块可由使用者进行自定义实现，也可使用提供的Default对象；
-
-- 框架提供第三方适配，如Utility.Json，用户可自定义任意JSON方案。框架建议使用的高速传输协议为MessagePack，包含适配方案。
-MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
 
 - 最新请使用 V1.1 版本，V0.1、1.0 停止维护。Master暂停维护。
 

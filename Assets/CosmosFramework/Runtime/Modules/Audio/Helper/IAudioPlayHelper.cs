@@ -7,6 +7,7 @@
         void StopAudio(AudioObject audioObject);
         void PauseAudio(AudioObject audioObject);
         void UnPauseAudio(AudioObject audioObject);
+        void ClearAllAudio();
         void TickRefresh();
     }
 }

@@ -66,6 +66,10 @@ namespace Cosmos.Audio
             {
                 return audioGroupPool.Spawn();
             }
+            public void Clear()
+            {
+                audioGroupPool.Clear();
+            }
         }
     }
 }

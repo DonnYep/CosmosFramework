@@ -110,6 +110,20 @@ namespace Cosmos
                 }
             }
         }
+        public void ClearAllAudio()
+        {
+            foreach (var au in playingDict)
+            {
+                GameObject.Destroy(au.Value);
+            }
+            foreach (var au in pauseDict)
+            {
+                GameObject.Destroy(au.Value);
+            }
+            pauseDict.Clear();
+            playingDict.Clear();
+            pool.Clear();
+        }
         public void TickRefresh()
         {
             var now = Utility.Time.SecondNow();
@@ -143,11 +157,6 @@ namespace Cosmos
                     }
                 }
             }
-        }
-
-        public void PlayAudio(AudioObject audioObject)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -17,6 +17,14 @@ namespace Cosmos.Audio
         {
             return audioSourcePool.Spawn();
         }
+        public void Clear()
+        {
+            foreach (var au in audioSourcePool)
+            {
+                GameObject.Destroy(au);
+            }
+            audioSourcePool.Clear();
+        }
         AudioSource OnGenerate()
         {
             var go = new GameObject();

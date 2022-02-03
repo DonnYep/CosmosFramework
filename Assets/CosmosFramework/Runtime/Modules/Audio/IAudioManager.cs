@@ -44,6 +44,10 @@ namespace Cosmos.Audio
         /// </summary>
         /// <param name="audioName">声音名</param>
         void DeregisterAudio(string audioName);
+        /// <summary>
+        /// 注销所有声音，且情况声音组池；
+        /// </summary>
+        void DeregisterAllAudios();
         bool HasAudio(string audioName);
         bool HasAudioGroup(string audioGroupName);
         /// <summary>
