@@ -8,7 +8,7 @@ namespace Cosmos.FSM
      */
     //================================================
     [Module]
-    internal sealed class FSMManager : Module, IFSMManager
+    internal sealed partial class FSMManager : Module , IFSMManager
     {
         #region Properties
         /// <summary>

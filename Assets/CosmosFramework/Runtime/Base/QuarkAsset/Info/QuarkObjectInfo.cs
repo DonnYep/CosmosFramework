@@ -1,6 +1,7 @@
-﻿namespace Quark.Asset
+﻿using System;
+namespace Quark.Asset
 {
-    public struct QuarkObjectInfo
+    public struct QuarkObjectInfo : IEquatable<QuarkObjectInfo>
     {
         /// <summary>
         /// 资源名称；
@@ -25,6 +26,16 @@
             info.ABObjectHash = this.ABObjectHash;
             return info;
         }
+        public bool Equals(QuarkObjectInfo other)
+        {
+            return other.AssetName == this.AssetName && other.AssetBundleName == this.AssetBundleName
+                && other.AssetExtension == this.AssetExtension && other.ABObjectHash == this.ABObjectHash
+                && other.ReferenceCount == this.ReferenceCount;
+        }
+        public override bool Equals(object obj)
+        {
+            return (obj is QuarkObjectInfo) && Equals((QuarkObjectInfo)obj);
+        }
         public static QuarkObjectInfo None { get { return new QuarkObjectInfo(); } }
         public static QuarkObjectInfo operator --(QuarkObjectInfo quarkObjectInfo)
         {
@@ -37,6 +48,14 @@
             var latesetReferenceCount = quarkObjectInfo.ReferenceCount;
             var newInfo = QuarkObjectInfo.Create(quarkObjectInfo.AssetName, quarkObjectInfo.AssetBundleName, quarkObjectInfo.AssetExtension, latesetReferenceCount++);
             return newInfo;
+        }
+        public static bool operator ==(QuarkObjectInfo a,QuarkObjectInfo b)
+        {
+            return a.Equals(b);
+        }
+        public static bool operator !=(QuarkObjectInfo a, QuarkObjectInfo b)
+        {
+            return !a.Equals(b);
         }
         public static QuarkObjectInfo Create(string assetName, string assetBundleName, string assetExtension, int referenceCount)
         {
