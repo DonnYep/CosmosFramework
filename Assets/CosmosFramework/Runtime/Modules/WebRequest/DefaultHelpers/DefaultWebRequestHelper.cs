@@ -156,7 +156,7 @@ namespace Cosmos
         }
         public void AbortAllRequest()
         {
-            currentRequest.Abort();
+            currentRequest?.Abort();
         }
         IEnumerator EnumRequestWebRequest(UnityWebRequest unityWebRequest, WebRequestCallback webRequestCallback, Action<UnityWebRequest> doneCallback)
         {

@@ -40,14 +40,14 @@ public class FSMTester : MonoSingleton<FSMTester>
         exitState.AddTrigger(enterTrigger, enterState);
         enterState.AddTrigger(exitTrigger, exitState);
 
-        fsmA = fsmManager.CreateFSM("FSMTester", objectA, false, exitState, enterState);
+        fsmA = fsmManager.CreateFSM("FSMTesterA", objectA, exitState, enterState);
         fsmA.DefaultState = exitState;
         fsmA.StartDefault();
 
-        fsmB = fsmManager.CreateFSM("FSMTester", ObjectB, false, exitState, enterState);
+        fsmB = fsmManager.CreateFSM("FSMTesterB", ObjectB, exitState, enterState);
         fsmB.DefaultState = enterState;
         fsmB.StartDefault();
 
-        fsmManager.SetFSMGroupRefreshInterval<Transform>((int)(refreshInterval * 1000));
+        //fsmManager.SetFSMGroupRefreshInterval<Transform>((int)(refreshInterval * 1000));
     }
 }

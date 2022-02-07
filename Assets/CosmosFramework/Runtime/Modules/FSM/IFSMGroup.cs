@@ -1,19 +1,28 @@
 ﻿using System;
 namespace Cosmos.FSM
 {
+    /// <summary>
+    /// 状态机组； 
+    /// </summary>
     public interface IFSMGroup
     {
-        bool IsPause { get; }
-        void OnPause();
-        void OnUnPause();
-        void AddFSM(FSMBase fsm);
-        void DestoryFSM(Predicate<FSMBase> predicate);
-        void DestoryFSM(FSMBase fsm);
-        void SetRefreshInterval(int interval);
-        bool HasFSM(Predicate<FSMBase> predicate);
-        bool HasFSM(FSMBase fsm);
-        FSMBase GetFSM(Predicate<FSMBase> predicate);
-        int GetFSMCount();
-        void DestoryAllFSM();
+        /// <summary>
+        /// 状态机组名；
+        /// </summary>
+        string GroupName { get; }
+        /// <summary>
+        /// 当前组状态机的数量；
+        /// </summary>
+        int FSMCount { get; }
+        /// <summary>
+        /// 根据条件查找是否存在符合条件的状态机
+        /// </summary>
+        /// <returns>是否存在</returns>
+        bool HasFSM(TypeStringPair fsmKey);
+        /// <summary>
+        /// 条件查找状态机；
+        /// </summary>
+        /// <returns>符合条件的状态机</returns>
+        FSMBase GetFSM(TypeStringPair fsmKey);
     }
 }
