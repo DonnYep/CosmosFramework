@@ -1,18 +1,20 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
-using Cosmos;
 namespace Cosmos.FSM
 {
     //================================================
     /*
      * 1、状态机模块；
+     * 
+     * 2、状态机组别设置是互斥的。一个状态机只允许拥有一个组别；
      */
     //================================================
     [Module]
     internal sealed partial class FSMManager : Module, IFSMManager
     {
         #region Properties
+        FSMGroupPool fsmGroupPool = new FSMGroupPool();
         /// <summary>
         /// 单个状态机
         /// </summary>
@@ -94,9 +96,10 @@ namespace Cosmos.FSM
                 }
                 else
                 {
-                    var fsmPool = new FSMGroup();
-                    fsmPool.AddFSM(fsmKey, fsm);
-                    fsmGroupDict.Add(groupName, fsmPool);
+                    var fsmGroup = fsmGroupPool.Spawn();
+                    fsmGroup.GroupName = groupName;
+                    fsmGroup.AddFSM(fsmKey, fsm);
+                    fsmGroupDict.Add(groupName, fsmGroup);
                 }
             }
             return fsm;
@@ -150,7 +153,8 @@ namespace Cosmos.FSM
                 }
                 else
                 {
-                    var fsmGroup = new FSMGroup();
+                    var fsmGroup = fsmGroupPool.Spawn();
+                    fsmGroup.GroupName = groupName;
                     fsmGroup.AddFSM(fsmKey, fsm);
                     fsmGroupDict.Add(groupName, fsmGroup);
                 }
@@ -194,15 +198,20 @@ namespace Cosmos.FSM
         {
             if (!fsmGroupDict.TryRemove(groupName, out var fsmGroup))
                 return;
-            fsmGroup.AbortGroup();
+            var dict = fsmGroup.FSMDict;
+            foreach (var fsm in dict)
+            {
+                fsm.Value.GroupName = string.Empty;
+            }
+            fsmGroupPool.Despawn(fsmGroup);
         }
         /// <summary>
         /// 是否拥有指定类型的状态机集合
         /// </summary>
         /// <returns>是否存在</returns>
-        public bool HasFSMGroup(string name)
+        public bool HasFSMGroup(string groupName)
         {
-            return fsmGroupDict.ContainsKey(name);
+            return fsmGroupDict.ContainsKey(groupName);
         }
         /// <summary>
         /// 为一个状态机设置组别；
@@ -247,6 +256,7 @@ namespace Cosmos.FSM
             fsmCache.Clear();
             fsmDict.Clear();
             fsmGroupDict.Clear();
+            fsmGroupPool.Clear();
         }
         #endregion
         protected override void OnInitialization()
@@ -265,7 +275,5 @@ namespace Cosmos.FSM
                     fsm.Value.OnRefresh();
                 }
         }
-
- 
     }
 }

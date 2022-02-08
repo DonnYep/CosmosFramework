@@ -1,5 +1,4 @@
-﻿using System;
-namespace Cosmos.FSM
+﻿namespace Cosmos.FSM
 {
     /// <summary>
     /// 状态机组； 
