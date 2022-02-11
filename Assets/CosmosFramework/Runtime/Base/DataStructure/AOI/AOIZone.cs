@@ -3,19 +3,23 @@ using System.Collections.Generic;
 
 namespace Cosmos
 {
+    /// <summary>
+    ///跳表实现的AOIZone； 
+    /// </summary>
     public partial class AOIZone<T>
-        where T : IComparable
+        where T : IComparable<T>
     {
-        Dictionary<T, AOIEntity> entityDict = new Dictionary<T, AOIEntity>();
-        float viewDistance;
+        Dictionary<long, AOIEntity> entityDict = new Dictionary<long, AOIEntity>();
+        Queue<AOIEntity> entityCacheQueue = new Queue<AOIEntity>();
+
         /// <summary>
         /// X轴跳表；
         /// </summary>
-        readonly SkipList<float> xLinks;
+        readonly AOISkipList<AOIEntity, float> xLinks;
         /// <summary>
         /// Y轴跳表；
         /// </summary>
-        readonly SkipList<float> yLinks;
+        readonly AOISkipList<AOIEntity, float> yLinks;
         /// <summary>
         /// 当前AOI的矩形区域；
         /// </summary>
@@ -39,130 +43,469 @@ namespace Cosmos
         /// <summary>
         /// 节点间可视距离；
         /// </summary>
-        public float ViewDistance
-        {
-            get { return viewDistance; }
-            set
-            {
-                if (value <= 0)
-                    viewDistance = 0;
-                viewDistance = value;
-            }
-        }
-
-        IObjectHelper objectHelper;
-        public AOIZone(int width, int height, float offsetX, float offsetY, IObjectHelper objectHelper)
+        public AOIZone(int width, int height, float offsetX, float offsetY)
         {
             this.OffsetX = offsetX;
             this.OffsetY = offsetY;
-            this.objectHelper = objectHelper;
             var centerX = offsetX + width / 2;
             var centerY = offsetY + height / 2;
             ZoneSquare = new Rectangle(centerX, centerY, width, height);
-            xLinks = new SkipList<float>((t) => objectHelper.GetCenterX(t));
-            yLinks = new SkipList<float>((t) => objectHelper.GetCenterX(t));
+            xLinks = new AOISkipList<AOIEntity, float>(t => t.PositionX);
+            yLinks = new AOISkipList<AOIEntity, float>(t => t.PositionY);
         }
-        public AOIZone(int sideLength, float offsetX, float offsetY, IObjectHelper objectHelper)
-            : this(sideLength, sideLength, offsetX, offsetY, objectHelper) { }
-
-        public bool IsOverlapping(T obj)
-        {
-            var posX = objectHelper.GetCenterX(obj);
-            var posY = objectHelper.GetCenterY(obj);
-            return IsOverlapping(posX, posY);
-        }
+        public AOIZone(int sideLength, float offsetX, float offsetY)
+            : this(sideLength, sideLength, offsetX, offsetY) { }
         public bool IsOverlapping(float posX, float posY)
         {
             if (posX < ZoneSquare.Left || posX > ZoneSquare.Right) return false;
             if (posY < ZoneSquare.Bottom || posY > ZoneSquare.Top) return false;
             return true;
         }
-        public bool Insert(T obj)
+        public bool Add(long key, T obj, float viewDistance, float posX, float posY)
         {
-            if (!entityDict.ContainsKey(obj))
+            if (!entityDict.ContainsKey(key))
             {
-                xLinks.Add(obj);
-                yLinks.Add(obj);
-                var xNode = xLinks.Find(obj);
-                var yNode = yLinks.Find(obj);
-                //TODO
-                //UNDONE
-                return true;
-            }
-            return false;
-        }
-        public bool Remove(T obj)
-        {
-            if (entityDict.TryRemove(obj, out var entity))
-            {
-                xLinks.Remove(obj);
-                yLinks.Remove(obj);
-                var views = entity.ViewEntity;
-                foreach (var ve in views)
+                if (!IsOverlapping(posX, posY))
+                    return false;
+                var entity = AcquireEntity(key, obj);
+
+                xLinks.Add(entity);
+                yLinks.Add(entity);
+
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+
+                entity.XNode = xNode;
+                entity.YNode = yNode;
+
+                entityDict.Add(key, entity);
+
+                entity.PositionX = posX;
+                entity.PositionY = posY;
+
+                entity.ViewDistance = viewDistance;
+                #region xLink
+                for (int i = 0; i < 2; i++)
                 {
-                    ve.OnEntityExit(entity);
+                    var curNode = i == 0 ? xNode.Next : xNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(xNode, curNode);
+                        if (distance > entity.ViewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            entity.ViewEntity.Add(entity);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
                 }
-                //TODO
+                #endregion
+
+                #region yLink
+                for (int i = 0; i < 2; i++)
+                {
+                    var curNode = i == 0 ? yNode.Next : yNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(yNode, curNode);
+                        if (distance > entity.ViewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            entity.ViewEntity.Add(entity);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
+                }
+                #endregion
+
                 return true;
             }
             return false;
         }
-        public bool Contains(T obj)
+        public bool Add(long key, T obj, float viewDistance)
         {
-            return entityDict.ContainsKey(obj);
+            return Add(key, obj, 0, 0, viewDistance);
+        }
+        public bool Remove(long key, out T value)
+        {
+            value = default(T);
+            if (entityDict.TryRemove(key, out var entity))
+            {
+                value = entity.Handle;
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+
+                entity.XNode = xNode;
+                entity.YNode = yNode;
+
+                #region xLink
+                for (int i = 0; i < 2; i++)
+                {
+                    var curNode = i == 0 ? xNode.Next : xNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(xNode, curNode);
+                        if (distance > entity.ViewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            entity.ViewEntity.Add(entity);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
+                }
+                #endregion
+
+                #region yLink
+                for (int i = 0; i < 2; i++)
+                {
+                    var curNode = i == 0 ? yNode.Next : yNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(yNode, curNode);
+                        if (distance > entity.ViewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            entity.ViewEntity.Add(entity);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
+                }
+                #endregion
+
+                xLinks.Remove(entity);
+                yLinks.Remove(entity);
+                ReleaseEntity(entity);
+                return true;
+            }
+            return false;
         }
         /// <summary>
-        /// 轮询刷新节点；
+        /// 获取值；
         /// </summary>
-        public void Refresh()
+        /// <param name="key">实体的key</param>
+        /// <param name="value">获取到的值</param>
+        /// <returns>是否存在</returns>
+        public bool PeekValue(long key, out T value)
         {
+            value = default(T);
+            var rst = entityDict.TryGetValue(key, out var entity);
+            value = entity.Handle;
+            return rst;
+        }
+        /// <summary>
+        /// 获取值；
+        /// </summary>
+        /// <param name="key">实体的key</param>
+        /// <param name="entity">获取到的实体</param>
+        /// <returns>是否存在</returns>
+        public bool PeekEntity(long key, out AOIEntity entity)
+        {
+            return entityDict.TryGetValue(key, out entity);
+        }
+        /// <summary>
+        /// 是否存在实体；
+        /// </summary>
+        /// <param name="key">实体的key</param>
+        /// <returns>是否存在</returns>
+        public bool Contains(long key)
+        {
+            return entityDict.ContainsKey(key);
+        }
+        /// <summary>
+        /// 移动；
+        /// </summary>
+        /// <param name="key">实体的key</param>
+        /// <param name="posX">X方向新的位置点</param>
+        /// <param name="poxY">Y方向新的位置点</param>
+        public void Move(long key, float posX, float poxY)
+        {
+            if (entityDict.TryRemove(key, out var entity))
+            {
+                bool isMoved = false;
+                if (!IsOverlapping(posX, poxY))
+                    return;
+                if (Math.Abs(entity.PositionX - posX) > 0)
+                {
+                    entity.PositionX = posX;
+                    xLinks.Update(entity);
+                    isMoved = true;
+                }
+                if (Math.Abs(entity.PositionY - poxY) > 0)
+                {
+                    entity.PositionY = poxY;
+                    yLinks.Update(entity);
+                    isMoved = true;
+                }
 
+                if (!isMoved)
+                    return;
+
+                entity.SwapViewEntity();
+
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+
+                #region xLink
+                for (int i = 0; i < 2; i++)
+                {
+                    var curNode = i == 0 ? xNode.Next : xNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(xNode, curNode);
+                        if (distance > entity.ViewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            //X轴距离之内的实体
+                            entity.ViewEntity.Add(curNode.Value);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
+                }
+                #endregion
+
+                #region yLink
+                for (int i = 0; i < 2; i++)
+                {
+                    var curNode = i == 0 ? yNode.Next : yNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(yNode, curNode);
+                        if (distance > entity.ViewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            //Y轴距离之内的实体
+                            entity.ViewEntity.Add(curNode.Value);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
+                }
+                #endregion
+            }
+        }
+        public void Move(long key, float viewDistance, float posX, float poxY)
+        {
+            if (entityDict.TryRemove(key, out var entity))
+            {
+                bool isMoved = false;
+                if (!IsOverlapping(posX, poxY))
+                    return;
+                if (Math.Abs(entity.PositionX - posX) > 0)
+                {
+                    entity.PositionX = posX;
+                    xLinks.Update(entity);
+                    isMoved = true;
+                }
+                if (Math.Abs(entity.PositionY - poxY) > 0)
+                {
+                    entity.PositionY = poxY;
+                    yLinks.Update(entity);
+                    isMoved = true;
+                }
+
+                if (!isMoved)
+                    return;
+                entity.ViewDistance = viewDistance;
+                entity.SwapViewEntity();
+
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+
+                #region xLink
+                for (int i = 0; i < 2; i++)
+                {
+                    var curNode = i == 0 ? xNode.Next : xNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(xNode, curNode);
+                        if (distance > entity.ViewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            //X轴距离之内的实体
+                            entity.ViewEntity.Add(curNode.Value);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
+                }
+                #endregion
+
+                #region yLink
+                for (int i = 0; i < 2; i++)
+                {
+                    var curNode = i == 0 ? yNode.Next : yNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(yNode, curNode);
+                        if (distance > entity.ViewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            //Y轴距离之内的实体
+                            entity.ViewEntity.Add(curNode.Value);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
+                }
+                #endregion
+            }
         }
         /// <summary>
         /// 获取临近的对象；
         /// </summary>
-        /// <param name="obj">查找的对象</param>
-        /// <returns>获取到的临近对象</returns>
-        public T[] GetNeighbors(T obj,float viewDistance)
+        /// <param name="key">查找的key</param>
+        /// <param name="viewDistance">可视距离</param>
+        /// <param name="values">临近对象值集合</param>
+        public void GetNeighbors(long key, float viewDistance, ref HashSet<T> values)
         {
-            if (entityDict.TryGetValue(obj, out var entity))
+            if (values == null)
+                return;
+            if (entityDict.TryGetValue(key, out var entity))
             {
-
-            }
-
-            #region xLinks
-            var xNode = xLinks.Find(obj);
-            for (int i = 0; i < 2; i++)
-            {
-                var cur = i == 0 ? xNode.Next : xNode.Previous;
-                while (cur!=null)
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+                #region xLink
+                for (int i = 0; i < 2; i++)
                 {
-                    //超出距离则break；
-                    if (Distance(cur, xNode) > viewDistance)
+                    var curNode = i == 0 ? xNode.Next : xNode.Previous;
+                    while (curNode != null)
                     {
-                        break;
+                        var distance = AbsDistance(xNode, curNode);
+                        if (distance > viewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            values.Add(curNode.Value.Handle);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
                     }
- 
                 }
+                #endregion
+
+                #region yLink
+                for (int i = 0; i < 2; i++)
+                {
+                    var curNode = i == 0 ? yNode.Next : yNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(yNode, curNode);
+                        if (distance > viewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            values.Add(curNode.Value.Handle);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
+                }
+                #endregion
             }
-            #endregion
-
-            #region yLinks
-            var yNode = yLinks.Find(obj);
-
-
-            #endregion
-
-
-            return null;
         }
-        public Rectangle GetArea(T obj)
+        /// <summary>
+        /// 获取临近的对象；
+        /// </summary>
+        /// <param name="key">查找的key</param>
+        /// <param name="viewDistance">可视距离</param>
+        /// <param name="entities">临近对象实体集合</param>
+        public void GetNeighbors(long key, float viewDistance, ref HashSet<AOIEntity> entities)
         {
-            return Rectangle.Zero;
+            if (entities == null)
+                return;
+            if (entityDict.TryGetValue(key, out var entity))
+            {
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+                #region xLink
+                for (int i = 0; i < 2; i++)
+                {
+                    var curNode = i == 0 ? xNode.Next : xNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(xNode, curNode);
+                        if (distance > viewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            entities.Add(curNode.Value);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
+                }
+                #endregion
+
+                #region yLink
+                for (int i = 0; i < 2; i++)
+                {
+                    var curNode = i == 0 ? yNode.Next : yNode.Previous;
+                    while (curNode != null)
+                    {
+                        var distance = AbsDistance(yNode, curNode);
+                        if (distance > viewDistance)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            entities.Add(curNode.Value);
+                        }
+                        curNode = i == 0 ? curNode.Next : curNode.Previous;
+                    }
+                }
+                #endregion
+            }
         }
-        float Distance(SkipListNode a,SkipListNode b)
+        double AbsDistance(AOISkipList<AOIEntity, float>.AOISkipListNode a, AOISkipList<AOIEntity, float>.AOISkipListNode b)
         {
-            return 0;
+            var xDiff = Math.Abs(a.Value.PositionX - b.Value.PositionX);
+            var yDiff = Math.Abs(a.Value.PositionY - b.Value.PositionY);
+            return Math.Pow(xDiff * xDiff + yDiff * yDiff, 0.5);
+        }
+        AOIEntity AcquireEntity(long key, T value)
+        {
+            AOIEntity entity = null;
+            if (entityCacheQueue.Count > 0)
+            {
+                entity = entityCacheQueue.Dequeue();
+                entity.Handle = value;
+                entity.EntityKey = key;
+                return entity;
+            }
+            entity = new AOIEntity();
+            entity.Handle = value;
+            entity.EntityKey = key;
+            return entity;
+        }
+        void ReleaseEntity(AOIEntity entity)
+        {
+            entity.Dispose();
+            entityCacheQueue.Enqueue(entity);
         }
     }
 }
