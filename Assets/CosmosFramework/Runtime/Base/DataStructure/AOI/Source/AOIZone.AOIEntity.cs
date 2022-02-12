@@ -16,15 +16,15 @@ namespace Cosmos
 
             float viewDistance;
 
-            HashSet<AOIEntity> viewEntity;
+            HashSet<AOIEntity> viewEntities;
             /// <summary>
             /// 实体的备份；
             /// </summary>
-            HashSet<AOIEntity> viewEntityBak;
+            HashSet<AOIEntity> viewEntitiesBak;
             public AOIEntity()
             {
-                viewEntity = new HashSet<AOIEntity>();
-                viewEntityBak = new HashSet<AOIEntity>();
+                viewEntities = new HashSet<AOIEntity>();
+                viewEntitiesBak = new HashSet<AOIEntity>();
             }
             public float ViewDistance
             {
@@ -54,30 +54,30 @@ namespace Cosmos
             /// <summary>
             /// 当前能够看见的实体；
             /// </summary>
-            public HashSet<AOIEntity> ViewEntity { get { return viewEntity; } }
+            public HashSet<AOIEntity> ViewEntities { get { return viewEntities; } }
             /// <summary>
             /// 保持视线内的实体集合；
             /// </summary>
-            public IEnumerable<AOIEntity> Move { get { return ViewEntity.Union(viewEntityBak); } }
+            public IEnumerable<AOIEntity> Staying { get { return ViewEntities.Union(viewEntitiesBak); } }
             /// <summary>
             /// 离开视线的实体集合
             /// </summary>
-            public IEnumerable<AOIEntity> Leave { get { return viewEntityBak.Except(ViewEntity); } }
+            public IEnumerable<AOIEntity> Exited { get { return viewEntitiesBak.Except(ViewEntities); } }
             /// <summary>
             /// 新进入视线的实体集合；
             /// </summary>
-            public IEnumerable<AOIEntity> Enter { get { return ViewEntity.Except(viewEntityBak); } }
+            public IEnumerable<AOIEntity> Entered { get { return ViewEntities.Except(viewEntitiesBak); } }
             public void SwapViewEntity()
             {
-                viewEntityBak.Clear();
-                var tmp = viewEntity;
-                viewEntity = viewEntityBak;
-                viewEntityBak = tmp;
+                viewEntitiesBak.Clear();
+                var tmp = viewEntities;
+                viewEntities = viewEntitiesBak;
+                viewEntitiesBak = tmp;
             }
             public void Dispose()
             {
-                ViewEntity.Clear();
-                viewEntityBak.Clear();
+                ViewEntities.Clear();
+                viewEntitiesBak.Clear();
                 entityKey = 0;
             }
 
