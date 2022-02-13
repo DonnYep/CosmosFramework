@@ -32,13 +32,13 @@ namespace Cosmos
         }
         public static readonly SquareFix64 Zero = new SquareFix64 (Fix64.Zero, Fix64.Zero, Fix64.Zero);
         public static readonly SquareFix64 One = new SquareFix64(Fix64.One, Fix64.One, Fix64.One);
-        public static bool operator ==(SquareFix64 a, SquareFix64 b)
+        public static bool operator ==(SquareFix64 lhs, SquareFix64 rhs)
         {
-            return a.Equals(b);
+            return lhs.Equals(rhs);
         }
-        public static bool operator !=(SquareFix64 a, SquareFix64 b)
+        public static bool operator !=(SquareFix64 lhs, SquareFix64 rhs)
         {
-            return !a.Equals(b);
+            return !lhs.Equals(rhs);
         }
         public override bool Equals(object obj)
         {

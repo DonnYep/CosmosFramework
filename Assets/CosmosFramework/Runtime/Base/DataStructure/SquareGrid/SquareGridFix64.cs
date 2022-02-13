@@ -37,13 +37,13 @@ namespace Cosmos
             }
             public static readonly Square Zero = new Square(Fix64.Zero, Fix64.Zero, Fix64.Zero);
             public static readonly Square One = new Square(Fix64.One, Fix64.One, Fix64.One);
-            public static bool operator ==(Square a, Square b)
+            public static bool operator ==(Square lhs, Square rhs)
             {
-                return a.Equals(b);
+                return lhs.Equals(rhs);
             }
-            public static bool operator !=(Square a, Square b)
+            public static bool operator !=(Square lhs, Square rhs)
             {
-                return !a.Equals(b);
+                return !lhs.Equals(rhs);
             }
             public override bool Equals(object obj)
             {

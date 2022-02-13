@@ -20,13 +20,13 @@ namespace Cosmos
             this.value1 = value1;
             this.value2 = value2;
         }
-        public static bool operator ==(GenericValuePair<TValue1, TValue2> a, GenericValuePair<TValue1, TValue2> b)
+        public static bool operator ==(GenericValuePair<TValue1, TValue2> lhs, GenericValuePair<TValue1, TValue2> rhs)
         {
-            return a.Equals(b);
+            return lhs.Equals(rhs);
         }
-        public static bool operator !=(GenericValuePair<TValue1, TValue2> a, GenericValuePair<TValue1, TValue2> b)
+        public static bool operator !=(GenericValuePair<TValue1, TValue2> lhs, GenericValuePair<TValue1, TValue2> rhs)
         {
-            return !a.Equals(b);
+            return !lhs.Equals(rhs);
         }
         /// <summary>
         /// Equals方法需要注意，若在对象未覆写Equals时，值类型比较值是否相同，引用类型比较地址是否相同；

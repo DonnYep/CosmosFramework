@@ -25,13 +25,13 @@ namespace Cosmos
         {
             return type == other.type && _string == other._string;
         }
-        public static bool operator ==(TypeStringPair a, TypeStringPair b)
+        public static bool operator ==(TypeStringPair lhs, TypeStringPair rhs)
         {
-            return a.Equals(b);
+            return lhs.Equals(rhs);
         }
-        public static bool operator !=(TypeStringPair a, TypeStringPair b)
+        public static bool operator !=(TypeStringPair lhs, TypeStringPair rhs)
         {
-            return !(a == b);
+            return !(lhs == rhs);
         }
         public override bool Equals(object obj)
         {

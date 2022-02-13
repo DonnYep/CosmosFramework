@@ -26,7 +26,7 @@ namespace Cosmos
             /// <summary>
             /// 是否存在子节点；
             /// </summary>
-            public bool HasChild { get; set; }
+            public bool HasChild;
             /// <summary>
             /// TopRight Quadrant1
             /// </summary>
@@ -224,11 +224,11 @@ namespace Cosmos
                     return dstArr;
                 }
             }
-            public void OnQuarter()
+            public void OnSplit()
             {
                 ObjectSet.Clear();
             }
-            public void OnCombineQuad() { }
+            public void OnMerge() { }
             public int NodeMaxDepth()
             {
                 if (!HasChild)
@@ -252,6 +252,21 @@ namespace Cosmos
                         }
                     }
                     return depth;
+                }
+            }
+            public int NodeCount()
+            {
+                if (!HasChild)
+                {
+                    return 1;
+                }
+                else
+                {
+                    var trCount = TreeTRNode.NodeCount();
+                    var tlCount = TreeTLNode.NodeCount();
+                    var blCount = TreeBLNode.NodeCount();
+                    var brCount = TreeBRNode.NodeCount();
+                    return trCount + tlCount + blCount + brCount;
                 }
             }
             public void Release()

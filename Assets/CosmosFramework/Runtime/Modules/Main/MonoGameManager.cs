@@ -86,8 +86,6 @@ namespace Cosmos
         /// 默认延迟为0，表示立刻删除、
         /// 仅在场景中删除对应对象
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="t">默认参数，表示延迟</param>
         public static void KillObject(Object obj, float delay = 0)
         {
             GameObject.Destroy(obj, delay);
@@ -97,7 +95,6 @@ namespace Cosmos
         /// 会在内存中清理实例
         /// Editor适用
         /// </summary>
-        /// <param name="obj"></param>
         public static void KillObjectImmediate(Object obj)
         {
             GameObject.DestroyImmediate(obj);
@@ -105,8 +102,6 @@ namespace Cosmos
         /// <summary>
         /// 清除一组实例
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="objs"></param>
         public static void KillObjects<T>(List<T> objs) where T : Object
         {
             for (int i = 0; i < objs.Count; i++)

@@ -19,6 +19,7 @@ namespace Cosmos
         /// </summary>
         Node rootNode;
         HashSet<T> objectRemoveCache = new HashSet<T>();
+        Queue<Node> nodeCache = new Queue<Node>();
         /// <summary>
         /// 四叉树中对象的有效边界获取接口；
         /// </summary>
@@ -30,7 +31,7 @@ namespace Cosmos
         /// <summary>
         /// 节点数量；
         /// </summary>
-        public int NodeCount { get; private set; }
+        public int NodeCount { get { return rootNode.NodeCount(); } }
         /// <summary>
         /// 当前树的最大深度；
         /// </summary>
@@ -49,7 +50,7 @@ namespace Cosmos
             rootNode.Area = rectArea;
             rootNode.NodeDepth = 0;
         }
-        public QuadTree(float centerX, float centerY, float width, float height, IObjecBound boundHelper, int nodeObjectCapacity=10, int maxDepth=5)
+        public QuadTree(float centerX, float centerY, float width, float height, IObjecBound boundHelper, int nodeObjectCapacity = 10, int maxDepth = 5)
         {
             NodeObjectCapacity = nodeObjectCapacity;
             objectRectangleBound = boundHelper;
@@ -69,7 +70,7 @@ namespace Cosmos
             if (obj == null) throw new ArgumentNullException($"{nameof(obj)} is invalid !");
             if (rootNode.Remove(obj, out var node))
             {
-                CombineQuad(node);
+                Merge(node);
                 return true;
             }
             return false;
@@ -134,6 +135,10 @@ namespace Cosmos
             var objBound = GetObjectBound(obj);
             return rootNode.IsRectOverlapping(objBound);
         }
+        public void ClearNodeCache()
+        {
+            nodeCache.Clear();
+        }
         bool InsertObject(Node node, Rectangle objBound, T obj)
         {
             if (node.IsRectOverlapping(objBound))
@@ -148,7 +153,7 @@ namespace Cosmos
                     {
                         if (CurrentDepth < TreeMaxDepth)
                         {
-                            Quarter(node);
+                            Split(node);
                             return node.Insert(objBound, obj);
                         }
                         else
@@ -174,7 +179,7 @@ namespace Cosmos
         /// <summary>
         /// 检测此节点所在的区块是否可以合并；
         /// </summary>
-        void CombineQuad(Node node)
+        void Merge(Node node)
         {
             if (!node.HasChild)
             {
@@ -189,7 +194,8 @@ namespace Cosmos
                     {
                         Insert(obj);
                     }
-                    parent.OnCombineQuad();
+                    ReleaseNode(node);
+                    parent.OnMerge();
                 }
             }
         }
@@ -197,7 +203,7 @@ namespace Cosmos
         /// 将一个节点四等分化；
         /// </summary>
         /// <param name="node">被四等分化的节点</param>
-        void Quarter(Node node)
+        void Split(Node node)
         {
             int nextNodeDepth = node.NodeDepth + 1;
             if (CurrentDepth < nextNodeDepth)
@@ -213,7 +219,7 @@ namespace Cosmos
             {
                 Insert(obj);
             }
-            node.OnQuarter();
+            node.OnSplit();
         }
         bool PeekObjectNode(T obj, out Node node)
         {
@@ -226,12 +232,28 @@ namespace Cosmos
         }
         Node CreateNode(float x, float y, float width, float height, Node parent, int nodeDepth)
         {
-            var node = new Node();
+            var node = AcquireNode();
             node.Area = new Rectangle(x, y, width, height);
             node.Parent = parent;
             node.NodeDepth = nodeDepth;
             node.HasChild = false;
             return node;
+        }
+        Node AcquireNode()
+        {
+            if (nodeCache.Count > 0)
+            {
+                return nodeCache.Dequeue();
+            }
+            else
+            {
+                return new Node();
+            }
+        }
+        void ReleaseNode(Node node)
+        {
+            node.Release();
+            nodeCache.Enqueue(node);
         }
     }
 }

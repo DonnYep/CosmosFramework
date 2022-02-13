@@ -27,13 +27,13 @@ namespace Cosmos
             if (y > Top || y < Bottom) return false;
             return true;
         }
-        public static bool operator ==(RectangleFix64 a, RectangleFix64 b)
+        public static bool operator ==(RectangleFix64 lhs, RectangleFix64 rhs)
         {
-            return a.Equals(b);
+            return lhs.Equals(rhs);
         }
-        public static bool operator !=(RectangleFix64 a, RectangleFix64 b)
+        public static bool operator !=(RectangleFix64 lhs, RectangleFix64 rhs)
         {
-            return !a.Equals(b);
+            return !lhs.Equals(rhs);
         }
         public override bool Equals(object obj)
         {
