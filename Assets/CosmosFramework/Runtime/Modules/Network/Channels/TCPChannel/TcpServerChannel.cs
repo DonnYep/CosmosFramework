@@ -4,7 +4,6 @@ namespace Cosmos.Network
 {
     public class TcpServerChannel : INetworkServerChannel
     {
-        public const int MaxMessageSize = 1 << 14;//1024*16
         Server server;
         /// <summary>
         ///  check if the server is running
@@ -37,7 +36,7 @@ namespace Cosmos.Network
         public TcpServerChannel(string channelName, int port)
         {
             NetworkChannelKey = new NetworkChannelKey(channelName, $"localhost:{port}");
-            server = new Server(MaxMessageSize);
+            server = new Server(TcpConstants.MaxMessageSize);
             Log.Info = (s) => Utility.Debug.LogInfo(s);
             Log.Warning = (s) => Utility.Debug.LogWarning(s);
             Log.Error = (s) => Utility.Debug.LogError(s);

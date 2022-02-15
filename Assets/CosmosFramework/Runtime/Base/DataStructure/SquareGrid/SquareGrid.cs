@@ -4,7 +4,7 @@ namespace Cosmos
     /// <summary>
     /// 方形网格数据结构；
     /// </summary>
-    public struct SquareGrid
+    public struct SquareGrid : IEquatable<SquareGrid>
     {
         public struct Square : IEquatable<Square>
         {
@@ -222,6 +222,28 @@ namespace Cosmos
             if (posY < SquareGridArea.Bottom || posY > SquareGridArea.Top) return false;
             return true;
         }
+        public static bool operator ==(SquareGrid lhs, SquareGrid rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+        public static bool operator !=(SquareGrid lhs, SquareGrid rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+        public bool Equals(SquareGrid other)
+        {
+            return other.SquareGridArea == this.SquareGridArea && other.CellSection == this.CellSection
+                && other.CellSection == this.CellSection && other.OffsetX == this.OffsetX && other.OffsetY == this.OffsetY;
+        }
+        public override bool Equals(object obj)
+        {
+            return obj is SquareGrid && (Equals((SquareGrid)obj));
+        }
+        public override int GetHashCode()
+        {
+            var hashStr = $"{SquareGridArea}{CellSection}{CellSideLength}";
+            return hashStr.GetHashCode();
+        }
         bool IsOverlappingBufferZone(float posX, float posY)
         {
             if (posX < SquareGridArea.Left - BufferZoneRange || posX > SquareGridArea.Right + BufferZoneRange) return false;
@@ -247,5 +269,7 @@ namespace Cosmos
                 }
             }
         }
+
+
     }
 }

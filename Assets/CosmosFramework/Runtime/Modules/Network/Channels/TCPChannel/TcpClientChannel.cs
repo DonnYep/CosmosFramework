@@ -4,8 +4,6 @@ namespace Cosmos.Network
 {
     public class TcpClientChannel : INetworkClientChannel
     {
-        public const int MaxMessageSize = 1 << 14;//1024*16
-
         Client client;
         string channelName;
         public bool IsConnect { get { return client.Connected; } }
@@ -37,17 +35,16 @@ namespace Cosmos.Network
         public TcpClientChannel(string channelName)
         {
             this.channelName = channelName;
+            client = new Client(TcpConstants.MaxMessageSize);
             Log.Info = (s) => Utility.Debug.LogInfo(s);
             Log.Warning = (s) => Utility.Debug.LogWarning(s);
             Log.Error = (s) => Utility.Debug.LogError(s);
-
         }
         public void Connect(string ip, int port)
         {
             NetworkChannelKey = new NetworkChannelKey(channelName, $"{ip}:{port}");
             this.IPAddress = ip;
             this.Port = port;
-            client = new Client(MaxMessageSize);
             client.Connect(IPAddress, Port);
             client.OnData += OnReceiveDataHandler;
         }
