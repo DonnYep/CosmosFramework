@@ -21,6 +21,14 @@ namespace Cosmos
         {
             this.value = value;
         }
+        public virtual bool IsHeader()
+        {
+            return this.GetType() == typeof(SkipListNodeHeader<T>);
+        }
+        public virtual bool IsFooter()
+        {
+            return this.GetType() == typeof(SkipListNodeFooter<T>);
+        }
         public void Dispose()
         {
             value = default(T);
@@ -29,5 +37,15 @@ namespace Cosmos
             above = null;
             previous = null;
         }
+    }
+    public class SkipListNodeHeader<T> : SkipListNode<T>
+            where T : IComparable
+    {
+        public SkipListNodeHeader() : base(default(T)) { }
+    }
+    public class SkipListNodeFooter<T> : SkipListNode<T>
+        where T : IComparable
+    {
+        public SkipListNodeFooter() : base(default(T)) { }
     }
 }

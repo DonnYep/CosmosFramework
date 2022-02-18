@@ -315,7 +315,7 @@ where T : Component
         /// <param name="@this">同级别当前对象</param>
         /// <param name="includeSrc">是否包含本身</param>
         /// <returns>当前级别下除此对象的其他同级的对象</returns>
-        public static Transform[] Peers(this Transform @this, bool includeSrc = false)
+        public static Transform[] FindPeers(this Transform @this, bool includeSrc = false)
         {
             Transform parentTrans = @this.parent;
             var childTrans = parentTrans.GetComponentsInChildren<Transform>();
@@ -324,6 +324,13 @@ where T : Component
                 return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);
             else
                 return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
+        }
+        public static Transform FindPeer(this Transform @this,string peerNode)
+        {
+            Transform tran = @this.parent.Find(peerNode);
+            if (tran == null)
+                return null;
+            return tran;
         }
         /// <summary>
         /// 查找同级别下所有目标组件；

@@ -104,7 +104,5 @@ namespace Cosmos.Network
                 channel.TickRefresh();
             }
         }
-
-
     }
 }
