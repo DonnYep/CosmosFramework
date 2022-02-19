@@ -27,7 +27,7 @@ namespace Cosmos
         /// <summary>
         /// 当前AOI的矩形区域；
         /// </summary>
-        public Rectangle ZoneSquare { get; private set; }
+        public Rectangle AOIZoneArea { get; private set; }
         public int EntityCount { get { return entityDict.Count; } }
         public IEnumerable<AOIEntity> Entities { get { return entityDict.Values; } }
         public AOIZone(int width, int height) : this(width, height, 0, 0) { }
@@ -36,7 +36,7 @@ namespace Cosmos
         public AOIZone(int sideLength) : this(sideLength, sideLength, 0, 0) { }
         public AOIZone(int width, int height, float centerX, float centerY)
         {
-            ZoneSquare = new Rectangle(centerX, centerY, width, height);
+            AOIZoneArea = new Rectangle(centerX, centerY, width, height);
             entityDict = new Dictionary<long, AOIEntity>();
             entityCacheQueue = new Queue<AOIEntity>();
             xLinks = new AOISkipList<AOIEntity, float>(t => t.PositionX);
@@ -44,8 +44,8 @@ namespace Cosmos
         }
         public bool IsOverlapping(float posX, float posY)
         {
-            if (posX < ZoneSquare.Left || posX > ZoneSquare.Right) return false;
-            if (posY < ZoneSquare.Bottom || posY > ZoneSquare.Top) return false;
+            if (posX < AOIZoneArea.Left || posX > AOIZoneArea.Right) return false;
+            if (posY < AOIZoneArea.Bottom || posY > AOIZoneArea.Top) return false;
             return true;
         }
         public bool Add(long key, T obj)
@@ -155,13 +155,7 @@ namespace Cosmos
             {
                 bool isMoved = false;
                 if (!IsOverlapping(posX, poxY))
-                {
-                    xLinks.Remove(entity);
-                    yLinks.Remove(entity);
-                    entityDict.Remove(key);
-                    ReleaseEntity(entity);
                     return;
-                }
                 if (Math.Abs(entity.PositionX - posX) > 0)
                 {
                     entity.PositionX = posX;
@@ -177,6 +171,25 @@ namespace Cosmos
 
                 if (!isMoved)
                     return;
+
+                entity.SwapViewEntity();
+
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+
+                CheckEntitysNeighbor(xNode, entity);
+                CheckEntitysNeighbor(yNode, entity);
+            }
+        }
+        /// <summary>
+        /// 刷新AOIZone内的实体对象；
+        /// </summary>
+        public void Refresh()
+        {
+            foreach (var entity in entityDict.Values)
+            {
+                xLinks.Update(entity);
+                yLinks.Update(entity);
 
                 entity.SwapViewEntity();
 
@@ -266,7 +279,8 @@ namespace Cosmos
                         }
                         else
                         {
-                            dstEntity.ViewEntities.Add(curNode.Value);
+                            if (curNode.Value.EntityKey != dstNode.Value.EntityKey)
+                                dstEntity.ViewEntities.Add(curNode.Value);
                         }
                     }
                     curNode = i == 0 ? curNode.Next : curNode.Previous;
@@ -296,7 +310,7 @@ namespace Cosmos
                 }
             }
         }
-        void GetNeighborNodeValue(AOISkipList<AOIEntity, float >.AOISkipListNode dstNode, float viewDistance, ref HashSet<T> values)
+        void GetNeighborNodeValue(AOISkipList<AOIEntity, float>.AOISkipListNode dstNode, float viewDistance, ref HashSet<T> values)
         {
             for (int i = 0; i < 2; i++)
             {
