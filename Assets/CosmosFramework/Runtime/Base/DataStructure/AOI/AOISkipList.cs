@@ -61,10 +61,6 @@ namespace Cosmos
         int nodeCount;
         int maxLevels = int.MaxValue;
         /// <summary>
-        /// 跳表节点缓存；
-        /// </summary>
-        Queue<AOISkipListNode> cachedNodes;
-        /// <summary>
         /// 当前跳表层数；
         /// </summary>
         public int Level { get { return level; } }
@@ -80,10 +76,6 @@ namespace Cosmos
         /// </summary>
         public AOISkipListNode Head { get { return bottomLeft; } }
         /// <summary>
-        /// 节点缓存数量；
-        /// </summary>
-        public int CachedNodeCount { get { return cachedNodes.Count; } }
-        /// <summary>
         /// 比较器；
         /// </summary>
         Func<T, K> handler;
@@ -95,7 +87,6 @@ namespace Cosmos
             level = 1;
             nodeCount = 0;
             random = new Random();
-            cachedNodes = new Queue<AOISkipListNode>();
         }
         public void Add(T value)
         {
@@ -137,7 +128,7 @@ namespace Cosmos
                     else
                         break;// nextNode节点的值大于等于当前插入的值
                 }
-                var newNode = AcquireNode(value);
+                var newNode = new AOISkipListNode(value);
                 newNode.Next = currentNode.Next;
                 newNode.Previous = currentNode;
                 newNode.Next.Previous = newNode;
@@ -165,7 +156,6 @@ namespace Cosmos
                     this.Remove(currentNode);
                 currentNode = nextNode;
             }
-            cachedNodes.Clear();
         }
         public bool Contains(T value)
         {
@@ -214,7 +204,7 @@ namespace Cosmos
                     nextNode.Previous = previousNode;
 
                     var belowNode = currentNodeDown.Below;
-                    ReleaseNode(currentNodeDown);
+                    currentNodeDown.Dispose();
                     currentNodeDown = belowNode;
                 }
                 nodeCount--;
@@ -292,13 +282,6 @@ namespace Cosmos
             }
         }
         /// <summary>
-        /// 清除跳表节点缓存；
-        /// </summary>
-        public void ClearCachedNodes()
-        {
-            cachedNodes.Clear();
-        }
-        /// <summary>
         ///获取节点的高度； 
         /// </summary>
         public int GetHeight(AOISkipListNode valueNode)
@@ -368,25 +351,6 @@ namespace Cosmos
             header.Next = footer;
             footer.Previous = header;
             return header;
-        }
-        AOISkipListNode AcquireNode(T value)
-        {
-            AOISkipListNode node = null;
-            if (cachedNodes.Count > 0)
-            {
-                node = cachedNodes.Dequeue();
-                node.Value = value;
-            }
-            else
-            {
-                node = new AOISkipListNode(value);
-            }
-            return node;
-        }
-        void ReleaseNode(AOISkipListNode node)
-        {
-            node.Dispose();
-            cachedNodes.Enqueue(node);
         }
         /// <summary>
         /// 跳表迭代对象，遍历最低一层的跳表；

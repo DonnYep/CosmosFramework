@@ -50,15 +50,48 @@ namespace Cosmos
             if (posY < AOIZoneArea.Bottom || posY > AOIZoneArea.Top) return false;
             return true;
         }
-        public bool Add(long key, T obj)
+        public void AddOrUpdate(long key, T obj)
         {
-            return Add(key, obj, Fix64.One);
+            AddOrUpdate(key, obj, Fix64.One);
         }
-        public bool Add(long key, T obj, Fix64 viewDistance)
+        public void AddOrUpdate(long key, T obj, Fix64 viewDistance)
         {
-            return Add(key, obj, viewDistance, Fix64.Zero, Fix64.Zero);
+            AddOrUpdate(key, obj, viewDistance, Fix64.Zero, Fix64.Zero);
         }
-        public bool Add(long key, T obj, Fix64 viewDistance, Fix64 posX, Fix64 posY)
+        public void AddOrUpdate(long key, T obj, Fix64 viewDistance, Fix64 posX, Fix64 posY)
+        {
+            if (!IsOverlapping(posX, posY))
+                return;
+            var entity = AcquireEntity(key, obj);
+
+            xLinks.Add(entity);
+            yLinks.Add(entity);
+
+            var xNode = xLinks.FindLowest(entity);
+            var yNode = yLinks.FindLowest(entity);
+
+            entity.XNode = xNode;
+            entity.YNode = yNode;
+
+            entityDict.TryAdd(key, entity);
+
+            entity.PositionX = posX;
+            entity.PositionY = posY;
+
+            entity.ViewDistance = viewDistance;
+
+            CheckEntitysNeighbor(xNode, entity);
+            CheckEntitysNeighbor(yNode, entity);
+        }
+        public bool TryAdd(long key, T obj)
+        {
+            return TryAdd(key, obj, Fix64.One);
+        }
+        public bool TryAdd(long key, T obj, Fix64 viewDistance)
+        {
+            return TryAdd(key, obj, viewDistance, Fix64.Zero, Fix64.Zero);
+        }
+        public bool TryAdd(long key, T obj, Fix64 viewDistance, Fix64 posX, Fix64 posY)
         {
             if (!entityDict.ContainsKey(key))
             {
@@ -75,7 +108,7 @@ namespace Cosmos
                 entity.XNode = xNode;
                 entity.YNode = yNode;
 
-                entityDict.Add(key, entity);
+                entityDict.TryAdd(key, entity);
 
                 entity.PositionX = posX;
                 entity.PositionY = posY;
@@ -84,7 +117,6 @@ namespace Cosmos
 
                 CheckEntitysNeighbor(xNode, entity);
                 CheckEntitysNeighbor(yNode, entity);
-
                 return true;
             }
             return false;
@@ -184,13 +216,14 @@ namespace Cosmos
             }
         }
         /// <summary>
-        /// 刷新AOIZone内的实体对象；
+        /// 对AOIZone内的实体对象进行强制更新；
         /// </summary>
         public void Refresh()
         {
             foreach (var entity in entityDict.Values)
             {
                 xLinks.Update(entity);
+
                 yLinks.Update(entity);
 
                 entity.SwapViewEntity();
@@ -219,6 +252,7 @@ namespace Cosmos
 
                 GetNeighborNodeValue(xNode, viewDistance, ref values);
                 GetNeighborNodeValue(yNode, viewDistance, ref values);
+                values.Remove(entity.Handle);
             }
         }
         /// <summary>
@@ -238,7 +272,77 @@ namespace Cosmos
 
                 GetNeighborNodeEntities(xNode, viewDistance, ref entities);
                 GetNeighborNodeEntities(yNode, viewDistance, ref entities);
+                entities.Remove(entity);
             }
+        }
+        public void GetNeighbors(long key, ref HashSet<AOIEntity> entities)
+        {
+            if (entities == null)
+                return;
+            if (entityDict.TryGetValue(key, out var entity))
+            {
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+
+                GetNeighborNodeEntities(xNode, entity.ViewDistance, ref entities);
+                GetNeighborNodeEntities(yNode, entity.ViewDistance, ref entities);
+                entities.Remove(entity);
+            }
+        }
+        public void GetNeighbors(long key, ref HashSet<T> values)
+        {
+            if (values == null)
+                return;
+            if (entityDict.TryGetValue(key, out var entity))
+            {
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+
+                GetNeighborNodeValue(xNode, entity.ViewDistance, ref values);
+                GetNeighborNodeValue(yNode, entity.ViewDistance, ref values);
+                values.Remove(entity.Handle);
+            }
+        }
+        /// <summary>
+        ///右值实体是否在左值实体的视野范围之内；
+        /// </summary>
+        /// <param name="lhskey">左值Key</param>
+        /// <param name="rhsKey">右值Key</param>
+        /// <param name="lhsViewDistance">左值的视野距离</param>
+        /// <returns>是否在视野内</returns>
+        public bool IsEntityInView(long lhskey, long rhsKey, Fix64 lhsViewDistance)
+        {
+            if (!PeekEntity(lhskey, out var lhsEntity))
+                return false;
+            if (!PeekEntity(rhsKey, out var rhsEntity))
+                return false;
+            var lhsXNode = xLinks.FindLowest(lhsEntity);
+            var lhsYNode = yLinks.FindLowest(lhsEntity);
+            var rhsXNode = xLinks.FindLowest(rhsEntity);
+            var rhsYNode = yLinks.FindLowest(rhsEntity);
+            if ((Fix64)AbsDistance(lhsXNode, rhsXNode) > lhsViewDistance) return false;
+            if ((Fix64)AbsDistance(lhsYNode, rhsYNode) > lhsViewDistance) return false;
+            return true;
+        }
+        /// <summary>
+        ///右值实体是否在左值实体的视野范围之内；
+        /// </summary>
+        /// <param name="lhskey">左值Key</param>
+        /// <param name="rhsKey">右值Key</param>
+        /// <returns>是否在视野内</returns>
+        public bool IsEntityInView(long lhskey, long rhsKey)
+        {
+            if (!PeekEntity(lhskey, out var lhsEntity))
+                return false;
+            if (!PeekEntity(rhsKey, out var rhsEntity))
+                return false;
+            var lhsXNode = xLinks.FindLowest(lhsEntity);
+            var lhsYNode = yLinks.FindLowest(lhsEntity);
+            var rhsXNode = xLinks.FindLowest(rhsEntity);
+            var rhsYNode = yLinks.FindLowest(rhsEntity);
+            if ((Fix64)AbsDistance(lhsXNode, rhsXNode) > lhsEntity.ViewDistance) return false;
+            if ((Fix64)AbsDistance(lhsYNode, rhsYNode) > lhsEntity.ViewDistance) return false;
+            return true;
         }
         double AbsDistance(AOISkipList<AOIEntity, Fix64>.AOISkipListNode lhs, AOISkipList<AOIEntity, Fix64>.AOISkipListNode rhs)
         {
