@@ -178,6 +178,32 @@ namespace Cosmos
             return entityDict.ContainsKey(key);
         }
         /// <summary>
+        /// 刷新位置；
+        /// </summary>
+        /// <param name="key">实体的key</param>
+        /// <param name="posX">X方向新的位置点</param>
+        /// <param name="poxY">Y方向新的位置点</param>
+        public void Refresh(long key, Fix64 posX, Fix64 poxY)
+        {
+            if (entityDict.TryGetValue(key, out var entity))
+            {
+                if (!IsOverlapping(posX, poxY))
+                    return;
+                entity.PositionX = posX;
+                xLinks.Update(entity);
+                entity.PositionY = poxY;
+                yLinks.Update(entity);
+
+                entity.SwapViewEntity();
+
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+
+                CheckEntitysNeighbor(xNode, entity);
+                CheckEntitysNeighbor(yNode, entity);
+            }
+        }
+        /// <summary>
         /// 移动；
         /// </summary>
         /// <param name="key">实体的key</param>

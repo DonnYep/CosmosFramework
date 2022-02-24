@@ -138,11 +138,11 @@ namespace Cosmos.UI
         /// <summary>
         /// 获取UIForm；
         /// </summary>
-        T PeekUIForm<T>(string uiFormName) where T : class,IUIForm;
+        bool PeekUIForm(string uiFormName, out IUIForm uiForm);
         /// <summary>
         /// 获取UIForm；
         /// </summary>
-        IUIForm PeekUIForm(string uiFormName);
+        bool PeekUIForm<T>(string uiFormName, out T uiForm) where T : class, IUIForm;
         /// <summary>
         /// 通过条件选择组中的UIForm；
         /// </summary>

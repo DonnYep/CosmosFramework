@@ -10,7 +10,7 @@ namespace Cosmos.UI
      */
     //================================================
     [Module]
-    internal  sealed  partial class UIManager : Module, IUIManager
+    internal sealed partial class UIManager : Module, IUIManager
     {
         #region Properties
         /// <summary>
@@ -46,7 +46,7 @@ namespace Cosmos.UI
         {
             if (destroyOldOne)
                 GameObject.Destroy(UIRoot.gameObject);
-            var inct= this.Instance();
+            var inct = this.Instance();
             uiRoot.SetParent(inct.transform);
             UIRoot = uiRoot;
         }
@@ -110,7 +110,7 @@ namespace Cosmos.UI
             CheckUIAssetInfoValid(assetInfo, uiType);
             if (HasUIForm(assetInfo.UIAssetName))
             {
-                uiForm = PeekUIForm(assetInfo.UIAssetName);
+                PeekUIForm(assetInfo.UIAssetName, out uiForm);
                 ActiveUIForm(assetInfo.UIAssetName);
                 return uiForm;
             }
@@ -125,7 +125,7 @@ namespace Cosmos.UI
                     throw new ArgumentException($"UIGroup:{assetInfo.UIGroupName}---UIFormName: {assetInfo.UIAssetName}has already existed !");
                 else
                 {
-                    uiForm = PeekUIForm(assetInfo.UIAssetName);
+                    PeekUIForm(assetInfo.UIAssetName, out uiForm);
                     ActiveUIForm(assetInfo.UIAssetName);
                     return uiForm;
                 }
@@ -266,9 +266,9 @@ namespace Cosmos.UI
                 throw new ArgumentNullException("UIForm is invalid.");
             var uiFormName = uiForm.UIFormName;
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            if (uiFormDict.Remove(uiFormName,out var srcUIForm))
+            if (uiFormDict.Remove(uiFormName, out var srcUIForm))
             {
-                if(srcUIForm!=uiForm)
+                if (srcUIForm != uiForm)
                     throw new ArgumentException($"{uiFormName}'s ptr is not equal !");//指针不一致
                 if (!string.IsNullOrEmpty(uiForm.UIGroupName))
                 {
@@ -404,19 +404,21 @@ namespace Cosmos.UI
         /// <summary>
         /// 获取UIForm；
         /// </summary>
-        public T PeekUIForm<T>(string uiFormName)
+        public bool PeekUIForm<T>(string uiFormName, out T uiForm)
             where T : class, IUIForm
         {
-            return PeekUIForm(uiFormName) as T;
+            Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
+            var rst = uiFormDict.TryGetValue(uiFormName, out var form);
+            uiForm = form as T;
+            return rst;
         }
         /// <summary>
         /// 获取UIForm；
         /// </summary>
-        public IUIForm PeekUIForm(string uiFormName)
+        public bool PeekUIForm(string uiFormName, out IUIForm uiForm)
         {
-            CheckUIFormValid(uiFormName);
-            uiFormDict.TryGetValue(uiFormName, out var uiForm);
-            return uiForm;
+            Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
+            return uiFormDict.TryGetValue(uiFormName, out uiForm);
         }
         /// <summary>
         /// 通过条件选择组中的UIForm；

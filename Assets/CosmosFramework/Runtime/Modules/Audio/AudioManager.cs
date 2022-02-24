@@ -97,16 +97,14 @@ namespace Cosmos.Audio
         /// </summary>
         public void RegistAudio(AudioAssetInfo audioAssetInfo)
         {
-            var audioName = audioAssetInfo.AudioName;
-            var audioGroupName = audioAssetInfo.AudioGroupName;
-            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
+            Utility.Text.IsStringValid(audioAssetInfo.AudioName, "AudioName is invalid !");
             audioAssetHelper.LoadAudioAsync(audioAssetInfo, audioObj =>
              {
-                 if (audioObj != null && audioObj.AudioClip != null)
-                     OnAudioRegistSuccess(audioObj);
-                 else
-                     OnAudioRegistFailure(audioName, audioGroupName);
-             });
+                 OnAudioRegistSuccess(audioObj);
+             }, () =>
+              {
+                  OnAudioRegistFailure(audioAssetInfo.AudioName, audioAssetInfo.AudioGroupName);
+              });
         }
         /// <summary>
         /// 注销声音；

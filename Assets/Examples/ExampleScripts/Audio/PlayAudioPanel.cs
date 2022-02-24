@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Cosmos;
 using Cosmos.Audio;
 using UnityEngine.UI;
@@ -12,10 +10,10 @@ public class PlayAudioPanel : MonoBehaviour
     Button btnStop;
     void Awake()
     {
-        btnPlay = transform.Find("Play").GetComponent<Button>();
-        btnPause= transform.Find("Pause").GetComponent<Button>();
-        btnUnPause= transform.Find("Unpause").GetComponent<Button>();
-        btnStop= transform.Find("Stop").GetComponent<Button>();
+        btnPlay = transform.GetComponentInChildren<Button>("Play");
+        btnPause = transform.GetComponentInChildren<Button>("Pause");
+        btnUnPause = transform.GetComponentInChildren<Button>("Unpause");
+        btnStop = transform.GetComponentInChildren<Button>("Stop");
 
         btnPlay.onClick.AddListener(PlayAudio);
         btnPause.onClick.AddListener(PauseAudio);

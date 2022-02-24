@@ -15,18 +15,18 @@ namespace Cosmos
             var audioObject = new AudioObject(assetInfo.AudioName, clip);
             return audioObject;
         }
-        public Coroutine LoadAudioAsync(AudioAssetInfo assetInfo, Action<AudioObject> callback)
+        public Coroutine LoadAudioAsync(AudioAssetInfo assetInfo, Action<AudioObject> loadSuccess, Action loadFailure)
         {
             return ResourceManager.LoadAssetAsync<AudioClip>(assetInfo,clip=> 
             {
                 if (clip == null)
                 {
-                    callback?.Invoke(null);
+                    loadFailure?.Invoke();
                 }
                 else
                 {
                     var audioObject = new AudioObject(assetInfo.AudioName, clip);
-                    callback?.Invoke(audioObject);
+                    loadSuccess?.Invoke(audioObject);
                 }
             });
         }

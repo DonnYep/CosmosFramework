@@ -24,6 +24,8 @@ namespace Cosmos.Audio
         }
         public bool Equals(AudioObject other)
         {
+            if (AudioClip == null || other.AudioClip == null)
+                return false;
             return this.AudioClip == other.AudioClip && this.AudioName == other.AudioName
                 && this.AudioGroupName == other.AudioGroupName;
         }

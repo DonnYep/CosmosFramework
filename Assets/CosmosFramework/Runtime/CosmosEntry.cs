@@ -19,7 +19,10 @@ namespace Cosmos
 {
     public class CosmosEntry
     {
-        public int ModuleCount { get { return GameManager.ModuleCount; } }
+        /// <summary>
+        /// 当前模块数量；
+        /// </summary>
+        public static int ModuleCount { get { return GameManager.ModuleCount; } }
         /// <summary>
         /// 在初始化时是否打印Module的debug信息；
         /// </summary>
