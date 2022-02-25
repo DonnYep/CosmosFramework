@@ -212,11 +212,6 @@ namespace Cosmos
                 return true;
             }
         }
-        public void Update(T value)
-        {
-            Remove(value);
-            Add(value);
-        }
         public AOISkipListNode Find(T value)
         {
             var foundNode = this.topLeft;

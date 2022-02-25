@@ -155,7 +155,8 @@ namespace Cosmos
         {
             value = default(T);
             var rst = entityDict.TryGetValue(key, out var entity);
-            value = entity.Handle;
+            if (rst)
+                value = entity.Handle;
             return rst;
         }
         /// <summary>
@@ -189,10 +190,36 @@ namespace Cosmos
             {
                 if (!IsOverlapping(posX, poxY))
                     return;
+
+                xLinks.Remove(entity);
                 entity.PositionX = posX;
-                xLinks.Update(entity);
+                xLinks.Add(entity);
+
+                yLinks.Remove(entity);
                 entity.PositionY = poxY;
-                yLinks.Update(entity);
+                yLinks.Add(entity);
+
+                entity.SwapViewEntity();
+
+                var xNode = xLinks.FindLowest(entity);
+                var yNode = yLinks.FindLowest(entity);
+
+                CheckEntitysNeighbor(xNode, entity);
+                CheckEntitysNeighbor(yNode, entity);
+            }
+        }
+        /// <summary>
+        /// 对AOIZone内的实体对象进行强制更新；
+        /// </summary>
+        public void Refresh()
+        {
+            foreach (var entity in entityDict.Values)
+            {
+                xLinks.Remove(entity);
+                xLinks.Add(entity);
+
+                yLinks.Remove(entity);
+                yLinks.Add(entity);
 
                 entity.SwapViewEntity();
 
@@ -218,39 +245,20 @@ namespace Cosmos
                     return;
                 if ((entity.PositionX - posX) != Fix64.Zero)
                 {
+                    xLinks.Remove(entity);
                     entity.PositionX = posX;
-                    xLinks.Update(entity);
+                    xLinks.Add(entity);
                     isMoved = true;
                 }
                 if ((entity.PositionY - poxY) != Fix64.Zero)
                 {
+                    yLinks.Remove(entity);
                     entity.PositionY = poxY;
-                    yLinks.Update(entity);
+                    yLinks.Add(entity);
                     isMoved = true;
                 }
-
                 if (!isMoved)
                     return;
-
-                entity.SwapViewEntity();
-
-                var xNode = xLinks.FindLowest(entity);
-                var yNode = yLinks.FindLowest(entity);
-
-                CheckEntitysNeighbor(xNode, entity);
-                CheckEntitysNeighbor(yNode, entity);
-            }
-        }
-        /// <summary>
-        /// 对AOIZone内的实体对象进行强制更新；
-        /// </summary>
-        public void Refresh()
-        {
-            foreach (var entity in entityDict.Values)
-            {
-                xLinks.Update(entity);
-
-                yLinks.Update(entity);
 
                 entity.SwapViewEntity();
 
