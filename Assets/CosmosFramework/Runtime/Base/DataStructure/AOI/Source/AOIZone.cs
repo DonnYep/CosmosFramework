@@ -64,6 +64,9 @@ namespace Cosmos
                     return false;
                 var entity = AcquireEntity(key, obj);
 
+                entity.PositionX = posX;
+                entity.PositionY = posY;
+
                 xLinks.Add(entity);
                 yLinks.Add(entity);
 
@@ -75,14 +78,10 @@ namespace Cosmos
 
                 entityDict.Add(key, entity);
 
-                entity.PositionX = posX;
-                entity.PositionY = posY;
-
                 entity.ViewDistance = viewDistance;
 
                 CheckEntitysNeighbor(xNode, entity);
                 CheckEntitysNeighbor(yNode, entity);
-
                 return true;
             }
             return false;
@@ -101,7 +100,11 @@ namespace Cosmos
                 return;
             var entity = AcquireEntity(key, obj);
 
+            xLinks.Remove(entity);
+            entity.PositionX = posX;
             xLinks.Add(entity);
+            yLinks.Remove(entity);
+            entity.PositionY = posY;
             yLinks.Add(entity);
 
             var xNode = xLinks.FindLowest(entity);
@@ -110,10 +113,7 @@ namespace Cosmos
             entity.XNode = xNode;
             entity.YNode = yNode;
 
-            entityDict.Add(key, entity);
-
-            entity.PositionX = posX;
-            entity.PositionY = posY;
+            entityDict[key] = entity;
 
             entity.ViewDistance = viewDistance;
 
@@ -269,6 +269,12 @@ namespace Cosmos
                 CheckEntitysNeighbor(yNode, entity);
             }
         }
+        public void Clear()
+        {
+            xLinks.Clear();
+            yLinks.Clear();
+            entityDict.Clear();
+        }
         /// <summary>
         /// 获取临近的对象；
         /// </summary>
@@ -335,6 +341,21 @@ namespace Cosmos
                 GetNeighborNodeValue(yNode, entity.ViewDistance, ref values);
                 values.Remove(entity.Handle);
             }
+        }
+        /// <summary>
+        ///通过临近坐标获取附近的实体； 
+        /// </summary>
+        public void GetNeighbors(float posX, float poxY, float viewDistance, ref HashSet<AOIEntity> entities)
+        {
+            AddOrUpdate(long.MinValue, default(T), posX, poxY, viewDistance);
+            GetNeighbors(long.MinValue, viewDistance, ref entities);
+            Remove(long.MinValue, out _);
+        }
+        public void GetNeighbors(float posX, float poxY, float viewDistance, ref HashSet<T> values)
+        {
+            AddOrUpdate(long.MinValue, default(T), posX, poxY, viewDistance);
+            GetNeighbors(long.MinValue, viewDistance, ref values);
+            Remove(long.MinValue, out _);
         }
         /// <summary>
         ///右值实体是否在左值实体的视野范围之内；
