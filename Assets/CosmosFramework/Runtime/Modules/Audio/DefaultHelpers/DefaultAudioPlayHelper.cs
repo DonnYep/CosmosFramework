@@ -1,5 +1,4 @@
 ﻿using Cosmos.Audio;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 namespace Cosmos
@@ -43,13 +42,13 @@ namespace Cosmos
         }
         public void PlayAudio(AudioObject audioObject, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
         {
-            if (playingDict.TryGetValue(audioObject.AudioName,out var playingAS))
+            if (playingDict.TryGetValue(audioObject.AudioName, out var playingAS))
             {
                 playingAS.time = 0;
                 playingAS.Play();
                 return;
             }
-            if(pauseDict.TryRemove(audioObject.AudioName,out var asObj))
+            if (pauseDict.TryRemove(audioObject.AudioName, out var asObj))
             {
                 playingDict.Add(audioObject.AudioName, asObj);
                 asObj.time = 0;
@@ -77,7 +76,7 @@ namespace Cosmos
             audioSource.spread = audioParams.Spread;
             audioSource.maxDistance = audioParams.MaxDistance;
             audioSource.Play();
-            playingDict.AddOrUpdate(audioObject.AudioName, audioSource);
+            playingDict[audioObject.AudioName] = audioSource;
         }
         public void PauseAudio(AudioObject audioObject)
         {

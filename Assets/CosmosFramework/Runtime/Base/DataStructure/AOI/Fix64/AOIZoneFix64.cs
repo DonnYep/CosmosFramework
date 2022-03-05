@@ -229,6 +229,12 @@ namespace Cosmos
                 CheckEntitysNeighbor(entity);
             }
         }
+        public void Clear()
+        {
+            xLinks.Clear();
+            yLinks.Clear();
+            entityDict.Clear();
+        }
         /// <summary>
         /// 获取临近的对象；
         /// </summary>

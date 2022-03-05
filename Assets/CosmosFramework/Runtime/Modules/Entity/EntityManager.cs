@@ -70,7 +70,7 @@ namespace Cosmos.Entity
         /// <param name="entityAssetInfo">实体对象信息</param>
         /// <param name="entityGroupHelper">实体组帮助体</param>
         /// <returns>是否注册成功</returns>
-        public bool RegisterEntityGroup(EntityAssetInfo entityAssetInfo,IEntityGroupHelper entityGroupHelper=null)
+        public bool RegisterEntityGroup(EntityAssetInfo entityAssetInfo, IEntityGroupHelper entityGroupHelper = null)
         {
             if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
             {
@@ -81,7 +81,7 @@ namespace Cosmos.Entity
             {
                 var entityAsset = resourceManager.LoadPrefab(entityAssetInfo);
                 entityGroupHelper = entityGroupHelper != null ? entityGroupHelper : defaultEntityGroupHelper;
-                var entityGroup= EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityGroupHelper);
+                var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityGroupHelper);
                 if (entityAssetInfo.UseObjectPool)
                 {
                     var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
@@ -113,7 +113,7 @@ namespace Cosmos.Entity
                     var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityGroupHelper);
                     if (entityAssetInfo.UseObjectPool)
                     {
-                        var objectPool = objectPoolManager.RegisterObjectPool( entityAssetInfo.EntityGroupName, entityAsset);
+                        var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
                         entityGroup.AssignObjectPool(objectPool);
                     }
                     entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, entityGroup);
@@ -131,7 +131,7 @@ namespace Cosmos.Entity
             {
                 throw new ArgumentNullException("Entity group name is invalid.");
             }
-            entityGroupDict.Remove(entityGroupName,out var entityGroup);
+            entityGroupDict.Remove(entityGroupName, out var entityGroup);
             objectPoolManager.DeregisterObjectPool(entityGroup.ObjectPool.ObjectKey);
             EntityGroup.Release(entityGroup);
 
@@ -220,7 +220,7 @@ namespace Cosmos.Entity
 
                 entityGroup.AddEntity(entity);
             }
-            entityIdDict.AddOrUpdate(entityId, entity);
+            entityIdDict[entityId] = entity;
             return entity;
         }
         /// <summary>
@@ -261,7 +261,7 @@ namespace Cosmos.Entity
                 entity = Entity.Create(entityId, entityName, entityInstance, entityGroup);
                 entityGroup.AddEntity(entity);
             }
-            entityIdDict.AddOrUpdate(entityId, entity);
+            entityIdDict[entityId] = entity;
             return entity;
         }
         /// <summary>

@@ -45,15 +45,16 @@ namespace Cosmos
                 return false;
             }
         }
-        public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
+        public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
         {
-            if (dict.ContainsKey(key))
+            if (!@this.ContainsKey(key))
             {
-                dict[key] = value;
+                @this[key] = addValueFactory(key);
             }
             else
             {
-                dict.Add(key, value);
+                var oldValue = @this[key];
+                @this[key] = updateValueFactory(key, oldValue);
             }
         }
 

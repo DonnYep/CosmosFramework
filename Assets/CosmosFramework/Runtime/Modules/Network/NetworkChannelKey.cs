@@ -31,13 +31,13 @@ namespace Cosmos.Network
         {
             return ChannelName == other.ChannelName && ChannelIPAddress == other.ChannelIPAddress;
         }
-        public static bool operator ==(NetworkChannelKey a, NetworkChannelKey b)
+        public static bool operator ==(NetworkChannelKey lhs, NetworkChannelKey rhs)
         {
-            return a.Equals(b);
+            return lhs.Equals(rhs);
         }
-        public static bool operator !=(NetworkChannelKey a, NetworkChannelKey b)
+        public static bool operator !=(NetworkChannelKey lhs, NetworkChannelKey rhs)
         {
-            return !(a == b);
+            return !(lhs == rhs);
         }
         public override bool Equals(object obj)
         {

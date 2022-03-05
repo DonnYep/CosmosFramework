@@ -23,13 +23,13 @@ namespace Cosmos.ObjectPool
         {
             return obj is ObjectPoolKey && Equals((ObjectPoolKey)obj);
         }
-        public static bool operator ==(ObjectPoolKey a, ObjectPoolKey b)
+        public static bool operator ==(ObjectPoolKey lhs, ObjectPoolKey rhs)
         {
-            return a.Equals(b);
+            return lhs.Equals(rhs);
         }
-        public static bool operator !=(ObjectPoolKey a, ObjectPoolKey b)
+        public static bool operator !=(ObjectPoolKey lhs, ObjectPoolKey rhs)
         {
-            return !(a == b);
+            return !(lhs == rhs);
         }
         readonly public static ObjectPoolKey None = new ObjectPoolKey(typeof(object));
         public override int GetHashCode()

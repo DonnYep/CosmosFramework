@@ -297,7 +297,7 @@ namespace Cosmos.Audio
         {
             var audioName = audioObject.AudioName;
             var audioGroupName = audioObject.AudioGroupName;
-            audioObjectDict.AddOrUpdate(audioName, audioObject);
+            audioObjectDict[audioName] = audioObject;
             if (!string.IsNullOrEmpty(audioGroupName))
             {
                 if (!audioGroupDict.TryGetValue(audioGroupName, out var group))
