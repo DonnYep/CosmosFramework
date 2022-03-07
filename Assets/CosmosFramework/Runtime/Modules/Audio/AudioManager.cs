@@ -266,6 +266,18 @@ namespace Cosmos.Audio
                 audioPlayHelper.PauseAudio(ao.Value);
             }
         }
+        public void SetAudioParam(string audioName, AudioParams audioParams)
+        {
+            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
+            if (audioObjectDict.TryGetValue(audioName, out var audioObject))
+            {
+                audioPlayHelper.SetAudioParam(audioObject, audioParams);
+            }
+            else
+            {
+                throw new ArgumentNullException($"Audio {audioName} have not been registered ");
+            }
+        }
         public void ClearAudioGroup(string audioGroupName)
         {
             Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");

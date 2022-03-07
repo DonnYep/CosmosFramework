@@ -109,6 +109,25 @@ namespace Cosmos
                 }
             }
         }
+        public void SetAudioParam(AudioObject audioObject, AudioParams audioParams)
+        {
+            AudioSource audioSource = null;
+            if (playingDict.TryGetValue(audioObject.AudioName, out audioSource)
+                || pauseDict.TryGetValue(audioObject.AudioName, out audioSource))
+            {
+                audioSource.clip = audioObject.AudioClip;
+                audioSource.loop = audioParams.Loop;
+                audioSource.priority = audioParams.Priority;
+                audioSource.volume = audioParams.Volume;
+                audioSource.pitch = audioParams.Pitch;
+                audioSource.panStereo = audioParams.StereoPan;
+                audioSource.spatialBlend = audioParams.SpatialBlend;
+                audioSource.reverbZoneMix = audioParams.ReverbZoneMix;
+                audioSource.dopplerLevel = audioParams.DopplerLevel;
+                audioSource.spread = audioParams.Spread;
+                audioSource.maxDistance = audioParams.MaxDistance;
+            }
+        }
         public void ClearAllAudio()
         {
             foreach (var au in playingDict)
