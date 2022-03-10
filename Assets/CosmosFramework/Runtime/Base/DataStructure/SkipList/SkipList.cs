@@ -328,7 +328,7 @@ namespace Cosmos
         /// <summary>
         /// 跳表迭代对象，遍历最低一层的跳表；
         /// </summary>
-        public class SkipListEnumerator : IEnumerator<T>
+        public struct SkipListEnumerator : IEnumerator<T>
         {
             private SkipListNode<T> current;
             private SkipList<T> skipList;
@@ -336,6 +336,7 @@ namespace Cosmos
             public SkipListEnumerator(SkipList<T> skipList)
             {
                 this.skipList = skipList;
+                current = null;
             }
             public T Current { get { return current.Value; } }
             object IEnumerator.Current { get { return this.Current; } }

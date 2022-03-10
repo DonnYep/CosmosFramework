@@ -3,22 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 namespace Cosmos
 {
-    public class AOISkipList<T, K> : ICollection<T>
+    /// <summary>
+    /// 跳跃节点表；
+    /// 与SkipList的区别在于，可由T对象中的任意元素K作为comparer；
+    /// </summary>
+    public class SkipNodeList<T, K> : ICollection<T>
         where K : IComparable<K>
     {
-        public class AOISkipListNode
+        public class SkipListNode
         {
             private T value;
-            private AOISkipListNode next;
-            private AOISkipListNode previous;
-            private AOISkipListNode above;
-            private AOISkipListNode below;
+            private SkipListNode next;
+            private SkipListNode previous;
+            private SkipListNode above;
+            private SkipListNode below;
             public virtual T Value { get { return value; } set { this.value = value; } }
-            public AOISkipListNode Next { get { return next; } set { next = value; } }
-            public AOISkipListNode Previous { get { return previous; } set { previous = value; } }
-            public AOISkipListNode Above { get { return above; } set { above = value; } }
-            public AOISkipListNode Below { get { return below; } set { below = value; } }
-            public AOISkipListNode(T value)
+            public SkipListNode Next { get { return next; } set { next = value; } }
+            public SkipListNode Previous { get { return previous; } set { previous = value; } }
+            public SkipListNode Above { get { return above; } set { above = value; } }
+            public SkipListNode Below { get { return below; } set { below = value; } }
+            public SkipListNode(T value)
             {
                 this.value = value;
             }
@@ -32,23 +36,23 @@ namespace Cosmos
             }
             public virtual bool IsHeader()
             {
-                return this.GetType() == typeof(AOISkipListNodeHeader);
+                return this.GetType() == typeof(SkipListNodeHeader);
             }
             public virtual bool IsFooter()
             {
-                return this.GetType() == typeof(AOISkipListNodeFooter);
+                return this.GetType() == typeof(SkipListNodeFooter);
             }
         }
-        public class AOISkipListNodeHeader : AOISkipListNode
+        public class SkipListNodeHeader : SkipListNode
         {
-            public AOISkipListNodeHeader() : base(default(T)) { }
+            public SkipListNodeHeader() : base(default(T)) { }
         }
-        public class AOISkipListNodeFooter : AOISkipListNode
+        public class SkipListNodeFooter : SkipListNode
         {
-            public AOISkipListNodeFooter() : base(default(T)) { }
+            public SkipListNodeFooter() : base(default(T)) { }
         }
-        AOISkipListNode topLeft;
-        AOISkipListNode bottomLeft;
+        SkipListNode topLeft;
+        SkipListNode bottomLeft;
         Random random;
         /// <summary>
         /// 当前跳表层数；
@@ -74,14 +78,14 @@ namespace Cosmos
         /// <summary>
         /// 节点头，即最底层第一个节点；
         /// </summary>
-        public AOISkipListNode Head { get { return bottomLeft; } }
+        public SkipListNode Head { get { return bottomLeft; } }
         /// <summary>
         /// 比较器；
         /// </summary>
-        Func<T, K> handler;
-        public AOISkipList(Func<T, K> handler)
+        Func<T, K> compareHandler;
+        public SkipNodeList(Func<T, K> handler)
         {
-            this.handler = handler;
+            this.compareHandler = handler;
             topLeft = AcquireEmptyLevel();
             bottomLeft = topLeft;
             level = 1;
@@ -108,8 +112,8 @@ namespace Cosmos
                 newLevelCount--;
                 level++;
             }
-            AOISkipListNode currentNode = topLeft;
-            AOISkipListNode lastNodeAbove = null;
+            SkipListNode currentNode = topLeft;
+            SkipListNode lastNodeAbove = null;
             var remainLevel = level - 1;//剩余的层数
 
             while (currentNode != null && remainLevel >= 0)
@@ -123,12 +127,12 @@ namespace Cosmos
                 }
                 while (currentNode.Next != null)
                 {
-                    if (!currentNode.Next.IsFooter() && handler(currentNode.Next.Value).CompareTo(handler(value)) < 0)
+                    if (!currentNode.Next.IsFooter() && compareHandler(currentNode.Next.Value).CompareTo(compareHandler(value)) < 0)
                         currentNode = currentNode.Next;
                     else
                         break;// nextNode节点的值大于等于当前插入的值
                 }
-                var newNode = new AOISkipListNode(value);
+                var newNode = new SkipListNode(value);
                 newNode.Next = currentNode.Next;
                 newNode.Previous = currentNode;
                 newNode.Next.Previous = newNode;
@@ -148,10 +152,10 @@ namespace Cosmos
         }
         public void Clear()
         {
-            AOISkipListNode currentNode = this.Head;
+            SkipListNode currentNode = this.Head;
             while (currentNode != null)
             {
-                AOISkipListNode nextNode = currentNode.Next;
+                SkipListNode nextNode = currentNode.Next;
                 if (!currentNode.IsHeader() && !currentNode.IsFooter())
                     this.Remove(currentNode);
                 currentNode = nextNode;
@@ -186,7 +190,7 @@ namespace Cosmos
             var valueNode = FindHighest(value);
             return Remove(valueNode);
         }
-        public bool Remove(AOISkipListNode valueNode)
+        public bool Remove(SkipListNode valueNode)
         {
             if (valueNode == null)
                 return false;
@@ -212,16 +216,16 @@ namespace Cosmos
                 return true;
             }
         }
-        public AOISkipListNode Find(T value)
+        public SkipListNode Find(T value)
         {
             var foundNode = this.topLeft;
             while (foundNode != null && foundNode.Next != null)
             {
-                if (!foundNode.Next.IsFooter() && handler(foundNode.Next.Value).CompareTo(handler(value)) < 0)
+                if (!foundNode.Next.IsFooter() && compareHandler(foundNode.Next.Value).CompareTo(compareHandler(value)) < 0)
                     foundNode = foundNode.Next;
                 else
                 {
-                    if (!foundNode.Next.IsFooter() && handler(foundNode.Next.Value).CompareTo(handler(value)) == 0)
+                    if (!foundNode.Next.IsFooter() && compareHandler(foundNode.Next.Value).CompareTo(compareHandler(value)) == 0)
                     {
                         foundNode = foundNode.Next;
                         break;
@@ -240,7 +244,7 @@ namespace Cosmos
         /// </summary>
         /// <param name="valueNode">查询的目标节点</param>
         /// <returns>最高的节点</returns>
-        public AOISkipListNode FindHighest(AOISkipListNode valueNode)
+        public SkipListNode FindHighest(SkipListNode valueNode)
         {
             if (valueNode == null)
                 return null;
@@ -253,17 +257,17 @@ namespace Cosmos
                 return valueNode;
             }
         }
-        public virtual AOISkipListNode FindHighest(T value)
+        public virtual SkipListNode FindHighest(T value)
         {
-            AOISkipListNode valueNode = this.Find(value);
+            SkipListNode valueNode = this.Find(value);
             return this.FindHighest(valueNode);
         }
-        public AOISkipListNode FindLowest(T value)
+        public SkipListNode FindLowest(T value)
         {
-            AOISkipListNode valueNode = this.Find(value);
+            SkipListNode valueNode = this.Find(value);
             return this.FindLowest(valueNode);
         }
-        public AOISkipListNode FindLowest(AOISkipListNode valueNode)
+        public SkipListNode FindLowest(SkipListNode valueNode)
         {
             if (valueNode == null)
                 return null;
@@ -279,7 +283,7 @@ namespace Cosmos
         /// <summary>
         ///获取节点的高度； 
         /// </summary>
-        public int GetHeight(AOISkipListNode valueNode)
+        public int GetHeight(SkipListNode valueNode)
         {
             int height = 0;
             var currentNode = valueNode;
@@ -296,7 +300,7 @@ namespace Cosmos
         }
         public IEnumerator<T> GetEnumerator()
         {
-            return new SkipListEnumerator(this);
+            return new SkipNodeListEnumerator(this);
         }
         IEnumerator IEnumerable.GetEnumerator()
         {
@@ -339,10 +343,10 @@ namespace Cosmos
                 }
             }
         }
-        AOISkipListNode AcquireEmptyLevel()
+        SkipListNode AcquireEmptyLevel()
         {
-            var header = new AOISkipListNodeHeader();
-            var footer = new AOISkipListNodeFooter();
+            var header = new SkipListNodeHeader();
+            var footer = new SkipListNodeFooter();
             header.Next = footer;
             footer.Previous = header;
             return header;
@@ -350,12 +354,12 @@ namespace Cosmos
         /// <summary>
         /// 跳表迭代对象，遍历最低一层的跳表；
         /// </summary>
-        public struct SkipListEnumerator : IEnumerator<T>
+        public struct SkipNodeListEnumerator : IEnumerator<T>
         {
-            private AOISkipListNode current;
-            private AOISkipList<T, K> skipList;
+            private SkipListNode current;
+            private SkipNodeList<T, K> skipList;
 
-            public SkipListEnumerator(AOISkipList<T, K> skipList)
+            public SkipNodeListEnumerator(SkipNodeList<T, K> skipList)
             {
                 this.skipList = skipList;
                 current = null;
