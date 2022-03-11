@@ -1,10 +1,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/DonnYep/CosmosFramework/blob/V1.1/LICENSE)
+[![Issues:Welcome](https://img.shields.io/badge/Issues-welcome-blue.svg)](https://github.com/DonnYep/CosmosFramework/issues)
 
 # [中文](https://github.com/DonnYep/CosmosFramework/blob/V1.1/README_CN.md) 
 
 # CosmosFramework
 
-CosmosFramework is a lightweight Unity development framework . Has a rich Unity method extensions and toolchain. async/await syntax support, multi-network channel support. Framework has been made plug-in , it is recommended that the development into the Packages directory .
+CosmosFramework is a lightweight Unity development framework . Has a rich Unity method extensions and toolchain. async/await syntax support, multi-network channel support.The framework has been supported UMP, it is recommended to put it into the Packages directory to use.
 * [CosmosFramework Wiki](https://github.com/DonnYep/CosmosFramework/wiki)<br/>
 
 ## Master, V0.1, V1.0 branches are closed for maintenance. Please switch to V1.1 branch for the latest content.
@@ -35,11 +36,11 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **Input** : Input adaptation module. The input of each platform is simulated by virtual keys, and different input adapters can be passed in to adapt the input methods of different platforms.
 
-- **Hotfix** : Hot update module. This module is for C#-based hot update solutions. (This solution is not perfect, in the future it will use the MONO Interpreter interpreter to perform hot updates.)
+- **Hotfix** : Hot update module. This module is for C#-based hot update solutions. (This solution is not completed, in the future it will use the MONO interpreter to perform hot updates.)
 
 - **Network** : Network module. A variety of high-speed and reliable UDP protocols are provided, such as RUDP, SUDP, KCP, TCP, etc. The KCP protocol is used by default. Network in the form of channel (Channel) to distinguish each connection, support a variety of network types connected at the same time. Can be implemented (Client-Server) mode. Support async/await syntax.
 
-- **UI** : UI module. Based on UGUI implementation. Provide UI common functions, such as priority, reality hiding, getting and group setting. Extension method extends some common components such as buttons, so that you can listen to the interface implementation without manually implementing buttons lift, press, etc. Support commonly used UIBehaiour type triggerEvent.
+- **UI** : UI module. Based on UGUI implementation. Provide UI common functions, such as priority, reality hiding, getting and setting group. Extension method extends some common components such as buttons, so that you can listen to the interface implementation without manually implementing buttons lift, press, etc. Support commonly used UIBehaiour type triggerEvent.
 
 - **Main** : Module Center. Both custom modules and extensions are stored here. Custom modules are written in the same format as the built-in modules and have exactly the same lifecycle and permissions as the built-in modules. It is almost identical to the built-in module. The built-in polling pools of this main module: FixedRefreshHandler, LateRefreshHandler, RefreshHandler, ElapseRefreshHandler can poll the objects that need to be polled uniformly, reducing the performance loss caused by too many update and other mono callbacks. performance loss caused by too many update and other mono callbacks.
 
