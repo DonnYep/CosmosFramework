@@ -66,11 +66,11 @@ namespace Cosmos.Audio
         void StopAllAudios();
         void PauseAllAudios();
         /// <summary>
-        /// 设置声音参数；
+        /// 设置声音表现；
         /// </summary>
         /// <param name="audioName">注册过的声音名</param>
         /// <param name="audioParams">声音具体参数</param>
-        void SetAudioParam(string audioName, AudioParams audioParams);
+        void PoltAudioParam(string audioName, AudioParams audioParams);
         void ClearAudioGroup(string audioGroupName);
     }
 }

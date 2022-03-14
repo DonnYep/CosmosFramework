@@ -266,7 +266,7 @@ namespace Cosmos.Audio
                 audioPlayHelper.PauseAudio(ao.Value);
             }
         }
-        public void SetAudioParam(string audioName, AudioParams audioParams)
+        public void PoltAudioParam(string audioName, AudioParams audioParams)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
             if (audioObjectDict.TryGetValue(audioName, out var audioObject))
