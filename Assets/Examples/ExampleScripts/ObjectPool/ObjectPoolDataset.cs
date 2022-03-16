@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace Cosmos{
+namespace Cosmos.Test
+{
     /// <summary>
     /// 原则上打包发布后时不允许修改的，因此所有继承此类的子类都只有只读属性
     /// </summary>
     public abstract class ObjectPoolDataset : DatasetBase
     {
-        public virtual GameObject  SpawnObject { get; }
+        public virtual GameObject SpawnObject { get; }
         [SerializeField]
-        [Range(0,100,order =1)]
+        [Range(0, 100, order = 1)]
         protected short objectOdds = 25;
         public bool ObjectAddsResult
         {
@@ -18,7 +19,7 @@ namespace Cosmos{
                 if (objectOdds == 0)
                     return false;
                 var result = Utility.Unity.Random(1, 100);
-                if (result <=objectOdds)
+                if (result <= objectOdds)
                     return true;
                 else
                     return false;
@@ -29,14 +30,14 @@ namespace Cosmos{
         protected bool groupSpawn = false;
         [SerializeField]
         [Range(0, 20)]
-        protected short minSpawnCount=0;
+        protected short minSpawnCount = 0;
         [SerializeField]
         [Range(0, 20)]
-        protected short maxSpawnCount=1;
+        protected short maxSpawnCount = 1;
         [Header("是否使用回收区间，false默认使用最小回收时间")]
         [SerializeField] protected bool rangeCollectDelay = false;
         [SerializeField]
-        [Range(0.1f,900f,order =1)]
+        [Range(0.1f, 900f, order = 1)]
         protected float minCollectDelay = 3;
         [SerializeField]
         [Range(0.1f, 900f, order = 1)]
@@ -60,7 +61,7 @@ namespace Cosmos{
         /// <summary>
         /// 产生对象数量，非群组产生则默认数量为1
         /// </summary>
-        public virtual int  SpawnCount
+        public virtual int SpawnCount
         {
             get
             {
@@ -71,7 +72,7 @@ namespace Cosmos{
                         minSpawnCount = maxSpawnCount;
                         return maxSpawnCount;
                     }
-                    else return  Utility.Unity.Random(minSpawnCount, maxSpawnCount);
+                    else return Utility.Unity.Random(minSpawnCount, maxSpawnCount);
                 }
                 else return 1;
             }
@@ -89,15 +90,15 @@ namespace Cosmos{
     /// <summary>
     /// 对象生成时对齐的类型
     /// </summary>
-    public enum ObjectSpawnAlignType:int
+    public enum ObjectSpawnAlignType : int
     {
         /// <summary>
         /// AlignTransform表示全部对齐
         /// </summary>
         AlignTransform = 0,
-        AlignPosition=1,
-        AlignPositionRotation=2,
-        AlignPositionScale=3,
-        AlignRotationScale=4,
+        AlignPosition = 1,
+        AlignPositionRotation = 2,
+        AlignPositionScale = 3,
+        AlignRotationScale = 4,
     }
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -192,7 +192,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 201609284}
-  - component: {fileID: 201609285}
   - component: {fileID: 201609286}
   m_Layer: 0
   m_Name: ObjectSpawnerGroup
@@ -215,29 +214,6 @@ Transform:
   m_Father: {fileID: 1861258380}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &201609285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 201609283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e9390152b61d0b468081748fccf445b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnObjectGroup:
-  - spawnTransform: {fileID: 1727667396}
-    poolDataSet: {fileID: 0}
-  - spawnTransform: {fileID: 811413295}
-    poolDataSet: {fileID: 0}
-  - spawnTransform: {fileID: 37563108}
-    poolDataSet: {fileID: 0}
-  - spawnTransform: {fileID: 324390344}
-    poolDataSet: {fileID: 0}
-  - spawnTransform: {fileID: 334417137}
-    poolDataSet: {fileID: 0}
 --- !u!114 &201609286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,7 +235,7 @@ MonoBehaviour:
   action:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 201609285}
+      - m_Target: {fileID: 0}
         m_MethodName: Spawn
         m_Mode: 1
         m_Arguments:
@@ -496,7 +472,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 885055818}
-  - component: {fileID: 885055819}
   - component: {fileID: 885055820}
   m_Layer: 0
   m_Name: ObjectSpawnerMuti
@@ -519,23 +494,6 @@ Transform:
   m_Father: {fileID: 744649012}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &885055819
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 885055817}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56c921176086df24b9a2c45e96a117e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnTransforms:
-  - {fileID: 982564441}
-  - {fileID: 225758070}
-  - {fileID: 368005761}
-  poolDataSet: {fileID: 11400000, guid: d8939dff36898bf469851d01781c17a1, type: 2}
 --- !u!114 &885055820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -557,7 +515,7 @@ MonoBehaviour:
   action:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 885055819}
+      - m_Target: {fileID: 0}
         m_MethodName: Spawn
         m_Mode: 1
         m_Arguments:
@@ -749,10 +707,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36405f6fe0f5daf4d97f0601c42845b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  launchAppDomainModules: 1
-  printModulePreparatory: 1
+  LaunchAppDomainModules: 1
+  PrintModulePreparatory: 0
+  LoadDefaultHelper: 1
   ResourceLoadMode: 0
-  loadDefaultHelper: 1
+  QuarkRemoteUrl: RemoteUrl
+  QuarkLocalUrl: LocalUrl
 --- !u!4 &1484335752
 Transform:
   m_ObjectHideFlags: 0
@@ -858,7 +818,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1820407876}
-  - component: {fileID: 1820407875}
   - component: {fileID: 1820407877}
   m_Layer: 0
   m_Name: ObjectSpawnerSingle
@@ -867,20 +826,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1820407875
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1820407874}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18941d4bc836e724d8d6300d82e2d6a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnTransform: {fileID: 938495230}
-  poolDataSet: {fileID: 11400000, guid: 62f7d2cdf203f4e469ca6c63a1523ba9, type: 2}
 --- !u!4 &1820407876
 Transform:
   m_ObjectHideFlags: 0
@@ -916,7 +861,7 @@ MonoBehaviour:
   action:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1820407875}
+      - m_Target: {fileID: 0}
         m_MethodName: Spawn
         m_Mode: 1
         m_Arguments:
@@ -942,7 +887,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1861258380
 Transform:
   m_ObjectHideFlags: 0

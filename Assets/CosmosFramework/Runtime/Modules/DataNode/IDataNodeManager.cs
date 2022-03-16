@@ -1,5 +1,16 @@
 ﻿namespace Cosmos.Data
 {
+    //================================================
+    /*
+    *1、数据存储模块。可以使用几种方式记录数据：
+    *    Data/SubData/SubDataA
+    *    Data\SubData\SubDataA
+    *    Data.SubData.SubDataA
+    *    此为树状结构，又如有数据为Data/SubData/SubDataB，则表示为：
+    *    Data/SubData/ 下的两个数据，分别为SubDataA与SubDataB。
+    *    写法上使用何种分隔符并无区别。分隔符为 string[] { ".", "/", "\\" };
+    */
+    //================================================
     public interface IDataNodeManager :IModuleManager
     {
         /// 获取根数据结点。

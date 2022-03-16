@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cosmos
+namespace Cosmos.Test
 {
     [CreateAssetMenu(fileName = "NewSpawnDataSet", menuName = "CosmosFramework/ObjectPoolDataSet/SpawnObject")]
     public class SpawnDataset : ObjectPoolDataset

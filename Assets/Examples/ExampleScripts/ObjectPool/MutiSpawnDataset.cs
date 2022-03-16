@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace Cosmos
+namespace Cosmos.Test
 {
     [CreateAssetMenu(fileName = "NewMutiSpawnDataSet", menuName = "CosmosFramework/ObjectPoolDataSet/MutiSpawnObject")]
     public class MutiSpawnDataset : ObjectPoolDataset
