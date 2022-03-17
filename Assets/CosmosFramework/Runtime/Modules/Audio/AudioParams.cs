@@ -1,9 +1,10 @@
-﻿namespace Cosmos.Audio
+﻿using System;
+namespace Cosmos.Audio
 {
     /// <summary>
     /// 声音播放时的参数；
     /// </summary>
-    public struct AudioParams
+    public struct AudioParams:IEquatable<AudioParams>
     {
         /// <summary>
         /// Audio开始播放时间，默认从0秒开始；
@@ -62,6 +63,14 @@
             DopplerLevel = AudioConstant.DopplerLevel;
             Spread = AudioConstant.Spread;
             MaxDistance = AudioConstant.MaxDistance;
+        }
+        public bool Equals(AudioParams other)
+        {
+            return other.PlayTime == PlayTime && other.Loop == Loop &&
+                other.Priority == Priority && other.Volume == Volume && other.Pitch == Pitch &&
+                other.StereoPan == StereoPan && other.SpatialBlend == SpatialBlend &&
+                other.ReverbZoneMix == ReverbZoneMix && DopplerLevel == DopplerLevel &&
+                other.Spread == Spread && other.MaxDistance == MaxDistance;
         }
         readonly static AudioParams m_Default = new AudioParams()
         {

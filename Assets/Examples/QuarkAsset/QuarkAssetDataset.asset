@@ -30,7 +30,7 @@ MonoBehaviour:
     Hash: 6b66c76bfcd1e5c48bc51efeb19eddf9
   - Dir: Assets/Examples/AssetBundleTest/Video
     Hash: c027f3e3efab58e418761894535c4491
-  QuarkAssetCount: 49
+  QuarkAssetCount: 52
   QuarkAssetObjectList:
   - AssetName: AmbientAudio
     AssetExtension: .mp3
@@ -117,6 +117,36 @@ MonoBehaviour:
     AssetPath: Assets\Examples\AssetBundleTest\Photo\Grid2048.psd
     AssetType: UnityEngine.Texture2D
     AssetGuid: 51d6f0242df93ba41a181740af589fe3
+  - AssetName: Mat_ObjectPool_Blue
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\ObjectPoolResPrefab\Mat_ObjectPool_Blue.mat
+    AssetType: UnityEngine.Material
+    AssetGuid: 2b8e977c8bff18343b06c9bf3c2951c3
+  - AssetName: Mat_ObjectPool_Green
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\ObjectPoolResPrefab\Mat_ObjectPool_Green.mat
+    AssetType: UnityEngine.Material
+    AssetGuid: 1e7e2ac07fcab5e48bcddafd53017984
+  - AssetName: Mat_ObjectPool_Red
+    AssetExtension: .mat
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\ObjectPoolResPrefab\Mat_ObjectPool_Red.mat
+    AssetType: UnityEngine.Material
+    AssetGuid: 7e0dd544551300342b7aabb58cc8aa89
+  - AssetName: ResPrefab_Capsule
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\ObjectPoolResPrefab\ResPrefab_Capsule.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: c1ab78a2f0bc2224c971cc6e6525ead4
+  - AssetName: ResPrefab_Cube
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\ObjectPoolResPrefab\ResPrefab_Cube.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 81c6fee0d1daf134c8e521a37c643a9d
+  - AssetName: ResPrefab_Sphere
+    AssetExtension: .prefab
+    AssetPath: Assets\Examples\AssetBundleTest\Prefab\ObjectPoolResPrefab\ResPrefab_Sphere.prefab
+    AssetType: UnityEngine.GameObject
+    AssetGuid: 7e9ec9c0167883e4ba8bee31109753a7
   - AssetName: AC_XBot_Idle
     AssetExtension: .controller
     AssetPath: Assets\Examples\AssetBundleTest\Prefab\XBot\AC_XBot_Idle.controller
@@ -257,24 +287,8 @@ MonoBehaviour:
     AssetPath: Assets\Examples\AssetBundleTest\Texture\Tex_5212.png
     AssetType: UnityEngine.Texture2D
     AssetGuid: 0c6a7150c5c0ba248bfe339b605eca02
-  - AssetName: Digital
-    AssetExtension: .mp4
-    AssetPath: Assets\Examples\AssetBundleTest\Video\Digital.mp4
-    AssetType: UnityEngine.Video.VideoClip
-    AssetGuid: f84e7882c3b395c45aa97503e1aa6a52
   - AssetName: HowToMakeAMultiplayerGameInUnity2021.1
     AssetExtension: .mp4
     AssetPath: Assets\Examples\AssetBundleTest\Video\HowToMakeAMultiplayerGameInUnity2021.1.mp4
     AssetType: UnityEngine.Video.VideoClip
     AssetGuid: e6a61289ca656fb43901fc05f68edd06
-  - AssetName: RagdollPhysicsInUnity
-    AssetExtension: .mp4
-    AssetPath: Assets\Examples\AssetBundleTest\Video\RagdollPhysicsInUnity.mp4
-    AssetType: UnityEngine.Video.VideoClip
-    AssetGuid: 28adf8e35ada4fc4982bde38b1c0cfbd
-  - AssetName: Realistic Effects Pack v3 Update 1.2
-    AssetExtension: .mp4
-    AssetPath: Assets\Examples\AssetBundleTest\Video\Realistic Effects Pack v3 Update
-      1.2.mp4
-    AssetType: UnityEngine.Video.VideoClip
-    AssetGuid: ba2c344425a49f0498742f993669e620

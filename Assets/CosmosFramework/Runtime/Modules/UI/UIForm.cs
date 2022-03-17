@@ -6,6 +6,7 @@ namespace Cosmos.UI
 {
     /// <summary>
     /// 严格定义上，Panel是lable的容器。lable是作为组件存在，例如Text、Image等
+    /// 注意，UIForm 类是框架默认提供的UI类型，若需要使用自定义的面板类型，则可令其实现IUIForm接口，并配合DefaultUIFormAssetHelper来生成对应的资源；
     /// </summary>
     [DisallowMultipleComponent]
     public abstract class UIForm : MonoBehaviour, IUIForm
