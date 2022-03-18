@@ -4,9 +4,7 @@ using System.Linq;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
-using Cosmos;
-#if UNITY_EDITOR
-namespace CosmosEditor
+namespace Cosmos.Editor
 {
     public static partial class EditorUtil
     {
@@ -154,4 +152,3 @@ namespace CosmosEditor
         }
     }
 }
-#endif

@@ -1,11 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Cosmos;
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
-# if UNITY_EDITOR
-namespace CosmosEditor
+namespace Cosmos.Editor
 {
     public class HierachyFinderWindow : EditorWindow{
         [MenuItem("Window/Cosmos/HierachyFinder")]
@@ -417,4 +413,3 @@ namespace CosmosEditor
         }
     }
 }
-#endif

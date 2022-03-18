@@ -6,8 +6,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using Quark.Asset;
-
-namespace CosmosEditor.Quark
+namespace Cosmos.Editor.Quark
 {
     public class QuarkDirectoriesTreeView : TreeView
     {

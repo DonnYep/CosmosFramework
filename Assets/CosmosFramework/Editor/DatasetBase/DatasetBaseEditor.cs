@@ -1,10 +1,6 @@
 ﻿using UnityEngine;
-using Cosmos;
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
-#if UNITY_EDITOR
-namespace CosmosEditor
+namespace Cosmos.Editor
 {
     /// <summary>
     /// 子类也继承按钮
@@ -46,4 +42,3 @@ namespace CosmosEditor
         }
     }
 }
-#endif

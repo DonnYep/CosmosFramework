@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEditor;
-namespace CosmosEditor.Quark
+namespace Cosmos.Editor.Quark
 {
     internal enum AssetBundleHashType : byte
     {

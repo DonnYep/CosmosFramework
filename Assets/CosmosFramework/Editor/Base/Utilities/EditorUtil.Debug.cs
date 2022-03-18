@@ -1,7 +1,5 @@
-﻿using Cosmos;
-using Object = UnityEngine.Object;
-
-namespace CosmosEditor
+﻿using Object = UnityEngine.Object;
+namespace Cosmos.Editor
 {
     public static partial class EditorUtil
     {

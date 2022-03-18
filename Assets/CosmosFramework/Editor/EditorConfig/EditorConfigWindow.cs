@@ -1,11 +1,8 @@
 ﻿using System.IO;
 using UnityEngine;
 using System;
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
-# if UNITY_EDITOR
-namespace CosmosEditor.Config
+namespace Cosmos.Editor.Config
 {
     public class EditorConfigWindow : EditorWindow
     {
@@ -166,4 +163,3 @@ namespace CosmosEditor.Config
         #endregion
     }
 }
-#endif

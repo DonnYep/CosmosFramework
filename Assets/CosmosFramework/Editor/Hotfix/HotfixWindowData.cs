@@ -1,6 +1,5 @@
 ﻿using System;
-
-namespace CosmosEditor.Hotfix
+namespace Cosmos.Editor.Hotfix
 {
     [Serializable]
     public class HotfixWindowData

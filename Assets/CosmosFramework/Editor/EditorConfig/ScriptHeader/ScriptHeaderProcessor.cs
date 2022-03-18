@@ -1,9 +1,7 @@
 using System.IO;
-using Cosmos;
 using UnityEditor;
 using System.Text;
-
-namespace CosmosEditor.Config
+namespace Cosmos.Editor.Config
 {
     [InitializeOnLoad]
     public class ScriptHeaderProcessor : UnityEditor.AssetModificationProcessor

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
-
-namespace CosmosEditor
+namespace Cosmos.Editor
 {
     public static partial class EditorUtil
     {

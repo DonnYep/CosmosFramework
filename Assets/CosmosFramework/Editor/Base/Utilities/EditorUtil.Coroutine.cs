@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using Unity.EditorCoroutines.Editor;
-
-namespace CosmosEditor
+namespace Cosmos.Editor
 {
     public static partial class EditorUtil
     {

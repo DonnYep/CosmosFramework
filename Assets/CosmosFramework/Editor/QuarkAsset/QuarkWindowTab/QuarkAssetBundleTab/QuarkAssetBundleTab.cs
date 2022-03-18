@@ -7,8 +7,7 @@ using System.Linq;
 using System.Text;
 using Quark.Asset;
 using Quark;
-using Cosmos;
-namespace CosmosEditor.Quark
+namespace Cosmos.Editor.Quark
 {
     public class QuarkAssetBundleTab
     {

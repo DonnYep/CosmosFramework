@@ -1,5 +1,4 @@
-﻿using Cosmos;
-using Quark.Asset;
+﻿using Quark.Asset;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,8 +6,7 @@ using System.IO;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
-
-namespace CosmosEditor.Quark
+namespace Cosmos.Editor.Quark
 {
     public class QuarkDatasetTab
     {

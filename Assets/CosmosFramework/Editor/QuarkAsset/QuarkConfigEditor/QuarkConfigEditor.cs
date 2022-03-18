@@ -1,8 +1,7 @@
 ﻿using UnityEditor;
 using Quark;
 using Quark.Asset;
-
-namespace CosmosEditor.Quark
+namespace Cosmos.Editor.Quark
 {
     [CustomEditor(typeof(QuarkConfig), true)]
     public class QuarkConfigEditor : UnityEditor.Editor

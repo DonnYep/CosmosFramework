@@ -1,4 +1,4 @@
-﻿namespace CosmosEditor.Quark
+﻿namespace Cosmos.Editor.Quark
 {
     internal class QuarkWindowTabData
     {

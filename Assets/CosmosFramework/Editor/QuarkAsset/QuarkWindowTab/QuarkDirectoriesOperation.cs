@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-
-namespace CosmosEditor.Quark
+namespace Cosmos.Editor.Quark
 {
     public class QuarkDirectoriesOperation
     {

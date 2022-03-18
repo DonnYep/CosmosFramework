@@ -1,8 +1,6 @@
 ﻿using UnityEditor;
 using Cosmos.Resource;
-using Cosmos;
-
-namespace CosmosEditor
+namespace Cosmos.Editor
 {
     [CustomEditor(typeof(CosmosEntryConfig), true)]
     public class CosmosEntryConfigEditor : UnityEditor.Editor

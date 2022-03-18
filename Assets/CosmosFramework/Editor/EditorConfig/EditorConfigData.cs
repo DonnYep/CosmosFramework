@@ -1,5 +1,5 @@
 ﻿using System;
-namespace CosmosEditor.Config
+namespace Cosmos.Editor.Config
 {
     [Serializable]
     public class EditorConfigData 
