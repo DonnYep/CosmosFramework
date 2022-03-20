@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 namespace Cosmos.ObjectPool
 {
+    [StructLayout(LayoutKind.Auto)]
     public struct ObjectPoolKey : IEquatable<ObjectPoolKey>
     {
         readonly Type poolType;

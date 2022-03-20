@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 namespace Cosmos
 {
+    [StructLayout(LayoutKind.Auto)]
     public struct ReferencePoolInfo
     {
         readonly Type referenceType;

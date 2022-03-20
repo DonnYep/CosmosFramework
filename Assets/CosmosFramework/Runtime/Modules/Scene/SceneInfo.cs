@@ -1,5 +1,7 @@
-﻿namespace Cosmos.Scene
+﻿using System.Runtime.InteropServices;
+namespace Cosmos.Scene
 {
+    [StructLayout(LayoutKind.Auto)]
     public struct SceneInfo: ISceneInfo
     {
         readonly string sceneName;

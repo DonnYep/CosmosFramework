@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 namespace Cosmos.Network
 {
     /// <summary>
@@ -6,6 +7,7 @@ namespace Cosmos.Network
     /// ChannelName 与 ChannelIPAddress 的组合；
     /// ChannelIPAddress 字段示例为 127.0.0.1:80
     /// </summary>
+    [StructLayout(LayoutKind.Auto)]
     public struct NetworkChannelKey : IEquatable<NetworkChannelKey>
     {
         readonly string channelName;
