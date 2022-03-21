@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Cosmos;
-using Cosmos.Resource;
 /// <summary>
 /// 此示例展示了通过挂载特性达到资源生成的效果;
 /// 使用时挂载好特性，并且实现IReference接口即可；
@@ -16,23 +13,19 @@ public class ResourceTester : MonoBehaviour
        {
            go.transform.position = new Vector3(3, 0, 0);
        }, null, true);
-        CosmosEntry.ResourceManager.LoadPrefabAsync<ResourceMonoUnitTester>((monoGo) =>
+        CosmosEntry.ResourceManager.LoadPrefabAsync<ResourceMonoUnitTester>((go) =>
         {
-            monoGo.transform.position = new Vector3(5, 0, 0);
+            go.transform.position = new Vector3(5, 0, 0);
         }, null, true);
-    }
-    void LoadDone(ResourceUnitSphere resUnit, GameObject go)
-    {
-        resUnit.OnInitialization();
-        go.transform.position = new Vector3(1, 0, 0);
-        resUnit.ResPrefab = go;
+        CosmosEntry.ResourceManager.LoadPrefabAsync<ResourceUnitSphere>(go => 
+        {
+            go.transform.position = new Vector3(0, 0, 0);
+        },null,true);
     }
 }
-[PrefabAsset("ResPrefab/ResPrefab_Cube")]
+[PrefabAsset("Prefabs/ResCube")]
 public class ResourceUnitCube : IBehaviour, IReference
 {
-    public GameObject ResPrefab { get; set; }
-
     public void Release()
     {
         Utility.Debug.LogInfo("ResoureceUnitCube IReference Clear ! ", MessageColor.INDIGO);
@@ -46,11 +39,9 @@ public class ResourceUnitCube : IBehaviour, IReference
         Utility.Debug.LogInfo("ResoureceUnitCube OnTermination! ", MessageColor.INDIGO);
     }
 }
-[PrefabAsset("ResPrefab/ResPrefab_Sphere")]
+[PrefabAsset("Prefabs/ResSphere")]
 public class ResourceUnitSphere : IBehaviour, IReference
 {
-    public GameObject ResPrefab { get; set; }
-
     public void Release()
     {
         Utility.Debug.LogInfo(" ResoureceUnitSphere IReference Clear ! ", MessageColor.INDIGO);

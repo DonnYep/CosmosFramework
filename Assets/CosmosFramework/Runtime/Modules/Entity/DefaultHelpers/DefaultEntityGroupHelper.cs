@@ -4,27 +4,43 @@ namespace Cosmos
 {
     public class DefaultEntityGroupHelper : IEntityGroupHelper
     {
-        GameObject root = CosmosEntry.EntityManager.Instance();
         GameObject activeRoot;
         GameObject deactiveRoot;
-        public DefaultEntityGroupHelper()
+        GameObject ActiveRoot
         {
-            activeRoot = new GameObject("ActiveEntities");
-            deactiveRoot = new GameObject("DeactiveEntities");
-            activeRoot.transform.SetAlignParent(root.transform);
-            deactiveRoot.transform.SetAlignParent(root.transform);
+            get
+            {
+                if (activeRoot == null)
+                {
+                    activeRoot = new GameObject("ActivedEntities");
+                    activeRoot.transform.SetAlignParent(CosmosEntry.EntityManager.Instance().transform);
+                }
+                return activeRoot;
+            }
+        }
+        GameObject DeactiveRoot
+        {
+            get
+            {
+                if (deactiveRoot == null)
+                {
+                    deactiveRoot = new GameObject("DeactivedEntities");
+                    deactiveRoot.transform.SetAlignParent(CosmosEntry.EntityManager.Instance().transform);
+                }
+                return deactiveRoot;
+            }
         }
         public void OnEntitySpawn(object entityInstance)
         {
             var go = entityInstance.As<GameObject>();
             go.SetActive(true);
-            go.transform.SetAlignParent(activeRoot.transform);
+            go.transform.SetAlignParent(ActiveRoot.transform);
         }
         public void OnEntityDespawn(object entityInstance)
         {
             var go = entityInstance.As<GameObject>();
             go.SetActive(false);
-            go.transform.SetAlignParent(deactiveRoot.transform);
+            go.transform.SetAlignParent(DeactiveRoot.transform);
         }
     }
 }

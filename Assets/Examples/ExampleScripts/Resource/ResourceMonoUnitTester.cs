@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Cosmos;
 /// <summary>
 /// Mono类型资源示例;
 /// 此类型会在资源生成时自动挂载在生成对象上
 /// </summary>
-[PrefabAsset("ResPrefab/ResPrefab_Mono")]
+[PrefabAsset("Prefabs/ResCapsule")]
 public class ResourceMonoUnitTester : MonoBehaviour
 {
     private void Start()
