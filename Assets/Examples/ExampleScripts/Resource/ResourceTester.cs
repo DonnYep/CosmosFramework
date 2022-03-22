@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Cosmos;
+using Cosmos.Resource;
 /// <summary>
 /// 此示例展示了通过挂载特性达到资源生成的效果;
 /// 使用时挂载好特性，并且实现IReference接口即可；
@@ -7,7 +8,7 @@ using Cosmos;
 /// </summary>
 public class ResourceTester : MonoBehaviour
 {
-    void Start()
+  void Start()
     {
         CosmosEntry.ResourceManager.LoadPrefabAsync<ResourceUnitCube>((go) =>
        {
@@ -17,10 +18,18 @@ public class ResourceTester : MonoBehaviour
         {
             go.transform.position = new Vector3(5, 0, 0);
         }, null, true);
-        CosmosEntry.ResourceManager.LoadPrefabAsync<ResourceUnitSphere>(go => 
+        CosmosEntry.ResourceManager.LoadPrefabAsync<ResourceUnitSphere>(go =>
         {
             go.transform.position = new Vector3(0, 0, 0);
-        },null,true);
+        }, null, true);
+        LoadAsync();
+    }
+    async void LoadAsync()
+    {
+        await new WaitForSeconds(5);
+        var asyncGo = await CosmosEntry.ResourceManager.LoadPrefabAsync(new AssetInfo("Prefabs/ResCube"), true);
+        asyncGo.transform.position = new Vector3(0, 5, 0);
+        asyncGo.transform.localScale = Vector3.one * 2;
     }
 }
 [PrefabAsset("Prefabs/ResCube")]

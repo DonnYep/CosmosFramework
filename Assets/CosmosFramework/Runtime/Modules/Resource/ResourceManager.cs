@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
+
 namespace Cosmos.Resource
 {
     //================================================
@@ -51,7 +53,7 @@ namespace Cosmos.Resource
             if (builtInChannelDict.TryGetValue(resourceLoadMode, out var channel))
                 await new WaitUntil(() => channel.ResourceLoadHelper.IsLoading == false);
             builtInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
-            if (currentResourceLoadMode== resourceLoadMode)
+            if (currentResourceLoadMode == resourceLoadMode)
                 currentDefaultLoadHelper = loadHelper;
         }
         /// <summary>
@@ -145,7 +147,7 @@ namespace Cosmos.Resource
         }
         public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
         {
-            return currentDefaultLoadHelper.LoadAssetWithSubAssetsAsync<T>(info,loadDoneCallback, loadingCallback);
+            return currentDefaultLoadHelper.LoadAssetWithSubAssetsAsync<T>(info, loadDoneCallback, loadingCallback);
         }
         /// <summary>
         /// 使用默认加载模式；
@@ -161,6 +163,21 @@ namespace Cosmos.Resource
             where T : UnityEngine.Object
         {
             return currentDefaultLoadHelper.LoadAssetAsync<T>(info, loadDoneCallback, loadingCallback);
+        }
+        /// <summary>
+        /// 异步加载资源；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>加载task</returns>
+        public async Task<T> LoadAssetAsync<T>(AssetInfo info)
+            where T : UnityEngine.Object
+        {
+            T asset = null;
+            await currentDefaultLoadHelper.LoadAssetAsync<T>(info, a=>asset=a, null);
+            return asset;
         }
         /// <summary>
         /// 使用默认加载模式；
@@ -224,6 +241,28 @@ namespace Cosmos.Resource
         }
         /// <summary>
         /// 使用默认加载模式；
+        /// 特性无效！；
+        /// 加载预制体资源（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息标记</param>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载task</returns>
+        public async Task<GameObject> LoadPrefabAsync(AssetInfo info, bool instantiate = false)
+        {
+            GameObject go= null;
+            await currentDefaultLoadHelper.LoadAssetAsync<GameObject>(info, (asset) =>
+            {
+                if (instantiate)
+                    go = GameObject.Instantiate(asset);
+                else
+                    go = asset;
+            },null);
+            return go;
+        }
+        /// <summary>
+        /// 使用默认加载模式；
         /// 加载场景（异步）；
         /// </summary>
         /// <param name="info">资源信息标记</param>
@@ -233,6 +272,18 @@ namespace Cosmos.Resource
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
         {
             return currentDefaultLoadHelper.LoadSceneAsync(info, loadDoneCallback, loadingCallback);
+        }
+        /// <summary>
+        /// 使用默认加载模式；
+        /// 加载场景（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>Task异步任务</returns>
+        public async Task LoadSceneAsync(SceneAssetInfo info)
+        {
+            await currentDefaultLoadHelper.LoadSceneAsync(info, null, null);
         }
         /// <summary>
         /// 卸载资源;

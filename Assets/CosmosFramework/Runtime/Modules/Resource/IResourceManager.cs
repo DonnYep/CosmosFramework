@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos.Resource
 {
@@ -98,6 +99,15 @@ namespace Cosmos.Resource
         /// <returns>加载协程迭代器</returns>
         Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object;
         /// <summary>
+        /// 异步加载资源；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>加载task</returns>
+        Task<T> LoadAssetAsync<T>(AssetInfo info) where T : UnityEngine.Object;
+        /// <summary>
         /// 使用默认加载模式；
         /// 加载资源以及子资源；
         /// 加载资源（同步）；
@@ -143,6 +153,17 @@ namespace Cosmos.Resource
         Coroutine LoadPrefabAsync(AssetInfo info, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false);
         /// <summary>
         /// 使用默认加载模式；
+        /// 特性无效！；
+        /// 加载预制体资源（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息标记</param>
+        /// <param name="instantiate">是否实例化对象</param>
+        /// <returns>加载task</returns>
+        Task<GameObject> LoadPrefabAsync(AssetInfo info, bool instantiate = false);
+        /// <summary>
+        /// 使用默认加载模式；
         /// 加载场景（异步）；
         /// </summary>
         /// <param name="info">资源信息标记</param>
@@ -150,6 +171,15 @@ namespace Cosmos.Resource
         /// <param name="loadDoneCallback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
         Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null);
+        /// <summary>
+        /// 使用默认加载模式；
+        /// 加载场景（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>Task异步任务</returns>
+        Task LoadSceneAsync(SceneAssetInfo info);
         /// <summary>
         /// 使用默认加载模式；
         /// 卸载资源；
