@@ -9,9 +9,8 @@ namespace Cosmos.Editor.Quark
         SerializedObject targetObject;
         QuarkConfig quarkConfig;
         SerializedProperty sp_QuarkAssetLoadMode, sp_QuarkAssetDataset, sp_Url, sp_PingUrl, sp_QuarkBuildPath,
-            sp_AESEncryptionKey, sp_EnableRelativeLoadPath, sp_RelativeLoadPath, sp_CustomeAbsolutePath, 
-            sp_EnableRelativeBuildPath, sp_RelativeBuildPath, sp_QuarkDownloadedPath;
-        bool aesKeyFoldout = false;
+             sp_EnableRelativeLoadPath, sp_RelativeLoadPath, sp_CustomeAbsolutePath, 
+            sp_EnableRelativeBuildPath, sp_RelativeBuildPath, sp_QuarkDownloadedPath,sp_EncryptionOffset;
         public override void OnInspectorGUI()
         {
             targetObject.Update();
@@ -26,10 +25,10 @@ namespace Cosmos.Editor.Quark
                 case QuarkAssetLoadMode.BuiltAssetBundle:
                     {
                         DrawBuildAssetBundleTab();
+                        DrawOffstEncryption();
                     }
                     break;
             }
-            DrawAES();
             targetObject.ApplyModifiedProperties();
         }
         private void OnEnable()
@@ -41,7 +40,7 @@ namespace Cosmos.Editor.Quark
             sp_Url = targetObject.FindProperty("Url");
             sp_PingUrl = targetObject.FindProperty("PingUrl");
             sp_QuarkDownloadedPath = targetObject.FindProperty("QuarkDownloadedPath");
-            sp_AESEncryptionKey = targetObject.FindProperty("AESEncryptionKey");
+            sp_EncryptionOffset = targetObject.FindProperty("EncryptionOffset");
             sp_EnableRelativeLoadPath = targetObject.FindProperty("EnableRelativeLoadPath");
             sp_CustomeAbsolutePath = targetObject.FindProperty("CustomeAbsolutePath");
             sp_RelativeLoadPath = targetObject.FindProperty("RelativeLoadPath");
@@ -97,15 +96,9 @@ namespace Cosmos.Editor.Quark
             }
             EditorGUILayout.EndVertical();
         }
-        void DrawAES()
+        void DrawOffstEncryption()
         {
-            EditorGUILayout.Space(8);
-            aesKeyFoldout = EditorGUILayout.Foldout(aesKeyFoldout, "AESKey");
-            if (aesKeyFoldout)
-            {
-                EditorGUILayout.LabelField("Quark AES Key : ");
-                sp_AESEncryptionKey.stringValue = EditorGUILayout.TextField("AESEncryptionKey", sp_AESEncryptionKey.stringValue.Trim());
-            }
+            sp_EncryptionOffset.longValue= EditorGUILayout.LongField("QuarkEncryptionOffset", sp_EncryptionOffset.longValue);
         }
     }
 }

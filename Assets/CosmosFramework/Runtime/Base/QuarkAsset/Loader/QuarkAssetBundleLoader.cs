@@ -80,7 +80,7 @@ namespace Quark.Loader
                 else
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
-                    assetBundle = AssetBundle.LoadFromFile(abPath);
+                    assetBundle = AssetBundle.LoadFromFile(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
                     assetBundleDict.TryAdd(assetBundleName, assetBundle);
 
                     QuarkBuildInfo.AssetData buildInfo = null;
@@ -104,7 +104,7 @@ namespace Quark.Loader
                                 var dependentABPath = Path.Combine(PersistentPath, dependentABName);
                                 try
                                 {
-                                    AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath);
+                                    AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
                                     assetBundleDict.TryAdd(dependentABName, abBin);
                                 }
                                 catch (Exception e)
@@ -178,7 +178,7 @@ namespace Quark.Loader
                 else
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
-                    assetBundle = AssetBundle.LoadFromFile(abPath);
+                    assetBundle = AssetBundle.LoadFromFile(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
                     assetBundleDict.TryAdd(assetBundleName, assetBundle);
 
                     QuarkBuildInfo.AssetData buildInfo = null;
@@ -202,7 +202,7 @@ namespace Quark.Loader
                                 var dependentABPath = Path.Combine(PersistentPath, dependentABName);
                                 try
                                 {
-                                    AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath);
+                                    AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
                                     assetBundleDict.TryAdd(dependentABName, abBin);
                                 }
                                 catch (Exception e)
@@ -404,23 +404,14 @@ where T : UnityEngine.Object
                 if (!assetBundleDict.ContainsKey(assetBundleName))
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
-                   // Utility.Debug.LogInfo(abPath);
-                    try
-                    {
-                        AssetBundle abBin = AssetBundle.LoadFromFile(abPath);
-                        assetBundleDict.TryAdd(assetBundleName, abBin);
-                        //Utility.Debug.LogInfo("LoadAB : " + abPath, MessageColor.DARKBLUE);
-                    }
-                    catch (Exception e)
-                    {
-                        Utility.Debug.LogError(e);
-                    }
-                    //yield return EnumDownloadAssetBundle(abPath, ab =>
-                    //{
-                    //    Utility.Debug.LogInfo("assetBundleName : " + assetBundleName, MessageColor.NAVY);
-                    //    assetBundleDict.TryAdd(assetBundleName, ab);
-                    //    Utility.Debug.LogInfo("LoadAB : " + abPath, MessageColor.DARKBLUE);
-                    //}, null);
+                    // Utility.Debug.LogInfo(abPath);
+                    var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
+                    yield return abReq;
+                    var bundle = abReq.assetBundle;
+                    if (bundle != null)
+                        assetBundleDict.TryAdd(assetBundleName, abReq.assetBundle);
+                    else
+                        Utility.Debug.LogError($"AssetBundle : {assetBundleName} load failure !");
                 }
                 QuarkBuildInfo.AssetData buildInfo = null;
                 foreach (var item in QuarkBuildInfo.AssetDataMaps)
@@ -442,22 +433,13 @@ where T : UnityEngine.Object
                         if (!assetBundleDict.ContainsKey(dependentABName))
                         {
                             var abPath = Path.Combine(PersistentPath, dependentABName);
-
-                            try
-                            {
-                                AssetBundle abBin = AssetBundle.LoadFromFile(abPath);
-                                assetBundleDict.TryAdd(dependentABName, abBin);
-                                //Utility.Debug.LogInfo("dependentABName : " + dependentABName, MessageColor.FUCHSIA);
-                            }
-                            catch (Exception e)
-                            {
-                                Utility.Debug.LogError(e);
-                            }
-                            //yield return EnumDownloadAssetBundle(abPath, ab =>
-                            //{
-                            //    Utility.Debug.LogInfo("dependentABName : " + dependentABName, MessageColor.FUCHSIA);
-                            //    assetBundleDict.TryAdd(dependentABName, ab);
-                            //}, (str) => { Utility.Debug.LogError(str); });
+                            var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
+                            yield return abReq;
+                            var bundle = abReq.assetBundle;
+                            if (bundle != null)
+                                assetBundleDict.TryAdd(dependentABName, abReq.assetBundle);
+                            else
+                                Utility.Debug.LogError($"AssetBundle : {dependentABName} load failure !");
                         }
                     }
                 }

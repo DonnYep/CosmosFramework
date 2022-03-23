@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.45061135, g: 0.5005873, b: 0.5750094, a: 1}
+  m_IndirectSpecularColor: {r: 0.45061117, g: 0.5005859, b: 0.5750081, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -764,18 +764,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 435fb9601448fe144854aeece9140fde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  QuarkBuildPath: 0
+  QuarkBuildPath: 1
   EnableRelativeBuildPath: 1
-  RelativeBuildPath: Win
+  RelativeBuildPath: 
   Url: 
   PingUrl: 0
   QuarkAssetLoadMode: 1
   QuarkAssetDataset: {fileID: 11400000, guid: e4ef4e912cff6e24f8901a67d27afba9, type: 2}
-  QuarkLoadPath: 0
+  QuarkDownloadedPath: 0
   EnableRelativeLoadPath: 0
   RelativeLoadPath: 
-  AESEncryptionKey: 
-  CustomeLoadPath: 
+  EncryptionOffset: 0
+  CustomeAbsolutePath: 
 --- !u!1 &613508358
 GameObject:
   m_ObjectHideFlags: 0

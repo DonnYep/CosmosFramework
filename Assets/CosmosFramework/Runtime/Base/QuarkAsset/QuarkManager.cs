@@ -32,7 +32,11 @@ namespace Quark
     public class QuarkManager : Singleton<QuarkManager>
     {
         public QuarkAssetLoadMode QuarkAssetLoadMode { get; set; }
-        public string AESEncryptionKey { get; set; }
+        public ulong QuarkEncryptionOffset
+        {
+            get { return QuarkDataProxy.QuarkEncryptionOffset; }
+            set { QuarkDataProxy.QuarkEncryptionOffset = value; }
+        }
         QuarkDownloader quarkDownloader;
         QuarkComparator quarkComparator;
         Dictionary<QuarkAssetLoadMode, IQuarkAssetLoader> quarkLoaderDict;

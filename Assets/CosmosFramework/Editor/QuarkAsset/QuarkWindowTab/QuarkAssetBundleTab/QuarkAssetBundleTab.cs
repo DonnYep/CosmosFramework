@@ -99,14 +99,8 @@ namespace Cosmos.Editor.Quark
 
             GUILayout.Space(16);
 
-            assetBundleTabData.UseAESEncryption = EditorGUILayout.ToggleLeft("UseAESEncryption", assetBundleTabData.UseAESEncryption);
-            if (assetBundleTabData.UseAESEncryption)
-            {
-                GUILayout.Space(16);
-                var aesKeyLength = Encoding.UTF8.GetBytes(assetBundleTabData.AESEncryptionKey).Length;
-                EditorGUILayout.LabelField($"密钥长度须为16，24，32，当前密钥长度：{aesKeyLength}");
-                assetBundleTabData.AESEncryptionKey = EditorGUILayout.TextField("AESEncryptionKey", assetBundleTabData.AESEncryptionKey);
-            }
+            DrawOffsetEncryptionLable();
+
             GUILayout.Space(16);
 
             GUILayout.BeginHorizontal();
@@ -123,6 +117,18 @@ namespace Cosmos.Editor.Quark
                 EditorUtil.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
             }
             GUILayout.EndHorizontal();
+        }
+        void DrawOffsetEncryptionLable()
+        {
+            assetBundleTabData.UseOffsetEncryption = EditorGUILayout.ToggleLeft("UseOffsetEncryption", assetBundleTabData.UseOffsetEncryption);
+            if (assetBundleTabData.UseOffsetEncryption)
+            {
+                GUILayout.Space(16);
+                EditorGUILayout.LabelField("AssetBundle加密偏移量");
+                assetBundleTabData.EncryptionOffset = EditorGUILayout.IntField("EncryptionOffset", assetBundleTabData.EncryptionOffset);
+                if (assetBundleTabData.EncryptionOffset < 0)
+                    assetBundleTabData.EncryptionOffset = 0;
+            }
         }
         void BrowseFolder()
         {
@@ -228,9 +234,9 @@ namespace Cosmos.Editor.Quark
         void OperateManifest()
         {
             var buildPath = GetBuildPath();
-            var paths= buildPath.Split('/');
+            var paths = buildPath.Split('/');
             var pathLength = paths.Length;
-            if (pathLength==0)
+            if (pathLength == 0)
             {
                 EditorUtil.Debug.LogError("Build path is invalid !");
                 return;
@@ -309,7 +315,7 @@ namespace Cosmos.Editor.Quark
                         }
                     });
                 }
-                EncryptAB(abPaths.ToArray());
+                OffsetEncryptAB(abPaths.ToArray());
                 mainBundle.Unload(true);
             });
         }
@@ -409,11 +415,11 @@ namespace Cosmos.Editor.Quark
         /// 对AB进行加密；
         /// </summary>
         /// <param name="paths">AB的地址</param>
-        void EncryptAB(string[] paths)
+        void OffsetEncryptAB(string[] paths)
         {
-            if (assetBundleTabData.UseAESEncryption)
+            if (assetBundleTabData.UseOffsetEncryption)
             {
-                var aseByteKey = Encoding.UTF8.GetBytes(assetBundleTabData.AESEncryptionKey);
+                var offset = assetBundleTabData.EncryptionOffset;
                 EditorUtil.IO.DownloadAssetBundlesBytesAsync(paths, percent =>
                 {
                     var per = percent * 100;
@@ -425,8 +431,14 @@ namespace Cosmos.Editor.Quark
                     var length = byteList.Count;
                     for (int i = 0; i < length; i++)
                     {
-                        var encryptedBytes = Utility.Encryption.AESEncryptByteToByte(byteList[i], aseByteKey);
-                        File.WriteAllBytes(paths[i], encryptedBytes);
+                        using (MemoryStream stream = new MemoryStream(byteList[i].Length + offset))
+                        {
+                            var head = new byte[offset];
+                            stream.Write(head, 0, head.Length);
+                            stream.Write(byteList[i], 0, byteList[i].Length);
+                            File.WriteAllBytes(paths[i], stream.ToArray());
+                            stream.Close();
+                        }
                     }
                     //GUIUtility.ExitGUI();
                 });

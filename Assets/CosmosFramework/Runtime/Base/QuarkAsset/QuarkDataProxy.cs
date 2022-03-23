@@ -21,5 +21,9 @@
         /// 存储ab包中包含的资源信息；
         /// </summary>
         public static QuarkManifest QuarkManifest { get; set; }
+        /// <summary>
+        /// 加密偏移量；
+        /// </summary>
+        public static ulong QuarkEncryptionOffset { get; set; }
     }
 }

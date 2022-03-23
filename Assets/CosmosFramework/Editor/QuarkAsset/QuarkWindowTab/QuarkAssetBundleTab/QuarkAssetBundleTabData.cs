@@ -19,8 +19,14 @@ namespace Cosmos.Editor.Quark
         public string StreamingRelativePath { get; set; }
         public bool WithoutManifest { get; set; }
         public AssetBundleHashType NameHashType { get; set; }
-        public bool UseAESEncryption { get; set; }
-        public string AESEncryptionKey { get; set; }
+        /// <summary>
+        /// 使用偏移加密；
+        /// </summary>
+        public bool UseOffsetEncryption { get; set; }
+        /// <summary>
+        /// 加密偏移量；
+        /// </summary>
+        public int EncryptionOffset { get; set; }
         public BuildAssetBundleOptions BuildAssetBundleOptions { get; set; }
 
         public QuarkAssetBundleTabData()
@@ -33,8 +39,7 @@ namespace Cosmos.Editor.Quark
             StreamingRelativePath = string.Empty;
             WithoutManifest = true;
             NameHashType = AssetBundleHashType.DefaultName;
-            UseAESEncryption = false;
-            AESEncryptionKey = "QuarkAssetBundle";
+            EncryptionOffset = 0;
             BuildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression;
         }
     }

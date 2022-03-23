@@ -53,10 +53,14 @@ namespace Quark
         /// 持久化路径下的相对地址；
         /// </summary>
         public string RelativeLoadPath;
+        ///// <summary>
+        ///// 对称加密密钥；
+        ///// </summary>
+        //public string AESEncryptionKey;
         /// <summary>
-        /// 对称加密密钥；
+        /// 加密偏移量；
         /// </summary>
-        public string AESEncryptionKey;
+        public ulong EncryptionOffset;
         /// <summary>
         /// QuarkPersistentPathType 枚举下的自定义持久化路径；
         /// </summary>
@@ -88,7 +92,7 @@ namespace Quark
         {
             instance = this;
             QuarkManager.Instance.QuarkAssetLoadMode = QuarkAssetLoadMode;
-            QuarkManager.Instance.AESEncryptionKey = AESEncryptionKey;
+            QuarkManager.Instance.QuarkEncryptionOffset= EncryptionOffset;
             switch (QuarkAssetLoadMode)
             {
                 case QuarkAssetLoadMode.AssetDatabase:
@@ -99,7 +103,6 @@ namespace Quark
                     break;
                 case QuarkAssetLoadMode.BuiltAssetBundle:
                     {
-                        //var downloadPath =  Path.Combine( Application.persistentDataPath,"DownloadPath");
                         switch (QuarkBuildPath)
                         {
                             case QuarkBuildPath.StreamingAssets:

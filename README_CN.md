@@ -36,7 +36,7 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 
 - **Input**:输入适配模块。通过虚拟按键模拟各个平台的输入，传入不同的输入适配器可适配不同平台的输入方式。
 
-- **Hotfix**:热更新模块。此模块适用于基于C#的热更方案。（此方案未完善，未来将会使用MONO Interpreter 解释器执行热更新。）
+- **Hotfix**:热更新模块。此模块适用于基于C#的热更方案。（此方案未完善）
 
 - **Network**:网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP、TCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可实现(Client-Server)模式。支持async/await语法。
 

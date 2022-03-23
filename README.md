@@ -36,7 +36,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **Input** : Input adaptation module. The input of each platform is simulated by virtual keys, and different input adapters can be passed in to adapt the input methods of different platforms.
 
-- **Hotfix** : Hot update module. This module is for C#-based hot update solutions. (This solution is not completed, in the future it will use the MONO interpreter to perform hot updates.)
+- **Hotfix** : Hot update module. This module is for C#-based hot update solutions. (This solution is not completed.)
 
 - **Network** : Network module. A variety of high-speed and reliable UDP protocols are provided, such as RUDP, SUDP, KCP, TCP, etc. The KCP protocol is used by default. Network in the form of channel (Channel) to distinguish each connection, support a variety of network types connected at the same time. Can be implemented (Client-Server) mode. Support async/await syntax.
 
