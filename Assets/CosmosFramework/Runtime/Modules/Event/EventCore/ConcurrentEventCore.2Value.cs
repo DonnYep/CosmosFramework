@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 namespace Cosmos
 {
     /// <summary>
-    /// 标准事件模型；
-    /// 普通事件Core;
+    /// 线程安全事件Core；
     /// 此类型的事件可以与EventManager并行使用；
     /// EventManager为全局事件，当前此类事件可以是区域事件；
     /// </summary>
@@ -13,10 +13,10 @@ namespace Cosmos
     /// <typeparam name="TValueA">valueA的类型</typeparam>
     /// <typeparam name="TValueB">valueB的类型</typeparam>
     /// <typeparam name="TDerived">派生类的类型</typeparam>
-    public class StandardEventCore<TKey, TValueA, TValueB, TDerived> : Singleton<TDerived>
-            where TDerived : StandardEventCore<TKey, TValueA, TValueB, TDerived>, new()
+    public class ConcurrentEventCore<TKey, TValueA, TValueB, TDerived> : ConcurrentSingleton<TDerived>
+                where TDerived : ConcurrentEventCore<TKey, TValueA, TValueB, TDerived>, new()
     {
-        protected Dictionary<TKey, List<Action<TValueA,TValueB>>> eventDict = new Dictionary<TKey, List<Action<TValueA,TValueB>>>();
+        protected ConcurrentDictionary<TKey, List<Action<TValueA, TValueB>>> eventDict = new ConcurrentDictionary<TKey, List<Action<TValueA, TValueB>>>();
         #region Sync
         public virtual void AddEventListener(TKey key, Action<TValueA, TValueB> handler)
         {
@@ -26,7 +26,7 @@ namespace Cosmos
             {
                 List<Action<TValueA, TValueB>> handlerSet = new List<Action<TValueA, TValueB>>();
                 handlerSet.Add(handler);
-                eventDict.Add(key, handlerSet);
+                eventDict.TryAdd(key, handlerSet);
             }
         }
         public virtual void RemoveEventListener(TKey key, Action<TValueA, TValueB> handler)
@@ -36,7 +36,7 @@ namespace Cosmos
                 var handlerSet = eventDict[key];
                 handlerSet.Remove(handler);
                 if (handlerSet.Count <= 0)
-                    eventDict.Remove(key);
+                    eventDict.TryRemove(key, out _);
             }
         }
         public bool HasEventListened(TKey key)
@@ -71,7 +71,7 @@ namespace Cosmos
                 {
                     List<Action<TValueA, TValueB>> handlerSet = new List<Action<TValueA, TValueB>>();
                     handlerSet.Add(handler);
-                    eventDict.Add(key, handlerSet);
+                    eventDict.TryAdd(key, handlerSet);
                 }
             });
         }
@@ -84,7 +84,7 @@ namespace Cosmos
                     var handlerSet = eventDict[key];
                     handlerSet.Remove(handler);
                     if (handlerSet.Count <= 0)
-                        eventDict.Remove(key);
+                        eventDict.TryRemove(key,out _);
                 }
             });
         }

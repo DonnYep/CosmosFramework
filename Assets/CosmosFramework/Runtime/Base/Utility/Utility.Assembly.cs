@@ -747,6 +747,44 @@ where K : class
                 }
                 return type;
             }
+            /// <summary>
+            /// 获取类Type类型中的所有字段名；
+            /// </summary>
+            /// <typeparam name="T">type类型</typeparam>
+            /// <returns>名称数组</returns>
+            public static string[] GetTypeAllFields<T>()
+            {
+                return GetTypeAllFields(typeof(T));
+            }
+            /// <summary>
+            /// 获取类Type类型中的所有字段名；
+            /// </summary>
+            /// <param name="type">type类型</param>
+            /// <returns>名称数组</returns>
+            public static string[] GetTypeAllFields(Type type)
+            {
+                var fields= type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                return fields.Select(f => f.Name).ToArray();
+            }
+            /// <summary>
+            /// 获取Type类型中所有属性字段名；
+            /// </summary>
+            /// <typeparam name="T">type类型</typeparam>
+            /// <returns>名称数组</returns>
+            public static string[] GetTypeAllProperties<T>()
+            {
+                return GetTypeAllProperties(typeof(T));
+            }
+            /// <summary>
+            /// 获取Type类型中所有属性字段名；
+            /// </summary>
+            /// <param name="type">type类型</param>
+            /// <returns>名称数组</returns>
+            public static string[] GetTypeAllProperties(Type type)
+            {
+                var properties= type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                return properties.Select(f => f.Name).ToArray();
+            }
         }
     }
 }
