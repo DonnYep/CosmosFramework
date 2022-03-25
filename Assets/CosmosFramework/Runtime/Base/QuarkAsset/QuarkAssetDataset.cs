@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
-using Cosmos;
-
+using UnityEngine;
 namespace Quark.Asset
 {
     /// <summary>
@@ -9,7 +8,7 @@ namespace Quark.Asset
     /// build之后需配合AB资源使用；
     /// </summary>
     [Serializable]
-    public sealed class QuarkAssetDataset : DatasetBase
+    public sealed class QuarkAssetDataset : ScriptableObject, IDisposable
     {
         /// <summary>
         /// 包含的路径；
@@ -22,7 +21,7 @@ namespace Quark.Asset
             DirHashPairs = new List<QuarkDirHashPair>();
             QuarkAssetObjectList = new List<QuarkAssetDatabaseObject>();
         }
-        public override void Dispose()
+        public void Dispose()
         {
             QuarkAssetCount = 0;
             QuarkAssetObjectList?.Clear();

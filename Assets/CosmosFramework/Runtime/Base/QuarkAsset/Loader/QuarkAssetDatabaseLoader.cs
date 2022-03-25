@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Cosmos;
 namespace Quark.Loader
 {
     internal class QuarkAssetDatabaseLoader : IQuarkAssetLoader
@@ -102,11 +101,11 @@ namespace Quark.Loader
         }
         public void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
-            Utility.Debug.LogInfo("AssetDatabase Mode UnLoadAllAsset");
+            QuarkUtility.LogInfo("AssetDatabase Mode UnLoadAllAsset");
         }
         public void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
-            Utility.Debug.LogInfo("AssetDatabase Mode UnLoadAllAsset");
+            QuarkUtility.LogInfo("AssetDatabase Mode UnLoadAllAsset");
         }
         public QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {

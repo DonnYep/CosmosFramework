@@ -1,5 +1,4 @@
-﻿using Cosmos;
-using Quark.Asset;
+﻿using Quark.Asset;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -81,7 +80,7 @@ namespace Quark.Loader
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
                     assetBundle = AssetBundle.LoadFromFile(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
-                    assetBundleDict.TryAdd(assetBundleName, assetBundle);
+                    assetBundleDict[assetBundleName] = assetBundle;
 
                     QuarkBuildInfo.AssetData buildInfo = null;
                     foreach (var item in QuarkBuildInfo.AssetDataMaps)
@@ -105,7 +104,7 @@ namespace Quark.Loader
                                 try
                                 {
                                     AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
-                                    assetBundleDict.TryAdd(dependentABName, abBin);
+                                    assetBundleDict[dependentABName] = abBin;
                                 }
                                 catch (Exception e)
                                 {
@@ -179,7 +178,7 @@ namespace Quark.Loader
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
                     assetBundle = AssetBundle.LoadFromFile(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
-                    assetBundleDict.TryAdd(assetBundleName, assetBundle);
+                    assetBundleDict[assetBundleName] = assetBundle;
 
                     QuarkBuildInfo.AssetData buildInfo = null;
                     foreach (var item in QuarkBuildInfo.AssetDataMaps)
@@ -203,7 +202,7 @@ namespace Quark.Loader
                                 try
                                 {
                                     AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
-                                    assetBundleDict.TryAdd(dependentABName, abBin);
+                                    assetBundleDict[dependentABName]= abBin;
                                 }
                                 catch (Exception e)
                                 {
@@ -409,7 +408,7 @@ where T : UnityEngine.Object
                     yield return abReq;
                     var bundle = abReq.assetBundle;
                     if (bundle != null)
-                        assetBundleDict.TryAdd(assetBundleName, abReq.assetBundle);
+                        assetBundleDict[assetBundleName]= abReq.assetBundle;
                     else
                         Utility.Debug.LogError($"AssetBundle : {assetBundleName} load failure !");
                 }
@@ -437,7 +436,7 @@ where T : UnityEngine.Object
                             yield return abReq;
                             var bundle = abReq.assetBundle;
                             if (bundle != null)
-                                assetBundleDict.TryAdd(dependentABName, abReq.assetBundle);
+                                assetBundleDict[dependentABName]= abReq.assetBundle;
                             else
                                 Utility.Debug.LogError($"AssetBundle : {dependentABName} load failure !");
                         }

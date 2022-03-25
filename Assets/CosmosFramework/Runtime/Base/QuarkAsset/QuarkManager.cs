@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Cosmos;
 using UnityEngine;
 using Quark.Asset;
 using Quark.Networking;
@@ -29,8 +28,20 @@ namespace Quark
     *                        3>下载差异文件，调用LaunchDownload；
     */
     //================================================
-    public class QuarkManager : Singleton<QuarkManager>
+    public  class QuarkManager
     {
+        static QuarkManager instance;
+        public static QuarkManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new QuarkManager();
+                }
+                return instance;
+            }
+        }
         public QuarkAssetLoadMode QuarkAssetLoadMode { get; set; }
         public ulong QuarkEncryptionOffset
         {
@@ -247,7 +258,7 @@ where T : UnityEngine.Object
                 try
                 {
                     var expiredPath = Path.Combine(QuarkDataProxy.PersistentPath, expired[i]);
-                    Utility.IO.DeleteFile(expiredPath);
+                    QuarkUtility.DeleteFile(expiredPath);
                 }
                 catch { }
             }

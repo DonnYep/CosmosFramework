@@ -11,23 +11,23 @@ namespace Cosmos.Editor.Quark
     [Serializable]
     internal class QuarkAssetBundleTabData
     {
-        public BuildTarget BuildTarget { get; set; }
-        public string OutputPath { get; set; }
-        public bool UseDefaultPath { get; set; }
-        public bool ClearOutputFolders { get; set; }
-        public bool CopyToStreamingAssets { get; set; }
-        public string StreamingRelativePath { get; set; }
-        public bool WithoutManifest { get; set; }
-        public AssetBundleHashType NameHashType { get; set; }
+        public BuildTarget BuildTarget;
+        public string OutputPath;
+        public bool UseDefaultPath;
+        public bool ClearOutputFolders;
+        public bool CopyToStreamingAssets;
+        public string StreamingRelativePath;
+        public bool WithoutManifest;
+        public AssetBundleHashType NameHashType;
         /// <summary>
         /// 使用偏移加密；
         /// </summary>
-        public bool UseOffsetEncryption { get; set; }
+        public bool UseOffsetEncryption;
         /// <summary>
         /// 加密偏移量；
         /// </summary>
-        public int EncryptionOffset { get; set; }
-        public BuildAssetBundleOptions BuildAssetBundleOptions { get; set; }
+        public int EncryptionOffset;
+        public BuildAssetBundleOptions BuildAssetBundleOptions;
 
         public QuarkAssetBundleTabData()
         {

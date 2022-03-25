@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
 using Quark.Asset;
-using Cosmos;
-
 namespace Quark
 {
     /// <summary>
@@ -118,10 +116,10 @@ namespace Quark
         }
         void URLTab()
         {
-            Utility.Text.IsStringValid(Url, "URI is invalid !");
+            QuarkUtility.IsStringValid(Url, "URI is invalid !");
             if (PingUrl)
             {
-                if (!Utility.Net.PingURI(Url))
+                if (!QuarkUtility.PingURI(Url))
                     return;
             }
             if (QuarkDownloadedPath != QuarkDownloadedPath.Custome)
@@ -141,7 +139,7 @@ namespace Quark
             {
                 downloadPath = CustomeAbsolutePath;
             }
-            Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
+            QuarkUtility.IsStringValid(downloadPath, "DownloadPath is invalid !");
             if (!Directory.Exists(downloadPath))
                 Directory.CreateDirectory(downloadPath);
             QuarkManager.Instance.Initiate(Url, downloadPath);

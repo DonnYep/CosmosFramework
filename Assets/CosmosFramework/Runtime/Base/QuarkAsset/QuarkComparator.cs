@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine.Networking;
-using Utility = Cosmos.Utility;
 namespace Quark.Networking
 {
     /// <summary>
@@ -47,7 +46,7 @@ namespace Quark.Networking
         /// </summary>
         public void CheckForUpdates()
         {
-            var uriManifestPath = Utility.IO.WebPathCombine(URL, QuarkConstant.ManifestName);
+            var uriManifestPath = QuarkUtility.WebPathCombine(URL, QuarkConstant.ManifestName);
             QuarkUtility.Unity.StartCoroutine(EnumDownloadManifest(uriManifestPath));
         }
         public void LoadFromStreamingAssets()
@@ -92,13 +91,13 @@ namespace Quark.Networking
             long overallSize = 0;
             try
             {
-                localManifestContext = Utility.IO.ReadTextFileContent(localManifestPath);
+                localManifestContext = QuarkUtility.ReadTextFileContent(localManifestPath);
             }
             catch { }
 
-            try { localManifest = QuarkUtility.Json.ToObject<QuarkManifest>(localManifestContext); }
+            try { localManifest = QuarkUtility.ToObject<QuarkManifest>(localManifestContext); }
             catch { }
-            try { remoteManifest = QuarkUtility.Json.ToObject<QuarkManifest>(remoteManifestContext); }
+            try { remoteManifest = QuarkUtility.ToObject<QuarkManifest>(remoteManifestContext); }
             catch { }
             if (localManifest != null)
             {
@@ -122,7 +121,7 @@ namespace Quark.Networking
                             {
                                 //默认ab包文件名等于ab包名环境下测试；
                                 var abFilePath = Path.Combine(PersistentPath, localMF.ABName);
-                                var localSize = Utility.IO.GetFileSize(abFilePath);
+                                var localSize = QuarkUtility.GetFileSize(abFilePath);
                                 var remoteSize = remoteMF.Value.ABFileSize;
                                 if (remoteSize != localSize)
                                 {
@@ -169,7 +168,7 @@ namespace Quark.Networking
             latest.Clear();
             expired.Clear();
             var localNewManifestPath = Path.Combine(PersistentPath, QuarkConstant.ManifestName);
-            Utility.IO.OverwriteTextFile(localNewManifestPath, remoteManifestContext);
+            QuarkUtility.OverwriteTextFile(localNewManifestPath, remoteManifestContext);
             QuarkManager.Instance.SetBuiltAssetBundleModeData(remoteManifest);
             if (latesetArray.Length > 0 || expiredArray.Length > 0)
             {
@@ -183,8 +182,8 @@ namespace Quark.Networking
                 var localBuildInfoPath = Path.Combine(PersistentPath, QuarkConstant.BuildInfoFileName);
                 try
                 {
-                    var localBuildInfoContext = Utility.IO.ReadTextFileContent(localBuildInfoPath);
-                    QuarkDataProxy.QuarkBuildInfo = QuarkUtility.Json.ToObject<QuarkBuildInfo>(localBuildInfoContext);
+                    var localBuildInfoContext = QuarkUtility.ReadTextFileContent(localBuildInfoPath);
+                    QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(localBuildInfoContext);
                 }
                 catch (Exception e)
                 {
@@ -204,14 +203,14 @@ namespace Quark.Networking
                     {
                         var localNewBuildInfoPath = Path.Combine(PersistentPath, QuarkConstant.BuildInfoFileName);
                         var buildInfoContext = request.downloadHandler.text;
-                        Utility.IO.OverwriteTextFile(localNewBuildInfoPath, buildInfoContext);
+                        QuarkUtility.OverwriteTextFile(localNewBuildInfoPath, buildInfoContext);
                         try
                         {
-                            QuarkDataProxy.QuarkBuildInfo = QuarkUtility.Json.ToObject<QuarkBuildInfo>(buildInfoContext);
+                            QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(buildInfoContext);
                         }
                         catch (Exception e)
                         {
-                            Utility.Debug.LogError(e);
+                            QuarkUtility.LogError(e);
                         }
                         callback();
                     }
@@ -230,11 +229,11 @@ namespace Quark.Networking
                         var context = request.downloadHandler.text;
                         try
                         {
-                            localManifest = QuarkUtility.Json.ToObject<QuarkManifest>(context);
+                            localManifest = QuarkUtility.ToObject<QuarkManifest>(context);
                         }
                         catch (Exception e)
                         {
-                            Utility.Debug.LogError(e);
+                            QuarkUtility.LogError(e);
                         }
                     }
                 }
@@ -249,23 +248,23 @@ namespace Quark.Networking
                         var context = request.downloadHandler.text;
                         try
                         {
-                            QuarkDataProxy.QuarkBuildInfo = QuarkUtility.Json.ToObject<QuarkBuildInfo>(context);
+                            QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(context);
                         }
                         catch (Exception e)
                         {
-                            Utility.Debug.LogError(e);
+                            QuarkUtility.LogError(e);
                         }
                     }
                 }
             }
             if (localManifest == null)
             {
-                Utility.Debug.LogError("QuarkManifest is not existed !");
+                QuarkUtility.LogError("QuarkManifest is not existed !");
                 yield break;
             }
             if (QuarkDataProxy.QuarkBuildInfo == null)
             {
-                Utility.Debug.LogError("QuarkBuildInfo is not existed !");
+                QuarkUtility.LogError("QuarkBuildInfo is not existed !");
                 yield break;
             }
             QuarkManager.Instance.SetBuiltAssetBundleModeData(localManifest);

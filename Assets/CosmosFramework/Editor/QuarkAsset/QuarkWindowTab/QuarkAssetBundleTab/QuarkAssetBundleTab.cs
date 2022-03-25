@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Quark.Asset;
 using Quark;
 namespace Cosmos.Editor.Quark
@@ -373,12 +372,12 @@ namespace Cosmos.Editor.Quark
         void WriteBuildInfo()
         {
             abBuildInfo.BuildTime = System.DateTime.Now.ToString();
-            var json = QuarkUtility.Json.ToJson(abBuildInfo, true);
+            var json = QuarkUtility.ToJson(abBuildInfo, true);
             var fullPath = Utility.IO.PathCombine(GetBuildPath(), quarkABBuildInfo);
             Utility.IO.WriteTextFile(fullPath, json, false);
             abBuildInfo.Dispose();
             buildInfoCache.Clear();
-            var manifestJson = QuarkUtility.Json.ToJson(quarkAssetManifest);
+            var manifestJson = QuarkUtility.ToJson(quarkAssetManifest);
             var manifestPath = Utility.IO.PathCombine(GetBuildPath(), quarkManifest);
             Utility.IO.WriteTextFile(manifestPath, manifestJson, false);
         }
