@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using Quark;
 using Cosmos;
-using System;
 
 public class QuarkLoadAssetPanel : MonoBehaviour
 {
@@ -26,14 +23,14 @@ public class QuarkLoadAssetPanel : MonoBehaviour
     }
     private void Awake()
     {
-        QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess;
+        QuarkResources.OnDetectedSuccess += OnDetectedSuccess;
     }
     void Start()
     {
         btnLoad?.onClick.AddListener(OnLoadClick);
         btnUnload?.onClick.AddListener(OnUnloadClick);
         objectRoot = new GameObject("ObjectRoot");
-        if (QuarkManager.Instance.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
+        if (QuarkResources.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
             OnUpdateDone();
     }
     void OnLoadClick()

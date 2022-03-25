@@ -89,14 +89,14 @@ namespace Quark
         void Awake()
         {
             instance = this;
-            QuarkManager.Instance.QuarkAssetLoadMode = QuarkAssetLoadMode;
-            QuarkManager.Instance.QuarkEncryptionOffset= EncryptionOffset;
+            QuarkResources.QuarkAssetLoadMode = QuarkAssetLoadMode;
+            QuarkResources.QuarkEncryptionOffset= EncryptionOffset;
             switch (QuarkAssetLoadMode)
             {
                 case QuarkAssetLoadMode.AssetDatabase:
                     {
                         if (QuarkAssetDataset != null)
-                            QuarkManager.Instance.SetAssetDatabaseModeData(QuarkAssetDataset);
+                            QuarkEngine.Instance.SetAssetDatabaseModeData(QuarkAssetDataset);
                     }
                     break;
                 case QuarkAssetLoadMode.BuiltAssetBundle:
@@ -142,8 +142,8 @@ namespace Quark
             QuarkUtility.IsStringValid(downloadPath, "DownloadPath is invalid !");
             if (!Directory.Exists(downloadPath))
                 Directory.CreateDirectory(downloadPath);
-            QuarkManager.Instance.Initiate(Url, downloadPath);
-            QuarkManager.Instance.CheckForUpdates();
+            QuarkEngine.Instance.Initiate(Url, downloadPath);
+            QuarkEngine.Instance.CheckForUpdates();
         }
         void StreamingAssetsTab()
         {
@@ -152,12 +152,12 @@ namespace Quark
                 streamingAssetPath = Path.Combine(Application.streamingAssetsPath, RelativeBuildPath);
             else
                 streamingAssetPath = Application.streamingAssetsPath;
-            QuarkManager.Instance.Initiate(streamingAssetPath, streamingAssetPath);
-            QuarkManager.Instance.LoadFromStreamingAssets();
+            QuarkEngine.Instance.Initiate(streamingAssetPath, streamingAssetPath);
+            QuarkEngine.Instance.LoadFromStreamingAssets();
         }
         private void OnDestroy()
         {
-            QuarkManager.Instance.StopDownload();
+            QuarkResources.StopDownload();
         }
     }
 }

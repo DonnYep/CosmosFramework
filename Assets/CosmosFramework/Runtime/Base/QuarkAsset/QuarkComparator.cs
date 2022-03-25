@@ -169,7 +169,7 @@ namespace Quark.Networking
             expired.Clear();
             var localNewManifestPath = Path.Combine(PersistentPath, QuarkConstant.ManifestName);
             QuarkUtility.OverwriteTextFile(localNewManifestPath, remoteManifestContext);
-            QuarkManager.Instance.SetBuiltAssetBundleModeData(remoteManifest);
+            QuarkEngine.Instance.SetBuiltAssetBundleModeData(remoteManifest);
             if (latesetArray.Length > 0 || expiredArray.Length > 0)
             {
                 QuarkUtility.Unity.StartCoroutine(EnumDownloadBuildInfo(uriBuildInfoPath, () =>
@@ -267,7 +267,7 @@ namespace Quark.Networking
                 QuarkUtility.LogError("QuarkBuildInfo is not existed !");
                 yield break;
             }
-            QuarkManager.Instance.SetBuiltAssetBundleModeData(localManifest);
+            QuarkEngine.Instance.SetBuiltAssetBundleModeData(localManifest);
             onCompareSuccess(new string[0], new string[0], 0);
         }
     }

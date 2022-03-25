@@ -28,16 +28,16 @@ namespace Quark
     *                        3>下载差异文件，调用LaunchDownload；
     */
     //================================================
-    public  class QuarkManager
+    internal class QuarkEngine
     {
-        static QuarkManager instance;
-        public static QuarkManager Instance
+        static QuarkEngine instance;
+        public static QuarkEngine Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new QuarkManager();
+                    instance = new QuarkEngine();
                 }
                 return instance;
             }
@@ -59,7 +59,7 @@ namespace Quark
         /// 当检测失败；
         /// </summary>
         Action<string> onDetectedFailure;
-        public QuarkManager()
+        public QuarkEngine()
         {
             quarkComparator = new QuarkComparator();
             quarkDownloader = new QuarkDownloader();
@@ -125,27 +125,6 @@ namespace Quark
             remove { quarkDownloader.OnDownloadFinish -= value; }
         }
         /// <summary>
-        /// 初始化，传入资源定位符与本地持久化路径；
-        /// </summary>
-        /// <param name="url">统一资源定位符</param>
-        /// <param name="persistentPath">本地持久化地址</param>
-        internal void Initiate(string url, string persistentPath)
-        {
-            QuarkDataProxy.PersistentPath = persistentPath;
-            QuarkDataProxy.URL = url;
-        }
-        internal void LoadFromStreamingAssets()
-        {
-            quarkComparator.LoadFromStreamingAssets();
-        }
-        /// <summary>
-        /// 检查更新；
-        /// </summary>
-        internal void CheckForUpdates()
-        {
-            quarkComparator.CheckForUpdates();
-        }
-        /// <summary>
         /// 启动下载；
         /// </summary>
         public void LaunchDownload()
@@ -155,6 +134,27 @@ namespace Quark
         public void StopDownload()
         {
             quarkDownloader.RemoveAllDownload();
+        }
+        /// <summary>
+        /// 初始化，传入资源定位符与本地持久化路径；
+        /// </summary>
+        /// <param name="url">统一资源定位符</param>
+        /// <param name="persistentPath">本地持久化地址</param>
+        public void Initiate(string url, string persistentPath)
+        {
+            QuarkDataProxy.PersistentPath = persistentPath;
+            QuarkDataProxy.URL = url;
+        }
+        public void LoadFromStreamingAssets()
+        {
+            quarkComparator.LoadFromStreamingAssets();
+        }
+        /// <summary>
+        /// 检查更新；
+        /// </summary>
+        internal void CheckForUpdates()
+        {
+            quarkComparator.CheckForUpdates();
         }
         /// <summary>
         /// 对Manifest进行编码；

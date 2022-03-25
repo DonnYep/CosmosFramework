@@ -1,11 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using Cosmos;
-using Cosmos.UI;
-using Cosmos.Network;
-using System.IO;
 namespace Cosmos.Lockstep
 {
     public class MultiplayNetworkPanel : MonoBehaviour
@@ -15,11 +9,11 @@ namespace Cosmos.Lockstep
         InputField iptHost;
         protected void Awake()
         {
-            btnConnect = transform.GetComponentInChildren<Button>("BtnConnect");
+            btnConnect = gameObject.GetComponentInChildren<Button>("BtnConnect");
             btnConnect.onClick.AddListener(ConnectClick);
-            btnDisconnect = transform.GetComponentInChildren<Button>("BtnDisconnect");
+            btnDisconnect = gameObject.GetComponentInChildren<Button>("BtnDisconnect");
             btnDisconnect.onClick.AddListener(DisconnectClick);
-            iptHost = transform.GetComponentInChildren<InputField>("IptHost");
+            iptHost = gameObject.GetComponentInChildren<InputField>("IptHost");
         }
         void ConnectClick()
         {

@@ -1,12 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Quark;
 using Cosmos;
 using System;
-using System.IO;
-using System.Text;
-using System.Net;
 using UnityEngine.UI;
 public class QuarkDownloadMonitorPanel : MonoBehaviour
 {
@@ -35,15 +30,15 @@ public class QuarkDownloadMonitorPanel : MonoBehaviour
     }
     private void Awake()
     {
-        QuarkManager.Instance.OnDownloadFinish += OnDownloadFinish;
-        QuarkManager.Instance.OnDownloadOverall += OnDownloadOverall;
-        QuarkManager.Instance.OnDownloadStart += OnDownloadStart;
-        QuarkManager.Instance.OnDownloadSuccess += OnDownloadSucess;
-        QuarkManager.Instance.OnDownloadFailure += OnDownloadFailure;
+        QuarkResources.OnDownloadFinish += OnDownloadFinish;
+        QuarkResources.OnDownloadOverall += OnDownloadOverall;
+        QuarkResources.OnDownloadStart += OnDownloadStart;
+        QuarkResources.OnDownloadSuccess += OnDownloadSucess;
+        QuarkResources.OnDownloadFailure += OnDownloadFailure;
     }
     void Start()
     {
-        if (QuarkManager.Instance.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
+        if (QuarkResources.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
         {
             HasNoLatest();
             Debug.Log(nameof(HasNoLatest));

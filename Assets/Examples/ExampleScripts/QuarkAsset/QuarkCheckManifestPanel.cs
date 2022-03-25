@@ -1,9 +1,6 @@
 ﻿using Quark;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 using Cosmos;
 public class QuarkCheckManifestPanel : MonoBehaviour
 {
@@ -15,8 +12,8 @@ public class QuarkCheckManifestPanel : MonoBehaviour
     bool canDownload = false;
     private void Awake()
     {
-        QuarkManager.Instance.OnDetectedSuccess += OnDetectedSuccess;
-        QuarkManager.Instance.OnDetectedFailure += OnDetectedFailure;
+        QuarkResources.OnDetectedSuccess += OnDetectedSuccess;
+        QuarkResources.OnDetectedFailure += OnDetectedFailure;
     }
     void Start()
     {
@@ -56,7 +53,7 @@ public class QuarkCheckManifestPanel : MonoBehaviour
     {
         if (canDownload)
         {
-            QuarkManager.Instance.LaunchDownload();
+            QuarkResources.LaunchDownload();
             canvasGroup.alpha = 0;
             canvasGroup.interactable = false;
             canvasGroup.blocksRaycasts = false;

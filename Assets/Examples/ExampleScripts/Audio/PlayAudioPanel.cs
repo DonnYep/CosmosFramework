@@ -10,10 +10,10 @@ public class PlayAudioPanel : MonoBehaviour
     Button btnStop;
     void Awake()
     {
-        btnPlay = transform.GetComponentInChildren<Button>("Play");
-        btnPause = transform.GetComponentInChildren<Button>("Pause");
-        btnUnPause = transform.GetComponentInChildren<Button>("Unpause");
-        btnStop = transform.GetComponentInChildren<Button>("Stop");
+        btnPlay = gameObject.GetComponentInChildren<Button>("Play");
+        btnPause = gameObject.GetComponentInChildren<Button>("Pause");
+        btnUnPause = gameObject.GetComponentInChildren<Button>("Unpause");
+        btnStop = gameObject.GetComponentInChildren<Button>("Stop");
 
         btnPlay.onClick.AddListener(PlayAudio);
         btnPause.onClick.AddListener(PauseAudio);
