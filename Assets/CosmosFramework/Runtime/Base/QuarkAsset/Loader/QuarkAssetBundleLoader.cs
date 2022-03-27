@@ -5,9 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-using Utility = Cosmos.Utility;
 
 namespace Quark.Loader
 {
@@ -81,7 +79,6 @@ namespace Quark.Loader
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
                     assetBundle = AssetBundle.LoadFromFile(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
                     assetBundleDict[assetBundleName] = assetBundle;
-
                     QuarkBuildInfo.AssetData buildInfo = null;
                     foreach (var item in QuarkBuildInfo.AssetDataMaps)
                     {
@@ -108,7 +105,7 @@ namespace Quark.Loader
                                 }
                                 catch (Exception e)
                                 {
-                                    Utility.Debug.LogError(e);
+                                    QuarkUtility.LogError(e);
                                 }
                             }
                         }
@@ -179,7 +176,6 @@ namespace Quark.Loader
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
                     assetBundle = AssetBundle.LoadFromFile(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
                     assetBundleDict[assetBundleName] = assetBundle;
-
                     QuarkBuildInfo.AssetData buildInfo = null;
                     foreach (var item in QuarkBuildInfo.AssetDataMaps)
                     {
@@ -202,11 +198,11 @@ namespace Quark.Loader
                                 try
                                 {
                                     AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
-                                    assetBundleDict[dependentABName]= abBin;
+                                    assetBundleDict[dependentABName] = abBin;
                                 }
                                 catch (Exception e)
                                 {
-                                    Utility.Debug.LogError(e);
+                                    QuarkUtility.LogError(e);
                                 }
                             }
                         }
@@ -267,7 +263,6 @@ namespace Quark.Loader
                 assetBundleDict.Remove(assetBundleName);
             }
         }
-
         public QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
             QuarkAssetBundleObject abObject = null;
@@ -325,13 +320,13 @@ namespace Quark.Loader
             }
             else
             {
-                Utility.Debug.LogError($"asset：{assetName} not existed !");
+                QuarkUtility.LogError($"asset：{assetName} not existed !");
                 yield break;
             }
 
             if (string.IsNullOrEmpty(assetBundleName))
             {
-                Utility.Debug.LogError($"AssetBundle：{assetBundleName} not existed !");
+                QuarkUtility.LogError($"AssetBundle：{assetBundleName} not existed !");
                 callback?.Invoke(assets);
                 yield break;
             }
@@ -375,13 +370,13 @@ where T : UnityEngine.Object
             }
             else
             {
-                Utility.Debug.LogError($"asset：{assetName} not existed !");
+                QuarkUtility.LogError($"asset：{assetName} not existed !");
                 yield break;
             }
 
             if (string.IsNullOrEmpty(assetBundleName))
             {
-                Utility.Debug.LogError($"AssetBundle：{assetBundleName} not existed !");
+                QuarkUtility.LogError($"AssetBundle：{assetBundleName} not existed !");
                 callback?.Invoke(asset);
                 yield break;
             }
@@ -403,14 +398,13 @@ where T : UnityEngine.Object
                 if (!assetBundleDict.ContainsKey(assetBundleName))
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
-                    // Utility.Debug.LogInfo(abPath);
                     var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
                     yield return abReq;
                     var bundle = abReq.assetBundle;
                     if (bundle != null)
-                        assetBundleDict[assetBundleName]= abReq.assetBundle;
+                        assetBundleDict[assetBundleName] = abReq.assetBundle;
                     else
-                        Utility.Debug.LogError($"AssetBundle : {assetBundleName} load failure !");
+                        QuarkUtility.LogError($"AssetBundle : {assetBundleName} load failure !");
                 }
                 QuarkBuildInfo.AssetData buildInfo = null;
                 foreach (var item in QuarkBuildInfo.AssetDataMaps)
@@ -428,7 +422,6 @@ where T : UnityEngine.Object
                     for (int i = 0; i < length; i++)
                     {
                         var dependentABName = dependList[i];
-                        //Utility.Debug.LogInfo("dependentABName : " + dependentABName, MessageColor.ORANGE);
                         if (!assetBundleDict.ContainsKey(dependentABName))
                         {
                             var abPath = Path.Combine(PersistentPath, dependentABName);
@@ -436,28 +429,11 @@ where T : UnityEngine.Object
                             yield return abReq;
                             var bundle = abReq.assetBundle;
                             if (bundle != null)
-                                assetBundleDict[dependentABName]= abReq.assetBundle;
+                                assetBundleDict[dependentABName] = abReq.assetBundle;
                             else
-                                Utility.Debug.LogError($"AssetBundle : {dependentABName} load failure !");
+                                QuarkUtility.LogError($"AssetBundle : {dependentABName} load failure !");
                         }
                     }
-                }
-                yield return null;
-            }
-        }
-        IEnumerator EnumDownloadAssetBundle(string uri, Action<AssetBundle> doneCallback, Action<string> failureCallback)
-        {
-            using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(uri))
-            {
-                yield return request.SendWebRequest();
-                if (request.isNetworkError || request.isHttpError)
-                {
-                    failureCallback?.Invoke(request.error);
-                }
-                else
-                {
-                    AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(request);
-                    doneCallback?.Invoke(bundle);
                 }
                 yield return null;
             }
@@ -471,7 +447,7 @@ where T : UnityEngine.Object
             }
             else
             {
-                Utility.Debug.LogError($"Scene：{sceneName} not existed !");
+                QuarkUtility.LogError($"Scene：{sceneName} not existed !");
                 yield break;
             }
             if (string.IsNullOrEmpty(assetBundleName))
@@ -497,10 +473,10 @@ where T : UnityEngine.Object
                 AssetBundleName = abName,
                 AssetPath = assetPath,
             };
-            var strs = Utility.Text.StringSplit(assetPath, new string[] { "/" });
+            var strs = QuarkUtility.StringSplit(assetPath, new string[] { "/" });
             var nameWithExt = strs[strs.Length - 1];
-            var splits = Utility.Text.StringSplit(nameWithExt, new string[] { "." });
-            abObject.AssetExtension = Utility.Text.Combine(".", splits[splits.Length - 1]);
+            var splits = QuarkUtility.StringSplit(nameWithExt, new string[] { "." });
+            abObject.AssetExtension = QuarkUtility.Combine(".", splits[splits.Length - 1]);
             abObject.AssetName = assetName;
             return abObject;
         }

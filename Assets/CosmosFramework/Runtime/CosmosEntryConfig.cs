@@ -10,9 +10,6 @@ namespace Cosmos
         public bool PrintModulePreparatory = false;
         public bool LoadDefaultHelper = true;
         public ResourceLoadMode ResourceLoadMode;
-        //public QuarkAssetLoadMode QuarkAssetLoadMode;
-        public string QuarkRemoteUrl = "RemoteUrl";
-        public string QuarkLocalUrl = "LocalUrl";
         protected virtual void Awake()
         {
             if (LoadDefaultHelper)

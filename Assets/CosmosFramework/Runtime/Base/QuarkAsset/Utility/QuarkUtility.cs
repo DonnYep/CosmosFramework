@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Quark
 {
-    public partial class QuarkUtility 
+    public partial class QuarkUtility
     {
         /// <summary>
         /// 标准的UTF-8是不含BOM的；
@@ -106,6 +106,35 @@ namespace Quark
                 return response.StatusCode == HttpStatusCode.OK;
             }
         }
+        /// <summary>
+        /// 分割字符串
+        /// </summary>
+        /// <param name="fullString">分割字符串</param>
+        /// <param name="separator">new string[]{"."}</param>
+        /// <returns>分割后的字段数组</returns>
+        public static string[] StringSplit(string fullString, string[] separator)
+        {
+            string[] stringArray = null;
+            stringArray = fullString.Split(separator, StringSplitOptions.None);
+            return stringArray;
+        }
+        /// <summary>
+        /// 字段合并；
+        /// </summary>
+        /// <param name="strings">字段数组</param>
+        /// <returns></returns>
+        public static string Combine(params string[] strings)
+        {
+            if (strings == null)
+                throw new ArgumentNullException("Combine is invalid.");
+            stringBuilderCache.Length = 0;
+            int length = strings.Length;
+            for (int i = 0; i < length; i++)
+            {
+                stringBuilderCache.Append(strings[i]);
+            }
+            return stringBuilderCache.ToString();
+        }
         public static void IsStringValid(string context, string exceptionContext)
         {
             if (string.IsNullOrEmpty(context))
@@ -118,6 +147,7 @@ namespace Quark
                 File.Delete(fileFullPath);
             }
         }
+
         #region Debug
         public static void LogInfo(object msg)
         {
