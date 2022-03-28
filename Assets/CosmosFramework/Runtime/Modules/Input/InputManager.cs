@@ -9,9 +9,16 @@ namespace Cosmos.Input
     [Module]
     internal sealed class InputManager : Module, IInputManager
     {
+        /// <summary>
+        /// 是否启用虚拟输入；
+        /// </summary>
         public bool IsEnableInputDevice { get; set; } = true;
         VirtualInput inputModule = new VirtualInput();
         IInputHelper inputHelper;
+        /// <summary>
+        /// 设置自定义的输入帮助体；
+        /// </summary>
+        /// <param name="inputDevice">自定义的输入帮助体</param>
         public void SetInputHelper(IInputHelper helper)
         {
             inputHelper?.OnShutdown();

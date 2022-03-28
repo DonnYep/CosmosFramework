@@ -36,6 +36,9 @@ namespace Cosmos.Entity
     internal partial class EntityManager : Module, IEntityManager
     {
         #region Properties
+        /// <summary>
+        /// 实体组数量；
+        /// </summary>
         public int EntityGroupCount { get { return entityGroupDict.Count; } }
         IEntityHelper entityHelper;
         /// <summary>
@@ -51,12 +54,20 @@ namespace Cosmos.Entity
         IEntityGroupHelper defaultEntityGroupHelper;
         #endregion
         #region Methods
+        /// <summary>
+        /// 设置实体帮助体；
+        /// </summary>
+        /// <param name="helper">自定义实现的实体帮助体</param>
         public void SetHelper(IEntityHelper helper)
         {
             if (helper == null)
                 throw new ArgumentNullException("Entity helper is valid !");
             this.entityHelper = helper;
         }
+        /// <summary>
+        /// 设置默认实体组帮助体；
+        /// </summary>
+        /// <param name="entityGroupHelper">自定义实现的实体组帮助体</param>
         public void SetDefautEntityGroupHelper(IEntityGroupHelper entityGroupHelper)
         {
             if (entityGroupHelper == null)

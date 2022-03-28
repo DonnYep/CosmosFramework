@@ -44,6 +44,12 @@ namespace Cosmos.Audio
         /// </summary>
         /// <param name="helper">自定义实现的声音播放帮助体</param>
         void SetAudioPlayHelper(IAudioPlayHelper helper);
+        /// <summary>
+        /// 为音效设置组
+        /// </summary>
+        /// <param name="audioName">音效名</param>
+        /// <param name="audioGroupName">音效组</param>
+        /// <returns>是否设置成功</returns>
         bool SetAuidoGroup(string audioName, string audioGroupName);
         /// <summary>
         ///注册声音；
@@ -65,6 +71,11 @@ namespace Cosmos.Audio
         /// <param name="audioName">声音名</param>
         /// <returns>存在的结果</returns>
         bool HasAudio(string audioName);
+        /// <summary>
+        /// 是否存在音效组；
+        /// </summary>
+        /// <param name="audioGroupName">声音组名</param>
+        /// <returns>存在的结果</returns>
         bool HasAudioGroup(string audioGroupName);
         /// <summary>
         /// 播放声音；
@@ -73,21 +84,43 @@ namespace Cosmos.Audio
         /// <param name="audioParams">声音具体参数</param>
         /// <param name="audioPlayInfo">声音播放时候的位置信息以及绑定对象等</param>
         void PalyAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo);
+        /// <summary>
+        /// 暂停播放音效组；
+        /// </summary>
+        /// <param name="audioGroupName">声音组名</param>
         void PauseAudioGroup(string audioGroupName);
+        /// <summary>
+        /// 暂停声音；
+        /// </summary>
+        /// <param name="audioName">声音名</param>
         void PauseAudio(string audioName);
         /// <summary>
         /// 恢复声音组播放；
         /// </summary>
         /// <param name="audioGroupName">声音组名</param>
         void UnPauseAudioGroup(string audioGroupName);
+        /// <summary>
+        /// 恢复播放声音；
+        /// </summary>
+        /// <param name="audioName">声音名</param>
         void UnPauseAudio(string audioName);
         /// <summary>
         /// 停止播放声音组
         /// </summary>
         /// <param name="audioGroupName">声音组名</param>
         void StopAudioGroup(string audioGroupName);
+        /// <summary>
+        /// 停止播放声音；
+        /// </summary>
+        /// <param name="audioName">声音名</param>
         void StopAudio(string audioName);
+        /// <summary>
+        /// 停止所有声音；
+        /// </summary>
         void StopAllAudios();
+        /// <summary>
+        /// 暂停所有声音
+        /// </summary>
         void PauseAllAudios();
         /// <summary>
         /// 设置声音表现；

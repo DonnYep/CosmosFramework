@@ -66,18 +66,32 @@ namespace Cosmos.Audio
         /// 静音；
         /// </summary>
         public bool Mute { get { return audioPlayHelper.Mute; } set { audioPlayHelper.Mute = value; } }
+        /// <summary>
+        /// 设置声音资源帮助体；
+        /// </summary>
+        /// <param name="helper">自定义实现的声音帮助体</param>
         public void SetAudioAssetHelper(IAudioAssetHelper helper)
         {
             if (helper == null)
                 throw new NullReferenceException("IAudioAssetHelper is invalid !");
             this.audioAssetHelper = helper;
         }
+        /// <summary>
+        /// 设置声音播放帮助体；
+        /// </summary>
+        /// <param name="helper">自定义实现的声音播放帮助体</param>
         public void SetAudioPlayHelper(IAudioPlayHelper helper)
         {
             if (helper == null)
                 throw new NullReferenceException("IAudioPlayHelper  is invalid !");
             this.audioPlayHelper = helper;
         }
+        /// <summary>
+        /// 为音效设置组
+        /// </summary>
+        /// <param name="audioName">音效名</param>
+        /// <param name="audioGroupName">音效组</param>
+        /// <returns>是否设置成功</returns>
         public bool SetAuidoGroup(string audioName, string audioGroupName)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
@@ -137,6 +151,9 @@ namespace Cosmos.Audio
                 throw new ArgumentNullException($"IAudioObject {audioName} have not been registered ");
             }
         }
+        /// <summary>
+        /// 注销所有声音，并清空声音组池；
+        /// </summary>
         public void DeregisterAllAudios()
         {
             audioObjectDict.Clear();
@@ -144,11 +161,21 @@ namespace Cosmos.Audio
             audioGroupPool.Clear();
             audioPlayHelper.ClearAllAudio();
         }
+        /// <summary>
+        /// 是否存在声音；
+        /// </summary>
+        /// <param name="audioName">声音名</param>
+        /// <returns>存在的结果</returns>
         public bool HasAudio(string audioName)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
             return audioObjectDict.ContainsKey(audioName);
         }
+        /// <summary>
+        /// 是否存在音效组；
+        /// </summary>
+        /// <param name="audioGroupName">声音组名</param>
+        /// <returns>存在的结果</returns>
         public bool HasAudioGroup(string audioGroupName)
         {
             Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
@@ -172,6 +199,10 @@ namespace Cosmos.Audio
                 throw new ArgumentNullException($"Audio {audioName} have not been registered ");
             }
         }
+        /// <summary>
+        /// 暂停播放音效组；
+        /// </summary>
+        /// <param name="audioGroupName">声音组名</param>
         public void PauseAudioGroup(string audioGroupName)
         {
             Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
@@ -188,6 +219,10 @@ namespace Cosmos.Audio
                 throw new ArgumentNullException($"AudioGroup {audioGroupName} have not been registered ");
             }
         }
+        /// <summary>
+        /// 暂停声音；
+        /// </summary>
+        /// <param name="audioName">声音名</param>
         public void PauseAudio(string audioName)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
@@ -200,6 +235,10 @@ namespace Cosmos.Audio
                 throw new ArgumentNullException($"Audio {audioName} have not been registered ");
             }
         }
+        /// <summary>
+        /// 恢复声音组播放；
+        /// </summary>
+        /// <param name="audioGroupName">声音组名</param>
         public void UnPauseAudioGroup(string audioGroupName)
         {
             Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
@@ -216,6 +255,10 @@ namespace Cosmos.Audio
                 throw new ArgumentNullException($"AudioGroup {audioGroupName} have not been registered ");
             }
         }
+        /// <summary>
+        /// 恢复播放声音；
+        /// </summary>
+        /// <param name="audioName">声音名</param>
         public void UnPauseAudio(string audioName)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
@@ -228,6 +271,10 @@ namespace Cosmos.Audio
                 throw new NullReferenceException("IAudioObject have not been registered ");
             }
         }
+        /// <summary>
+        /// 停止播放声音组
+        /// </summary>
+        /// <param name="audioGroupName">声音组名</param>
         public void StopAudioGroup(string audioGroupName)
         {
             Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
@@ -244,6 +291,10 @@ namespace Cosmos.Audio
                 throw new ArgumentNullException($"AudioGroup {audioGroupName} have not been registered ");
             }
         }
+        /// <summary>
+        /// 停止播放声音；
+        /// </summary>
+        /// <param name="audioName">声音名</param>
         public void StopAudio(string audioName)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
@@ -256,6 +307,9 @@ namespace Cosmos.Audio
                 throw new ArgumentNullException($"Audio {audioName} have not been registered ");
             }
         }
+        /// <summary>
+        /// 停止所有声音；
+        /// </summary>
         public void StopAllAudios()
         {
             foreach (var ao in audioObjectDict)
@@ -263,6 +317,9 @@ namespace Cosmos.Audio
                 audioPlayHelper.StopAudio(ao.Value);
             }
         }
+        /// <summary>
+        /// 暂停所有声音
+        /// </summary>
         public void PauseAllAudios()
         {
             foreach (var ao in audioObjectDict)
@@ -287,6 +344,11 @@ namespace Cosmos.Audio
                 throw new ArgumentNullException($"Audio {audioName} have not been registered ");
             }
         }
+        /// <summary>
+        /// 清空声音组；
+        /// 注意：这里的清空指的是对声音组别的置空，并不会影响到声音对象注册的状态；
+        /// </summary>
+        /// <param name="audioGroupName">声音组名</param>
         public void ClearAudioGroup(string audioGroupName)
         {
             Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");

@@ -63,11 +63,11 @@
         INetworkChannel[] GetAllChannels();
         /// <summary>
         /// 获取通道信息；
-        /// 若通道存在，则返回具体的信息；若不存在，则返回NetworkChannelInfo.None
+        /// 若通道存在，则返回具体的信息；若不存在，则返回NetworkChannelInfo.None；
         /// <see cref="NetworkChannelInfo "/>
         /// </summary>
         /// <param name="channelKey">通道key</param>
-        /// <returns>通道的信息；</returns>
+        /// <returns>通道的信息</returns>
         NetworkChannelInfo GetChannelInfo(NetworkChannelKey channelKey);
         /// <summary>
         /// 弃用&终结通道；

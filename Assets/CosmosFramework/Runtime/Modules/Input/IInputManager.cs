@@ -3,8 +3,15 @@ namespace Cosmos.Input
 {
     public interface IInputManager : IModuleManager
     {
+        /// <summary>
+        /// 是否启用虚拟输入；
+        /// </summary>
         bool IsEnableInputDevice { get; set; }
-        void SetInputHelper(IInputHelper inputDevice);
+        /// <summary>
+        /// 设置自定义的输入帮助体；
+        /// </summary>
+        /// <param name="helper">自定义的输入帮助体</param>
+        void SetInputHelper(IInputHelper helper);
         /// <summary>
         /// 虚拟轴线是否存在
         /// </summary>

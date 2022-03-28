@@ -141,10 +141,28 @@ namespace Cosmos.Resource
                 go = srcGo;
             return go;
         }
+        /// <summary>
+        /// 使用默认加载模式；
+        /// 加载资源以及子资源；
+        /// 加载资源（同步）；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <returns>资源数组</returns>
         public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
         {
             return currentDefaultLoadHelper.LoadAssetWithSubAssets<T>(info);
         }
+        /// <summary>
+        /// 使用自定义加载通道；
+        /// 加载资源以及子资源；
+        /// 加载资源（同步）；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息标记</param>
+        /// <param name="loadDoneCallback">加载完成事件</param>
+        /// <param name="loadingCallback">加载中事件</param>
+        /// <returns>加载协程迭代器</returns>
         public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
         {
             return currentDefaultLoadHelper.LoadAssetWithSubAssetsAsync<T>(info, loadDoneCallback, loadingCallback);

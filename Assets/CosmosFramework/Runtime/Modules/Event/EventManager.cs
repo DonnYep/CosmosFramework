@@ -11,6 +11,9 @@ namespace Cosmos.Event
     internal sealed partial class EventManager : Module, IEventManager
     {
         Dictionary<string, EventNode> eventDict;
+        /// <summary>
+        /// 当前注册的事件总数；
+        /// </summary>
         public int EventCount { get { return eventDict.Count; } }
         /// <summary>
         /// 添加事件

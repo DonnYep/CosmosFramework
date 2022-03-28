@@ -29,10 +29,20 @@ namespace Cosmos.Entity
     //================================================
     public interface IEntityManager:IModuleManager
     {
+        /// <summary>
+        /// 实体组数量；
+        /// </summary>
         int EntityGroupCount { get; }
+        /// <summary>
+        /// 设置实体帮助体；
+        /// </summary>
+        /// <param name="helper">自定义实现的实体帮助体</param>
         void SetHelper(IEntityHelper helper);
+        /// <summary>
+        /// 设置默认实体组帮助体；
+        /// </summary>
+        /// <param name="entityGroupHelper">自定义实现的实体组帮助体</param>
         void SetDefautEntityGroupHelper(IEntityGroupHelper entityGroupHelper);
-
         /// <summary>
         /// 注册EntityGroup (同步)；
         /// 若传入的entityGroupHelper 为空，则使用默认的entityGroupHelper；
