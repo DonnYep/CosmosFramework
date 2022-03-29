@@ -148,7 +148,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new ArgumentNullException($"IAudioObject {audioName} have not been registered ");
+                throw new ArgumentNullException($"IAudioObject {audioName} is unregistered ");
             }
         }
         /// <summary>
@@ -187,7 +187,7 @@ namespace Cosmos.Audio
         /// <param name="audioName">注册过的声音名</param>
         /// <param name="audioParams">声音具体参数</param>
         /// <param name="audioPlayInfo">声音播放时候的位置信息以及绑定对象等</param>
-        public void PalyAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
+        public void PlayAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
             if (audioObjectDict.TryGetValue(audioName, out var audioObject))
@@ -196,7 +196,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new ArgumentNullException($"Audio {audioName} have not been registered ");
+                throw new ArgumentNullException($"Audio {audioName} is unregistered ");
             }
         }
         /// <summary>
@@ -216,7 +216,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new ArgumentNullException($"AudioGroup {audioGroupName} have not been registered ");
+                throw new ArgumentNullException($"AudioGroup {audioGroupName} is unregistered ");
             }
         }
         /// <summary>
@@ -232,7 +232,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new ArgumentNullException($"Audio {audioName} have not been registered ");
+                throw new ArgumentNullException($"Audio {audioName} is unregistered ");
             }
         }
         /// <summary>
@@ -252,7 +252,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new ArgumentNullException($"AudioGroup {audioGroupName} have not been registered ");
+                throw new ArgumentNullException($"AudioGroup {audioGroupName} is unregistered ");
             }
         }
         /// <summary>
@@ -268,7 +268,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new NullReferenceException("IAudioObject have not been registered ");
+                throw new NullReferenceException("IAudioObject is unregistered ");
             }
         }
         /// <summary>
@@ -288,7 +288,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new ArgumentNullException($"AudioGroup {audioGroupName} have not been registered ");
+                throw new ArgumentNullException($"AudioGroup {audioGroupName} is unregistered ");
             }
         }
         /// <summary>
@@ -304,7 +304,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new ArgumentNullException($"Audio {audioName} have not been registered ");
+                throw new ArgumentNullException($"Audio {audioName} is unregistered ");
             }
         }
         /// <summary>
@@ -332,7 +332,7 @@ namespace Cosmos.Audio
         /// </summary>
         /// <param name="audioName">注册过的声音名</param>
         /// <param name="audioParams">声音具体参数</param>
-        public void PoltAudioParam(string audioName, AudioParams audioParams)
+        public void SetAudioParam(string audioName, AudioParams audioParams)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
             if (audioObjectDict.TryGetValue(audioName, out var audioObject))
@@ -341,7 +341,7 @@ namespace Cosmos.Audio
             }
             else
             {
-                throw new ArgumentNullException($"Audio {audioName} have not been registered ");
+                throw new ArgumentNullException($"Audio {audioName} is unregistered ");
             }
         }
         /// <summary>

@@ -41,7 +41,7 @@ public class PlayAudioPanel : MonoBehaviour
     {
         var ap = AudioParams.Default;
         ap.Loop = true;
-        CosmosEntry.AudioManager.PalyAudio("AudioTechHouse", ap, AudioPlayInfo.Default);
+        CosmosEntry.AudioManager.PlayAudio("AudioTechHouse", ap, AudioPlayInfo.Default);
         Utility.Debug.LogInfo("PlayAudio");
     }
     void PauseAudio()

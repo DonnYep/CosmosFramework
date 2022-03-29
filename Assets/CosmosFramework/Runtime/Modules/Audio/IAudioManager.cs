@@ -83,7 +83,7 @@ namespace Cosmos.Audio
         /// <param name="audioName">注册过的声音名</param>
         /// <param name="audioParams">声音具体参数</param>
         /// <param name="audioPlayInfo">声音播放时候的位置信息以及绑定对象等</param>
-        void PalyAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo);
+        void PlayAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo);
         /// <summary>
         /// 暂停播放音效组；
         /// </summary>
@@ -127,7 +127,7 @@ namespace Cosmos.Audio
         /// </summary>
         /// <param name="audioName">注册过的声音名</param>
         /// <param name="audioParams">声音具体参数</param>
-        void PoltAudioParam(string audioName, AudioParams audioParams);
+        void SetAudioParam(string audioName, AudioParams audioParams);
         /// <summary>
         /// 清空声音组；
         /// 注意：这里的清空指的是对声音组别的置空，并不会影响到声音对象注册的状态；
