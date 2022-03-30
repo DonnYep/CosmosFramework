@@ -50,6 +50,10 @@ namespace Cosmos.Audio
         /// 最大可听范围；
         /// </summary>
         public float MaxDistance { get; set; }
+        /// <summary>
+        /// 渐入时间；
+        /// </summary>
+        public float FadeInTime{ get; set; }
         public void Reset()
         {
             PlayTime = 0;
@@ -63,6 +67,7 @@ namespace Cosmos.Audio
             DopplerLevel = AudioConstant.DopplerLevel;
             Spread = AudioConstant.Spread;
             MaxDistance = AudioConstant.MaxDistance;
+            FadeInTime = 0;
         }
         public bool Equals(AudioParams other)
         {
@@ -84,7 +89,8 @@ namespace Cosmos.Audio
             ReverbZoneMix = AudioConstant.ReverbZoneMix,
             DopplerLevel = AudioConstant.DopplerLevel,
             Spread = AudioConstant.Spread,
-            MaxDistance = AudioConstant.MaxDistance
+            MaxDistance = AudioConstant.MaxDistance,
+            FadeInTime = 0
         };
         public  static AudioParams Default { get { return m_Default; } }
     }

@@ -7,9 +7,9 @@
     {
         bool Mute { get; set; }
         void PlayAudio(AudioObject audioObject,AudioParams audioParams, AudioPlayInfo audioPlayInfo);
-        void StopAudio(AudioObject audioObject);
-        void PauseAudio(AudioObject audioObject);
-        void UnPauseAudio(AudioObject audioObject);
+        void StopAudio(AudioObject audioObject,float fadeTime);
+        void PauseAudio(AudioObject audioObject, float fadeTime);
+        void UnPauseAudio(AudioObject audioObject, float fadeTime);
         void SetAudioParam(AudioObject audioObject, AudioParams audioParams);
         void ClearAllAudio();
         void TickRefresh();
