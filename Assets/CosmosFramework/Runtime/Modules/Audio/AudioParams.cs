@@ -4,7 +4,7 @@ namespace Cosmos.Audio
     /// <summary>
     /// 声音播放时的参数；
     /// </summary>
-    public struct AudioParams:IEquatable<AudioParams>
+    public struct AudioParams : IEquatable<AudioParams>
     {
         /// <summary>
         /// Audio开始播放时间，默认从0秒开始；
@@ -53,7 +53,7 @@ namespace Cosmos.Audio
         /// <summary>
         /// 渐入时间；
         /// </summary>
-        public float FadeInTime{ get; set; }
+        public float FadeInTime { get; set; }
         public void Reset()
         {
             PlayTime = 0;
@@ -74,7 +74,7 @@ namespace Cosmos.Audio
             return other.PlayTime == PlayTime && other.Loop == Loop &&
                 other.Priority == Priority && other.Volume == Volume && other.Pitch == Pitch &&
                 other.StereoPan == StereoPan && other.SpatialBlend == SpatialBlend &&
-                other.ReverbZoneMix == ReverbZoneMix && DopplerLevel == DopplerLevel &&
+                other.ReverbZoneMix == ReverbZoneMix && other.DopplerLevel == DopplerLevel &&
                 other.Spread == Spread && other.MaxDistance == MaxDistance;
         }
         readonly static AudioParams m_Default = new AudioParams()
@@ -92,6 +92,6 @@ namespace Cosmos.Audio
             MaxDistance = AudioConstant.MaxDistance,
             FadeInTime = 0
         };
-        public  static AudioParams Default { get { return m_Default; } }
+        public static AudioParams Default { get { return m_Default; } }
     }
 }

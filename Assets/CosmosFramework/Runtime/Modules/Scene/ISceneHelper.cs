@@ -13,9 +13,9 @@ namespace Cosmos.Scene
         /// </summary>
         bool IsLoading { get; }
         void LoadScene(ISceneInfo sceneInfo);
-        IEnumerator LoadSceneAsync(ISceneInfo sceneInfo,Action startLoadCallback,Action<float> progressCallback, Action loadedCallback = null);
-        IEnumerator LoadSceneAsync(ISceneInfo sceneInfo, Action startLoadCallback, Action<float> progressCallback, Func<bool> loadedPredicate, Action loadedCallback = null);
-        IEnumerator UnLoadSceneAsync(ISceneInfo sceneInfo, Action startUnloadCallback, Action<float> progressCallback, Action unLoadedCallback = null);
-        IEnumerator UnLoadSceneAsync(ISceneInfo sceneInfo, Action startUnloadCallback,Action<float> progressCallback, Func<bool> unLoadedPredicate, Action unLoadedCallback = null);
+        IEnumerator LoadSceneAsync(ISceneInfo sceneInfo,Action<float> progressCallback, Action loadedCallback = null);
+        IEnumerator LoadSceneAsync(ISceneInfo sceneInfo,Action<float> progressCallback, Func<bool> loadedPredicate, Action loadedCallback = null);
+        IEnumerator UnLoadSceneAsync(ISceneInfo sceneInfo, Action<float> progressCallback, Action unLoadedCallback = null);
+        IEnumerator UnLoadSceneAsync(ISceneInfo sceneInfo, Action<float> progressCallback, Func<bool> unLoadedPredicate, Action unLoadedCallback = null);
     }
 }
