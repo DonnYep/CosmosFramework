@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbd49cd0571faa149961b98b363c3496, type: 3}
-  m_Name: Item04_DataSet
+  m_Name: Item04_Dataset
   m_EditorClassIdentifier: 
   objectName: Item04
   itemImage: {fileID: 21300008, guid: 59f366023da131c419982492bf8eb05e, type: 3}

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cd4216079067c084f831de9d8218b5bb, type: 3}
-  m_Name: EquipItem01_DataSet
+  m_Name: EquipItem01_Dataset
   m_EditorClassIdentifier: 
   objectName: EquipItem01
   itemImage: {fileID: 21300022, guid: 59f366023da131c419982492bf8eb05e, type: 3}

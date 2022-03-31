@@ -4,11 +4,5 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Assets/Examples/Levels/AsyncLoadLevelSilder_Example/AsyncTarget.unity
-    guid: e29380e7d23f7f94b9702b53e31a69f5
-  - enabled: 1
-    path: Assets/Examples/Levels/AsyncLoadLevelSilder_Example/AsyncLoadingScene.unity
-    guid: a9a8c761bda1fac4cb41a45328b545f1
+  m_Scenes: []
   m_configObjects: {}

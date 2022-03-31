@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using Cosmos.Mono;
 namespace Cosmos
 {
     [DisallowMultipleComponent]
@@ -27,10 +26,10 @@ public class Timer : MonoBehaviour {
         [SerializeField] UnityEvent action;
         public UnityEvent Action { get { return action; } set { action = value; } }
         Coroutine  tempRoutine;
-        private void Awake()
+        private void Start()
         {
             if (autoStart)
-                tempRoutine = Facade.StartCoroutine(EnumAction(StartDelay, () => action.Invoke()));
+                tempRoutine = Utility.Unity.StartCoroutine(EnumAction(StartDelay, () => action.Invoke()));
         }
         private void OnValidate()
         {
@@ -44,23 +43,23 @@ public class Timer : MonoBehaviour {
         public virtual void ExecuteTimerAction()
         {
             if(!RandomInterval)
-            tempRoutine = Facade.StartCoroutine(EnumAction(Interval, ()=>action.Invoke()));
+            tempRoutine = Utility.Unity.StartCoroutine(EnumAction(Interval, ()=>action.Invoke()));
             else
-                tempRoutine = Facade.StartCoroutine(EnumAction(Interval+ Utility.Unity.Random(-RandomRange, RandomRange), () => action.Invoke()));
+                tempRoutine = Utility.Unity.StartCoroutine(EnumAction(Interval+ Utility.Unity.Random(-RandomRange, RandomRange), () => action.Invoke()));
         }
         /// <summary>
         /// 立即停止
         /// </summary>
         public virtual void StopTimerAction()
         {
-            Facade.StopCoroutine(tempRoutine);
+            Utility.Unity.StopCoroutine(tempRoutine);
         }
-        IEnumerator EnumAction(object arg,Action handler)
+        IEnumerator EnumAction(float time,Action handler)
         {
-            yield return new WaitForSeconds(Utility.Converter.Float(arg));
+            yield return new WaitForSeconds(time);
             handler?.Invoke();
             if(loop)
-                tempRoutine = Facade.StartCoroutine(EnumAction(Interval, () => action.Invoke()));
+                tempRoutine = Utility.Unity.StartCoroutine(EnumAction(Interval, () => action.Invoke()));
         }
     }
 }

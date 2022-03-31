@@ -1,91 +1,126 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/DonnYep/CosmosFramework/blob/V1.1/LICENSE)
+[![Issues:Welcome](https://img.shields.io/badge/Issues-welcome-blue.svg)](https://github.com/DonnYep/CosmosFramework/issues)
+
+# [中文](https://github.com/DonnYep/CosmosFramework/blob/V1.1/README_CN.md) 
+
 # CosmosFramework
-CosmosFramework是一款基于Unity的轻量级游戏框架。内置常用模块、算法工具类等。自定义模块可与原生模块完全同等优先级，共享相同的生命周期。
 
-## Master、V0.1分支暂停维护，最新内容请切换到V1.0!
+CosmosFramework is a lightweight Unity development framework . Has a rich Unity method extensions and toolchain. async/await syntax support, multi-network channel support.The framework has been supported UMP, it is recommended to put it into the Packages directory to use.
+* [CosmosFramework Wiki](https://github.com/DonnYep/CosmosFramework/wiki)<br/>
 
-## 环境
+## V0.1, V1.0 branches are closed for maintenance. 
 
-- Unity版本：2017及以上； .NET API版本：4.x。
+## Environment
 
-## 模块简介
+- Unity version:2018 and above,DOTNET API version:4.x.
 
-- **Audio**： 框架中的音效管理模块，提供游戏内音效的播放、暂停等常用功能。
+## Module Introduction
 
-- **Config**： 游戏常用配置模块。用户可在游戏初始化时读取配置文件，并缓存于配置模块。运行时在其他所需位置读取对应配置的数据。
+- **Audio** : Game audio module. By registering audio information, you can automatically load audio resources to play by passing in the audio name when playing. audio effects support grouping, and the whole group can be played.
 
-- **Event**： 事件中心模块。使用标准事件模型，提供了监听、移除、派发等常用事件功能。
+- **Config** : Game configuration module. The user can read the configuration file at game initialization and cache it in the configuration module. At runtime the data corresponding to the configuration is read at other desired locations.
 
-- **FSM**： 有限状态机模块。对状态机进行创建、回收、管理。
+- **Event** : Event Center module. Using the standard event model, it provides common event functions such as listening, removing and dispatching. Provides event observation methods to detect event status in real time.
 
-- **Mono**：MONO模块。提供常用的开启、关闭协程等功能。协程可在此进行统一管理，其中内置的协程可以直接进行调用，无需额外写协程方法。
+- **FSM** : Finite state machine module. Fully abstract finite state machines that can do state machine implementations for different types of owners.
 
-- **ObjectsPool**：对象池模块。提供常用的对象生成回收等功能。
+- **ObjectsPool** : Object pool module. Provides commonly used functions such as entity object generation and recycling. The underlying implementation uses the data structure Pool.
 
-- **ReferencePool**：引用池模块。为减少GC，框架特意提供引用池对实现了IReference接口的对象进行回收重复利用。减少由于重复生成对象导致的GC性能损耗。
+- **Resource** : Resource loading module. Built-in provides Resources and AB two loading modes, by switching the loading mode can change the current default loading method. Support resources multi-channel custom loading channel, can be customized to adapt to other types of resource management solutions.
 
-- **Resource**：资源加载模块。框架集成了基于Resources与AB两种加载模式，在使用时切换加载模式即可。并提供通过特性"PrefabAssetAttribute"加载资源的方式。
+- **Scene** : Scene loading module. Provide common asynchronous and synchronous loading of embedded scenes. Support custom implementation of loading methods.
 
-- **Scene**：场景加载模块。提供常用的异步、同步加载嵌入的场景功能。
+- **DataNode** : Data caching module. Provides a tree-structured data caching center.
 
-- **Data**：数据缓存模块。提供树状结构的数据缓存中心。
+- **Entity** : Game Entity Module. Manage the game runtime entity objects. Entity support group classification, by passing in the resource address can directly manage the resource entity object generation, recycling and other operations, built-in object pool generation.
 
-- **Entity**：游戏实体模块。管理游戏运行时的实体对象。
+- **Input** : Input adaptation module. The input of each platform is simulated by virtual keys, and different input adapters can be passed in to adapt the input methods of different platforms.
 
-- **Input**：输入适配模块。用于适配不同平台的输入方式。
+- **Hotfix** : Hot update module. This module is for C#-based hot update solutions. (This solution is not completed.)
 
-- **Hotfix**：热更新模块。此模块适用于基于C#的热更方案，如ILRuntime、JEngine等。
+- **Network** : Network module. A variety of high-speed and reliable UDP protocols are provided, such as RUDP, SUDP, KCP, TCP, etc. The KCP protocol is used by default. Network in the form of channel (Channel) to distinguish each connection, support a variety of network types connected at the same time. Can be implemented (Client-Server) mode. Support async/await syntax.
 
-- **Network**：网络模块。当前模块提供了可靠的UDP协议，并集成了KCP协议。TCP协议持续更新中。
+- **UI** : UI module. Based on UGUI implementation. Provide UI common functions, such as priority, reality hiding, getting and setting group. Extension method extends some common components such as buttons, so that you can listen to the interface implementation without manually implementing buttons lift, press, etc. Support commonly used UIBehaiour type triggerEvent.
 
-- **UI**：UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取等功能。
+- **Main** : Module Center. Both custom modules and extensions are stored here. Custom modules are written in the same format as the built-in modules and have exactly the same lifecycle and permissions as the built-in modules. It is almost identical to the built-in module. The built-in polling pools of this main module: FixedRefreshHandler, LateRefreshHandler, RefreshHandler, ElapseRefreshHandler can poll the objects that need to be polled uniformly, reducing the performance loss caused by too many update and other mono callbacks. performance loss caused by too many update and other mono callbacks.
 
-- **Main**：模块中心。自定义模块与扩展模块都存于此。自定义模块按照内置模块相同格式写入后，可享有完全同等与内置模块的生命周期与权限。几乎与内置模块无异。此主模块的内置轮询池：FixedRefreshHandler、LateRefreshHandler、RefreshHandler、ElapseRefreshHandler可对需要统一进行轮询管理的对象进行统一轮询，减少由于过多的Update等mono回调导致的新能损耗。
+- **Controller** : Controller module. By registering with this module, polling can be managed without generating a GameObject. This module provides update polling.
 
-- **Controller**：控制器模块。提供常用需要轮询(Update)对象的统一管理。
+- **WebRequest** : UnityWebRequest module, can be used to load persistent resources, network resources download and other needs. It supports getting AssetBundle, AudioClip, Texture2D, string, and when the resource is obtained, the user can operate on the resource through WebRequestCallback.
 
-## 内置数据、工具
+- **Download** : Download module. Support localhost local file download and http file download. Asynchronous incremental writing to localhost in byte stream when downloading files. Support for dynamic addition and removal of download tasks during downloading.
 
-- **Utility**：提供了反射、算法、断言、转换、Debug富文本、IO、加密、Json、MessagePack、Time、Text、Unity等常用工具函数。是非常实用的工具包。
+## Built-in data structures, tools
 
-- **Singleton**：单例基类。提供了线程安全、非线程安全、MONO单例基类。使用时仅继承即可。
+- **Utility** : Provides common tool functions such as Reflection, Algorithm, Assertion, Conversion, Debug Rich Text, IO, Encryption, Json, MessagePack, Time, Text, Unity Coroutine, Unity Component, etc.
 
-- **DataStructure**：常用数据结构。链表、双向链表、二叉树、LRU、线程锁等数据结构。
+- **Singleton** : Singleton base class. Provides thread-safe, non-thread-safe, MONO singleton base classes.
 
-- **Behaviour**：内置生命周期函数。生命周期优先级为：OnInitialization > OnActive > OnPreparatory > OnFixRefresh > OnRefresh > OnLateRefresh > OnDeactive > OnTermination。此生命周期可参考Unity的MONO生命周期。需要注意，此内置生命周期适用于原生模块与自定义模块，相对于Unity生命周期是独立的。
+- **DataStructure** : Common data structures. Data structures such as linked table, bidirectional linked table, bidirectional dictionary, binary tree, quadtree, AStar, LRU, thread lock, etc.
 
-- **Extension**：静态扩展工具。提供unity的扩展以及.NETCore对unity.NET的扩展。
+- **Extensions** : Static extension tool. Provides extensions for Unity and native extensions for common data structures in C# Collections.
 
--**EventCore** ：轻量级事件模块，可自定义监听的数据类型；
+- **Awaitable** : This tool provides support for async/await syntax in the unity environment. You can write asynchronous in Unity just like c# native asynchronous. Support Task asynchronous, Task execution will return to the main thread after completion, when using the normal format can be written.
 
-## 内置软件架构 MVVM
+- **EventCore** : Fully abstract event data structure. Contains normal, standard and thread-safe types.
+```CSharp
+    //Declare a class so that it derives from EventCore and does type constraints.
+    public class MyEventCore :EventCore<string,string, MyEventCore>{}
+    //Once implemented, you can use the custom event listener.
+```
+- **ReferencePool** : Global reference pool module.
 
-- MVVM是基于PureMVC改进的更适于理解的软件架构。对Command、Mediator、Proxy注册使用基本与PureMVC相同。框架提供了基于特性更加简洁的注册方式，即：MVVMCommandAttribute、MVVMMediatorAttribute、MVVMProxyAttribute分别对应各自的注册类型，在入口调用MVVM.RegisterAttributedMVVM()方法即可。
+- **Editor** : Editor provides methods to retrieve objects and components commonly used in Hierarchy, and EditorConfig provides the ability to automatically create code headers for code generation.
 
-- 需要注意，MVVM.RegisterAttributedMVVM()方法需要传入对应的程序集。目前已经验证跨程序集反射MVVM成员是可行且稳定的。
+- **QuarkAsset** : QuarkAsset is a set of AssetBundle resource management solutions. Editor mode and AB mode can be quickly switched between, and AB dependency issues are automatically handled when loading resources. Download support for large file breakpoints. Loading can be done by resource name without passing in the full address. If the resource is renamed, it will be loaded fully qualified by filename + suffix.
 
-## 注意事项
+- **FutureTask**:Asynchronous task detection, supports multi-threaded and concurrent asynchronous progress detection. The detection function needs to be passed in Func<bool> format, and asynchronous detection ends when the condition returns true; Note: FutureTask itself is not a concurrent process, and cannot execute asynchronous tasks instead of a concurrent process. The await/async syntax is not supported at the moment.
 
-- 所有带Default开头的模块、方法，都需要在开始时都需要传入其对应的默认类型的Hepler传入。
+- **Pool**:Pool data structure. Includes thread-safe and non-thread-safe types. Object pools, reference pools and cache pools of other modules in the framework are implemented using "Pool".
+    
+## Built-in Architecture PureMVC
 
-- 框架的AB方案正在开发中。
+- A more understandable architecture based on the original PureMVC improvements.
+    The framework provides a more concise feature-based registration:
+    - 1.MVCCommandAttribute, corresponding to the Command, i.e. C layer.
+    - 2.MVCMediatorAttribute, corresponding to the Mediator, i.e. the V layer.
+    - 3.MVCProxyAttribute, corresponding to the Proxy, i.e. the M layer.
+    
+- The derived proxy class needs to override the constructor and pass in the NAME parameter.
 
-- 框架提供第三方适配，如Utility.Json，用户可自定义任意JSON方案。框架建议使用的高速传输协议为MessagePack，包含适配方案。
-MessagePack 链接地址：https://github.com/neuecc/MessagePack-CSharp
+- The derived proxy class needs to override the constructor and pass in the NAME parameter.
 
-- 默认请使用 V1.0 版本，V0.1 已经停止维护。Master暂停维护，所有最新的功能都在V1.0中。
+- Note that the MVC.RegisterAttributedMVC() method needs to be passed in the corresponding assembly. Multi-assembly reflection is supported.
 
-- 内置案例地址：Assets\Examples\ExampleScripts 。
+## Cautions
 
-## 其他
+- Project Launch:
+    Mount CosmosConfig on a suitable GameObject and run Unity. if PrintModulePreparatory on CosmosConfig is in true state, the console will show the initialization message.  Since then, the project startup is complete.
+    
+- Some of the modules with Helper can be custom implemented by the user or can use the Default object provided.
 
-- MVVM的纯C#版本：https://github.com/DonHitYep/Cosmos_SimpleMVVM
+- Please use V1.1 version for the latest, V0.1, 1.0 stop maintenance. master suspend maintenance.
 
-- CosmosFramework的服务器版本：https://github.com/DonHitYep/CosmosFramework4Server 
-服务器版本已提供可靠UDP协议，并集成了KCP协议。TCP持续更新中。内置模块与Unity客户端类似，内置类型都为线程安全类型。
+- Built-in case address:Assets\Examples\.
 
-- KCP地址：https://github.com/skywind3000/kcp
+## Other
 
-- 服务器版本的KCP与客户端版本的KCP皆为参考自Mirror。
-    Mirror地址:https://github.com/vis2k/Mirror
+- V1.1 supports UPM. select Assets/CosmosFramework folder and copy it to Packages directory of the project to use this framework.
+    
+- For a demonstration, please watch the video:
+    - https://www.bilibili.com/video/BV1x741157eR
+    - https://www.bilibili.com/video/BV17u411Z7Ni/
+    
+## Library link
 
+- CosmosEngine:https://github.com/DonnYep/CosmosEngine
 
+- KCP C:https://github.com/skywind3000/kcp
+    
+- KCP CSharp:https://github.com/vis2k/kcp2k
+    
+- TCP:https://github.com/vis2k/Telepathy
+
+- PureMVC:https://github.com/DonnYep/PureMVC
+
+- Mirror:https://github.com/vis2k/Mirror
