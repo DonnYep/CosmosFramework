@@ -33,13 +33,13 @@
             {
                 debugHelper?.LogWarning(msg, context);
             }
-            public static void LogError(object o, object context = null)
+            public static void LogError(object msg, object context = null)
             {
-                debugHelper?.LogError(o, context);
+                debugHelper?.LogError(msg, context);
             }
-            public static void LogFatal(object o, object context = null)
+            public static void LogFatal(object msg, object context = null)
             {
-                debugHelper?.LogFatal(o, context);
+                debugHelper?.LogFatal(msg, context);
             }
         }
     }
