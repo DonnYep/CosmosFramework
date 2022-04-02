@@ -7,10 +7,9 @@
             public interface IDebugHelper
             {
                 void LogInfo(object msg, object context);
-                void LogInfo(object msg, string msgColor, object context);
+                void LogInfo(object msg, DebugColor debugColor, object context);
                 void LogWarning(object msg, object context);
                 void LogError(object msg, object context);
-                void LogFatal(object msg, object context);
             }
             static IDebugHelper debugHelper = null;
             public static void SetHelper(IDebugHelper helper)
@@ -25,9 +24,9 @@
             {
                 debugHelper?.LogInfo(msg, context);
             }
-            public static void LogInfo(object msg, string msgColor, object context = null)
+            public static void LogInfo(object msg, DebugColor debugColor, object context = null)
             {
-                debugHelper?.LogInfo(msg, msgColor, context);
+                debugHelper?.LogInfo(msg, debugColor, context);
             }
             public static void LogWarning(object msg, object context = null)
             {
@@ -36,10 +35,6 @@
             public static void LogError(object o, object context = null)
             {
                 debugHelper?.LogError(o, context);
-            }
-            public static void LogFatal(object o, object context = null)
-            {
-                debugHelper?.LogFatal(o, context);
             }
         }
     }

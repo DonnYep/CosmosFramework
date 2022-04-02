@@ -76,7 +76,7 @@ public class QuarkDownloadMonitorPanel : MonoBehaviour
             txtDownloadingUri.text = "资源下载已完成";
             txtProgress.text = "点击任意键继续！";
         }
-        Utility.Debug.LogInfo($"DownloadFinish {timeSpan}", MessageColor.GREEN);
+        Utility.Debug.LogInfo($"DownloadFinish {timeSpan}", DebugColor.green);
         downloadDone = true;
     }
     private void Update()

@@ -1,51 +1,27 @@
 ﻿namespace Cosmos
 {
-    public static class MessageColor
+    public enum DebugColor
     {
-        public const string BLACK = "#000000";
-        public const string WHITE = "#FFFFFF";
-        public const string BLUE = "#254FDB";
-        /// <summary>
-        /// 棕色
-        /// </summary>
-        public const string BROWN = "#A52A2A";
-        public const string DARKBLUE = "#0000A0";
-        public const string GREEN = "#008000";
-        /// <summary>
-        /// 青橙绿
-        /// </summary>
-        public const string LIME = "#00FF00";
-        public const string CYAN = "#00FFFF";
-        public const string DARKCYAN = "#008B8B";
-        public const string GREY = "#808080";
-        /// <summary>
-        /// 洋红
-        /// </summary>
-        public const string FUCHSIA = "#FF00FF";
-        /// <summary>
-        /// 海军蓝
-        /// </summary>
-        public const string NAVY = "#000080";
-        public const string ORANGE = "#FFA500";
-        public const string RED = "#FF0000";
-        /// <summary>
-        /// 蓝绿
-        /// </summary>
-        public const string TEAL = "#008080";
-        public const string YELLOW = "#FFFF00";
-        /// <summary>
-        /// 褐红
-        /// </summary>
-        public const string MAROON = "#800000";
-        public const string PURPLE = "#800080";
-        /// <summary>
-        /// 蓝紫罗兰
-        /// </summary>
-        public const string BLUEVIOLET = "#8A2BE2";
-        /// <summary>
-        /// 紫兰
-        /// </summary>
-        public const string INDIGO = "#4B0082";
+        black,
+        blue,
+        brown,
+        cyan,
+        darkblue,
+        fuchsia,
+        green,
+        grey,
+        lightblue,
+        lime,
+        maroon,
+        navy,
+        olive,
+        orange,
+        purple,
+        red,
+        silver,
+        teal,
+        white,
+        yellow
     }
     public static partial class Utility
     {

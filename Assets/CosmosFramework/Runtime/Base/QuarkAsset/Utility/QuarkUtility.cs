@@ -161,10 +161,6 @@ namespace Quark
         {
             Utility.Debug.LogError(msg);
         }
-        public static void LogFatal(object msg)
-        {
-            Utility.Debug.LogFatal(msg);
-        }
         #endregion
 
         #region Json

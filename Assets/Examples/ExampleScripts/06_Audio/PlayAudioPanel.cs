@@ -32,7 +32,7 @@ public class PlayAudioPanel : MonoBehaviour
     }
     void AudioRegisterSuccess(AudioRegistSuccessEventArgs eventArgs)
     {
-        Utility.Debug.LogInfo($" {eventArgs.AudioName} Register success", MessageColor.GREEN);
+        Utility.Debug.LogInfo($" {eventArgs.AudioName} Register success", DebugColor.green);
     }
     void AudioRegistFailure(AudioRegistFailureEventArgs eventArgs)
     {

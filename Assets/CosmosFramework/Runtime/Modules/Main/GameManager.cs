@@ -166,7 +166,7 @@ namespace Cosmos
                 moduleDict.Remove(type);
                 moduleCount--;
                 Utility.Assembly.InvokeMethod(module, LifecycleMethodsConstant.OnTermination);
-                Utility.Debug.LogInfo($"Module :{module} is OnTermination", MessageColor.DARKBLUE);
+                Utility.Debug.LogInfo($"Module :{module} is OnTermination", DebugColor.olive);
             }
             else
                 throw new ArgumentException($"Module : {module} is not exist!");

@@ -24,38 +24,31 @@ namespace Cosmos
         public void LogInfo(object msg, object context)
         {
             if (context == null)
-                Debug.Log($"<b><color={MessageColor.CYAN}>{"[INFO]-->>"} </color></b>{msg}");
+                Debug.Log($"<b><color={DebugColor.cyan}>{"[INFO]-->>"} </color></b>{msg}");
             else
-                Debug.Log($"<b><color={MessageColor.CYAN}>{"[INFO]-->>"}</color></b>{msg}", context as Object);
+                Debug.Log($"<b><color={DebugColor.cyan}>{"[INFO]-->>"}</color></b>{msg}", context as Object);
         }
-        public void LogInfo(object msg, string msgColor, object context)
+        public void LogInfo(object msg, DebugColor debugColor, object context)
         {
             if (context == null)
-                Debug.Log($"<b><color={msgColor }>{"[INFO]-->>"}</color></b>{msg}");
+                Debug.Log($"<b><color={debugColor}>{"[INFO]-->>"}</color></b>{msg}");
             else
-                Debug.Log($"<b><color={msgColor }>{"[INFO]-->>"}</color></b>{msg}", context as Object);
+                Debug.Log($"<b><color={debugColor}>{"[INFO]-->>"}</color></b>{msg}", context as Object);
         }
         public void LogError(object msg, object context)
         {
             if (context == null)
-                Debug.LogError($"<b><color={MessageColor.RED}>{"[ERROR]-->>"} </color></b>{msg}");
+                Debug.LogError($"<b><color={DebugColor.red}>{"[ERROR]-->>"} </color></b>{msg}");
             else
-                Debug.LogError($"<b><color={MessageColor.RED}>{"[ERROR]-->>"}</color></b>{msg}", context as Object);
+                Debug.LogError($"<b><color={DebugColor.red}>{"[ERROR]-->>"}</color></b>{msg}", context as Object);
         }
 
         public void LogWarning(object msg, object context)
         {
             if (context == null)
-                Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[WARNING]-->>" }</color></b>{msg}");
+                Debug.LogWarning($"<b><color={DebugColor.orange}>{"[WARNING]-->>" }</color></b>{msg}");
             else
-                Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[WARNING]-->>" }</color></b>{msg}", context as Object);
-        }
-        public void LogFatal(object msg, object context)
-        {
-            if (context == null)
-                Debug.LogError($"<b><color={MessageColor.RED}>{ "[FATAL]-->>" }</color></b>{msg}");
-            else
-                Debug.LogError($"<b><color={MessageColor.RED}>{ "[FATAL]-->>" }</color></b>{msg}", context as Object);
+                Debug.LogWarning($"<b><color={DebugColor.orange}>{"[WARNING]-->>" }</color></b>{msg}", context as Object);
         }
         void UnityLog(string msgStr, string stackTrace, LogType logType)
         {

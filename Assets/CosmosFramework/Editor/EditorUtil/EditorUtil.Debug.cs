@@ -8,37 +8,30 @@ namespace Cosmos.Editor
             public static void LogInfo(object msg, object context = null)
             {
                 if (context == null)
-                   UnityEngine. Debug.Log($"<b><color={MessageColor.CYAN}>{"[EDITOR-INFO]-->>"} </color></b>{msg}");
+                    UnityEngine.Debug.Log($"<b><color={DebugColor.cyan}>{"[EDITOR-INFO]-->>"} </color></b>{msg}");
                 else
-                    UnityEngine.Debug.Log($"<b><color={MessageColor.CYAN}>{"[EDITOR-INFO]-->>"}</color></b>{msg}", context as Object);
+                    UnityEngine.Debug.Log($"<b><color={DebugColor.cyan}>{"[EDITOR-INFO]-->>"}</color></b>{msg}", context as Object);
             }
-            public static void LogInfo(object msg, string msgColor, object context = null)
+            public static void LogInfo(object msg, DebugColor debugColor, object context = null)
             {
                 if (context == null)
-                    UnityEngine.Debug.Log($"<b><color={msgColor }>{"[EDITOR-INFO]-->>"}</color></b>{msg}");
+                    UnityEngine.Debug.Log($"<b><color={debugColor}>{"[EDITOR-INFO]-->>"}</color></b>{msg}");
                 else
-                    UnityEngine.Debug.Log($"<b><color={msgColor }>{"[EDITOR-INFO]-->>"}</color></b>{msg}", context as Object);
+                    UnityEngine.Debug.Log($"<b><color={debugColor}>{"[EDITOR-INFO]-->>"}</color></b>{msg}", context as Object);
             }
             public static void LogWarning(object msg, object context = null)
             {
                 if (context == null)
-                    UnityEngine.Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[EDITOR-WARNING]-->>" }</color></b>{msg}");
+                    UnityEngine.Debug.LogWarning($"<b><color={DebugColor.orange}>{"[EDITOR-WARNING]-->>" }</color></b>{msg}");
                 else
-                    UnityEngine.Debug.LogWarning($"<b><color={MessageColor.ORANGE}>{"[EDITOR-WARNING]-->>" }</color></b>{msg}", context as Object);
+                    UnityEngine.Debug.LogWarning($"<b><color={DebugColor.orange}>{"[EDITOR-WARNING]-->>" }</color></b>{msg}", context as Object);
             }
             public static void LogError(object msg, object context = null)
             {
                 if (context == null)
-                    UnityEngine.Debug.LogError($"<b><color={MessageColor.RED}>{"[EDITOR-ERROR]-->>"} </color></b>{msg}");
+                    UnityEngine.Debug.LogError($"<b><color={DebugColor.red}>{"[EDITOR-ERROR]-->>"} </color></b>{msg}");
                 else
-                    UnityEngine.Debug.LogError($"<b><color={MessageColor.RED}>{"[EDITOR-ERROR]-->>"}</color></b>{msg}", context as Object);
-            }
-            public static void LogFatal(object msg, object context = null)
-            {
-                if (context == null)
-                    UnityEngine.Debug.LogError($"<b><color={MessageColor.RED}>{ "[EDITOR-FATAL]-->>" }</color></b>{msg}");
-                else
-                    UnityEngine.Debug.LogError($"<b><color={MessageColor.RED}>{ "[EDITOR-FATAL]-->>" }</color></b>{msg}", context as Object);
+                    UnityEngine.Debug.LogError($"<b><color={DebugColor.red}>{"[EDITOR-ERROR]-->>"}</color></b>{msg}", context as Object);
             }
         }
     }

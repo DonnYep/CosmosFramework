@@ -58,6 +58,6 @@ public class MyDownload : MonoBehaviour
         {
             text.text = "100%   Done";
         }
-        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.DownloadAndWriteTimeSpan}",MessageColor.GREEN);
+        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.DownloadAndWriteTimeSpan}",DebugColor.green);
     }
 }
