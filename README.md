@@ -8,7 +8,7 @@
 CosmosFramework is a lightweight Unity development framework . Has a rich Unity method extensions and toolchain. async/await syntax support, multi-network channel support.The framework has been supported UMP, it is recommended to put it into the Packages directory to use.
 * [CosmosFramework Wiki](https://github.com/DonnYep/CosmosFramework/wiki)<br/>
 
-## V0.1, V1.0 branches are closed for maintenance. 
+## V0.1, V1.0 branches are closed for maintenance. See master branch for the latest features
 
 ## Environment
 
