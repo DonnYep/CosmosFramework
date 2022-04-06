@@ -8,7 +8,7 @@ namespace Quark.Asset
     /// 含每个ab包中所包含的文件信息，ab的hash等；
     /// </summary>
     [Serializable]
-    public class QuarkManifest
+    public class QuarkManifest:IQuarkLoaderData
     {
         [Serializable]
         public class ManifestItem

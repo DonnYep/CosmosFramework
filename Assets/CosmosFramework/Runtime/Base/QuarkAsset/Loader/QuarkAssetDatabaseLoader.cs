@@ -21,9 +21,9 @@ namespace Quark.Loader
         /// </summary>
         Dictionary<int, QuarkObjectInfo> hashQuarkObjectInfoDict = new Dictionary<int, QuarkObjectInfo>();
 
-        public void SetLoaderData(object customeData)
+        public void SetLoaderData(IQuarkLoaderData loaderData)
         {
-            SetAssetDatabaseModeData(customeData as QuarkAssetDataset);
+            SetAssetDatabaseModeData(loaderData as QuarkAssetDataset);
         }
         public T LoadAsset<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
@@ -39,6 +39,7 @@ namespace Quark.Loader
             {
                 var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetDatabaseObject.AssetGuid);
                 var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(guid2path);
+                IncrementQuarkObjectInfo(quarkAssetDatabaseObject);
                 return asset;
             }
             else
@@ -99,6 +100,20 @@ namespace Quark.Loader
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, assetExtension, callback));
         }
+        public void UnloadAsset(string assetName, string assetExtension, bool forceUnload)
+        {
+            if (string.IsNullOrEmpty(assetName))
+                throw new ArgumentNullException("Asset name is invalid!");
+            QuarkAssetDatabaseObject quarkAssetDatabaseObject = null;
+            if (assetDatabaseMap == null)
+                throw new Exception("QuarkAsset 未执行 build 操作！");
+            if (assetDatabaseMap.TryGetValue(assetName, out var lnk))
+                quarkAssetDatabaseObject = GetAssetDatabaseObject(lnk, assetExtension);
+            if (quarkAssetDatabaseObject != null)
+            {
+                DecrementQuarkObjectInfo(quarkAssetDatabaseObject);
+            }
+        }
         public void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
             QuarkUtility.LogInfo("AssetDatabase Mode UnLoadAllAsset");
@@ -150,7 +165,7 @@ namespace Quark.Loader
         }
         IEnumerator EnumLoadPrefabtAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate)
         {
-            var resGo= LoadAsset<GameObject>(assetName, assetExtension);
+            var resGo = LoadAsset<GameObject>(assetName, assetExtension);
             yield return null;
             if (instantiate)
             {
@@ -228,7 +243,6 @@ namespace Quark.Loader
             var info = hashQuarkObjectInfoDict[hashCode];
             hashQuarkObjectInfoDict[hashCode] = info++;
         }
-
         /// <summary>
         /// 减少一个引用计数；
         /// </summary>
@@ -238,7 +252,5 @@ namespace Quark.Loader
             var info = hashQuarkObjectInfoDict[hashCode];
             hashQuarkObjectInfoDict[hashCode] = info--;
         }
-
-
     }
 }

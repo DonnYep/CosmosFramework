@@ -252,8 +252,10 @@ namespace Cosmos.Editor.Quark
                 EditorUtility.ClearProgressBar();
                 var manifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
                 var abNames = manifest.GetAllAssetBundles();
-                Utility.Assert.Traverse(abNames, (ab) =>
+                var length = abNames.Length;
+                for (int i = 0; i < length; i++)
                 {
+                    var ab = abNames[i];
                     var hash = manifest.GetAssetBundleHash(ab);
                     foreach (var adm in abBuildInfo.AssetDataMaps)
                     {
@@ -262,7 +264,7 @@ namespace Cosmos.Editor.Quark
                             adm.Value.ABHash = hash.ToString();
                         }
                     }
-                });
+                }
                 SetManifestInfo(abNames);
                 abPaths.Clear();
                 var m_buildPath = GetBuildPath();

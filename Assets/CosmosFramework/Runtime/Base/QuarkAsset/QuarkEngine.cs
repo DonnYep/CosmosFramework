@@ -221,7 +221,11 @@ where T : UnityEngine.Object
                 return loader.LoadScenetAsync(sceneName, progress, callback, additive);
             return null;
         }
-
+        internal void UnloadAsset(string assetName, string assetExtension, bool forceUnload)
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                loader.UnloadAsset(assetName, assetExtension, forceUnload);
+        }
         internal void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))

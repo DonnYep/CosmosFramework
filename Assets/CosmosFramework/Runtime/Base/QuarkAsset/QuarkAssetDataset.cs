@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
 using UnityEngine;
+using System.Collections.Generic;
 namespace Quark.Asset
 {
     /// <summary>
@@ -8,7 +8,7 @@ namespace Quark.Asset
     /// build之后需配合AB资源使用；
     /// </summary>
     [Serializable]
-    public sealed class QuarkAssetDataset : ScriptableObject, IDisposable
+    public sealed class QuarkAssetDataset : ScriptableObject, IDisposable,IQuarkLoaderData
     {
         /// <summary>
         /// 包含的路径；
