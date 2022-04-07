@@ -99,8 +99,6 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
     
 - Some of the modules with Helper can be custom implemented by the user or can use the Default object provided.
 
-- Please use V1.1 version for the latest, V0.1, 1.0 stop maintenance. master suspend maintenance.
-
 - Built-in case address:Assets\Examples\.
 
 ## Other

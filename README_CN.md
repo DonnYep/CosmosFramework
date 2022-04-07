@@ -99,8 +99,6 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
     
 - 部分带有Helper的模块可由使用者进行自定义实现，也可使用提供的Default对象；
 
-- 最新请使用 V1.1 版本，V0.1、1.0 停止维护。Master暂停维护。
-
 - 内置案例地址:Assets\Examples\ 。
 
 ## 其他
