@@ -20,7 +20,11 @@ namespace Quark.Loader
         /// Hash===QuarkObjectInfo
         /// </summary>
         Dictionary<int, QuarkObjectInfo> hashQuarkObjectInfoDict = new Dictionary<int, QuarkObjectInfo>();
-
+        /// <summary>
+        /// 被加载的场景字典；
+        /// SceneName===Scene
+        /// </summary>
+        Dictionary<string, Scene> loadedSceneDict = new Dictionary<string, Scene>();
         public void SetLoaderData(IQuarkLoaderData loaderData)
         {
             SetAssetDatabaseModeData(loaderData as QuarkAssetDataset);
@@ -30,16 +34,16 @@ namespace Quark.Loader
 #if UNITY_EDITOR
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
-            QuarkAssetDatabaseObject quarkAssetDatabaseObject = null;
+            QuarkAssetDatabaseObject adObject = null;
             if (assetDatabaseMap == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
             if (assetDatabaseMap.TryGetValue(assetName, out var lnk))
-                quarkAssetDatabaseObject = GetAssetDatabaseObject(lnk, assetExtension);
-            if (quarkAssetDatabaseObject != null)
+                adObject = GetAssetDatabaseObject(lnk, assetExtension);
+            if (adObject != null)
             {
-                var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetDatabaseObject.AssetGuid);
+                var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(adObject.AssetGuid);
                 var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(guid2path);
-                IncrementQuarkObjectInfo(quarkAssetDatabaseObject);
+                IncrementQuarkObjectInfo(adObject);
                 return asset;
             }
             else
@@ -61,14 +65,14 @@ namespace Quark.Loader
 #if UNITY_EDITOR
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
-            QuarkAssetDatabaseObject quarkAssetDatabaseObject = null;
+            QuarkAssetDatabaseObject adObject = null;
             if (assetDatabaseMap == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
             if (assetDatabaseMap.TryGetValue(assetName, out var lnk))
-                quarkAssetDatabaseObject = GetAssetDatabaseObject(lnk, assetExtension);
-            if (quarkAssetDatabaseObject != null)
+                adObject = GetAssetDatabaseObject(lnk, assetExtension);
+            if (adObject != null)
             {
-                var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(quarkAssetDatabaseObject.AssetGuid);
+                var guid2path = UnityEditor.AssetDatabase.GUIDToAssetPath(adObject.AssetGuid);
                 var assetObj = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(guid2path);
                 var length = assetObj.Length;
                 T[] assets = new T[length];
@@ -86,9 +90,9 @@ namespace Quark.Loader
         }
         public Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
         {
-            return QuarkUtility.Unity.StartCoroutine(EnumLoadPrefabtAsync(assetName, assetExtension, callback, instantiate));
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadPrefabAsync(assetName, assetExtension, callback, instantiate));
         }
-        public Coroutine LoadScenetAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
+        public Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progress, callback, additive));
         }
@@ -104,14 +108,14 @@ namespace Quark.Loader
         {
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
-            QuarkAssetDatabaseObject quarkAssetDatabaseObject = null;
+            QuarkAssetDatabaseObject adObject = null;
             if (assetDatabaseMap == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
             if (assetDatabaseMap.TryGetValue(assetName, out var lnk))
-                quarkAssetDatabaseObject = GetAssetDatabaseObject(lnk, assetExtension);
-            if (quarkAssetDatabaseObject != null)
+                adObject = GetAssetDatabaseObject(lnk, assetExtension);
+            if (adObject != null)
             {
-                DecrementQuarkObjectInfo(quarkAssetDatabaseObject);
+                DecrementQuarkObjectInfo(adObject);
             }
         }
         public void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
@@ -121,6 +125,14 @@ namespace Quark.Loader
         public void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
             QuarkUtility.LogInfo("AssetDatabase Mode UnLoadAllAsset");
+        }
+        public Coroutine UnLoadSceneAsync(string sceneName, Action<float> progress, Action callback)
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumUnLoadSceneAsync(sceneName, progress, callback));
+        }
+        public Coroutine UnLoadAllSceneAsync(Action<float> progress, Action callback)
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumUnLoadAllSceneAsync(progress, callback));
         }
         public QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
@@ -163,7 +175,7 @@ namespace Quark.Loader
             yield return null;
             callback?.Invoke(asset);
         }
-        IEnumerator EnumLoadPrefabtAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate)
+        IEnumerator EnumLoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate)
         {
             var resGo = LoadAsset<GameObject>(assetName, assetExtension);
             yield return null;
@@ -179,15 +191,119 @@ namespace Quark.Loader
         }
         IEnumerator EnumLoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive)
         {
-            LoadSceneMode loadSceneMode = additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
-            var ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
-            while (!ao.isDone)
+            if (string.IsNullOrEmpty(sceneName))
             {
-                progress.Invoke(ao.progress);
-                yield return null;
+                QuarkUtility.LogError("Scene name is invalid!");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
             }
-            progress.Invoke(1);
-            callback.Invoke();
+            if (assetDatabaseMap == null)
+            {
+                QuarkUtility.LogError("QuarkAsset 未执行 build 操作！");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            if (loadedSceneDict.ContainsKey(sceneName))
+            {
+                QuarkUtility.LogError($"Scene：{sceneName} is already loaded !");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            QuarkAssetDatabaseObject adObject = null;
+            if (assetDatabaseMap.TryGetValue(sceneName, out var lnk))
+                adObject = GetAssetDatabaseObject(lnk, ".unity");
+            if (adObject != null)
+            {
+                LoadSceneMode loadSceneMode = additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
+#if UNITY_EDITOR
+                var ao = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(adObject.AssetPath, new LoadSceneParameters(loadSceneMode));
+#else
+                var ao = SceneManager.LoadSceneAsync(adObject.AssetName, loadSceneMode);
+#endif
+                while (!ao.isDone)
+                {
+                    progress?.Invoke(ao.progress);
+                    yield return null;
+                }
+                var scene = SceneManager.GetSceneByPath(adObject.AssetPath);
+                loadedSceneDict.Add(sceneName, scene);
+                IncrementQuarkObjectInfo(adObject);
+            }
+            progress?.Invoke(1);
+            callback?.Invoke();
+        }
+        IEnumerator EnumUnLoadSceneAsync(string sceneName, Action<float> progress, Action callback)
+        {
+            if (string.IsNullOrEmpty(sceneName))
+            {
+                QuarkUtility.LogError("Scene name is invalid!");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            if (assetDatabaseMap == null)
+            {
+                QuarkUtility.LogError("QuarkAsset 未执行 build 操作！");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            if (!loadedSceneDict.TryGetValue(sceneName,out var scene))
+            {
+                QuarkUtility.LogError($"Unload scene failure： {sceneName}  not loaded yet !");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            QuarkAssetDatabaseObject adObject = null;
+            if (assetDatabaseMap.TryGetValue(sceneName, out var lnk))
+                adObject = GetAssetDatabaseObject(lnk, ".unity");
+            if (adObject != null)
+            {
+                var ao = SceneManager.UnloadSceneAsync(scene);
+                while (!ao.isDone)
+                {
+                    progress?.Invoke(ao.progress);
+                    yield return null;
+                }
+                loadedSceneDict.Remove(sceneName);
+                DecrementQuarkObjectInfo(adObject);
+            }
+            progress?.Invoke(1);
+            callback?.Invoke();
+        }
+        IEnumerator EnumUnLoadAllSceneAsync(Action<float> progress, Action callback)
+        {
+            var sceneCount = loadedSceneDict.Count;
+            //单位场景的百分比比率
+            var unitResRatio = 100f / sceneCount;
+            int currentSceneIndex = 0;
+            float overallProgress = 0;
+            foreach (var scene in loadedSceneDict)
+            {
+                QuarkAssetDatabaseObject adObject = null;
+                if (assetDatabaseMap.TryGetValue(scene.Key, out var lnk))
+                    adObject = GetAssetDatabaseObject(lnk, ".unity");
+                var overallIndexPercent = 100 * ((float)currentSceneIndex / sceneCount);
+                currentSceneIndex++;
+                if (adObject != null)
+                {
+                    var ao = SceneManager.UnloadSceneAsync(scene.Value);
+                    while (!ao.isDone)
+                    {
+                        overallProgress = overallIndexPercent + (unitResRatio * ao.progress);
+                        progress?.Invoke(overallProgress / 100);
+                        yield return null;
+                    }
+                }
+                overallProgress = overallIndexPercent + (unitResRatio * 1);
+                progress?.Invoke(overallProgress / 100);
+            }
+            loadedSceneDict.Clear();
+            callback?.Invoke();
         }
         QuarkAssetDatabaseObject GetAssetDatabaseObject(LinkedList<QuarkAssetDatabaseObject> lnk, string assetExtension = null)
         {

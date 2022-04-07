@@ -218,7 +218,7 @@ where T : UnityEngine.Object
         internal Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                return loader.LoadScenetAsync(sceneName, progress, callback, additive);
+                return loader.LoadSceneAsync(sceneName, progress, callback, additive);
             return null;
         }
         internal void UnloadAsset(string assetName, string assetExtension, bool forceUnload)
@@ -235,6 +235,18 @@ where T : UnityEngine.Object
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
                 loader.UnLoadAssetBundle(assetBundleName, unloadAllLoadedObjects);
+        }
+        internal Coroutine UnLoadSceneAsync(string sceneName, Action<float> progress, Action callback)
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.UnLoadSceneAsync(sceneName, progress, callback);
+            return null;
+        }
+        internal Coroutine UnLoadAllSceneAsync(Action<float> progress, Action callback)
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.UnLoadAllSceneAsync(progress, callback);
+            return null;
         }
         internal QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {

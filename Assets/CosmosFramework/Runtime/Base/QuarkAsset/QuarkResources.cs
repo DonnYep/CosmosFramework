@@ -150,6 +150,14 @@ where T : UnityEngine.Object
         {
             QuarkEngine.Instance.UnLoadAssetBundle(assetBundleName, unloadAllLoadedObjects);
         }
+        public static Coroutine UnLoadSceneAsync(string sceneName, Action<float> progress, Action callback)
+        {
+            return QuarkEngine.Instance.UnLoadSceneAsync(sceneName, progress, callback);
+        }
+        public static Coroutine UnLoadAllSceneAsync(Action<float> progress, Action callback)
+        {
+            return QuarkEngine.Instance.UnLoadAllSceneAsync(progress, callback);
+        }
         public static QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
             return QuarkEngine.Instance.GetInfo<T>(assetName, assetExtension);
