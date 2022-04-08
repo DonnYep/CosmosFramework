@@ -1,7 +1,6 @@
 ﻿using UnityEditor;
-using Quark;
 using Quark.Asset;
-namespace Cosmos.Editor.Quark
+namespace Quark.Editor
 {
     [CustomEditor(typeof(QuarkConfig), true)]
     public class QuarkConfigEditor : UnityEditor.Editor
@@ -51,7 +50,6 @@ namespace Cosmos.Editor.Quark
         }
         void DrawBuildAssetBundleTab()
         {
-            EditorGUILayout.Space(16);
             EditorGUILayout.HelpBox("Asset bundle build path", MessageType.Info);
 
             EditorGUILayout.BeginVertical();

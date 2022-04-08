@@ -46,7 +46,11 @@ namespace Cosmos
             {
                 yield return request.SendWebRequest();
                 string size = request.GetResponseHeader("Content-Length");
-                if (request.isNetworkError || request.isHttpError)
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
+                if (!request.isNetworkError && !request.isHttpError)
+#endif
                     callback?.Invoke(-1);
                 else
                     callback?.Invoke(Convert.ToInt64(size));

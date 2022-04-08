@@ -174,6 +174,7 @@ namespace Cosmos
                     if (audioProxy != null)
                     {
                         audioProxy.AudioSource.name = prefix;
+                        audioProxy.AudioSource.transform.SetParent(CosmosEntry.AudioManager.Instance().transform);
                         pool.Despawn(audioProxy.AudioSource);
                         audioProxyPool.Despawn(audioProxy);
                     }

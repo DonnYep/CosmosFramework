@@ -158,7 +158,32 @@ namespace Quark.Loader
             }
             return QuarkObjectInfo.None;
         }
-        public QuarkObjectInfo[] GetAllInfos()
+        public QuarkObjectInfo GetInfo(string assetName, string assetExtension)
+        {
+            QuarkAssetDatabaseObject abObject = null;
+            if (assetDatabaseMap.TryGetValue(assetName, out var abLnk))
+            {
+                if (string.IsNullOrEmpty(assetExtension))
+                {
+                    abObject = abLnk.First.Value;
+                }
+                else
+                {
+                    foreach (var obj in abLnk)
+                    {
+                        if (obj.AssetExtension == assetExtension)
+                        {
+                            abObject = obj;
+                            break;
+                        }
+                    }
+                }
+                if (abObject != null)
+                    return hashQuarkObjectInfoDict[abObject.GetHashCode()];
+            }
+            return QuarkObjectInfo.None;
+        }
+        public QuarkObjectInfo[] GetAllLoadedInfos()
         {
             return hashQuarkObjectInfoDict.Values.ToArray();
         }

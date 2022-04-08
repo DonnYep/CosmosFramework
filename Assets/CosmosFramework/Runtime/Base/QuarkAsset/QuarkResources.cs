@@ -162,9 +162,13 @@ where T : UnityEngine.Object
         {
             return QuarkEngine.Instance.GetInfo<T>(assetName, assetExtension);
         }
-        public static QuarkObjectInfo[] GetAllInfos()
+        public static QuarkObjectInfo GetInfo(string assetName, string assetExtension)
         {
-            return QuarkEngine.Instance.GetAllInfos();
+            return QuarkEngine.Instance.GetInfo(assetName, assetExtension);
+        }
+        public static QuarkObjectInfo[] GetAllLoadedInfos()
+        {
+            return QuarkEngine.Instance.GetAllLoadedInfos();
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Quark.Asset;
-namespace Cosmos.Editor.Quark
+using Cosmos.Editor;
+
+namespace Quark.Editor
 {
     public class QuarkAssetWindow : EditorWindow
     {

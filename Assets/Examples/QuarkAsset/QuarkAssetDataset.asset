@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc7d1d238e40f44dab5b3c9c9efad39, type: 3}
   m_Name: QuarkAssetDataset
   m_EditorClassIdentifier: 
-  objectName: NewScriptableObject
   DirHashPairs:
   - Dir: Assets/Examples/AssetBundleTest/Audio
     Hash: 12778af4cb8833e46b38d87bf137c135
@@ -30,7 +29,9 @@ MonoBehaviour:
     Hash: 6b66c76bfcd1e5c48bc51efeb19eddf9
   - Dir: Assets/Examples/AssetBundleTest/Video
     Hash: c027f3e3efab58e418761894535c4491
-  QuarkAssetCount: 52
+  - Dir: Assets/Examples/AssetBundleTest/Scene
+    Hash: 7993b3e650ad69340b14014bf8629336
+  QuarkAssetCount: 53
   QuarkAssetObjectList:
   - AssetName: AmbientAudio
     AssetExtension: .mp3
@@ -292,3 +293,8 @@ MonoBehaviour:
     AssetPath: Assets\Examples\AssetBundleTest\Video\HowToMakeAMultiplayerGameInUnity2021.1.mp4
     AssetType: UnityEngine.Video.VideoClip
     AssetGuid: e6a61289ca656fb43901fc05f68edd06
+  - AssetName: TestAddtiveScene
+    AssetExtension: .unity
+    AssetPath: Assets\Examples\AssetBundleTest\Scene\TestAddtiveScene.unity
+    AssetType: UnityEditor.SceneAsset
+    AssetGuid: 392f932c6aaf23046a9fcdc4cde262cd

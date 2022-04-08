@@ -49,9 +49,7 @@ namespace Cosmos.Editor
                               return UnityEditor.AssetDatabase.LoadAssetAtPath(assetPath, typeof(T));
                           else
                               return null;
-                      })
-                          .OfType<T>()
-                          .ToArray();
+                      }).OfType<T>().ToArray();
         }
         /// <summary>
         /// 写入方式为覆写；

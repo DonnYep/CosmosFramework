@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using UnityEditor;
-namespace Cosmos.Editor.Quark
+namespace Quark.Editor
 {
     public static partial class QuarkAssetEditorUtility
     {

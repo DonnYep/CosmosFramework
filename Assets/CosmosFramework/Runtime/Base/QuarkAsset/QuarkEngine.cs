@@ -254,10 +254,16 @@ where T : UnityEngine.Object
                 loader.GetInfo<T>(assetName, assetExtension);
             return QuarkObjectInfo.None;
         }
-        internal QuarkObjectInfo[] GetAllInfos()
+        internal QuarkObjectInfo GetInfo(string assetName, string assetExtension)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.GetAllInfos();
+                loader.GetInfo(assetName, assetExtension);
+            return QuarkObjectInfo.None;
+        }
+        internal QuarkObjectInfo[] GetAllLoadedInfos()
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                loader.GetAllLoadedInfos();
             return new QuarkObjectInfo[0];
         }
         /// <summary>

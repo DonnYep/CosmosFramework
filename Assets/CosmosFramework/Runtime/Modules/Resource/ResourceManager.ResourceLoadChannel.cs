@@ -163,12 +163,12 @@ namespace Cosmos.Resource
             else
                 throw new ArgumentNullException($"channelName :{channelName} is invalid !");
         }
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(string channelName,AssetInfo info, Action<T[]> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(string channelName,AssetInfo info, Action<T[]> loadDoneCallback, Action<float> progress = null) where T : UnityEngine.Object
         {
             Utility.Text.IsStringValid(channelName, "channelName is invalid !");
             if (channelDict.TryGetValue(channelName, out var channel))
             {
-                return channel.ResourceLoadHelper.LoadAssetWithSubAssetsAsync<T>(info,loadDoneCallback,loadingCallback);
+                return channel.ResourceLoadHelper.LoadAssetWithSubAssetsAsync<T>(info,loadDoneCallback,progress);
             }
             else
                 throw new ArgumentNullException($"channelName :{channelName} is invalid !");
@@ -181,16 +181,16 @@ namespace Cosmos.Resource
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="channelName">资源加载的通道</param>
         /// <param name="info">资源信息标记</param>
-        /// <param name="loadingCallback">加载中事件</param>
+        /// <param name="progress">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadAssetAsync<T>(string channelName, AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null)
+        public Coroutine LoadAssetAsync<T>(string channelName, AssetInfo info, Action<T> loadDoneCallback, Action<float> progress = null)
             where T : UnityEngine.Object
         {
             Utility.Text.IsStringValid(channelName, "channelName is invalid !");
             if (channelDict.TryGetValue(channelName, out var channel))
             {
-                return channel.ResourceLoadHelper.LoadAssetAsync<T>(info, loadDoneCallback, loadingCallback);
+                return channel.ResourceLoadHelper.LoadAssetAsync<T>(info, loadDoneCallback, progress);
             }
             else
                 throw new ArgumentNullException($"channelName :{channelName} is invalid !");
@@ -202,17 +202,17 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="channelName">资源加载的通道</param>
         /// <param name="type">类对象类型</param>
-        /// <param name="loadingCallback">加载中事件</param>
+        /// <param name="progress">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(string channelName, Type type, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync(string channelName, Type type, Action<GameObject> loadDoneCallback, Action<float> progress = null, bool instantiate = false)
         {
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
             {
                 var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath);
-                return LoadPrefabAsync(channelName, info, loadDoneCallback, loadingCallback, instantiate);
+                return LoadPrefabAsync(channelName, info, loadDoneCallback, progress, instantiate);
             }
             else
                 return null;
@@ -224,15 +224,15 @@ namespace Cosmos.Resource
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="channelName">资源加载的通道</param>
-        /// <param name="loadingCallback">加载中事件</param>
+        /// <param name="progress">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync<T>(string channelName, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync<T>(string channelName, Action<GameObject> loadDoneCallback, Action<float> progress = null, bool instantiate = false)
             where T : class
         {
             var type = typeof(T);
-            return LoadPrefabAsync(channelName, type, loadDoneCallback, loadingCallback, instantiate);
+            return LoadPrefabAsync(channelName, type, loadDoneCallback, progress, instantiate);
         }
         /// <summary>
         /// 使用自定义加载通道；
@@ -241,11 +241,11 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="channelName">资源加载的通道</param>
         /// <param name="info">资源信息标记</param>
-        /// <param name="loadingCallback">加载中事件</param>
+        /// <param name="progress">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(string channelName, AssetInfo info, Action<GameObject> loadDoneCallback, Action<float> loadingCallback = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync(string channelName, AssetInfo info, Action<GameObject> loadDoneCallback, Action<float> progress = null, bool instantiate = false)
         {
             Utility.Text.IsStringValid(channelName, "channelName is invalid !");
             if (channelDict.TryGetValue(channelName, out var channel))
@@ -259,7 +259,7 @@ namespace Cosmos.Resource
                     }
                     else
                         loadDoneCallback?.Invoke(srcGo);
-                }, loadingCallback);
+                }, progress);
             }
             else
                 throw new ArgumentNullException($"channelName :{channelName} is invalid !");
@@ -270,15 +270,15 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="channelName">资源加载的通道</param>
         /// <param name="info">资源信息标记</param>
-        /// <param name="loadingCallback">加载中事件</param>
+        /// <param name="progress">加载中事件</param>
         /// <param name="loadDoneCallback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadSceneAsync(string channelName, SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
+        public Coroutine LoadSceneAsync(string channelName, SceneAssetInfo info, Action loadDoneCallback, Action<float> progress = null)
         {
             Utility.Text.IsStringValid(channelName, "channelName is invalid !");
             if (channelDict.TryGetValue(channelName, out var channel))
             {
-                return channel.ResourceLoadHelper.LoadSceneAsync(info, loadDoneCallback, loadingCallback);
+                return channel.ResourceLoadHelper.LoadSceneAsync(info, loadDoneCallback, progress);
             }
             else
                 throw new ArgumentNullException($"channelName :{channelName} is invalid !");

@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-namespace Cosmos.Editor.Quark
+using Cosmos.Editor;
+
+namespace Quark.Editor
 {
     public class QuarkDirectoriesOperation
     {
@@ -64,7 +66,7 @@ namespace Cosmos.Editor.Quark
                         //{
                         //	treeView.AddPath(path);
                         //}
-                        if (!(obj is MonoScript))
+                        if (!(obj is MonoScript)/*&&!(obj is SceneAsset)*/)
                         {
                             quarjTreeView.AddPath(path);
                         }

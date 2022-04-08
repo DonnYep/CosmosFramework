@@ -5,8 +5,10 @@ using Cosmos;
 
 public class QuarkLoadAssetPanel : MonoBehaviour
 {
-    [SerializeField] Button btnLoad;
-    [SerializeField] Button btnUnload;
+    [SerializeField] Button btnLoadAsset;
+    [SerializeField] Button btnUnloadAsset;
+    [SerializeField] Button btnLoadScene;
+    [SerializeField] Button btnUnLoadScene;
     [SerializeField] InputField iptAssetName;
     [SerializeField] CanvasGroup canvasGroup;
     [SerializeField] Vector3 startPos = new Vector3(-2, 0, 0);
@@ -27,13 +29,18 @@ public class QuarkLoadAssetPanel : MonoBehaviour
     }
     void Start()
     {
-        btnLoad?.onClick.AddListener(OnLoadClick);
-        btnUnload?.onClick.AddListener(OnUnloadClick);
+        btnLoadAsset?.onClick.AddListener(OnLoadAssetClick);
+        btnUnloadAsset?.onClick.AddListener(OnUnloadAssetClick);
+        btnLoadScene?.onClick.AddListener(OnLoadSceneClick);
+        btnUnLoadScene?.onClick.AddListener(OnUnloadSceneClick);
         objectRoot = new GameObject("ObjectRoot");
         if (QuarkResources.QuarkAssetLoadMode == QuarkAssetLoadMode.AssetDatabase)
             OnUpdateDone();
     }
-    void OnLoadClick()
+
+    
+
+    void OnLoadAssetClick()
     {
         var assetName = iptAssetName?.text;
         if (!string.IsNullOrEmpty(assetName))
@@ -52,13 +59,21 @@ public class QuarkLoadAssetPanel : MonoBehaviour
             }, true);
         }
     }
-    void OnUnloadClick()
+    void OnUnloadAssetClick()
     {
         var assetName = iptAssetName.text;
         if (!string.IsNullOrEmpty(assetName))
         {
             Utility.Debug.LogInfo("功能未实现");
         }
+    }
+    void OnLoadSceneClick()
+    {
+        QuarkResources.LoadSceneAsync("TestAddtiveScene", null,null,true);
+    }
+    void OnUnloadSceneClick()
+    {
+        QuarkResources.UnLoadSceneAsync("TestAddtiveScene",null,null);
     }
     void OnDetectedSuccess(long size)
     {

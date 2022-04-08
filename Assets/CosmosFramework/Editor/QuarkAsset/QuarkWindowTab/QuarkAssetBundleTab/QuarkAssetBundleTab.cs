@@ -5,8 +5,10 @@ using UnityEditor;
 using System.IO;
 using System.Linq;
 using Quark.Asset;
-using Quark;
-namespace Cosmos.Editor.Quark
+using Cosmos.Editor;
+using Cosmos;
+
+namespace Quark.Editor
 {
     public class QuarkAssetBundleTab
     {
@@ -354,7 +356,6 @@ namespace Cosmos.Editor.Quark
                             }
                         }
                     }
-                    //EditorUtil.Debug.LogInfo(bundleName, MessageColor.YELLOW);
                     if (buildInfoCache.TryGetValue(bundleName, out var abPath))
                     {
                         abBuildInfo.AssetDataMaps.TryGetValue(abPath, out var assetData);

@@ -5,6 +5,9 @@ using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine;
 using Unity.EditorCoroutines.Editor;
+using System.Linq;
+using System.IO;
+
 namespace Cosmos.Editor
 {
     public static partial class EditorUtil
@@ -69,7 +72,6 @@ namespace Cosmos.Editor
             /// <summary>
             /// 获取所有Asset目录下，除文件夹、CS脚本以外的资源路径；
             /// </summary>
-            /// <returns></returns>
             public static string[] GetAllBundleableFilePath()
             {
                 var paths = AssetDatabase.GetAllAssetPaths();
@@ -87,7 +89,18 @@ namespace Cosmos.Editor
                 }
                 return pathList.ToArray();
             }
-
+            public static string[] GetAllBundleableFilePath(string folder)
+            {
+                List<string> pathList = new List<string>();
+                TraverseFolderFile(folder, (asset) =>
+                {
+                    if (!(asset is MonoScript))
+                    {
+                        pathList.Add(AssetDatabase.GetAssetPath(asset));
+                    }
+                });
+                return pathList.ToArray();
+            }
             public static EditorCoroutine DownloadAssetBundleAsync(string url, Action<float> progress, Action<AssetBundle> downloadedCallback)
             {
                 return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequestAssetBundle.GetAssetBundle(url), progress, (UnityWebRequest req) =>
@@ -152,7 +165,11 @@ namespace Cosmos.Editor
                         progress?.Invoke(request.downloadProgress);
                         yield return null;
                     }
+#if UNITY_2020_1_OR_NEWER
+                    if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                     if (!request.isNetworkError && !request.isHttpError)
+#endif
                     {
                         if (request.isDone)
                         {

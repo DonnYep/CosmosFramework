@@ -1,5 +1,5 @@
 ﻿using Quark.Asset;
-namespace Cosmos.Editor.Quark
+namespace Quark.Editor
 {
     public class QuarkEditorDataProxy
     {

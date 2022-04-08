@@ -293,6 +293,36 @@ namespace Quark.Loader
         public QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
             QuarkAssetBundleObject abObject = null;
+            var typeString = typeof(T).ToString();
+            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
+            {
+                if (string.IsNullOrEmpty(assetExtension))
+                {
+                    var obj = abLnk.First.Value;
+                    if (obj.AssetType == typeString)
+                    {
+                        abObject = obj;
+                    }
+                }
+                else
+                {
+                    foreach (var obj in abLnk)
+                    {
+                        if (obj.AssetExtension == assetExtension && obj.AssetType == typeString)
+                        {
+                            abObject = obj;
+                            break;
+                        }
+                    }
+                }
+                if (abObject != null)
+                    return hashQuarkObjectInfoDict[abObject.GetHashCode()];
+            }
+            return QuarkObjectInfo.None;
+        }
+        public QuarkObjectInfo GetInfo(string assetName, string assetExtension)
+        {
+            QuarkAssetBundleObject abObject = null;
             if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
             {
                 if (string.IsNullOrEmpty(assetExtension))
@@ -301,20 +331,21 @@ namespace Quark.Loader
                 }
                 else
                 {
-                    foreach (var ab in abLnk)
+                    foreach (var obj in abLnk)
                     {
-                        if (ab.AssetExtension == assetExtension)
+                        if (obj.AssetExtension == assetExtension)
                         {
-                            abObject = ab;
+                            abObject = obj;
                             break;
                         }
                     }
                 }
-                return hashQuarkObjectInfoDict[abObject.GetHashCode()];
+                if (abObject != null)
+                    return hashQuarkObjectInfoDict[abObject.GetHashCode()];
             }
             return QuarkObjectInfo.None;
         }
-        public QuarkObjectInfo[] GetAllInfos()
+        public QuarkObjectInfo[] GetAllLoadedInfos()
         {
             return hashQuarkObjectInfoDict.Values.ToArray();
         }
@@ -503,7 +534,7 @@ where T : UnityEngine.Object
                 callback?.Invoke();
                 yield break;
             }
-            if (!loadedSceneDict.TryGetValue(sceneName,out var scene))
+            if (!loadedSceneDict.TryGetValue(sceneName, out var scene))
             {
                 QuarkUtility.LogError($"Unload scene failure： {sceneName}  not loaded yet !");
                 progress?.Invoke(1);

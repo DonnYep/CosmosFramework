@@ -67,7 +67,11 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
                 yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
+#endif
                 {
                     if (request.isDone)
                     {
@@ -197,7 +201,11 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
                 yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
+#endif
                 {
                     if (request.isDone)
                     {
@@ -222,7 +230,11 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(manifestUri))
             {
                 yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
+#endif
                 {
                     if (request.isDone)
                     {
@@ -241,7 +253,11 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(buildInfoUri))
             {
                 yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
+#endif
                 {
                     if (request.isDone)
                     {
