@@ -134,13 +134,13 @@ where T : UnityEngine.Object
         {
             return QuarkEngine.Instance.LoadSceneAsync(sceneName, progress, callback, additive);
         }
-        public static void UnloadAsset(string assetName, bool forceUnload)
+        public static void UnloadAsset(string assetName)
         {
-            QuarkEngine.Instance.UnloadAsset(assetName, string.Empty, forceUnload);
+            QuarkEngine.Instance.UnloadAsset(assetName, string.Empty);
         }
-        public static void UnloadAsset(string assetName, string assetExtension, bool forceUnload)
+        public static void UnloadAsset(string assetName, string assetExtension)
         {
-            QuarkEngine.Instance.UnloadAsset(assetName, assetExtension, forceUnload);
+            QuarkEngine.Instance.UnloadAsset(assetName, assetExtension);
         }
         public static void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {

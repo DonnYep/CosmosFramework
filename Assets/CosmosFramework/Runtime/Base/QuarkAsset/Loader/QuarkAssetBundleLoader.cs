@@ -250,7 +250,7 @@ namespace Quark.Loader
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progress, callback, additive));
         }
-        public void UnloadAsset(string assetName, string assetExtension, bool forceUnload)
+        public void UnloadAsset(string assetName, string assetExtension)
         {
             QuarkAssetBundleObject abObject = null;
             if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))

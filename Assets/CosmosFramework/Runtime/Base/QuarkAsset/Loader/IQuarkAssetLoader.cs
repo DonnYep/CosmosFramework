@@ -17,7 +17,7 @@ namespace Quark.Loader
         Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false);
         Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension,Action<T[]>callback) where T : UnityEngine.Object;
         Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false);
-        void UnloadAsset(string assetName, string assetExtension, bool forceUnload);
+        void UnloadAsset(string assetName, string assetExtension);
         void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false);
         void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false);
         Coroutine UnLoadSceneAsync(string sceneName, Action<float> progress, Action callback);

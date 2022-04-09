@@ -104,7 +104,7 @@ namespace Quark.Loader
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, assetExtension, callback));
         }
-        public void UnloadAsset(string assetName, string assetExtension, bool forceUnload)
+        public void UnloadAsset(string assetName, string assetExtension)
         {
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
