@@ -1,5 +1,4 @@
-﻿using System;
-namespace Cosmos
+﻿namespace Cosmos
 {
     /// <summary>
     /// 任务基类；

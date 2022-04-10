@@ -5,8 +5,6 @@ using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine;
 using Unity.EditorCoroutines.Editor;
-using System.Linq;
-using System.IO;
 
 namespace Cosmos.Editor
 {

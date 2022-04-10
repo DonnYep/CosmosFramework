@@ -148,5 +148,14 @@ namespace Cosmos.Editor
                 string.Join(";", allDefines.ToArray()));
             return true;
         }
+        /// <summary>
+        /// 获取在build列表中场景的文件地址；
+        /// </summary>
+        /// <returns>场景文件的地址列表</returns>
+        public static string[] GetScenesInBuildsPath()
+        {
+            var scenes = EditorBuildSettings.scenes;
+            return scenes.Select(s => s.path).ToArray();
+        }
     }
 }
