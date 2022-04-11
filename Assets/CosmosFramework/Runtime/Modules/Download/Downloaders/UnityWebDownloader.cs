@@ -240,7 +240,11 @@ namespace Cosmos.Download
                     OnFileDownloading(uri, fileDownloadPath, request.downloadProgress);
                     yield return null;
                 }
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError&& canDownload)
+#elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
+#endif
                 {
                     if (request.isDone)
                     {

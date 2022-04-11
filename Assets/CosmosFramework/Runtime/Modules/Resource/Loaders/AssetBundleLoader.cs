@@ -215,7 +215,11 @@ namespace Cosmos.Resource
                     : UnityWebRequestAssetBundle.GetAssetBundle(AssetBundleRootPath + assetBundleName, GetAssetBundleHash(assetBundleName)))
                 {
                     yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                     if (!request.isNetworkError && !request.isHttpError)
+#endif
                     {
                         AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(request);
                         if (bundle)
@@ -256,7 +260,11 @@ namespace Cosmos.Resource
                         loadingAction?.Invoke(request.downloadProgress);
                         yield return null;
                     }
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                     if (!request.isNetworkError && !request.isHttpError)
+#endif
                     {
                         AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(request);
                         if (bundle)
