@@ -3,7 +3,7 @@
     /// <summary>
     /// 数据代理类；
     /// </summary>
-    public class QuarkDataProxy
+    internal class QuarkDataProxy
     {
         /// <summary>
         /// 远端存储的地址；

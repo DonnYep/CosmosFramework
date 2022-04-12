@@ -148,6 +148,18 @@ namespace Quark
             }
         }
 
+        /// <summary>
+        /// 格式化AB名称；
+        /// 此方法Quark专供；
+        /// </summary>
+        /// <param name="srcStr">原始名称</param>
+        /// <param name="replaceContext">替换的内容</param>
+        /// <returns>格式化后的字符串</returns>
+        public static string FormatAssetBundleName(string srcStr,string replaceContext="_")
+        {
+            return Utility.Text.Replace(srcStr, new string[] { "\\", "/", ".", " " }, replaceContext).ToLower();
+        }
+
         #region Debug
         public static void LogInfo(object msg)
         {
