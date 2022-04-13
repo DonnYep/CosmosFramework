@@ -10,6 +10,11 @@ namespace Quark
             get { return QuarkDataProxy.QuarkEncryptionOffset; }
             set { QuarkDataProxy.QuarkEncryptionOffset = value; }
         }
+        public static byte[] QuarkAESEncryptionKey
+        {
+            get { return QuarkDataProxy.QuarkAESEncryptionKey; }
+            set { QuarkDataProxy.QuarkAESEncryptionKey = value; }
+        }
         public static QuarkAssetLoadMode QuarkAssetLoadMode
         {
             get { return QuarkEngine.Instance.QuarkAssetLoadMode; }
@@ -158,23 +163,23 @@ where T : UnityEngine.Object
         {
             return QuarkEngine.Instance.UnLoadAllSceneAsync(progress, callback);
         }
-        public static QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        public static QuarkAssetObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
             return QuarkEngine.Instance.GetInfo<T>(assetName, assetExtension);
         }
-        public static QuarkObjectInfo GetInfo<T>(string assetName) where T : UnityEngine.Object
+        public static QuarkAssetObjectInfo GetInfo<T>(string assetName) where T : UnityEngine.Object
         {
             return QuarkEngine.Instance.GetInfo<T>(assetName, string.Empty);
         }
-        public static QuarkObjectInfo GetInfo(string assetName, string assetExtension)
+        public static QuarkAssetObjectInfo GetInfo(string assetName, string assetExtension)
         {
             return QuarkEngine.Instance.GetInfo(assetName, assetExtension);
         }
-        public static QuarkObjectInfo GetInfo(string assetName)
+        public static QuarkAssetObjectInfo GetInfo(string assetName)
         {
             return QuarkEngine.Instance.GetInfo(assetName, string.Empty);
         }
-        public static QuarkObjectInfo[] GetAllLoadedInfos()
+        public static QuarkAssetObjectInfo[] GetAllLoadedInfos()
         {
             return QuarkEngine.Instance.GetAllLoadedInfos();
         }

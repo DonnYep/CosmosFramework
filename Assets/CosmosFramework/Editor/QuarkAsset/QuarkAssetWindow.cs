@@ -110,7 +110,6 @@ namespace Quark.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             var dataset = AssetDatabase.LoadAssetAtPath<QuarkAssetDataset>("Assets/New QuarkAssetDataset.asset");
-            dataset.Init();
             EditorUtil.Debug.LogInfo("QuarkAssetDataset is created");
             return dataset;
         }

@@ -69,38 +69,101 @@ namespace Cosmos
                 return Convert.ToBase64String(cryptString);
             }
             /// <summary>
-            /// 生成 8 位密钥
-            /// Data Encryption Standard
-            /// initialization vector
+            /// 生成8位密钥；
+            /// 注意：此工具类中提供的对称加密需要为16，24，32位密钥；
             /// </summary>
-            /// <param name="key">需要生成的Key</param>
-            /// <returns></returns>
-            public static byte[] GenerateIV(string key)
+            /// <param name="srckey">原始密钥信息</param>
+            /// <returns>加密后的值</returns>
+            public static byte[] Generate8BytesAESKey(string srckey)
             {
-                var result = Encoding.UTF8.GetBytes(key);
-                byte[] iv;
-                if (result.Length > 8)
+                var dstLen = 8;
+                var srcBytes = Encoding.UTF8.GetBytes(srckey);
+                byte[] dstBytes = new byte[dstLen];
+                var srcLen = srcBytes.Length;
+                if (srcLen > dstLen)
                 {
-                    iv = new byte[8];
-                    for (int i = 0; i < 8; i++)
-                    {
-                        iv[i] = result[i];
-                    }
-                    return iv;
+                    Array.Copy(srcBytes, 0, dstBytes, 0, dstLen);
                 }
-                else if (result.Length < 8)
+                else
                 {
-                    iv = new byte[8];
-                    for (int i = 0; i < 8; i++)
-                    {
-                        if (result.Length > i)
-                            iv[i] = result[i];
-                        else
-                            iv[i] = 0;
-                        return iv;
-                    }
+                    var diffLen = dstLen - srcLen;
+                    var diffBytes = new byte[diffLen];
+                    Array.Copy(srcBytes, 0, dstBytes, 0, srcLen);
+                    Array.Copy(diffBytes, 0, dstBytes, srcLen, diffLen);
                 }
-                return result;
+                return dstBytes;
+            }
+            /// <summary>
+            /// 生成16位密钥；
+            /// </summary>
+            /// <param name="srckey">原始密钥信息</param>
+            /// <returns>加密后的值</returns>
+            public static byte[] Generate16BytesAESKey(string srckey)
+            {
+                var dstLen = 16;
+                var srcBytes = Encoding.UTF8.GetBytes(srckey);
+                byte[] dstBytes = new byte[dstLen];
+                var srcLen = srcBytes.Length;
+                if (srcLen > dstLen)
+                {
+                    Array.Copy(srcBytes, 0, dstBytes, 0, dstLen);
+                }
+                else
+                {
+                    var diffLen = dstLen - srcLen;
+                    var diffBytes = new byte[diffLen];
+                    Array.Copy(srcBytes, 0, dstBytes, 0, srcLen);
+                    Array.Copy(diffBytes, 0, dstBytes, srcLen, diffLen);
+                }
+                return dstBytes;
+            }
+            /// <summary>
+            /// 生成24位密钥；
+            /// </summary>
+            /// <param name="srckey">原始密钥信息</param>
+            /// <returns>加密后的值</returns>
+            public static byte[] Generate24BytesAESKey(string srckey)
+            {
+                var dstLen = 24;
+                var srcBytes = Encoding.UTF8.GetBytes(srckey);
+                byte[] dstBytes = new byte[dstLen];
+                var srcLen = srcBytes.Length;
+                if (srcLen > dstLen)
+                {
+                    Array.Copy(srcBytes, 0, dstBytes, 0, dstLen);
+                }
+                else
+                {
+                    var diffLen = dstLen - srcLen;
+                    var diffBytes = new byte[diffLen];
+                    Array.Copy(srcBytes, 0, dstBytes, 0, srcLen);
+                    Array.Copy(diffBytes, 0, dstBytes, srcLen, diffLen);
+                }
+                return dstBytes;
+            }
+            /// <summary>
+            /// 生成32位密钥；
+            /// </summary>
+            /// <param name="srckey">原始密钥信息</param>
+            /// <returns>加密后的值</returns>
+            public static byte[] Generate32BytesAESKey(string srckey)
+            {
+                var dstLen = 16;
+                var srcBytes = Encoding.UTF8.GetBytes(srckey);
+                byte[] dstBytes = new byte[dstLen];
+                var srcLen = srcBytes.Length;
+                if (srcLen > dstLen)
+                {
+                    Array.Copy(srcBytes, 0, dstBytes, 0, dstLen);
+                }
+                else
+                {
+                    var diffLen = dstLen - srcLen;
+                    var diffBytes = new byte[diffLen];
+                    Array.Copy(srcBytes, 0, dstBytes, 0, srcLen);
+                    Array.Copy(diffBytes, 0, dstBytes, srcLen, diffLen);
+                }
+                return dstBytes;
             }
             /// <summary>
             /// 加密算法HmacSHA256  

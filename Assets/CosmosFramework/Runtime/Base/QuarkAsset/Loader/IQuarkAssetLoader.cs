@@ -22,8 +22,8 @@ namespace Quark.Loader
         void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false);
         Coroutine UnLoadSceneAsync(string sceneName, Action<float> progress, Action callback);
         Coroutine UnLoadAllSceneAsync( Action<float> progress, Action callback);
-        QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object;
-        QuarkObjectInfo GetInfo(string assetName, string assetExtension);
-        QuarkObjectInfo[] GetAllLoadedInfos();
+        QuarkAssetObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object;
+        QuarkAssetObjectInfo GetInfo(string assetName, string assetExtension);
+        QuarkAssetObjectInfo[] GetAllLoadedInfos();
     }
 }

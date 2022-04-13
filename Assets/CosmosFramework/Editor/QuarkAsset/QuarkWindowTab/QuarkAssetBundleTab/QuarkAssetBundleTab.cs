@@ -100,7 +100,8 @@ namespace Quark.Editor
 
             GUILayout.Space(16);
 
-            DrawOffsetEncryptionLable();
+            DrawAESEncryptionForBuildInfoLable();
+            DrawOffsetEncryptionForAssetBundleLable();
 
             GUILayout.Space(16);
 
@@ -108,7 +109,25 @@ namespace Quark.Editor
             if (GUILayout.Button("Build"))
             {
                 if (quarkAssetDataset != null)
-                    EditorUtil.Coroutine.StartCoroutine(EnumBuildAssetBundle());
+                {
+                    if (assetBundleTabData.UseAesEncryptionForBuildInfo)
+                    {
+                        var aesKeyStr = assetBundleTabData.AesEncryptionKeyForBuildInfo;
+                        var aesKeyLength = System.Text.Encoding.UTF8.GetBytes(aesKeyStr).Length;
+                        if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32)
+                        {
+                            EditorUtil.Debug.LogError("QuarkAsset build aes key is invalid , key should be 16,24 or 32 bytes long !");
+                        }
+                        else
+                        {
+                            EditorUtil.Coroutine.StartCoroutine(EnumBuildAssetBundle());
+                        }
+                    }
+                    else
+                    {
+                        EditorUtil.Coroutine.StartCoroutine(EnumBuildAssetBundle());
+                    }
+                }
                 else
                     EditorUtil.Debug.LogError("QuarkAssetDataset is invalid !");
             }
@@ -119,16 +138,33 @@ namespace Quark.Editor
             }
             GUILayout.EndHorizontal();
         }
-        void DrawOffsetEncryptionLable()
+        void DrawAESEncryptionForBuildInfoLable()
         {
-            assetBundleTabData.UseOffsetEncryption = EditorGUILayout.ToggleLeft("UseOffsetEncryption", assetBundleTabData.UseOffsetEncryption);
-            if (assetBundleTabData.UseOffsetEncryption)
+            assetBundleTabData.UseAesEncryptionForBuildInfo = EditorGUILayout.ToggleLeft("Aes encryption for buildInfo and manifest", assetBundleTabData.UseAesEncryptionForBuildInfo);
+            if (assetBundleTabData.UseAesEncryptionForBuildInfo)
             {
+                EditorGUILayout.LabelField("BuildInfo AES encryption key, key should be 16,24 or 32 bytes long");
+                assetBundleTabData.AesEncryptionKeyForBuildInfo = EditorGUILayout.TextField("AESKey", assetBundleTabData.AesEncryptionKeyForBuildInfo);
+
+                var aesKeyStr = assetBundleTabData.AesEncryptionKeyForBuildInfo;
+                var aesKeyLength = System.Text.Encoding.UTF8.GetBytes(aesKeyStr).Length;
+                EditorGUILayout.LabelField($"Current key length is:{aesKeyLength}");
+                if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32)
+                {
+                    EditorGUILayout.HelpBox("Key should be 16,24 or 32 bytes long", MessageType.Error);
+                }
                 GUILayout.Space(16);
-                EditorGUILayout.LabelField("AssetBundle加密偏移量");
-                assetBundleTabData.EncryptionOffset = EditorGUILayout.IntField("EncryptionOffset", assetBundleTabData.EncryptionOffset);
-                if (assetBundleTabData.EncryptionOffset < 0)
-                    assetBundleTabData.EncryptionOffset = 0;
+            }
+        }
+        void DrawOffsetEncryptionForAssetBundleLable()
+        {
+            assetBundleTabData.UseOffsetEncryptionForAssetBundle = EditorGUILayout.ToggleLeft("Offset encryption for asserBundle", assetBundleTabData.UseOffsetEncryptionForAssetBundle);
+            if (assetBundleTabData.UseOffsetEncryptionForAssetBundle)
+            {
+                EditorGUILayout.LabelField("AssetBundle encryption offset");
+                assetBundleTabData.EncryptionOffsetForAssetBundle = EditorGUILayout.IntField("Encryption offset", assetBundleTabData.EncryptionOffsetForAssetBundle);
+                if (assetBundleTabData.EncryptionOffsetForAssetBundle < 0)
+                    assetBundleTabData.EncryptionOffsetForAssetBundle = 0;
             }
         }
         void BrowseFolder()
@@ -182,17 +218,9 @@ namespace Quark.Editor
                     Utility.IO.DeleteFolder(path);
                 }
             }
-            if (QuarkAssetWindow.WindowTabData.UnderAssetsDirectory)
-            {
-                var dirs = EditorUtil.IO.GetAllBundleableFilePath();
-                yield return EditorUtil.Coroutine.StartCoroutine(TraverseTargetDirectories(dirs));
-            }
-            else
-            {
-                var dirHashPairs = quarkAssetDataset.DirHashPairs;
-                var dirs = dirHashPairs.Select(d => d.Dir).ToArray();
-                yield return EditorUtil.Coroutine.StartCoroutine(TraverseTargetDirectories(dirs));
-            }
+            var dirHashPairs = quarkAssetDataset.DirHashPairs;
+            var dirs = dirHashPairs.Select(d => d.Dir).ToArray();
+            yield return EditorUtil.Coroutine.StartCoroutine(TraverseTargetDirectories(dirs));
         }
         IEnumerator TraverseTargetDirectories(string[] dirs)
         {
@@ -344,7 +372,7 @@ namespace Quark.Editor
                 {
                     var bundleName = bundles[i].name;
                     var manifest = new QuarkManifest.ManifestItem();
-                    manifest.Assets = new Dictionary<string, string>();
+                    manifest.Assets = new Dictionary<string, QuarkAssetObject>();
                     var bundleAssets = bundles[i].GetAllAssetNames();
                     {
                         var bundleAssetLength = bundleAssets.Length;
@@ -352,7 +380,7 @@ namespace Quark.Editor
                         {
                             if (assetObjsDict.TryGetValue(bundleAssets[j], out var assetObj))
                             {
-                                manifest.Assets.TryAdd(bundleAssets[j], assetObj.AssetName);
+                                manifest.Assets.TryAdd(bundleAssets[j], assetObj);
                             }
                         }
                     }
@@ -375,21 +403,33 @@ namespace Quark.Editor
         void WriteBuildInfo()
         {
             abBuildInfo.BuildTime = System.DateTime.Now.ToString();
-            var json = QuarkUtility.ToJson(abBuildInfo, true);
-            var fullPath = Utility.IO.PathCombine(GetBuildPath(), quarkABBuildInfo);
-            Utility.IO.WriteTextFile(fullPath, json, false);
-            abBuildInfo.Dispose();
-            buildInfoCache.Clear();
+            var abBuildInfoJson = QuarkUtility.ToJson(abBuildInfo, true);
+            var abBuildInfoPath = Utility.IO.PathCombine(GetBuildPath(), quarkABBuildInfo);
+
             var manifestJson = QuarkUtility.ToJson(quarkAssetManifest);
             var manifestPath = Utility.IO.PathCombine(GetBuildPath(), quarkManifest);
-            Utility.IO.WriteTextFile(manifestPath, manifestJson, false);
+            abBuildInfo.Dispose();
+            buildInfoCache.Clear();
+            if (assetBundleTabData.UseAesEncryptionForBuildInfo)
+            {
+                var aesKeyStr = assetBundleTabData.AesEncryptionKeyForBuildInfo;
+                byte[] aesKey = QuarkUtility.GenerateBytesAESKey(aesKeyStr);
+                var encryptedBuildInfoStr = QuarkUtility.AESEncryptStringToString(abBuildInfoJson, aesKey);
+                var encryptedManifestStr = QuarkUtility.AESEncryptStringToString(manifestJson, aesKey);
+                Utility.IO.WriteTextFile(abBuildInfoPath, encryptedBuildInfoStr, false);
+                Utility.IO.WriteTextFile(manifestPath, encryptedManifestStr, false);
+            }
+            else
+            {
+                Utility.IO.WriteTextFile(abBuildInfoPath, abBuildInfoJson, false);
+                Utility.IO.WriteTextFile(manifestPath, manifestJson, false);
+            }
+
         }
         void SetAssetBundleName(string path)
         {
-            string abName = string.Empty;
-            abName = Utility.Text.Replace(path, new string[] { "\\", "/", ".", " " }, "_").ToLower();
-            AssetImporter importer = null;
-            if (!importerCacheDict.TryGetValue(path, out importer))
+            var abName = QuarkUtility.FormatAssetBundleName(path);
+            if (!importerCacheDict.TryGetValue(path, out var importer))
             {
                 importer = AssetImporter.GetAtPath(path);
                 importerCacheDict[path] = importer;
@@ -413,15 +453,16 @@ namespace Quark.Editor
                 }
             }
         }
+
         /// <summary>
         /// 对AB进行加密；
         /// </summary>
         /// <param name="paths">AB的地址</param>
         void OffsetEncryptAB(string[] paths)
         {
-            if (assetBundleTabData.UseOffsetEncryption)
+            if (assetBundleTabData.UseOffsetEncryptionForAssetBundle)
             {
-                var offset = assetBundleTabData.EncryptionOffset;
+                var offset = assetBundleTabData.EncryptionOffsetForAssetBundle;
                 EditorUtil.IO.DownloadAssetBundlesBytesAsync(paths, percent =>
                 {
                     var per = percent * 100;

@@ -22,8 +22,12 @@
         /// </summary>
         public static QuarkManifest QuarkManifest { get; set; }
         /// <summary>
-        /// 加密偏移量；
+        /// AssetBundle加密偏移量；
         /// </summary>
         public static ulong QuarkEncryptionOffset { get; set; }
+        /// <summary>
+        /// BuildInfo对称加密密钥；
+        /// </summary>
+        public static byte[] QuarkAESEncryptionKey{ get; set; }
     }
 }

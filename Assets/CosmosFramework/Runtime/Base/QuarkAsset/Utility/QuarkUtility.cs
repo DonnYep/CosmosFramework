@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Quark
@@ -159,7 +160,105 @@ namespace Quark
         {
             return Utility.Text.Replace(srcStr, new string[] { "\\", "/", ".", " " }, replaceContext).ToLower();
         }
-
+        public static byte[] GenerateBytesAESKey(string srckey)
+        {
+            var srcKeyLen= Encoding.UTF8.GetBytes(srckey).Length;
+            int dstLen = 16;
+            switch (srcKeyLen)
+            {
+                case 0:
+                    return new byte[0];
+                    break;
+                case 16:
+                    dstLen = 16;
+                    break;
+                case 24:
+                    dstLen = 24;
+                    break;
+                case 32:
+                    dstLen = 32;
+                    break;
+                default:
+                    throw new Exception("Key should be 16,24 or 32 bytes long");
+                    break;
+            }
+            var srcBytes = Encoding.UTF8.GetBytes(srckey);
+            byte[] dstBytes = new byte[dstLen];
+            var srcLen = srcBytes.Length;
+            if (srcLen > dstLen)
+            {
+                Array.Copy(srcBytes, 0, dstBytes, 0, dstLen);
+            }
+            else
+            {
+                var diffLen = dstLen - srcLen;
+                var diffBytes = new byte[diffLen];
+                Array.Copy(srcBytes, 0, dstBytes, 0, srcLen);
+                Array.Copy(diffBytes, 0, dstBytes, srcLen, diffLen);
+            }
+            return dstBytes;
+        }
+        /// <summary>
+        /// AES对称加密string类型内容;
+        /// 密钥的byte长度必须是16, 24, 32；
+        /// </summary>
+        /// <param name="context">需要加密的内容</param>
+        /// <param name="key">密钥</param>
+        /// <returns>加密后的内容</returns>
+        public static string AESEncryptStringToString(string context, byte[] key)
+        {
+            if (string.IsNullOrEmpty(context))
+                throw new ArgumentNullException("context is invalid ! ");
+            if (key == null)
+                throw new ArgumentNullException("key is invalid ! ");
+            using (var aes = new AesCryptoServiceProvider())
+            {
+                var iv = aes.IV;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ms.Write(iv, 0, iv.Length);
+                    using (var cryptStream = new CryptoStream(ms, aes.CreateEncryptor(key, aes.IV), CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter writer = new StreamWriter(cryptStream))
+                        {
+                            writer.Write(context);
+                        }
+                    }
+                    var buf = ms.ToArray();
+                    return Convert.ToBase64String(buf, 0, buf.Length);
+                }
+            }
+        }
+        /// <summary>
+        /// AES对称解密string类型内容；
+        /// 密钥的byte长度必须是16, 24, 32；
+        /// </summary>
+        /// <param name="context">需要解密的内容</param>
+        /// <param name="key">密钥</param>
+        /// <returns>解密后的内容</returns>
+        public static string AESDecryptStringToString(string context, byte[] key)
+        {
+            if (string.IsNullOrEmpty(context))
+                throw new ArgumentNullException("context is invalid ! ");
+            if (key == null)
+                throw new ArgumentNullException("key is invalid ! ");
+            var bytes = Convert.FromBase64String(context);
+            using (var aes = new AesCryptoServiceProvider())
+            {
+                using (MemoryStream ms = new MemoryStream(bytes))
+                {
+                    var iv = new byte[16];
+                    ms.Read(iv, 0, 16);
+                    using (var cryptStream = new CryptoStream(ms, aes.CreateDecryptor(key, iv), CryptoStreamMode.Read))
+                    {
+                        using (StreamReader reader = new StreamReader(cryptStream))
+                        {
+                            return reader.ReadToEnd();
+                        }
+                    }
+                }
+            }
+        }
         #region Debug
         public static void LogInfo(object msg)
         {

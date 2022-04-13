@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.IO;
 using Quark.Asset;
+using System;
+
 namespace Quark
 {
     /// <summary>
@@ -51,10 +53,10 @@ namespace Quark
         /// 持久化路径下的相对地址；
         /// </summary>
         public string RelativeLoadPath;
-        ///// <summary>
-        ///// 对称加密密钥；
-        ///// </summary>
-        //public string AESEncryptionKey;
+        /// <summary>
+        /// 对称加密密钥；
+        /// </summary>
+        public string BuildInfoAESEncryptionKey;
         /// <summary>
         /// 加密偏移量；
         /// </summary>
@@ -89,8 +91,13 @@ namespace Quark
         void Awake()
         {
             instance = this;
+            QuarkResources.QuarkEncryptionOffset = EncryptionOffset;
             QuarkResources.QuarkAssetLoadMode = QuarkAssetLoadMode;
-            QuarkResources.QuarkEncryptionOffset= EncryptionOffset;
+            {
+                var keyStr = BuildInfoAESEncryptionKey;
+                var aesKey = QuarkUtility.GenerateBytesAESKey(keyStr);
+                QuarkResources.QuarkAESEncryptionKey = aesKey;
+            }
             switch (QuarkAssetLoadMode)
             {
                 case QuarkAssetLoadMode.AssetDatabase:

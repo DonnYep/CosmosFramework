@@ -248,23 +248,23 @@ where T : UnityEngine.Object
                 return loader.UnLoadAllSceneAsync(progress, callback);
             return null;
         }
-        internal QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        internal QuarkAssetObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
                 loader.GetInfo<T>(assetName, assetExtension);
-            return QuarkObjectInfo.None;
+            return QuarkAssetObjectInfo.None;
         }
-        internal QuarkObjectInfo GetInfo(string assetName, string assetExtension)
+        internal QuarkAssetObjectInfo GetInfo(string assetName, string assetExtension)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
                 loader.GetInfo(assetName, assetExtension);
-            return QuarkObjectInfo.None;
+            return QuarkAssetObjectInfo.None;
         }
-        internal QuarkObjectInfo[] GetAllLoadedInfos()
+        internal QuarkAssetObjectInfo[] GetAllLoadedInfos()
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
                 loader.GetAllLoadedInfos();
-            return new QuarkObjectInfo[0];
+            return new QuarkAssetObjectInfo[0];
         }
         /// <summary>
         /// 获取比较manifest成功；

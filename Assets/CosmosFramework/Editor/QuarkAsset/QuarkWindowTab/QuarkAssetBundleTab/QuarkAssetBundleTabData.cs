@@ -22,11 +22,21 @@ namespace Quark.Editor
         /// <summary>
         /// 使用偏移加密；
         /// </summary>
-        public bool UseOffsetEncryption;
+        public bool UseOffsetEncryptionForAssetBundle;
         /// <summary>
         /// 加密偏移量；
         /// </summary>
-        public int EncryptionOffset;
+        public int EncryptionOffsetForAssetBundle;
+
+        /// <summary>
+        /// 使用对称加密对build信息进行加密;
+        /// </summary>
+        public bool UseAesEncryptionForBuildInfo;
+        /// <summary>
+        /// 对称加密的密钥；
+        /// </summary>
+        public string AesEncryptionKeyForBuildInfo;
+
         public BuildAssetBundleOptions BuildAssetBundleOptions;
 
         public QuarkAssetBundleTabData()
@@ -39,7 +49,10 @@ namespace Quark.Editor
             StreamingRelativePath = string.Empty;
             WithoutManifest = true;
             NameHashType = AssetBundleHashType.DefaultName;
-            EncryptionOffset = 0;
+            UseOffsetEncryptionForAssetBundle = false;
+            EncryptionOffsetForAssetBundle = 0;
+            UseAesEncryptionForBuildInfo = false;
+            AesEncryptionKeyForBuildInfo = "QuarkAssetAesKey";
             BuildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression;
         }
     }

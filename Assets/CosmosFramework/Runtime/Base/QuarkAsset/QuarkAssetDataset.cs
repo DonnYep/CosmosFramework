@@ -8,24 +8,55 @@ namespace Quark.Asset
     /// build之后需配合AB资源使用；
     /// </summary>
     [Serializable]
-    public sealed class QuarkAssetDataset : ScriptableObject, IDisposable,IQuarkLoaderData
+    public sealed class QuarkAssetDataset : ScriptableObject, IDisposable, IQuarkLoaderData
     {
+        Dictionary<string, List<QuarkAssetObject>> assetBundleAssetObjectDict;
+        [SerializeField]
+        int quarkAssetCount;
+        [SerializeField]
+        List<QuarkDirHashPair> dirHashPairs;
+        [SerializeField]
+        List<QuarkAssetObject> quarkAssetObjectList;
+        public int QuarkAssetCount { get { return quarkAssetCount; } set { quarkAssetCount = value; } }
         /// <summary>
         /// 包含的路径；
         /// </summary>
-        public List<QuarkDirHashPair> DirHashPairs;
-        public int QuarkAssetCount;
-        public List<QuarkAssetDatabaseObject> QuarkAssetObjectList;
-        public void Init()
+        public List<QuarkDirHashPair> DirHashPairs
         {
-            DirHashPairs = new List<QuarkDirHashPair>();
-            QuarkAssetObjectList = new List<QuarkAssetDatabaseObject>();
+            get
+            {
+                if (dirHashPairs == null)
+                    dirHashPairs = new List<QuarkDirHashPair>();
+                return dirHashPairs;
+            }
+        }
+        public List<QuarkAssetObject> QuarkAssetObjectList
+        {
+            get
+            {
+                if (quarkAssetObjectList == null)
+                    quarkAssetObjectList = new List<QuarkAssetObject>();
+                return quarkAssetObjectList;
+            }
+        }
+        /// <summary>
+        /// AB名===AB中的资源；
+        /// </summary>
+        public Dictionary<string, List<QuarkAssetObject>> AssetBundleAssetObjectDict
+        {
+            get
+            {
+                if (assetBundleAssetObjectDict == null)
+                    assetBundleAssetObjectDict = new Dictionary<string, List<QuarkAssetObject>>();
+                return assetBundleAssetObjectDict;
+            }
         }
         public void Dispose()
         {
-            QuarkAssetCount = 0;
-            QuarkAssetObjectList?.Clear();
-            DirHashPairs.Clear();
+            quarkAssetCount = 0;
+            quarkAssetObjectList?.Clear();
+            dirHashPairs?.Clear();
+            assetBundleAssetObjectDict?.Clear();
         }
     }
 }

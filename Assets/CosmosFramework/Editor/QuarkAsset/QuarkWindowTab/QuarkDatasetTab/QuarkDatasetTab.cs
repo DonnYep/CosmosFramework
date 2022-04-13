@@ -36,7 +36,6 @@ namespace Quark.Editor
         {
             EditorUtil.DrawVerticalContext(() =>
             {
-                WindowTabData.UnderAssetsDirectory = EditorGUILayout.ToggleLeft("UnderAssetsDirectory", WindowTabData.UnderAssetsDirectory);
                 WindowTabData.GenerateAssetPathCode = EditorGUILayout.ToggleLeft("GenerateAssetPath", WindowTabData.GenerateAssetPathCode);
                 WindowTabData.SortAssetObjectList = EditorGUILayout.ToggleLeft("SortAssetObjectList", WindowTabData.SortAssetObjectList);
                 WindowTabData.SortAssetBundle = EditorGUILayout.ToggleLeft("SortAssetBundles", WindowTabData.SortAssetBundle);
@@ -64,10 +63,7 @@ namespace Quark.Editor
             {
                 quarkDirectoriesOperation.Clear();
             }
-            if (!WindowTabData.UnderAssetsDirectory)
-            {
-                quarkDirectoriesOperation.OnGUI(rect);
-            }
+            quarkDirectoriesOperation.OnGUI(rect);
             GUILayout.EndVertical();
 
 
@@ -87,29 +83,14 @@ namespace Quark.Editor
                 EditorUtil.Debug.LogError("QuarkAssetDataset is invalid !");
                 yield break;
             }
-            if (WindowTabData.UnderAssetsDirectory)
+            try
             {
-                try
-                {
-                    ADBModeUnderAssetsDirectoryBuild();
-                }
-                catch (Exception e)
-                {
-                    EditorUtility.ClearProgressBar();
-                    EditorUtil.Debug.LogError($"Asset is invaild : {e.Message}");
-                }
+                AssetDatabaseModeBuild();
             }
-            else
+            catch (Exception e)
             {
-                try
-                {
-                    ADBModeNotUnderAssetsDirectoryBuild();
-                }
-                catch (Exception e)
-                {
-                    EditorUtility.ClearProgressBar();
-                    EditorUtil.Debug.LogError($"Asset is invaild : {e.Message}");
-                }
+                EditorUtility.ClearProgressBar();
+                EditorUtil.Debug.LogError($"Asset is invaild : {e.Message}");
             }
             EditorUtility.SetDirty(quarkAssetDataset);
             EditorUtil.SaveData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName, WindowTabData);
@@ -126,17 +107,18 @@ namespace Quark.Editor
             EditorUtil.ClearData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName);
             EditorUtil.Debug.LogInfo("Quark asset clear done ");
         }
-        void ADBModeNotUnderAssetsDirectoryBuild()
+        void AssetDatabaseModeBuild()
         {
             EditorUtility.ClearProgressBar();
             var count = Utility.IO.FolderFileCount(Application.dataPath);
             int currentBuildIndex = 0;
-            List<QuarkAssetDatabaseObject> quarkAssetList = new List<QuarkAssetDatabaseObject>();
+            List<QuarkAssetObject> quarkAssetList = new List<QuarkAssetObject>();
             quarkAssetList?.Clear();
             int currentDirIndex = 0;
             var dirs = quarkAssetDataset.DirHashPairs;
             var dirHashPair = quarkAssetDataset.DirHashPairs.ToArray();
-            Dictionary<string, FileSystemInfo> fileSysInfoDict = new Dictionary<string, FileSystemInfo>();
+            //dir===[fileFullName===fileInfo]
+            Dictionary<string, Dictionary<string, FileSystemInfo>> dirFileInfoDict = new Dictionary<string, Dictionary<string, FileSystemInfo>>();
             if (dirs != null)
             {
                 foreach (var dir in dirs)
@@ -154,55 +136,65 @@ namespace Quark.Editor
                             {
                                 EditorUtility.ClearProgressBar();
                             }
-                            if (!fileSysInfoDict.ContainsKey(file.FullName))
+                            if (!dirFileInfoDict.TryGetValue(dir.Dir, out var fileInfoDict))
                             {
-                                fileSysInfoDict.Add(file.FullName, file);
+                                fileInfoDict = new Dictionary<string, FileSystemInfo>();
+                                dirFileInfoDict.Add(dir.Dir, fileInfoDict);
                             }
+                            fileInfoDict[file.FullName] = file;
                         });
                     }
                     else if (File.Exists(dir.Dir))
                     {
                         var fullPath = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), dir.Dir);
-                        if (!fileSysInfoDict.ContainsKey(fullPath))
+
+                        if (!dirFileInfoDict.TryGetValue(dir.Dir, out var fileInfoDict))
                         {
-                            var fileInfo = new FileInfo(fullPath);
-                            fileSysInfoDict.Add(fileInfo.FullName, fileInfo);
+                            fileInfoDict = new Dictionary<string, FileSystemInfo>();
+                            dirFileInfoDict.Add(dir.Dir, fileInfoDict);
                         }
+                        var fileInfo = new FileInfo(fullPath);
+                        fileInfoDict[fileInfo.FullName] = fileInfo;
                     }
                 }
-                var fileCount = fileSysInfoDict.Count;
-                foreach (var file in fileSysInfoDict.Values)
+                var fileCount = dirFileInfoDict.Count;
+                foreach (var files in dirFileInfoDict)
                 {
-
-                    currentBuildIndex++;
-                    if (currentBuildIndex < fileCount)
+                    var fileDict = files.Value;
+                    foreach (var srcFile in fileDict)
                     {
-                        EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "Building", currentBuildIndex / (float)fileCount);
-                    }
-                    else
-                    {
-                        EditorUtility.ClearProgressBar();
-                    }
-                    var projLength = QuarkConstant.Extensions.Length;
-                    for (int i = 0; i < projLength; i++)
-                    {
-                        var lowerExtension = file.Extension.ToLower();
-                        var quarkLowerExt = QuarkConstant.Extensions[i].ToLower();
-
-                        if (quarkLowerExt == lowerExtension)
+                        var file = srcFile.Value;
+                        currentBuildIndex++;
+                        if (currentBuildIndex < fileCount)
                         {
-                            var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
-                            var assetName = file.Name.Replace(file.Extension, string.Empty);
-                            var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
-                            var assetObj = new QuarkAssetDatabaseObject()
+                            EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "Building", currentBuildIndex / (float)fileCount);
+                        }
+                        else
+                        {
+                            EditorUtility.ClearProgressBar();
+                        }
+                        var projLength = QuarkConstant.Extensions.Length;
+                        for (int i = 0; i < projLength; i++)
+                        {
+                            var lowerExtension = file.Extension.ToLower();
+                            var quarkLowerExt = QuarkConstant.Extensions[i].ToLower();
+
+                            if (quarkLowerExt == lowerExtension)
                             {
-                                AssetExtension = lowerExtension,
-                                AssetName = assetName,
-                                AssetPath = assetPath,
-                                AssetType = type.ToString(),
-                                AssetGuid = AssetDatabase.AssetPathToGUID(assetPath)
-                            };
-                            quarkAssetList.Add(assetObj);
+                                var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
+                                var assetName = file.Name.Replace(file.Extension, string.Empty);
+                                var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
+                                var assetBundleName = QuarkUtility.FormatAssetBundleName(files.Key);
+                                var assetObj = new QuarkAssetObject()
+                                {
+                                    AssetExtension = lowerExtension,
+                                    AssetName = assetName,
+                                    AssetPath = assetPath,
+                                    AssetType = type.ToString(),
+                                    AssetBundleName = assetBundleName
+                                };
+                                quarkAssetList.Add(assetObj);
+                            }
                         }
                     }
                 }
@@ -230,73 +222,16 @@ namespace Quark.Editor
                 EditorUtility.ClearProgressBar();
             }
             quarkAssetDataset.DirHashPairs.AddRange(dirHashPair);
-        }
-        void ADBModeUnderAssetsDirectoryBuild()
-        {
-            EditorUtility.ClearProgressBar();
-            var count = Utility.IO.FolderFileCount(Application.dataPath);
-            int currentBuildIndex = 0;
-            List<QuarkAssetDatabaseObject> quarkAssetList = new List<QuarkAssetDatabaseObject>();
-            var dirHashPair = quarkAssetDataset.DirHashPairs.ToArray();
-            quarkAssetList?.Clear();
-            string path = Application.dataPath;
-            Utility.IO.TraverseFolderFile(path, (file) =>
+            var quarkAssetObjectList= quarkAssetDataset.QuarkAssetObjectList;
+            foreach (var ao in quarkAssetObjectList)
             {
-                currentBuildIndex++;
-                if (currentBuildIndex < count)
+                if (!quarkAssetDataset.AssetBundleAssetObjectDict.TryGetValue(ao.AssetBundleName, out var objList))
                 {
-                    EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "Building", currentBuildIndex / count);
+                    objList = new List<QuarkAssetObject>();
+                    quarkAssetDataset.AssetBundleAssetObjectDict.Add(ao.AssetBundleName, objList);
                 }
-                else
-                {
-                    EditorUtility.ClearProgressBar();
-                }
-                var length = QuarkConstant.Extensions.Length;
-                for (int i = 0; i < length; i++)
-                {
-                    var lowerExtension = file.Extension.ToLower();
-                    var quarkLowerExt = QuarkConstant.Extensions[i].ToLower();
-                    if (quarkLowerExt == lowerExtension)
-                    {
-                        var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
-                        assetPath = assetPath.Replace("\\", "/");
-                        var assetName = file.Name.Replace(file.Extension, string.Empty);
-                        var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
-                        var assetObj = new QuarkAssetDatabaseObject()
-                        {
-                            AssetExtension = lowerExtension,
-                            AssetName = assetName,
-                            AssetPath = assetPath,
-                            AssetType = type.ToString(),
-                            AssetGuid = AssetDatabase.AssetPathToGUID(assetPath)
-                        };
-                        quarkAssetList.Add(assetObj);
-                    }
-                }
-            });
-            var arr = quarkAssetList.ToArray();
-
-            if (WindowTabData.SortAssetObjectList)
-            {
-                int arrIdx = 0;
-                var arrCount = arr.Length - 1;
-                SortByAscend(arr, d => d.AssetName, () => { EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "SortingAssetObjectList", arrIdx++ / (float)arrCount); });
-                EditorUtility.ClearProgressBar();
+                objList.Add(ao);
             }
-
-            quarkAssetDataset.QuarkAssetObjectList.Clear();
-            quarkAssetDataset.QuarkAssetObjectList.AddRange(arr);
-            quarkAssetDataset.QuarkAssetCount = arr.Length;
-            quarkAssetDataset.DirHashPairs.Clear();
-
-            if (WindowTabData.SortAssetBundle)
-            {
-                int dirIdx = 0;
-                var dirCount = dirHashPair.Length - 1;
-                SortByAscend(dirHashPair, d => d.Dir, () => { EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "SortingAssetBundles", dirIdx++ / (float)dirCount); });
-                EditorUtility.ClearProgressBar();
-            }
-            quarkAssetDataset.DirHashPairs.AddRange(dirHashPair);
         }
         void AssetDataBaseModeCreatePathScript()
         {
@@ -315,7 +250,6 @@ namespace Quark.Editor
             AssetDatabase.Refresh();
         }
         #endregion
-
         void SortByAscend<T, K>(T[] array, Func<T, K> handler, Action progress)
     where K : IComparable<K>
         {
