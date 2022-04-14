@@ -1,5 +1,4 @@
 ﻿using System;
-
 namespace Quark.Asset
 {
     /// <summary>
@@ -7,7 +6,7 @@ namespace Quark.Asset
     /// </summary>
     internal class QuarkAssetObjectWapper : IEquatable<QuarkAssetObjectWapper>
     {
-        QuarkAssetObject QuarkAssetObject;
+        public QuarkAssetObject QuarkAssetObject;
         /// <summary>
         /// 资源的引用计数；
         /// </summary>
@@ -20,6 +19,17 @@ namespace Quark.Asset
         public override bool Equals(object obj)
         {
             return (obj is QuarkAssetObjectWapper) && Equals((QuarkAssetObjectWapper)obj);
+        }
+        public QuarkAssetObjectInfo GetQuarkAssetObjectInfo()
+        {
+            var assetBundleName = QuarkAssetObject.AssetBundleName;
+            var assetPath = QuarkAssetObject.AssetPath;
+            var referenceCount = AssetReferenceCount;
+            var assetName = QuarkAssetObject.AssetName;
+            var assetExtension = QuarkAssetObject.AssetExtension;
+            var assetType = QuarkAssetObject.AssetType;
+            var info = QuarkAssetObjectInfo.Create(assetName, assetPath, assetBundleName, assetExtension, assetType,referenceCount);
+            return info;
         }
         public static QuarkAssetObjectWapper operator --(QuarkAssetObjectWapper quarkAsset)
         {
