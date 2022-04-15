@@ -24,11 +24,11 @@ namespace Quark.Editor
         /// </summary>
         Dictionary<string, string> buildInfoCache = new Dictionary<string, string>();
         QuarkAssetDataset quarkAssetDataset { get { return QuarkEditorDataProxy.QuarkAssetDataset; } }
-        QuarkDatasetTab assetDatasetTab;
+        QuarkAssetDatabaseTab assetDatabaseTab;
         List<string> abPaths = new List<string>();
-        public void SetAssetDatasetTab(QuarkDatasetTab assetDatasetTab)
+        public void SetAssetDatabaseTab(QuarkAssetDatabaseTab assetDatabaseTab)
         {
-            this.assetDatasetTab = assetDatasetTab;
+            this.assetDatabaseTab = assetDatabaseTab;
         }
         public void OnDisable()
         {
@@ -149,7 +149,7 @@ namespace Quark.Editor
                 var aesKeyStr = assetBundleTabData.AesEncryptionKeyForBuildInfo;
                 var aesKeyLength = System.Text.Encoding.UTF8.GetBytes(aesKeyStr).Length;
                 EditorGUILayout.LabelField($"Current key length is:{aesKeyLength}");
-                if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32)
+                if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32 && aesKeyLength != 0)
                 {
                     EditorGUILayout.HelpBox("Key should be 16,24 or 32 bytes long", MessageType.Error);
                 }
@@ -202,7 +202,7 @@ namespace Quark.Editor
         }
         IEnumerator EnumBuildAssetBundle()
         {
-            yield return assetDatasetTab.EnumUpdateADBMode();
+            yield return assetDatabaseTab.EnumUpdateADBMode();
             yield return SetBuildInfo();
             BuildPipeline.BuildAssetBundles(GetBuildFolder(), assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
             OperateManifest();
@@ -453,7 +453,6 @@ namespace Quark.Editor
                 }
             }
         }
-
         /// <summary>
         /// 对AB进行加密；
         /// </summary>
@@ -483,7 +482,6 @@ namespace Quark.Editor
                             stream.Close();
                         }
                     }
-                    //GUIUtility.ExitGUI();
                 });
             }
         }

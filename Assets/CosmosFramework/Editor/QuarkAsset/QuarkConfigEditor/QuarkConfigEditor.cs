@@ -103,14 +103,19 @@ namespace Quark.Editor
         }
         void DrawOffstEncryption()
         {
-            sp_EncryptionOffset.longValue = EditorGUILayout.LongField("QuarkEncryptionOffset", sp_EncryptionOffset.longValue);
+            sp_EncryptionOffset.longValue = EditorGUILayout.LongField("QuarkEncryptOffset", sp_EncryptionOffset.longValue);
+            var offsetVar = sp_EncryptionOffset.longValue;
+            if (offsetVar < 0)
+                sp_EncryptionOffset.longValue = 0;
         }
         void DrawAESEncryption()
         {
-            sp_BuildInfoAESEncryptionKey.stringValue = EditorGUILayout.TextField("QuarkAESEncryptionKey", sp_BuildInfoAESEncryptionKey.stringValue);
+            EditorGUILayout.Space(8);
+            sp_BuildInfoAESEncryptionKey.stringValue = EditorGUILayout.TextField("QuarkAesKey", sp_BuildInfoAESEncryptionKey.stringValue);
             var keyStr = sp_BuildInfoAESEncryptionKey.stringValue;
             var keyLength = System.Text.Encoding.UTF8.GetBytes(keyStr).Length;
-            if (keyLength != 16 && keyLength != 24 && keyLength != 32&&keyLength!=0)
+            EditorGUILayout.LabelField($"Current key length is:{keyLength }");
+            if (keyLength != 16 && keyLength != 24 && keyLength != 32 && keyLength != 0)
             {
                 EditorGUILayout.HelpBox("Key should be 16,24 or 32 bytes long", MessageType.Error);
             }

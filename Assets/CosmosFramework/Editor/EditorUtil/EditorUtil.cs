@@ -23,10 +23,8 @@ namespace Cosmos.Editor
             }
         }
         static string libraryPath;
-        static readonly Vector2 cosmosDevWinSize = new Vector2(512f, 384f);
-        static readonly Vector2 cosmosMaxWinSize = new Vector2(768f, 768f);
-        public static Vector2 CosmosDevWinSize { get { return cosmosDevWinSize; } }
-        public static Vector2 CosmosMaxWinSize { get { return cosmosMaxWinSize; } }
+        public static readonly Vector2 DevWinSize = new Vector2(512f, 384f);
+        public static readonly Vector2 MaxWinSize = new Vector2(768f, 768f);
 
         /// <summary>
         ///获取项目的目录，即Assets文件夹的上一层； 
@@ -74,27 +72,9 @@ namespace Cosmos.Editor
             var filePath = Utility.IO.PathCombine(LibraryPath, fileName);
             Utility.IO.DeleteFile(filePath);
         }
-        public static void DrawVerticalContext(Action context)
-        {
-            GUILayout.BeginVertical();
-            context?.Invoke();
-            GUILayout.EndVertical();
-        }
-        public static void DrawVerticalContext(Action context, params GUILayoutOption[] options)
-        {
-            GUILayout.BeginVertical(options);
-            context?.Invoke();
-            GUILayout.EndVertical();
-        }
         public static void DrawHorizontalContext(Action context, params GUILayoutOption[] options)
         {
             GUILayout.BeginHorizontal(options);
-            context?.Invoke();
-            GUILayout.EndHorizontal();
-        }
-        public static void DrawHorizontalContext(Action context)
-        {
-            GUILayout.BeginHorizontal();
             context?.Invoke();
             GUILayout.EndHorizontal();
         }

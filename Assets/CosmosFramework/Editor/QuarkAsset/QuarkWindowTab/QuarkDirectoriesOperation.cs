@@ -11,7 +11,6 @@ namespace Quark.Editor
         TreeViewState treeViewState;
         SearchField searchField;
 
-        //public List<string> FolderPath { get { return treeView.PathList; }set { treeView.PathList = value; } }
         public void Clear()
         {
             quarjTreeView.Clear();

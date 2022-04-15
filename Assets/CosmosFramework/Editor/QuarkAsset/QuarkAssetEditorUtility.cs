@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using UnityEditor;
+
 namespace Quark.Editor
 {
     public static partial class QuarkAssetEditorUtility
@@ -15,6 +16,22 @@ namespace Quark.Editor
                 Directory.CreateDirectory(outPath);
             }
             BuildPipeline.BuildAssetBundles(outPath, options | BuildAssetBundleOptions.DeterministicAssetBundle, target);
+        }
+        public static void BuildSceneBundle(string[] sceneList, string outPath)
+        {
+            if (!Directory.Exists(outPath))
+            {
+                Directory.CreateDirectory(outPath);
+            }
+            var buildOptions = new BuildPlayerOptions()
+            {
+                scenes = sceneList,
+                locationPathName = outPath,
+                target = BuildTarget.StandaloneWindows,
+                options = BuildOptions.BuildAdditionalStreamedScenes
+            };
+            BuildPipeline.BuildPlayer(buildOptions);
+            AssetDatabase.Refresh();
         }
         /// <summary>
         /// 获取除自生以外的依赖资源的所有路径；

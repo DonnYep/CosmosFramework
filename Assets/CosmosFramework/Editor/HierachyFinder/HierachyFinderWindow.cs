@@ -8,8 +8,8 @@ namespace Cosmos.Editor
         public static void OpenWindow()
         {
             var window = GetWindow<HierachyFinderWindow>();
-            ((EditorWindow)window).maxSize = EditorUtil.CosmosMaxWinSize;
-            ((EditorWindow)window).minSize = EditorUtil.CosmosDevWinSize;
+            ((EditorWindow)window).maxSize = EditorUtil.MaxWinSize;
+            ((EditorWindow)window).minSize = EditorUtil.DevWinSize;
         }
        public HierachyFinderWindow()
         {

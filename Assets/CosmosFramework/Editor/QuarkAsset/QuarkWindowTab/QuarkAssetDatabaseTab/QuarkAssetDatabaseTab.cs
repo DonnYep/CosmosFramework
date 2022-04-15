@@ -10,22 +10,54 @@ using UnityEditor;
 using UnityEngine;
 namespace Quark.Editor
 {
-    public class QuarkDatasetTab
+    public class QuarkAssetDatabaseTab
     {
         QuarkDirectoriesOperation quarkDirectoriesOperation = new QuarkDirectoriesOperation();
-        QuarkWindowTabData WindowTabData { get { return QuarkAssetWindow.WindowTabData; } }
+        QuarkAssetDatabaseTabData assetDatabaseTabData { get { return QuarkEditorDataProxy.QuarkAssetDatabaseTabData; } }
         QuarkAssetDataset quarkAssetDataset { get { return QuarkEditorDataProxy.QuarkAssetDataset; } }
-        Rect position;
-        public void OnDisable()
-        {
-        }
+        internal const string QuarkAssetDatabaseTabDataFileName = "QuarkAssetDatabaseTabData.json";
         public void OnEnable()
         {
+            try
+            {
+                QuarkEditorDataProxy.QuarkAssetDatabaseTabData = EditorUtil.GetData<QuarkAssetDatabaseTabData>(QuarkAssetDatabaseTabDataFileName);
+            }
+            catch
+            {
+                QuarkEditorDataProxy.QuarkAssetDatabaseTabData = new QuarkAssetDatabaseTabData();
+            }
             quarkDirectoriesOperation.OnEnable();
+            if (!string.IsNullOrEmpty(assetDatabaseTabData.QuarkAssetDatasetPath))
+            {
+                try
+                {
+                    QuarkEditorDataProxy.QuarkAssetDataset = AssetDatabase.LoadAssetAtPath<QuarkAssetDataset>(assetDatabaseTabData.QuarkAssetDatasetPath);
+                }
+                catch { }
+            }
         }
+        public void OnDisable()
+        {
+            if (quarkAssetDataset != null)
+            {
+                try
+                {
+                    var path = AssetDatabase.GetAssetPath(quarkAssetDataset);
+                    assetDatabaseTabData.QuarkAssetDatasetPath = path;
+                }
+                catch { }
+            }
+            else
+            {
+                assetDatabaseTabData.QuarkAssetDatasetPath = string.Empty;
+            }
+            EditorUtil.SaveData(QuarkAssetDatabaseTabDataFileName, assetDatabaseTabData);
+            if (quarkAssetDataset != null)
+                EditorUtility.SetDirty(quarkAssetDataset);
+        }
+
         public void OnGUI(Rect rect)
         {
-            position = rect;
             DrawFastDevelopTab(rect);
         }
         public EditorCoroutine EnumUpdateADBMode()
@@ -34,24 +66,24 @@ namespace Quark.Editor
         }
         void DrawFastDevelopTab(Rect rect)
         {
-            EditorUtil.DrawVerticalContext(() =>
-            {
-                WindowTabData.GenerateAssetPathCode = EditorGUILayout.ToggleLeft("GenerateAssetPath", WindowTabData.GenerateAssetPathCode);
-                WindowTabData.SortAssetObjectList = EditorGUILayout.ToggleLeft("SortAssetObjectList", WindowTabData.SortAssetObjectList);
-                WindowTabData.SortAssetBundle = EditorGUILayout.ToggleLeft("SortAssetBundles", WindowTabData.SortAssetBundle);
-            });
+            GUILayout.BeginVertical();
+            assetDatabaseTabData.GenerateAssetPathCode = EditorGUILayout.ToggleLeft("GenerateAssetPath", assetDatabaseTabData.GenerateAssetPathCode);
+            assetDatabaseTabData.SortAssetObjectList = EditorGUILayout.ToggleLeft("SortAssetObjectList", assetDatabaseTabData.SortAssetObjectList);
+            assetDatabaseTabData.SortAssetBundle = EditorGUILayout.ToggleLeft("SortAssetBundles", assetDatabaseTabData.SortAssetBundle);
+            GUILayout.EndVertical();
+
             GUILayout.Space(16);
-            EditorUtil.DrawHorizontalContext(() =>
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Build"))
             {
-                if (GUILayout.Button("Build"))
-                {
-                    EditorUtil.Coroutine.StartCoroutine(EnumBuildADBMode());
-                }
-                if (GUILayout.Button("Clear"))
-                {
-                    ADBModeClear();
-                }
-            });
+                EditorUtil.Coroutine.StartCoroutine(EnumBuildADBMode());
+            }
+            if (GUILayout.Button("Clear"))
+            {
+                ADBModeClear();
+            }
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(16);
             GUILayout.BeginHorizontal();
@@ -93,8 +125,8 @@ namespace Quark.Editor
                 EditorUtil.Debug.LogError($"Asset is invaild : {e.Message}");
             }
             EditorUtility.SetDirty(quarkAssetDataset);
-            EditorUtil.SaveData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName, WindowTabData);
-            if (WindowTabData.GenerateAssetPathCode)
+            EditorUtil.SaveData(QuarkAssetDatabaseTabDataFileName, assetDatabaseTabData);
+            if (assetDatabaseTabData.GenerateAssetPathCode)
                 AssetDataBaseModeCreatePathScript();
             yield return null;
             EditorUtil.Debug.LogInfo("Quark asset  build done ");
@@ -104,7 +136,7 @@ namespace Quark.Editor
             quarkDirectoriesOperation.Clear();
             quarkAssetDataset.Dispose();
             EditorUtility.SetDirty(quarkAssetDataset);
-            EditorUtil.ClearData(QuarkAssetWindow.QuarkAssetWindowTabDataFileName);
+            EditorUtil.ClearData(QuarkAssetDatabaseTabDataFileName);
             EditorUtil.Debug.LogInfo("Quark asset clear done ");
         }
         void AssetDatabaseModeBuild()
@@ -201,7 +233,7 @@ namespace Quark.Editor
             }
             var arr = quarkAssetList.ToArray();
 
-            if (WindowTabData.SortAssetObjectList)
+            if (assetDatabaseTabData.SortAssetObjectList)
             {
                 int arrIdx = 0;
                 var arrCount = arr.Length - 1;
@@ -214,7 +246,7 @@ namespace Quark.Editor
             quarkAssetDataset.QuarkAssetCount = arr.Length;
             quarkAssetDataset.DirHashPairs.Clear();
 
-            if (WindowTabData.SortAssetBundle)
+            if (assetDatabaseTabData.SortAssetBundle)
             {
                 int dirIdx = 0;
                 var dirCount = dirHashPair.Length - 1;
@@ -222,7 +254,7 @@ namespace Quark.Editor
                 EditorUtility.ClearProgressBar();
             }
             quarkAssetDataset.DirHashPairs.AddRange(dirHashPair);
-            var quarkAssetObjectList= quarkAssetDataset.QuarkAssetObjectList;
+            var quarkAssetObjectList = quarkAssetDataset.QuarkAssetObjectList;
             foreach (var ao in quarkAssetObjectList)
             {
                 if (!quarkAssetDataset.AssetBundleAssetObjectDict.TryGetValue(ao.AssetBundleName, out var objList))

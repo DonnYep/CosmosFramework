@@ -12,8 +12,8 @@ namespace Cosmos.Editor.Config
         public static void OpenWindow()
         {
             var window = GetWindow<EditorConfigWindow>();
-            ((EditorWindow)window).maxSize = EditorUtil.CosmosMaxWinSize;
-            ((EditorWindow)window).minSize = EditorUtil.CosmosDevWinSize;
+            ((EditorWindow)window).maxSize = EditorUtil.MaxWinSize;
+            ((EditorWindow)window).minSize = EditorUtil.DevWinSize;
         }
         [InitializeOnLoadMethod]
         public static void LoadData()
@@ -43,7 +43,7 @@ namespace Cosmos.Editor.Config
         }
         void DrawWindow()
         {
-            EditorUtil.DrawVerticalContext(() =>
+            GUILayout.BeginVertical();
             {
                 EditorGUILayout.Space();
                 GUI.color = Color.green;
@@ -54,14 +54,15 @@ namespace Cosmos.Editor.Config
                 #endregion
                 GUI.color = Color.white;
                 EditorGUILayout.Space();
-                EditorUtil.DrawHorizontalContext(() =>
+
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("Reset"))
                 {
-                    if (GUILayout.Button("Reset"))
-                    {
-                        ResetButtonClick();
-                    }
-                });
-            });
+                    ResetButtonClick();
+                }
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.EndVertical();
         }
         void SaveEditorConfigData()
         {
@@ -69,13 +70,13 @@ namespace Cosmos.Editor.Config
             {
                 EditorUtil.SaveData(EditorConfigFileName, EditorConfigData == null ? new EditorConfigData() : EditorConfigData);
             }
-            catch{}
+            catch { }
         }
         void ResetButtonClick()
         {
             try
             {
-                EditorConfigData =EditorUtil.GetData<EditorConfigData>(EditorConfigFileName);
+                EditorConfigData = EditorUtil.GetData<EditorConfigData>(EditorConfigFileName);
                 EditorUtil.Debug.LogInfo("重置 CosmosFramework EditorConfigData 成功");
             }
             catch (Exception e)
@@ -93,7 +94,7 @@ namespace Cosmos.Editor.Config
             GUILayout.BeginHorizontal();
             GUILayout.Label("EnableScriptHeader", GUILayout.Width(192));
             GUILayout.Space(128);
-            EditorConfigData.EnableScriptHeader= EditorGUILayout.Toggle(EditorConfigData.EnableScriptHeader);
+            EditorConfigData.EnableScriptHeader = EditorGUILayout.Toggle(EditorConfigData.EnableScriptHeader);
             GUILayout.EndHorizontal();
             if (EditorConfigData.EnableScriptHeader)
             {

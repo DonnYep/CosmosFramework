@@ -2,45 +2,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 namespace Quark.Loader
 {
-    internal class QuarkAssetDatabaseLoader : IQuarkAssetLoader
+    internal class QuarkAssetDatabaseLoader : QuarkAssetLoader
     {
-        /// <summary>
-        /// AssetDataBase模式下资源的映射字典；
-        /// Key : AssetName---Value :  Lnk [QuarkAssetObjectWapper]
-        /// </summary>
-        Dictionary<string, LinkedList<QuarkAssetObjectWapper>> assetDatabaseMap
-            = new Dictionary<string, LinkedList<QuarkAssetObjectWapper>>();
-        /// <summary>
-        /// Key : [ABName] ; Value : [QuarkAssetBundle]
-        /// </summary>
-        Dictionary<string, QuarkAssetBundle> assetBundleDict = new Dictionary<string, QuarkAssetBundle>();
-
-        /// <summary>
-        /// Hash===QuarkAssetObjectInfo
-        /// </summary>
-        Dictionary<int, QuarkAssetObjectInfo> hashQuarkAssetObjectInfoDict = new Dictionary<int, QuarkAssetObjectInfo>();
-        /// <summary>
-        /// 被加载的场景字典；
-        /// SceneName===Scene
-        /// </summary>
-        Dictionary<string, Scene> loadedSceneDict = new Dictionary<string, Scene>();
-        public void SetLoaderData(IQuarkLoaderData loaderData)
+        public override void SetLoaderData(IQuarkLoaderData loaderData)
         {
             SetAssetDatabaseModeData(loaderData as QuarkAssetDataset);
         }
-        public T LoadAsset<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        public override T LoadAsset<T>(string assetName, string assetExtension)
         {
 #if UNITY_EDITOR
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
-            if (assetDatabaseMap == null)
+            if (quarkAssetObjectDict == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
-            var hasWapper = GetAssetDatabaseObject<T>(assetName, assetExtension, out var wapper);
+            var hasWapper = GetAssetObjectWapper<T>(assetName, assetExtension, out var wapper);
             if (hasWapper)
             {
                 var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(wapper.QuarkAssetObject.AssetPath);
@@ -53,7 +32,7 @@ namespace Quark.Loader
                 return null;
 #endif
         }
-        public GameObject LoadPrefab(string assetName, string assetExtension, bool instantiate = false)
+        public override GameObject LoadPrefab(string assetName, string assetExtension, bool instantiate = false)
         {
             var resGGo = LoadAsset<GameObject>(assetName, assetExtension);
             if (instantiate)
@@ -61,14 +40,14 @@ namespace Quark.Loader
             else
                 return resGGo;
         }
-        public T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        public override T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension)
         {
 #if UNITY_EDITOR
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
-            if (assetDatabaseMap == null)
+            if (quarkAssetObjectDict == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
-            var hasWapper = GetAssetDatabaseObject<T>(assetName, assetExtension, out var wapper);
+            var hasWapper = GetAssetObjectWapper<T>(assetName, assetExtension, out var wapper);
             if (hasWapper)
             {
                 var assetObj = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(wapper.QuarkAssetObject.AssetPath);
@@ -86,71 +65,49 @@ namespace Quark.Loader
                 return null;
 #endif
         }
-        public Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
+        public override Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadPrefabAsync(assetName, assetExtension, callback, instantiate));
         }
-        public Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
+        public override Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progress, callback, additive));
         }
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object
+        public override Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, callback));
         }
-        public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object
+        public override Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, assetExtension, callback));
         }
-        public void UnloadAsset(string assetName, string assetExtension)
+        public override void UnloadAsset(string assetName, string assetExtension)
         {
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
-            if (assetDatabaseMap == null)
+            if (quarkAssetObjectDict == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
-            var hasWapper = GetAssetDatabaseObject(assetName, assetExtension, out var wapper);
+            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, out var wapper);
             if (hasWapper)
             {
                 DecrementQuarkObjectInfo(wapper);
             }
         }
-        public void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
+        public override void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
             QuarkUtility.LogInfo("AssetDatabase Mode UnLoadAllAsset");
         }
-        public void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        public override void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
             QuarkUtility.LogInfo("AssetDatabase Mode UnLoadAllAsset");
         }
-        public Coroutine UnLoadSceneAsync(string sceneName, Action<float> progress, Action callback)
+        public override Coroutine UnLoadSceneAsync(string sceneName, Action<float> progress, Action callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumUnLoadSceneAsync(sceneName, progress, callback));
         }
-        public Coroutine UnLoadAllSceneAsync(Action<float> progress, Action callback)
+        public override Coroutine UnLoadAllSceneAsync(Action<float> progress, Action callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumUnLoadAllSceneAsync(progress, callback));
-        }
-        public QuarkAssetObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
-        {
-            var hasWapper = GetAssetDatabaseObject<T>(assetName, assetExtension, out var wapper);
-            if (hasWapper)
-            {
-                return wapper.GetQuarkAssetObjectInfo();
-            }
-            return QuarkAssetObjectInfo.None;
-        }
-        public QuarkAssetObjectInfo GetInfo(string assetName, string assetExtension)
-        {
-            var hasWapper = GetAssetDatabaseObject(assetName, assetExtension, out var wapper);
-            if (hasWapper)
-            {
-                return wapper.GetQuarkAssetObjectInfo();
-            }
-            return QuarkAssetObjectInfo.None;
-        }
-        public QuarkAssetObjectInfo[] GetAllLoadedInfos()
-        {
-            return hashQuarkAssetObjectInfoDict.Values.ToArray();
         }
         IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
     where T : UnityEngine.Object
@@ -188,7 +145,7 @@ namespace Quark.Loader
                 callback?.Invoke();
                 yield break;
             }
-            if (assetDatabaseMap == null)
+            if (quarkAssetObjectDict == null)
             {
                 QuarkUtility.LogError("QuarkAsset 未执行 build 操作！");
                 progress?.Invoke(1);
@@ -202,7 +159,7 @@ namespace Quark.Loader
                 callback?.Invoke();
                 yield break;
             }
-            var hasWapper = GetAssetDatabaseObject(sceneName, ".unity", out var wapper);
+            var hasWapper = GetAssetObjectWapper(sceneName, ".unity", out var wapper);
             if (hasWapper)
             {
                 LoadSceneMode loadSceneMode = additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
@@ -232,7 +189,7 @@ namespace Quark.Loader
                 callback?.Invoke();
                 yield break;
             }
-            if (assetDatabaseMap == null)
+            if (quarkAssetObjectDict == null)
             {
                 QuarkUtility.LogError("QuarkAsset 未执行 build 操作！");
                 progress?.Invoke(1);
@@ -246,7 +203,7 @@ namespace Quark.Loader
                 callback?.Invoke();
                 yield break;
             }
-            var hasWapper = GetAssetDatabaseObject(sceneName, ".unity", out var wapper);
+            var hasWapper = GetAssetObjectWapper(sceneName, ".unity", out var wapper);
             if (hasWapper)
             {
                 var ao = SceneManager.UnloadSceneAsync(scene);
@@ -270,7 +227,7 @@ namespace Quark.Loader
             float overallProgress = 0;
             foreach (var scene in loadedSceneDict)
             {
-                var hasWapper = GetAssetDatabaseObject(scene.Key, ".unity", out var wapper);
+                var hasWapper = GetAssetObjectWapper(scene.Key, ".unity", out var wapper);
                 var overallIndexPercent = 100 * ((float)currentSceneIndex / sceneCount);
                 currentSceneIndex++;
                 if (hasWapper)
@@ -289,55 +246,6 @@ namespace Quark.Loader
             loadedSceneDict.Clear();
             callback?.Invoke();
         }
-        bool GetAssetDatabaseObject<T>(string assetName, string assetExtension, out QuarkAssetObjectWapper wapper)
-        {
-            wapper = null;
-            var typeString = typeof(T).ToString();
-            if (assetDatabaseMap.TryGetValue(assetName, out var abLnk))
-            {
-                if (string.IsNullOrEmpty(assetExtension))
-                {
-                    var obj = abLnk.First.Value;
-                    if (obj.QuarkAssetObject.AssetType == typeString)
-                        wapper = abLnk.First.Value;
-                }
-                else
-                {
-                    foreach (var abWapper in abLnk)
-                    {
-                        if (abWapper.QuarkAssetObject.AssetExtension == assetExtension && abWapper.QuarkAssetObject.AssetType == typeString)
-                        {
-                            wapper = abWapper;
-                            break;
-                        }
-                    }
-                }
-            }
-            return wapper != null;
-        }
-        bool GetAssetDatabaseObject(string assetName, string assetExtension, out QuarkAssetObjectWapper wapper)
-        {
-            wapper = null;
-            if (assetDatabaseMap.TryGetValue(assetName, out var abLnk))
-            {
-                if (string.IsNullOrEmpty(assetExtension))
-                {
-                    wapper = abLnk.First.Value;
-                }
-                else
-                {
-                    foreach (var abWapper in abLnk)
-                    {
-                        if (abWapper.QuarkAssetObject.AssetExtension == assetExtension)
-                        {
-                            wapper = abWapper;
-                            break;
-                        }
-                    }
-                }
-            }
-            return wapper != null;
-        }
         /// <summary>
         /// 对QuarkAssetDataset进行编码
         /// </summary>
@@ -348,13 +256,13 @@ namespace Quark.Loader
             for (int i = 0; i < length; i++)
             {
                 var quarkObject = assetData.QuarkAssetObjectList[i];
-                if (!assetDatabaseMap.TryGetValue(quarkObject.AssetName, out var lnkList))
+                if (!quarkAssetObjectDict.TryGetValue(quarkObject.AssetName, out var lnkList))
                 {
                     var lnk = new LinkedList<QuarkAssetObjectWapper>();
                     var wapper = new QuarkAssetObjectWapper();
                     wapper.QuarkAssetObject = assetData.QuarkAssetObjectList[i];
                     lnk.AddLast(wapper);
-                    assetDatabaseMap.Add(quarkObject.AssetName, lnk);
+                    quarkAssetObjectDict.Add(quarkObject.AssetName, lnk);
                 }
                 else
                 {

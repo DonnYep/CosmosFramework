@@ -163,21 +163,21 @@ where T : UnityEngine.Object
         {
             return QuarkEngine.Instance.UnLoadAllSceneAsync(progress, callback);
         }
-        public static QuarkAssetObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        public static bool GetInfo<T>(string assetName, string assetExtension, out QuarkAssetObjectInfo info) where T : UnityEngine.Object
         {
-            return QuarkEngine.Instance.GetInfo<T>(assetName, assetExtension);
+            return QuarkEngine.Instance.GetInfo<T>(assetName, assetExtension, out info);
         }
-        public static QuarkAssetObjectInfo GetInfo<T>(string assetName) where T : UnityEngine.Object
+        public static bool GetInfo<T>(string assetName, out QuarkAssetObjectInfo info) where T : UnityEngine.Object
         {
-            return QuarkEngine.Instance.GetInfo<T>(assetName, string.Empty);
+            return QuarkEngine.Instance.GetInfo<T>(assetName, string.Empty, out info);
         }
-        public static QuarkAssetObjectInfo GetInfo(string assetName, string assetExtension)
+        public static bool GetInfo(string assetName, string assetExtension, out QuarkAssetObjectInfo info)
         {
-            return QuarkEngine.Instance.GetInfo(assetName, assetExtension);
+            return QuarkEngine.Instance.GetInfo(assetName, assetExtension, out info);
         }
-        public static QuarkAssetObjectInfo GetInfo(string assetName)
+        public static bool GetInfo(string assetName, out QuarkAssetObjectInfo info)
         {
-            return QuarkEngine.Instance.GetInfo(assetName, string.Empty);
+            return QuarkEngine.Instance.GetInfo(assetName, string.Empty, out info);
         }
         public static QuarkAssetObjectInfo[] GetAllLoadedInfos()
         {

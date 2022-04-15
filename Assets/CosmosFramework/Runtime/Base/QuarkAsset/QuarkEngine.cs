@@ -50,7 +50,7 @@ namespace Quark
         }
         QuarkDownloader quarkDownloader;
         QuarkComparator quarkComparator;
-        Dictionary<QuarkAssetLoadMode, IQuarkAssetLoader> quarkLoaderDict;
+        Dictionary<QuarkAssetLoadMode, QuarkAssetLoader> quarkLoaderDict;
         /// <summary>
         /// 当检测到最新的；
         /// </summary>
@@ -64,7 +64,7 @@ namespace Quark
             quarkComparator = new QuarkComparator();
             quarkDownloader = new QuarkDownloader();
             quarkComparator.Initiate(OnCompareSuccess, OnCompareFailure);
-            quarkLoaderDict = new Dictionary<QuarkAssetLoadMode, IQuarkAssetLoader>();
+            quarkLoaderDict = new Dictionary<QuarkAssetLoadMode, QuarkAssetLoader>();
             quarkLoaderDict[QuarkAssetLoadMode.AssetDatabase] = new QuarkAssetDatabaseLoader();
             quarkLoaderDict[QuarkAssetLoadMode.BuiltAssetBundle] = new QuarkAssetBundleLoader();
         }
@@ -248,17 +248,19 @@ where T : UnityEngine.Object
                 return loader.UnLoadAllSceneAsync(progress, callback);
             return null;
         }
-        internal QuarkAssetObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        internal bool GetInfo<T>(string assetName, string assetExtension, out QuarkAssetObjectInfo info) where T : UnityEngine.Object
         {
+            info = QuarkAssetObjectInfo.None;
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.GetInfo<T>(assetName, assetExtension);
-            return QuarkAssetObjectInfo.None;
+                return loader.GetInfo<T>(assetName, assetExtension, out info);
+            return false;
         }
-        internal QuarkAssetObjectInfo GetInfo(string assetName, string assetExtension)
+        internal bool GetInfo(string assetName, string assetExtension, out QuarkAssetObjectInfo info)
         {
+            info = QuarkAssetObjectInfo.None;
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.GetInfo(assetName, assetExtension);
-            return QuarkAssetObjectInfo.None;
+                return loader.GetInfo(assetName, assetExtension, out info);
+            return false;
         }
         internal QuarkAssetObjectInfo[] GetAllLoadedInfos()
         {

@@ -1,5 +1,4 @@
 ﻿using System;
-
 namespace Quark
 {
     public struct QuarkAssetBundleInfo : IEquatable<QuarkAssetBundleInfo>
@@ -12,7 +11,6 @@ namespace Quark
         /// 包体对应的引用计数；
         /// </summary>
         public int ReferenceCount { get; private set; }
-        
         public bool Equals(QuarkAssetBundleInfo other)
         {
             return other.AssetBundleName==this.AssetBundleName&&
@@ -22,6 +20,10 @@ namespace Quark
         {
             return (obj is QuarkAssetBundleInfo) && Equals((QuarkAssetBundleInfo)obj);
         }
+        public override string ToString()
+        {
+            return $"AssetBundleName:{AssetBundleName},ReferenceCount:{ReferenceCount}";
+        }
         public static bool operator ==(QuarkAssetBundleInfo a, QuarkAssetBundleInfo b)
         {
             return a.Equals(b);
@@ -29,6 +31,13 @@ namespace Quark
         public static bool operator !=(QuarkAssetBundleInfo a, QuarkAssetBundleInfo b)
         {
             return !a.Equals(b);
+        }
+        internal static QuarkAssetBundleInfo Create(string assetBundleName,int referenceCount)
+        {
+            QuarkAssetBundleInfo info = new QuarkAssetBundleInfo();
+            info.AssetBundleName = assetBundleName;
+            info.ReferenceCount = referenceCount;
+            return info;
         }
     }
 }

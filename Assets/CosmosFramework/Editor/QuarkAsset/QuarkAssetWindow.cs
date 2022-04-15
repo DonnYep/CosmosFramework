@@ -13,12 +13,10 @@ namespace Quark.Editor
             AssetBundleMode = 1
         }
         int selectedBar = 0;
-        string[] barArray = new string[] { "QuarkDatasetBuilder", "AssetBundleBuilder" };
+        string[] barArray = new string[] { "AssetDatabaseBuilder", "AssetBundleBuilder" };
         public static int FilterLength { get; private set; }
-        static QuarkDatasetTab quarkDatasetTab = new QuarkDatasetTab();
+        static QuarkAssetDatabaseTab quarkAssetDatabaseTab = new QuarkAssetDatabaseTab();
         static QuarkAssetBundleTab quarkAssetBundleTab = new QuarkAssetBundleTab();
-        internal static QuarkWindowTabData WindowTabData { get; private set; }
-        internal const string QuarkAssetWindowTabDataFileName = "QuarkAssetWindowTabData.json";
         QuarkAssetDataset quarkAssetDataset;
         Vector2 m_ScrollPos;
 
@@ -33,46 +31,14 @@ namespace Quark.Editor
         }
         void OnEnable()
         {
-            try
-            {
-                WindowTabData = EditorUtil.GetData<QuarkWindowTabData>(QuarkAssetWindowTabDataFileName);
-            }
-            catch
-            {
-                WindowTabData = new QuarkWindowTabData();
-            }
-            quarkDatasetTab.OnEnable();
+            quarkAssetDatabaseTab.OnEnable();
             quarkAssetBundleTab.OnEnable();
-            quarkAssetBundleTab.SetAssetDatasetTab(quarkDatasetTab);
-            if (!string.IsNullOrEmpty(WindowTabData.QuarkAssetDatasetPath))
-            {
-                try
-                {
-                    quarkAssetDataset = AssetDatabase.LoadAssetAtPath<QuarkAssetDataset>(WindowTabData.QuarkAssetDatasetPath);
-                }
-                catch { }
-            }
+            quarkAssetBundleTab.SetAssetDatabaseTab(quarkAssetDatabaseTab);
         }
         void OnDisable()
         {
-            quarkDatasetTab.OnDisable();
+            quarkAssetDatabaseTab.OnDisable();
             quarkAssetBundleTab.OnDisable();
-            if (quarkAssetDataset != null)
-            {
-                try
-                {
-                    var path = AssetDatabase.GetAssetPath(quarkAssetDataset);
-                    WindowTabData.QuarkAssetDatasetPath = path;
-                }
-                catch { }
-            }
-            else
-            {
-                WindowTabData.QuarkAssetDatasetPath = string.Empty;
-            }
-            EditorUtil.SaveData(QuarkAssetWindowTabDataFileName, WindowTabData);
-            if (quarkAssetDataset != null)
-                EditorUtility.SetDirty(quarkAssetDataset);
         }
         void OnGUI()
         {
@@ -93,7 +59,7 @@ namespace Quark.Editor
             switch (bar)
             {
                 case AssetInfoBar.AssetDatabaseMode:
-                    quarkDatasetTab.OnGUI(position);
+                    quarkAssetDatabaseTab.OnGUI(position);
                     break;
                 case AssetInfoBar.AssetBundleMode:
                     quarkAssetBundleTab.OnGUI(position);

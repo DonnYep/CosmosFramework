@@ -16,25 +16,27 @@ public class QuarkLoader : IResourceLoadHelper
     {
         return QuarkResources.LoadAsset<T>(info.AssetPath);
     }
-    public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+    public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> progress = null) where T : UnityEngine.Object
     {
         return QuarkResources.LoadAssetAsync<T>(info.AssetPath, loadDoneCallback);
     }
-    public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
+    public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> progress = null)
     {
-        return QuarkResources.LoadSceneAsync(info.AssetPath, loadingCallback, loadDoneCallback);
+        return QuarkResources.LoadSceneAsync(info.AssetPath, progress, loadDoneCallback);
     }
     public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
     {
+        QuarkResources.UnLoadAllAssetBundle(unloadAllLoadedObjects);
     }
-    public void UnLoadAsset(object customData, bool unloadAllLoadedObjects = false)
+    public void UnLoadAsset(AssetInfo info)
     {
+        QuarkResources.UnloadAsset(info.AssetPath);
     }
     public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
     {
         return QuarkResources.LoadAssetWithSubAssets<T>(info.AssetPath);
     }
-    public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+    public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
     {
         return QuarkResources.LoadAssetWithSubAssetsAsync<T>(info.AssetPath, string.Empty, callback);
     }

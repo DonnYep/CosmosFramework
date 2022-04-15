@@ -47,19 +47,12 @@ namespace Quark
         {
             return (obj is QuarkAssetObjectInfo) && Equals((QuarkAssetObjectInfo)obj);
         }
+        public override string ToString()
+        {
+            return $"AssetName:{AssetName},AssetPath:{AssetPath},AssetType{AssetType}" +
+                $",AssetBundleName:{AssetBundleName},ReferenceCount:{ReferenceCount}";
+        }
         public static QuarkAssetObjectInfo None { get { return new QuarkAssetObjectInfo(); } }
-        public static QuarkAssetObjectInfo operator --(QuarkAssetObjectInfo quarkObjectInfo)
-        {
-            var latesetReferenceCount = quarkObjectInfo.ReferenceCount;
-            var newInfo = QuarkAssetObjectInfo.Create(quarkObjectInfo.AssetName, quarkObjectInfo.AssetPath, quarkObjectInfo.AssetBundleName, quarkObjectInfo.AssetExtension, quarkObjectInfo.AssetType,latesetReferenceCount--);
-            return newInfo;
-        }
-        public static QuarkAssetObjectInfo operator ++(QuarkAssetObjectInfo quarkObjectInfo)
-        {
-            var latesetReferenceCount = quarkObjectInfo.ReferenceCount;
-            var newInfo = QuarkAssetObjectInfo.Create(quarkObjectInfo.AssetName, quarkObjectInfo.AssetPath, quarkObjectInfo.AssetBundleName, quarkObjectInfo.AssetExtension, quarkObjectInfo.AssetType,latesetReferenceCount++);
-            return newInfo;
-        }
         public static bool operator ==(QuarkAssetObjectInfo a, QuarkAssetObjectInfo b)
         {
             return a.Equals(b);

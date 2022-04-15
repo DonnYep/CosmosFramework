@@ -764,7 +764,7 @@ MonoBehaviour:
   RelativeBuildPath: Win
   Url: 
   PingUrl: 0
-  QuarkAssetLoadMode: 2
+  QuarkAssetLoadMode: 1
   QuarkAssetDataset: {fileID: 11400000, guid: e4ef4e912cff6e24f8901a67d27afba9, type: 2}
   QuarkDownloadedPath: 0
   EnableRelativeLoadPath: 0
