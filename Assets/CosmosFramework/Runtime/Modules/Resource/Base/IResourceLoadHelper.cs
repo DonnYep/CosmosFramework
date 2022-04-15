@@ -8,20 +8,20 @@ namespace Cosmos.Resource
     public interface IResourceLoadHelper
     {
         bool IsLoading { get; }
-        T LoadAsset<T>(AssetInfo info)where T : UnityEngine.Object;
+        T LoadAsset<T>(AssetInfo info) where T : UnityEngine.Object;
         T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object;
         T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object;
-        Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null)where T : UnityEngine.Object;
-        Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> loadingCallback = null) where T : UnityEngine.Object;
+        Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object;
+        Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object;
         /// <summary>
         /// 加载场景（异步）
         /// </summary>
         /// <param name="info">资源信息标记</param>
-        /// <param name="loadingCallback">加载中事件</param>
-        /// <param name="loadDoneCallback">加载完成事件</param>
+        /// <param name="progress">加载中事件</param>
+        /// <param name="callback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
-        Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null);
-        void UnLoadAsset(object customData, bool unloadAllLoadedObjects = false);
+        Coroutine LoadSceneAsync(SceneAssetInfo info, Action callback, Action<float> progress = null);
+        void UnLoadAsset(AssetInfo info);
         void UnLoadAllAsset(bool unloadAllLoadedObjects = false);
     }
 }

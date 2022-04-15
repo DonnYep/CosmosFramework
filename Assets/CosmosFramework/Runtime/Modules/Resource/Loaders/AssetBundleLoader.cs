@@ -102,13 +102,17 @@ namespace Cosmos.Resource
             }
             return asset;
         }
-        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(info, loadDoneCallback, loadingCallback));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(info, callback, progress));
         }
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action callback, Action<float> progress = null)
         {
-            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info, loadDoneCallback, loadingCallback));
+            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info, callback, progress));
+        }
+        public void UnLoadAsset(AssetInfo info)
+        {
+
         }
         public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
         {
@@ -120,19 +124,7 @@ namespace Cosmos.Resource
             assetBundleHashDict.Clear();
             AssetBundle.UnloadAllAssetBundles(unloadAllLoadedObjects);
         }
-        public void UnLoadAsset(object customData, bool unloadAllLoadedObjects = false)
-        {
-            var assetBundleName = Convert.ToString(customData);
-            if (assetBundleDict.ContainsKey(assetBundleName))
-            {
-                assetBundleDict[assetBundleName].Unload(unloadAllLoadedObjects);
-                assetBundleDict.Remove(assetBundleName);
-            }
-            if (assetBundleHashDict.ContainsKey(assetBundleName))
-            {
-                assetBundleHashDict.Remove(assetBundleName);
-            }
-        }
+
         public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
         {
             T[] assets = null;
@@ -147,9 +139,9 @@ namespace Cosmos.Resource
             return assets;
         }
 
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(info, callback, loadingCallback));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(info, callback, progress));
         }
         /// <summary>
         /// 异步加载依赖AB包
@@ -194,7 +186,7 @@ namespace Cosmos.Resource
                     if (assetBundleDict.ContainsKey(AssetBundleManifestName))
                     {
                         assetBundleManifest = assetBundleDict[AssetBundleManifestName].LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                        UnLoadAsset(AssetBundleManifestName);
+                        UnloadAssetBundle(AssetBundleManifestName);
                     }
                 }
             }
@@ -308,11 +300,11 @@ namespace Cosmos.Resource
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="info">资源信息标记</param>
-        /// <param name="loadingCallback">加载中事件</param>
-        /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
+        /// <param name="progress">加载中事件</param>
+        /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程迭代器</returns>
-        IEnumerator EnumLoadAssetWithSubAssets<T>(AssetInfoBase info, Action<T[]> loadDoneCallback, Action<float> loadingCallback)
+        IEnumerator EnumLoadAssetWithSubAssets<T>(AssetInfoBase info, Action<T[]> callback, Action<float> progress)
             where T : UnityEngine.Object
         {
             DateTime beginTime = DateTime.Now;
@@ -324,7 +316,7 @@ namespace Cosmos.Resource
             yield return LoadDependenciesAssetBundleAsync(info.AssetBundleName);
             DateTime waitTime = DateTime.Now;
             T[] assets = null;
-            yield return LoadAssetBundleAsync(info.AssetBundleName, loadingCallback);
+            yield return LoadAssetBundleAsync(info.AssetBundleName, progress);
             if (assetBundleDict.ContainsKey(info.AssetBundleName))
             {
                 assets = assetBundleDict[info.AssetBundleName].LoadAssetWithSubAssets<T>(info.AssetPath);
@@ -335,11 +327,11 @@ namespace Cosmos.Resource
             }
             if (assets != null)
             {
-                loadDoneCallback?.Invoke(assets);
+                callback?.Invoke(assets);
             }
             _isLoading = false;
         }
-        IEnumerator EnumLoadAssetAsync<T>(AssetInfoBase info, Action<T> loadDoneCallback, Action<float> loadingCallback, bool instantiate = false)
+        IEnumerator EnumLoadAssetAsync<T>(AssetInfoBase info, Action<T> callback, Action<float> progress, bool instantiate = false)
             where T : UnityEngine.Object
         {
             DateTime beginTime = DateTime.Now;
@@ -351,7 +343,7 @@ namespace Cosmos.Resource
             yield return LoadDependenciesAssetBundleAsync(info.AssetBundleName);
             DateTime waitTime = DateTime.Now;
             UnityEngine.Object asset = null;
-            yield return LoadAssetBundleAsync(info.AssetBundleName, loadingCallback);
+            yield return LoadAssetBundleAsync(info.AssetBundleName, progress);
             if (assetBundleDict.ContainsKey(info.AssetBundleName))
             {
                 asset = assetBundleDict[info.AssetBundleName].LoadAsset<T>(info.AssetPath);
@@ -369,7 +361,7 @@ namespace Cosmos.Resource
             }
             if (asset != null)
             {
-                loadDoneCallback?.Invoke(asset as T);
+                callback?.Invoke(asset as T);
             }
             _isLoading = false;
         }
@@ -377,10 +369,10 @@ namespace Cosmos.Resource
         /// 加载场景（异步）
         /// </summary>
         /// <param name="info">资源信息标记</param>
-        /// <param name="loadingCallback">加载中事件</param>
-        /// <param name="loadDoneCallback">加载完成事件</param>
+        /// <param name="progress">加载中事件</param>
+        /// <param name="callback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
-        IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback)
+        IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Action callback, Action<float> progress)
         {
             if (_isLoading)
             {
@@ -388,12 +380,22 @@ namespace Cosmos.Resource
             }
             _isLoading = true;
             yield return LoadDependenciesAssetBundleAsync(info.AssetBundleName);
-            yield return LoadAssetBundleAsync(info.AssetBundleName, loadingCallback);
+            yield return LoadAssetBundleAsync(info.AssetBundleName, progress);
             yield return SceneManager.LoadSceneAsync(info.AssetPath, LoadSceneMode.Additive);
-            loadDoneCallback?.Invoke();
+            callback?.Invoke();
             _isLoading = false;
         }
-
-
+        void UnloadAssetBundle(string assetBundleName)
+        {
+            if (assetBundleDict.ContainsKey(assetBundleName))
+            {
+                assetBundleDict[assetBundleName].Unload(false);
+                assetBundleDict.Remove(assetBundleName);
+            }
+            if (assetBundleHashDict.ContainsKey(assetBundleName))
+            {
+                assetBundleHashDict.Remove(assetBundleName);
+            }
+        }
     }
 }

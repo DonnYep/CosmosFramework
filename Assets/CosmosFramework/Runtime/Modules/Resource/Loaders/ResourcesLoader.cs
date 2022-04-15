@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 namespace Cosmos.Resource
 {
-    public class ResourceLoader : IResourceLoadHelper
+    public class ResourcesLoader : IResourceLoadHelper
     {
         public bool IsLoading { get { return isLoading; } }
         bool isLoading = false;
@@ -34,15 +34,15 @@ namespace Cosmos.Resource
             }
             return assets;
         }
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(info, callback, loadingCallback));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(info, callback, progress));
         }
-        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> loadingCallback = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(info, loadDoneCallback, loadingCallback));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(info, callback, progress));
         }
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> loadingCallback = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action callback, Action<float> progress = null)
         {
             return null;
         }
@@ -50,29 +50,29 @@ namespace Cosmos.Resource
         {
             Resources.UnloadUnusedAssets();
         }
-        public void UnLoadAsset(object customData, bool unloadAllLoadedObjects = false)
+        public void UnLoadAsset(AssetInfo info)
         {
             Resources.UnloadUnusedAssets();
         }
-        IEnumerator EnumLoadAssetWithSubAssets<T>(AssetInfoBase info, Action<T[]> loadDoneCallback, Action<float> loadingCallback)
+        IEnumerator EnumLoadAssetWithSubAssets<T>(AssetInfoBase info, Action<T[]> callback, Action<float> progress)
             where T : UnityEngine.Object
         {
             T[] assets = null;
             assets = Resources.LoadAll<T>(info.AssetPath);
             isLoading = true;
             yield return null;
-            loadingCallback?.Invoke(1);
+            progress?.Invoke(1);
             if (assets == null)
             {
                 throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
             }
             else
             {
-                loadDoneCallback?.Invoke(assets);
+                callback?.Invoke(assets);
             }
             isLoading = false;
         }
-        IEnumerator EnumLoadAssetAsync<T>(AssetInfoBase info, Action<T> loadDoneCallback, Action<float> loadingCallback, bool instantiate = false)
+        IEnumerator EnumLoadAssetAsync<T>(AssetInfoBase info, Action<T> callback, Action<float> progress, bool instantiate = false)
             where T : UnityEngine.Object
         {
             UnityEngine.Object asset = null;
@@ -80,7 +80,7 @@ namespace Cosmos.Resource
             isLoading = true;
             while (!request.isDone)
             {
-                loadingCallback?.Invoke(request.progress);
+                progress?.Invoke(request.progress);
                 yield return null;
             }
             asset = request.asset;
@@ -97,7 +97,7 @@ namespace Cosmos.Resource
             }
             if (asset != null)
             {
-                loadDoneCallback?.Invoke(asset as T);
+                callback?.Invoke(asset as T);
             }
             isLoading = false;
         }

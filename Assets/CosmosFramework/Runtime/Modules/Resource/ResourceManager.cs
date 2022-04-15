@@ -160,12 +160,12 @@ namespace Cosmos.Resource
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="info">资源信息标记</param>
-        /// <param name="loadDoneCallback">加载完成事件</param>
+        /// <param name="callback">加载完成事件</param>
         /// <param name="progress">加载中事件</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> loadDoneCallback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            return currentDefaultLoadHelper.LoadAssetWithSubAssetsAsync<T>(info, loadDoneCallback, progress);
+            return currentDefaultLoadHelper.LoadAssetWithSubAssetsAsync<T>(info, callback, progress);
         }
         /// <summary>
         /// 使用默认加载模式；
@@ -175,12 +175,12 @@ namespace Cosmos.Resource
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="info">资源信息标记</param>
         /// <param name="progress">加载中事件</param>
-        /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
+        /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> loadDoneCallback, Action<float> progress = null)
+        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress = null)
             where T : UnityEngine.Object
         {
-            return currentDefaultLoadHelper.LoadAssetAsync<T>(info, loadDoneCallback, progress);
+            return currentDefaultLoadHelper.LoadAssetAsync<T>(info, callback, progress);
         }
         /// <summary>
         /// 异步加载资源；
@@ -204,16 +204,16 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="type">类对象类型</param>
         /// <param name="progress">加载中事件</param>
-        /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
+        /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(Type type, Action<GameObject> loadDoneCallback, Action<float> progress = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync(Type type, Action<GameObject> callback, Action<float> progress = null, bool instantiate = false)
         {
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
             if (attribute != null)
             {
                 var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath);
-                return LoadPrefabAsync(info, loadDoneCallback, progress, instantiate);
+                return LoadPrefabAsync(info, callback, progress, instantiate);
             }
             else
                 return null;
@@ -225,14 +225,14 @@ namespace Cosmos.Resource
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="progress">加载中事件</param>
-        /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
+        /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync<T>(Action<GameObject> loadDoneCallback, Action<float> progress = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync<T>(Action<GameObject> callback, Action<float> progress = null, bool instantiate = false)
             where T : class
         {
             var type = typeof(T);
-            return LoadPrefabAsync(type, loadDoneCallback, progress, instantiate);
+            return LoadPrefabAsync(type, callback, progress, instantiate);
         }
         /// <summary>
         /// 使用默认加载模式；
@@ -241,20 +241,20 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="info">资源信息标记</param>
         /// <param name="progress">加载中事件</param>
-        /// <param name="loadDoneCallback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
+        /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(AssetInfo info, Action<GameObject> loadDoneCallback, Action<float> progress = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync(AssetInfo info, Action<GameObject> callback, Action<float> progress = null, bool instantiate = false)
         {
             return currentDefaultLoadHelper.LoadAssetAsync<GameObject>(info, (srcGo) =>
             {
                 if (instantiate)
                 {
                     var go = GameObject.Instantiate(srcGo);
-                    loadDoneCallback?.Invoke(go);
+                    callback?.Invoke(go);
                 }
                 else
-                    loadDoneCallback?.Invoke(srcGo);
+                    callback?.Invoke(srcGo);
             }, progress);
         }
         /// <summary>
@@ -285,11 +285,11 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="info">资源信息标记</param>
         /// <param name="progress">加载中事件</param>
-        /// <param name="loadDoneCallback">加载完成事件</param>
+        /// <param name="callback">加载完成事件</param>
         /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action loadDoneCallback, Action<float> progress = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action callback, Action<float> progress = null)
         {
-            return currentDefaultLoadHelper.LoadSceneAsync(info, loadDoneCallback, progress);
+            return currentDefaultLoadHelper.LoadSceneAsync(info, callback, progress);
         }
         /// <summary>
         /// 使用默认加载模式；
@@ -306,11 +306,9 @@ namespace Cosmos.Resource
         /// <summary>
         /// 卸载资源;
         /// </summary>
-        /// <param name="customData">自定义的数据</param>
-        /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        public void UnLoadAsset(object customData, bool unloadAllLoadedObjects = false)
+        public void UnLoadAsset(AssetInfo info)
         {
-            currentDefaultLoadHelper.UnLoadAsset(customData, unloadAllLoadedObjects);
+            currentDefaultLoadHelper.UnLoadAsset(info);
         }
         /// <summary>
         /// 使用默认加载模式；
@@ -325,7 +323,7 @@ namespace Cosmos.Resource
         protected override void OnInitialization()
         {
             builtInChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
-            builtInChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourceLoader()));
+            builtInChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourcesLoader()));
             builtInChannelDict.Add(ResourceLoadMode.AssetBundle, new ResourceLoadChannel(ResourceLoadMode.AssetBundle.ToString(), new AssetBundleLoader()));
             currentResourceLoadMode = ResourceLoadMode.Resource;
             currentDefaultLoadHelper = builtInChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
