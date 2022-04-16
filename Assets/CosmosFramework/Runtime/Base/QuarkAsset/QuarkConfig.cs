@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
 using Quark.Asset;
-using System;
 
 namespace Quark
 {

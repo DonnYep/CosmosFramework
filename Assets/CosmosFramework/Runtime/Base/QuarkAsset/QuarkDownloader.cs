@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine.Networking;
 using Quark.Asset;
-using Utility = Cosmos.Utility;
-using Cosmos;
 
 namespace Quark.Networking
 {
@@ -170,10 +168,11 @@ namespace Quark.Networking
         {
             while (pendingURIs.Count > 0)
             {
-                var uri = pendingURIs.RemoveFirst();
+                var uri = pendingURIs[0];
+                pendingURIs.RemoveAt(0);
                 currentDownloadIndex = downloadCount - pendingURIs.Count - 1;
                 var fileDownloadPath = Path.Combine(PersistentPath, uri);
-                var remoteUri = Utility.IO.WebPathCombine(URL, uri);
+                var remoteUri = QuarkUtility.WebPathCombine(URL, uri);
                 yield return EnumDownloadSingleFile(remoteUri, fileDownloadPath);
             }
             OnDownloadedPendingFiles();
@@ -226,7 +225,7 @@ namespace Quark.Networking
                     OnFileDownloading(uri, PersistentPath, 1);
                     if (DeleteFailureFile)
                     {
-                        Utility.IO.DeleteFile(downloadPath);
+                        QuarkUtility.DeleteFile(downloadPath);
                     }
                 }
                 unityWebRequest = null;

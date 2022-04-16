@@ -62,7 +62,16 @@ namespace Cosmos.Resource
         public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
         {
 #if UNITY_EDITOR
-            return null;
+            if (string.IsNullOrEmpty(info.AssetPath))
+                throw new ArgumentNullException("Asset name is invalid!");
+            var assetObj = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(info.AssetPath);
+            var length = assetObj.Length;
+            T[] assets = new T[length];
+            for (int i = 0; i < length; i++)
+            {
+                assets[i] = assetObj[i] as T;
+            }
+            return assets;
 #else
             return null;
 

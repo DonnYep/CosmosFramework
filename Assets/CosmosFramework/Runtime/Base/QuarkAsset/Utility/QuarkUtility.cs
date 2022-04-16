@@ -1,5 +1,4 @@
-﻿using Cosmos;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -158,7 +157,29 @@ namespace Quark
         /// <returns>格式化后的字符串</returns>
         public static string FormatAssetBundleName(string srcStr,string replaceContext="_")
         {
-            return Utility.Text.Replace(srcStr, new string[] { "\\", "/", ".", " " }, replaceContext).ToLower();
+            return Replace(srcStr, new string[] { "\\", "/", ".", " " }, replaceContext).ToLower();
+        }
+        /// <summary>
+        /// 多字符替换；
+        /// </summary>
+        /// <param name="context">需要修改的内容</param>
+        /// <param name="oldContext">需要修改的内容</param>
+        /// <param name="newContext">修改的新内容</param>
+        /// <returns>修改后的内容</returns>
+        public static string Replace(string context, string[] oldContext, string newContext)
+        {
+            if (string.IsNullOrEmpty(context))
+                throw new ArgumentNullException("context is invalid.");
+            if (oldContext == null)
+                throw new ArgumentNullException("oldContext is invalid.");
+            if (string.IsNullOrEmpty(newContext))
+                throw new ArgumentNullException("newContext is invalid.");
+            var length = oldContext.Length;
+            for (int i = 0; i < length; i++)
+            {
+                context = context.Replace(oldContext[i], newContext);
+            }
+            return context;
         }
         public static byte[] GenerateBytesAESKey(string srckey)
         {
@@ -259,21 +280,21 @@ namespace Quark
                 }
             }
         }
+
         #region Debug
         public static void LogInfo(object msg)
         {
-            Utility.Debug.LogInfo(msg);
+            UnityEngine.Debug.Log($"<b><color=cyan>{"[QUARK-INFO]-->>"} </color></b>{msg}");
         }
         public static void LogWarning(object msg)
         {
-            Utility.Debug.LogWarning(msg);
+            UnityEngine.Debug.LogWarning($"<b><color=orange>{"[QUARK-WARNING]-->>" }</color></b>{msg}");
         }
         public static void LogError(object msg)
         {
-            Utility.Debug.LogError(msg);
+            UnityEngine.Debug.LogError($"<b><color=red>{"[QUARK-ERROR]-->>"} </color></b>{msg}");
         }
         #endregion
-
         #region Json
         /// <summary>
         /// 将对象序列化为JSON字段
