@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Quark.Asset;
-using Cosmos.Editor;
-
 namespace Quark.Editor
 {
     public class QuarkAssetWindow : EditorWindow
@@ -76,7 +74,7 @@ namespace Quark.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             var dataset = AssetDatabase.LoadAssetAtPath<QuarkAssetDataset>("Assets/New QuarkAssetDataset.asset");
-            EditorUtil.Debug.LogInfo("QuarkAssetDataset is created");
+            QuarkUtility.LogInfo("QuarkAssetDataset is created");
             return dataset;
         }
         [InitializeOnLoadMethod]

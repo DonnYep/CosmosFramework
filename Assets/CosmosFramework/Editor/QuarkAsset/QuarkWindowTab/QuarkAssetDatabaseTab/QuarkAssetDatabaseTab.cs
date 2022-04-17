@@ -1,5 +1,4 @@
-﻿using Cosmos;
-using Cosmos.Editor;
+﻿using Cosmos.Editor;
 using Quark.Asset;
 using System;
 using System.Collections;
@@ -142,7 +141,7 @@ namespace Quark.Editor
         void AssetDatabaseModeBuild()
         {
             EditorUtility.ClearProgressBar();
-            var count = Utility.IO.FolderFileCount(Application.dataPath);
+            var count = QuarkUtility.FolderFileCount(Application.dataPath);
             int currentBuildIndex = 0;
             List<QuarkAssetObject> quarkAssetList = new List<QuarkAssetObject>();
             quarkAssetList?.Clear();
@@ -157,7 +156,7 @@ namespace Quark.Editor
                 {
                     if (Directory.Exists(dir.Dir))
                     {
-                        Utility.IO.TraverseFolderFile(dir.Dir, (file) =>
+                        QuarkUtility.TraverseFolderFile(dir.Dir, (file) =>
                         {
                             currentDirIndex++;
                             if (currentDirIndex < dirs.Count)
@@ -178,7 +177,7 @@ namespace Quark.Editor
                     }
                     else if (File.Exists(dir.Dir))
                     {
-                        var fullPath = Utility.IO.PathCombine(EditorUtil.ApplicationPath(), dir.Dir);
+                        var fullPath = QuarkUtility.PathCombine(EditorUtil.ApplicationPath(), dir.Dir);
 
                         if (!dirFileInfoDict.TryGetValue(dir.Dir, out var fileInfoDict))
                         {
@@ -275,10 +274,10 @@ namespace Quark.Editor
                 srcName = srcName.Trim();
                 var fnlName = srcName.Contains(".") == true ? srcName.Replace(".", "_") : srcName;
                 fnlName = srcName.Contains(" ") == true ? srcName.Replace(" ", "_") : srcName;
-                str = Utility.Text.Append(str, con, fnlName, "= \"", srcName, "\"", " ;\n");
+                str = QuarkUtility.Append(str, con, fnlName, "= \"", srcName, "\"", " ;\n");
             }
             str += "\n}";
-            Utility.IO.OverwriteTextFile(Application.dataPath, "QuarkAssetDefine.cs", str);
+            QuarkUtility.OverwriteTextFile(Application.dataPath, "QuarkAssetDefine.cs", str);
             AssetDatabase.Refresh();
         }
         #endregion

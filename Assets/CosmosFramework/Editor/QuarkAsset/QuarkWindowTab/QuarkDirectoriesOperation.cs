@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-using Cosmos.Editor;
 
 namespace Quark.Editor
 {
@@ -35,19 +34,19 @@ namespace Quark.Editor
                 DragAndDrop.AcceptDrag();
                 if (DragAndDrop.paths.Length == 0 && DragAndDrop.objectReferences.Length > 0)
                 {
-                    //EditorUtil.Debug.LogInfo("GameObject");
+                    //QuarkUtility.LogInfo("GameObject");
                     foreach (Object obj in DragAndDrop.objectReferences)
                     {
-                        EditorUtil.Debug.LogInfo("- " + obj);
+                        QuarkUtility.LogInfo("- " + obj);
                     }
                 }
                 // Object outside project. It mays from File Explorer (Finder in OSX).
                 else if (DragAndDrop.paths.Length > 0 && DragAndDrop.objectReferences.Length == 0)
                 {
-                    //EditorUtil.Debug.LogInfo("File");
+                    //QuarkUtility.LogInfo("File");
                     foreach (string path in DragAndDrop.paths)
                     {
-                        EditorUtil.Debug.LogInfo("- " + path);
+                        QuarkUtility.LogInfo("- " + path);
                     }
                 }
                 // Unity Assets including folder.
@@ -74,16 +73,16 @@ namespace Quark.Editor
                 // Log to make sure we cover all cases.
                 else
                 {
-                    EditorUtil.Debug.LogInfo("Out of reach");
-                    EditorUtil.Debug.LogInfo("Paths:");
+                    QuarkUtility.LogInfo("Out of reach");
+                    QuarkUtility.LogInfo("Paths:");
                     foreach (string path in DragAndDrop.paths)
                     {
-                        EditorUtil.Debug.LogInfo("- " + path);
+                        QuarkUtility.LogInfo("- " + path);
                     }
-                    EditorUtil.Debug.LogInfo("ObjectReferences:");
+                    QuarkUtility.LogInfo("ObjectReferences:");
                     foreach (Object obj in DragAndDrop.objectReferences)
                     {
-                        EditorUtil.Debug.LogInfo("- " + obj);
+                        QuarkUtility.LogInfo("- " + obj);
                     }
                 }
             }

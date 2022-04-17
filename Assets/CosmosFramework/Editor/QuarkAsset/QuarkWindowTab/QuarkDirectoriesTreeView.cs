@@ -6,7 +6,6 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using Quark.Asset;
-using Cosmos.Editor;
 
 namespace Quark.Editor
 {
@@ -68,7 +67,7 @@ namespace Quark.Editor
             }
             catch (Exception e)
             {
-                EditorUtil.Debug.LogError(e);
+                QuarkUtility.LogError(e);
             }
             Reload();
         }
@@ -123,7 +122,7 @@ namespace Quark.Editor
             }
             catch (Exception e)
             {
-                EditorUtil.Debug.LogError($"OnGUI :{e}");
+                QuarkUtility.LogError($"OnGUI :{e}");
             }
             Reload();
             base.OnGUI(rect);
@@ -131,12 +130,16 @@ namespace Quark.Editor
         protected override void SingleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            EditorUtil.SelectionActiveObject(pathList[id]);
+            var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(pathList[id]);
+            EditorGUIUtility.PingObject(obj);
+            Selection.activeObject = obj;
         }
         protected override void DoubleClickedItem(int id)
         {
             base.DoubleClickedItem(id);
-            EditorUtil.PingAndActiveObject(pathList[id]);
+            var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(pathList[id]);
+            EditorGUIUtility.PingObject(obj);
+            Selection.activeObject = obj;
         }
         protected override TreeViewItem BuildRoot()
         {
@@ -188,7 +191,7 @@ namespace Quark.Editor
             }
             catch (Exception e)
             {
-                EditorUtil.Debug.LogError(e);
+                QuarkUtility.LogError(e);
             }
         }
     }
