@@ -41,13 +41,5 @@ namespace Quark.Asset
             quarkAsset.AssetReferenceCount++;
             return quarkAsset;
         }
-        public static bool operator ==(QuarkAssetObjectWapper a, QuarkAssetObjectWapper b)
-        {
-            return a.Equals(b);
-        }
-        public static bool operator !=(QuarkAssetObjectWapper a, QuarkAssetObjectWapper b)
-        {
-            return !a.Equals(b);
-        }
     }
 }

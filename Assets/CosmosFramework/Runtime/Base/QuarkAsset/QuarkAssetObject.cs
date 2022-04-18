@@ -38,13 +38,5 @@ namespace Quark.Asset
         {
             return (obj is QuarkAssetObjectWapper) && Equals((QuarkAssetObjectWapper)obj);
         }
-        public static bool operator ==(QuarkAssetObject a, QuarkAssetObject b)
-        {
-            return a.Equals(b);
-        }
-        public static bool operator !=(QuarkAssetObject a, QuarkAssetObject b)
-        {
-            return !a.Equals(b);
-        }
     }
 }

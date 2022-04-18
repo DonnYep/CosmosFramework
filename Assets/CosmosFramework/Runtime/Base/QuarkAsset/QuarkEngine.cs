@@ -200,7 +200,7 @@ where T : UnityEngine.Object
 where T : UnityEngine.Object
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.LoadAssetAsync(assetName, assetExtension, callback);
+               return loader.LoadAssetAsync(assetName, assetExtension, callback);
             return null;
         }
         internal Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
