@@ -155,7 +155,7 @@ namespace Quark
         /// <param name="srcStr">原始名称</param>
         /// <param name="replaceContext">替换的内容</param>
         /// <returns>格式化后的字符串</returns>
-        public static string FormatAssetBundleName(string srcStr,string replaceContext="_")
+        public static string FormatAssetBundleName(string srcStr, string replaceContext = "_")
         {
             return Replace(srcStr, new string[] { "\\", "/", ".", " " }, replaceContext).ToLower();
         }
@@ -183,7 +183,7 @@ namespace Quark
         }
         public static byte[] GenerateBytesAESKey(string srckey)
         {
-            var srcKeyLen= Encoding.UTF8.GetBytes(srckey).Length;
+            var srcKeyLen = Encoding.UTF8.GetBytes(srckey).Length;
             int dstLen = 16;
             switch (srcKeyLen)
             {
@@ -301,7 +301,7 @@ namespace Quark
         /// </summary>
         /// <param name="obj">需要被序列化的对象</param>
         /// <returns>序列化后的JSON字符串</returns>xxxx
-        public static string ToJson(object obj, bool prettyPrint = false)
+        public static string ToJson(object obj)
         {
             return LitJson.JsonMapper.ToJson(obj);
         }
@@ -397,30 +397,30 @@ namespace Quark
                 }
             }
         }
-            /// <summary>
-            /// 遍历文件夹下的文件；
-            /// </summary>
-            /// <param name="folderPath">文件夹路径</param>
-            /// <param name="handler">遍历到一个文件时的处理的函数</param>
-            /// <exception cref="IOException">
-            /// Folder path is invalid
-            /// </exception>
-            public static void TraverseFolderFile(string folderPath, Action<FileSystemInfo> handler)
+        /// <summary>
+        /// 遍历文件夹下的文件；
+        /// </summary>
+        /// <param name="folderPath">文件夹路径</param>
+        /// <param name="handler">遍历到一个文件时的处理的函数</param>
+        /// <exception cref="IOException">
+        /// Folder path is invalid
+        /// </exception>
+        public static void TraverseFolderFile(string folderPath, Action<FileSystemInfo> handler)
+        {
+            DirectoryInfo d = new DirectoryInfo(folderPath);
+            FileSystemInfo[] fsInfoArr = d.GetFileSystemInfos();
+            foreach (FileSystemInfo fsInfo in fsInfoArr)
             {
-                DirectoryInfo d = new DirectoryInfo(folderPath);
-                FileSystemInfo[] fsInfoArr = d.GetFileSystemInfos();
-                foreach (FileSystemInfo fsInfo in fsInfoArr)
+                if (fsInfo is DirectoryInfo)     //判断是否为文件夹
                 {
-                    if (fsInfo is DirectoryInfo)     //判断是否为文件夹
-                    {
-                        TraverseFolderFile(fsInfo.FullName, handler);//递归调用
-                    }
-                    else
-                    {
-                        handler(fsInfo);
-                    }
+                    TraverseFolderFile(fsInfo.FullName, handler);//递归调用
+                }
+                else
+                {
+                    handler(fsInfo);
                 }
             }
+        }
         /// <summary>
         /// 遍历文件夹下的所有文件地址；
         /// </summary>

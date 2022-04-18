@@ -402,7 +402,7 @@ namespace Quark.Editor
         void WriteBuildInfo()
         {
             abBuildInfo.BuildTime = System.DateTime.Now.ToString();
-            var abBuildInfoJson = QuarkUtility.ToJson(abBuildInfo, true);
+            var abBuildInfoJson = QuarkUtility.ToJson(abBuildInfo);
             var abBuildInfoPath = QuarkUtility.PathCombine(GetBuildPath(), quarkABBuildInfo);
 
             var manifestJson = QuarkUtility.ToJson(quarkAssetManifest);
