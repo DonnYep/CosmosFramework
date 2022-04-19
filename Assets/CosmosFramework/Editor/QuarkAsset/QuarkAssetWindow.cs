@@ -15,7 +15,6 @@ namespace Quark.Editor
         public static int FilterLength { get; private set; }
         static QuarkAssetDatabaseTab quarkAssetDatabaseTab = new QuarkAssetDatabaseTab();
         static QuarkAssetBundleTab quarkAssetBundleTab = new QuarkAssetBundleTab();
-        QuarkAssetDataset quarkAssetDataset;
         Vector2 m_ScrollPos;
 
         public QuarkAssetWindow()
@@ -42,13 +41,12 @@ namespace Quark.Editor
         {
             selectedBar = GUILayout.Toolbar(selectedBar, barArray);
             GUILayout.Space(16);
-            quarkAssetDataset = (QuarkAssetDataset)EditorGUILayout.ObjectField("QuarkAssetDataset", quarkAssetDataset, typeof(QuarkAssetDataset), false);
-            QuarkEditorDataProxy.QuarkAssetDataset = quarkAssetDataset;
+            QuarkEditorDataProxy.QuarkAssetDataset = (QuarkAssetDataset)EditorGUILayout.ObjectField("QuarkAssetDataset", QuarkEditorDataProxy.QuarkAssetDataset, typeof(QuarkAssetDataset), false);
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("CreateDataset", GUILayout.MaxWidth(128f)))
             {
-                quarkAssetDataset = CreateQuarkAssetDataset();
+                QuarkEditorDataProxy.QuarkAssetDataset = CreateQuarkAssetDataset();
             }
             GUILayout.EndHorizontal();
             GUILayout.Space(16);
