@@ -92,6 +92,7 @@ namespace Quark.Editor
 
             if (GUILayout.Button("ClearAssetBundles"))
             {
+                QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs?.Clear();
                 quarkDirectoriesOperation.Clear();
             }
             quarkDirectoriesOperation.OnGUI(rect);
@@ -106,7 +107,6 @@ namespace Quark.Editor
 
         }
 
-        #region AssetDataBaseMode
         IEnumerator EnumBuildADBMode()
         {
             if (quarkAssetDataset == null)
@@ -132,8 +132,8 @@ namespace Quark.Editor
         }
         void ADBModeClear()
         {
-            quarkDirectoriesOperation.Clear();
             quarkAssetDataset.Dispose();
+            quarkDirectoriesOperation.Clear();
             EditorUtility.SetDirty(quarkAssetDataset);
             EditorUtil.ClearData(QuarkAssetDatabaseTabDataFileName);
             EditorUtil.Debug.LogInfo("Quark asset clear done ");
@@ -212,7 +212,7 @@ namespace Quark.Editor
 
                             if (quarkLowerExt == lowerExtension)
                             {
-                                var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength);
+                                var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength).Replace("\\","/");
                                 var assetName = file.Name.Replace(file.Extension, string.Empty);
                                 var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
                                 var assetBundleName = QuarkUtility.FormatAssetBundleName(files.Key);
@@ -280,7 +280,6 @@ namespace Quark.Editor
             QuarkUtility.OverwriteTextFile(Application.dataPath, "QuarkAssetDefine.cs", str);
             AssetDatabase.Refresh();
         }
-        #endregion
         void SortByAscend<T, K>(T[] array, Func<T, K> handler, Action progress)
     where K : IComparable<K>
         {
