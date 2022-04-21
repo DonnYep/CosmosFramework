@@ -1,4 +1,4 @@
-// kcp server logic abstracted into a class.
+﻿// kcp server logic abstracted into a class.
 // for use in Mirror, DOTSNET, testing, etc.
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-namespace Telepathy
+﻿namespace Telepathy
 {
     public static class Utils
     {

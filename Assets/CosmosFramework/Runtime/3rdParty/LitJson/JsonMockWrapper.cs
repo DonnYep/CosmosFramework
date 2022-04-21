@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 /**
  * JsonMockWrapper.cs
  *   Mock object implementing IJsonWrapper, to facilitate actions like

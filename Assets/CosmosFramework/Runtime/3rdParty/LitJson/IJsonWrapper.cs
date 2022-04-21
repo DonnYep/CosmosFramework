@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 /**
  * IJsonWrapper.cs
  *   Interface that represents a type capable of handling all kinds of JSON

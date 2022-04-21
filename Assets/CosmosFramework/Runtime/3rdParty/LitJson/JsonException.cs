@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 /**
  * JsonException.cs
  *   Base class throwed by LitJSON when a parsing error occurs.

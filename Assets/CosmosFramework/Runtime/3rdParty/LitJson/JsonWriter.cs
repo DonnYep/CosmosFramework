@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 /**
  * JsonWriter.cs
  *   Stream-like facility to output JSON text.

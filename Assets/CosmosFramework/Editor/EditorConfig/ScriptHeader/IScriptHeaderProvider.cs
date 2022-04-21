@@ -1,4 +1,4 @@
-namespace Cosmos.Editor.Config
+﻿namespace Cosmos.Editor.Config
 {
     /// <summary>
     /// 代码注释提供者接口；

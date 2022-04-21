@@ -1,4 +1,4 @@
-// pool to avoid allocations. originally from libuv2k.
+﻿// pool to avoid allocations. originally from libuv2k.
 using System;
 using System.Collections.Generic;
 

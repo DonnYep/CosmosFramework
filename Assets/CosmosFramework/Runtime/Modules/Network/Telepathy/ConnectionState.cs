@@ -1,4 +1,4 @@
-// both server and client need a connection state object.
+﻿// both server and client need a connection state object.
 // -> server needs it to keep track of multiple connections
 // -> client needs it to safely create a new connection state on every new
 //    connect in order to avoid data races where a dieing thread might still

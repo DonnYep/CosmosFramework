@@ -1,4 +1,4 @@
-// a magnificent send pipe to shield us from all of life's complexities.
+﻿// a magnificent send pipe to shield us from all of life's complexities.
 // safely sends messages from main thread to send thread.
 // -> thread safety built in
 // -> byte[] pooling coming in the future

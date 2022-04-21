@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 /**
  * JsonData.cs
  *   Generic type to hold JSON data (objects, arrays, and so on). This is

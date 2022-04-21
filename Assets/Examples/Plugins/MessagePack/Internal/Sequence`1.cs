@@ -1,4 +1,4 @@
-// Copyright (c) All contributors. All rights reserved.
+﻿// Copyright (c) All contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 /* Original license and copyright from file copied from https://github.com/AArnott/Nerdbank.Streams/blob/d656899be26d4d7c72c11c9232b4952c64a89bcb/src/Nerdbank.Streams/Sequence%601.cs

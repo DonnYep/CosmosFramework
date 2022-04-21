@@ -1,4 +1,4 @@
-namespace kcp 
+﻿namespace kcp 
 {
     public enum KcpHeader : byte
     {
