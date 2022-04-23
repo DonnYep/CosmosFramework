@@ -231,6 +231,12 @@ namespace Cosmos.UI
             await OpenUIFormAsync<T>(assetInfo, pnl => uiForm = pnl);
             return uiForm;
         }
+        /// <summary>
+        ///  通过UIAssetInfo加载UI对象
+        /// </summary>
+        /// <param name="assetInfo">传入的assetInfo对象</param>
+        /// <param name="uiType">目标组件的type类型</param>
+        /// <returns>Task异步任务</returns>
         public async Task<IUIForm> OpenUIFormAsync(UIAssetInfo assetInfo,Type uiType)
         {
             IUIForm uiForm = null;
