@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
+
 namespace Cosmos.UI
 {
     //================================================
@@ -215,6 +217,25 @@ namespace Cosmos.UI
             }
             else
                 return OpenUIFormAsync(assetInfo, typeof(T), uiForm => { callback?.Invoke(uiForm as T); });
+        }
+        /// <summary>
+        /// 通过UIAssetInfo加载UI对象
+        /// </summary>
+        /// <typeparam name="T">目标UI组件</typeparam>
+        /// <param name="assetInfo">传入的assetInfo对象</param>
+        /// <returns>Task异步任务</returns>
+        public async Task<T> OpenUIFormAsync<T>(UIAssetInfo assetInfo)
+            where T : class, IUIForm
+        {
+            T uiForm = null;
+            await OpenUIFormAsync<T>(assetInfo, pnl => uiForm = pnl);
+            return uiForm;
+        }
+        public async Task<IUIForm> OpenUIFormAsync(UIAssetInfo assetInfo,Type uiType)
+        {
+            IUIForm uiForm = null;
+            await OpenUIFormAsync(assetInfo,uiType, pnl => uiForm = pnl);
+            return uiForm;
         }
         /// <summary>
         /// 通过特性UIAssetAttribute加载Panel（异步）；

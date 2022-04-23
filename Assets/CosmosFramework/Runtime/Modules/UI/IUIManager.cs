@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos.UI
 {
@@ -80,6 +81,20 @@ namespace Cosmos.UI
         /// <param name="callback">加载成功的回调。若失败，则不执行</param>
         /// <returns>协程对象</returns>
         Coroutine OpenUIFormAsync(Type uiType, Action<IUIForm> callback = null);
+        /// <summary>
+        /// 通过UIAssetInfo加载UI对象
+        /// </summary>
+        /// <typeparam name="T">目标UI组件</typeparam>
+        /// <param name="assetInfo">传入的assetInfo对象</param>
+        /// <returns>Task异步任务</returns>
+        Task<T> OpenUIFormAsync<T>(UIAssetInfo assetInfo) where T : class, IUIForm;
+        /// <summary>
+        ///  通过UIAssetInfo加载UI对象
+        /// </summary>
+        /// <param name="assetInfo">传入的assetInfo对象</param>
+        /// <param name="uiType">目标组件的type类型</param>
+        /// <returns>Task异步任务</returns>
+        Task<IUIForm> OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType);
         /// <summary>
         /// 释放UIForm；
         /// 此操作会释放UIForm对象；
