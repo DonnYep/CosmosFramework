@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 namespace Cosmos.FSM
 {
     public abstract class FSMBase : IRefreshable
