@@ -2,6 +2,7 @@
 using Cosmos.Config;
 using Cosmos.Controller;
 using Cosmos.Data;
+using Cosmos.DataTable;
 using Cosmos.Download;
 using Cosmos.Entity;
 using Cosmos.Event;
@@ -70,6 +71,7 @@ namespace Cosmos
         public static ISceneManager SceneManager { get { return GetModule<ISceneManager>(); } }
         public static IWebRequestManager WebRequestManager { get { return GetModule<IWebRequestManager>(); } }
         public static IDownloadManager DownloadManager { get { return GetModule<IDownloadManager>(); } }
+        public static IDataTableManager  DataTableManager{ get { return GetModule<IDataTableManager>(); } }
 
         /// <summary>
         /// 启动当前AppDomain下的helper

@@ -2,6 +2,7 @@
 using Cosmos.Config;
 using Cosmos.Controller;
 using Cosmos.Data;
+using Cosmos.DataTable;
 using Cosmos.Entity;
 using Cosmos.Event;
 using Cosmos.FSM;
@@ -72,6 +73,10 @@ namespace Cosmos
         public static GameObject Instance(this ISceneManager sceneManager)
         {
             return MonoGameManager.Instance.GetModuleInstance<ISceneManager>();
+        }
+        public static GameObject Instance(this IDataTableManager  dataTableManager)
+        {
+            return MonoGameManager.Instance.GetModuleInstance<IDataTableManager>();
         }
     }
 }
