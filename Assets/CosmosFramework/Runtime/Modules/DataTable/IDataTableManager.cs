@@ -20,6 +20,12 @@ namespace Cosmos.DataTable
         /// <param name="dataTable">数据表</param>
         void ReadDataTableAssetAsync(DataTableAssetInfo assetInfo, DataTableBase dataTable);
         /// <summary>
+        /// 异步读取数据表资源
+        /// </summary>
+        /// <param name="assetInfo">资源信息</param>
+        /// <param name="name">数据表名</param>
+        void ReadDataTableAssetAsync(DataTableAssetInfo assetInfo, string name);
+        /// <summary>
         /// 获取数据表；
         /// </summary>
         /// <typeparam name="T">数据类型</typeparam>

@@ -785,6 +785,26 @@ where K : class
                 var properties= type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
                 return properties.Select(f => f.Name).ToArray();
             }
+            /// <summary>
+            /// 获取Type类型中所有字段名称与字段类型的映射
+            /// </summary>
+            /// <param name="type">type类型</param>
+            /// <returns>名称与类型的映射</returns>
+            public static IDictionary<string, Type> GetTypeFieldsNameAndTypeMapping(Type type)
+            {
+                var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                return fields.ToDictionary(f => f.Name, t => t.FieldType);
+            }
+            /// <summary>
+            /// 获取Type类型中所有属性名称与字段类型的映射
+            /// </summary>
+            /// <param name="type">type类型</param>
+            /// <returns>名称与类型的映射</returns>
+            public static IDictionary<string, Type> GetTypePropertyNameAndTypeMapping(Type type)
+            {
+                var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                return properties.ToDictionary(f => f.Name, t => t.PropertyType);
+            }
         }
     }
 }

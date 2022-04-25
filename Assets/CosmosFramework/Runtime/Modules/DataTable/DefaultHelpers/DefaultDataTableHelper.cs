@@ -5,15 +5,15 @@ namespace Cosmos
 {
     public class DefaultDataTableHelper : IDataTableHelper
     {
-        Action<DataTableBase> onReadDataTableSuccess;
-        Action<DataTableBase> onReadDataTableFailure;
+        Action<DataTableBase,byte[]> onReadDataTableSuccess;
+        Action<DataTableBase,string> onReadDataTableFailure;
 
-        public event Action<DataTableBase> OnReadDataTableSuccess
+        public event Action<DataTableBase, byte[]> OnReadDataTableSuccess
         {
             add { onReadDataTableSuccess += value; }
             remove { onReadDataTableSuccess -= value; }
         }
-        public event Action<DataTableBase> OnReadDataTableFailure
+        public event Action<DataTableBase, string> OnReadDataTableFailure
         {
             add { onReadDataTableFailure += value; }
             remove { onReadDataTableFailure -= value; }
@@ -30,12 +30,11 @@ namespace Cosmos
         {
             if (asset != null)
             {
-                dataTable.ReadDataTable(asset.bytes);
-                onReadDataTableSuccess?.Invoke(dataTable);
+                onReadDataTableSuccess?.Invoke(dataTable,asset.bytes);
             }
             else
             {
-                onReadDataTableFailure?.Invoke(dataTable);
+                onReadDataTableFailure?.Invoke(dataTable,$"{dataTable.Name} read data failure ");
             }
         }
     }

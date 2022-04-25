@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace Cosmos.DataTable
 {
-    public interface IDataTable<T>:IEnumerable<T>where T:IDataRow
+    public interface IDataTable<T> : IEnumerable<T> where T : IDataRow
     {
+
         /// <summary>
         /// 数据表名
         /// </summary>
@@ -17,6 +18,12 @@ namespace Cosmos.DataTable
         /// 数据的类型
         /// </summary>
         Type Type { get; }
+        /// <summary>
+        /// 索引；
+        /// </summary>
+        /// <param name="id">索引</param>
+        /// <returns>目标数据</returns>
+        T this[int id] { get; }
         /// <summary>
         /// 添加一行数据；
         /// </summary>

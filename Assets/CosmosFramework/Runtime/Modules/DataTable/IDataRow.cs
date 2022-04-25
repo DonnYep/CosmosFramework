@@ -1,6 +1,7 @@
-﻿namespace Cosmos.DataTable
+﻿using System;
+namespace Cosmos.DataTable
 {
-    public interface IDataRow
+    public interface IDataRow:IDisposable
     {
         /// <summary>
         /// 行索引
