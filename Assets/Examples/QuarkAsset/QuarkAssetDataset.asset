@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc7d1d238e40f44dab5b3c9c9efad39, type: 3}
   m_Name: QuarkAssetDataset
   m_EditorClassIdentifier: 
-  quarkAssetCount: 53
+  quarkAssetCount: 54
   dirHashPairs:
   - Dir: Assets/Examples/AssetBundleTest/Audio
     Hash: 12778af4cb8833e46b38d87bf137c135
@@ -226,6 +226,11 @@ MonoBehaviour:
   - AssetName: ABMapSchema
     AssetExtension: .json
     AssetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
+    AssetType: UnityEngine.TextAsset
+    AssetBundleName: assets_examples_assetbundletest_text
+  - AssetName: SampleCSV
+    AssetExtension: .csv
+    AssetPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
     AssetType: UnityEngine.TextAsset
     AssetBundleName: assets_examples_assetbundletest_text
   - AssetName: Tex_5195
