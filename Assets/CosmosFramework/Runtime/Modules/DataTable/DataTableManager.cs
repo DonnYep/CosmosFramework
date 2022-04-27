@@ -143,10 +143,10 @@ namespace Cosmos.DataTable
             }
         }
         /// <summary>
-        /// 创建一个数据表；
+        /// 创建一个数据表，dataType指需要传入IDataRow的派生类型；
         /// </summary>
         /// <param name="name">数据表名</param>
-        /// <param name="rowType">数据类型</param>
+        /// <param name="dataType">数据类型,IDataRow的派生类</param>
         /// <returns>数据表</returns>
         public DataTableBase CreateDataTable(string name, Type dataType)
         {
@@ -154,6 +154,8 @@ namespace Cosmos.DataTable
                 throw new ArgumentNullException($"{name} is invalid ");
             if (dataTableDict.TryGetValue(name, out var dataTableBase))
                 return dataTableBase;
+            if (dataType == null)
+                throw new ArgumentNullException($"dataType is invalid");
             if (typeof(IDataRow).IsAssignableFrom(dataType))
                 throw new Exception($"{dataType} is not inherit from IDataRow");
             Type dataTableType = typeof(DataTable<>).MakeGenericType(dataType);
@@ -182,7 +184,7 @@ namespace Cosmos.DataTable
             dataTableDict = new Dictionary<string, DataTableBase>();
             SetDataTableProvider(new DefaultDataTableHelper());
         }
-        void OnReadSuccess(DataTableBase dataTable,byte[] dataTableBytes)
+        void OnReadSuccess(DataTableBase dataTable, byte[] dataTableBytes)
         {
             dataTable.ReadDataTable(dataTableBytes);
             dataTable.OnReadDataSuccess();

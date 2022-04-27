@@ -115,12 +115,12 @@ where T : Component
             /// 查找目标场景中的目标对象
             /// </summary>
             /// <param name="sceneName">传入的场景名</param>
-            /// <param name="predicate">查找条件</param>
+            /// <param name="condition">查找条件</param>
             /// <returns>查找到的对象</returns>
-            public static GameObject FindSceneGameObject(string sceneName, Func<GameObject, bool> predicate)
+            public static GameObject FindSceneGameObject(string sceneName, Func<GameObject, bool> condition)
             {
                 var scene = SceneManager.GetSceneByName(sceneName);
-                return scene.GetRootGameObjects().FirstOrDefault(predicate);
+                return scene.GetRootGameObjects().FirstOrDefault(condition);
             }
             /// <summary>
             /// 场景是否被加载；

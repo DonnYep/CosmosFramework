@@ -36,12 +36,12 @@ namespace Cosmos.Controller
                 controllerDict.TryGetValue(controllerId, out var controller);
                 return controller;
             }
-            public IController GetController(Predicate<IController> predicate)
+            public IController GetController(Predicate<IController> condition)
             {
                 foreach (var ctrl in controllerDict)
                 {
                     var c = ctrl.Value;
-                    if (predicate(c))
+                    if (condition(c))
                         return c;
                 }
                 return default;
@@ -49,15 +49,15 @@ namespace Cosmos.Controller
             /// <summary>
             /// 条件查找多个Controller；
             /// </summary>
-            /// <param name="predicate">条件函数</param>
+            /// <param name="condition">条件函数</param>
             /// <returns>查找到的Controller数组</returns>
-            public IController[] GetControllers(Predicate<IController> predicate)
+            public IController[] GetControllers(Predicate<IController> condition)
             {
                 List<IController> list = new List<IController>();
                 foreach (var ctrl in controllerDict)
                 {
                     var c = ctrl.Value;
-                    if (predicate(c))
+                    if (condition(c))
                         list.Add(c);
                 }
                 return list.ToArray();

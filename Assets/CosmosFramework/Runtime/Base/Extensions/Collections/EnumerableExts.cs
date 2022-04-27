@@ -53,12 +53,12 @@ namespace Cosmos
             }
             return -1;
         }
-        public static int IndexOf<T>(this IEnumerable<T> @this, Func<T, bool> predicate)
+        public static int IndexOf<T>(this IEnumerable<T> @this, Func<T, bool> condition)
         {
             int i = 0;
             foreach (T item in @this)
             {
-                if (predicate(item))
+                if (condition(item))
                     return i;
                 i++;
             }
@@ -77,12 +77,12 @@ namespace Cosmos
             }
             return index;
         }
-        public static int LastIndexOf<T>(this IEnumerable<T> @this, Func<T, bool> predicate)
+        public static int LastIndexOf<T>(this IEnumerable<T> @this, Func<T, bool> condition)
         {
             int i = 0, index = -1;
             foreach (T item in @this)
             {
-                if (predicate(item))
+                if (condition(item))
                     index = i;
                 i++;
             }

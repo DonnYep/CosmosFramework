@@ -20,13 +20,13 @@ namespace Cosmos.UI
             {
                 return uiFormDict.Values.ToArray();
             }
-            public IUIForm[] GetUIForms(Predicate<IUIForm> predicate)
+            public IUIForm[] GetUIForms(Predicate<IUIForm> condition)
             {
                 var dst = new IUIForm[UIFormCount];
                 int idx = 0;
                 foreach (var uiForm in uiFormDict.Values)
                 {
-                    if (predicate.Invoke(uiForm))
+                    if (condition.Invoke(uiForm))
                     {
                         dst[idx] = uiForm;
                         idx++;

@@ -79,9 +79,9 @@ namespace Cosmos.DataTable
                 return data;
             }
             /// <inheritdoc/>
-            public T[] GetRowDatas(Predicate<T> predicate)
+            public T[] GetRowDatas(Predicate<T> condition)
             {
-                return rowDataDict.Values.Where(t => predicate(t)).ToArray();
+                return rowDataDict.Values.Where(t => condition(t)).ToArray();
             }
             /// <inheritdoc/>
             public bool HasRow(int id)
@@ -89,11 +89,11 @@ namespace Cosmos.DataTable
                 return rowDataDict.ContainsKey(id);
             }
             /// <inheritdoc/>
-            public bool HasRow(Predicate<T> predicate)
+            public bool HasRow(Predicate<T> condition)
             {
                 foreach (var data in rowDataDict.Values)
                 {
-                    if (predicate(data))
+                    if (condition(data))
                         return true;
                 }
                 return false;

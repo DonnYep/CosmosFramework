@@ -170,16 +170,16 @@ namespace Cosmos.Controller
         /// 条件查找所有符合的Controller
         /// </summary>
         /// <param name="controllerGroupName">组的名称</param>
-        /// <param name="predicate">查询条件</param>
+        /// <param name="condition">查询条件</param>
         /// <param name="controllers">返回的controller集合</param>
         /// <returns>是否存在</returns>
-        public bool GetControllers(string controllerGroupName, Predicate<IController> predicate, out IController[] controllers)
+        public bool GetControllers(string controllerGroupName, Predicate<IController> condition, out IController[] controllers)
         {
             Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
             controllers = null;
             bool result = controllerGroupDict.TryGetValue(controllerGroupName, out var controllerGroup);
             if (result)
-                controllers = controllerGroup.GetControllers(predicate);
+                controllers = controllerGroup.GetControllers(condition);
             return result;
         }
         /// <summary>
