@@ -137,7 +137,15 @@ where T : UnityEngine.Object
         }
         public static Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
-            return QuarkEngine.Instance.LoadSceneAsync(sceneName, progress, callback, additive);
+            return QuarkEngine.Instance.LoadSceneAsync(sceneName, null, progress, null, callback, additive);
+        }
+        public static Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Func<bool> condition, Action callback, bool additive = false)
+        {
+            return QuarkEngine.Instance.LoadSceneAsync(sceneName, null, progress, condition, callback, additive);
+        }
+        public static Coroutine LoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive = false)
+        {
+            return QuarkEngine.Instance.LoadSceneAsync(sceneName, progressProvider, progress, condition, callback, additive);
         }
         public static void UnloadAsset(string assetName)
         {
@@ -147,21 +155,21 @@ where T : UnityEngine.Object
         {
             QuarkEngine.Instance.UnloadAsset(assetName, assetExtension);
         }
-        public static void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
+        public static void UnloadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
-            QuarkEngine.Instance.UnLoadAllAssetBundle(unloadAllLoadedObjects);
+            QuarkEngine.Instance.UnloadAllAssetBundle(unloadAllLoadedObjects);
         }
-        public static void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        public static void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
-            QuarkEngine.Instance.UnLoadAssetBundle(assetBundleName, unloadAllLoadedObjects);
+            QuarkEngine.Instance.UnloadAssetBundle(assetBundleName, unloadAllLoadedObjects);
         }
-        public static Coroutine UnLoadSceneAsync(string sceneName, Action<float> progress, Action callback)
+        public static Coroutine UnloadSceneAsync(string sceneName, Action<float> progress, Action callback)
         {
-            return QuarkEngine.Instance.UnLoadSceneAsync(sceneName, progress, callback);
+            return QuarkEngine.Instance.UnloadSceneAsync(sceneName, progress, callback);
         }
-        public static Coroutine UnLoadAllSceneAsync(Action<float> progress, Action callback)
+        public static Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback)
         {
-            return QuarkEngine.Instance.UnLoadAllSceneAsync(progress, callback);
+            return QuarkEngine.Instance.UnloadAllSceneAsync(progress, callback);
         }
         public static bool GetInfo<T>(string assetName, string assetExtension, out QuarkAssetObjectInfo info) where T : UnityEngine.Object
         {

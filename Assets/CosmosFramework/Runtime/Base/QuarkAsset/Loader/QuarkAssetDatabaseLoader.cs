@@ -23,7 +23,7 @@ namespace Quark.Loader
             if (hasWapper)
             {
                 var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(wapper.QuarkAssetObject.AssetPath);
-                IncrementQuarkObjectInfo(wapper);
+                IncrementQuarkAssetObject(wapper);
                 return asset;
             }
             else
@@ -69,9 +69,9 @@ namespace Quark.Loader
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadPrefabAsync(assetName, assetExtension, callback, instantiate));
         }
-        public override Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
+        public override Coroutine LoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive = false)
         {
-            return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progress, callback, additive));
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progressProvider, progress, condition, callback, additive));
         }
         public override Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
         {
@@ -90,24 +90,58 @@ namespace Quark.Loader
             var hasWapper = GetAssetObjectWapper(assetName, assetExtension, out var wapper);
             if (hasWapper)
             {
-                DecrementQuarkObjectInfo(wapper);
+                DecrementQuarkAssetObject(wapper);
             }
         }
-        public override void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
+        public override void UnloadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
             QuarkUtility.LogInfo("AssetDatabase Mode UnLoadAllAsset");
         }
-        public override void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        public override void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
             QuarkUtility.LogInfo("AssetDatabase Mode UnLoadAllAsset");
         }
-        public override Coroutine UnLoadSceneAsync(string sceneName, Action<float> progress, Action callback)
+        public override Coroutine UnloadSceneAsync(string sceneName, Action<float> progress, Action callback)
         {
-            return QuarkUtility.Unity.StartCoroutine(EnumUnLoadSceneAsync(sceneName, progress, callback));
+            return QuarkUtility.Unity.StartCoroutine(EnumUnloadSceneAsync(sceneName, progress, callback));
         }
-        public override Coroutine UnLoadAllSceneAsync(Action<float> progress, Action callback)
+        public override Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback)
         {
-            return QuarkUtility.Unity.StartCoroutine(EnumUnLoadAllSceneAsync(progress, callback));
+            return QuarkUtility.Unity.StartCoroutine(EnumUnloadAllSceneAsync(progress, callback));
+        }
+        /// <inheritdoc/>
+        protected override void IncrementQuarkAssetObject(QuarkAssetObjectWapper wapper)
+        {
+            wapper.AssetReferenceCount++;
+            hashQuarkAssetObjectInfoDict[wapper.GetHashCode()] = wapper.GetQuarkAssetObjectInfo();
+            //增加一个AB的引用计数；
+            if (!assetBundleDict.TryGetValue(wapper.QuarkAssetObject.AssetBundleName, out var assetBundle))
+            {
+                assetBundle = new QuarkAssetBundle(wapper.QuarkAssetObject.AssetBundleName, null);
+                assetBundleDict.Add(assetBundle.AssetBundleName, assetBundle);
+            }
+            assetBundle.ReferenceCount++;
+        }
+        /// <inheritdoc/>
+        protected override void DecrementQuarkAssetObject(QuarkAssetObjectWapper wapper)
+        {
+            var refCount = wapper.AssetReferenceCount;
+            if (refCount <= 0)
+            {
+                QuarkUtility.LogError($"{wapper.QuarkAssetObject.AssetName}{wapper.QuarkAssetObject.AssetExtension} not loaded !");
+                return;
+            }
+            wapper.AssetReferenceCount--;
+            hashQuarkAssetObjectInfoDict[wapper.GetHashCode()] = wapper.GetQuarkAssetObjectInfo();
+            //减少一个AB的引用计数
+            if (assetBundleDict.TryGetValue(wapper.QuarkAssetObject.AssetBundleName, out var assetBundle))
+            {
+                assetBundle.ReferenceCount--;
+                if (assetBundle.ReferenceCount == 0)
+                {
+                    assetBundleDict.Remove(assetBundle.AssetBundleName);
+                }
+            }
         }
         IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
     where T : UnityEngine.Object
@@ -136,22 +170,8 @@ namespace Quark.Loader
                 callback?.Invoke(resGo);
             }
         }
-        IEnumerator EnumLoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive)
+        IEnumerator EnumLoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive)
         {
-            if (string.IsNullOrEmpty(sceneName))
-            {
-                QuarkUtility.LogError("Scene name is invalid!");
-                progress?.Invoke(1);
-                callback?.Invoke();
-                yield break;
-            }
-            if (quarkAssetObjectDict == null)
-            {
-                QuarkUtility.LogError("QuarkAsset 未执行 build 操作！");
-                progress?.Invoke(1);
-                callback?.Invoke();
-                yield break;
-            }
             if (loadedSceneDict.ContainsKey(sceneName))
             {
                 QuarkUtility.LogError($"Scene：{sceneName} is already loaded !");
@@ -160,65 +180,53 @@ namespace Quark.Loader
                 yield break;
             }
             var hasWapper = GetAssetObjectWapper(sceneName, ".unity", out var wapper);
-            if (hasWapper)
+            if (!hasWapper)
             {
-                LoadSceneMode loadSceneMode = additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
+                QuarkUtility.LogError($"Scene：{sceneName} not existed !");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            LoadSceneMode loadSceneMode = additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
 #if UNITY_EDITOR
-                var ao = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(wapper.QuarkAssetObject.AssetPath, new LoadSceneParameters(loadSceneMode));
+            var operation = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(wapper.QuarkAssetObject.AssetPath, new LoadSceneParameters(loadSceneMode));
 #else
-                var ao = SceneManager.LoadSceneAsync(wapper.QuarkAssetObject.AssetName, loadSceneMode);
+            var operation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(wapper.QuarkAssetObject.AssetName, loadSceneMode);
 #endif
-                while (!ao.isDone)
+            operation.allowSceneActivation = false;
+            var hasProviderProgress = progressProvider != null;
+            while (!operation.isDone)
+            {
+                if (hasProviderProgress)
                 {
-                    progress?.Invoke(ao.progress);
-                    yield return null;
+                    var providerProgress = progressProvider();
+                    var sum = providerProgress + operation.progress;
+                    progress?.Invoke(sum / 2);
+                    if (sum >= 1.9)
+                    {
+                        break;
+                    }
                 }
-                var scene = SceneManager.GetSceneByPath(wapper.QuarkAssetObject.AssetPath);
-                loadedSceneDict.Add(sceneName, scene);
-                IncrementQuarkObjectInfo(wapper);
+                else
+                {
+                    progress?.Invoke(operation.progress);
+                    if (operation.progress >= 0.9f)
+                    {
+                        break;
+                    }
+                }
+                yield return null;
             }
             progress?.Invoke(1);
+            if (condition != null)
+                yield return new WaitUntil(condition);
+            var scene = SceneManager.GetSceneByPath(wapper.QuarkAssetObject.AssetPath);
+            loadedSceneDict.Add(sceneName, scene);
+            IncrementQuarkAssetObject(wapper);
+            operation.allowSceneActivation = true;
             callback?.Invoke();
         }
-        IEnumerator EnumUnLoadSceneAsync(string sceneName, Action<float> progress, Action callback)
-        {
-            if (string.IsNullOrEmpty(sceneName))
-            {
-                QuarkUtility.LogError("Scene name is invalid!");
-                progress?.Invoke(1);
-                callback?.Invoke();
-                yield break;
-            }
-            if (quarkAssetObjectDict == null)
-            {
-                QuarkUtility.LogError("QuarkAsset 未执行 build 操作！");
-                progress?.Invoke(1);
-                callback?.Invoke();
-                yield break;
-            }
-            if (!loadedSceneDict.TryGetValue(sceneName, out var scene))
-            {
-                QuarkUtility.LogError($"Unload scene failure： {sceneName}  not loaded yet !");
-                progress?.Invoke(1);
-                callback?.Invoke();
-                yield break;
-            }
-            var hasWapper = GetAssetObjectWapper(sceneName, ".unity", out var wapper);
-            if (hasWapper)
-            {
-                var ao = SceneManager.UnloadSceneAsync(scene);
-                while (!ao.isDone)
-                {
-                    progress?.Invoke(ao.progress);
-                    yield return null;
-                }
-                loadedSceneDict.Remove(sceneName);
-                DecrementQuarkObjectInfo(wapper);
-            }
-            progress?.Invoke(1);
-            callback?.Invoke();
-        }
-        IEnumerator EnumUnLoadAllSceneAsync(Action<float> progress, Action callback)
+        IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
         {
             var sceneCount = loadedSceneDict.Count;
             //单位场景的百分比比率
@@ -244,6 +252,7 @@ namespace Quark.Loader
                 progress?.Invoke(overallProgress / 100);
             }
             loadedSceneDict.Clear();
+            progress?.Invoke(1);
             callback?.Invoke();
         }
         /// <summary>
@@ -269,44 +278,6 @@ namespace Quark.Loader
                     var wapper = new QuarkAssetObjectWapper();
                     wapper.QuarkAssetObject = assetData.QuarkAssetObjectList[i];
                     lnkList.AddLast(wapper);
-                }
-            }
-        }
-        /// <summary>
-        /// 增加一个引用计数；
-        /// </summary>
-        void IncrementQuarkObjectInfo(QuarkAssetObjectWapper wapper)
-        {
-            wapper.AssetReferenceCount++;
-            hashQuarkAssetObjectInfoDict[wapper.GetHashCode()] = wapper.GetQuarkAssetObjectInfo();
-            //增加一个AB的引用计数；
-            if (!assetBundleDict.TryGetValue(wapper.QuarkAssetObject.AssetBundleName, out var assetBundle))
-            {
-                assetBundle = new QuarkAssetBundle(wapper.QuarkAssetObject.AssetBundleName, null);
-                assetBundleDict.Add(assetBundle.AssetBundleName, assetBundle);
-            }
-            assetBundle.ReferenceCount++;
-        }
-        /// <summary>
-        /// 减少一个引用计数；
-        /// </summary>
-        void DecrementQuarkObjectInfo(QuarkAssetObjectWapper wapper)
-        {
-            var refCount = wapper.AssetReferenceCount;
-            if (refCount <= 0)
-            {
-                QuarkUtility.LogError($"{wapper.QuarkAssetObject.AssetName}{wapper.QuarkAssetObject.AssetExtension} not loaded !");
-                return;
-            }
-            wapper.AssetReferenceCount--;
-            hashQuarkAssetObjectInfoDict[wapper.GetHashCode()] = wapper.GetQuarkAssetObjectInfo();
-            //减少一个AB的引用计数
-            if (assetBundleDict.TryGetValue(wapper.QuarkAssetObject.AssetBundleName, out var assetBundle))
-            {
-                assetBundle.ReferenceCount--;
-                if (assetBundle.ReferenceCount == 0)
-                {
-                    assetBundleDict.Remove(assetBundle.AssetBundleName);
                 }
             }
         }

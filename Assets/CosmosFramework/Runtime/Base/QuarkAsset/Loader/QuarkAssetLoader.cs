@@ -1,5 +1,6 @@
 ﻿using Quark.Asset;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -39,12 +40,12 @@ namespace Quark.Loader
         public abstract Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object;
         public abstract Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false);
         public abstract Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object;
-        public abstract Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false);
+        public abstract Coroutine LoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress,Func<bool>condition, Action callback, bool additive = false);
         public abstract void UnloadAsset(string assetName, string assetExtension);
-        public abstract void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false);
-        public abstract void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false);
-        public abstract Coroutine UnLoadSceneAsync(string sceneName, Action<float> progress, Action callback);
-        public abstract Coroutine UnLoadAllSceneAsync(Action<float> progress, Action callback);
+        public abstract void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false);
+        public abstract void UnloadAllAssetBundle(bool unloadAllLoadedObjects = false);
+        public abstract Coroutine UnloadSceneAsync(string sceneName, Action<float> progress, Action callback);
+        public abstract Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback);
         public bool GetInfo<T>(string assetName, string assetExtension, out QuarkAssetObjectInfo info) where T : UnityEngine.Object
         {
             info = QuarkAssetObjectInfo.None;
@@ -120,5 +121,48 @@ namespace Quark.Loader
             }
             return wapper != null;
         }
+        protected IEnumerator EnumUnloadSceneAsync(string sceneName, Action<float> progress, Action callback)
+        {
+            if (string.IsNullOrEmpty(sceneName))
+            {
+                QuarkUtility.LogError("Scene name is invalid!");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            if (!loadedSceneDict.TryGetValue(sceneName, out var scene))
+            {
+                QuarkUtility.LogError($"Unload scene failure： {sceneName}  not loaded yet !");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            var hasWapper = GetAssetObjectWapper(sceneName, ".unity", out var wapper);
+            if (hasWapper)
+            {
+                QuarkUtility.LogError($"Scene：{sceneName}.unity not existed !");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            var ao = SceneManager.UnloadSceneAsync(scene);
+            while (!ao.isDone)
+            {
+                progress?.Invoke(ao.progress);
+                yield return null;
+            }
+            loadedSceneDict.Remove(sceneName);
+            DecrementQuarkAssetObject(wapper);
+            progress?.Invoke(1);
+            callback?.Invoke();
+        }
+        /// <summary>
+        /// 增加一个引用计数；
+        /// </summary>
+        protected abstract void IncrementQuarkAssetObject(QuarkAssetObjectWapper wapper);
+        /// <summary>
+        /// 减少一个引用计数；
+        /// </summary>
+        protected abstract void DecrementQuarkAssetObject(QuarkAssetObjectWapper wapper);
     }
 }
