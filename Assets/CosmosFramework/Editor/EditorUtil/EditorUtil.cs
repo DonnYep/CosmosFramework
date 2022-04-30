@@ -72,12 +72,6 @@ namespace Cosmos.Editor
             var filePath = Utility.IO.PathCombine(LibraryPath, fileName);
             Utility.IO.DeleteFile(filePath);
         }
-        public static void DrawHorizontalContext(Action context, params GUILayoutOption[] options)
-        {
-            GUILayout.BeginHorizontal(options);
-            context?.Invoke();
-            GUILayout.EndHorizontal();
-        }
         /// <summary>
         /// 定位目标路径在Assets下的位置；
         /// </summary>

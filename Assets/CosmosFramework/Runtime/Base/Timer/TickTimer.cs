@@ -84,8 +84,23 @@ namespace Cosmos
         /// <returns>添加事件成功后返回的ID</returns>
         public int AddTask(int intervalTime, Action<int> taskCallback, Action<int> cancelCallback, int loopCount = 1)
         {
+            return AddTask(intervalTime, 0, taskCallback, cancelCallback, loopCount);
+        }
+        /// <summary>
+        /// 添加任务；
+        /// 若任务添加成功，则返回大于0的TaskId；
+        /// 若任务添加失败，则返回-1；
+        /// </summary>
+        /// <param name="intervalTime">毫秒级别时间间隔</param>
+        /// <param name="delayTime">毫秒级别时间延迟</param>
+        /// <param name="taskCallback">执行回调</param>
+        /// <param name="cancelCallback">任务取消回调</param>
+        /// <param name="loopCount">执行次数</param>
+        /// <returns>添加事件成功后返回的ID</returns>
+        public int AddTask(int intervalTime, int delayTime, Action<int> taskCallback, Action<int> cancelCallback, int loopCount = 1)
+        {
             int tid = GenerateTaskId();
-            double startTime = GetUTCMilliseconds();
+            double startTime = GetUTCMilliseconds() + delayTime;
             double destTime = startTime + intervalTime;
             TickTask task = null;
             if (usePool)
