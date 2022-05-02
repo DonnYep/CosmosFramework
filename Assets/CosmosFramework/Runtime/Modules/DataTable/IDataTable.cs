@@ -45,9 +45,9 @@ namespace Cosmos.DataTable
         /// <summary>
         /// 条件查找数据对象集合
         /// </summary>
-        /// <param name="predicate">条件</param>
+        /// <param name="condition">条件</param>
         /// <returns>满足条件的集合</returns>
-        T[] GetRowDatas(Predicate<T> predicate);
+        T[] GetRowDatas(Predicate<T> condition);
         /// <summary>
         /// 获取所有行数据；
         /// </summary>
@@ -62,9 +62,9 @@ namespace Cosmos.DataTable
         /// <summary>
         /// 条件判断是否存在行数据；
         /// </summary>
-        /// <param name="predicate">条件</param>
+        /// <param name="condition">条件</param>
         /// <returns>是否存在</returns>
-        bool HasRow(Predicate<T> predicate);
+        bool HasRow(Predicate<T> condition);
         /// <summary>
         /// 移除一个行数据；
         /// </summary>

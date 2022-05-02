@@ -24,7 +24,7 @@ namespace Cosmos
         }
         public void UnLoadDataTable(DataTableAssetInfo assetInfo)
         {
-            CosmosEntry.ResourceManager.UnLoadAsset(assetInfo);
+            CosmosEntry.ResourceManager.UnloadAsset(assetInfo);
         }
         void OnLoadDone(TextAsset asset, DataTableBase dataTable)
         {

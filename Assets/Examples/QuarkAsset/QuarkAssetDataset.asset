@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc7d1d238e40f44dab5b3c9c9efad39, type: 3}
   m_Name: QuarkAssetDataset
   m_EditorClassIdentifier: 
-  quarkAssetCount: 54
+  quarkAssetCount: 55
   dirHashPairs:
   - Dir: Assets/Examples/AssetBundleTest/Audio
     Hash: 12778af4cb8833e46b38d87bf137c135
@@ -218,6 +218,11 @@ MonoBehaviour:
     AssetPath: Assets/Examples/AssetBundleTest/Prefab/Sphere.prefab
     AssetType: UnityEngine.GameObject
     AssetBundleName: assets_examples_assetbundletest_prefab
+  - AssetName: SceneTarget
+    AssetExtension: .unity
+    AssetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
+    AssetType: UnityEditor.SceneAsset
+    AssetBundleName: assets_examples_assetbundletest_scene
   - AssetName: TestAddtiveScene
     AssetExtension: .unity
     AssetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity

@@ -5,7 +5,7 @@ using Quark;
 
 public class QuarkLoader : IResourceLoadHelper
 {
-    public bool IsLoading { get { return isLoading; } }
+    public bool IsProcessing { get { return isLoading; } }
     bool isLoading = false;
 
     public T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object
@@ -24,11 +24,11 @@ public class QuarkLoader : IResourceLoadHelper
     {
         return QuarkResources.LoadSceneAsync(info.AssetPath, progress, loadDoneCallback);
     }
-    public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
+    public void UnloadAllAsset(bool unloadAllLoadedObjects = false)
     {
-        QuarkResources.UnLoadAllAssetBundle(unloadAllLoadedObjects);
+        QuarkResources.UnloadAllAssetBundle(unloadAllLoadedObjects);
     }
-    public void UnLoadAsset(AssetInfo info)
+    public void UnloadAsset(AssetInfo info)
     {
         QuarkResources.UnloadAsset(info.AssetPath);
     }
@@ -39,5 +39,13 @@ public class QuarkLoader : IResourceLoadHelper
     public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
     {
         return QuarkResources.LoadAssetWithSubAssetsAsync<T>(info.AssetPath, string.Empty, callback);
+    }
+    public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
+    {
+        return QuarkResources.LoadSceneAsync(info.AssetPath, progressProvider, progress, condition, callback, info.Additive);
+    }
+    public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+    {
+        return QuarkResources.UnloadSceneAsync(info.AssetPath, progress, callback);
     }
 }
