@@ -9,7 +9,7 @@
         /// </summary>
         public string AssetBundleName { get { return assetBundleName; } }
         /// <summary>
-        /// AB包地址、Resource地址或其他路径地址；
+        /// 资源的相对路径
         /// </summary>
         public string AssetPath { get { return assetPath; } }
         public AssetInfoBase() { }

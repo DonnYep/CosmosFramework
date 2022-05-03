@@ -73,7 +73,7 @@ public class QuarkLoadAssetPanel : MonoBehaviour
     }
     void OnUnloadSceneClick()
     {
-        QuarkResources.UnLoadSceneAsync("TestAddtiveScene",null,null);
+        QuarkResources.UnloadSceneAsync("TestAddtiveScene",null,null);
     }
     void OnDetectedSuccess(long size)
     {

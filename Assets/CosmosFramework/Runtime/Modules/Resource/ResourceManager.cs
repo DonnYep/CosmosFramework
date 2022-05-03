@@ -15,25 +15,32 @@ namespace Cosmos.Resource
     * 
     * 3、自定义部分加载前需要进行通道注册，加载时需要指定通道名称；
     * 
-    * 4、默认提供两种加载模式，分别为 Resource与AssetBundle；
+    * 4、默认提供三种加载模式，分别为Resource、AssetBundle和AssetDatabase。
     */
     //================================================
     [Module]
     internal sealed partial class ResourceManager : Module, IResourceManager
     {
         #region Properties
+        Dictionary<ResourceLoadMode, ResourceLoadChannel> loadChannelDict;
+        IResourceLoadHelper currentLoadHelper;
         ResourceLoadMode currentResourceLoadMode;
-        public ResourceLoadMode CurrentResourceLoadMode { get { return currentResourceLoadMode; } }
-        Dictionary<ResourceLoadMode, ResourceLoadChannel> builtInChannelDict;
-        IResourceLoadHelper currentDefaultLoadHelper;
+        /// <summary>
+        /// 当前资源的加载模式；
+        /// </summary>
+        public ResourceLoadMode ResourceLoadMode { get { return currentResourceLoadMode; } }
         #endregion
         #region Methods
+        /// <summary>
+        /// 切换当前默认的加载模式；
+        /// </summary>
+        /// <param name="resourceLoadMode">加载模式</param>
         public void SwitchBuildInLoadMode(ResourceLoadMode resourceLoadMode)
         {
-            if (builtInChannelDict.TryGetValue(resourceLoadMode, out var channel))
+            if (loadChannelDict.TryGetValue(resourceLoadMode, out var channel))
             {
                 this.currentResourceLoadMode = resourceLoadMode;
-                currentDefaultLoadHelper = channel.ResourceLoadHelper;
+                currentLoadHelper = channel.ResourceLoadHelper;
             }
             else
             {
@@ -41,7 +48,6 @@ namespace Cosmos.Resource
             }
         }
         /// <summary>
-        /// 使用默认加载模式；
         /// 添加者更新替换内置的加载帮助体；
         /// </summary>
         /// <param name="resourceLoadMode">加载模式</param>
@@ -50,47 +56,55 @@ namespace Cosmos.Resource
         {
             if (Utility.Assert.IsNull(loadHelper))
                 throw new ArgumentNullException($"IResourceLoadHelper is invalid !");
-            if (builtInChannelDict.TryGetValue(resourceLoadMode, out var channel))
-                await new WaitUntil(() => channel.ResourceLoadHelper.IsLoading == false);
-            builtInChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
+            if (loadChannelDict.TryGetValue(resourceLoadMode, out var channel))
+                await new WaitUntil(() => channel.ResourceLoadHelper.IsProcessing == false);
+            loadChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
             if (currentResourceLoadMode == resourceLoadMode)
-                currentDefaultLoadHelper = loadHelper;
+                currentLoadHelper = loadHelper;
         }
         /// <summary>
-        /// 使用默认加载模式；
-        /// 特性无效！；
+        /// 特性无效！
         /// 加载资源（同步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息标记</param>
+        /// <param name="info">资源信息</param>
         /// <returns>资源</returns>
         public T LoadAsset<T>(AssetInfo info)
             where T : UnityEngine.Object
         {
-            return currentDefaultLoadHelper.LoadAsset<T>(info);
+            return currentLoadHelper.LoadAsset<T>(info);
         }
         /// <summary>
-        /// 使用默认加载模式；
-        /// 特性无效！；
+        /// 特性无效！
         /// 加载资源（同步）；
         /// 注意：AB环境下会获取bundle中所有T类型的对象；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息标记</param>
+        /// <param name="info">资源信息</param>
         /// <returns>资源</returns>
         public T[] LoadAllAsset<T>(AssetInfo info)
         where T : UnityEngine.Object
         {
-            return currentDefaultLoadHelper.LoadAllAsset<T>(info);
+            return currentLoadHelper.LoadAllAsset<T>(info);
         }
         /// <summary>
-        /// 使用默认加载模式；
-        /// 特性加载:PrefabAssetAttribute！；
+        /// 加载资源以及子资源；
+        /// 加载资源（同步）；
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息</param>
+        /// <returns>资源数组</returns>
+        public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
+        {
+            return currentLoadHelper.LoadAssetWithSubAssets<T>(info);
+        }
+        /// <summary>
+        /// 特性加载:PrefabAssetAttribute！
         /// 加载预制体资源（同步）；
         /// </summary>
         /// <param name="type">类对象类型</param>
         /// <param name="instantiate">是否实例化对象</param>
-        /// <returns>加载协程</returns>
+        /// <returns>资源</returns>
         public GameObject LoadPrefab(Type type, bool instantiate = false)
         {
             var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
@@ -103,13 +117,12 @@ namespace Cosmos.Resource
                 return null;
         }
         /// <summary>
-        /// 使用默认加载模式；
-        /// 特性加载:PrefabAssetAttribute！；
+        /// 特性加载:PrefabAssetAttribute！
         /// 加载预制体资源（同步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="instantiate">是否实例化对象</param>
-        /// <returns>加载协程</returns>
+        /// <returns>资源</returns>
         public GameObject LoadPrefab<T>(bool instantiate = false)
             where T : class
         {
@@ -124,13 +137,12 @@ namespace Cosmos.Resource
                 return null;
         }
         /// <summary>
-        /// 使用默认加载模式；
-        /// 特性无效！；
+        /// 特性无效！
         /// 加载预制体资源（同步）；
         /// </summary>
-        /// <param name="info">资源信息标记</param>
+        /// <param name="info">资源信息</param>
         /// <param name="instantiate">是否实例化对象</param>
-        /// <returns>加载协程</returns>
+        /// <returns>资源</returns>
         public GameObject LoadPrefab(AssetInfo info, bool instantiate = false)
         {
             GameObject go = null;
@@ -142,63 +154,34 @@ namespace Cosmos.Resource
             return go;
         }
         /// <summary>
-        /// 使用默认加载模式；
-        /// 加载资源以及子资源；
-        /// 加载资源（同步）；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息标记</param>
-        /// <returns>资源数组</returns>
-        public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
-        {
-            return currentDefaultLoadHelper.LoadAssetWithSubAssets<T>(info);
-        }
-        /// <summary>
-        /// 使用自定义加载通道；
-        /// 加载资源以及子资源；
-        /// 加载资源（同步）；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息标记</param>
-        /// <param name="callback">加载完成事件</param>
-        /// <param name="progress">加载中事件</param>
-        /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
-        {
-            return currentDefaultLoadHelper.LoadAssetWithSubAssetsAsync<T>(info, callback, progress);
-        }
-        /// <summary>
-        /// 使用默认加载模式；
-        /// 特性无效！；
+        /// 特性无效！
         /// 加载资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息标记</param>
+        /// <param name="info">资源信息</param>
         /// <param name="progress">加载中事件</param>
         /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
-        /// <returns>加载协程迭代器</returns>
+        /// <returns>协程对象</returns>
         public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress = null)
             where T : UnityEngine.Object
         {
-            return currentDefaultLoadHelper.LoadAssetAsync<T>(info, callback, progress);
+            return currentLoadHelper.LoadAssetAsync<T>(info, callback, progress);
         }
         /// <summary>
-        /// 异步加载资源；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// 加载资源以及子资源；
+        /// 加载资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息标记</param>
-        /// <returns>加载task</returns>
-        public async Task<T> LoadAssetAsync<T>(AssetInfo info)
-            where T : UnityEngine.Object
+        /// <param name="info">资源信息</param>
+        /// <param name="callback">加载完成事件</param>
+        /// <param name="progress">加载中事件</param>
+        /// <returns>协程对象</returns>
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            T asset = null;
-            await currentDefaultLoadHelper.LoadAssetAsync<T>(info, a=>asset=a, null);
-            return asset;
+            return currentLoadHelper.LoadAssetWithSubAssetsAsync<T>(info, callback, progress);
         }
         /// <summary>
-        /// 使用默认加载模式；
+        /// 加载资源（异步）；
         /// 特性加载:PrefabAssetAttribute！；
         /// 加载预制体资源（异步）；
         /// </summary>
@@ -219,7 +202,7 @@ namespace Cosmos.Resource
                 return null;
         }
         /// <summary>
-        /// 使用默认加载模式；
+        ///  加载资源（异步）；
         /// 特性加载:PrefabAssetAttribute！；
         /// 加载预制体资源（异步）；
         /// </summary>
@@ -235,18 +218,17 @@ namespace Cosmos.Resource
             return LoadPrefabAsync(type, callback, progress, instantiate);
         }
         /// <summary>
-        /// 使用默认加载模式；
-        /// 特性无效！；
+        ///  加载资源（异步）；
         /// 加载预制体资源（异步）；
         /// </summary>
-        /// <param name="info">资源信息标记</param>
+        /// <param name="info">资源信息</param>
         /// <param name="progress">加载中事件</param>
         /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
         public Coroutine LoadPrefabAsync(AssetInfo info, Action<GameObject> callback, Action<float> progress = null, bool instantiate = false)
         {
-            return currentDefaultLoadHelper.LoadAssetAsync<GameObject>(info, (srcGo) =>
+            return currentLoadHelper.LoadAssetAsync<GameObject>(info, (srcGo) =>
             {
                 if (instantiate)
                 {
@@ -258,78 +240,235 @@ namespace Cosmos.Resource
             }, progress);
         }
         /// <summary>
-        /// 使用默认加载模式；
-        /// 特性无效！；
-        /// 加载预制体资源（异步）；
+        /// 加载场景（异步）;
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">加载场景进度回调</param>
+        /// <param name="callback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action<float> progress, Action callback)
+        {
+            return currentLoadHelper.LoadSceneAsync(info, null,progress, null,callback);
+        }
+        /// <summary>
+        /// 加载场景（异步）;
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">加载场景进度回调</param>
+        /// <param name="condition">场景加载完成的条件</param>
+        /// <param name="callback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+        {
+            return currentLoadHelper.LoadSceneAsync(info, null,progress, condition, callback);
+        }
+        /// <summary>
+        /// 加载场景（异步）;
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progressProvider">自定义的加载进度0-1</param>
+        /// <param name="progress">加载场景进度回调</param>
+        /// <param name="callback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Action callback)
+        {
+            return currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, null, callback);
+        }
+        /// <summary>
+        /// 加载场景（异步）;
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progressProvider">自定义的加载进度0-1</param>
+        /// <param name="progress">加载场景进度回调</param>
+        /// <param name="condition">场景加载完成的条件</param>
+        /// <param name="callback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider,  Action<float> progress, Func<bool> condition, Action callback)
+        {
+            return currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, condition, callback);
+        }
+        /// <summary>
+        /// 卸载场景（异步）;
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">卸载场景的进度</param>
+        /// <param name="callback">场景卸载完毕后的回调<</param>
+        /// <returns>协程对象</returns>
+        public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Action callback)
+        {
+            return currentLoadHelper.UnloadSceneAsync(info, progress, null, callback);
+        }
+        /// <summary>
+        /// 卸载场景（异步）;
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">卸载场景的进度</param>
+        /// <param name="condition">卸载场景完成的条件</param>
+        /// <param name="callback">场景卸载完毕后的回调<</param>
+        /// <returns>协程对象</returns>
+        public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+        {
+            return currentLoadHelper.UnloadSceneAsync(info, progress, condition, callback);
+        }
+        /// <summary>
+        /// 加载资源（异步）；
         /// 须使用await获取结果；
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
-        /// <param name="info">资源信息标记</param>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="info">资源信息</param>
+        /// <returns>加载task</returns>
+        public async Task<T> LoadAssetAsync<T>(AssetInfo info)
+            where T : UnityEngine.Object
+        {
+            T asset = null;
+            await currentLoadHelper.LoadAssetAsync<T>(info, a => asset = a, null);
+            return asset;
+        }
+        /// <summary>
+        /// 特性无效！
+        ///  加载资源（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载task</returns>
         public async Task<GameObject> LoadPrefabAsync(AssetInfo info, bool instantiate = false)
         {
-            GameObject go= null;
-            await currentDefaultLoadHelper.LoadAssetAsync<GameObject>(info, (asset) =>
+            GameObject go = null;
+            await currentLoadHelper.LoadAssetAsync<GameObject>(info, (asset) =>
             {
                 if (instantiate)
                     go = GameObject.Instantiate(asset);
                 else
                     go = asset;
-            },null);
+            }, null);
             return go;
         }
         /// <summary>
-        /// 使用默认加载模式；
-        /// 加载场景（异步）；
-        /// </summary>
-        /// <param name="info">资源信息标记</param>
-        /// <param name="progress">加载中事件</param>
-        /// <param name="callback">加载完成事件</param>
-        /// <returns>加载协程迭代器</returns>
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action callback, Action<float> progress = null)
-        {
-            return currentDefaultLoadHelper.LoadSceneAsync(info, callback, progress);
-        }
-        /// <summary>
-        /// 使用默认加载模式；
         /// 加载场景（异步）；
         /// 须使用await获取结果；
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
-        /// <param name="info">资源信息标记</param>
+        /// <param name="info">资源信息</param>
         /// <returns>Task异步任务</returns>
         public async Task LoadSceneAsync(SceneAssetInfo info)
         {
-            await currentDefaultLoadHelper.LoadSceneAsync(info, null, null);
+            await currentLoadHelper.LoadSceneAsync(info,null, null, null, null);
         }
         /// <summary>
-        /// 卸载资源;
+        /// 加载场景（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
-        public void UnLoadAsset(AssetInfo info)
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">加载场景进度回调</param>
+        /// <returns>Task异步任务</returns>
+        public async Task LoadSceneAsync(SceneAssetInfo info, Action<float> progress)
         {
-            currentDefaultLoadHelper.UnLoadAsset(info);
+            await currentLoadHelper.LoadSceneAsync(info,null, progress, null, null);
         }
         /// <summary>
-        /// 使用默认加载模式；
+        /// 加载场景（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">加载场景进度回调</param>
+        /// <param name="condition">加载场景完成的条件</param>
+        /// <returns>Task异步任务</returns>
+        public async Task LoadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition)
+        {
+            await currentLoadHelper.LoadSceneAsync(info, null,progress, condition, null);
+        }
+        /// <summary>
+        /// 加载场景（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progressProvider">自定义的加载进度0-1</param>
+        /// <param name="progress">加载场景进度回调</param>
+        /// <returns>Task异步任务</returns>
+        public async Task LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress)
+        {
+            await currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, null, null);
+        }
+        /// <summary>
+        /// 加载场景（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progressProvider">自定义的加载进度0-1</param>
+        /// <param name="progress">加载场景进度回调</param>
+        /// <param name="condition">加载场景完成的条件</param>
+        /// <returns>Task异步任务</returns>
+        public async Task LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition)
+        {
+            await currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, condition, null);
+        }
+        /// <summary>
+        /// 卸载场景（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <returns>Task异步任务</returns>
+        public async Task UnloadSceneAsync(SceneAssetInfo info)
+        {
+            await currentLoadHelper.UnloadSceneAsync(info, null, null, null);
+        }
+        /// <summary>
+        /// 卸载场景（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">卸载场景的进度</param>
+        /// <returns>Task异步任务</returns>
+        public async Task UnloadSceneAsync(SceneAssetInfo info, Action<float> progress)
+        {
+            await currentLoadHelper.UnloadSceneAsync(info, progress, null, null);
+        }
+        /// <summary>
+        /// 卸载场景（异步）；
+        /// 须使用await获取结果；
+        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">卸载场景的进度</param>
+        /// <param name="condition">卸载场景完成的条件</param>
+        /// <returns>Task异步任务</returns>
+        public async Task UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition)
+        {
+            await currentLoadHelper.UnloadSceneAsync(info, progress, condition, null);
+        }
+        /// <summary>
+        /// 卸载资源（同步）；
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        public void UnloadAsset(AssetInfo info)
+        {
+            currentLoadHelper.UnloadAsset(info);
+        }
+        /// <summary>
         /// 卸载所有资源;
         /// </summary>
-        /// <param name="channelName">资源加载的通道id</param>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
+        public void UnloadAllAsset(bool unloadAllLoadedObjects = false)
         {
-            currentDefaultLoadHelper.UnLoadAllAsset(unloadAllLoadedObjects);
+            currentLoadHelper.UnloadAllAsset(unloadAllLoadedObjects);
         }
         protected override void OnInitialization()
         {
-            builtInChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
-            builtInChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourcesLoader()));
-            builtInChannelDict.Add(ResourceLoadMode.AssetBundle, new ResourceLoadChannel(ResourceLoadMode.AssetBundle.ToString(), new AssetBundleLoader()));
+            loadChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
+            loadChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourcesLoader()));
+            loadChannelDict.Add(ResourceLoadMode.AssetBundle, new ResourceLoadChannel(ResourceLoadMode.AssetBundle.ToString(), new AssetBundleLoader()));
             currentResourceLoadMode = ResourceLoadMode.Resource;
-            currentDefaultLoadHelper = builtInChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
+            currentLoadHelper = loadChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
         }
-
-
         #endregion
     }
 }

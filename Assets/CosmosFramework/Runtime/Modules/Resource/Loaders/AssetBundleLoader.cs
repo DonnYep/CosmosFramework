@@ -6,27 +6,10 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 namespace Cosmos.Resource
 {
+    //TODO AssetBundleLoader 需要重写
     public class AssetBundleLoader : IResourceLoadHelper
     {
-        public AssetBundleLoader(string assetBundleRootPath, string manifestName)
-        {
-            assetBundleHashDict = new Dictionary<string, Hash128>();
-            assetBundleDict = new Dictionary<string, AssetBundle>();
-            this.AssetBundleRootPath = assetBundleRootPath;
-            AssetBundleManifestName = manifestName;
-            _loadWait = new WaitUntil(() => { return !_isLoading; });
-        }
-        public void SetLoaderData(string assetBundleRootPath, string manifestName)
-        {
-            this.AssetBundleRootPath = assetBundleRootPath;
-            this.AssetBundleManifestName = manifestName;
-        }
-        public AssetBundleLoader()
-        {
-            assetBundleHashDict = new Dictionary<string, Hash128>();
-            assetBundleDict = new Dictionary<string, AssetBundle>();
-            _loadWait = new WaitUntil(() => { return !_isLoading; });
-        }
+
         /// <summary>
         /// AssetBundle资源加载根路径
         /// </summary>
@@ -35,9 +18,7 @@ namespace Cosmos.Resource
         /// 所有AssetBundle资源包清单的名称
         /// </summary>
         public string AssetBundleManifestName { get; private set; }
-
-        public bool IsLoading { get { return _isLoading; } }
-
+        public bool IsProcessing { get { return isProcessing; } }
         /// <summary>
         /// 缓存的所有AssetBundle包【AB包名称、AB包】
         /// </summary>
@@ -53,11 +34,30 @@ namespace Cosmos.Resource
         /// <summary>
         /// 单线下载中
         /// </summary>
-        private bool _isLoading = false;
+        private bool isProcessing = false;
         /// <summary>
         /// 单线下载等待
         /// </summary>
-        private WaitUntil _loadWait;
+        private WaitUntil loadWait;
+        public AssetBundleLoader()
+        {
+            assetBundleHashDict = new Dictionary<string, Hash128>();
+            assetBundleDict = new Dictionary<string, AssetBundle>();
+            loadWait = new WaitUntil(() => { return !isProcessing; });
+        }
+        public AssetBundleLoader(string assetBundleRootPath, string manifestName)
+        {
+            assetBundleHashDict = new Dictionary<string, Hash128>();
+            assetBundleDict = new Dictionary<string, AssetBundle>();
+            this.AssetBundleRootPath = assetBundleRootPath;
+            AssetBundleManifestName = manifestName;
+            loadWait = new WaitUntil(() => { return !isProcessing; });
+        }
+        public void SetLoaderData(string assetBundleRootPath, string manifestName)
+        {
+            this.AssetBundleRootPath = assetBundleRootPath;
+            this.AssetBundleManifestName = manifestName;
+        }
         /// <summary>
         /// 设置AssetBundle资源根路径（仅当使用AssetBundle加载时有效）
         /// </summary>
@@ -66,29 +66,7 @@ namespace Cosmos.Resource
         {
             AssetBundleRootPath = path;
         }
-        /// <summary>
-        /// 通过名称获取指定的AssetBundle
-        /// </summary>
-        /// <param name="assetBundleName">名称</param>
-        /// <returns>AssetBundle</returns>
-        public AssetBundle GetAssetBundle(string assetBundleName)
-        {
-            assetBundleDict.TryGetValue(assetBundleName, out var ab);
-            return ab;
-        }
-        public T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object
-        {
-            T[] asset = null;
-            if (assetBundleDict.ContainsKey(info.AssetBundleName))
-            {
-                asset = assetBundleDict[info.AssetBundleName].LoadAllAssets<T>();
-                if (asset == null)
-                {
-                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
-                }
-            }
-            return asset;
-        }
+        /// <inheritdoc/>
         public T LoadAsset<T>(AssetInfo info) where T : UnityEngine.Object
         {
             T asset = null;
@@ -102,19 +80,31 @@ namespace Cosmos.Resource
             }
             return asset;
         }
+        /// <inheritdoc/>
+        public T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object
+        {
+            T[] asset = null;
+            if (assetBundleDict.ContainsKey(info.AssetBundleName))
+            {
+                asset = assetBundleDict[info.AssetBundleName].LoadAllAssets<T>();
+                if (asset == null)
+                {
+                    throw new ArgumentNullException($"ResourceManager-->>加载资源失败：AB包 {info.AssetBundleName } 中不存在资源 {info.AssetPath } ！");
+                }
+            }
+            return asset;
+        }
+        /// <inheritdoc/>
         public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
             return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(info, callback, progress));
         }
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action callback, Action<float> progress = null)
+        /// <inheritdoc/>
+        public void UnloadAsset(AssetInfo info)
         {
-            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info, callback, progress));
         }
-        public void UnLoadAsset(AssetInfo info)
-        {
-
-        }
-        public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
+        /// <inheritdoc/>
+        public void UnloadAllAsset(bool unloadAllLoadedObjects = false)
         {
             foreach (var assetBundle in assetBundleDict)
             {
@@ -124,7 +114,7 @@ namespace Cosmos.Resource
             assetBundleHashDict.Clear();
             AssetBundle.UnloadAllAssetBundles(unloadAllLoadedObjects);
         }
-
+        /// <inheritdoc/>
         public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
         {
             T[] assets = null;
@@ -138,10 +128,20 @@ namespace Cosmos.Resource
             }
             return assets;
         }
-
+        /// <inheritdoc/>
         public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
             return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(info, callback, progress));
+        }
+        /// <inheritdoc/>
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
+        {
+            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info, progressProvider, progress, condition, callback));
+        }
+        /// <inheritdoc/>
+        public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+        {
+            return Utility.Unity.StartCoroutine(EnumUnloadSceneAsync(info, progress, condition, callback));
         }
         /// <summary>
         /// 异步加载依赖AB包
@@ -307,12 +307,11 @@ namespace Cosmos.Resource
         IEnumerator EnumLoadAssetWithSubAssets<T>(AssetInfoBase info, Action<T[]> callback, Action<float> progress)
             where T : UnityEngine.Object
         {
-            DateTime beginTime = DateTime.Now;
-            if (_isLoading)
+            if (isProcessing)
             {
-                yield return _loadWait;
+                yield return loadWait;
             }
-            _isLoading = true;
+            isProcessing = true;
             yield return LoadDependenciesAssetBundleAsync(info.AssetBundleName);
             DateTime waitTime = DateTime.Now;
             T[] assets = null;
@@ -329,17 +328,16 @@ namespace Cosmos.Resource
             {
                 callback?.Invoke(assets);
             }
-            _isLoading = false;
+            isProcessing = false;
         }
         IEnumerator EnumLoadAssetAsync<T>(AssetInfoBase info, Action<T> callback, Action<float> progress, bool instantiate = false)
             where T : UnityEngine.Object
         {
-            DateTime beginTime = DateTime.Now;
-            if (_isLoading)
+            if (isProcessing)
             {
-                yield return _loadWait;
+                yield return loadWait;
             }
-            _isLoading = true;
+            isProcessing = true;
             yield return LoadDependenciesAssetBundleAsync(info.AssetBundleName);
             DateTime waitTime = DateTime.Now;
             UnityEngine.Object asset = null;
@@ -363,27 +361,93 @@ namespace Cosmos.Resource
             {
                 callback?.Invoke(asset as T);
             }
-            _isLoading = false;
+            isProcessing = false;
         }
         /// <summary>
         /// 加载场景（异步）
         /// </summary>
-        /// <param name="info">资源信息标记</param>
-        /// <param name="progress">加载中事件</param>
-        /// <param name="callback">加载完成事件</param>
-        /// <returns>加载协程迭代器</returns>
-        IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Action callback, Action<float> progress)
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">加载场景进度回调</param>
+        /// <param name="condition">场景加载完成的条件</param>
+        /// <param name="callback">场景加载完毕回调</param>
+        /// <returns>协程对象</returns>
+        IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
         {
-            if (_isLoading)
+            if (isProcessing)
             {
-                yield return _loadWait;
+                yield return loadWait;
             }
-            _isLoading = true;
+            isProcessing = true;
             yield return LoadDependenciesAssetBundleAsync(info.AssetBundleName);
             yield return LoadAssetBundleAsync(info.AssetBundleName, progress);
-            yield return SceneManager.LoadSceneAsync(info.AssetPath, LoadSceneMode.Additive);
+            {
+                isProcessing = true;
+                var ao = SceneManager.LoadSceneAsync(info.SceneName, (LoadSceneMode)Convert.ToByte(info.Additive));
+                ao.allowSceneActivation = false;
+                var hasProviderProgress = progressProvider != null;
+                while (!ao.isDone)
+                {
+                    if (hasProviderProgress)
+                    {
+                        var providerProgress = progressProvider();
+                        var sum = providerProgress + ao.progress;
+                        if (sum >= 1.9)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            progress?.Invoke(sum / 2);
+                        }
+                    }
+                    else
+                    {
+                        progress?.Invoke(ao.progress);
+                        if (ao.progress >= 0.9f)
+                        {
+                            break;
+                        }
+                    }
+                    yield return new WaitForEndOfFrame();
+                }
+                progress?.Invoke(1);
+                if (condition != null)
+                    yield return new WaitUntil(condition);
+                ao.allowSceneActivation = true;
+                callback?.Invoke();
+                isProcessing = false;
+            }
+        }
+        /// <summary>
+        /// 卸载场景（异步）
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">卸载场景的进度</param>
+        /// <param name="condition">卸载场景完成的条件</param>
+        /// <param name="callback">场景卸载完毕后的回调<</param>
+        /// <returns>协程对象</returns>
+        IEnumerator EnumUnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+        {
+            if (isProcessing)
+            {
+                yield return loadWait;
+            }
+            isProcessing = true;
+            var ao = SceneManager.UnloadSceneAsync(info.SceneName);
+            while (!ao.isDone)
+            {
+                progress?.Invoke(ao.progress);
+                if (ao.progress >= 0.9f)
+                {
+                    break;
+                }
+                yield return new WaitForEndOfFrame();
+            }
+            if (condition != null)
+                yield return new WaitUntil(condition);
+            progress?.Invoke(1);
             callback?.Invoke();
-            _isLoading = false;
+            isProcessing = false;
         }
         void UnloadAssetBundle(string assetBundleName)
         {

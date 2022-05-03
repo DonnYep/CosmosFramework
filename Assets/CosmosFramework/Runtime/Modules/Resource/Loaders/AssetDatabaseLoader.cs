@@ -1,23 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
-using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 namespace Cosmos.Resource
 {
     public class AssetDatabaseLoader : IResourceLoadHelper
     {
+        bool isProcessing;
         /// <summary>
-        /// 指定工作目录
+        /// 单线下载等待
         /// </summary>
-        readonly string rootPath;
-        bool isLoading;
-        public AssetDatabaseLoader(string rootPath)
+        private WaitUntil loadWait;
+        public AssetDatabaseLoader()
         {
-            this.rootPath = rootPath;
+            loadWait = new WaitUntil(() => { return !isProcessing; });
         }
-
-        public bool IsLoading { get { return IsLoading; } }
+        ///<inheritdoc/> 
+        public bool IsProcessing { get { return isProcessing; } }
+        ///<inheritdoc/> 
         public T LoadAsset<T>(AssetInfo info) where T : UnityEngine.Object
         {
             if (info == null)
@@ -31,6 +33,7 @@ namespace Cosmos.Resource
             return null;    
 #endif
         }
+        ///<inheritdoc/> 
         public T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object
         {
             if (info == null)
@@ -50,6 +53,7 @@ namespace Cosmos.Resource
                 return null;
 #endif
         }
+        ///<inheritdoc/> 
         public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
 #if UNITY_EDITOR
@@ -59,6 +63,7 @@ namespace Cosmos.Resource
 
 #endif
         }
+        ///<inheritdoc/> 
         public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
         {
 #if UNITY_EDITOR
@@ -77,6 +82,7 @@ namespace Cosmos.Resource
 
 #endif
         }
+        ///<inheritdoc/> 
         public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
 #if UNITY_EDITOR
@@ -86,30 +92,93 @@ namespace Cosmos.Resource
 
 #endif
         }
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action callback, Action<float> progress = null)
+        ///<inheritdoc/> 
+        public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
+        {
+            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info, progressProvider, progress, condition, callback));
+        }
+        ///<inheritdoc/> 
+        public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+        {
+            return Utility.Unity.StartCoroutine(EnumUnloadSceneAsync(info, progress, condition, callback));
+        }
+        ///<inheritdoc/> 
+        public void UnloadAllAsset(bool unloadAllLoadedObjects = false)
         {
 #if UNITY_EDITOR
-            return null;
 
 #else
-            return null;
 
 #endif
         }
-        public void UnLoadAllAsset(bool unloadAllLoadedObjects = false)
+        ///<inheritdoc/> 
+        public void UnloadAsset(AssetInfo info)
         {
 #if UNITY_EDITOR
-
 #else
 
 #endif
         }
-        public void UnLoadAsset(AssetInfo info)
+        IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
+            if (isProcessing)
+            {
+                yield return loadWait;
+            }
+            isProcessing = true;
+            LoadSceneMode loadSceneMode = info.Additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
 #if UNITY_EDITOR
+            var ao = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(info.SceneName, new LoadSceneParameters(loadSceneMode));
 #else
-
+            var ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(info.SceneName, loadSceneMode);
 #endif
+            ao.allowSceneActivation = false;
+            while (!ao.isDone)
+            {
+                progress?.Invoke(ao.progress);
+                if (ao.progress >= 0.9f)
+                {
+                    break;
+                }
+                yield return new WaitForEndOfFrame();
+            }
+            progress?.Invoke(1);
+            if (condition != null)
+                yield return new WaitUntil(condition);
+            ao.allowSceneActivation = true;
+            callback?.Invoke();
+            isProcessing = false;
+        }
+        /// <summary>
+        /// 卸载场景（异步）
+        /// </summary>
+        /// <param name="info">资源信息</param>
+        /// <param name="progress">卸载场景的进度</param>
+        /// <param name="condition">卸载场景完成的条件</param>
+        /// <param name="callback">场景卸载完毕后的回调<</param>
+        /// <returns>协程对象</returns>
+        IEnumerator EnumUnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+        {
+            if (isProcessing)
+            {
+                yield return loadWait;
+            }
+            isProcessing = true;
+            var ao = SceneManager.UnloadSceneAsync(info.SceneName);
+            while (!ao.isDone)
+            {
+                progress?.Invoke(ao.progress);
+                if (ao.progress >= 0.9f)
+                {
+                    break;
+                }
+                yield return new WaitForEndOfFrame();
+            }
+            if (condition != null)
+                yield return new WaitUntil(condition);
+            progress?.Invoke(1);
+            callback?.Invoke();
+            isProcessing = false;
         }
     }
 }
