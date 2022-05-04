@@ -21,11 +21,11 @@ namespace Cosmos.Test
 
         TickTimer tickTimer = new TickTimer(true);
 
-        List<GameObject> cubeCache = new List<GameObject>();
-        List<GameObject> sphereCache = new List<GameObject>();
-        List<GameObject> capsuleCache = new List<GameObject>();
+        Queue<GameObject> cubeCache = new Queue<GameObject>();
+        Queue<GameObject> sphereCache = new Queue<GameObject>();
+        Queue<GameObject> capsuleCache = new Queue<GameObject>();
 
-        async void Start()
+        void Start()
         {
             CosmosEntry.ResourceManager.AddOrUpdateBuildInLoadHelper(Resource.ResourceLoadMode.Resource, new QuarkLoader());
             objectPoolManager = CosmosEntry.ObjectPoolManager;
@@ -45,8 +45,8 @@ namespace Cosmos.Test
             //注意，这里是毫秒单位；
             tickTimer.AddTask(100, OnSpawnTime, null, int.MaxValue);
             //此写法的实际意义为，生成的单位存活时间为15秒；
-            await new WaitForSeconds(15f);
-            tickTimer.AddTask(100, OnDespawnTime, null, int.MaxValue);
+            //await new WaitForSeconds(15f);
+            tickTimer.AddTask(100, 15000,OnDespawnTime, null, int.MaxValue);
         }
         void Update()
         {
@@ -58,13 +58,13 @@ namespace Cosmos.Test
         void OnSpawnTime(int idx)
         {
             var cubeGo = cubePool.Spawn();
-            cubeCache.Add(cubeGo);
+            cubeCache.Enqueue(cubeGo);
 
             var sphereGo = spherePool.Spawn();
-            sphereCache.Add(sphereGo);
+            sphereCache.Enqueue(sphereGo);
 
             var capsuleGo = capsulePool.Spawn();
-            capsuleCache.Add(capsuleGo);
+            capsuleCache.Enqueue(capsuleGo);
         }
         /// <summary>
         /// 倒计时出发回收事件；
@@ -72,35 +72,35 @@ namespace Cosmos.Test
         void OnDespawnTime(int idx)
         {
             {
-                var go = cubeCache.RemoveFirst();
+                var go = cubeCache.Dequeue();
                 cubePool.Despawn(go);
             }
             {
-                var go = sphereCache.RemoveFirst();
+                var go = sphereCache.Dequeue();
                 spherePool.Despawn(go);
             }
             {
-                var go = capsuleCache.RemoveFirst();
+                var go = capsuleCache.Dequeue();
                 capsulePool.Despawn(go);
             }
         }
         /// <summary>
         /// 对象被对象池生成事件；
         /// </summary>
-        void OnObjectSpawn(GameObject obj)
+        void OnObjectSpawn(GameObject go)
         {
-            obj.transform.SetParent(spawnRoot);
-            obj.transform.ResetLocalTransform();
-            obj.SetActive(true);
+            go.transform.SetParent(spawnRoot);
+            go.transform.ResetLocalTransform();
+            go.SetActive(true);
         }
         /// <summary>
         /// 对象被对象池回收事件；
         /// </summary>
-        void  OnObjectDespawn(GameObject obj)
+        void  OnObjectDespawn(GameObject go)
         {
-            obj.transform.SetParent(despawnRoot);
-            obj.transform.ResetLocalTransform();
-            obj.SetActive(false);
+            go.transform.SetParent(despawnRoot);
+            go.transform.ResetLocalTransform();
+            go.SetActive(false);
         }
 
     }

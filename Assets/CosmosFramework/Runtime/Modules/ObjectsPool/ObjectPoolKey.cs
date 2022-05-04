@@ -45,6 +45,5 @@ namespace Cosmos.ObjectPool
             var typeName = poolType.FullName;
             return string.IsNullOrEmpty(poolName) ? typeName : $"{typeName}.{poolName}";
         }
-
     }
 }
