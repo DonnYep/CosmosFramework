@@ -53,7 +53,8 @@ namespace Cosmos.ObjectPool
                 capacity = value;
             }
         }
-        public ObjectPoolKey ObjectKey { get; private set; }
+        public string ObjectPoolName { get; private set; }
+        public ObjectPoolAssetInfo ObjectPoolAssetInfo { get; private set; }
         /// <summary>
         /// 当前池对象中的数量
         /// </summary>
@@ -98,9 +99,8 @@ namespace Cosmos.ObjectPool
             onObjectSpawn?.Invoke(go);
             return go;
         }
-        public void Despawn(object obj)
+        public void Despawn(GameObject go)
         {
-            var go = obj.CastTo<GameObject>();
             if (go == null)
                 return;
             onObjectDespawn?.Invoke(go);
@@ -119,22 +119,24 @@ namespace Cosmos.ObjectPool
             onObjectDespawn = null;
             capacity = 0;
             expireTime = 0;
-            ObjectKey = ObjectPoolKey.None;
+            ObjectPoolName = string.Empty;
+            ObjectPoolAssetInfo = null;
         }
-        void Init(GameObject spawnItem, ObjectPoolKey objectKey)
+        void Init(GameObject spawnAsset, string objectPoolName, ObjectPoolAssetInfo assetInfo)
         {
-            this.spawnAsset = spawnItem;
+            this.spawnAsset = spawnAsset;
             pool = new Pool<GameObject>(capacity,
             () => { return GameObject.Instantiate(this.spawnAsset); },
             (go) => { go.gameObject.SetActive(true); },
             (go) => { go.gameObject.SetActive(false); },
             (go) => { GameObject.Destroy(go); });
-            this.ObjectKey = objectKey;
+            this.ObjectPoolName = objectPoolName;
+            this.ObjectPoolAssetInfo = assetInfo;
         }
-        internal static ObjectPool Create(object spawnAsset, ObjectPoolKey objectKey)
+        internal static ObjectPool Create(GameObject spawnAsset, string objectPoolName, ObjectPoolAssetInfo assetInfo)
         {
             var p = poolInstPool.Spawn();
-            p.Init(spawnAsset.CastTo<GameObject>(), objectKey);
+            p.Init(spawnAsset, objectPoolName, assetInfo);
             return p;
         }
         internal static void Release(ObjectPool objectPool)

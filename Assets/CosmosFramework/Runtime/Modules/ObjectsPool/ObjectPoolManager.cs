@@ -1,171 +1,157 @@
 ﻿using System.Collections.Generic;
 using System;
-using Cosmos.Resource;
+using UnityEngine;
+using System.Threading.Tasks;
+
 namespace Cosmos.ObjectPool
 {
     //================================================
     /*
-     * 1、对象池；
+     * 1、对象池模块，采用注册式生成池对象。
+     * 
+     * 2、对象池名不可重复。
      */
     //================================================
     [Module]
     internal sealed class ObjectPoolManager : Module, IObjectPoolManager
     {
         #region Properties
-        Dictionary<ObjectPoolKey, IObjectPool> poolDict;
-
+        Dictionary<string, ObjectPool> poolDict;
+        /// <summary>
+        /// 对象池的数量；
+        /// </summary>
+        public int PoolCount { get { return poolDict.Count; } }
         Action<float> elapseRefreshHandler;
         event Action<float> ElapseRefreshHandler
         {
             add { elapseRefreshHandler += value; }
             remove { elapseRefreshHandler -= value; }
         }
-        IResourceManager resourceManager;
+        IObjectPoolHelper objectPoolHelper;
         #endregion
 
         #region Methods
         /// <summary>
-        /// 注册对象池（异步）;
+        /// 设置对象池帮助体；
         /// </summary>
-        /// <param name="objectAssetInfo">对象资源信息</param>
-        /// <param name="onRegisterCallback">注册成功后的回调，若失败则不回调</param>
+        /// <param name="helper">帮助体对象</param>
+        public void SetHelper(IObjectPoolHelper helper)
+        {
+            if (helper == null)
+                throw new ArgumentNullException("helper is invalid");
+            objectPoolHelper = helper;
+        }
+        /// <summary>
+        /// 异步注册对象池；
+        /// </summary>
+        /// <param name="assetInfo">对象池资源信息</param>
+        /// <param name="callback">注册回调</param>
         /// <returns>协程对象</returns>
-        public async void RegisterObjectPoolAsync(ObjectAssetInfo objectAssetInfo, Action<IObjectPool> onRegisterCallback = null)
+        public Coroutine RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo, Action<IObjectPool> callback)
         {
-            if (objectAssetInfo == null)
+            if (assetInfo == null)
                 throw new ArgumentNullException("objectAssetInfo is  invalid.");
-            await resourceManager.LoadPrefabAsync(objectAssetInfo,
-                 (spawnItem) =>
-                 {
-                     var objectKey = objectAssetInfo.ObjectKey;
-                     if (!HasObjectPool(objectKey))
-                     {
-                         var pool = ObjectPool.Create(spawnItem, objectKey);
-                         poolDict.TryAdd(objectKey, pool);
-                         ElapseRefreshHandler += pool.OnElapseRefresh;
-                         onRegisterCallback?.Invoke(pool);
-                     }
-                     else
-                         throw new ArgumentException($"object key :{objectKey} is exist.");
-                 });
+            if (!HasObjectPool(assetInfo.PoolName))
+            {
+                return objectPoolHelper.LoadObjectAssetAsync(assetInfo, (info, go) =>
+                  {
+                      var poolName = info.PoolName;
+                      if (go != null)
+                      {
+                          var pool = ObjectPool.Create(go, poolName, assetInfo);
+                          poolDict.TryAdd(poolName, pool);
+                          ElapseRefreshHandler += pool.OnElapseRefresh;
+                          callback?.Invoke(pool);
+                      }
+                      else
+                      {
+                          throw new ArgumentException($"{ info.AssetPath} not exist.");
+                      }
+                  });
+            }
+            else
+                throw new ArgumentException($"object pool :{assetInfo.PoolName} is exist.");
         }
         /// <summary>
-        /// 注册对象池；
+        /// 异步注册对象池；
+        /// 须使用await获取结果；
         /// </summary>
-        /// <param name="objectAssetInfo">对象资源信息</param>
-        /// <returns>注册生成后的池对象接口</returns>
-        public IObjectPool RegisterObjectPool(ObjectAssetInfo objectAssetInfo)
+        /// <param name="assetInfo">对象池资源信息</param>
+        /// <returns>Task异步任务</returns>
+        public async Task<IObjectPool> RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo)
         {
-            if (objectAssetInfo == null)
-                throw new ArgumentNullException("objectAssetInfo is  invalid.");
-            var objectKey = objectAssetInfo.ObjectKey;
-            if (!HasObjectPool(objectKey))
+            IObjectPool pool = null;
+            await RegisterObjectPoolAsync(assetInfo, (p) => { pool = p; });
+            return pool;
+        }
+        /// <summary>
+        /// 注册自定义资源对象池；
+        /// </summary>
+        /// <param name="poolName">对象池名<</param>
+        /// <param name="spawnAsset">需要生成的对象</param>
+        /// <returns>注册生成后的池对象接口</returns>
+        public IObjectPool RegisterObjectPool(string poolName, GameObject spawnAsset)
+        {
+            if (!HasObjectPool(poolName))
             {
-                var spawnItem = resourceManager.LoadPrefab(objectAssetInfo);
-                var pool = ObjectPool.Create(spawnItem, objectKey);
-                poolDict.TryAdd(objectKey, pool);
+                var pool = ObjectPool.Create(spawnAsset, poolName, null);
+                poolDict.TryAdd(poolName, pool);
                 ElapseRefreshHandler += pool.OnElapseRefresh;
                 return pool;
             }
             else
-                throw new ArgumentException($"object key :{objectKey} is exist.");
+                throw new ArgumentException($"object pool :{poolName} is exist.");
         }
-        /// <summary>
-        /// 注册对象池；
-        /// </summary>
-        /// <param name="objectKey">对象池key</param>
-        /// <param name="spawnAsset">需要生成的对象</param>
-        /// <returns>注册生成后的池对象接口</returns>
-        public IObjectPool RegisterObjectPool(ObjectPoolKey objectKey, object spawnAsset)
-        {
-            if (!HasObjectPool(objectKey))
-            {
-                var pool = ObjectPool.Create(spawnAsset, objectKey);
-                poolDict.TryAdd(objectKey, pool);
-                ElapseRefreshHandler += pool.OnElapseRefresh;
-                return pool;
-            }
-            else
-                throw new ArgumentException($"object key :{objectKey} is exist.");
-        }
-        /// <summary>
-        /// 注册对象池（同步）;
-        /// </summary>
-        /// <param name="name">对象的名称</param>
-        /// <param name="spawnAsset">需要生成的对象</param>
-        /// <returns>注册生成后的池对象接口</returns>
-        public IObjectPool RegisterObjectPool(string name, object spawnAsset)
-        {
-            return RegisterObjectPool(new ObjectPoolKey(typeof(object), name), spawnAsset);
-        }
-
         /// <summary>
         /// 注销对象池;
         /// </summary>
-        /// <param name="objectKey">对象池key</param>
-        public void DeregisterObjectPool(ObjectPoolKey objectKey)
+        /// <param name="poolName">对象池名<</param>
+        public void DeregisterObjectPool(string poolName)
         {
-            if (poolDict.Remove(objectKey, out var pool))
+            if (poolDict.Remove(poolName, out var pool))
             {
                 ElapseRefreshHandler -= pool.OnElapseRefresh;
+                if (pool.ObjectPoolAssetInfo != null)
+                    objectPoolHelper.UnloadObjectAsset(pool.ObjectPoolAssetInfo);
                 ObjectPool.Release(pool.CastTo<ObjectPool>());
             }
         }
         /// <summary>
         /// 注销对象池;
         /// </summary>
-        /// <param name="name">对象的名称</param>
-        public void DeregisterObjectPool(string name)
+        /// <param name="pool">对象池</param>
+        public void DeregisterObjectPool(IObjectPool pool)
         {
-            DeregisterObjectPool(new ObjectPoolKey(typeof(object), name));
-        }
-
-        /// <summary>
-        /// 获得对象池;
-        /// </summary>
-        /// <param name="objectKey">对象池key</param>
-        /// <returns>对象池对象的接口</returns>
-        public IObjectPool GetObjectPool(ObjectPoolKey objectKey)
-        {
-            var hasPool = poolDict.TryGetValue(objectKey, out var pool);
-            if (hasPool)
+            if (poolDict.Remove(pool.ObjectPoolName, out var srcPool))
             {
-                return pool;
-            }
-            else
-            {
-                throw new ArgumentNullException($"object key :{objectKey} has not been register");
+                ElapseRefreshHandler -= pool.OnElapseRefresh;
+                if (srcPool.ObjectPoolAssetInfo != null)
+                    objectPoolHelper.UnloadObjectAsset(srcPool.ObjectPoolAssetInfo);
+                ObjectPool.Release(pool.CastTo<ObjectPool>());
             }
         }
         /// <summary>
-        /// 获得对象池;
+        /// 获取对象池；
         /// </summary>
-        /// <param name="name">对象的名称</param>
-        /// <returns>对象池对象的接口</returns>
-        public IObjectPool GetObjectPool(string name)
+        /// <param name="poolName">对象池名</param>
+        /// <param name="pool">对象池</param>
+        /// <returns>获取结果</returns>
+        public bool GetObjectPool(string poolName, out IObjectPool pool)
         {
-            return GetObjectPool(new ObjectPoolKey(typeof(object), name));
-        }
-
-        /// <summary>
-        /// 是否存在对象池；
-        /// </summary>
-        /// <param name="objectKey">对象池key</param>
-        /// <returns>是否存在</returns>
-        public bool HasObjectPool(ObjectPoolKey objectKey)
-        {
-            return poolDict.ContainsKey(objectKey);
+            pool = null;
+            var rst = poolDict.TryGetValue(poolName, out var srcPool);
+            pool = srcPool;
+            return rst;
         }
         /// <summary>
         /// 是否存在对象池；
         /// </summary>
-        /// <param name="name">对象的名称</param>
+        /// <param name="poolName">对象池名</param>
         /// <returns>是否存在</returns>
-        public bool HasObjectPool(string name)
+        public bool HasObjectPool(string poolName)
         {
-            return HasObjectPool(new ObjectPoolKey(typeof(object), name));
+            return poolDict.ContainsKey(poolName);
         }
-
         /// <summary>
         /// 注销所有池对象
         /// </summary>
@@ -174,13 +160,16 @@ namespace Cosmos.ObjectPool
             foreach (var pool in poolDict)
             {
                 pool.Value.ClearPool();
+                var assetInfo = pool.Value.ObjectPoolAssetInfo;
+                if (assetInfo != null)
+                    objectPoolHelper.UnloadObjectAsset(assetInfo);
             }
             poolDict.Clear();
         }
-        protected override void OnPreparatory()
+        protected override void OnInitialization()
         {
-            poolDict = new Dictionary<ObjectPoolKey, IObjectPool>();
-            resourceManager = GameManager.GetModule<IResourceManager>();
+            SetHelper(new DefaultObjectPoolHelper());
+            poolDict = new Dictionary<string, ObjectPool>();
         }
         [ElapseRefresh]
         void ElapseRefresh(float deltatime)

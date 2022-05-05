@@ -1,72 +1,65 @@
 ﻿using System;
+using System.Threading.Tasks;
+using UnityEngine;
+
 namespace Cosmos.ObjectPool
 {
     public interface IObjectPoolManager: IModuleManager
     {
         /// <summary>
-        /// 注册对象池（异步）;
+        /// 对象池的数量；
         /// </summary>
-        /// <param name="objectAssetInfo">对象资源信息</param>
-        /// <param name="onRegisterCallback">注册成功后的回调，若失败则不回调</param>
-        void RegisterObjectPoolAsync(ObjectAssetInfo objectAssetInfo, Action<IObjectPool> onRegisterCallback = null);
-        /// <summary>
-        /// 注册对象池（同步）;
-        /// </summary>
-        /// <param name="objectAssetInfo">对象资源信息</param>
-        /// <returns>注册生成后的池对象接口</returns>
-        IObjectPool RegisterObjectPool(ObjectAssetInfo objectAssetInfo);
-        /// <summary>
-        /// 注册对象池（同步）;
-        /// </summary>
-        /// <param name="objectKey">对象池key</param>
-        /// <param name="spawnItem">需要生成的对象</param>
-        /// <returns>注册生成后的池对象接口</returns>
-        IObjectPool RegisterObjectPool(ObjectPoolKey objectKey, object spawnItem);
-        /// <summary>
-        /// 注册对象池（同步）;
-        /// </summary>
-        /// <param name="name">对象的名称</param>
-        /// <param name="spawnItem">需要生成的对象</param>
-        /// <returns>注册生成后的池对象接口</returns>
-        IObjectPool RegisterObjectPool(string name, object spawnItem);
+        int PoolCount { get; }
 
+        /// <summary>
+        /// 设置对象池帮助体；
+        /// </summary>
+        /// <param name="helper">帮助体对象</param>
+        void SetHelper(IObjectPoolHelper helper);
+        /// <summary>
+        /// 异步注册对象池；
+        /// </summary>
+        /// <param name="assetInfo">对象池资源信息</param>
+        /// <param name="callback">注册回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo, Action<IObjectPool> callback);
+        /// <summary>
+        /// 异步注册对象池；
+        /// 须使用await获取结果；
+        /// </summary>
+        /// <param name="assetInfo">对象池资源信息</param>
+        /// <returns>Task异步任务</returns>
+        Task<IObjectPool> RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo);
+        /// <summary>
+        /// 注册自定义资源对象池；
+        /// </summary>
+        /// <param name="poolName">对象池名<</param>
+        /// <param name="spawnAsset">需要生成的对象</param>
+        /// <returns>注册生成后的池对象接口</returns>
+        IObjectPool RegisterObjectPool(string poolName, GameObject spawnAsset);
         /// <summary>
         /// 注销对象池;
         /// </summary>
-        /// <param name="objectKey">对象池key</param>
-        void DeregisterObjectPool(ObjectPoolKey objectKey);
+        /// <param name="poolName">对象池名<</param>
+        void DeregisterObjectPool(string poolName);
         /// <summary>
         /// 注销对象池;
         /// </summary>
-        /// <param name="name">对象的名称</param>
-        void DeregisterObjectPool(string name);
-
+        /// <param name="pool">对象池</param>
+        void DeregisterObjectPool(IObjectPool pool);
         /// <summary>
-        /// 获得对象池;
+        /// 获取对象池；
         /// </summary>
-        /// <param name="objectKey">对象池key</param>
-        /// <returns>对象池对象的接口</returns>
-        IObjectPool GetObjectPool(ObjectPoolKey objectKey);
-        /// <summary>
-        /// 获得对象池;
-        /// </summary>
-        /// <param name="name">对象的名称</param>
-        /// <returns>对象池对象的接口</returns>
-        IObjectPool GetObjectPool(string name);
-
+        /// <param name="poolName">对象池名</param>
+        /// <param name="pool">对象池</param>
+        /// <returns>获取结果</returns>
+        bool GetObjectPool(string poolName, out IObjectPool pool);
         /// <summary>
         /// 是否存在对象池；
         /// </summary>
-        /// <param name="objectKey">对象池key</param>
+        /// <param name="poolName">对象池名</param>
         /// <returns>是否存在</returns>
-        bool HasObjectPool(ObjectPoolKey objectKey);
-        /// <summary>
-        /// 是否存在对象池；
-        /// </summary>
-        /// <param name="name">对象的名称</param>
-        /// <returns>是否存在</returns>
-        bool HasObjectPool(string name);
-
+        bool HasObjectPool(string poolName);
         /// <summary>
         /// 注销所有池对象
         /// </summary>
