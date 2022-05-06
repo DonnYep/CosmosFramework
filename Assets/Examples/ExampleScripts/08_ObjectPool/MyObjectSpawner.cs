@@ -7,7 +7,7 @@ namespace Cosmos.Test
     /// 使用框架中的对象池，有相当多参数需要自定义维护，自定义可控性更高；
     /// 相对易维护的方式是使用实体Entity模块；
     /// </summary>
-    public class MyObjectSpawner: MonoBehaviour
+    public class MyObjectSpawner : MonoBehaviour
     {
         [SerializeField] Transform spawnRoot;
         [SerializeField] Transform despawnRoot;
@@ -25,14 +25,14 @@ namespace Cosmos.Test
         Queue<GameObject> sphereCache = new Queue<GameObject>();
         Queue<GameObject> capsuleCache = new Queue<GameObject>();
 
-        void Start()
+        async void Start()
         {
             CosmosEntry.ResourceManager.AddOrUpdateBuildInLoadHelper(Resource.ResourceLoadMode.Resource, new QuarkLoader());
             objectPoolManager = CosmosEntry.ObjectPoolManager;
 
-            capsulePool = objectPoolManager.RegisterObjectPool(new ObjectAssetInfo(resCapsule, resCapsule));
-            spherePool = objectPoolManager.RegisterObjectPool(new ObjectAssetInfo(resSphere, resSphere));
-            cubePool = objectPoolManager.RegisterObjectPool(new ObjectAssetInfo(resCube, resCube));
+            capsulePool = await objectPoolManager.RegisterObjectPoolAsync(new ObjectPoolAssetInfo(resCapsule, resCapsule));
+            spherePool = await objectPoolManager.RegisterObjectPoolAsync(new ObjectPoolAssetInfo(resSphere, resSphere));
+            cubePool = await objectPoolManager.RegisterObjectPoolAsync(new ObjectPoolAssetInfo(resCube, resCube));
 
             capsulePool.OnObjectSpawn += OnObjectSpawn;
             cubePool.OnObjectSpawn += OnObjectSpawn;
@@ -46,7 +46,7 @@ namespace Cosmos.Test
             tickTimer.AddTask(100, OnSpawnTime, null, int.MaxValue);
             //此写法的实际意义为，生成的单位存活时间为15秒；
             //await new WaitForSeconds(15f);
-            tickTimer.AddTask(100, 15000,OnDespawnTime, null, int.MaxValue);
+            tickTimer.AddTask(100, 15000, OnDespawnTime, null, int.MaxValue);
         }
         void Update()
         {
@@ -96,7 +96,7 @@ namespace Cosmos.Test
         /// <summary>
         /// 对象被对象池回收事件；
         /// </summary>
-        void  OnObjectDespawn(GameObject go)
+        void OnObjectDespawn(GameObject go)
         {
             go.transform.SetParent(despawnRoot);
             go.transform.ResetLocalTransform();

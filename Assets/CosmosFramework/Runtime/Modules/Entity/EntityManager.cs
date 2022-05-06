@@ -143,7 +143,7 @@ namespace Cosmos.Entity
                 throw new ArgumentNullException("Entity group name is invalid.");
             }
             entityGroupDict.Remove(entityGroupName, out var entityGroup);
-            objectPoolManager.DeregisterObjectPool(entityGroup.ObjectPool.ObjectKey);
+            objectPoolManager.DeregisterObjectPool(entityGroup.ObjectPool.ObjectPoolName);
             EntityGroup.Release(entityGroup);
 
         }
@@ -485,7 +485,7 @@ namespace Cosmos.Entity
             var entityGroup = (EntityGroup)entity.EntityGroup;
             if (entityGroup != null)
             {
-                entityGroup.ObjectPool.Despawn(entity.EntityInstance);
+                entityGroup.ObjectPool.Despawn(entity.EntityInstance.CastTo<UnityEngine.GameObject>());
                 entityGroup.EntityGroupHelper.OnEntityDespawn(entity.EntityInstance);
                 entityGroup.RemoveEntity(entity);
             }
