@@ -50,7 +50,7 @@ namespace Quark.Editor
             WithoutManifest = true;
             NameHashType = AssetBundleHashType.DefaultName;
             UseOffsetEncryptionForAssetBundle = false;
-            EncryptionOffsetForAssetBundle = 0;
+            EncryptionOffsetForAssetBundle = 32;
             UseAesEncryptionForBuildInfo = false;
             AesEncryptionKeyForBuildInfo = "QuarkAssetAesKey";
             BuildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression;

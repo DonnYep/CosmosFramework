@@ -128,7 +128,7 @@ namespace Quark.Editor
             if (assetDatabaseTabData.GenerateAssetPathCode)
                 AssetDataBaseModeCreatePathScript();
             yield return null;
-            EditorUtil.Debug.LogInfo("Quark asset  build done ");
+            QuarkUtility.LogInfo("Quark asset  build done ");
         }
         void ADBModeClear()
         {
@@ -212,7 +212,7 @@ namespace Quark.Editor
 
                             if (quarkLowerExt == lowerExtension)
                             {
-                                var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength).Replace("\\","/");
+                                var assetPath = file.FullName.Remove(0, QuarkAssetWindow.FilterLength).Replace("\\", "/");
                                 var assetName = file.Name.Replace(file.Extension, string.Empty);
                                 var type = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
                                 var assetBundleName = QuarkUtility.FormatAssetBundleName(files.Key);
