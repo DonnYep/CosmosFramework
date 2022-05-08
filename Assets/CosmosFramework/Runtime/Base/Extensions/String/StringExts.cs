@@ -48,5 +48,23 @@ namespace Cosmos
             var b = Convert.FromBase64String(@this);
             return Encoding.Default.GetString(b);
         }
+        /// <summary>
+        /// 获取字符串之间的内容
+        /// </summary>
+        /// <param name="start">首部</param>
+        /// <param name="end">尾部</param>
+        /// <param name="inculdeStartAndEnd">是否包含首位</param>
+        /// <returns>首尾之间的字段</returns>
+        public static string Between(this string @this, string start, string end, bool inculdeStartAndEnd = false)
+        {
+            if (start.Equals(end))
+                throw new ArgumentException("Start string can't equals a end string.");
+            int startIndex = @this.LastIndexOf(start) + 1;
+            int endIndex = @this.LastIndexOf(end) - 1 - @this.LastIndexOf(start);
+            if (!inculdeStartAndEnd)
+                return @this.Substring(startIndex + start.Length, endIndex - end.Length);
+            else
+                return @this.Substring(startIndex, endIndex + end.Length);
+        }
     }
 }

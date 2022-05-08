@@ -35,7 +35,7 @@ namespace Cosmos.Resource
         /// 切换当前默认的加载模式；
         /// </summary>
         /// <param name="resourceLoadMode">加载模式</param>
-        public void SwitchBuildInLoadMode(ResourceLoadMode resourceLoadMode)
+        public void SwitchLoadMode(ResourceLoadMode resourceLoadMode)
         {
             if (loadChannelDict.TryGetValue(resourceLoadMode, out var channel))
             {

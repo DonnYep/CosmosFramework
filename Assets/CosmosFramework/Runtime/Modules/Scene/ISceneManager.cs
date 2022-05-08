@@ -92,6 +92,5 @@ namespace Cosmos.Scene
         /// <param name="callback">场景卸载完毕后的回调</param>
         /// <returns>协程对象</returns>
         Coroutine UnloadSceneAsync(ISceneInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null);
-
     }
 }

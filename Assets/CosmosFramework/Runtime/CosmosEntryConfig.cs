@@ -18,7 +18,7 @@ namespace Cosmos
             if (LaunchAppDomainModules)
             {
                 CosmosEntry.LaunchAppDomainModules();
-                CosmosEntry.ResourceManager.SwitchBuildInLoadMode(ResourceLoadMode);
+                CosmosEntry.ResourceManager.SwitchLoadMode(ResourceLoadMode);
             }
         }
     }

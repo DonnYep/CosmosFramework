@@ -9,7 +9,6 @@ namespace Cosmos.Resource
     //TODO AssetBundleLoader 需要重写
     public class AssetBundleLoader : IResourceLoadHelper
     {
-
         /// <summary>
         /// AssetBundle资源加载根路径
         /// </summary>

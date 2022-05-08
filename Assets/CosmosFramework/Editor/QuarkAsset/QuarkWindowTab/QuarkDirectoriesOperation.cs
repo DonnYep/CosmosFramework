@@ -6,21 +6,21 @@ namespace Quark.Editor
 {
     public class QuarkDirectoriesOperation
     {
-        QuarkDirectoriesTreeView quarjTreeView;
+        QuarkDirectoriesTreeView quarkTreeView;
         TreeViewState treeViewState;
         SearchField searchField;
 
         public void Clear()
         {
-            quarjTreeView.Clear();
+            quarkTreeView.Clear();
         }
         public void OnEnable()
         {
             if (treeViewState == null)
                 treeViewState = new TreeViewState();
-            quarjTreeView = new QuarkDirectoriesTreeView(treeViewState);
+            quarkTreeView = new QuarkDirectoriesTreeView(treeViewState);
             searchField = new SearchField();
-            searchField.downOrUpArrowKeyPressed += quarjTreeView.SetFocusAndEnsureSelectedItem;
+            searchField.downOrUpArrowKeyPressed += quarkTreeView.SetFocusAndEnsureSelectedItem;
         }
         public void OnGUI(Rect rect)
         {
@@ -66,7 +66,7 @@ namespace Quark.Editor
                         //}
                         if (!(obj is MonoScript)/*&&!(obj is SceneAsset)*/)
                         {
-                            quarjTreeView.AddPath(path);
+                            quarkTreeView.AddPath(path);
                         }
                     }
                 }
@@ -95,13 +95,13 @@ namespace Quark.Editor
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
             GUILayout.Space(128);
             GUILayout.FlexibleSpace();
-            quarjTreeView.searchString = searchField.OnToolbarGUI(quarjTreeView.searchString);
+            quarkTreeView.searchString = searchField.OnToolbarGUI(quarkTreeView.searchString);
             GUILayout.EndHorizontal();
         }
         void DoTreeView()
         {
             Rect rect = GUILayoutUtility.GetRect(0, 8192, 0, 8192);
-            quarjTreeView.OnGUI(rect);
+            quarkTreeView.OnGUI(rect);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Cosmos.Resource
         /// 切换当前默认的加载模式；
         /// </summary>
         /// <param name="resourceLoadMode">加载模式</param>
-        void SwitchBuildInLoadMode(ResourceLoadMode resourceLoadMode);
+        void SwitchLoadMode(ResourceLoadMode resourceLoadMode);
         /// <summary>
         /// 添加者更新替换内置的加载帮助体；
         /// </summary>

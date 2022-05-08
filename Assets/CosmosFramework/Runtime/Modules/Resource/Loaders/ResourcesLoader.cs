@@ -183,9 +183,9 @@ namespace Cosmos.Resource
                 }
                 yield return new WaitForEndOfFrame();
             }
+            progress?.Invoke(1);
             if (condition != null)
                 yield return new WaitUntil(condition);
-            progress?.Invoke(1);
             callback?.Invoke();
             IsProcessing = false;
         }

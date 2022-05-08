@@ -9,11 +9,11 @@ namespace Cosmos.Audio
         /// 声音组别；
         /// </summary>
         public string AudioGroupName{ get; set; }
-        public AudioAssetInfo(string assetPath,string audioName) : base(assetPath)
+        public AudioAssetInfo(string audioName, string assetPath) : base(assetPath)
         {
             this.audioName = audioName;
         }
-        public AudioAssetInfo(string assetBundleName, string assetPath,string audioName) : base(assetBundleName, assetPath)
+        public AudioAssetInfo(string audioName, string assetBundleName, string assetPath) : base(assetBundleName, assetPath)
         {
             this.audioName = audioName;
         }

@@ -553,6 +553,28 @@ namespace Cosmos
                 }
                 return -1;
             }
+            /// <summary>
+            /// 判断是否是二级路径；
+            /// </summary>
+            /// <param name="basePath">上级路径</param>
+            /// <param name="subPath">下级路径</param>
+            /// <returns>是否是二级路径</returns>
+            public static bool IsSubDirectory(string basePath, string subPath)
+            {
+                DirectoryInfo baseDirInfo = new DirectoryInfo(basePath);
+                DirectoryInfo subDirInfo = new DirectoryInfo(subPath);
+                bool isSubDir = false;
+                while (subDirInfo.Parent != null)
+                {
+                    if (subDirInfo.Parent.FullName == baseDirInfo.FullName)
+                    {
+                        isSubDir = true;
+                        break;
+                    }
+                    else subDirInfo = subDirInfo.Parent;
+                }
+                return isSubDir;
+            }
         }
     }
 }
