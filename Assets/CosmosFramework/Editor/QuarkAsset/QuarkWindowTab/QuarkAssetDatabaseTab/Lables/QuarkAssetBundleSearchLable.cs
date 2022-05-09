@@ -1,55 +1,65 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-
+using UnityEngine;
 namespace Quark.Editor
 {
-    public class QuarkDirectoriesOperation
+    public  class QuarkAssetBundleSearchLable
     {
-        QuarkDirectoriesTreeView quarkTreeView;
+        QuarkAssetBundleTreeView treeView;
         TreeViewState treeViewState;
         SearchField searchField;
-
-        public void Clear()
-        {
-            quarkTreeView.Clear();
-        }
         public void OnEnable()
         {
-            if (treeViewState == null)
-                treeViewState = new TreeViewState();
-            quarkTreeView = new QuarkDirectoriesTreeView(treeViewState);
             searchField = new SearchField();
-            searchField.downOrUpArrowKeyPressed += quarkTreeView.SetFocusAndEnsureSelectedItem;
+            treeViewState = new TreeViewState();
+            treeView = new QuarkAssetBundleTreeView(treeViewState);
+            searchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
         }
-        public void OnGUI(Rect rect)
+        public void OnGUI()
         {
-            if (UnityEngine.Event.current.type == EventType.DragUpdated)
+            GUILayout.BeginVertical();
+            DrawDragRect();
+            DrawToolbar();
+            DrawTreeView();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("ClearAllAssetBundle"))
+            {
+                QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs?.Clear();
+                Clear();
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+        }
+        public void Clear()
+        {
+            treeView.Clear();
+        }
+        void DrawDragRect()
+        {
+            if (Event.current.type == EventType.DragUpdated)
             {
                 DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-                UnityEngine.Event.current.Use();
+                Event.current.Use();
             }
-            else if (UnityEngine.Event.current.type == EventType.DragPerform)
+            else if (Event.current.type == EventType.DragPerform)
             {
                 DragAndDrop.AcceptDrag();
                 if (DragAndDrop.paths.Length == 0 && DragAndDrop.objectReferences.Length > 0)
                 {
-                    //QuarkUtility.LogInfo("GameObject");
                     foreach (Object obj in DragAndDrop.objectReferences)
                     {
                         QuarkUtility.LogInfo("- " + obj);
                     }
                 }
-                // Object outside project. It mays from File Explorer (Finder in OSX).
                 else if (DragAndDrop.paths.Length > 0 && DragAndDrop.objectReferences.Length == 0)
                 {
-                    //QuarkUtility.LogInfo("File");
                     foreach (string path in DragAndDrop.paths)
                     {
                         QuarkUtility.LogInfo("- " + path);
                     }
                 }
-                // Unity Assets including folder.
                 else if (DragAndDrop.paths.Length == DragAndDrop.objectReferences.Length)
                 {
                     for (int i = 0; i < DragAndDrop.objectReferences.Length; i++)
@@ -66,11 +76,10 @@ namespace Quark.Editor
                         //}
                         if (!(obj is MonoScript)/*&&!(obj is SceneAsset)*/)
                         {
-                            quarkTreeView.AddPath(path);
+                            treeView.AddPath(path);
                         }
                     }
                 }
-                // Log to make sure we cover all cases.
                 else
                 {
                     QuarkUtility.LogInfo("Out of reach");
@@ -86,22 +95,19 @@ namespace Quark.Editor
                     }
                 }
             }
-            DoToolbar();
-            DoTreeView();
         }
-
-        void DoToolbar()
+        void DrawToolbar()
         {
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
-            GUILayout.Space(128);
-            GUILayout.FlexibleSpace();
-            quarkTreeView.searchString = searchField.OnToolbarGUI(quarkTreeView.searchString);
+            treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
             GUILayout.EndHorizontal();
         }
-        void DoTreeView()
+        void DrawTreeView()
         {
-            Rect rect = GUILayoutUtility.GetRect(0, 8192, 0, 8192);
-            quarkTreeView.OnGUI(rect);
+            GUILayout.BeginVertical("box");
+            Rect rect = GUILayoutUtility.GetRect(32, 8192, 32, 8192);
+            treeView.OnGUI(rect);
+            GUILayout.EndVertical();
         }
     }
 }

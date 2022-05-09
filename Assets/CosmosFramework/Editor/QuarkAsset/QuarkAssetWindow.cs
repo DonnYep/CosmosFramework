@@ -15,7 +15,7 @@ namespace Quark.Editor
         public static int FilterLength { get; private set; }
         static QuarkAssetDatabaseTab quarkAssetDatabaseTab = new QuarkAssetDatabaseTab();
         static QuarkAssetBundleTab quarkAssetBundleTab = new QuarkAssetBundleTab();
-        Vector2 m_ScrollPos;
+        Vector2 scrollPosition;
 
         public QuarkAssetWindow()
         {
@@ -51,14 +51,14 @@ namespace Quark.Editor
             GUILayout.EndHorizontal();
             GUILayout.Space(16);
             var bar = (AssetInfoBar)selectedBar;
-            m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             switch (bar)
             {
                 case AssetInfoBar.AssetDatabaseMode:
-                    quarkAssetDatabaseTab.OnGUI(position);
+                    quarkAssetDatabaseTab.OnGUI();
                     break;
                 case AssetInfoBar.AssetBundleMode:
-                    quarkAssetBundleTab.OnGUI(position);
+                    quarkAssetBundleTab.OnGUI();
                     break;
             }
             EditorGUILayout.EndScrollView();

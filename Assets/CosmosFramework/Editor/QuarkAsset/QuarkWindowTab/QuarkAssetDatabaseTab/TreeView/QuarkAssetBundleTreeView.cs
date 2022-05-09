@@ -9,7 +9,7 @@ using Quark.Asset;
 
 namespace Quark.Editor
 {
-    public class QuarkDirectoriesTreeView : TreeView
+    public class QuarkAssetBundleTreeView : TreeView
     {
         List<string> pathList = new List<string>();
         bool canRender { get { return QuarkEditorDataProxy.QuarkAssetDataset != null; } }
@@ -71,7 +71,7 @@ namespace Quark.Editor
             }
             Reload();
         }
-        public QuarkDirectoriesTreeView(TreeViewState treeViewState)
+        public QuarkAssetBundleTreeView(TreeViewState treeViewState)
             : base(treeViewState)
         {
             Reload();

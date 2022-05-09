@@ -45,7 +45,7 @@ namespace Quark.Editor
                 EditorUtil.SaveData(AssetBundleTabDataFileName, assetBundleTabData);
             }
         }
-        public void OnGUI(Rect rect)
+        public void OnGUI()
         {
             assetBundleTabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", assetBundleTabData.BuildTarget);
             assetBundleTabData.OutputPath = EditorGUILayout.TextField("OutputPath", assetBundleTabData.OutputPath.Trim());

@@ -10,7 +10,7 @@ namespace Quark.Asset
     [Serializable]
     public sealed class QuarkAssetDataset : ScriptableObject, IDisposable, IQuarkLoaderData
     {
-        Dictionary<string, List<QuarkAssetObject>> assetBundleAssetObjectDict;
+        Dictionary<string, List<QuarkAssetObject>> assetBundleDict;
         [SerializeField]
         int quarkAssetCount;
         [SerializeField]
@@ -42,13 +42,13 @@ namespace Quark.Asset
         /// <summary>
         /// AB名===AB中的资源；
         /// </summary>
-        public Dictionary<string, List<QuarkAssetObject>> AssetBundleAssetObjectDict
+        public Dictionary<string, List<QuarkAssetObject>> AssetBundleDict
         {
             get
             {
-                if (assetBundleAssetObjectDict == null)
-                    assetBundleAssetObjectDict = new Dictionary<string, List<QuarkAssetObject>>();
-                return assetBundleAssetObjectDict;
+                if (assetBundleDict == null)
+                    assetBundleDict = new Dictionary<string, List<QuarkAssetObject>>();
+                return assetBundleDict;
             }
         }
         public void Dispose()
@@ -56,7 +56,7 @@ namespace Quark.Asset
             quarkAssetCount = 0;
             quarkAssetObjectList?.Clear();
             dirHashPairs?.Clear();
-            assetBundleAssetObjectDict?.Clear();
+            assetBundleDict?.Clear();
         }
     }
 }
