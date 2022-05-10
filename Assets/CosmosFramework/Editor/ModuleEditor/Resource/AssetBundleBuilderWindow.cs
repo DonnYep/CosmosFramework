@@ -13,7 +13,7 @@ namespace Cosmos.Editor
         {
             this.titleContent = new GUIContent("AssetBundleBuilder");
         }
-        [MenuItem("Window/Cosmos/AssetBundleBuilder")]
+        [MenuItem("Window/Cosmos/ModuleEditor/Resource")]
         public static void OpenIntegrateWindow()
         {
             var window = GetWindow<AssetBundleBuilderWindow>();

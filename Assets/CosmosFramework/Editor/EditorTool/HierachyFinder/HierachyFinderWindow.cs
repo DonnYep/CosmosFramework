@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Cosmos.Editor
 {
     public class HierachyFinderWindow : EditorWindow{
-        [MenuItem("Window/Cosmos/HierachyFinder")]
+        [MenuItem("Window/Cosmos/EditorTool/HierachyFinder")]
         public static void OpenWindow()
         {
             var window = GetWindow<HierachyFinderWindow>();
