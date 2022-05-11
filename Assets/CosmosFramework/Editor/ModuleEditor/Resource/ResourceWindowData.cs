@@ -3,12 +3,12 @@ using UnityEditor;
 namespace Cosmos.Editor
 {
     [Serializable]
-    public class AssetBundleBuilderData
+    public class ResourceWindowData
     {
         public BuildAssetBundleOptions BuildAssetBundleOptions;
         public BuildTarget BuildTarget;
         public string OutputPath;
-        public AssetBundleBuilderData()
+        public ResourceWindowData()
         {
             BuildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression;
             BuildTarget = BuildTarget.StandaloneWindows;

@@ -5,18 +5,18 @@ using System.IO;
 
 namespace Cosmos.Editor
 {
-    public class AssetBundleBuilderWindow : EditorWindow
+    public class ResourceWindow : EditorWindow
     {
-        AssetBundleBuilderData data;
+        ResourceWindowData data;
         readonly string AssetBundleBuilderDataName = "AssetBundleBuilderData.json";
-        public AssetBundleBuilderWindow()
+        public ResourceWindow()
         {
             this.titleContent = new GUIContent("AssetBundleBuilder");
         }
         [MenuItem("Window/Cosmos/ModuleEditor/Resource")]
         public static void OpenIntegrateWindow()
         {
-            var window = GetWindow<AssetBundleBuilderWindow>();
+            var window = GetWindow<ResourceWindow>();
             window.maxSize = EditorUtil.MaxWinSize;
             window.minSize = EditorUtil.DevWinSize;
         }
@@ -24,11 +24,11 @@ namespace Cosmos.Editor
         {
             try
             {
-                data = EditorUtil.GetData<AssetBundleBuilderData>(AssetBundleBuilderDataName);
+                data = EditorUtil.GetData<ResourceWindowData>(AssetBundleBuilderDataName);
             }
             catch
             {
-                data = new AssetBundleBuilderData();
+                data = new ResourceWindowData();
                 EditorUtil.SaveData(AssetBundleBuilderDataName, data);
             }
         }
@@ -58,7 +58,7 @@ namespace Cosmos.Editor
             }
             if (GUILayout.Button("Reset"))
             {
-                data = new AssetBundleBuilderData();
+                data = new ResourceWindowData();
                 Repaint();
             }
             EditorGUILayout.EndHorizontal();
