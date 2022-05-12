@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using UnityEditor.IMGUI.Controls;
 using System.IO;
 
 namespace Cosmos.Editor
 {
-    public class ResourceWindow : EditorWindow
+    public class ResourceWindow : ModuleWindowBase
     {
         ResourceWindowData data;
         readonly string AssetBundleBuilderDataName = "AssetBundleBuilderData.json";

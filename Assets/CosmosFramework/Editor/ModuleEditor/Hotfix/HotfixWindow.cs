@@ -4,7 +4,7 @@ using System.IO;
 using System;
 namespace Cosmos.Editor.Hotfix
 {
-    public class HotfixWindow : EditorWindow
+    public class HotfixWindow : ModuleWindowBase
     {
         static HotfixWindowData hotfixWindowData;
         internal const string HotfixWindowDataFileName = "HotfixWindowData.json";
