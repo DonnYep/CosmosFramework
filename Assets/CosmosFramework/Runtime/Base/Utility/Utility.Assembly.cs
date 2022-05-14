@@ -9,6 +9,22 @@ namespace Cosmos
     {
         public static class Assembly
         {
+
+            /// <summary>
+            /// 获取AppDomain中指定的程序集
+            /// </summary>
+            /// <param name="assemblyName">程序集名</param>
+            /// <returns>程序集</returns>
+            public static System.Reflection.Assembly GetAssembly(string assemblyName)
+            {
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                foreach (var assembly in assemblies)
+                {
+                    if (assembly.GetName().Name == assemblyName)
+                        return assembly;
+                }
+                return null;
+            }
             /// <summary>
             /// 反射工具，得到反射类的对象；
             /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
@@ -394,6 +410,12 @@ where K : class
                     handler.Invoke(f.Name, f.GetValue(obj));
                 }
             }
+            /// <summary>
+            /// 遍历实例对象上的所有属性；
+            /// </summary>
+            /// <param name="type">实例对象类型</param>
+            /// <param name="obj">实例对象</param>
+            /// <param name="handler">遍历到一条字段执行的方法</param>
             public static void TraverseInstanceAllProperties(Type type, object obj, Action<string, object> handler)
             {
                 if (type == null)

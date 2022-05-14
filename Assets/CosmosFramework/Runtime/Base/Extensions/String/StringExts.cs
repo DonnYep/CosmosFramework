@@ -66,5 +66,24 @@ namespace Cosmos
             else
                 return @this.Substring(startIndex, endIndex + end.Length);
         }
+        /// <summary>
+		/// 移除首个字符
+		/// </summary>
+		public static string RemoveFirstChar(this string @this)
+        {
+            if (string.IsNullOrEmpty(@this))
+                return @this;
+            return @this.Substring(1);
+        }
+        /// <summary>
+        /// 移除末尾字符
+        /// </summary>
+        public static string RemoveLastChar(this string @this)
+        {
+            if (string.IsNullOrEmpty(@this))
+                return @this;
+            return @this.Substring(0, @this.Length - 1);
+        }
+
     }
 }

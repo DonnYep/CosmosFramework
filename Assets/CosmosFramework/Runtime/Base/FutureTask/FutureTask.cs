@@ -18,8 +18,7 @@ namespace Cosmos
     ///FutureTask是异步的监听器，包含异步完成时的检测，本身不具备异步逻辑处理功能；
     ///异步操作本身请使用真正的异步操作；
     /// </summary>
-    /// <see cref="Task">Return vaalue</see>
-    /// <see cref="UnityEngine. Coroutine">Return vaalue</see>
+    /// <see cref="Task">Return value</see>
     public class FutureTask : IReference
     {
         static int FutureTaskIndex = 0;
