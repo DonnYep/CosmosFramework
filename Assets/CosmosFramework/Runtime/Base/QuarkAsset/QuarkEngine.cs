@@ -50,7 +50,7 @@ namespace Quark
         }
         QuarkDownloader quarkDownloader;
         QuarkComparator quarkComparator;
-        Dictionary<QuarkAssetLoadMode, IQuarkAssetLoader> quarkLoaderDict;
+        Dictionary<QuarkAssetLoadMode, QuarkAssetLoader> quarkLoaderDict;
         /// <summary>
         /// 当检测到最新的；
         /// </summary>
@@ -64,7 +64,7 @@ namespace Quark
             quarkComparator = new QuarkComparator();
             quarkDownloader = new QuarkDownloader();
             quarkComparator.Initiate(OnCompareSuccess, OnCompareFailure);
-            quarkLoaderDict = new Dictionary<QuarkAssetLoadMode, IQuarkAssetLoader>();
+            quarkLoaderDict = new Dictionary<QuarkAssetLoadMode, QuarkAssetLoader>();
             quarkLoaderDict[QuarkAssetLoadMode.AssetDatabase] = new QuarkAssetDatabaseLoader();
             quarkLoaderDict[QuarkAssetLoadMode.BuiltAssetBundle] = new QuarkAssetBundleLoader();
         }
@@ -200,7 +200,7 @@ where T : UnityEngine.Object
 where T : UnityEngine.Object
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.LoadAssetAsync(assetName, assetExtension, callback);
+                return loader.LoadAssetAsync(assetName, assetExtension, callback);
             return null;
         }
         internal Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
@@ -215,34 +215,58 @@ where T : UnityEngine.Object
                 return loader.LoadAssetWithSubAssetsAsync(assetName, assetExtension, callback);
             return null;
         }
-        internal Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
+        internal Coroutine LoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                return loader.LoadScenetAsync(sceneName, progress, callback, additive);
+                return loader.LoadSceneAsync(sceneName, progressProvider, progress, condition, callback, additive);
             return null;
         }
-
-        internal void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
+        internal void UnloadAsset(string assetName, string assetExtension)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.UnLoadAllAssetBundle(unloadAllLoadedObjects);
+                loader.UnloadAsset(assetName, assetExtension);
         }
-        internal void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        internal void UnloadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.UnLoadAssetBundle(assetBundleName, unloadAllLoadedObjects);
+                loader.UnloadAllAssetBundle(unloadAllLoadedObjects);
         }
-        internal QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        internal void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.GetInfo<T>(assetName, assetExtension);
-            return QuarkObjectInfo.None;
+                loader.UnloadAssetBundle(assetBundleName, unloadAllLoadedObjects);
         }
-        internal QuarkObjectInfo[] GetAllInfos()
+        internal Coroutine UnloadSceneAsync(string sceneName, Action<float> progress, Action callback)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                loader.GetAllInfos();
-            return new QuarkObjectInfo[0];
+                return loader.UnloadSceneAsync(sceneName, progress, callback);
+            return null;
+        }
+        internal Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback)
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.UnloadAllSceneAsync(progress, callback);
+            return null;
+        }
+        internal bool GetInfo<T>(string assetName, string assetExtension, out QuarkAssetObjectInfo info) where T : UnityEngine.Object
+        {
+            info = QuarkAssetObjectInfo.None;
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.GetInfo<T>(assetName, assetExtension, out info);
+            return false;
+        }
+        internal bool GetInfo(string assetName, string assetExtension, out QuarkAssetObjectInfo info)
+        {
+            info = QuarkAssetObjectInfo.None;
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.GetInfo(assetName, assetExtension, out info);
+            return false;
+        }
+        internal QuarkAssetObjectInfo[] GetAllLoadedInfos()
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                loader.GetAllLoadedInfos();
+            return new QuarkAssetObjectInfo[0];
         }
         /// <summary>
         /// 获取比较manifest成功；

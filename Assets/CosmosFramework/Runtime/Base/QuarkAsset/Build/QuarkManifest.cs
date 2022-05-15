@@ -8,12 +8,12 @@ namespace Quark.Asset
     /// 含每个ab包中所包含的文件信息，ab的hash等；
     /// </summary>
     [Serializable]
-    public class QuarkManifest
+    public class QuarkManifest : IQuarkLoaderData
     {
         [Serializable]
         public class ManifestItem
         {
-            public string ABName{ get; set; }
+            public string ABName { get; set; }
             /// <summary>
             /// Manifest AssetFileHash
             /// AB打包出来之后生成的Hash码；
@@ -25,9 +25,9 @@ namespace Quark.Asset
             public long ABFileSize { get; set; }
             /// <summary>
             /// Assets根目录下的相对路径数组；
-            /// AssetPath===AssetName(case sensitivity)
+            /// AssetPath===[AssetName(case sensitivity)===AssetExtension]
             /// </summary>
-            public Dictionary<string, string> Assets { get; set; }
+            public Dictionary<string, QuarkAssetObject> Assets { get; set; }
         }
         /// <summary>
         /// Key:ABName;Value:Manifest;

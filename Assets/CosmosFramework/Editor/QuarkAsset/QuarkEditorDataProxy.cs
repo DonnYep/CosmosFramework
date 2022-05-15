@@ -1,9 +1,10 @@
 ﻿using Quark.Asset;
-namespace Cosmos.Editor.Quark
+namespace Quark.Editor
 {
     public class QuarkEditorDataProxy
     {
-        public static bool CanRender { get; set; }
         public static QuarkAssetDataset  QuarkAssetDataset{ get; set; }
+        internal static QuarkAssetDatabaseTabData QuarkAssetDatabaseTabData { get; set; }
+        internal static QuarkAssetBundleTabData QuarkAssetBundleTabData { get; set; }
     }
 }

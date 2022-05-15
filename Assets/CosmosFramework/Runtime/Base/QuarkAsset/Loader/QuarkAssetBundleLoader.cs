@@ -3,82 +3,49 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Quark.Loader
 {
-    internal class QuarkAssetBundleLoader : IQuarkAssetLoader
+    internal class QuarkAssetBundleLoader : QuarkAssetLoader
     {
         string PersistentPath { get { return QuarkDataProxy.PersistentPath; } }
         /// <summary>
         /// 存储ab包之间的引用关系；
         /// </summary>
         QuarkBuildInfo QuarkBuildInfo { get { return QuarkDataProxy.QuarkBuildInfo; } }
-        /// <summary>
-        /// Key : [ABName] ; Value : [AssetBundle]
-        /// </summary>
-        Dictionary<string, AssetBundle> assetBundleDict = new Dictionary<string, AssetBundle>();
-        /// <summary>
-        /// BuiltAssetBundle 模式下资源的映射；
-        /// Key : AssetName---Value :  Lnk [QuarkAssetABObject]
-        /// </summary>` 
-        Dictionary<string, LinkedList<QuarkAssetBundleObject>> builtAssetBundleMap
-            = new Dictionary<string, LinkedList<QuarkAssetBundleObject>>();
-
-        /// <summary>
-        /// Hash===QuarkObjectInfo
-        /// </summary>
-        Dictionary<int, QuarkObjectInfo> hashQuarkObjectInfoDict = new Dictionary<int, QuarkObjectInfo>();
-
-        public void SetLoaderData(object customeData)
+        public override void SetLoaderData(IQuarkLoaderData loaderData)
         {
-            SetBuiltAssetBundleModeData(customeData as QuarkManifest);
+            SetBuiltAssetBundleModeData(loaderData as QuarkManifest);
         }
-        public T LoadAsset<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        public override T LoadAsset<T>(string assetName, string assetExtension)
         {
             T asset = null;
             string assetBundleName = string.Empty;
-            QuarkAssetBundleObject abObject = null;
             AssetBundle assetBundle = null;
-            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
+            var hasWapper = GetAssetObjectWapper<T>(assetName, assetExtension, out var wapper);
+            if (hasWapper)
             {
-                if (string.IsNullOrEmpty(assetExtension))
-                {
-                    abObject = abLnk.First.Value;
-                    assetBundleName = abObject.AssetBundleName;
-                }
-                else
-                {
-                    foreach (var ab in abLnk)
-                    {
-                        if (ab.AssetExtension == assetExtension)
-                        {
-                            abObject = ab;
-                            assetBundleName = ab.AssetBundleName;
-                            break;
-                        }
-                    }
-                }
+                assetBundleName = wapper.QuarkAssetObject.AssetBundleName;
                 if (string.IsNullOrEmpty(assetBundleName))
                 {
                     return null;
                 }
                 if (assetBundleDict.ContainsKey(assetBundleName))
                 {
-                    assetBundle = assetBundleDict[assetBundleName];
-                    asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
+                    assetBundle = assetBundleDict[assetBundleName].AssetBundle;
+                    asset = assetBundle.LoadAsset<T>(assetName);
                     if (asset != null)
                     {
-                        IncrementQuarkObjectInfo(abObject);
+                        IncrementQuarkAssetObject(wapper);
                     }
                 }
                 else
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
                     assetBundle = AssetBundle.LoadFromFile(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
-                    assetBundleDict[assetBundleName] = assetBundle;
+                    assetBundleDict[assetBundleName] = new QuarkAssetBundle(assetBundleName, assetBundle);
                     QuarkBuildInfo.AssetData buildInfo = null;
                     foreach (var item in QuarkBuildInfo.AssetDataMaps)
                     {
@@ -101,7 +68,7 @@ namespace Quark.Loader
                                 try
                                 {
                                     AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
-                                    assetBundleDict[dependentABName] = abBin;
+                                    assetBundleDict[dependentABName] = new QuarkAssetBundle(dependentABName, abBin);
                                 }
                                 catch (Exception e)
                                 {
@@ -114,7 +81,7 @@ namespace Quark.Loader
                             asset = assetBundle.LoadAsset<T>(assetName);
                             if (asset != null)
                             {
-                                IncrementQuarkObjectInfo(abObject);
+                                IncrementQuarkAssetObject(wapper);
                             }
                         }
                     }
@@ -122,9 +89,9 @@ namespace Quark.Loader
             }
             return asset;
         }
-        public GameObject LoadPrefab(string assetName, string assetExtension, bool instantiate = false)
+        public override GameObject LoadPrefab(string assetName, string assetExtension, bool instantiate = false)
         {
-            var resGo = LoadAsset<GameObject>(assetName, null);
+            var resGo = LoadAsset<GameObject>(assetName, assetExtension);
             if (instantiate)
             {
                 var go = GameObject.Instantiate(resGo);
@@ -133,49 +100,33 @@ namespace Quark.Loader
             else
                 return resGo;
         }
-        public T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        public override T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension)
         {
             T[] assets = null;
             string assetBundleName = string.Empty;
-            QuarkAssetBundleObject abObject = null;
             AssetBundle assetBundle = null;
-            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
+            var hasWapper = GetAssetObjectWapper<T>(assetName, assetExtension, out var wapper);
+            if (hasWapper)
             {
-                if (string.IsNullOrEmpty(assetExtension))
-                {
-                    abObject = abLnk.First.Value;
-                    assetBundleName = abObject.AssetBundleName;
-                }
-                else
-                {
-                    foreach (var ab in abLnk)
-                    {
-                        if (ab.AssetExtension == assetExtension)
-                        {
-                            abObject = ab;
-                            assetBundleName = ab.AssetBundleName;
-                            break;
-                        }
-                    }
-                }
+                assetBundleName = wapper.QuarkAssetObject.AssetBundleName;
                 if (string.IsNullOrEmpty(assetBundleName))
                 {
                     return null;
                 }
                 if (assetBundleDict.ContainsKey(assetBundleName))
                 {
-                    assetBundle = assetBundleDict[assetBundleName];
-                    assets = assetBundleDict[assetBundleName].LoadAssetWithSubAssets<T>(assetName);
+                    assetBundle = assetBundleDict[assetBundleName].AssetBundle;
+                    assets = assetBundle.LoadAssetWithSubAssets<T>(assetName);
                     if (assets != null)
                     {
-                        IncrementQuarkObjectInfo(abObject);
+                        IncrementQuarkAssetObject(wapper);
                     }
                 }
                 else
                 {
                     var abPath = Path.Combine(PersistentPath, assetBundleName);
                     assetBundle = AssetBundle.LoadFromFile(abPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
-                    assetBundleDict[assetBundleName] = assetBundle;
+                    assetBundleDict[assetBundleName] = new QuarkAssetBundle(assetBundleName, assetBundle);
                     QuarkBuildInfo.AssetData buildInfo = null;
                     foreach (var item in QuarkBuildInfo.AssetDataMaps)
                     {
@@ -198,7 +149,7 @@ namespace Quark.Loader
                                 try
                                 {
                                     AssetBundle abBin = AssetBundle.LoadFromFile(dependentABPath, 0, QuarkDataProxy.QuarkEncryptionOffset);
-                                    assetBundleDict[dependentABName] = abBin;
+                                    assetBundleDict[dependentABName] = new QuarkAssetBundle(assetBundleName, abBin);
                                 }
                                 catch (Exception e)
                                 {
@@ -211,7 +162,7 @@ namespace Quark.Loader
                             assets = assetBundle.LoadAssetWithSubAssets<T>(assetName);
                             if (assets != null)
                             {
-                                IncrementQuarkObjectInfo(abObject);
+                                IncrementQuarkAssetObject(wapper);
                             }
                         }
                     }
@@ -219,11 +170,11 @@ namespace Quark.Loader
             }
             return assets;
         }
-        public Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object
+        public override Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, assetExtension, callback));
         }
-        public Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
+        public override Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync<GameObject>(assetName, assetExtension, (resGo) =>
             {
@@ -238,105 +189,125 @@ namespace Quark.Loader
                 }
             }));
         }
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object
+        public override Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, callback));
         }
-        public Coroutine LoadScenetAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
+        public override Coroutine LoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive = false)
         {
-            return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progress, callback, additive));
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progressProvider, progress, condition, callback, additive));
         }
-        public void UnLoadAllAssetBundle(bool unloadAllLoadedObjects = false)
+        public override void UnloadAsset(string assetName, string assetExtension)
         {
+            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, out var wapper);
+            if (!hasWapper)
+            {
+                QuarkUtility.LogError($"Asset：{assetName}{assetExtension} not existed !");
+                return;
+            }
+            DecrementQuarkAssetObject(wapper);
+        }
+        public override void UnloadAllAssetBundle(bool unloadAllLoadedObjects = false)
+        {
+            foreach (var lnk in quarkAssetObjectDict.Values)
+            {
+                foreach (var wapper in lnk)
+                {
+                    wapper.AssetReferenceCount = 0;
+                }
+            }
             foreach (var assetBundle in assetBundleDict)
             {
-                assetBundle.Value.Unload(unloadAllLoadedObjects);
+                assetBundle.Value.AssetBundle.Unload(unloadAllLoadedObjects);
             }
             assetBundleDict.Clear();
             AssetBundle.UnloadAllAssetBundles(unloadAllLoadedObjects);
+
         }
-        public void UnLoadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        public override void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
             if (assetBundleDict.ContainsKey(assetBundleName))
             {
-                assetBundleDict[assetBundleName].Unload(unloadAllLoadedObjects);
+                var bundle = assetBundleDict[assetBundleName];
+                foreach (var a in bundle.Assets)
+                {
+                    a.AssetReferenceCount = 0;
+                }
+                bundle.AssetBundle.Unload(unloadAllLoadedObjects);
                 assetBundleDict.Remove(assetBundleName);
             }
         }
-        public QuarkObjectInfo GetInfo<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        public override Coroutine UnloadSceneAsync(string sceneName, Action<float> progress, Action callback)
         {
-            QuarkAssetBundleObject abObject = null;
-            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
-            {
-                if (string.IsNullOrEmpty(assetExtension))
-                {
-                    abObject = abLnk.First.Value;
-                }
-                else
-                {
-                    foreach (var ab in abLnk)
-                    {
-                        if (ab.AssetExtension == assetExtension)
-                        {
-                            abObject = ab;
-                            break;
-                        }
-                    }
-                }
-                return hashQuarkObjectInfoDict[abObject.GetHashCode()];
-            }
-            return QuarkObjectInfo.None;
+            return QuarkUtility.Unity.StartCoroutine(EnumUnloadSceneAsync(sceneName, progress, callback));
         }
-        public QuarkObjectInfo[] GetAllInfos()
+        public override Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback)
         {
-            return hashQuarkObjectInfoDict.Values.ToArray();
+            return QuarkUtility.Unity.StartCoroutine(EnumUnloadAllSceneAsync(progress, callback));
+        }
+        /// <summary>
+        /// 增加一个资源对象的引用计数；
+        /// </summary>
+        protected override void IncrementQuarkAssetObject(QuarkAssetObjectWapper wapper)
+        {
+            wapper.AssetReferenceCount++;
+            hashQuarkAssetObjectInfoDict[wapper.GetHashCode()] = wapper.GetQuarkAssetObjectInfo();
+            //增加一个AB的引用计数；
+            if (assetBundleDict.TryGetValue(wapper.QuarkAssetObject.AssetBundleName, out var assetBundle))
+            {
+                assetBundle.ReferenceCount++;
+                assetBundle.Assets.Add(wapper);
+            }
+        }
+        /// <summary>
+        /// 减少一个资源对象的引用计数；
+        /// </summary>
+        protected override void DecrementQuarkAssetObject(QuarkAssetObjectWapper wapper)
+        {
+            wapper.AssetReferenceCount--;
+            var hashCode = wapper.GetHashCode();
+            hashQuarkAssetObjectInfoDict[hashCode] = wapper.GetQuarkAssetObjectInfo();
+            //减少一个AB的引用计数
+            if (assetBundleDict.TryGetValue(wapper.QuarkAssetObject.AssetBundleName, out var assetBundle))
+            {
+                if (wapper.AssetReferenceCount <= 0)
+                {
+                    wapper.AssetReferenceCount = 0;
+                    assetBundle.Assets.Remove(wapper);
+                }
+                assetBundle.ReferenceCount--;
+                if (assetBundle.ReferenceCount == 0)
+                {
+                    assetBundle.AssetBundle.Unload(true);
+                    assetBundleDict.Remove(assetBundle.AssetBundleName);
+                }
+            }
         }
         IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
             where T : UnityEngine.Object
         {
             T[] assets = null;
             string assetBundleName = string.Empty;
-            QuarkAssetBundleObject abObject = null;
-
-            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
+            var hasWapper = GetAssetObjectWapper<T>(assetName, assetExtension, out var wapper);
+            if (hasWapper)
             {
-                if (string.IsNullOrEmpty(assetExtension))
-                {
-                    abObject = abLnk.First.Value;
-                    assetBundleName = abObject.AssetBundleName;
-                }
-                else
-                {
-                    foreach (var ab in abLnk)
-                    {
-                        if (ab.AssetExtension == assetExtension)
-                        {
-                            abObject = ab;
-                            assetBundleName = ab.AssetBundleName;
-                            break;
-                        }
-                    }
-                }
+                assetBundleName = wapper.QuarkAssetObject.AssetBundleName;
             }
             else
             {
-                QuarkUtility.LogError($"asset：{assetName} not existed !");
-                yield break;
-            }
-
-            if (string.IsNullOrEmpty(assetBundleName))
-            {
-                QuarkUtility.LogError($"AssetBundle：{assetBundleName} not existed !");
+                QuarkUtility.LogError($"Asset：{assetName}{assetExtension} not existed !");
                 callback?.Invoke(assets);
                 yield break;
             }
+            if (string.IsNullOrEmpty(assetBundleName))
+                yield break;
             yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
             if (assetBundleDict.ContainsKey(assetBundleName))
             {
-                assets = assetBundleDict[assetBundleName].LoadAssetWithSubAssets<T>(assetName);
+                assets = assetBundleDict[assetBundleName].AssetBundle.LoadAssetWithSubAssets<T>(assetName);
                 if (assets != null)
                 {
-                    IncrementQuarkObjectInfo(abObject);
+                    IncrementQuarkAssetObject(wapper);
                 }
             }
             callback?.Invoke(assets);
@@ -346,47 +317,26 @@ where T : UnityEngine.Object
         {
             T asset = null;
             string assetBundleName = string.Empty;
-            QuarkAssetBundleObject abObject = null;
-
-            if (builtAssetBundleMap.TryGetValue(assetName, out var abLnk))
+            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, out var wapper);
+            if (hasWapper)
             {
-                if (string.IsNullOrEmpty(assetExtension))
-                {
-                    abObject = abLnk.First.Value;
-                    assetBundleName = abObject.AssetBundleName;
-                }
-                else
-                {
-                    foreach (var ab in abLnk)
-                    {
-                        if (ab.AssetExtension == assetExtension)
-                        {
-                            abObject = ab;
-                            assetBundleName = ab.AssetBundleName;
-                            break;
-                        }
-                    }
-                }
+                assetBundleName = wapper.QuarkAssetObject.AssetBundleName;
             }
             else
             {
-                QuarkUtility.LogError($"asset：{assetName} not existed !");
-                yield break;
-            }
-
-            if (string.IsNullOrEmpty(assetBundleName))
-            {
-                QuarkUtility.LogError($"AssetBundle：{assetBundleName} not existed !");
+                QuarkUtility.LogError($"Asset：{assetName}{assetExtension} not existed !");
                 callback?.Invoke(asset);
                 yield break;
             }
+            if (string.IsNullOrEmpty(assetBundleName))
+                yield break;
             yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
             if (assetBundleDict.ContainsKey(assetBundleName))
             {
-                asset = assetBundleDict[assetBundleName].LoadAsset<T>(assetName);
+                asset = assetBundleDict[assetBundleName].AssetBundle.LoadAsset<T>(assetName);
                 if (asset != null)
                 {
-                    IncrementQuarkObjectInfo(abObject);
+                    IncrementQuarkAssetObject(wapper);
                 }
             }
             callback?.Invoke(asset);
@@ -402,7 +352,7 @@ where T : UnityEngine.Object
                     yield return abReq;
                     var bundle = abReq.assetBundle;
                     if (bundle != null)
-                        assetBundleDict[assetBundleName] = abReq.assetBundle;
+                        assetBundleDict[assetBundleName] = new QuarkAssetBundle(assetBundleName, abReq.assetBundle);
                     else
                         QuarkUtility.LogError($"AssetBundle : {assetBundleName} load failure !");
                 }
@@ -429,7 +379,7 @@ where T : UnityEngine.Object
                             yield return abReq;
                             var bundle = abReq.assetBundle;
                             if (bundle != null)
-                                assetBundleDict[dependentABName] = abReq.assetBundle;
+                                assetBundleDict[dependentABName] = new QuarkAssetBundle(dependentABName, abReq.assetBundle);
                             else
                                 QuarkUtility.LogError($"AssetBundle : {dependentABName} load failure !");
                         }
@@ -438,47 +388,97 @@ where T : UnityEngine.Object
                 yield return null;
             }
         }
-        IEnumerator EnumLoadSceneAsync(string sceneName, Action<float> loadingCallback, Action callback, bool additive)
+        IEnumerator EnumLoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive)
         {
-            string assetBundleName = string.Empty;
-            if (builtAssetBundleMap.TryGetValue(sceneName, out var abObject))
+            if (loadedSceneDict.ContainsKey(sceneName))
             {
-                assetBundleName = abObject.First.Value.AssetBundleName;
-            }
-            else
-            {
-                QuarkUtility.LogError($"Scene：{sceneName} not existed !");
-                yield break;
-            }
-            if (string.IsNullOrEmpty(assetBundleName))
-            {
+                QuarkUtility.LogError($"Scene：{sceneName} is already loaded !");
+                progress?.Invoke(1);
                 callback?.Invoke();
                 yield break;
             }
-            yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
+            var hasWapper = GetAssetObjectWapper(sceneName, ".unity", out var wapper);
+            if (!hasWapper)
+            {
+                QuarkUtility.LogError($"Scene：{sceneName} not existed !");
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            yield return EnumLoadDependenciesAssetBundleAsync(wapper.QuarkAssetObject.AssetBundleName);
             LoadSceneMode loadSceneMode = additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
-            var operation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+            var operation = SceneManager.LoadSceneAsync(wapper.QuarkAssetObject.AssetPath, loadSceneMode);
+            operation.allowSceneActivation = false;
+            var hasProviderProgress = progressProvider != null;
             while (!operation.isDone)
             {
-                loadingCallback?.Invoke(operation.progress);
+                if (hasProviderProgress)
+                {
+                    var providerProgress = progressProvider();
+                    var sum = providerProgress + operation.progress;
+                    if (sum >= 1.9)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        progress?.Invoke(sum / 2);
+                    }
+                }
+                else
+                {
+                    progress?.Invoke(operation.progress);
+                    if (operation.progress >= 0.9f)
+                    {
+                        break;
+                    }
+                }
                 yield return null;
             }
-            loadingCallback?.Invoke(1);
+            progress?.Invoke(1);
+            if (condition != null)
+                yield return new WaitUntil(condition);
+            var scene = SceneManager.GetSceneByPath(wapper.QuarkAssetObject.AssetPath);
+            loadedSceneDict.Add(sceneName, scene);
+            IncrementQuarkAssetObject(wapper);
+            operation.allowSceneActivation = true;
             callback?.Invoke();
         }
-        QuarkAssetBundleObject GetAssetBundleObject(string abName, string assetPath, string assetName)
+        IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
         {
-            var abObject = new QuarkAssetBundleObject()
+            var sceneCount = loadedSceneDict.Count;
+            //单位场景的百分比比率
+            var unitResRatio = 100f / sceneCount;
+            int currentSceneIndex = 0;
+            float overallProgress = 0;
+            foreach (var scene in loadedSceneDict)
             {
-                AssetBundleName = abName,
-                AssetPath = assetPath,
-            };
-            var strs = QuarkUtility.StringSplit(assetPath, new string[] { "/" });
-            var nameWithExt = strs[strs.Length - 1];
-            var splits = QuarkUtility.StringSplit(nameWithExt, new string[] { "." });
-            abObject.AssetExtension = QuarkUtility.Combine(".", splits[splits.Length - 1]);
-            abObject.AssetName = assetName;
-            return abObject;
+                var overallIndexPercent = 100 * ((float)currentSceneIndex / sceneCount);
+                currentSceneIndex++;
+                var sceneName = scene.Key;
+                var hasWapper = GetAssetObjectWapper(sceneName, ".unity", out var wapper);
+                if (!hasWapper)
+                {
+                    overallProgress = overallIndexPercent + (unitResRatio * 1);
+                    progress?.Invoke(overallProgress / 100);
+                }
+                else
+                {
+                    var ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene.Value);
+                    while (!ao.isDone)
+                    {
+                        overallProgress = overallIndexPercent + (unitResRatio * ao.progress);
+                        progress?.Invoke(overallProgress / 100);
+                        yield return null;
+                    }
+                    overallProgress = overallIndexPercent + (unitResRatio * 1);
+                    progress?.Invoke(overallProgress / 100);
+                    ReleaseQuarkAssetObject(wapper);
+                }
+            }
+            loadedSceneDict.Clear();
+            progress?.Invoke(1);
+            callback?.Invoke();
         }
         /// <summary>
         /// 对Manifest进行编码；
@@ -491,42 +491,42 @@ where T : UnityEngine.Object
                 var assets = mf.Value.Assets;
                 if (assets == null)
                     continue;
+                var abName = mf.Value.ABName;
                 foreach (var a in assets)
                 {
-                    var abObject = GetAssetBundleObject(mf.Value.ABName, a.Key, a.Value);
-                    if (!builtAssetBundleMap.TryGetValue(abObject.AssetName, out var lnkList))
+                    var quarkObject = a.Value;
+                    if (!quarkAssetObjectDict.TryGetValue(quarkObject.AssetName, out var lnkList))
                     {
-                        lnkList = new LinkedList<QuarkAssetBundleObject>();
-                        lnkList.AddLast(abObject);
-                        builtAssetBundleMap.Add(abObject.AssetName, lnkList);
+                        lnkList = new LinkedList<QuarkAssetObjectWapper>();
+                        var wapper = new QuarkAssetObjectWapper();
+                        wapper.QuarkAssetObject = quarkObject;
+                        lnkList.AddLast(wapper);
+                        quarkAssetObjectDict.Add(quarkObject.AssetName, lnkList);
                     }
                     else
                     {
-                        lnkList.AddLast(abObject);
+                        var wapper = new QuarkAssetObjectWapper();
+                        wapper.QuarkAssetObject = quarkObject;
+                        lnkList.AddLast(wapper);
                     }
-                    var info = QuarkObjectInfo.Create(abObject.AssetName, abObject.AssetBundleName, abObject.AssetExtension, 0);
-                    info.ABObjectHash = abObject.GetHashCode();
-                    hashQuarkObjectInfoDict.Add(info.ABObjectHash, info);
                 }
             }
         }
-        /// <summary>
-        /// 增加一个引用计数；
-        /// </summary>
-        void IncrementQuarkObjectInfo(QuarkAssetBundleObject abObject)
+        void ReleaseQuarkAssetObject(QuarkAssetObjectWapper wapper)
         {
-            var hashCode = abObject.GetHashCode();
-            var info = hashQuarkObjectInfoDict[hashCode];
-            hashQuarkObjectInfoDict[hashCode] = info++;
-        }
-        /// <summary>
-        /// 减少一个引用计数；
-        /// </summary>
-        void DecrementQuarkObjectInfo(QuarkAssetBundleObject abObject)
-        {
-            var hashCode = abObject.GetHashCode();
-            var info = hashQuarkObjectInfoDict[hashCode];
-            hashQuarkObjectInfoDict[hashCode] = info--;
+            var count = wapper.AssetReferenceCount;
+            wapper.AssetReferenceCount = 0;
+            var hashCode = wapper.GetHashCode();
+            hashQuarkAssetObjectInfoDict[hashCode] = wapper.GetQuarkAssetObjectInfo();
+            if (assetBundleDict.TryGetValue(wapper.QuarkAssetObject.AssetBundleName, out var assetBundle))
+            {
+                assetBundle.ReferenceCount -= count;
+                if (assetBundle.ReferenceCount == 0)
+                {
+                    assetBundle.AssetBundle.Unload(true);
+                    assetBundleDict.Remove(assetBundle.AssetBundleName);
+                }
+            }
         }
     }
 }

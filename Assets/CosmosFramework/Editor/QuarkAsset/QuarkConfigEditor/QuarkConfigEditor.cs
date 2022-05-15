@@ -1,16 +1,16 @@
 ﻿using UnityEditor;
-using Quark;
 using Quark.Asset;
-namespace Cosmos.Editor.Quark
+namespace Quark.Editor
 {
     [CustomEditor(typeof(QuarkConfig), true)]
     public class QuarkConfigEditor : UnityEditor.Editor
     {
         SerializedObject targetObject;
         QuarkConfig quarkConfig;
+        bool encryptionToggle;
         SerializedProperty sp_QuarkAssetLoadMode, sp_QuarkAssetDataset, sp_Url, sp_PingUrl, sp_QuarkBuildPath,
-             sp_EnableRelativeLoadPath, sp_RelativeLoadPath, sp_CustomeAbsolutePath, 
-            sp_EnableRelativeBuildPath, sp_RelativeBuildPath, sp_QuarkDownloadedPath,sp_EncryptionOffset;
+             sp_EnableRelativeLoadPath, sp_RelativeLoadPath, sp_CustomeAbsolutePath, sp_EnableRelativeBuildPath,
+            sp_RelativeBuildPath, sp_QuarkDownloadedPath, sp_EncryptionOffset, sp_BuildInfoAESEncryptionKey;
         public override void OnInspectorGUI()
         {
             targetObject.Update();
@@ -25,7 +25,13 @@ namespace Cosmos.Editor.Quark
                 case QuarkAssetLoadMode.BuiltAssetBundle:
                     {
                         DrawBuildAssetBundleTab();
-                        DrawOffstEncryption();
+                        EditorGUILayout.Space(8);
+                        encryptionToggle = EditorGUILayout.Foldout(encryptionToggle, "Encryption");
+                        if (encryptionToggle)
+                        {
+                            DrawOffstEncryption();
+                            DrawAESEncryption();
+                        }
                     }
                     break;
             }
@@ -44,14 +50,13 @@ namespace Cosmos.Editor.Quark
             sp_EnableRelativeLoadPath = targetObject.FindProperty("EnableRelativeLoadPath");
             sp_CustomeAbsolutePath = targetObject.FindProperty("CustomeAbsolutePath");
             sp_RelativeLoadPath = targetObject.FindProperty("RelativeLoadPath");
-
+            sp_BuildInfoAESEncryptionKey = targetObject.FindProperty("BuildInfoAESEncryptionKey");
             sp_QuarkBuildPath = targetObject.FindProperty("QuarkBuildPath");
             sp_EnableRelativeBuildPath = targetObject.FindProperty("EnableRelativeBuildPath");
             sp_RelativeBuildPath = targetObject.FindProperty("RelativeBuildPath");
         }
         void DrawBuildAssetBundleTab()
         {
-            EditorGUILayout.Space(16);
             EditorGUILayout.HelpBox("Asset bundle build path", MessageType.Info);
 
             EditorGUILayout.BeginVertical();
@@ -98,7 +103,22 @@ namespace Cosmos.Editor.Quark
         }
         void DrawOffstEncryption()
         {
-            sp_EncryptionOffset.longValue= EditorGUILayout.LongField("QuarkEncryptionOffset", sp_EncryptionOffset.longValue);
+            sp_EncryptionOffset.longValue = EditorGUILayout.LongField("QuarkEncryptOffset", sp_EncryptionOffset.longValue);
+            var offsetVar = sp_EncryptionOffset.longValue;
+            if (offsetVar < 0)
+                sp_EncryptionOffset.longValue = 0;
+        }
+        void DrawAESEncryption()
+        {
+            EditorGUILayout.Space(8);
+            sp_BuildInfoAESEncryptionKey.stringValue = EditorGUILayout.TextField("QuarkAesKey", sp_BuildInfoAESEncryptionKey.stringValue);
+            var keyStr = sp_BuildInfoAESEncryptionKey.stringValue;
+            var keyLength = System.Text.Encoding.UTF8.GetBytes(keyStr).Length;
+            EditorGUILayout.LabelField($"Current key length is:{keyLength }");
+            if (keyLength != 16 && keyLength != 24 && keyLength != 32 && keyLength != 0)
+            {
+                EditorGUILayout.HelpBox("Key should be 16,24 or 32 bytes long", MessageType.Error);
+            }
         }
     }
 }

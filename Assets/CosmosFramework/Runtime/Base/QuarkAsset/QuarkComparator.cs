@@ -32,7 +32,7 @@ namespace Quark.Networking
         /// 远程资源地址；
         /// </summary>
         public string URL { get { return QuarkDataProxy.URL; } }
-
+        bool isEncrypted { get { return QuarkDataProxy.QuarkAESEncryptionKey.Length > 0; } }
         QuarkManifest localManifest = null;
         QuarkManifest remoteManifest = null;
         public void Initiate(Action<string[], string[], long> onCompareSuccess, Action<string> onCompareFailure)
@@ -67,7 +67,11 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
                 yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
+#endif
                 {
                     if (request.isDone)
                     {
@@ -89,16 +93,46 @@ namespace Quark.Networking
             var localManifestPath = Path.Combine(PersistentPath, QuarkConstant.ManifestName);
             string localManifestContext = string.Empty;
             long overallSize = 0;
+            var aesKey = QuarkDataProxy.QuarkAESEncryptionKey;
+
             try
             {
-                localManifestContext = QuarkUtility.ReadTextFileContent(localManifestPath);
+                if (isEncrypted)
+                {
+                    var encryptedManifest = QuarkUtility.ReadTextFileContent(localManifestPath);
+                    localManifestContext = QuarkUtility.AESDecryptStringToString(encryptedManifest, aesKey);
+                }
+                else
+                {
+                    localManifestContext = QuarkUtility.ReadTextFileContent(localManifestPath);
+                }
+                localManifest = QuarkUtility.ToObject<QuarkManifest>(localManifestContext);
             }
-            catch { }
+            catch (Exception e)
+            {
+                QuarkUtility.LogError(e);
+                onCompareFailure?.Invoke(e.ToString());
+                return;
+            }
 
-            try { localManifest = QuarkUtility.ToObject<QuarkManifest>(localManifestContext); }
-            catch { }
-            try { remoteManifest = QuarkUtility.ToObject<QuarkManifest>(remoteManifestContext); }
-            catch { }
+            try
+            {
+                if (isEncrypted)
+                {
+                    var unencryptedManifest = QuarkUtility.AESDecryptStringToString(remoteManifestContext, aesKey);
+                    remoteManifest = QuarkUtility.ToObject<QuarkManifest>(unencryptedManifest);
+                }
+                else
+                {
+                    remoteManifest = QuarkUtility.ToObject<QuarkManifest>(remoteManifestContext);
+                }
+            }
+            catch (Exception e)
+            {
+                QuarkUtility.LogError(e);
+                onCompareFailure?.Invoke(e.ToString());
+                return;
+            }
             if (localManifest != null)
             {
                 //若本地的Manifest不为空，远端的Manifest不为空，则对比二者之间的差异；
@@ -183,13 +217,23 @@ namespace Quark.Networking
                 try
                 {
                     var localBuildInfoContext = QuarkUtility.ReadTextFileContent(localBuildInfoPath);
-                    QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(localBuildInfoContext);
+                    if (isEncrypted)
+                    {
+                        var unencryptedBuildInfo = QuarkUtility.AESDecryptStringToString(localBuildInfoContext, aesKey);
+                        QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(unencryptedBuildInfo);
+                    }
+                    else
+                    {
+                        QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(localBuildInfoContext);
+                    }
+                    onCompareSuccess?.Invoke(latesetArray, expiredArray, 0);
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    QuarkUtility.LogError(e);
+                    onCompareFailure?.Invoke(e.ToString());
+                    return;
                 }
-                onCompareSuccess?.Invoke(latesetArray, expiredArray, 0);
             }
         }
         IEnumerator EnumDownloadBuildInfo(string uri, Action callback)
@@ -197,7 +241,11 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
                 yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
+#endif
                 {
                     if (request.isDone)
                     {
@@ -206,13 +254,22 @@ namespace Quark.Networking
                         QuarkUtility.OverwriteTextFile(localNewBuildInfoPath, buildInfoContext);
                         try
                         {
-                            QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(buildInfoContext);
+                            if (isEncrypted)
+                            {
+                                var unencryptedBuildInfo = QuarkUtility.AESDecryptStringToString(buildInfoContext, QuarkDataProxy.QuarkAESEncryptionKey);
+                                QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(unencryptedBuildInfo);
+                            }
+                            else
+                            {
+                                QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(buildInfoContext);
+                            }
+                            callback();
                         }
                         catch (Exception e)
                         {
                             QuarkUtility.LogError(e);
+                            onCompareFailure?.Invoke(e.ToString());
                         }
-                        callback();
                     }
                 }
             }
@@ -222,14 +279,26 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(manifestUri))
             {
                 yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
+#endif
                 {
                     if (request.isDone)
                     {
                         var context = request.downloadHandler.text;
                         try
                         {
-                            localManifest = QuarkUtility.ToObject<QuarkManifest>(context);
+                            if (isEncrypted)
+                            {
+                                var unencryptedManifest = QuarkUtility.AESDecryptStringToString(context, QuarkDataProxy.QuarkAESEncryptionKey);
+                                localManifest = QuarkUtility.ToObject<QuarkManifest>(unencryptedManifest);
+                            }
+                            else
+                            {
+                                localManifest = QuarkUtility.ToObject<QuarkManifest>(context);
+                            }
                         }
                         catch (Exception e)
                         {
@@ -241,14 +310,26 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(buildInfoUri))
             {
                 yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
+#endif
                 {
                     if (request.isDone)
                     {
                         var context = request.downloadHandler.text;
                         try
                         {
-                            QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(context);
+                            if (isEncrypted)
+                            {
+                                var unencryptedBuildInfo = QuarkUtility.AESDecryptStringToString(context, QuarkDataProxy.QuarkAESEncryptionKey);
+                                QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(unencryptedBuildInfo);
+                            }
+                            else
+                            {
+                                QuarkDataProxy.QuarkBuildInfo = QuarkUtility.ToObject<QuarkBuildInfo>(context);
+                            }
                         }
                         catch (Exception e)
                         {

@@ -6,9 +6,10 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using Quark.Asset;
-namespace Cosmos.Editor.Quark
+
+namespace Quark.Editor
 {
-    public class QuarkDirectoriesTreeView : TreeView
+    public class QuarkAssetBundleTreeView : TreeView
     {
         List<string> pathList = new List<string>();
         bool canRender { get { return QuarkEditorDataProxy.QuarkAssetDataset != null; } }
@@ -66,11 +67,11 @@ namespace Cosmos.Editor.Quark
             }
             catch (Exception e)
             {
-                EditorUtil.Debug.LogError(e);
+                QuarkUtility.LogError(e);
             }
             Reload();
         }
-        public QuarkDirectoriesTreeView(TreeViewState treeViewState)
+        public QuarkAssetBundleTreeView(TreeViewState treeViewState)
             : base(treeViewState)
         {
             Reload();
@@ -121,7 +122,7 @@ namespace Cosmos.Editor.Quark
             }
             catch (Exception e)
             {
-                EditorUtil.Debug.LogError($"OnGUI :{e}");
+                QuarkUtility.LogError($"OnGUI :{e}");
             }
             Reload();
             base.OnGUI(rect);
@@ -129,12 +130,16 @@ namespace Cosmos.Editor.Quark
         protected override void SingleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            EditorUtil.SelectionActiveObject(pathList[id]);
+            var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(pathList[id]);
+            EditorGUIUtility.PingObject(obj);
+            Selection.activeObject = obj;
         }
         protected override void DoubleClickedItem(int id)
         {
             base.DoubleClickedItem(id);
-            EditorUtil.PingAndActiveObject(pathList[id]);
+            var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(pathList[id]);
+            EditorGUIUtility.PingObject(obj);
+            Selection.activeObject = obj;
         }
         protected override TreeViewItem BuildRoot()
         {
@@ -186,7 +191,7 @@ namespace Cosmos.Editor.Quark
             }
             catch (Exception e)
             {
-                EditorUtil.Debug.LogError(e);
+                QuarkUtility.LogError(e);
             }
         }
     }

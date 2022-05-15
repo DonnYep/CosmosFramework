@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine.Networking;
 using Quark.Asset;
-using Utility = Cosmos.Utility;
-using Cosmos;
 
 namespace Quark.Networking
 {
@@ -170,10 +168,11 @@ namespace Quark.Networking
         {
             while (pendingURIs.Count > 0)
             {
-                var uri = pendingURIs.RemoveFirst();
+                var uri = pendingURIs[0];
+                pendingURIs.RemoveAt(0);
                 currentDownloadIndex = downloadCount - pendingURIs.Count - 1;
                 var fileDownloadPath = Path.Combine(PersistentPath, uri);
-                var remoteUri = Utility.IO.WebPathCombine(URL, uri);
+                var remoteUri = QuarkUtility.WebPathCombine(URL, uri);
                 yield return EnumDownloadSingleFile(remoteUri, fileDownloadPath);
             }
             OnDownloadedPendingFiles();
@@ -183,7 +182,11 @@ namespace Quark.Networking
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
                 Downloading = true;
-                request.downloadHandler = new DownloadHandlerFile(downloadPath,true);
+#if UNITY_2019_1_OR_NEWER
+                request.downloadHandler = new DownloadHandlerFile(downloadPath, true);
+#elif UNITY_2018_1_OR_NEWER
+                request.downloadHandler = new DownloadHandlerFile(downloadPath);
+#endif
                 unityWebRequest = request;
                 var timeout = Convert.ToInt32(DownloadTimeout);
                 if (timeout > 0)
@@ -192,7 +195,7 @@ namespace Quark.Networking
 
                 //增量下载实现
                 var fileInfo = new FileInfo(downloadPath);
-                request.SetRequestHeader("Range","bytes="+fileInfo.Length+"-");
+                request.SetRequestHeader("Range", "bytes=" + fileInfo.Length + "-");
 
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
@@ -200,7 +203,11 @@ namespace Quark.Networking
                     OnFileDownloading(uri, PersistentPath, request.downloadProgress);
                     yield return null;
                 }
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError&& canDownload)
+#elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError && canDownload)
+#endif
                 {
                     if (request.isDone)
                     {
@@ -218,7 +225,7 @@ namespace Quark.Networking
                     OnFileDownloading(uri, PersistentPath, 1);
                     if (DeleteFailureFile)
                     {
-                        Utility.IO.DeleteFile(downloadPath);
+                        QuarkUtility.DeleteFile(downloadPath);
                     }
                 }
                 unityWebRequest = null;
