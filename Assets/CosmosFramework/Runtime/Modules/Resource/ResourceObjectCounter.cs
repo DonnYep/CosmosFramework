@@ -16,9 +16,5 @@ namespace Cosmos.Resource
         {
 
         }
-        ResourceObject GetResouceObject(AssetInfo info)
-        {
-            return new ResourceObject(info.AssetPath, info.AssetBundleName, 0);
-        }
     }
 }

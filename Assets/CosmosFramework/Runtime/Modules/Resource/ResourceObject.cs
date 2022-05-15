@@ -5,32 +5,30 @@ namespace Cosmos.Resource
     /// <summary>
     /// 资源实体对象；
     /// </summary>
-    internal struct ResourceObject : IEquatable<ResourceObject>
+    public struct ResourceObject : IEquatable<ResourceObject>
     {
         /// <summary>
         /// 资源的相对路径
         /// </summary>
-        public string AssetPath;
+        public string ResourcePath;
         /// <summary>
-        /// AssetBundle的名称
+        /// 资源Bundle的名称
         /// </summary>
-        /// 
-        public string AssetBundleName;
+        public string ResourceBundleName;
         /// <summary>
-        /// 资源的引用计数
+        /// 资源类型；
         /// </summary>
-        public int AssetReferenceCount;
-        public ResourceObject(string assetPath, string assetBundleName, int assetReferenceCount)
+        public string ResourceType;
+        public ResourceObject(string resourcePath, string resourceBundleName,string resourceType)
         {
-            AssetPath = assetPath;
-            AssetBundleName = assetBundleName;
-            AssetReferenceCount = assetReferenceCount;
+            ResourcePath = resourcePath;
+            ResourceBundleName = resourceBundleName;
+            ResourceType = resourceType;
         }
         public bool Equals(ResourceObject other)
         {
-            return other.AssetPath == this.AssetPath &&
-                other.AssetBundleName == this.AssetBundleName &&
-                other.AssetReferenceCount == this.AssetReferenceCount;
+            return other.ResourcePath == this.ResourcePath &&
+                other.ResourceBundleName == this.ResourceBundleName;
         }
         public override bool Equals(object obj)
         {
@@ -38,25 +36,15 @@ namespace Cosmos.Resource
         }
         public override int GetHashCode()
         {
-            return $"{AssetPath},{AssetBundleName}".GetHashCode();
+            return $"{ResourcePath},{ResourceBundleName}".GetHashCode();
         }
         public override string ToString()
         {
-            return $"{AssetPath} : {AssetBundleName}";
+            return $"ResourcePath: {ResourcePath} , ResourceBundleName: {ResourceBundleName}";
         }
         public ResourceObject Clone()
         {
-            return new ResourceObject(this.AssetPath, this.AssetBundleName, this.AssetReferenceCount);
-        }
-        public static ResourceObject operator ++(ResourceObject obj)
-        {
-            var latestCount = obj.AssetReferenceCount;
-            return new ResourceObject(obj.AssetPath, obj.AssetBundleName, latestCount - 1);
-        }
-        public static ResourceObject operator --(ResourceObject obj)
-        {
-            var latestCount = obj.AssetReferenceCount;
-            return new ResourceObject(obj.AssetPath, obj.AssetBundleName, latestCount + 1);
+            return new ResourceObject(this.ResourcePath, this.ResourceBundleName,this.ResourceType);
         }
     }
 }

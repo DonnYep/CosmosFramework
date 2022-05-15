@@ -57,6 +57,7 @@ namespace Quark.Loader
                 {
                     assets[i] = assetObj[i] as T;
                 }
+                IncrementQuarkAssetObject(wapper);
                 return assets;
             }
             else
@@ -96,10 +97,25 @@ namespace Quark.Loader
         public override void UnloadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
             QuarkUtility.LogInfo("AssetDatabase Mode UnLoadAllAsset");
+            foreach (var lnk in quarkAssetObjectDict.Values)
+            {
+                foreach (var obj in lnk)
+                {
+                    obj.AssetReferenceCount = 0;
+                }
+            }
+            assetBundleDict.Clear();
         }
         public override void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
-            QuarkUtility.LogInfo("AssetDatabase Mode UnLoadAllAsset");
+            if (assetBundleDict.TryGetValue(assetBundleName, out var bundle))
+            {
+                foreach (var a in bundle.Assets)
+                {
+                    a.AssetReferenceCount = 0;
+                }
+                assetBundleDict.Remove(assetBundleName);
+            }
         }
         public override Coroutine UnloadSceneAsync(string sceneName, Action<float> progress, Action callback)
         {

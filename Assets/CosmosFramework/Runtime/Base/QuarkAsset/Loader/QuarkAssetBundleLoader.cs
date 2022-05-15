@@ -209,18 +209,31 @@ namespace Quark.Loader
         }
         public override void UnloadAllAssetBundle(bool unloadAllLoadedObjects = false)
         {
+            foreach (var lnk in quarkAssetObjectDict.Values)
+            {
+                foreach (var wapper in lnk)
+                {
+                    wapper.AssetReferenceCount = 0;
+                }
+            }
             foreach (var assetBundle in assetBundleDict)
             {
                 assetBundle.Value.AssetBundle.Unload(unloadAllLoadedObjects);
             }
             assetBundleDict.Clear();
             AssetBundle.UnloadAllAssetBundles(unloadAllLoadedObjects);
+
         }
         public override void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
             if (assetBundleDict.ContainsKey(assetBundleName))
             {
-                assetBundleDict[assetBundleName].AssetBundle.Unload(unloadAllLoadedObjects);
+                var bundle = assetBundleDict[assetBundleName];
+                foreach (var a in bundle.Assets)
+                {
+                    a.AssetReferenceCount = 0;
+                }
+                bundle.AssetBundle.Unload(unloadAllLoadedObjects);
                 assetBundleDict.Remove(assetBundleName);
             }
         }
@@ -243,6 +256,7 @@ namespace Quark.Loader
             if (assetBundleDict.TryGetValue(wapper.QuarkAssetObject.AssetBundleName, out var assetBundle))
             {
                 assetBundle.ReferenceCount++;
+                assetBundle.Assets.Add(wapper);
             }
         }
         /// <summary>
@@ -251,15 +265,16 @@ namespace Quark.Loader
         protected override void DecrementQuarkAssetObject(QuarkAssetObjectWapper wapper)
         {
             wapper.AssetReferenceCount--;
-            if (wapper.AssetReferenceCount <= 0)
-            {
-                wapper.AssetReferenceCount = 0;
-            }
             var hashCode = wapper.GetHashCode();
             hashQuarkAssetObjectInfoDict[hashCode] = wapper.GetQuarkAssetObjectInfo();
             //减少一个AB的引用计数
             if (assetBundleDict.TryGetValue(wapper.QuarkAssetObject.AssetBundleName, out var assetBundle))
             {
+                if (wapper.AssetReferenceCount <= 0)
+                {
+                    wapper.AssetReferenceCount = 0;
+                    assetBundle.Assets.Remove(wapper);
+                }
                 assetBundle.ReferenceCount--;
                 if (assetBundle.ReferenceCount == 0)
                 {

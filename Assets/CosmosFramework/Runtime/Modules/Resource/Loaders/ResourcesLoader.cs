@@ -3,6 +3,9 @@ using System.Collections;
 using UnityEngine;
 namespace Cosmos.Resource
 {
+    /// <summary>
+    /// Resources加载模式不记录引用计数
+    /// </summary>
     public class ResourcesLoader : IResourceLoadHelper
     {
         bool isProcessing = false;

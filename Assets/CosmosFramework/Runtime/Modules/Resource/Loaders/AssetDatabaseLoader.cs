@@ -86,7 +86,7 @@ namespace Cosmos.Resource
         public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
 #if UNITY_EDITOR
-            return null;
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(info, callback));
 #else
             return null;
 
@@ -179,6 +179,13 @@ namespace Cosmos.Resource
             progress?.Invoke(1);
             callback?.Invoke();
             isProcessing = false;
+        }
+        IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback)
+where T : UnityEngine.Object
+        {
+            var assets = LoadAssetWithSubAssets<T>(info);
+            yield return null;
+            callback?.Invoke(assets);
         }
     }
 }
