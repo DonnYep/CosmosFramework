@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEditor;
 namespace Quark.Editor
 {
@@ -13,6 +14,7 @@ namespace Quark.Editor
     {
         public BuildTarget BuildTarget;
         public string OutputPath;
+        public string AssetBundleBuildPath;
         public bool UseDefaultPath;
         public bool ClearOutputFolders;
         public bool CopyToStreamingAssets;
@@ -42,7 +44,7 @@ namespace Quark.Editor
         public QuarkAssetBundleTabData()
         {
             BuildTarget = BuildTarget.StandaloneWindows;
-            OutputPath = "AssetBundles/StandaloneWindows";
+            OutputPath = Path.Combine(Path.GetFullPath("."), "AssetBundles").Replace("\\","/");
             UseDefaultPath = true;
             ClearOutputFolders = true;
             CopyToStreamingAssets = false;

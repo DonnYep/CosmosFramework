@@ -49,6 +49,8 @@ namespace Quark.Editor
         {
             assetBundleTabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", assetBundleTabData.BuildTarget);
             assetBundleTabData.OutputPath = EditorGUILayout.TextField("OutputPath", assetBundleTabData.OutputPath.Trim());
+            assetBundleTabData.AssetBundleBuildPath = Path.Combine(assetBundleTabData.OutputPath, assetBundleTabData.BuildTarget.ToString()).Replace("\\", "/");
+            EditorGUILayout.LabelField("AssetBundleBuildPath", assetBundleTabData.AssetBundleBuildPath);
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
@@ -67,7 +69,12 @@ namespace Quark.Editor
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("OpenOutputPath"))
             {
-                EditorUtility.RevealInFinder(GetBuildFolder());
+                var path = assetBundleTabData.AssetBundleBuildPath;
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                EditorUtility.RevealInFinder(path);
             }
             if (GUILayout.Button("OpenPersistentPath"))
             {
@@ -172,38 +179,29 @@ namespace Quark.Editor
             var newPath = EditorUtility.OpenFolderPanel("Bundle Folder", assetBundleTabData.OutputPath, string.Empty);
             if (!string.IsNullOrEmpty(newPath))
             {
-                var gamePath = EditorUtil.ApplicationPath();
-                gamePath = gamePath.Replace("\\", "/");
-                if (newPath.StartsWith(gamePath) && newPath.Length > gamePath.Length)
-                    newPath = newPath.Remove(0, gamePath.Length + 1);
-                assetBundleTabData.OutputPath = newPath;
+                assetBundleTabData.OutputPath = newPath.Replace("\\", "/");
             }
         }
         void ResetPath()
         {
             assetBundleTabData.UseDefaultPath = true;
-            assetBundleTabData.OutputPath = Path.Combine("AssetBundles", assetBundleTabData.BuildTarget.ToString());
-        }
-        string GetBuildFolder()
-        {
-            var path = QuarkUtility.WebPathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            return path;
+            assetBundleTabData.OutputPath = Path.Combine(Path.GetFullPath("."), "AssetBundles").Replace("\\", "/");
         }
         string GetBuildPath()
         {
-            assetBundleTabData.OutputPath = QuarkUtility.WebPathCombine(assetBundleTabData.OutputPath);
-            var path = QuarkUtility.WebPathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
+            var path = assetBundleTabData.AssetBundleBuildPath;
             return path;
         }
         IEnumerator EnumBuildAssetBundle()
         {
             yield return assetDatabaseTab.EnumUpdateADBMode();
             yield return SetBuildInfo();
-            BuildPipeline.BuildAssetBundles(GetBuildFolder(), assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
+            var path = assetBundleTabData.AssetBundleBuildPath;
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            BuildPipeline.BuildAssetBundles(assetBundleTabData.AssetBundleBuildPath, assetBundleTabData.BuildAssetBundleOptions, assetBundleTabData.BuildTarget);
             yield return OperateManifest();
         }
         IEnumerator SetBuildInfo()
@@ -211,7 +209,7 @@ namespace Quark.Editor
             QuarkUtility.LogInfo("Start build asset bundle");
             if (assetBundleTabData.ClearOutputFolders)
             {
-                var path = QuarkUtility.PathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
+                var path = assetBundleTabData.AssetBundleBuildPath;
                 if (Directory.Exists(path))
                 {
                     QuarkUtility.DeleteFolder(path);
@@ -248,7 +246,7 @@ namespace Quark.Editor
         {
             if (assetBundleTabData.CopyToStreamingAssets)
             {
-                var buildPath = QuarkUtility.WebPathCombine(EditorUtil.ApplicationPath(), assetBundleTabData.OutputPath);
+                var buildPath = assetBundleTabData.AssetBundleBuildPath;
                 if (Directory.Exists(buildPath))
                 {
                     var streamingAssetPath = QuarkUtility.WebPathCombine(Application.streamingAssetsPath, assetBundleTabData.StreamingRelativePath);
@@ -271,7 +269,7 @@ namespace Quark.Editor
             }
             var targetFolder = paths[pathLength - 1];
             QuarkUtility.LogInfo(targetFolder);
-            var url = QuarkUtility.WebPathCombine(buildPath, targetFolder);
+            var url = Path.Combine(buildPath, assetBundleTabData.BuildTarget.ToString());
             AssetBundleManifest manifest = null;
             AssetBundle mainBundle = null;
             yield return EditorUtil.IO.DownloadAssetBundleAsync(url, (percent) =>
@@ -305,7 +303,6 @@ namespace Quark.Editor
             {
                 var fileName = Path.GetFileName(path);
                 var fileDir = Path.GetDirectoryName(path);
-                //QuarkUtility.LogInfo(fileDir);
                 if (!fileName.Contains(".manifest"))
                 {
                     if (buildInfoCache.TryGetValue(fileName, out var abPath))
