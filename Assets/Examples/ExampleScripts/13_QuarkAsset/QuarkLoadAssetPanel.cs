@@ -64,7 +64,7 @@ public class QuarkLoadAssetPanel : MonoBehaviour
         var assetName = iptAssetName.text;
         if (!string.IsNullOrEmpty(assetName))
         {
-            Utility.Debug.LogInfo("功能未实现");
+            QuarkResources.UnloadAsset(assetName);
         }
     }
     void OnLoadSceneClick()

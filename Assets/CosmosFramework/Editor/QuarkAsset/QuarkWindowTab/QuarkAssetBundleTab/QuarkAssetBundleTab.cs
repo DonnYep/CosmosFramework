@@ -341,6 +341,10 @@ namespace Quark.Editor
                         File.Delete(path);
                     }
                 }
+                if (fileName == assetBundleTabData.BuildTarget.ToString())
+                {
+                    File.Delete(path);
+                }
             });
             WriteBuildInfo();
             ResetBuildInfo();
