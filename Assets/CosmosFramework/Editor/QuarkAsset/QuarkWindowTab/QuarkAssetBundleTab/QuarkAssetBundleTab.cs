@@ -186,6 +186,7 @@ namespace Quark.Editor
         {
             assetBundleTabData.UseDefaultPath = true;
             assetBundleTabData.OutputPath = Path.Combine(Path.GetFullPath("."), "AssetBundles").Replace("\\", "/");
+            assetBundleTabData.BuildTarget = BuildTarget.StandaloneWindows;
         }
         string GetBuildPath()
         {
