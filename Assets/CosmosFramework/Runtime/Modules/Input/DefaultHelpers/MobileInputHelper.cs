@@ -4,7 +4,7 @@ namespace Cosmos
 {
     public class MobileInputHelper : IInputHelper
     {
-        IInputManager inputManager;
+        IInputManager inputManager = CosmosEntry.InputManager;
         public void OnStart()
         {
             inputManager.RegisterVirtualButton(InputButtonType._MouseLeft);
