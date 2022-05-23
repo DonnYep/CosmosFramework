@@ -315,7 +315,7 @@ namespace Cosmos
         int CoinFlipLevel()
         {
             int level = 0;
-            while (random.Next(0, 1) == 1 && level < this.level)//投掷硬币为1时增加一层
+            while (random.Next(0, 2) == 1 && level < this.level)//投掷硬币为1时增加一层
             {
                 level++;
             }
