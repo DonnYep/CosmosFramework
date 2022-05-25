@@ -22,7 +22,7 @@ namespace Cosmos
             Top = centerY + HalfSideLength;
             Bottom = centerY - HalfSideLength;
             Left = centerX - HalfSideLength;
-            Right = CenterX + HalfSideLength;
+            Right = centerX + HalfSideLength;
         }
         public bool Contains(Fix64 x, Fix64 y)
         {

@@ -1,41 +1,42 @@
 ﻿using System;
+using FixMath.NET;
 namespace Cosmos
 {
     /// <summary>
     /// 方形网格数据结构；
     /// </summary>
-    public struct SquareGrid : IEquatable<SquareGrid>
+    public struct SquareGridFix64 : IEquatable<SquareGridFix64>
     {
         public struct Square : IEquatable<Square>
         {
-            public float CenterX { get; private set; }
-            public float CenterY { get; private set; }
-            public float SideLength { get; private set; }
-            public float Top { get; private set; }
-            public float Bottom { get; private set; }
-            public float Left { get; private set; }
-            public float Right { get; private set; }
-            public float HalfSideLength { get; private set; }
-            public Square(float centerX, float centerY, float sideLength)
+            public Fix64 CenterX { get; private set; }
+            public Fix64 CenterY { get; private set; }
+            public Fix64 SideLength { get; private set; }
+            public Fix64 Top { get; private set; }
+            public Fix64 Bottom { get; private set; }
+            public Fix64 Left { get; private set; }
+            public Fix64 Right { get; private set; }
+            public Fix64 HalfSideLength { get; private set; }
+            public Square(Fix64 centerX, Fix64 centerY, Fix64 sideLength)
             {
                 CenterX = centerX;
                 CenterY = centerY;
                 SideLength = sideLength;
-                HalfSideLength = sideLength * 0.5f;
+                HalfSideLength = sideLength / (Fix64)2;
 
                 Top = centerY + HalfSideLength;
                 Bottom = centerY - HalfSideLength;
                 Left = centerX - HalfSideLength;
-                Right = CenterX + HalfSideLength;
+                Right = centerX + HalfSideLength;
             }
-            public bool Contains(float x, float y)
+            public bool Contains(Fix64 x, Fix64 y)
             {
                 if (x < Left || x > Right) return false;
                 if (y > Top || y < Bottom) return false;
                 return true;
             }
-            public static readonly Square Zero = new Square(0, 0, 0);
-            public static readonly Square One = new Square(1, 1, 1);
+            public static readonly Square Zero = new Square(Fix64.Zero, Fix64.Zero, Fix64.Zero);
+            public static readonly Square One = new Square(Fix64.One, Fix64.One, Fix64.One);
             public static bool operator ==(Square lhs, Square rhs)
             {
                 return lhs.Equals(rhs);
@@ -60,41 +61,40 @@ namespace Cosmos
             }
             public override string ToString()
             {
-                return $"[ X:{CenterX} ,Y:{CenterY} ],[ SideLength:{SideLength} ]";
+                return $"[ X:{CenterX.RawValue} ,Y:{CenterY.RawValue} ],[ SideLength:{SideLength.RawValue} ]";
             }
         }
         Square[,] square2d;
         Square[] square1d;
         public Square SquareGridArea { get; private set; }
         public uint CellSection { get; private set; }
-        public float CellSideLength { get; private set; }
-        public float OffsetX { get; private set; }
-        public float OffsetY { get; private set; }
+        public Fix64 CellSideLength { get; private set; }
+        public Fix64 OffsetX { get; private set; }
+        public Fix64 OffsetY { get; private set; }
         /// <summary>
         /// 缓冲去范围；
         /// 缓冲区=bufferRange+border;
         /// </summary>
-        public float BufferZoneRange { get; private set; }
-        public SquareGrid(float cellSideLength, uint cellSection, float offsetX, float offsetY) : this(cellSideLength, cellSection, offsetX, offsetY, 0) { }
-        public SquareGrid(float cellSideLength, uint cellSection, float offsetX, float offsetY, float bufferRange)
+        public Fix64 BufferZoneRange { get; private set; }
+        public SquareGridFix64(Fix64 cellSideLength, uint cellSection, Fix64 offsetX, Fix64 offsetY) : this(cellSideLength, cellSection, offsetX, offsetY, Fix64.Zero) { }
+        public SquareGridFix64(Fix64 cellSideLength, uint cellSection, Fix64 offsetX, Fix64 offsetY, Fix64 bufferRange)
         {
-            if (cellSideLength < 0)
+            if (cellSideLength < Fix64.Zero)
                 throw new OverflowException("cellSideLength can not less than zero !");
             CellSection = cellSection;
 
             this.OffsetX = offsetX;
             this.OffsetY = offsetY;
 
-            var squareSideLength = cellSideLength * cellSection;
+            var squareSideLength = cellSideLength * (Fix64)cellSection;
             CellSideLength = cellSideLength;
             square2d = new Square[cellSection, cellSection];
-            var halfSideLength = squareSideLength / 2;
+            var halfSideLength = squareSideLength / (Fix64)2;
 
             var centerX = halfSideLength + offsetX;
             var centerY = halfSideLength + offsetY;
 
-            BufferZoneRange = bufferRange >= 0 ? bufferRange : 0;
-
+            BufferZoneRange = bufferRange >= Fix64.Zero ? bufferRange : Fix64.Zero;
             SquareGridArea = new Square(centerX, centerY, squareSideLength);
 
             square1d = new Square[CellSection * CellSection];
@@ -106,7 +106,7 @@ namespace Cosmos
         /// <param name="posX">位置X</param>
         /// <param name="posY">位置Y</param>
         /// <returns>位置所在的块</returns>
-        public Square GetSquare(float posX, float posY)
+        public Square GetSquare(Fix64 posX, Fix64 posY)
         {
             if (!IsOverlapping(posX, posY))
                 return Square.Zero;
@@ -120,7 +120,7 @@ namespace Cosmos
         /// <param name="posX">位置X</param>
         /// <param name="posY">位置Y</param>
         /// <returns>缓冲所属的块</returns>
-        public Square[] GetSquares(float posX, float posY)
+        public Square[] GetSquares(Fix64 posX, Fix64 posY)
         {
             if (!IsOverlappingBufferZone(posX, posY))
                 return new Square[0];
@@ -167,7 +167,7 @@ namespace Cosmos
         /// <param name="posY">位置Y</param>
         /// <param name="level">临近的层级</param>
         /// <returns>获取到的临近地块</returns>
-        public Square[] GetNearbySquares(float posX, float posY, int level = 0)
+        public Square[] GetNearbySquares(Fix64 posX, Fix64 posY, int level = 0)
         {
             if (!IsOverlapping(posX, posY))
                 return new Square[0];
@@ -216,60 +216,58 @@ namespace Cosmos
         /// <param name="posX">位置X</param>
         /// <param name="posY">位置Y</param>
         /// <returns>是否重叠</returns>
-        public bool IsOverlapping(float posX, float posY)
+        public bool IsOverlapping(Fix64 posX, Fix64 posY)
         {
             if (posX < SquareGridArea.Left || posX > SquareGridArea.Right) return false;
             if (posY < SquareGridArea.Bottom || posY > SquareGridArea.Top) return false;
             return true;
         }
-        public static bool operator ==(SquareGrid lhs, SquareGrid rhs)
+        public static bool operator ==(SquareGridFix64 lhs, SquareGridFix64 rhs)
         {
             return lhs.Equals(rhs);
         }
-        public static bool operator !=(SquareGrid lhs, SquareGrid rhs)
+        public static bool operator !=(SquareGridFix64 lhs, SquareGridFix64 rhs)
         {
             return !lhs.Equals(rhs);
         }
-        public bool Equals(SquareGrid other)
+        public bool Equals(SquareGridFix64 other)
         {
             return other.SquareGridArea == this.SquareGridArea && other.CellSection == this.CellSection
                 && other.CellSection == this.CellSection && other.OffsetX == this.OffsetX && other.OffsetY == this.OffsetY;
         }
         public override bool Equals(object obj)
         {
-            return obj is SquareGrid && (Equals((SquareGrid)obj));
+            return obj is SquareGridFix64 && (Equals((SquareGridFix64)obj));
         }
         public override int GetHashCode()
         {
             var hashStr = $"{SquareGridArea}{CellSection}{CellSideLength}";
             return hashStr.GetHashCode();
         }
-        bool IsOverlappingBufferZone(float posX, float posY)
+        bool IsOverlappingBufferZone(Fix64 posX, Fix64 posY)
         {
             if (posX < SquareGridArea.Left - BufferZoneRange || posX > SquareGridArea.Right + BufferZoneRange) return false;
             if (posY < SquareGridArea.Bottom - BufferZoneRange || posY > SquareGridArea.Top + BufferZoneRange) return false;
             return true;
         }
-        bool IsOverlappingCellBufferZone(Square square, float posX, float posY)
+        bool IsOverlappingCellBufferZone(Square square, Fix64 posX, Fix64 posY)
         {
             if (posX < square.Left - BufferZoneRange || posX > square.Right + BufferZoneRange) return false;
             if (posY < square.Bottom - BufferZoneRange || posY > square.Top + BufferZoneRange) return false;
             return true;
         }
-        void CreateSquare(float offsetX, float offsetY)
+        void CreateSquare(Fix64 offsetX, Fix64 offsetY)
         {
-            var centerOffsetX = CellSideLength / 2 + offsetX;
-            var centerOffsetY = CellSideLength / 2 + offsetY;
+            var centerOffsetX = CellSideLength / (Fix64)2 + offsetX;
+            var centerOffsetY = CellSideLength / (Fix64)2 + offsetY;
             for (int i = 0; i < CellSection; i++)
             {
                 for (int j = 0; j < CellSection; j++)
                 {
-                    square2d[i, j] = new Square(i * CellSideLength + centerOffsetX, j * CellSideLength + centerOffsetY, CellSideLength);
+                    square2d[i, j] = new Square((Fix64)i * CellSideLength + centerOffsetX, (Fix64)j * CellSideLength + centerOffsetY, CellSideLength);
                     square1d[i * CellSection + j] = square2d[i, j];
                 }
             }
         }
-
-
     }
 }

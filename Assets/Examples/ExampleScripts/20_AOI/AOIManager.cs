@@ -24,7 +24,7 @@ public class AOIManager : MonoBehaviour
     [SerializeField] float robotMoveSpeed = 1;
     [SerializeField] int changeDirSec = 5;
     SquareGrid squareGrid;
-    SquareGrid.Square[] nineSquareGrid;
+    Square[] nineSquareGrid;
     List<RobotEntity> robotInstList = new List<RobotEntity>();
     long latestTime;
     void Awake()

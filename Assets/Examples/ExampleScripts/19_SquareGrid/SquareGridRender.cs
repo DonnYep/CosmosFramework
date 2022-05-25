@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 namespace Cosmos.Test
 {
@@ -22,10 +18,10 @@ namespace Cosmos.Test
         SquareGrid squareGrid;
 
         GameObject normalTileRoot;
-        Dictionary<SquareGrid.Square, SquareTileComponent> squareTileDict
-            = new Dictionary<SquareGrid.Square, SquareTileComponent>();
+        Dictionary<Square, SquareTileComponent> squareTileDict
+            = new Dictionary<Square, SquareTileComponent>();
 
-        List<SquareGrid.Square> highlightCache = new List<SquareGrid.Square>();
+        List<Square> highlightCache = new List<Square>();
         private void Start()
         {
             normalTileRoot = new GameObject("NormalTileRoot");
