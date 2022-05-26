@@ -327,8 +327,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellSideLength: 128
   cellSection: 8
-  offset: {x: -512, y: -512}
-  cellBufferZoneBound: 32
+  offset: {x: 0, y: 0}
+  cellBufferZoneBound: 24
   cellZoneColor: {r: 0, g: 0.89716387, b: 1, a: 1}
   bufferZoneColor: {r: 1, g: 0, b: 0.745, a: 1}
   heightLightColor: {r: 1, g: 0.8296892, b: 0.36320752, a: 0.22745098}
@@ -476,8 +476,6 @@ MonoBehaviour:
   PrintModulePreparatory: 0
   LoadDefaultHelper: 1
   ResourceLoadMode: 0
-  QuarkRemoteUrl: RemoteUrl
-  QuarkLocalUrl: LocalUrl
 --- !u!4 &1445863190
 Transform:
   m_ObjectHideFlags: 0
@@ -511,11 +509,12 @@ MonoBehaviour:
   PingUrl: 0
   QuarkAssetLoadMode: 1
   QuarkAssetDataset: {fileID: 11400000, guid: e4ef4e912cff6e24f8901a67d27afba9, type: 2}
-  QuarkLoadPath: 0
+  QuarkDownloadedPath: 0
   EnableRelativeLoadPath: 0
   RelativeLoadPath: 
-  AESEncryptionKey: 
-  CustomeLoadPath: 
+  BuildInfoAESEncryptionKey: 
+  EncryptionOffset: 0
+  CustomeAbsolutePath: 
 --- !u!1 &1569567838
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,40 +8,44 @@ namespace Cosmos
     {
         Square[,] square2d;
         Square[] square1d;
-        public Square SquareGridArea { get; private set; }
+        public Square GridArea { get; private set; }
         public uint CellSection { get; private set; }
         public float CellSideLength { get; private set; }
-        public float OffsetX { get; private set; }
-        public float OffsetY { get; private set; }
+        public float CenterX { get { return GridArea.CenterX; } }
+        public float CenterY { get { return GridArea.CenterY; } }
         /// <summary>
-        /// 缓冲去范围；
+        /// 缓冲区范围；
         /// 缓冲区=bufferRange+border;
         /// </summary>
         public float BufferZoneRange { get; private set; }
-        public SquareGrid(float cellSideLength, uint cellSection, float offsetX, float offsetY) : this(cellSideLength, cellSection, offsetX, offsetY, 0) { }
-        public SquareGrid(float cellSideLength, uint cellSection, float offsetX, float offsetY, float bufferRange)
+        float OffsetX;
+        float OffsetY;
+        public SquareGrid(float cellSideLength, uint cellSection) : this(cellSideLength, cellSection, 0, 0, 0) { }
+        public SquareGrid(float cellSideLength, uint cellSection, float centerX, float centerY) : this(cellSideLength, cellSection, centerX, centerY, 0) { }
+        public SquareGrid(float cellSideLength, uint cellSection, float centerX, float centerY, float bufferRange)
         {
             if (cellSideLength < 0)
                 throw new OverflowException("cellSideLength can not less than zero !");
             CellSection = cellSection;
-
-            this.OffsetX = offsetX;
-            this.OffsetY = offsetY;
-
             var squareSideLength = cellSideLength * cellSection;
             CellSideLength = cellSideLength;
             square2d = new Square[cellSection, cellSection];
-            var halfSideLength = squareSideLength / 2;
-
-            var centerX = halfSideLength + offsetX;
-            var centerY = halfSideLength + offsetY;
-
             BufferZoneRange = bufferRange >= 0 ? bufferRange : 0;
-
-            SquareGridArea = new Square(centerX, centerY, squareSideLength);
-
+            GridArea = new Square(centerX, centerY, squareSideLength);
             square1d = new Square[CellSection * CellSection];
-            CreateSquare(offsetX, offsetY);
+            this.OffsetX = centerX - GridArea.HalfSideLength;
+            this.OffsetY = centerY - GridArea.HalfSideLength;
+
+            var centerOffsetX = CellSideLength / 2 + OffsetX;
+            var centerOffsetY = CellSideLength / 2 + OffsetY;
+            for (int i = 0; i < CellSection; i++)
+            {
+                for (int j = 0; j < CellSection; j++)
+                {
+                    square2d[i, j] = new Square(j * CellSideLength + centerOffsetX, i * CellSideLength + centerOffsetY, CellSideLength);
+                    square1d[i * CellSection + j] = square2d[i, j];
+                }
+            }
         }
         /// <summary>
         /// 获取与位置重合的块；
@@ -53,9 +57,9 @@ namespace Cosmos
         {
             if (!IsOverlapping(posX, posY))
                 return Square.Zero;
-            var col = (posX - OffsetX) / CellSideLength;
-            var row = (posY - OffsetY) / CellSideLength;
-            return square2d[(int)col, (int)row];
+            var row = (int)((posX - OffsetX) / CellSideLength);
+            var col = (int)((posY - OffsetY) / CellSideLength);
+            return square2d[col, row];
         }
         /// <summary>
         /// 获取位置所在缓冲区所有重叠的块；
@@ -67,10 +71,10 @@ namespace Cosmos
         {
             if (!IsOverlappingBufferZone(posX, posY))
                 return new Square[0];
-            var col = (int)((posX - OffsetX) / CellSideLength);
-            var row = (int)((posY - OffsetY) / CellSideLength);
             if (!IsOverlapping(posX, posY))
                 return new Square[0];
+            var row = (int)((posX - OffsetX) / CellSideLength);
+            var col = (int)((posY - OffsetY) / CellSideLength);
             Square[] neighborSquares = new Square[9];
             int idx = 0;
             for (int x = -1; x <= 1; x++)
@@ -81,7 +85,7 @@ namespace Cosmos
                         continue;
                     int idxX = col + x;
                     int idxY = row + y;
-                    if (idxX <= CellSection && idxX >= 0 && idxY <= CellSection && idxY >= 0)
+                    if (idxX <= CellSection - 1 && idxX >= 0 && idxY <= CellSection - 1 && idxY >= 0)
                     {
                         neighborSquares[idx++] = square2d[idxX, idxY];
                     }
@@ -114,10 +118,10 @@ namespace Cosmos
         {
             if (!IsOverlapping(posX, posY))
                 return new Square[0];
-            var col = (int)((posX - OffsetX) / CellSideLength);
-            var row = (int)((posY - OffsetY) / CellSideLength);
             if (!IsOverlapping(posX, posY))
                 return new Square[0];
+            var row = (int)((posX - OffsetX) / CellSideLength);
+            var col = (int)((posY - OffsetY) / CellSideLength);
             level = level >= 0 ? level : 0;
             if (level == 0)
                 return new Square[] { square2d[col, row] };
@@ -161,8 +165,8 @@ namespace Cosmos
         /// <returns>是否重叠</returns>
         public bool IsOverlapping(float posX, float posY)
         {
-            if (posX < SquareGridArea.Left || posX > SquareGridArea.Right) return false;
-            if (posY < SquareGridArea.Bottom || posY > SquareGridArea.Top) return false;
+            if (posX < GridArea.Left || posX > GridArea.Right) return false;
+            if (posY < GridArea.Bottom || posY > GridArea.Top) return false;
             return true;
         }
         public static bool operator ==(SquareGrid lhs, SquareGrid rhs)
@@ -175,8 +179,10 @@ namespace Cosmos
         }
         public bool Equals(SquareGrid other)
         {
-            return other.SquareGridArea == this.SquareGridArea && other.CellSection == this.CellSection
-                && other.CellSection == this.CellSection && other.OffsetX == this.OffsetX && other.OffsetY == this.OffsetY;
+            return other.GridArea == this.GridArea &&
+                      other.CellSideLength == this.CellSideLength &&
+                      other.CellSection == this.CellSection &&
+                      other.BufferZoneRange == this.BufferZoneRange;
         }
         public override bool Equals(object obj)
         {
@@ -184,13 +190,13 @@ namespace Cosmos
         }
         public override int GetHashCode()
         {
-            var hashStr = $"{SquareGridArea}{CellSection}{CellSideLength}";
+            var hashStr = $"{GridArea}{CellSection}{CellSideLength}{BufferZoneRange}";
             return hashStr.GetHashCode();
         }
         bool IsOverlappingBufferZone(float posX, float posY)
         {
-            if (posX < SquareGridArea.Left - BufferZoneRange || posX > SquareGridArea.Right + BufferZoneRange) return false;
-            if (posY < SquareGridArea.Bottom - BufferZoneRange || posY > SquareGridArea.Top + BufferZoneRange) return false;
+            if (posX < GridArea.Left - BufferZoneRange || posX > GridArea.Right + BufferZoneRange) return false;
+            if (posY < GridArea.Bottom - BufferZoneRange || posY > GridArea.Top + BufferZoneRange) return false;
             return true;
         }
         bool IsOverlappingCellBufferZone(Square square, float posX, float posY)
@@ -198,19 +204,6 @@ namespace Cosmos
             if (posX < square.Left - BufferZoneRange || posX > square.Right + BufferZoneRange) return false;
             if (posY < square.Bottom - BufferZoneRange || posY > square.Top + BufferZoneRange) return false;
             return true;
-        }
-        void CreateSquare(float offsetX, float offsetY)
-        {
-            var centerOffsetX = CellSideLength / 2 + offsetX;
-            var centerOffsetY = CellSideLength / 2 + offsetY;
-            for (int i = 0; i < CellSection; i++)
-            {
-                for (int j = 0; j < CellSection; j++)
-                {
-                    square2d[i, j] = new Square(i * CellSideLength + centerOffsetX, j * CellSideLength + centerOffsetY, CellSideLength);
-                    square1d[i * CellSection + j] = square2d[i, j];
-                }
-            }
         }
     }
 }

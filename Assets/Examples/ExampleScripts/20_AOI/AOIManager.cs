@@ -55,8 +55,8 @@ public class AOIManager : MonoBehaviour
     }
     Vector3 GetRandomPosition()
     {
-        var valueX = UnityEngine.Random.Range(squareGrid.SquareGridArea.Left, squareGrid.SquareGridArea.Right);
-        var valueZ = UnityEngine.Random.Range(squareGrid.SquareGridArea.Top, squareGrid.SquareGridArea.Bottom);
+        var valueX = UnityEngine.Random.Range(squareGrid.GridArea.Left, squareGrid.GridArea.Right);
+        var valueZ = UnityEngine.Random.Range(squareGrid.GridArea.Top, squareGrid.GridArea.Bottom);
         var pos = new Vector3(valueX, 0, valueZ);
         return pos;
     }

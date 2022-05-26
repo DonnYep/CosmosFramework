@@ -7,7 +7,7 @@ namespace Cosmos.Test
         [SerializeField] float cellSideLength = 5;
         [SerializeField] uint divided;
 
-        [SerializeField] Vector2 offset;
+        [SerializeField] Vector2 center;
         [SerializeField] float cellBufferZoneBound = 8;
         [SerializeField] Color cellZoneColor;
         [SerializeField] Color bufferZoneColor;
@@ -28,10 +28,10 @@ namespace Cosmos.Test
             normalTileRoot.transform.SetParent(transform);
             normalTileRoot.transform.ResetLocalTransform();
 
-            squareGrid = new SquareGrid(cellSideLength, divided, offset.x, offset.y, cellBufferZoneBound);
+            squareGrid = new SquareGrid(cellSideLength, divided, center.x, center.y, cellBufferZoneBound);
 
             var squares = squareGrid.GetAllSquares();
-            var length = squareGrid.CellSection * squareGrid.CellSection;
+            var length = squares.Length;
             for (int i = 0; i < length; i++)
             {
                 var go = GameObject.Instantiate(squareTilePrefab, normalTileRoot.transform);
@@ -84,10 +84,10 @@ namespace Cosmos.Test
                 var length = highlightCache.Count;
                 for (int i = 0; i < length; i++)
                 {
-                    var tmpSquare = highlightCache[i];
+                    var curSquare = highlightCache[i];
                     Gizmos.color = heightLightColor;
-                    var hlSize = new Vector3(tmpSquare.SideLength, 1, tmpSquare.SideLength);
-                    var hlPos = new Vector3(tmpSquare.CenterX, 0, tmpSquare.CenterY);
+                    var hlSize = new Vector3(curSquare.SideLength, 1, curSquare.SideLength);
+                    var hlPos = new Vector3(curSquare.CenterX, 0, curSquare.CenterY);
                     Gizmos.DrawCube(hlPos, hlSize);
                 }
             }

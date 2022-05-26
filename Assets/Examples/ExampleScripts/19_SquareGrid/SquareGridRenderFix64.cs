@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using FixMath.NET;
 namespace Cosmos.Test
@@ -23,10 +19,10 @@ namespace Cosmos.Test
         SquareGridFix64 squareGrid;
 
         GameObject normalTileRoot;
-        Dictionary<SquareGridFix64.Square, SquareTileComponent> squareTileDict
-            = new Dictionary<SquareGridFix64.Square, SquareTileComponent>();
+        Dictionary<SquareFix64, SquareTileComponent> squareTileDict
+            = new Dictionary<SquareFix64, SquareTileComponent>();
 
-        List<SquareGridFix64.Square> highlightCache = new List<SquareGridFix64.Square>();
+        List<SquareFix64> highlightCache = new List<SquareFix64>();
         private void Start()
         {
             normalTileRoot = new GameObject("NormalTileRoot");
