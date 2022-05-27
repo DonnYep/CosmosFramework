@@ -26,6 +26,10 @@ namespace Cosmos
         public float HeightBufferZoneRange { get; private set; }
         public float CenterX { get { return GridArea.CenterX; } }
         public float CenterY { get { return GridArea.CenterY; } }
+        float OffsetX;
+        float OffsetY;
+        public RectangleGrid(float cellWidth, float cellHeight, uint rowCount, uint columnCount)
+    : this(cellWidth, cellHeight, rowCount, columnCount, 0, 0, 0, 0) { }
         public RectangleGrid(float cellWidth, float cellHeight, uint rowCount, uint columnCount, float centerX, float centerY)
             : this(cellWidth, cellHeight, rowCount, columnCount, centerX, centerY, 0, 0) { }
         public RectangleGrid(float cellWidth, float cellHeight, uint rowCount, uint columnCount, float centerX, float centerY, float widthBufferRange, float heightBufferRange)
@@ -46,7 +50,19 @@ namespace Cosmos
             HeightBufferZoneRange = heightBufferRange >= 0 ? heightBufferRange : 0;
             GridArea = new Rectangle(centerX, centerY, width, height);
             rectangle1d = new Rectangle[RowCount * ColumnCount];
-            CreateRectangle();
+            this.OffsetX = centerX - GridArea.HalfWidth;
+            this.OffsetY = centerY - GridArea.HalfHeight;
+
+            var centerOffsetX = cellWidth / 2 + OffsetX;
+            var centerOffsetY = cellHeight / 2 + OffsetY;
+            for (int i = 0; i < ColumnCount; i++)
+            {
+                for (int j = 0; j < RowCount; j++)
+                {
+                    rectangle2d[i, j] = new Rectangle(j * CellWidth + centerOffsetX, i * CellHeight + centerOffsetY, CellWidth, CellHeight);
+                    rectangle1d[i * ColumnCount + j] = rectangle2d[i, j];
+                }
+            }
         }
         /// <summary>
         /// 获取与位置重合的块；
@@ -58,9 +74,9 @@ namespace Cosmos
         {
             if (!IsOverlapping(posX, posY))
                 return Rectangle.Zero;
-            var col = (posX - CenterX) / CellWidth;
-            var row = (posY - CenterY) / CellHeight;
-            return rectangle2d[(int)col, (int)row];
+            var row = (int)((posX - OffsetX) / CellWidth);
+            var col = (int)((posY - OffsetY) / CellHeight);
+            return rectangle2d[col, row];
         }
         /// <summary>
         /// 获取位置所在缓冲区所有重叠的块；
@@ -72,10 +88,10 @@ namespace Cosmos
         {
             if (!IsOverlappingBufferZone(posX, posY))
                 return new Rectangle[0];
-            var col = (int)((posX - CenterX) / CellWidth);
-            var row = (int)((posY - CenterY) / CellHeight);
             if (!IsOverlapping(posX, posY))
                 return new Rectangle[0];
+            var row = (int)((posX - OffsetX) / CellWidth);
+            var col = (int)((posY - OffsetY) / CellHeight);
             Rectangle[] neighborSquares = new Rectangle[9];
             int idx = 0;
             for (int x = -1; x <= 1; x++)
@@ -86,7 +102,7 @@ namespace Cosmos
                         continue;
                     int idxX = col + x;
                     int idxY = row + y;
-                    if (idxX <= CellWidth && idxX >= 0 && idxY <= CellHeight && idxY >= 0)
+                    if (idxX <= RowCount - 1 && idxX >= 0 && idxY <= ColumnCount - 1 && idxY >= 0)
                     {
                         neighborSquares[idx++] = rectangle2d[idxX, idxY];
                     }
@@ -119,10 +135,10 @@ namespace Cosmos
         {
             if (!IsOverlapping(posX, posY))
                 return new Rectangle[0];
-            var col = (int)((posX - CenterX) / CellWidth);
-            var row = (int)((posY - CenterY) / CellHeight);
             if (!IsOverlapping(posX, posY))
                 return new Rectangle[0];
+            var row = (int)((posX - OffsetX) / CellWidth);
+            var col = (int)((posY - OffsetY) / CellHeight);
             level = level >= 0 ? level : 0;
             if (level == 0)
                 return new Rectangle[] { rectangle2d[col, row] };
@@ -136,7 +152,7 @@ namespace Cosmos
                 {
                     int idxX = col + x;
                     int idxY = row + y;
-                    if (idxX < CellWidth && idxX >= 0 && idxY < CellHeight && idxY >= 0)
+                    if (idxX <= RowCount && idxX >= 0 && idxY <= ColumnCount && idxY >= 0)
                     {
                         neabySquares[idx] = rectangle2d[idxX, idxY];
                         idx++;
@@ -206,19 +222,6 @@ namespace Cosmos
             if (posX < rectangle.Left - WidthBufferZoneRange || posX > rectangle.Right + WidthBufferZoneRange) return false;
             if (posY < rectangle.Bottom - HeightBufferZoneRange || posY > rectangle.Top + HeightBufferZoneRange) return false;
             return true;
-        }
-        void CreateRectangle()
-        {
-            var halfWidthOffset = GridArea.HalfWidth;
-            var halfHeightOffset = GridArea.HalfHeight;
-            for (int column = 0; column < ColumnCount; column++)
-            {
-                for (int row = 0; row < RowCount; row++)
-                {
-                    rectangle2d[column, row] = new Rectangle(column * CellWidth - halfWidthOffset, row * CellHeight - halfHeightOffset, CellWidth, CellHeight);
-                    rectangle1d[column * ColumnCount + row] = rectangle2d[column, row];
-                }
-            }
         }
     }
 }

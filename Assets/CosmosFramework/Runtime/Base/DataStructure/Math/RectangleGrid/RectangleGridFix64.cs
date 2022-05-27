@@ -16,6 +16,8 @@ namespace Cosmos
         public uint ColumnCount { get; private set; }
         public Fix64 CellWidth { get; private set; }
         public Fix64 CellHeight { get; private set; }
+        public Fix64 CenterX { get { return GridArea.CenterX; } }
+        public Fix64 CenterY { get { return GridArea.CenterY; } }
         /// <summary>
         /// 宽度的缓冲区范围；
         /// 缓冲区=bufferRange+border;
@@ -26,8 +28,10 @@ namespace Cosmos
         /// 缓冲区=bufferRange+border;
         /// </summary>
         public Fix64 HeightBufferZoneRange { get; private set; }
-        public Fix64 CenterX { get { return GridArea.CenterX; } }
-        public Fix64 CenterY { get { return GridArea.CenterY; } }
+        Fix64 OffsetX;
+        Fix64 OffsetY;
+        public RectangleGridFix64(Fix64 cellWidth, Fix64 cellHeight, uint rowCount, uint columnCount)
+    : this(cellWidth, cellHeight, rowCount, columnCount, Fix64.Zero, Fix64.Zero, Fix64.Zero, Fix64.Zero) { }
         public RectangleGridFix64(Fix64 cellWidth, Fix64 cellHeight, uint rowCount, uint columnCount, Fix64 centerX, Fix64 centerY)
             : this(cellWidth, cellHeight, rowCount, columnCount, centerX, centerY, Fix64.Zero, Fix64.Zero) { }
         public RectangleGridFix64(Fix64 cellWidth, Fix64 cellHeight, uint rowCount, uint columnCount, Fix64 centerX, Fix64 centerY, Fix64 widthBufferRange, Fix64 heightBufferRange)
@@ -48,7 +52,20 @@ namespace Cosmos
             HeightBufferZoneRange = heightBufferRange >= Fix64.Zero ? heightBufferRange : Fix64.Zero;
             GridArea = new RectangleFix64(centerX, centerY, width, height);
             rectangle1d = new RectangleFix64[RowCount * ColumnCount];
-            CreateRectangle();
+
+            this.OffsetX = centerX - GridArea.HalfWidth;
+            this.OffsetY = centerY - GridArea.HalfHeight;
+
+            var centerOffsetX = cellWidth / (Fix64)2 + OffsetX;
+            var centerOffsetY = cellHeight / (Fix64)2 + OffsetY;
+            for (int i = 0; i < ColumnCount; i++)
+            {
+                for (int j = 0; j < RowCount; j++)
+                {
+                    rectangle2d[i, j] = new RectangleFix64((Fix64)j * CellWidth + centerOffsetX, (Fix64)i * CellHeight + centerOffsetY, CellWidth, CellHeight);
+                    rectangle1d[i * ColumnCount + j] = rectangle2d[i, j];
+                }
+            }
         }
         /// <summary>
         /// 获取与位置重合的块；
@@ -60,9 +77,9 @@ namespace Cosmos
         {
             if (!IsOverlapping(posX, posY))
                 return RectangleFix64.Zero;
-            var col = (posX - CenterX) / CellWidth;
-            var row = (posY - CenterY) / CellHeight;
-            return rectangle2d[(int)col, (int)row];
+            var row = (int)((posX - OffsetX) / CellWidth);
+            var col = (int)((posY - OffsetY) / CellHeight);
+            return rectangle2d[col, row];
         }
         /// <summary>
         /// 获取位置所在缓冲区所有重叠的块；
@@ -74,10 +91,10 @@ namespace Cosmos
         {
             if (!IsOverlappingBufferZone(posX, posY))
                 return new RectangleFix64[0];
-            var col = (int)((posX - CenterX) / CellWidth);
-            var row = (int)((posY - CenterY) / CellHeight);
             if (!IsOverlapping(posX, posY))
                 return new RectangleFix64[0];
+            var row = (int)((posX - OffsetX) / CellWidth);
+            var col = (int)((posY - OffsetY) / CellHeight);
             RectangleFix64[] neighborSquares = new RectangleFix64[9];
             int idx = 0;
             for (int x = -1; x <= 1; x++)
@@ -88,7 +105,7 @@ namespace Cosmos
                         continue;
                     int idxX = col + x;
                     int idxY = row + y;
-                    if (idxX <= RowCount && idxX >= 0 && idxY <= ColumnCount && idxY >= 0)
+                    if (idxX <= RowCount - 1 && idxX >= 0 && idxY <= ColumnCount - 1 && idxY >= 0)
                     {
                         neighborSquares[idx++] = rectangle2d[idxX, idxY];
                     }
@@ -121,10 +138,10 @@ namespace Cosmos
         {
             if (!IsOverlapping(posX, posY))
                 return new RectangleFix64[0];
-            var col = (int)((posX - CenterX) / CellWidth);
-            var row = (int)((posY - CenterY) / CellHeight);
             if (!IsOverlapping(posX, posY))
                 return new RectangleFix64[0];
+            var row = (int)((posX - OffsetX) / CellWidth);
+            var col = (int)((posY - OffsetY) / CellHeight);
             level = level >= 0 ? level : 0;
             if (level == 0)
                 return new RectangleFix64[] { rectangle2d[col, row] };
@@ -208,19 +225,6 @@ namespace Cosmos
             if (posX < rectangle.Left - WidthBufferZoneRange || posX > rectangle.Right + WidthBufferZoneRange) return false;
             if (posY < rectangle.Bottom - HeightBufferZoneRange || posY > rectangle.Top + HeightBufferZoneRange) return false;
             return true;
-        }
-        void CreateRectangle()
-        {
-            var halfWidthOffset = GridArea.HalfWidth;
-            var halfHeightOffset = GridArea.HalfHeight;
-            for (int column = 0; column < ColumnCount; column++)
-            {
-                for (int row = 0; row < RowCount; row++)
-                {
-                    rectangle2d[column, row] = new RectangleFix64((Fix64)column * CellWidth - halfWidthOffset, (Fix64)row * CellHeight - halfHeightOffset, CellWidth, CellHeight);
-                    rectangle1d[column * ColumnCount + row] = rectangle2d[column, row];
-                }
-            }
         }
     }
 }
