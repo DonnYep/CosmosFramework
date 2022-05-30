@@ -272,7 +272,7 @@ namespace Cosmos.UI
         /// <param name="uiFormName">UI资源的名称</param>
         public void CloseUIForm(string uiFormName)
         {
-            CheckUIFormValid(uiFormName);
+            CheckUIFormNameValid(uiFormName);
             uiFormDict.Remove(uiFormName, out var uiForm);
             if (!string.IsNullOrEmpty(uiForm.UIGroupName))
             {
@@ -316,7 +316,7 @@ namespace Cosmos.UI
         /// <param name="uiFormName">UI资源的名称</param>
         public void DeactiveUIForm(string uiFormName)
         {
-            CheckUIFormValid(uiFormName);
+            CheckUIFormNameValid(uiFormName);
             if (HasUIForm(uiFormName))
             {
                 uiFormDict.TryGetValue(uiFormName, out var uiForm);
@@ -367,7 +367,7 @@ namespace Cosmos.UI
         /// <param name="uiFormName">UI资源的名称</param>
         public void ActiveUIForm(string uiFormName)
         {
-            CheckUIFormValid(uiFormName);
+            CheckUIFormNameValid(uiFormName);
             if (HasUIForm(uiFormName))
             {
                 uiFormDict.TryGetValue(uiFormName, out var uiForm);
@@ -452,32 +452,32 @@ namespace Cosmos.UI
         /// 通过条件选择组中的UIForm；
         /// </summary>
         /// <param name="uiGroupName">UI组的名字</param>
-        /// <param name="handler">条件委托</param>
+        /// <param name="condition">条件委托</param>
         /// <returns>符合条件的UIForm</returns>
-        public IUIForm[] FindUIForms(string uiGroupName, Predicate<IUIForm> handler)
+        public IUIForm[] FindUIForms(string uiGroupName, Predicate<IUIForm> condition)
         {
             Utility.Text.IsStringValid(uiGroupName, "UIGroupName is invalid !");
-            if (handler == null)
+            if (condition == null)
                 throw new ArgumentNullException("Handler is invalid !");
             if (uiGroupDict.TryGetValue(uiGroupName, out var group))
-                return group.GetUIForms(handler);
+                return group.GetUIForms(condition);
             else
                 throw new ArgumentException($"UIGroup  {uiGroupName} is not existed !");
         }
         /// <summary>
         /// 通过条件选择UIForm
         /// </summary>
-        /// <param name="handler">条件委托</param>
+        /// <param name="condition">条件委托</param>
         /// <returns>符合条件的UIForm</returns>
-        public IUIForm[] FindtUIForms(Predicate<IUIForm> handler)
+        public IUIForm[] FindUIForms(Predicate<IUIForm> condition)
         {
-            if (handler == null)
+            if (condition == null)
                 throw new ArgumentNullException("Handler is invalid !");
             var dst = new IUIForm[uiFormDict.Count];
             int idx = 0;
             foreach (var uiForm in uiFormDict.Values)
             {
-                if (handler.Invoke(uiForm))
+                if (condition.Invoke(uiForm))
                 {
                     dst[idx] = uiForm;
                     idx++;
@@ -493,7 +493,7 @@ namespace Cosmos.UI
         /// <param name="uiGroupName">UI组的名字</param>
         public void GroupUIForm(string uiFormName, string uiGroupName)
         {
-            CheckUIFormValid(uiFormName);
+            CheckUIFormNameValid(uiFormName);
             if (string.IsNullOrEmpty(uiGroupName))
                 throw new ArgumentNullException("UIGroupName is invalid !");
             if (!uiGroupDict.TryGetValue(uiGroupName, out var group))
@@ -515,7 +515,7 @@ namespace Cosmos.UI
         /// <param name="uiFormName">UI资源的名称</param>
         public void UngroupUIForm(string uiFormName)
         {
-            CheckUIFormValid(uiFormName);
+            CheckUIFormNameValid(uiFormName);
             var uiForm = uiFormDict[uiFormName];
             if (!string.IsNullOrEmpty(uiForm.UIGroupName))
             {
@@ -534,7 +534,7 @@ namespace Cosmos.UI
         /// 检测UIForm的名字是否有效，且是否存在；
         /// </summary>
         /// <param name="uiFormName">UI资源的名称</param>
-        void CheckUIFormValid(string uiFormName)
+        void CheckUIFormNameValid(string uiFormName)
         {
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
             if (!uiFormDict.ContainsKey(uiFormName))

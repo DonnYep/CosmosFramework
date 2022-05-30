@@ -162,15 +162,15 @@ namespace Cosmos.UI
         /// 通过条件选择组中的UIForm；
         /// </summary>
         /// <param name="uiGroupName">UI组的名字</param>
-        /// <param name="handler">条件委托</param>
+        /// <param name="condition">条件委托</param>
         /// <returns>符合条件的UIForm</returns>
-        IUIForm[] FindUIForms(string uiGroupName, Predicate<IUIForm> handler);
+        IUIForm[] FindUIForms(string uiGroupName, Predicate<IUIForm> condition);
         /// <summary>
         /// 通过条件选择UIForm
         /// </summary>
-        /// <param name="handler">条件委托</param>
+        /// <param name="condition">条件委托</param>
         /// <returns>符合条件的UIForm</returns>
-        IUIForm[] FindtUIForms(Predicate<IUIForm> handler);
+        IUIForm[] FindUIForms(Predicate<IUIForm> condition);
         /// <summary>
         /// 设置UIForm的组别；
         /// </summary>
