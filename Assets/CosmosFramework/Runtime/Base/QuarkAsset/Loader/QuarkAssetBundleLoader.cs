@@ -218,7 +218,8 @@ namespace Quark.Loader
             }
             foreach (var assetBundle in assetBundleDict)
             {
-                assetBundle.Value.AssetBundle?.Unload(unloadAllLoadedObjects);
+                if (assetBundle.Value.AssetBundle != null)
+                    assetBundle.Value.AssetBundle.Unload(unloadAllLoadedObjects);
             }
             assetBundleDict.Clear();
             AssetBundle.UnloadAllAssetBundles(unloadAllLoadedObjects);
@@ -233,7 +234,8 @@ namespace Quark.Loader
                 {
                     a.AssetReferenceCount = 0;
                 }
-                bundle.AssetBundle?.Unload(unloadAllLoadedObjects);
+                if (bundle.AssetBundle != null)
+                    bundle.AssetBundle.Unload(unloadAllLoadedObjects);
                 assetBundleDict.Remove(assetBundleName);
             }
         }
@@ -278,7 +280,8 @@ namespace Quark.Loader
                 assetBundle.ReferenceCount--;
                 if (assetBundle.ReferenceCount == 0)
                 {
-                    assetBundle.AssetBundle?.Unload(true);
+                    if (assetBundle.AssetBundle != null)
+                        assetBundle.AssetBundle.Unload(true);
                     assetBundleDict.Remove(assetBundle.AssetBundleName);
                 }
             }
@@ -523,7 +526,8 @@ where T : UnityEngine.Object
                 assetBundle.ReferenceCount -= count;
                 if (assetBundle.ReferenceCount == 0)
                 {
-                    assetBundle.AssetBundle?.Unload(true);
+                    if (assetBundle.AssetBundle != null)
+                        assetBundle.AssetBundle.Unload(true);
                     assetBundleDict.Remove(assetBundle.AssetBundleName);
                 }
             }
