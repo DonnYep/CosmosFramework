@@ -1,7 +1,7 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/DonnYep/CosmosFramework/blob/master/LICENSE)
 [![Issues:Welcome](https://img.shields.io/badge/Issues-welcome-blue.svg)](https://github.com/DonnYep/CosmosFramework/issues)
 
-# [中文](README.md) 
+# [中文](https://github.com/DonnYep/CosmosFramework/blob/master/README.md) 
 
 # CosmosFramework
 
