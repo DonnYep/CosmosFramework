@@ -120,7 +120,7 @@ namespace Cosmos.ObjectPool
             capacity = 0;
             expireTime = 0;
             ObjectPoolName = string.Empty;
-            ObjectPoolAssetInfo = new ObjectPoolAssetInfo();
+            ObjectPoolAssetInfo = null;
         }
         void Init(GameObject spawnAsset, string objectPoolName, ObjectPoolAssetInfo assetInfo)
         {

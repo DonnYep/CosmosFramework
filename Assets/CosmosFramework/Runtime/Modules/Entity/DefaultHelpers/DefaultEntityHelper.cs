@@ -5,18 +5,12 @@ namespace Cosmos
 {
     public class DefaultEntityHelper : IEntityHelper
     {
-        GameObject m_SingleRoot;
-        GameObject SingleRoot
+        GameObject root = CosmosEntry.EntityManager.Instance();
+        GameObject singleRoot;
+        public DefaultEntityHelper()
         {
-            get
-            {
-                if (m_SingleRoot == null)
-                {
-                    m_SingleRoot = new GameObject("SingleEntities");
-                    m_SingleRoot.transform.SetAlignParent(CosmosEntry.EntityManager.Instance().transform);
-                }
-                return m_SingleRoot;
-            }
+            singleRoot = new GameObject("SingleEntities");
+            singleRoot.transform.SetAlignParent(root.transform);
         }
         public void AttachToParent(IEntity childEntity, IEntity parentEntity)
         {
@@ -27,14 +21,14 @@ namespace Cosmos
         public void DeatchFromParent(IEntity entity)
         {
             var childGo = entity.EntityInstance.CastTo<GameObject>();
-            childGo.transform.SetParent(SingleRoot.transform);
+            childGo.transform.SetParent(singleRoot.transform);
             childGo.transform.ResetLocalTransform();
         }
         public object InstantiateEntity(object entityAsset)
         {
             var resGo = entityAsset.CastTo<GameObject>();
             var go = GameObject.Instantiate(resGo);
-            go.transform.SetParent(SingleRoot.transform);
+            go.transform.SetParent(singleRoot.transform);
             return go;
         }
 

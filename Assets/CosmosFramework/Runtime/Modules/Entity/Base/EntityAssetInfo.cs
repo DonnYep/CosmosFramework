@@ -1,20 +1,25 @@
-﻿using System.Runtime.InteropServices;
+﻿using Cosmos.Resource;
 namespace Cosmos.Entity
 {
     /// <summary>
     /// 实体资源信息；
     /// </summary>
-    [StructLayout(LayoutKind.Auto)]
-    public struct EntityAssetInfo
+    public class EntityAssetInfo : AssetInfo
     {
-        public string AssetName { get; private set; }
-        public string EntityGroupName { get; private set; }
-        public bool UseObjectPool { get; private set; }
-        public EntityAssetInfo(string entityGroupName, string assetName, bool useObjectPool = false)
+        readonly string entityGroupName;
+        public string EntityGroupName { get { return entityGroupName; } }
+        readonly bool useObjectPool;
+        public bool UseObjectPool { get { return useObjectPool; } }
+        public EntityAssetInfo(string entityGroupName, string assetBundleName, string assetPath, bool useObjectPool=false) :
+            base(assetBundleName, assetPath)
         {
-            this.EntityGroupName = entityGroupName;
-            this.AssetName = assetName;
-            this.UseObjectPool = useObjectPool;
+            this.entityGroupName = entityGroupName;
+            this.useObjectPool = useObjectPool;
+        }
+        public EntityAssetInfo(string entityGroupName, string assetPath, bool useObjectPool=false) : base(assetPath)
+        {
+            this.entityGroupName = entityGroupName;
+            this.useObjectPool = useObjectPool;
         }
     }
 }

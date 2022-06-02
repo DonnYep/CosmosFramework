@@ -1,17 +1,15 @@
-﻿using System.Runtime.InteropServices;
+﻿using Cosmos.Resource;
 namespace Cosmos.DataTable
 {
-    [StructLayout(LayoutKind.Auto)]
-    public struct DataTableAssetInfo
+    public class DataTableAssetInfo : AssetInfo
     {
         readonly string dataTableName;
         public string DataTableName { get { return dataTableName; } }
-        public string AssetName { get; private set; }
-        public DataTableAssetInfo(string dataTableName) : this(dataTableName, dataTableName) { }
-        public DataTableAssetInfo(string dataTableName, string assetName)
+        public DataTableAssetInfo(string dataTableName) : this(dataTableName, string.Empty, dataTableName) { }
+        public DataTableAssetInfo(string dataTableName, string assetPath) : this(dataTableName, string.Empty, assetPath) { }
+        public DataTableAssetInfo(string dataTableName, string assetBundleName, string assetPath) : base(assetBundleName, assetPath)
         {
             this.dataTableName = dataTableName;
-            AssetName = assetName;
         }
     }
 }

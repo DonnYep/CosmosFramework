@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Cosmos;
+using Cosmos.Resource;
 public class SlotContext : MonoBehaviour
 {
-    public GameObject SlotAsset { get; set; }
+    GameObject slotPrefab;
     List<Slot> slotList = new List<Slot>();
+    IResourceManager resourceManager;
     public void UpdateDataSet(InventoryDataset invDataSet)
     {
         var slots = GetComponentsInChildren<Slot>();
@@ -18,7 +21,7 @@ public class SlotContext : MonoBehaviour
         {
             for (int i = 0; i < invDataSet.InventoryCapacity; i++)
             {
-                var go = Instantiate(SlotAsset, transform);
+                var go = Instantiate(slotPrefab, transform);
                 go.name = "Slot";
                 slotList.Add(go.GetComponent<Slot>());
             }
@@ -40,7 +43,7 @@ public class SlotContext : MonoBehaviour
             {
                 if (i >= slotList.Count)
                 {
-                    var go = Instantiate(SlotAsset, transform);
+                    var go = Instantiate(slotPrefab, transform);
                     go.name = "Slot";
                     slotList.Add(go.GetComponent<Slot>());
                 }
@@ -53,5 +56,10 @@ public class SlotContext : MonoBehaviour
         {
             slotList[i].SetupSlot(invDataSet.ItemDataSets[i]);
         }
+    }
+    protected void Awake()
+    {
+        resourceManager = CosmosEntry.ResourceManager;
+        slotPrefab = resourceManager.LoadPrefab(typeof(Slot));
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine.UI;
 using Cosmos.UI;
-public class SettingPanel : UGUIUIForm
+[UIAsset(nameof(SettingPanel), "Example", "UI/SettingPanel" )]
+public class SettingPanel : UIForm
 {
     protected override void Awake()
     {

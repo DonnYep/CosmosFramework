@@ -35,6 +35,8 @@ namespace Cosmos.DataTable
         {
             if (dataTableHelper == null)
                 throw new ArgumentNullException("dataTableHelper is invalid ");
+            if (assetInfo == null)
+                throw new ArgumentNullException("assetInfo is invalid ");
             if (dataTable == null)
                 throw new ArgumentNullException("dataTable is invalid ");
             dataTableHelper.LoadDataTableAsync(assetInfo, dataTable);
@@ -49,6 +51,8 @@ namespace Cosmos.DataTable
         {
             if (dataTableHelper == null)
                 throw new ArgumentNullException("dataTableHelper is invalid ");
+            if (assetInfo == null)
+                throw new ArgumentNullException("assetInfo is invalid ");
             if (dataTableDict.TryGetValue(name, out var dataTable))
             {
                 dataTableHelper.LoadDataTableAsync(assetInfo, dataTable);
@@ -101,7 +105,8 @@ namespace Cosmos.DataTable
                 throw new ArgumentNullException($"{name} is invalid ");
             if (dataTableDict.TryRemove(name, out var dataTable))
             {
-                dataTableHelper.UnLoadDataTable(dataTable.DataTableAssetInfo);
+                if (dataTable.DataTableAssetInfo != null)
+                    dataTableHelper.UnLoadDataTable(dataTable.DataTableAssetInfo);
                 dataTable.OnRelease();
             }
         }
@@ -117,7 +122,8 @@ namespace Cosmos.DataTable
             if (dataTableDict.Remove(dataTable.Name))
             {
                 var dataTableBase = dataTable as DataTableBase;
-                dataTableHelper.UnLoadDataTable(((DataTable<T>)dataTable).DataTableAssetInfo);
+                if (dataTableBase.DataTableAssetInfo != null)
+                    dataTableHelper.UnLoadDataTable(((DataTable<T>)dataTable).DataTableAssetInfo);
                 dataTableBase.OnRelease();
             }
         }
@@ -131,7 +137,8 @@ namespace Cosmos.DataTable
                 throw new ArgumentNullException("dataTable is invalid ");
             if (dataTableDict.Remove(dataTable.Name))
             {
-                dataTableHelper.UnLoadDataTable(dataTable.DataTableAssetInfo);
+                if (dataTable.DataTableAssetInfo != null)
+                    dataTableHelper.UnLoadDataTable(dataTable.DataTableAssetInfo);
                 dataTable.OnRelease();
             }
         }

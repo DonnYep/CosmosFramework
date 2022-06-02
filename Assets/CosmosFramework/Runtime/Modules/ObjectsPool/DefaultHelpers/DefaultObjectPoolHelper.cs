@@ -7,11 +7,11 @@ namespace Cosmos
     {
         public Coroutine LoadObjectAssetAsync(ObjectPoolAssetInfo assetInfo, Action<ObjectPoolAssetInfo, GameObject> callback)
         {
-            return CosmosEntry.ResourceManager.LoadPrefabAsync(assetInfo.AssetName, (go) => { callback?.Invoke(assetInfo, go); });
+            return CosmosEntry.ResourceManager.LoadPrefabAsync(assetInfo, (go) => { callback?.Invoke(assetInfo, go); });
         }
         public void UnloadObjectAsset(ObjectPoolAssetInfo assetInfo)
         {
-            CosmosEntry.ResourceManager.UnloadAsset(assetInfo.AssetName);
+            CosmosEntry.ResourceManager.UnloadAsset(assetInfo);
         }
     }
 }

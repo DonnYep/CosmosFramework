@@ -9,7 +9,7 @@ namespace Cosmos.UI
     /// 注意，UIForm 类是框架默认提供的UI类型，若需要使用自定义的面板类型，则可令其实现IUIForm接口，并配合DefaultUIFormAssetHelper来生成对应的资源；
     /// </summary>
     [DisallowMultipleComponent]
-    public abstract class UGUIUIForm : MonoBehaviour, IUIForm
+    public abstract class UIForm : MonoBehaviour, IUIForm
     {
         struct UILableInfo
         {
@@ -34,7 +34,7 @@ namespace Cosmos.UI
                     priority = 10000;
                 else if (value < 0)
                     priority = 0;
-                var peerComps = gameObject.GetComponentsInPeer<UGUIUIForm>(transform);
+                var peerComps = gameObject.GetComponentsInPeer<UIForm>(transform);
                 Utility.Unity.SortCompsByAscending(peerComps, (comp) => comp.Priority);
             }
         }
@@ -45,7 +45,7 @@ namespace Cosmos.UI
             get
             {
                 if (string.IsNullOrEmpty(uiFormName))
-                    uiFormName = GetComponent<UGUIUIForm>().GetType().Name;
+                    uiFormName = GetComponent<UIForm>().GetType().Name;
                 return uiFormName;
             }
             set

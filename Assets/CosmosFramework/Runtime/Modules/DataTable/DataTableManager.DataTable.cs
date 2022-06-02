@@ -139,7 +139,7 @@ namespace Cosmos.DataTable
             {
                 rowDataDict.Clear();
                 rowPool.Clear();
-                DataTableAssetInfo = default;
+                DataTableAssetInfo = null;
             }
         }
     }

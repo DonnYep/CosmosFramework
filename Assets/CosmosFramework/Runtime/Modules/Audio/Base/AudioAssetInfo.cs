@@ -1,22 +1,21 @@
-﻿using System.Runtime.InteropServices;
+﻿using Cosmos.Resource;
 namespace Cosmos.Audio
 {
-    [StructLayout(LayoutKind.Auto)]
-    public struct AudioAssetInfo 
+    public class AudioAssetInfo : AssetInfo
     {
-        /// <summary>
-        /// 声音资源信息
-        /// </summary>
-        public string AssetName { get; private set; }
+        readonly string audioName;
+        public string AudioName { get { return audioName; } }
         /// <summary>
         /// 声音组别；
         /// </summary>
-        public string AudioGroupName { get; private set; }
-        public AudioAssetInfo(string assetName) : this(assetName, string.Empty) { }
-        public AudioAssetInfo(string assetName, string audioGroupName)
+        public string AudioGroupName{ get; set; }
+        public AudioAssetInfo(string audioName, string assetPath) : base(assetPath)
         {
-            AssetName = assetName;
-            AudioGroupName = audioGroupName;
+            this.audioName = audioName;
+        }
+        public AudioAssetInfo(string audioName, string assetBundleName, string assetPath) : base(assetBundleName, assetPath)
+        {
+            this.audioName = audioName;
         }
     }
 }

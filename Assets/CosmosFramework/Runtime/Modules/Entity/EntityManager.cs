@@ -75,6 +75,34 @@ namespace Cosmos.Entity
             defaultEntityGroupHelper = entityGroupHelper;
         }
         /// <summary>
+        /// 注册EntityGroup (同步)；
+        /// 若传入的entityGroupHelper 为空，则使用默认的entityGroupHelper；
+        /// </summary>
+        /// <param name="entityAssetInfo">实体对象信息</param>
+        /// <param name="entityGroupHelper">实体组帮助体</param>
+        /// <returns>是否注册成功</returns>
+        public bool RegisterEntityGroup(EntityAssetInfo entityAssetInfo, IEntityGroupHelper entityGroupHelper = null)
+        {
+            if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
+            {
+                throw new ArgumentNullException("Entity group name is invalid.");
+            }
+            var result = HasEntityGroup(entityAssetInfo.EntityGroupName);
+            if (!result)
+            {
+                var entityAsset = resourceManager.LoadPrefab(entityAssetInfo);
+                entityGroupHelper = entityGroupHelper != null ? entityGroupHelper : defaultEntityGroupHelper;
+                var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityGroupHelper);
+                if (entityAssetInfo.UseObjectPool)
+                {
+                    var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
+                    entityGroup.AssignObjectPool(objectPool);
+                }
+                entityGroupDict.TryAdd(entityAssetInfo.EntityGroupName, entityGroup);
+            }
+            return !result;
+        }
+        /// <summary>
         /// 注册EntityGroup (异步)；
         /// 若传入的entityGroupHelper 为空，则使用默认的entityGroupHelper；
         /// </summary>
@@ -90,7 +118,7 @@ namespace Cosmos.Entity
             var result = HasEntityGroup(entityAssetInfo.EntityGroupName);
             if (!result)
             {
-                await resourceManager.LoadPrefabAsync(entityAssetInfo.AssetName, (entityAsset) =>
+                await resourceManager.LoadPrefabAsync(entityAssetInfo, (entityAsset) =>
                 {
                     entityGroupHelper = entityGroupHelper != null ? entityGroupHelper : defaultEntityGroupHelper;
                     var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityGroupHelper);

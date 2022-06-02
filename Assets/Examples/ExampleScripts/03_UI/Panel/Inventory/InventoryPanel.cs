@@ -1,10 +1,14 @@
-﻿using UnityEngine.UI;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 using PureMVC;
 using Cosmos.UI;
 /// <summary>
 /// 仅测试
 /// </summary>
-public class InventoryPanel : UGUIUIForm
+[UIAsset(nameof(InventoryPanel), "Example", "UI/InventoryPanel")]
+public class InventoryPanel : UIForm
 {
     MED_Inventory med_Inventory;
     public Button BtnLoad { get; private set; }
@@ -29,7 +33,7 @@ public class InventoryPanel : UGUIUIForm
     }
     private void Start()
     {
-        med_Inventory = MVC.PeekMediator<MED_Inventory>(MED_Inventory.NAME);
+        med_Inventory = MVC.PeekMediator(MED_Inventory.NAME) as MED_Inventory;
         med_Inventory.Init(this);
         med_Inventory.UpdateSlotItem();
     }

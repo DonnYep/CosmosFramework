@@ -30,8 +30,8 @@ namespace Cosmos.FSM
         #endregion
         #region Lifecycle
         public virtual void OnInitialization(IFSM<T> fsm) { }
-        public abstract void OnStateEnter(IFSM<T> fsm);
-        public abstract void OnStateExit(IFSM<T> fsm);
+        public abstract void OnEnter(IFSM<T> fsm);
+        public abstract void OnExit(IFSM<T> fsm);
         public virtual void OnTermination(IFSM<T> fsm) { }
         public virtual void Reason(IFSM<T> fsm)
         {
@@ -44,7 +44,7 @@ namespace Cosmos.FSM
                 }
             }
         }
-        public abstract void OnStateStay(IFSM<T> fsm);
+        public abstract void Action(IFSM<T> fsm);
         #endregion
     }
 }

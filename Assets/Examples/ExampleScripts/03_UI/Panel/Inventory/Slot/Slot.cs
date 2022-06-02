@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Cosmos;
+[PrefabAsset("UI/Slot")]
 public class Slot : MonoBehaviour
 {
     public void SetupSlot(ItemDataset item)

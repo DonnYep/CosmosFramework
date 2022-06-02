@@ -8,6 +8,7 @@ namespace Cosmos.Audio
     /// </summary>
     public interface IAudioAssetHelper
     {
+        AudioObject LoadAudio(AudioAssetInfo assetInfo);
         Coroutine LoadAudioAsync(AudioAssetInfo assetInfo, Action<AudioObject> loadSuccess, Action loadFailure);
     }
 }

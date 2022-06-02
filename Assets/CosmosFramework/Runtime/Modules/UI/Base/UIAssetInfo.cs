@@ -1,22 +1,21 @@
-﻿using System.Runtime.InteropServices;
+﻿using Cosmos.Resource;
 namespace Cosmos.UI
 {
     /// <summary>
     /// UI资源信息；
     /// </summary>
-    [StructLayout(LayoutKind.Auto)]
-    public struct UIAssetInfo
+    public class UIAssetInfo : AssetInfo
     {
-        public string AssetName { get; private set; }
-        public string UIFormName { get; private set; }
-        public string UIGroupName { get; private set; }
-        public UIAssetInfo(string assetName, string uiGroupName)
-            : this(assetName, assetName, uiGroupName) { }
-        public UIAssetInfo(string assetName, string uiFormName, string uiGroupName)
+        readonly string uiAssetName;
+        public string UIAssetName { get { return uiAssetName; } }
+        public string UIGroupName{ get; set; }
+        public UIAssetInfo(string uiAssetName,string assetPath):base(assetPath)
         {
-            AssetName = assetName;
-            UIFormName = uiFormName;
-            UIGroupName = uiGroupName;
+            this.uiAssetName= uiAssetName;
+        }
+        public UIAssetInfo(string uiAssetName, string assetBundleName, string assetPath) : base(assetBundleName, assetPath)
+        {
+            this.uiAssetName = uiAssetName;
         }
     }
 }

@@ -2,7 +2,7 @@
 using Cosmos.UI;
 using PureMVC;
 
-public class NavigatePanel : UGUIUIForm
+public class NavigatePanel : UIForm
 {
     public Button BtnWelcome { get; private set; }
     public Button BtnInventory { get; private set; }

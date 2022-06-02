@@ -92,13 +92,13 @@ namespace Cosmos.Audio
         /// </summary>
         public void RegistAudio(AudioAssetInfo audioAssetInfo)
         {
-            Utility.Text.IsStringValid(audioAssetInfo.AssetName, "AudioName is invalid !");
+            Utility.Text.IsStringValid(audioAssetInfo.AudioName, "AudioName is invalid !");
             audioAssetHelper.LoadAudioAsync(audioAssetInfo, audioObj =>
             {
                 OnAudioRegistSuccess(audioObj);
             }, () =>
             {
-                OnAudioRegistFailure(audioAssetInfo.AssetName, audioAssetInfo.AudioGroupName);
+                OnAudioRegistFailure(audioAssetInfo.AudioName, audioAssetInfo.AudioGroupName);
             });
         }
         /// <summary>

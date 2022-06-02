@@ -43,7 +43,6 @@ public class MED_Inventory : Mediator
         InventoryPanel.BtnQuit.onClick.AddListener(QuitClick);
         InventoryPanel.BtnSave.onClick.AddListener(SaveClick);
         InventoryPanel.BtnUpdate.onClick.AddListener(UpdateClick);
-        InventoryPanel.SlotContext.SlotAsset = PRX_Inventory.SlotAsset;
     }
     /// <summary>
     /// 更新inventory的slot与item中的信息；
