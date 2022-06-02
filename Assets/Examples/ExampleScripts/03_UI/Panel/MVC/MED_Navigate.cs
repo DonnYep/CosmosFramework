@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PureMVC;
+﻿using PureMVC;
 using Cosmos.UI;
 using Cosmos;
 public class MED_Navigate : Mediator
@@ -32,7 +27,7 @@ public class MED_Navigate : Mediator
     {
         if (welcome == null)
         {
-            CosmosEntry.UIManager.OpenUIFormAsync<WelcomePanel>(panel =>
+            CosmosEntry.UIManager.OpenUIFormAsync<WelcomePanel>(new UIAssetInfo("UI/WelcomePanel", "WelcomePanel", "Example"),panel =>
             { panel.gameObject.SetActive(true); welcome = panel; });
             return;
         }
@@ -45,7 +40,7 @@ public class MED_Navigate : Mediator
     {
         if (inventory == null)
         {
-            CosmosEntry.UIManager.OpenUIFormAsync<InventoryPanel>(panel =>
+            CosmosEntry.UIManager.OpenUIFormAsync<InventoryPanel>(new UIAssetInfo("UI/InventoryPanel", "InventoryPanel", "Example"),panel =>
            { panel.gameObject.name = "InventoryPanel"; panel.gameObject.SetActive(true); inventory = panel; });
             return;
         }
@@ -58,7 +53,7 @@ public class MED_Navigate : Mediator
     {
         if (store == null)
         {
-            CosmosEntry.UIManager.OpenUIFormAsync<StorePanel>(panel =>
+            CosmosEntry.UIManager.OpenUIFormAsync<StorePanel>(new UIAssetInfo("UI/StorePanel", "StorePanel", "Example"),panel =>
             { panel.gameObject.SetActive(true); store = panel; });
             return;
         }
@@ -71,7 +66,7 @@ public class MED_Navigate : Mediator
     {
         if (setting == null)
         {
-            CosmosEntry.UIManager.OpenUIFormAsync<SettingPanel>(panel =>
+            CosmosEntry.UIManager.OpenUIFormAsync<SettingPanel>(new UIAssetInfo("UI/SettingPanel", "SettingPanel", "Example"),panel =>
             { panel.gameObject.SetActive(true); setting = panel; });
             return;
         }
@@ -84,7 +79,7 @@ public class MED_Navigate : Mediator
     {
         if (status == null)
         {
-            CosmosEntry.UIManager.OpenUIFormAsync<StatusPanel>(panel =>
+            CosmosEntry.UIManager.OpenUIFormAsync<StatusPanel>(new UIAssetInfo("UI/StatusPanel", "StatusPanel", "Example"),panel =>
             { panel.gameObject.SetActive(true); status = panel; });
             return;
         }

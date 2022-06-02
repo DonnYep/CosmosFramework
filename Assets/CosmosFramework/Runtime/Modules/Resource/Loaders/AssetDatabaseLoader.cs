@@ -20,28 +20,24 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public bool IsProcessing { get { return isProcessing; } }
         ///<inheritdoc/> 
-        public T LoadAsset<T>(AssetInfo info) where T : UnityEngine.Object
+        public T LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
-            if (info == null)
-                return null;
 #if UNITY_EDITOR
-            if (string.IsNullOrEmpty(info.AssetPath))
+            if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset path is invalid!");
-            var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(info.AssetPath);
+            var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetName);
             return asset;
 #else
             return null;    
 #endif
         }
         ///<inheritdoc/> 
-        public T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object
+        public T[] LoadAllAsset<T>(string assetName) where T : UnityEngine.Object
         {
-            if (info == null)
-                return null;
 #if UNITY_EDITOR
-            if (string.IsNullOrEmpty(info.AssetPath))
+            if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset path is invalid!");
-            var asset = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(info.AssetPath);
+            var asset = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(assetName);
             var arr = asset.Where(a => a.GetType() == typeof(T)).ToArray();
             T[] t_arr = new T[arr.Length];
             for (int i = 0; i < t_arr.Length; i++)
@@ -54,22 +50,22 @@ namespace Cosmos.Resource
 #endif
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
 #if UNITY_EDITOR
-            return Utility.Unity.StartCoroutine(EnumLoadAsssetAsync(info,callback,progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, callback, progress));
 #else
             return null;
 
 #endif
         }
         ///<inheritdoc/> 
-        public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
+        public T[] LoadAssetWithSubAssets<T>(string assetName) where T : UnityEngine.Object
         {
 #if UNITY_EDITOR
-            if (string.IsNullOrEmpty(info.AssetPath))
+            if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
-            var assetObj = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(info.AssetPath);
+            var assetObj = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(assetName);
             var length = assetObj.Length;
             T[] assets = new T[length];
             for (int i = 0; i < length; i++)
@@ -83,10 +79,10 @@ namespace Cosmos.Resource
 #endif
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
 #if UNITY_EDITOR
-            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(info, callback));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, callback));
 #else
             return null;
 
@@ -112,7 +108,7 @@ namespace Cosmos.Resource
 #endif
         }
         ///<inheritdoc/> 
-        public void UnloadAsset(AssetInfo info)
+        public void UnloadAsset(string assetName)
         {
 #if UNITY_EDITOR
 #else
@@ -180,16 +176,16 @@ namespace Cosmos.Resource
             callback?.Invoke();
             isProcessing = false;
         }
-        IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback)
+        IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback)
 where T : UnityEngine.Object
         {
-            var assets = LoadAssetWithSubAssets<T>(info);
+            var assets = LoadAssetWithSubAssets<T>(assetName);
             yield return null;
             callback?.Invoke(assets);
         }
-        IEnumerator EnumLoadAsssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress) where T : UnityEngine.Object
+        IEnumerator EnumLoadAsssetAsync<T>(string assetName, Action<T> callback, Action<float> progress) where T : UnityEngine.Object
         {
-            var asset = LoadAsset<T>(info);
+            var asset = LoadAsset<T>(assetName);
             yield return null;
             progress.Invoke(1);
             callback?.Invoke(asset);

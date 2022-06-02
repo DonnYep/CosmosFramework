@@ -64,171 +64,43 @@ namespace Cosmos.Resource
         }
         /// <summary>
         /// 特性无效！
-        /// 加载资源（同步）；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息</param>
-        /// <returns>资源</returns>
-        public T LoadAsset<T>(AssetInfo info)
-            where T : UnityEngine.Object
-        {
-            return currentLoadHelper.LoadAsset<T>(info);
-        }
-        /// <summary>
-        /// 特性无效！
-        /// 加载资源（同步）；
-        /// 注意：AB环境下会获取bundle中所有T类型的对象；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息</param>
-        /// <returns>资源</returns>
-        public T[] LoadAllAsset<T>(AssetInfo info)
-        where T : UnityEngine.Object
-        {
-            return currentLoadHelper.LoadAllAsset<T>(info);
-        }
-        /// <summary>
-        /// 加载资源以及子资源；
-        /// 加载资源（同步）；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息</param>
-        /// <returns>资源数组</returns>
-        public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
-        {
-            return currentLoadHelper.LoadAssetWithSubAssets<T>(info);
-        }
-        /// <summary>
-        /// 特性加载:PrefabAssetAttribute！
-        /// 加载预制体资源（同步）；
-        /// </summary>
-        /// <param name="type">类对象类型</param>
-        /// <param name="instantiate">是否实例化对象</param>
-        /// <returns>资源</returns>
-        public GameObject LoadPrefab(Type type, bool instantiate = false)
-        {
-            var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
-            if (attribute != null)
-            {
-                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath);
-                return LoadPrefab(info, instantiate);
-            }
-            else
-                return null;
-        }
-        /// <summary>
-        /// 特性加载:PrefabAssetAttribute！
-        /// 加载预制体资源（同步）；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="instantiate">是否实例化对象</param>
-        /// <returns>资源</returns>
-        public GameObject LoadPrefab<T>(bool instantiate = false)
-            where T : class
-        {
-            var type = typeof(T);
-            var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
-            if (attribute != null)
-            {
-                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath);
-                return LoadPrefab(info, instantiate);
-            }
-            else
-                return null;
-        }
-        /// <summary>
-        /// 特性无效！
-        /// 加载预制体资源（同步）；
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <param name="instantiate">是否实例化对象</param>
-        /// <returns>资源</returns>
-        public GameObject LoadPrefab(AssetInfo info, bool instantiate = false)
-        {
-            GameObject go = null;
-            var srcGo = LoadAsset<GameObject>(info);
-            if (instantiate)
-                go = GameObject.Instantiate(srcGo);
-            else
-                go = srcGo;
-            return go;
-        }
-        /// <summary>
-        /// 特性无效！
         /// 加载资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息</param>
+        /// <param name="assetName">资源信息</param>
         /// <param name="progress">加载中事件</param>
         /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <returns>协程对象</returns>
-        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress = null)
+        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null)
             where T : UnityEngine.Object
         {
-            return currentLoadHelper.LoadAssetAsync<T>(info, callback, progress);
+            return currentLoadHelper.LoadAssetAsync<T>(assetName, callback, progress);
         }
         /// <summary>
         /// 加载资源以及子资源；
         /// 加载资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息</param>
+        /// <param name="assetName">资源信息</param>
         /// <param name="callback">加载完成事件</param>
         /// <param name="progress">加载中事件</param>
         /// <returns>协程对象</returns>
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            return currentLoadHelper.LoadAssetWithSubAssetsAsync<T>(info, callback, progress);
-        }
-        /// <summary>
-        /// 加载资源（异步）；
-        /// 特性加载:PrefabAssetAttribute！；
-        /// 加载预制体资源（异步）；
-        /// </summary>
-        /// <param name="type">类对象类型</param>
-        /// <param name="progress">加载中事件</param>
-        /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
-        /// <param name="instantiate">是否实例化对象</param>
-        /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(Type type, Action<GameObject> callback, Action<float> progress = null, bool instantiate = false)
-        {
-            var attribute = type.GetCustomAttribute<PrefabAssetAttribute>();
-            if (attribute != null)
-            {
-                var info = new AssetInfo(attribute.AssetBundleName, attribute.AssetPath);
-                return LoadPrefabAsync(info, callback, progress, instantiate);
-            }
-            else
-                return null;
-        }
-        /// <summary>
-        ///  加载资源（异步）；
-        /// 特性加载:PrefabAssetAttribute！；
-        /// 加载预制体资源（异步）；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="progress">加载中事件</param>
-        /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
-        /// <param name="instantiate">是否实例化对象</param>
-        /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync<T>(Action<GameObject> callback, Action<float> progress = null, bool instantiate = false)
-            where T : class
-        {
-            var type = typeof(T);
-            return LoadPrefabAsync(type, callback, progress, instantiate);
+            return currentLoadHelper.LoadAssetWithSubAssetsAsync<T>(assetName, callback, progress);
         }
         /// <summary>
         ///  加载资源（异步）；
         /// 加载预制体资源（异步）；
         /// </summary>
-        /// <param name="info">资源信息</param>
+        /// <param name="assetName">资源信息</param>
         /// <param name="progress">加载中事件</param>
         /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载协程</returns>
-        public Coroutine LoadPrefabAsync(AssetInfo info, Action<GameObject> callback, Action<float> progress = null, bool instantiate = false)
+        public Coroutine LoadPrefabAsync(string assetName, Action<GameObject> callback, Action<float> progress = null, bool instantiate = false)
         {
-            return currentLoadHelper.LoadAssetAsync<GameObject>(info, (srcGo) =>
+            return currentLoadHelper.LoadAssetAsync<GameObject>(assetName, (srcGo) =>
             {
                 if (instantiate)
                 {
@@ -316,13 +188,13 @@ namespace Cosmos.Resource
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息</param>
+        /// <param name="assetName">资源信息</param>
         /// <returns>加载task</returns>
-        public async Task<T> LoadAssetAsync<T>(AssetInfo info)
+        public async Task<T> LoadAssetAsync<T>(string assetName)
             where T : UnityEngine.Object
         {
             T asset = null;
-            await currentLoadHelper.LoadAssetAsync<T>(info, a => asset = a, null);
+            await currentLoadHelper.LoadAssetAsync<T>(assetName, a => asset = a, null);
             return asset;
         }
         /// <summary>
@@ -331,13 +203,13 @@ namespace Cosmos.Resource
         /// 须使用await获取结果；
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
-        /// <param name="info">资源信息</param>
+        /// <param name="assetName">资源信息</param>
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载task</returns>
-        public async Task<GameObject> LoadPrefabAsync(AssetInfo info, bool instantiate = false)
+        public async Task<GameObject> LoadPrefabAsync(string assetName, bool instantiate = false)
         {
             GameObject go = null;
-            await currentLoadHelper.LoadAssetAsync<GameObject>(info, (asset) =>
+            await currentLoadHelper.LoadAssetAsync<GameObject>(assetName, (asset) =>
             {
                 if (instantiate)
                     go = GameObject.Instantiate(asset);
@@ -448,10 +320,10 @@ namespace Cosmos.Resource
         /// <summary>
         /// 卸载资源（同步）；
         /// </summary>
-        /// <param name="info">资源信息</param>
-        public void UnloadAsset(AssetInfo info)
+        /// <param name="assetName">资源信息</param>
+        public void UnloadAsset(string assetName)
         {
-            currentLoadHelper.UnloadAsset(info);
+            currentLoadHelper.UnloadAsset(assetName);
         }
         /// <summary>
         /// 卸载所有资源;
@@ -465,7 +337,6 @@ namespace Cosmos.Resource
         {
             loadChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
             loadChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourcesLoader()));
-            loadChannelDict.Add(ResourceLoadMode.AssetBundle, new ResourceLoadChannel(ResourceLoadMode.AssetBundle.ToString(), new AssetBundleLoader()));
             currentResourceLoadMode = ResourceLoadMode.Resource;
             currentLoadHelper = loadChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
         }

@@ -1,14 +1,15 @@
-﻿using Cosmos.Resource;
+﻿using System.Runtime.InteropServices;
 namespace Cosmos
 {
-    public class ObjectPoolAssetInfo : AssetInfo
+    [StructLayout(LayoutKind.Auto)]
+    public struct ObjectPoolAssetInfo 
     {
+        public string AssetName { get; private set; }
         public string PoolName { get; private set; }
-        public ObjectPoolAssetInfo(string poolName, string assetPath) : this(poolName, string.Empty, assetPath) { }
-        public ObjectPoolAssetInfo(string poolName, string assetBundleName, string assetPath)
-            : base(assetBundleName, assetPath)
+        public ObjectPoolAssetInfo(string poolName, string assetName)
         {
             this.PoolName = poolName;
+            this.AssetName = assetName;
         }
     }
 }

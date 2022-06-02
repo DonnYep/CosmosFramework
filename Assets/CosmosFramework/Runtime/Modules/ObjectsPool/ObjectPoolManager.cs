@@ -49,8 +49,6 @@ namespace Cosmos.ObjectPool
         /// <returns>协程对象</returns>
         public Coroutine RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo, Action<IObjectPool> callback)
         {
-            if (assetInfo == null)
-                throw new ArgumentNullException("objectAssetInfo is  invalid.");
             if (!HasObjectPool(assetInfo.PoolName))
             {
                 return objectPoolHelper.LoadObjectAssetAsync(assetInfo, (info, go) =>
@@ -65,7 +63,7 @@ namespace Cosmos.ObjectPool
                       }
                       else
                       {
-                          throw new ArgumentException($"{ info.AssetPath} not exist.");
+                          throw new ArgumentException($"{ info.AssetName} not exist.");
                       }
                   });
             }
@@ -94,7 +92,7 @@ namespace Cosmos.ObjectPool
         {
             if (!HasObjectPool(poolName))
             {
-                var pool = ObjectPool.Create(spawnAsset, poolName, null);
+                var pool = ObjectPool.Create(spawnAsset, poolName, default);
                 poolDict.TryAdd(poolName, pool);
                 ElapseRefreshHandler += pool.OnElapseRefresh;
                 return pool;
@@ -111,7 +109,7 @@ namespace Cosmos.ObjectPool
             if (poolDict.Remove(poolName, out var pool))
             {
                 ElapseRefreshHandler -= pool.OnElapseRefresh;
-                if (pool.ObjectPoolAssetInfo != null)
+                if (!string.IsNullOrEmpty(pool.ObjectPoolAssetInfo.PoolName))
                     objectPoolHelper.UnloadObjectAsset(pool.ObjectPoolAssetInfo);
                 ObjectPool.Release(pool.CastTo<ObjectPool>());
             }
@@ -125,7 +123,7 @@ namespace Cosmos.ObjectPool
             if (poolDict.Remove(pool.ObjectPoolName, out var srcPool))
             {
                 ElapseRefreshHandler -= pool.OnElapseRefresh;
-                if (srcPool.ObjectPoolAssetInfo != null)
+                if (!string.IsNullOrEmpty(srcPool.ObjectPoolAssetInfo.PoolName))
                     objectPoolHelper.UnloadObjectAsset(srcPool.ObjectPoolAssetInfo);
                 ObjectPool.Release(pool.CastTo<ObjectPool>());
             }
@@ -161,7 +159,7 @@ namespace Cosmos.ObjectPool
             {
                 pool.Value.ClearPool();
                 var assetInfo = pool.Value.ObjectPoolAssetInfo;
-                if (assetInfo != null)
+                if (!string.IsNullOrEmpty(assetInfo.PoolName))
                     objectPoolHelper.UnloadObjectAsset(assetInfo);
             }
             poolDict.Clear();

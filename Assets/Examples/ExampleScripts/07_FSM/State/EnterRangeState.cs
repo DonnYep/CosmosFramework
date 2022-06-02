@@ -5,15 +5,15 @@ using Cosmos.FSM;
 using Cosmos;
 public class EnterRangeState : FSMState<Transform>
 {
-    public override void Action(IFSM<Transform> fsm)
+    public override void OnStateStay(IFSM<Transform> fsm)
     {
     }
-    public override void OnEnter(IFSM<Transform> fsm)
+    public override void OnStateEnter(IFSM<Transform> fsm)
     {
         var go = fsm.Owner.gameObject;
-        Utility.Debug.LogInfo($"Enter {go.name} detection range", go);
+        Utility.Debug.LogInfo($"Enter {go.name} detection range", DebugColor.green,go);
     }
-    public override void OnExit(IFSM<Transform> fsm)
+    public override void OnStateExit(IFSM<Transform> fsm)
     {
     }
     public override void OnInitialization(IFSM<Transform> fsm)

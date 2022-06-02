@@ -34,13 +34,6 @@ namespace Cosmos.UI
         /// <returns>协程对象</returns>
         Coroutine InstanceUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> doneCallback);
         /// <summary>
-        /// 同步实例化UIForm；
-        /// </summary>
-        /// <param name="assetInfo"> UI资源信息</param>
-        /// <param name="uiType">UI类型</param>
-        /// <returns>实例化后的UIForm 对象</returns>
-        IUIForm InstanceUIForm(UIAssetInfo assetInfo, Type uiType);
-        /// <summary>
         /// 释放&关闭UIForm；
         /// </summary>
         /// <param name="uiForm">UIForm对象</param>

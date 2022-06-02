@@ -39,7 +39,7 @@ namespace Cosmos.DataTable
         internal void OnReadDataFailure()
         {
             onReadFailure?.Invoke(this);
-            DataTableAssetInfo = null;
+            DataTableAssetInfo = new DataTableAssetInfo();
             onReadFailure = null;
         }
     }

@@ -49,7 +49,7 @@ namespace Cosmos
         protected override void Awake()
         {
             base.Awake();
-            gameObject.name = "GameRoot";
+            gameObject.name = "CosmosRoot";
             DontDestroyOnLoad(this.gameObject);
             previousTimeSinceStartup = DateTime.Now;
             moduleMountDict = new Dictionary<Type, GameObject>();

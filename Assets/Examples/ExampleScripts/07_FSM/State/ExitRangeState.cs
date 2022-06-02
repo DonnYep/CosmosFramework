@@ -1,19 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Cosmos;
 using Cosmos.FSM;
 public class ExitRangeState : FSMState<Transform>
 {
-    public override void Action(IFSM<Transform> fsm)
+    public override void OnStateStay(IFSM<Transform> fsm)
     {
     }
-    public override void OnEnter(IFSM<Transform> fsm)
+    public override void OnStateEnter(IFSM<Transform> fsm)
     {
         var go = fsm.Owner.gameObject;
-        Utility.Debug.LogInfo($"Exit {go.name} detection range", go);
+        Utility.Debug.LogInfo($"Exit {go.name} detection range", DebugColor.red, go);
     }
-    public override void OnExit(IFSM<Transform> fsm)
+    public override void OnStateExit(IFSM<Transform> fsm)
     {
     }
     public override void OnInitialization(IFSM<Transform> fsm)

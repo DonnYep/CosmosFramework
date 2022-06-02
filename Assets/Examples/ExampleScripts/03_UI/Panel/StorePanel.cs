@@ -1,7 +1,6 @@
 ﻿using UnityEngine.UI;
 using Cosmos.UI;
-[UIAsset(nameof(StorePanel), "Example", "UI/StorePanel")]
-public class StorePanel : UIForm
+public class StorePanel : UGUIUIForm
 {
     protected override void Awake()
     {

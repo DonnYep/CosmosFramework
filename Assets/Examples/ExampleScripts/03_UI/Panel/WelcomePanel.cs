@@ -1,7 +1,6 @@
 ﻿using Cosmos.UI;
 using UnityEngine.UI;
-[UIAsset(nameof(WelcomePanel), "Example", "UI/WelcomePanel" )]
-public class WelcomePanel : UIForm
+public class WelcomePanel : UGUIUIForm
 {
     Text info;
     InputField inputMsg;

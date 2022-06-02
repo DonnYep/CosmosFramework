@@ -70,103 +70,6 @@ namespace Cosmos.UI
             this.uiFormAssetHelper = helper;
         }
         /// <summary>
-        /// 通过特性UIAssetAttribute加载Panel（同步）；
-        /// </summary>
-        /// <typeparam name="T">目标组件的type类型</typeparam>
-        /// <returns>生成的UI对象Comp</returns>
-        public T OpenUIForm<T>()
-            where T : class, IUIForm
-        {
-            return OpenUIForm(typeof(T)) as T;
-        }
-        /// <summary>
-        ///  通过特性UIAssetAttribute加载Panel（同步）
-        /// </summary>
-        /// <param name="uiType">目标组件的type类型</param>
-        /// <returns>生成的UI对象Comp</returns>
-        public IUIForm OpenUIForm(Type uiType)
-        {
-            var attribute = GetTypeAttribute(uiType);
-            var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath) { UIGroupName = attribute.UIGroupName };
-            return OpenUIForm(assetInfo, uiType);
-        }
-        /// <summary>
-        ///  通过UIAssetInfo加载UI对象（同步）；
-        /// </summary>
-        /// <typeparam name="T">目标组件的type类型</typeparam>
-        /// <param name="assetInfo">传入的assetInfo对象</param>
-        /// <returns>生成的UI对象Comp</returns>
-        public T OpenUIForm<T>(UIAssetInfo assetInfo)
-            where T : class, IUIForm
-        {
-            return OpenUIForm(assetInfo, typeof(T)) as T;
-        }
-        /// <summary>
-        /// 通过UIAssetInfo加载UI对象（同步）；
-        /// </summary>
-        /// <param name="assetInfo">目标组件的type类型</param>
-        /// <param name="uiType">传入的assetInfo对象</param>
-        /// <returns>生成的UI对象Comp</returns>
-        public IUIForm OpenUIForm(UIAssetInfo assetInfo, Type uiType)
-        {
-            IUIForm uiForm = null;
-            CheckUIAssetInfoValid(assetInfo, uiType);
-            if (HasUIForm(assetInfo.UIAssetName))
-            {
-                PeekUIForm(assetInfo.UIAssetName, out uiForm);
-                ActiveUIForm(assetInfo.UIAssetName);
-                return uiForm;
-            }
-            if (!string.IsNullOrEmpty(assetInfo.UIGroupName))
-            {
-                if (!uiGroupDict.TryGetValue(assetInfo.UIGroupName, out var group))
-                {
-                    group = new UIFormGroup(assetInfo.UIGroupName);
-                    uiGroupDict.Add(group.UIGroupName, group);
-                }
-                if (group.HasUIForm(assetInfo.UIAssetName))
-                    throw new ArgumentException($"UIGroup:{assetInfo.UIGroupName}---UIFormName: {assetInfo.UIAssetName}has already existed !");
-                else
-                {
-                    PeekUIForm(assetInfo.UIAssetName, out uiForm);
-                    ActiveUIForm(assetInfo.UIAssetName);
-                    return uiForm;
-                }
-            }
-            else
-            {
-                uiForm = uiFormAssetHelper.InstanceUIForm(assetInfo, uiType);
-                uiFormDict.Add(uiForm.UIFormName, uiForm);
-                uiFormAssetHelper.AttachTo(uiForm, UIRoot);
-                return uiForm;
-            }
-        }
-        /// <summary>
-        /// 通过特性UIAssetAttribute加载Panel（异步）；
-        /// </summary>
-        /// <typeparam name="T">带有UIAssetAttribute特性的panel类</typeparam>
-        /// <param name="callback">加载成功的回调。若失败，则不执行</param>
-        /// <returns>协程对象</returns>
-        public Coroutine OpenUIFormAsync<T>(Action<T> callback = null)
-    where T : class, IUIForm
-        {
-
-            Type uiType = typeof(T);
-            var attribute = GetTypeAttribute(uiType);
-            if (string.IsNullOrEmpty(attribute.UIAssetName))
-                throw new ArgumentException("UIFormName is invalid !");
-            if (HasUIForm(attribute.UIAssetName))
-            {
-                ActiveUIForm(attribute.UIAssetName);
-                return null;
-            }
-            else
-            {
-                var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath) { UIGroupName = attribute.UIGroupName };
-                return OpenUIFormAsync(assetInfo, typeof(T), uiForm => { callback?.Invoke(uiForm as T); });
-            }
-        }
-        /// <summary>
         /// 通过UIAssetInfo加载UI对象（异步）；
         /// </summary>
         /// <param name="assetInfo">传入的assetInfo对象</param>
@@ -176,16 +79,16 @@ namespace Cosmos.UI
         public Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback = null)
         {
             CheckUIAssetInfoValid(assetInfo, uiType);
-            if (HasUIForm(assetInfo.UIAssetName))
+            if (HasUIForm(assetInfo.UIFormName))
             {
-                ActiveUIForm(assetInfo.UIAssetName);
+                ActiveUIForm(assetInfo.UIFormName);
                 return null;
             }
             else
                 return uiFormAssetHelper.InstanceUIFormAsync(assetInfo, uiType, uiForm =>
                 {
                     uiFormAssetHelper.AttachTo(uiForm, UIRoot);
-                    uiFormDict.Add(assetInfo.UIAssetName, uiForm);
+                    uiFormDict.Add(assetInfo.UIFormName, uiForm);
                     if (!string.IsNullOrEmpty(assetInfo.UIGroupName))
                     {
                         if (!uiGroupDict.TryGetValue(assetInfo.UIGroupName, out var group))
@@ -210,9 +113,9 @@ namespace Cosmos.UI
         {
             var type = typeof(T);
             CheckUIAssetInfoValid(assetInfo, type);
-            if (HasUIForm(assetInfo.UIAssetName))
+            if (HasUIForm(assetInfo.UIFormName))
             {
-                ActiveUIForm(assetInfo.UIAssetName);
+                ActiveUIForm(assetInfo.UIFormName);
                 return null;
             }
             else
@@ -242,28 +145,6 @@ namespace Cosmos.UI
             IUIForm uiForm = null;
             await OpenUIFormAsync(assetInfo,uiType, pnl => uiForm = pnl);
             return uiForm;
-        }
-        /// <summary>
-        /// 通过特性UIAssetAttribute加载Panel（异步）；
-        /// </summary>
-        /// <param name="uiType">带有UIAssetAttribute特性的panel类</param>
-        /// <param name="callback">加载成功的回调。若失败，则不执行</param>
-        /// <returns>协程对象</returns>
-        public Coroutine OpenUIFormAsync(Type uiType, Action<IUIForm> callback = null)
-        {
-            var attribute = GetTypeAttribute(uiType);
-            if (string.IsNullOrEmpty(attribute.UIAssetName))
-                throw new ArgumentException("UIFormName is invalid !");
-            if (HasUIForm(attribute.UIAssetName))
-            {
-                ActiveUIForm(attribute.UIAssetName);
-                return null;
-            }
-            else
-            {
-                var assetInfo = new UIAssetInfo(attribute.UIAssetName, attribute.AssetBundleName, attribute.AssetPath) { UIGroupName = attribute.UIGroupName };
-                return OpenUIFormAsync(assetInfo, uiType, callback);
-            }
         }
         /// <summary>
         /// 关闭释放UIForm；
@@ -542,23 +423,10 @@ namespace Cosmos.UI
         }
         void CheckUIAssetInfoValid(UIAssetInfo assetInfo, Type uiType)
         {
-            if (assetInfo == null)
-                throw new ArgumentNullException("UIAssetInfo is invalid !");
-            if (string.IsNullOrEmpty(assetInfo.UIAssetName))
+            if (string.IsNullOrEmpty(assetInfo.UIFormName))
                 throw new ArgumentException("UIFormName is invalid !");
             if (!uiFromBaseType.IsAssignableFrom(uiType))
                 throw new NotImplementedException($"Type:{uiType} is not inherit form UIForm");
-        }
-        UIAssetAttribute GetTypeAttribute(Type uiType)
-        {
-            if (uiType == null)
-                throw new ArgumentNullException("UIType is invalid !");
-            var attribute = uiType.GetCustomAttribute<UIAssetAttribute>();
-            if (!uiFromBaseType.IsAssignableFrom(uiType))
-                throw new ArgumentException($"Type:{uiType} is not inherit from UIForm");
-            if (attribute == null)
-                throw new ArgumentNullException($"Type:{uiType} has no UIAssetAttribute");
-            return attribute;
         }
         #endregion
     }

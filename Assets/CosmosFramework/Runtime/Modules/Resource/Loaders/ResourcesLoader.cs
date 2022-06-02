@@ -20,44 +20,44 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public bool IsProcessing { get { return isProcessing; } private set { isProcessing = value; } }
         ///<inheritdoc/> 
-        public T LoadAsset<T>(AssetInfo info) where T : UnityEngine.Object
+        public T LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
-            var asset = Resources.Load<T>(info.AssetPath);
+            var asset = Resources.Load<T>(assetName);
             if (asset == null)
             {
-                throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
+                throw new ArgumentNullException($"Resources文件夹中不存在资源 {assetName}！");
             }
             return asset;
         }
         ///<inheritdoc/> 
-        public T[] LoadAllAsset<T>(AssetInfo info) where T : UnityEngine.Object
+        public T[] LoadAllAsset<T>(string assetName) where T : UnityEngine.Object
         {
-            var asset = Resources.LoadAll<T>(info.AssetPath);
+            var asset = Resources.LoadAll<T>(assetName);
             if (asset == null)
             {
-                throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
+                throw new ArgumentNullException($"Resources文件夹中不存在资源 {assetName}！");
             }
             return asset;
         }
         ///<inheritdoc/> 
-        public T[] LoadAssetWithSubAssets<T>(AssetInfo info) where T : UnityEngine.Object
+        public T[] LoadAssetWithSubAssets<T>(string assetName) where T : UnityEngine.Object
         {
-            var assets = Resources.LoadAll<T>(info.AssetPath);
+            var assets = Resources.LoadAll<T>(assetName);
             if (assets == null)
             {
-                throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
+                throw new ArgumentNullException($"Resources文件夹中不存在资源 {assetName}！");
             }
             return assets;
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetAsync<T>(AssetInfo info, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(info, callback, progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, callback, progress));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(AssetInfo info, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(info, callback, progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(assetName, callback, progress));
         }
         ///<inheritdoc/> 
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
@@ -70,7 +70,7 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumUnloadSceneAsync(info, progress, condition, callback));
         }
         ///<inheritdoc/> 
-        public void UnloadAsset(AssetInfo info)
+        public void UnloadAsset(string assetName)
         {
             Resources.UnloadUnusedAssets();
         }
@@ -79,7 +79,7 @@ namespace Cosmos.Resource
         {
             Resources.UnloadUnusedAssets();
         }
-        IEnumerator EnumLoadAssetAsync<T>(AssetInfoBase info, Action<T> callback, Action<float> progress, bool instantiate = false)
+        IEnumerator EnumLoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress, bool instantiate = false)
             where T : UnityEngine.Object
         {
             if (isProcessing)
@@ -87,7 +87,7 @@ namespace Cosmos.Resource
                 yield return loadWait;
             }
             UnityEngine.Object asset = null;
-            ResourceRequest request = Resources.LoadAsync<T>(info.AssetPath);
+            ResourceRequest request = Resources.LoadAsync<T>(assetName);
             isProcessing = true;
             while (!request.isDone)
             {
@@ -97,7 +97,7 @@ namespace Cosmos.Resource
             asset = request.asset;
             if (asset == null)
             {
-                throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
+                throw new ArgumentNullException($"Resources文件夹中不存在资源 {assetName}！");
             }
             else
             {
@@ -112,17 +112,17 @@ namespace Cosmos.Resource
             }
             isProcessing = false;
         }
-        IEnumerator EnumLoadAssetWithSubAssets<T>(AssetInfoBase info, Action<T[]> callback, Action<float> progress)
+        IEnumerator EnumLoadAssetWithSubAssets<T>(string assetName, Action<T[]> callback, Action<float> progress)
             where T : UnityEngine.Object
         {
             T[] assets = null;
-            assets = Resources.LoadAll<T>(info.AssetPath);
+            assets = Resources.LoadAll<T>(assetName);
             isProcessing = true;
             yield return null;
             progress?.Invoke(1);
             if (assets == null)
             {
-                throw new ArgumentNullException($"Resources文件夹中不存在资源 {info.AssetPath}！");
+                throw new ArgumentNullException($"Resources文件夹中不存在资源 {assetName}！");
             }
             else
             {

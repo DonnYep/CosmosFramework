@@ -44,14 +44,6 @@ namespace Cosmos.Entity
         /// <param name="entityGroupHelper">自定义实现的实体组帮助体</param>
         void SetDefautEntityGroupHelper(IEntityGroupHelper entityGroupHelper);
         /// <summary>
-        /// 注册EntityGroup (同步)；
-        /// 若传入的entityGroupHelper 为空，则使用默认的entityGroupHelper；
-        /// </summary>
-        /// <param name="entityAssetInfo">实体对象信息</param>
-        /// <param name="entityGroupHelper">实体组帮助体</param>
-        /// <returns>是否注册成功</returns>
-        bool RegisterEntityGroup(EntityAssetInfo entityAssetInfo, IEntityGroupHelper entityGroupHelper = null);
-        /// <summary>
         /// 注册EntityGroup (异步)；
         /// 若传入的entityGroupHelper 为空，则使用默认的entityGroupHelper；
         /// </summary>

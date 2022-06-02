@@ -30,7 +30,7 @@ namespace Cosmos.FSM
         {
             if (currentState != null)
             {
-                currentState.OnExit(this);
+                currentState.OnStateExit(this);
             }
             foreach (var state in fsmStateDict)
             {
@@ -54,7 +54,7 @@ namespace Cosmos.FSM
             if (state == null)
                 return;
             currentState = state;
-            currentState.OnEnter(this);
+            currentState.OnStateEnter(this);
         }
         /// <summary>
         /// 进入状态
@@ -71,7 +71,7 @@ namespace Cosmos.FSM
             if (state == null)
                 return;
             currentState = state;
-            currentState.OnEnter(this);
+            currentState.OnStateEnter(this);
         }
         public void Start<TState>()
             where TState : FSMState<T>
@@ -82,7 +82,7 @@ namespace Cosmos.FSM
             if (state == null)
                 return;
             currentState = state;
-            currentState.OnEnter(this);
+            currentState.OnStateEnter(this);
         }
         /// <summary>
         /// FSM轮询，由拥有者轮询调用
@@ -92,7 +92,7 @@ namespace Cosmos.FSM
             if (Pause)
                 return;
             currentState?.Reason(this);
-            currentState?.Action(this);
+            currentState?.OnStateStay(this);
         }
         public override void Shutdown()
         {
@@ -131,9 +131,9 @@ namespace Cosmos.FSM
             state = GetState(stateType);
             if (state == null)
                 throw new ArgumentNullException("FSM" + currentState.ToString() + " can not change state to " + state.ToString() + " which is not exist");
-            currentState.OnExit(this);
+            currentState.OnStateExit(this);
             currentState = state;
-            currentState.OnEnter(this);
+            currentState.OnStateEnter(this);
         }
         public void GetAllState(out List<FSMState<T>> result)
         {

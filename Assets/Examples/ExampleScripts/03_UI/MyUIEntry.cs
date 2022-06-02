@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Cosmos.Resource;
 using Cosmos;
 public class MyUIEntry : MonoBehaviour
 {
@@ -13,10 +12,10 @@ public class MyUIEntry : MonoBehaviour
     }
     private void Start()
     {
-        var mianUICanvas = CosmosEntry.ResourceManager.LoadPrefabAsync(new AssetInfo(null, "UI/MainUICanvas"), go =>
-        {
-            CosmosEntry.UIManager.SetUIRoot(go.transform);
-        }, null, true);
+        var mianUICanvas = CosmosEntry.ResourceManager.LoadPrefabAsync("UI/MainUICanvas", go =>
+       {
+           CosmosEntry.UIManager.SetUIRoot(go.transform);
+       }, null, true);
         PureMVC.MVC.RegisterCommand<CMD_Navigate>(MVCEventDefine.CMD_Navigate);
         PureMVC.MVC.Dispatch(MVCEventDefine.CMD_Navigate);
     }

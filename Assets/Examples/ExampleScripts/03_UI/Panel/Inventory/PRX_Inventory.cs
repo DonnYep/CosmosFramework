@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Cosmos;
-using Cosmos.Resource;
+﻿using Cosmos;
 using PureMVC;
 using UnityEngine;
 public class PRX_Inventory : Proxy
@@ -13,15 +7,14 @@ public class PRX_Inventory : Proxy
 
     string dataSetPath = "DataSet/Inventory/DefaultInventory_Dataset";
     string jsonFilePath;
-
+    public GameObject SlotAsset { get; private set; }
     public PRX_Inventory() : base(NAME) { }
 
     public InventoryDataset InventoryDataSet { get; private set; }
-    public override void OnRegister()
+    public async override void OnRegister()
     {
-        InventoryDataSet = CosmosEntry.ResourceManager.LoadAsset<InventoryDataset>(new AssetInfo(dataSetPath));
-        //if (InventoryDataSet != null)
-        //    Utility.Debug.LogInfo("InventoryDataset数据加载成功", MessageColor.ORANGE);
+        InventoryDataSet =await CosmosEntry.ResourceManager.LoadAssetAsync<UnityEngine.Object>(dataSetPath) as InventoryDataset;
+        SlotAsset = await CosmosEntry.ResourceManager.LoadPrefabAsync("UI/Slot");
         jsonFilePath = Utility.IO.WebPathCombine(Application.persistentDataPath, "Inventory");
     }
     public void SaveJson()

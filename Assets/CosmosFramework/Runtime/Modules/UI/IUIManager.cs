@@ -26,39 +26,6 @@ namespace Cosmos.UI
         /// <param name="helper">帮助体对象</param>
         void SetUIFormAssetHelper(IUIFormAssetHelper helper);
         /// <summary>
-        /// 通过特性UIAssetAttribute加载Panel（同步）；
-        /// </summary>
-        /// <typeparam name="T">目标组件的type类型</typeparam>
-        /// <returns>生成的UI对象Comp</returns>
-        T OpenUIForm<T>() where T : class, IUIForm;
-        /// <summary>
-        ///  通过特性UIAssetAttribute加载Panel（同步）
-        /// </summary>
-        /// <param name="uiType">目标组件的type类型</param>
-        /// <returns>生成的UI对象Comp</returns>
-        IUIForm OpenUIForm(Type uiType);
-        /// <summary>
-        ///  通过UIAssetInfo加载UI对象（同步）；
-        /// </summary>
-        /// <typeparam name="T">目标组件的type类型</typeparam>
-        /// <param name="assetInfo">传入的assetInfo对象</param>
-        /// <returns>生成的UI对象Comp</returns>
-        T OpenUIForm<T>(UIAssetInfo assetInfo) where T : class, IUIForm;
-        /// <summary>
-        /// 通过UIAssetInfo加载UI对象（同步）；
-        /// </summary>
-        /// <param name="assetInfo">目标组件的type类型</param>
-        /// <param name="uiType">传入的assetInfo对象</param>
-        /// <returns>生成的UI对象Comp</returns>
-        IUIForm OpenUIForm(UIAssetInfo assetInfo, Type uiType);
-        /// <summary>
-        /// 通过特性UIAssetAttribute加载Panel（异步）；
-        /// </summary>
-        /// <typeparam name="T">带有UIAssetAttribute特性的panel类</typeparam>
-        /// <param name="callback">加载成功的回调。若失败，则不执行</param>
-        /// <returns>协程对象</returns>
-        Coroutine OpenUIFormAsync<T>(Action<T> callback = null) where T : class, IUIForm;
-        /// <summary>
         /// 通过UIAssetInfo加载UI对象（异步）；
         /// </summary>
         /// <param name="assetInfo">传入的assetInfo对象</param>
@@ -74,13 +41,6 @@ namespace Cosmos.UI
         /// <param name="callback">加载完成后的回调</param>
         /// <returns>协程对象</returns>
         Coroutine OpenUIFormAsync<T>(UIAssetInfo assetInfo, Action<T> callback = null) where T : class, IUIForm;
-        /// <summary>
-        /// 通过特性UIAssetAttribute加载Panel（异步）；
-        /// </summary>
-        /// <param name="uiType">带有UIAssetAttribute特性的panel类</param>
-        /// <param name="callback">加载成功的回调。若失败，则不执行</param>
-        /// <returns>协程对象</returns>
-        Coroutine OpenUIFormAsync(Type uiType, Action<IUIForm> callback = null);
         /// <summary>
         /// 通过UIAssetInfo加载UI对象
         /// </summary>

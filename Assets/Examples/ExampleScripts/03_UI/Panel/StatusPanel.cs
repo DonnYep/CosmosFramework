@@ -1,7 +1,6 @@
 ﻿using UnityEngine.UI;
 using Cosmos.UI;
-[UIAsset(nameof(StatusPanel), "Example", "UI/StatusPanel")]
-public class StatusPanel : UIForm
+public class StatusPanel : UGUIUIForm
 {
     protected override void Awake()
     {
