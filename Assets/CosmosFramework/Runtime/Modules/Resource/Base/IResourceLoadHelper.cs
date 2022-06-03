@@ -12,33 +12,6 @@ namespace Cosmos.Resource
         /// </summary>
         bool IsProcessing { get; }
         /// <summary>
-        /// 特性无效！
-        /// 加载资源（同步）；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="info">资源信息</param>
-        /// <returns>资源</returns>
-        T LoadAsset<T>(string assetName) where T : UnityEngine.Object;
-        /// <summary>
-        /// 特性无效！
-        /// 加载资源（同步）；
-        /// 注意：AB环境下会获取bundle中所有T类型的对象；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="assetName">资源信息</param>
-        /// <returns>资源</returns>
-        T[] LoadAllAsset<T>(string assetName) where T : UnityEngine.Object;
-        /// <summary>
-        /// 特性无效！
-        /// 加载资源（同步）；
-        /// 注意：AB环境下会获取bundle中所有T类型的对象；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="assetName">资源信息</param>
-        /// <returns>资源</returns>
-        T[] LoadAssetWithSubAssets<T>(string assetName) where T : UnityEngine.Object;
-        /// <summary>
-        /// 特性无效！
         /// 加载资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
@@ -48,6 +21,15 @@ namespace Cosmos.Resource
         /// <returns>协程对象</returns>
         Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object;
         /// <summary>
+        /// 加载资源（异步）；
+        /// </summary>
+        /// <param name="assetName">资源信息</param>
+        /// <param name="type">资源类型</param>
+        /// <param name="progress">加载中事件</param>
+        /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadAssetAsync(string assetName, Type type, Action<UnityEngine.Object> callback, Action<float> progress = null);
+        /// <summary>
         /// 加载资源以及子资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
@@ -56,6 +38,15 @@ namespace Cosmos.Resource
         /// <param name="progress">加载中事件</param>
         /// <returns>协程对象</returns>
         Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object;
+        /// <summary>
+        /// 加载资源以及子资源（异步）；
+        /// </summary>
+        /// <param name="assetName">资源信息</param>
+        /// <param name="type">资源类型</param>
+        /// <param name="callback">加载完成事件</param>
+        /// <param name="progress">加载中事件</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress = null);
         /// <summary>
         /// 加载场景（异步）
         /// </summary>
