@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 namespace Quark.Loader
 {
     internal class QuarkAssetDatabaseLoader : QuarkAssetLoader
@@ -19,10 +20,30 @@ namespace Quark.Loader
                 throw new ArgumentNullException("Asset name is invalid!");
             if (quarkAssetObjectDict == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
-            var hasWapper = GetAssetObjectWapper<T>(assetName, assetExtension, out var wapper);
+            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, typeof(T), out var wapper);
             if (hasWapper)
             {
                 var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(wapper.QuarkAssetObject.AssetPath);
+                IncrementQuarkAssetObject(wapper);
+                return asset;
+            }
+            else
+                return null;
+#else
+                return null;
+#endif
+        }
+        public override Object LoadAsset(string assetName, string assetExtension, Type type)
+        {
+#if UNITY_EDITOR
+            if (string.IsNullOrEmpty(assetName))
+                throw new ArgumentNullException("Asset name is invalid!");
+            if (quarkAssetObjectDict == null)
+                throw new Exception("QuarkAsset 未执行 build 操作！");
+            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, type, out var wapper);
+            if (hasWapper)
+            {
+                var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(wapper.QuarkAssetObject.AssetPath, type);
                 IncrementQuarkAssetObject(wapper);
                 return asset;
             }
@@ -47,7 +68,7 @@ namespace Quark.Loader
                 throw new ArgumentNullException("Asset name is invalid!");
             if (quarkAssetObjectDict == null)
                 throw new Exception("QuarkAsset 未执行 build 操作！");
-            var hasWapper = GetAssetObjectWapper<T>(assetName, assetExtension, out var wapper);
+            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, typeof(T), out var wapper);
             if (hasWapper)
             {
                 var assetObj = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(wapper.QuarkAssetObject.AssetPath);
@@ -56,6 +77,32 @@ namespace Quark.Loader
                 for (int i = 0; i < length; i++)
                 {
                     assets[i] = assetObj[i] as T;
+                }
+                IncrementQuarkAssetObject(wapper);
+                return assets;
+            }
+            else
+                return null;
+#else
+                return null;
+#endif
+        }
+        public override Object[] LoadAssetWithSubAssets(string assetName, string assetExtension, Type type)
+        {
+#if UNITY_EDITOR
+            if (string.IsNullOrEmpty(assetName))
+                throw new ArgumentNullException("Asset name is invalid!");
+            if (quarkAssetObjectDict == null)
+                throw new Exception("QuarkAsset 未执行 build 操作！");
+            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, type, out var wapper);
+            if (hasWapper)
+            {
+                var assetObj = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(wapper.QuarkAssetObject.AssetPath);
+                var length = assetObj.Length;
+                Object[] assets = new Object[length];
+                for (int i = 0; i < length; i++)
+                {
+                    assets[i] = assetObj[i];
                 }
                 IncrementQuarkAssetObject(wapper);
                 return assets;
@@ -78,9 +125,17 @@ namespace Quark.Loader
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, callback));
         }
+        public override Coroutine LoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, type, callback));
+        }
         public override Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, assetExtension, callback));
+        }
+        public override Coroutine LoadAssetAsync(string assetName, string assetExtension, Type type, Action<Object> callback)
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, assetExtension, type, callback));
         }
         public override void UnloadAsset(string assetName, string assetExtension)
         {
@@ -166,9 +221,21 @@ namespace Quark.Loader
             yield return null;
             callback?.Invoke(assets);
         }
-        IEnumerator EnumLoadAsssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : UnityEngine.Object
+        IEnumerator EnumLoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
+        {
+            var assets = LoadAssetWithSubAssets(assetName, assetExtension, type);
+            yield return null;
+            callback?.Invoke(assets);
+        }
+        IEnumerator EnumLoadAsssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : Object
         {
             var asset = LoadAsset<T>(assetName, assetExtension);
+            yield return null;
+            callback?.Invoke(asset);
+        }
+        IEnumerator EnumLoadAsssetAsync(string assetName, string assetExtension, Type type, Action<Object> callback)
+        {
+            var asset = LoadAsset(assetName, assetExtension, type);
             yield return null;
             callback?.Invoke(asset);
         }

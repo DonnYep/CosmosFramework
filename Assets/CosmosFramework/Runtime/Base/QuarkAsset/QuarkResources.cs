@@ -1,6 +1,7 @@
 ﻿using Quark.Asset;
 using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 namespace Quark
 {
     public sealed class QuarkResources
@@ -89,19 +90,31 @@ namespace Quark
             QuarkEngine.Instance.StopDownload();
         }
         public static T LoadAsset<T>(string assetName, string assetExtension = null)
-where T : UnityEngine.Object
+where T : Object
         {
             return QuarkEngine.Instance.LoadAsset<T>(assetName, assetExtension);
         }
+        public static Object LoadAsset(string assetName, Type type, string assetExtension = null)
+        {
+            return QuarkEngine.Instance.LoadAsset(assetName, type, assetExtension);
+        }
         public static Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback)
-where T : UnityEngine.Object
+where T : Object
         {
             return QuarkEngine.Instance.LoadAssetAsync<T>(assetName, string.Empty, callback);
         }
         public static Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback)
-where T : UnityEngine.Object
+where T : Object
         {
             return QuarkEngine.Instance.LoadAssetAsync<T>(assetName, assetExtension, callback);
+        }
+        public static Coroutine LoadAssetAsync(string assetName, Type type, Action<Object> callback)
+        {
+            return QuarkEngine.Instance.LoadAssetAsync(assetName, string.Empty, type, callback);
+        }
+        public static Coroutine LoadAssetAsync(string assetName, string assetExtension, Type type, Action<Object> callback)
+        {
+            return QuarkEngine.Instance.LoadAssetAsync(assetName, assetExtension, type, callback);
         }
         public static GameObject LoadPrefab(string assetName, bool instantiate = false)
         {
@@ -119,6 +132,14 @@ where T : UnityEngine.Object
         {
             return QuarkEngine.Instance.LoadAssetWithSubAssets<T>(assetName, assetExtension);
         }
+        public static Object[] LoadAssetWithSubAssets(string assetName, Type type)
+        {
+            return QuarkEngine.Instance.LoadAssetWithSubAssets(assetName, string.Empty, type);
+        }
+        public static Object[] LoadAssetWithSubAssets(string assetName, string assetExtension, Type type)
+        {
+            return QuarkEngine.Instance.LoadAssetWithSubAssets(assetName, assetExtension, type);
+        }
         public static Coroutine LoadPrefabAsync(string assetName, Action<GameObject> callback, bool instantiate = false)
         {
             return QuarkEngine.Instance.LoadPrefabAsync(assetName, string.Empty, callback, instantiate);
@@ -134,6 +155,14 @@ where T : UnityEngine.Object
         public static Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object
         {
             return QuarkEngine.Instance.LoadAssetWithSubAssetsAsync<T>(assetName, assetExtension, callback);
+        }
+        public static Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type,Action<Object[]> callback)
+        {
+            return QuarkEngine.Instance.LoadAssetWithSubAssetsAsync(assetName, string.Empty, type,callback);
+        }
+        public static Coroutine LoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type,Action<Object[]> callback)
+        {
+            return QuarkEngine.Instance.LoadAssetWithSubAssetsAsync(assetName, assetExtension, type,callback);
         }
         public static Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
@@ -178,6 +207,14 @@ where T : UnityEngine.Object
         public static bool GetInfo<T>(string assetName, out QuarkAssetObjectInfo info) where T : UnityEngine.Object
         {
             return QuarkEngine.Instance.GetInfo<T>(assetName, string.Empty, out info);
+        }
+        public static bool GetInfo(string assetName, string assetExtension, Type type,out QuarkAssetObjectInfo info) 
+        {
+            return QuarkEngine.Instance.GetInfo(assetName, assetExtension, type,out info);
+        }
+        public static bool GetInfo(string assetName, Type type,out QuarkAssetObjectInfo info) 
+        {
+            return QuarkEngine.Instance.GetInfo(assetName, string.Empty,type , out info);
         }
         public static bool GetInfo(string assetName, string assetExtension, out QuarkAssetObjectInfo info)
         {
