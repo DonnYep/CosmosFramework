@@ -2,7 +2,7 @@
 namespace Cosmos.Scene
 {
     [StructLayout(LayoutKind.Auto)]
-    public struct SceneInfo: ISceneInfo
+    public struct SceneInfo
     {
         readonly string sceneName;
         readonly bool additive;

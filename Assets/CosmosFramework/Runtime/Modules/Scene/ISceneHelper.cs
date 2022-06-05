@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
 
 namespace Cosmos.Scene
@@ -19,8 +18,7 @@ namespace Cosmos.Scene
         /// <param name="condition">场景加载完成的条件</param>
         /// <param name="callback">场景加载完毕回调</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadSceneAsync(ISceneInfo sceneInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null);
-
+        Coroutine LoadSceneAsync(SceneInfo sceneInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null);
         /// <summary>
         /// 异步卸载场景；
         /// </summary>
@@ -29,6 +27,6 @@ namespace Cosmos.Scene
         /// <param name="condition">卸载场景完成的条件</param>
         /// <param name="callback">场景卸载完毕后的回调</param>
         /// <returns>协程对象</returns>
-        Coroutine UnloadSceneAsync(ISceneInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null);
+        Coroutine UnloadSceneAsync(SceneInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null);
     }
 }
