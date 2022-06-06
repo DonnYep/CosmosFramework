@@ -20,6 +20,7 @@ namespace Cosmos
 {
     public class CosmosEntry
     {
+        static bool isLaunched = false;
         /// <summary>
         /// 当前模块数量；
         /// </summary>
@@ -71,71 +72,16 @@ namespace Cosmos
         public static ISceneManager SceneManager { get { return GetModule<ISceneManager>(); } }
         public static IWebRequestManager WebRequestManager { get { return GetModule<IWebRequestManager>(); } }
         public static IDownloadManager DownloadManager { get { return GetModule<IDownloadManager>(); } }
-        public static IDataTableManager  DataTableManager{ get { return GetModule<IDataTableManager>(); } }
+        public static IDataTableManager DataTableManager { get { return GetModule<IDataTableManager>(); } }
 
-        /// <summary>
-        /// 启动当前AppDomain下的helper
-        /// </summary>
-        public static void LaunchAppDomainHelpers()
-        {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var length = assemblies.Length;
-            for (int i = 0; i < length; i++)
-            {
-                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, Utility.Debug.IDebugHelper>(assemblies[i]);
-                if (helper != null)
-                {
-                    Utility.Debug.SetHelper(helper);
-                    break;
-                }
-            }
-            for (int i = 0; i < length; i++)
-            {
-                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, Utility.Json.IJsonHelper>(assemblies[i]);
-                if (helper != null)
-                {
-                    Utility.Json.SetHelper(helper);
-                    break;
-                }
-            }
-            for (int i = 0; i < length; i++)
-            {
-                var helper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, Utility.MessagePack.IMessagePackHelper>(assemblies[i]);
-                if (helper != null)
-                {
-                    Utility.MessagePack.SetHelper(helper);
-                    break;
-                }
-            }
-        }
-        /// <summary>
-        /// 启动目标程序集下的helper
-        /// </summary>
-        /// <param name="assembly">查询的目标程序集</param>
-        public static void LaunchAssemblyHelpers(System.Reflection.Assembly assembly)
-        {
-            var debugHelper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, Utility.Debug.IDebugHelper>(assembly);
-            if (debugHelper != null)
-            {
-                Utility.Debug.SetHelper(debugHelper);
-            }
-            var jsonHelper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, Utility.Json.IJsonHelper>(assembly);
-            if (jsonHelper != null)
-            {
-                Utility.Json.SetHelper(jsonHelper);
-            }
-            var mpHelper = Utility.Assembly.GetInstanceByAttribute<ImplementerAttribute, Utility.MessagePack.IMessagePackHelper>(assembly);
-            if (mpHelper != null)
-            {
-                Utility.MessagePack.SetHelper(mpHelper);
-            }
-        }
         /// <summary>
         /// 初始化当前AppDomain下的Module；
         /// 注意：初始化尽量只执行一次！！！
         /// </summary>
         public static void LaunchAppDomainModules()
         {
+            if (isLaunched)
+                return;
             MonoGameManager.Instance.ToString();
             GameManager.InitAppDomainModule();
         }

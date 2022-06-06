@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 namespace Cosmos
 {
+    //如何使用: https://blog.lindexi.com/post/C-dotnet-%E4%BD%BF%E7%94%A8-AsyncEx-%E5%BA%93%E7%9A%84-AsyncLock-%E5%BC%82%E6%AD%A5%E9%94%81.html
     public class AsyncLock
     {
         /// <summary>

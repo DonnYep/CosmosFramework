@@ -9,6 +9,11 @@ namespace Cosmos
     {
         public static class Assembly
         {
+            static readonly System.Reflection.Assembly[] domainAssemblies;
+            static Assembly()
+            {
+                domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            }
 
             /// <summary>
             /// 获取AppDomain中指定的程序集
@@ -17,8 +22,7 @@ namespace Cosmos
             /// <returns>程序集</returns>
             public static System.Reflection.Assembly GetAssembly(string assemblyName)
             {
-                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-                foreach (var assembly in assemblies)
+                foreach (var assembly in domainAssemblies)
                 {
                     if (assembly.GetName().Name == assemblyName)
                         return assembly;
@@ -30,21 +34,51 @@ namespace Cosmos
             /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
             /// </summary>
             /// <param name="type">类型</param>
-            /// <returns>装箱后的对象</returns>
+            /// <returns>实例化后的对象</returns>
             public static object GetTypeInstance(Type type)
             {
                 return Activator.CreateInstance(type);
             }
             /// <summary>
             /// 反射工具，得到反射类的对象；
-            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
+            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造 
             /// </summary>
-            /// <param name="type">类型</param>
-            /// <returns>装箱后的对象</returns>
-            public static T GetTypeInstance<T>(Type type)
-                where T : class
+            /// <param name="typeName">类型名</param>
+            /// <returns>实例化后的对象</returns>
+            public static object GetTypeInstance(string typeName)
             {
-                return type.Assembly.CreateInstance(type.FullName) as T;
+                object inst = null;
+                foreach (var a in domainAssemblies)
+                {
+                    var dstType = a.GetType(typeName);
+                    if (dstType != null)
+                    {
+                        inst = Activator.CreateInstance(dstType);
+                        break;
+                    }
+                }
+                return inst;
+            }
+            /// <summary>
+            /// 反射工具，得到反射类的对象；
+            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造 
+            /// </summary>
+            /// <param name="typeName">类型名</param>
+            /// <param name="assemblies">程序集集合</param>
+            /// <returns>实例化后的对象</returns>
+            public static object GetTypeInstance(string typeName, params System.Reflection.Assembly[] assemblies)
+            {
+                object inst = null;
+                foreach (var a in assemblies)
+                {
+                    var dstType = a.GetType(typeName);
+                    if (dstType != null)
+                    {
+                        inst = Activator.CreateInstance(dstType);
+                        break;
+                    }
+                }
+                return inst;
             }
             /// <summary>
             /// 获取所有派生类的实例对象
@@ -342,6 +376,133 @@ where K : class
                 else
                     types = assembly.GetTypes();
                 return types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).ToArray();
+            }
+            /// <summary>
+            /// 获取某类型在指定程序集的所有派生类数组；
+            /// </summary>
+            /// <typeparam name="T">基类</typeparam>
+            /// <param name="assemblies">查询的程序集</param>
+            /// <returns>非抽象派生类</returns>
+            public static Type[] GetDerivedTypes<T>(params System.Reflection.Assembly[] assemblies)
+    where T : class
+            {
+                return GetDerivedTypes(typeof(T), assemblies);
+            }
+            /// <summary>
+            /// 获取某类型在指定程序集的所有派生类数组；
+            /// </summary>
+            /// <param name="type">基类</param>
+            /// <param name="assemblies">查询的程序集集合</param>
+            /// <returns>非抽象派生类</returns>
+            public static Type[] GetDerivedTypes(Type type, params System.Reflection.Assembly[] assemblies)
+            {
+                List<Type> types;
+                if (assemblies == null)
+                    return type.Assembly.GetTypes().Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).ToArray();
+                else
+                {
+                    types = new List<Type>();
+                    foreach (var a in assemblies)
+                    {
+                        var dstTypes = a.GetTypes().Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; });
+                        types.AddRange(dstTypes);
+                    }
+                    return types.ToArray();
+                }
+            }
+            /// <summary>
+            /// 获取某类型的第一个派生类完全限定名；
+            /// </summary>
+            /// <typeparam name="T">基类</typeparam>
+            /// <param name="assembly">查询的程序集</param>
+            /// <returns>非抽象派生类完全限定名</returns>
+            public static string GetDerivedTypeName<T>(System.Reflection.Assembly assembly = null)
+    where T : class
+            {
+                return GetDerivedTypeName(typeof(T), assembly);
+            }
+            /// <summary>
+            ///  获取某类型的第一个派生类完全限定名；
+            /// </summary>
+            /// <param name="type">基类</param>
+            /// <param name="assembly">查询的程序集</param>
+            /// <returns>非抽象派生类完全限定名</returns>
+            public static string GetDerivedTypeName(Type type, System.Reflection.Assembly assembly = null)
+            {
+                Type[] types;
+                if (assembly == null)
+                    types = type.Assembly.GetTypes();
+                else
+                    types = assembly.GetTypes();
+                var rstType = from t in types
+                              where type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract
+                              select t;
+                return rstType.FirstOrDefault().FullName;
+            }
+            /// <summary>
+            /// 获取某类型在指定程序集的所有派生类完全限定名数组；
+            /// </summary>
+            /// <typeparam name="T">基类</typeparam>
+            /// <param name="assembly">查询的程序集</param>
+            /// <returns>非抽象派生类完全限定名</returns>
+            public static string[] GetDerivedTypeNames<T>(System.Reflection.Assembly assembly = null)
+    where T : class
+            {
+                Type type = typeof(T);
+                Type[] types;
+                if (assembly == null)
+                    types = type.Assembly.GetTypes();
+                else
+                    types = assembly.GetTypes();
+                return types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).Select(t => t.FullName).ToArray();
+            }
+            /// <summary>
+            /// 获取某类型在指定程序集的所有派生类完全限定名数组；
+            /// </summary>
+            /// <param name="type">基类</param>
+            /// <param name="assembly">查询的程序集</param>
+            /// <returns>非抽象派生类完全限定名</returns>
+            public static string[] GetDerivedTypeNames(Type type, System.Reflection.Assembly assembly = null)
+            {
+                Type[] types;
+                if (assembly == null)
+                    types = type.Assembly.GetTypes();
+                else
+                    types = assembly.GetTypes();
+                return types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).Select(t => t.FullName).ToArray();
+            }
+            /// <summary>
+            /// 获取某类型在指定程序集的所有派生类完全限定名数组；
+            /// </summary>
+            /// <param name="type">基类</param>
+            /// <param name="assemblies">查询的程序集集合</param>
+            /// <returns>非抽象派生类完全限定名</returns>
+            public static string[] GetDerivedTypeNames(Type type, params System.Reflection.Assembly[] assemblies)
+            {
+                List<string> types;
+                if (assemblies == null)
+                    return type.Assembly.GetTypes().Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).Select(t => t.FullName).ToArray();
+                else
+                {
+                    types = new List<string>();
+                    foreach (var a in assemblies)
+                    {
+                        var dstTypes = a.GetTypes().Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).Select(t => t.FullName);
+                        types.AddRange(dstTypes);
+                    }
+                }
+                return types.ToArray();
+            }
+            /// <summary>
+            /// 获取某类型在指定程序集的所有派生类完全限定名数组；
+            /// </summary>
+            /// <typeparam name="T">基类</typeparam>
+            /// <param name="assemblies">查询的程序集集合</param>
+            /// <returns>非抽象派生类完全限定名</returns>
+            public static string[] GetDerivedTypeNames<T>(params System.Reflection.Assembly[] assemblies)
+                where T : class
+            {
+                return GetDerivedTypeNames(typeof(T), assemblies);
             }
             /// <summary>
             /// 将一个对象上的字段值赋予到另一个对象上名字相同的字段上；
@@ -785,7 +946,7 @@ where K : class
             /// <returns>名称数组</returns>
             public static string[] GetTypeAllFields(Type type)
             {
-                var fields= type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
                 return fields.Select(f => f.Name).ToArray();
             }
             /// <summary>
@@ -804,7 +965,7 @@ where K : class
             /// <returns>名称数组</returns>
             public static string[] GetTypeAllProperties(Type type)
             {
-                var properties= type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
                 return properties.Select(f => f.Name).ToArray();
             }
             /// <summary>
