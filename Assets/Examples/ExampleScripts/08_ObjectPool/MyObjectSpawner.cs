@@ -27,7 +27,6 @@ namespace Cosmos.Test
 
         async void Start()
         {
-            CosmosEntry.ResourceManager.AddOrUpdateBuildInLoadHelper(Resource.ResourceLoadMode.Resource, new QuarkLoader());
             objectPoolManager = CosmosEntry.ObjectPoolManager;
 
             capsulePool = await objectPoolManager.RegisterObjectPoolAsync(new ObjectPoolAssetInfo(resCapsule, resCapsule));

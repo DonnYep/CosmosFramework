@@ -9,6 +9,8 @@ namespace Cosmos
         [SerializeField] bool launchAppDomainModules = true;
         [SerializeField] bool printModulePreparatory = false;
         [SerializeField] ResourceLoadMode resourceLoadMode;
+        [SerializeField] string resourceLoaderName;
+        [SerializeField] int resourceLoaderIndex;
 
         [SerializeField] int debugHelperIndex;
         [SerializeField] int jsonHelperIndex;
@@ -17,6 +19,7 @@ namespace Cosmos
         [SerializeField] string debugHelperName;
         [SerializeField] string jsonHelperName;
         [SerializeField] string messagePackHelperName;
+
 
         protected virtual void Awake()
         {
@@ -39,7 +42,12 @@ namespace Cosmos
             if (launchAppDomainModules)
             {
                 CosmosEntry.LaunchAppDomainModules();
-                CosmosEntry.ResourceManager.SwitchLoadMode(resourceLoadMode);
+                var loadHelper = Utility.Assembly.GetTypeInstance(resourceLoaderName);
+                if (loadHelper != null)
+                {
+                    CosmosEntry.ResourceManager.AddOrUpdateLoadHelper(resourceLoadMode, (IResourceLoadHelper)loadHelper);
+                    CosmosEntry.ResourceManager.SwitchLoadMode(resourceLoadMode);
+                }
             }
         }
     }

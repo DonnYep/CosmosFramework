@@ -34,7 +34,7 @@ namespace Cosmos.UI
         /// <returns>协程对象</returns>
         Coroutine InstanceUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> doneCallback);
         /// <summary>
-        /// 释放&关闭UIForm；
+        /// 关闭并释放UIForm；
         /// </summary>
         /// <param name="uiForm">UIForm对象</param>
         void CloseUIForm(IUIForm uiForm);

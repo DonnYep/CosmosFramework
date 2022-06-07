@@ -54,16 +54,31 @@ namespace Cosmos.UI
                     uiFormName = value;
             }
         }
-        public string UIGroupName { get; private set; }
         protected IUIManager UIManager { get { return CosmosEntry.UIManager; } }
+        public UIAssetInfo UIAssetInfo { get; set; }
+
         /// <summary>
         /// Name===[Lnk=== UILableInfo]；
         /// </summary>
         Dictionary<string, LinkedList<UILableInfo>> uiLableDict
             = new Dictionary<string, LinkedList<UILableInfo>>();
         string uiFormName;
+        ///<inheritdoc/>
+        public virtual void OnActive()
+        {
+            gameObject.SetActive(true);
+        }
+        ///<inheritdoc/>
+        public virtual void OnDeactive()
+        {
+            gameObject.SetActive(false);
+        }
+        ///<inheritdoc/>
+        public virtual void OnClose()
+        {
+            Utility.Debug.LogInfo($"{UIFormName} OnClose");
+        }
         protected virtual void Awake() { }
-        protected virtual void OnDestroy() { }
         protected bool HasLable<T>(string lableName)
         {
             if (uiLableDict.ContainsKey(lableName))
@@ -115,5 +130,6 @@ namespace Cosmos.UI
             }
             return comp;
         }
+
     }
 }

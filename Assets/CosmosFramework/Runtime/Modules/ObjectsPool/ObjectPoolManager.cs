@@ -17,9 +17,7 @@ namespace Cosmos.ObjectPool
     {
         #region Properties
         Dictionary<string, ObjectPool> poolDict;
-        /// <summary>
-        /// 对象池的数量；
-        /// </summary>
+        /// <inheritdoc/>
         public int PoolCount { get { return poolDict.Count; } }
         Action<float> elapseRefreshHandler;
         event Action<float> ElapseRefreshHandler
@@ -31,22 +29,14 @@ namespace Cosmos.ObjectPool
         #endregion
 
         #region Methods
-        /// <summary>
-        /// 设置对象池帮助体；
-        /// </summary>
-        /// <param name="helper">帮助体对象</param>
+        /// <inheritdoc/>
         public void SetHelper(IObjectPoolHelper helper)
         {
             if (helper == null)
                 throw new ArgumentNullException("helper is invalid");
             objectPoolHelper = helper;
         }
-        /// <summary>
-        /// 异步注册对象池；
-        /// </summary>
-        /// <param name="assetInfo">对象池资源信息</param>
-        /// <param name="callback">注册回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo, Action<IObjectPool> callback)
         {
             if (!HasObjectPool(assetInfo.PoolName))
@@ -70,24 +60,14 @@ namespace Cosmos.ObjectPool
             else
                 throw new ArgumentException($"object pool :{assetInfo.PoolName} is exist.");
         }
-        /// <summary>
-        /// 异步注册对象池；
-        /// 须使用await获取结果；
-        /// </summary>
-        /// <param name="assetInfo">对象池资源信息</param>
-        /// <returns>Task异步任务</returns>
+        /// <inheritdoc/>
         public async Task<IObjectPool> RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo)
         {
             IObjectPool pool = null;
             await RegisterObjectPoolAsync(assetInfo, (p) => { pool = p; });
             return pool;
         }
-        /// <summary>
-        /// 注册自定义资源对象池；
-        /// </summary>
-        /// <param name="poolName">对象池名<</param>
-        /// <param name="spawnAsset">需要生成的对象</param>
-        /// <returns>注册生成后的池对象接口</returns>
+        /// <inheritdoc/>
         public IObjectPool RegisterObjectPool(string poolName, GameObject spawnAsset)
         {
             if (!HasObjectPool(poolName))
@@ -100,10 +80,7 @@ namespace Cosmos.ObjectPool
             else
                 throw new ArgumentException($"object pool :{poolName} is exist.");
         }
-        /// <summary>
-        /// 注销对象池;
-        /// </summary>
-        /// <param name="poolName">对象池名<</param>
+        /// <inheritdoc/>
         public void DeregisterObjectPool(string poolName)
         {
             if (poolDict.Remove(poolName, out var pool))
@@ -114,10 +91,7 @@ namespace Cosmos.ObjectPool
                 ObjectPool.Release(pool.CastTo<ObjectPool>());
             }
         }
-        /// <summary>
-        /// 注销对象池;
-        /// </summary>
-        /// <param name="pool">对象池</param>
+        /// <inheritdoc/>
         public void DeregisterObjectPool(IObjectPool pool)
         {
             if (poolDict.Remove(pool.ObjectPoolName, out var srcPool))
@@ -128,12 +102,7 @@ namespace Cosmos.ObjectPool
                 ObjectPool.Release(pool.CastTo<ObjectPool>());
             }
         }
-        /// <summary>
-        /// 获取对象池；
-        /// </summary>
-        /// <param name="poolName">对象池名</param>
-        /// <param name="pool">对象池</param>
-        /// <returns>获取结果</returns>
+        /// <inheritdoc/>
         public bool GetObjectPool(string poolName, out IObjectPool pool)
         {
             pool = null;
@@ -141,18 +110,12 @@ namespace Cosmos.ObjectPool
             pool = srcPool;
             return rst;
         }
-        /// <summary>
-        /// 是否存在对象池；
-        /// </summary>
-        /// <param name="poolName">对象池名</param>
-        /// <returns>是否存在</returns>
+        /// <inheritdoc/>
         public bool HasObjectPool(string poolName)
         {
             return poolDict.ContainsKey(poolName);
         }
-        /// <summary>
-        /// 注销所有池对象
-        /// </summary>
+        /// <inheritdoc/>
         public void DeregisterAllObjectPool()
         {
             foreach (var pool in poolDict)

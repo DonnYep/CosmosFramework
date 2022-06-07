@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641335, b: 0.57481605, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657832, g: 0.4964127, b: 0.57481533, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -362,12 +362,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab892e25c4938ae4295f586fc62f508a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LaunchAppDomainModules: 1
-  PrintModulePreparatory: 0
-  LoadDefaultHelper: 1
-  ResourceLoadMode: 0
-  QuarkRemoteUrl: RemoteUrl
-  QuarkLocalUrl: LocalUrl
+  launchAppDomainModules: 1
+  printModulePreparatory: 0
+  resourceLoadMode: 0
+  resourceLoaderName: Cosmos.Test.QuarkLoader
+  resourceLoaderIndex: 0
+  debugHelperIndex: 0
+  jsonHelperIndex: 0
+  messagePackHelperIndex: 0
+  debugHelperName: Cosmos.StandaloneDebugHelper
+  jsonHelperName: Cosmos.Test.NewtonjsonHelper
+  messagePackHelperName: Cosmos.MessagePackHelper
 --- !u!4 &1445863190
 Transform:
   m_ObjectHideFlags: 0
@@ -401,11 +406,12 @@ MonoBehaviour:
   PingUrl: 0
   QuarkAssetLoadMode: 1
   QuarkAssetDataset: {fileID: 11400000, guid: e4ef4e912cff6e24f8901a67d27afba9, type: 2}
-  QuarkLoadPath: 0
+  QuarkDownloadedPath: 0
   EnableRelativeLoadPath: 0
   RelativeLoadPath: 
-  AESEncryptionKey: 
-  CustomeLoadPath: 
+  BuildInfoAESEncryptionKey: 
+  EncryptionOffset: 0
+  CustomeAbsolutePath: 
 --- !u!1 &1644205380
 GameObject:
   m_ObjectHideFlags: 0

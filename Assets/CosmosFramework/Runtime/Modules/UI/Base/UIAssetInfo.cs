@@ -1,11 +1,12 @@
 ﻿using System.Runtime.InteropServices;
+using System;
 namespace Cosmos.UI
 {
     /// <summary>
     /// UI资源信息；
     /// </summary>
     [StructLayout(LayoutKind.Auto)]
-    public struct UIAssetInfo
+    public struct UIAssetInfo : IEquatable<UIAssetInfo>
     {
         public string AssetName { get; private set; }
         public string UIFormName { get; private set; }
@@ -17,6 +18,12 @@ namespace Cosmos.UI
             AssetName = assetName;
             UIFormName = uiFormName;
             UIGroupName = uiGroupName;
+        }
+        public bool Equals(UIAssetInfo other)
+        {
+            return this.AssetName == other.AssetName &&
+                this.UIFormName == other.AssetName &&
+                this.UIGroupName == other.UIGroupName;
         }
     }
 }

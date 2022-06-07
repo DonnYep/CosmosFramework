@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Cosmos.Resource
@@ -43,7 +42,7 @@ namespace Cosmos.Resource
             }
         }
         /// <inheritdoc/>
-        public async void AddOrUpdateBuildInLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper)
+        public async void AddOrUpdateLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper)
         {
             if (Utility.Assert.IsNull(loadHelper))
                 throw new ArgumentNullException($"IResourceLoadHelper is invalid !");
@@ -89,29 +88,9 @@ namespace Cosmos.Resource
             }, progress);
         }
         /// <inheritdoc/>
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action<float> progress, Action callback)
-        {
-            return currentLoadHelper.LoadSceneAsync(info, null, progress, null, callback);
-        }
-        /// <inheritdoc/>
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
-        {
-            return currentLoadHelper.LoadSceneAsync(info, null, progress, condition, callback);
-        }
-        /// <inheritdoc/>
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Action callback)
-        {
-            return currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, null, callback);
-        }
-        /// <inheritdoc/>
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
         {
             return currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, condition, callback);
-        }
-        /// <inheritdoc/>
-        public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Action callback)
-        {
-            return currentLoadHelper.UnloadSceneAsync(info, progress, null, callback);
         }
         /// <inheritdoc/>
         public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
@@ -152,34 +131,9 @@ namespace Cosmos.Resource
             await currentLoadHelper.LoadSceneAsync(info, null, null, null, null);
         }
         /// <inheritdoc/>
-        public async Task LoadSceneAsync(SceneAssetInfo info, Action<float> progress)
-        {
-            await currentLoadHelper.LoadSceneAsync(info, null, progress, null, null);
-        }
-        /// <inheritdoc/>
-        public async Task LoadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition)
-        {
-            await currentLoadHelper.LoadSceneAsync(info, null, progress, condition, null);
-        }
-        /// <inheritdoc/>
-        public async Task LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress)
-        {
-            await currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, null, null);
-        }
-        /// <inheritdoc/>
         public async Task LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition)
         {
             await currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, condition, null);
-        }
-        /// <inheritdoc/>
-        public async Task UnloadSceneAsync(SceneAssetInfo info)
-        {
-            await currentLoadHelper.UnloadSceneAsync(info, null, null, null);
-        }
-        /// <inheritdoc/>
-        public async Task UnloadSceneAsync(SceneAssetInfo info, Action<float> progress)
-        {
-            await currentLoadHelper.UnloadSceneAsync(info, progress, null, null);
         }
         /// <inheritdoc/>
         public async Task UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition)
@@ -199,9 +153,9 @@ namespace Cosmos.Resource
         protected override void OnInitialization()
         {
             loadChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
-            loadChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourcesLoader()));
-            currentResourceLoadMode = ResourceLoadMode.Resource;
-            currentLoadHelper = loadChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
+            //loadChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourcesLoader()));
+            //currentResourceLoadMode = ResourceLoadMode.Resource;
+            //currentLoadHelper = loadChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
         }
         #endregion
     }

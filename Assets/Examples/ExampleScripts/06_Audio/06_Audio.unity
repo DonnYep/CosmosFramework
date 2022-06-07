@@ -226,11 +226,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 215960616}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad6a9f758a822ef4abccdc56f3b589da, type: 3}
+  m_Script: {fileID: 11500000, guid: ab892e25c4938ae4295f586fc62f508a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  printModulesInitInfo: 1
-  useQuark: 0
+  launchAppDomainModules: 1
+  printModulePreparatory: 0
+  resourceLoadMode: 0
+  resourceLoaderName: Cosmos.Test.QuarkLoader
+  resourceLoaderIndex: 0
+  debugHelperIndex: 0
+  jsonHelperIndex: 0
+  messagePackHelperIndex: 0
+  debugHelperName: Cosmos.StandaloneDebugHelper
+  jsonHelperName: Cosmos.Test.NewtonjsonHelper
+  messagePackHelperName: Cosmos.MessagePackHelper
 --- !u!4 &215960618
 Transform:
   m_ObjectHideFlags: 0

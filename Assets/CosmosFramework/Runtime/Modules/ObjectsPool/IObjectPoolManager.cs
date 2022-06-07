@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Cosmos.ObjectPool
 {
-    public interface IObjectPoolManager: IModuleManager
+    public interface IObjectPoolManager : IModuleManager
     {
         /// <summary>
         /// 对象池的数量；
@@ -33,17 +33,17 @@ namespace Cosmos.ObjectPool
         /// <summary>
         /// 注册自定义资源对象池；
         /// </summary>
-        /// <param name="poolName">对象池名<</param>
+        /// <param name="poolName">对象池名</param>
         /// <param name="spawnAsset">需要生成的对象</param>
         /// <returns>注册生成后的池对象接口</returns>
         IObjectPool RegisterObjectPool(string poolName, GameObject spawnAsset);
         /// <summary>
-        /// 注销对象池;
+        /// 注销对象池；
         /// </summary>
-        /// <param name="poolName">对象池名<</param>
+        /// <param name="poolName">对象池名</param>
         void DeregisterObjectPool(string poolName);
         /// <summary>
-        /// 注销对象池;
+        /// 注销对象池
         /// </summary>
         /// <param name="pool">对象池</param>
         void DeregisterObjectPool(IObjectPool pool);

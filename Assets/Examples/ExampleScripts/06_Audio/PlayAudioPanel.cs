@@ -23,8 +23,6 @@ public class PlayAudioPanel : MonoBehaviour
     }
     void Start()
     {
-        //这里使用了QuarkLoader替换了默认的资源加载器
-        CosmosEntry.ResourceManager.AddOrUpdateBuildInLoadHelper(Cosmos.Resource.ResourceLoadMode.Resource, new QuarkLoader());
         CosmosEntry.AudioManager.AudioRegisterSuccess += AudioRegisterSuccess;
         CosmosEntry.AudioManager.AudioRegistFailure += AudioRegistFailure; ;
         var audioAssetInfo = new AudioAssetInfo("AudioTechHouse", "AudioTechHouse");

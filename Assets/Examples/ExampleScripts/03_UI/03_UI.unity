@@ -131,6 +131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9490478}
   - component: {fileID: 9490477}
+  - component: {fileID: 9490479}
   m_Layer: 0
   m_Name: UIEntry
   m_TagString: Untagged
@@ -150,7 +151,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38cd0d0e11fbad845a4d363e7063e986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  printModulesInitInfo: 0
 --- !u!4 &9490478
 Transform:
   m_ObjectHideFlags: 0
@@ -165,6 +165,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9490479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9490476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab892e25c4938ae4295f586fc62f508a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  launchAppDomainModules: 1
+  printModulePreparatory: 0
+  resourceLoadMode: 0
+  resourceLoaderName: Cosmos.Resource.ResourcesLoader
+  resourceLoaderIndex: 2
+  debugHelperIndex: 0
+  jsonHelperIndex: 0
+  messagePackHelperIndex: 0
+  debugHelperName: Cosmos.StandaloneDebugHelper
+  jsonHelperName: Cosmos.Test.NewtonjsonHelper
+  messagePackHelperName: Cosmos.MessagePackHelper
 --- !u!1 &1049725160
 GameObject:
   m_ObjectHideFlags: 0

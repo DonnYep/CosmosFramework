@@ -16,11 +16,6 @@ namespace Cosmos.UI
         /// <param name="destroyOldOne">销毁旧的uiRoot对象</param>
         void SetUIRoot(Transform uiRoot, bool destroyOldOne = false);
         /// <summary>
-        /// 设置ui动效帮助体；
-        /// </summary>
-        /// <param name="helper">帮助体对象</param>
-        void SetMotionHelper(IUIFormMotionHelper helper);
-        /// <summary>
         /// 设置ui资产加载帮助体；
         /// </summary>
         /// <param name="helper">帮助体对象</param>
@@ -104,7 +99,7 @@ namespace Cosmos.UI
         void ActiveUIGroup(string uiGroupName);
         /// <summary>
         /// 是否存在UI;
-        /// <see cref=" IUIForm",>
+        ///<see cref="IUIForm"/>
         /// UIForm.UIName
         /// </summary>
         /// <param name="uiFormName">UI资源的名称</param>
@@ -133,6 +128,7 @@ namespace Cosmos.UI
         IUIForm[] FindUIForms(Predicate<IUIForm> condition);
         /// <summary>
         /// 设置UIForm的组别；
+        /// 若UIForm本身已存在组别，则被移除旧组，加入新组；
         /// </summary>
         /// <param name="uiFormName">UI资源的名称</param>
         /// <param name="uiGroupName">UI组的名字</param>

@@ -32,7 +32,7 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="resourceLoadMode">加载模式</param>
         /// <param name="loadHelper">加载帮助对象</param>
-        void AddOrUpdateBuildInLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper);
+        void AddOrUpdateLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper);
         /// <summary>
         /// 加载资源（异步）；
         /// </summary>
@@ -86,43 +86,10 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="info">资源信息</param>
         /// <param name="progress">加载场景进度回调</param>
-        /// <param name="callback">场景加载完毕回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine LoadSceneAsync(SceneAssetInfo info, Action<float> progress, Action callback);
-        /// <summary>
-        /// 加载场景（异步）;
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <param name="progress">加载场景进度回调</param>
-        /// <param name="condition">场景加载完成的条件</param>
-        /// <param name="callback">场景加载完毕回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine LoadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback);
-        /// <summary>
-        /// 加载场景（异步）;
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <param name="progress">加载场景进度回调</param>
-        /// <param name="callback">场景加载完毕回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Action callback);
-        /// <summary>
-        /// 加载场景（异步）;
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <param name="progress">加载场景进度回调</param>
         /// <param name="condition">场景加载完成的条件</param>
         /// <param name="callback">场景加载完毕回调</param>
         /// <returns>协程对象</returns>
         Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback);
-        /// <summary>
-        /// 卸载场景（异步）;
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <param name="progress">卸载场景的进度</param>
-        /// <param name="callback">场景卸载完毕后的回调<</param>
-        /// <returns>协程对象</returns>
-        Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Action callback);
         /// <summary>
         /// 卸载场景（异步）;
         /// </summary>
@@ -147,7 +114,7 @@ namespace Cosmos.Resource
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
         /// <param name="assetName">资源信息</param>
-        /// <param name="type">资源类型</typeparam>
+        /// <param name="type">资源类型</param>
         /// <returns>加载task</returns>
         Task<UnityEngine.Object> LoadAssetAsync(string assetName, Type type);
         /// <summary>
@@ -173,57 +140,11 @@ namespace Cosmos.Resource
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
         /// <param name="info">资源信息</param>
-        /// <param name="progress">加载场景进度回调</param>
-        /// <returns>Task异步任务</returns>
-        Task LoadSceneAsync(SceneAssetInfo info, Action<float> progress);
-        /// <summary>
-        /// 加载场景（异步）；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <param name="progress">加载场景进度回调</param>
-        /// <param name="condition">加载场景完成的条件</param>
-        /// <returns>Task异步任务</returns>
-        Task LoadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition);
-        /// <summary>
-        /// 加载场景（异步）；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <param name="progressProvider">自定义的加载进度0-1</param>
-        /// <param name="progress">加载场景进度回调</param>
-        /// <returns>Task异步任务</returns>
-        Task LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress);
-        /// <summary>
-        /// 加载场景（异步）；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <param name="info">资源信息</param>
         /// <param name="progressProvider">自定义的加载进度0-1</param>
         /// <param name="progress">加载场景进度回调</param>
         /// <param name="condition">加载场景完成的条件</param>
         /// <returns>Task异步任务</returns>
         Task LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition);
-        /// <summary>
-        /// 卸载场景（异步）；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <returns>Task异步任务</returns>
-        Task UnloadSceneAsync(SceneAssetInfo info);
-        /// <summary>
-        /// 卸载场景（异步）；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <param name="progress">卸载场景的进度</param>
-        /// <returns>Task异步任务</returns>
-        Task UnloadSceneAsync(SceneAssetInfo info, Action<float> progress);
         /// <summary>
         /// 卸载场景（异步）；
         /// 须使用await获取结果；
