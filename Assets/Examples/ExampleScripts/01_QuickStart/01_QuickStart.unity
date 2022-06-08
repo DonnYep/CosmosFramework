@@ -342,7 +342,7 @@ MonoBehaviour:
   launchAppDomainModules: 1
   printModulePreparatory: 0
   resourceLoadMode: 0
-  resourceLoaderName: QuarkLoader
+  resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
   debugHelperIndex: 0
   jsonHelperIndex: 0

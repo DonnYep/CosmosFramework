@@ -153,6 +153,7 @@ namespace Cosmos.Resource
         IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback)
 where T : UnityEngine.Object
         {
+#if UNITY_EDITOR
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset name is invalid!");
             var assetObj = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(assetName);
@@ -164,15 +165,22 @@ where T : UnityEngine.Object
             }
             yield return null;
             callback?.Invoke(assets);
+#else
+            yield return null;
+#endif
         }
         IEnumerator EnumLoadAsssetAsync<T>(string assetName, Action<T> callback, Action<float> progress) where T : UnityEngine.Object
         {
+#if UNITY_EDITOR
             if (string.IsNullOrEmpty(assetName))
                 throw new ArgumentNullException("Asset path is invalid!");
             var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetName);
             yield return null;
             progress.Invoke(1);
             callback?.Invoke(asset);
+#else
+            yield return null;
+#endif
         }
     }
 }

@@ -11,12 +11,7 @@ namespace Cosmos.Config
     internal sealed partial class ConfigManager : Module, IConfigManager
     {
         Dictionary<string, ConfigData> configDataDict;
-        /// <summary>
-        /// 添加一个配置数据；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <param name="configValue">存档值</param>
-        /// <returns>添加结果</returns>
+        ///<inheritdoc/>
         public bool AddConfig(string configName, string configValue)
         {
             bool boolValue = false;
@@ -30,15 +25,7 @@ namespace Cosmos.Config
 
             return AddConfig(configName, boolValue, intValue, floatValue, configValue);
         }
-        /// <summary>
-        /// 添加一个配置数据；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <param name="boolValue">bool值</param>
-        /// <param name="intValue">int值</param>
-        /// <param name="floatValue">float值</param>
-        /// <param name="stringValue">string值</param>
-        /// <returns>添加结果</returns>
+        ///<inheritdoc/>
         public bool AddConfig(string configName, bool boolValue, int intValue, float floatValue, string stringValue)
         {
             if (HasConfig(configName))
@@ -46,11 +33,7 @@ namespace Cosmos.Config
             configDataDict.Add(configName, new ConfigData(boolValue, intValue, floatValue, stringValue));
             return true;
         }
-        /// <summary>
-        /// 移除一个配置数据；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <returns>移除结果</returns>
+        ///<inheritdoc/>
         public bool RemoveConfig(string configName)
         {
             if (HasConfig(configName))
@@ -61,20 +44,12 @@ namespace Cosmos.Config
             else
                 return false;
         }
-        /// <summary>
-        /// 是否存在配置数据；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <returns>存在结果</returns>
+        ///<inheritdoc/>
         public bool HasConfig(string configName)
         {
             return configDataDict.ContainsKey(configName);
         }
-        /// <summary>
-        /// 从指定全局配置项中读取布尔值；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <returns>读取的布尔值</returns>
+        ///<inheritdoc/>
         public bool GetBool(string configName)
         {
             ConfigData? configData = GetConfigData(configName);
@@ -85,22 +60,13 @@ namespace Cosmos.Config
 
             return configData.Value.BoolValue;
         }
-        /// <summary>
-        /// 从指定全局配置项中读取布尔值；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值</param>
-        /// <returns>读取的布尔值</returns>
+        ///<inheritdoc/>
         public bool GetBool(string configName, bool defaultValue)
         {
             ConfigData? configData = GetConfigData(configName);
             return configData.HasValue ? configData.Value.BoolValue : defaultValue;
         }
-        /// <summary>
-        /// 从指定全局配置项中读取整数值；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <returns>读取的整数值</returns>
+        ///<inheritdoc/>
         public int GetInt(string configName)
         {
             ConfigData? configData = GetConfigData(configName);
@@ -110,22 +76,13 @@ namespace Cosmos.Config
             }
             return configData.Value.IntValue;
         }
-        /// <summary>
-        /// 从指定全局配置项中读取整数值；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值</param>
-        /// <returns>读取的整数值</returns>
+        ///<inheritdoc/>
         public int GetInt(string configName, int defaultValue)
         {
             ConfigData? configData = GetConfigData(configName);
             return configData.HasValue ? configData.Value.IntValue : defaultValue;
         }
-        /// <summary>
-        /// 从指定全局配置项中读取浮点数值；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <returns>读取的浮点数值</returns>
+        ///<inheritdoc/>
         public float GetFloat(string configName)
         {
             ConfigData? configData = GetConfigData(configName);
@@ -136,22 +93,13 @@ namespace Cosmos.Config
 
             return configData.Value.FloatValue;
         }
-        /// <summary>
-        /// 从指定全局配置项中读取浮点数值；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值</param>
-        /// <returns>读取的浮点数值</returns>
+        ///<inheritdoc/>
         public float GetFloat(string configName, float defaultValue)
         {
             ConfigData? configData = GetConfigData(configName);
             return configData.HasValue ? configData.Value.FloatValue : defaultValue;
         }
-        /// <summary>
-        /// 从指定全局配置项中读取字符串值；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <returns>读取的字符串值</returns>
+        ///<inheritdoc/>
         public string GetString(string configName)
         {
             ConfigData? configData = GetConfigData(configName);
@@ -161,20 +109,13 @@ namespace Cosmos.Config
             }
             return configData.Value.StringValue;
         }
-        /// <summary>
-        /// 从指定全局配置项中读取字符串值；
-        /// </summary>
-        /// <param name="configName">要获取全局配置项的Key</param>
-        /// <param name="defaultValue">当指定的全局配置项不存在时，返回此默认值</param>
-        /// <returns>读取的字符串值</returns>
+        ///<inheritdoc/>
         public string GetString(string configName, string defaultValue)
         {
             ConfigData? configData = GetConfigData(configName);
             return configData.HasValue ? configData.Value.StringValue : defaultValue;
         }
-        /// <summary>
-        /// 移除所有配置数据；
-        /// </summary>
+        ///<inheritdoc/>
         public void RemoveAllConfig()
         {
             configDataDict.Clear();

@@ -24,148 +24,73 @@ namespace Cosmos.FSM
         /// </summary>
         Dictionary<string, FSMGroup> fsmGroupDict;
         List<FSMBase> fsmCache = new List<FSMBase>();
-        /// <summary>
-        /// 状态机数量；
-        /// </summary>
+        ///<inheritdoc/>
         public int FSMCount { get { return fsmDict.Count; } }
         #endregion
 
         #region Methods
-        /// <summary>
-        /// 获取状态机；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <returns>状态机基类</returns>
+        ///<inheritdoc/>
         public FSMBase GetFSM<T>()
     where T : class
         {
             Type type = typeof(T).GetType();
             return GetFSM(type);
         }
-        /// <summary>
-        /// 获取状态机；
-        /// </summary>
-        /// <param name="type">拥有者类型</param>
-        /// <returns>状态机基类</returns>
+        ///<inheritdoc/>
         public FSMBase GetFSM(Type type)
         {
             fsmDict.TryGetValue(new TypeStringPair(type), out var fsm);
             return fsm;
         }
-        /// <summary>
-        /// 获取所有状态机；
-        /// </summary>
-        /// <returns>状态机集合</returns>
+        ///<inheritdoc/>
         public IList<FSMBase> GetAllFSMs()
         {
             return fsmDict.Values.ToArray();
         }
-        /// <summary>
-        /// 是否存在状态机；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="name">状态机名称</param>
-        /// <returns>存在结果</returns>
+        ///<inheritdoc/>
         public bool HasFSM<T>(string name)
            where T : class
         {
             return HasFSM(typeof(T), name);
         }
-        /// <summary>
-        /// 是否存在状态机；
-        /// </summary>
-        /// <param name="type">拥有者类型</param>
-        /// <param name="name">状态机名称</param>
-        /// <returns>存在结果</returns>
+        ///<inheritdoc/>
         public bool HasFSM(Type type, string name)
         {
             return fsmDict.ContainsKey(new TypeStringPair(type, name));
         }
-        /// <summary>
-        /// 创建状态机；
-        /// 不分配状态机组；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="owner">拥有者</param>
-        /// <param name="states">状态</param>
-        /// <returns>创建成功后的状态机</returns>
+        ///<inheritdoc/>
         public IFSM<T> CreateFSM<T>(T owner, IList<FSMState<T>> states) where T : class
         {
             return CreateFSM(string.Empty, owner, string.Empty, states);
         }
-        /// <summary>
-        /// 创建状态机；
-        /// 不分配状态机组；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="owner">拥有者</param>
-        /// <param name="states">状态</param>
-        /// <returns>创建成功后的状态机</returns>
+        ///<inheritdoc/>
         public IFSM<T> CreateFSM<T>(T owner, params FSMState<T>[] states) where T :class
         {
             return CreateFSM(string.Empty, owner, string.Empty, states);
         }
-        /// <summary>
-        ///  创建状态机；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="owner">拥有者</param>
-        /// <param name="fsmGroupName">状态机组名，若为空，则不分配组</param>
-        /// <param name="states">状态</param>
-        /// <returns>创建成功后的状态机</returns>
+        ///<inheritdoc/>
         public IFSM<T> CreateFSM<T>(T owner, string fsmGroupName, IList<FSMState<T>> states)
            where T : class
         {
             return CreateFSM(string.Empty, owner, fsmGroupName, states);
         }
-        /// <summary>
-        /// 创建状态机；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="owner">拥有者</param>
-        /// <param name="fsmGroupName">状态机组名，若为空，则不分配组</param>
-        /// <param name="states">状态</param>
-        /// <returns>创建成功后的状态机</returns>
+        ///<inheritdoc/>
         public IFSM<T> CreateFSM<T>(T owner, string fsmGroupName, params FSMState<T>[] states)
            where T : class
         {
             return CreateFSM(string.Empty, owner, fsmGroupName, states);
         }
-        /// <summary>
-        ///  创建状态机；
-        /// 不分配状态机组；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="name">状态机名称</param>
-        /// <param name="owner">拥有者</param>
-        /// <param name="states">状态</param>
-        /// <returns>创建成功后的状态机</returns>
+        ///<inheritdoc/>
         public IFSM<T> CreateFSM<T>(string name, T owner, IList<FSMState<T>> states)where T:class
         {
             return CreateFSM<T>(name, owner, string.Empty, states);
         }
-        /// <summary>
-        ///  创建状态机；
-        /// 不分配状态机组；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="name">状态机名称</param>
-        /// <param name="owner">拥有者</param>
-        /// <param name="states">状态</param>
-        /// <returns>创建成功后的状态机</returns>
+        ///<inheritdoc/>
         public IFSM<T> CreateFSM<T>(string name, T owner, params FSMState<T>[] states) where T : class
         {
             return CreateFSM<T>(name, owner, string.Empty, states);
         }
-        /// <summary>
-        /// 创建状态机；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="name">状态机名称</param>
-        /// <param name="owner">拥有者</param>
-        /// <param name="fsmGroupName">状态机组名</param>
-        /// <param name="states">状态</param>
-        /// <returns>创建成功后的状态机</returns>
+        ///<inheritdoc/>
         public IFSM<T> CreateFSM<T>(string name, T owner, string fsmGroupName, IList<FSMState<T>> states)
            where T : class
         {
@@ -200,15 +125,7 @@ namespace Cosmos.FSM
             }
             return fsm;
         }
-        /// <summary>
-        /// 创建状态机；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="name">状态机名称</param>
-        /// <param name="owner">拥有者</param>
-        /// <param name="fsmGroupName">状态机组名，若为空，则不分配组</param>
-        /// <param name="states">状态</param>
-        /// <returns>创建成功后的状态机</returns>
+        ///<inheritdoc/>
         public IFSM<T> CreateFSM<T>(string name, T owner, string fsmGroupName, params FSMState<T>[] states)
            where T : class
         {
@@ -243,19 +160,13 @@ namespace Cosmos.FSM
             }
             return fsm;
         }
-        /// <summary>
-        /// 销毁独立的状态机
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
+        ///<inheritdoc/>
         public void DestoryFSM<T>()
            where T : class
         {
             DestoryFSM(typeof(T));
         }
-        /// <summary>
-        /// 销毁独立的状态机；
-        /// </summary>
-        /// <param name="type">拥有者类型</param>
+        ///<inheritdoc/>
         public void DestoryFSM(Type type)
         {
             FSMBase fsm = null;
@@ -274,22 +185,14 @@ namespace Cosmos.FSM
                 fsm.GroupName = null;
             }
         }
-        /// <summary>
-        /// 获取状态机组
-        /// </summary>
-        /// <param name="fsmGroupName">状态机组名</param>
-        /// <param name="fsmGroup">状态机组</param>
-        /// <returns>是否存在组</returns>
+        ///<inheritdoc/>
         public bool PeekFSMGroup(string fsmGroupName, out IFSMGroup fsmGroup)
         {
             var rst = fsmGroupDict.TryGetValue(fsmGroupName, out var group);
             fsmGroup = group;
             return rst;
         }
-        /// <summary>
-        /// 移除状态机组；
-        /// </summary>
-        /// <param name="fsmGroupName">状态机组名</param>
+        ///<inheritdoc/>
         public void RemoveFSMGroup(string fsmGroupName)
         {
             if (!fsmGroupDict.TryRemove(fsmGroupName, out var fsmGroup))
@@ -301,20 +204,12 @@ namespace Cosmos.FSM
             }
             fsmGroupPool.Despawn(fsmGroup);
         }
-        /// <summary>
-        /// 是否拥有指定类型的状态机集合；
-        /// </summary>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public bool HasFSMGroup(string fsmGroupName)
         {
             return fsmGroupDict.ContainsKey(fsmGroupName);
         }
-        /// <summary>
-        /// 为状态机设置组别；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="name">状态机名</param>
-        /// <param name="fsmGroupName">状态机组名</param>
+        ///<inheritdoc/>
         public void SetFSMGroup<T>(string name, string fsmGroupName) where T : class
         {
             var fsmKey = new TypeStringPair(typeof(T), name);
@@ -327,18 +222,12 @@ namespace Cosmos.FSM
             fsmGroupDict.TryGetValue(fsmGroupName, out var newGroup);
             newGroup?.AddFSM(fsmKey, fsm);
         }
-        /// <summary>
-        /// 为状态机设置组别；
-        /// </summary>
-        /// <typeparam name="T">拥有者类型</typeparam>
-        /// <param name="fsmGroupName">状态机组名</param>
+        ///<inheritdoc/>
         public void SetFSMGroup<T>(string fsmGroupName) where T : class
         {
             SetFSMGroup<T>(string.Empty, fsmGroupName);
         }
-        /// <summary>
-        /// 销毁所有状态机；
-        /// </summary>
+        ///<inheritdoc/>
         public void DestoryAllFSM()
         {
             if (fsmDict.Count > 0)

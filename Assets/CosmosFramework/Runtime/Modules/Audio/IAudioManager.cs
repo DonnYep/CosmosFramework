@@ -10,9 +10,9 @@ namespace Cosmos.Audio
      * 3、播放声音时传入的AudioPlayInfo拥有两个公共属性字段。若BindObject
      * 不为空，则有限绑定，否则是WorldPosition；
      * 
-     * 4、播放声音前需要先对声音资源进行注册，API为  RegistAudio 。通过监听
-     * AudioRegistFailure与AudioRegisterSuccess事件查看注册结果。注册成功后
-     * 就可对声音进行播放，暂停，停止等操作。
+     * 4、播放声音前需要先对声音资源进行注册，API为  RegistAudioAsync 。
+     * 通过监听AudioRegistFailure与AudioRegisterSuccess事件查看注册结果。
+     * 注册成功后就可对声音进行播放，暂停，停止等操作。
      */
     //================================================
     public interface IAudioManager : IModuleManager
@@ -48,7 +48,7 @@ namespace Cosmos.Audio
         ///注册声音；
         ///若声音原始存在，则更新，若不存在，则加载；
         /// </summary>
-        void RegistAudio(AudioAssetInfo audioAssetInfo);
+        void RegistAudioAsync(AudioAssetInfo audioAssetInfo);
         /// <summary>
         /// 注销声音；
         /// </summary>

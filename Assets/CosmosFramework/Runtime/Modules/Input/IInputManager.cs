@@ -53,13 +53,13 @@ namespace Cosmos.Input
         /// 获得轴线
         /// </summary>
         /// <param name="name">按键名称</param>
-        /// <returns></returns>
+        /// <returns>数值</returns>
         float GetAxis(string name);
         /// <summary>
         /// 未插值的输入 -1，0 ，1
         /// </summary>
         /// <param name="name">按键名称</param>
-        /// <returns></returns>
+        /// <returns>数值</returns>
         float GetAxisRaw(string name);
         /// <summary>
         /// 按钮按下

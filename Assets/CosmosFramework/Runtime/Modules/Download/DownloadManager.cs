@@ -22,50 +22,38 @@ namespace Cosmos.Download
     internal class DownloadManager : Module, IDownloadManager
     {
         #region events
-        /// <summary>
-        /// 下载开始事件；
-        /// </summary>
+        ///<inheritdoc/>
         public event Action<DownloadStartEventArgs> OnDownloadStart
         {
             add { downloader.OnDownloadStart += value; }
             remove { downloader.OnDownloadStart -= value; }
         }
-        /// <summary>
-        /// 单个资源下载成功事件；
-        /// </summary>
+        ///<inheritdoc/>
         public event Action<DownloadSuccessEventArgs> OnDownloadSuccess
         {
             add { downloader.OnDownloadSuccess += value; }
             remove { downloader.OnDownloadSuccess -= value; }
         }
-        /// <summary>
-        /// 单个资源下载失败事件；
-        /// </summary>
+        ///<inheritdoc/>
         public event Action<DownloadFailureEventArgs> OnDownloadFailure
         {
             add { downloader.OnDownloadFailure += value; }
             remove { downloader.OnDownloadFailure -= value; }
         }
-        /// <summary>
-        /// 下载整体进度事件；
-        /// </summary>
+        ///<inheritdoc/>
         public event Action<DonwloadOverallEventArgs> OnDownloadOverall
         {
             add { downloader.OnDownloadOverall += value; }
             remove { downloader.OnDownloadOverall -= value; }
         }
-        /// <summary>
-        /// 整体下载并写入完成事件
-        /// </summary>
+        ///<inheritdoc/>
         public event Action<DownloadAndWriteFinishEventArgs> OnDownloadAndWriteFinish
         {
             add { downloader.OnDownloadAndWriteFinish += value; }
             remove { downloader.OnDownloadAndWriteFinish -= value; }
         }
         #endregion
-        /// <summary>
-        /// 是否删除本地下载失败的文件；
-        /// </summary>
+        ///<inheritdoc/>
         public bool DeleteFailureFile
         {
             get { return downloader.DeleteFailureFile; }
@@ -75,9 +63,7 @@ namespace Cosmos.Download
                 deleteFailureFile = value;
             }
         }
-        /// <summary>
-        /// 任务过期时间，以秒为单位；
-        /// </summary>
+        ///<inheritdoc/>
         public float DownloadTimeout
         {
             get { return downloader.DownloadTimeout; }
@@ -88,17 +74,11 @@ namespace Cosmos.Download
                 downloader.DownloadTimeout = downloadTimeout;
             }
         }
-        /// <summary>
-        /// 是否正在下载；
-        /// </summary>
+        ///<inheritdoc/>
         public bool Downloading { get { return downloader.Downloading; } }
-        /// <summary>
-        ///  下载中的资源总数；
-        /// </summary>
+        ///<inheritdoc/>
         public int DownloadingCount { get { return downloader.DownloadingCount; } }
-        /// <summary>
-        /// 下载模式；
-        /// </summary>
+
         /// <summary>
         /// 是否删除本地下载失败的文件；
         /// </summary>
@@ -121,10 +101,7 @@ namespace Cosmos.Download
         /// </summary>
         IDownloadUrlHelper downloadUrlHelper;
 
-        /// <summary>
-        /// 设置或更新downloader;
-        /// </summary>
-        /// <param name="newDownloader">下载器</param>
+        ///<inheritdoc/>
         public void SetOrUpdateDownloadHelper(IDownloader newDownloader)
         {
             if (this.downloader != null)
@@ -139,38 +116,24 @@ namespace Cosmos.Download
                 });
             }
         }
-        /// <summary>
-        /// 设置下载资源地址帮助体；
-        /// </summary>
-        /// <param name="helper">帮助体对象</param>
+        ///<inheritdoc/>
         public void SetUrlHelper(IDownloadUrlHelper helper)
         {
             this.downloadUrlHelper = helper;
         }
-        /// <summary>
-        /// 设置资源请求帮助体；
-        /// </summary>
-        /// <param name="helper">帮助体对象</param>
+        ///<inheritdoc/>
         public void SetRequesterHelper(IDownloadRequester helper)
         {
             this.downloadRequester = helper;
         }
-        /// <summary>
-        /// 添加URI下载；
-        /// </summary>
-        /// <param name="uri">统一资源名称</param>
-        /// <param name="downloadPath">下载到地址的绝对路径</param>
+        ///<inheritdoc/>
         public void AddUriDownload(string uri, string downloadPath)
         {
             Utility.Text.IsStringValid(uri, "URI is invalid !");
             Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
             downloader.AddUriDownload(uri, downloadPath);
         }
-        /// <summary>
-        /// 将URL添加到下载队列，并下载当前URL页面下的所有文件到本地；
-        /// </summary>
-        /// <param name="url">统一资源定位符</param>
-        /// <param name="downloadRootPath">下载到地址的根目录</param>
+        ///<inheritdoc/>
         public void AddUrlDownload(string url, string downloadRootPath)
         {
             Utility.Text.IsStringValid(url, "DownloadPath is invalid !");
@@ -184,19 +147,13 @@ namespace Cosmos.Download
                 AddUriDownload(absUri, absDownloadPath);
             }
         }
-        /// <summary>
-        /// 移除URI下载；
-        /// </summary>
-        /// <param name="uri">统一资源名称</param>
+        ///<inheritdoc/>
         public void RemoveUriDownload(string uri)
         {
             Utility.Text.IsStringValid(uri, "URI is invalid !");
             downloader.RemoveUriDownload(uri);
         }
-        /// <summary>
-        /// 移除多个URI下载；
-        /// </summary>
-        /// <param name="uris">统一资源名称数组</param>
+        ///<inheritdoc/>
         public void RemoveUrisDownload(string[] uris)
         {
             if (uris == null)
@@ -205,19 +162,12 @@ namespace Cosmos.Download
             for (int i = 0; i < length; i++)
                 RemoveUriDownload(uris[i]);
         }
-        /// <summary>
-        /// 移除所有下载；
-        /// </summary>
+        ///<inheritdoc/>
         public void RemoveAllDownload()
         {
             downloader.RemoveAllDownload();
         }
-        /// <summary>
-        /// 获取URI单个文件的大小；
-        /// 若获取到，则回调传入正确的数值，否则就传入-1；
-        /// </summary>
-        /// <param name="uri">统一资源名称</param>
-        /// <param name="callback">回调</param>
+        ///<inheritdoc/>
         public void GetUriFileSizeAsync(string uri, Action<long> callback)
         {
             Utility.Text.IsStringValid(uri, "URI is invalid !");
@@ -225,27 +175,19 @@ namespace Cosmos.Download
                 throw new ArgumentNullException("Callback is invalid !");
             downloadRequester.GetUriFileSizeAsync(uri, callback);
         }
-        /// <summary>
-        /// 获取一个URL地址下的所有文件的总和大小；
-        /// 若获取到，则回调传入正确的数值，否则就传入-1；
-        /// </summary>
-        /// <param name="url">统一资源定位符</param>
-        /// <param name="callback">回调</param>
+        ///<inheritdoc/>
         public void GetUrlFilesSizeAsync(string url, Action<long> callback)
         {
             Utility.Text.IsStringValid(url, "URL is invalid !");
             var relUris = downloadUrlHelper.ParseUrlToRelativeUris(url);
             downloadRequester.GetUriFilesSizeAsync(relUris, callback);
         }
-        /// <summary>
-        /// 设置完成下载配置后启动下载；
+        ///<inheritdoc/>
         public void LaunchDownload()
         {
             downloader.LaunchDownload();
         }
-        /// <summary>
-        /// 取消下载
-        /// </summary>
+        ///<inheritdoc/>
         public void CancelDownload()
         {
             downloader.CancelDownload();

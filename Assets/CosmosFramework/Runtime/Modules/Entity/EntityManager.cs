@@ -36,9 +36,7 @@ namespace Cosmos.Entity
     internal partial class EntityManager : Module, IEntityManager
     {
         #region Properties
-        /// <summary>
-        /// 实体组数量；
-        /// </summary>
+        ///<inheritdoc/>
         public int EntityGroupCount { get { return entityGroupDict.Count; } }
         IEntityHelper entityHelper;
         /// <summary>
@@ -54,33 +52,21 @@ namespace Cosmos.Entity
         IEntityGroupHelper defaultEntityGroupHelper;
         #endregion
         #region Methods
-        /// <summary>
-        /// 设置实体帮助体；
-        /// </summary>
-        /// <param name="helper">自定义实现的实体帮助体</param>
+        ///<inheritdoc/>
         public void SetHelper(IEntityHelper helper)
         {
             if (helper == null)
                 throw new ArgumentNullException("Entity helper is valid !");
             this.entityHelper = helper;
         }
-        /// <summary>
-        /// 设置默认实体组帮助体；
-        /// </summary>
-        /// <param name="entityGroupHelper">自定义实现的实体组帮助体</param>
+        ///<inheritdoc/>
         public void SetDefautEntityGroupHelper(IEntityGroupHelper entityGroupHelper)
         {
             if (entityGroupHelper == null)
                 throw new ArgumentNullException("EntityGroupHelper is valid !");
             defaultEntityGroupHelper = entityGroupHelper;
         }
-        /// <summary>
-        /// 注册EntityGroup (异步)；
-        /// 若传入的entityGroupHelper 为空，则使用默认的entityGroupHelper；
-        /// </summary>
-        /// <param name="entityAssetInfo">实体对象信息</param>
-        /// <param name="entityGroupHelper">实体组帮助体</param>
-        /// <returns>异步任务</returns>
+        ///<inheritdoc/>
         public async Task RegisterEntityGroupAsync(EntityAssetInfo entityAssetInfo, IEntityGroupHelper entityGroupHelper = null)
         {
             if (string.IsNullOrEmpty(entityAssetInfo.EntityGroupName))
@@ -103,11 +89,7 @@ namespace Cosmos.Entity
                 });
             }
         }
-
-        /// <summary>
-        /// 注销EntityGroup；
-        /// </summary>
-        /// <param name="entityGroupName">实体组名称</param>
+        ///<inheritdoc/>
         public void DeregisterEntityGroup(string entityGroupName)
         {
             if (string.IsNullOrEmpty(entityGroupName))
@@ -119,11 +101,7 @@ namespace Cosmos.Entity
             EntityGroup.Release(entityGroup);
 
         }
-        /// <summary>
-        /// 是否存在实体组；
-        /// </summary>
-        /// <param name="entityGroupName">实体组名称</param>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public bool HasEntityGroup(string entityGroupName)
         {
             if (string.IsNullOrEmpty(entityGroupName))
@@ -132,11 +110,7 @@ namespace Cosmos.Entity
             }
             return entityGroupDict.ContainsKey(entityGroupName);
         }
-        /// <summary>
-        /// 获得实体组的实体资源；
-        /// </summary>
-        /// <param name="entityGroupName">实体组名称</param>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public object GetGroupEntityAsset(string entityGroupName)
         {
             if (string.IsNullOrEmpty(entityGroupName))
@@ -146,23 +120,12 @@ namespace Cosmos.Entity
             entityGroupDict.TryGetValue(entityGroupName, out var entityGroup);
             return entityGroup;
         }
-        /// <summary>
-        /// 是否存在实体；
-        /// </summary>
-        /// <param name="entityId">自定义的实体id;</param>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public bool HasEntity(int entityId)
         {
             return entityIdDict.ContainsKey(entityId);
         }
-
-        /// <summary>
-        /// 激活&添加实体对象；
-        /// </summary>
-        /// <param name="entityId">自定义的实体Id</param>
-        /// <param name="entityName">自定义实体名称</param>
-        /// <param name="entityGroupName">注册的实体组名称</param>
-        /// <returns>实体对象</returns>
+        ///<inheritdoc/>
         public IEntity ShowEntity(int entityId, string entityName, string entityGroupName)
         {
             if (entityHelper == null)
@@ -206,12 +169,7 @@ namespace Cosmos.Entity
             entityIdDict[entityId] = entity;
             return entity;
         }
-        /// <summary>
-        ///  激活&添加实体对象；
-        /// </summary>
-        /// <param name="entityName">自定义实体名称</param>
-        /// <param name="entityGroupName">注册的实体组名称</param>
-        /// <returns>实体对象</returns>
+        ///<inheritdoc/>
         public IEntity ShowEntity(string entityName, string entityGroupName)
         {
             if (entityHelper == null)
@@ -247,20 +205,12 @@ namespace Cosmos.Entity
             entityIdDict[entityId] = entity;
             return entity;
         }
-        /// <summary>
-        /// 激活&添加实体对象；
-        ///  显示指定实体组的任意一个；
-        /// </summary>
-        /// <param name="entityGroupName">注册的实体组名称</param>
-        /// <returns>实体对象</returns>
+        ///<inheritdoc/>
         public IEntity ShowEntity(string entityGroupName)
         {
             return ShowEntity(null, entityGroupName);
         }
-        /// <summary>
-        /// 失活&移除实体对象
-        /// </summary>
-        /// <param name="entityId">实体Id</param>
+        ///<inheritdoc/>
         public void DeactiveEntity(int entityId)
         {
             if (entityHelper == null)
@@ -270,21 +220,14 @@ namespace Cosmos.Entity
             entityIdDict.Remove(entityId, out var entity);
             DeactiveEntityObject(entity);
         }
-        /// <summary>
-        /// 失活&移除实体对象
-        /// </summary>
-        /// <param name="entity">实体对象接口索引</param>
+        ///<inheritdoc/>
         public void DeactiveEntity(IEntity entity)
         {
             if (entity == null)
                 throw new ArgumentNullException("Entity is invalid.");
             DeactiveEntity(entity.EntityId);
         }
-        /// <summary>
-        /// 失活&移除实体组；
-        /// 并不注销实体组；
-        /// </summary>
-        /// <param name="entityGroupName">实体组名称</param>
+        ///<inheritdoc/>
         public void DeactiveEntityGroup(string entityGroupName)
         {
             if (string.IsNullOrEmpty(entityGroupName))
@@ -299,12 +242,7 @@ namespace Cosmos.Entity
                 DeactiveEntityObject(childEntities[i]);
             }
         }
-
-        /// <summary>
-        /// 挂载子实体到父实体；
-        /// </summary>
-        /// <param name="childEntityId">子实体Id</param>
-        /// <param name="parentEntityId">父实体Id</param>
+        ///<inheritdoc/>
         public void AttachEntity(int childEntityId, int parentEntityId)
         {
             if (childEntityId == parentEntityId)
@@ -326,11 +264,7 @@ namespace Cosmos.Entity
             parentEntity.CastTo<Entity>().AddChild(childEntity);
             childEntity.CastTo<Entity>().SetParent(parentEntity);
         }
-        /// <summary>
-        /// 挂载子实体到父实体；
-        /// </summary>
-        /// <param name="childEntityId">子实体Id</param>
-        /// <param name="parentEntity">父实体</param>
+        ///<inheritdoc/>
         public void AttachEntity(int childEntityId, IEntity parentEntity)
         {
             if (parentEntity == null)
@@ -339,11 +273,7 @@ namespace Cosmos.Entity
             }
             AttachEntity(childEntityId, parentEntity.EntityId);
         }
-        /// <summary>
-        /// 挂载子实体到父实体；
-        /// </summary>
-        /// <param name="childEntity">子实体</param>
-        /// <param name="parentEntity">父实体</param>
+        ///<inheritdoc/>
         public void AttachEntity(IEntity childEntity, IEntity parentEntity)
         {
             if (childEntity == null)
@@ -356,12 +286,7 @@ namespace Cosmos.Entity
             }
             AttachEntity(childEntity.EntityId, parentEntity.EntityId);
         }
-
-        /// <summary>
-        /// 解除子实体的挂载；
-        /// 断开与父实体的连接；
-        /// </summary>
-        /// <param name="childEntityId">需要与父实体断开的子实体Id</param>
+        ///<inheritdoc/>
         public void DeatchEntity(int childEntityId)
         {
             if (!HasEntity(childEntityId))
@@ -374,11 +299,7 @@ namespace Cosmos.Entity
             childEntity.CastTo<Entity>().ClearParent();
             parentEntity.CastTo<Entity>().RemoveChild(childEntity);
         }
-        /// <summary>
-        /// 解除子实体的挂载；
-        /// 断开与父实体的连接；
-        /// </summary>
-        /// <param name="childEntity">需要与父实体断开的子实体</param>
+        ///<inheritdoc/>
         public void DeatchEntity(IEntity childEntity)
         {
             if (childEntity == null)
@@ -387,11 +308,7 @@ namespace Cosmos.Entity
             }
             DeatchEntity(childEntity.EntityId);
         }
-
-        /// <summary>
-        /// 解除实体的子实体挂载；
-        /// </summary>
-        /// <param name="parentEntityId">父实体Id</param>
+        ///<inheritdoc/>
         public void DeatchChildEntities(int parentEntityId)
         {
             if (!HasEntity(parentEntityId))
@@ -412,10 +329,7 @@ namespace Cosmos.Entity
                 }
             }
         }
-        /// <summary>
-        /// 解除实体的子实体挂载；
-        /// </summary>
-        /// <param name="parentEntity">父实体</param>
+        ///<inheritdoc/>
         public void DeatchChildEntities(IEntity parentEntity)
         {
             if (parentEntity == null)
@@ -424,7 +338,6 @@ namespace Cosmos.Entity
             }
             DeatchChildEntities(parentEntity.EntityId);
         }
-
         protected override void OnInitialization()
         {
             entityGroupDict = new Dictionary<string, EntityGroup>();
@@ -437,7 +350,6 @@ namespace Cosmos.Entity
             defaultEntityGroupHelper = new DefaultEntityGroupHelper();
             entityHelper = new DefaultEntityHelper();
         }
-
         int GenerateEntityId()
         {
             var id = Utility.Algorithm.RandomRange(0, int.MaxValue);

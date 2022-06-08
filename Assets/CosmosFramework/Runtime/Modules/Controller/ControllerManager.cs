@@ -40,9 +40,7 @@ namespace Cosmos.Controller
         Action tickRefresh;
         Action lateRefresh;
         Action fixedRefresh;
-        /// <summary>
-        /// 控制器组的数量；
-        /// </summary>
+        ///<inheritdoc/>
         public int ControllerGroupCount
         {
             get { return controllerGroupDict.Count; }
@@ -50,23 +48,12 @@ namespace Cosmos.Controller
         #endregion
 
         #region Methods
-        /// <summary>
-        /// 创建一个controller；
-        /// </summary>
-        /// <param name="controllerName">被创建controller的名字</param>
-        /// <param name="handle">持有者对象</param>
-        /// <returns>被创建的controller</returns>
+        ///<inheritdoc/>
         public IController CreateController(string controllerName, object handle)
         {
             return CreateController(controllerName, string.Empty, handle);
         }
-        /// <summary>
-        /// 创建一个具有组别属性的controller；
-        /// </summary>
-        /// <param name="controllerGroupName">controller所在的组的名称</param>
-        /// <param name="controllerName">被创建controller的名字</param>
-        /// <param name="handle">持有者对象</param>
-        /// <returns>被创建的controller</returns>
+        ///<inheritdoc/>
         public IController CreateController(string controllerName, string controllerGroupName, object handle)
         {
             Utility.Text.IsStringValid(controllerName, "ControllerName is invalid !");
@@ -86,29 +73,17 @@ namespace Cosmos.Controller
             }
             return controller;
         }
-        /// <summary>
-        /// 是否存在controller组别；
-        /// </summary>
-        /// <param name="controllerGroupName"></param>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public bool HasControllerGroup(string controllerGroupName)
         {
             return controllerGroupDict.ContainsKey(controllerGroupName);
         }
-        /// <summary>
-        /// 是否存在指定类型，指定名称的Controller;
-        /// </summary>
-        /// <param name="controllerId">ControllerId</param>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public bool HasController(int controllerId)
         {
             return controllerIdDict.ContainsKey(controllerId);
         }
-        /// <summary>
-        /// 是否存在指定名字的controller；
-        /// </summary>
-        /// <param name="controllerName">controller name</param>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public bool HasController(string controllerName)
         {
             Utility.Text.IsStringValid(controllerName, "ControllerName is invalid !");
@@ -119,22 +94,12 @@ namespace Cosmos.Controller
             }
             return false;
         }
-        /// <summary>
-        /// 通过Id获取controller；
-        /// </summary>
-        /// <param name="controllerId">controller id</param>
-        /// <param name="controller">返回的controller</param>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public bool GetController(int controllerId, out IController controller)
         {
             return controllerIdDict.TryGetValue(controllerId, out controller);
         }
-        /// <summary>
-        /// 通过名称获取controller；
-        /// </summary>
-        /// <param name="controllerName">controller name</param>
-        /// <param name="controller">返回的controller</param>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public bool GetController(string controllerName, out IController controller)
         {
             Utility.Text.IsStringValid(controllerName, "ControllerName is invalid !");
@@ -149,12 +114,7 @@ namespace Cosmos.Controller
             }
             return false;
         }
-        /// <summary>
-        ///获得指定tag下所有的controller；
-        /// </summary>
-        /// <param name="controllerGroupName">组的名称</param>
-        /// <param name="controllers">返回的controller集合</param>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public bool GetControllers(string controllerGroupName, out IController[] controllers)
         {
             Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
@@ -166,13 +126,7 @@ namespace Cosmos.Controller
             }
             return false;
         }
-        /// <summary>
-        /// 条件查找所有符合的Controller
-        /// </summary>
-        /// <param name="controllerGroupName">组的名称</param>
-        /// <param name="condition">查询条件</param>
-        /// <param name="controllers">返回的controller集合</param>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public bool GetControllers(string controllerGroupName, Predicate<IController> condition, out IController[] controllers)
         {
             Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
@@ -182,12 +136,7 @@ namespace Cosmos.Controller
                 controllers = controllerGroup.GetControllers(condition);
             return result;
         }
-        /// <summary>
-        /// 获得指定tag的controller数量；
-        /// 若不存在tag，则返回负一；
-        /// </summary>
-        /// <param name="controllerGroupName">组的名称</param>
-        /// <returns>数量</returns>
+        ///<inheritdoc/>
         public int GetControllerGroupCount(string controllerGroupName)
         {
             Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
@@ -195,10 +144,7 @@ namespace Cosmos.Controller
                 return controllerGroup.ControllerCount;
             return -1;
         }
-        /// <summary>
-        /// 通过 tag释放controller组；
-        /// </summary>
-        /// <param name="controllerGroupName">需要释放的组</param>
+        ///<inheritdoc/>
         public void ReleaseControllerGroup(string controllerGroupName)
         {
             Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
@@ -215,10 +161,7 @@ namespace Cosmos.Controller
                 }
             }
         }
-        /// <summary>
-        /// 释放指定id的controller；
-        /// </summary>
-        /// <param name="controllerId">controller id</param>
+        ///<inheritdoc/>
         public void ReleaseController(int controllerId)
         {
             if (controllerIdDict.Remove(controllerId, out var controller))
@@ -235,10 +178,7 @@ namespace Cosmos.Controller
                 Controller.Release(controller);
             }
         }
-        /// <summary>
-        /// 释放controller；
-        /// </summary>
-        /// <param name="controller">需要释放的controller对象</param>
+        ///<inheritdoc/>
         public void ReleaseController(IController controller)
         {
             if (controller == null)
@@ -261,10 +201,7 @@ namespace Cosmos.Controller
                 Controller.Release(controller);
             }
         }
-        /// <summary>
-        /// 释放指定名字的控制器；
-        /// </summary>
-        /// <param name="controllerName">controller name</param>
+        ///<inheritdoc/>
         public void ReleaseController(string controllerName)
         {
             Utility.Text.IsStringValid(controllerName, "ControllerName is invalid !");
@@ -280,9 +217,7 @@ namespace Cosmos.Controller
             if (controller != null)
                 ReleaseController(controller.Id);
         }
-        /// <summary>
-        /// 释放所有controller；
-        /// </summary>
+        ///<inheritdoc/>
         public void ReleaseAllControllers()
         {
             foreach (var controllerGroup in controllerGroupDict)
@@ -300,10 +235,7 @@ namespace Cosmos.Controller
             fixedRefresh = null;
             lateRefresh = null;
         }
-        /// <summary>
-        /// 暂停组中的所有controller的轮询；
-        /// </summary>
-        /// <param name="controllerGroupName">被暂停的组的名称</param>
+        ///<inheritdoc/>
         public void PauseControllerGroup(string controllerGroupName)
         {
             Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");
@@ -312,10 +244,7 @@ namespace Cosmos.Controller
                 controllerGroup.PauseControllers();
             }
         }
-        /// <summary>
-        /// 恢复组中的所有controller的轮询；
-        /// </summary>
-        /// <param name="controllerGroupName">被恢复的组的名称</param>
+        ///<inheritdoc/>
         public void UnPauseControllerGroup(string controllerGroupName)
         {
             Utility.Text.IsStringValid(controllerGroupName, "ControllerGroupName is invalid !");

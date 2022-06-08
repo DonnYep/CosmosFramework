@@ -42,8 +42,8 @@ namespace Cosmos.Controller
         /// <summary>
         /// 是否存在controller组别；
         /// </summary>
-        /// <param name="controllerGroupName"></param>
-        /// <returns></returns>
+        /// <param name="controllerGroupName">controller所在的组的名称</param>
+        /// <returns>是否存在</returns>
         bool HasControllerGroup(string controllerGroupName);
         /// <summary>
         /// 是否存在指定类型，指定名称的Controller;

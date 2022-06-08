@@ -7,14 +7,9 @@ namespace Cosmos.DataTable
     {
         Dictionary<string, DataTableBase> dataTableDict;
         IDataTableHelper dataTableHelper;
-        /// <summary>
-        /// 数据表数量；
-        /// </summary>
+        ///<inheritdoc/>
         public int DataTableCount { get { return dataTableDict.Count; } }
-        /// <summary>
-        /// 设置数据表数据表帮助体；
-        /// </summary>
-        /// <param name="provider">帮助体</param>
+        ///<inheritdoc/>
         public void SetDataTableProvider(IDataTableHelper provider)
         {
             if (dataTableHelper != null)
@@ -26,11 +21,7 @@ namespace Cosmos.DataTable
             this.dataTableHelper.OnReadDataTableFailure += OnReadFailure;
             this.dataTableHelper.OnReadDataTableSuccess += OnReadSuccess;
         }
-        /// <summary>
-        /// 异步读取数据表资源
-        /// </summary>
-        /// <param name="assetInfo">资源信息</param>
-        /// <param name="dataTable">数据表</param>
+        ///<inheritdoc/>
         public void ReadDataTableAssetAsync(DataTableAssetInfo assetInfo, DataTableBase dataTable)
         {
             if (dataTableHelper == null)
@@ -40,11 +31,7 @@ namespace Cosmos.DataTable
             dataTableHelper.LoadDataTableAsync(assetInfo, dataTable);
             dataTable.DataTableAssetInfo = assetInfo;
         }
-        /// <summary>
-        /// 异步读取数据表资源
-        /// </summary>
-        /// <param name="assetInfo">资源信息</param>
-        /// <param name="name">数据表名</param>
+        ///<inheritdoc/>
         public void ReadDataTableAssetAsync(DataTableAssetInfo assetInfo, string name)
         {
             if (dataTableHelper == null)
@@ -55,12 +42,7 @@ namespace Cosmos.DataTable
                 dataTable.DataTableAssetInfo = assetInfo;
             }
         }
-        /// <summary>
-        /// 获取数据表；
-        /// </summary>
-        /// <typeparam name="T">数据类型</typeparam>
-        /// <param name="name">数据表名</param>
-        /// <returns>数据表</returns>
+        ///<inheritdoc/>
         public IDataTable<T> GetDataTable<T>(string name) where T : class, IDataRow, new()
         {
             if (string.IsNullOrEmpty(name))
@@ -68,11 +50,7 @@ namespace Cosmos.DataTable
             dataTableDict.TryGetValue(name, out var dataTableBase);
             return dataTableBase as IDataTable<T>;
         }
-        /// <summary>
-        /// 获取数据表；
-        /// </summary>
-        /// <param name="name">数据表名</param>
-        /// <returns>数据表</returns>
+        ///<inheritdoc/>
         public DataTableBase GetDataTable(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -80,21 +58,14 @@ namespace Cosmos.DataTable
             dataTableDict.TryGetValue(name, out var dataTableBase);
             return dataTableBase;
         }
-        /// <summary>
-        /// 是否存在数据表；
-        /// </summary>
-        /// <param name="name">数据表名</param>
-        /// <returns>是否存在</returns>
+        ///<inheritdoc/>
         public bool HasDataTable(string name)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException($"{name} is invalid ");
             return dataTableDict.ContainsKey(name);
         }
-        /// <summary>
-        /// 释放数据表；
-        /// </summary>
-        /// <param name="name">数据表名</param>
+        ///<inheritdoc/>
         public void ReleaseDataTable(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -105,11 +76,7 @@ namespace Cosmos.DataTable
                 dataTable.OnRelease();
             }
         }
-        /// <summary>
-        /// 释放数据表；
-        /// </summary>
-        /// <typeparam name="T">数据类型</typeparam>
-        /// <param name="dataTable">数据表</param>
+        ///<inheritdoc/>
         public void ReleaseDataTable<T>(IDataTable<T> dataTable) where T : class, IDataRow, new()
         {
             if (dataTable == null)
@@ -121,10 +88,7 @@ namespace Cosmos.DataTable
                 dataTableBase.OnRelease();
             }
         }
-        /// <summary>
-        /// 释放数据表；
-        /// </summary>
-        /// <param name="dataTable">数据表</param>
+        ///<inheritdoc/>
         public void ReleaseDataTable(DataTableBase dataTable)
         {
             if (dataTable == null)
@@ -135,12 +99,7 @@ namespace Cosmos.DataTable
                 dataTable.OnRelease();
             }
         }
-        /// <summary>
-        /// 创建一个数据表，dataType指需要传入IDataRow的派生类型；
-        /// </summary>
-        /// <param name="name">数据表名</param>
-        /// <param name="dataType">数据类型,IDataRow的派生类</param>
-        /// <returns>数据表</returns>
+        ///<inheritdoc/>
         public DataTableBase CreateDataTable(string name, Type dataType)
         {
             if (string.IsNullOrEmpty(name))
@@ -156,12 +115,7 @@ namespace Cosmos.DataTable
             dataTableDict.Add(name, dataTable);
             return dataTable;
         }
-        /// <summary>
-        /// 创建一个数据表；
-        /// </summary>
-        /// <typeparam name="T">数据类型</typeparam>
-        /// <param name="name">数据表名</param>
-        /// <returns>数据表</returns>
+        ///<inheritdoc/>
         public IDataTable<T> CreateDataTable<T>(string name) where T : class, IDataRow, new()
         {
             if (string.IsNullOrEmpty(name))

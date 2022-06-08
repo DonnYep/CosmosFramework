@@ -18,133 +18,66 @@ namespace Cosmos.WebRequest
     internal class WebRequestManager : Module, IWebRequestManager
     {
         IWebRequestHelper webRequestHelper;
-        /// <summary>
-        /// 网络状态是否可用；
-        /// </summary>
+        /// <inheritdoc/>
         public bool NetworkReachable { get { return Application.internetReachability != NetworkReachability.NotReachable; } }
-        /// <summary>
-        /// 设置WebRequestHelper；
-        /// </summary>
-        /// <param name="webRequestHelper">自定义实现的WebRequestHelper</param>
+        /// <inheritdoc/>
         public async void SetHelperAsync(IWebRequestHelper webRequestHelper)
         {
             if (webRequestHelper != null)
                 await new WaitUntil(() => { return webRequestHelper.IsLoading == false; });
             this.webRequestHelper = webRequestHelper;
         }
-        /// <summary>
-        /// 异步请求AssetBundle；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RequestAssetBundleAsync(string uri, WebRequestCallback webRequestCallback, Action<AssetBundle> resultCallback)
         {
             return webRequestHelper.RequestAssetBundleAsync(uri, webRequestCallback, resultCallback);
         }
-        /// <summary>
-        /// 异步请求AssetBundle；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RequestAssetBundleAsync(Uri uri, WebRequestCallback webRequestCallback, Action<AssetBundle> resultCallback)
         {
             return webRequestHelper.RequestAssetBundleAsync(uri, webRequestCallback, resultCallback);
         }
-        /// <summary>
-        /// 异步请求Audio；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="audioType">声音类型</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RequestAudioAsync(string uri, AudioType audioType, WebRequestCallback webRequestCallback, Action<AudioClip> resultCallback)
         {
             return webRequestHelper.RequestAudioAsync(uri, audioType, webRequestCallback, resultCallback);
         }
-        /// <summary>
-        /// 异步请求Audio；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="audioType">声音类型</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RequestAudioAsync(Uri uri, AudioType audioType, WebRequestCallback webRequestCallback, Action<AudioClip> resultCallback)
         {
             return webRequestHelper.RequestAudioAsync(uri, audioType, webRequestCallback, resultCallback);
         }
-        /// <summary>
-        /// 异步请求文件流；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RequestFileBytesAsync(string uri, WebRequestCallback webRequestCallback)
         {
             return webRequestHelper.RequestFileBytesAsync(uri, webRequestCallback);
         }
-        /// <summary>
-        /// 异步请求文件流；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RequestFileBytesAsync(Uri uri, WebRequestCallback webRequestCallback)
         {
             return webRequestHelper.RequestFileBytesAsync(uri, webRequestCallback);
         }
-        /// <summary>
-        /// 异步请求Text；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RequestTextAsync(string uri, WebRequestCallback webRequestCallback, Action<string> resultCallback)
         {
             return webRequestHelper.RequestTextAsync(uri, webRequestCallback, resultCallback);
         }
-        /// <summary>
-        /// 异步请求Text；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RequestTextAsync(Uri uri, WebRequestCallback webRequestCallback, Action<string> resultCallback)
         {
             return webRequestHelper.RequestTextAsync(uri, webRequestCallback, resultCallback);
         }
-        /// <summary>
-        /// 异步请求Texture；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RequestTextureAsync(string uri, WebRequestCallback webRequestCallback, Action<Texture2D> resultCallback)
         {
             return webRequestHelper.RequestTextureAsync(uri, webRequestCallback, resultCallback);
         }
-        /// <summary>
-        /// 异步请求Texture；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
+        /// <inheritdoc/>
         public Coroutine RequestTextureAsync(Uri uri, WebRequestCallback webRequestCallback, Action<Texture2D> resultCallback)
         {
             return webRequestHelper.RequestTextureAsync(uri, webRequestCallback, resultCallback);
         }
-        /// <summary>
-        /// 结束所有网络请求
-        /// </summary>
+        /// <inheritdoc/>
         public void AbortAllRequest()
         {
             webRequestHelper.AbortAllRequest();
