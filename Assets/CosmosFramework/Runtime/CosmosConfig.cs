@@ -20,7 +20,7 @@ namespace Cosmos
         [SerializeField] string jsonHelperName;
         [SerializeField] string messagePackHelperName;
 
-
+        [SerializeField] bool runInBackground;
         protected virtual void Awake()
         {
             var debugHelper = Utility.Assembly.GetTypeInstance(debugHelperName);
@@ -49,6 +49,7 @@ namespace Cosmos
                     CosmosEntry.ResourceManager.SwitchLoadMode(resourceLoadMode);
                 }
             }
+            Application.runInBackground = runInBackground;
         }
     }
 }

@@ -111,6 +111,10 @@ namespace Cosmos
                     return ms.GetBuffer();
                 }
             }
+            public static string Convert2String(byte[] bytes)
+            {
+                return Encoding.UTF8.GetString(bytes);
+            }
         }
     }
 }

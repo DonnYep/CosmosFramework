@@ -1,7 +1,6 @@
 ﻿using UnityEditor;
 using Cosmos.Resource;
 using System;
-using UnityEngine;
 namespace Cosmos.Editor
 {
     [CustomEditor(typeof(CosmosConfig), false)]
@@ -24,6 +23,8 @@ namespace Cosmos.Editor
         SerializedProperty sp_JsonHelperName;
         SerializedProperty sp_MessagePackHelperName;
 
+        SerializedProperty sp_RunInBackground;
+
         string[] debugHelpers;
         string[] jsonHelpers;
         string[] messagePackHelpers;
@@ -38,6 +39,8 @@ namespace Cosmos.Editor
 
         string[] resourceLoaders;
         string[] resourceLoadModes;
+
+        bool runInBackground;
         public override void OnInspectorGUI()
         {
             targetObject.Update();
@@ -94,6 +97,10 @@ namespace Cosmos.Editor
             }
             EditorGUILayout.EndVertical();
 
+            runInBackground = EditorGUILayout.Toggle("RunInBackground", runInBackground);
+            if (runInBackground != sp_RunInBackground.boolValue)
+                sp_RunInBackground.boolValue = runInBackground;
+
             targetObject.ApplyModifiedProperties();
         }
         private void OnEnable()
@@ -118,6 +125,7 @@ namespace Cosmos.Editor
             sp_DebugHelperName = targetObject.FindProperty("debugHelperName");
             sp_JsonHelperName = targetObject.FindProperty("jsonHelperName");
             sp_MessagePackHelperName = targetObject.FindProperty("messagePackHelperName");
+            sp_RunInBackground = targetObject.FindProperty("runInBackground");
             resourceLoadModes = Enum.GetNames(typeof(ResourceLoadMode));
             RefreshConfig();
         }
@@ -133,6 +141,7 @@ namespace Cosmos.Editor
             sp_JsonHelperName.stringValue = jsonHelpers[sp_JsonHelperIndex.intValue];
             sp_MessagePackHelperName.stringValue = messagePackHelpers[sp_MessagePackHelperIndex.intValue];
             sp_ResourceLoaderName.stringValue = resourceLoaders[sp_ResourceLoaderIndex.intValue];
+            runInBackground = sp_RunInBackground.boolValue;
             targetObject.ApplyModifiedProperties();
         }
     }
