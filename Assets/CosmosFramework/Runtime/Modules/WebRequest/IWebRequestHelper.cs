@@ -89,6 +89,38 @@ namespace Cosmos.WebRequest
         /// <returns>协程对象</returns>
         Coroutine RequestAudioAsync(Uri uri, AudioType audioType, WebRequestCallback webRequestCallback, Action<AudioClip> resultCallback);
         /// <summary>
+        /// 异步提交新建资源；
+        /// </summary>
+        /// <param name="uri">Uniform Resource Identifier</param>
+        /// <param name="bytes">数据流</param>
+        /// <param name="webUploadCallback">回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine PostAsync(Uri uri, byte[] bytes, WebUploadCallback  webUploadCallback);
+        /// <summary>
+        /// 异步提交新建资源；
+        /// </summary>
+        /// <param name="uri">Uniform Resource Identifier</param>
+        /// <param name="bytes">数据流</param>
+        /// <param name="webUploadCallback">回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine PostAsync(string uri, byte[] bytes, WebUploadCallback  webUploadCallback);
+        /// <summary>
+        /// 异步提交覆盖资源；
+        /// </summary>
+        /// <param name="uri">Uniform Resource Identifier</param>
+        /// <param name="bytes">数据流</param>
+        /// <param name="webUploadCallback">回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine PutAsync(Uri uri, byte[] bytes, WebUploadCallback  webUploadCallback);
+        /// <summary>
+        /// 异步提交覆盖资源；
+        /// </summary>
+        /// <param name="uri">Uniform Resource Identifier</param>
+        /// <param name="bytes">数据流</param>
+        /// <param name="webUploadCallback">回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine PutAsync(string uri, byte[] bytes, WebUploadCallback  webUploadCallback);
+        /// <summary>
         /// 结束所有网络请求
         /// </summary>
         void AbortAllRequest();

@@ -1,14 +1,11 @@
 ﻿using System;
 namespace Cosmos.WebRequest
 {
-    /// <summary>
-    /// WebRequest 回调对象；
-    /// </summary>
-    public class WebRequestCallback : IReference
+    public class WebUploadCallback : IReference
     {
         Action onStartCallback;
         Action<float> onUpdateCallback;
-        Action<byte[]> onSuccessCallback;
+        Action onSuccessCallback;
         Action<string> onFailureCallback;
         /// <summary>
         /// 请求开始回调；
@@ -20,36 +17,34 @@ namespace Cosmos.WebRequest
         /// </summary>
         public Action<float> OnUpdateCallback { get { return onUpdateCallback; } }
         /// <summary>
-        /// 请求成功回调；
-        /// Response bytes array;
+        /// 上传成功回调；
         /// </summary>
-        public Action<byte[]> OnSuccessCallback { get { return onSuccessCallback; } }
+        public Action OnSuccessCallback { get { return onSuccessCallback; } }
         /// <summary>
         /// 请求失败回调；
         /// ErrorMessage;
         /// </summary>
         public Action<string> OnFailureCallback { get { return onFailureCallback; } }
-        public WebRequestCallback () { }
         public void Release()
         {
-            onStartCallback=null;
-            onUpdateCallback = null;;
+            onStartCallback = null;
+            onUpdateCallback = null; ;
             onSuccessCallback = null; ;
             onFailureCallback = null; ;
         }
-        public static WebRequestCallback Create(Action onStartCallback, Action<float> onUpdateCallback,
-            Action<byte[]> onSuccessCallback, Action<string> onFailureCallback)
+        public static WebUploadCallback Create(Action onStartCallback, Action<float> onUpdateCallback,
+    Action onSuccessCallback, Action<string> onFailureCallback)
         {
-            var webRequest = ReferencePool.Acquire<WebRequestCallback>();
+            var webRequest = ReferencePool.Acquire<WebUploadCallback>();
             webRequest.onStartCallback = onStartCallback;
             webRequest.onUpdateCallback = onUpdateCallback;
             webRequest.onSuccessCallback = onSuccessCallback;
             webRequest.onFailureCallback = onFailureCallback;
             return webRequest;
         }
-        public static void Release(WebRequestCallback webRequestCallback)
+        public static void Release(WebUploadCallback webPostCallback)
         {
-            ReferencePool.Release(webRequestCallback);
+            ReferencePool.Release(webPostCallback);
         }
     }
 }

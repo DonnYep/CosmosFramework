@@ -2,6 +2,16 @@
 using UnityEngine;
 namespace Cosmos.WebRequest
 {
+    //================================================
+    /*
+     * 1、WebRequest用于加载AssetBundle资源。资源状态可以是Remote的，
+    *  也可以是Local下persistentDataPath的；
+     * 
+     * 2、内置已经实现了一个默认的WebRequest帮助类对象；模块初始化时会
+    * 自动加载并将默认的helper设置为此模块的默认加载helper；
+    * 
+    */
+    //================================================
     public interface IWebRequestManager : IModuleManager
     {
         /// <summary>
@@ -93,6 +103,38 @@ namespace Cosmos.WebRequest
         /// <param name="resultCallback">带结果的回调</param>
         /// <returns>协程对象</returns>
         Coroutine RequestAudioAsync(Uri uri, AudioType audioType, WebRequestCallback webRequestCallback, Action<AudioClip> resultCallback);
+        /// <summary>
+        /// 异步提交新建资源；
+        /// </summary>
+        /// <param name="uri">Uniform Resource Identifier</param>
+        /// <param name="bytes">数据流</param>
+        /// <param name="webUploadCallback">回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine PostAsync(Uri uri, byte[] bytes, WebUploadCallback webUploadCallback);
+        /// <summary>
+        /// 异步提交新建资源；
+        /// </summary>
+        /// <param name="uri">Uniform Resource Identifier</param>
+        /// <param name="bytes">数据流</param>
+        /// <param name="webUploadCallback">回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine PostAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback);
+        /// <summary>
+        /// 异步提交覆盖资源；
+        /// </summary>
+        /// <param name="uri">Uniform Resource Identifier</param>
+        /// <param name="bytes">数据流</param>
+        /// <param name="webUploadCallback">回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine PutAsync(Uri uri, byte[] bytes, WebUploadCallback webUploadCallback);
+        /// <summary>
+        /// 异步提交覆盖资源；
+        /// </summary>
+        /// <param name="uri">Uniform Resource Identifier</param>
+        /// <param name="bytes">数据流</param>
+        /// <param name="webUploadCallback">回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine PutAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback);
         /// <summary>
         /// 结束所有网络请求
         /// </summary>

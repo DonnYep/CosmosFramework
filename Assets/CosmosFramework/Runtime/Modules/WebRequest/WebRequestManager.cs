@@ -10,8 +10,6 @@ namespace Cosmos.WebRequest
      * 2、内置已经实现了一个默认的WebRequest帮助类对象；模块初始化时会
     * 自动加载并将默认的helper设置为此模块的默认加载helper；
     * 
-    * 3、helper可以自行实现并且切换，切换模块的状态是异步的，内部由
-    * FutureTask进行异步状态的检测。
     */
     //================================================
     [Module]
@@ -76,6 +74,26 @@ namespace Cosmos.WebRequest
         public Coroutine RequestTextureAsync(Uri uri, WebRequestCallback webRequestCallback, Action<Texture2D> resultCallback)
         {
             return webRequestHelper.RequestTextureAsync(uri, webRequestCallback, resultCallback);
+        }
+        /// <inheritdoc/>
+        public Coroutine PostAsync(Uri uri, byte[] bytes, WebUploadCallback webUploadCallback)
+        {
+            return webRequestHelper.PostAsync(uri, bytes, webUploadCallback);
+        }
+        /// <inheritdoc/>
+        public Coroutine PostAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback)
+        {
+            return webRequestHelper.PostAsync(uri, bytes, webUploadCallback);
+        }
+        /// <inheritdoc/>
+        public Coroutine PutAsync(Uri uri, byte[] bytes, WebUploadCallback webUploadCallback)
+        {
+            return webRequestHelper.PutAsync(uri, bytes, webUploadCallback);
+        }
+        /// <inheritdoc/>
+        public Coroutine PutAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback)
+        {
+            return webRequestHelper.PutAsync(uri, bytes, webUploadCallback);
         }
         /// <inheritdoc/>
         public void AbortAllRequest()
