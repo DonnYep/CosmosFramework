@@ -3,7 +3,6 @@
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
 /[Ll]ibrary/
-/[Pp]ackages/
 /[Tt]emp/
 /[Oo]bj/
 /[Bb]uild/
@@ -17,6 +16,8 @@
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
 
+/[Pp]ackages/manifest.json
+/[Pp]ackages/packages-lock.json
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*
 
