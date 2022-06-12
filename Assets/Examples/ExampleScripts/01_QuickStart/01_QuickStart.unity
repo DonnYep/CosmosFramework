@@ -340,7 +340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   launchAppDomainModules: 1
-  printModulePreparatory: 0
+  printModulePreparatory: 1
   resourceLoadMode: 0
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
@@ -350,3 +350,4 @@ MonoBehaviour:
   debugHelperName: Cosmos.StandaloneDebugHelper
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
   messagePackHelperName: Cosmos.MessagePackHelper
+  runInBackground: 0

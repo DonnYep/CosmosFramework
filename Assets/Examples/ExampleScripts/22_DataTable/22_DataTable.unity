@@ -1565,7 +1565,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchAppDomainModules: 1
   printModulePreparatory: 0
-  resourceLoadMode: 0
+  resourceLoadMode: 3
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
   debugHelperIndex: 0
@@ -1574,6 +1574,7 @@ MonoBehaviour:
   debugHelperName: Cosmos.StandaloneDebugHelper
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
   messagePackHelperName: Cosmos.MessagePackHelper
+  runInBackground: 0
 --- !u!4 &1173073560
 Transform:
   m_ObjectHideFlags: 0

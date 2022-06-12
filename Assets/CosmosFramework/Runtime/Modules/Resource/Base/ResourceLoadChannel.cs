@@ -3,16 +3,16 @@
     /// <summary>
     /// 资源加载通道；
     /// </summary>
-    public class ResourceLoadChannel 
+    public class ResourceLoadChannel
     {
-        readonly IResourceLoadHelper m_ResourceLoadHelper;
-        readonly string m_ChannelName;
-        public IResourceLoadHelper ResourceLoadHelper { get { return m_ResourceLoadHelper; } }
-        public string ChannelName { get { return m_ChannelName; } }
-        public ResourceLoadChannel(string channelName, IResourceLoadHelper resourceLoadHelper)
+        readonly IResourceLoadHelper resourceLoadHelper;
+        readonly ResourceLoadMode resourceLoadMode;
+        public IResourceLoadHelper ResourceLoadHelper { get { return resourceLoadHelper; } }
+        public ResourceLoadMode ResourceLoadMode { get { return resourceLoadMode; } }
+        public ResourceLoadChannel(ResourceLoadMode resourceLoadMode, IResourceLoadHelper resourceLoadHelper)
         {
-            this.m_ChannelName= channelName;
-            this.m_ResourceLoadHelper = resourceLoadHelper;
+            this.resourceLoadMode = resourceLoadMode;
+            this.resourceLoadHelper = resourceLoadHelper;
         }
     }
 }

@@ -505,6 +505,16 @@ where K : class
                 return GetDerivedTypeNames(typeof(T), assemblies);
             }
             /// <summary>
+            /// 获取某类型在指定程序集的所有派生类完全限定名数组；
+            /// </summary>
+            /// <typeparam name="T">基类</typeparam>
+            /// <returns>非抽象派生类完全限定名</returns>
+            public static string[] GetDerivedTypeNames<T>()
+                where T : class
+            {
+                return GetDerivedTypeNames(typeof(T), domainAssemblies);
+            }
+            /// <summary>
             /// 将一个对象上的字段值赋予到另一个对象上名字相同的字段上；
             /// 此方法可识别属性与字段，赋值时尽量将属性的索引字段也进行命名统一；
             /// </summary>

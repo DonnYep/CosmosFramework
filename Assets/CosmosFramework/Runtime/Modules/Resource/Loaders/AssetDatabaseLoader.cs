@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +8,14 @@ namespace Cosmos.Resource
 {
     public class AssetDatabaseLoader : IResourceLoadHelper
     {
+        /// <summary>
+        /// name===resourceObject
+        /// </summary>
+        Dictionary<string, ResourceObject> resourceObjectDict;
+        /// <summary>
+        /// abName===resourceBundle
+        /// </summary>
+        Dictionary<string, ResourceBundle> resourceBundleDict;
         bool isProcessing;
         /// <summary>
         /// 单线下载等待
@@ -14,6 +23,9 @@ namespace Cosmos.Resource
         private WaitUntil loadWait;
         public AssetDatabaseLoader()
         {
+            resourceBundleDict = new Dictionary<string, ResourceBundle>();
+            resourceObjectDict = new Dictionary<string, ResourceObject>();
+
             loadWait = new WaitUntil(() => { return !isProcessing; });
         }
         ///<inheritdoc/> 
@@ -181,6 +193,21 @@ where T : UnityEngine.Object
 #else
             yield return null;
 #endif
+        }
+
+        /// <summary>
+        /// 增加一个引用计数
+        /// </summary>
+        void IncrementReferenceCount(string assetName)
+        {
+
+        }
+        /// <summary>
+        /// 减少一个引用计数
+        /// </summary>
+        void DecrementReferenceCount(string assetName)
+        {
+
         }
     }
 }

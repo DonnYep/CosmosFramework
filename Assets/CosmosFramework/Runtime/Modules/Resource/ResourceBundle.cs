@@ -10,9 +10,9 @@ namespace Cosmos.Resource
     public class ResourceBundle
     {
         /// <summary>
-        /// 资源包的名称，即AsseBundleName；
+        /// 资源包的名称，AsseBundleName；
         /// </summary>
-        public string ResourceBundleName { get; set; }
+        public string BundleName { get; set; }
         /// <summary>
         /// 资源对象列表；
         /// </summary>

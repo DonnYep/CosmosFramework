@@ -3,10 +3,14 @@
 namespace Cosmos.Resource
 {
     /// <summary>
-    /// 资源实体对象；
+    /// 资源对象信息
     /// </summary>
     public struct ResourceObject : IEquatable<ResourceObject>
     {
+        /// <summary>
+        /// 资源名
+        /// </summary>
+        public string AssetName;
         /// <summary>
         /// 资源的相对路径
         /// </summary>
@@ -19,8 +23,9 @@ namespace Cosmos.Resource
         /// 资源类型；
         /// </summary>
         public string ResourceType;
-        public ResourceObject(string resourcePath, string resourceBundleName,string resourceType)
+        public ResourceObject(string assetName,string resourcePath, string resourceBundleName,string resourceType)
         {
+            AssetName = assetName;
             ResourcePath = resourcePath;
             ResourceBundleName = resourceBundleName;
             ResourceType = resourceType;
@@ -44,7 +49,7 @@ namespace Cosmos.Resource
         }
         public ResourceObject Clone()
         {
-            return new ResourceObject(this.ResourcePath, this.ResourceBundleName,this.ResourceType);
+            return new ResourceObject(this.AssetName,this.ResourcePath, this.ResourceBundleName,this.ResourceType);
         }
     }
 }

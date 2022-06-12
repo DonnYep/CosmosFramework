@@ -23,6 +23,12 @@ namespace Cosmos.Resource
         ResourceLoadMode ResourceLoadMode { get; }
         #region Methods
         /// <summary>
+        /// 设置默认的加载方式；
+        /// </summary>
+        /// <param name="resourceLoadMode">加载模式</param>
+        /// <param name="loadHelper">加载帮助对象</param>
+        void SetDefaultLoadHeper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper);
+        /// <summary>
         /// 切换当前默认的加载模式；
         /// </summary>
         /// <param name="resourceLoadMode">加载模式</param>

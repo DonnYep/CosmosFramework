@@ -29,6 +29,16 @@ namespace Cosmos.Resource
         #endregion
         #region Methods
         /// <inheritdoc/>
+        public void SetDefaultLoadHeper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper)
+        {
+            if (loadHelper == null)
+                throw new ArgumentNullException($"IResourceLoadHelper is invalid !");
+            var channel = new ResourceLoadChannel(resourceLoadMode, loadHelper);
+            loadChannelDict[resourceLoadMode] = channel;
+            this.currentResourceLoadMode = resourceLoadMode;
+            currentLoadHelper = channel.ResourceLoadHelper;
+        }
+        /// <inheritdoc/>
         public void SwitchLoadMode(ResourceLoadMode resourceLoadMode)
         {
             if (loadChannelDict.TryGetValue(resourceLoadMode, out var channel))
@@ -48,7 +58,7 @@ namespace Cosmos.Resource
                 throw new ArgumentNullException($"IResourceLoadHelper is invalid !");
             if (loadChannelDict.TryGetValue(resourceLoadMode, out var channel))
                 await new WaitUntil(() => channel.ResourceLoadHelper.IsProcessing == false);
-            loadChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode.ToString(), loadHelper);
+            loadChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode, loadHelper);
             if (currentResourceLoadMode == resourceLoadMode)
                 currentLoadHelper = loadHelper;
         }
@@ -153,9 +163,6 @@ namespace Cosmos.Resource
         protected override void OnInitialization()
         {
             loadChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
-            //loadChannelDict.Add(ResourceLoadMode.Resource, new ResourceLoadChannel(ResourceLoadMode.Resource.ToString(), new ResourcesLoader()));
-            //currentResourceLoadMode = ResourceLoadMode.Resource;
-            //currentLoadHelper = loadChannelDict[ResourceLoadMode.Resource].ResourceLoadHelper;
         }
         #endregion
     }

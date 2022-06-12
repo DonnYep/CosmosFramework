@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using Cosmos.Resource;
 using System;
+using System.Linq;
 namespace Cosmos.Editor
 {
     [CustomEditor(typeof(CosmosConfig), false)]
@@ -88,12 +89,14 @@ namespace Cosmos.Editor
             {
                 sp_ResourceLoadMode.enumValueIndex = resourceLoadModeIndex;
             }
-
-            resourceLoaderIndex = EditorGUILayout.Popup("ResourceLoadHelper", resourceLoaderIndex, resourceLoaders);
-            if (resourceLoaderIndex != sp_ResourceLoaderIndex.intValue)
+            if ((ResourceLoadMode)resourceLoadModeIndex == ResourceLoadMode.CustomLoader)
             {
-                sp_ResourceLoaderIndex.intValue = resourceLoaderIndex;
-                sp_ResourceLoaderName.stringValue = resourceLoaders[sp_ResourceLoaderIndex.intValue];
+                resourceLoaderIndex = EditorGUILayout.Popup("ResourceLoadHelper", resourceLoaderIndex, resourceLoaders);
+                if (resourceLoaderIndex != sp_ResourceLoaderIndex.intValue)
+                {
+                    sp_ResourceLoaderIndex.intValue = resourceLoaderIndex;
+                    sp_ResourceLoaderName.stringValue = resourceLoaders[sp_ResourceLoaderIndex.intValue];
+                }
             }
             EditorGUILayout.EndVertical();
 
@@ -105,10 +108,11 @@ namespace Cosmos.Editor
         }
         private void OnEnable()
         {
-            debugHelpers = Utility.Assembly.GetDerivedTypeNames<Utility.Debug.IDebugHelper>(AppDomain.CurrentDomain.GetAssemblies());
-            jsonHelpers = Utility.Assembly.GetDerivedTypeNames<Utility.Json.IJsonHelper>(AppDomain.CurrentDomain.GetAssemblies());
-            messagePackHelpers = Utility.Assembly.GetDerivedTypeNames<Utility.MessagePack.IMessagePackHelper>(AppDomain.CurrentDomain.GetAssemblies());
-            resourceLoaders = Utility.Assembly.GetDerivedTypeNames<IResourceLoadHelper>(AppDomain.CurrentDomain.GetAssemblies());
+            debugHelpers = Utility.Assembly.GetDerivedTypeNames<Utility.Debug.IDebugHelper>();
+            jsonHelpers = Utility.Assembly.GetDerivedTypeNames<Utility.Json.IJsonHelper>();
+            messagePackHelpers = Utility.Assembly.GetDerivedTypeNames<Utility.MessagePack.IMessagePackHelper>();
+            var loaders = Utility.Assembly.GetDerivedTypeNames<IResourceLoadHelper>();
+            resourceLoaders = loaders.Where(l => { return !l.StartsWith("Cosmos.Resource"); }).ToArray();
             cosmosConfig = target as CosmosConfig;
             targetObject = new SerializedObject(cosmosConfig);
 
@@ -140,7 +144,7 @@ namespace Cosmos.Editor
             sp_DebugHelperName.stringValue = debugHelpers[sp_DebugHelperIndex.intValue];
             sp_JsonHelperName.stringValue = jsonHelpers[sp_JsonHelperIndex.intValue];
             sp_MessagePackHelperName.stringValue = messagePackHelpers[sp_MessagePackHelperIndex.intValue];
-            sp_ResourceLoaderName.stringValue = resourceLoaders[sp_ResourceLoaderIndex.intValue];
+            sp_ResourceLoaderName.stringValue = sp_ResourceLoaderName.stringValue;
             runInBackground = sp_RunInBackground.boolValue;
             targetObject.ApplyModifiedProperties();
         }

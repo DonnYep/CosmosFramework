@@ -42,11 +42,26 @@ namespace Cosmos
             if (launchAppDomainModules)
             {
                 CosmosEntry.LaunchAppDomainModules();
-                var loadHelper = Utility.Assembly.GetTypeInstance(resourceLoaderName);
-                if (loadHelper != null)
+                switch (resourceLoadMode)
                 {
-                    CosmosEntry.ResourceManager.AddOrUpdateLoadHelper(resourceLoadMode, (IResourceLoadHelper)loadHelper);
-                    CosmosEntry.ResourceManager.SwitchLoadMode(resourceLoadMode);
+                    case ResourceLoadMode.Resource:
+                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new ResourcesLoader());
+                        break;
+                    case ResourceLoadMode.AssetBundle:
+                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new AssetBundleLoader());
+                        break;
+                    case ResourceLoadMode.AssetDatabase:
+                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new AssetDatabaseLoader());
+                        break;
+                    case ResourceLoadMode.CustomLoader:
+                        {
+                            var loadHelper = Utility.Assembly.GetTypeInstance(resourceLoaderName);
+                            if (loadHelper != null)
+                            {
+                                CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, (IResourceLoadHelper)loadHelper);
+                            }
+                        }
+                        break;
                 }
             }
             Application.runInBackground = runInBackground;
