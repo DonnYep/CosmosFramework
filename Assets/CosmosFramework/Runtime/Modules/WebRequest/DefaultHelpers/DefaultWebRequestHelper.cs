@@ -1,6 +1,7 @@
 ﻿using Cosmos.WebRequest;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 namespace Cosmos
@@ -15,13 +16,17 @@ namespace Cosmos
         UnityWebRequest currentRequest;
 
         /// <inheritdoc/>
-        public Coroutine RequestAssetBundleAsync(Uri uri, WebRequestCallback webDownloadCallback, Action<AssetBundle> resultCallback)
+        public Coroutine DownloadRequestAsync(UnityWebRequest downloadRequest, WebRequestCallback webDownloadCallback, Action<UnityWebRequest> resultCallback)
         {
-            return Utility.Unity.StartCoroutine(EnumWebRequest(UnityWebRequestAssetBundle.GetAssetBundle(uri), webDownloadCallback, req =>
+            return Utility.Unity.StartCoroutine(EnumWebRequest(downloadRequest, webDownloadCallback, req =>
             {
-                AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(req);
-                resultCallback?.Invoke(bundle);
+                resultCallback?.Invoke(req);
             }));
+        }
+        /// <inheritdoc/>
+        public Coroutine UploadRequestAsync(UnityWebRequest uploadRequest, WebUploadCallback  webUploadCallback)
+        {
+            return Utility.Unity.StartCoroutine(EnumWebUpload(uploadRequest, webUploadCallback));
         }
         /// <inheritdoc/>
         public Coroutine RequestAssetBundleAsync(string uri, WebRequestCallback webDownloadCallback, Action<AssetBundle> resultCallback)
@@ -32,15 +37,7 @@ namespace Cosmos
                resultCallback?.Invoke(bundle);
            }));
         }
-        /// <inheritdoc/>
-        public Coroutine RequestAudioAsync(Uri uri, AudioType audioType, WebRequestCallback webDownloadCallback, Action<AudioClip> resultCallback)
-        {
-            return Utility.Unity.StartCoroutine(EnumWebRequest(UnityWebRequestMultimedia.GetAudioClip(uri, audioType), webDownloadCallback, (UnityWebRequest req) =>
-            {
-                AudioClip clip = DownloadHandlerAudioClip.GetContent(req);
-                resultCallback?.Invoke(clip);
-            }));
-        }
+
         /// <inheritdoc/>
         public Coroutine RequestAudioAsync(string uri, AudioType audioType, WebRequestCallback webDownloadCallback, Action<AudioClip> resultCallback)
         {
@@ -56,20 +53,7 @@ namespace Cosmos
             return Utility.Unity.StartCoroutine(EnumWebRequest(UnityWebRequest.Get(uri), webDownloadCallback, null));
         }
         /// <inheritdoc/>
-        public Coroutine RequestFileBytesAsync(Uri uri, WebRequestCallback webDownloadCallback)
-        {
-            return Utility.Unity.StartCoroutine(EnumWebRequest(UnityWebRequest.Get(uri), webDownloadCallback, null));
-        }
-        /// <inheritdoc/>
         public Coroutine RequestTextAsync(string uri, WebRequestCallback webDownloadCallback, Action<string> resultCallback)
-        {
-            return Utility.Unity.StartCoroutine(EnumWebRequest(UnityWebRequest.Get(uri), webDownloadCallback, req =>
-            {
-                resultCallback?.Invoke(req.downloadHandler.text);
-            }));
-        }
-        /// <inheritdoc/>
-        public Coroutine RequestTextAsync(Uri uri, WebRequestCallback webDownloadCallback, Action<string> resultCallback)
         {
             return Utility.Unity.StartCoroutine(EnumWebRequest(UnityWebRequest.Get(uri), webDownloadCallback, req =>
             {
@@ -86,28 +70,9 @@ namespace Cosmos
               }));
         }
         /// <inheritdoc/>
-        public Coroutine RequestTextureAsync(Uri uri, WebRequestCallback webDownloadCallback, Action<Texture2D> resultCallback)
-        {
-            return Utility.Unity.StartCoroutine(EnumWebRequest(UnityWebRequestTexture.GetTexture(uri), webDownloadCallback, (UnityWebRequest req) =>
-            {
-                Texture2D texture = DownloadHandlerTexture.GetContent(req);
-                resultCallback?.Invoke(texture);
-            }));
-        }
-        /// <inheritdoc/>
-        public Coroutine PostAsync(Uri uri, byte[] bytes, WebUploadCallback webUploadCallback)
-        {
-            return Utility.Unity.StartCoroutine(EnumWebUpload(UnityWebRequest.Post(uri, Utility.Converter.Convert2String(bytes)), webUploadCallback));
-        }
-        /// <inheritdoc/>
         public Coroutine PostAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback)
         {
             return Utility.Unity.StartCoroutine(EnumWebUpload(UnityWebRequest.Post(uri, Utility.Converter.Convert2String(bytes)), webUploadCallback));
-        }
-        /// <inheritdoc/>
-        public Coroutine PutAsync(Uri uri, byte[] bytes, WebUploadCallback webUploadCallback)
-        {
-            return Utility.Unity.StartCoroutine(EnumWebUpload(UnityWebRequest.Put(uri, bytes), webUploadCallback));
         }
         /// <inheritdoc/>
         public Coroutine PutAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback)

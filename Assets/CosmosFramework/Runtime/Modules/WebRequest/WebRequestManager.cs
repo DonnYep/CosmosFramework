@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
+
 namespace Cosmos.WebRequest
 {
     //================================================
@@ -26,12 +29,22 @@ namespace Cosmos.WebRequest
             this.webRequestHelper = webRequestHelper;
         }
         /// <inheritdoc/>
+        public Coroutine UploadRequestAsync(UnityWebRequest uploadRequest, WebUploadCallback webUploadCallback)
+        {
+            return webRequestHelper.UploadRequestAsync(uploadRequest, webUploadCallback);
+        }
+        /// <inheritdoc/>
+        public Coroutine DownloadRequestAsync(UnityWebRequest downloadRequest, WebRequestCallback webDownloadCallback, Action<UnityWebRequest> resultCallback)
+        {
+            return webRequestHelper.DownloadRequestAsync(downloadRequest, webDownloadCallback, resultCallback);
+        }
+        /// <inheritdoc/>
         public Coroutine RequestAssetBundleAsync(string uri, WebRequestCallback webRequestCallback, Action<AssetBundle> resultCallback)
         {
             return webRequestHelper.RequestAssetBundleAsync(uri, webRequestCallback, resultCallback);
         }
         /// <inheritdoc/>
-        public Coroutine RequestAssetBundleAsync(Uri uri, WebRequestCallback webRequestCallback, Action<AssetBundle> resultCallback)
+        public Coroutine RequestAssetBundleAsync(string uri, IList<KeyValuePair<string, string>> headers, WebRequestCallback webRequestCallback, Action<AssetBundle> resultCallback)
         {
             return webRequestHelper.RequestAssetBundleAsync(uri, webRequestCallback, resultCallback);
         }
@@ -41,17 +54,7 @@ namespace Cosmos.WebRequest
             return webRequestHelper.RequestAudioAsync(uri, audioType, webRequestCallback, resultCallback);
         }
         /// <inheritdoc/>
-        public Coroutine RequestAudioAsync(Uri uri, AudioType audioType, WebRequestCallback webRequestCallback, Action<AudioClip> resultCallback)
-        {
-            return webRequestHelper.RequestAudioAsync(uri, audioType, webRequestCallback, resultCallback);
-        }
-        /// <inheritdoc/>
         public Coroutine RequestFileBytesAsync(string uri, WebRequestCallback webRequestCallback)
-        {
-            return webRequestHelper.RequestFileBytesAsync(uri, webRequestCallback);
-        }
-        /// <inheritdoc/>
-        public Coroutine RequestFileBytesAsync(Uri uri, WebRequestCallback webRequestCallback)
         {
             return webRequestHelper.RequestFileBytesAsync(uri, webRequestCallback);
         }
@@ -61,34 +64,14 @@ namespace Cosmos.WebRequest
             return webRequestHelper.RequestTextAsync(uri, webRequestCallback, resultCallback);
         }
         /// <inheritdoc/>
-        public Coroutine RequestTextAsync(Uri uri, WebRequestCallback webRequestCallback, Action<string> resultCallback)
-        {
-            return webRequestHelper.RequestTextAsync(uri, webRequestCallback, resultCallback);
-        }
-        /// <inheritdoc/>
         public Coroutine RequestTextureAsync(string uri, WebRequestCallback webRequestCallback, Action<Texture2D> resultCallback)
         {
             return webRequestHelper.RequestTextureAsync(uri, webRequestCallback, resultCallback);
         }
         /// <inheritdoc/>
-        public Coroutine RequestTextureAsync(Uri uri, WebRequestCallback webRequestCallback, Action<Texture2D> resultCallback)
-        {
-            return webRequestHelper.RequestTextureAsync(uri, webRequestCallback, resultCallback);
-        }
-        /// <inheritdoc/>
-        public Coroutine PostAsync(Uri uri, byte[] bytes, WebUploadCallback webUploadCallback)
-        {
-            return webRequestHelper.PostAsync(uri, bytes, webUploadCallback);
-        }
-        /// <inheritdoc/>
         public Coroutine PostAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback)
         {
             return webRequestHelper.PostAsync(uri, bytes, webUploadCallback);
-        }
-        /// <inheritdoc/>
-        public Coroutine PutAsync(Uri uri, byte[] bytes, WebUploadCallback webUploadCallback)
-        {
-            return webRequestHelper.PutAsync(uri, bytes, webUploadCallback);
         }
         /// <inheritdoc/>
         public Coroutine PutAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback)
@@ -109,5 +92,7 @@ namespace Cosmos.WebRequest
         {
             webRequestHelper.AbortAllRequest();
         }
+
+
     }
 }
