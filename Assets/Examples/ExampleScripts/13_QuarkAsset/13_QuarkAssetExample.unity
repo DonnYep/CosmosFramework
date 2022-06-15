@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.45061135, g: 0.5005873, b: 0.5750094, a: 1}
+  m_IndirectSpecularColor: {r: 0.45061117, g: 0.5005859, b: 0.5750081, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -737,9 +737,9 @@ MonoBehaviour:
   resourceLoadMode: 3
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
-  debugHelperIndex: 0
-  jsonHelperIndex: 0
-  messagePackHelperIndex: 0
+  debugHelperIndex: 1
+  jsonHelperIndex: 1
+  messagePackHelperIndex: 1
   debugHelperName: Cosmos.StandaloneDebugHelper
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
   messagePackHelperName: Cosmos.MessagePackHelper

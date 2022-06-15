@@ -4381,12 +4381,13 @@ MonoBehaviour:
   resourceLoadMode: 0
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
-  debugHelperIndex: 0
-  jsonHelperIndex: 0
+  debugHelperIndex: 1
+  jsonHelperIndex: 1
   messagePackHelperIndex: 0
   debugHelperName: Cosmos.StandaloneDebugHelper
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
-  messagePackHelperName: Cosmos.MessagePackHelper
+  messagePackHelperName: <NONE>
+  runInBackground: 0
 --- !u!4 &1865920171
 Transform:
   m_ObjectHideFlags: 0

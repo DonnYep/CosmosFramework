@@ -1568,9 +1568,9 @@ MonoBehaviour:
   resourceLoadMode: 3
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
-  debugHelperIndex: 0
-  jsonHelperIndex: 0
-  messagePackHelperIndex: 0
+  debugHelperIndex: 1
+  jsonHelperIndex: 1
+  messagePackHelperIndex: 1
   debugHelperName: Cosmos.StandaloneDebugHelper
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
   messagePackHelperName: Cosmos.MessagePackHelper
