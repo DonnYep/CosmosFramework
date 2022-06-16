@@ -43,7 +43,6 @@ namespace Cosmos.Editor
         string[] resourceLoadModes;
 
         bool runInBackground;
-        const string NONE = "<NONE>";
         public override void OnInspectorGUI()
         {
             targetObject.Update();
@@ -110,19 +109,19 @@ namespace Cosmos.Editor
         }
         private void OnEnable()
         {
-            var debugSrc= Utility.Assembly.GetDerivedTypeNames<Utility.Debug.IDebugHelper>();
+            var debugSrc = Utility.Assembly.GetDerivedTypeNames<Utility.Debug.IDebugHelper>();
             debugHelpers = new string[debugSrc.Length + 1];
-            debugHelpers[0] = NONE;
+            debugHelpers[0] = CosmosConfig.NONE;
             Array.Copy(debugSrc, 0, debugHelpers, 1, debugSrc.Length);
 
             var jsonSrc = Utility.Assembly.GetDerivedTypeNames<Utility.Json.IJsonHelper>();
             jsonHelpers = new string[jsonSrc.Length + 1];
-            jsonHelpers[0] = NONE;
+            jsonHelpers[0] = CosmosConfig.NONE;
             Array.Copy(jsonSrc, 0, jsonHelpers, 1, jsonSrc.Length);
 
-            var msgPackSrc=  Utility.Assembly.GetDerivedTypeNames<Utility.MessagePack.IMessagePackHelper>();
+            var msgPackSrc = Utility.Assembly.GetDerivedTypeNames<Utility.MessagePack.IMessagePackHelper>();
             messagePackHelpers = new string[msgPackSrc.Length + 1];
-            messagePackHelpers[0] = NONE;
+            messagePackHelpers[0] = CosmosConfig.NONE;
             Array.Copy(msgPackSrc, 0, messagePackHelpers, 1, msgPackSrc.Length);
 
             var loaders = Utility.Assembly.GetDerivedTypeNames<IResourceLoadHelper>();

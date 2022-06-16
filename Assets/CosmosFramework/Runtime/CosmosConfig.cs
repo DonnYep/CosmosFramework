@@ -21,7 +21,9 @@ namespace Cosmos
         [SerializeField] string messagePackHelperName;
 
         [SerializeField] bool runInBackground;
-        const string NONE = "<NONE>";
+        public const string NONE = "<NONE>";
+
+        
         protected virtual void Awake()
         {
             if (!string.IsNullOrEmpty(debugHelperName)&&debugHelperName!= NONE)
