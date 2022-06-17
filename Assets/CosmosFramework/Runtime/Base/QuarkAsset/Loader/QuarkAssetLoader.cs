@@ -153,7 +153,7 @@ namespace Quark.Loader
                 yield break;
             }
             var hasWapper = GetAssetObjectWapper(sceneName, ".unity", out var wapper);
-            if (hasWapper)
+            if (!hasWapper)
             {
                 QuarkUtility.LogError($"Scene：{sceneName}.unity not existed !");
                 progress?.Invoke(1);

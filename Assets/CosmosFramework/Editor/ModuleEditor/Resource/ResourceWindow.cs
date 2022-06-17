@@ -37,7 +37,7 @@ namespace Cosmos.Editor
         }
         private void OnGUI()
         {
-            DrawBuildAssetBundle();
+            //DrawBuildAssetBundle();
         }
         void DrawBuildAssetBundle()
         {

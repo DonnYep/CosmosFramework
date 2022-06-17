@@ -23,7 +23,7 @@ namespace Cosmos
         [SerializeField] bool runInBackground;
         public const string NONE = "<NONE>";
 
-        
+        [SerializeField] ResourceDataset resourceDataset;
         protected virtual void Awake()
         {
             if (!string.IsNullOrEmpty(debugHelperName)&&debugHelperName!= NONE)
@@ -60,10 +60,10 @@ namespace Cosmos
                         CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new ResourcesLoader());
                         break;
                     case ResourceLoadMode.AssetBundle:
-                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new AssetBundleLoader());
+                        //CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new AssetBundleLoader());
                         break;
                     case ResourceLoadMode.AssetDatabase:
-                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new AssetDatabaseLoader());
+                        //CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new AssetDatabaseLoader(resourceDataset));
                         break;
                     case ResourceLoadMode.CustomLoader:
                         {

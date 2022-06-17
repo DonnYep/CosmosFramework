@@ -5,7 +5,7 @@ namespace Cosmos.Resource
     /// <summary>
     ///资源加载适配接口
     /// </summary>
-    public interface IResourceLoadHelper
+    public interface IResourceLoadHelper:IDisposable
     {
         /// <summary>
         /// 是否进行中
@@ -67,14 +67,26 @@ namespace Cosmos.Resource
         /// <returns>协程对象</returns>
         Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback);
         /// <summary>
+        /// 卸载全部场景（异步）
+        /// </summary>
+        /// <param name="progress">卸载场景的进度</param>
+        /// <param name="callback">场景卸载完毕后的回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback);
+        /// <summary>
         /// 卸载资源
         /// </summary>
         /// <param name="assetName">资源信息</param>
         void UnloadAsset(string assetName);
         /// <summary>
-        /// 卸载所有资源;
+        /// 释放资源
+        /// </summary>
+        /// <param name="assetName">资源信息</param>
+        void ReleaseAsset(string assetName);
+        /// <summary>
+        /// 释放所有资源;
         /// </summary>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        void UnloadAllAsset(bool unloadAllLoadedObjects = false);
+        void ReleaseAllAsset(bool unloadAllLoadedObjects = false);
     }
 }

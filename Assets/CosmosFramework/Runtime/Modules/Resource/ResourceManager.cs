@@ -158,7 +158,7 @@ namespace Cosmos.Resource
         /// <inheritdoc/>
         public void UnloadAllAsset(bool unloadAllLoadedObjects = false)
         {
-            currentLoadHelper.UnloadAllAsset(unloadAllLoadedObjects);
+            currentLoadHelper.ReleaseAllAsset(unloadAllLoadedObjects);
         }
         protected override void OnInitialization()
         {

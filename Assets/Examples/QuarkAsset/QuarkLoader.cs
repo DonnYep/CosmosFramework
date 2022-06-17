@@ -45,9 +45,22 @@ namespace Cosmos.Test
             QuarkResources.UnloadAsset(assetName);
         }
         ///<inheritdoc/>
-        public void UnloadAllAsset(bool unloadAllLoadedObjects = false)
+        public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
         {
             QuarkResources.UnloadAllAssetBundle(unloadAllLoadedObjects);
+        }
+        ///<inheritdoc/> 
+        public void Dispose()
+        {
+        }
+        ///<inheritdoc/> 
+        public Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback)
+        {
+            return QuarkResources.UnloadAllSceneAsync(progress, callback);
+        }
+        ///<inheritdoc/> 
+        public void ReleaseAsset(string assetName)
+        {
         }
     }
 }

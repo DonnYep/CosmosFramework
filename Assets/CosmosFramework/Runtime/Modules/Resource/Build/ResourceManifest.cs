@@ -4,6 +4,7 @@ using System;
 namespace Cosmos.Resource
 {
     /// <summary>
+    /// AssetBundle 模式下资源寻址数据对象
     /// 文件清单，记录AB包体与资源的包含关系
     /// </summary>
     [Serializable]
@@ -22,13 +23,9 @@ namespace Cosmos.Resource
             /// </summary>
             public long ABFileSize { get; set; }
             /// <summary>
-            /// 资源的依赖项；
+            /// 资源包；
             /// </summary>
-            public IList<string> DependList { get; set; }
-            /// <summary>
-            /// AssetName===ResourceObject
-            /// </summary>
-            public Dictionary<string, ResourceObject> ResourceObjectDict;
+            public ResourceBundle ResourceBundle { get; set; }
         }
         /// <summary>
         /// 打包的版本；

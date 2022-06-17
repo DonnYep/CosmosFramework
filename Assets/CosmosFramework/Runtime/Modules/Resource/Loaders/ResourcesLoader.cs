@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 namespace Cosmos.Resource
 {
@@ -13,9 +14,16 @@ namespace Cosmos.Resource
         /// 单线下载等待
         /// </summary>
         private WaitUntil loadWait;
+
+        /// <summary>
+        /// 被加载的场景字典；
+        /// SceneName===Scene
+        /// </summary>
+        readonly Dictionary<string, UnityEngine.SceneManagement.Scene> loadedSceneDict;
         public ResourcesLoader()
         {
             loadWait = new WaitUntil(() => { return !isProcessing; });
+            loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
         }
         ///<inheritdoc/> 
         public bool IsProcessing { get { return isProcessing; } private set { isProcessing = value; } }
@@ -25,9 +33,9 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, callback, progress));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetAsync(string assetName,Type type, Action<UnityEngine.Object> callback, Action<float> progress = null) 
+        public Coroutine LoadAssetAsync(string assetName, Type type, Action<UnityEngine.Object> callback, Action<float> progress = null)
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, type,callback, progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, type, callback, progress));
         }
         ///<inheritdoc/> 
         public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
@@ -35,9 +43,9 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(assetName, callback, progress));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type,Action<UnityEngine.Object[]> callback, Action<float> progress = null) 
+        public Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress = null)
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(assetName,type, callback, progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(assetName, type, callback, progress));
         }
         ///<inheritdoc/> 
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
@@ -50,14 +58,27 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumUnloadSceneAsync(info, progress, condition, callback));
         }
         ///<inheritdoc/> 
+        public Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback)
+        {
+            return Utility.Unity.StartCoroutine(EnumUnloadAllSceneAsync(progress, callback));
+        }
+        ///<inheritdoc/> 
         public void UnloadAsset(string assetName)
         {
             Resources.UnloadUnusedAssets();
         }
         ///<inheritdoc/> 
-        public void UnloadAllAsset(bool unloadAllLoadedObjects = false)
+        public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
         {
             Resources.UnloadUnusedAssets();
+        }
+        ///<inheritdoc/> 
+        public void Dispose()
+        {
+        }
+        ///<inheritdoc/> 
+        public void ReleaseAsset(string assetName)
+        {
         }
         IEnumerator EnumLoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress, bool instantiate = false)
             where T : UnityEngine.Object
@@ -110,14 +131,14 @@ namespace Cosmos.Resource
             }
             isProcessing = false;
         }
-        IEnumerator EnumLoadAssetAsync(string assetName, Type type,Action<UnityEngine.Object> callback, Action<float> progress, bool instantiate = false)
+        IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<UnityEngine.Object> callback, Action<float> progress, bool instantiate = false)
         {
             if (isProcessing)
             {
                 yield return loadWait;
             }
             UnityEngine.Object asset = null;
-            ResourceRequest request = Resources.LoadAsync(assetName,type);
+            ResourceRequest request = Resources.LoadAsync(assetName, type);
             isProcessing = true;
             while (!request.isDone)
             {
@@ -142,7 +163,7 @@ namespace Cosmos.Resource
             }
             isProcessing = false;
         }
-        IEnumerator EnumLoadAssetWithSubAssets(string assetName,Type type, Action<UnityEngine.Object[]> callback, Action<float> progress)
+        IEnumerator EnumLoadAssetWithSubAssets(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress)
         {
             UnityEngine.Object[] assets = null;
             assets = Resources.LoadAll(assetName);
@@ -220,6 +241,33 @@ namespace Cosmos.Resource
                 yield return new WaitUntil(condition);
             callback?.Invoke();
             IsProcessing = false;
+        }
+  
+        IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
+        {
+            var sceneCount = loadedSceneDict.Count;
+            //单位场景的百分比比率
+            var unitResRatio = 100f / sceneCount;
+            int currentSceneIndex = 0;
+            float overallProgress = 0;
+            foreach (var scene in loadedSceneDict)
+            {
+                var overallIndexPercent = 100 * ((float)currentSceneIndex / sceneCount);
+                currentSceneIndex++;
+                var sceneName = scene.Key;
+                var ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene.Value);
+                while (!ao.isDone)
+                {
+                    overallProgress = overallIndexPercent + (unitResRatio * ao.progress);
+                    progress?.Invoke(overallProgress / 100);
+                    yield return null;
+                }
+                overallProgress = overallIndexPercent + (unitResRatio * 1);
+                progress?.Invoke(overallProgress / 100);
+            }
+            loadedSceneDict.Clear();
+            progress?.Invoke(1);
+            callback?.Invoke();
         }
     }
 }
