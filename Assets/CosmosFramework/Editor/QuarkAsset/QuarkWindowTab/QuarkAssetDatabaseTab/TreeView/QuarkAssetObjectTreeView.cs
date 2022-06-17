@@ -11,7 +11,6 @@ namespace Quark.Editor
     : base(treeViewState)
         {
             Reload();
-            showAlternatingRowBackgrounds = true;
         }
         public void AddPaths(IEnumerable<string> paths)
         {

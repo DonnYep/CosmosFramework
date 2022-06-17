@@ -75,7 +75,6 @@ namespace Quark.Editor
             : base(treeViewState)
         {
             Reload();
-            showAlternatingRowBackgrounds = true;
         }
         public override void OnGUI(Rect rect)
         {
