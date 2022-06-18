@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
-namespace Cosmos.Editor
+namespace Cosmos.Editor.Resource
 {
     public class AssetBundleTab
     {

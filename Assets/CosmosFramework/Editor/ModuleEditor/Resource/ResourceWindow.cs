@@ -2,7 +2,7 @@
 using UnityEditor;
 using System.IO;
 
-namespace Cosmos.Editor
+namespace Cosmos.Editor.Resource
 {
     public class ResourceWindow : ModuleWindowBase
     {
@@ -37,7 +37,7 @@ namespace Cosmos.Editor
         }
         private void OnGUI()
         {
-            //DrawBuildAssetBundle();
+            DrawBuildAssetBundle();
         }
         void DrawBuildAssetBundle()
         {

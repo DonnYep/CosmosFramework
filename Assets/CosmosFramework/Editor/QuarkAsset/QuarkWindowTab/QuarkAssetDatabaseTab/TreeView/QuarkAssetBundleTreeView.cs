@@ -13,6 +13,12 @@ namespace Quark.Editor
     {
         List<string> pathList = new List<string>();
         bool canRender { get { return QuarkEditorDataProxy.QuarkAssetDataset != null; } }
+        public QuarkAssetBundleTreeView(TreeViewState treeViewState)
+      : base(treeViewState)
+        {
+            Reload();
+            showAlternatingRowBackgrounds = true;
+        }
         public void Clear()
         {
             pathList.Clear();
@@ -71,11 +77,7 @@ namespace Quark.Editor
             }
             Reload();
         }
-        public QuarkAssetBundleTreeView(TreeViewState treeViewState)
-            : base(treeViewState)
-        {
-            Reload();
-        }
+  
         public override void OnGUI(Rect rect)
         {
             if (UnityEngine.Event.current.type == EventType.Repaint)

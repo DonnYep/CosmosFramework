@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-using UnityEngine;
+
 namespace Cosmos.Editor.Resource
 {
-    public class AssetDatabaseTab
+    public class AssetDatabaseLable
     {
-        AssetDatabaseLable assetDatabaseLable = new AssetDatabaseLable();
-        public void OnGUI()
-        {
-        }
+        ResourceBundleTreeView treeView;
+        SearchField searchField;
     }
 }

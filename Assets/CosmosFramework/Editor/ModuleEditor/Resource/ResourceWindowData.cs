@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEditor;
-namespace Cosmos.Editor
+namespace Cosmos.Editor.Resource
 {
     [Serializable]
     public class ResourceWindowData
