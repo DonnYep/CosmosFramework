@@ -9,6 +9,7 @@ namespace Cosmos.Resource
     {
         [SerializeField]
         List<ResourceObject> resourceObjectList;
+        [SerializeField]
         List<ResourceBundle> resourceBundleList;
         /// <summary>
         /// 资源对象数量；

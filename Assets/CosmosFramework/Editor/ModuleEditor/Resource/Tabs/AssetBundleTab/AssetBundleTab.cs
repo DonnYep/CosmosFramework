@@ -9,6 +9,9 @@ namespace Cosmos.Editor.Resource
 {
     public class AssetBundleTab
     {
+        public void OnEnable()
+        {
+        }
         public void OnGUI()
         {
         }

@@ -1,16 +1,22 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.IO;
+using Cosmos.Resource;
 
 namespace Cosmos.Editor.Resource
 {
     public class ResourceWindow : ModuleWindowBase
     {
-        ResourceWindowData data;
-        readonly string AssetBundleBuilderDataName = "AssetBundleBuilderData.json";
+        ResourceWindowData windowData;
+        public ResourceWindowData ResourceWindowData { get { return windowData; } }
+        readonly string ResourceWindowDataName = "ResourceWindowData.json";
+        AssetDatabaseTab assetDatabaseTab = new AssetDatabaseTab();
+        AssetBundleTab assetBundleTab = new AssetBundleTab();
+        string[] tabArray = new string[] { "AssetDatabase", "AssetBundle" };
+        ResourceDataset latestResourceDataset;
         public ResourceWindow()
         {
-            this.titleContent = new GUIContent("AssetBundleBuilder");
+            this.titleContent = new GUIContent("ResourceWindow");
         }
         [MenuItem("Window/Cosmos/ModuleEditor/Resource")]
         public static void OpenIntegrateWindow()
@@ -23,28 +29,96 @@ namespace Cosmos.Editor.Resource
         {
             try
             {
-                data = EditorUtil.GetData<ResourceWindowData>(AssetBundleBuilderDataName);
+                windowData = EditorUtil.GetData<ResourceWindowData>(ResourceWindowDataName);
+                if (!string.IsNullOrEmpty(windowData.ResourceDatasetPath))
+                {
+                    ResourceEditorDataProxy.ResourceDataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(windowData.ResourceDatasetPath);
+                }
             }
             catch
             {
-                data = new ResourceWindowData();
-                EditorUtil.SaveData(AssetBundleBuilderDataName, data);
+                windowData = new ResourceWindowData();
+                EditorUtil.SaveData(ResourceWindowDataName, windowData);
             }
+            assetDatabaseTab.OnEnable();
+            assetBundleTab.OnEnable();
         }
         private void OnDisable()
         {
-            EditorUtil.SaveData(AssetBundleBuilderDataName, data);
+            if (ResourceEditorDataProxy.ResourceDataset != null)
+            {
+                windowData.ResourceDatasetPath = AssetDatabase.GetAssetPath(ResourceEditorDataProxy.ResourceDataset);
+                EditorUtility.SetDirty(ResourceEditorDataProxy.ResourceDataset);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+            EditorUtil.SaveData(ResourceWindowDataName, windowData);
         }
         private void OnGUI()
         {
-            DrawBuildAssetBundle();
+            DrawLables();
+
         }
+
+        void DrawLables()
+        {
+            EditorGUILayout.BeginVertical();
+            windowData.SelectedTabIndex = GUILayout.Toolbar(windowData.SelectedTabIndex, tabArray);
+            latestResourceDataset = (ResourceDataset)EditorGUILayout.ObjectField("ResourceDataset", latestResourceDataset, typeof(ResourceDataset), false);
+            if (latestResourceDataset != ResourceEditorDataProxy.ResourceDataset)
+            {
+                ResourceEditorDataProxy.ResourceDataset = latestResourceDataset;
+                if (ResourceEditorDataProxy.ResourceDataset != null)
+                    assetDatabaseTab.OnAssign();
+                else
+                    assetDatabaseTab.OnUnassign();
+
+            }
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Create Dataset", GUILayout.MinWidth(128f)))
+            {
+                ResourceEditorDataProxy.ResourceDataset = CreateResourceDataset();
+            }
+            if (GUILayout.Button("Clear Dataset", GUILayout.MinWidth(128f)))
+            {
+                ResourceEditorDataProxy.ResourceDataset = null;
+                windowData.ResourceDatasetPath = string.Empty;
+            }
+            EditorGUILayout.EndHorizontal();
+
+            switch (windowData.SelectedTabIndex)
+            {
+                case 0:
+                    assetDatabaseTab.OnGUI();
+                    break;
+                case 1:
+                    assetBundleTab.OnGUI();
+                    break;
+            }
+
+            EditorGUILayout.EndVertical();
+        }
+        ResourceDataset CreateResourceDataset()
+        {
+            var so = ScriptableObject.CreateInstance<ResourceDataset>();
+            so.hideFlags = HideFlags.NotEditable;
+            AssetDatabase.CreateAsset(so, "Assets/New ResourceDataset.asset");
+            EditorUtility.SetDirty(so);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            var dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>("Assets/New ResourceDataset.asset");
+            EditorUtil.Debug.LogInfo("ResourceDataset created successfully");
+            return dataset;
+        }
+
         void DrawBuildAssetBundle()
         {
-            data.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", data.BuildTarget);
-            data.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("BuildAssetBundleOptions", data.BuildAssetBundleOptions);
-            data.OutputPath = EditorGUILayout.TextField("OutputPath", data.OutputPath.Trim());
-            bool outputPathNull = string.IsNullOrEmpty(data.OutputPath);
+            windowData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", windowData.BuildTarget);
+            windowData.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("BuildAssetBundleOptions", windowData.BuildAssetBundleOptions);
+            windowData.OutputPath = EditorGUILayout.TextField("OutputPath", windowData.OutputPath.Trim());
+            bool outputPathNull = string.IsNullOrEmpty(windowData.OutputPath);
             if (outputPathNull)
             {
                 EditorGUILayout.HelpBox("Out put path is null !", MessageType.Error);
@@ -53,11 +127,11 @@ namespace Cosmos.Editor.Resource
             if (GUILayout.Button("Build"))
             {
                 if (!outputPathNull)
-                    BuildPipeline.BuildAssetBundles(GetBuildFolder(), data.BuildAssetBundleOptions, data.BuildTarget);
+                    BuildPipeline.BuildAssetBundles(GetBuildFolder(), windowData.BuildAssetBundleOptions, windowData.BuildTarget);
             }
             if (GUILayout.Button("Reset"))
             {
-                data = new ResourceWindowData();
+                windowData = new ResourceWindowData();
                 Repaint();
             }
             EditorGUILayout.EndHorizontal();
@@ -75,7 +149,7 @@ namespace Cosmos.Editor.Resource
         }
         string GetBuildFolder()
         {
-            var path = Path.Combine(EditorUtil.ApplicationPath(), data.OutputPath);
+            var path = Path.Combine(EditorUtil.ApplicationPath(), windowData.OutputPath);
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
