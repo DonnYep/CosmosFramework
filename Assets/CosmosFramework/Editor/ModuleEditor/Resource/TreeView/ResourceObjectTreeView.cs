@@ -1,17 +1,19 @@
 ﻿using System.Collections.Generic;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using UnityEditor;
 namespace Cosmos.Editor.Resource
 {
     public class ResourceObjectTreeView : TreeView
     {
         List<ResourceObjectInfo> objectList = new List<ResourceObjectInfo>();
-
-        public ResourceObjectTreeView(TreeViewState state) : base(state)
+        public ResourceObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
             showAlternatingRowBackgrounds = true;
+            showBorder = true;
         }
+
         public void AddObject(ResourceObjectInfo objectInfo)
         {
             if (!objectList.Contains(objectInfo))
@@ -33,6 +35,12 @@ namespace Cosmos.Editor.Resource
             objectList.Clear();
             Reload();
         }
+        protected override void ContextClickedItem(int id)
+        {
+            GenericMenu menu = new GenericMenu();
+            menu.AddItem(new GUIContent("Copy name to clipboard"), false, CopyToClipboard,id);
+            menu.ShowAsContext();
+        }
         protected override void DoubleClickedItem(int id)
         {
             base.SingleClickedItem(id);
@@ -41,23 +49,37 @@ namespace Cosmos.Editor.Resource
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
-            var assetIcon = ResourceWindowUtil.GetFolderIcon();
-            var sceneIcon = ResourceWindowUtil.GetSceneIcon();
             var allItems = new List<TreeViewItem>();
             {
                 for (int i = 0; i < objectList.Count; i++)
                 {
-                    Texture2D objIcon;
-                    var obj = objectList[i];
-                    if (obj.AssetPath.EndsWith(".unity"))
-                        objIcon = sceneIcon;
-                    else objIcon = assetIcon;
-                    var item = new TreeViewItem { id = i, depth = 1, displayName = obj.AssetPath, icon = objIcon };
+                    var objInfo = objectList[i];
+                    var obj = AssetDatabase.LoadMainAssetAtPath(objInfo.AssetPath);
+                    Texture2D objIcon = null;
+                    bool isValidAsset=obj!=null;
+                    string itemDisplayName = string.Empty;
+                    if (isValidAsset)
+                    {
+                        objIcon = EditorUtil.ToTexture2D(EditorGUIUtility.ObjectContent(obj, obj.GetType()).image);
+                        itemDisplayName = objInfo.AssetPath;
+                    }
+                    else
+                    {
+                        objIcon = EditorGUIUtility.FindTexture("console.erroricon");
+                        itemDisplayName = $"INVALID [ - ] {objInfo.AssetPath}";
+                    }
+                    var item = new TreeViewItem { id = i, depth = 1, displayName = itemDisplayName, icon = objIcon };
                     allItems.Add(item);
                 }
                 SetupParentsAndChildrenFromDepths(root, allItems);
                 return root;
             }
+        }
+        void CopyToClipboard(object context)
+        {
+            var id = System.Convert.ToInt32(context);
+            var path = objectList[id].ObjectName;
+            GUIUtility.systemCopyBuffer = path;
         }
     }
 }

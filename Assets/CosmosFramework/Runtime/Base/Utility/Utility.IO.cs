@@ -15,12 +15,21 @@ namespace Cosmos
             /// </summary>
             static UTF8Encoding utf8Encoding = new UTF8Encoding(false);
             /// <summary>
-            /// Get application absolute path;
+            /// 获取当前绝对路径
             /// </summary>
             /// <returns>path</returns>
             public static string ApplicationPath()
             {
                 return Path.GetFullPath(".");
+            }
+            /// <summary>
+            /// 获取文件夹中的所有文件；
+            /// </summary>
+            /// <param name="path">地址</param>
+            /// <returns>文件地址</returns>
+            public static string[] GetAllFiles(string path)
+            {
+                return Directory.GetFiles(path, ".", SearchOption.AllDirectories);
             }
             /// <summary>
             /// 获取文件夹中的文件数量；

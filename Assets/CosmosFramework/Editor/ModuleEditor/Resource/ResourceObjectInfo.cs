@@ -7,6 +7,11 @@ namespace Cosmos.Editor.Resource
         public string ObjectName;
         public string AssetPath;
 
+        public ResourceObjectInfo(string objectName, string assetPath)
+        {
+            ObjectName = objectName;
+            AssetPath = assetPath;
+        }
         public bool Equals(ResourceObjectInfo other)
         {
             return other.ObjectName == this.ObjectName &&

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using UnityEngine;
 namespace Cosmos.Resource
 {
     /// <summary>
@@ -9,11 +10,14 @@ namespace Cosmos.Resource
     [Serializable]
     public struct ResourceObject : IEquatable<ResourceObject>
     {
-        readonly string assetName;
-        readonly string assetPath;
-        readonly string bundleName;
-        readonly string variant;
-        readonly string extension;
+        [SerializeField]
+        string assetName;
+        [SerializeField]
+        string assetPath;
+        [SerializeField]
+        string bundleName;
+        [SerializeField]
+        string extension;
         /// <summary>
         /// 资源名
         /// </summary>
@@ -21,25 +25,20 @@ namespace Cosmos.Resource
         /// <summary>
         /// 资源在asset目录下的地址
         /// </summary>
-        public string AssetPath{ get { return assetPath; } }
+        public string AssetPath { get { return assetPath; } }
         /// <summary>
         /// 资源Bundle的名称
         /// </summary>
         public string BundleName { get { return bundleName; } }
         /// <summary>
-        /// 变体名称。
-        /// </summary>
-        public string Variant { get { return variant; } }
-        /// <summary>
         /// 后缀名；
         /// </summary>
         public string Extension { get { return extension; } }
-        public ResourceObject(string assetName, string assetPath,string bundleName, string variant, string extension)
+        public ResourceObject(string assetName, string assetPath, string bundleName, string extension)
         {
             this.assetName = assetName;
             this.assetPath = assetPath;
             this.bundleName = bundleName;
-            this.variant = variant;
             this.extension = extension;
         }
         public bool Equals(ResourceObject other)
@@ -47,8 +46,7 @@ namespace Cosmos.Resource
             return other.Extension == this.Extension &&
                 other.BundleName == this.BundleName &&
                 other.AssetName == this.AssetName &&
-                other.AssetPath==this.AssetPath&&
-                other.Variant == this.Variant;
+                other.AssetPath == this.AssetPath;
         }
         public override bool Equals(object obj)
         {
@@ -56,15 +54,15 @@ namespace Cosmos.Resource
         }
         public override int GetHashCode()
         {
-            return $"{assetPath},{bundleName}{variant}".GetHashCode();
+            return $"{assetPath},{bundleName}".GetHashCode();
         }
         public override string ToString()
         {
-            return $"AssetPath: {assetPath} , BundleName: {bundleName} , Variant: {variant}";
+            return $"AssetPath: {assetPath} , BundleName: {bundleName}";
         }
         public ResourceObject Clone()
         {
-            return new ResourceObject(this.AssetName,this.assetPath, this.BundleName, this.Variant, this.Extension);
+            return new ResourceObject(this.AssetName, this.assetPath, this.BundleName, this.Extension);
         }
     }
 }

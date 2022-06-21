@@ -25,6 +25,7 @@ namespace Cosmos.Editor.Resource
         /// 被选择的标签序号；
         /// </summary>
         public int SelectedTabIndex;
+
         public ResourceWindowData()
         {
             BuildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression;

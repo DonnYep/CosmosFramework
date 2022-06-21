@@ -9,11 +9,16 @@ namespace Cosmos.Editor.Resource
     {
         ResourceWindowData windowData;
         public ResourceWindowData ResourceWindowData { get { return windowData; } }
-        readonly string ResourceWindowDataName = "ResourceWindowData.json";
+        readonly string ResourceWindowDataName = "ResourceEditor_WindowData.json";
         AssetDatabaseTab assetDatabaseTab = new AssetDatabaseTab();
         AssetBundleTab assetBundleTab = new AssetBundleTab();
         string[] tabArray = new string[] { "AssetDatabase", "AssetBundle" };
         ResourceDataset latestResourceDataset;
+
+        /// <summary>
+        /// dataset是否为空处理标记；
+        /// </summary>
+        bool emptyDatasetFlag= false;
         public ResourceWindow()
         {
             this.titleContent = new GUIContent("ResourceWindow");
@@ -22,23 +27,14 @@ namespace Cosmos.Editor.Resource
         public static void OpenIntegrateWindow()
         {
             var window = GetWindow<ResourceWindow>();
-            window.maxSize = EditorUtil.MaxWinSize;
             window.minSize = EditorUtil.DevWinSize;
         }
         private void OnEnable()
         {
-            try
+            GetWindowData();
+            if (!string.IsNullOrEmpty(windowData.ResourceDatasetPath))
             {
-                windowData = EditorUtil.GetData<ResourceWindowData>(ResourceWindowDataName);
-                if (!string.IsNullOrEmpty(windowData.ResourceDatasetPath))
-                {
-                    ResourceEditorDataProxy.ResourceDataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(windowData.ResourceDatasetPath);
-                }
-            }
-            catch
-            {
-                windowData = new ResourceWindowData();
-                EditorUtil.SaveData(ResourceWindowDataName, windowData);
+                latestResourceDataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(windowData.ResourceDatasetPath);
             }
             assetDatabaseTab.OnEnable();
             assetBundleTab.OnEnable();
@@ -53,37 +49,54 @@ namespace Cosmos.Editor.Resource
                 AssetDatabase.Refresh();
             }
             EditorUtil.SaveData(ResourceWindowDataName, windowData);
+            assetDatabaseTab.OnDisable();
+            assetBundleTab.OnDisable();
         }
         private void OnGUI()
         {
             DrawLables();
-
         }
-
         void DrawLables()
         {
             EditorGUILayout.BeginVertical();
             windowData.SelectedTabIndex = GUILayout.Toolbar(windowData.SelectedTabIndex, tabArray);
             latestResourceDataset = (ResourceDataset)EditorGUILayout.ObjectField("ResourceDataset", latestResourceDataset, typeof(ResourceDataset), false);
-            if (latestResourceDataset != ResourceEditorDataProxy.ResourceDataset)
+            if (ResourceEditorDataProxy.ResourceDataset != latestResourceDataset)
             {
                 ResourceEditorDataProxy.ResourceDataset = latestResourceDataset;
                 if (ResourceEditorDataProxy.ResourceDataset != null)
-                    assetDatabaseTab.OnAssign();
+                {
+                    assetDatabaseTab.OnDatasetAssign();
+                    assetBundleTab.OnDatasetAssign();
+                    emptyDatasetFlag = false;
+                }
                 else
-                    assetDatabaseTab.OnUnassign();
-
+                {
+                    assetDatabaseTab.OnDatasetUnassign();
+                    assetBundleTab.OnDatasetUnassign();
+                }
             }
-
+            else
+            {
+                if (ResourceEditorDataProxy.ResourceDataset == null)
+                {
+                    if (!emptyDatasetFlag)
+                    {
+                        assetDatabaseTab.OnDatasetUnassign();
+                        assetBundleTab.OnDatasetUnassign();
+                        emptyDatasetFlag = true;
+                    }
+                }
+            }
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Create Dataset", GUILayout.MinWidth(128f)))
             {
-                ResourceEditorDataProxy.ResourceDataset = CreateResourceDataset();
+                latestResourceDataset = CreateResourceDataset();
             }
             if (GUILayout.Button("Clear Dataset", GUILayout.MinWidth(128f)))
             {
-                ResourceEditorDataProxy.ResourceDataset = null;
+                latestResourceDataset = null;
                 windowData.ResourceDatasetPath = string.Empty;
             }
             EditorGUILayout.EndHorizontal();
@@ -91,7 +104,7 @@ namespace Cosmos.Editor.Resource
             switch (windowData.SelectedTabIndex)
             {
                 case 0:
-                    assetDatabaseTab.OnGUI();
+                    assetDatabaseTab.OnGUI(this.position);
                     break;
                 case 1:
                     assetBundleTab.OnGUI();
@@ -103,6 +116,7 @@ namespace Cosmos.Editor.Resource
         ResourceDataset CreateResourceDataset()
         {
             var so = ScriptableObject.CreateInstance<ResourceDataset>();
+            so.ResourceAvailableExtenisonList.AddRange(ResourceEditorConstant.Extensions);
             so.hideFlags = HideFlags.NotEditable;
             AssetDatabase.CreateAsset(so, "Assets/New ResourceDataset.asset");
             EditorUtility.SetDirty(so);
@@ -112,49 +126,17 @@ namespace Cosmos.Editor.Resource
             EditorUtil.Debug.LogInfo("ResourceDataset created successfully");
             return dataset;
         }
-
-        void DrawBuildAssetBundle()
+        void GetWindowData()
         {
-            windowData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("BuildTarget", windowData.BuildTarget);
-            windowData.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("BuildAssetBundleOptions", windowData.BuildAssetBundleOptions);
-            windowData.OutputPath = EditorGUILayout.TextField("OutputPath", windowData.OutputPath.Trim());
-            bool outputPathNull = string.IsNullOrEmpty(windowData.OutputPath);
-            if (outputPathNull)
+            try
             {
-                EditorGUILayout.HelpBox("Out put path is null !", MessageType.Error);
+                windowData = EditorUtil.GetData<ResourceWindowData>(ResourceWindowDataName);
             }
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Build"))
-            {
-                if (!outputPathNull)
-                    BuildPipeline.BuildAssetBundles(GetBuildFolder(), windowData.BuildAssetBundleOptions, windowData.BuildTarget);
-            }
-            if (GUILayout.Button("Reset"))
+            catch
             {
                 windowData = new ResourceWindowData();
-                Repaint();
+                EditorUtil.SaveData(ResourceWindowDataName, windowData);
             }
-            EditorGUILayout.EndHorizontal();
-            GUILayout.Space(16);
-
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("OpenOutputPath"))
-            {
-                EditorUtility.RevealInFinder(GetBuildFolder());
-            }
-            if (GUILayout.Button("ClearAssetBundles"))
-            {
-            }
-            GUILayout.EndHorizontal();
-        }
-        string GetBuildFolder()
-        {
-            var path = Path.Combine(EditorUtil.ApplicationPath(), windowData.OutputPath);
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            return path;
         }
         /// <summary>
         /// 预留
@@ -179,5 +161,6 @@ namespace Cosmos.Editor.Resource
                 GUILayout.EndHorizontal();
             }
         }
+
     }
 }

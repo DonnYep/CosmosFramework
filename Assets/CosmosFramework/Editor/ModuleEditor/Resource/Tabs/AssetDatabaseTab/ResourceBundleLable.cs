@@ -22,17 +22,23 @@ namespace Cosmos.Editor.Resource
             add { treeView.onAllDelete += value; }
             remove { treeView.onAllDelete -= value; }
         }
+        public event Action<int> onBundleClick
+        {
+            add { treeView.onBundleClick += value; }
+            remove { treeView.onBundleClick -= value; }
+        }
         public void OnEnable()
         {
             searchField = new SearchField();
             treeViewState = new TreeViewState();
-            treeView = new ResourceBundleTreeView(treeViewState);
+            var multiColumnHeaderState = new MultiColumnHeader(ResourceEditorUtil.CreateResourceBundleMultiColumnHeader());
+            treeView = new ResourceBundleTreeView(treeViewState, multiColumnHeaderState);
             searchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
         }
-        public void OnGUI()
+        public void OnGUI(Rect rect)
         {
             GUILayout.BeginVertical();
-            DrawTreeView();
+            DrawTreeView(rect);
             GUILayout.EndVertical();
         }
         public void Clear()
@@ -43,16 +49,25 @@ namespace Cosmos.Editor.Resource
         {
             treeView.AddBundle(bundleInfo);
         }
-        void DrawTreeView()
+        public void SetSetSelectionBundle(int index)
         {
-            GUILayout.Label("Bundle lable");
-            GUILayout.BeginVertical("box");
-            treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
-            Rect rect = GUILayoutUtility.GetRect(32, 8192, 32, 8192);
-            treeView.OnGUI(rect);
+            treeView.SetSelection(new int[] { index });
+        }
+        void DrawTreeView(Rect rect)
+        {
+            var width= rect.width * 0.382f;
+            GUILayout.BeginVertical(GUILayout.MaxWidth(width));
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label("Search bundle");
+                    treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
+                }
+                GUILayout.EndHorizontal();
+                Rect viewRect = GUILayoutUtility.GetRect(32, 8192, 32, 8192);
+                treeView.OnGUI(viewRect);
+            }
             GUILayout.EndVertical();
         }
-
-
     }
 }

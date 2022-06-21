@@ -140,5 +140,14 @@ namespace Cosmos.Editor
                 false, false,
                 texture.GetNativeTexturePtr());
         }
+        /// <summary>
+        /// 过滤字段，过滤绝对路径到Assets目录下的相对路径；
+        /// </summary>
+        /// <param name="src">绝对路径</param>
+        /// <returns>过滤后的地址</returns>
+        public static string FilterApplicationDataPath(string src)
+        {
+            return src.Remove(0, Application.dataPath.Length - 6);
+        }
     }
 }

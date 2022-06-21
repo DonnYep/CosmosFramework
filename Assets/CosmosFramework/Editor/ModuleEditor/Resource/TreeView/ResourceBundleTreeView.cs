@@ -11,11 +11,12 @@ namespace Cosmos.Editor.Resource
 
         public Action<List<ResourceBundleInfo>> onDelete;
         public Action onAllDelete;
-
-        public ResourceBundleTreeView(TreeViewState state) : base(state)
+        public Action<int> onBundleClick;
+        public ResourceBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state,multiColumnHeader)
         {
             Reload();
             showAlternatingRowBackgrounds = true;
+            showBorder = true;
         }
         public void Clear()
         {
@@ -37,6 +38,11 @@ namespace Cosmos.Editor.Resource
                 bundleList.Remove(bundleInfo);
                 Reload();
             }
+        }
+        protected override void SingleClickedItem(int id)
+        {
+            base.SingleClickedItem(id);
+            onBundleClick?.Invoke(id);
         }
         protected override void DoubleClickedItem(int id)
         {
@@ -86,7 +92,7 @@ namespace Cosmos.Editor.Resource
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
-            var assetIcon = ResourceWindowUtil.GetFolderIcon();
+            var assetIcon = ResourceEditorUtil.GetFolderIcon();
             var allItems = new List<TreeViewItem>();
             {
                 for (int i = 0; i < bundleList.Count; i++)

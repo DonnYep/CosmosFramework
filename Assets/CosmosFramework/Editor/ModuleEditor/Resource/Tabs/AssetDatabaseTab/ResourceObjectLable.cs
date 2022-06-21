@@ -1,5 +1,4 @@
-﻿using UnityEditor;
-using UnityEditor.IMGUI.Controls;
+﻿using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 namespace Cosmos.Editor.Resource
@@ -13,7 +12,8 @@ namespace Cosmos.Editor.Resource
         {
             searchField = new SearchField();
             treeViewState = new TreeViewState();
-            treeView = new ResourceObjectTreeView(treeViewState);
+            var multiColumnHeaderState = new MultiColumnHeader(ResourceEditorUtil.CreateResourceObjectMultiColumnHeader());
+            treeView = new ResourceObjectTreeView(treeViewState, multiColumnHeaderState);
             searchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
         }
         public void Clear()
@@ -28,19 +28,25 @@ namespace Cosmos.Editor.Resource
         {
             treeView.RemoveObject(objectInfo);
         }
-        public void OnGUI()
+        public void OnGUI(Rect rect)
         {
             GUILayout.BeginVertical();
-            DrawTreeView();
+            DrawTreeView(rect);
             GUILayout.EndVertical();
         }
-        void DrawTreeView()
+        void DrawTreeView(Rect rect)
         {
-            GUILayout.Label("Object lable");
-            GUILayout.BeginVertical("box");
-            treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
-            Rect rect = GUILayoutUtility.GetRect(32, 8192, 32, 8192);
-            treeView.OnGUI(rect);
+            GUILayout.BeginVertical(GUILayout.MaxWidth(rect.width * 0.618f));
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label("Search object");
+                    treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
+                }
+                GUILayout.EndHorizontal();
+                Rect viewRect = GUILayoutUtility.GetRect(32, 8192, 32, 8192);
+                treeView.OnGUI(viewRect);
+            }
             GUILayout.EndVertical();
         }
     }

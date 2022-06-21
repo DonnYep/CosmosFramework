@@ -1,16 +1,19 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System;
 namespace Cosmos.Resource
 {
     /// <summary>
     /// AssetDatabase 模式下资源寻址数据对象
     /// </summary>
-    public class ResourceDataset : ScriptableObject
+    public class ResourceDataset : ScriptableObject,IDisposable
     {
         [SerializeField]
         List<ResourceObject> resourceObjectList;
         [SerializeField]
         List<ResourceBundle> resourceBundleList;
+        [SerializeField]
+        List<string> resourceAvailableExtenisonList;
         /// <summary>
         /// 资源对象数量；
         /// </summary>
@@ -42,6 +45,35 @@ namespace Cosmos.Resource
                     resourceBundleList = new List<ResourceBundle>();
                 return resourceBundleList;
             }
+        }
+        /// <summary>
+        /// 可识别的资源后缀列表；
+        /// </summary>
+        public List<string> ResourceAvailableExtenisonList
+        {
+            get
+            {
+                if (resourceAvailableExtenisonList == null)
+                    resourceAvailableExtenisonList = new List<string>();
+                return resourceAvailableExtenisonList;
+            }
+        }
+        /// <summary>
+        /// 清空资源包与资源实体；
+        /// </summary>
+        public void Clear()
+        {
+            ResourceBundleList.Clear();
+            ResourceObjectList.Clear();
+        }
+        /// <summary>
+        /// 释放当前dataset；
+        /// </summary>
+        public void Dispose()
+        {
+            ResourceBundleList.Clear();
+            ResourceObjectList.Clear();
+            ResourceAvailableExtenisonList.Clear();
         }
     }
 }
