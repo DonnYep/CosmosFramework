@@ -45,9 +45,9 @@ namespace Cosmos.Editor.Resource
         {
             treeView.Clear();
         }
-        public void AddBundle(ResourceBundleInfo bundleInfo)
+        public bool AddBundle(ResourceBundleInfo bundleInfo)
         {
-            treeView.AddBundle(bundleInfo);
+            return treeView.AddBundle(bundleInfo);
         }
         public void SetSetSelectionBundle(int index)
         {

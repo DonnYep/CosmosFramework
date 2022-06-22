@@ -32,7 +32,7 @@ namespace Cosmos.Editor.Resource
                 for (int i = 0; i < bundleLen; i++)
                 {
                     var bundle = bundleList[i];
-                    resourceBundleLable.AddBundle(new ResourceBundleInfo() { BundlePath = bundle.BundleName });
+                    resourceBundleLable.AddBundle(new ResourceBundleInfo() { BundleName = bundle.BundleName });
                 }
                 if (ResourceEditorDataProxy.ResourceDataset.ResourceObjectCount == 0 && ResourceEditorDataProxy.ResourceDataset.ResourceBundleCount > 0)
                     hasChanged = true;
@@ -88,10 +88,10 @@ namespace Cosmos.Editor.Resource
                 for (int i = 0; i < bundleLen; i++)
                 {
                     var bundle = bundleList[i];
-                    resourceBundleLable.AddBundle(new ResourceBundleInfo() { BundlePath = bundle.BundleName });
+                    resourceBundleLable.AddBundle(new ResourceBundleInfo() { BundleName = bundle.BundleName });
                 }
                 resourceObjectLable.Clear();
-                if (ResourceEditorDataProxy.ResourceDataset.ResourceObjectCount ==0&& ResourceEditorDataProxy.ResourceDataset.ResourceBundleCount>0)
+                if (ResourceEditorDataProxy.ResourceDataset.ResourceObjectCount == 0 && ResourceEditorDataProxy.ResourceDataset.ResourceBundleCount > 0)
                     hasChanged = true;
                 DisplaySelectedBundle();
             }
@@ -131,6 +131,7 @@ namespace Cosmos.Editor.Resource
                 }
                 else if (DragAndDrop.paths.Length == DragAndDrop.objectReferences.Length)
                 {
+                    bool added = false;
                     for (int i = 0; i < DragAndDrop.objectReferences.Length; i++)
                     {
                         Object obj = DragAndDrop.objectReferences[i];
@@ -143,11 +144,12 @@ namespace Cosmos.Editor.Resource
                             {
                                 bundleList.Add(resourceBundle);
                             }
-                            var bundle = new ResourceBundleInfo() { BundlePath = path, BundleName = obj.name };
-                            resourceBundleLable.AddBundle(bundle);
-                            hasChanged = true;
+                            var bundle = new ResourceBundleInfo() { BundleName = path };
+                            added = resourceBundleLable.AddBundle(bundle);
                         }
                     }
+                    if (added)
+                        hasChanged = true;
                 }
             }
         }
@@ -169,7 +171,7 @@ namespace Cosmos.Editor.Resource
             {
                 foreach (var info in infos)
                 {
-                    if (bundles[i].BundleName == info.BundlePath)
+                    if (bundles[i].BundleName == info.BundleName)
                         indexList.Add(i);
                 }
             }
@@ -189,8 +191,8 @@ namespace Cosmos.Editor.Resource
                 return;
             var bundles = ResourceEditorDataProxy.ResourceDataset.ResourceBundleList;
             ResourceBundle resourceBundle = null;
-            if (bundleIndex > bundles.Count)
-                bundleIndex = bundles.Count;
+            if (bundleIndex > bundles.Count - 1)
+                bundleIndex = bundles.Count - 1;
             if (bundles.Count > 0)
                 resourceBundle = bundles[bundleIndex];
             if (resourceBundle == null)

@@ -10,19 +10,14 @@ namespace Cosmos.Editor.Resource
         /// 资源包的名称，AsseBundleName；
         /// </summary>
         public string BundleName;
-        /// <summary>
-        /// 包相对Asset目录下的地址；
-        /// </summary>
-        public string BundlePath;
 
         public bool Equals(ResourceBundleInfo other)
         {
-            return other.BundleName == this.BundleName &&
-                other.BundlePath == this.BundlePath;
+            return other.BundleName == this.BundleName;
         }
         public override int GetHashCode()
         {
-            return $"{BundleName}{BundlePath}".GetHashCode();
+            return $"{BundleName}".GetHashCode();
         }
         public override bool Equals(object obj)
         {

@@ -29,6 +29,14 @@ namespace Cosmos.Editor.Resource
         {
             return EditorGUIUtility.FindTexture("Folder Icon");
         }
+        public static Texture2D GetAssetInvalidIcon()
+        {
+            return EditorGUIUtility.FindTexture("TestFailed");
+        }
+        public static Texture2D GetAssetValidIcon()
+        {
+            return EditorGUIUtility.FindTexture("TestPassed");
+        }
         public static MultiColumnHeaderState CreateResourceBundleMultiColumnHeader()
         {
             var columns = new[]
@@ -41,6 +49,7 @@ namespace Cosmos.Editor.Resource
                     sortedAscending = false,
                     width = 768,
                     autoResize = false,
+                    canSort=true
                 }
             };
             var state = new MultiColumnHeaderState(columns);
@@ -52,14 +61,39 @@ namespace Cosmos.Editor.Resource
             {
             new MultiColumnHeaderState.Column
                 {
-                    headerContent = new GUIContent("Object"),
+                    headerContent = new GUIContent("Name"),
                     headerTextAlignment = TextAlignment.Left,
-                    sortingArrowAlignment = TextAlignment.Left,
+                    sortingArrowAlignment = TextAlignment.Center,
                     sortedAscending = false,
-                    width = 1024,
+                    minWidth=128,
+                    width = 256,
+                    maxWidth=512,
+                    autoResize = false,
+                },
+                new MultiColumnHeaderState.Column
+                {
+                    headerContent = new GUIContent("State"),
+                    headerTextAlignment = TextAlignment.Left,
+                    sortingArrowAlignment = TextAlignment.Center,
+                    sortedAscending = false,
+                    minWidth=64,
+                    width=128,
+                    maxWidth=192,
+                    autoResize = false,
+                },
+                new MultiColumnHeaderState.Column
+                {
+                    headerContent = new GUIContent("AssetPath"),
+                    headerTextAlignment = TextAlignment.Left,
+                    sortingArrowAlignment = TextAlignment.Center,
+                    sortedAscending = false,
+                    minWidth=192,
+                    width=512,
+                    maxWidth=1024,
                     autoResize = false,
                 }
             };
+
             var state = new MultiColumnHeaderState(columns);
             return state;
         }

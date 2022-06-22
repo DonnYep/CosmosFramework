@@ -23,13 +23,15 @@ namespace Cosmos.Editor.Resource
             bundleList.Clear();
             Reload();
         }
-        public void AddBundle(ResourceBundleInfo bundleInfo)
+        public bool AddBundle(ResourceBundleInfo bundleInfo)
         {
             if (!bundleList.Contains(bundleInfo))
             {
                 bundleList.Add(bundleInfo);
                 Reload();
+                return true;
             }
+            return false;
         }
         public void RemoveBundle(ResourceBundleInfo bundleInfo)
         {
@@ -47,12 +49,12 @@ namespace Cosmos.Editor.Resource
         protected override void DoubleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            EditorUtil.PingAndActiveObject(bundleList[id].BundlePath);
+            EditorUtil.PingAndActiveObject(bundleList[id].BundleName);
         }
         protected override void ContextClickedItem(int id)
         {
+            onBundleClick?.Invoke(id);
             List<ResourceBundleInfo> selectedNodes = new List<ResourceBundleInfo>();
-
             var selected = GetSelection();
             foreach (var nodeId in selected)
             {
@@ -61,8 +63,8 @@ namespace Cosmos.Editor.Resource
             GenericMenu menu = new GenericMenu();
             if (selectedNodes.Count >= 1)
             {
-                menu.AddItem(new GUIContent("Delete"), false, Delete, selectedNodes);
-                menu.AddItem(new GUIContent("DeleteAll"), false, DeleteAll);
+                menu.AddItem(new GUIContent("Delete bundle"), false, Delete, selectedNodes);
+                menu.AddItem(new GUIContent("Delete all bundle"), false, DeleteAll);
             }
             menu.ShowAsContext();
         }
@@ -97,7 +99,7 @@ namespace Cosmos.Editor.Resource
             {
                 for (int i = 0; i < bundleList.Count; i++)
                 {
-                    var item = new TreeViewItem { id = i, depth = 1, displayName = bundleList[i].BundlePath, icon = assetIcon };
+                    var item = new TreeViewItem { id = i, depth = 1, displayName = bundleList[i].BundleName, icon = assetIcon };
                     allItems.Add(item);
                 }
                 SetupParentsAndChildrenFromDepths(root, allItems);
