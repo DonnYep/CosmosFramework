@@ -32,7 +32,7 @@ namespace Cosmos.Editor.Resource
                 for (int i = 0; i < bundleLen; i++)
                 {
                     var bundle = bundleList[i];
-                    resourceBundleLable.AddBundle(new ResourceBundleInfo() { BundleName = bundle.BundleName });
+                    resourceBundleLable.AddBundle(new ResourceBundleInfo(bundle.BundleName, EditorUtility.FormatBytes(bundle.BundleSize)));
                 }
                 if (ResourceEditorDataProxy.ResourceDataset.ResourceObjectCount == 0 && ResourceEditorDataProxy.ResourceDataset.ResourceBundleCount > 0)
                     hasChanged = true;
@@ -88,7 +88,7 @@ namespace Cosmos.Editor.Resource
                 for (int i = 0; i < bundleLen; i++)
                 {
                     var bundle = bundleList[i];
-                    resourceBundleLable.AddBundle(new ResourceBundleInfo() { BundleName = bundle.BundleName });
+                    resourceBundleLable.AddBundle(new ResourceBundleInfo(bundle.BundleName, EditorUtility.FormatBytes(bundle.BundleSize)));
                 }
                 resourceObjectLable.Clear();
                 if (ResourceEditorDataProxy.ResourceDataset.ResourceObjectCount == 0 && ResourceEditorDataProxy.ResourceDataset.ResourceBundleCount > 0)
@@ -139,13 +139,13 @@ namespace Cosmos.Editor.Resource
                         if (!(obj is MonoScript) && (obj is DefaultAsset))
                         {
                             var bundleList = ResourceEditorDataProxy.ResourceDataset.ResourceBundleList;
-                            var resourceBundle = new ResourceBundle(path);
-                            if (!bundleList.Contains(resourceBundle))
+                            var bundle = new ResourceBundle(path);
+                            if (!bundleList.Contains(bundle))
                             {
-                                bundleList.Add(resourceBundle);
+                                bundleList.Add(bundle);
                             }
-                            var bundle = new ResourceBundleInfo() { BundleName = path };
-                            added = resourceBundleLable.AddBundle(bundle);
+                            var bundleInfo = new ResourceBundleInfo(path, EditorUtility.FormatBytes(bundle.BundleSize));
+                            added = resourceBundleLable.AddBundle(bundleInfo);
                         }
                     }
                     if (added)
@@ -202,7 +202,8 @@ namespace Cosmos.Editor.Resource
             var objectLength = objects.Count;
             for (int i = 0; i < objectLength; i++)
             {
-                var objInfo = new ResourceObjectInfo(objects[i].AssetName, objects[i].AssetPath);
+                var assetPath = objects[i].AssetPath;
+                var objInfo = new ResourceObjectInfo(objects[i].AssetName, assetPath, EditorUtil.GetAssetFileSize(assetPath), EditorUtil.GetAssetFileSizeLength(assetPath));
                 resourceObjectLable.AddObject(objInfo);
             }
             tabData.HighlightBundleIndex = bundleIndex;
@@ -232,11 +233,16 @@ namespace Cosmos.Editor.Resource
             var extensions = ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
             objects.Clear();
             var bundleLength = bundles.Count;
+
+            List<ResourceBundleInfo> tmpBundleInfo = new List<ResourceBundleInfo>();
+
             for (int i = 0; i < bundleLength; i++)
             {
                 var bundlePath = bundles[i].BundleName;
                 var files = Utility.IO.GetAllFiles(bundlePath);
                 var fileLength = files.Length;
+                var bundle = bundles[i];
+                long bundleSize = 0;
                 for (int j = 0; j < fileLength; j++)
                 {
                     var srcFilePath = files[j].Replace("\\", "/");
@@ -245,18 +251,33 @@ namespace Cosmos.Editor.Resource
                     {
                         var resourceObject = new ResourceObject(Path.GetFileName(srcFilePath), srcFilePath, bundlePath, Path.GetExtension(srcFilePath));
                         objects.Add(resourceObject);
-                        bundles[i].ResourceObjectList.Add(resourceObject);
+                        bundle.ResourceObjectList.Add(resourceObject);
+                        bundleSize += EditorUtil.GetAssetFileSizeLength(resourceObject.AssetPath);
                     }
                     var percent = j / (float)fileLength;
                     EditorUtility.DisplayProgressBar("BuildDataset building", $"Checking bundle : {bundlePath} {Mathf.RoundToInt(percent * 100)}%", percent);
                     yield return null;
                 }
+                bundle.BundleSize = bundleSize;
+
+                var bundleInfo = new ResourceBundleInfo(bundlePath, EditorUtility.FormatBytes(bundle.BundleSize));
+                tmpBundleInfo.Add(bundleInfo);
             }
             EditorUtility.ClearProgressBar();
 
             EditorUtility.SetDirty(ResourceEditorDataProxy.ResourceDataset);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+
+            {
+                //这么处理是为了bundleLable能够在编辑器页面一下刷新，放在协程里逐步更新，使用体验并不是很好。
+                resourceBundleLable.Clear();
+                for (int i = 0; i < bundleLength; i++)
+                {
+                    resourceBundleLable.AddBundle(tmpBundleInfo[i]);
+                }
+            }
+
             DisplaySelectedBundle();
             hasChanged = false;
         }
@@ -266,5 +287,6 @@ namespace Cosmos.Editor.Resource
             resourceBundleLable.SetSetSelectionBundle(index);
             OnBundleClick(index);
         }
+
     }
 }

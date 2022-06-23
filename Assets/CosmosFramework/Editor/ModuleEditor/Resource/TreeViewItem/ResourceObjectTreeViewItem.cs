@@ -4,7 +4,8 @@ namespace Cosmos.Editor.Resource
 {
     public class ResourceObjectTreeViewItem : TreeViewItem
     {
-        public ResourceObjectTreeViewItem(int id, int depth, string displayName,Texture2D icon) : base(id, depth, displayName)
+        string objectSize;
+        public ResourceObjectTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
         {
             this.icon = icon;
         }
@@ -12,7 +13,20 @@ namespace Cosmos.Editor.Resource
         /// <summary>
         /// 当前对象状态，INVALID , VALID
         /// </summary>
-        public string ObjectState{ get; set; }
-        public Texture2D ObjectStateIcon{ get; set; }
+        public string ObjectState { get; set; }
+        public Texture2D ObjectStateIcon { get; set; }
+        /// <summary>
+        /// 文件大小；
+        /// </summary>
+        public string ObjectSize
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(objectSize))
+                    return "<NULL>";
+                return objectSize;
+            }
+            set { objectSize = value; }
+        }
     }
 }

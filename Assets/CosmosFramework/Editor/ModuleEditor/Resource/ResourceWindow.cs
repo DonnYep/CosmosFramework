@@ -18,7 +18,7 @@ namespace Cosmos.Editor.Resource
         /// <summary>
         /// dataset是否为空处理标记；
         /// </summary>
-        bool emptyDatasetFlag= false;
+        bool emptyDatasetFlag = false;
         public ResourceWindow()
         {
             this.titleContent = new GUIContent("ResourceWindow");
@@ -29,8 +29,9 @@ namespace Cosmos.Editor.Resource
             var window = GetWindow<ResourceWindow>();
             window.minSize = EditorUtil.DevWinSize;
         }
-        private void OnEnable()
+        void OnEnable()
         {
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
             GetWindowData();
             if (!string.IsNullOrEmpty(windowData.ResourceDatasetPath))
             {
@@ -39,20 +40,21 @@ namespace Cosmos.Editor.Resource
             assetDatabaseTab.OnEnable();
             assetBundleTab.OnEnable();
         }
-        private void OnDisable()
+
+        void OnDisable()
         {
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+
             if (ResourceEditorDataProxy.ResourceDataset != null)
             {
                 windowData.ResourceDatasetPath = AssetDatabase.GetAssetPath(ResourceEditorDataProxy.ResourceDataset);
                 EditorUtility.SetDirty(ResourceEditorDataProxy.ResourceDataset);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
             }
             EditorUtil.SaveData(ResourceWindowDataName, windowData);
             assetDatabaseTab.OnDisable();
             assetBundleTab.OnDisable();
         }
-        private void OnGUI()
+        void OnGUI()
         {
             DrawLables();
         }
@@ -112,6 +114,29 @@ namespace Cosmos.Editor.Resource
             }
 
             EditorGUILayout.EndVertical();
+        }
+        void OnPlayModeStateChanged(PlayModeStateChange stateChange)
+        {
+            switch (stateChange)
+            {
+                case PlayModeStateChange.EnteredEditMode:
+                    {
+                        GetWindowData();
+                        if (!string.IsNullOrEmpty(windowData.ResourceDatasetPath))
+                        {
+                            latestResourceDataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(windowData.ResourceDatasetPath);
+                        }
+                        assetDatabaseTab.OnEnable();
+                        assetBundleTab.OnEnable();
+                    }
+                    break;
+                case PlayModeStateChange.ExitingEditMode:
+                    break;
+                case PlayModeStateChange.EnteredPlayMode:
+                    break;
+                case PlayModeStateChange.ExitingPlayMode:
+                    break;
+            }
         }
         ResourceDataset CreateResourceDataset()
         {

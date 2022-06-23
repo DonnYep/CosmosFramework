@@ -19,10 +19,6 @@ namespace Cosmos.Resource
             /// </summary>
             public string Hash { get; set; }
             /// <summary>
-            /// AB数据数据长度，用于验证数据完整性；
-            /// </summary>
-            public long ABFileSize { get; set; }
-            /// <summary>
             /// 资源包；
             /// </summary>
             public ResourceBundle ResourceBundle { get; set; }

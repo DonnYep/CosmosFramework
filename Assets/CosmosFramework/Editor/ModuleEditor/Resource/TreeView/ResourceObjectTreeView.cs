@@ -38,8 +38,8 @@ namespace Cosmos.Editor.Resource
         protected override void ContextClickedItem(int id)
         {
             GenericMenu menu = new GenericMenu();
-            menu.AddItem(new GUIContent("Copy name to clipboard"), false, CopyNameToClipboard,id);
-            menu.AddItem(new GUIContent("Copy asset path to clipboard"), false, CopyAssetPathToClipboard,id);
+            menu.AddItem(new GUIContent("Copy name to clipboard"), false, CopyNameToClipboard, id);
+            menu.AddItem(new GUIContent("Copy asset path to clipboard"), false, CopyAssetPathToClipboard, id);
             menu.ShowAsContext();
         }
         protected override void DoubleClickedItem(int id)
@@ -58,7 +58,7 @@ namespace Cosmos.Editor.Resource
                     var obj = AssetDatabase.LoadMainAssetAtPath(objectInfo.AssetPath);
                     Texture2D objectIcon = null;
                     Texture2D stateIcon = null;
-                    bool isValidAsset=obj!=null;
+                    bool isValidAsset = obj != null;
                     string objectState = string.Empty;
                     if (isValidAsset)
                     {
@@ -72,7 +72,13 @@ namespace Cosmos.Editor.Resource
                         objectState = "INVALID";
                         stateIcon = ResourceEditorUtil.GetAssetInvalidIcon();
                     }
-                    var item = new ResourceObjectTreeViewItem(i, 1, objectInfo.AssetPath, objectIcon) { ObjectName= objectInfo.ObjectName,ObjectState=objectState,ObjectStateIcon= stateIcon };
+                    var item = new ResourceObjectTreeViewItem(i, 1, objectInfo.AssetPath, objectIcon)
+                    {
+                        ObjectName = objectInfo.ObjectName,
+                        ObjectState = objectState,
+                        ObjectStateIcon = stateIcon,
+                        ObjectSize = objectInfo.FileSize
+                    };
                     allItems.Add(item);
                 }
                 SetupParentsAndChildrenFromDepths(root, allItems);
@@ -84,33 +90,38 @@ namespace Cosmos.Editor.Resource
             var length = args.GetNumVisibleColumns();
             for (int i = 0; i < length; i++)
             {
-                DrawCellGUI(args.GetCellRect(i), args.item as ResourceObjectTreeViewItem, args.GetColumn(i),ref args);
+                DrawCellGUI(args.GetCellRect(i), args.item as ResourceObjectTreeViewItem, args.GetColumn(i), ref args);
             }
         }
-        void DrawCellGUI(Rect cellRect, ResourceObjectTreeViewItem treeView, int column,ref RowGUIArgs args)
+        void DrawCellGUI(Rect cellRect, ResourceObjectTreeViewItem treeView, int column, ref RowGUIArgs args)
         {
             switch (column)
             {
                 case 0:
                     {
-                        var iconRect = new Rect(cellRect.x+2 , cellRect.y , cellRect.height , cellRect.height );
+                        var iconRect = new Rect(cellRect.x + 4, cellRect.y, cellRect.height, cellRect.height);
                         if (treeView.icon != null)
                             GUI.DrawTexture(iconRect, treeView.icon, ScaleMode.ScaleToFit);
-                        var lablCellRect = new Rect(cellRect.x + iconRect.width+ 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
+                        var lablCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
                         DefaultGUI.Label(lablCellRect, treeView.ObjectName, args.selected, args.focused);
                     }
                     break;
                 case 1:
                     {
-                        var iconRect = new Rect(cellRect.x, cellRect.y , cellRect.height, cellRect.height);
+                        var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
                         if (treeView.icon != null)
                             GUI.DrawTexture(iconRect, treeView.ObjectStateIcon, ScaleMode.ScaleToFit);
-                        var lablCellRect = new Rect(cellRect.x + iconRect.width+2, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
+                        var lablCellRect = new Rect(cellRect.x + iconRect.width + 2, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
 
                         DefaultGUI.Label(lablCellRect, treeView.ObjectState, args.selected, args.focused);
                     }
                     break;
                 case 2:
+                    {
+                        DefaultGUI.Label(cellRect, treeView.ObjectSize, args.selected, args.focused);
+                    }
+                    break;
+                case 3:
                     {
                         DefaultGUI.Label(cellRect, treeView.displayName, args.selected, args.focused);
                     }

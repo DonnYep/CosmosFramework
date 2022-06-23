@@ -149,5 +149,20 @@ namespace Cosmos.Editor
         {
             return src.Remove(0, Application.dataPath.Length - 6);
         }
+        public static string GetAssetFileSize(string assetPath)
+        {
+            if (!assetPath.StartsWith("Assets"))
+                return "<NULL>";
+            var fullPath = Path.Combine(ApplicationPath(), assetPath);
+            var len = Utility.IO.GetFileSize(fullPath);
+            return EditorUtility.FormatBytes(len);
+        }
+        public static long GetAssetFileSizeLength(string assetPath)
+        {
+            if (!assetPath.StartsWith("Assets"))
+                return 0;
+            var fullPath = Path.Combine(ApplicationPath(), assetPath);
+            return Utility.IO.GetFileSize(fullPath);
+        }
     }
 }

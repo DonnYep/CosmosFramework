@@ -41,13 +41,26 @@ namespace Cosmos.Editor.Resource
         {
             var columns = new[]
             {
-            new MultiColumnHeaderState.Column
+                new MultiColumnHeaderState.Column
+                {
+                    headerContent = new GUIContent("Size"),
+                    headerTextAlignment = TextAlignment.Left,
+                    sortingArrowAlignment = TextAlignment.Left,
+                    sortedAscending = false,
+                    minWidth=64,
+                    width=72,
+                    maxWidth=128,
+                    autoResize = true,
+                },
+                new MultiColumnHeaderState.Column
                 {
                     headerContent = new GUIContent("Bundle"),
                     headerTextAlignment = TextAlignment.Left,
                     sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
+                    minWidth=192,
                     width = 768,
+                    maxWidth=1024,
                     autoResize = false,
                     canSort=true
                 }
@@ -63,34 +76,45 @@ namespace Cosmos.Editor.Resource
                 {
                     headerContent = new GUIContent("Name"),
                     headerTextAlignment = TextAlignment.Left,
-                    sortingArrowAlignment = TextAlignment.Center,
+                    sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
                     minWidth=128,
                     width = 256,
                     maxWidth=512,
-                    autoResize = false,
+                    autoResize = true,
                 },
                 new MultiColumnHeaderState.Column
                 {
                     headerContent = new GUIContent("State"),
                     headerTextAlignment = TextAlignment.Left,
-                    sortingArrowAlignment = TextAlignment.Center,
+                    sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
                     minWidth=64,
-                    width=128,
+                    width=96,
                     maxWidth=192,
-                    autoResize = false,
+                    autoResize = true,
+                },
+                new MultiColumnHeaderState.Column
+                {
+                    headerContent = new GUIContent("Size"),
+                    headerTextAlignment = TextAlignment.Left,
+                    sortingArrowAlignment = TextAlignment.Left,
+                    sortedAscending = false,
+                    minWidth=64,
+                    width=72,
+                    maxWidth=128,
+                    autoResize = true,
                 },
                 new MultiColumnHeaderState.Column
                 {
                     headerContent = new GUIContent("AssetPath"),
                     headerTextAlignment = TextAlignment.Left,
-                    sortingArrowAlignment = TextAlignment.Center,
+                    sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
                     minWidth=192,
-                    width=512,
+                    width=768,
                     maxWidth=1024,
-                    autoResize = false,
+                    autoResize = true,
                 }
             };
 

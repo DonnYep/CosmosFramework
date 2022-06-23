@@ -12,7 +12,7 @@ namespace Cosmos.Editor.Resource
         public Action<List<ResourceBundleInfo>> onDelete;
         public Action onAllDelete;
         public Action<int> onBundleClick;
-        public ResourceBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state,multiColumnHeader)
+        public ResourceBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
             showAlternatingRowBackgrounds = true;
@@ -68,6 +68,35 @@ namespace Cosmos.Editor.Resource
             }
             menu.ShowAsContext();
         }
+        protected override void RowGUI(RowGUIArgs args)
+        {
+            var length = args.GetNumVisibleColumns();
+            for (int i = 0; i < length; i++)
+            {
+                DrawCellGUI(args.GetCellRect(i), args.item as ResourceBundleTreeViewItem, args.GetColumn(i), ref args);
+            }
+        }
+        void DrawCellGUI(Rect cellRect, ResourceBundleTreeViewItem treeView, int column, ref RowGUIArgs args)
+        {
+            switch (column)
+            {
+                case 0:
+                    {
+                        var lablCellRect = new Rect(cellRect.x + 4, cellRect.y, cellRect.width, cellRect.height);
+                        DefaultGUI.Label(lablCellRect, treeView.BundleSize, args.selected, args.focused);
+                    }
+                    break;
+                case 1:
+                    {
+                        var iconRect = new Rect(cellRect.x + 2, cellRect.y, cellRect.height, cellRect.height);
+                        if (treeView.icon != null)
+                            GUI.DrawTexture(iconRect, treeView.icon, ScaleMode.ScaleToFit);
+                        var lablCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
+                        DefaultGUI.Label(lablCellRect, treeView.displayName, args.selected, args.focused);
+                    }
+                    break;
+            }
+        }
         void DeleteAll()
         {
             bundleList.Clear();
@@ -99,7 +128,7 @@ namespace Cosmos.Editor.Resource
             {
                 for (int i = 0; i < bundleList.Count; i++)
                 {
-                    var item = new TreeViewItem { id = i, depth = 1, displayName = bundleList[i].BundleName, icon = assetIcon };
+                    var item = new ResourceBundleTreeViewItem(i, 1, bundleList[i].BundleName, assetIcon) { BundleSize=bundleList[i].BundleSize};
                     allItems.Add(item);
                 }
                 SetupParentsAndChildrenFromDepths(root, allItems);

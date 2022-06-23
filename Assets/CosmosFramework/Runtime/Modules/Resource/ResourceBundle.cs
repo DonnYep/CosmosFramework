@@ -17,6 +17,8 @@ namespace Cosmos.Resource
         List<string> dependList;
         [SerializeField]
         List<ResourceObject> resourceObjectList;
+        [SerializeField]
+        long bundleSize;
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
@@ -43,6 +45,19 @@ namespace Cosmos.Resource
                 if (resourceObjectList == null)
                     resourceObjectList = new List<ResourceObject>();
                 return resourceObjectList;
+            }
+        }
+        /// <summary>
+        ///  包体数据数据长度，用于验证数据完整性；
+        /// </summary>
+        public long BundleSize
+        {
+            get { return bundleSize; }
+            set
+            {
+                bundleSize = value;
+                if (bundleSize < 0)
+                    bundleSize = 0;
             }
         }
         public ResourceBundle(string bundleName)
