@@ -9,9 +9,9 @@ namespace Cosmos.Editor.Resource
     {
         readonly List<ResourceBundleInfo> bundleList = new List<ResourceBundleInfo>();
 
-        public Action<List<ResourceBundleInfo>> onDelete;
+        public Action<IList<int>> onSelectionChanged;
+        public Action<IList<int>> onDelete;
         public Action onAllDelete;
-        public Action<int> onBundleClick;
         public ResourceBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
@@ -41,11 +41,6 @@ namespace Cosmos.Editor.Resource
                 Reload();
             }
         }
-        protected override void SingleClickedItem(int id)
-        {
-            base.SingleClickedItem(id);
-            onBundleClick?.Invoke(id);
-        }
         protected override void DoubleClickedItem(int id)
         {
             base.SingleClickedItem(id);
@@ -53,17 +48,11 @@ namespace Cosmos.Editor.Resource
         }
         protected override void ContextClickedItem(int id)
         {
-            onBundleClick?.Invoke(id);
-            List<ResourceBundleInfo> selectedNodes = new List<ResourceBundleInfo>();
             var selected = GetSelection();
-            foreach (var nodeId in selected)
-            {
-                selectedNodes.Add(bundleList[nodeId]);
-            }
             GenericMenu menu = new GenericMenu();
-            if (selectedNodes.Count >= 1)
+            if (selected.Count >= 1)
             {
-                menu.AddItem(new GUIContent("Delete bundle"), false, Delete, selectedNodes);
+                menu.AddItem(new GUIContent("Delete bundle"), false, Delete, selected);
                 menu.AddItem(new GUIContent("Delete all bundle"), false, DeleteAll);
             }
             menu.ShowAsContext();
@@ -75,6 +64,26 @@ namespace Cosmos.Editor.Resource
             {
                 DrawCellGUI(args.GetCellRect(i), args.item as ResourceBundleTreeViewItem, args.GetColumn(i), ref args);
             }
+        }
+        protected override TreeViewItem BuildRoot()
+        {
+            var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
+            var assetIcon = ResourceEditorUtil.GetFolderIcon();
+            var allItems = new List<TreeViewItem>();
+            {
+                for (int i = 0; i < bundleList.Count; i++)
+                {
+                    var item = new ResourceBundleTreeViewItem(i, 1, bundleList[i].BundleName, assetIcon) { BundleSize = bundleList[i].BundleSize };
+                    allItems.Add(item);
+                }
+                SetupParentsAndChildrenFromDepths(root, allItems);
+                return root;
+            }
+        }
+        protected override void SelectionChanged(IList<int> selectedIds)
+        {
+            base.SelectionChanged(selectedIds);
+            onSelectionChanged?.Invoke(selectedIds);
         }
         void DrawCellGUI(Rect cellRect, ResourceBundleTreeViewItem treeView, int column, ref RowGUIArgs args)
         {
@@ -107,12 +116,21 @@ namespace Cosmos.Editor.Resource
         {
             try
             {
-                var list = context as List<ResourceBundleInfo>;
-                for (int i = 0; i < list.Count; i++)
+                var list = context as IList<int>;
+                var length = list.Count;
+                var rmbundles = new ResourceBundleInfo[length];
+                for (int i = 0; i < length; i++)
                 {
-                    RemoveBundle(list[i]);
+                    var rmid = list[i];
+                    rmbundles[i] = bundleList[rmid];
+                }
+                var rmlen = rmbundles.Length;
+                for (int i = 0; i < rmlen; i++)
+                {
+                    bundleList.Remove(rmbundles[i]);
                 }
                 onDelete?.Invoke(list);
+                SetSelection(new int[0]);
                 Reload();
             }
             catch (Exception e)
@@ -120,20 +138,6 @@ namespace Cosmos.Editor.Resource
                 EditorUtil.Debug.LogError(e);
             }
         }
-        protected override TreeViewItem BuildRoot()
-        {
-            var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
-            var assetIcon = ResourceEditorUtil.GetFolderIcon();
-            var allItems = new List<TreeViewItem>();
-            {
-                for (int i = 0; i < bundleList.Count; i++)
-                {
-                    var item = new ResourceBundleTreeViewItem(i, 1, bundleList[i].BundleName, assetIcon) { BundleSize=bundleList[i].BundleSize};
-                    allItems.Add(item);
-                }
-                SetupParentsAndChildrenFromDepths(root, allItems);
-                return root;
-            }
-        }
+
     }
 }

@@ -12,7 +12,7 @@ namespace Cosmos.Editor.Resource
         TreeViewState treeViewState;
         ResourceBundleTreeView treeView;
 
-        public event Action<List<ResourceBundleInfo>> OnDelete
+        public event Action<IList<int>> OnDelete
         {
             add { treeView.onDelete += value; }
             remove { treeView.onDelete -= value; }
@@ -22,10 +22,10 @@ namespace Cosmos.Editor.Resource
             add { treeView.onAllDelete += value; }
             remove { treeView.onAllDelete -= value; }
         }
-        public event Action<int> onBundleClick
+        public event Action<IList<int>> OnSelectionChanged
         {
-            add { treeView.onBundleClick += value; }
-            remove { treeView.onBundleClick -= value; }
+            add { treeView.onSelectionChanged+= value; }
+            remove { treeView.onSelectionChanged-= value; }
         }
         public void OnEnable()
         {
@@ -48,10 +48,6 @@ namespace Cosmos.Editor.Resource
         public bool AddBundle(ResourceBundleInfo bundleInfo)
         {
             return treeView.AddBundle(bundleInfo);
-        }
-        public void SetSetSelectionBundle(int index)
-        {
-            treeView.SetSelection(new int[] { index });
         }
         void DrawTreeView(Rect rect)
         {

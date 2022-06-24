@@ -1,12 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Cosmos.Editor.Resource
 {
     [Serializable]
     public class AssetDatasetTabData
     {
+        List<int> selectedBundleIds;
+
         /// <summary>
-        /// 当前点击的bundle序号；
+        /// 当前被选择的bundleId集合
         /// </summary>
-        public int HighlightBundleIndex;
+        public List<int> SelectedBundleIds
+        {
+            get
+            {
+                if (selectedBundleIds == null)
+                    selectedBundleIds = new List<int>();
+                return selectedBundleIds;
+            }
+            set
+            {
+                selectedBundleIds = value;
+                if (selectedBundleIds == null)
+                    selectedBundleIds = new List<int>();
+            }
+        }
     }
 }
