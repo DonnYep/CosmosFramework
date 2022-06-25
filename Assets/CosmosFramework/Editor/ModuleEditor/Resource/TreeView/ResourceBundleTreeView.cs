@@ -12,6 +12,11 @@ namespace Cosmos.Editor.Resource
         public Action<IList<int>> onSelectionChanged;
         public Action<IList<int>> onDelete;
         public Action onAllDelete;
+        /// <summary>
+        /// 上一行的cellRect
+        /// </summary>
+        Rect latestBundleCellRect;
+        string originalName;
         public ResourceBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
@@ -65,6 +70,23 @@ namespace Cosmos.Editor.Resource
                 DrawCellGUI(args.GetCellRect(i), args.item as ResourceBundleTreeViewItem, args.GetColumn(i), ref args);
             }
         }
+        protected override bool CanRename(TreeViewItem item)
+        {
+            originalName = item.displayName;
+            item.displayName = null;
+            BeginRename(item);
+            return item != null;
+        }
+        protected override void RenameEnded(RenameEndedArgs args)
+        {
+            base.RenameEnded(args);
+            var item= FindItem(args.itemID,rootItem);
+            item.displayName = originalName;
+        }
+        protected override Rect GetRenameRect(Rect rowRect, int row, TreeViewItem item)
+        {
+            return new Rect(latestBundleCellRect.x, latestBundleCellRect.height * row, latestBundleCellRect.width, latestBundleCellRect.height);
+        }
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
@@ -100,8 +122,9 @@ namespace Cosmos.Editor.Resource
                         var iconRect = new Rect(cellRect.x + 2, cellRect.y, cellRect.height, cellRect.height);
                         if (treeView.icon != null)
                             GUI.DrawTexture(iconRect, treeView.icon, ScaleMode.ScaleToFit);
-                        var lablCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-                        DefaultGUI.Label(lablCellRect, treeView.displayName, args.selected, args.focused);
+                        var lableCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
+                        DefaultGUI.Label(lableCellRect, treeView.displayName, args.selected, args.focused);
+                        latestBundleCellRect = lableCellRect;
                     }
                     break;
             }
