@@ -39,8 +39,8 @@ namespace Cosmos.Editor.Resource
             }
             assetDatabaseTab.OnEnable();
             assetBundleTab.OnEnable();
+            assetBundleTab.BuildDataset = assetDatabaseTab.BuildDataset;
         }
-
         void OnDisable()
         {
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
@@ -109,7 +109,7 @@ namespace Cosmos.Editor.Resource
                     assetDatabaseTab.OnGUI(this.position);
                     break;
                 case 1:
-                    assetBundleTab.OnGUI();
+                    assetBundleTab.OnGUI(this.position);
                     break;
             }
 

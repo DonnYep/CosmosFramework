@@ -13,7 +13,7 @@
             ".wav",".txt",".prefab",".xml",".shadervariants",".shader",".anim",
             ".unity",".mat",".mask",".overrideController",".tif",".spriteatlas",
             ".mp3",".ogg",".aiff",".tga",".dds",".bytes",".json",".asset",".mp4",
-            ".xls",".xlsx",".docx",".doc",".mov",".renderTexture",".csv"
+            ".xls",".xlsx",".docx",".doc",".mov",".renderTexture",".csv",".fbx"
         };
     }
 }

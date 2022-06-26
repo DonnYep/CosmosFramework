@@ -24,8 +24,13 @@ namespace Cosmos.Editor.Resource
         }
         public event Action<IList<int>> OnSelectionChanged
         {
-            add { treeView.onSelectionChanged+= value; }
-            remove { treeView.onSelectionChanged-= value; }
+            add { treeView.onSelectionChanged += value; }
+            remove { treeView.onSelectionChanged -= value; }
+        }
+        public event Action<int, string> OnRenameBundle
+        {
+            add { treeView.onRenameBundle += value; }
+            remove { treeView.onRenameBundle -= value; }
         }
         public void OnEnable()
         {
@@ -49,9 +54,13 @@ namespace Cosmos.Editor.Resource
         {
             return treeView.AddBundle(bundleInfo);
         }
+        public void SetSelection(IList<int> selectedIds)
+        {
+            treeView.SetSelection(selectedIds);
+        }
         void DrawTreeView(Rect rect)
         {
-            var width= rect.width * 0.382f;
+            var width = rect.width * 0.382f;
             GUILayout.BeginVertical(GUILayout.MaxWidth(width));
             {
                 GUILayout.BeginHorizontal();

@@ -19,10 +19,16 @@ namespace Cosmos.Resource
         List<ResourceObject> resourceObjectList;
         [SerializeField]
         long bundleSize;
+        [SerializeField]
+        string bundlePath;
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
-        public string BundleName { get { return bundleName; } }
+        public string BundleName { get { return bundleName; } set { bundleName = value; } }
+        /// <summary>
+        /// AB包在Assets目录下的地址；
+        /// </summary>
+        public string BundlePath { get { return bundlePath; } }
         /// <summary>
         /// 资源的依赖项；
         /// </summary>
@@ -63,6 +69,11 @@ namespace Cosmos.Resource
         public ResourceBundle(string bundleName)
         {
             this.bundleName = bundleName;
+        }
+        public ResourceBundle(string bundleName,string bundlePath)
+        {
+            this.bundleName = bundleName;
+            this.bundlePath = bundlePath;
         }
         public bool Equals(ResourceBundle other)
         {

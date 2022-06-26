@@ -16,7 +16,7 @@
             var bundleManifest = resourceManifest.BundleManifestDict;
             foreach (var manifest in bundleManifest.Values)
             {
-                resourceBundleDict.TryAdd(manifest.BundleName, new ResourceBundleWarpper(manifest.ResourceBundle));
+                resourceBundleDict.TryAdd(manifest.ResourceBundle.BundleName, new ResourceBundleWarpper(manifest.ResourceBundle));
                 var objList = manifest.ResourceBundle.ResourceObjectList;
                 var length = objList.Count;
                 for (int i = 0; i < length; i++)

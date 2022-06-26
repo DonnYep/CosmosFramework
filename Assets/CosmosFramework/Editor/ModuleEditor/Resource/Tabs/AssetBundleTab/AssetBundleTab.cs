@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
+using Unity.EditorCoroutines.Editor;
+
 namespace Cosmos.Editor.Resource
 {
     public class AssetBundleTab
     {
+        public Func<EditorCoroutine> BuildDataset;
+        public const string AssetBundleTabDataName = "ResourceEditor_AsseBundleTabData.json";
+        AssetBundleTabData tabData;
 
         public void OnEnable()
         {
@@ -16,9 +20,9 @@ namespace Cosmos.Editor.Resource
         public void OnDisable()
         {
         }
-        public void OnGUI()
+        public void OnGUI(Rect rect)
         {
-            EditorGUILayout.LabelField("WIP");
+            DrawLable();
         }
         public void OnDatasetAssign()
         {
@@ -30,7 +34,23 @@ namespace Cosmos.Editor.Resource
         }
         void DrawLable()
         {
-
+            EditorGUILayout.LabelField("WIP");
+        }
+        void GetTabData()
+        {
+            try
+            {
+                tabData = EditorUtil.GetData<AssetBundleTabData>(AssetBundleTabDataName);
+            }
+            catch
+            {
+                tabData = new AssetBundleTabData();
+                EditorUtil.SaveData(AssetBundleTabDataName, tabData);
+            }
+        }
+        void SaveTabData()
+        {
+            EditorUtil.SaveData(AssetBundleTabDataName, tabData);
         }
     }
 }

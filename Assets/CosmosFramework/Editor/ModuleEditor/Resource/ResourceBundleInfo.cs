@@ -6,15 +6,20 @@ namespace Cosmos.Editor.Resource
     /// </summary>
     public struct ResourceBundleInfo : IEquatable<ResourceBundleInfo>
     {
-        public ResourceBundleInfo(string bundleName, string bundleSize)
+        public ResourceBundleInfo(string bundleName,string bundlePath, string bundleSize)
         {
             BundleName = bundleName;
             BundleSize = bundleSize;
+            BundlePath = bundlePath;
         }
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
         public string BundleName { get; private set; }
+        /// <summary>
+        /// 资源包在Assets目录下的地址
+        /// </summary>
+        public string BundlePath { get; private set; }
         /// <summary>
         /// 编辑器模式下包体的大小
         /// </summary>
@@ -22,11 +27,12 @@ namespace Cosmos.Editor.Resource
 
         public bool Equals(ResourceBundleInfo other)
         {
-            return other.BundleName == this.BundleName;
+            return other.BundleName == this.BundleName &&
+                other.BundlePath == this.BundlePath; ;
         }
         public override int GetHashCode()
         {
-            return $"{BundleName}".GetHashCode();
+            return $"{BundleName}{BundlePath}".GetHashCode();
         }
         public override bool Equals(object obj)
         {

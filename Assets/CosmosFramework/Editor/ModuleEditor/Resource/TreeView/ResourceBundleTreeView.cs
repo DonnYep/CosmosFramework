@@ -12,6 +12,7 @@ namespace Cosmos.Editor.Resource
         public Action<IList<int>> onSelectionChanged;
         public Action<IList<int>> onDelete;
         public Action onAllDelete;
+        public Action<int, string> onRenameBundle;
         /// <summary>
         /// 上一行的cellRect
         /// </summary>
@@ -55,10 +56,18 @@ namespace Cosmos.Editor.Resource
         {
             var selected = GetSelection();
             GenericMenu menu = new GenericMenu();
-            if (selected.Count >= 1)
+            if (selected.Count == 1)
             {
                 menu.AddItem(new GUIContent("Delete bundle"), false, Delete, selected);
                 menu.AddItem(new GUIContent("Delete all bundle"), false, DeleteAll);
+                menu.AddItem(new GUIContent("Reset bundle name"), false, ResetBundleName, id);
+                menu.AddItem(new GUIContent("Reset all bundle name"), false, ResetAllBundleName);
+            }
+            else if (selected.Count > 1)
+            {
+                menu.AddItem(new GUIContent("Delete bundle"), false, Delete, selected);
+                menu.AddItem(new GUIContent("Delete all bundle"), false, DeleteAll);
+                menu.AddItem(new GUIContent("Reset all bundle name"), false, ResetAllBundleName);
             }
             menu.ShowAsContext();
         }
@@ -79,9 +88,38 @@ namespace Cosmos.Editor.Resource
         }
         protected override void RenameEnded(RenameEndedArgs args)
         {
+            var item = FindItem(args.itemID, rootItem);
+            if (!string.IsNullOrEmpty(args.newName))
+            {
+                //防止重名
+                var canUse = true;
+                var newName = args.newName;
+                var length = bundleList.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    if (bundleList[i].BundleName == newName)
+                    {
+                        canUse = false;
+                        break;
+                    }
+                }
+                if (canUse)
+                {
+                    var bundleInfo = bundleList[args.itemID];
+                    bundleList[args.itemID] = new ResourceBundleInfo(newName, bundleInfo.BundlePath, bundleInfo.BundleSize);
+                    item.displayName = args.newName;
+                    onRenameBundle?.Invoke(args.itemID, args.newName);
+                }
+                else
+                {
+                    item.displayName = originalName;
+                }
+            }
+            else
+            {
+                item.displayName = originalName;
+            }
             base.RenameEnded(args);
-            var item= FindItem(args.itemID,rootItem);
-            item.displayName = originalName;
         }
         protected override Rect GetRenameRect(Rect rowRect, int row, TreeViewItem item)
         {
@@ -161,6 +199,26 @@ namespace Cosmos.Editor.Resource
                 EditorUtil.Debug.LogError(e);
             }
         }
-
+        void ResetBundleName(object context)
+        {
+            var itemId = Convert.ToInt32(context);
+            var item = FindItem(itemId, rootItem);
+            var bundleInfo = bundleList[itemId];
+            item.displayName = bundleInfo.BundlePath;
+            bundleList[itemId] = new ResourceBundleInfo(bundleInfo.BundlePath, bundleInfo.BundlePath, bundleInfo.BundleSize);
+            onRenameBundle?.Invoke(itemId, bundleInfo.BundlePath);
+        }
+        void ResetAllBundleName()
+        {
+            var length = bundleList.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var item = FindItem(i, rootItem);
+                var bundleInfo = bundleList[i];
+                item.displayName = bundleInfo.BundlePath;
+                bundleList[i] = new ResourceBundleInfo(bundleInfo.BundlePath, bundleInfo.BundlePath, bundleInfo.BundleSize);
+                onRenameBundle?.Invoke(i, bundleInfo.BundlePath);
+            }
+        }
     }
 }

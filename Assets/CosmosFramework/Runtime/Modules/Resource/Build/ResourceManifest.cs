@@ -13,7 +13,6 @@ namespace Cosmos.Resource
         [Serializable]
         public class BundleManifest
         {
-            public string BundleName { get; set; }
             /// <summary>
             /// AB打包出来之后生成的Hash码；
             /// </summary>
