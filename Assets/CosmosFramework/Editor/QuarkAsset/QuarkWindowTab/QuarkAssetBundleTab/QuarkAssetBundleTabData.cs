@@ -45,7 +45,6 @@ namespace Quark.Editor
         {
             BuildTarget = BuildTarget.StandaloneWindows;
             OutputPath = Path.Combine(Path.GetFullPath("."), "AssetBundles").Replace("\\","/");
-            UseDefaultPath = true;
             ClearOutputFolders = true;
             CopyToStreamingAssets = false;
             StreamingRelativePath = string.Empty;

@@ -65,7 +65,7 @@ namespace Cosmos.Editor.Resource
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Label("Search bundle");
+                    EditorGUILayout.LabelField("Search bundle", EditorStyles.boldLabel, GUILayout.MaxWidth(128));
                     treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
                 }
                 GUILayout.EndHorizontal();

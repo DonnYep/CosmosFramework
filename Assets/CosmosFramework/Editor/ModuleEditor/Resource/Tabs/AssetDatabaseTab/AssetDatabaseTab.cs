@@ -54,7 +54,7 @@ namespace Cosmos.Editor.Resource
             {
                 if (hasChanged)
                     EditorGUILayout.HelpBox("Dataset has been changed, please \"Build Dataset\" !", MessageType.Warning);
-                EditorGUILayout.BeginHorizontal("box");
+                EditorGUILayout.BeginHorizontal();
                 {
                     DrawDragRect();
                     resourceBundleLable.OnGUI(rect);

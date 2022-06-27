@@ -175,7 +175,6 @@ namespace Quark.Editor
         }
         void BrowseFolder()
         {
-            assetBundleTabData.UseDefaultPath = false;
             var newPath = EditorUtility.OpenFolderPanel("Bundle Folder", assetBundleTabData.OutputPath, string.Empty);
             if (!string.IsNullOrEmpty(newPath))
             {
@@ -184,7 +183,6 @@ namespace Quark.Editor
         }
         void ResetPath()
         {
-            assetBundleTabData.UseDefaultPath = true;
             assetBundleTabData.OutputPath = Path.Combine(Path.GetFullPath("."), "AssetBundles").Replace("\\", "/");
             assetBundleTabData.BuildTarget = BuildTarget.StandaloneWindows;
         }

@@ -7,21 +7,29 @@ namespace Cosmos.Editor.Resource
     public class AssetBundleTabData
     {
         /// <summary>
-        /// AB打包选项；
-        /// </summary>
-        public BuildAssetBundleOptions BuildAssetBundleOptions;
-        /// <summary>
         /// AB打包到的平台
         /// </summary>
         public BuildTarget BuildTarget;
+        /// <summary>
+        /// AB打包选项；
+        /// </summary>
+        public BuildAssetBundleOptions BuildAssetBundleOptions;
         /// <summary>
         /// AB包名称类型
         /// </summary>
         public AssetBundleNameType AssetBundleNameType;
         /// <summary>
+        /// AB打包输出的绝对路径；
+        /// </summary>
+        public string AssetBundleBuildPath;
+        /// <summary>
         /// AB输出目录；
         /// </summary>
-        public string OutputPath;
+        public string BuildPath;
+        /// <summary>
+        /// 打包的版本；
+        /// </summary>
+        public string BuildVersion;
         /// <summary>
         /// AB偏移加密；
         /// </summary>
@@ -42,12 +50,13 @@ namespace Cosmos.Editor.Resource
         {
             BuildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression;
             BuildTarget = BuildTarget.StandaloneWindows;
-            OutputPath = "AssetBundles/StandaloneWindows";
+            BuildPath = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), "AssetBundles");
             AssetBundleEncryption = false;
             AssetBundleOffsetValue = 16;
             BuildInfoEncryption = false;
             BuildInfoEncryptionKey = "CosmosBundlesKey";
             AssetBundleNameType = AssetBundleNameType.DefaultName;
+            BuildVersion = "0.0.1";
         }
     }
 }

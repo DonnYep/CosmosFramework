@@ -1,4 +1,5 @@
-﻿using UnityEditor.IMGUI.Controls;
+﻿using UnityEditor;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 namespace Cosmos.Editor.Resource
@@ -40,7 +41,7 @@ namespace Cosmos.Editor.Resource
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Label("Search object");
+                    EditorGUILayout.LabelField("Search object", EditorStyles.boldLabel,GUILayout.MaxWidth(128));
                     treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
                 }
                 GUILayout.EndHorizontal();
