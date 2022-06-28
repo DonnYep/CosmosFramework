@@ -147,11 +147,12 @@ namespace Quark.Editor
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
             var allItems = new List<TreeViewItem>();
+            var assetIcon = EditorGUIUtility.FindTexture("PreMatCube");
             if (canRender)
             {
                 for (int i = 0; i < pathList.Count; i++)
                 {
-                    var item = new TreeViewItem { id = i, depth = 1, displayName = pathList[i] };
+                    var item = new TreeViewItem { id = i, depth = 1, displayName = pathList[i] ,icon=assetIcon};
                     allItems.Add(item);
                 }
             }

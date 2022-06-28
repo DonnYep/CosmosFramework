@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
+using UnityEngine;
 
 namespace Quark.Editor
 {
@@ -46,11 +47,22 @@ namespace Quark.Editor
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
+            Texture2D objectIcon = null;
             var allItems = new List<TreeViewItem>();
             {
                 for (int i = 0; i < pathList.Count; i++)
                 {
-                    var item = new TreeViewItem { id = i, depth = 1, displayName = pathList[i] };
+                    var obj = AssetDatabase.LoadMainAssetAtPath(pathList[i]);
+                    bool isValidAsset = obj != null;
+                    if (isValidAsset)
+                    {
+                        objectIcon = QuarkAssetEditorUtility.ToTexture2D(EditorGUIUtility.ObjectContent(obj, obj.GetType()).image);
+                    }
+                    else
+                    {
+                        objectIcon = EditorGUIUtility.FindTexture("console.erroricon");
+                    }
+                    var item = new TreeViewItem { id = i, depth = 1, displayName = pathList[i],icon=objectIcon };
                     allItems.Add(item);
                 }
                 SetupParentsAndChildrenFromDepths(root, allItems);

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEngine;
 
 namespace Quark.Editor
 {
@@ -32,6 +33,23 @@ namespace Quark.Editor
             };
             BuildPipeline.BuildPlayer(buildOptions);
             AssetDatabase.Refresh();
+        }
+        /// <summary>
+        /// 获取原生Folder资源icon
+        /// </summary>
+        /// <returns>icon</returns>
+        public static Texture2D GetFolderIcon()
+        {
+            return EditorGUIUtility.FindTexture("Folder Icon");
+        }
+        public static Texture2D ToTexture2D(Texture texture)
+        {
+            return Texture2D.CreateExternalTexture(
+                texture.width,
+                texture.height,
+                TextureFormat.RGB24,
+                false, false,
+                texture.GetNativeTexturePtr());
         }
         /// <summary>
         /// 获取除自生以外的依赖资源的所有路径；

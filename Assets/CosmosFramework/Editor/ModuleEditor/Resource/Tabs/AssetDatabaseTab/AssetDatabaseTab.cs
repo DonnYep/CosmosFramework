@@ -246,6 +246,7 @@ namespace Cosmos.Editor.Resource
                 var files = Utility.IO.GetAllFiles(bundlePath);
                 var fileLength = files.Length;
                 var bundle = bundles[i];
+                bundle.ResourceObjectList.Clear();
                 long bundleSize = 0;
                 for (int j = 0; j < fileLength; j++)
                 {
