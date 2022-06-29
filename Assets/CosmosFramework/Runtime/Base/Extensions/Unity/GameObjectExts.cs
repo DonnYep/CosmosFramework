@@ -429,14 +429,5 @@ where T : Component
         {
             return @this.GetComponent(type) != null;
         }
-        /// <summary>
-        /// 是否为空
-        /// </summary>
-        /// <param name="go"></param>
-        /// <returns></returns>
-        public static bool IsNull(this GameObject go)
-        {
-            return go == null;
-        }
     }
 }
