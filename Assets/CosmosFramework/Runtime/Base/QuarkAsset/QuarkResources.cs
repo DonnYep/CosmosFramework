@@ -164,6 +164,10 @@ where T : Object
         {
             return QuarkEngine.Instance.LoadAssetWithSubAssetsAsync(assetName, assetExtension, type,callback);
         }
+        public static Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback)
+        {
+            return QuarkEngine.Instance.LoadAllAssetAsync(assetBundleName,  callback);
+        }
         public static Coroutine LoadSceneAsync(string sceneName, Action<float> progress, Action callback, bool additive = false)
         {
             return QuarkEngine.Instance.LoadSceneAsync(sceneName, null, progress, null, callback, additive);

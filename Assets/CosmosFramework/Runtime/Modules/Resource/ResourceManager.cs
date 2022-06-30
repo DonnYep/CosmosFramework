@@ -74,12 +74,12 @@ namespace Cosmos.Resource
             return currentLoadHelper.LoadAssetAsync(assetName, type, callback, progress);
         }
         /// <inheritdoc/>
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            return currentLoadHelper.LoadAssetWithSubAssetsAsync<T>(assetName, callback, progress);
+            return currentLoadHelper.LoadMainAndSubAssetsAsync<T>(assetName, callback, progress);
         }
         /// <inheritdoc/>
-        public Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress = null)
+        public Coroutine LoadMainAndSubAssetsAsync(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress = null)
         {
             return currentLoadHelper.LoadAssetWithSubAssetsAsync(assetName, type, callback, progress);
         }

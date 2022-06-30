@@ -20,7 +20,7 @@ namespace Cosmos.Test
             return QuarkResources.LoadAssetAsync(assetName, callback);
         }
         ///<inheritdoc/>
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
             return QuarkResources.LoadAssetWithSubAssetsAsync<T>(assetName, string.Empty, callback);
         }

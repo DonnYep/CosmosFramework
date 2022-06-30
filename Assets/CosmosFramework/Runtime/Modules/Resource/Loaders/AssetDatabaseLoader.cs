@@ -52,7 +52,7 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, callback, progress));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
             return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, callback, progress));
         }
@@ -300,7 +300,6 @@ where T : UnityEngine.Object
             callback?.Invoke(assetList.ToArray());
             progress?.Invoke(1);
         }
-
         /// <summary>
         /// 增加一个引用计数
         /// </summary>

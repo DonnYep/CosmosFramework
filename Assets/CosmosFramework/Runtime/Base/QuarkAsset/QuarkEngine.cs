@@ -239,6 +239,12 @@ where T : UnityEngine.Object
                 return loader.LoadAssetWithSubAssetsAsync(assetName, assetExtension, type, callback);
             return null;
         }
+        internal Coroutine LoadAllAssetAsync(string assetBundleName,Action<Object[]>callback)
+        {
+            if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
+                return loader.LoadAllAssetAsync(assetBundleName, callback);
+            return null;
+        }
         internal Coroutine LoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive = false)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))

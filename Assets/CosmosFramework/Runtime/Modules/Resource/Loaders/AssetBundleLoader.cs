@@ -49,7 +49,7 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, type, callback, progress));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : Object
+        public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : Object
         {
             return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync<T>(assetName, callback, progress));
         }

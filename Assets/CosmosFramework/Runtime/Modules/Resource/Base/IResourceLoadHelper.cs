@@ -45,7 +45,7 @@ namespace Cosmos.Resource
         /// <param name="callback">加载完成事件</param>
         /// <param name="progress">加载中事件</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object;
+        Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object;
         /// <summary>
         /// 加载资源以及子资源（异步）；
         /// </summary>
