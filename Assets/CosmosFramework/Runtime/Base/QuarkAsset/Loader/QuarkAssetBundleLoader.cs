@@ -175,7 +175,7 @@ namespace Quark.Loader
             T[] assets = null;
             string assetBundleName = string.Empty;
             AssetBundle assetBundle = null;
-            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, typeof(T),out var wapper);
+            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, typeof(T), out var wapper);
             if (hasWapper)
             {
                 assetBundleName = wapper.QuarkAssetObject.AssetBundleName;
@@ -240,7 +240,7 @@ namespace Quark.Loader
             }
             return assets;
         }
-        public override Object[] LoadAssetWithSubAssets(string assetName, string assetExtension,Type type)
+        public override Object[] LoadAssetWithSubAssets(string assetName, string assetExtension, Type type)
         {
             Object[] assets = null;
             string assetBundleName = string.Empty;
@@ -256,7 +256,7 @@ namespace Quark.Loader
                 if (assetBundleDict.ContainsKey(assetBundleName))
                 {
                     assetBundle = assetBundleDict[assetBundleName].AssetBundle;
-                    assets = assetBundle.LoadAssetWithSubAssets(assetName,type);
+                    assets = assetBundle.LoadAssetWithSubAssets(assetName, type);
                     if (assets != null)
                     {
                         IncrementQuarkAssetObject(wapper);
@@ -299,7 +299,7 @@ namespace Quark.Loader
                         }
                         if (assetBundle != null)
                         {
-                            assets = assetBundle.LoadAssetWithSubAssets(assetName,type);
+                            assets = assetBundle.LoadAssetWithSubAssets(assetName, type);
                             if (assets != null)
                             {
                                 IncrementQuarkAssetObject(wapper);
@@ -314,9 +314,9 @@ namespace Quark.Loader
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, assetExtension, callback));
         }
-        public override Coroutine LoadAssetAsync(string assetName, string assetExtension,Type type, Action<Object> callback)
+        public override Coroutine LoadAssetAsync(string assetName, string assetExtension, Type type, Action<Object> callback)
         {
-            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, assetExtension, type,callback));
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, assetExtension, type, callback));
         }
         public override Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false)
         {
@@ -337,9 +337,13 @@ namespace Quark.Loader
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, callback));
         }
-        public override Coroutine LoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type,Action<Object[]> callback)
+        public override Coroutine LoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
         {
-            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, type,callback));
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, type, callback));
+        }
+        public override Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback)
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAllAssetAsync(assetBundleName, callback));
         }
         public override Coroutine LoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive = false)
         {
@@ -463,11 +467,11 @@ namespace Quark.Loader
             }
             callback?.Invoke(assets);
         }
-        IEnumerator EnumLoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type,Action<Object[]> callback)
+        IEnumerator EnumLoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
         {
             Object[] assets = null;
             string assetBundleName = string.Empty;
-            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, type , out var wapper);
+            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, type, out var wapper);
             if (hasWapper)
             {
                 assetBundleName = wapper.QuarkAssetObject.AssetBundleName;
@@ -483,7 +487,7 @@ namespace Quark.Loader
             yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
             if (assetBundleDict.ContainsKey(assetBundleName))
             {
-                assets = assetBundleDict[assetBundleName].AssetBundle.LoadAssetWithSubAssets(assetName,type);
+                assets = assetBundleDict[assetBundleName].AssetBundle.LoadAssetWithSubAssets(assetName, type);
                 if (assets != null)
                 {
                     IncrementQuarkAssetObject(wapper);
@@ -520,11 +524,11 @@ where T : Object
             }
             callback?.Invoke(asset);
         }
-        IEnumerator EnumLoadAssetAsync(string assetName, string assetExtension, Type type,Action<Object> callback)
+        IEnumerator EnumLoadAssetAsync(string assetName, string assetExtension, Type type, Action<Object> callback)
         {
             Object asset = null;
             string assetBundleName = string.Empty;
-            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, type , out var wapper);
+            var hasWapper = GetAssetObjectWapper(assetName, assetExtension, type, out var wapper);
             if (hasWapper)
             {
                 assetBundleName = wapper.QuarkAssetObject.AssetBundleName;
@@ -540,7 +544,7 @@ where T : Object
             yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
             if (assetBundleDict.ContainsKey(assetBundleName))
             {
-                asset = assetBundleDict[assetBundleName].AssetBundle.LoadAsset(assetName,type);
+                asset = assetBundleDict[assetBundleName].AssetBundle.LoadAsset(assetName, type);
                 if (asset != null)
                 {
                     IncrementQuarkAssetObject(wapper);
@@ -650,6 +654,24 @@ where T : Object
             IncrementQuarkAssetObject(wapper);
             operation.allowSceneActivation = true;
             callback?.Invoke();
+        }
+        IEnumerator EnumLoadAllAssetAsync(string assetBundleName, Action<Object[]> callback)
+        {
+            if (string.IsNullOrEmpty(assetBundleName))
+                yield break;
+            yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
+            Object[] assets = null;
+            if (assetBundleDict.ContainsKey(assetBundleName))
+            {
+                var bundle = assetBundleDict[assetBundleName];
+                assets = bundle.AssetBundle.LoadAllAssets();
+                callback?.Invoke(assets);
+                var warppers = bundle.Assets;
+                foreach (var w in warppers)
+                {
+                    IncrementQuarkAssetObject(w);
+                }
+            }
         }
         IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
         {

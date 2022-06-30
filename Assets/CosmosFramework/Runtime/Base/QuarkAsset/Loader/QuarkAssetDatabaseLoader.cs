@@ -137,6 +137,10 @@ namespace Quark.Loader
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, assetExtension, type, callback));
         }
+        public override Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback)
+        {
+            return QuarkUtility.Unity.StartCoroutine(EnumLoadAllAssetAsync(assetBundleName, callback));
+        }
         public override void UnloadAsset(string assetName, string assetExtension)
         {
             if (string.IsNullOrEmpty(assetName))
@@ -253,6 +257,24 @@ namespace Quark.Loader
                 callback?.Invoke(resGo);
             }
         }
+        IEnumerator EnumLoadAllAssetAsync(string assetBundleName, Action<Object[]> callback)
+        {
+            if (string.IsNullOrEmpty(assetBundleName))
+                yield break;
+            List< Object> assetList = new List<Object>();
+            if (assetBundleDict.ContainsKey(assetBundleName))
+            {
+                var bundle = assetBundleDict[assetBundleName];
+                var warppers = bundle.Assets;
+                foreach (var w in warppers)
+                {
+                    var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(w.QuarkAssetObject.AssetPath,typeof(Object));
+                    assetList.Add(asset);
+                    IncrementQuarkAssetObject(w);
+                }
+                callback?.Invoke(assetList.ToArray());
+            }
+        }
         IEnumerator EnumLoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive)
         {
             if (loadedSceneDict.ContainsKey(sceneName))
@@ -364,5 +386,6 @@ namespace Quark.Loader
                 }
             }
         }
+
     }
 }

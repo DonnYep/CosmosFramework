@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos.Resource
@@ -40,7 +41,7 @@ namespace Cosmos.Resource
         /// <param name="loadHelper">加载帮助对象</param>
         void AddOrUpdateLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper);
         /// <summary>
-        /// 加载资源（异步）；
+        /// 加载资源（异步），增加一个引用计数；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="assetName">资源信息</param>
@@ -49,16 +50,16 @@ namespace Cosmos.Resource
         /// <returns>协程对象</returns>
         Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object;
         /// <summary>
-        /// 加载资源（异步）；
+        /// 加载资源（异步），增加一个引用计数；
         /// </summary>
         /// <param name="assetName">资源信息</param>
         /// <param name="type">资源类型</typeparam>
         /// <param name="progress">加载中事件</param>
         /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadAssetAsync(string assetName, Type type,Action<UnityEngine.Object> callback, Action<float> progress = null);
+        Coroutine LoadAssetAsync(string assetName, Type type, Action<UnityEngine.Object> callback, Action<float> progress = null);
         /// <summary>
-        /// 加载资源以及子资源；
+        /// 加载资源以及子资源（异步），增加一个引用计数；
         /// 加载资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
@@ -68,7 +69,7 @@ namespace Cosmos.Resource
         /// <returns>协程对象</returns>
         Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object;
         /// <summary>
-        /// 加载资源以及子资源；
+        /// 加载资源以及子资源（异步），增加一个引用计数；
         /// 加载资源（异步）；
         /// </summary>
         /// <param name="assetName">资源信息</param>
@@ -78,7 +79,7 @@ namespace Cosmos.Resource
         /// <returns>协程对象</returns>
         Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress = null);
         /// <summary>
-        ///  加载资源（异步）；
+        ///  加载资源（异步），增加一个引用计数；
         /// 加载预制体资源（异步）；
         /// </summary>
         /// <param name="assetName">资源信息</param>
@@ -88,7 +89,15 @@ namespace Cosmos.Resource
         /// <returns>加载协程</returns>
         Coroutine LoadPrefabAsync(string assetName, Action<GameObject> callback, Action<float> progress = null, bool instantiate = false);
         /// <summary>
-        /// 加载场景（异步）;
+        ///  加载资源包种的所有资源（异步），增加一个引用计数；
+        /// </summary>
+        /// <param name="assetBundleName">资源包</param>
+        /// <param name="callback">加载完成事件</param>
+        /// <param name="progress">加载中事件</param>
+        /// <returns>协程对象</returns>
+        Coroutine LoadAllAssetAsync(string assetBundleName, Action<UnityEngine.Object[]> callback, Action<float> progress = null);
+        /// <summary>
+        /// 加载场景（异步），增加一个引用计数;
         /// </summary>
         /// <param name="info">资源信息</param>
         /// <param name="progress">加载场景进度回调</param>
@@ -97,7 +106,7 @@ namespace Cosmos.Resource
         /// <returns>协程对象</returns>
         Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback);
         /// <summary>
-        /// 卸载场景（异步）;
+        /// 卸载场景（异步），增加一个引用计数;
         /// </summary>
         /// <param name="info">资源信息</param>
         /// <param name="progress">卸载场景的进度</param>
@@ -106,7 +115,7 @@ namespace Cosmos.Resource
         /// <returns>协程对象</returns>
         Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback);
         /// <summary>
-        /// 加载资源（异步）；
+        /// 加载资源（异步），增加一个引用计数；
         /// 须使用await获取结果；
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
@@ -115,7 +124,7 @@ namespace Cosmos.Resource
         /// <returns>加载task</returns>
         Task<T> LoadAssetAsync<T>(string assetName) where T : UnityEngine.Object;
         /// <summary>
-        /// 加载资源（异步）；
+        /// 加载资源（异步），增加一个引用计数；
         /// 须使用await获取结果；
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
@@ -124,7 +133,7 @@ namespace Cosmos.Resource
         /// <returns>加载task</returns>
         Task<UnityEngine.Object> LoadAssetAsync(string assetName, Type type);
         /// <summary>
-        ///  加载资源（异步）；
+        ///  加载资源（异步），增加一个引用计数；
         /// 须使用await获取结果；
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
@@ -132,6 +141,13 @@ namespace Cosmos.Resource
         /// <param name="instantiate">是否实例化对象</param>
         /// <returns>加载task</returns>
         Task<GameObject> LoadPrefabAsync(string assetName, bool instantiate = false);
+        /// <summary>
+        ///  加载资源包种的所有资源（异步），增加一个引用计数；
+        /// </summary>
+        /// <param name="assetBundleName">资源包</param>
+        /// <param name="progress">加载中事件</param>
+        /// <returns>加载task</returns>
+        Task<UnityEngine.Object[]> LoadAllAssetAsync(string assetBundleName, Action<float> progress = null);
         /// <summary>
         /// 加载场景（异步）；
         /// 须使用await获取结果；
@@ -141,7 +157,7 @@ namespace Cosmos.Resource
         /// <returns>Task异步任务</returns>
         Task LoadSceneAsync(SceneAssetInfo info);
         /// <summary>
-        /// 加载场景（异步）；
+        /// 加载场景（异步），增加一个引用计数；
         /// 须使用await获取结果；
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
@@ -152,7 +168,7 @@ namespace Cosmos.Resource
         /// <returns>Task异步任务</returns>
         Task LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition);
         /// <summary>
-        /// 卸载场景（异步）；
+        /// 卸载场景（异步），增加一个引用计数；
         /// 须使用await获取结果；
         /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
         /// </summary>
@@ -162,15 +178,26 @@ namespace Cosmos.Resource
         /// <returns>Task异步任务</returns>
         Task UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition);
         /// <summary>
-        /// 卸载资源（同步）；
+        /// 卸载资源（同步），减少一个引用计数；
         /// </summary>
-        /// <param name="assetName">资源信息</param>
+        /// <param name="assetName">资源名</param>
         void UnloadAsset(string assetName);
         /// <summary>
-        /// 卸载所有资源;
+        /// 卸载多个资源（同步），减少一个引用计数；
+        /// </summary>
+        /// <param name="assetNames">资源名合集</param>
+        void UnloadAssets(IEnumerable<string> assetNames);
+        /// <summary>
+        /// 释放资源包（同步），引用计数归零；
+        /// </summary>
+        /// <param name="assetBundleName">资源包名</param>
+        /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
+        void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false);
+        /// <summary>
+        /// 释放所有资源（同步），引用计数归零;
         /// </summary>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        void UnloadAllAsset(bool unloadAllLoadedObjects = false);
+        void ReleaseAllAsset(bool unloadAllLoadedObjects = false);
         #endregion
     }
 }

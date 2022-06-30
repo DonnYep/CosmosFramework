@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Cosmos.Resource
 {
@@ -61,6 +62,11 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, callback, progress));
         }
         ///<inheritdoc/> 
+        public Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback, Action<float> progress = null)
+        {
+            return Utility.Unity.StartCoroutine(EnumLoadAllAssetAsync(assetBundleName, progress, callback));
+        }
+        ///<inheritdoc/> 
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
         {
             return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info, progressProvider, progress, condition, callback));
@@ -74,6 +80,18 @@ namespace Cosmos.Resource
         public Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback)
         {
             return Utility.Unity.StartCoroutine(EnumUnloadAllSceneAsync(progress, callback));
+        }
+        ///<inheritdoc/> 
+        public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        {
+            if (resourceBundleDict.TryGetValue(assetBundleName, out var bundleWarpper))
+            {
+                var objs = bundleWarpper.ResourceBundle.ResourceObjectList;
+                foreach (var obj in objs)
+                {
+                    ReleaseAsset(obj.AssetName);
+                }
+            }
         }
         ///<inheritdoc/> 
         public void UnloadAsset(string assetName)
@@ -251,6 +269,37 @@ where T : UnityEngine.Object
             progress.Invoke(1);
             callback?.Invoke(asset);
         }
+        IEnumerator EnumLoadAllAssetAsync(string assetBundleName, Action<float> progress, Action<Object[]> callback)
+        {
+            if (string.IsNullOrEmpty(assetBundleName))
+                yield break;
+            var hasBundle = resourceBundleDict.TryGetValue(assetBundleName, out var bundleWarpper);
+            List<Object> assetList = new List<Object>();
+            if (hasBundle)
+            {
+                if (bundleWarpper.AssetBundle == null)
+                {
+                    callback?.Invoke(null);
+                    progress?.Invoke(1);
+                    yield break;
+                }
+
+                var objs = bundleWarpper.ResourceBundle.ResourceObjectList;
+                foreach (var obj in objs)
+                {
+                    bundleWarpper.ReferenceCount++;
+                    var hasObject = resourceObjectDict.TryGetValue(obj.AssetName, out var objectWarpper);
+                    if (hasObject)
+                    {
+                        objectWarpper.ReferenceCount++;
+                        var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(objectWarpper.ResourceObject.AssetPath, typeof(Object));
+                        assetList.Add(asset);
+                    }
+                }
+            }
+            callback?.Invoke(assetList.ToArray());
+            progress?.Invoke(1);
+        }
 
         /// <summary>
         /// 增加一个引用计数
@@ -312,7 +361,7 @@ where T : UnityEngine.Object
                 bundleWarpper.ReferenceCount -= count;
                 if (bundleWarpper.ReferenceCount == 0)
                 {
-      
+
                 }
             }
         }

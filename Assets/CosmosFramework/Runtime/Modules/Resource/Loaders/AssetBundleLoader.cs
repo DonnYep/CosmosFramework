@@ -59,6 +59,11 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, type, callback, progress));
         }
         ///<inheritdoc/> 
+        public Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback, Action<float> progress = null)
+        {
+            return Utility.Unity.StartCoroutine(EnumLoadAllAssetAsync(assetBundleName, progress, callback));
+        }
+        ///<inheritdoc/> 
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
         {
             return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info, progressProvider, progress, condition, callback));
@@ -83,6 +88,18 @@ namespace Cosmos.Resource
         {
             if (resourceObjectDict.TryGetValue(assetName, out var objectWarpper))
                 ReleaseObject(objectWarpper);
+        }
+        ///<inheritdoc/> 
+        public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        {
+            if (resourceBundleDict.TryGetValue(assetBundleName, out var bundleWarpper))
+            {
+                var objs = bundleWarpper.ResourceBundle.ResourceObjectList;
+                foreach (var obj in objs)
+                {
+                    ReleaseAsset(obj.AssetName);
+                }
+            }
         }
         ///<inheritdoc/> 
         public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
@@ -401,6 +418,36 @@ namespace Cosmos.Resource
             progress?.Invoke(1);
             callback?.Invoke();
         }
+        IEnumerator EnumLoadAllAssetAsync(string assetBundleName, Action<float> progress, Action<Object[]> callback)
+        {
+            Object[] assets = null;
+            if (string.IsNullOrEmpty(assetBundleName))
+                yield break;
+            yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
+            var hasBundle = resourceBundleDict.TryGetValue(assetBundleName, out var bundleWarpper);
+            if (hasBundle)
+            {
+                if (bundleWarpper.AssetBundle == null)
+                {
+                    callback?.Invoke(assets);
+                    progress?.Invoke(1);
+                    yield break;
+                }
+                assets = bundleWarpper.AssetBundle.LoadAllAssets();
+                var objs = bundleWarpper.ResourceBundle.ResourceObjectList;
+                foreach (var obj in objs)
+                {
+                    bundleWarpper.ReferenceCount++;
+                    var hasObject = resourceObjectDict.TryGetValue(obj.AssetName, out var objectWarpper);
+                    if (hasObject)
+                    {
+                        objectWarpper.ReferenceCount++;
+                    }
+                }
+            }
+            callback?.Invoke(assets);
+            progress?.Invoke(1);
+        }
         void DecrementReferenceCount(string assetName)
         {
             var hasObject = resourceObjectDict.TryGetValue(assetName, out var objectWarpper);
@@ -439,6 +486,7 @@ namespace Cosmos.Resource
             if (hasBundle)
                 bundleWarpper.ReferenceCount++;
         }
+
 
     }
 }

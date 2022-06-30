@@ -61,6 +61,16 @@ namespace Cosmos.Test
         ///<inheritdoc/> 
         public void ReleaseAsset(string assetName)
         {
+
+            //QuarkResources.UnloadAsset(assetName);
+        }
+        public Coroutine LoadAllAssetAsync(string assetPack, Action<UnityEngine.Object[]> callback, Action<float> progress = null)
+        {
+            throw new NotImplementedException();
+        }
+        public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        {
+            QuarkResources.UnloadAssetBundle(assetBundleName, unloadAllLoadedObjects);
         }
     }
 }

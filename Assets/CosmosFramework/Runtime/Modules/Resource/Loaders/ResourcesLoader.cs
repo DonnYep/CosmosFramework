@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
+
 namespace Cosmos.Resource
 {
     /// <summary>
@@ -33,7 +35,7 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, callback, progress));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetAsync(string assetName, Type type, Action<UnityEngine.Object> callback, Action<float> progress = null)
+        public Coroutine LoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress = null)
         {
             return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, type, callback, progress));
         }
@@ -43,9 +45,14 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(assetName, callback, progress));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress = null)
+        public Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type, Action<Object[]> callback, Action<float> progress = null)
         {
             return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(assetName, type, callback, progress));
+        }
+        ///<inheritdoc/> 
+        public Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback, Action<float> progress = null)
+        {
+            return Utility.Unity.StartCoroutine(EnumLoadAllAssetAsync(assetBundleName,progress,callback));
         }
         ///<inheritdoc/> 
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
@@ -65,7 +72,10 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public void UnloadAsset(string assetName)
         {
-            Resources.UnloadUnusedAssets();
+        }
+        ///<inheritdoc/> 
+        public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        {
         }
         ///<inheritdoc/> 
         public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
@@ -242,7 +252,6 @@ namespace Cosmos.Resource
             callback?.Invoke();
             IsProcessing = false;
         }
-  
         IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
         {
             var sceneCount = loadedSceneDict.Count;
@@ -268,6 +277,14 @@ namespace Cosmos.Resource
             loadedSceneDict.Clear();
             progress?.Invoke(1);
             callback?.Invoke();
+        }
+        IEnumerator EnumLoadAllAssetAsync(string assetBundleName, Action<float> progress, Action<Object[]> callback)
+        {
+            if (string.IsNullOrEmpty(assetBundleName))
+                yield break;
+            var assets= Resources.LoadAll(assetBundleName);
+            callback?.Invoke(assets);
+            progress?.Invoke(1);
         }
     }
 }

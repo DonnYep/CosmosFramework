@@ -98,6 +98,11 @@ namespace Cosmos.Resource
             }, progress);
         }
         /// <inheritdoc/>
+        public Coroutine LoadAllAssetAsync(string assetPack, Action<UnityEngine.Object[]> callback, Action<float> progress = null)
+        {
+            return currentLoadHelper.LoadAllAssetAsync(assetPack, callback,progress);
+        }
+        /// <inheritdoc/>
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
         {
             return currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, condition, callback);
@@ -136,6 +141,13 @@ namespace Cosmos.Resource
             return go;
         }
         /// <inheritdoc/>
+        public async Task<UnityEngine.Object[]> LoadAllAssetAsync(string assetPack, Action<float> progress = null)
+        {
+            UnityEngine.Object[] assets = null;
+            await currentLoadHelper.LoadAllAssetAsync(assetPack, (a) => { assets = a; }, progress);
+            return assets;
+        }
+        /// <inheritdoc/>
         public async Task LoadSceneAsync(SceneAssetInfo info)
         {
             await currentLoadHelper.LoadSceneAsync(info, null, null, null, null);
@@ -156,7 +168,20 @@ namespace Cosmos.Resource
             currentLoadHelper.UnloadAsset(assetName);
         }
         /// <inheritdoc/>
-        public void UnloadAllAsset(bool unloadAllLoadedObjects = false)
+        public void UnloadAssets(IEnumerable<string> assetNames)
+        {
+            foreach (var assetName in assetNames)
+            {
+                currentLoadHelper.UnloadAsset(assetName);
+            }
+        }
+        /// <inheritdoc/>
+        public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        {
+            currentLoadHelper.ReleaseAssetBundle(assetBundleName,unloadAllLoadedObjects);
+        }
+        /// <inheritdoc/>
+        public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
         {
             currentLoadHelper.ReleaseAllAsset(unloadAllLoadedObjects);
         }
