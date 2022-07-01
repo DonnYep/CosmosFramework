@@ -25,7 +25,7 @@ namespace Quark.Editor
         /// <summary>
         /// dataset是否为空处理标记；
         /// </summary>
-        bool emptyDatasetFlag = false;
+        bool datasetAssigned = false;
         public QuarkAssetWindow()
         {
             this.titleContent = new GUIContent("QuarkAsset");
@@ -37,6 +37,7 @@ namespace Quark.Editor
         }
         void OnEnable()
         {
+            QuarkEditorDataProxy.QuarkAssetDataset = null;
             GetWindowData();
             assetDatabaseTab.OnEnable();
             assetBundleTab.OnEnable();
@@ -47,6 +48,7 @@ namespace Quark.Editor
             SaveWindowData();
             assetDatabaseTab.OnDisable();
             assetBundleTab.OnDisable();
+            QuarkEditorDataProxy.QuarkAssetDataset = null;
         }
         void OnGUI()
         {
@@ -56,27 +58,28 @@ namespace Quark.Editor
             if (QuarkEditorDataProxy.QuarkAssetDataset != latestDataset)
             {
                 QuarkEditorDataProxy.QuarkAssetDataset = latestDataset;
-                if (QuarkEditorDataProxy.QuarkAssetDataset != null)
+                if (QuarkEditorDataProxy.QuarkAssetDataset != null && !datasetAssigned)
                 {
                     assetDatabaseTab.OnDatasetAssign(latestDataset);
                     assetBundleTab.OnDatasetAssign();
-                    emptyDatasetFlag = false;
+                    datasetAssigned = true;
                 }
                 else
                 {
                     assetDatabaseTab.OnDatasetUnassign();
                     assetBundleTab.OnDatasetUnassign();
+                    datasetAssigned = false;
                 }
             }
             else
             {
-                if (QuarkEditorDataProxy.QuarkAssetDataset != null)
+                if (QuarkEditorDataProxy.QuarkAssetDataset == null)
                 {
-                    if (!emptyDatasetFlag)
+                    if (datasetAssigned)
                     {
                         assetDatabaseTab.OnDatasetUnassign();
                         assetBundleTab.OnDatasetUnassign();
-                        emptyDatasetFlag = true;
+                        datasetAssigned = false;
                     }
                 }
             }
@@ -137,6 +140,12 @@ namespace Quark.Editor
         }
         void SaveWindowData()
         {
+            if (QuarkEditorDataProxy.QuarkAssetDataset != null)
+            {
+                windowData.QuarkDatasetPath = AssetDatabase.GetAssetPath(QuarkEditorDataProxy.QuarkAssetDataset);
+                EditorUtility.SetDirty(QuarkEditorDataProxy.QuarkAssetDataset);
+                AssetDatabase.Refresh();
+            }
             EditorUtil.SaveData(QuarkAssetWindowDataName, windowData);
         }
         [InitializeOnLoadMethod]

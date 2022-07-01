@@ -13,34 +13,25 @@ MonoBehaviour:
   m_Name: QuarkAssetDataset
   m_EditorClassIdentifier: 
   quarkAssetCount: 57
-  namePathInfoList:
+  quarkBundleInfoList:
   - assetBundlePath: Assets/Examples/AssetBundleTest/Audio
     assetBundleName: audio
-    assetBundlePathHash: 12778af4cb8833e46b38d87bf137c135
   - assetBundlePath: Assets/Examples/AssetBundleTest/Material
     assetBundleName: material
-    assetBundlePathHash: 96a2e79d37647ce4f879a50f3c51cead
   - assetBundlePath: Assets/Examples/AssetBundleTest/Model
     assetBundleName: model
-    assetBundlePathHash: 34f1fc1c949f5f945a4682304c61dd14
   - assetBundlePath: Assets/Examples/AssetBundleTest/Photo
     assetBundleName: photo
-    assetBundlePathHash: 58a60d87288d45645ac1744d07d3c664
   - assetBundlePath: Assets/Examples/AssetBundleTest/Prefab
     assetBundleName: prefab
-    assetBundlePathHash: ab1e77ea0dc162743b999fb21ad88f1d
   - assetBundlePath: Assets/Examples/AssetBundleTest/Scene
     assetBundleName: scene
-    assetBundlePathHash: 7993b3e650ad69340b14014bf8629336
   - assetBundlePath: Assets/Examples/AssetBundleTest/Text
     assetBundleName: text
-    assetBundlePathHash: f0b176288f6484a4db31bed880118d43
   - assetBundlePath: Assets/Examples/AssetBundleTest/Texture
     assetBundleName: texture
-    assetBundlePathHash: 6b66c76bfcd1e5c48bc51efeb19eddf9
   - assetBundlePath: Assets/Examples/AssetBundleTest/Video
     assetBundleName: video
-    assetBundlePathHash: c027f3e3efab58e418761894535c4491
   quarkAssetObjectList:
   - AssetName: AmbientAudio
     AssetExtension: .mp3

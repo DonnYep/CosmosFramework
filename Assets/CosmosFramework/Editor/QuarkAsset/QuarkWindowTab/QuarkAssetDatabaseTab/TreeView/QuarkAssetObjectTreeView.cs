@@ -13,10 +13,12 @@ namespace Quark.Editor
         {
             Reload();
             showAlternatingRowBackgrounds = true;
+            showBorder = true;
         }
         public void AddPath(string path)
         {
             pathList.Add(path);
+            Reload();
         }
         public void AddPaths(IEnumerable<string> paths)
         {
@@ -27,10 +29,13 @@ namespace Quark.Editor
         public void Clear()
         {
             pathList.Clear();
+            Reload();
         }
         protected override void SingleClickedItem(int id)
         {
             base.SingleClickedItem(id);
+            if (pathList.Count < id)
+                return;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(pathList[id]);
             EditorGUIUtility.PingObject(obj);
             Selection.activeObject = obj;
@@ -38,6 +43,8 @@ namespace Quark.Editor
         protected override void DoubleClickedItem(int id)
         {
             base.DoubleClickedItem(id);
+            if (pathList.Count < id)
+                return;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(pathList[id]);
             EditorGUIUtility.PingObject(obj);
             Selection.activeObject = obj;
@@ -60,7 +67,7 @@ namespace Quark.Editor
                     {
                         objectIcon = EditorGUIUtility.FindTexture("console.erroricon");
                     }
-                    var item = new TreeViewItem { id = i, depth = 1, displayName = pathList[i],icon=objectIcon };
+                    var item = new TreeViewItem { id = i, depth = 1, displayName = pathList[i], icon = objectIcon };
                     allItems.Add(item);
                 }
                 SetupParentsAndChildrenFromDepths(root, allItems);

@@ -220,7 +220,7 @@ namespace Quark.Editor
                     QuarkUtility.DeleteFolder(path);
                 }
             }
-            var dirHashPairs = quarkAssetDataset.NamePathInfoList;
+            var dirHashPairs = quarkAssetDataset.QuarkBundleInfoList;
             var dirs = dirHashPairs.ToArray();
             yield return EditorUtil.Coroutine.StartCoroutine(TraverseTargetDirectories(dirs));
         }

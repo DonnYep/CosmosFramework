@@ -9,16 +9,12 @@ namespace Quark.Asset
         string assetBundlePath;
         [SerializeField]
         string assetBundleName;
-        [SerializeField]
-        string assetBundlePathHash;
         public string AssetBundlePath { get { return assetBundlePath; } }
         public string AssetBundleName { get { return assetBundleName; } }
-        public string AssetBundlePathHash { get { return assetBundlePathHash; } }
-        public QuarkBundleInfo(string assetBundlePath, string assetBundlePathHash, string assetBundleName)
+        public QuarkBundleInfo(string assetBundlePath,  string assetBundleName)
         {
             this.assetBundlePath = assetBundlePath;
             this.assetBundleName = assetBundleName;
-            this.assetBundlePathHash = assetBundlePathHash;
         }
         public static bool operator ==(QuarkBundleInfo a, QuarkBundleInfo b)
         {
@@ -34,16 +30,15 @@ namespace Quark.Asset
         }
         public override int GetHashCode()
         {
-            return AssetBundlePathHash.GetHashCode() ^ AssetBundlePath.GetHashCode()^ AssetBundleName.GetHashCode();
+            return  AssetBundlePath.GetHashCode()^ AssetBundleName.GetHashCode();
         }
         public override string ToString()
         {
-            return $"DirHash: {(string.IsNullOrEmpty(AssetBundlePathHash) == true ? "Null" : AssetBundlePathHash)} ; Dir :{(string.IsNullOrEmpty(AssetBundlePath) == true ? "Null" : AssetBundlePath)}";
+            return $"AssetBundleName: {(string.IsNullOrEmpty(AssetBundleName) == true ? "Null" : AssetBundleName)} ; AssetBundlePath :{(string.IsNullOrEmpty(AssetBundlePath) == true ? "Null" : AssetBundlePath)}";
         }
         public bool Equals(QuarkBundleInfo other)
         {
-            return other.AssetBundlePathHash == this.AssetBundlePathHash &&
-                other.AssetBundlePath == this.AssetBundlePath &&
+            return other.AssetBundlePath == this.AssetBundlePath &&
                 other.AssetBundleName == this.AssetBundleName;
         }
         public static QuarkBundleInfo None { get { return new QuarkBundleInfo(); } }

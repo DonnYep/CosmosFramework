@@ -27,7 +27,7 @@ namespace Quark.Editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("ClearAllAssetBundle"))
             {
-                QuarkEditorDataProxy.QuarkAssetDataset.NamePathInfoList?.Clear();
+                QuarkEditorDataProxy.QuarkAssetDataset.QuarkBundleInfoList?.Clear();
                 treeView.Clear();
             }
             GUILayout.EndHorizontal();

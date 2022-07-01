@@ -20,7 +20,7 @@ namespace Quark.Editor
         QuarkAssetObjectSearchLable assetObjectSearchLable = new QuarkAssetObjectSearchLable();
 
         QuarkAssetDataset dataset;
-
+        EditorCoroutine editorCoroutine;
         public void OnEnable()
         {
             try
@@ -34,7 +34,6 @@ namespace Quark.Editor
             }
             assetBundleSearchLable.OnEnable();
             assetObjectSearchLable.OnEnable();
-
         }
         public void OnDisable()
         {
@@ -43,25 +42,12 @@ namespace Quark.Editor
         public void OnDatasetAssign(QuarkAssetDataset dataset)
         {
             this.dataset = dataset;
-            var bundles = dataset.NamePathInfoList;
-            var bundleLen = bundles.Count;
-            assetBundleSearchLable.TreeView.Clear();
-            for (int i = 0; i < bundleLen; i++)
-            {
-                var bundle = bundles[i];
-                assetBundleSearchLable.TreeView.AddPath(bundle.AssetBundlePath);
-            }
-            assetObjectSearchLable.TreeView.Clear();
-            var objects = dataset.QuarkAssetObjectList;
-            var objectLength = objects.Count;
-            for (int i = 0; i < objectLength; i++)
-            {
-                assetObjectSearchLable.TreeView.AddPath(objects[i].AssetPath);
-            }
-            assetObjectSearchLable.TreeView.Reload();
+            editorCoroutine=EditorUtil.Coroutine.StartCoroutine(EnumOnDatasetAssign(dataset));
         }
         public void OnDatasetUnassign()
         {
+            if (editorCoroutine != null)
+                EditorUtil.Coroutine.StopCoroutine(editorCoroutine);
             assetObjectSearchLable.TreeView.Clear();
             assetBundleSearchLable.TreeView.Clear();
         }
@@ -156,7 +142,7 @@ namespace Quark.Editor
             List<QuarkBundleInfo> validBundleList = new List<QuarkBundleInfo>();
             quarkAssetList?.Clear();
             int currentDirIndex = 0;
-            var bundles = dataset.NamePathInfoList;
+            var bundles = dataset.QuarkBundleInfoList;
             QuarkBundleInfo[] bundleArray = new QuarkBundleInfo[0];
             //bundle===[fileFullName===fileInfo]
             Dictionary<QuarkBundleInfo, Dictionary<string, FileSystemInfo>> bundleFileInfoDict = new Dictionary<QuarkBundleInfo, Dictionary<string, FileSystemInfo>>();
@@ -263,7 +249,7 @@ namespace Quark.Editor
             dataset.QuarkAssetObjectList.Clear();
             dataset.QuarkAssetObjectList.AddRange(arr);
             dataset.QuarkAssetCount = arr.Length;
-            dataset.NamePathInfoList.Clear();
+            dataset.QuarkBundleInfoList.Clear();
 
             if (tabData.SortAssetBundle)
             {
@@ -272,7 +258,7 @@ namespace Quark.Editor
                 SortByAscend(bundleArray, d => d.AssetBundlePath, () => { EditorUtility.DisplayCancelableProgressBar("QuarkAsset", "SortingAssetBundles", dirIdx++ / (float)dirCount); });
                 EditorUtility.ClearProgressBar();
             }
-            dataset.NamePathInfoList.AddRange(bundleArray);
+            dataset.QuarkBundleInfoList.AddRange(bundleArray);
         }
         void AssetDataBaseModeCreatePathScript()
         {
@@ -305,6 +291,25 @@ namespace Quark.Editor
                     }
                 }
                 progress.Invoke();
+            }
+        }
+
+        IEnumerator EnumOnDatasetAssign(QuarkAssetDataset dataset)
+        {
+            var bundles = dataset.QuarkBundleInfoList;
+            var bundleLen = bundles.Count;
+            assetBundleSearchLable.TreeView.Clear();
+            for (int i = 0; i < bundleLen; i++)
+            {
+                var bundle = bundles[i];
+                assetBundleSearchLable.TreeView.AddPath(bundle.AssetBundlePath);
+            }
+            assetObjectSearchLable.TreeView.Clear();
+            var objects = dataset.QuarkAssetObjectList;
+            for (int i = 0; i < objects.Count; i++)
+            {
+                assetObjectSearchLable.TreeView.AddPath(objects[i].AssetPath);
+                yield return null;
             }
         }
     }
