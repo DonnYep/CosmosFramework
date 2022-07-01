@@ -238,11 +238,17 @@ namespace Cosmos.Editor.Resource
             objects.Clear();
             var bundleLength = bundles.Count;
 
-            List<ResourceBundleInfo> tmpBundleInfo = new List<ResourceBundleInfo>();
+            List<ResourceBundleInfo> validBundleInfo = new List<ResourceBundleInfo>();
+            List<ResourceBundle> invalidBundles = new List<ResourceBundle>();
 
             for (int i = 0; i < bundleLength; i++)
             {
                 var bundlePath = bundles[i].BundlePath;
+                if (!AssetDatabase.IsValidFolder(bundlePath))
+                {
+                    invalidBundles.Add(bundles[i]);
+                    continue;
+                }
                 var files = Utility.IO.GetAllFiles(bundlePath);
                 var fileLength = files.Length;
                 var bundle = bundles[i];
@@ -263,7 +269,7 @@ namespace Cosmos.Editor.Resource
 
                 bundle.BundleSize = bundleSize;
                 var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundle.BundleSize));
-                tmpBundleInfo.Add(bundleInfo);
+                validBundleInfo.Add(bundleInfo);
 
                 var bundlePercent = i / (float)bundleLength;
                 EditorUtility.DisplayProgressBar("BuildDataset building", $"building bundle : {Mathf.RoundToInt(bundlePercent * 100)}%", bundlePercent);
@@ -272,14 +278,19 @@ namespace Cosmos.Editor.Resource
             EditorUtility.DisplayProgressBar("BuildDataset building", $"building bundle : {100}%", 1);
             yield return null;
 
+            for (int i = 0; i < invalidBundles.Count; i++)
+            {
+                bundles.Remove(invalidBundles[i]);
+            }
+
             EditorUtility.ClearProgressBar();
             EditorUtility.SetDirty(ResourceEditorDataProxy.ResourceDataset);
             {
                 //这么处理是为了bundleLable能够在编辑器页面一下刷新，放在协程里逐步更新，使用体验并不是很好。
                 resourceBundleLable.Clear();
-                for (int i = 0; i < bundleLength; i++)
+                for (int i = 0; i < validBundleInfo.Count; i++)
                 {
-                    resourceBundleLable.AddBundle(tmpBundleInfo[i]);
+                    resourceBundleLable.AddBundle(validBundleInfo[i]);
                 }
             }
 
@@ -308,6 +319,7 @@ namespace Cosmos.Editor.Resource
                     var assetPath = objects[j].AssetPath;
                     var objInfo = new ResourceObjectInfo(objects[j].AssetName, assetPath, EditorUtil.GetAssetFileSize(assetPath), EditorUtil.GetAssetFileSizeLength(assetPath));
                     resourceObjectLable.AddObject(objInfo);
+                    yield return null;
                 }
                 var progress = Mathf.RoundToInt((float)i / (idlen - 1) * 100); ;
                 loadingProgress = progress > 0 ? progress : 0;

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Quark.Asset;
+using Cosmos.Editor;
+
 namespace Quark.Editor
 {
     public class QuarkAssetWindow : EditorWindow
@@ -13,53 +15,95 @@ namespace Quark.Editor
         int selectedBar = 0;
         string[] barArray = new string[] { "AssetDatabaseBuilder", "AssetBundleBuilder" };
         public static int FilterLength { get; private set; }
-        static QuarkAssetDatabaseTab quarkAssetDatabaseTab = new QuarkAssetDatabaseTab();
-        static QuarkAssetBundleTab quarkAssetBundleTab = new QuarkAssetBundleTab();
+        static QuarkAssetDatabaseTab assetDatabaseTab = new QuarkAssetDatabaseTab();
+        static QuarkAssetBundleTab assetBundleTab = new QuarkAssetBundleTab();
         Vector2 scrollPosition;
+        internal const string QuarkAssetWindowDataName = "QuarkAsset_WindowData.json";
 
+        QuarkAssetWindowData windowData;
+        QuarkAssetDataset latestDataset;
+        /// <summary>
+        /// dataset是否为空处理标记；
+        /// </summary>
+        bool emptyDatasetFlag = false;
         public QuarkAssetWindow()
         {
             this.titleContent = new GUIContent("QuarkAsset");
         }
-        [MenuItem("Window/Cosmos/QuarkAsset",false,100)]
+        [MenuItem("Window/Cosmos/QuarkAsset", false, 100)]
         public static void OpenWindow()
         {
             var window = GetWindow<QuarkAssetWindow>();
         }
         void OnEnable()
         {
-            quarkAssetDatabaseTab.OnEnable();
-            quarkAssetBundleTab.OnEnable();
-            quarkAssetBundleTab.SetAssetDatabaseTab(quarkAssetDatabaseTab);
+            GetWindowData();
+            assetDatabaseTab.OnEnable();
+            assetBundleTab.OnEnable();
+            assetBundleTab.SetAssetDatabaseTab(assetDatabaseTab);
         }
         void OnDisable()
         {
-            quarkAssetDatabaseTab.OnDisable();
-            quarkAssetBundleTab.OnDisable();
+            SaveWindowData();
+            assetDatabaseTab.OnDisable();
+            assetBundleTab.OnDisable();
         }
         void OnGUI()
         {
             selectedBar = GUILayout.Toolbar(selectedBar, barArray);
             GUILayout.Space(16);
-            QuarkEditorDataProxy.QuarkAssetDataset = (QuarkAssetDataset)EditorGUILayout.ObjectField("QuarkAssetDataset", QuarkEditorDataProxy.QuarkAssetDataset, typeof(QuarkAssetDataset), false);
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("CreateDataset", GUILayout.MaxWidth(128f)))
+            latestDataset = (QuarkAssetDataset)EditorGUILayout.ObjectField("QuarkAssetDataset", latestDataset, typeof(QuarkAssetDataset), false);
+            if (QuarkEditorDataProxy.QuarkAssetDataset != latestDataset)
             {
-                QuarkEditorDataProxy.QuarkAssetDataset = CreateQuarkAssetDataset();
+                QuarkEditorDataProxy.QuarkAssetDataset = latestDataset;
+                if (QuarkEditorDataProxy.QuarkAssetDataset != null)
+                {
+                    assetDatabaseTab.OnDatasetAssign(latestDataset);
+                    assetBundleTab.OnDatasetAssign();
+                    emptyDatasetFlag = false;
+                }
+                else
+                {
+                    assetDatabaseTab.OnDatasetUnassign();
+                    assetBundleTab.OnDatasetUnassign();
+                }
+            }
+            else
+            {
+                if (QuarkEditorDataProxy.QuarkAssetDataset != null)
+                {
+                    if (!emptyDatasetFlag)
+                    {
+                        assetDatabaseTab.OnDatasetUnassign();
+                        assetBundleTab.OnDatasetUnassign();
+                        emptyDatasetFlag = true;
+                    }
+                }
+            }
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("CreateDataset", GUILayout.MaxWidth(128f)))
+                {
+                    latestDataset = CreateQuarkAssetDataset();
+                }
             }
             GUILayout.EndHorizontal();
+
             GUILayout.Space(16);
             var bar = (AssetInfoBar)selectedBar;
+
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            switch (bar)
             {
-                case AssetInfoBar.AssetDatabaseMode:
-                    quarkAssetDatabaseTab.OnGUI();
-                    break;
-                case AssetInfoBar.AssetBundleMode:
-                    quarkAssetBundleTab.OnGUI();
-                    break;
+                switch (bar)
+                {
+                    case AssetInfoBar.AssetDatabaseMode:
+                        assetDatabaseTab.OnGUI();
+                        break;
+                    case AssetInfoBar.AssetBundleMode:
+                        assetBundleTab.OnGUI();
+                        break;
+                }
             }
             EditorGUILayout.EndScrollView();
         }
@@ -74,6 +118,26 @@ namespace Quark.Editor
             var dataset = AssetDatabase.LoadAssetAtPath<QuarkAssetDataset>("Assets/New QuarkAssetDataset.asset");
             QuarkUtility.LogInfo("QuarkAssetDataset is created");
             return dataset;
+        }
+        void GetWindowData()
+        {
+            try
+            {
+                windowData = EditorUtil.GetData<QuarkAssetWindowData>(QuarkAssetWindowDataName);
+            }
+            catch
+            {
+                windowData = new QuarkAssetWindowData();
+                EditorUtil.SaveData(QuarkAssetWindowDataName, windowData);
+            }
+            if (!string.IsNullOrEmpty(windowData.QuarkDatasetPath))
+            {
+                latestDataset = AssetDatabase.LoadAssetAtPath<QuarkAssetDataset>(windowData.QuarkDatasetPath);
+            }
+        }
+        void SaveWindowData()
+        {
+            EditorUtil.SaveData(QuarkAssetWindowDataName, windowData);
         }
         [InitializeOnLoadMethod]
         static void InitData()

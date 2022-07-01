@@ -14,20 +14,21 @@ namespace Quark.Asset
         [SerializeField]
         int quarkAssetCount;
         [SerializeField]
-        List<QuarkDirHashPair> dirHashPairs;
+        List<QuarkBundleInfo> namePathInfoList;
         [SerializeField]
         List<QuarkAssetObject> quarkAssetObjectList;
         public int QuarkAssetCount { get { return quarkAssetCount; } set { quarkAssetCount = value; } }
         /// <summary>
         /// 包含的路径；
+        /// <see cref="QuarkBundleInfo"/>
         /// </summary>
-        public List<QuarkDirHashPair> DirHashPairs
+        public List<QuarkBundleInfo> NamePathInfoList
         {
             get
             {
-                if (dirHashPairs == null)
-                    dirHashPairs = new List<QuarkDirHashPair>();
-                return dirHashPairs;
+                if (namePathInfoList == null)
+                    namePathInfoList = new List<QuarkBundleInfo>();
+                return namePathInfoList;
             }
         }
         public List<QuarkAssetObject> QuarkAssetObjectList
@@ -55,7 +56,7 @@ namespace Quark.Asset
         {
             quarkAssetCount = 0;
             quarkAssetObjectList?.Clear();
-            dirHashPairs?.Clear();
+            namePathInfoList?.Clear();
             assetBundleDict?.Clear();
         }
     }

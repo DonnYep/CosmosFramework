@@ -283,7 +283,7 @@ where T : UnityEngine.Object
                     progress?.Invoke(1);
                     yield break;
                 }
-
+#if UNITY_EDITOR
                 var objs = bundleWarpper.ResourceBundle.ResourceObjectList;
                 foreach (var obj in objs)
                 {
@@ -296,6 +296,7 @@ where T : UnityEngine.Object
                         assetList.Add(asset);
                     }
                 }
+#endif
             }
             callback?.Invoke(assetList.ToArray());
             progress?.Invoke(1);
@@ -364,6 +365,5 @@ where T : UnityEngine.Object
                 }
             }
         }
-
     }
 }

@@ -22,7 +22,7 @@ namespace Cosmos.Test
         ///<inheritdoc/>
         public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
-            return QuarkResources.LoadAssetWithSubAssetsAsync<T>(assetName, string.Empty, callback);
+            return QuarkResources.LoadMainAndSubAssetsAsync<T>(assetName, string.Empty, callback);
         }
         ///<inheritdoc/>
         public Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress = null)

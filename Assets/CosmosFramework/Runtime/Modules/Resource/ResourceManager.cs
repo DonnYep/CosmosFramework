@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
-
+using Object = UnityEngine.Object;
 namespace Cosmos.Resource
 {
     //================================================
@@ -64,22 +64,22 @@ namespace Cosmos.Resource
         }
         /// <inheritdoc/>
         public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null)
-            where T : UnityEngine.Object
+            where T : Object
         {
             return currentLoadHelper.LoadAssetAsync<T>(assetName, callback, progress);
         }
         /// <inheritdoc/>
-        public Coroutine LoadAssetAsync(string assetName, Type type, Action<UnityEngine.Object> callback, Action<float> progress = null)
+        public Coroutine LoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress = null)
         {
             return currentLoadHelper.LoadAssetAsync(assetName, type, callback, progress);
         }
         /// <inheritdoc/>
-        public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : Object
         {
             return currentLoadHelper.LoadMainAndSubAssetsAsync<T>(assetName, callback, progress);
         }
         /// <inheritdoc/>
-        public Coroutine LoadMainAndSubAssetsAsync(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress = null)
+        public Coroutine LoadMainAndSubAssetsAsync(string assetName, Type type, Action<Object[]> callback, Action<float> progress = null)
         {
             return currentLoadHelper.LoadAssetWithSubAssetsAsync(assetName, type, callback, progress);
         }
@@ -98,7 +98,7 @@ namespace Cosmos.Resource
             }, progress);
         }
         /// <inheritdoc/>
-        public Coroutine LoadAllAssetAsync(string assetPack, Action<UnityEngine.Object[]> callback, Action<float> progress = null)
+        public Coroutine LoadAllAssetAsync(string assetPack, Action<Object[]> callback, Action<float> progress = null)
         {
             return currentLoadHelper.LoadAllAssetAsync(assetPack, callback,progress);
         }
@@ -114,16 +114,16 @@ namespace Cosmos.Resource
         }
         /// <inheritdoc/>
         public async Task<T> LoadAssetAsync<T>(string assetName)
-            where T : UnityEngine.Object
+            where T : Object
         {
             T asset = null;
             await currentLoadHelper.LoadAssetAsync<T>(assetName, a => asset = a, null);
             return asset;
         }
         /// <inheritdoc/>
-        public async Task<UnityEngine.Object> LoadAssetAsync(string assetName, Type type)
+        public async Task<Object> LoadAssetAsync(string assetName, Type type)
         {
-            UnityEngine.Object asset = null;
+            Object asset = null;
             await currentLoadHelper.LoadAssetAsync(assetName, type, a => asset = a, null);
             return asset;
         }
@@ -141,9 +141,9 @@ namespace Cosmos.Resource
             return go;
         }
         /// <inheritdoc/>
-        public async Task<UnityEngine.Object[]> LoadAllAssetAsync(string assetPack, Action<float> progress = null)
+        public async Task<Object[]> LoadAllAssetAsync(string assetPack, Action<float> progress = null)
         {
-            UnityEngine.Object[] assets = null;
+            Object[] assets = null;
             await currentLoadHelper.LoadAllAssetAsync(assetPack, (a) => { assets = a; }, progress);
             return assets;
         }

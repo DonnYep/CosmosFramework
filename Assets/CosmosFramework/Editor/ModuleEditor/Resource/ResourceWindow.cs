@@ -130,12 +130,6 @@ namespace Cosmos.Editor.Resource
                         assetBundleTab.OnEnable();
                     }
                     break;
-                case PlayModeStateChange.ExitingEditMode:
-                    break;
-                case PlayModeStateChange.EnteredPlayMode:
-                    break;
-                case PlayModeStateChange.ExitingPlayMode:
-                    break;
             }
         }
         ResourceDataset CreateResourceDataset()

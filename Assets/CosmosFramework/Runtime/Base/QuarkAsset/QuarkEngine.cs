@@ -196,16 +196,16 @@ where T : UnityEngine.Object
                 return loader.LoadPrefab(assetName, assetExtension, instantiate);
             return null;
         }
-        internal T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        internal T[] LoadMainAndSubAssets<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                return loader.LoadAssetWithSubAssets<T>(assetName, assetExtension);
+                return loader.LoadMainAndSubAssets<T>(assetName, assetExtension);
             return null;
         }
-        internal Object[] LoadAssetWithSubAssets(string assetName, string assetExtension, Type type)
+        internal Object[] LoadMainAndSubAssets(string assetName, string assetExtension, Type type)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                return loader.LoadAssetWithSubAssets(assetName, assetExtension, type);
+                return loader.LoadMainAndSubAssets(assetName, assetExtension, type);
             return null;
         }
         internal Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback)
@@ -227,16 +227,16 @@ where T : UnityEngine.Object
                 return loader.LoadPrefabAsync(assetName, assetExtension, callback, instantiate);
             return null;
         }
-        internal Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object
+        internal Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                return loader.LoadAssetWithSubAssetsAsync(assetName, assetExtension, callback);
+                return loader.LoadMainAndSubAssetsAsync(assetName, assetExtension, callback);
             return null;
         }
-        internal Coroutine LoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
+        internal Coroutine LoadMainAndSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
         {
             if (quarkLoaderDict.TryGetValue(QuarkAssetLoadMode, out var loader))
-                return loader.LoadAssetWithSubAssetsAsync(assetName, assetExtension, type, callback);
+                return loader.LoadMainAndSubAssetsAsync(assetName, assetExtension, type, callback);
             return null;
         }
         internal Coroutine LoadAllAssetAsync(string assetBundleName,Action<Object[]>callback)

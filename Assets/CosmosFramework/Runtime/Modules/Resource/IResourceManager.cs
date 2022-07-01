@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using Object = UnityEngine.Object;
+
 namespace Cosmos.Resource
 {
     //================================================
@@ -48,7 +50,7 @@ namespace Cosmos.Resource
         /// <param name="progress">加载中事件</param>
         /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object;
+        Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : Object;
         /// <summary>
         /// 加载资源（异步），增加一个引用计数；
         /// </summary>
@@ -57,7 +59,7 @@ namespace Cosmos.Resource
         /// <param name="progress">加载中事件</param>
         /// <param name="callback">加载完成事件，T表示原始对象，GameObject表示实例化的对象</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadAssetAsync(string assetName, Type type, Action<UnityEngine.Object> callback, Action<float> progress = null);
+        Coroutine LoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress = null);
         /// <summary>
         /// 加载资源以及子资源（异步），增加一个引用计数；
         /// 加载资源（异步）；
@@ -67,7 +69,7 @@ namespace Cosmos.Resource
         /// <param name="callback">加载完成事件</param>
         /// <param name="progress">加载中事件</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object;
+        Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : Object;
         /// <summary>
         /// 加载资源以及子资源（异步），增加一个引用计数；
         /// 加载资源（异步）；
@@ -77,7 +79,7 @@ namespace Cosmos.Resource
         /// <param name="callback">加载完成事件</param>
         /// <param name="progress">加载中事件</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadMainAndSubAssetsAsync(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress = null);
+        Coroutine LoadMainAndSubAssetsAsync(string assetName, Type type, Action<Object[]> callback, Action<float> progress = null);
         /// <summary>
         ///  加载资源（异步），增加一个引用计数；
         /// 加载预制体资源（异步）；
@@ -95,7 +97,7 @@ namespace Cosmos.Resource
         /// <param name="callback">加载完成事件</param>
         /// <param name="progress">加载中事件</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadAllAssetAsync(string assetBundleName, Action<UnityEngine.Object[]> callback, Action<float> progress = null);
+        Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback, Action<float> progress = null);
         /// <summary>
         /// 加载场景（异步），增加一个引用计数;
         /// </summary>
@@ -122,7 +124,7 @@ namespace Cosmos.Resource
         /// <typeparam name="T">资源类型</typeparam>
         /// <param name="assetName">资源信息</param>
         /// <returns>加载task</returns>
-        Task<T> LoadAssetAsync<T>(string assetName) where T : UnityEngine.Object;
+        Task<T> LoadAssetAsync<T>(string assetName) where T : Object;
         /// <summary>
         /// 加载资源（异步），增加一个引用计数；
         /// 须使用await获取结果；
@@ -131,7 +133,7 @@ namespace Cosmos.Resource
         /// <param name="assetName">资源信息</param>
         /// <param name="type">资源类型</param>
         /// <returns>加载task</returns>
-        Task<UnityEngine.Object> LoadAssetAsync(string assetName, Type type);
+        Task<Object> LoadAssetAsync(string assetName, Type type);
         /// <summary>
         ///  加载资源（异步），增加一个引用计数；
         /// 须使用await获取结果；
@@ -147,7 +149,7 @@ namespace Cosmos.Resource
         /// <param name="assetBundleName">资源包</param>
         /// <param name="progress">加载中事件</param>
         /// <returns>加载task</returns>
-        Task<UnityEngine.Object[]> LoadAllAssetAsync(string assetBundleName, Action<float> progress = null);
+        Task<Object[]> LoadAllAssetAsync(string assetBundleName, Action<float> progress = null);
         /// <summary>
         /// 加载场景（异步）；
         /// 须使用await获取结果；

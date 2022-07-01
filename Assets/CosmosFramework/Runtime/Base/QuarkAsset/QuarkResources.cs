@@ -124,21 +124,21 @@ where T : Object
         {
             return QuarkEngine.Instance.LoadPrefab(assetName, assetExtension, instantiate);
         }
-        public static T[] LoadAssetWithSubAssets<T>(string assetName) where T : UnityEngine.Object
+        public static T[] LoadMainAndSubAssets<T>(string assetName) where T : UnityEngine.Object
         {
-            return QuarkEngine.Instance.LoadAssetWithSubAssets<T>(assetName, string.Empty);
+            return QuarkEngine.Instance.LoadMainAndSubAssets<T>(assetName, string.Empty);
         }
-        public static T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension) where T : UnityEngine.Object
+        public static T[] LoadMainAndSubAssets<T>(string assetName, string assetExtension) where T : UnityEngine.Object
         {
-            return QuarkEngine.Instance.LoadAssetWithSubAssets<T>(assetName, assetExtension);
+            return QuarkEngine.Instance.LoadMainAndSubAssets<T>(assetName, assetExtension);
         }
-        public static Object[] LoadAssetWithSubAssets(string assetName, Type type)
+        public static Object[] LoadMainAndSubAssets(string assetName, Type type)
         {
-            return QuarkEngine.Instance.LoadAssetWithSubAssets(assetName, string.Empty, type);
+            return QuarkEngine.Instance.LoadMainAndSubAssets(assetName, string.Empty, type);
         }
-        public static Object[] LoadAssetWithSubAssets(string assetName, string assetExtension, Type type)
+        public static Object[] LoadMainAndSubAssets(string assetName, string assetExtension, Type type)
         {
-            return QuarkEngine.Instance.LoadAssetWithSubAssets(assetName, assetExtension, type);
+            return QuarkEngine.Instance.LoadMainAndSubAssets(assetName, assetExtension, type);
         }
         public static Coroutine LoadPrefabAsync(string assetName, Action<GameObject> callback, bool instantiate = false)
         {
@@ -148,21 +148,21 @@ where T : Object
         {
             return QuarkEngine.Instance.LoadPrefabAsync(assetName, assetExtension, callback, instantiate);
         }
-        public static Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback) where T : UnityEngine.Object
+        public static Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback) where T : UnityEngine.Object
         {
-            return QuarkEngine.Instance.LoadAssetWithSubAssetsAsync<T>(assetName, string.Empty, callback);
+            return QuarkEngine.Instance.LoadMainAndSubAssetsAsync<T>(assetName, string.Empty, callback);
         }
-        public static Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object
+        public static Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : UnityEngine.Object
         {
-            return QuarkEngine.Instance.LoadAssetWithSubAssetsAsync<T>(assetName, assetExtension, callback);
+            return QuarkEngine.Instance.LoadMainAndSubAssetsAsync<T>(assetName, assetExtension, callback);
         }
-        public static Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type,Action<Object[]> callback)
+        public static Coroutine LoadMainAndSubAssetsAsync(string assetName, Type type,Action<Object[]> callback)
         {
-            return QuarkEngine.Instance.LoadAssetWithSubAssetsAsync(assetName, string.Empty, type,callback);
+            return QuarkEngine.Instance.LoadMainAndSubAssetsAsync(assetName, string.Empty, type,callback);
         }
-        public static Coroutine LoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type,Action<Object[]> callback)
+        public static Coroutine LoadMainAndSubAssetsAsync(string assetName, string assetExtension, Type type,Action<Object[]> callback)
         {
-            return QuarkEngine.Instance.LoadAssetWithSubAssetsAsync(assetName, assetExtension, type,callback);
+            return QuarkEngine.Instance.LoadMainAndSubAssetsAsync(assetName, assetExtension, type,callback);
         }
         public static Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback)
         {

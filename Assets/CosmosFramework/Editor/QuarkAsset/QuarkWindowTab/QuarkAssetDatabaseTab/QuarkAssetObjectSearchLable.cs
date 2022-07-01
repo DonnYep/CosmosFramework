@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-using System.Linq;
 namespace Quark.Editor
 {
     public class QuarkAssetObjectSearchLable
@@ -9,6 +8,7 @@ namespace Quark.Editor
         QuarkAssetObjectTreeView treeView;
         TreeViewState treeViewState;
         SearchField searchField;
+        public QuarkAssetObjectTreeView TreeView { get { return treeView; } }
 
         public void OnEnable()
         {
@@ -17,26 +17,12 @@ namespace Quark.Editor
             treeView = new QuarkAssetObjectTreeView(treeViewState);
             searchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
         }
-        void Refresh()
-        {
-            treeView.ClearPath();
-            if (QuarkEditorDataProxy.QuarkAssetDataset != null)
-            {
-                var list = QuarkEditorDataProxy.QuarkAssetDataset.QuarkAssetObjectList;
-                treeView.AddPaths(list.Select(o => o.AssetPath));
-            }
-        }
         public void OnGUI()
         {
             GUILayout.BeginVertical();
             DrawToolbar();
             DrawTreeView();
-            Refresh();
             GUILayout.EndVertical();
-        }
-        public void Clear()
-        {
-            treeView.ClearPath();
         }
         void DrawToolbar()
         {

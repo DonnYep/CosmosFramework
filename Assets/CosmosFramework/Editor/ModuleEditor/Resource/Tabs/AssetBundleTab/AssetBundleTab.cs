@@ -29,8 +29,6 @@ namespace Cosmos.Editor.Resource
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             DrawBuildOptions();
             GUILayout.Space(16);
-            DrawAssetBundleOptions();
-            GUILayout.Space(16);
             DrawEncryption();
             GUILayout.Space(16);
             EditorGUILayout.BeginHorizontal();
@@ -62,6 +60,7 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.BeginVertical();
             {
                 tabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("Build target", tabData.BuildTarget);
+                tabData.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("Build assetBundle options", tabData.BuildAssetBundleOptions);
                 tabData.BuildVersion = EditorGUILayout.TextField("Build version", tabData.BuildVersion);
 
                 EditorGUILayout.BeginHorizontal();
@@ -91,32 +90,24 @@ namespace Cosmos.Editor.Resource
 
 
         }
-        void DrawAssetBundleOptions()
-        {
-            EditorGUILayout.LabelField("AssetBundle options", EditorStyles.boldLabel);
-            EditorGUILayout.BeginVertical();
-            {
-                tabData.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("AssetBundle options", tabData.BuildAssetBundleOptions);
-                tabData.AssetBundleNameType = (AssetBundleNameType)EditorGUILayout.EnumPopup("AssetBundle name type ", tabData.AssetBundleNameType);
-            }
-            EditorGUILayout.EndVertical();
-        }
         void DrawEncryption()
         {
             EditorGUILayout.LabelField("Encryption Options", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical();
             {
-                tabData.BuildInfoEncryption = EditorGUILayout.ToggleLeft("BuildInfo encryption", tabData.BuildInfoEncryption);
-                if (tabData.BuildInfoEncryption)
+                tabData.BuildedAssetsEncryption = EditorGUILayout.ToggleLeft("Builded assets encryption", tabData.BuildedAssetsEncryption);
+                if (tabData.BuildedAssetsEncryption)
                 {
-                    tabData.BuildInfoEncryptionKey = EditorGUILayout.TextField("BuildInfo encryption key", tabData.BuildInfoEncryptionKey);
-                    var aesKeyStr = tabData.BuildInfoEncryptionKey;
+                    tabData.BuildIedAssetsEncryptionKey = EditorGUILayout.TextField("Builded assets encryption key", tabData.BuildIedAssetsEncryptionKey);
+                    var aesKeyStr = tabData.BuildIedAssetsEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
-                    EditorGUILayout.LabelField($"BuildInfo AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");
+                    EditorGUILayout.LabelField($"Builded assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");
                     if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32 && aesKeyLength != 0)
                     {
                         EditorGUILayout.HelpBox("Key should be 16,24 or 32 bytes long", MessageType.Error);
                     }
+                    //打包输出的资源加密，如buildInfo，assetbundle 文件名加密
+                    tabData.BuildedAssetNameType = (BuildedAssetNameType)EditorGUILayout.EnumPopup("Builded assets name type ", tabData.BuildedAssetNameType);
                     GUILayout.Space(16);
                 }
                 tabData.AssetBundleEncryption = EditorGUILayout.ToggleLeft("AssetBundle encryption", tabData.AssetBundleEncryption);

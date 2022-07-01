@@ -61,7 +61,7 @@ namespace Quark.Loader
             else
                 return resGGo;
         }
-        public override T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension)
+        public override T[] LoadMainAndSubAssets<T>(string assetName, string assetExtension)
         {
 #if UNITY_EDITOR
             if (string.IsNullOrEmpty(assetName))
@@ -87,7 +87,7 @@ namespace Quark.Loader
                 return null;
 #endif
         }
-        public override Object[] LoadAssetWithSubAssets(string assetName, string assetExtension, Type type)
+        public override Object[] LoadMainAndSubAssets(string assetName, string assetExtension, Type type)
         {
 #if UNITY_EDITOR
             if (string.IsNullOrEmpty(assetName))
@@ -121,11 +121,11 @@ namespace Quark.Loader
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneName, progressProvider, progress, condition, callback, additive));
         }
-        public override Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
+        public override Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, callback));
         }
-        public override Coroutine LoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
+        public override Coroutine LoadMainAndSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, type, callback));
         }
@@ -221,13 +221,13 @@ namespace Quark.Loader
         IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
     where T : UnityEngine.Object
         {
-            var assets = LoadAssetWithSubAssets<T>(assetName, assetExtension);
+            var assets = LoadMainAndSubAssets<T>(assetName, assetExtension);
             yield return null;
             callback?.Invoke(assets);
         }
         IEnumerator EnumLoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
         {
-            var assets = LoadAssetWithSubAssets(assetName, assetExtension, type);
+            var assets = LoadMainAndSubAssets(assetName, assetExtension, type);
             yield return null;
             callback?.Invoke(assets);
         }
@@ -261,19 +261,21 @@ namespace Quark.Loader
         {
             if (string.IsNullOrEmpty(assetBundleName))
                 yield break;
-            List< Object> assetList = new List<Object>();
+            List<Object> assetList = new List<Object>();
+# if UNITY_EDITOR
             if (assetBundleDict.ContainsKey(assetBundleName))
             {
                 var bundle = assetBundleDict[assetBundleName];
                 var warppers = bundle.Assets;
                 foreach (var w in warppers)
                 {
-                    var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(w.QuarkAssetObject.AssetPath,typeof(Object));
+                    var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(w.QuarkAssetObject.AssetPath, typeof(Object));
                     assetList.Add(asset);
                     IncrementQuarkAssetObject(w);
                 }
-                callback?.Invoke(assetList.ToArray());
             }
+#endif
+            callback?.Invoke(assetList.ToArray());
         }
         IEnumerator EnumLoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive)
         {

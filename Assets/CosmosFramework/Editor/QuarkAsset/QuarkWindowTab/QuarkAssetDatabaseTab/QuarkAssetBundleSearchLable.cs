@@ -8,6 +8,7 @@ namespace Quark.Editor
         QuarkAssetBundleTreeView treeView;
         TreeViewState treeViewState;
         SearchField searchField;
+        public QuarkAssetBundleTreeView TreeView { get { return treeView; } }
         public void OnEnable()
         {
             searchField = new SearchField();
@@ -26,15 +27,11 @@ namespace Quark.Editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("ClearAllAssetBundle"))
             {
-                QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs?.Clear();
-                Clear();
+                QuarkEditorDataProxy.QuarkAssetDataset.NamePathInfoList?.Clear();
+                treeView.Clear();
             }
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
-        }
-        public void Clear()
-        {
-            treeView.Clear();
         }
         void DrawDragRect()
         {

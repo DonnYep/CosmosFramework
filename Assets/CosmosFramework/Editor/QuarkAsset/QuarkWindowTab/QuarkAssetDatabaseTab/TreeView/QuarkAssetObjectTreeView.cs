@@ -14,33 +14,31 @@ namespace Quark.Editor
             Reload();
             showAlternatingRowBackgrounds = true;
         }
+        public void AddPath(string path)
+        {
+            pathList.Add(path);
+        }
         public void AddPaths(IEnumerable<string> paths)
         {
             pathList.Clear();
             pathList.AddRange(paths);
+            Reload();
         }
-        public void ClearPath()
+        public void Clear()
         {
             pathList.Clear();
-        }
-        public override void OnGUI(UnityEngine.Rect rect)
-        {
-            if (QuarkEditorDataProxy.QuarkAssetDataset == null)
-                return;
-            Reload();
-            base.OnGUI(rect);
         }
         protected override void SingleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(pathList[id]);
+            var obj = AssetDatabase.LoadAssetAtPath<Object>(pathList[id]);
             EditorGUIUtility.PingObject(obj);
             Selection.activeObject = obj;
         }
         protected override void DoubleClickedItem(int id)
         {
             base.DoubleClickedItem(id);
-            var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(pathList[id]);
+            var obj = AssetDatabase.LoadAssetAtPath<Object>(pathList[id]);
             EditorGUIUtility.PingObject(obj);
             Selection.activeObject = obj;
         }

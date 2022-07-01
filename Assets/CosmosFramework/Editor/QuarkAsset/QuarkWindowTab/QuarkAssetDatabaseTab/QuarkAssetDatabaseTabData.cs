@@ -15,10 +15,6 @@
         /// </summary>
         public bool SortAssetObjectList;
         /// <summary>
-        /// QuarkAssetDataset对象在Assets目录下的相对路径；
-        /// </summary>
-        public string QuarkAssetDatasetPath;
-        /// <summary>
         ///  所选择界面的序号；
         /// </summary>
         public int SelectedBarIndex;

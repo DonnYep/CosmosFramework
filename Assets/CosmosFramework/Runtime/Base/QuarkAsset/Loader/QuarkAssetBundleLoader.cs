@@ -170,7 +170,7 @@ namespace Quark.Loader
             else
                 return resGo;
         }
-        public override T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension)
+        public override T[] LoadMainAndSubAssets<T>(string assetName, string assetExtension)
         {
             T[] assets = null;
             string assetBundleName = string.Empty;
@@ -240,7 +240,7 @@ namespace Quark.Loader
             }
             return assets;
         }
-        public override Object[] LoadAssetWithSubAssets(string assetName, string assetExtension, Type type)
+        public override Object[] LoadMainAndSubAssets(string assetName, string assetExtension, Type type)
         {
             Object[] assets = null;
             string assetBundleName = string.Empty;
@@ -333,11 +333,11 @@ namespace Quark.Loader
                 }
             }));
         }
-        public override Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
+        public override Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, callback));
         }
-        public override Coroutine LoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
+        public override Coroutine LoadMainAndSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback)
         {
             return QuarkUtility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, assetExtension, type, callback));
         }

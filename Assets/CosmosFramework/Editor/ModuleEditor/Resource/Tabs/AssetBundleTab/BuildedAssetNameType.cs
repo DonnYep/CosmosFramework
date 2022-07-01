@@ -3,7 +3,7 @@
     /// <summary>
     /// AB包名称类型
     /// </summary>
-    public enum AssetBundleNameType:byte
+    public enum BuildedAssetNameType:byte
     {
         DefaultName =0,
         AppendHash = 1,

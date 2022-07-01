@@ -37,13 +37,13 @@ namespace Quark.Loader
         public abstract T LoadAsset<T>(string assetName, string assetExtension) where T : Object;
         public abstract Object LoadAsset(string assetName, string assetExtension, Type type);
         public abstract GameObject LoadPrefab(string assetName, string assetExtension, bool instantiate = false);
-        public abstract T[] LoadAssetWithSubAssets<T>(string assetName, string assetExtension) where T : Object;
-        public abstract Object[] LoadAssetWithSubAssets(string assetName, string assetExtension, Type type);
+        public abstract T[] LoadMainAndSubAssets<T>(string assetName, string assetExtension) where T : Object;
+        public abstract Object[] LoadMainAndSubAssets(string assetName, string assetExtension, Type type);
         public abstract Coroutine LoadAssetAsync<T>(string assetName, string assetExtension, Action<T> callback) where T : Object;
         public abstract Coroutine LoadAssetAsync(string assetName, string assetExtension, Type type, Action<Object> callback);
         public abstract Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false);
-        public abstract Coroutine LoadAssetWithSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : Object;
-        public abstract Coroutine LoadAssetWithSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback);
+        public abstract Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : Object;
+        public abstract Coroutine LoadMainAndSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback);
         public abstract Coroutine LoadAllAssetAsync(string assetBundleName,Action<Object[]>callback);
         public abstract Coroutine LoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive = false);
         public abstract void UnloadAsset(string assetName, string assetExtension);
