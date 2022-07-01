@@ -247,9 +247,10 @@ namespace Quark.Editor
             for (int i = 0; i < infos.Count; i++)
             {
                 var info = infos[i];
-                infos[i] = new QuarkBundleInfo(info.AssetBundlePath, info.AssetBundlePathHash, info.AssetBundleName);
+                infos[i] = new QuarkBundleInfo(info.AssetBundlePath, info.AssetBundlePathHash, info.AssetBundlePath);
             }
             EditorUtility.SetDirty(QuarkEditorDataProxy.QuarkAssetDataset);
+            Reload();
         }
         void ResetBundleName(object context)
         {
@@ -258,8 +259,9 @@ namespace Quark.Editor
                 return;
             var info = QuarkEditorDataProxy.QuarkAssetDataset.NamePathInfoList[id];
             QuarkEditorDataProxy.QuarkAssetDataset.NamePathInfoList[id]
-                = new QuarkBundleInfo(info.AssetBundlePath, info.AssetBundlePathHash, info.AssetBundleName);
+                = new QuarkBundleInfo(info.AssetBundlePath, info.AssetBundlePathHash, info.AssetBundlePath);
             EditorUtility.SetDirty(QuarkEditorDataProxy.QuarkAssetDataset);
+            Reload();
         }
         void Delete(object context)
         {
