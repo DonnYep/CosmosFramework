@@ -6,7 +6,6 @@
     public enum BuildedAssetNameType:byte
     {
         DefaultName =0,
-        AppendHash = 1,
-        HashInstead = 2
+        HashInstead = 1
     }
 }

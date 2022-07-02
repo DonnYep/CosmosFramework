@@ -72,58 +72,6 @@ namespace Quark.Editor
             }
             Reload();
         }
-
-        //public override void OnGUI(Rect rect)
-        //{
-        //    if (UnityEngine.Event.current.type == EventType.Repaint)
-        //        DefaultStyles.backgroundOdd.Draw(rect, false, false, false, false);
-        //    try
-        //    {
-        //        if (QuarkEditorDataProxy.QuarkAssetDataset == null)
-        //            return;
-        //        var dirHashPairs = QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs;
-        //        var dirHashCount = dirHashPairs.Count;
-        //        int removeCount = 0;
-        //        int[] removeIndexArray = new int[dirHashCount];
-        //        for (int i = 0; i < dirHashCount; i++)
-        //        {
-        //            var srcHash = dirHashPairs[i].DirHash;
-        //            var srcDir = dirHashPairs[i].Dir;
-        //            var newPath = AssetDatabase.GUIDToAssetPath(srcHash);
-        //            var newHash = AssetDatabase.AssetPathToGUID(srcDir);
-        //            if (newPath != dirHashPairs[i].Dir)
-        //            {
-        //                if (!string.IsNullOrEmpty(newPath))
-        //                    dirHashPairs[i] = new QuarkDirHashPair(srcHash, newPath);
-        //            }
-        //            else
-        //            {
-        //                var filePath = Path.Combine(Directory.GetCurrentDirectory(), srcDir);
-        //                if (!File.Exists(filePath) && !Directory.Exists(filePath))
-        //                {
-        //                    if (!File.Exists(filePath) && !Directory.Exists(filePath))
-        //                    {
-        //                        removeIndexArray[removeCount] = i;
-        //                        removeCount++;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        for (int i = 0; i < removeCount; i++)
-        //        {
-        //            QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs.RemoveAt(removeIndexArray[i]);
-        //        }
-        //        var dirs = QuarkEditorDataProxy.QuarkAssetDataset.DirHashPairs.ToArray();
-        //        pathList.Clear();
-        //        pathList.AddRange(dirs.Select(d => d.Dir));
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        QuarkUtility.LogError($"OnGUI :{e}");
-        //    }
-        //    Reload();
-        //    base.OnGUI(rect);
-        //}
         protected override void SingleClickedItem(int id)
         {
             if (QuarkEditorDataProxy.QuarkAssetDataset == null)

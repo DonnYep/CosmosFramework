@@ -148,7 +148,7 @@ namespace Cosmos
             /// <returns>加密后的值</returns>
             public static byte[] Generate32BytesAESKey(string srckey)
             {
-                var dstLen = 16;
+                var dstLen = 32;
                 var srcBytes = Encoding.UTF8.GetBytes(srckey);
                 byte[] dstBytes = new byte[dstLen];
                 var srcLen = srcBytes.Length;
@@ -166,18 +166,78 @@ namespace Cosmos
                 return dstBytes;
             }
             /// <summary>
-            /// 加密算法HmacSHA256  
+            /// 加密算法HMACSHA1
             /// </summary>
             /// <param name="encrpytedStr">被加密的数据</param>
             /// <param name="strKey">加密密码</param>
             /// <returns>加密后的字段</returns>
-            public static string HmacSHA256(string encrpytedStr, string strKey)
+            public static string HMACSHA1(string encrpytedStr, string strKey)
+            {
+                string encrpytedResult = string.Empty;
+                using (HMACSHA1 mac = new HMACSHA1(Encoding.UTF8.GetBytes(strKey)))
+                {
+                    byte[] hashMsg = mac.ComputeHash(Encoding.UTF8.GetBytes(encrpytedStr));
+                    encrpytedResult = Convert.ToBase64String(hashMsg);
+                }
+                return encrpytedResult;
+            }
+            /// <summary>
+            /// 加密算法HMACSHA1，输出16位字符串；
+            /// </summary>
+            /// <param name="encrpytedStr">被加密的数据</param>
+            /// <param name="strKey">加密密码</param>
+            /// <returns>加密后的字段</returns>
+            public static string HMACSHA1ToHex(string encrpytedStr, string strKey)
+            {
+                string encrpytedResult = string.Empty;
+                using (HMACSHA1 mac = new HMACSHA1(Encoding.UTF8.GetBytes(strKey)))
+                {
+                    byte[] hashBytes = mac.ComputeHash(Encoding.UTF8.GetBytes(encrpytedStr));
+                    int length = hashBytes.Length;
+                    stringBuilderCache.Clear();
+                    for (int i = 0; i < length; i++)
+                    {
+                        stringBuilderCache.Append(hashBytes[i].ToString("X2"));
+                    }
+                    encrpytedResult = stringBuilderCache.ToString();
+                }
+                return encrpytedResult;
+            }
+            /// <summary>
+            /// 加密算法HMACSHA256
+            /// </summary>
+            /// <param name="encrpytedStr">被加密的数据</param>
+            /// <param name="strKey">加密密码</param>
+            /// <returns>加密后的字段</returns>
+            public static string HMACSHA256(string encrpytedStr, string strKey)
             {
                 string encrpytedResult = string.Empty;
                 using (HMACSHA256 mac = new HMACSHA256(Encoding.UTF8.GetBytes(strKey)))
                 {
                     byte[] hashMsg = mac.ComputeHash(Encoding.UTF8.GetBytes(encrpytedStr));
                     encrpytedResult = Convert.ToBase64String(hashMsg);
+                }
+                return encrpytedResult;
+            }
+            /// <summary>
+            /// 加密算法HMACSHA256，输出16位字符串；
+            /// </summary>
+            /// <param name="encrpytedStr">被加密的数据</param>
+            /// <param name="strKey">加密密码</param>
+            /// <returns>加密后的字段</returns>
+            public static string HMACSHA256ToHex(string encrpytedStr, string strKey)
+            {
+                string encrpytedResult = string.Empty;
+                using (HMACSHA256 mac = new HMACSHA256(Encoding.UTF8.GetBytes(strKey)))
+                {
+                    byte[] hashBytes = mac.ComputeHash(Encoding.UTF8.GetBytes(encrpytedStr));
+                    int length = hashBytes.Length;
+                    stringBuilderCache.Clear();
+                    for (int i = 0; i < length; i++)
+                    {
+                        stringBuilderCache.Append(hashBytes[i].ToString("X2"));
+                    }
+                    encrpytedResult = stringBuilderCache.ToString();
                 }
                 return encrpytedResult;
             }

@@ -29,6 +29,20 @@ namespace Cosmos
                 byte[] bytes = Convert.FromBase64String(message);
                 return Encoding.GetEncoding("utf-8").GetString(bytes);
             }
+            public static string ConvertToHexString( string srcData)
+            {
+                string hexString = string.Empty;
+                var bytes = Encoding.UTF8.GetBytes(srcData);
+                if (bytes != null)
+                {
+                    foreach (byte b in bytes)
+                    {
+                        stringBuilderCache.AppendFormat("{0:x2}", b);
+                    }
+                    hexString = stringBuilderCache.ToString();
+                }
+                return hexString;
+            }
             public static string ConvertToHexString(byte[] bytes)
             {
                 string hexString = string.Empty;

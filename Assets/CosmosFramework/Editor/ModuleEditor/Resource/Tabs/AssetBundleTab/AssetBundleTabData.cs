@@ -11,13 +11,29 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public BuildTarget BuildTarget;
         /// <summary>
-        /// AB打包选项；
+        /// AB资源压缩类型；
         /// </summary>
-        public BuildAssetBundleOptions BuildAssetBundleOptions;
+        public AssetBundleCompressType AssetBundleCompressType;
         /// <summary>
-        /// AB包名称类型
+        /// AB资源名称类型
         /// </summary>
         public BuildedAssetNameType BuildedAssetNameType;
+        /// <summary>
+        /// 不会在AssetBundle中包含类型信息;
+        /// </summary>
+        public bool DisableWriteTypeTree;
+        /// <summary>
+        /// 使用存储在Asset Bundle中的对象的id的哈希构建Asset Bundle;
+        /// </summary>
+        public bool DeterministicAssetBundle;
+        /// <summary>
+        /// 强制重建Asset Bundles;
+        /// </summary>
+        public bool ForceRebuildAssetBundle;
+        /// <summary>
+        /// 执行增量构建检查时忽略类型树更改;
+        /// </summary>
+        public bool IgnoreTypeTreeChanges;
         /// <summary>
         /// AB打包输出的绝对路径；
         /// </summary>
@@ -48,7 +64,7 @@ namespace Cosmos.Editor.Resource
         public string BuildIedAssetsEncryptionKey;
         public AssetBundleTabData()
         {
-            BuildAssetBundleOptions = BuildAssetBundleOptions.ChunkBasedCompression;
+            AssetBundleCompressType = AssetBundleCompressType.ChunkBasedCompression_LZ4;
             BuildTarget = BuildTarget.StandaloneWindows;
             BuildPath = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), "AssetBundles");
             AssetBundleEncryption = false;
@@ -57,6 +73,10 @@ namespace Cosmos.Editor.Resource
             BuildIedAssetsEncryptionKey = "CosmosBundlesKey";
             BuildedAssetNameType = BuildedAssetNameType.DefaultName;
             BuildVersion = "0.0.1";
+            ForceRebuildAssetBundle = false;
+            DisableWriteTypeTree = false;
+            DeterministicAssetBundle = false;
+            IgnoreTypeTreeChanges = false;
         }
     }
 }

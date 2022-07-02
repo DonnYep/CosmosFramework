@@ -18,7 +18,6 @@ namespace Quark.Editor
         public void AddPath(string path)
         {
             pathList.Add(path);
-            Reload();
         }
         public void AddPaths(IEnumerable<string> paths)
         {
@@ -57,7 +56,7 @@ namespace Quark.Editor
             {
                 for (int i = 0; i < pathList.Count; i++)
                 {
-                    var obj = AssetDatabase.LoadMainAssetAtPath(pathList[i]);
+                    var obj = AssetDatabase.LoadAssetAtPath(pathList[i], typeof(UnityEngine.Object));
                     bool isValidAsset = obj != null;
                     if (isValidAsset)
                     {

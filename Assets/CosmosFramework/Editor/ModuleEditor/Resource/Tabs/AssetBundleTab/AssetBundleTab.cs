@@ -5,7 +5,8 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 using Unity.EditorCoroutines.Editor;
-using System.IO;
+using System.Collections;
+using Cosmos.Resource;
 
 namespace Cosmos.Editor.Resource
 {
@@ -14,7 +15,7 @@ namespace Cosmos.Editor.Resource
         public Func<EditorCoroutine> BuildDataset;
         public const string AssetBundleTabDataName = "ResourceEditor_AsseBundleTabData.json";
         AssetBundleTabData tabData;
-        Vector2 scrollPosition;
+        AssetBundleBuilder assetBundleBuilder = new AssetBundleBuilder();
 
         public void OnEnable()
         {
@@ -26,8 +27,9 @@ namespace Cosmos.Editor.Resource
         }
         public void OnGUI(Rect rect)
         {
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             DrawBuildOptions();
+            GUILayout.Space(16);
+            DrawPathOptions();
             GUILayout.Space(16);
             DrawEncryption();
             GUILayout.Space(16);
@@ -35,7 +37,22 @@ namespace Cosmos.Editor.Resource
             {
                 if (GUILayout.Button("Build assetBundle"))
                 {
-
+                    if (ResourceEditorDataProxy.ResourceDataset == null)
+                    {
+                        EditorUtil.Debug.LogError("ResourceDataset is invalid !");
+                        return;
+                    }
+                    var buildParams = new AssetBundleBuildParams()
+                    {
+                        AssetBundleBuildPath = tabData.AssetBundleBuildPath,
+                        AssetBundleOffsetValue = tabData.AssetBundleOffsetValue,
+                        BuildAssetBundleOptions = GetBuildAssetBundleOptions(),
+                        BuildedAssetNameType = tabData.BuildedAssetNameType,
+                        BuildIedAssetsEncryptionKey = tabData.BuildIedAssetsEncryptionKey,
+                        BuildTarget = tabData.BuildTarget,
+                        BuildVersion = tabData.BuildVersion
+                    };
+                    EditorUtil.Coroutine.StartCoroutine(BuildAssetBundle(buildParams, ResourceEditorDataProxy.ResourceDataset));
                 }
                 if (GUILayout.Button("Reset options"))
                 {
@@ -43,7 +60,6 @@ namespace Cosmos.Editor.Resource
                 }
             }
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndScrollView();
         }
         public void OnDatasetAssign()
         {
@@ -56,13 +72,25 @@ namespace Cosmos.Editor.Resource
         void DrawBuildOptions()
         {
             EditorGUILayout.LabelField("Build Options", EditorStyles.boldLabel);
-            bool versionValid = false;
             EditorGUILayout.BeginVertical();
             {
                 tabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("Build target", tabData.BuildTarget);
-                tabData.BuildAssetBundleOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("Build assetBundle options", tabData.BuildAssetBundleOptions);
-                tabData.BuildVersion = EditorGUILayout.TextField("Build version", tabData.BuildVersion);
+                tabData.AssetBundleCompressType = (AssetBundleCompressType)EditorGUILayout.EnumPopup("Build compression type", tabData.AssetBundleCompressType);
 
+                tabData.ForceRebuildAssetBundle = EditorGUILayout.ToggleLeft("Force rebuild assetBundle", tabData.ForceRebuildAssetBundle);
+                tabData.DisableWriteTypeTree = EditorGUILayout.ToggleLeft("Disable write type tree", tabData.DisableWriteTypeTree);
+                tabData.DeterministicAssetBundle = EditorGUILayout.ToggleLeft("Deterministic assetBundle", tabData.DeterministicAssetBundle);
+                tabData.IgnoreTypeTreeChanges = EditorGUILayout.ToggleLeft("Ignore type tree changes", tabData.IgnoreTypeTreeChanges);
+            }
+            EditorGUILayout.EndVertical();
+        }
+        void DrawPathOptions()
+        {
+            EditorGUILayout.LabelField("Path Options", EditorStyles.boldLabel);
+            bool versionValid = false;
+            EditorGUILayout.BeginVertical();
+            {
+                tabData.BuildVersion = EditorGUILayout.TextField("Build version", tabData.BuildVersion);
                 EditorGUILayout.BeginHorizontal();
                 {
                     tabData.BuildPath = EditorGUILayout.TextField("Build path", tabData.BuildPath.Trim());
@@ -87,9 +115,8 @@ namespace Cosmos.Editor.Resource
                 EditorGUILayout.LabelField("AssetBundle build path", tabData.AssetBundleBuildPath);
             }
             EditorGUILayout.EndVertical();
-
-
         }
+
         void DrawEncryption()
         {
             EditorGUILayout.LabelField("Encryption Options", EditorStyles.boldLabel);
@@ -136,6 +163,39 @@ namespace Cosmos.Editor.Resource
         void SaveTabData()
         {
             EditorUtil.SaveData(AssetBundleTabDataName, tabData);
+        }
+        IEnumerator BuildAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset)
+        {
+            yield return BuildDataset.Invoke();
+            assetBundleBuilder.PrepareBuildAssetBundle(buildParams, dataset);
+            var manifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
+            assetBundleBuilder.ProcessAssetBundle(buildParams, dataset, manifest);
+        }
+        BuildAssetBundleOptions GetBuildAssetBundleOptions()
+        {
+            BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
+            var compressType = tabData.AssetBundleCompressType;
+            switch (compressType)
+            {
+                case AssetBundleCompressType.Uncompressed:
+                    options |= BuildAssetBundleOptions.UncompressedAssetBundle;
+                    break;
+                case AssetBundleCompressType.StandardCompression_LZMA:
+                    //None=StandardCompression_LZMA
+                    break;
+                case AssetBundleCompressType.ChunkBasedCompression_LZ4:
+                    options |= BuildAssetBundleOptions.ChunkBasedCompression;
+                    break;
+            }
+            if (tabData.DisableWriteTypeTree)
+                options |= BuildAssetBundleOptions.DisableWriteTypeTree;
+            if (tabData.DeterministicAssetBundle)
+                options |= BuildAssetBundleOptions.DeterministicAssetBundle;
+            if (tabData.ForceRebuildAssetBundle)
+                options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
+            if (tabData.IgnoreTypeTreeChanges)
+                options |= BuildAssetBundleOptions.IgnoreTypeTreeChanges;
+            return options;
         }
     }
 }

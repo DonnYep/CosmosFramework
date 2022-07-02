@@ -15,8 +15,8 @@ namespace Quark.Editor
         int selectedBar = 0;
         string[] barArray = new string[] { "AssetDatabaseBuilder", "AssetBundleBuilder" };
         public static int FilterLength { get; private set; }
-        static QuarkAssetDatabaseTab assetDatabaseTab = new QuarkAssetDatabaseTab();
-        static QuarkAssetBundleTab assetBundleTab = new QuarkAssetBundleTab();
+        QuarkAssetDatabaseTab assetDatabaseTab;
+        QuarkAssetBundleTab assetBundleTab;
         Vector2 scrollPosition;
         internal const string QuarkAssetWindowDataName = "QuarkAsset_WindowData.json";
 
@@ -37,18 +37,27 @@ namespace Quark.Editor
         }
         void OnEnable()
         {
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            if (assetDatabaseTab == null)
+                assetDatabaseTab = new QuarkAssetDatabaseTab();
+            if (assetBundleTab == null)
+                assetBundleTab = new QuarkAssetBundleTab();
+            datasetAssigned = false;
             QuarkEditorDataProxy.QuarkAssetDataset = null;
             GetWindowData();
             assetDatabaseTab.OnEnable();
             assetBundleTab.OnEnable();
             assetBundleTab.SetAssetDatabaseTab(assetDatabaseTab);
         }
+
         void OnDisable()
         {
+            datasetAssigned = false;
             SaveWindowData();
             assetDatabaseTab.OnDisable();
             assetBundleTab.OnDisable();
             QuarkEditorDataProxy.QuarkAssetDataset = null;
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
         }
         void OnGUI()
         {
@@ -110,6 +119,12 @@ namespace Quark.Editor
             }
             EditorGUILayout.EndScrollView();
         }
+        void OnPlayModeStateChanged(PlayModeStateChange stateChange)
+        {
+            datasetAssigned = false;
+            QuarkEditorDataProxy.QuarkAssetDataset = null;
+        }
+
         QuarkAssetDataset CreateQuarkAssetDataset()
         {
             var so = ScriptableObject.CreateInstance<QuarkAssetDataset>();

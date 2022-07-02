@@ -50,7 +50,7 @@ namespace Cosmos.Editor.Resource
         protected override void DoubleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            EditorUtil.PingAndActiveObject(bundleList[id].BundleName);
+            EditorUtil.PingAndActiveObject(bundleList[id].BundlePath);
         }
         protected override void ContextClickedItem(int id)
         {

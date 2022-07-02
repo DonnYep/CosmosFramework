@@ -10,15 +10,15 @@ namespace Cosmos.Editor.Resource
         ResourceWindowData windowData;
         public ResourceWindowData ResourceWindowData { get { return windowData; } }
         readonly string ResourceWindowDataName = "ResourceEditor_WindowData.json";
-        AssetDatabaseTab assetDatabaseTab = new AssetDatabaseTab();
-        AssetBundleTab assetBundleTab = new AssetBundleTab();
+        AssetDatabaseTab assetDatabaseTab;
+        AssetBundleTab assetBundleTab;
         string[] tabArray = new string[] { "AssetDatabase", "AssetBundle" };
         ResourceDataset latestResourceDataset;
 
         /// <summary>
         /// dataset是否为空处理标记；
         /// </summary>
-        bool emptyDatasetFlag = false;
+        bool isDatasetEmpty = false;
         public ResourceWindow()
         {
             this.titleContent = new GUIContent("ResourceWindow");
@@ -32,6 +32,10 @@ namespace Cosmos.Editor.Resource
         void OnEnable()
         {
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            if (assetBundleTab == null)
+                assetBundleTab = new AssetBundleTab();
+            if (assetDatabaseTab == null)
+                assetDatabaseTab = new AssetDatabaseTab();
             GetWindowData();
             if (!string.IsNullOrEmpty(windowData.ResourceDatasetPath))
             {
@@ -44,7 +48,6 @@ namespace Cosmos.Editor.Resource
         void OnDisable()
         {
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
-
             if (ResourceEditorDataProxy.ResourceDataset != null)
             {
                 windowData.ResourceDatasetPath = AssetDatabase.GetAssetPath(ResourceEditorDataProxy.ResourceDataset);
@@ -70,7 +73,7 @@ namespace Cosmos.Editor.Resource
                 {
                     assetDatabaseTab.OnDatasetAssign();
                     assetBundleTab.OnDatasetAssign();
-                    emptyDatasetFlag = false;
+                    isDatasetEmpty = false;
                 }
                 else
                 {
@@ -82,11 +85,11 @@ namespace Cosmos.Editor.Resource
             {
                 if (ResourceEditorDataProxy.ResourceDataset == null)
                 {
-                    if (!emptyDatasetFlag)
+                    if (!isDatasetEmpty)
                     {
                         assetDatabaseTab.OnDatasetUnassign();
                         assetBundleTab.OnDatasetUnassign();
-                        emptyDatasetFlag = true;
+                        isDatasetEmpty = true;
                     }
                 }
             }
@@ -117,20 +120,7 @@ namespace Cosmos.Editor.Resource
         }
         void OnPlayModeStateChanged(PlayModeStateChange stateChange)
         {
-            switch (stateChange)
-            {
-                case PlayModeStateChange.EnteredEditMode:
-                    {
-                        GetWindowData();
-                        if (!string.IsNullOrEmpty(windowData.ResourceDatasetPath))
-                        {
-                            latestResourceDataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(windowData.ResourceDatasetPath);
-                        }
-                        assetDatabaseTab.OnEnable();
-                        assetBundleTab.OnEnable();
-                    }
-                    break;
-            }
+            ResourceEditorDataProxy.ResourceDataset = null;
         }
         ResourceDataset CreateResourceDataset()
         {
