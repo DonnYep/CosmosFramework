@@ -71,8 +71,8 @@ namespace Cosmos.Editor.Resource
             AssetBundleOffsetValue = 16;
             BuildedAssetsEncryption = false;
             BuildIedAssetsEncryptionKey = "CosmosBundlesKey";
-            BuildedAssetNameType = BuildedAssetNameType.DefaultName;
-            BuildVersion = "0.0.1";
+            BuildedAssetNameType = BuildedAssetNameType.HashInstead;
+            BuildVersion = "Alpha";
             ForceRebuildAssetBundle = false;
             DisableWriteTypeTree = false;
             DeterministicAssetBundle = false;

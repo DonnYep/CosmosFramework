@@ -14,10 +14,10 @@
         void InitData()
         {
             var bundleManifest = resourceManifest.BundleManifestDict;
-            foreach (var manifest in bundleManifest.Values)
+            foreach (var bundle in bundleManifest.Values)
             {
-                resourceBundleDict.TryAdd(manifest.ResourceBundle.BundleName, new ResourceBundleWarpper(manifest.ResourceBundle));
-                var objList = manifest.ResourceBundle.ResourceObjectList;
+                resourceBundleDict.TryAdd(bundle.BundleName, new ResourceBundleWarpper(bundle));
+                var objList = bundle.ResourceObjectList;
                 var length = objList.Count;
                 for (int i = 0; i < length; i++)
                 {

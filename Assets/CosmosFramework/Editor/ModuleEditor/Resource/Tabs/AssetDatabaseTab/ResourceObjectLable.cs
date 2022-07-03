@@ -13,7 +13,7 @@ namespace Cosmos.Editor.Resource
         {
             searchField = new SearchField();
             treeViewState = new TreeViewState();
-            var multiColumnHeaderState = new MultiColumnHeader(ResourceEditorUtil.CreateResourceObjectMultiColumnHeader());
+            var multiColumnHeaderState = new MultiColumnHeader(ResourceEditorUtility.CreateResourceObjectMultiColumnHeader());
             treeView = new ResourceObjectTreeView(treeViewState, multiColumnHeaderState);
             searchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
         }

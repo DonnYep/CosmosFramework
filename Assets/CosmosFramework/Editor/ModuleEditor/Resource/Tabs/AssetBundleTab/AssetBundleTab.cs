@@ -16,7 +16,8 @@ namespace Cosmos.Editor.Resource
         public const string AssetBundleTabDataName = "ResourceEditor_AsseBundleTabData.json";
         AssetBundleTabData tabData;
         AssetBundleBuilder assetBundleBuilder = new AssetBundleBuilder();
-
+        Vector2 scrollPosition;
+        bool isAesKeyInvalid = false;
         public void OnEnable()
         {
             GetTabData();
@@ -27,6 +28,7 @@ namespace Cosmos.Editor.Resource
         }
         public void OnGUI(Rect rect)
         {
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             DrawBuildOptions();
             GUILayout.Space(16);
             DrawPathOptions();
@@ -42,12 +44,19 @@ namespace Cosmos.Editor.Resource
                         EditorUtil.Debug.LogError("ResourceDataset is invalid !");
                         return;
                     }
+                    if (!isAesKeyInvalid)
+                    {
+                        EditorUtil.Debug.LogError("Encryption key should be 16,24 or 32 bytes long");
+                        return;
+                    }
                     var buildParams = new AssetBundleBuildParams()
                     {
                         AssetBundleBuildPath = tabData.AssetBundleBuildPath,
+                        AssetBundleEncryption = tabData.AssetBundleEncryption,
                         AssetBundleOffsetValue = tabData.AssetBundleOffsetValue,
                         BuildAssetBundleOptions = GetBuildAssetBundleOptions(),
                         BuildedAssetNameType = tabData.BuildedAssetNameType,
+                        BuildedAssetsEncryption = tabData.BuildedAssetsEncryption,
                         BuildIedAssetsEncryptionKey = tabData.BuildIedAssetsEncryptionKey,
                         BuildTarget = tabData.BuildTarget,
                         BuildVersion = tabData.BuildVersion
@@ -60,6 +69,7 @@ namespace Cosmos.Editor.Resource
                 }
             }
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndScrollView();
         }
         public void OnDatasetAssign()
         {
@@ -79,8 +89,16 @@ namespace Cosmos.Editor.Resource
 
                 tabData.ForceRebuildAssetBundle = EditorGUILayout.ToggleLeft("Force rebuild assetBundle", tabData.ForceRebuildAssetBundle);
                 tabData.DisableWriteTypeTree = EditorGUILayout.ToggleLeft("Disable write type tree", tabData.DisableWriteTypeTree);
+                if (tabData.DisableWriteTypeTree)
+                    tabData.IgnoreTypeTreeChanges = false;
+
                 tabData.DeterministicAssetBundle = EditorGUILayout.ToggleLeft("Deterministic assetBundle", tabData.DeterministicAssetBundle);
                 tabData.IgnoreTypeTreeChanges = EditorGUILayout.ToggleLeft("Ignore type tree changes", tabData.IgnoreTypeTreeChanges);
+                if (tabData.IgnoreTypeTreeChanges)
+                    tabData.DisableWriteTypeTree = false;
+
+                //打包输出的资源加密，如buildInfo，assetbundle 文件名加密
+                tabData.BuildedAssetNameType = (BuildedAssetNameType)EditorGUILayout.EnumPopup("Build assets name type ", tabData.BuildedAssetNameType);
             }
             EditorGUILayout.EndVertical();
         }
@@ -116,7 +134,6 @@ namespace Cosmos.Editor.Resource
             }
             EditorGUILayout.EndVertical();
         }
-
         void DrawEncryption()
         {
             EditorGUILayout.LabelField("Encryption Options", EditorStyles.boldLabel);
@@ -128,15 +145,21 @@ namespace Cosmos.Editor.Resource
                     tabData.BuildIedAssetsEncryptionKey = EditorGUILayout.TextField("Builded assets encryption key", tabData.BuildIedAssetsEncryptionKey);
                     var aesKeyStr = tabData.BuildIedAssetsEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
-                    EditorGUILayout.LabelField($"Builded assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");
+                    EditorGUILayout.LabelField($"Assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");
                     if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32 && aesKeyLength != 0)
                     {
-                        EditorGUILayout.HelpBox("Key should be 16,24 or 32 bytes long", MessageType.Error);
+                        EditorGUILayout.HelpBox("Encryption key should be 16,24 or 32 bytes long", MessageType.Error);
+                        isAesKeyInvalid = false;
                     }
-                    //打包输出的资源加密，如buildInfo，assetbundle 文件名加密
-                    tabData.BuildedAssetNameType = (BuildedAssetNameType)EditorGUILayout.EnumPopup("Builded assets name type ", tabData.BuildedAssetNameType);
+                    else
+                    {
+                        isAesKeyInvalid = true;
+                    }
+
                     GUILayout.Space(16);
                 }
+                else
+                    isAesKeyInvalid = true;
                 tabData.AssetBundleEncryption = EditorGUILayout.ToggleLeft("AssetBundle encryption", tabData.AssetBundleEncryption);
                 if (tabData.AssetBundleEncryption)
                 {

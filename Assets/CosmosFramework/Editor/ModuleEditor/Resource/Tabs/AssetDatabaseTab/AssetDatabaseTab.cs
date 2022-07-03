@@ -268,6 +268,11 @@ namespace Cosmos.Editor.Resource
                 }
 
                 bundle.BundleSize = bundleSize;
+
+                //这里获取绝对ab绝对路径下，所有资源的bytes，生成唯一MD5 hash
+                var path = Path.Combine(EditorUtil.ApplicationPath(), bundle.BundlePath);
+                bundle.BundleHash= ResourceUtility.CreateDirectoryMd5(path);
+
                 var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundle.BundleSize));
                 validBundleInfo.Add(bundleInfo);
 

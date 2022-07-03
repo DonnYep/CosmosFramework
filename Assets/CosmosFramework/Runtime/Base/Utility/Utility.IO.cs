@@ -282,7 +282,7 @@ namespace Cosmos
                 {
                     using (StreamReader reader = new StreamReader(stream, utf8Encoding))
                     {
-                        result= Utility.Text.Append(reader.ReadToEnd());
+                        result = Utility.Text.Append(reader.ReadToEnd());
                     }
                 }
                 return result;
@@ -438,6 +438,27 @@ namespace Cosmos
                 using (BinaryWriter writer = new BinaryWriter(File.Open(fileFullPath, FileMode.OpenOrCreate)))
                 {
                     writer.Write(context, startPosition, context.Length);
+                }
+            }
+            /// <summary>
+            /// 追加并完全写入所有bytes;
+            /// </summary>
+            /// <param name="path">写入的地址</param>
+            /// <param name="bytesArray">数组集合</param>
+            public static void AppendAndWriteAllBytes(string path, params byte[][] bytesArray)
+            {
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    var bytesArrayLength = bytesArray.Length;
+                    int size = 0;
+                    for (int i = 0; i < bytesArrayLength; i++)
+                    {
+                        stream.Write(bytesArray[i], 0, bytesArray[i].Length);
+                        size += bytesArray[i].Length;
+                    }
+                    File.WriteAllBytes(path, stream.ToArray());
+                    stream.Close();
                 }
             }
             /// <summary>

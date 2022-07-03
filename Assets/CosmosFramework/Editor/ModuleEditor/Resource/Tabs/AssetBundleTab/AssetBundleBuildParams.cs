@@ -24,9 +24,17 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public string BuildVersion;
         /// <summary>
+        /// 打包输出资源加密；
+        /// </summary>
+        public bool BuildedAssetsEncryption;
+        /// <summary>
         /// 打包输出资源加密密钥；
         /// </summary>
         public string BuildIedAssetsEncryptionKey;
+        /// <summary>
+        /// AB偏移加密；
+        /// </summary>
+        public bool AssetBundleEncryption;
         /// <summary>
         /// AB偏移量；
         /// </summary>

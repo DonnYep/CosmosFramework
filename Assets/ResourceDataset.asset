@@ -242,7 +242,7 @@ MonoBehaviour:
     bundleName: Assets/Examples/AssetBundleTest/Video
     extension: .mp4
   resourceBundleList:
-  - bundleName: Assets/Examples/AssetBundleTest/Audio
+  - bundleName: audio
     dependList: []
     resourceObjectList:
     - assetName: AmbientAudio.mp3
@@ -267,7 +267,8 @@ MonoBehaviour:
       extension: .mp3
     bundleSize: 6986559
     bundlePath: Assets/Examples/AssetBundleTest/Audio
-  - bundleName: Assets/Examples/AssetBundleTest/Material
+    bundleHash: ed47e6f35abfea84ec74480d2e315ebf
+  - bundleName: material
     dependList: []
     resourceObjectList:
     - assetName: Alpha_Body_MAT.mat
@@ -288,7 +289,8 @@ MonoBehaviour:
       extension: .mat
     bundleSize: 8513
     bundlePath: Assets/Examples/AssetBundleTest/Material
-  - bundleName: Assets/Examples/AssetBundleTest/Model
+    bundleHash: 0502fbef8668dbd98bd016d766260b0a
+  - bundleName: model
     dependList: []
     resourceObjectList:
     - assetName: LM_XBotIdle.anim
@@ -317,7 +319,8 @@ MonoBehaviour:
       extension: .fbx
     bundleSize: 6008044
     bundlePath: Assets/Examples/AssetBundleTest/Model
-  - bundleName: Assets/Examples/AssetBundleTest/Photo
+    bundleHash: 7aae7a543ef750edf8ec41a497a31491
+  - bundleName: photo
     dependList: []
     resourceObjectList:
     - assetName: CB1024.tga
@@ -338,8 +341,145 @@ MonoBehaviour:
       extension: .psd
     bundleSize: 21600736
     bundlePath: Assets/Examples/AssetBundleTest/Photo
-  - bundleName: Assets/Examples/AssetBundleTest/Prefab
-    dependList: []
+    bundleHash: dc74cb87b57bb2b4cdb4d4f78441c887
+  - bundleName: prefab
+    dependList:
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - audio
+    - material
+    - model
+    - texture
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - audio
+    - material
+    - model
+    - texture
+    - audio
+    - material
+    - model
+    - texture
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    - audio
+    - material
+    - model
+    - texture
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
     resourceObjectList:
     - assetName: AudioSource.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
@@ -423,8 +563,145 @@ MonoBehaviour:
       extension: .prefab
     bundleSize: 360065
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
-  - bundleName: Assets/Examples/AssetBundleTest/Scene
-    dependList: []
+    bundleHash: 3fe16adbafe77bff7c919125c0cdb0c7
+  - bundleName: scene
+    dependList:
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - material
+    - model
+    - prefab
+    - texture
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - material
+    - model
+    - prefab
+    - texture
+    - material
+    - model
+    - prefab
+    - texture
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - material
+    - model
+    - prefab
+    - texture
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
     resourceObjectList:
     - assetName: SceneTarget.unity
       assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
@@ -436,7 +713,8 @@ MonoBehaviour:
       extension: .unity
     bundleSize: 326733
     bundlePath: Assets/Examples/AssetBundleTest/Scene
-  - bundleName: Assets/Examples/AssetBundleTest/Text
+    bundleHash: ee23d87c514f8dfbcbe9f2a8438bd6e4
+  - bundleName: text
     dependList: []
     resourceObjectList:
     - assetName: ABMapSchema.json
@@ -449,7 +727,8 @@ MonoBehaviour:
       extension: .csv
     bundleSize: 7565
     bundlePath: Assets/Examples/AssetBundleTest/Text
-  - bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleHash: 574e905d9902fa0875cec5d2858941ee
+  - bundleName: texture
     dependList: []
     resourceObjectList:
     - assetName: Tex_5195.png
@@ -506,7 +785,8 @@ MonoBehaviour:
       extension: .png
     bundleSize: 709776
     bundlePath: Assets/Examples/AssetBundleTest/Texture
-  - bundleName: Assets/Examples/AssetBundleTest/Video
+    bundleHash: 68cf059d128b5ecf0b07bcb34d5f79ab
+  - bundleName: video
     dependList: []
     resourceObjectList:
     - assetName: HowToMakeAMultiplayerGameInUnity2021.1.mp4
@@ -515,6 +795,7 @@ MonoBehaviour:
       extension: .mp4
     bundleSize: 16999458
     bundlePath: Assets/Examples/AssetBundleTest/Video
+    bundleHash: 38ac4da41a96c9b57350f307ccc4293a
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp

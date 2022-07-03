@@ -10,18 +10,7 @@ namespace Cosmos.Resource
     [Serializable]
     public class ResourceManifest
     {
-        [Serializable]
-        public class BundleManifest
-        {
-            /// <summary>
-            /// AB打包出来之后生成的Hash码；
-            /// </summary>
-            public string Hash { get; set; }
-            /// <summary>
-            /// 资源包；
-            /// </summary>
-            public ResourceBundle ResourceBundle { get; set; }
-        }
+        Dictionary<string, ResourceBundle> bundleManifestDict;
         /// <summary>
         /// 打包的版本；
         /// </summary>
@@ -29,6 +18,15 @@ namespace Cosmos.Resource
         /// <summary>
         /// BundleName===BundleManifest；
         /// </summary>
-        public Dictionary<string, BundleManifest> BundleManifestDict { get; set; }
+        public Dictionary<string, ResourceBundle> BundleManifestDict
+        {
+            get
+            {
+                if (bundleManifestDict == null)
+                    bundleManifestDict = new Dictionary<string, ResourceBundle>();
+                return bundleManifestDict;
+            }
+            set { bundleManifestDict = value; }
+        }
     }
 }

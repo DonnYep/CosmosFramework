@@ -3,7 +3,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceEditorUtil
+    public class ResourceEditorUtility
     {
         /// <summary>
         /// 获取原生资产icon

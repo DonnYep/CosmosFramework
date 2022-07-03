@@ -128,7 +128,7 @@ namespace Cosmos.Editor.Resource
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
-            var assetIcon = ResourceEditorUtil.GetFolderIcon();
+            var assetIcon = ResourceEditorUtility.GetFolderIcon();
             var allItems = new List<TreeViewItem>();
             {
                 for (int i = 0; i < bundleList.Count; i++)

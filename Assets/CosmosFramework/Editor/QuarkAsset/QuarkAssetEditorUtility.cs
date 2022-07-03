@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -70,6 +73,27 @@ namespace Quark.Editor
                 dependenciesMap[path] = list;
             }
             return list.ToArray();
+        }
+        /// <summary>
+        /// 获取文件夹的MD5；
+        /// </summary>
+        /// <param name="srcPath">文件夹路径</param>
+        /// <returns>MD5</returns>
+        public static string CreateDirectoryMd5(string srcPath)
+        {
+            var filePaths = Directory.GetFiles(srcPath, "*", SearchOption.AllDirectories).OrderBy(p => p).ToArray();
+            using (var md5 = MD5.Create())
+            {
+                foreach (var filePath in filePaths)
+                {
+                    byte[] pathBytes = Encoding.UTF8.GetBytes(filePath);
+                    md5.TransformBlock(pathBytes, 0, pathBytes.Length, pathBytes, 0);
+                    byte[] contentBytes = File.ReadAllBytes(filePath);
+                    md5.TransformBlock(contentBytes, 0, contentBytes.Length, contentBytes, 0);
+                }
+                md5.TransformFinalBlock(new byte[0], 0, 0);
+                return BitConverter.ToString(md5.Hash).Replace("-", "").ToLower();
+            }
         }
         /// <summary>
         /// 获取可以打包的资源
