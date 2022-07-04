@@ -37,7 +37,8 @@ namespace Cosmos.Editor.Resource
                 for (int i = 0; i < bundleLen; i++)
                 {
                     var bundle = bundleList[i];
-                    resourceBundleLable.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundle.BundleSize)));
+                    long bundleSize = ResourceEditorUtility.GetDirectorySize(bundle.BundlePath, ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
+                    resourceBundleLable.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize)));
                 }
                 if (ResourceEditorDataProxy.ResourceDataset.ResourceObjectCount == 0 && ResourceEditorDataProxy.ResourceDataset.ResourceBundleCount > 0)
                     hasChanged = true;
@@ -101,7 +102,8 @@ namespace Cosmos.Editor.Resource
                 for (int i = 0; i < bundleLen; i++)
                 {
                     var bundle = bundleList[i];
-                    resourceBundleLable.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundle.BundleSize)));
+                    long bundleSize = ResourceEditorUtility.GetDirectorySize(bundle.BundlePath, ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
+                    resourceBundleLable.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize)));
                 }
                 resourceObjectLable.Clear();
                 if (ResourceEditorDataProxy.ResourceDataset.ResourceObjectCount == 0 && ResourceEditorDataProxy.ResourceDataset.ResourceBundleCount > 0)
@@ -161,7 +163,8 @@ namespace Cosmos.Editor.Resource
                             {
                                 bundleList.Add(bundle);
                             }
-                            var bundleInfo = new ResourceBundleInfo(path, path, EditorUtility.FormatBytes(bundle.BundleSize));
+                            long bundleSize = ResourceEditorUtility.GetDirectorySize(path, ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
+                            var bundleInfo = new ResourceBundleInfo(path, path, EditorUtility.FormatBytes(bundleSize));
                             added = resourceBundleLable.AddBundle(bundleInfo);
                         }
                     }
@@ -253,7 +256,6 @@ namespace Cosmos.Editor.Resource
                 var fileLength = files.Length;
                 var bundle = bundles[i];
                 bundle.ResourceObjectList.Clear();
-                long bundleSize = 0;
                 for (int j = 0; j < fileLength; j++)
                 {
                     var srcFilePath = files[j].Replace("\\", "/");
@@ -263,17 +265,14 @@ namespace Cosmos.Editor.Resource
                         var resourceObject = new ResourceObject(Path.GetFileName(srcFilePath), srcFilePath, bundlePath, Path.GetExtension(srcFilePath));
                         objects.Add(resourceObject);
                         bundle.ResourceObjectList.Add(resourceObject);
-                        bundleSize += EditorUtil.GetAssetFileSizeLength(resourceObject.AssetPath);
                     }
                 }
-
-                bundle.BundleSize = bundleSize;
-
+                long bundleSize = ResourceEditorUtility.GetDirectorySize(bundlePath, ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
                 //这里获取绝对ab绝对路径下，所有资源的bytes，生成唯一MD5 hash
                 var path = Path.Combine(EditorUtil.ApplicationPath(), bundle.BundlePath);
-                bundle.BundleHash= ResourceUtility.CreateDirectoryMd5(path);
+                bundle.BundleHash = ResourceUtility.CreateDirectoryMd5(path);
 
-                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundle.BundleSize));
+                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize));
                 validBundleInfo.Add(bundleInfo);
 
                 var bundlePercent = i / (float)bundleLength;
@@ -324,7 +323,6 @@ namespace Cosmos.Editor.Resource
                     var assetPath = objects[j].AssetPath;
                     var objInfo = new ResourceObjectInfo(objects[j].AssetName, assetPath, EditorUtil.GetAssetFileSize(assetPath), EditorUtil.GetAssetFileSizeLength(assetPath));
                     resourceObjectLable.AddObject(objInfo);
-                    yield return null;
                 }
                 var progress = Mathf.RoundToInt((float)i / (idlen - 1) * 100); ;
                 loadingProgress = progress > 0 ? progress : 0;

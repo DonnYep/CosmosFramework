@@ -89,7 +89,7 @@ namespace Cosmos.Editor.Resource
         protected override void RenameEnded(RenameEndedArgs args)
         {
             var item = FindItem(args.itemID, rootItem);
-            if (!string.IsNullOrEmpty(args.newName))
+            if (!string.IsNullOrWhiteSpace(args.newName))
             {
                 //防止重名
                 var canUse = true;

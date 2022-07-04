@@ -605,6 +605,24 @@ namespace Cosmos
                 }
                 return isSubDir;
             }
+            /// <summary>
+            /// 获取文件夹所包含的文件大小；
+            /// </summary>
+            /// <param name="path">路径</param>
+            /// <returns>文件夹大小</returns>
+            public static long GetDirectorySize(string path)
+            {
+                if (!Directory.Exists(path))
+                    return 0;
+                DirectoryInfo directory = new DirectoryInfo(path);
+                var allFiles = directory.GetFiles();
+                long totalSize = 0;
+                foreach (var file in allFiles)
+                {
+                    totalSize += file.Length;
+                }
+                return totalSize;
+            }
         }
     }
 }
