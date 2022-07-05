@@ -77,7 +77,8 @@ namespace Cosmos.Editor.Resource
                         ObjectName = objectInfo.ObjectName,
                         ObjectState = objectState,
                         ObjectStateIcon = stateIcon,
-                        ObjectSize = objectInfo.FileSize
+                        ObjectSize = objectInfo.FileSize,
+                        ObjectBundleName=objectInfo.AssetBundleName
                     };
                     allItems.Add(item);
                 }
@@ -122,6 +123,11 @@ namespace Cosmos.Editor.Resource
                     }
                     break;
                 case 3:
+                    {
+                        DefaultGUI.Label(cellRect, treeView.ObjectBundleName, args.selected, args.focused);
+                    }
+                    break;
+                case 4:
                     {
                         DefaultGUI.Label(cellRect, treeView.displayName, args.selected, args.focused);
                     }

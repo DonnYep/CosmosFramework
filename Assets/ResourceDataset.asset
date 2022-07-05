@@ -265,9 +265,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
       bundleName: Assets/Examples/AssetBundleTest/Audio
       extension: .mp3
-    bundleSize: 6986559
     bundlePath: Assets/Examples/AssetBundleTest/Audio
-    bundleHash: ed47e6f35abfea84ec74480d2e315ebf
+    bundleHash: 85cfcb341456da4a695c7f72e0b4ff07
   - bundleName: material
     dependList: []
     resourceObjectList:
@@ -287,9 +286,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
       bundleName: Assets/Examples/AssetBundleTest/Material
       extension: .mat
-    bundleSize: 8513
     bundlePath: Assets/Examples/AssetBundleTest/Material
-    bundleHash: 0502fbef8668dbd98bd016d766260b0a
+    bundleHash: 1e1f8e4702b2ecd0840b7ff9acd5486b
   - bundleName: model
     dependList: []
     resourceObjectList:
@@ -317,9 +315,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
       bundleName: Assets/Examples/AssetBundleTest/Model
       extension: .fbx
-    bundleSize: 6008044
     bundlePath: Assets/Examples/AssetBundleTest/Model
-    bundleHash: 7aae7a543ef750edf8ec41a497a31491
+    bundleHash: 85982cd123bcdf5039205f2a6af5b1e3
   - bundleName: photo
     dependList: []
     resourceObjectList:
@@ -339,9 +336,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
       bundleName: Assets/Examples/AssetBundleTest/Photo
       extension: .psd
-    bundleSize: 21600736
     bundlePath: Assets/Examples/AssetBundleTest/Photo
-    bundleHash: dc74cb87b57bb2b4cdb4d4f78441c887
+    bundleHash: 1d0e725573ab7a82136a8c34825b2b64
   - bundleName: prefab
     dependList:
     - 7aae7a543ef750edf8ec41a497a31491
@@ -480,6 +476,22 @@ MonoBehaviour:
     - 68cf059d128b5ecf0b07bcb34d5f79ab
     - 0502fbef8668dbd98bd016d766260b0a
     - ed47e6f35abfea84ec74480d2e315ebf
+    - 1e1f8e4702b2ecd0840b7ff9acd5486b
+    - 85cfcb341456da4a695c7f72e0b4ff07
+    - 92ba5ab088319e2d8b04da28a85cc589
+    - 85982cd123bcdf5039205f2a6af5b1e3
+    - audio
+    - material
+    - model
+    - texture
+    - audio
+    - material
+    - model
+    - texture
+    - audio
+    - material
+    - model
+    - texture
     resourceObjectList:
     - assetName: AudioSource.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
@@ -561,9 +573,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
       bundleName: Assets/Examples/AssetBundleTest/Prefab
       extension: .prefab
-    bundleSize: 360065
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
-    bundleHash: 3fe16adbafe77bff7c919125c0cdb0c7
+    bundleHash: bc393f615c775b0523f6d4c33ffd522d
   - bundleName: scene
     dependList:
     - 3fe16adbafe77bff7c919125c0cdb0c7
@@ -702,6 +713,22 @@ MonoBehaviour:
     - 7aae7a543ef750edf8ec41a497a31491
     - 68cf059d128b5ecf0b07bcb34d5f79ab
     - 0502fbef8668dbd98bd016d766260b0a
+    - 1e1f8e4702b2ecd0840b7ff9acd5486b
+    - 92ba5ab088319e2d8b04da28a85cc589
+    - 85982cd123bcdf5039205f2a6af5b1e3
+    - bc393f615c775b0523f6d4c33ffd522d
+    - material
+    - model
+    - prefab
+    - texture
+    - material
+    - model
+    - prefab
+    - texture
+    - material
+    - model
+    - prefab
+    - texture
     resourceObjectList:
     - assetName: SceneTarget.unity
       assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
@@ -711,9 +738,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
       bundleName: Assets/Examples/AssetBundleTest/Scene
       extension: .unity
-    bundleSize: 326733
     bundlePath: Assets/Examples/AssetBundleTest/Scene
-    bundleHash: ee23d87c514f8dfbcbe9f2a8438bd6e4
+    bundleHash: ee4579a66043cb45ff9e4d2065f00c82
   - bundleName: text
     dependList: []
     resourceObjectList:
@@ -725,9 +751,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
       bundleName: Assets/Examples/AssetBundleTest/Text
       extension: .csv
-    bundleSize: 7565
     bundlePath: Assets/Examples/AssetBundleTest/Text
-    bundleHash: 574e905d9902fa0875cec5d2858941ee
+    bundleHash: 8f573e261d42c326ba532f750fa98f43
   - bundleName: texture
     dependList: []
     resourceObjectList:
@@ -783,9 +808,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
       bundleName: Assets/Examples/AssetBundleTest/Texture
       extension: .png
-    bundleSize: 709776
     bundlePath: Assets/Examples/AssetBundleTest/Texture
-    bundleHash: 68cf059d128b5ecf0b07bcb34d5f79ab
+    bundleHash: 92ba5ab088319e2d8b04da28a85cc589
   - bundleName: video
     dependList: []
     resourceObjectList:
@@ -793,9 +817,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Video/HowToMakeAMultiplayerGameInUnity2021.1.mp4
       bundleName: Assets/Examples/AssetBundleTest/Video
       extension: .mp4
-    bundleSize: 16999458
     bundlePath: Assets/Examples/AssetBundleTest/Video
-    bundleHash: 38ac4da41a96c9b57350f307ccc4293a
+    bundleHash: 93206fa5b54d3f4ee9c6db712050d2b8
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp

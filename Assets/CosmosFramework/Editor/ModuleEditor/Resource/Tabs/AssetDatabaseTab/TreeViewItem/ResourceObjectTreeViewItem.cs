@@ -28,5 +28,9 @@ namespace Cosmos.Editor.Resource
             }
             set { objectSize = value; }
         }
+        /// <summary>
+        /// AB包名；
+        /// </summary>
+        public string ObjectBundleName { get; set; }
     }
 }

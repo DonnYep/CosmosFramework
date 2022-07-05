@@ -134,6 +134,17 @@ namespace Cosmos.Editor.Resource
                 },
                 new MultiColumnHeaderState.Column
                 {
+                    headerContent = new GUIContent("AssetBundle"),
+                    headerTextAlignment = TextAlignment.Left,
+                    sortingArrowAlignment = TextAlignment.Left,
+                    sortedAscending = false,
+                    minWidth=64,
+                    width=96,
+                    maxWidth=192,
+                    autoResize = true,
+                },
+                new MultiColumnHeaderState.Column
+                {
                     headerContent = new GUIContent("AssetPath"),
                     headerTextAlignment = TextAlignment.Left,
                     sortingArrowAlignment = TextAlignment.Left,

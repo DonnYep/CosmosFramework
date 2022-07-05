@@ -246,15 +246,15 @@ namespace Cosmos.Editor.Resource
 
             for (int i = 0; i < bundleLength; i++)
             {
-                var bundlePath = bundles[i].BundlePath;
+                var bundle = bundles[i];
+                var bundlePath = bundle.BundlePath;
                 if (!AssetDatabase.IsValidFolder(bundlePath))
                 {
-                    invalidBundles.Add(bundles[i]);
+                    invalidBundles.Add(bundle);
                     continue;
                 }
                 var files = Utility.IO.GetAllFiles(bundlePath);
                 var fileLength = files.Length;
-                var bundle = bundles[i];
                 bundle.ResourceObjectList.Clear();
                 for (int j = 0; j < fileLength; j++)
                 {
@@ -262,7 +262,7 @@ namespace Cosmos.Editor.Resource
                     var fileExt = Path.GetExtension(srcFilePath);
                     if (extensions.Contains(fileExt))
                     {
-                        var resourceObject = new ResourceObject(Path.GetFileName(srcFilePath), srcFilePath, bundlePath, Path.GetExtension(srcFilePath));
+                        var resourceObject = new ResourceObject(Path.GetFileName(srcFilePath), srcFilePath, bundle.BundleName, Path.GetExtension(srcFilePath));
                         objects.Add(resourceObject);
                         bundle.ResourceObjectList.Add(resourceObject);
                     }
@@ -321,7 +321,7 @@ namespace Cosmos.Editor.Resource
                 for (int j = 0; j < objectLength; j++)
                 {
                     var assetPath = objects[j].AssetPath;
-                    var objInfo = new ResourceObjectInfo(objects[j].AssetName, assetPath, EditorUtil.GetAssetFileSize(assetPath), EditorUtil.GetAssetFileSizeLength(assetPath));
+                    var objInfo = new ResourceObjectInfo(objects[j].AssetName, assetPath, objects[i].BundleName,EditorUtil.GetAssetFileSize(assetPath), EditorUtil.GetAssetFileSizeLength(assetPath));
                     resourceObjectLable.AddObject(objInfo);
                 }
                 var progress = Mathf.RoundToInt((float)i / (idlen - 1) * 100); ;
