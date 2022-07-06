@@ -8,7 +8,7 @@ namespace Cosmos.Editor
 {
     public static partial class EditorUtil
     {
-        public const string CosmosFramework = "CosmosFramework";
+        public const string EDITOR_CACHE_FOLDER_NAME= "CosmosFramework";
         public static string LibraryPath
         {
             get
@@ -17,7 +17,7 @@ namespace Cosmos.Editor
                 {
                     var editorPath = new DirectoryInfo(Application.dataPath);
                     var rootPath = editorPath.Parent.FullName + "/Library/";
-                    libraryPath = Utility.IO.PathCombine(rootPath, CosmosFramework);
+                    libraryPath = Utility.IO.PathCombine(rootPath, EDITOR_CACHE_FOLDER_NAME);
                 }
                 return libraryPath;
             }

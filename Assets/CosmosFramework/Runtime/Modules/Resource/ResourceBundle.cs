@@ -19,17 +19,10 @@ namespace Cosmos.Resource
         List<ResourceObject> resourceObjectList;
         [SerializeField]
         string bundlePath;
-        [SerializeField]
-        string bundleHash;
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
         public string BundleName { get { return bundleName; } set { bundleName = value; } }
-        /// <summary>
-        /// AsseBundle的Hash；
-        /// 这里采用bundle地址内涵的文件bytes生成；
-        /// </summary>
-        public string BundleHash { get { return bundleHash; } set { bundleHash = value; } }
         /// <summary>
         /// AB包在Assets目录下的地址；
         /// </summary>

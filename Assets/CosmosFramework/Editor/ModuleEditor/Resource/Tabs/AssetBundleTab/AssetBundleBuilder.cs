@@ -36,7 +36,10 @@ namespace Cosmos.Editor.Resource
                         break;
                     case BuildedAssetNameType.HashInstead:
                         {
-                            bundleName = bundle.BundleHash;
+                            //这里获取绝对ab绝对路径下，所有资源的bytes，生成唯一MD5 hash
+                            var path = Path.Combine(EditorUtil.ApplicationPath(), bundle.BundlePath);
+                            var hash = ResourceUtility.CreateDirectoryMd5(path);
+                            bundleName = hash;
                         }
                         break;
                 }
@@ -46,6 +49,7 @@ namespace Cosmos.Editor.Resource
             for (int i = 0; i < bundleLength; i++)
             {
                 var bundle = bundles[i];
+                bundle.DependList.Clear();
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 bundle.DependList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
@@ -57,7 +61,7 @@ namespace Cosmos.Editor.Resource
                 var key = ResourceUtility.GenerateBytesAESKey(encryptionKey);
                 manifestContext = Utility.Encryption.AESEncryptStringToString(manifestJson, key);
             }
-            Utility.IO.WriteTextFile(buildParams.AssetBundleBuildPath, "ResourceManifest.json", manifestContext);
+            Utility.IO.WriteTextFile(buildParams.AssetBundleBuildPath, ResourceConstants.RESOURCE_MANIFEST, manifestContext);
         }
         public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest manifest)
         {

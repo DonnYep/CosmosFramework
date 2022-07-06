@@ -16,6 +16,10 @@ namespace Cosmos.Editor
         SerializedProperty sp_ResourceLoadMode;
         SerializedProperty sp_ResourceLoaderName;
         SerializedProperty sp_ResourceLoaderIndex;
+        SerializedProperty sp_ResourceDataset;
+        SerializedProperty sp_ResourceBundlePathType;
+        SerializedProperty sp_ResourceBundlePath;
+        SerializedProperty sp_CustomeResourceBundlePath;
 
         SerializedProperty sp_DebugHelperIndex;
         SerializedProperty sp_JsonHelperIndex;
@@ -38,69 +42,127 @@ namespace Cosmos.Editor
         bool launchAppDomainModules;
         int resourceLoadModeIndex;
         int resourceLoaderIndex;
+        int resourceBundlePathTypeIndex;//这里使用index存储enum的写法能够避免点击到脚本时，场景发生改变以至于可以存储的问题
 
         string[] resourceLoaders;
         string[] resourceLoadModes;
+        string[] resourceBundlePathTypes;
 
         bool runInBackground;
+
         public override void OnInspectorGUI()
         {
             targetObject.Update();
-            EditorGUILayout.LabelField("CosmosConfig", EditorStyles.boldLabel);
-
-            EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.LabelField("Helpers", EditorStyles.boldLabel);
-
-            debugHelperIndex = EditorGUILayout.Popup("DebugHelper", debugHelperIndex, debugHelpers);
-            if (debugHelperIndex != sp_DebugHelperIndex.intValue)
+            EditorGUILayout.BeginVertical();
             {
-                sp_DebugHelperIndex.intValue = debugHelperIndex;
-                sp_DebugHelperName.stringValue = debugHelpers[sp_DebugHelperIndex.intValue];
-            }
-
-            jsonHelperIndex = EditorGUILayout.Popup("JsonHelper", jsonHelperIndex, jsonHelpers);
-            if (jsonHelperIndex != sp_JsonHelperIndex.intValue)
-            {
-                sp_JsonHelperIndex.intValue = jsonHelperIndex;
-                sp_JsonHelperName.stringValue = jsonHelpers[sp_JsonHelperIndex.intValue];
-            }
-
-            messagePackHelperIndex = EditorGUILayout.Popup("MessagePackHelper", messagePackHelperIndex, messagePackHelpers);
-            if (messagePackHelperIndex != sp_MessagePackHelperIndex.intValue)
-            {
-                sp_MessagePackHelperIndex.intValue = messagePackHelperIndex;
-                sp_MessagePackHelperName.stringValue = messagePackHelpers[sp_MessagePackHelperIndex.intValue];
-            }
-            EditorGUILayout.EndVertical();
-
-            launchAppDomainModules = EditorGUILayout.Toggle("LaunchAppDomainModules", launchAppDomainModules);
-            if (launchAppDomainModules != sp_LaunchAppDomainModules.boolValue)
-            {
-                sp_LaunchAppDomainModules.boolValue = launchAppDomainModules;
-            }
-            if (sp_LaunchAppDomainModules.boolValue)
-            {
-                sp_PrintModulePreparatory.boolValue = EditorGUILayout.Toggle("PrintModulePreparatory", sp_PrintModulePreparatory.boolValue);
-            }
-
-            EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.LabelField("ResourceLoadConfig", EditorStyles.boldLabel);
-            resourceLoadModeIndex = EditorGUILayout.Popup("ResourceLoadMode", resourceLoadModeIndex, resourceLoadModes);
-            if (resourceLoadModeIndex != sp_ResourceLoadMode.enumValueIndex)
-            {
-                sp_ResourceLoadMode.enumValueIndex = resourceLoadModeIndex;
-            }
-            if ((ResourceLoadMode)resourceLoadModeIndex == ResourceLoadMode.CustomLoader)
-            {
-                resourceLoaderIndex = EditorGUILayout.Popup("ResourceLoadHelper", resourceLoaderIndex, resourceLoaders);
-                if (resourceLoaderIndex != sp_ResourceLoaderIndex.intValue)
+                EditorGUILayout.LabelField("Helpers", EditorStyles.boldLabel);
+                debugHelperIndex = EditorGUILayout.Popup("DebugHelper", debugHelperIndex, debugHelpers);
+                if (debugHelperIndex != sp_DebugHelperIndex.intValue)
                 {
-                    sp_ResourceLoaderIndex.intValue = resourceLoaderIndex;
-                    sp_ResourceLoaderName.stringValue = resourceLoaders[sp_ResourceLoaderIndex.intValue];
+                    sp_DebugHelperIndex.intValue = debugHelperIndex;
+                    sp_DebugHelperName.stringValue = debugHelpers[sp_DebugHelperIndex.intValue];
+                }
+
+                jsonHelperIndex = EditorGUILayout.Popup("JsonHelper", jsonHelperIndex, jsonHelpers);
+                if (jsonHelperIndex != sp_JsonHelperIndex.intValue)
+                {
+                    sp_JsonHelperIndex.intValue = jsonHelperIndex;
+                    sp_JsonHelperName.stringValue = jsonHelpers[sp_JsonHelperIndex.intValue];
+                }
+
+                messagePackHelperIndex = EditorGUILayout.Popup("MessagePackHelper", messagePackHelperIndex, messagePackHelpers);
+                if (messagePackHelperIndex != sp_MessagePackHelperIndex.intValue)
+                {
+                    sp_MessagePackHelperIndex.intValue = messagePackHelperIndex;
+                    sp_MessagePackHelperName.stringValue = messagePackHelpers[sp_MessagePackHelperIndex.intValue];
                 }
             }
             EditorGUILayout.EndVertical();
 
+            EditorGUILayout.Space(16);
+            {
+                EditorGUILayout.LabelField("Module", EditorStyles.boldLabel);
+                launchAppDomainModules = EditorGUILayout.Toggle("LaunchAppDomainModules", launchAppDomainModules);
+                if (launchAppDomainModules != sp_LaunchAppDomainModules.boolValue)
+                {
+                    sp_LaunchAppDomainModules.boolValue = launchAppDomainModules;
+                }
+                if (sp_LaunchAppDomainModules.boolValue)
+                {
+                    sp_PrintModulePreparatory.boolValue = EditorGUILayout.Toggle("PrintModulePreparatory", sp_PrintModulePreparatory.boolValue);
+                }
+            }
+
+            EditorGUILayout.Space(16);
+
+            EditorGUILayout.BeginVertical();
+            {
+                EditorGUILayout.LabelField("ResourceLoadConfig", EditorStyles.boldLabel);
+                resourceLoadModeIndex = EditorGUILayout.Popup("ResourceLoadMode", resourceLoadModeIndex, resourceLoadModes);
+                if (resourceLoadModeIndex != sp_ResourceLoadMode.enumValueIndex)
+                {
+                    sp_ResourceLoadMode.enumValueIndex = resourceLoadModeIndex;
+                }
+                var resourceLoadMode = (ResourceLoadMode)resourceLoadModeIndex;
+                switch (resourceLoadMode)
+                {
+                    case ResourceLoadMode.Resource:
+                        break;
+                    case ResourceLoadMode.AssetBundle:
+                        {
+                            resourceBundlePathTypeIndex = EditorGUILayout.Popup("ResourceBundlePathType",resourceBundlePathTypeIndex,resourceBundlePathTypes);
+                            if (resourceBundlePathTypeIndex!=sp_ResourceBundlePathType.enumValueIndex)
+                            {
+                                sp_ResourceBundlePathType.enumValueIndex = resourceBundlePathTypeIndex;
+                            }
+                            var bundlePathType = (ResourceBundlePathType)resourceBundlePathTypeIndex;
+                            switch (bundlePathType)
+                            {
+                                case ResourceBundlePathType.StreamingAssets:
+                                    {
+                                        sp_ResourceBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_ResourceBundlePath.stringValue);
+                                        var path = Utility.IO.WebPathCombine(UnityEngine.Application.streamingAssetsPath, sp_ResourceBundlePath.stringValue);
+                                        EditorGUILayout.LabelField($"BundlPath {path}");
+                                    }
+                                    break;
+                                case ResourceBundlePathType.PersistentDataPath:
+                                    {
+                                        sp_ResourceBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_ResourceBundlePath.stringValue);
+                                        var path = Utility.IO.WebPathCombine(UnityEngine.Application.persistentDataPath, sp_ResourceBundlePath.stringValue);
+                                        EditorGUILayout.LabelField($"BundlPath {path}");
+
+                                    }
+                                    break;
+                                case ResourceBundlePathType.CustomePath:
+                                    {
+                                        sp_CustomeResourceBundlePath.stringValue = EditorGUILayout.TextField("CustomePath", sp_CustomeResourceBundlePath.stringValue);
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+                    case ResourceLoadMode.AssetDatabase:
+                        {
+                            sp_ResourceDataset.objectReferenceValue = (ResourceDataset)EditorGUILayout.
+                                ObjectField("ResourceDataset", sp_ResourceDataset.objectReferenceValue, typeof(ResourceDataset), false);
+                        }
+                        break;
+                    case ResourceLoadMode.CustomLoader:
+                        {
+                            resourceLoaderIndex = EditorGUILayout.Popup("ResourceLoadHelper", resourceLoaderIndex, resourceLoaders);
+                            if (resourceLoaderIndex != sp_ResourceLoaderIndex.intValue)
+                            {
+                                sp_ResourceLoaderIndex.intValue = resourceLoaderIndex;
+                                sp_ResourceLoaderName.stringValue = resourceLoaders[sp_ResourceLoaderIndex.intValue];
+                            }
+                        }
+                        break;
+                }
+            }
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.Space(16);
+            EditorGUILayout.LabelField("Application", EditorStyles.boldLabel);
             runInBackground = EditorGUILayout.Toggle("RunInBackground", runInBackground);
             if (runInBackground != sp_RunInBackground.boolValue)
                 sp_RunInBackground.boolValue = runInBackground;
@@ -143,7 +205,12 @@ namespace Cosmos.Editor
             sp_JsonHelperName = targetObject.FindProperty("jsonHelperName");
             sp_MessagePackHelperName = targetObject.FindProperty("messagePackHelperName");
             sp_RunInBackground = targetObject.FindProperty("runInBackground");
+            sp_ResourceDataset = targetObject.FindProperty("resourceDataset");
+            sp_ResourceBundlePathType = targetObject.FindProperty("resourceBundlePathType");
+            sp_ResourceBundlePath= targetObject.FindProperty("resourceBundlePath");
+            sp_CustomeResourceBundlePath= targetObject.FindProperty("customeResourceBundlePath");
             resourceLoadModes = Enum.GetNames(typeof(ResourceLoadMode));
+            resourceBundlePathTypes= Enum.GetNames(typeof(ResourceBundlePathType));
             RefreshConfig();
         }
         void RefreshConfig()
@@ -159,6 +226,7 @@ namespace Cosmos.Editor
             sp_MessagePackHelperName.stringValue = messagePackHelpers[sp_MessagePackHelperIndex.intValue];
             sp_ResourceLoaderName.stringValue = sp_ResourceLoaderName.stringValue;
             runInBackground = sp_RunInBackground.boolValue;
+            resourceBundlePathTypeIndex = sp_ResourceBundlePathType.enumValueIndex;
             targetObject.ApplyModifiedProperties();
         }
     }

@@ -139,10 +139,10 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.LabelField("Encryption Options", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical();
             {
-                tabData.BuildedAssetsEncryption = EditorGUILayout.ToggleLeft("Builded assets encryption", tabData.BuildedAssetsEncryption);
+                tabData.BuildedAssetsEncryption = EditorGUILayout.ToggleLeft("Build info encryption", tabData.BuildedAssetsEncryption);
                 if (tabData.BuildedAssetsEncryption)
                 {
-                    tabData.BuildIedAssetsEncryptionKey = EditorGUILayout.TextField("Builded assets encryption key", tabData.BuildIedAssetsEncryptionKey);
+                    tabData.BuildIedAssetsEncryptionKey = EditorGUILayout.TextField("Build info encryption key", tabData.BuildIedAssetsEncryptionKey);
                     var aesKeyStr = tabData.BuildIedAssetsEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
                     EditorGUILayout.LabelField($"Assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");

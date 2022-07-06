@@ -48,6 +48,7 @@ namespace Cosmos
                 this.TaskCallback = null;
                 this.CancelCallback = null;
                 this.StartTime = 0;
+                this.LoopIndex = 0;
             }
         }
         public Action<string> LogInfo { get; set; }
