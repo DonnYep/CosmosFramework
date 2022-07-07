@@ -28,6 +28,13 @@ namespace Cosmos
         [SerializeField] ResourceBundlePathType resourceBundlePathType;
         [SerializeField] string resourceBundlePath;
         [SerializeField] string customeResourceBundlePath;
+
+        [SerializeField] bool assetBundleEncrytion = false;
+        [SerializeField] ulong assetBundleEncrytionOffset = 16;
+
+        [SerializeField] bool buildInfoEncrytion = false;
+        [SerializeField] string buildInfoEncrytionKey = "CosmosBundlesKey";
+
         public const string NONE = "<NONE>";
         /// <summary>
         /// AB包所在位置；
@@ -92,7 +99,13 @@ namespace Cosmos
                             }
                             catch { }
                             if (resourceManifest != null)
+                            {
+                                if (assetBundleEncrytion)
+                                    ResourceDataProxy.Instance.EncryptionOffset = assetBundleEncrytionOffset;
+                                if (buildInfoEncrytion)
+                                    ResourceDataProxy.Instance.BuildInfoEncryptionKey = buildInfoEncrytionKey;
                                 CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new AssetBundleLoader(resourceManifest));
+                            }
                             else
                                 throw new Exception("ResourceManifest deserialization failed , check your file !");
                         }

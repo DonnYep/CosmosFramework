@@ -21,6 +21,12 @@ namespace Cosmos.Editor
         SerializedProperty sp_ResourceBundlePath;
         SerializedProperty sp_CustomeResourceBundlePath;
 
+        SerializedProperty sp_AssetBundleEncrytion;
+        SerializedProperty sp_AssetBundleEncrytionOffset;
+        SerializedProperty sp_BuildInfoEncrytion;
+        SerializedProperty sp_BuildInfoEncrytionKey;
+
+
         SerializedProperty sp_DebugHelperIndex;
         SerializedProperty sp_JsonHelperIndex;
         SerializedProperty sp_MessagePackHelperIndex;
@@ -38,6 +44,9 @@ namespace Cosmos.Editor
         int debugHelperIndex;
         int jsonHelperIndex;
         int messagePackHelperIndex;
+
+        bool assetBundleEncrytion;
+        bool buildInfoEncrytion;
 
         bool launchAppDomainModules;
         int resourceLoadModeIndex;
@@ -110,34 +119,50 @@ namespace Cosmos.Editor
                         break;
                     case ResourceLoadMode.AssetBundle:
                         {
-                            resourceBundlePathTypeIndex = EditorGUILayout.Popup("ResourceBundlePathType",resourceBundlePathTypeIndex,resourceBundlePathTypes);
-                            if (resourceBundlePathTypeIndex!=sp_ResourceBundlePathType.enumValueIndex)
+                            resourceBundlePathTypeIndex = EditorGUILayout.Popup("ResourceBundlePathType", resourceBundlePathTypeIndex, resourceBundlePathTypes);
+                            if (resourceBundlePathTypeIndex != sp_ResourceBundlePathType.enumValueIndex)
                             {
                                 sp_ResourceBundlePathType.enumValueIndex = resourceBundlePathTypeIndex;
                             }
                             var bundlePathType = (ResourceBundlePathType)resourceBundlePathTypeIndex;
-                            switch (bundlePathType)
+                            if (bundlePathType == ResourceBundlePathType.CustomePath)
                             {
-                                case ResourceBundlePathType.StreamingAssets:
-                                    {
-                                        sp_ResourceBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_ResourceBundlePath.stringValue);
-                                        var path = Utility.IO.WebPathCombine(UnityEngine.Application.streamingAssetsPath, sp_ResourceBundlePath.stringValue);
-                                        EditorGUILayout.LabelField($"BundlPath {path}");
-                                    }
-                                    break;
-                                case ResourceBundlePathType.PersistentDataPath:
-                                    {
-                                        sp_ResourceBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_ResourceBundlePath.stringValue);
-                                        var path = Utility.IO.WebPathCombine(UnityEngine.Application.persistentDataPath, sp_ResourceBundlePath.stringValue);
-                                        EditorGUILayout.LabelField($"BundlPath {path}");
+                                sp_CustomeResourceBundlePath.stringValue = EditorGUILayout.TextField("CustomePath", sp_CustomeResourceBundlePath.stringValue);
+                            }
+                            else
+                            {
+                                sp_ResourceBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_ResourceBundlePath.stringValue);
+                                string path = string.Empty;
+                                switch (bundlePathType)
+                                {
+                                    case ResourceBundlePathType.StreamingAssets:
+                                        path = Utility.IO.WebPathCombine(UnityEngine.Application.streamingAssetsPath, sp_ResourceBundlePath.stringValue);
+                                        break;
+                                    case ResourceBundlePathType.PersistentDataPath:
+                                        path = Utility.IO.WebPathCombine(UnityEngine.Application.persistentDataPath, sp_ResourceBundlePath.stringValue);
+                                        break;
+                                }
+                                EditorGUILayout.LabelField($"BundlPath {path}");
 
-                                    }
-                                    break;
-                                case ResourceBundlePathType.CustomePath:
-                                    {
-                                        sp_CustomeResourceBundlePath.stringValue = EditorGUILayout.TextField("CustomePath", sp_CustomeResourceBundlePath.stringValue);
-                                    }
-                                    break;
+                                assetBundleEncrytion = EditorGUILayout.ToggleLeft("AssetBundleEncrytion", assetBundleEncrytion);
+                                if (assetBundleEncrytion != sp_AssetBundleEncrytion.boolValue)
+                                {
+                                    sp_AssetBundleEncrytion.boolValue = assetBundleEncrytion;
+                                }
+                                if (assetBundleEncrytion)
+                                {
+                                    sp_AssetBundleEncrytionOffset.intValue = EditorGUILayout.IntField("AssetBundleEncrytionOffset", sp_AssetBundleEncrytionOffset.intValue);
+                                }
+
+                                buildInfoEncrytion = EditorGUILayout.ToggleLeft("BuildInfoEncrytion", buildInfoEncrytion);
+                                if (buildInfoEncrytion != sp_BuildInfoEncrytion.boolValue)
+                                {
+                                    sp_BuildInfoEncrytion.boolValue = buildInfoEncrytion;
+                                }
+                                if (buildInfoEncrytion)
+                                {
+                                    sp_BuildInfoEncrytionKey.stringValue = EditorGUILayout.TextField("BuildInfoEncrytionKey", sp_BuildInfoEncrytionKey.stringValue);
+                                }
                             }
                         }
                         break;
@@ -207,10 +232,16 @@ namespace Cosmos.Editor
             sp_RunInBackground = targetObject.FindProperty("runInBackground");
             sp_ResourceDataset = targetObject.FindProperty("resourceDataset");
             sp_ResourceBundlePathType = targetObject.FindProperty("resourceBundlePathType");
-            sp_ResourceBundlePath= targetObject.FindProperty("resourceBundlePath");
-            sp_CustomeResourceBundlePath= targetObject.FindProperty("customeResourceBundlePath");
+            sp_ResourceBundlePath = targetObject.FindProperty("resourceBundlePath");
+            sp_CustomeResourceBundlePath = targetObject.FindProperty("customeResourceBundlePath");
+
+            sp_AssetBundleEncrytion = targetObject.FindProperty("assetBundleEncrytion");
+            sp_AssetBundleEncrytionOffset = targetObject.FindProperty("assetBundleEncrytionOffset");
+            sp_BuildInfoEncrytion = targetObject.FindProperty("buildInfoEncrytion");
+            sp_BuildInfoEncrytionKey = targetObject.FindProperty("buildInfoEncrytionKey");
+
             resourceLoadModes = Enum.GetNames(typeof(ResourceLoadMode));
-            resourceBundlePathTypes= Enum.GetNames(typeof(ResourceBundlePathType));
+            resourceBundlePathTypes = Enum.GetNames(typeof(ResourceBundlePathType));
             RefreshConfig();
         }
         void RefreshConfig()
@@ -227,6 +258,10 @@ namespace Cosmos.Editor
             sp_ResourceLoaderName.stringValue = sp_ResourceLoaderName.stringValue;
             runInBackground = sp_RunInBackground.boolValue;
             resourceBundlePathTypeIndex = sp_ResourceBundlePathType.enumValueIndex;
+
+            assetBundleEncrytion = sp_AssetBundleEncrytion.boolValue;
+            buildInfoEncrytion = sp_BuildInfoEncrytion.boolValue;
+
             targetObject.ApplyModifiedProperties();
         }
     }

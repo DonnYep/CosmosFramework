@@ -4,28 +4,65 @@ namespace Cosmos
 {
     /// <summary>
     /// 简易的抽象有限状态机；
-    /// 区别于FSM模块，此状态机是精简只含核心逻辑的状态机抽象；
+    /// 此状态机是精简只含核心逻辑的状态机抽象；
     /// </summary>
     public class SimpleFsm<T> where T : class
     {
         SimpleFsmState<T> currentState;
         Dictionary<Type, SimpleFsmState<T>> typeStateDict
             = new Dictionary<Type, SimpleFsmState<T>>();
-        public string FsmName { get; set; }
+        /// <summary>
+        /// 状态机名；
+        /// </summary>
+        public string FsmName { get; private set; }
+        /// <summary>
+        /// 当前状态；
+        /// </summary>
+        public SimpleFsmState<T> CurrentState { get { return currentState; } }
+        /// <summary>
+        /// 当前状态类型；
+        /// </summary>
         public Type CurrentStateType { get { return currentState.GetType(); } }
+        /// <summary>
+        /// 状态机持有者；
+        /// </summary>
         public T Handle { get; private set; }
+        /// <summary>
+        /// 状态数量；
+        /// </summary>
         public int StateCount { get { return typeStateDict.Count; } }
+        /// <summary>
+        /// 构造函数；
+        /// </summary>
+        /// <param name="handle">状态机持有者对象</param>
+        /// <param name="fsmName">状态机名</param>
         public SimpleFsm(T handle, string fsmName)
         {
             FsmName = fsmName;
             Handle = handle;
         }
+        /// <summary>
+        /// 构造函数；
+        /// </summary>
+        /// <param name="handle">状态机持有者对象</param>
         public SimpleFsm(T handle) : this(handle, string.Empty) { }
+        /// <summary>
+        /// 设置默认状态；
+        /// </summary>
+        /// <param name="stateType">状态类型</param>
         public void SetDefaultState(Type stateType)
         {
-            currentState = GetState(stateType);
-            currentState.OnEnter(this);
+            if (typeStateDict.TryGetValue(stateType, out var state))
+            {
+                currentState = state;
+                currentState.OnEnter(this);
+            }
         }
+        /// <summary>
+        /// 添加一个状态；
+        /// </summary>
+        /// <param name="state">状态</param>
+        /// <returns>添加结果</returns>
         public bool AddState(SimpleFsmState<T> state)
         {
             var type = state.GetType();
@@ -36,6 +73,10 @@ namespace Cosmos
             }
             return false;
         }
+        /// <summary>
+        /// 添加一组状态；
+        /// </summary>
+        /// <param name="states">状态集合</param>
         public void AddStates(params SimpleFsmState<T>[] states)
         {
             var length = states.Length;
@@ -44,6 +85,11 @@ namespace Cosmos
                 AddState(states[i]);
             }
         }
+        /// <summary>
+        /// 移除一个状态；
+        /// </summary>
+        /// <param name="stateType">状态类型</param>
+        /// <returns>移除结果</returns>
         public bool RemoveState(Type stateType)
         {
             if (typeStateDict.Remove(stateType, out var state))
@@ -53,27 +99,69 @@ namespace Cosmos
             }
             return false;
         }
+        /// <summary>
+        /// 移除一组状态；
+        /// </summary>
+        /// <param name="stateTypes">状态类型集合</param>
+        public void RemoveStates(params Type[] stateTypes)
+        {
+            var typeLength = stateTypes.Length;
+            for (int i = 0; i < typeLength; i++)
+            {
+                if (typeStateDict.Remove(stateTypes[i], out var state))
+                {
+                    state.OnDestroy(this);
+                }
+            }
+        }
+        /// <summary>
+        /// 是否存在状态；
+        /// </summary>
+        /// <param name="stateType">状态类型</param>
+        /// <returns>存在结果</returns>
         public bool HasState(Type stateType)
         {
             return typeStateDict.ContainsKey(stateType);
         }
-        public SimpleFsmState<T> GetState(Type type)
+        /// <summary>
+        /// 获取状态；
+        /// </summary>
+        /// <param name="stateType">状态类型</param>
+        /// <param name="state">获取的状态</param>
+        /// <returns>获取结果</returns>
+        public bool PeekState(Type stateType, out SimpleFsmState<T> state)
         {
-            return typeStateDict[type];
+            return typeStateDict.TryGetValue(stateType, out state);
         }
+        /// <summary>
+        /// 轮询；
+        /// </summary>
         public void Refresh()
         {
-            currentState?.OnUpdate(this);
+            currentState.OnUpdate(this);
         }
+        /// <summary>
+        /// 切换状态；
+        /// </summary>
+        /// <param name="stateType">状态类型</param>
         public void ChangeState(Type stateType)
         {
-            var state = GetState(stateType);
-            if (state != null)
+            if (typeStateDict.TryGetValue(stateType, out var state))
             {
-                currentState?.OnExit(this);
-                currentState = state;
-                currentState.OnEnter(this);
+                if (state != null)
+                {
+                    currentState.OnExit(this);
+                    currentState = state;
+                    currentState.OnEnter(this);
+                }
             }
+        }
+        /// <summary>
+        /// 清理所有状态；
+        /// </summary>
+        public void ClearAllState()
+        {
+            typeStateDict.Clear();
         }
     }
 }
