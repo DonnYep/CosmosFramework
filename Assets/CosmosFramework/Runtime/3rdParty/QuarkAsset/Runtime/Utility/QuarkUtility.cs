@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
-
 namespace Quark
 {
     public partial class QuarkUtility
@@ -323,16 +322,6 @@ namespace Quark
         public static T ToObject<T>(string json)
         {
             return LitJson.JsonMapper.ToObject<T>(json);
-        }
-        /// <summary>
-        /// 将JSON字符串反序列化对象
-        /// </summary>
-        /// <param name="objectType">对象类型</param>
-        /// <param name="json">需要反序列化的JSON字符串</param>
-        /// <returns>反序列化后的对象</returns>
-        public static object ToObject(string json, Type objectType)
-        {
-            return LitJson.JsonMapper.ToObject(json, objectType);
         }
         /// <summary>
         /// 将JSON流转换为对象

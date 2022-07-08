@@ -1,10 +1,8 @@
-﻿using Cosmos.Editor;
-using Quark.Asset;
+﻿using Quark.Asset;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
 namespace Quark.Editor
@@ -24,19 +22,19 @@ namespace Quark.Editor
         {
             try
             {
-                tabData = EditorUtil.GetData<QuarkAssetDatabaseTabData>(QuarkAssetDatabaseTabDataFileName);
+                tabData = QuarkEditorUtility.GetData<QuarkAssetDatabaseTabData>(QuarkAssetDatabaseTabDataFileName);
             }
             catch
             {
                 tabData = new QuarkAssetDatabaseTabData();
-                EditorUtil.SaveData(QuarkAssetDatabaseTabDataFileName, tabData);
+                QuarkEditorUtility.SaveData(QuarkAssetDatabaseTabDataFileName, tabData);
             }
             assetBundleSearchLable.OnEnable();
             assetObjectSearchLable.OnEnable();
         }
         public void OnDisable()
         {
-            EditorUtil.SaveData(QuarkAssetDatabaseTabDataFileName, tabData);
+            QuarkEditorUtility.SaveData(QuarkAssetDatabaseTabDataFileName, tabData);
         }
         public void OnDatasetAssign(QuarkAssetDataset dataset)
         {
@@ -68,7 +66,7 @@ namespace Quark.Editor
         }
         public EditorCoroutine EnumUpdateADBMode()
         {
-            return EditorUtil.Coroutine.StartCoroutine(EnumBuildADBMode());
+            return QuarkEditorUtility.StartCoroutine(EnumBuildADBMode());
         }
         void DrawFastDevelopTab()
         {
@@ -83,7 +81,7 @@ namespace Quark.Editor
 
             if (GUILayout.Button("Build"))
             {
-                EditorUtil.Coroutine.StartCoroutine(EnumBuildADBMode());
+                QuarkEditorUtility.StartCoroutine(EnumBuildADBMode());
             }
             if (GUILayout.Button("Clear"))
             {
@@ -115,7 +113,7 @@ namespace Quark.Editor
         {
             if (dataset == null)
             {
-                EditorUtil.Debug.LogError("QuarkAssetDataset is invalid !");
+                QuarkUtility.LogError("QuarkAssetDataset is invalid !");
                 yield break;
             }
             try
@@ -125,14 +123,15 @@ namespace Quark.Editor
             catch (Exception e)
             {
                 EditorUtility.ClearProgressBar();
-                EditorUtil.Debug.LogError($"Asset is invaild : {e.Message}");
+                QuarkUtility.LogError($"Asset is invaild : {e.Message}");
             }
             EditorUtility.SetDirty(dataset);
-            EditorUtil.SaveData(QuarkAssetDatabaseTabDataFileName, tabData);
+            QuarkEditorUtility.SaveData(QuarkAssetDatabaseTabDataFileName, tabData);
             if (tabData.GenerateAssetPathCode)
                 AssetDataBaseModeCreatePathScript();
             yield return null;
             OnDatasetAssign(dataset);
+            AssetDatabase.SaveAssets();
             QuarkUtility.LogInfo("Quark asset  build done ");
         }
         void ADBModeClear()
@@ -141,8 +140,8 @@ namespace Quark.Editor
             assetBundleSearchLable.TreeView.Clear();
             assetObjectSearchLable.TreeView.Clear();
             EditorUtility.SetDirty(dataset);
-            EditorUtil.ClearData(QuarkAssetDatabaseTabDataFileName);
-            EditorUtil.Debug.LogInfo("Quark asset clear done ");
+            QuarkEditorUtility.ClearData(QuarkAssetDatabaseTabDataFileName);
+            QuarkUtility.LogInfo("Quark asset clear done ");
         }
         void AssetDatabaseModeBuild()
         {
@@ -184,7 +183,7 @@ namespace Quark.Editor
                     }
                     else if (File.Exists(bundle.AssetBundlePath))
                     {
-                        var fullPath = QuarkUtility.PathCombine(EditorUtil.ApplicationPath(), bundle.AssetBundlePath);
+                        var fullPath = QuarkUtility.PathCombine(QuarkEditorUtility.ApplicationPath, bundle.AssetBundlePath);
 
                         if (!bundleFileInfoDict.TryGetValue(bundle, out var fileInfoDict))
                         {

@@ -285,6 +285,7 @@ namespace Cosmos.Editor.Resource
 
             EditorUtility.ClearProgressBar();
             EditorUtility.SetDirty(ResourceEditorDataProxy.ResourceDataset);
+            AssetDatabase.SaveAssets();
             {
                 //这么处理是为了bundleLable能够在编辑器页面一下刷新，放在协程里逐步更新，使用体验并不是很好。
                 resourceBundleLable.Clear();

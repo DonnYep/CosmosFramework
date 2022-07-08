@@ -5,8 +5,6 @@ using UnityEditor;
 using System.IO;
 using System.Linq;
 using Quark.Asset;
-using Cosmos.Editor;
-
 namespace Quark.Editor
 {
     public class QuarkAssetBundleTab
@@ -31,18 +29,18 @@ namespace Quark.Editor
         }
         public void OnDisable()
         {
-            EditorUtil.SaveData(AssetBundleTabDataFileName, tabData);
+            QuarkEditorUtility.SaveData(AssetBundleTabDataFileName, tabData);
         }
         public void OnEnable()
         {
             try
             {
-                tabData = EditorUtil.GetData<QuarkAssetBundleTabData>(AssetBundleTabDataFileName);
+                tabData = QuarkEditorUtility.GetData<QuarkAssetBundleTabData>(AssetBundleTabDataFileName);
             }
             catch
             {
                 tabData = new QuarkAssetBundleTabData();
-                EditorUtil.SaveData(AssetBundleTabDataFileName, tabData);
+                QuarkEditorUtility.SaveData(AssetBundleTabDataFileName, tabData);
             }
         }
         public void OnDatasetAssign()
@@ -132,12 +130,12 @@ namespace Quark.Editor
                         }
                         else
                         {
-                            EditorUtil.Coroutine.StartCoroutine(EnumBuildAssetBundle());
+                            QuarkEditorUtility.StartCoroutine(EnumBuildAssetBundle());
                         }
                     }
                     else
                     {
-                        EditorUtil.Coroutine.StartCoroutine(EnumBuildAssetBundle());
+                        QuarkEditorUtility.StartCoroutine(EnumBuildAssetBundle());
                     }
                 }
                 else
@@ -146,7 +144,7 @@ namespace Quark.Editor
             if (GUILayout.Button("Reset"))
             {
                 tabData = new QuarkAssetBundleTabData();
-                EditorUtil.SaveData(AssetBundleTabDataFileName, tabData);
+                QuarkEditorUtility.SaveData(AssetBundleTabDataFileName, tabData);
             }
             GUILayout.EndHorizontal();
         }
@@ -222,7 +220,7 @@ namespace Quark.Editor
             }
             var dirHashPairs = quarkAssetDataset.QuarkBundleInfoList;
             var dirs = dirHashPairs.ToArray();
-            yield return EditorUtil.Coroutine.StartCoroutine(TraverseTargetDirectories(dirs));
+            yield return QuarkEditorUtility.StartCoroutine(TraverseTargetDirectories(dirs));
         }
         IEnumerator TraverseTargetDirectories(QuarkBundleInfo[] dirs)
         {
@@ -277,7 +275,7 @@ namespace Quark.Editor
             var url = Path.Combine(buildPath, tabData.BuildTarget.ToString());
             AssetBundleManifest manifest = null;
             AssetBundle mainBundle = null;
-            yield return EditorUtil.IO.DownloadAssetBundleAsync(url, (percent) =>
+            yield return QuarkEditorUtility. DownloadAssetBundleAsync(url, (percent) =>
             {
                 var per = percent * 100;
                 EditorUtility.DisplayProgressBar("LoadManifest", $"current progress : {per} %", percent);
@@ -367,7 +365,7 @@ namespace Quark.Editor
             }
             //assetPath===assetName；这里统一使用unity的地址格式；
             var assetObjsDict = quarkAssetDataset.QuarkAssetObjectList.ToDictionary((obj) => { return obj.AssetPath.ToLower().Replace("\\", "/"); });
-            yield return EditorUtil.IO.DownloadAssetBundlesAsync(urls, percent =>
+            yield return QuarkEditorUtility.DownloadAssetBundlesAsync(urls, percent =>
             {
                 EditorUtility.DisplayProgressBar("AssetBundle loading", $"{percent * 100} %", percent);
             }, null, bundles =>
@@ -430,7 +428,6 @@ namespace Quark.Editor
         }
         void SetAssetBundleName(QuarkBundleInfo info)
         {
-
             var abName = QuarkUtility.FormatAssetBundleName(info.AssetBundleName);
             var path = info.AssetBundlePath;
             if (!importerCacheDict.TryGetValue(path, out var importer))
@@ -466,31 +463,27 @@ namespace Quark.Editor
             if (tabData.UseOffsetEncryptionForAssetBundle)
             {
                 var offset = tabData.EncryptionOffsetForAssetBundle;
-                yield return EditorUtil.IO.DownloadAssetBundlesBytesAsync(paths, percent =>
+                var count = paths.Length;
+                int abIndex = 0;
+;                foreach (var path in paths)
                 {
-                    var per = percent * 100;
-                    EditorUtility.DisplayProgressBar("AssetBundle loading", $"current progress : {per} %", percent);
+                    QuarkUtility.LogInfo(path);
+                    var bytes= File.ReadAllBytes(path);
+                    var percent = abIndex / (float)count;
+                    var per = Mathf.RoundToInt( percent * 100);
+                    EditorUtility.DisplayProgressBar("AssetBundle encrypting", $"current progress : {per} %", percent);
+                    using (MemoryStream stream = new MemoryStream(bytes.Length + offset))
+                    {
+                        var head = new byte[offset];
+                        stream.Write(head, 0, head.Length);
+                        stream.Write(bytes, 0, bytes.Length);
+                        File.WriteAllBytes(path, stream.ToArray());
+                        stream.Close();
+                    }
+                    abIndex++;
+                    yield return null;
                 }
-                     , null, byteList =>
-                     {
-                         EditorUtility.ClearProgressBar();
-                         var length = byteList.Count;
-                         for (int i = 0; i < length; i++)
-                         {
-                             var percent = i / (float)length;
-                             var per = Mathf.RoundToInt(percent * 100);
-                             EditorUtility.DisplayProgressBar("AssetBundle encrypting", $"current progress : {per} %", percent);
-                             using (MemoryStream stream = new MemoryStream(byteList[i].Length + offset))
-                             {
-                                 var head = new byte[offset];
-                                 stream.Write(head, 0, head.Length);
-                                 stream.Write(byteList[i], 0, byteList[i].Length);
-                                 File.WriteAllBytes(paths[i], stream.ToArray());
-                                 stream.Close();
-                             }
-                         }
-                         EditorUtility.ClearProgressBar();
-                     });
+                EditorUtility.ClearProgressBar();
             }
         }
     }

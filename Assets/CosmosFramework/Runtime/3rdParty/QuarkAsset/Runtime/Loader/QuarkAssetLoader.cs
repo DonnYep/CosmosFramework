@@ -44,7 +44,7 @@ namespace Quark.Loader
         public abstract Coroutine LoadPrefabAsync(string assetName, string assetExtension, Action<GameObject> callback, bool instantiate = false);
         public abstract Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, string assetExtension, Action<T[]> callback) where T : Object;
         public abstract Coroutine LoadMainAndSubAssetsAsync(string assetName, string assetExtension, Type type, Action<Object[]> callback);
-        public abstract Coroutine LoadAllAssetAsync(string assetBundleName,Action<Object[]>callback);
+        public abstract Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback);
         public abstract Coroutine LoadSceneAsync(string sceneName, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback, bool additive = false);
         public abstract void UnloadAsset(string assetName, string assetExtension);
         public abstract void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false);
@@ -162,10 +162,13 @@ namespace Quark.Loader
                 yield break;
             }
             var ao = SceneManager.UnloadSceneAsync(scene);
-            while (!ao.isDone)
+            if (ao != null)
             {
-                progress?.Invoke(ao.progress);
-                yield return null;
+                while (!ao.isDone)
+                {
+                    progress?.Invoke(ao.progress);
+                    yield return null;
+                }
             }
             loadedSceneDict.Remove(sceneName);
             DecrementQuarkAssetObject(wapper);

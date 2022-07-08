@@ -1,0 +1,21 @@
+{
+  "name": "com.quarkAsset",
+  "displayName": "QuarkAsset",
+  "version": "0.0.1",
+  "unity": "2019.3",
+  "description": "Unity resource management solution",
+  "dependencies": {
+  },
+  "repository": {
+		"type": "git",
+		"url": "git@github.com:DonnYep/CosmosFramework.git"
+	},
+  "keywords": [
+    "AssetBundle"
+  ],
+  "author": {
+    "name": "DonnYep",
+		"email": "zhengdonn@gmail.com",
+    "url": "https://github.com/DonnYep/CosmosFramework"
+  }
+}

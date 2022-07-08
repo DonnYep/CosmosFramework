@@ -60,7 +60,7 @@ namespace Quark.Editor
                     bool isValidAsset = obj != null;
                     if (isValidAsset)
                     {
-                        objectIcon = QuarkAssetEditorUtility.ToTexture2D(EditorGUIUtility.ObjectContent(obj, obj.GetType()).image);
+                        objectIcon = QuarkEditorUtility.ToTexture2D(EditorGUIUtility.ObjectContent(obj, obj.GetType()).image);
                     }
                     else
                     {

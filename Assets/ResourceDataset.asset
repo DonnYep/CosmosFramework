@@ -15,231 +15,231 @@ MonoBehaviour:
   resourceObjectList:
   - assetName: AmbientAudio.mp3
     assetPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
-    bundleName: Assets/Examples/AssetBundleTest/Audio
+    bundleName: audio
     extension: .mp3
   - assetName: Audio00.mp3
     assetPath: Assets/Examples/AssetBundleTest/Audio/Audio00.mp3
-    bundleName: Assets/Examples/AssetBundleTest/Audio
+    bundleName: audio
     extension: .mp3
   - assetName: Audio01.mp3
     assetPath: Assets/Examples/AssetBundleTest/Audio/Audio01.mp3
-    bundleName: Assets/Examples/AssetBundleTest/Audio
+    bundleName: audio
     extension: .mp3
   - assetName: AudioFashion.mp3
     assetPath: Assets/Examples/AssetBundleTest/Audio/AudioFashion.mp3
-    bundleName: Assets/Examples/AssetBundleTest/Audio
+    bundleName: audio
     extension: .mp3
   - assetName: AudioTechHouse.mp3
     assetPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
-    bundleName: Assets/Examples/AssetBundleTest/Audio
+    bundleName: audio
     extension: .mp3
   - assetName: Alpha_Body_MAT.mat
     assetPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
-    bundleName: Assets/Examples/AssetBundleTest/Material
+    bundleName: material
     extension: .mat
   - assetName: BlueMat.mat
     assetPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
-    bundleName: Assets/Examples/AssetBundleTest/Material
+    bundleName: material
     extension: .mat
   - assetName: GreyMaterial.Default.mat
     assetPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
-    bundleName: Assets/Examples/AssetBundleTest/Material
+    bundleName: material
     extension: .mat
   - assetName: RedMat.mat
     assetPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
-    bundleName: Assets/Examples/AssetBundleTest/Material
+    bundleName: material
     extension: .mat
   - assetName: LM_XBotIdle.anim
     assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
-    bundleName: Assets/Examples/AssetBundleTest/Model
+    bundleName: model
     extension: .anim
   - assetName: LM_XBotWalking.anim
     assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
-    bundleName: Assets/Examples/AssetBundleTest/Model
+    bundleName: model
     extension: .anim
   - assetName: LM_YBotIdle.anim
     assetPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
-    bundleName: Assets/Examples/AssetBundleTest/Model
+    bundleName: model
     extension: .anim
   - assetName: LM_YBotWalk.anim
     assetPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
-    bundleName: Assets/Examples/AssetBundleTest/Model
+    bundleName: model
     extension: .anim
   - assetName: XBot_TPose.fbx
     assetPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
-    bundleName: Assets/Examples/AssetBundleTest/Model
+    bundleName: model
     extension: .fbx
   - assetName: YBot_TPose.fbx
     assetPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
-    bundleName: Assets/Examples/AssetBundleTest/Model
+    bundleName: model
     extension: .fbx
   - assetName: CB1024.tga
     assetPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
-    bundleName: Assets/Examples/AssetBundleTest/Photo
+    bundleName: photo
     extension: .tga
   - assetName: CB2048.tga
     assetPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
-    bundleName: Assets/Examples/AssetBundleTest/Photo
+    bundleName: photo
     extension: .tga
   - assetName: CheckBoard_2048.jpg
     assetPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
-    bundleName: Assets/Examples/AssetBundleTest/Photo
+    bundleName: photo
     extension: .jpg
   - assetName: Grid2048.psd
     assetPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
-    bundleName: Assets/Examples/AssetBundleTest/Photo
+    bundleName: photo
     extension: .psd
   - assetName: AudioSource.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: Capsule.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/Capsule.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: Cube.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/Cube.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: Cylinder.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/Cylinder.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: Label.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/Label.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: Sphere.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/Sphere.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: Mat_ObjectPool_Blue.mat
     assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Blue.mat
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .mat
   - assetName: Mat_ObjectPool_Green.mat
     assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Green.mat
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .mat
   - assetName: Mat_ObjectPool_Red.mat
     assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Red.mat
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .mat
   - assetName: ResPrefab_Capsule.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Capsule.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: ResPrefab_Cube.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Cube.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: ResPrefab_Sphere.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Sphere.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: AC_XBot_Idle.controller
     assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/AC_XBot_Idle.controller
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .controller
   - assetName: AC_XBot_Walking.controller
     assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/AC_XBot_Walking.controller
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .controller
   - assetName: XBot_Idle.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/XBot_Idle.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: XBot_Walking.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/XBot_Walking.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: AC_YBot_Idle.controller
     assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/AC_YBot_Idle.controller
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .controller
   - assetName: AC_YBot_Walking.controller
     assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/AC_YBot_Walking.controller
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .controller
   - assetName: YBot_Idle.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Idle.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: YBot_Walking.prefab
     assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
-    bundleName: Assets/Examples/AssetBundleTest/Prefab
+    bundleName: prefab
     extension: .prefab
   - assetName: SceneTarget.unity
     assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
-    bundleName: Assets/Examples/AssetBundleTest/Scene
+    bundleName: scene
     extension: .unity
   - assetName: TestAddtiveScene.unity
     assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
-    bundleName: Assets/Examples/AssetBundleTest/Scene
+    bundleName: scene
     extension: .unity
   - assetName: ABMapSchema.json
     assetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
-    bundleName: Assets/Examples/AssetBundleTest/Text
+    bundleName: text
     extension: .json
   - assetName: SampleCSV.csv
     assetPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
-    bundleName: Assets/Examples/AssetBundleTest/Text
+    bundleName: text
     extension: .csv
   - assetName: Tex_5195.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5196.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5196.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5197.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5197.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5199.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5199.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5203.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5203.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5205.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5205.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5206.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5206.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5207.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5207.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5208.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5208.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5209.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5209.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5210.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5210.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5211.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5211.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: Tex_5212.png
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
-    bundleName: Assets/Examples/AssetBundleTest/Texture
+    bundleName: texture
     extension: .png
   - assetName: HowToMakeAMultiplayerGameInUnity2021.1.mp4
     assetPath: Assets/Examples/AssetBundleTest/Video/HowToMakeAMultiplayerGameInUnity2021.1.mp4
-    bundleName: Assets/Examples/AssetBundleTest/Video
+    bundleName: video
     extension: .mp4
   resourceBundleList:
   - bundleName: audio
@@ -247,97 +247,93 @@ MonoBehaviour:
     resourceObjectList:
     - assetName: AmbientAudio.mp3
       assetPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
-      bundleName: Assets/Examples/AssetBundleTest/Audio
+      bundleName: audio
       extension: .mp3
     - assetName: Audio00.mp3
       assetPath: Assets/Examples/AssetBundleTest/Audio/Audio00.mp3
-      bundleName: Assets/Examples/AssetBundleTest/Audio
+      bundleName: audio
       extension: .mp3
     - assetName: Audio01.mp3
       assetPath: Assets/Examples/AssetBundleTest/Audio/Audio01.mp3
-      bundleName: Assets/Examples/AssetBundleTest/Audio
+      bundleName: audio
       extension: .mp3
     - assetName: AudioFashion.mp3
       assetPath: Assets/Examples/AssetBundleTest/Audio/AudioFashion.mp3
-      bundleName: Assets/Examples/AssetBundleTest/Audio
+      bundleName: audio
       extension: .mp3
     - assetName: AudioTechHouse.mp3
       assetPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
-      bundleName: Assets/Examples/AssetBundleTest/Audio
+      bundleName: audio
       extension: .mp3
     bundlePath: Assets/Examples/AssetBundleTest/Audio
-    bundleHash: 85cfcb341456da4a695c7f72e0b4ff07
   - bundleName: material
     dependList: []
     resourceObjectList:
     - assetName: Alpha_Body_MAT.mat
       assetPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
-      bundleName: Assets/Examples/AssetBundleTest/Material
+      bundleName: material
       extension: .mat
     - assetName: BlueMat.mat
       assetPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
-      bundleName: Assets/Examples/AssetBundleTest/Material
+      bundleName: material
       extension: .mat
     - assetName: GreyMaterial.Default.mat
       assetPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
-      bundleName: Assets/Examples/AssetBundleTest/Material
+      bundleName: material
       extension: .mat
     - assetName: RedMat.mat
       assetPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
-      bundleName: Assets/Examples/AssetBundleTest/Material
+      bundleName: material
       extension: .mat
     bundlePath: Assets/Examples/AssetBundleTest/Material
-    bundleHash: 1e1f8e4702b2ecd0840b7ff9acd5486b
   - bundleName: model
     dependList: []
     resourceObjectList:
     - assetName: LM_XBotIdle.anim
       assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
-      bundleName: Assets/Examples/AssetBundleTest/Model
+      bundleName: model
       extension: .anim
     - assetName: LM_XBotWalking.anim
       assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
-      bundleName: Assets/Examples/AssetBundleTest/Model
+      bundleName: model
       extension: .anim
     - assetName: LM_YBotIdle.anim
       assetPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
-      bundleName: Assets/Examples/AssetBundleTest/Model
+      bundleName: model
       extension: .anim
     - assetName: LM_YBotWalk.anim
       assetPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
-      bundleName: Assets/Examples/AssetBundleTest/Model
+      bundleName: model
       extension: .anim
     - assetName: XBot_TPose.fbx
       assetPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
-      bundleName: Assets/Examples/AssetBundleTest/Model
+      bundleName: model
       extension: .fbx
     - assetName: YBot_TPose.fbx
       assetPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
-      bundleName: Assets/Examples/AssetBundleTest/Model
+      bundleName: model
       extension: .fbx
     bundlePath: Assets/Examples/AssetBundleTest/Model
-    bundleHash: 85982cd123bcdf5039205f2a6af5b1e3
   - bundleName: photo
     dependList: []
     resourceObjectList:
     - assetName: CB1024.tga
       assetPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
-      bundleName: Assets/Examples/AssetBundleTest/Photo
+      bundleName: photo
       extension: .tga
     - assetName: CB2048.tga
       assetPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
-      bundleName: Assets/Examples/AssetBundleTest/Photo
+      bundleName: photo
       extension: .tga
     - assetName: CheckBoard_2048.jpg
       assetPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
-      bundleName: Assets/Examples/AssetBundleTest/Photo
+      bundleName: photo
       extension: .jpg
     - assetName: Grid2048.psd
       assetPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
-      bundleName: Assets/Examples/AssetBundleTest/Photo
+      bundleName: photo
       extension: .psd
     bundlePath: Assets/Examples/AssetBundleTest/Photo
-    bundleHash: 1d0e725573ab7a82136a8c34825b2b64
   - bundleName: prefab
     dependList:
     - 7aae7a543ef750edf8ec41a497a31491
@@ -495,86 +491,85 @@ MonoBehaviour:
     resourceObjectList:
     - assetName: AudioSource.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: Capsule.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/Capsule.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: Cube.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/Cube.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: Cylinder.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/Cylinder.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: Label.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/Label.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: Sphere.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/Sphere.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: Mat_ObjectPool_Blue.mat
       assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Blue.mat
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .mat
     - assetName: Mat_ObjectPool_Green.mat
       assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Green.mat
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .mat
     - assetName: Mat_ObjectPool_Red.mat
       assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Red.mat
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .mat
     - assetName: ResPrefab_Capsule.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Capsule.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: ResPrefab_Cube.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Cube.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: ResPrefab_Sphere.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Sphere.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: AC_XBot_Idle.controller
       assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/AC_XBot_Idle.controller
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .controller
     - assetName: AC_XBot_Walking.controller
       assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/AC_XBot_Walking.controller
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .controller
     - assetName: XBot_Idle.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/XBot_Idle.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: XBot_Walking.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/XBot_Walking.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: AC_YBot_Idle.controller
       assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/AC_YBot_Idle.controller
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .controller
     - assetName: AC_YBot_Walking.controller
       assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/AC_YBot_Walking.controller
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .controller
     - assetName: YBot_Idle.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Idle.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     - assetName: YBot_Walking.prefab
       assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
-      bundleName: Assets/Examples/AssetBundleTest/Prefab
+      bundleName: prefab
       extension: .prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
-    bundleHash: bc393f615c775b0523f6d4c33ffd522d
   - bundleName: scene
     dependList:
     - 3fe16adbafe77bff7c919125c0cdb0c7
@@ -732,93 +727,89 @@ MonoBehaviour:
     resourceObjectList:
     - assetName: SceneTarget.unity
       assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
-      bundleName: Assets/Examples/AssetBundleTest/Scene
+      bundleName: scene
       extension: .unity
     - assetName: TestAddtiveScene.unity
       assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
-      bundleName: Assets/Examples/AssetBundleTest/Scene
+      bundleName: scene
       extension: .unity
     bundlePath: Assets/Examples/AssetBundleTest/Scene
-    bundleHash: ee4579a66043cb45ff9e4d2065f00c82
   - bundleName: text
     dependList: []
     resourceObjectList:
     - assetName: ABMapSchema.json
       assetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
-      bundleName: Assets/Examples/AssetBundleTest/Text
+      bundleName: text
       extension: .json
     - assetName: SampleCSV.csv
       assetPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
-      bundleName: Assets/Examples/AssetBundleTest/Text
+      bundleName: text
       extension: .csv
     bundlePath: Assets/Examples/AssetBundleTest/Text
-    bundleHash: 8f573e261d42c326ba532f750fa98f43
   - bundleName: texture
     dependList: []
     resourceObjectList:
     - assetName: Tex_5195.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5196.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5196.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5197.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5197.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5199.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5199.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5203.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5203.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5205.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5205.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5206.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5206.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5207.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5207.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5208.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5208.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5209.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5209.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5210.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5210.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5211.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5211.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     - assetName: Tex_5212.png
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
-      bundleName: Assets/Examples/AssetBundleTest/Texture
+      bundleName: texture
       extension: .png
     bundlePath: Assets/Examples/AssetBundleTest/Texture
-    bundleHash: 92ba5ab088319e2d8b04da28a85cc589
   - bundleName: video
     dependList: []
     resourceObjectList:
     - assetName: HowToMakeAMultiplayerGameInUnity2021.1.mp4
       assetPath: Assets/Examples/AssetBundleTest/Video/HowToMakeAMultiplayerGameInUnity2021.1.mp4
-      bundleName: Assets/Examples/AssetBundleTest/Video
+      bundleName: video
       extension: .mp4
     bundlePath: Assets/Examples/AssetBundleTest/Video
-    bundleHash: 93206fa5b54d3f4ee9c6db712050d2b8
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp

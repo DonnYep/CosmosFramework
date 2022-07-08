@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Quark.Asset;
-using Cosmos.Editor;
-
 namespace Quark.Editor
 {
     public class QuarkAssetWindow : EditorWindow
@@ -141,12 +139,12 @@ namespace Quark.Editor
         {
             try
             {
-                windowData = EditorUtil.GetData<QuarkAssetWindowData>(QuarkAssetWindowDataName);
+                windowData = QuarkEditorUtility.GetData<QuarkAssetWindowData>(QuarkAssetWindowDataName);
             }
             catch
             {
                 windowData = new QuarkAssetWindowData();
-                EditorUtil.SaveData(QuarkAssetWindowDataName, windowData);
+                QuarkEditorUtility.SaveData(QuarkAssetWindowDataName, windowData);
             }
             if (!string.IsNullOrEmpty(windowData.QuarkDatasetPath))
             {
@@ -161,7 +159,7 @@ namespace Quark.Editor
                 EditorUtility.SetDirty(QuarkEditorDataProxy.QuarkAssetDataset);
                 AssetDatabase.Refresh();
             }
-            EditorUtil.SaveData(QuarkAssetWindowDataName, windowData);
+            QuarkEditorUtility.SaveData(QuarkAssetWindowDataName, windowData);
         }
         [InitializeOnLoadMethod]
         static void InitData()
