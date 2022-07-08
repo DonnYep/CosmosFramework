@@ -28,7 +28,7 @@ namespace Quark.Editor
         {
             this.titleContent = new GUIContent("QuarkAsset");
         }
-        [MenuItem("Window/Cosmos/QuarkAsset", false, 100)]
+        [MenuItem("Window/QuarkAsset/QuarkAssetEditor", false, 100)]
         public static void OpenWindow()
         {
             var window = GetWindow<QuarkAssetWindow>();
