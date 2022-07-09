@@ -262,7 +262,7 @@ namespace Cosmos.Editor.Resource
                     var fileExt = Path.GetExtension(srcFilePath);
                     if (extensions.Contains(fileExt))
                     {
-                        var resourceObject = new ResourceObject(Path.GetFileName(srcFilePath), srcFilePath, bundle.BundleName, Path.GetExtension(srcFilePath));
+                        var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(srcFilePath), srcFilePath, bundle.BundleName, Path.GetExtension(srcFilePath));
                         objects.Add(resourceObject);
                         bundle.ResourceObjectList.Add(resourceObject);
                     }
@@ -318,7 +318,7 @@ namespace Cosmos.Editor.Resource
                 for (int j = 0; j < objectLength; j++)
                 {
                     var assetPath = objects[j].AssetPath;
-                    var objInfo = new ResourceObjectInfo(objects[j].AssetName, assetPath, objects[i].BundleName,EditorUtil.GetAssetFileSize(assetPath), EditorUtil.GetAssetFileSizeLength(assetPath));
+                    var objInfo = new ResourceObjectInfo(objects[j].AssetName, assetPath, objects[i].BundleName,EditorUtil.GetAssetFileSize(assetPath),objects[i].Extension);
                     resourceObjectLable.AddObject(objInfo);
                 }
                 var progress = Mathf.RoundToInt((float)i / (idlen - 1) * 100); ;

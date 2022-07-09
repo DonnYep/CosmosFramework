@@ -1542,7 +1542,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1173073560}
-  - component: {fileID: 1173073561}
   - component: {fileID: 1173073559}
   m_Layer: 0
   m_Name: Entry
@@ -1565,7 +1564,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchAppDomainModules: 1
   printModulePreparatory: 0
-  resourceLoadMode: 3
+  resourceLoadMode: 2
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
   debugHelperIndex: 1
@@ -1575,6 +1574,14 @@ MonoBehaviour:
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
   messagePackHelperName: Cosmos.MessagePackHelper
   runInBackground: 0
+  resourceDataset: {fileID: 11400000, guid: ac9e1ddf21f63234c848d5250d3e43c6, type: 2}
+  resourceBundlePathType: 0
+  resourceBundlePath: 
+  customeResourceBundlePath: 
+  assetBundleEncrytion: 0
+  assetBundleEncrytionOffset: 16
+  buildInfoEncrytion: 0
+  buildInfoEncrytionKey: CosmosBundlesKey
 --- !u!4 &1173073560
 Transform:
   m_ObjectHideFlags: 0
@@ -1589,31 +1596,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1173073561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1173073558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 435fb9601448fe144854aeece9140fde, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  QuarkBuildPath: 0
-  EnableRelativeBuildPath: 0
-  RelativeBuildPath: 
-  Url: 
-  PingUrl: 0
-  QuarkAssetLoadMode: 1
-  QuarkAssetDataset: {fileID: 11400000, guid: e4ef4e912cff6e24f8901a67d27afba9, type: 2}
-  QuarkDownloadedPath: 0
-  EnableRelativeLoadPath: 0
-  RelativeLoadPath: 
-  BuildInfoAESEncryptionKey: 
-  EncryptionOffset: 0
-  CustomeAbsolutePath: 
 --- !u!1 &1213670551
 GameObject:
   m_ObjectHideFlags: 0

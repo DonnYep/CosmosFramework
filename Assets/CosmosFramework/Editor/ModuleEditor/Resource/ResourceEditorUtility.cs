@@ -106,8 +106,19 @@ namespace Cosmos.Editor.Resource
                     sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
                     minWidth=128,
-                    width = 256,
+                    width = 160,
                     maxWidth=512,
+                    autoResize = true,
+                },
+                new MultiColumnHeaderState.Column
+                {
+                    headerContent = new GUIContent("Extension"),
+                    headerTextAlignment = TextAlignment.Left,
+                    sortingArrowAlignment = TextAlignment.Left,
+                    sortedAscending = false,
+                  minWidth=64,
+                    width=72,
+                    maxWidth=128,
                     autoResize = true,
                 },
                 new MultiColumnHeaderState.Column

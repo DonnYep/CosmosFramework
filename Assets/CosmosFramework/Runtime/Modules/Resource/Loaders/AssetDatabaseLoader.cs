@@ -253,7 +253,7 @@ where T : UnityEngine.Object
             var hasObjWarpper = resourceObjectDict.TryGetValue(assetName, out var objectWarpper);
             if (!hasObjWarpper)
             {
-                progress.Invoke(1);
+                progress?.Invoke(1);
                 callback?.Invoke(asset);
                 yield break;
             }
@@ -263,10 +263,10 @@ where T : UnityEngine.Object
             }
 #if UNITY_EDITOR
             if (!string.IsNullOrEmpty(assetPath))
-                asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetName);
+                asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
 #endif
             yield return null;
-            progress.Invoke(1);
+            progress?.Invoke(1);
             callback?.Invoke(asset);
         }
         IEnumerator EnumLoadAllAssetAsync(string assetBundleName, Action<float> progress, Action<Object[]> callback)

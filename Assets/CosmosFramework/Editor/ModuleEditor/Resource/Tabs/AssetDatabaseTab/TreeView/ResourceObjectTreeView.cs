@@ -78,7 +78,8 @@ namespace Cosmos.Editor.Resource
                         ObjectState = objectState,
                         ObjectStateIcon = stateIcon,
                         ObjectSize = objectInfo.FileSize,
-                        ObjectBundleName=objectInfo.AssetBundleName
+                        ObjectBundleName = objectInfo.AssetBundleName,
+                        ObjectExtension = objectInfo.Extension
                     };
                     allItems.Add(item);
                 }
@@ -109,6 +110,11 @@ namespace Cosmos.Editor.Resource
                     break;
                 case 1:
                     {
+                        DefaultGUI.Label(cellRect, treeView.ObjectExtension, args.selected, args.focused);
+                    }
+                    break;
+                case 2:
+                    {
                         var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
                         if (treeView.icon != null)
                             GUI.DrawTexture(iconRect, treeView.ObjectStateIcon, ScaleMode.ScaleToFit);
@@ -117,17 +123,17 @@ namespace Cosmos.Editor.Resource
                         DefaultGUI.Label(lablCellRect, treeView.ObjectState, args.selected, args.focused);
                     }
                     break;
-                case 2:
+                case 3:
                     {
                         DefaultGUI.Label(cellRect, treeView.ObjectSize, args.selected, args.focused);
                     }
                     break;
-                case 3:
+                case 4:
                     {
                         DefaultGUI.Label(cellRect, treeView.ObjectBundleName, args.selected, args.focused);
                     }
                     break;
-                case 4:
+                case 5:
                     {
                         DefaultGUI.Label(cellRect, treeView.displayName, args.selected, args.focused);
                     }

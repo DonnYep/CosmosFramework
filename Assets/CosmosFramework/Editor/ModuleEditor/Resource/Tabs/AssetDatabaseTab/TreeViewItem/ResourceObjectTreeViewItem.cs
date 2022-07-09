@@ -32,5 +32,9 @@ namespace Cosmos.Editor.Resource
         /// AB包名；
         /// </summary>
         public string ObjectBundleName { get; set; }
+        /// <summary>
+        /// 对象后缀名
+        /// </summary>
+        public string ObjectExtension { get; set; }
     }
 }

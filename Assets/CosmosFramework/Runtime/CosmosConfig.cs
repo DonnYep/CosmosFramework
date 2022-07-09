@@ -115,6 +115,10 @@ namespace Cosmos
                         break;
                     case ResourceLoadMode.CustomLoader:
                         {
+                            if (string.IsNullOrEmpty(resourceLoaderName)||resourceLoaderName==NONE)
+                            {
+                                throw new Exception("CustomLoader is invalid !");
+                            }
                             var loadHelper = Utility.Assembly.GetTypeInstance(resourceLoaderName);
                             if (loadHelper != null)
                                 CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, (IResourceLoadHelper)loadHelper);

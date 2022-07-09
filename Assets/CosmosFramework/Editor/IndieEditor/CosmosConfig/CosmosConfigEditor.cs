@@ -211,8 +211,17 @@ namespace Cosmos.Editor
             messagePackHelpers[0] = CosmosConfig.NONE;
             Array.Copy(msgPackSrc, 0, messagePackHelpers, 1, msgPackSrc.Length);
 
-            var loaders = Utility.Assembly.GetDerivedTypeNames<IResourceLoadHelper>();
-            resourceLoaders = loaders.Where(l => { return !l.StartsWith("Cosmos.Resource"); }).ToArray();
+            var srcLoaders = Utility.Assembly.GetDerivedTypeNames<IResourceLoadHelper>();
+           var filteredLoader = resourceLoaders = srcLoaders.Where(l =>
+            {
+                return l != typeof(AssetDatabaseLoader).FullName &&
+                  l != typeof(ResourcesLoader).FullName &&
+                  l != typeof(AssetBundleLoader).FullName;
+            }).ToArray();
+            resourceLoaders = new string[filteredLoader.Length + 1];
+            resourceLoaders[0] = CosmosConfig.NONE;
+            Array.Copy(srcLoaders, 0, resourceLoaders, 1, filteredLoader.Length);
+
             cosmosConfig = target as CosmosConfig;
             targetObject = new SerializedObject(cosmosConfig);
 
