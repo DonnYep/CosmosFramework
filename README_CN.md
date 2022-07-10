@@ -24,7 +24,7 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 
 - **ObjectsPool**:对象池模块。提供常用的实体对象生成回收等功能。底层使用数据结构Pool进行实现。
 
-- **Resource**:资源加载模块。内置提供了Resources与AB两种加载模式，通过切换加载模式可变更当前默认的加载方式。支持资源多通道自定义加载通道，可自定义适配其他类型的资源管理方案。
+- **Resource**:资源加载模块。内置提供了AssetDatabase、Resource以及AssetBundle几种加载方案。开发阶段无需对进行AB打包，仅需切换到AssetDatabase模式即可进行加载。同时在AssetDatabase模式以及AssetBundle模式都提供引用计数支持，可试试查看当前资源的引用状态。编辑器菜单栏位于Window>Cosmos>ModuleEditor>Resource。
 
 - **Scene**:场景加载模块。提供常用的异步、同步加载嵌入的场景功能。支持自定义实现加载方式。
 
@@ -72,8 +72,6 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 
 - **Editor** :Editor中提供了在Hierarchy常用检索对象、组件的方法，EditorConfig提供了代码生成是自动创建代码标头的功能；
 
-- **QuarkAsset** :QuarkAsset是一套AssetBundle资源管理方案。 Editor模式与AB模式之间可快速切换，加载资源时自动处理AB依赖问题。下载支持大文件断点续传。加载时无需传入完整地址，通过资源名称即可完成加载。若资源重名，则通过文件名+后缀进行完全限定加载。
-
 - **FutureTask**:异步任务检测，支持多线程与协程异步进度检测。检测函数需要传入Func<bool>格式的函数，当条件返回值为true时，异步检测结束；注意:FutureTask本身并不是协程，不能代替协程执行异步任务。暂不支持await/async语法。
 
 - **Pool**:池数据结构。包含线程安全与非线程安全类型。框架中的对象池、引用池以及其他模块的缓存池都使用了“Pool”进行实现。
@@ -118,7 +116,5 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 - KCP CSharp:https://github.com/vis2k/kcp2k
     
 - TCP:https://github.com/vis2k/Telepathy
-
-- PureMVC:https://github.com/DonnYep/PureMVC
 
 - Mirror:https://github.com/vis2k/Mirror

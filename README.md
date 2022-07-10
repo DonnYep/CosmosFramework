@@ -24,7 +24,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **ObjectsPool** : Object pool module. Provides commonly used functions such as entity object generation and recycling. The underlying implementation uses the data structure Pool.
 
-- **Resource** : Resource loading module. Built-in provides Resources and AB two loading modes, by switching the loading mode can change the current default loading method. Support resources multi-channel custom loading channel, can be customized to adapt to other types of resource management solutions.
+- **Resource** : Resource loading module. Several loading options are built in, including AssetDatabase, Resource and AssetBundle. There is no need to build AB during the development phase, just switch to AssetDatabase mode and load. Reference counting is also supported in both AssetDatabase and AssetBundle modes, so you can try to check the reference status of the current resource.The editor menu bar is located at >Cosmos>ModuleEditor>Resource.
 
 - **Scene** : Scene loading module. Provide common asynchronous and synchronous loading of embedded scenes. Support custom implementation of loading methods.
 
@@ -72,8 +72,6 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **Editor** : Editor provides methods to retrieve objects and components commonly used in Hierarchy, and EditorConfig provides the ability to automatically create code headers for code generation.
 
-- **QuarkAsset** : QuarkAsset is a set of AssetBundle resource management solutions. Editor mode and AB mode can be quickly switched between, and AB dependency issues are automatically handled when loading resources. Download support for large file breakpoints. Loading can be done by resource name without passing in the full address. If the resource is renamed, it will be loaded fully qualified by filename + suffix.
-
 - **FutureTask**:Asynchronous task detection, supports multi-threaded and concurrent asynchronous progress detection. The detection function needs to be passed in Func<bool> format, and asynchronous detection ends when the condition returns true; Note: FutureTask itself is not a concurrent process, and cannot execute asynchronous tasks instead of a concurrent process. The await/async syntax is not supported at the moment.
 
 - **Pool**:Pool data structure. Includes thread-safe and non-thread-safe types. Object pools, reference pools and cache pools of other modules in the framework are implemented using "Pool".
@@ -99,7 +97,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
     
 - Some of the modules with Helper can be custom implemented by the user or can use the Default object provided.
 
-- Built-in case address:Assets\Examples\.
+- Built-in case address:Assets\Examples\ .
 
 ## Other
 
@@ -118,7 +116,5 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 - KCP CSharp:https://github.com/vis2k/kcp2k
     
 - TCP:https://github.com/vis2k/Telepathy
-
-- PureMVC:https://github.com/DonnYep/PureMVC
 
 - Mirror:https://github.com/vis2k/Mirror
