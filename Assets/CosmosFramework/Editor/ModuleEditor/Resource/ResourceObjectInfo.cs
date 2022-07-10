@@ -4,11 +4,11 @@ namespace Cosmos.Editor.Resource
 {
     public struct ResourceObjectInfo : IEquatable<ResourceObjectInfo>
     {
-        public string ObjectName { get; set; }
-        public string AssetPath { get; set; }
-        public string AssetBundleName { get; set; }
-        public string FileSize { get; set; }
-        public string Extension { get; set; }
+        public string ObjectName;
+        public string AssetPath;
+        public string AssetBundleName;
+        public string FileSize;
+        public string Extension;
         public ResourceObjectInfo(string objectName, string assetPath, string assetBundleName, string fileSize, string extension)
         {
             ObjectName = objectName;

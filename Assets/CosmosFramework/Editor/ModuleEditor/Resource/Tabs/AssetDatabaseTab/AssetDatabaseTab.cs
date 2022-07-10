@@ -317,8 +317,9 @@ namespace Cosmos.Editor.Resource
                 var objectLength = objects.Count;
                 for (int j = 0; j < objectLength; j++)
                 {
-                    var assetPath = objects[j].AssetPath;
-                    var objInfo = new ResourceObjectInfo(objects[j].AssetName, assetPath, objects[i].BundleName,EditorUtil.GetAssetFileSize(assetPath),objects[i].Extension);
+                    var obj = objects[j];
+                    var assetPath = obj.AssetPath;
+                    var objInfo = new ResourceObjectInfo(obj.AssetName, assetPath, obj.BundleName,EditorUtil.GetAssetFileSize(assetPath), obj.Extension);
                     resourceObjectLable.AddObject(objInfo);
                 }
                 var progress = Mathf.RoundToInt((float)i / (idlen - 1) * 100); ;
