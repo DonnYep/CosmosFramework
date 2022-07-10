@@ -24,7 +24,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **ObjectsPool** : Object pool module. Provides commonly used functions such as entity object generation and recycling. The underlying implementation uses the data structure Pool.
 
-- **Resource** : Resource loading module. Several loading options are built in, including AssetDatabase, Resource and AssetBundle. There is no need to build AB during the development phase, just switch to AssetDatabase mode and load. Reference counting is also supported in both AssetDatabase and AssetBundle modes, so you can try to check the reference status of the current resource.The editor menu bar is located at >Cosmos>ModuleEditor>Resource.
+- **Resource** : Resource loading module. Several loading options are built in, including AssetDatabase, Resource and AssetBundle. There is no need to build AB during the development phase, just switch to AssetDatabase mode and load. Reference counting is also supported in both AssetDatabase and AssetBundle modes, so you can try to check the reference status of the current resource.The editor menu bar is located at Window>Cosmos>ModuleEditor>Resource.
 
 - **Scene** : Scene loading module. Provide common asynchronous and synchronous loading of embedded scenes. Support custom implementation of loading methods.
 

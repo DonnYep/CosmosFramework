@@ -11,7 +11,7 @@ namespace Cosmos.Resource
         /// 是否进行中
         /// </summary>
         bool IsProcessing { get; }
-        /// <summary>
+        /// <summary>l
         /// 加载资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>
