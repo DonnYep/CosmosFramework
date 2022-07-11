@@ -13,11 +13,16 @@ using Cosmos.ObjectPool;
 using Cosmos.Resource;
 using Cosmos.Scene;
 using Cosmos.UI;
+using Cosmos.Procedure;
 using UnityEngine;
 namespace Cosmos
 {
     public static class CosmosModuleExtensions
     {
+        public static GameObject Instance(this IProcedureManager  procedureManager)
+        {
+            return MonoGameManager.Instance.GetModuleInstance<IProcedureManager>();
+        }
         public static GameObject Instance(this IAudioManager audioManager)
         {
             return MonoGameManager.Instance.GetModuleInstance<IAudioManager>();

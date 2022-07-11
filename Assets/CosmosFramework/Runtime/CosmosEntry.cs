@@ -15,6 +15,7 @@ using Cosmos.Resource;
 using Cosmos.Scene;
 using Cosmos.UI;
 using Cosmos.WebRequest;
+using Cosmos.Procedure;
 using System;
 namespace Cosmos
 {
@@ -57,6 +58,7 @@ namespace Cosmos
             remove { GameManager.ElapseRefreshHandler -= value; }
         }
         public static IAudioManager AudioManager { get { return GetModule<IAudioManager>(); } }
+        public static IProcedureManager  ProcedureManager{ get { return GetModule<IProcedureManager>(); } }
         public static IControllerManager ControllerManager { get { return GetModule<IControllerManager>(); } }
         public static IFSMManager FSMManager { get { return GetModule<IFSMManager>(); } }
         public static IObjectPoolManager ObjectPoolManager { get { return GetModule<IObjectPoolManager>(); } }

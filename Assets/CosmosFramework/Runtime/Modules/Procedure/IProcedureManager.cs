@@ -4,26 +4,42 @@ namespace Cosmos.Procedure
 {
     //================================================
     /*
-     * 1、流程管理模块
+     * 1、流程管理模块。
+     * 
+     * 2、流程节点的生命周期按照顺序依次为:OnInit>OnEnter>OnUpdate
+     * >OnExit>OnDestroy。
+     * 
+     * 3、OnInit函数在ProcedureNode被添加到ProcedureManager时触发。
+     * 
+     * 4、OnEnter函数在进入ProcedureNode状态时触发。
+     * 
+     * 5、OnUpdate函数在ProcedureNode状态中轮询触发。
+     * 
+     * 6、OnExit函数在离开ProcedureNode状态时触发。
+     * 
+     * 7、OnDestroy函数在ProcedureNode被从ProcedureManager移除时触发。
      */
     //================================================
     public interface IProcedureManager: IModuleManager
     {
-        int ProcedureNodeCount { get; }
+        /// <summary>
+        /// 流程节点数量；
+        /// </summary>
+        int ProcedureCount { get; }
         /// <summary>
         /// 当前节点；
         /// </summary>
-        ProcedureNode CurrentProcedureNode { get; }
+        ProcedureState CurrentProcedureNode { get; }
         /// <summary>
         /// 添加多个流程；
         /// </summary>
         /// <param name="nodes">流程集合</param>
-        void AddProcedures(params ProcedureNode[] nodes);
+        void AddProcedures(params ProcedureState[] nodes);
         /// <summary>
         /// 运行流程；
         /// </summary>
         /// <typeparam name="T">流程节点类型</typeparam>
-        void RunProcedure<T>() where T : ProcedureNode;
+        void RunProcedure<T>() where T : ProcedureState;
         /// <summary>
         ///  运行流程；
         /// </summary>
@@ -34,7 +50,7 @@ namespace Cosmos.Procedure
         /// </summary>
         /// <typeparam name="T">流程节点类型</typeparam>
         /// <returns>存在结果</returns>
-        bool HasProcedure<T>() where T : ProcedureNode;
+        bool HasProcedure<T>() where T : ProcedureState;
         /// <summary>
         /// 是否存在节点；
         /// </summary>
@@ -47,14 +63,14 @@ namespace Cosmos.Procedure
         /// <param name="type">流程节点类型</param>
         /// <param name="node">获得的节点</param>
         /// <returns>获得结果</returns>
-        bool PeekProcedure(Type type, out ProcedureNode node);
+        bool PeekProcedure(Type type, out ProcedureState node);
         /// <summary>
         ///  获取流程；
         /// </summary>
         /// <typeparam name="T">流程节点类型</typeparam>
         /// <param name="node">获得的节点</param>
         /// <returns>获得结果</returns>
-        bool PeekProcedure<T>(out ProcedureNode node) where T : ProcedureNode;
+        bool PeekProcedure<T>(out ProcedureState node) where T : ProcedureState;
         /// <summary>
         /// 移除多个流程；
         /// </summary>

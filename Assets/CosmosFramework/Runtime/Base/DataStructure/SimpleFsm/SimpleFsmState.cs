@@ -11,27 +11,27 @@ namespace Cosmos
         /// 当状态被添加时触发；
         /// </summary>
         /// <param name="fsm">所属的状态机</param>
-        public virtual void OnInit(SimpleFsm<T> fsm) { }
+        public abstract void OnInit(SimpleFsm<T> fsm);
         /// <summary>
         /// 进入状态时触发；
         /// </summary>
         /// <param name="fsm">所属的状态机</param>
-        public virtual void OnEnter(SimpleFsm<T> fsm) { }
-        /// <summary>
-        /// 当离开状态时触发；
-        /// </summary>
-        /// <param name="fsm">所属的状态机</param>
-        public virtual void OnExit(SimpleFsm<T> fsm) { }
+        public abstract void OnEnter(SimpleFsm<T> fsm);
         /// <summary>
         /// 当状态被执行时，轮询触发；
         /// </summary>
         /// <param name="fsm">所属的状态机</param>
         public abstract void OnUpdate(SimpleFsm<T> fsm);
         /// <summary>
+        /// 当离开状态时触发；
+        /// </summary>
+        /// <param name="fsm">所属的状态机</param>
+        public abstract void OnExit(SimpleFsm<T> fsm);
+        /// <summary>
         /// 当状态被移除时触发；
         /// </summary>
         /// <param name="fsm">所属的状态机</param>
-        public virtual void OnDestroy(SimpleFsm<T> fsm) { }
+        public abstract void OnDestroy(SimpleFsm<T> fsm);
         /// <summary>
         /// 切换所属状态机的状态；
         /// </summary>
