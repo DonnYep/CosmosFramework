@@ -76,5 +76,18 @@ namespace Cosmos.Procedure
         /// </summary>
         /// <param name="types">流程类型集合</param>
         void RemoveProcedures(params Type[] types);
+        /// <summary>
+        /// 移除一个流程；
+        /// </summary>
+        /// <typeparam name="T">流程节点类型</typeparam>
+        /// <returns>移除结果</returns>
+        bool RemoveProcedure<T>() where T : ProcedureState;
+        /// <summary>
+        /// 移除一个流程；
+        /// </summary>
+        /// <param name="type">流程节点类型</param>
+        /// <returns>移除结果</returns>
+        bool RemoveProcedure(Type type);
+
     }
 }

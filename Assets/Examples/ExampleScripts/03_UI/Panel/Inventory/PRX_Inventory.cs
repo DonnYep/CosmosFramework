@@ -13,7 +13,7 @@ public class PRX_Inventory : Proxy
     public InventoryDataset InventoryDataSet { get; private set; }
     public async override void OnRegister()
     {
-        InventoryDataSet =await CosmosEntry.ResourceManager.LoadAssetAsync<UnityEngine.Object>(dataSetPath) as InventoryDataset;
+        InventoryDataSet = await CosmosEntry.ResourceManager.LoadAssetAsync<UnityEngine.Object>(dataSetPath) as InventoryDataset;
         SlotAsset = await CosmosEntry.ResourceManager.LoadPrefabAsync("UI/Slot");
         jsonFilePath = Utility.IO.WebPathCombine(Application.persistentDataPath, "Inventory");
     }
@@ -28,8 +28,16 @@ public class PRX_Inventory : Proxy
     }
     public void LoadJson()
     {
-        string json = Utility.IO.ReadTextFileContent(jsonFilePath, "InventoryCache.json");
-        JsonUtility.FromJsonOverwrite(json, InventoryDataSet);
-        Utility.Debug.LogInfo("LoadJsonDataFromLocal");
+        try
+        {
+            string json = Utility.IO.ReadTextFileContent(jsonFilePath, "InventoryCache.json");
+            JsonUtility.FromJsonOverwrite(json, InventoryDataSet);
+            Utility.Debug.LogInfo("LoadJsonDataFromLocal");
+        }
+        catch (System.Exception)
+        {
+            var path = Utility.IO.WebPathCombine(jsonFilePath, "InventoryCache.json");
+            Utility.Debug.LogError($"{path} not exsit !");
+        }
     }
 }

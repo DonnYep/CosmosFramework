@@ -22,7 +22,7 @@ namespace Cosmos
         /// <summary>
         /// 当前状态类型；
         /// </summary>
-        public Type CurrentStateType { get { return currentState.GetType(); } }
+        public Type CurrentStateType { get { return currentState?.GetType(); } }
         /// <summary>
         /// 状态机持有者；
         /// </summary>
@@ -55,7 +55,7 @@ namespace Cosmos
             if (typeStateDict.TryGetValue(stateType, out var state))
             {
                 currentState = state;
-                currentState.OnEnter(this);
+                currentState?.OnEnter(this);
             }
         }
         /// <summary>
@@ -66,9 +66,10 @@ namespace Cosmos
         public bool AddState(SimpleFsmState<T> state)
         {
             var type = state.GetType();
-            if (typeStateDict.TryAdd(type, state))
+            if (!typeStateDict.ContainsKey(type))
             {
-                state.OnInit(this);
+                typeStateDict.Add(type, state);
+                state?.OnInit(this);
                 return true;
             }
             return false;
@@ -92,9 +93,11 @@ namespace Cosmos
         /// <returns>移除结果</returns>
         public bool RemoveState(Type stateType)
         {
-            if (typeStateDict.Remove(stateType, out var state))
+            if (typeStateDict.ContainsKey(stateType))
             {
-                state.OnDestroy(this);
+                var state = typeStateDict[stateType];
+                typeStateDict.Remove(stateType);
+                state?.OnDestroy(this);
                 return true;
             }
             return false;
@@ -108,10 +111,7 @@ namespace Cosmos
             var typeLength = stateTypes.Length;
             for (int i = 0; i < typeLength; i++)
             {
-                if (typeStateDict.Remove(stateTypes[i], out var state))
-                {
-                    state.OnDestroy(this);
-                }
+                RemoveState(stateTypes[i]);
             }
         }
         /// <summary>
@@ -138,7 +138,7 @@ namespace Cosmos
         /// </summary>
         public void Refresh()
         {
-            currentState.OnUpdate(this);
+            currentState?.OnUpdate(this);
         }
         /// <summary>
         /// 切换状态；
@@ -150,9 +150,9 @@ namespace Cosmos
             {
                 if (state != null)
                 {
-                    currentState.OnExit(this);
+                    currentState?.OnExit(this);
                     currentState = state;
-                    currentState.OnEnter(this);
+                    currentState?.OnEnter(this);
                 }
             }
         }
