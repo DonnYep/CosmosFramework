@@ -58,7 +58,7 @@ public class MED_Inventory : Mediator
     }
     void QuitClick()
     {
-        CosmosEntry.UIManager.DeactiveUIForm(InventoryPanel.UIFormName);
+        InventoryPanel.Active = false;
     }
     void LoadClick()
     {

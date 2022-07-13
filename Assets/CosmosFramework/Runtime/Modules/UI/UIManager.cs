@@ -7,8 +7,10 @@ namespace Cosmos.UI
 {
     //================================================
     /*
-     * 1、UI模块；由于UI模块没有强约束类型，因此是可以添加实现了IUIForm
-     *  接口的自定义对象。
+     * 1、UI模块。UI模块管理的对象为IUIForm，因此支持多种UI方案。
+     * 
+     * 2、框架目前内置了UGUI支持。若需要支持如FGUI、NGUI等UI方案，
+     * 参照UGUI的支持库写法即可。
      */
     //================================================
     [Module]
@@ -16,13 +18,11 @@ namespace Cosmos.UI
     {
         #region Properties
         /// <inheritdoc/>
-        public Transform UIRoot { get; private set; }
         Type uiFromBaseType = typeof(IUIForm);
         /// <summary>
         /// UI资产帮助体；
         /// </summary>
         IUIFormAssetHelper uiFormAssetHelper;
-
         /// <summary>
         /// UIGroupName===UIGroup；
         /// </summary>
@@ -34,15 +34,6 @@ namespace Cosmos.UI
         #endregion
         #region Methods
         /// <inheritdoc/>
-        public void SetUIRoot(Transform uiRoot, bool destroyOldOne = false)
-        {
-            if (destroyOldOne)
-                GameObject.Destroy(UIRoot.gameObject);
-            var inct = this.Instance();
-            uiRoot.SetParent(inct.transform);
-            UIRoot = uiRoot;
-        }
-        /// <inheritdoc/>
         public void SetUIFormAssetHelper(IUIFormAssetHelper helper)
         {
             this.uiFormAssetHelper = helper;
@@ -51,17 +42,17 @@ namespace Cosmos.UI
         public Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback = null)
         {
             CheckUIAssetInfoValid(assetInfo, uiType);
-            if (HasUIForm(assetInfo.UIFormName))
+            if (uiFormDict.TryGetValue(assetInfo.UIFormName, out var ui))
             {
-                ActiveUIForm(assetInfo.UIFormName);
+                ui.Active = true;
                 return null;
             }
             else
                 return uiFormAssetHelper.InstanceUIFormAsync(assetInfo, uiType, uiForm =>
                 {
-                    uiFormAssetHelper.AttachTo(uiForm, UIRoot);
                     uiForm.UIAssetInfo = assetInfo;
                     uiFormDict.Add(assetInfo.UIFormName, uiForm);
+                    uiForm.OnInit();
                     if (!string.IsNullOrEmpty(assetInfo.UIGroupName))
                     {
                         if (!uiGroupDict.TryGetValue(assetInfo.UIGroupName, out var group))
@@ -71,6 +62,7 @@ namespace Cosmos.UI
                         }
                         group.AddUIForm(uiForm);
                     }
+                    uiForm.Active = true;
                     callback?.Invoke(uiForm);
                 });
         }
@@ -80,9 +72,9 @@ namespace Cosmos.UI
         {
             var type = typeof(T);
             CheckUIAssetInfoValid(assetInfo, type);
-            if (HasUIForm(assetInfo.UIFormName))
+            if (uiFormDict.TryGetValue(assetInfo.UIFormName, out var ui))
             {
-                ActiveUIForm(assetInfo.UIFormName);
+                ui.Active = true;
                 return null;
             }
             else
@@ -104,25 +96,14 @@ namespace Cosmos.UI
             return uiForm;
         }
         /// <inheritdoc/>
-        public void CloseUIForm(string uiFormName)
+        public void ReleaseUIForm(string uiFormName)
         {
             CheckUIFormNameValid(uiFormName);
             uiFormDict.Remove(uiFormName, out var uiForm);
-            if (!string.IsNullOrEmpty(uiForm.UIAssetInfo.UIGroupName))
-            {
-                uiGroupDict.TryGetValue(uiForm.UIAssetInfo.UIGroupName, out var group);
-                group?.RemoveUIForm(uiForm);
-                if (group.UIFormCount <= 0)
-                {
-                    uiGroupDict.Remove(uiForm.UIAssetInfo.UIGroupName, out var uiFormGroup);
-                    UIFormGroup.Release(uiFormGroup as UIFormGroup);
-                }
-            }
-            uiForm.OnClose();
-            uiFormAssetHelper.CloseUIForm(uiForm);
+            ReleaseUIForm(uiForm);
         }
         /// <inheritdoc/>
-        public void CloseUIForm(IUIForm uiForm)
+        public void ReleaseUIForm(IUIForm uiForm)
         {
             if (uiForm == null)
                 throw new ArgumentNullException("UIForm is invalid.");
@@ -139,66 +120,16 @@ namespace Cosmos.UI
                     if (group.UIFormCount <= 0)
                         uiGroupDict.Remove(uiForm.UIAssetInfo.UIGroupName);
                 }
-                uiForm.OnClose();
-                uiFormAssetHelper.CloseUIForm(uiForm);
+                if (uiForm.Active)
+                    uiForm.Active = false;
+                uiForm.OnRelease();
+                uiFormAssetHelper.ReleaseUIForm(uiForm);
             }
             else
-                throw new ArgumentNullException($"UI  { uiFormName} is not existed or registered !");
+                throw new ArgumentNullException($"UI  {uiFormName} is not existed or registered !");
         }
         /// <inheritdoc/>
-        public void DeactiveUIForm(string uiFormName)
-        {
-            CheckUIFormNameValid(uiFormName);
-            if (HasUIForm(uiFormName))
-            {
-                uiFormDict.TryGetValue(uiFormName, out var uiForm);
-                uiForm.OnDeactive();
-            }
-        }
-        /// <inheritdoc/>
-        public void DeactiveUIForm(IUIForm uiForm)
-        {
-            if (uiForm == null)
-                throw new ArgumentNullException("UIForm is invalid.");
-            var uiFormName = uiForm.UIAssetInfo.UIFormName;
-            Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            if (HasUIForm(uiFormName))
-            {
-                uiFormDict.TryGetValue(uiFormName, out var srcUIForm);
-                if (srcUIForm == uiForm)
-                    uiForm.OnDeactive();
-                else
-                    throw new ArgumentException($"{uiFormName}'s ptr is not equal !");//指针不一致
-            }
-        }
-        /// <inheritdoc/>
-        public void ActiveUIForm(IUIForm uiForm)
-        {
-            if (uiForm == null)
-                throw new ArgumentNullException("UIForm is invalid.");
-            var uiFormName = uiForm.UIAssetInfo.UIFormName;
-            Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            if (HasUIForm(uiFormName))
-            {
-                uiFormDict.TryGetValue(uiFormName, out var srcUIForm);
-                if (srcUIForm == uiForm)
-                    uiForm.OnActive();
-                else
-                    throw new ArgumentException($"{uiFormName}'s ptr is not equal !");//指针不一致
-            }
-        }
-        /// <inheritdoc/>
-        public void ActiveUIForm(string uiFormName)
-        {
-            CheckUIFormNameValid(uiFormName);
-            if (HasUIForm(uiFormName))
-            {
-                uiFormDict.TryGetValue(uiFormName, out var uiForm);
-                uiForm.OnActive();
-            }
-        }
-        /// <inheritdoc/>
-        public void CloseUIGroup(string uiGroupName)
+        public void ReleaseUIGroup(string uiGroupName)
         {
             if (uiGroupDict.TryGetValue(uiGroupName, out var group))
             {
@@ -206,8 +137,11 @@ namespace Cosmos.UI
                 var length = uiForms.Length;
                 for (int i = 0; i < length; i++)
                 {
-                    uiForms[i].OnClose();
-                    uiFormAssetHelper.CloseUIForm(uiForms[i]);
+                    var uiForm = uiForms[i];
+                    if (uiForm.Active)
+                        uiForm.Active = false;
+                    uiForm.OnRelease();
+                    uiFormAssetHelper.ReleaseUIForm(uiForms[i]);
                 }
                 uiGroupDict.Remove(uiGroupName, out var uiFormGroup);
                 UIFormGroup.Release(uiFormGroup as UIFormGroup);
@@ -221,7 +155,7 @@ namespace Cosmos.UI
                 var uiForms = group.GetAllUIForm();
                 var length = uiForms.Length;
                 for (int i = 0; i < length; i++)
-                    uiForms[i].OnDeactive();
+                    uiForms[i].Active = false;
             }
         }
         /// <inheritdoc/>
@@ -232,7 +166,7 @@ namespace Cosmos.UI
                 var uiForms = group.GetAllUIForm();
                 var length = uiForms.Length;
                 for (int i = 0; i < length; i++)
-                    uiForms[i].OnActive();
+                    uiForms[i].Active = true;
             }
         }
         /// <inheritdoc/>
@@ -337,7 +271,6 @@ namespace Cosmos.UI
         {
             uiGroupDict = new Dictionary<string, IUIFormGroup>();
             uiFormDict = new Dictionary<string, IUIForm>();
-            uiFormAssetHelper = new DefaultUIFormAssetHelper();
         }
         /// <summary>
         /// 检测UIForm的名字是否有效，且是否存在；
@@ -347,7 +280,7 @@ namespace Cosmos.UI
         {
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
             if (!uiFormDict.ContainsKey(uiFormName))
-                throw new ArgumentNullException($"UI  { uiFormName} is not existed or registered !");
+                throw new ArgumentNullException($"UI  {uiFormName} is not existed or registered !");
         }
         void CheckUIAssetInfoValid(UIAssetInfo assetInfo, Type uiType)
         {

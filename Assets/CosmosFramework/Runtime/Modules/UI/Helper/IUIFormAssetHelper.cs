@@ -14,12 +14,6 @@ namespace Cosmos.UI
         /// <param name="dst">被其他对象挂载</param>
         void AttachTo(IUIForm src, IUIForm dst);
         /// <summary>
-        /// 附加UIForm到一个对象上；
-        /// </summary>
-        /// <param name="src">挂载到其他对象</param>
-        /// <param name="dst">被其他对象挂载</param>
-        void AttachTo(IUIForm src, Transform dst);
-        /// <summary>
         /// 移除挂载；
         /// </summary>
         /// <param name="src">原本挂在其他form的对象</param>
@@ -37,6 +31,6 @@ namespace Cosmos.UI
         /// 关闭并释放UIForm；
         /// </summary>
         /// <param name="uiForm">UIForm对象</param>
-        void CloseUIForm(IUIForm uiForm);
+        void ReleaseUIForm(IUIForm uiForm);
     }
 }

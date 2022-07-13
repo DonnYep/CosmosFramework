@@ -27,66 +27,51 @@ public class MED_Navigate : Mediator
     {
         if (welcome == null)
         {
-            CosmosEntry.UIManager.OpenUIFormAsync<WelcomePanel>(new UIAssetInfo("UI/WelcomePanel", "WelcomePanel", "Example"),panel =>
+            CosmosEntry.UIManager.OpenUIFormAsync<WelcomePanel>(new UIAssetInfo("UI/WelcomePanel", "WelcomePanel", "Example"), panel =>
             { panel.gameObject.SetActive(true); welcome = panel; });
             return;
         }
-        if (welcome.gameObject.activeSelf)
-            CosmosEntry.UIManager.DeactiveUIForm(welcome.UIFormName);
-        else
-            CosmosEntry.UIManager.ActiveUIForm(welcome.UIFormName);
+        welcome.Active = !welcome.Active;
     }
     void InventoryClick()
     {
         if (inventory == null)
         {
-            CosmosEntry.UIManager.OpenUIFormAsync<InventoryPanel>(new UIAssetInfo("UI/InventoryPanel", "InventoryPanel", "Example"),panel =>
+            CosmosEntry.UIManager.OpenUIFormAsync<InventoryPanel>(new UIAssetInfo("UI/InventoryPanel", "InventoryPanel", "Example"), panel =>
            { panel.gameObject.name = "InventoryPanel"; panel.gameObject.SetActive(true); inventory = panel; });
             return;
         }
-        if (inventory.gameObject.activeSelf)
-            CosmosEntry.UIManager.DeactiveUIForm(inventory.UIFormName);
-        else
-            CosmosEntry.UIManager.ActiveUIForm(inventory.UIFormName);
+        inventory.Active = !inventory.Active;
     }
     void StoreClick()
     {
         if (store == null)
         {
-            CosmosEntry.UIManager.OpenUIFormAsync<StorePanel>(new UIAssetInfo("UI/StorePanel", "StorePanel", "Example"),panel =>
+            CosmosEntry.UIManager.OpenUIFormAsync<StorePanel>(new UIAssetInfo("UI/StorePanel", "StorePanel", "Example"), panel =>
             { panel.gameObject.SetActive(true); store = panel; });
             return;
         }
-        if (store.gameObject.activeSelf)
-            CosmosEntry.UIManager.DeactiveUIForm(store.UIFormName);
-        else
-            CosmosEntry.UIManager.ActiveUIForm(store.UIFormName);
+        store.Active = !store.Active;
     }
     void SettingClick()
     {
         if (setting == null)
         {
-            CosmosEntry.UIManager.OpenUIFormAsync<SettingPanel>(new UIAssetInfo("UI/SettingPanel", "SettingPanel", "Example"),panel =>
+            CosmosEntry.UIManager.OpenUIFormAsync<SettingPanel>(new UIAssetInfo("UI/SettingPanel", "SettingPanel", "Example"), panel =>
             { panel.gameObject.SetActive(true); setting = panel; });
             return;
         }
-        if (setting.gameObject.activeSelf)
-            CosmosEntry.UIManager.DeactiveUIForm(setting.UIFormName);
-        else
-            CosmosEntry.UIManager.ActiveUIForm(setting.UIFormName);
+        setting.Active = !setting.Active;
     }
     void StatusClick()
     {
         if (status == null)
         {
-            CosmosEntry.UIManager.OpenUIFormAsync<StatusPanel>(new UIAssetInfo("UI/StatusPanel", "StatusPanel", "Example"),panel =>
+            CosmosEntry.UIManager.OpenUIFormAsync<StatusPanel>(new UIAssetInfo("UI/StatusPanel", "StatusPanel", "Example"), panel =>
             { panel.gameObject.SetActive(true); status = panel; });
             return;
         }
-        if (status.gameObject.activeSelf)
-            CosmosEntry.UIManager.DeactiveUIForm(status.UIFormName);
-        else
-            CosmosEntry.UIManager.ActiveUIForm(status.UIFormName);
+        status.Active = !status.Active;
     }
     void OperateGroup()
     {

@@ -3,18 +3,16 @@ using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos.UI
 {
+    //================================================
+    /*
+     * 1、UI模块。UI模块管理的对象为IUIForm，因此支持多种UI方案。
+     * 
+     * 2、框架目前内置了UGUI支持。若需要支持如FGUI、NGUI等UI方案，
+     * 参照UGUI的支持库写法即可。
+     */
+    //================================================
     public interface IUIManager : IModuleManager
     {
-        /// <summary>
-        /// UI根节点；
-        /// </summary>
-        Transform UIRoot { get; }
-        /// <summary>
-        /// 设置UI根节点
-        /// </summary>
-        /// <param name="uiRoot">传入的UIRoot</param>
-        /// <param name="destroyOldOne">销毁旧的uiRoot对象</param>
-        void SetUIRoot(Transform uiRoot, bool destroyOldOne = false);
         /// <summary>
         /// 设置ui资产加载帮助体；
         /// </summary>
@@ -55,38 +53,18 @@ namespace Cosmos.UI
         /// 此操作会释放UIForm对象；
         /// </summary>
         /// <param name="uiFormName">UI资源的名称</param>
-        void CloseUIForm(string uiFormName);
+        void ReleaseUIForm(string uiFormName);
         /// <summary>
         /// 关闭释放UIForm；
         /// 此操作会释放UIForm对象；
         /// </summary>
         /// <param name="uiForm">open的UIForm</param>
-        void CloseUIForm(IUIForm uiForm);
-        /// <summary>
-        /// 失活UIForm;
-        /// </summary>
-        /// <param name="uiFormName">UI资源的名称</param>
-        void DeactiveUIForm(string uiFormName);
-        /// <summary>
-        ///  失活UIForm；
-        /// </summary>
-        /// <param name="uiForm">UIForm对象</param>
-        void DeactiveUIForm(IUIForm uiForm);
-        /// <summary>
-        /// 激活UIForm;
-        /// </summary>
-        /// <param name="uiFormName">UI资源的名称</param>
-        void ActiveUIForm(string uiFormName);
-        /// <summary>
-        /// 激活UIForm；
-        /// </summary>
-        /// <param name="uiForm">UIForm对象</param>
-        void ActiveUIForm(IUIForm uiForm);
+        void ReleaseUIForm(IUIForm uiForm);
         /// <summary>
         /// 释放关闭整个组；
         /// </summary>
         /// <param name="uiGroupName">UI组的名字</param>
-        void CloseUIGroup(string uiGroupName);
+        void ReleaseUIGroup(string uiGroupName);
         /// <summary>
         /// 失活整个ui组；
         /// </summary>

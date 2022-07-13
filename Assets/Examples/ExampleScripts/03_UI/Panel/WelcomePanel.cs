@@ -4,7 +4,7 @@ public class WelcomePanel : UGUIUIForm
 {
     Text info;
     InputField inputMsg;
-    protected override void Awake()
+    void Awake()
     {
         GetUILable<Button>("BtnShowInfo").onClick.AddListener(ShowInfo);
         GetUILable<Button>("BtnHideInfo").onClick.AddListener(HideInfo);
@@ -22,6 +22,6 @@ public class WelcomePanel : UGUIUIForm
     }
     void Quit()
     {
-        UIManager.DeactiveUIForm(UIFormName);
+        Active = false;
     }
 }

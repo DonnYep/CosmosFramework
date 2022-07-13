@@ -18,7 +18,7 @@ public class InventoryPanel : UGUIUIForm
         SlotContext.UpdateSlot(invDataSet);
         SlotContext.UpdateItem(invDataSet);
     }
-    protected override void Awake()
+    void Awake()
     {
         BtnLoad = GetUILable<Button>("BtnLoad");
         BtnQuit = GetUILable<Button>("BtnQuit");
@@ -27,7 +27,7 @@ public class InventoryPanel : UGUIUIForm
         TxtDescription = GetUILable<Text>("TxtDescription");
         SlotContext = gameObject.GetComponentInChildren<SlotContext>();
     }
-    private void Start()
+    void Start()
     {
         med_Inventory = MVC.PeekMediator<MED_Inventory>(MED_Inventory.NAME);
         med_Inventory.Init(this);

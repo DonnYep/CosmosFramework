@@ -10,7 +10,7 @@ public class NavigatePanel : UGUIUIForm
     public Button BtnStatus { get; private set; }
     public Button BtnSetting { get; private set; }
     public Button BtnOpGroup { get; private set; }
-    protected override void Awake()
+    void Awake()
     {
         BtnWelcome = GetUILable<Button>("BtnWelcome");
         BtnInventory = GetUILable<Button>("BtnInventory");

@@ -21,10 +21,24 @@ namespace Cosmos.UI
             public Type UIType { get; private set; }
             public UIBehaviour UIBehaviour { get; private set; }
         }
-        /// <summary>
-        /// 设置 UIForm层级顺序 ；
-        /// 默认优先级为100，取值区间为[0,10000]；
-        /// </summary>
+        bool active;
+        /// <inheritdoc/>
+        public bool Active
+        {
+            get { return active; }
+            set
+            {
+                if (active != value)
+                {
+                    active = value;
+                    if (active)
+                        OnOpen();
+                    else
+                        OnClose();
+                }
+            }
+        }
+        /// <inheritdoc/>
         public int Priority
         {
             get { return priority; }
@@ -39,7 +53,9 @@ namespace Cosmos.UI
             }
         }
         protected int priority = 100;
+        /// <inheritdoc/>
         public object Handle { get { return gameObject; } }
+        string uiFormName;
         public string UIFormName
         {
             get
@@ -54,31 +70,34 @@ namespace Cosmos.UI
                     uiFormName = value;
             }
         }
-        protected IUIManager UIManager { get { return CosmosEntry.UIManager; } }
+        /// <inheritdoc/>
         public UIAssetInfo UIAssetInfo { get; set; }
-
         /// <summary>
         /// Name===[Lnk=== UILableInfo]；
         /// </summary>
         Dictionary<string, LinkedList<UILableInfo>> uiLableDict
             = new Dictionary<string, LinkedList<UILableInfo>>();
-        string uiFormName;
+
         ///<inheritdoc/>
-        public virtual void OnActive()
+        public virtual void OnInit()
+        {
+            Utility.Debug.LogInfo($"{UIFormName} OnInit");
+        }
+        ///<inheritdoc/>
+        public virtual void OnOpen()
         {
             gameObject.SetActive(true);
         }
         ///<inheritdoc/>
-        public virtual void OnDeactive()
+        public virtual void OnClose()
         {
             gameObject.SetActive(false);
         }
         ///<inheritdoc/>
-        public virtual void OnClose()
+        public virtual void OnRelease()
         {
-            Utility.Debug.LogInfo($"{UIFormName} OnClose");
+            Utility.Debug.LogInfo($"{UIFormName} OnRelease");
         }
-        protected virtual void Awake() { }
         protected bool HasLable<T>(string lableName)
         {
             if (uiLableDict.ContainsKey(lableName))
@@ -130,6 +149,5 @@ namespace Cosmos.UI
             }
             return comp;
         }
-
     }
 }
