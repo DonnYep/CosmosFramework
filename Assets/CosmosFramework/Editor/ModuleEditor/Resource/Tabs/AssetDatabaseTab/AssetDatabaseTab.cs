@@ -158,13 +158,17 @@ namespace Cosmos.Editor.Resource
                         if (!(obj is MonoScript) && (obj is DefaultAsset))
                         {
                             var bundleList = ResourceEditorDataProxy.ResourceDataset.ResourceBundleList;
-                            var bundle = new ResourceBundle(path, path);
+                            var bundle = new ResourceBundle()
+                            {
+                                BundleName = path,
+                                BundlePath = path
+                            };
                             if (!bundleList.Contains(bundle))
                             {
                                 bundleList.Add(bundle);
                             }
                             long bundleSize = ResourceEditorUtility.GetDirectorySize(path, ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                            var bundleInfo = new ResourceBundleInfo(path, path, EditorUtility.FormatBytes(bundleSize));
+                            var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize));
                             added = resourceBundleLable.AddBundle(bundleInfo);
                         }
                     }
@@ -319,7 +323,7 @@ namespace Cosmos.Editor.Resource
                 {
                     var obj = objects[j];
                     var assetPath = obj.AssetPath;
-                    var objInfo = new ResourceObjectInfo(obj.AssetName, assetPath, obj.BundleName,EditorUtil.GetAssetFileSize(assetPath), obj.Extension);
+                    var objInfo = new ResourceObjectInfo(obj.AssetName, assetPath, obj.BundleName, EditorUtil.GetAssetFileSize(assetPath), obj.Extension);
                     resourceObjectLable.AddObject(objInfo);
                 }
                 var progress = Mathf.RoundToInt((float)i / (idlen - 1) * 100); ;

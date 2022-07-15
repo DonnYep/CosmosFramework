@@ -6,7 +6,7 @@ namespace Cosmos.Editor.Resource
     /// </summary>
     public struct ResourceBundleInfo : IEquatable<ResourceBundleInfo>
     {
-        public ResourceBundleInfo(string bundleName,string bundlePath, string bundleSize)
+        public ResourceBundleInfo(string bundleName, string bundlePath, string bundleSize)
         {
             BundleName = bundleName;
             BundleSize = bundleSize;
@@ -24,7 +24,6 @@ namespace Cosmos.Editor.Resource
         /// 编辑器模式下包体的大小
         /// </summary>
         public string BundleSize { get; private set; }
-
         public bool Equals(ResourceBundleInfo other)
         {
             return other.BundleName == this.BundleName &&

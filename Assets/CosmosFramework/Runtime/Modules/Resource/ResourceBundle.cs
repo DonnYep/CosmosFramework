@@ -22,11 +22,27 @@ namespace Cosmos.Resource
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
-        public string BundleName { get { return bundleName; } set { bundleName = value; } }
+        public string BundleName
+        {
+            get { return bundleName; }
+            set
+            {
+                var srcValue = value;
+                if (!string.IsNullOrEmpty(srcValue))
+                {
+                    srcValue = ResourceUtility.BundleNameFilter(srcValue);
+                }
+                bundleName = srcValue;
+            }
+        }
         /// <summary>
         /// AB包在Assets目录下的地址；
         /// </summary>
-        public string BundlePath { get { return bundlePath; } }
+        public string BundlePath
+        {
+            get { return bundlePath; }
+            set { bundlePath = value; }
+        }
         /// <summary>
         /// 资源的依赖项；
         /// </summary>
@@ -50,15 +66,6 @@ namespace Cosmos.Resource
                     resourceObjectList = new List<ResourceObject>();
                 return resourceObjectList;
             }
-        }
-        public ResourceBundle(string bundleName)
-        {
-            this.bundleName = bundleName;
-        }
-        public ResourceBundle(string bundleName, string bundlePath)
-        {
-            this.bundleName = bundleName;
-            this.bundlePath = bundlePath;
         }
         public bool Equals(ResourceBundle other)
         {

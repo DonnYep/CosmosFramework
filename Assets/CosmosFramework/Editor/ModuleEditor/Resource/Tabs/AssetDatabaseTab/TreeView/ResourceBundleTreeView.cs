@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.Resource;
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -89,11 +90,12 @@ namespace Cosmos.Editor.Resource
         protected override void RenameEnded(RenameEndedArgs args)
         {
             var item = FindItem(args.itemID, rootItem);
-            if (!string.IsNullOrWhiteSpace(args.newName))
+            var newName = args.newName;
+            if (!string.IsNullOrWhiteSpace(newName))
             {
+                newName = ResourceUtility.BundleNameFilter(newName);
                 //防止重名
                 var canUse = true;
-                var newName = args.newName;
                 var length = bundleList.Count;
                 for (int i = 0; i < length; i++)
                 {
@@ -107,8 +109,8 @@ namespace Cosmos.Editor.Resource
                 {
                     var bundleInfo = bundleList[args.itemID];
                     bundleList[args.itemID] = new ResourceBundleInfo(newName, bundleInfo.BundlePath, bundleInfo.BundleSize);
-                    item.displayName = args.newName;
-                    onRenameBundle?.Invoke(args.itemID, args.newName);
+                    item.displayName = newName;
+                    onRenameBundle?.Invoke(args.itemID, newName);
                 }
                 else
                 {
@@ -204,8 +206,10 @@ namespace Cosmos.Editor.Resource
             var itemId = Convert.ToInt32(context);
             var item = FindItem(itemId, rootItem);
             var bundleInfo = bundleList[itemId];
-            item.displayName = bundleInfo.BundlePath;
-            bundleList[itemId] = new ResourceBundleInfo(bundleInfo.BundlePath, bundleInfo.BundlePath, bundleInfo.BundleSize);
+            var bundleName = ResourceUtility.BundleNameFilter(bundleInfo.BundlePath);
+            var newBundleInfo = new ResourceBundleInfo(bundleName, bundleInfo.BundlePath, bundleInfo.BundleSize);
+            bundleList[itemId] = newBundleInfo;
+            item.displayName = newBundleInfo.BundleName;
             onRenameBundle?.Invoke(itemId, bundleInfo.BundlePath);
         }
         void ResetAllBundleName()
@@ -215,8 +219,10 @@ namespace Cosmos.Editor.Resource
             {
                 var item = FindItem(i, rootItem);
                 var bundleInfo = bundleList[i];
-                item.displayName = bundleInfo.BundlePath;
-                bundleList[i] = new ResourceBundleInfo(bundleInfo.BundlePath, bundleInfo.BundlePath, bundleInfo.BundleSize);
+                var bundleName = ResourceUtility.BundleNameFilter(bundleInfo.BundlePath);
+                var newBundleInfo = new ResourceBundleInfo(bundleName, bundleInfo.BundlePath, bundleInfo.BundleSize);
+                bundleList[i] = newBundleInfo;
+                item.displayName = newBundleInfo.BundleName;
                 onRenameBundle?.Invoke(i, bundleInfo.BundlePath);
             }
         }

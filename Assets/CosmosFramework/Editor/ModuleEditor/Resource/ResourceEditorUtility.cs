@@ -151,7 +151,7 @@ namespace Cosmos.Editor.Resource
                     sortedAscending = false,
                     minWidth=64,
                     width=96,
-                    maxWidth=192,
+                    maxWidth=384,
                     autoResize = true,
                 },
                 new MultiColumnHeaderState.Column
