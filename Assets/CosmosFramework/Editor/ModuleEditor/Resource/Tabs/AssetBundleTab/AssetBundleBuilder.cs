@@ -44,7 +44,7 @@ namespace Cosmos.Editor.Resource
                         break;
                 }
                 importer.assetBundleName = bundleName;
-                resourceManifest.BundleManifestDict.Add(bundleName, bundle);
+                resourceManifest.BundleDict.Add(bundleName, bundle);
             }
             for (int i = 0; i < bundleLength; i++)
             {

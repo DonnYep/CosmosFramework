@@ -14,11 +14,11 @@ namespace Cosmos.Resource
         [SerializeField]
         string bundleName;
         [SerializeField]
+        string bundlePath;
+        [SerializeField]
         List<string> dependList;
         [SerializeField]
         List<ResourceObject> resourceObjectList;
-        [SerializeField]
-        string bundlePath;
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
@@ -54,6 +54,7 @@ namespace Cosmos.Resource
                     dependList = new List<string>();
                 return dependList;
             }
+            set { dependList = value; }
         }
         /// <summary>
         /// 资源对象列表；
@@ -66,6 +67,7 @@ namespace Cosmos.Resource
                     resourceObjectList = new List<ResourceObject>();
                 return resourceObjectList;
             }
+            set { resourceObjectList = value; }
         }
         public bool Equals(ResourceBundle other)
         {

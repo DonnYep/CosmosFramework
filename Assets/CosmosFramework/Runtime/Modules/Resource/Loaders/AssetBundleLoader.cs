@@ -117,7 +117,7 @@ namespace Cosmos.Resource
         }
         void InitData()
         {
-            var bundleManifest = resourceManifest.BundleManifestDict;
+            var bundleManifest = resourceManifest.BundleDict;
             foreach (var bundle in bundleManifest.Values)
             {
                 resourceBundleDict.TryAdd(bundle.BundleName, new ResourceBundleWarpper(bundle));

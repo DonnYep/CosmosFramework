@@ -21,19 +21,35 @@ namespace Cosmos.Resource
         /// <summary>
         /// 资源名
         /// </summary>
-        public string AssetName { get { return assetName; } }
+        public string AssetName
+        {
+            get { return assetName; }
+            set { assetName = value; }
+        }
         /// <summary>
         /// 资源在asset目录下的地址
         /// </summary>
-        public string AssetPath { get { return assetPath; } }
+        public string AssetPath
+        {
+            get { return assetPath; }
+            set { assetPath = value; }
+        }
         /// <summary>
         /// 资源Bundle的名称
         /// </summary>
-        public string BundleName { get { return bundleName; } }
+        public string BundleName
+        {
+            get { return bundleName; }
+            set { bundleName = value; }
+        }
         /// <summary>
         /// 后缀名；
         /// </summary>
-        public string Extension { get { return extension; } }
+        public string Extension
+        {
+            get { return extension; }
+            set { extension = value; }
+        }
         public ResourceObject(string assetName, string assetPath, string bundleName, string extension)
         {
             this.assetName = assetName;
