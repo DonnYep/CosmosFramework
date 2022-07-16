@@ -117,11 +117,11 @@ namespace Cosmos.Resource
         }
         void InitData()
         {
-            var bundleManifest = resourceManifest.BundleDict;
-            foreach (var bundle in bundleManifest.Values)
+            var bundleBuildInfoDict = resourceManifest.ResourceBundleBuildInfoDict;
+            foreach (var bundleBuildInfo in bundleBuildInfoDict.Values)
             {
-                resourceBundleDict.TryAdd(bundle.BundleName, new ResourceBundleWarpper(bundle));
-                var objList = bundle.ResourceObjectList;
+                resourceBundleDict.TryAdd(bundleBuildInfo.ResourceBundle.BundleName, new ResourceBundleWarpper(bundleBuildInfo.ResourceBundle));
+                var objList = bundleBuildInfo.ResourceBundle.ResourceObjectList;
                 var length = objList.Count;
                 for (int i = 0; i < length; i++)
                 {

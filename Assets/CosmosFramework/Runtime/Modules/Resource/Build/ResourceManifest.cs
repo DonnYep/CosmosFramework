@@ -10,23 +10,42 @@ namespace Cosmos.Resource
     [Serializable]
     public class ResourceManifest
     {
-        Dictionary<string, ResourceBundle> bundleDict;
+        /// <summary>
+        /// 包体打包后的信息
+        /// </summary>
+        [Serializable]
+        public class ResourceBundleBuildInfo
+        {
+            /// <summary>
+            /// 打包后的包大小；
+            /// </summary>
+            public long BundleSize;
+            /// <summary>
+            /// 包体的Hash
+            /// </summary>
+            public string BundleHash;
+            /// <summary>
+            /// 包体数据；
+            /// </summary>
+            public ResourceBundle ResourceBundle;
+        }
+        Dictionary<string, ResourceBundleBuildInfo> resourceBundleBuildInfoDict;
         /// <summary>
         /// 打包的版本；
         /// </summary>
         public string BuildVersion { get; set; }
         /// <summary>
-        /// BundleName===ResourceBundle；
+        /// BundleName===ResourceBundleBuildInfo；
         /// </summary>
-        public Dictionary<string, ResourceBundle> BundleDict
+        public Dictionary<string, ResourceBundleBuildInfo> ResourceBundleBuildInfoDict
         {
             get
             {
-                if (bundleDict == null)
-                    bundleDict = new Dictionary<string, ResourceBundle>();
-                return bundleDict;
+                if (resourceBundleBuildInfoDict == null)
+                    resourceBundleBuildInfoDict = new Dictionary<string, ResourceBundleBuildInfo>();
+                return resourceBundleBuildInfoDict;
             }
-            set { bundleDict = value; }
+            set { resourceBundleBuildInfoDict = value; }
         }
     }
 }

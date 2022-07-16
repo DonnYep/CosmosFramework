@@ -9,24 +9,26 @@ namespace Cosmos.Editor.Resource
     /// </summary>
     public class AssetBundleBuilder
     {
-        public void PrepareBuildAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset)
+        public void PrepareBuildAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, out ResourceManifest resourceManifest)
         {
             if (Directory.Exists(buildParams.AssetBundleBuildPath))
                 Utility.IO.DeleteFolder(buildParams.AssetBundleBuildPath);
             Directory.CreateDirectory(buildParams.AssetBundleBuildPath);
-            var encryptionKey = buildParams.BuildIedAssetsEncryptionKey;
-            var encrypt = buildParams.BuildedAssetsEncryption;
+
             var nameType = buildParams.BuildedAssetNameType;
 
             var bundles = dataset.ResourceBundleList;
             var bundleLength = bundles.Count;
-            var resourceManifest = new ResourceManifest();
+            resourceManifest = new ResourceManifest();
 
             for (int i = 0; i < bundleLength; i++)
             {
                 var bundle = bundles[i];
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 var bundleName = string.Empty;
+                //这里获取绝对ab绝对路径下，所有资源的bytes，生成唯一MD5 hash
+                var path = Path.Combine(EditorUtil.ApplicationPath(), bundle.BundlePath);
+                var hash = ResourceUtility.CreateDirectoryMd5(path);
                 switch (nameType)
                 {
                     case BuildedAssetNameType.DefaultName:
@@ -36,15 +38,18 @@ namespace Cosmos.Editor.Resource
                         break;
                     case BuildedAssetNameType.HashInstead:
                         {
-                            //这里获取绝对ab绝对路径下，所有资源的bytes，生成唯一MD5 hash
-                            var path = Path.Combine(EditorUtil.ApplicationPath(), bundle.BundlePath);
-                            var hash = ResourceUtility.CreateDirectoryMd5(path);
                             bundleName = hash;
                         }
                         break;
                 }
                 importer.assetBundleName = bundleName;
-                resourceManifest.BundleDict.Add(bundleName, bundle);
+                var bundleBuildInfo = new ResourceManifest.ResourceBundleBuildInfo()
+                {
+                    BundleHash = hash,
+                    ResourceBundle = bundle
+                };
+                //这里存储hash与bundle，打包出来的包体长度在下一个流程处理
+                resourceManifest.ResourceBundleBuildInfoDict.Add(bundleName, bundleBuildInfo);
             }
             for (int i = 0; i < bundleLength; i++)
             {
@@ -53,6 +58,38 @@ namespace Cosmos.Editor.Resource
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 bundle.DependList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
+        }
+        public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest unityManifest, ResourceManifest resourceManifest)
+        {
+            var bundleNames = unityManifest.GetAllAssetBundles();
+            var bundleNameLength = bundleNames.Length;
+            for (int i = 0; i < bundleNameLength; i++)
+            {
+                var bundleName = bundleNames[i];
+                var bundlePath = Path.Combine(buildParams.AssetBundleBuildPath, bundleName);
+                long bundleSize = 0;
+                if (buildParams.AssetBundleEncryption)
+                {
+                    var bundleBytes = File.ReadAllBytes(bundlePath);
+                    var offset = buildParams.AssetBundleOffsetValue;
+                    bundleSize = Utility.IO.AppendAndWriteAllBytes(bundlePath, new byte[offset], bundleBytes);
+                }
+                else
+                {
+                    var bundleBytes = File.ReadAllBytes(bundlePath);
+                    bundleSize = bundleBytes.LongLength;
+                }
+                if (resourceManifest.ResourceBundleBuildInfoDict.TryGetValue(bundleName, out var resourceBundleBuildInfo))
+                {
+                    //这里存储打包出来的AB长度
+                    resourceBundleBuildInfo.BundleSize = bundleSize;
+                }
+                var bundleManifestPath = Utility.Text.Append(bundlePath, ".manifest");
+                Utility.IO.DeleteFile(bundleManifestPath);
+            }
+            //这段生成resourceManifest.json文件
+            var encryptionKey = buildParams.BuildIedAssetsEncryptionKey;
+            var encrypt = buildParams.BuildedAssetsEncryption;
             resourceManifest.BuildVersion = buildParams.BuildVersion;
             var manifestJson = EditorUtil.Json.ToJson(resourceManifest);
             var manifestContext = manifestJson;
@@ -62,25 +99,6 @@ namespace Cosmos.Editor.Resource
                 manifestContext = Utility.Encryption.AESEncryptStringToString(manifestJson, key);
             }
             Utility.IO.WriteTextFile(buildParams.AssetBundleBuildPath, ResourceConstants.RESOURCE_MANIFEST, manifestContext);
-        }
-        public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest manifest)
-        {
-
-            var bundleNames = manifest.GetAllAssetBundles();
-            var bundleNameLength = bundleNames.Length;
-            for (int i = 0; i < bundleNameLength; i++)
-            {
-                var bundlePath = Path.Combine(buildParams.AssetBundleBuildPath, bundleNames[i]);
-                if (buildParams.AssetBundleEncryption)
-                {
-                    var bundleBytes = File.ReadAllBytes(bundlePath);
-
-                    var offset = buildParams.AssetBundleOffsetValue;
-                    Utility.IO.AppendAndWriteAllBytes(bundlePath, new byte[offset], bundleBytes);
-                }
-                var bundleManifestPath = Utility.Text.Append(bundlePath, ".manifest");
-                Utility.IO.DeleteFile(bundleManifestPath);
-            }
 
             //删除生成文对应的主manifest文件
             var buildVersionPath = Path.Combine(buildParams.AssetBundleBuildPath, buildParams.BuildVersion);

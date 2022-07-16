@@ -243,6 +243,7 @@ MonoBehaviour:
     extension: .mp4
   resourceBundleList:
   - bundleName: audio
+    bundlePath: Assets/Examples/AssetBundleTest/Audio
     dependList: []
     resourceObjectList:
     - assetName: AmbientAudio
@@ -265,8 +266,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
       bundleName: audio
       extension: .mp3
-    bundlePath: Assets/Examples/AssetBundleTest/Audio
   - bundleName: material
+    bundlePath: Assets/Examples/AssetBundleTest/Material
     dependList: []
     resourceObjectList:
     - assetName: Alpha_Body_MAT
@@ -285,8 +286,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
       bundleName: material
       extension: .mat
-    bundlePath: Assets/Examples/AssetBundleTest/Material
   - bundleName: model
+    bundlePath: Assets/Examples/AssetBundleTest/Model
     dependList: []
     resourceObjectList:
     - assetName: LM_XBotIdle
@@ -313,8 +314,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
       bundleName: model
       extension: .fbx
-    bundlePath: Assets/Examples/AssetBundleTest/Model
   - bundleName: photo
+    bundlePath: Assets/Examples/AssetBundleTest/Photo
     dependList: []
     resourceObjectList:
     - assetName: CB1024
@@ -333,9 +334,13 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
       bundleName: photo
       extension: .psd
-    bundlePath: Assets/Examples/AssetBundleTest/Photo
   - bundleName: prefab
-    dependList: []
+    bundlePath: Assets/Examples/AssetBundleTest/Prefab
+    dependList:
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
     resourceObjectList:
     - assetName: AudioSource
       assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
@@ -417,9 +422,13 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
       bundleName: prefab
       extension: .prefab
-    bundlePath: Assets/Examples/AssetBundleTest/Prefab
   - bundleName: scene
-    dependList: []
+    bundlePath: Assets/Examples/AssetBundleTest/Scene
+    dependList:
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
     resourceObjectList:
     - assetName: SceneTarget
       assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
@@ -429,8 +438,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
       bundleName: scene
       extension: .unity
-    bundlePath: Assets/Examples/AssetBundleTest/Scene
   - bundleName: text
+    bundlePath: Assets/Examples/AssetBundleTest/Text
     dependList: []
     resourceObjectList:
     - assetName: ABMapSchema
@@ -441,8 +450,8 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
       bundleName: text
       extension: .csv
-    bundlePath: Assets/Examples/AssetBundleTest/Text
   - bundleName: texture
+    bundlePath: Assets/Examples/AssetBundleTest/Texture
     dependList: []
     resourceObjectList:
     - assetName: Tex_5195
@@ -497,15 +506,14 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
       bundleName: texture
       extension: .png
-    bundlePath: Assets/Examples/AssetBundleTest/Texture
   - bundleName: video
+    bundlePath: Assets/Examples/AssetBundleTest/Video
     dependList: []
     resourceObjectList:
     - assetName: HowToMakeAMultiplayerGameInUnity2021.1
       assetPath: Assets/Examples/AssetBundleTest/Video/HowToMakeAMultiplayerGameInUnity2021.1.mp4
       bundleName: video
       extension: .mp4
-    bundlePath: Assets/Examples/AssetBundleTest/Video
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp

@@ -158,6 +158,13 @@ namespace Cosmos.Editor.Resource
                         if (!(obj is MonoScript) && (obj is DefaultAsset))
                         {
                             var bundleList = ResourceEditorDataProxy.ResourceDataset.ResourceBundleList;
+                            var isInSameBundle = ResourceEditorUtility.CheckAssetsAndScenesInOneAssetBundle(path);
+                            if (isInSameBundle)
+                            {
+                                var invalidBundleName = ResourceUtility.BundleNameFilter(path);
+                                EditorUtil.Debug.LogError($"Cannot mark assets and scenes in one AssetBundle. AssetBundle name is {invalidBundleName}");
+                                continue;
+                            }
                             var bundle = new ResourceBundle()
                             {
                                 BundleName = path,
@@ -166,10 +173,10 @@ namespace Cosmos.Editor.Resource
                             if (!bundleList.Contains(bundle))
                             {
                                 bundleList.Add(bundle);
+                                long bundleSize = ResourceEditorUtility.GetDirectorySize(path, ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
+                                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize));
+                                added = resourceBundleLable.AddBundle(bundleInfo);
                             }
-                            long bundleSize = ResourceEditorUtility.GetDirectorySize(path, ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                            var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize));
-                            added = resourceBundleLable.AddBundle(bundleInfo);
                         }
                     }
                     if (added)

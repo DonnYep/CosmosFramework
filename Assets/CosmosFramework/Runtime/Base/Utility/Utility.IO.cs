@@ -445,9 +445,9 @@ namespace Cosmos
             /// </summary>
             /// <param name="path">写入的地址</param>
             /// <param name="bytesArray">数组集合</param>
-            public static void AppendAndWriteAllBytes(string path, params byte[][] bytesArray)
+            /// <returns>写入的长度</returns>
+            public static long AppendAndWriteAllBytes(string path, params byte[][] bytesArray)
             {
-
                 using (MemoryStream stream = new MemoryStream())
                 {
                     var bytesArrayLength = bytesArray.Length;
@@ -457,8 +457,10 @@ namespace Cosmos
                         stream.Write(bytesArray[i], 0, bytesArray[i].Length);
                         size += bytesArray[i].Length;
                     }
+                    var bytesLength = stream.Length;
                     File.WriteAllBytes(path, stream.ToArray());
                     stream.Close();
+                    return bytesLength;
                 }
             }
             /// <summary>

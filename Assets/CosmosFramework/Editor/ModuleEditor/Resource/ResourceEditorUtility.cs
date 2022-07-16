@@ -8,6 +8,24 @@ namespace Cosmos.Editor.Resource
     public class ResourceEditorUtility
     {
         /// <summary>
+        /// 检测资源与场景是否同处于一个AB包中；
+        /// </summary>
+        /// <param name="bundlePath">包地址</param>
+        /// <returns>是否处于同一个包</returns>
+        public static bool CheckAssetsAndScenesInOneAssetBundle(string bundlePath)
+        {
+            var unitySceneExt = ".unity";
+            var filePaths = Directory.GetFiles(bundlePath, ".", SearchOption.AllDirectories);
+            var length = filePaths.Length;
+            for (int i = 0; i < length; i++)
+            {
+                var ext = Path.GetExtension(filePaths[i]);
+                if (ext!=".meta"&& ext != unitySceneExt)
+                    return true;
+            }
+            return false;
+        }
+        /// <summary>
         /// 获取文件夹中文件的总体大小；
         /// </summary>
         /// <param name="path">路径</param>
