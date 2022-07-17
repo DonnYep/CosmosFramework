@@ -14,7 +14,7 @@ namespace Cosmos.Editor.Resource
         /// <summary>
         /// AB包名称类型
         /// </summary>
-        public BuildedAssetNameType BuildedAssetNameType;
+        public AssetBundleNameType AssetBundleNameType;
         /// <summary>
         /// AB打包输出的绝对路径；
         /// </summary>

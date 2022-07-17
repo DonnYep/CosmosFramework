@@ -50,6 +50,7 @@ namespace Cosmos.Resource
             get { return extension; }
             set { extension = value; }
         }
+        public static readonly ResourceObject None = new ResourceObject();
         public ResourceObject(string assetName, string assetPath, string bundleName, string extension)
         {
             this.assetName = assetName;

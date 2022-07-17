@@ -77,6 +77,7 @@ namespace Cosmos
                             if (string.IsNullOrEmpty(resourceBundlePath))
                                 throw new Exception("Relative Bundle Path is invalid !");
                             ResourceManifest resourceManifest = null;
+                            //TODO 这段如果是其他平台，可能无法通过IO获取到资源
                             string bundleFolderPath = string.Empty;
                             switch (resourceBundlePathType)
                             {

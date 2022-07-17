@@ -55,7 +55,7 @@ namespace Cosmos.Editor.Resource
                         AssetBundleEncryption = tabData.AssetBundleEncryption,
                         AssetBundleOffsetValue = tabData.AssetBundleOffsetValue,
                         BuildAssetBundleOptions = GetBuildAssetBundleOptions(),
-                        BuildedAssetNameType = tabData.BuildedAssetNameType,
+                        AssetBundleNameType = tabData.AssetBundleNameType,
                         BuildedAssetsEncryption = tabData.BuildedAssetsEncryption,
                         BuildIedAssetsEncryptionKey = tabData.BuildIedAssetsEncryptionKey,
                         BuildTarget = tabData.BuildTarget,
@@ -98,7 +98,7 @@ namespace Cosmos.Editor.Resource
                     tabData.DisableWriteTypeTree = false;
 
                 //打包输出的资源加密，如buildInfo，assetbundle 文件名加密
-                tabData.BuildedAssetNameType = (BuildedAssetNameType)EditorGUILayout.EnumPopup("Build assets name type ", tabData.BuildedAssetNameType);
+                tabData.AssetBundleNameType = (AssetBundleNameType)EditorGUILayout.EnumPopup("Build assets name type ", tabData.AssetBundleNameType);
             }
             EditorGUILayout.EndVertical();
         }

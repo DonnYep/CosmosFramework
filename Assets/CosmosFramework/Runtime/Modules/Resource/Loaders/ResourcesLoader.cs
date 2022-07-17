@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Cosmos.Resource
@@ -11,12 +12,6 @@ namespace Cosmos.Resource
     /// </summary>
     public class ResourcesLoader : IResourceLoadHelper
     {
-        bool isProcessing = false;
-        /// <summary>
-        /// 单线下载等待
-        /// </summary>
-        private WaitUntil loadWait;
-
         /// <summary>
         /// 被加载的场景字典；
         /// SceneName===Scene
@@ -24,11 +19,9 @@ namespace Cosmos.Resource
         readonly Dictionary<string, UnityEngine.SceneManagement.Scene> loadedSceneDict;
         public ResourcesLoader()
         {
-            loadWait = new WaitUntil(() => { return !isProcessing; });
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
-        ///<inheritdoc/> 
-        public bool IsProcessing { get { return isProcessing; } private set { isProcessing = value; } }
         ///<inheritdoc/> 
         public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
         {
@@ -93,13 +86,8 @@ namespace Cosmos.Resource
         IEnumerator EnumLoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress, bool instantiate = false)
             where T : UnityEngine.Object
         {
-            if (isProcessing)
-            {
-                yield return loadWait;
-            }
             UnityEngine.Object asset = null;
             ResourceRequest request = Resources.LoadAsync<T>(assetName);
-            isProcessing = true;
             while (!request.isDone)
             {
                 progress?.Invoke(request.progress);
@@ -121,14 +109,12 @@ namespace Cosmos.Resource
             {
                 callback?.Invoke(asset as T);
             }
-            isProcessing = false;
         }
         IEnumerator EnumLoadAssetWithSubAssets<T>(string assetName, Action<T[]> callback, Action<float> progress)
             where T : UnityEngine.Object
         {
             T[] assets = null;
             assets = Resources.LoadAll<T>(assetName);
-            isProcessing = true;
             yield return null;
             progress?.Invoke(1);
             if (assets == null)
@@ -139,17 +125,11 @@ namespace Cosmos.Resource
             {
                 callback?.Invoke(assets);
             }
-            isProcessing = false;
         }
         IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<UnityEngine.Object> callback, Action<float> progress, bool instantiate = false)
         {
-            if (isProcessing)
-            {
-                yield return loadWait;
-            }
             UnityEngine.Object asset = null;
             ResourceRequest request = Resources.LoadAsync(assetName, type);
-            isProcessing = true;
             while (!request.isDone)
             {
                 progress?.Invoke(request.progress);
@@ -171,13 +151,11 @@ namespace Cosmos.Resource
             {
                 callback?.Invoke(asset);
             }
-            isProcessing = false;
         }
         IEnumerator EnumLoadAssetWithSubAssets(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress)
         {
             UnityEngine.Object[] assets = null;
             assets = Resources.LoadAll(assetName);
-            isProcessing = true;
             yield return null;
             progress?.Invoke(1);
             if (assets == null)
@@ -188,15 +166,9 @@ namespace Cosmos.Resource
             {
                 callback?.Invoke(assets);
             }
-            isProcessing = false;
         }
         IEnumerator EnumLoadSceneAsync(SceneAssetInfo sceneInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
-            if (isProcessing)
-            {
-                yield return loadWait;
-            }
-            IsProcessing = true;
             AsyncOperation ao;
             ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneInfo.SceneName, (UnityEngine.SceneManagement.LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
             ao.allowSceneActivation = false;
@@ -231,11 +203,9 @@ namespace Cosmos.Resource
                 yield return new WaitUntil(condition);
             ao.allowSceneActivation = true;
             callback?.Invoke();
-            IsProcessing = false;
         }
         IEnumerator EnumUnloadSceneAsync(SceneAssetInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null)
         {
-            IsProcessing = true;
             var ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneInfo.SceneName);
             while (!ao.isDone)
             {
@@ -250,7 +220,6 @@ namespace Cosmos.Resource
             if (condition != null)
                 yield return new WaitUntil(condition);
             callback?.Invoke();
-            IsProcessing = false;
         }
         IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
         {
@@ -285,6 +254,10 @@ namespace Cosmos.Resource
             var assets= Resources.LoadAll(assetBundleName);
             callback?.Invoke(assets);
             progress?.Invoke(1);
+        }
+        void OnSceneUnloaded(UnityEngine.SceneManagement.Scene scene)
+        {
+            loadedSceneDict.Remove(scene.name);
         }
     }
 }

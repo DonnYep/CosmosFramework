@@ -15,7 +15,7 @@ namespace Cosmos.Editor.Resource
                 Utility.IO.DeleteFolder(buildParams.AssetBundleBuildPath);
             Directory.CreateDirectory(buildParams.AssetBundleBuildPath);
 
-            var nameType = buildParams.BuildedAssetNameType;
+            var assetBundleNameType = buildParams.AssetBundleNameType;
 
             var bundles = dataset.ResourceBundleList;
             var bundleLength = bundles.Count;
@@ -29,14 +29,14 @@ namespace Cosmos.Editor.Resource
                 //这里获取绝对ab绝对路径下，所有资源的bytes，生成唯一MD5 hash
                 var path = Path.Combine(EditorUtil.ApplicationPath(), bundle.BundlePath);
                 var hash = ResourceUtility.CreateDirectoryMd5(path);
-                switch (nameType)
+                switch (assetBundleNameType)
                 {
-                    case BuildedAssetNameType.DefaultName:
+                    case AssetBundleNameType.DefaultName:
                         {
                             bundleName = bundle.BundleName;
                         }
                         break;
-                    case BuildedAssetNameType.HashInstead:
+                    case AssetBundleNameType.HashInstead:
                         {
                             bundleName = hash;
                         }

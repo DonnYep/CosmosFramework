@@ -17,7 +17,7 @@ namespace Cosmos.Editor.Resource
         /// <summary>
         /// AB资源名称类型
         /// </summary>
-        public BuildedAssetNameType BuildedAssetNameType;
+        public AssetBundleNameType AssetBundleNameType;
         /// <summary>
         /// 不会在AssetBundle中包含类型信息;
         /// </summary>
@@ -71,7 +71,7 @@ namespace Cosmos.Editor.Resource
             AssetBundleOffsetValue = 16;
             BuildedAssetsEncryption = false;
             BuildIedAssetsEncryptionKey = "CosmosBundlesKey";
-            BuildedAssetNameType = BuildedAssetNameType.HashInstead;
+            AssetBundleNameType = AssetBundleNameType.HashInstead;
             BuildVersion = "Alpha";
             ForceRebuildAssetBundle = false;
             DisableWriteTypeTree = false;

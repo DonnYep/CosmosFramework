@@ -5,11 +5,22 @@
     /// </summary>
     public class ResourceObjectWarpper
     {
+        int referenceCount;
+        ResourceObject resourceObject;
         public ResourceObjectWarpper(ResourceObject resourceObject)
         {
-            ResourceObject = resourceObject;
+            this.resourceObject = resourceObject;
         }
-        public ResourceObject ResourceObject { get; set; }
-        public int ReferenceCount { get; set; }
+        public ResourceObject ResourceObject { get { return resourceObject; } }
+        public int ReferenceCount
+        {
+            get { return referenceCount; }
+            set
+            {
+                referenceCount = value;
+                if (referenceCount < 0)
+                    referenceCount = 0;
+            }
+        }
     }
 }

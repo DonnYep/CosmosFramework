@@ -52,12 +52,10 @@ namespace Cosmos.Resource
             }
         }
         /// <inheritdoc/>
-        public async void AddOrUpdateLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper)
+        public void AddOrUpdateLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper)
         {
             if (Utility.Assert.IsNull(loadHelper))
                 throw new ArgumentNullException($"IResourceLoadHelper is invalid !");
-            if (loadChannelDict.TryGetValue(resourceLoadMode, out var channel))
-                await new WaitUntil(() => channel.ResourceLoadHelper.IsProcessing == false);
             loadChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode, loadHelper);
             if (currentResourceLoadMode == resourceLoadMode)
                 currentLoadHelper = loadHelper;

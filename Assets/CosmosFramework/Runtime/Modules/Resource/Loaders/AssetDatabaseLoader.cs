@@ -37,6 +37,7 @@ namespace Cosmos.Resource
             resourceBundleDict = new Dictionary<string, ResourceBundleWarpper>();
             resourceObjectDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
             InitData();
         }
         ///<inheritdoc/> 
@@ -96,7 +97,6 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public void UnloadAsset(string assetName)
         {
-            DecrementReferenceCount(assetName);
         }
         ///<inheritdoc/> 
         public void ReleaseAsset(string assetName)
@@ -119,16 +119,16 @@ namespace Cosmos.Resource
         }
         void InitData()
         {
-            var bundles = resourceDataset.ResourceBundleList;
-            foreach (var bundle in bundles)
+            var resourceBundleList= resourceDataset.ResourceBundleList;
+            foreach (var resourceBundle in resourceBundleList)
             {
-                resourceBundleDict.TryAdd(bundle.BundleName, new ResourceBundleWarpper(bundle));
-                var objList = bundle.ResourceObjectList;
-                var length = objList.Count;
-                for (int i = 0; i < length; i++)
+                resourceBundleDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle));
+                var resourceObjectList = resourceBundle.ResourceObjectList;
+                var objectLength = resourceObjectList.Count;
+                for (int i = 0; i < objectLength; i++)
                 {
-                    var obj = objList[i];
-                    resourceObjectDict.TryAdd(obj.AssetName, new ResourceObjectWarpper(obj));
+                    var resourceObject = resourceObjectList[i];
+                    resourceObjectDict.TryAdd(resourceObject.AssetName, new ResourceObjectWarpper(resourceObject));
                 }
             }
         }
@@ -301,21 +301,10 @@ where T : UnityEngine.Object
             callback?.Invoke(assetList.ToArray());
             progress?.Invoke(1);
         }
-        /// <summary>
-        /// 增加一个引用计数
-        /// </summary>
-        void IncrementReferenceCount(string assetName)
+        void OnSceneUnloaded(UnityEngine.SceneManagement.Scene scene)
         {
-
+            loadedSceneDict.Remove(scene.name);
         }
-        /// <summary>
-        /// 减少一个引用计数
-        /// </summary>
-        void DecrementReferenceCount(string assetName)
-        {
-
-        }
-
         IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
         {
             var sceneCount = loadedSceneDict.Count;

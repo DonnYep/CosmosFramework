@@ -16,11 +16,14 @@ namespace Cosmos.Resource
         bool isProcessing;
         ResourceManifest resourceManifest;
         /// <summary>
-        /// assetName===resourceObjectWarpper
+        /// assetPath===resourceObjectWarpper
+        /// 理论上资源地址在unity中应该是唯一的。
+        /// 资源地址相同但文件bytes内容改变，打包时生成的hash也会与之不同。因此理论上应该是assetPath是唯一的。
         /// </summary>
         readonly Dictionary<string, ResourceObjectWarpper> resourceObjectDict;
         /// <summary>
         /// bundleName===resourceBundleWarpper
+        /// 从框架的角度出发，资源bundle设计上就是以文件夹做包体单位。且编辑器做了限制。因此在原生的模块中，理论上bundleName是唯一的。
         /// </summary>
         readonly Dictionary<string, ResourceBundleWarpper> resourceBundleDict;
         /// <summary>
@@ -28,13 +31,17 @@ namespace Cosmos.Resource
         /// SceneName===Scene
         /// </summary>
         readonly Dictionary<string, UnityEngine.SceneManagement.Scene> loadedSceneDict;
+        readonly ResourceAddress resourceAddress;
         public AssetBundleLoader(ResourceManifest resourceManifest)
         {
+            resourceAddress = new ResourceAddress();
             this.resourceManifest = resourceManifest;
             resourceBundleDict = new Dictionary<string, ResourceBundleWarpper>();
             resourceObjectDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
             InitData();
+
         }
         ///<inheritdoc/> 
         public bool IsProcessing { get { return isProcessing; } }
@@ -81,7 +88,7 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public void UnloadAsset(string assetName)
         {
-            DecrementReferenceCount(assetName);
+            OnResourceObjectUnload(assetName);
         }
         ///<inheritdoc/> 
         public void ReleaseAsset(string assetName)
@@ -120,24 +127,27 @@ namespace Cosmos.Resource
             var bundleBuildInfoDict = resourceManifest.ResourceBundleBuildInfoDict;
             foreach (var bundleBuildInfo in bundleBuildInfoDict.Values)
             {
-                resourceBundleDict.TryAdd(bundleBuildInfo.ResourceBundle.BundleName, new ResourceBundleWarpper(bundleBuildInfo.ResourceBundle));
-                var objList = bundleBuildInfo.ResourceBundle.ResourceObjectList;
-                var length = objList.Count;
-                for (int i = 0; i < length; i++)
+                var resourceBundle = bundleBuildInfo.ResourceBundle;
+                resourceBundleDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle));
+                var resourceObjectList = resourceBundle.ResourceObjectList;
+                var objectLength = resourceObjectList.Count;
+                for (int i = 0; i < objectLength; i++)
                 {
-                    var obj = objList[i];
-                    resourceObjectDict.TryAdd(obj.AssetName, new ResourceObjectWarpper(obj));
+                    var resourceObject = resourceObjectList[i];
+                    resourceObjectDict.TryAdd(resourceObject.AssetPath, new ResourceObjectWarpper(resourceObject));
                 }
+                resourceAddress.AddResourceObjects(resourceObjectList);
             }
         }
         IEnumerator EnumLoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null)
             where T : Object
         {
+            //DONE
             T asset = null;
             var bundleName = string.Empty;
-            var hasObject = resourceObjectDict.TryGetValue(assetName, out var objectWarpper);
+            var hasObject = PeekResourceObject(assetName, out var resourceObject);
             if (hasObject)
-                bundleName = objectWarpper.ResourceObject.BundleName;
+                bundleName = resourceObject.BundleName;
             else
             {
                 callback?.Invoke(asset);
@@ -145,28 +155,41 @@ namespace Cosmos.Resource
                 yield break;
             }
             if (string.IsNullOrEmpty(bundleName))
+            {
+                callback?.Invoke(asset);
+                progress?.Invoke(1);
                 yield break;
+            }
             yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
             var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
-            if (hasBundle)
+            if (!hasBundle)
             {
-                if (bundleWarpper.AssetBundle != null)
-                {
-                    asset = bundleWarpper.AssetBundle.LoadAsset<T>(assetName);
-                    bundleWarpper.ReferenceCount++;
-                    objectWarpper.ReferenceCount++;
-                }
+                callback?.Invoke(asset);
+                progress?.Invoke(1);
+                yield break;
+            }
+            if (bundleWarpper.AssetBundle == null)
+            {
+                callback?.Invoke(asset);
+                progress?.Invoke(1);
+                yield break;
+            }
+            asset = bundleWarpper.AssetBundle.LoadAsset<T>(assetName);
+            if (asset != null)
+            {
+                OnResourceObjectLoad(resourceObject);
             }
             callback?.Invoke(asset);
             progress?.Invoke(1);
         }
         IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress = null)
         {
+            //DONE
             Object asset = null;
             var bundleName = string.Empty;
-            var hasObject = resourceObjectDict.TryGetValue(assetName, out var objectWarpper);
+            var hasObject = PeekResourceObject(assetName, out var resourceObject);
             if (hasObject)
-                bundleName = objectWarpper.ResourceObject.BundleName;
+                bundleName = resourceObject.BundleName;
             else
             {
                 callback?.Invoke(asset);
@@ -174,17 +197,29 @@ namespace Cosmos.Resource
                 yield break;
             }
             if (string.IsNullOrEmpty(bundleName))
+            {
+                callback?.Invoke(asset);
+                progress?.Invoke(1);
                 yield break;
+            }
             yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
             var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
-            if (hasBundle)
+            if (!hasBundle)
             {
-                if (bundleWarpper.AssetBundle != null)
-                {
-                    asset = bundleWarpper.AssetBundle.LoadAsset(assetName, type);
-                    bundleWarpper.ReferenceCount++;
-                    objectWarpper.ReferenceCount++;
-                }
+                callback?.Invoke(asset);
+                progress?.Invoke(1);
+                yield break;
+            }
+            if (bundleWarpper.AssetBundle == null)
+            {
+                callback?.Invoke(asset);
+                progress?.Invoke(1);
+                yield break;
+            }
+            asset = bundleWarpper.AssetBundle.LoadAsset(assetName, type);
+            if (asset != null)
+            {
+                OnResourceObjectLoad(resourceObject);
             }
             callback?.Invoke(asset);
             progress?.Invoke(1);
@@ -192,13 +227,12 @@ namespace Cosmos.Resource
         IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress)
     where T : Object
         {
+            //DONE
             T[] assets = null;
-            string bundleName = string.Empty;
-            var hasObject = resourceObjectDict.TryGetValue(assetName, out var objectWarpper);
+            var bundleName = string.Empty;
+            var hasObject = PeekResourceObject(assetName, out var resourceObject);
             if (hasObject)
-            {
-                bundleName = objectWarpper.ResourceObject.BundleName;
-            }
+                bundleName = resourceObject.BundleName;
             else
             {
                 callback?.Invoke(assets);
@@ -206,31 +240,41 @@ namespace Cosmos.Resource
                 yield break;
             }
             if (string.IsNullOrEmpty(bundleName))
+            {
+                callback?.Invoke(assets);
+                progress?.Invoke(1);
                 yield break;
+            }
             yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
             var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
-            if (hasBundle)
+            if (!hasBundle)
             {
-                var bundle = bundleWarpper.AssetBundle;
-                if (bundle != null)
-                {
-                    assets = bundle.LoadAssetWithSubAssets<T>(assetName);
-                    bundleWarpper.ReferenceCount++;
-                    objectWarpper.ReferenceCount++;
-                }
+                callback?.Invoke(assets);
+                progress?.Invoke(1);
+                yield break;
+            }
+            if (bundleWarpper.AssetBundle == null)
+            {
+                callback?.Invoke(assets);
+                progress?.Invoke(1);
+                yield break;
+            }
+            assets = bundleWarpper.AssetBundle.LoadAssetWithSubAssets<T>(assetName);
+            if (assets != null)
+            {
+                OnResourceObjectLoad(resourceObject);
             }
             callback?.Invoke(assets);
             progress?.Invoke(1);
         }
         IEnumerator EnumLoadAssetWithSubAssetsAsync(string assetName, Type type, Action<Object[]> callback, Action<float> progress)
         {
+            //DONE
             Object[] assets = null;
-            string bundleName = string.Empty;
-            var hasObject = resourceObjectDict.TryGetValue(assetName, out var objectWarpper);
+            var bundleName = string.Empty;
+            var hasObject = PeekResourceObject(assetName, out var resourceObject);
             if (hasObject)
-            {
-                bundleName = objectWarpper.ResourceObject.BundleName;
-            }
+                bundleName = resourceObject.BundleName;
             else
             {
                 callback?.Invoke(assets);
@@ -238,25 +282,36 @@ namespace Cosmos.Resource
                 yield break;
             }
             if (string.IsNullOrEmpty(bundleName))
+            {
+                callback?.Invoke(assets);
+                progress?.Invoke(1);
                 yield break;
+            }
             yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
             var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
-            if (hasBundle)
+            if (!hasBundle)
             {
-                var bundle = bundleWarpper.AssetBundle;
-                if (bundle != null)
-                {
-                    assets = bundle.LoadAssetWithSubAssets(assetName, type);
-                    bundleWarpper.ReferenceCount++;
-                    objectWarpper.ReferenceCount++;
-
-                }
+                callback?.Invoke(assets);
+                progress?.Invoke(1);
+                yield break;
+            }
+            if (bundleWarpper.AssetBundle == null)
+            {
+                callback?.Invoke(assets);
+                progress?.Invoke(1);
+                yield break;
+            }
+            assets = bundleWarpper.AssetBundle.LoadAssetWithSubAssets(assetName, type);
+            if (assets != null)
+            {
+                OnResourceObjectLoad(resourceObject);
             }
             callback?.Invoke(assets);
             progress?.Invoke(1);
         }
         IEnumerator EnumLoadDependenciesAssetBundleAsync(string bundleName)
         {
+            //DONE
             var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
             if (!hasBundle)
             {
@@ -380,7 +435,6 @@ namespace Cosmos.Resource
                 yield return new WaitUntil(condition);
             progress?.Invoke(1);
             callback?.Invoke();
-            DecrementReferenceCount(sceneName);
         }
         IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
         {
@@ -418,49 +472,37 @@ namespace Cosmos.Resource
             progress?.Invoke(1);
             callback?.Invoke();
         }
-        IEnumerator EnumLoadAllAssetAsync(string assetBundleName, Action<float> progress, Action<Object[]> callback)
+        IEnumerator EnumLoadAllAssetAsync(string bundleName, Action<float> progress, Action<Object[]> callback)
         {
+            //DONE
             Object[] assets = null;
-            if (string.IsNullOrEmpty(assetBundleName))
-                yield break;
-            yield return EnumLoadDependenciesAssetBundleAsync(assetBundleName);
-            var hasBundle = resourceBundleDict.TryGetValue(assetBundleName, out var bundleWarpper);
-            if (hasBundle)
+            var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
+            if (!hasBundle)
             {
-                if (bundleWarpper.AssetBundle == null)
-                {
-                    callback?.Invoke(assets);
-                    progress?.Invoke(1);
-                    yield break;
-                }
-                assets = bundleWarpper.AssetBundle.LoadAllAssets();
-                var objs = bundleWarpper.ResourceBundle.ResourceObjectList;
-                foreach (var obj in objs)
-                {
-                    bundleWarpper.ReferenceCount++;
-                    var hasObject = resourceObjectDict.TryGetValue(obj.AssetName, out var objectWarpper);
-                    if (hasObject)
-                    {
-                        objectWarpper.ReferenceCount++;
-                    }
-                }
+                callback?.Invoke(assets);
+                progress?.Invoke(1);
+                yield break;
+            }
+            if (string.IsNullOrEmpty(bundleName))
+            {
+                callback?.Invoke(assets);
+                progress?.Invoke(1);
+                yield break;
+            }
+            yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
+            if (bundleWarpper.AssetBundle == null)
+            {
+                callback?.Invoke(assets);
+                progress?.Invoke(1);
+                yield break;
+            }
+            assets = bundleWarpper.AssetBundle.LoadAllAssets();
+            if (assets != null)
+            {
+                OnResourceBundleLoad(bundleName);
             }
             callback?.Invoke(assets);
             progress?.Invoke(1);
-        }
-        void DecrementReferenceCount(string assetName)
-        {
-            var hasObject = resourceObjectDict.TryGetValue(assetName, out var objectWarpper);
-            if (!hasObject)
-                return;
-            objectWarpper.ReferenceCount--;
-            var hasBundle = resourceBundleDict.TryGetValue(objectWarpper.ResourceObject.BundleName, out var bundleWarpper);
-            if (hasBundle)
-            {
-                bundleWarpper.ReferenceCount--;
-                if (bundleWarpper.ReferenceCount <= 0)
-                    bundleWarpper.AssetBundle.Unload(true);
-            }
         }
         void ReleaseObject(ResourceObjectWarpper objectWarpper)
         {
@@ -476,17 +518,69 @@ namespace Cosmos.Resource
                 }
             }
         }
-        void IncrementReferenceCount(string assetName)
+        void OnSceneUnloaded(UnityEngine.SceneManagement.Scene scene)
         {
-            var hasObject = resourceObjectDict.TryGetValue(assetName, out var objectWarpper);
-            if (!hasObject)
-                return;
-            objectWarpper.ReferenceCount++;
-            var hasBundle = resourceBundleDict.TryGetValue(objectWarpper.ResourceObject.BundleName, out var bundleWarpper);
-            if (hasBundle)
-                bundleWarpper.ReferenceCount++;
+            loadedSceneDict.Remove(scene.name);
         }
-
-
+        bool PeekResourceObject(string assetName, out ResourceObject resourceObject)
+        {
+            resourceObject = ResourceObject.None;
+            if (resourceAddress.PeekAssetPath(assetName, out var path))
+            {
+                if (!resourceObjectDict.TryGetValue(path, out var resourceObjectWarpper))
+                    return false;
+                resourceObject = resourceObjectWarpper.ResourceObject;
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 只负责计算引用计数
+        /// </summary>ram>
+        void OnResourceObjectLoad(ResourceObject resourceObject)
+        {
+            if (!resourceObjectDict.TryGetValue(resourceObject.AssetPath, out var resourceObjectWarpper))
+                return;
+            if (!resourceBundleDict.TryGetValue(resourceObject.BundleName, out var resourceBundleWarpper))
+                return;
+            resourceObjectWarpper.ReferenceCount++;
+            resourceBundleWarpper.ReferenceCount++;
+        }
+        void OnResourceBundleLoad(string bundleName)
+        {
+            if (!resourceBundleDict.TryGetValue(bundleName, out var resourceBundleWarpper))
+                return;
+            var ResourceObjectList = resourceBundleWarpper.ResourceBundle.ResourceObjectList;
+            foreach (var resourceObject in ResourceObjectList)
+            {
+                OnResourceObjectLoad(resourceObject);
+            }
+        }
+        /// <summary>
+        /// 只负责计算引用计数
+        /// </summary>
+        void OnResourceObjectUnload(ResourceObject resourceObject)
+        {
+            if (!resourceObjectDict.TryGetValue(resourceObject.AssetPath, out var resourceObjectWarpper))
+                return;
+            if (!resourceBundleDict.TryGetValue(resourceObject.BundleName, out var resourceBundleWarpper))
+                return;
+            resourceObjectWarpper.ReferenceCount--;
+            resourceBundleWarpper.ReferenceCount--;
+        }
+        /// <summary>
+        /// 只负责计算引用计数
+        /// </summary>
+        void OnResourceObjectUnload(string assetName)
+        {
+            if (!resourceAddress.PeekAssetPath(assetName, out var assetPath))
+                return;
+            if (!resourceObjectDict.TryGetValue(assetPath, out var resourceObjectWarpper))
+                return;
+            if (!resourceBundleDict.TryGetValue(resourceObjectWarpper.ResourceObject.BundleName, out var resourceBundleWarpper))
+                return;
+            resourceObjectWarpper.ReferenceCount--;
+            resourceBundleWarpper.ReferenceCount--;
+        }
     }
 }

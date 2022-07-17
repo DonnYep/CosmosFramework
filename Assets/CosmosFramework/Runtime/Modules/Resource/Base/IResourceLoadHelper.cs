@@ -7,10 +7,6 @@ namespace Cosmos.Resource
     /// </summary>
     public interface IResourceLoadHelper : IDisposable
     {
-        /// <summary>
-        /// 是否进行中
-        /// </summary>
-        bool IsProcessing { get; }
         /// <summary>l
         /// 加载资源（异步）；
         /// </summary>
