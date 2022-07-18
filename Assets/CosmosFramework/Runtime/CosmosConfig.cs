@@ -105,18 +105,22 @@ namespace Cosmos
                                     ResourceDataProxy.Instance.EncryptionOffset = assetBundleEncrytionOffset;
                                 if (buildInfoEncrytion)
                                     ResourceDataProxy.Instance.BuildInfoEncryptionKey = buildInfoEncrytionKey;
-                                CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new AssetBundleLoader(resourceManifest));
+                                var assetBundleLoader = new AssetBundleLoader();
+                                assetBundleLoader.InitLoader(resourceManifest);
+                                CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
                             }
                             else
                                 throw new Exception("ResourceManifest deserialization failed , check your file !");
                         }
                         break;
                     case ResourceLoadMode.AssetDatabase:
-                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new AssetDatabaseLoader(resourceDataset));
+                        var assetDatabaseLoader = new AssetDatabaseLoader();
+                        assetDatabaseLoader.InitLoader(resourceDataset);
+                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetDatabaseLoader);
                         break;
                     case ResourceLoadMode.CustomLoader:
                         {
-                            if (string.IsNullOrEmpty(resourceLoaderName)||resourceLoaderName==NONE)
+                            if (string.IsNullOrEmpty(resourceLoaderName) || resourceLoaderName == NONE)
                             {
                                 throw new Exception("CustomLoader is invalid !");
                             }

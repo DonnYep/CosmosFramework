@@ -78,6 +78,7 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public void Dispose()
         {
+            loadedSceneDict.Clear();
         }
         ///<inheritdoc/> 
         public void ReleaseAsset(string assetName)

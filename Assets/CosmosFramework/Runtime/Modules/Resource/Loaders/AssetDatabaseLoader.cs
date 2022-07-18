@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -9,6 +10,7 @@ namespace Cosmos.Resource
 {
     public class AssetDatabaseLoader : IResourceLoadHelper
     {
+        ResourceDataset resourceDataset;
         /// <summary>
         /// assetName===resourceObjectWarpper
         /// </summary>
@@ -17,50 +19,67 @@ namespace Cosmos.Resource
         /// bundleName===resourceBundleWarpper
         /// </summary>
         readonly Dictionary<string, ResourceBundleWarpper> resourceBundleDict;
-
         /// <summary>
         /// 被加载的场景字典；
         /// SceneName===Scene
         /// </summary>
         readonly Dictionary<string, UnityEngine.SceneManagement.Scene> loadedSceneDict;
-
-        bool isProcessing;
-        ResourceDataset resourceDataset;
         /// <summary>
-        /// 单线下载等待
+        /// 资源寻址地址；
         /// </summary>
-        private WaitUntil loadWait;
-        public AssetDatabaseLoader(ResourceDataset resourceDataset)
+        readonly ResourceAddress resourceAddress;
+        public AssetDatabaseLoader()
         {
-            loadWait = new WaitUntil(() => { return !isProcessing; });
-            this.resourceDataset = resourceDataset;
+            resourceAddress = new ResourceAddress();
             resourceBundleDict = new Dictionary<string, ResourceBundleWarpper>();
             resourceObjectDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
+        }
+        public void InitLoader(ResourceDataset resourceDataset)
+        {
+            this.resourceDataset = resourceDataset;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
-            InitData();
+            var resourceBundleList = resourceDataset.ResourceBundleList;
+            foreach (var resourceBundle in resourceBundleList)
+            {
+                resourceBundleDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle));
+                var resourceObjectList = resourceBundle.ResourceObjectList;
+                var objectLength = resourceObjectList.Count;
+                for (int i = 0; i < objectLength; i++)
+                {
+                    var resourceObject = resourceObjectList[i];
+                    resourceObjectDict.TryAdd(resourceObject.AssetName, new ResourceObjectWarpper(resourceObject));
+                }
+            }
         }
         ///<inheritdoc/> 
-        public bool IsProcessing { get { return isProcessing; } }
-        ///<inheritdoc/> 
-        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : Object
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, callback, progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, typeof(T), asset => { callback?.Invoke(asset as T); }, progress));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetAsync(string assetName, Type type, Action<UnityEngine.Object> callback, Action<float> progress = null)
+        public Coroutine LoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress = null)
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAsssetAsync(assetName, callback, progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, type, callback, progress));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : Object
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, callback, progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, typeof(T), assets =>
+            {
+                T[] rstAssets = new T[assets.Length];
+                var length = rstAssets.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    rstAssets[i] = assets[i] as T;
+                }
+                callback?.Invoke(rstAssets);
+            }, progress));
         }
         ///<inheritdoc/> 
         public Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress = null)
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, callback, progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssetsAsync(assetName, type, callback, progress));
         }
         ///<inheritdoc/> 
         public Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback, Action<float> progress = null)
@@ -83,6 +102,17 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumUnloadAllSceneAsync(progress, callback));
         }
         ///<inheritdoc/> 
+        public void UnloadAsset(string assetName)
+        {
+            OnResourceObjectUnload(assetName);
+        }
+        ///<inheritdoc/> 
+        public void ReleaseAsset(string assetName)
+        {
+            if (resourceObjectDict.TryGetValue(assetName, out var objectWarpper))
+                OnResoucreObjectRelease(objectWarpper);
+        }
+        ///<inheritdoc/> 
         public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
             if (resourceBundleDict.TryGetValue(assetBundleName, out var bundleWarpper))
@@ -95,92 +125,189 @@ namespace Cosmos.Resource
             }
         }
         ///<inheritdoc/> 
-        public void UnloadAsset(string assetName)
-        {
-        }
-        ///<inheritdoc/> 
-        public void ReleaseAsset(string assetName)
-        {
-            if (resourceObjectDict.TryGetValue(assetName, out var objectWarpper))
-                ReleaseObject(objectWarpper);
-        }
-        ///<inheritdoc/> 
         public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
         {
             foreach (var objectWarpper in resourceObjectDict.Values)
             {
-                ReleaseObject(objectWarpper);
+                OnResoucreObjectRelease(objectWarpper);
             }
         }
+        ///<inheritdoc/> 
         public void Dispose()
         {
             resourceObjectDict.Clear();
             resourceBundleDict.Clear();
+            resourceAddress.Clear();
+            loadedSceneDict.Clear();
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
         }
-        void InitData()
+        IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress)
         {
-            var resourceBundleList= resourceDataset.ResourceBundleList;
-            foreach (var resourceBundle in resourceBundleList)
+            //DONE
+            Object asset = null;
+            var bundleName = string.Empty;
+            var hasObject = PeekResourceObject(assetName, out var resourceObject);
+            if (hasObject)
+                bundleName = resourceObject.BundleName;
+            else
             {
-                resourceBundleDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle));
-                var resourceObjectList = resourceBundle.ResourceObjectList;
-                var objectLength = resourceObjectList.Count;
-                for (int i = 0; i < objectLength; i++)
+                progress?.Invoke(1);
+                callback?.Invoke(asset);
+                yield break;
+            }
+            if (string.IsNullOrEmpty(bundleName))
+            {
+                progress?.Invoke(1);
+                callback?.Invoke(asset);
+                yield break;
+            }
+            yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
+            var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
+            if (!hasBundle)
+            {
+                progress?.Invoke(1);
+                callback?.Invoke(asset);
+                yield break;
+            }
+#if UNITY_EDITOR
+            if (!string.IsNullOrEmpty(resourceObject.AssetPath))
+                asset = UnityEditor.AssetDatabase.LoadAssetAtPath(resourceObject.AssetPath, type);
+            if (asset != null)
+            {
+                OnResourceObjectLoad(resourceObject);
+            }
+#endif
+            yield return null;
+            progress?.Invoke(1);
+            callback?.Invoke(asset);
+        }
+        IEnumerator EnumLoadAssetWithSubAssetsAsync(string assetName, Type type, Action<Object[]> callback, Action<float> progress)
+        {
+            //DONE
+            Object[] assets = default;
+            var bundleName = string.Empty;
+            var hasObject = PeekResourceObject(assetName, out var resourceObject);
+            if (hasObject)
+                bundleName = resourceObject.BundleName;
+            else
+            {
+                progress?.Invoke(1);
+                callback?.Invoke(assets);
+                yield break;
+            }
+            if (string.IsNullOrEmpty(bundleName))
+            {
+                progress?.Invoke(1);
+                callback?.Invoke(assets);
+                yield break;
+            }
+            yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
+            var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
+            if (!hasBundle)
+            {
+                progress?.Invoke(1);
+                callback?.Invoke(assets);
+                yield break;
+            }
+#if UNITY_EDITOR
+            assets = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(resourceObject.AssetPath);
+            if (assets != null)
+            {
+                OnResourceObjectLoad(resourceObject);
+            }
+#endif
+            yield return null;
+            progress?.Invoke(1);
+            callback?.Invoke(assets);
+        }
+        IEnumerator EnumLoadAllAssetAsync(string bundleName, Action<float> progress, Action<Object[]> callback)
+        {
+            Object[] assets = null;
+            var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
+            if (!hasBundle)
+            {
+                progress?.Invoke(1);
+                callback?.Invoke(assets);
+                yield break;
+            }
+            if (string.IsNullOrEmpty(bundleName))
+            {
+                progress?.Invoke(1);
+                callback?.Invoke(assets);
+                yield break;
+            }
+            yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
+
+#if UNITY_EDITOR
+            List<Object> assetList = new List<Object>();
+            var resourceObjects = bundleWarpper.ResourceBundle.ResourceObjectList;
+            foreach (var resourceObject in resourceObjects)
+            {
+                bundleWarpper.ReferenceCount++;
+                var hasObject = resourceObjectDict.TryGetValue(resourceObject.AssetName, out var objectWarpper);
+                if (hasObject)
                 {
-                    var resourceObject = resourceObjectList[i];
-                    resourceObjectDict.TryAdd(resourceObject.AssetName, new ResourceObjectWarpper(resourceObject));
+                    objectWarpper.ReferenceCount++;
+                    var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(resourceObject.AssetPath, typeof(Object));
+                    assetList.Add(asset);
                 }
             }
+            assets = assetList.ToArray();
+            OnResourceBundleAllAssetLoad(bundleName);
+#endif
+            callback?.Invoke(assets);
+            progress?.Invoke(1);
+        }
+        IEnumerator EnumLoadDependenciesAssetBundleAsync(string bundleName)
+        {
+            yield return null;
         }
         IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
-            if (isProcessing)
-            {
-                yield return loadWait;
-            }
-            isProcessing = true;
-            if (loadedSceneDict.TryGetValue(info.SceneName, out var scene))
+            if (loadedSceneDict.TryGetValue(info.SceneName, out var loadedScene))
             {
                 progress?.Invoke(1);
+                SceneManager.SetActiveScene(loadedScene);
                 callback?.Invoke();
                 yield break;
             }
             LoadSceneMode loadSceneMode = info.Additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
+            AsyncOperation operation = null;
 #if UNITY_EDITOR
-            var ao = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(info.SceneName, new LoadSceneParameters(loadSceneMode));
+            var scene = SceneManager.GetSceneByName(info.SceneName);
+            var sceneIdx = SceneUtility.GetBuildIndexByScenePath(scene.path);
+            if (sceneIdx >= 0)
+                operation = SceneManager.LoadSceneAsync(info.SceneName, loadSceneMode);
+            else
+                operation = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(info.SceneName, new LoadSceneParameters(loadSceneMode));
 #else
-            var ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(info.SceneName, loadSceneMode);
+            operation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(info.SceneName, loadSceneMode);
 #endif
-            ao.allowSceneActivation = false;
+            operation.allowSceneActivation = false;
             var hasProviderProgress = progressProvider != null;
-            while (!ao.isDone)
+            while (!operation.isDone)
             {
                 if (hasProviderProgress)
                 {
                     var providerProgress = progressProvider();
-                    var sum = providerProgress + ao.progress;
+                    var sum = providerProgress + operation.progress;
                     progress?.Invoke(sum / 2);
                     if (sum >= 1.9)
-                    {
                         break;
-                    }
                 }
                 else
                 {
-                    progress?.Invoke(ao.progress);
-                    if (ao.progress >= 0.9f)
-                    {
+                    progress?.Invoke(operation.progress);
+                    if (operation.progress >= 0.9f)
                         break;
-                    }
                 }
-                yield return new WaitForEndOfFrame();
+                yield return null;
             }
             progress?.Invoke(1);
             if (condition != null)
                 yield return new WaitUntil(condition);
-            ao.allowSceneActivation = true;
+            operation.allowSceneActivation = true;
             callback?.Invoke();
-            isProcessing = false;
         }
         /// <summary>
         /// 卸载场景（异步）
@@ -192,118 +319,32 @@ namespace Cosmos.Resource
         /// <returns>协程对象</returns>
         IEnumerator EnumUnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
         {
-            if (isProcessing)
+            var sceneName = info.SceneName;
+            if (string.IsNullOrEmpty(sceneName))
             {
-                yield return loadWait;
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
             }
-            isProcessing = true;
-            var ao = SceneManager.UnloadSceneAsync(info.SceneName);
-            while (!ao.isDone)
+            if (!loadedSceneDict.TryGetValue(sceneName, out var scene))
             {
-                progress?.Invoke(ao.progress);
-                if (ao.progress >= 0.9f)
-                {
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            var operation = SceneManager.UnloadSceneAsync(scene);
+            while (!operation.isDone)
+            {
+                progress?.Invoke(operation.progress);
+                if (operation.progress >= 0.9f)
                     break;
-                }
-                yield return new WaitForEndOfFrame();
+                yield return null;
             }
+            progress?.Invoke(1);
+            loadedSceneDict.Remove(sceneName);
             if (condition != null)
                 yield return new WaitUntil(condition);
-            progress?.Invoke(1);
             callback?.Invoke();
-            isProcessing = false;
-        }
-        IEnumerator EnumLoadAssetWithSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress)
-where T : UnityEngine.Object
-        {
-            T[] assets = default;
-            if (string.IsNullOrEmpty(assetName))
-                throw new ArgumentNullException("Asset name is invalid!");
-            string assetPath = string.Empty;
-            var hasObjWarpper = resourceObjectDict.TryGetValue(assetName, out var objectWarpper);
-            if (!hasObjWarpper)
-            {
-                progress?.Invoke(1);
-                callback?.Invoke(assets);
-                yield break;
-            }
-            else
-            {
-                assetPath = objectWarpper.ResourceObject.AssetPath;
-            }
-#if UNITY_EDITOR
-            var assetObj = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(assetPath);
-            var length = assetObj.Length;
-            assets = new T[length];
-            for (int i = 0; i < length; i++)
-            {
-                assets[i] = assetObj[i] as T;
-            }
-#endif
-            yield return null;
-            progress?.Invoke(1);
-            callback?.Invoke(assets);
-        }
-        IEnumerator EnumLoadAsssetAsync<T>(string assetName, Action<T> callback, Action<float> progress) where T : UnityEngine.Object
-        {
-            T asset = default;
-            if (string.IsNullOrEmpty(assetName))
-                throw new ArgumentNullException("Asset path is invalid!");
-            string assetPath = string.Empty;
-            var hasObjWarpper = resourceObjectDict.TryGetValue(assetName, out var objectWarpper);
-            if (!hasObjWarpper)
-            {
-                progress?.Invoke(1);
-                callback?.Invoke(asset);
-                yield break;
-            }
-            else
-            {
-                assetPath = objectWarpper.ResourceObject.AssetPath;
-            }
-#if UNITY_EDITOR
-            if (!string.IsNullOrEmpty(assetPath))
-                asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
-#endif
-            yield return null;
-            progress?.Invoke(1);
-            callback?.Invoke(asset);
-        }
-        IEnumerator EnumLoadAllAssetAsync(string assetBundleName, Action<float> progress, Action<Object[]> callback)
-        {
-            if (string.IsNullOrEmpty(assetBundleName))
-                yield break;
-            var hasBundle = resourceBundleDict.TryGetValue(assetBundleName, out var bundleWarpper);
-            List<Object> assetList = new List<Object>();
-            if (hasBundle)
-            {
-                if (bundleWarpper.AssetBundle == null)
-                {
-                    callback?.Invoke(null);
-                    progress?.Invoke(1);
-                    yield break;
-                }
-#if UNITY_EDITOR
-                var objs = bundleWarpper.ResourceBundle.ResourceObjectList;
-                foreach (var obj in objs)
-                {
-                    bundleWarpper.ReferenceCount++;
-                    var hasObject = resourceObjectDict.TryGetValue(obj.AssetName, out var objectWarpper);
-                    if (hasObject)
-                    {
-                        objectWarpper.ReferenceCount++;
-                        var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(objectWarpper.ResourceObject.AssetPath, typeof(Object));
-                        assetList.Add(asset);
-                    }
-                }
-#endif
-            }
-            callback?.Invoke(assetList.ToArray());
-            progress?.Invoke(1);
-        }
-        void OnSceneUnloaded(UnityEngine.SceneManagement.Scene scene)
-        {
-            loadedSceneDict.Remove(scene.name);
         }
         IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
         {
@@ -334,24 +375,128 @@ where T : UnityEngine.Object
                     }
                     overallProgress = overallIndexPercent + (unitResRatio * 1);
                     progress?.Invoke(overallProgress / 100);
-                    ReleaseObject(objectWapper);
+                    OnResoucreObjectRelease(objectWapper);
                 }
             }
             loadedSceneDict.Clear();
             progress?.Invoke(1);
             callback?.Invoke();
         }
-        void ReleaseObject(ResourceObjectWarpper objectWarpper)
+        bool PeekResourceObject(string assetName, out ResourceObject resourceObject)
+        {
+            resourceObject = ResourceObject.None;
+            if (resourceAddress.PeekAssetPath(assetName, out var path))
+            {
+                if (!resourceObjectDict.TryGetValue(path, out var resourceObjectWarpper))
+                    return false;
+                resourceObject = resourceObjectWarpper.ResourceObject;
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 当对象被释放；
+        /// </summary>
+        void OnResoucreObjectRelease(ResourceObjectWarpper objectWarpper)
         {
             var count = objectWarpper.ReferenceCount;
             objectWarpper.ReferenceCount = 0;
             if (resourceBundleDict.TryGetValue(objectWarpper.ResourceObject.AssetName, out var bundleWarpper))
             {
                 bundleWarpper.ReferenceCount -= count;
-                if (bundleWarpper.ReferenceCount == 0)
+                OnResourceBundleDecrement(bundleWarpper);
+            }
+        }
+        /// <summary>
+        /// 当场景被卸载；
+        /// </summary>
+        void OnSceneUnloaded(UnityEngine.SceneManagement.Scene scene)
+        {
+            loadedSceneDict.Remove(scene.name);
+        }
+        /// <summary>
+        /// 只负责计算引用计数
+        /// </summary>ram>
+        void OnResourceObjectLoad(ResourceObject resourceObject)
+        {
+            if (!resourceObjectDict.TryGetValue(resourceObject.AssetPath, out var resourceObjectWarpper))
+                return;
+            if (!resourceBundleDict.TryGetValue(resourceObject.BundleName, out var resourceBundleWarpper))
+                return;
+            resourceObjectWarpper.ReferenceCount++;
+            resourceBundleWarpper.ReferenceCount++;
+        }
+        /// <summary>
+        /// 当资源包中的所有对象被加载；
+        /// </summary>
+        void OnResourceBundleAllAssetLoad(string bundleName)
+        {
+            if (!resourceBundleDict.TryGetValue(bundleName, out var resourceBundleWarpper))
+                return;
+            var ResourceObjectList = resourceBundleWarpper.ResourceBundle.ResourceObjectList;
+            foreach (var resourceObject in ResourceObjectList)
+            {
+                OnResourceObjectLoad(resourceObject);
+            }
+        }
+        /// <summary>
+        /// 当资源对象被卸载；
+        /// </summary>
+        void OnResourceObjectUnload(string assetName)
+        {
+            if (!resourceAddress.PeekAssetPath(assetName, out var assetPath))
+                return;
+            if (!resourceObjectDict.TryGetValue(assetPath, out var resourceObjectWarpper))
+                return;
+            if (!resourceBundleDict.TryGetValue(resourceObjectWarpper.ResourceObject.BundleName, out var resourceBundleWarpper))
+                return;
+            resourceObjectWarpper.ReferenceCount--;
+            OnResourceBundleDecrement(resourceBundleWarpper);
+        }
+        /// <summary>
+        /// 当包体引用计数-1
+        /// </summary>
+        void OnResourceBundleDecrement(ResourceBundleWarpper resourceBundleWarpper)
+        {
+            resourceBundleWarpper.ReferenceCount--;
+            if (resourceBundleWarpper.ReferenceCount <= 0)
+            {
+                //当包体的引用计数小于等于0时，则表示该包已经未被依赖。
+                if (resourceBundleWarpper.AssetBundle == null)
+                    return;
+                //卸载AssetBundle；
+                resourceBundleWarpper.AssetBundle.Unload(true);
+                var dependBundleNames = resourceBundleWarpper.ResourceBundle.DependList;
+                var dependBundleNameLength = dependBundleNames.Count;
+                //遍历查询依赖包
+                for (int i = 0; i < dependBundleNameLength; i++)
                 {
-
+                    var dependBundleName = dependBundleNames[i];
+                    if (!resourceBundleDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
+                        continue;
+                    OnResourceBundleDecrement(dependBundleWarpper);
                 }
+            }
+        }
+        /// <summary>
+        /// 当包体引用计数+1
+        /// </summary>
+        void OnResourceBundleIncrement(ResourceBundleWarpper resourceBundleWarpper)
+        {
+            resourceBundleWarpper.ReferenceCount++;
+            var dependBundleNames = resourceBundleWarpper.ResourceBundle.DependList;
+            var dependBundleNameLength = dependBundleNames.Count;
+            //遍历查询依赖包
+            for (int i = 0; i < dependBundleNameLength; i++)
+            {
+                var dependBundleName = dependBundleNames[i];
+                if (!resourceBundleDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
+                    continue;
+                if (dependBundleWarpper.AssetBundle == null)
+                    continue;
+                //依赖包体引用计数+1
+                dependBundleWarpper.ReferenceCount++;
+                OnResourceBundleIncrement(dependBundleWarpper);
             }
         }
     }
