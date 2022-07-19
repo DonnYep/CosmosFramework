@@ -8,7 +8,7 @@ using UnityEngine;
 public class LoadScenePanel : MonoBehaviour
 {
     [SerializeField] GameObject root;
-    readonly string targetLevel = "SceneTarget";
+    [SerializeField] string targetLevel = "SceneTarget";
     Text txtProgress;
     Slider sldProgress;
     Button btnLoad;

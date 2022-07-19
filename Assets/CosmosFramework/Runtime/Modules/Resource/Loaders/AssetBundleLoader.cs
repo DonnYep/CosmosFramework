@@ -34,8 +34,13 @@ namespace Cosmos.Resource
         /// 资源寻址地址；
         /// </summary>
         readonly ResourceAddress resourceAddress;
+        /// <summary>
+        /// 主动加载的场景列表；
+        /// </summary>
+        readonly List<string> loadSceneList;
         public AssetBundleLoader()
         {
+            loadSceneList = new List<string>();
             resourceAddress = new ResourceAddress();
             resourceBundleDict = new Dictionary<string, ResourceBundleWarpper>();
             resourceObjectDict = new Dictionary<string, ResourceObjectWarpper>();
@@ -44,6 +49,7 @@ namespace Cosmos.Resource
         public void InitLoader(ResourceManifest resourceManifest)
         {
             SceneManager.sceneUnloaded += OnSceneUnloaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
             this.resourceManifest = resourceManifest;
             var bundleBuildInfoDict = resourceManifest.ResourceBundleBuildInfoDict;
             foreach (var bundleBuildInfo in bundleBuildInfoDict.Values)
@@ -147,6 +153,7 @@ namespace Cosmos.Resource
             resourceBundleDict.Clear();
             resourceAddress.Clear();
             loadedSceneDict.Clear();
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
         }
         IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress = null)
@@ -335,15 +342,41 @@ namespace Cosmos.Resource
         }
         IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
-            if (loadedSceneDict.TryGetValue(info.SceneName, out var loadedScene))
+            var sceneName = info.SceneName;
+            if (loadedSceneDict.TryGetValue(sceneName, out var loadedScene))
             {
                 progress?.Invoke(1);
                 SceneManager.SetActiveScene(loadedScene);
                 callback?.Invoke();
                 yield break;
             }
+            var bundleName = string.Empty;
+            var hasObject = PeekResourceObject(sceneName, out var resourceObject);
+            if (hasObject)
+                bundleName = resourceObject.BundleName;
+            else
+            {
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            if (string.IsNullOrEmpty(bundleName))
+            {
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
             LoadSceneMode loadSceneMode = info.Additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
             var operation = SceneManager.LoadSceneAsync(info.SceneName, loadSceneMode);
+            if (operation == null)
+            {
+                //为空表示场景不存在
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            loadSceneList.Add(info.SceneName);
             operation.allowSceneActivation = false;
             var hasProviderProgress = progressProvider != null;
             while (!operation.isDone)
@@ -353,29 +386,21 @@ namespace Cosmos.Resource
                     var providerProgress = progressProvider();
                     var sum = providerProgress + operation.progress;
                     if (sum >= 1.9)
-                    {
                         break;
-                    }
                     else
-                    {
                         progress?.Invoke(sum / 2);
-                    }
                 }
                 else
                 {
                     progress?.Invoke(operation.progress);
                     if (operation.progress >= 0.9f)
-                    {
                         break;
-                    }
                 }
                 yield return null;
             }
             progress?.Invoke(1);
             if (condition != null)
                 yield return new WaitUntil(condition);
-            var scene = SceneManager.GetSceneByName(info.SceneName);
-            loadedSceneDict.Add(info.SceneName, scene);
             operation.allowSceneActivation = true;
             callback?.Invoke();
         }
@@ -403,7 +428,6 @@ namespace Cosmos.Resource
                 yield return null;
             }
             progress?.Invoke(1);
-            loadedSceneDict.Remove(sceneName);
             if (condition != null)
                 yield return new WaitUntil(condition);
             callback?.Invoke();
@@ -415,31 +439,23 @@ namespace Cosmos.Resource
             var unitResRatio = 100f / sceneCount;
             int currentSceneIndex = 0;
             float overallProgress = 0;
-            foreach (var scene in loadedSceneDict.Values)
+            foreach (var sceneName in loadSceneList)
             {
                 var overallIndexPercent = 100 * ((float)currentSceneIndex / sceneCount);
                 currentSceneIndex++;
-                var sceneName = scene.name;
-                var hasObject = resourceObjectDict.TryGetValue(sceneName, out var objectWapper);
-                if (!hasObject)
+                if (!loadedSceneDict.TryGetValue(sceneName, out var scene))
+                    continue;
+                var ao = SceneManager.UnloadSceneAsync(scene);
+                while (!ao.isDone)
                 {
-                    overallProgress = overallIndexPercent + (unitResRatio * 1);
+                    overallProgress = overallIndexPercent + (unitResRatio * ao.progress);
                     progress?.Invoke(overallProgress / 100);
+                    yield return null;
                 }
-                else
-                {
-                    var ao = SceneManager.UnloadSceneAsync(scene);
-                    while (!ao.isDone)
-                    {
-                        overallProgress = overallIndexPercent + (unitResRatio * ao.progress);
-                        progress?.Invoke(overallProgress / 100);
-                        yield return null;
-                    }
-                    overallProgress = overallIndexPercent + (unitResRatio * 1);
-                    progress?.Invoke(overallProgress / 100);
-                }
+                overallProgress = overallIndexPercent + (unitResRatio * 1);
+                progress?.Invoke(overallProgress / 100);
             }
-            loadedSceneDict.Clear();
+            loadSceneList.Clear();
             progress?.Invoke(1);
             callback?.Invoke();
         }
@@ -469,11 +485,27 @@ namespace Cosmos.Resource
             }
         }
         /// <summary>
+        /// 当场景被加载；
+        /// </summary>
+        void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode loadSceneMode)
+        {
+            var sceneName = scene.name;
+            if (loadSceneList.Contains(sceneName))
+            {
+                if (PeekResourceObject(sceneName, out var resourceObject))
+                    OnResourceObjectLoad(resourceObject);
+                loadedSceneDict.TryAdd(sceneName, scene);
+            }
+        }
+        /// <summary>
         /// 当场景被卸载；
         /// </summary>
         void OnSceneUnloaded(UnityEngine.SceneManagement.Scene scene)
         {
-            loadedSceneDict.Remove(scene.name);
+            var sceneName = scene.name;
+            if (loadSceneList.Remove(sceneName))
+                OnResourceObjectUnload(sceneName);
+            loadedSceneDict.Remove(sceneName);
         }
         /// <summary>
         /// 只负责计算引用计数

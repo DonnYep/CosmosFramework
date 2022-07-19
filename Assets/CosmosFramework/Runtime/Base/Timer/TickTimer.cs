@@ -56,7 +56,6 @@ namespace Cosmos
         public Action<string> LogError { get; set; }
         readonly DateTime startDateTime = new DateTime(1970, 1, 1, 0, 0, 0);
         readonly ConcurrentDictionary<int, TickTask> taskDict;
-        readonly object locker = new object();
         int taskIndex = 0;
         public int TaskCount { get { return taskDict.Count; } }
         Queue<TickTask> taskQueue;
@@ -175,16 +174,14 @@ namespace Cosmos
         }
         int GenerateTaskId()
         {
-            lock (locker)
+            ++taskIndex;
+            while (taskDict.ContainsKey(taskIndex))
             {
-                while (taskDict.ContainsKey(taskIndex))
-                {
-                    ++taskIndex;
-                    if (taskIndex == int.MaxValue)
-                        taskIndex = 0;
-                }
-                return taskIndex;
+                ++taskIndex;
+                if (taskIndex == int.MaxValue)
+                    taskIndex = 0;
             }
+            return taskIndex;
         }
         /// <summary>
         /// 获取毫秒级别时间；

@@ -169,14 +169,6 @@ MonoBehaviour:
     assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
     bundleName: prefab
     extension: .prefab
-  - assetName: SceneTarget
-    assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
-    bundleName: scene
-    extension: .unity
-  - assetName: TestAddtiveScene
-    assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
-    bundleName: scene
-    extension: .unity
   - assetName: ABMapSchema
     assetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
     bundleName: text
@@ -422,22 +414,6 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
       bundleName: prefab
       extension: .prefab
-  - bundleName: scene
-    bundlePath: Assets/Examples/AssetBundleTest/Scene
-    dependList:
-    - material
-    - model
-    - prefab
-    - texture
-    resourceObjectList:
-    - assetName: SceneTarget
-      assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
-      bundleName: scene
-      extension: .unity
-    - assetName: TestAddtiveScene
-      assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
-      bundleName: scene
-      extension: .unity
   - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text
     dependList: []
