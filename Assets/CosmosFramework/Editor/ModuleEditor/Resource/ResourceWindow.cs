@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.IO;
 using Cosmos.Resource;
 
 namespace Cosmos.Editor.Resource
@@ -23,7 +22,7 @@ namespace Cosmos.Editor.Resource
         {
             this.titleContent = new GUIContent("ResourceWindow");
         }
-        [MenuItem("Window/Cosmos/ModuleEditor/Resource")]
+        [MenuItem("Window/Cosmos/Module/Resource/ResourceEditor")]
         public static void OpenIntegrateWindow()
         {
             var window = GetWindow<ResourceWindow>();

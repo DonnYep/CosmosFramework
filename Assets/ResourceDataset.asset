@@ -519,7 +519,7 @@ MonoBehaviour:
   - .unity
   - .mat
   - .mask
-  - .overrideController
+  - .overridecontroller
   - .tif
   - .spriteatlas
   - .mp3
@@ -536,12 +536,13 @@ MonoBehaviour:
   - .docx
   - .doc
   - .mov
-  - .renderTexture
+  - .rendertexture
   - .csv
   - .fbx
   - .mixer
   - .flare
   - .playable
-  - .physicMaterial
+  - .physicmaterial
   - .signal
   - .guiskin
+  isChanged: 0

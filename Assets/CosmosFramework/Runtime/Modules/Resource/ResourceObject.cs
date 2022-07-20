@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using UnityEngine;
 namespace Cosmos.Resource
 {
     /// <summary>
     /// 资源对象
     /// </summary>
-    [StructLayout(LayoutKind.Auto)]
     [Serializable]
-    public struct ResourceObject : IEquatable<ResourceObject>
+    public class ResourceObject : IEquatable<ResourceObject>
     {
         [SerializeField]
         string assetName;
@@ -50,7 +48,7 @@ namespace Cosmos.Resource
             get { return extension; }
             set { extension = value; }
         }
-        public static readonly ResourceObject None = new ResourceObject();
+        public ResourceObject() { }
         public ResourceObject(string assetName, string assetPath, string bundleName, string extension)
         {
             this.assetName = assetName;

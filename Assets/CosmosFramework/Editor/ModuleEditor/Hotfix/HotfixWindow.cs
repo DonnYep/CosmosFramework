@@ -15,7 +15,7 @@ namespace Cosmos.Editor.Hotfix
         {
             this.titleContent = new GUIContent("HotfixTool");
         }
-        [MenuItem("Window/Cosmos/ModuleEditor/Hotfix")]
+        [MenuItem("Window/Cosmos/Module/Hotfix")]
         public static void OpenWindow()
         {
             var window = GetWindow<HotfixWindow>();

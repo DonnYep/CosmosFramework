@@ -6,6 +6,7 @@ using Object = UnityEngine.Object;
 using System.Collections;
 using System.IO;
 using Unity.EditorCoroutines.Editor;
+using System.Linq;
 
 namespace Cosmos.Editor.Resource
 {
@@ -40,8 +41,7 @@ namespace Cosmos.Editor.Resource
                     long bundleSize = ResourceEditorUtility.GetDirectorySize(bundle.BundlePath, ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
                     resourceBundleLable.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize)));
                 }
-                if (ResourceEditorDataProxy.ResourceDataset.ResourceObjectCount == 0 && ResourceEditorDataProxy.ResourceDataset.ResourceBundleCount > 0)
-                    hasChanged = true;
+                hasChanged = ResourceEditorDataProxy.ResourceDataset.IsChanged;
                 DisplaySelectedBundle();
             }
         }
@@ -106,8 +106,7 @@ namespace Cosmos.Editor.Resource
                     resourceBundleLable.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize)));
                 }
                 resourceObjectLable.Clear();
-                if (ResourceEditorDataProxy.ResourceDataset.ResourceObjectCount == 0 && ResourceEditorDataProxy.ResourceDataset.ResourceBundleCount > 0)
-                    hasChanged = true;
+                hasChanged = ResourceEditorDataProxy.ResourceDataset.IsChanged;
                 DisplaySelectedBundle();
             }
         }
@@ -150,7 +149,6 @@ namespace Cosmos.Editor.Resource
                 }
                 else if (DragAndDrop.paths.Length == DragAndDrop.objectReferences.Length)
                 {
-                    bool added = false;
                     for (int i = 0; i < DragAndDrop.objectReferences.Length; i++)
                     {
                         Object obj = DragAndDrop.objectReferences[i];
@@ -175,12 +173,12 @@ namespace Cosmos.Editor.Resource
                                 bundleList.Add(bundle);
                                 long bundleSize = ResourceEditorUtility.GetDirectorySize(path, ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
                                 var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize));
-                                added = resourceBundleLable.AddBundle(bundleInfo);
+                                resourceBundleLable.AddBundle(bundleInfo);
+                                ResourceEditorDataProxy.ResourceDataset.IsChanged = true;
+                                hasChanged = true;
                             }
                         }
                     }
-                    if (added)
-                        hasChanged = true;
                 }
             }
         }
@@ -189,7 +187,7 @@ namespace Cosmos.Editor.Resource
             ResourceEditorDataProxy.ResourceDataset.ResourceBundleList.Clear();
             resourceObjectLable.Clear();
             tabData.SelectedBundleIds.Clear();
-            hasChanged = true;
+            ResourceEditorDataProxy.ResourceDataset.IsChanged = true;
         }
         void OnBundleDelete(IList<int> bundleIds)
         {
@@ -210,6 +208,7 @@ namespace Cosmos.Editor.Resource
             {
                 bundles.Remove(rmbundles[i]);
             }
+            ResourceEditorDataProxy.ResourceDataset.IsChanged = true;
             hasChanged = true;
             resourceObjectLable.Clear();
         }
@@ -249,6 +248,9 @@ namespace Cosmos.Editor.Resource
             var bundles = ResourceEditorDataProxy.ResourceDataset.ResourceBundleList;
             var objects = ResourceEditorDataProxy.ResourceDataset.ResourceObjectList;
             var extensions = ResourceEditorDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
+            var lowerExtensions = extensions.Select(s => s.ToLower()).ToArray();
+            extensions.Clear();
+            extensions.AddRange(lowerExtensions);
             objects.Clear();
             var bundleLength = bundles.Count;
 
@@ -264,16 +266,19 @@ namespace Cosmos.Editor.Resource
                     invalidBundles.Add(bundle);
                     continue;
                 }
+                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
+                importer.assetBundleName = bundle.BundleName;
+
                 var files = Utility.IO.GetAllFiles(bundlePath);
                 var fileLength = files.Length;
                 bundle.ResourceObjectList.Clear();
                 for (int j = 0; j < fileLength; j++)
                 {
                     var srcFilePath = files[j].Replace("\\", "/");
-                    var fileExt = Path.GetExtension(srcFilePath);
+                    var fileExt = Path.GetExtension(srcFilePath).ToLower();
                     if (extensions.Contains(fileExt))
                     {
-                        var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(srcFilePath), srcFilePath, bundle.BundleName, Path.GetExtension(srcFilePath));
+                        var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(srcFilePath), srcFilePath, bundle.BundleName, fileExt);
                         objects.Add(resourceObject);
                         bundle.ResourceObjectList.Add(resourceObject);
                     }
@@ -287,13 +292,25 @@ namespace Cosmos.Editor.Resource
                 yield return null;
             }
             EditorUtility.DisplayProgressBar("BuildDataset building", $"building bundle : {100}%", 1);
-            yield return null;
-
+            //yield return null;
             for (int i = 0; i < invalidBundles.Count; i++)
             {
                 bundles.Remove(invalidBundles[i]);
             }
-
+            for (int i = 0; i < bundles.Count; i++)
+            {
+                var bundle = bundles[i];
+                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
+                bundle.DependList.Clear();
+                bundle.DependList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+            }
+            for (int i = 0; i < bundles.Count; i++)
+            {
+                var bundle = bundles[i];
+                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
+                importer.assetBundleName = string.Empty;
+            }
+            yield return null;
             EditorUtility.ClearProgressBar();
             EditorUtility.SetDirty(ResourceEditorDataProxy.ResourceDataset);
             AssetDatabase.SaveAssets();
@@ -305,7 +322,7 @@ namespace Cosmos.Editor.Resource
                     resourceBundleLable.AddBundle(validBundleInfo[i]);
                 }
             }
-
+            ResourceEditorDataProxy.ResourceDataset.IsChanged = false;
             hasChanged = false;
             yield return null;
             SaveTabData();

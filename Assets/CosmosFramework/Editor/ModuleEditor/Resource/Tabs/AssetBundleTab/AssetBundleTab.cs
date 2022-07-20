@@ -190,9 +190,10 @@ namespace Cosmos.Editor.Resource
         IEnumerator BuildAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset)
         {
             yield return BuildDataset.Invoke();
-            assetBundleBuilder.PrepareBuildAssetBundle(buildParams, dataset, out var resourceManifest);
+            ResourceManifest resourceManifest = new ResourceManifest();
+            assetBundleBuilder.PrepareBuildAssetBundle(buildParams, dataset, ref resourceManifest);
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
-            assetBundleBuilder.ProcessAssetBundle(buildParams, dataset, unityManifest, resourceManifest);
+            assetBundleBuilder.ProcessAssetBundle(buildParams, dataset, unityManifest,ref resourceManifest);
         }
         BuildAssetBundleOptions GetBuildAssetBundleOptions()
         {

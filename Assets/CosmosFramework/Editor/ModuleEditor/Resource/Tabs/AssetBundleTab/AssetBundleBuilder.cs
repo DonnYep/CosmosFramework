@@ -9,7 +9,7 @@ namespace Cosmos.Editor.Resource
     /// </summary>
     public class AssetBundleBuilder
     {
-        public void PrepareBuildAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, out ResourceManifest resourceManifest)
+        public void PrepareBuildAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, ref ResourceManifest resourceManifest)
         {
             if (Directory.Exists(buildParams.AssetBundleBuildPath))
                 Utility.IO.DeleteFolder(buildParams.AssetBundleBuildPath);
@@ -19,7 +19,6 @@ namespace Cosmos.Editor.Resource
 
             var bundles = dataset.ResourceBundleList;
             var bundleLength = bundles.Count;
-            resourceManifest = new ResourceManifest();
 
             for (int i = 0; i < bundleLength; i++)
             {
@@ -46,7 +45,8 @@ namespace Cosmos.Editor.Resource
                 var bundleBuildInfo = new ResourceManifest.ResourceBundleBuildInfo()
                 {
                     BundleHash = hash,
-                    ResourceBundle = bundle
+                    ResourceBundle = bundle,
+                    BundleSize = 0
                 };
                 //这里存储hash与bundle，打包出来的包体长度在下一个流程处理
                 resourceManifest.ResourceBundleBuildInfoDict.Add(bundleName, bundleBuildInfo);
@@ -59,7 +59,7 @@ namespace Cosmos.Editor.Resource
                 bundle.DependList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
         }
-        public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest unityManifest, ResourceManifest resourceManifest)
+        public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
         {
             var bundleNames = unityManifest.GetAllAssetBundles();
             var bundleNameLength = bundleNames.Length;

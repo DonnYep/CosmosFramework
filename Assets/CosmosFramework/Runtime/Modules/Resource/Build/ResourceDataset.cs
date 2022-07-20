@@ -6,7 +6,7 @@ namespace Cosmos.Resource
     /// <summary>
     /// AssetDatabase 模式下资源寻址数据对象
     /// </summary>
-    public class ResourceDataset : ScriptableObject,IDisposable
+    public class ResourceDataset : ScriptableObject, IDisposable
     {
         [SerializeField]
         List<ResourceObject> resourceObjectList;
@@ -14,6 +14,8 @@ namespace Cosmos.Resource
         List<ResourceBundle> resourceBundleList;
         [SerializeField]
         List<string> resourceAvailableExtenisonList;
+        [SerializeField]
+        bool isChanged;
         /// <summary>
         /// 资源对象数量；
         /// </summary>
@@ -58,6 +60,10 @@ namespace Cosmos.Resource
                 return resourceAvailableExtenisonList;
             }
         }
+        /// <summary>
+        /// 是否做出了修改
+        /// </summary>
+        public bool IsChanged { get { return isChanged; } set { isChanged = value; } }
         /// <summary>
         /// 清空资源包与资源实体；
         /// </summary>

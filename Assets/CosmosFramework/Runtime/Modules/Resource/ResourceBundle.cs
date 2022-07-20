@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
 using UnityEngine;
-
 namespace Cosmos.Resource
 {
     /// <summary>
@@ -16,9 +15,9 @@ namespace Cosmos.Resource
         [SerializeField]
         string bundlePath;
         [SerializeField]
-        List<string> dependList;
+        List<string> dependList=new List<string>();
         [SerializeField]
-        List<ResourceObject> resourceObjectList;
+        List<ResourceObject> resourceObjectList=new List<ResourceObject>();
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>

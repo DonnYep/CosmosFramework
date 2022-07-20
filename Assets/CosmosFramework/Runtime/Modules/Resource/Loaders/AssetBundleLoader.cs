@@ -19,12 +19,12 @@ namespace Cosmos.Resource
         /// 理论上资源地址在unity中应该是唯一的。
         /// 资源地址相同但文件bytes内容改变，打包时生成的hash也会与之不同。因此理论上应该是assetPath是唯一的。
         /// </summary>
-        readonly Dictionary<string, ResourceObjectWarpper> resourceObjectDict;
+        readonly Dictionary<string, ResourceObjectWarpper> resourceObjectWarpperDict;
         /// <summary>
         /// bundleName===resourceBundleWarpper
         /// 从框架的角度出发，资源bundle设计上就是以文件夹做包体单位。且编辑器做了限制。因此在原生的模块中，理论上bundleName是唯一的。
         /// </summary>
-        readonly Dictionary<string, ResourceBundleWarpper> resourceBundleDict;
+        readonly Dictionary<string, ResourceBundleWarpper> resourceBundleWarpperDict;
         /// <summary>
         /// 被加载的场景字典；
         /// SceneName===Scene
@@ -42,8 +42,8 @@ namespace Cosmos.Resource
         {
             loadSceneList = new List<string>();
             resourceAddress = new ResourceAddress();
-            resourceBundleDict = new Dictionary<string, ResourceBundleWarpper>();
-            resourceObjectDict = new Dictionary<string, ResourceObjectWarpper>();
+            resourceBundleWarpperDict = new Dictionary<string, ResourceBundleWarpper>();
+            resourceObjectWarpperDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
         }
         public void InitLoader(ResourceManifest resourceManifest)
@@ -55,13 +55,13 @@ namespace Cosmos.Resource
             foreach (var bundleBuildInfo in bundleBuildInfoDict.Values)
             {
                 var resourceBundle = bundleBuildInfo.ResourceBundle;
-                resourceBundleDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle));
+                resourceBundleWarpperDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle));
                 var resourceObjectList = resourceBundle.ResourceObjectList;
                 var objectLength = resourceObjectList.Count;
                 for (int i = 0; i < objectLength; i++)
                 {
                     var resourceObject = resourceObjectList[i];
-                    resourceObjectDict.TryAdd(resourceObject.AssetPath, new ResourceObjectWarpper(resourceObject));
+                    resourceObjectWarpperDict.TryAdd(resourceObject.AssetPath, new ResourceObjectWarpper(resourceObject));
                 }
                 resourceAddress.AddResourceObjects(resourceObjectList);
             }
@@ -123,13 +123,13 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public void ReleaseAsset(string assetName)
         {
-            if (resourceObjectDict.TryGetValue(assetName, out var objectWarpper))
+            if (resourceObjectWarpperDict.TryGetValue(assetName, out var objectWarpper))
                 OnResoucreObjectRelease(objectWarpper);
         }
         ///<inheritdoc/> 
         public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
-            if (resourceBundleDict.TryGetValue(assetBundleName, out var bundleWarpper))
+            if (resourceBundleWarpperDict.TryGetValue(assetBundleName, out var bundleWarpper))
             {
                 var objs = bundleWarpper.ResourceBundle.ResourceObjectList;
                 foreach (var obj in objs)
@@ -141,7 +141,7 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
         {
-            foreach (var objectWarpper in resourceObjectDict.Values)
+            foreach (var objectWarpper in resourceObjectWarpperDict.Values)
             {
                 OnResoucreObjectRelease(objectWarpper);
             }
@@ -149,8 +149,8 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public void Dispose()
         {
-            resourceObjectDict.Clear();
-            resourceBundleDict.Clear();
+            resourceObjectWarpperDict.Clear();
+            resourceBundleWarpperDict.Clear();
             resourceAddress.Clear();
             loadedSceneDict.Clear();
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
@@ -177,7 +177,7 @@ namespace Cosmos.Resource
                 yield break;
             }
             yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
-            var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
+            var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
             if (!hasBundle)
             {
                 progress?.Invoke(1);
@@ -227,7 +227,7 @@ namespace Cosmos.Resource
                 yield break;
             }
             yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
-            var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
+            var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
             if (!hasBundle)
             {
                 progress?.Invoke(1);
@@ -260,7 +260,7 @@ namespace Cosmos.Resource
         {
             //DONE
             Object[] assets = null;
-            var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
+            var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
             if (!hasBundle)
             {
                 progress?.Invoke(1);
@@ -299,7 +299,7 @@ namespace Cosmos.Resource
         IEnumerator EnumLoadDependenciesAssetBundleAsync(string bundleName)
         {
             //DONE
-            var hasBundle = resourceBundleDict.TryGetValue(bundleName, out var bundleWarpper);
+            var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
             if (!hasBundle)
             {
                 //若bundle信息为空，则终止；
@@ -321,7 +321,7 @@ namespace Cosmos.Resource
             for (int i = 0; i < length; i++)
             {
                 var dependentABName = dependList[i];
-                var hasDependentBundle = resourceBundleDict.TryGetValue(bundleName, out var dependentBundleWarpper);
+                var hasDependentBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var dependentBundleWarpper);
                 if (hasDependentBundle)
                 {
                     if (dependentBundleWarpper.AssetBundle == null)
@@ -461,10 +461,10 @@ namespace Cosmos.Resource
         }
         bool PeekResourceObject(string assetName, out ResourceObject resourceObject)
         {
-            resourceObject = ResourceObject.None;
+            resourceObject = null;
             if (resourceAddress.PeekAssetPath(assetName, out var path))
             {
-                if (!resourceObjectDict.TryGetValue(path, out var resourceObjectWarpper))
+                if (!resourceObjectWarpperDict.TryGetValue(path, out var resourceObjectWarpper))
                     return false;
                 resourceObject = resourceObjectWarpper.ResourceObject;
                 return true;
@@ -478,7 +478,7 @@ namespace Cosmos.Resource
         {
             var count = objectWarpper.ReferenceCount;
             objectWarpper.ReferenceCount = 0;
-            if (resourceBundleDict.TryGetValue(objectWarpper.ResourceObject.AssetName, out var bundleWarpper))
+            if (resourceBundleWarpperDict.TryGetValue(objectWarpper.ResourceObject.AssetName, out var bundleWarpper))
             {
                 bundleWarpper.ReferenceCount -= count;
                 OnResourceBundleDecrement(bundleWarpper);
@@ -512,9 +512,9 @@ namespace Cosmos.Resource
         /// </summary>ram>
         void OnResourceObjectLoad(ResourceObject resourceObject)
         {
-            if (!resourceObjectDict.TryGetValue(resourceObject.AssetPath, out var resourceObjectWarpper))
+            if (!resourceObjectWarpperDict.TryGetValue(resourceObject.AssetPath, out var resourceObjectWarpper))
                 return;
-            if (!resourceBundleDict.TryGetValue(resourceObject.BundleName, out var resourceBundleWarpper))
+            if (!resourceBundleWarpperDict.TryGetValue(resourceObject.BundleName, out var resourceBundleWarpper))
                 return;
             resourceObjectWarpper.ReferenceCount++;
             resourceBundleWarpper.ReferenceCount++;
@@ -524,10 +524,10 @@ namespace Cosmos.Resource
         /// </summary>
         void OnResourceBundleAllAssetLoad(string bundleName)
         {
-            if (!resourceBundleDict.TryGetValue(bundleName, out var resourceBundleWarpper))
+            if (!resourceBundleWarpperDict.TryGetValue(bundleName, out var resourceBundleWarpper))
                 return;
-            var ResourceObjectList = resourceBundleWarpper.ResourceBundle.ResourceObjectList;
-            foreach (var resourceObject in ResourceObjectList)
+            var resourceObjectList = resourceBundleWarpper.ResourceBundle.ResourceObjectList;
+            foreach (var resourceObject in resourceObjectList)
             {
                 OnResourceObjectLoad(resourceObject);
             }
@@ -539,9 +539,9 @@ namespace Cosmos.Resource
         {
             if (!resourceAddress.PeekAssetPath(assetName, out var assetPath))
                 return;
-            if (!resourceObjectDict.TryGetValue(assetPath, out var resourceObjectWarpper))
+            if (!resourceObjectWarpperDict.TryGetValue(assetPath, out var resourceObjectWarpper))
                 return;
-            if (!resourceBundleDict.TryGetValue(resourceObjectWarpper.ResourceObject.BundleName, out var resourceBundleWarpper))
+            if (!resourceBundleWarpperDict.TryGetValue(resourceObjectWarpper.ResourceObject.BundleName, out var resourceBundleWarpper))
                 return;
             resourceObjectWarpper.ReferenceCount--;
             OnResourceBundleDecrement(resourceBundleWarpper);
@@ -565,7 +565,7 @@ namespace Cosmos.Resource
                 for (int i = 0; i < dependBundleNameLength; i++)
                 {
                     var dependBundleName = dependBundleNames[i];
-                    if (!resourceBundleDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
+                    if (!resourceBundleWarpperDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
                         continue;
                     OnResourceBundleDecrement(dependBundleWarpper);
                 }
@@ -583,7 +583,7 @@ namespace Cosmos.Resource
             for (int i = 0; i < dependBundleNameLength; i++)
             {
                 var dependBundleName = dependBundleNames[i];
-                if (!resourceBundleDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
+                if (!resourceBundleWarpperDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
                     continue;
                 if (dependBundleWarpper.AssetBundle == null)
                     continue;

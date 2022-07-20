@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -14,14 +15,14 @@ namespace Cosmos.Editor.Resource
         /// <returns>是否处于同一个包</returns>
         public static bool CheckAssetsAndScenesInOneAssetBundle(string bundlePath)
         {
-            var unitySceneExt = ".unity";
-            var filePaths = Directory.GetFiles(bundlePath, ".", SearchOption.AllDirectories);
-            var length = filePaths.Length;
-            for (int i = 0; i < length; i++)
+            if (File.Exists(bundlePath))//若是文件
+                return false;
+            var exts = Directory.GetFiles(bundlePath, ".", SearchOption.AllDirectories).Select(path => Path.GetExtension(path)).ToHashSet();
+            exts.Remove(".meta");
+            if (exts.Contains(".unity"))
             {
-                var ext = Path.GetExtension(filePaths[i]);
-                if (ext!=".meta"&& ext != unitySceneExt)
-                    return true;
+                exts.Remove(".unity");
+                return exts.Count != 0;
             }
             return false;
         }
