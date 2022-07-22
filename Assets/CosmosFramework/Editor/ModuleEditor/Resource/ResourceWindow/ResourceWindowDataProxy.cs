@@ -2,7 +2,7 @@
 
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceEditorDataProxy
+    public class ResourceWindowDataProxy
     {
         public static ResourceDataset ResourceDataset { get; set; }
     }

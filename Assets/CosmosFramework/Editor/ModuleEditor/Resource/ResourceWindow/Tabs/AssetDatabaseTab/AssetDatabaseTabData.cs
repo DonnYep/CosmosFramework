@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Cosmos.Editor.Resource
 {
     [Serializable]
-    public class AssetDatasetTabData
+    public class AssetDatabaseTabData
     {
         List<int> selectedBundleIds;
 

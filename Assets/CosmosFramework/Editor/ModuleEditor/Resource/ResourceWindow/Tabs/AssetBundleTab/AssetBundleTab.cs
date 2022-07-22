@@ -39,7 +39,7 @@ namespace Cosmos.Editor.Resource
             {
                 if (GUILayout.Button("Build assetBundle"))
                 {
-                    if (ResourceEditorDataProxy.ResourceDataset == null)
+                    if (ResourceWindowDataProxy.ResourceDataset == null)
                     {
                         EditorUtil.Debug.LogError("ResourceDataset is invalid !");
                         return;
@@ -61,7 +61,7 @@ namespace Cosmos.Editor.Resource
                         BuildTarget = tabData.BuildTarget,
                         BuildVersion = tabData.BuildVersion
                     };
-                    EditorUtil.Coroutine.StartCoroutine(BuildAssetBundle(buildParams, ResourceEditorDataProxy.ResourceDataset));
+                    EditorUtil.Coroutine.StartCoroutine(BuildAssetBundle(buildParams, ResourceWindowDataProxy.ResourceDataset));
                 }
                 if (GUILayout.Button("Reset options"))
                 {
@@ -72,6 +72,10 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.EndScrollView();
         }
         public void OnDatasetAssign()
+        {
+
+        }
+        public void OnDatasetRefresh()
         {
 
         }

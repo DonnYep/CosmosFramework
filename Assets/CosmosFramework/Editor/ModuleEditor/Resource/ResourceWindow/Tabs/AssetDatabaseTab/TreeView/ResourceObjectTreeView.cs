@@ -64,13 +64,13 @@ namespace Cosmos.Editor.Resource
                     {
                         objectIcon = EditorUtil.ToTexture2D(EditorGUIUtility.ObjectContent(obj, obj.GetType()).image);
                         objectState = "VALID";
-                        stateIcon = ResourceEditorUtility.GetAssetValidIcon();
+                        stateIcon = ResourceWindowUtility.GetAssetValidIcon();
                     }
                     else
                     {
                         objectIcon = EditorGUIUtility.FindTexture("console.erroricon");
                         objectState = "INVALID";
-                        stateIcon = ResourceEditorUtility.GetAssetInvalidIcon();
+                        stateIcon = ResourceWindowUtility.GetAssetInvalidIcon();
                     }
                     var item = new ResourceObjectTreeViewItem(i, 1, objectInfo.AssetPath, objectIcon)
                     {

@@ -164,5 +164,30 @@ namespace Cosmos.Editor
             var fullPath = Path.Combine(ApplicationPath(), assetPath);
             return Utility.IO.GetFileSize(fullPath);
         }
+        /// <summary>
+        /// 获取文件夹中文件的总体大小；
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="availableExtes">可识别的后缀名</param>
+        /// <returns>size</returns>
+        public static long GetUnityDirectorySize(string path, List<string> availableExtes)
+        {
+            if (!path.StartsWith("Assets"))
+                return 0;
+            if (!AssetDatabase.IsValidFolder(path))
+                return 0;
+            var fullPath = Path.Combine(EditorUtil.ApplicationPath(), path);
+            if (!Directory.Exists(fullPath))
+                return 0;
+            DirectoryInfo directory = new DirectoryInfo(fullPath);
+            var allFiles = directory.GetFiles();
+            long totalSize = 0;
+            foreach (var file in allFiles)
+            {
+                if (availableExtes.Contains(file.Extension))
+                    totalSize += file.Length;
+            }
+            return totalSize;
+        }
     }
 }

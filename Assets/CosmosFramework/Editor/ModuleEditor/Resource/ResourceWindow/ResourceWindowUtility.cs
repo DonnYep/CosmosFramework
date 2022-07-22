@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceEditorUtility
+    public class ResourceWindowUtility
     {
         /// <summary>
         /// 检测资源与场景是否同处于一个AB包中；
@@ -25,31 +25,6 @@ namespace Cosmos.Editor.Resource
                 return exts.Count != 0;
             }
             return false;
-        }
-        /// <summary>
-        /// 获取文件夹中文件的总体大小；
-        /// </summary>
-        /// <param name="path">路径</param>
-        /// <param name="availableExtes">可识别的后缀名</param>
-        /// <returns>size</returns>
-        public static long GetDirectorySize(string path, List<string> availableExtes)
-        {
-            if (!path.StartsWith("Assets"))
-                return 0;
-            if (!AssetDatabase.IsValidFolder(path))
-                return 0;
-            var fullPath = Path.Combine(EditorUtil.ApplicationPath(), path);
-            if (!Directory.Exists(fullPath))
-                return 0;
-            DirectoryInfo directory = new DirectoryInfo(fullPath);
-            var allFiles = directory.GetFiles();
-            long totalSize = 0;
-            foreach (var file in allFiles)
-            {
-                if (availableExtes.Contains(file.Extension))
-                    totalSize += file.Length;
-            }
-            return totalSize;
         }
         /// <summary>
         /// 获取原生资产icon
@@ -74,6 +49,10 @@ namespace Cosmos.Editor.Resource
         public static Texture2D GetFolderIcon()
         {
             return EditorGUIUtility.FindTexture("Folder Icon");
+        }
+        public static Texture2D GetAssetRefreshIcon()
+        {
+            return EditorGUIUtility.FindTexture("Refresh");
         }
         public static Texture2D GetAssetInvalidIcon()
         {

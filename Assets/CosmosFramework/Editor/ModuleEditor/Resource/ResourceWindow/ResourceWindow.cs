@@ -11,19 +11,20 @@ namespace Cosmos.Editor.Resource
         readonly string ResourceWindowDataName = "ResourceEditor_WindowData.json";
         AssetDatabaseTab assetDatabaseTab;
         AssetBundleTab assetBundleTab;
-        string[] tabArray = new string[] { "AssetDatabase", "AssetBundle" };
+        AssetDatasetTab assetDatasetTab;
+        string[] tabArray = new string[] { "AssetDatabase", "AssetBundle", "AssetDataset" };
         ResourceDataset latestResourceDataset;
-
         /// <summary>
         /// dataset是否为空处理标记；
         /// </summary>
         bool isDatasetEmpty = false;
+        Texture2D refreshIcon;
         public ResourceWindow()
         {
             this.titleContent = new GUIContent("ResourceWindow");
         }
-        [MenuItem("Window/Cosmos/Module/Resource/ResourceEditor")]
-        public static void OpenIntegrateWindow()
+        [MenuItem("Window/Cosmos/Module/Resource/ResourceWindow")]
+        public static void OpenWindow()
         {
             var window = GetWindow<ResourceWindow>();
             window.minSize = EditorUtil.DevWinSize;
@@ -35,6 +36,8 @@ namespace Cosmos.Editor.Resource
                 assetBundleTab = new AssetBundleTab();
             if (assetDatabaseTab == null)
                 assetDatabaseTab = new AssetDatabaseTab();
+            if (assetDatasetTab == null)
+                assetDatasetTab = new AssetDatasetTab();
             GetWindowData();
             if (!string.IsNullOrEmpty(windowData.ResourceDatasetPath))
             {
@@ -42,52 +45,71 @@ namespace Cosmos.Editor.Resource
             }
             assetDatabaseTab.OnEnable();
             assetBundleTab.OnEnable();
+            assetDatasetTab.OnEnable();
             assetBundleTab.BuildDataset = assetDatabaseTab.BuildDataset;
-        }
-        void OnDisable()
-        {
-            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
-            if (ResourceEditorDataProxy.ResourceDataset != null)
-            {
-                windowData.ResourceDatasetPath = AssetDatabase.GetAssetPath(ResourceEditorDataProxy.ResourceDataset);
-                EditorUtility.SetDirty(ResourceEditorDataProxy.ResourceDataset);
-            }
-            EditorUtil.SaveData(ResourceWindowDataName, windowData);
-            assetDatabaseTab.OnDisable();
-            assetBundleTab.OnDisable();
+            refreshIcon = ResourceWindowUtility.GetAssetRefreshIcon();
+
         }
         void OnGUI()
         {
             DrawLables();
         }
+        void OnDisable()
+        {
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            if (ResourceWindowDataProxy.ResourceDataset != null)
+            {
+                windowData.ResourceDatasetPath = AssetDatabase.GetAssetPath(ResourceWindowDataProxy.ResourceDataset);
+                EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
+            }
+            EditorUtil.SaveData(ResourceWindowDataName, windowData);
+            assetDatabaseTab.OnDisable();
+            assetBundleTab.OnDisable();
+            assetDatasetTab.OnDisable();
+        }
         void DrawLables()
         {
             EditorGUILayout.BeginVertical();
             windowData.SelectedTabIndex = GUILayout.Toolbar(windowData.SelectedTabIndex, tabArray);
-            latestResourceDataset = (ResourceDataset)EditorGUILayout.ObjectField("ResourceDataset", latestResourceDataset, typeof(ResourceDataset), false);
-            if (ResourceEditorDataProxy.ResourceDataset != latestResourceDataset)
+            EditorGUILayout.BeginHorizontal();
             {
-                ResourceEditorDataProxy.ResourceDataset = latestResourceDataset;
-                if (ResourceEditorDataProxy.ResourceDataset != null)
+                latestResourceDataset = (ResourceDataset)EditorGUILayout.ObjectField("ResourceDataset", latestResourceDataset, typeof(ResourceDataset), false);
+                if (GUILayout.Button(refreshIcon, GUILayout.MaxWidth(32)))
+                {
+                    if (latestResourceDataset == null)
+                        return;
+                    assetDatabaseTab.OnDatasetRefresh();
+                    assetBundleTab.OnDatasetRefresh();
+                    assetDatasetTab.OnDatasetRefresh();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+            if (ResourceWindowDataProxy.ResourceDataset != latestResourceDataset)
+            {
+                ResourceWindowDataProxy.ResourceDataset = latestResourceDataset;
+                if (ResourceWindowDataProxy.ResourceDataset != null)
                 {
                     assetDatabaseTab.OnDatasetAssign();
                     assetBundleTab.OnDatasetAssign();
+                    assetDatasetTab.OnDatasetAssign();
                     isDatasetEmpty = false;
                 }
                 else
                 {
                     assetDatabaseTab.OnDatasetUnassign();
                     assetBundleTab.OnDatasetUnassign();
+                    assetDatasetTab.OnDatasetUnassign();
                 }
             }
             else
             {
-                if (ResourceEditorDataProxy.ResourceDataset == null)
+                if (ResourceWindowDataProxy.ResourceDataset == null)
                 {
                     if (!isDatasetEmpty)
                     {
                         assetDatabaseTab.OnDatasetUnassign();
                         assetBundleTab.OnDatasetUnassign();
+                        assetDatasetTab.OnDatasetUnassign();
                         isDatasetEmpty = true;
                     }
                 }
@@ -113,13 +135,16 @@ namespace Cosmos.Editor.Resource
                 case 1:
                     assetBundleTab.OnGUI(this.position);
                     break;
+                case 2:
+                    assetDatasetTab.OnGUI(this.position);
+                    break;
             }
 
             EditorGUILayout.EndVertical();
         }
         void OnPlayModeStateChanged(PlayModeStateChange stateChange)
         {
-            ResourceEditorDataProxy.ResourceDataset = null;
+            ResourceWindowDataProxy.ResourceDataset = null;
         }
         ResourceDataset CreateResourceDataset()
         {
@@ -169,6 +194,5 @@ namespace Cosmos.Editor.Resource
                 GUILayout.EndHorizontal();
             }
         }
-
     }
 }
