@@ -9,9 +9,9 @@ namespace Cosmos.Editor.Resource
         ResourceWindowData windowData;
         public ResourceWindowData ResourceWindowData { get { return windowData; } }
         readonly string ResourceWindowDataName = "ResourceEditor_WindowData.json";
-        AssetDatabaseTab assetDatabaseTab;
-        AssetBundleTab assetBundleTab;
-        AssetDatasetTab assetDatasetTab;
+        ResourceWindowTabBase assetDatabaseTab;
+        ResourceWindowTabBase assetBundleTab;
+        ResourceWindowTabBase assetDatasetTab;
         string[] tabArray = new string[] { "AssetDatabase", "AssetBundle", "AssetDataset" };
         ResourceDataset latestResourceDataset;
         /// <summary>
@@ -46,9 +46,8 @@ namespace Cosmos.Editor.Resource
             assetDatabaseTab.OnEnable();
             assetBundleTab.OnEnable();
             assetDatasetTab.OnEnable();
-            assetBundleTab.BuildDataset = assetDatabaseTab.BuildDataset;
+            ((AssetBundleTab)assetBundleTab).BuildDataset = ((AssetDatabaseTab)assetDatabaseTab).BuildDataset;
             refreshIcon = ResourceWindowUtility.GetAssetRefreshIcon();
-
         }
         void OnGUI()
         {
@@ -88,30 +87,16 @@ namespace Cosmos.Editor.Resource
             {
                 ResourceWindowDataProxy.ResourceDataset = latestResourceDataset;
                 if (ResourceWindowDataProxy.ResourceDataset != null)
-                {
-                    assetDatabaseTab.OnDatasetAssign();
-                    assetBundleTab.OnDatasetAssign();
-                    assetDatasetTab.OnDatasetAssign();
-                    isDatasetEmpty = false;
-                }
+                    AssignDataset();
                 else
-                {
-                    assetDatabaseTab.OnDatasetUnassign();
-                    assetBundleTab.OnDatasetUnassign();
-                    assetDatasetTab.OnDatasetUnassign();
-                }
+                    UnassignDataset();
             }
             else
             {
                 if (ResourceWindowDataProxy.ResourceDataset == null)
                 {
                     if (!isDatasetEmpty)
-                    {
-                        assetDatabaseTab.OnDatasetUnassign();
-                        assetBundleTab.OnDatasetUnassign();
-                        assetDatasetTab.OnDatasetUnassign();
-                        isDatasetEmpty = true;
-                    }
+                        UnassignDataset();
                 }
             }
             EditorGUILayout.BeginHorizontal();
@@ -170,6 +155,24 @@ namespace Cosmos.Editor.Resource
                 windowData = new ResourceWindowData();
                 EditorUtil.SaveData(ResourceWindowDataName, windowData);
             }
+        }
+        void AssignDataset()
+        {
+            assetDatabaseTab.OnDatasetAssign();
+            assetBundleTab.OnDatasetAssign();
+            assetDatasetTab.OnDatasetAssign();
+            isDatasetEmpty = false;
+            windowData.ResourceDatasetPath = AssetDatabase.GetAssetPath(latestResourceDataset);
+            EditorUtil.SaveData(ResourceWindowDataName, windowData);
+        }
+        void UnassignDataset()
+        {
+            assetDatabaseTab.OnDatasetUnassign();
+            assetBundleTab.OnDatasetUnassign();
+            assetDatasetTab.OnDatasetUnassign();
+            isDatasetEmpty = true;
+            windowData.ResourceDatasetPath = string.Empty;
+            EditorUtil.SaveData(ResourceWindowDataName, windowData);
         }
         /// <summary>
         /// 预留

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +8,7 @@ using Cosmos.Resource;
 
 namespace Cosmos.Editor.Resource
 {
-    public class AssetBundleTab
+    public class AssetBundleTab:ResourceWindowTabBase
     {
         public Func<EditorCoroutine> BuildDataset;
         public const string AssetBundleTabDataName = "ResourceEditor_AsseBundleTabData.json";
@@ -18,15 +16,15 @@ namespace Cosmos.Editor.Resource
         AssetBundleBuilder assetBundleBuilder = new AssetBundleBuilder();
         Vector2 scrollPosition;
         bool isAesKeyInvalid = false;
-        public void OnEnable()
+        public override void OnEnable()
         {
             GetTabData();
         }
-        public void OnDisable()
+        public override void OnDisable()
         {
             SaveTabData();
         }
-        public void OnGUI(Rect rect)
+        public override void OnGUI(Rect rect)
         {
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             DrawBuildOptions();
@@ -70,18 +68,6 @@ namespace Cosmos.Editor.Resource
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndScrollView();
-        }
-        public void OnDatasetAssign()
-        {
-
-        }
-        public void OnDatasetRefresh()
-        {
-
-        }
-        public void OnDatasetUnassign()
-        {
-
         }
         void DrawBuildOptions()
         {

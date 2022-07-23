@@ -312,10 +312,13 @@ namespace Cosmos.Resource
                 yield return abReq;
                 var bundle = abReq.assetBundle;
                 if (bundle != null)
+                {
                     bundleWarpper.AssetBundle = bundle;
-                else
-                    yield break;
+                    bundleWarpper.ReferenceCount++; //AB包引用计数增加
+                }
             }
+            else
+                bundleWarpper.ReferenceCount++; //AB包引用计数增加
             var dependList = bundleWarpper.ResourceBundle.DependList;
             var length = dependList.Count;
             for (int i = 0; i < length; i++)
@@ -333,10 +336,12 @@ namespace Cosmos.Resource
                         if (bundle != null)
                         {
                             dependentBundleWarpper.AssetBundle = bundle;
-                            //依赖的AB包引用计数增加
-                            OnResourceBundleIncrement(dependentBundleWarpper);
+                            dependentBundleWarpper.ReferenceCount++;
                         }
                     }
+                    else
+                        dependentBundleWarpper.ReferenceCount++;
+                    yield return EnumLoadDependenciesAssetBundleAsync(dependentABName);
                 }
             }
         }
@@ -481,7 +486,7 @@ namespace Cosmos.Resource
             if (resourceBundleWarpperDict.TryGetValue(objectWarpper.ResourceObject.AssetName, out var bundleWarpper))
             {
                 bundleWarpper.ReferenceCount -= count;
-                OnResourceBundleDecrement(bundleWarpper);
+                OnDecrementDependenciesAssetBundleAsync(bundleWarpper);
             }
         }
         /// <summary>
@@ -544,39 +549,20 @@ namespace Cosmos.Resource
             if (!resourceBundleWarpperDict.TryGetValue(resourceObjectWarpper.ResourceObject.BundleName, out var resourceBundleWarpper))
                 return;
             resourceObjectWarpper.ReferenceCount--;
-            OnResourceBundleDecrement(resourceBundleWarpper);
+            OnDecrementDependenciesAssetBundleAsync(resourceBundleWarpper);
         }
         /// <summary>
-        /// 当包体引用计数-1
+        /// 递归减少包体引用计数；
         /// </summary>
-        void OnResourceBundleDecrement(ResourceBundleWarpper resourceBundleWarpper)
+        void OnDecrementDependenciesAssetBundleAsync(ResourceBundleWarpper resourceBundleWarpper)
         {
             resourceBundleWarpper.ReferenceCount--;
             if (resourceBundleWarpper.ReferenceCount <= 0)
             {
                 //当包体的引用计数小于等于0时，则表示该包已经未被依赖。
-                if (resourceBundleWarpper.AssetBundle == null)
-                    return;
                 //卸载AssetBundle；
-                resourceBundleWarpper.AssetBundle.Unload(true);
-                var dependBundleNames = resourceBundleWarpper.ResourceBundle.DependList;
-                var dependBundleNameLength = dependBundleNames.Count;
-                //遍历查询依赖包
-                for (int i = 0; i < dependBundleNameLength; i++)
-                {
-                    var dependBundleName = dependBundleNames[i];
-                    if (!resourceBundleWarpperDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
-                        continue;
-                    OnResourceBundleDecrement(dependBundleWarpper);
-                }
+                resourceBundleWarpper.AssetBundle?.Unload(true);
             }
-        }
-        /// <summary>
-        /// 当包体引用计数+1
-        /// </summary>
-        void OnResourceBundleIncrement(ResourceBundleWarpper resourceBundleWarpper)
-        {
-            resourceBundleWarpper.ReferenceCount++;
             var dependBundleNames = resourceBundleWarpper.ResourceBundle.DependList;
             var dependBundleNameLength = dependBundleNames.Count;
             //遍历查询依赖包
@@ -585,11 +571,7 @@ namespace Cosmos.Resource
                 var dependBundleName = dependBundleNames[i];
                 if (!resourceBundleWarpperDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
                     continue;
-                if (dependBundleWarpper.AssetBundle == null)
-                    continue;
-                //依赖包体引用计数+1
-                dependBundleWarpper.ReferenceCount++;
-                OnResourceBundleIncrement(dependBundleWarpper);
+                OnDecrementDependenciesAssetBundleAsync(dependBundleWarpper);
             }
         }
     }

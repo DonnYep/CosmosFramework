@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Cosmos.Editor.Resource
 {
-    public class AssetDatabaseTab
+    public class AssetDatabaseTab: ResourceWindowTabBase
     {
         ResourceBundleLable resourceBundleLable = new ResourceBundleLable();
         ResourceObjectLable resourceObjectLable = new ResourceObjectLable();
@@ -20,7 +20,7 @@ namespace Cosmos.Editor.Resource
         bool loadingMultiSelection = false;
         int loadingProgress;
         EditorCoroutine selectionCoroutine;
-        public void OnEnable()
+        public override void OnEnable()
         {
             resourceBundleLable.OnEnable();
             resourceObjectLable.OnEnable();
@@ -45,11 +45,11 @@ namespace Cosmos.Editor.Resource
                 DisplaySelectedBundle();
             }
         }
-        public void OnDisable()
+        public override void OnDisable()
         {
             SaveTabData();
         }
-        public void OnGUI(Rect rect)
+        public override void OnGUI(Rect rect)
         {
             EditorGUILayout.BeginVertical();
             {
@@ -92,7 +92,7 @@ namespace Cosmos.Editor.Resource
                 EditorGUILayout.EndVertical();
             }
         }
-        public void OnDatasetAssign()
+        public override void OnDatasetAssign()
         {
             if (ResourceWindowDataProxy.ResourceDataset != null)
             {
@@ -110,11 +110,11 @@ namespace Cosmos.Editor.Resource
                 DisplaySelectedBundle();
             }
         }
-        public void OnDatasetRefresh()
+        public override void OnDatasetRefresh()
         {
             OnDatasetAssign();
         }
-        public void OnDatasetUnassign()
+        public override void OnDatasetUnassign()
         {
             resourceBundleLable.Clear();
             resourceObjectLable.Clear();

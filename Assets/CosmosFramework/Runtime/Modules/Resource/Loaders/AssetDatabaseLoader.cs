@@ -507,11 +507,17 @@ namespace Cosmos.Resource
             }
         }
         /// <summary>
-        /// 当包体引用计数+1
+        /// 递归减少包体引用计数；
         /// </summary>
-        void OnResourceBundleIncrement(ResourceBundleWarpper resourceBundleWarpper)
+        void OnDecrementDependenciesAssetBundleAsync(ResourceBundleWarpper resourceBundleWarpper)
         {
-            resourceBundleWarpper.ReferenceCount++;
+            resourceBundleWarpper.ReferenceCount--;
+            if (resourceBundleWarpper.ReferenceCount <= 0)
+            {
+                //当包体的引用计数小于等于0时，则表示该包已经未被依赖。
+                //卸载AssetBundle；
+                resourceBundleWarpper.AssetBundle?.Unload(true);
+            }
             var dependBundleNames = resourceBundleWarpper.ResourceBundle.DependList;
             var dependBundleNameLength = dependBundleNames.Count;
             //遍历查询依赖包
@@ -520,11 +526,7 @@ namespace Cosmos.Resource
                 var dependBundleName = dependBundleNames[i];
                 if (!resourceBundleWarpperDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
                     continue;
-                if (dependBundleWarpper.AssetBundle == null)
-                    continue;
-                //依赖包体引用计数+1
-                dependBundleWarpper.ReferenceCount++;
-                OnResourceBundleIncrement(dependBundleWarpper);
+                OnDecrementDependenciesAssetBundleAsync(dependBundleWarpper);
             }
         }
     }
