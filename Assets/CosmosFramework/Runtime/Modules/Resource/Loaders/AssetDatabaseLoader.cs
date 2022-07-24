@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -183,7 +182,6 @@ namespace Cosmos.Resource
                 OnResourceObjectLoad(resourceObject);
             }
 #endif
-            yield return null;
             progress?.Invoke(1);
             callback?.Invoke(asset);
         }
@@ -222,7 +220,6 @@ namespace Cosmos.Resource
                 OnResourceObjectLoad(resourceObject);
             }
 #endif
-            yield return null;
             progress?.Invoke(1);
             callback?.Invoke(assets);
         }
@@ -243,17 +240,14 @@ namespace Cosmos.Resource
                 yield break;
             }
             yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
-
 #if UNITY_EDITOR
             List<Object> assetList = new List<Object>();
             var resourceObjects = bundleWarpper.ResourceBundle.ResourceObjectList;
             foreach (var resourceObject in resourceObjects)
             {
-                bundleWarpper.ReferenceCount++;
                 var hasObject = resourceObjectWarpperDict.TryGetValue(resourceObject.AssetName, out var objectWarpper);
                 if (hasObject)
                 {
-                    objectWarpper.ReferenceCount++;
                     var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(resourceObject.AssetPath, typeof(Object));
                     assetList.Add(asset);
                 }
@@ -266,7 +260,20 @@ namespace Cosmos.Resource
         }
         IEnumerator EnumLoadDependenciesAssetBundleAsync(string bundleName)
         {
-            yield return null;
+            //DONE
+            var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
+            if (!hasBundle)
+                yield break; //若bundle信息为空，则终止；
+            bundleWarpper.ReferenceCount++; //AB包引用计数增加
+            var dependList = bundleWarpper.ResourceBundle.DependList;
+            var length = dependList.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var dependentABName = dependList[i];
+                var hasDependentBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var dependentBundleWarpper);
+                if (hasDependentBundle)
+                    yield return EnumLoadDependenciesAssetBundleAsync(dependentABName);
+            }
         }
         IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
@@ -489,11 +496,6 @@ namespace Cosmos.Resource
             resourceBundleWarpper.ReferenceCount--;
             if (resourceBundleWarpper.ReferenceCount <= 0)
             {
-                //当包体的引用计数小于等于0时，则表示该包已经未被依赖。
-                if (resourceBundleWarpper.AssetBundle == null)
-                    return;
-                //卸载AssetBundle；
-                resourceBundleWarpper.AssetBundle.Unload(true);
                 var dependBundleNames = resourceBundleWarpper.ResourceBundle.DependList;
                 var dependBundleNameLength = dependBundleNames.Count;
                 //遍历查询依赖包
@@ -512,12 +514,6 @@ namespace Cosmos.Resource
         void OnDecrementDependenciesAssetBundleAsync(ResourceBundleWarpper resourceBundleWarpper)
         {
             resourceBundleWarpper.ReferenceCount--;
-            if (resourceBundleWarpper.ReferenceCount <= 0)
-            {
-                //当包体的引用计数小于等于0时，则表示该包已经未被依赖。
-                //卸载AssetBundle；
-                resourceBundleWarpper.AssetBundle?.Unload(true);
-            }
             var dependBundleNames = resourceBundleWarpper.ResourceBundle.DependList;
             var dependBundleNameLength = dependBundleNames.Count;
             //遍历查询依赖包

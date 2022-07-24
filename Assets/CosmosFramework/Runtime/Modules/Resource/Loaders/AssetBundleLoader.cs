@@ -301,10 +301,7 @@ namespace Cosmos.Resource
             //DONE
             var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
             if (!hasBundle)
-            {
-                //若bundle信息为空，则终止；
-                yield break;
-            }
+                yield break; //若bundle信息为空，则终止；
             if (bundleWarpper.AssetBundle == null)
             {
                 var abPath = Path.Combine(ResourceDataProxy.Instance.BundlePath, bundleName);
@@ -324,25 +321,9 @@ namespace Cosmos.Resource
             for (int i = 0; i < length; i++)
             {
                 var dependentABName = dependList[i];
-                var hasDependentBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var dependentBundleWarpper);
+                var hasDependentBundle = resourceBundleWarpperDict.ContainsKey(bundleName);
                 if (hasDependentBundle)
-                {
-                    if (dependentBundleWarpper.AssetBundle == null)
-                    {
-                        var abPath = Path.Combine(ResourceDataProxy.Instance.BundlePath, dependentABName);
-                        var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.Instance.EncryptionOffset);
-                        yield return abReq;
-                        var bundle = abReq.assetBundle;
-                        if (bundle != null)
-                        {
-                            dependentBundleWarpper.AssetBundle = bundle;
-                            dependentBundleWarpper.ReferenceCount++;
-                        }
-                    }
-                    else
-                        dependentBundleWarpper.ReferenceCount++;
                     yield return EnumLoadDependenciesAssetBundleAsync(dependentABName);
-                }
             }
         }
         IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)

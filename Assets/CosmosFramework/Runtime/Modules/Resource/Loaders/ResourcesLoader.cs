@@ -17,10 +17,16 @@ namespace Cosmos.Resource
         /// SceneName===Scene
         /// </summary>
         readonly Dictionary<string, UnityEngine.SceneManagement.Scene> loadedSceneDict;
+        /// <summary>
+        /// 主动加载的场景列表；
+        /// </summary>
+        readonly List<string> loadSceneList;
         public ResourcesLoader()
         {
+            loadSceneList = new List<string>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
             SceneManager.sceneUnloaded += OnSceneUnloaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         ///<inheritdoc/> 
         public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
@@ -45,7 +51,7 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public Coroutine LoadAllAssetAsync(string assetBundleName, Action<Object[]> callback, Action<float> progress = null)
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAllAssetAsync(assetBundleName,progress,callback));
+            return Utility.Unity.StartCoroutine(EnumLoadAllAssetAsync(assetBundleName, progress, callback));
         }
         ///<inheritdoc/> 
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
@@ -85,51 +91,47 @@ namespace Cosmos.Resource
         {
         }
         IEnumerator EnumLoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress, bool instantiate = false)
-            where T : UnityEngine.Object
+            where T : Object
         {
-            UnityEngine.Object asset = null;
-            ResourceRequest request = Resources.LoadAsync<T>(assetName);
+            Object asset = null;
+            var request = Resources.LoadAsync<T>(assetName);
+            if (request == null)
+            {
+                progress?.Invoke(1);
+                callback?.Invoke(null);
+                yield break;
+            }
             while (!request.isDone)
             {
                 progress?.Invoke(request.progress);
                 yield return null;
             }
+            progress?.Invoke(1);
             asset = request.asset;
             if (asset == null)
             {
-                throw new ArgumentNullException($"Resources文件夹中不存在资源 {assetName}！");
+                callback?.Invoke(asset as T);
             }
             else
             {
                 if (instantiate)
-                {
                     asset = GameObject.Instantiate(asset);
-                }
             }
             if (asset != null)
-            {
                 callback?.Invoke(asset as T);
-            }
         }
         IEnumerator EnumLoadAssetWithSubAssets<T>(string assetName, Action<T[]> callback, Action<float> progress)
-            where T : UnityEngine.Object
+            where T : Object
         {
             T[] assets = null;
             assets = Resources.LoadAll<T>(assetName);
             yield return null;
             progress?.Invoke(1);
-            if (assets == null)
-            {
-                throw new ArgumentNullException($"Resources文件夹中不存在资源 {assetName}！");
-            }
-            else
-            {
-                callback?.Invoke(assets);
-            }
+            callback?.Invoke(assets);
         }
-        IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<UnityEngine.Object> callback, Action<float> progress, bool instantiate = false)
+        IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress, bool instantiate = false)
         {
-            UnityEngine.Object asset = null;
+            Object asset = null;
             ResourceRequest request = Resources.LoadAsync(assetName, type);
             while (!request.isDone)
             {
@@ -153,65 +155,80 @@ namespace Cosmos.Resource
                 callback?.Invoke(asset);
             }
         }
-        IEnumerator EnumLoadAssetWithSubAssets(string assetName, Type type, Action<UnityEngine.Object[]> callback, Action<float> progress)
+        IEnumerator EnumLoadAssetWithSubAssets(string assetName, Type type, Action<Object[]> callback, Action<float> progress)
         {
-            UnityEngine.Object[] assets = null;
+            Object[] assets = null;
             assets = Resources.LoadAll(assetName);
             yield return null;
             progress?.Invoke(1);
-            if (assets == null)
-            {
-                throw new ArgumentNullException($"Resources文件夹中不存在资源 {assetName}！");
-            }
-            else
-            {
-                callback?.Invoke(assets);
-            }
+            callback?.Invoke(assets);
         }
-        IEnumerator EnumLoadSceneAsync(SceneAssetInfo sceneInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
+        IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
-            AsyncOperation ao;
-            ao = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneInfo.SceneName, (UnityEngine.SceneManagement.LoadSceneMode)Convert.ToByte(sceneInfo.Additive));
-            ao.allowSceneActivation = false;
+            var sceneName = info.SceneName;
+            if (loadedSceneDict.TryGetValue(sceneName, out var loadedScene))
+            {
+                progress?.Invoke(1);
+                SceneManager.SetActiveScene(loadedScene);
+                callback?.Invoke();
+                yield break;
+            }
+            var operation = SceneManager.LoadSceneAsync(sceneName, (LoadSceneMode)Convert.ToByte(info.Additive));
+            if (operation == null)
+            {
+                //为空表示场景不存在
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            loadSceneList.Add(info.SceneName);
+            operation.allowSceneActivation = false;
             var hasProviderProgress = progressProvider != null;
-            while (!ao.isDone)
+            while (!operation.isDone)
             {
                 if (hasProviderProgress)
                 {
                     var providerProgress = progressProvider();
-                    var sum = providerProgress + ao.progress;
+                    var sum = providerProgress + operation.progress;
                     if (sum >= 1.9)
-                    {
                         break;
-                    }
                     else
-                    {
                         progress?.Invoke(sum / 2);
-                    }
                 }
                 else
                 {
-                    progress?.Invoke(ao.progress);
-                    if (ao.progress >= 0.9f)
-                    {
+                    progress?.Invoke(operation.progress);
+                    if (operation.progress >= 0.9f)
                         break;
-                    }
                 }
                 yield return new WaitForEndOfFrame();
             }
             progress?.Invoke(1);
             if (condition != null)
                 yield return new WaitUntil(condition);
-            ao.allowSceneActivation = true;
+            operation.allowSceneActivation = true;
             callback?.Invoke();
         }
-        IEnumerator EnumUnloadSceneAsync(SceneAssetInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null)
+        IEnumerator EnumUnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback = null)
         {
-            var ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneInfo.SceneName);
-            while (!ao.isDone)
+            var sceneName = info.SceneName;
+            if (string.IsNullOrEmpty(sceneName))
             {
-                progress?.Invoke(ao.progress);
-                if (ao.progress >= 0.9f)
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            if (!loadedSceneDict.TryGetValue(sceneName, out var scene))
+            {
+                progress?.Invoke(1);
+                callback?.Invoke();
+                yield break;
+            }
+            var operation = SceneManager.UnloadSceneAsync(sceneName);
+            while (!operation.isDone)
+            {
+                progress?.Invoke(operation.progress);
+                if (operation.progress >= 0.9f)
                 {
                     break;
                 }
@@ -229,12 +246,13 @@ namespace Cosmos.Resource
             var unitResRatio = 100f / sceneCount;
             int currentSceneIndex = 0;
             float overallProgress = 0;
-            foreach (var scene in loadedSceneDict)
+            foreach (var sceneName in loadSceneList)
             {
                 var overallIndexPercent = 100 * ((float)currentSceneIndex / sceneCount);
                 currentSceneIndex++;
-                var sceneName = scene.Key;
-                var ao = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene.Value);
+                if (!loadedSceneDict.TryGetValue(sceneName, out var scene))
+                    continue;
+                var ao = SceneManager.UnloadSceneAsync(sceneName);
                 while (!ao.isDone)
                 {
                     overallProgress = overallIndexPercent + (unitResRatio * ao.progress);
@@ -244,7 +262,7 @@ namespace Cosmos.Resource
                 overallProgress = overallIndexPercent + (unitResRatio * 1);
                 progress?.Invoke(overallProgress / 100);
             }
-            loadedSceneDict.Clear();
+            loadSceneList.Clear();
             progress?.Invoke(1);
             callback?.Invoke();
         }
@@ -252,13 +270,23 @@ namespace Cosmos.Resource
         {
             if (string.IsNullOrEmpty(assetBundleName))
                 yield break;
-            var assets= Resources.LoadAll(assetBundleName);
+            var assets = Resources.LoadAll(assetBundleName);
             callback?.Invoke(assets);
             progress?.Invoke(1);
         }
         void OnSceneUnloaded(UnityEngine.SceneManagement.Scene scene)
         {
-            loadedSceneDict.Remove(scene.name);
+            var sceneName = scene.name;
+            loadSceneList.Remove(sceneName);
+            loadedSceneDict.Remove(sceneName);
+        }
+        void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode loadSceneMode)
+        {
+            var sceneName = scene.name;
+            if (loadSceneList.Contains(sceneName))
+            {
+                loadedSceneDict.TryAdd(sceneName, scene);
+            }
         }
     }
 }
