@@ -142,9 +142,11 @@ namespace Cosmos.Resource
         {
             resourceObjectWarpperDict.Clear();
             resourceBundleWarpperDict.Clear();
+            loadSceneList.Clear();
             resourceAddress.Clear();
             loadedSceneDict.Clear();
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
+            SceneManager.sceneLoaded -= OnSceneLoaded;
         }
         IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress)
         {

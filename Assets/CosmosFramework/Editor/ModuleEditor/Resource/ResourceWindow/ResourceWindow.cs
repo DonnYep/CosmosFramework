@@ -77,9 +77,18 @@ namespace Cosmos.Editor.Resource
                 {
                     if (latestResourceDataset == null)
                         return;
-                    assetDatabaseTab.OnDatasetRefresh();
-                    assetBundleTab.OnDatasetRefresh();
-                    assetDatasetTab.OnDatasetRefresh();
+                    switch (windowData.SelectedTabIndex)
+                    {
+                        case 0:
+                            assetDatabaseTab.OnDatasetRefresh();
+                            break;
+                        case 1:
+                            assetBundleTab.OnDatasetRefresh();
+                            break;
+                        case 2:
+                            assetDatasetTab.OnDatasetRefresh();
+                            break;
+                    }
                 }
             }
             EditorGUILayout.EndHorizontal();

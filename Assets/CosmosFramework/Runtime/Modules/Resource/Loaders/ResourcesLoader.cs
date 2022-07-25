@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
-
 namespace Cosmos.Resource
 {
     /// <summary>
@@ -29,9 +28,9 @@ namespace Cosmos.Resource
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         ///<inheritdoc/> 
-        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : Object
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, callback, progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, typeof(T), asset => { callback?.Invoke(asset as T); }, progress));
         }
         ///<inheritdoc/> 
         public Coroutine LoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress = null)
@@ -39,9 +38,18 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAssetAsync(assetName, type, callback, progress));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : UnityEngine.Object
+        public Coroutine LoadMainAndSubAssetsAsync<T>(string assetName, Action<T[]> callback, Action<float> progress = null) where T : Object
         {
-            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(assetName, callback, progress));
+            return Utility.Unity.StartCoroutine(EnumLoadAssetWithSubAssets(assetName, typeof(T), assets =>
+             {
+                 T[] rstAssets = new T[assets.Length];
+                 var length = rstAssets.Length;
+                 for (int i = 0; i < length; i++)
+                 {
+                     rstAssets[i] = assets[i] as T;
+                 }
+                 callback?.Invoke(rstAssets);
+             }, progress));
         }
         ///<inheritdoc/> 
         public Coroutine LoadAssetWithSubAssetsAsync(string assetName, Type type, Action<Object[]> callback, Action<float> progress = null)
@@ -84,52 +92,16 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public void Dispose()
         {
+            loadSceneList.Clear();
             loadedSceneDict.Clear();
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
         }
         ///<inheritdoc/> 
         public void ReleaseAsset(string assetName)
         {
         }
-        IEnumerator EnumLoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress, bool instantiate = false)
-            where T : Object
-        {
-            Object asset = null;
-            var request = Resources.LoadAsync<T>(assetName);
-            if (request == null)
-            {
-                progress?.Invoke(1);
-                callback?.Invoke(null);
-                yield break;
-            }
-            while (!request.isDone)
-            {
-                progress?.Invoke(request.progress);
-                yield return null;
-            }
-            progress?.Invoke(1);
-            asset = request.asset;
-            if (asset == null)
-            {
-                callback?.Invoke(asset as T);
-            }
-            else
-            {
-                if (instantiate)
-                    asset = GameObject.Instantiate(asset);
-            }
-            if (asset != null)
-                callback?.Invoke(asset as T);
-        }
-        IEnumerator EnumLoadAssetWithSubAssets<T>(string assetName, Action<T[]> callback, Action<float> progress)
-            where T : Object
-        {
-            T[] assets = null;
-            assets = Resources.LoadAll<T>(assetName);
-            yield return null;
-            progress?.Invoke(1);
-            callback?.Invoke(assets);
-        }
-        IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress, bool instantiate = false)
+        IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress)
         {
             Object asset = null;
             ResourceRequest request = Resources.LoadAsync(assetName, type);
@@ -138,27 +110,15 @@ namespace Cosmos.Resource
                 progress?.Invoke(request.progress);
                 yield return null;
             }
+            progress?.Invoke(1);
             asset = request.asset;
-            if (asset == null)
-            {
-                throw new ArgumentNullException($"Resources文件夹中不存在资源 {assetName}！");
-            }
-            else
-            {
-                if (instantiate)
-                {
-                    asset = GameObject.Instantiate(asset);
-                }
-            }
-            if (asset != null)
-            {
-                callback?.Invoke(asset);
-            }
+            callback?.Invoke(asset);
         }
         IEnumerator EnumLoadAssetWithSubAssets(string assetName, Type type, Action<Object[]> callback, Action<float> progress)
         {
-            Object[] assets = null;
-            assets = Resources.LoadAll(assetName);
+            Object[] assets = new Object[1];
+            var asset = Resources.Load(assetName);
+            assets[0] = asset;
             yield return null;
             progress?.Invoke(1);
             callback?.Invoke(assets);

@@ -151,6 +151,7 @@ namespace Cosmos.Resource
         {
             resourceObjectWarpperDict.Clear();
             resourceBundleWarpperDict.Clear();
+            loadSceneList.Clear();
             resourceAddress.Clear();
             loadedSceneDict.Clear();
             SceneManager.sceneUnloaded -= OnSceneUnloaded;

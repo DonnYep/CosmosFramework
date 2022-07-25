@@ -88,7 +88,9 @@ namespace Cosmos.Resource
             {
                 if (instantiate)
                 {
-                    var go = GameObject.Instantiate(srcGo);
+                    GameObject go = null;
+                    if (srcGo != null)
+                        go = GameObject.Instantiate(srcGo);
                     callback?.Invoke(go);
                 }
                 else
@@ -98,7 +100,7 @@ namespace Cosmos.Resource
         /// <inheritdoc/>
         public Coroutine LoadAllAssetAsync(string assetPack, Action<Object[]> callback, Action<float> progress = null)
         {
-            return currentLoadHelper.LoadAllAssetAsync(assetPack, callback,progress);
+            return currentLoadHelper.LoadAllAssetAsync(assetPack, callback, progress);
         }
         /// <inheritdoc/>
         public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
@@ -132,7 +134,10 @@ namespace Cosmos.Resource
             await currentLoadHelper.LoadAssetAsync<GameObject>(assetName, (asset) =>
             {
                 if (instantiate)
-                    go = GameObject.Instantiate(asset);
+                {
+                    if (asset != null)
+                        go = GameObject.Instantiate(asset);
+                }
                 else
                     go = asset;
             }, null);
@@ -176,7 +181,7 @@ namespace Cosmos.Resource
         /// <inheritdoc/>
         public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
         {
-            currentLoadHelper.ReleaseAssetBundle(assetBundleName,unloadAllLoadedObjects);
+            currentLoadHelper.ReleaseAssetBundle(assetBundleName, unloadAllLoadedObjects);
         }
         /// <inheritdoc/>
         public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)

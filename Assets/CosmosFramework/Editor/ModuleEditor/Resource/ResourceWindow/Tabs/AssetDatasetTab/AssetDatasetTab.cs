@@ -93,7 +93,6 @@ namespace Cosmos.Editor.Resource
             {
                 list.list.Add("<none>");
             };
-
             reorderableList.onChangedCallback = (list) =>
             {
                 if (!datasetAssigned)
@@ -119,6 +118,13 @@ namespace Cosmos.Editor.Resource
         public override void OnDatasetAssign()
         {
             datasetAssigned = true;
+            extensionList.AddRange(ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
+        }
+        public override void OnDatasetRefresh()
+        {
+            if (!datasetAssigned)
+                return;
+            extensionList.Clear();
             extensionList.AddRange(ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
         }
         public override void OnDatasetUnassign()
