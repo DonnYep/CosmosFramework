@@ -63,12 +63,14 @@ namespace Cosmos.Editor.Resource
                 menu.AddItem(new GUIContent("Delete all bundle"), false, DeleteAll);
                 menu.AddItem(new GUIContent("Reset bundle name"), false, ResetBundleName, id);
                 menu.AddItem(new GUIContent("Reset all bundle name"), false, ResetAllBundleName);
+                menu.AddItem(new GUIContent("Copy bundle name to clipboard"), false, CopyBundleNameToClipboard,id);
+                menu.AddItem(new GUIContent("Copy bundle path to clipboard"), false, CopyBundlePathToClipboard,id);
             }
             else if (selected.Count > 1)
             {
                 menu.AddItem(new GUIContent("Delete bundle"), false, Delete, selected);
-                menu.AddItem(new GUIContent("Delete all bundle"), false, DeleteAll);
-                menu.AddItem(new GUIContent("Reset all bundle name"), false, ResetAllBundleName);
+                menu.AddItem(new GUIContent("Delete all bundles"), false, DeleteAll);
+                menu.AddItem(new GUIContent("Reset the names of all bundles"), false, ResetAllBundleName);
             }
             menu.ShowAsContext();
         }
@@ -225,6 +227,18 @@ namespace Cosmos.Editor.Resource
                 item.displayName = newBundleInfo.BundleName;
                 onRenameBundle?.Invoke(i, bundleInfo.BundlePath);
             }
+        }
+        void CopyBundleNameToClipboard(object context)
+        {
+            var id = Convert.ToInt32(context);
+            var bundle = bundleList[id];
+            GUIUtility.systemCopyBuffer = bundle.BundleName;
+        }
+        void CopyBundlePathToClipboard(object context)
+        {
+            var id = Convert.ToInt32(context);
+            var bundle = bundleList[id];
+            GUIUtility.systemCopyBuffer = bundle.BundlePath;
         }
     }
 }

@@ -76,12 +76,13 @@ namespace Cosmos.Resource
                     //若文件后缀名存在
                     //获取无后的文件名
                     var nameWithoutExt = Path.GetFileNameWithoutExtension(assetName);
+                    var lowerExt = ext.ToLower();
                     if (resourceObjectLnkDict.TryGetValue(nameWithoutExt, out var lnk))
                     {
                         foreach (var resourceObject in lnk)
                         {
                             //返回后缀名匹配的
-                            if (resourceObject.Extension == ext)
+                            if (resourceObject.Extension == lowerExt)
                             {
                                 assetPath = resourceObject.AssetPath;
                                 break;

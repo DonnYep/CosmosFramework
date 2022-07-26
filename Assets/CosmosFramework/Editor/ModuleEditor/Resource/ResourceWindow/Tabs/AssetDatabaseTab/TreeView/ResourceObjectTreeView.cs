@@ -38,8 +38,8 @@ namespace Cosmos.Editor.Resource
         protected override void ContextClickedItem(int id)
         {
             GenericMenu menu = new GenericMenu();
-            menu.AddItem(new GUIContent("Copy name to clipboard"), false, CopyNameToClipboard, id);
-            menu.AddItem(new GUIContent("Copy asset path to clipboard"), false, CopyAssetPathToClipboard, id);
+            menu.AddItem(new GUIContent("Copy object name to clipboard"), false, CopyNameToClipboard, id);
+            menu.AddItem(new GUIContent("Copy object path to clipboard"), false, CopyAssetPathToClipboard, id);
             menu.ShowAsContext();
         }
         protected override void DoubleClickedItem(int id)

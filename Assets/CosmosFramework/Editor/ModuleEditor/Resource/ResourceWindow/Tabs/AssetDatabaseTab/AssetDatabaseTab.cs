@@ -279,10 +279,13 @@ namespace Cosmos.Editor.Resource
                 for (int j = 0; j < fileLength; j++)
                 {
                     var srcFilePath = files[j].Replace("\\", "/");
-                    var fileExt = Path.GetExtension(srcFilePath).ToLower();
-                    if (extensions.Contains(fileExt))
+                    var srcFileExt = Path.GetExtension(srcFilePath);
+                    var lowerFileExt = srcFileExt.ToLower();
+                    if (extensions.Contains(srcFileExt))
                     {
-                        var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(srcFilePath), srcFilePath, bundle.BundleName, fileExt);
+                        //统一使用小写的文件后缀名
+                        var lowerExtFilePath= srcFilePath.Replace(srcFileExt,lowerFileExt);
+                        var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(lowerExtFilePath), lowerExtFilePath, bundle.BundleName, lowerFileExt);
                         objects.Add(resourceObject);
                         bundle.ResourceObjectList.Add(resourceObject);
                     }
