@@ -1,3 +1,5 @@
+![CosmosGitLogo](Docs/CosmosGitLogo.png)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
 [![Issues:Welcome](https://img.shields.io/badge/Issues-welcome-blue.svg)](https://github.com/DonnYep/CosmosFramework/issues)
 
@@ -24,7 +26,7 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 
 - **ObjectsPool**:对象池模块。提供常用的实体对象生成回收等功能。底层使用数据结构Pool进行实现。
 
-- **Resource**:资源加载模块。内置提供了AssetDatabase、Resource以及AssetBundle几种加载方案。开发阶段无需对进行AB打包，仅需切换到AssetDatabase模式即可进行加载。同时在AssetDatabase模式以及AssetBundle模式都提供引用计数支持，可试试查看当前资源的引用状态。编辑器菜单栏位于Window>Cosmos>ModuleEditor>Resource。
+- **Resource**:资源加载模块。内置提供AssetDatabase、AssetBundle以及Resource三种加载模式。AssetDatabase与AssetBundle模式支持引用计数，资源包会根据引用计数自动加载或卸载。此外此模块支持自定义加载方案。资源模块对应的编辑器位于Window>Cosmos>Module>Resource。
 
 - **Scene**:场景加载模块。提供常用的异步、同步加载嵌入的场景功能。支持自定义实现加载方式。
 
