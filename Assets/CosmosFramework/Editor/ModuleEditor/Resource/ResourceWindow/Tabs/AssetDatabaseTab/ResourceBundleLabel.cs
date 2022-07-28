@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceBundleLable
+    public class ResourceBundleLabel
     {
         SearchField searchField;
         TreeViewState treeViewState;
