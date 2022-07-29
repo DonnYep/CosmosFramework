@@ -2,6 +2,8 @@
 using Cosmos.Resource;
 using System.IO;
 using System;
+using System.Collections;
+using UnityEngine.Networking;
 
 namespace Cosmos
 {
@@ -76,41 +78,15 @@ namespace Cosmos
                         {
                             if (string.IsNullOrEmpty(resourceBundlePath))
                                 throw new Exception("Relative Bundle Path is invalid !");
-                            ResourceManifest resourceManifest = null;
-                            //TODO 这段如果是其他平台，可能无法通过IO获取到资源
-                            string bundleFolderPath = string.Empty;
                             switch (resourceBundlePathType)
                             {
                                 case ResourceBundlePathType.StreamingAssets:
-                                    bundleFolderPath = Path.Combine(Application.streamingAssetsPath, resourceBundlePath);
+                                    LoadFromStreamingAssetsPath();
                                     break;
                                 case ResourceBundlePathType.PersistentDataPath:
-                                    bundleFolderPath = Path.Combine(Application.persistentDataPath, resourceBundlePath);
+                                    LoadFromPersistentDataPath();
                                     break;
                             }
-                            if (!Directory.Exists(bundleFolderPath))
-                                throw new DirectoryNotFoundException(string.Format("Path {0} not found !", bundleFolderPath));
-                            var manifestPath = Path.Combine(bundleFolderPath, ResourceConstants.RESOURCE_MANIFEST);
-                            if (!File.Exists(manifestPath))
-                                throw new FileNotFoundException(string.Format("File {0} not found !", manifestPath));
-                            var manifestJson = Utility.IO.ReadTextFileContent(manifestPath);
-                            try
-                            {
-                                resourceManifest = Utility.Json.ToObject<ResourceManifest>(manifestJson);
-                            }
-                            catch { }
-                            if (resourceManifest != null)
-                            {
-                                if (assetBundleEncrytion)
-                                    ResourceDataProxy.Instance.EncryptionOffset = assetBundleEncrytionOffset;
-                                if (buildInfoEncrytion)
-                                    ResourceDataProxy.Instance.BuildInfoEncryptionKey = buildInfoEncrytionKey;
-                                var assetBundleLoader = new AssetBundleLoader();
-                                assetBundleLoader.InitLoader(resourceManifest);
-                                CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
-                            }
-                            else
-                                throw new Exception("ResourceManifest deserialization failed , check your file !");
                         }
                         break;
                     case ResourceLoadMode.AssetDatabase:
@@ -153,6 +129,40 @@ namespace Cosmos
                 if (messagePackHelper != null)
                     Utility.MessagePack.SetHelper((Utility.MessagePack.IMessagePackHelper)messagePackHelper);
             }
+        }
+        void LoadFromPersistentDataPath()
+        {
+            //persistentDataPath 直接通过IO读取
+            ResourceManifest resourceManifest = null;
+            var bundleFolderPath = Path.Combine(Application.persistentDataPath, resourceBundlePath);
+            if (!Directory.Exists(bundleFolderPath))
+                throw new DirectoryNotFoundException(string.Format("Path {0} not found !", bundleFolderPath));
+            var manifestPath = Path.Combine(bundleFolderPath, ResourceConstants.RESOURCE_MANIFEST);
+            if (!File.Exists(manifestPath))
+                throw new FileNotFoundException(string.Format("File {0} not found !", manifestPath));
+            var manifestJson = Utility.IO.ReadTextFileContent(manifestPath);
+            try
+            {
+                resourceManifest = Utility.Json.ToObject<ResourceManifest>(manifestJson);
+            }
+            catch { }
+            if (resourceManifest != null)
+            {
+                if (assetBundleEncrytion)
+                    ResourceDataProxy.Instance.EncryptionOffset = assetBundleEncrytionOffset;
+                if (buildInfoEncrytion)
+                    ResourceDataProxy.Instance.BuildInfoEncryptionKey = buildInfoEncrytionKey;
+                var assetBundleLoader = new AssetBundleLoader();
+                assetBundleLoader.InitLoader(resourceManifest);
+                CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
+            }
+            else
+                throw new Exception("ResourceManifest deserialization failed , check your file !");
+        }
+        void LoadFromStreamingAssetsPath()
+        {
+            //streamingAssetsPath 通过webrequest读取
+
         }
     }
 }

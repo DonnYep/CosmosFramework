@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Cosmos
 {
-    /// <summary>
+  /// <summary>
     /// 计时器，需要从外部调用轮询。
     /// 所有逻辑线程安全；
     /// </summary>
@@ -15,20 +15,22 @@ namespace Cosmos
             /// <summary>
             /// 任务Id；
             /// </summary>
-            public int TaskId { get; set; }
+            public int TaskId;
             /// <summary>
             /// 间隙时间；
             /// </summary>
-            public int IntervalTime { get; set; }
+            public int IntervalTime;
             /// <summary>
             /// 循环执行次数；
             /// </summary>
-            public int LoopCount { get; set; }
-            public double DestTime { get; set; }
-            public Action<int> TaskCallback { get; set; }
-            public Action<int> CancelCallback { get; set; }
-            public double StartTime { get; set; }
-            public int LoopIndex { get; set; }
+            public int LoopCount;
+            public double DestTime;
+            public Action<int> TaskCallback;
+            public Action<int> CancelCallback;
+            public double StartTime;
+            public int LoopIndex;
+            public bool IsPause;
+            public double PauseRemainTime;
             public TickTask(int taskId, int loopCount, int intervalTime, double destTime, Action<int> taskCallback, Action<int> cancelCallback, double startTime)
             {
                 this.TaskId = taskId;
@@ -38,6 +40,8 @@ namespace Cosmos
                 this.TaskCallback = taskCallback;
                 this.CancelCallback = cancelCallback;
                 this.StartTime = startTime;
+                this.IsPause = false;
+                this.PauseRemainTime = 0;
             }
             public void Dispose()
             {
@@ -49,6 +53,8 @@ namespace Cosmos
                 this.CancelCallback = null;
                 this.StartTime = 0;
                 this.LoopIndex = 0;
+                this.IsPause = false;
+                this.PauseRemainTime = 0;
             }
         }
         public Action<string> LogInfo { get; set; }
@@ -125,6 +131,27 @@ namespace Cosmos
                 ReleaseTickTask(task);
             return true;
         }
+        public bool PauseTask(int taskId)
+        {
+            if (!taskDict.TryRemove(taskId, out TickTask task))
+                return false;
+            task.IsPause = true;
+                var remainTime= task.DestTime - GetUTCMilliseconds();
+            task.PauseRemainTime = remainTime > 0 ? remainTime : 0;
+            return true;
+        }
+        public bool UnPauseTask(int taskId)
+        {
+            if (!taskDict.TryRemove(taskId, out TickTask task))
+                return false;
+            task.IsPause = false;
+            task.DestTime = task.PauseRemainTime + GetUTCMilliseconds();
+            return true;
+        }
+        public bool HasTask(int taskId)
+        {
+            return taskDict.ContainsKey(taskId);
+        }
         /// <summary>
         /// 轮询；
         /// </summary>
@@ -135,6 +162,8 @@ namespace Cosmos
                 double nowTime = GetUTCMilliseconds();
                 foreach (var task in taskDict.Values)
                 {
+                    if (task.IsPause)
+                        continue;
                     if (nowTime < task.DestTime)
                         continue;
                     ++task.LoopIndex;
@@ -204,6 +233,8 @@ namespace Cosmos
                 task.TaskCallback = taskCallback;
                 task.CancelCallback = cancelCallback;
                 task.StartTime = startTime;
+                task.IsPause = false;
+                task.PauseRemainTime = 0;
             }
             else
                 task = new TickTask(taskId, loopCount, intervalTime, destTime, taskCallback, cancelCallback, startTime);

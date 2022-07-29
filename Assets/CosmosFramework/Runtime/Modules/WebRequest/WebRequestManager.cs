@@ -92,7 +92,5 @@ namespace Cosmos.WebRequest
         {
             webRequestHelper.AbortAllRequest();
         }
-
-
     }
 }
