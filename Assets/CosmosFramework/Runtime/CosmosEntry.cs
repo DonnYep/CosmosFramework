@@ -58,7 +58,7 @@ namespace Cosmos
             remove { GameManager.ElapseRefreshHandler -= value; }
         }
         public static IAudioManager AudioManager { get { return GetModule<IAudioManager>(); } }
-        public static IProcedureManager  ProcedureManager{ get { return GetModule<IProcedureManager>(); } }
+        public static IProcedureManager ProcedureManager { get { return GetModule<IProcedureManager>(); } }
         public static IControllerManager ControllerManager { get { return GetModule<IControllerManager>(); } }
         public static IFSMManager FSMManager { get { return GetModule<IFSMManager>(); } }
         public static IObjectPoolManager ObjectPoolManager { get { return GetModule<IObjectPoolManager>(); } }
@@ -75,7 +75,6 @@ namespace Cosmos
         public static IWebRequestManager WebRequestManager { get { return GetModule<IWebRequestManager>(); } }
         public static IDownloadManager DownloadManager { get { return GetModule<IDownloadManager>(); } }
         public static IDataTableManager DataTableManager { get { return GetModule<IDataTableManager>(); } }
-
         /// <summary>
         /// 初始化当前AppDomain下的Module；
         /// 注意：初始化尽量只执行一次！！！

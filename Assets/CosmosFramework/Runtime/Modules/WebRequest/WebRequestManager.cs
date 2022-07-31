@@ -13,84 +13,131 @@ namespace Cosmos.WebRequest
      * 2、内置已经实现了一个默认的WebRequest帮助类对象；模块初始化时会
     * 自动加载并将默认的helper设置为此模块的默认加载helper；
     * 
+    * 3、请求以队列形式存在。
+    * 
+    * 4、当前未支持请求优先级。
     */
     //================================================
     [Module]
     internal class WebRequestManager : Module, IWebRequestManager
     {
-        IWebRequestHelper webRequestHelper;
-        /// <inheritdoc/>
-        public bool NetworkReachable { get { return Application.internetReachability != NetworkReachability.NotReachable; } }
-        /// <inheritdoc/>
-        public async void SetHelperAsync(IWebRequestHelper webRequestHelper)
+        WebRequester webRequester = new WebRequester();
+        ///<inheritdoc/>
+        public int TaskCount { get { return webRequester.TaskCount; } }
+        ///<inheritdoc/>
+        public event Action<WebRequestStartEventArgs> OnStartCallback
         {
-            if (webRequestHelper != null)
-                await new WaitUntil(() => { return webRequestHelper.IsLoading == false; });
-            this.webRequestHelper = webRequestHelper;
+            add { webRequester.onStartCallback += value; }
+            remove { webRequester.onStartCallback -= value; }
+        }
+        ///<inheritdoc/>
+        public event Action<WebRequestUpdateEventArgs> OnUpdateCallback
+        {
+            add { webRequester.onUpdateCallback += value; }
+            remove { webRequester.onUpdateCallback -= value; }
+        }
+        ///<inheritdoc/>
+        public event Action<WebRequestSuccessEventArgs> OnSuccessCallback
+        {
+            add { webRequester.onSuccessCallback += value; }
+            remove { webRequester.onSuccessCallback -= value; }
+        }
+        ///<inheritdoc/>
+        public event Action<WebRequestFailureEventArgs> OnFailureCallback
+        {
+            add { webRequester.onFailureCallback += value; }
+            remove { webRequester.onFailureCallback -= value; }
+        }
+        ///<inheritdoc/>
+        public event Action<WebRequestAllTaskCompleteEventArgs> OnAllTaskCompleteCallback
+        {
+            add { webRequester.onAllTaskCompleteCallback += value; }
+            remove { webRequester.onAllTaskCompleteCallback -= value; }
         }
         /// <inheritdoc/>
-        public Coroutine UploadRequestAsync(UnityWebRequest uploadRequest, WebUploadCallback webUploadCallback)
+        public long AddDownloadAssetBundleTask(string url)
         {
-            return webRequestHelper.UploadRequestAsync(uploadRequest, webUploadCallback);
+            var webRequest = UnityWebRequestAssetBundle.GetAssetBundle(url);
+            return AddDownloadRequestTask(webRequest);
         }
         /// <inheritdoc/>
-        public Coroutine DownloadRequestAsync(UnityWebRequest downloadRequest, WebRequestCallback webDownloadCallback, Action<UnityWebRequest> resultCallback)
+        public long AddDownloadAudioTask(string url, AudioType audioType)
         {
-            return webRequestHelper.DownloadRequestAsync(downloadRequest, webDownloadCallback, resultCallback);
+            var webRequest = UnityWebRequestMultimedia.GetAudioClip(url, audioType);
+            return AddDownloadRequestTask(webRequest);
         }
         /// <inheritdoc/>
-        public Coroutine RequestAssetBundleAsync(string uri, WebRequestCallback webRequestCallback, Action<AssetBundle> resultCallback)
+        public long AddDownloadTextTask(string url)
         {
-            return webRequestHelper.RequestAssetBundleAsync(uri, webRequestCallback, resultCallback);
+            var webRequest = UnityWebRequest.Get(url);
+            return AddDownloadRequestTask(webRequest);
         }
         /// <inheritdoc/>
-        public Coroutine RequestAssetBundleAsync(string uri, IList<KeyValuePair<string, string>> headers, WebRequestCallback webRequestCallback, Action<AssetBundle> resultCallback)
+        public long AddDownloadTextureTask(string url)
         {
-            return webRequestHelper.RequestAssetBundleAsync(uri, webRequestCallback, resultCallback);
+            var webRequest = UnityWebRequestTexture.GetTexture(url);
+            return AddDownloadRequestTask(webRequest);
         }
         /// <inheritdoc/>
-        public Coroutine RequestAudioAsync(string uri, AudioType audioType, WebRequestCallback webRequestCallback, Action<AudioClip> resultCallback)
+        public long AddDownloadRequestTask(string url)
         {
-            return webRequestHelper.RequestAudioAsync(uri, audioType, webRequestCallback, resultCallback);
+            var webRequest = UnityWebRequest.Get(url);
+            return AddDownloadRequestTask(webRequest);
         }
         /// <inheritdoc/>
-        public Coroutine RequestFileBytesAsync(string uri, WebRequestCallback webRequestCallback)
+        public long AddUploadRequestTask(string url, byte[] data, WebRequestUploadType uploadType)
         {
-            return webRequestHelper.RequestFileBytesAsync(uri, webRequestCallback);
+            UnityWebRequest webRequest = null;
+            switch (uploadType)
+            {
+                case WebRequestUploadType.POST:
+                    webRequest = UnityWebRequest.Post(url, Utility.Converter.Convert2String(data));
+                    break;
+                case WebRequestUploadType.PUT:
+                    webRequest = UnityWebRequest.Put(url, data);
+                    break;
+            }
+            return AddUploadRequestTask(webRequest);
         }
         /// <inheritdoc/>
-        public Coroutine RequestTextAsync(string uri, WebRequestCallback webRequestCallback, Action<string> resultCallback)
+        public long AddUploadRequestTask(UnityWebRequest webRequest)
         {
-            return webRequestHelper.RequestTextAsync(uri, webRequestCallback, resultCallback);
+            var task = WebRequestTask.Create(webRequest.url, webRequest, WebRequestType.Upload);
+            webRequester.AddTask(task);
+            StartRequestTasks();
+            return task.TaskId;
         }
         /// <inheritdoc/>
-        public Coroutine RequestTextureAsync(string uri, WebRequestCallback webRequestCallback, Action<Texture2D> resultCallback)
+        public long AddDownloadRequestTask(UnityWebRequest webRequest)
         {
-            return webRequestHelper.RequestTextureAsync(uri, webRequestCallback, resultCallback);
+            var task = WebRequestTask.Create(webRequest.url, webRequest, WebRequestType.DownLoad);
+            webRequester.AddTask(task);
+            StartRequestTasks();
+            return task.TaskId;
         }
         /// <inheritdoc/>
-        public Coroutine PostAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback)
+        public bool RemoveTask(long taskId)
         {
-            return webRequestHelper.PostAsync(uri, bytes, webUploadCallback);
+            return webRequester.RemoveTask(taskId);
         }
         /// <inheritdoc/>
-        public Coroutine PutAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback)
+        public void StartRequestTasks()
         {
-            return webRequestHelper.PutAsync(uri, bytes, webUploadCallback);
+            webRequester.StartRequestTasks();
         }
         /// <inheritdoc/>
-        public void AbortAllRequest()
+        public void StopRequestTasks()
         {
-            webRequestHelper.AbortAllRequest();
+            webRequester.StopRequestTasks();
         }
-        protected override void OnInitialization()
+        /// <inheritdoc/>
+        public void AbortRequestTasks()
         {
-            //初始化时会加载默认helper
-            webRequestHelper = new DefaultWebRequestHelper();
+            webRequester.AbortRequestTasks();
         }
         protected override void OnTermination()
         {
-            webRequestHelper.AbortAllRequest();
+            webRequester.StopRequestTasks();
         }
     }
 }

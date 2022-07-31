@@ -17,89 +17,97 @@ namespace Cosmos.WebRequest
     public interface IWebRequestManager : IModuleManager
     {
         /// <summary>
-        /// 网络状态是否可用；
+        /// 任务数量
         /// </summary>
-        bool NetworkReachable { get ; }
+        int TaskCount { get; }
         /// <summary>
-        /// 设置WebRequestHelper；
+        /// 开始回调；
         /// </summary>
-        /// <param name="webRequestHelper">自定义实现的WebRequestHelper</param>
-        void SetHelperAsync(IWebRequestHelper webRequestHelper);
+        event Action<WebRequestStartEventArgs> OnStartCallback;
         /// <summary>
-        /// 异步上传请求；
+        /// 进度回调；
         /// </summary>
-        /// <param name="uploadRequest">上传请求</param>
-        /// <param name="webUploadCallback">回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine UploadRequestAsync(UnityWebRequest uploadRequest, WebUploadCallback webUploadCallback);
+        event Action<WebRequestUpdateEventArgs> OnUpdateCallback;
         /// <summary>
-        /// 异步下载请求；
+        /// 成功回调；
         /// </summary>
-        /// <param name="downloadRequest">下载请求</param>
-        /// <param name="webDownloadCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine DownloadRequestAsync(UnityWebRequest downloadRequest, WebRequestCallback webDownloadCallback, Action<UnityWebRequest> resultCallback);
+        event Action<WebRequestSuccessEventArgs> OnSuccessCallback;
         /// <summary>
-        /// 异步请求文件流；
+        /// 失败回调；
         /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine RequestFileBytesAsync(string uri, WebRequestCallback webRequestCallback);
+        event Action<WebRequestFailureEventArgs> OnFailureCallback;
         /// <summary>
-        /// 异步请求Text；
+        /// 所有任务完成回调；
         /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine RequestTextAsync(string uri, WebRequestCallback webRequestCallback, Action<string> resultCallback);
+        event Action<WebRequestAllTaskCompleteEventArgs> OnAllTaskCompleteCallback;
         /// <summary>
-        /// 异步请求Texture；
+        /// 添加下载AssetBundle任务；
         /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine RequestTextureAsync(string uri, WebRequestCallback webRequestCallback, Action<Texture2D> resultCallback);
+        /// <param name="url">地址</param>
+        /// <returns>任务id</returns>
+        long AddDownloadAssetBundleTask(string url);
         /// <summary>
-        /// 异步请求AssetBundle；
+        ///  添加下载Audio任务；
         /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine RequestAssetBundleAsync(string uri, WebRequestCallback webRequestCallback, Action<AssetBundle> resultCallback);
-        /// <summary>
-        /// 异步请求Audio；
-        /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
+        /// <param name="url">地址</param>
         /// <param name="audioType">声音类型</param>
-        /// <param name="webRequestCallback">回调</param>
-        /// <param name="resultCallback">带结果的回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine RequestAudioAsync(string uri, AudioType audioType, WebRequestCallback webRequestCallback, Action<AudioClip> resultCallback);
+        /// <returns>任务id</returns>
+        long AddDownloadAudioTask(string url, AudioType audioType);
         /// <summary>
-        /// 异步提交新建资源；
+        /// 添加下载Text任务；
         /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="bytes">数据流</param>
-        /// <param name="webUploadCallback">回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine PostAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback);
+        /// <param name="url">地址</param>
+        /// <returns>任务id</returns>
+        long AddDownloadTextTask(string url);
         /// <summary>
-        /// 异步提交覆盖资源；
+        /// 添加下载Texture任务；
         /// </summary>
-        /// <param name="uri">Uniform Resource Identifier</param>
-        /// <param name="bytes">数据流</param>
-        /// <param name="webUploadCallback">回调</param>
-        /// <returns>协程对象</returns>
-        Coroutine PutAsync(string uri, byte[] bytes, WebUploadCallback webUploadCallback);
+        /// <param name="url">地址</param>
+        /// <returns>任务id</returns>
+        long AddDownloadTextureTask(string url);
         /// <summary>
-        /// 结束所有网络请求
+        /// 添加下载请求任务；
         /// </summary>
-        void AbortAllRequest();
-
+        /// <param name="url">地址</param>
+        /// <returns>任务id</returns>
+        long AddDownloadRequestTask(string url);
+        /// <summary>
+        /// 添加上传请求任务；
+        /// </summary>
+        /// <param name="url">地址</param>
+        /// <param name="data">数据</param>
+        /// <param name="uploadType">上传类型</param>
+        /// <returns>任务id</returns>
+        long AddUploadRequestTask(string url, byte[] data, WebRequestUploadType uploadType);
+        /// <summary>
+        /// 添加上传请求任务；
+        /// </summary>
+        /// <param name="webRequest">请求</param>
+        /// <returns>任务id</returns>
+        long AddUploadRequestTask(UnityWebRequest webRequest);
+        /// <summary>
+        /// 添加下载请求任务；
+        /// </summary>
+        /// <param name="webRequest">请求</param>
+        /// <returns>任务id</returns>
+        long AddDownloadRequestTask(UnityWebRequest webRequest);
+        /// <summary>
+        /// 移除任务；
+        /// </summary>
+        /// <param name="taskId">任务id</param>
+        /// <returns>移除结果</returns>
+        bool RemoveTask(long taskId);
+        /// <summary>
+        /// 开始执行请求任务；
+        /// </summary>
+        void StartRequestTasks();
+        /// <summary>
+        /// 停止但不清空任务；
+        /// </summary>
+        void StopRequestTasks();
+        /// <summary>
+        /// 清空并终止所有请求任务；
+        /// </summary>
+        void AbortRequestTasks();
     }
 }

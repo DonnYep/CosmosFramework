@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MessagePack;
 using UnityEngine;
 namespace Protocol
@@ -41,18 +37,6 @@ namespace Protocol
             return LeftShiftDown == other.LeftShiftDown && MouseLeftDown == other.MouseLeftDown
                 && Position == other.Position && Rotation == other.Rotation
                 && Input == other.Input&&Forward==other.Forward;
-        }
-        public static bool operator ==(OpInput a, OpInput b)
-        {
-            return a.Equals(b);
-        }
-        public static bool operator !=(OpInput a, OpInput b)
-        {
-            return !(a == b);
-        }
-        public override bool Equals(object obj)
-        {
-            return obj is OpInput && Equals((OpInput)obj);
         }
         public override string ToString()
         {

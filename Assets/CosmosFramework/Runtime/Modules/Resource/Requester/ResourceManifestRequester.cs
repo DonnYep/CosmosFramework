@@ -1,30 +1,45 @@
 ﻿using Cosmos.WebRequest;
 using System;
-using UnityEngine;
 
 namespace Cosmos.Resource
 {
     public class ResourceManifestRequester
     {
-        public Action onStartCallback;
-        public Action<float> onUpdateCallback;
-        public Action<byte[]> onSuccessCallback;
-        public Action<string> onFailureCallback;
         IWebRequestManager webRequestManager { get { return GameManager.GetModule<IWebRequestManager>(); } }
-        Coroutine coroutine;
-        public Coroutine RequestManifest(string url)
+        readonly Action<ResourceManifest> onSuccess;
+        readonly Action<string> onFailure;
+        long taskId;
+        public ResourceManifestRequester(Action<ResourceManifest> onSuccess, Action<string> onFailure)
         {
-            var callback = WebRequestCallback.Create(onStartCallback, onUpdateCallback, onSuccessCallback, onFailureCallback);
-            coroutine = webRequestManager.RequestTextAsync(url, callback, OnResultCallback);
-            return coroutine;
+            this.onSuccess = onSuccess;
+            this.onFailure = onFailure;
+        }
+        public void StartRequestManifest(string url)
+        {
+            webRequestManager.AddDownloadTextTask(url);
+            webRequestManager.OnSuccessCallback += OnSuccessCallback;
+            webRequestManager.OnFailureCallback += OnFailureCallback;
         }
         public void StopRequestManifest()
         {
-            Utility.Unity.StopCoroutine(coroutine);
+            webRequestManager.RemoveTask(taskId);
         }
-        void OnResultCallback(string text)
+        void OnSuccessCallback(WebRequestSuccessEventArgs eventArgs)
         {
-       
+            var manifestJson = eventArgs.GetText();
+            try
+            {
+                var resourceManifest = Utility.Json.ToObject<ResourceManifest>(manifestJson);
+                onSuccess?.Invoke(resourceManifest);
+            }
+            catch (Exception e)
+            {
+                onFailure?.Invoke(e.ToString());
+            }
+        }
+        void OnFailureCallback(WebRequestFailureEventArgs eventArgs)
+        {
+            onFailure?.Invoke(eventArgs.ErrorMessage);
         }
     }
 }
