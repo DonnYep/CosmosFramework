@@ -5,12 +5,13 @@ namespace Cosmos.Resource
 {
     public class ResourceManifestRequester
     {
-        IWebRequestManager webRequestManager { get { return GameManager.GetModule<IWebRequestManager>(); } }
+        readonly IWebRequestManager webRequestManager;
         readonly Action<ResourceManifest> onSuccess;
         readonly Action<string> onFailure;
         long taskId;
-        public ResourceManifestRequester(Action<ResourceManifest> onSuccess, Action<string> onFailure)
+        public ResourceManifestRequester(IWebRequestManager webRequestManager, Action<ResourceManifest> onSuccess, Action<string> onFailure)
         {
+            this.webRequestManager = webRequestManager;
             this.onSuccess = onSuccess;
             this.onFailure = onFailure;
         }

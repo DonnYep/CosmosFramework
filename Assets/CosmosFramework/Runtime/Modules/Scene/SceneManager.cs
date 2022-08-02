@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System;
+using Cosmos.Resource;
+
 namespace Cosmos.Scene
 {
     //================================================
@@ -15,77 +17,72 @@ namespace Cosmos.Scene
         /// <summary>
         /// 场景帮助体；
         /// </summary>
-        ISceneHelper sceneHelper;
+        SceneAssetHelper sceneHelper;
         ///<inheritdoc/>
-        public void SetHelperAsync(ISceneHelper sceneHelper)
-        {
-            this.sceneHelper = sceneHelper;
-        }
-        ///<inheritdoc/>
-        public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Action callback = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo sceneInfo, Action callback = null)
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return sceneHelper.LoadSceneAsync(sceneInfo, null, null, null, callback);
         }
         ///<inheritdoc/>
-        public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Action<float> progress, Action callback = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo sceneInfo, Action<float> progress, Action callback = null)
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return sceneHelper.LoadSceneAsync(sceneInfo, null, progress, null, callback);
         }
         ///<inheritdoc/>
-        public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Func<bool> condition, Action callback = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo sceneInfo, Func<bool> condition, Action callback = null)
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return sceneHelper.LoadSceneAsync(sceneInfo, null, null, condition, callback);
         }
         ///<inheritdoc/>
-        public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null)
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return sceneHelper.LoadSceneAsync(sceneInfo, null, progress, condition, callback);
         }
         ///<inheritdoc/>
-        public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Func<float> progressProvider, Action<float> progress, Action callback = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo sceneInfo, Func<float> progressProvider, Action<float> progress, Action callback = null)
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return sceneHelper.LoadSceneAsync(sceneInfo, progressProvider, progress, null, callback);
         }
         ///<inheritdoc/>
-        public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
+        public Coroutine LoadSceneAsync(SceneAssetInfo sceneInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return sceneHelper.LoadSceneAsync(sceneInfo, progressProvider, progress, condition, callback);
         }
         ///<inheritdoc/>
-        public Coroutine UnloadSceneAsync(SceneInfo sceneInfo, Action callback = null)
+        public Coroutine UnloadSceneAsync(SceneAssetInfo sceneInfo, Action callback = null)
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return sceneHelper.UnloadSceneAsync(sceneInfo, null, null, callback);
         }
         ///<inheritdoc/>
-        public Coroutine UnloadSceneAsync(SceneInfo sceneInfo, Action<float> progress, Action callback = null)
+        public Coroutine UnloadSceneAsync(SceneAssetInfo sceneInfo, Action<float> progress, Action callback = null)
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return sceneHelper.UnloadSceneAsync(sceneInfo, progress, null, callback);
         }
         ///<inheritdoc/>
-        public Coroutine UnloadSceneAsync(SceneInfo sceneInfo, Func<bool> condition, Action callback = null)
+        public Coroutine UnloadSceneAsync(SceneAssetInfo sceneInfo, Func<bool> condition, Action callback = null)
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
             return sceneHelper.UnloadSceneAsync(sceneInfo, null, condition, callback);
         }
         ///<inheritdoc/>
-        public Coroutine UnloadSceneAsync(SceneInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null)
+        public Coroutine UnloadSceneAsync(SceneAssetInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null)
         {
             if (sceneHelper == null)
                 throw new ArgumentNullException($"{this.GetType()}: SceneHelper is invalid !");
@@ -93,7 +90,7 @@ namespace Cosmos.Scene
         }
         protected override void OnInitialization()
         {
-            sceneHelper = new DefalutSceneHelper();
+            sceneHelper = new SceneAssetHelper();
         }
     }
 }

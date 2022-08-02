@@ -87,7 +87,7 @@ namespace Cosmos
                                     bundleFolderPath = Path.Combine(Application.persistentDataPath, resourceBundlePath);
                                     break;
                             }
-                            ResourceManifestRequester manifestRequester = new ResourceManifestRequester(OnManifestSuccess, OnManifestFailure);
+                            ResourceManifestRequester manifestRequester = new ResourceManifestRequester(CosmosEntry.WebRequestManager, OnManifestSuccess, OnManifestFailure);
                             manifestRequester.StartRequestManifest(bundleFolderPath);
                         }
                         break;

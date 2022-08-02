@@ -1,7 +1,7 @@
 ﻿using UnityEngine.UI;
 using Cosmos;
-using Cosmos.Scene;
 using UnityEngine;
+using Cosmos.Resource;
 /// <summary>
 /// 按钮按下载入的脚本
 /// </summary>
@@ -30,7 +30,7 @@ public class LoadScenePanel : MonoBehaviour
     {
         loadingSlider.alpha = 1;
         btnLoad.gameObject.SetActive(false);
-        CosmosEntry.SceneManager.LoadSceneAsync(new SceneInfo(targetLevel), ProgressProvider, OnSceneLoading, LoadDoneCodition, OnSceneLoadDone);
+        CosmosEntry.SceneManager.LoadSceneAsync(new SceneAssetInfo(targetLevel), ProgressProvider, OnSceneLoading, LoadDoneCodition, OnSceneLoadDone);
         isLoading = true;
     }
     void Update()

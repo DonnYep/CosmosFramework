@@ -10,12 +10,6 @@ namespace Cosmos.ObjectPool
         /// 对象池的数量；
         /// </summary>
         int PoolCount { get; }
-
-        /// <summary>
-        /// 设置对象池帮助体；
-        /// </summary>
-        /// <param name="helper">帮助体对象</param>
-        void SetHelper(IObjectPoolHelper helper);
         /// <summary>
         /// 异步注册对象池；
         /// </summary>

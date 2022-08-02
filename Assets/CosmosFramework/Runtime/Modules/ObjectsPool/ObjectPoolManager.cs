@@ -25,23 +25,16 @@ namespace Cosmos.ObjectPool
             add { elapseRefreshHandler += value; }
             remove { elapseRefreshHandler -= value; }
         }
-        IObjectPoolHelper objectPoolHelper;
+        ObjectPoolAssetHelper objectPoolAssetHelper;
         #endregion
 
         #region Methods
-        /// <inheritdoc/>
-        public void SetHelper(IObjectPoolHelper helper)
-        {
-            if (helper == null)
-                throw new ArgumentNullException("helper is invalid");
-            objectPoolHelper = helper;
-        }
         /// <inheritdoc/>
         public Coroutine RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo, Action<IObjectPool> callback)
         {
             if (!HasObjectPool(assetInfo.PoolName))
             {
-                return objectPoolHelper.LoadObjectAssetAsync(assetInfo, (info, go) =>
+                return objectPoolAssetHelper.LoadObjectAssetAsync(assetInfo, (info, go) =>
                   {
                       var poolName = info.PoolName;
                       if (go != null)
@@ -87,7 +80,7 @@ namespace Cosmos.ObjectPool
             {
                 ElapseRefreshHandler -= pool.OnElapseRefresh;
                 if (!string.IsNullOrEmpty(pool.ObjectPoolAssetInfo.PoolName))
-                    objectPoolHelper.UnloadObjectAsset(pool.ObjectPoolAssetInfo);
+                    objectPoolAssetHelper.UnloadObjectAsset(pool.ObjectPoolAssetInfo);
                 ObjectPool.Release(pool.CastTo<ObjectPool>());
             }
         }
@@ -98,7 +91,7 @@ namespace Cosmos.ObjectPool
             {
                 ElapseRefreshHandler -= pool.OnElapseRefresh;
                 if (!string.IsNullOrEmpty(srcPool.ObjectPoolAssetInfo.PoolName))
-                    objectPoolHelper.UnloadObjectAsset(srcPool.ObjectPoolAssetInfo);
+                    objectPoolAssetHelper.UnloadObjectAsset(srcPool.ObjectPoolAssetInfo);
                 ObjectPool.Release(pool.CastTo<ObjectPool>());
             }
         }
@@ -123,13 +116,13 @@ namespace Cosmos.ObjectPool
                 pool.Value.ClearPool();
                 var assetInfo = pool.Value.ObjectPoolAssetInfo;
                 if (!string.IsNullOrEmpty(assetInfo.PoolName))
-                    objectPoolHelper.UnloadObjectAsset(assetInfo);
+                    objectPoolAssetHelper.UnloadObjectAsset(assetInfo);
             }
             poolDict.Clear();
         }
         protected override void OnInitialization()
         {
-            SetHelper(new DefaultObjectPoolHelper());
+            objectPoolAssetHelper = new ObjectPoolAssetHelper();
             poolDict = new Dictionary<string, ObjectPool>();
         }
         [ElapseRefresh]

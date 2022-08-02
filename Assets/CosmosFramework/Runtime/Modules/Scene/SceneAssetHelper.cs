@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.Resource;
+using System;
 using UnityEngine;
 
 namespace Cosmos.Scene
@@ -7,7 +8,7 @@ namespace Cosmos.Scene
     /// 加载场景帮助类；
     /// 可实现区分AB加载与BuildScene加载；
     /// </summary>
-    public interface ISceneHelper
+    public class SceneAssetHelper
     {
         /// <summary>
         /// 异步加载场景；
@@ -18,7 +19,10 @@ namespace Cosmos.Scene
         /// <param name="condition">场景加载完成的条件</param>
         /// <param name="callback">场景加载完毕回调</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadSceneAsync(SceneInfo sceneInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null);
+        public Coroutine LoadSceneAsync(SceneAssetInfo sceneInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
+        {
+            return CosmosEntry.ResourceManager.LoadSceneAsync(sceneInfo, progressProvider, progress, condition, callback);
+        }
         /// <summary>
         /// 异步卸载场景；
         /// </summary>
@@ -27,6 +31,9 @@ namespace Cosmos.Scene
         /// <param name="condition">卸载场景完成的条件</param>
         /// <param name="callback">场景卸载完毕后的回调</param>
         /// <returns>协程对象</returns>
-        Coroutine UnloadSceneAsync(SceneInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null);
+        public Coroutine UnloadSceneAsync(SceneAssetInfo sceneInfo, Action<float> progress, Func<bool> condition, Action callback = null)
+        {
+            return CosmosEntry.ResourceManager.UnloadSceneAsync(sceneInfo, progress, condition, callback);
+        }
     }
 }
