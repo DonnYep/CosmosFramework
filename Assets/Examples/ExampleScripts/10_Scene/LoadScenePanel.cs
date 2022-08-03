@@ -1,7 +1,6 @@
 ﻿using UnityEngine.UI;
 using Cosmos;
 using UnityEngine;
-using Cosmos.Resource;
 /// <summary>
 /// 按钮按下载入的脚本
 /// </summary>

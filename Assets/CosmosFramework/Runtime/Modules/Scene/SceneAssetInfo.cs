@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-namespace Cosmos.Resource
+namespace Cosmos
 {
     /// <summary>
     /// AB包中场景资源的信息；
