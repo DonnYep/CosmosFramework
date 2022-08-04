@@ -144,6 +144,8 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - CosmosEngine:https://github.com/DonnYep/CosmosEngine
 
+- QuarkAsset:https://github.com/DonnYep/QuarkAsset
+
 - KCP C:https://github.com/skywind3000/kcp
     
 - KCP CSharp:https://github.com/vis2k/kcp2k
