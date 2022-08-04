@@ -7,7 +7,7 @@
 
 # CosmosFramework
 
-CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方法扩展以及工具链。async/await语法支持，多网络通道支持。框架已做插件化，建议开发时放入Packages目录。
+CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方法扩展以及工具链。async/await语法支持，多网络通道支持。框架遵循unityPackage规范，建议通过UPM导入使用。
 * [CosmosFramework Wiki](https://github.com/DonnYep/CosmosFramework/wiki)<br/>
 
 <a name="导航"></a>
@@ -18,8 +18,8 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 - [内置数据结构、工具](#内置数据结构、工具)
 - [内置架构 PureMVC](#内置架构-PureMVC)
 - [注意事项](#注意事项)
+- [UPM](#UPM)
 - [其他](#其他)
-  - [UPM](#UPM)
 - [Librarylink](#Library-link)
 
 <a name="环境"></a>
@@ -123,6 +123,16 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 
 - 内置案例地址:Assets\Examples\ 。
 
+<a name="UPM"></a>
+
+## UPM
+
+- CosmosFramework遵循unityPackage规范，可以完全将整个库放置于Packages目录下。
+
+- 从本地导入：选择Assets/CosmosFramework文件夹，拷贝到工程的Packages目录下。
+
+- 从git导入：填入url: https://github.com/DonnYep/CosmosFramework.git#v1.3_upm
+
 <a name="其他"></a>
 
 ## 其他
@@ -130,16 +140,6 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 - 部分模块演示请观看视频:
     - https://www.bilibili.com/video/BV1x741157eR
     - https://www.bilibili.com/video/BV17u411Z7Ni/
-
-<a name="UPM"></a>
-
-### UPM
-
-- CosmosFramework遵循unityPackage规范，可以完全将整个库放置于Packages目录下。
-
-- 从本地导入：选择Assets/CosmosFramework文件夹，拷贝到工程的Packages目录下。
-
-- 从git导入：填入url: https://github.com/DonnYep/CosmosFramework.git#v1.3_upm
     
 <a name="Library-link"></a>
 

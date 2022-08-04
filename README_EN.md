@@ -7,7 +7,7 @@
 
 # CosmosFramework
 
-CosmosFramework is a lightweight Unity development framework . Has a rich Unity method extensions and toolchain. async/await syntax support, multi-network channel support.The framework has been supported UMP, it is recommended to put it into the Packages directory to use.
+CosmosFramework is a lightweight Unity development framework . Has a rich Unity method extensions and toolchain. async/await syntax support, multi-network channel support.The framework follows the unityPackage specification and is recommended to be imported for use through UPM.
 * [CosmosFramework Wiki](https://github.com/DonnYep/CosmosFramework/wiki)<br/>
 
 <a name="Navigation"></a>
@@ -18,8 +18,8 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 - [Built-in data tructures,tools](#Built-in-data-structures,tools)
 - [Built-in Architecture PureMVC](#Built-in-Architecture-PureMVC)
 - [Cautions](#Cautions)
+- [UPM](#UPM)
 - [Other](#Other)
-  - [UPM](#UPM)
 - [Library link](#Library-link)
 
 <a name="Environment"></a>
@@ -123,6 +123,15 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - Built-in case address:Assets\Examples\ .
 
+<a name="UPM"></a>
+
+## UPM 
+- CosmosFramework follows the unityPackage specification and can completely place the entire library in the Packages directory.
+
+- Import from local: Select the Assets/CosmosFramework folder and copy it to the project's Packages directory.
+
+- Import from git: fill in the url: https://github.com/DonnYep/CosmosFramework.git#v1.3_upm
+
 <a name="Other"></a>
 
 ## Other
@@ -130,15 +139,6 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 - For a demonstration, please watch the video:
     - https://www.bilibili.com/video/BV1x741157eR
     - https://www.bilibili.com/video/BV17u411Z7Ni/
-
-<a name="UPM"></a>
-
-### UPM 
-- CosmosFramework follows the unityPackage specification and can completely place the entire library in the Packages directory.
-
-- Import from local: Select the Assets/CosmosFramework folder and copy it to the project's Packages directory.
-
-- Import from git: fill in the url: https://github.com/DonnYep/CosmosFramework.git#v1.3_upm
     
 <a name="Library-link"></a>
 
