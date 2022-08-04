@@ -135,9 +135,11 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 
 ### UPM
 
-- 支持UPM导入。选择Assets/CosmosFramework文件夹，拷贝到工程的Packages目录下。
+- CosmosFramework遵循unityPackage规范，可以完全将整个库放置于Packages目录下。
 
-- UPM url: https://github.com/DonnYep/CosmosFramework.git#v1.3_upm
+- 从本地导入：选择Assets/CosmosFramework文件夹，拷贝到工程的Packages目录下。
+
+- 从git导入：填入url: https://github.com/DonnYep/CosmosFramework.git#v1.3_upm
     
 <a name="Library-link"></a>
 

@@ -134,9 +134,11 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 <a name="UPM"></a>
 
 ### UPM 
-- UPM import is supported. Select the Assets/CosmosFramework folder and copy it to the project's Packages directory.
+- CosmosFramework follows the unityPackage specification and can completely place the entire library in the Packages directory.
 
-- UPM url: https://github.com/DonnYep/CosmosFramework.git#v1.3_upm
+- Import from local: Select the Assets/CosmosFramework folder and copy it to the project's Packages directory.
+
+- Import from git: fill in the url: https://github.com/DonnYep/CosmosFramework.git#v1.3_upm
     
 <a name="Library-link"></a>
 
