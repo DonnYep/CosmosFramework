@@ -448,8 +448,23 @@ namespace Cosmos.Resource
             for (int i = 0; i < length; i++)
             {
                 var dependentABName = dependList[i];
-                if (resourceBundleWarpperDict.ContainsKey(bundleName))
-                    yield return EnumLoadDependenciesAssetBundleAsync(dependentABName);
+                if (resourceBundleWarpperDict.TryGetValue(bundleName, out var dependBundleWarpper))
+                {
+                    if (dependBundleWarpper.AssetBundle == null)
+                    {
+                        var abPath = Path.Combine(ResourceDataProxy.Instance.BundlePath, dependentABName);
+                        var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.Instance.EncryptionOffset);
+                        yield return abReq;
+                        var bundle = abReq.assetBundle;
+                        if (bundle != null)
+                        {
+                            dependBundleWarpper.AssetBundle = bundle;
+                            dependBundleWarpper.ReferenceCount++; //AB包引用计数增加
+                        }
+                    }
+                    else
+                        dependBundleWarpper.ReferenceCount++; //AB包引用计数增加
+                }
             }
         }
         /// <summary>
@@ -470,9 +485,14 @@ namespace Cosmos.Resource
             for (int i = 0; i < dependBundleNameLength; i++)
             {
                 var dependBundleName = dependBundleNames[i];
-                if (!resourceBundleWarpperDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
-                    continue;
-                UnloadDependenciesAssetBundle(dependBundleWarpper, count, unloadAllLoadedObjects);
+                if (resourceBundleWarpperDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
+                {
+                    dependBundleWarpper.ReferenceCount -= count;
+                    if (dependBundleWarpper.ReferenceCount <= 0)
+                    {
+                        dependBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                    }
+                }
             }
         }
         bool PeekResourceObject(string assetName, out ResourceObject resourceObject)
