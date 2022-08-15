@@ -6,12 +6,17 @@ namespace Cosmos.Editor.Resource
     /// </summary>
     public struct ResourceBundleInfo : IEquatable<ResourceBundleInfo>
     {
-        public ResourceBundleInfo(string bundleName, string bundlePath, string bundleSize)
+        public ResourceBundleInfo(string bundleName, string bundlePath, string bundleSize,int objectCount)
         {
             BundleName = bundleName;
             BundleSize = bundleSize;
             BundlePath = bundlePath;
+            ObjectCount = objectCount;
         }
+        /// <summary>
+        /// 资源包内对象的数量；
+        /// </summary>
+        public int ObjectCount{ get; private set; }
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>

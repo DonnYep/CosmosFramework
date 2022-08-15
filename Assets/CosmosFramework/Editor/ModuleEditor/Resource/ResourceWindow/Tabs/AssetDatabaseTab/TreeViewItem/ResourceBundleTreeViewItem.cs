@@ -5,6 +5,7 @@ namespace Cosmos.Editor.Resource
     public class ResourceBundleTreeViewItem : TreeViewItem
     {
         string bundleSize;
+        int objectCount;
         public ResourceBundleTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
         {
             this.icon = icon;
@@ -21,6 +22,16 @@ namespace Cosmos.Editor.Resource
                 return bundleSize;
             }
             set { bundleSize = value; }
+        }
+        public int ObjectCount
+        {
+            get { return objectCount; }
+            set
+            {
+                objectCount = value;
+                if (objectCount <= 0)
+                    objectCount = 0;
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Cosmos.Editor.Resource
                 {
                     var bundle = bundleList[i];
                     long bundleSize = EditorUtil.GetUnityDirectorySize(bundle.BundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                    resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize)));
+                    resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize),bundle.ResourceObjectList.Count));
                 }
                 hasChanged = ResourceWindowDataProxy.ResourceDataset.IsChanged;
                 DisplaySelectedBundle();
@@ -103,7 +103,7 @@ namespace Cosmos.Editor.Resource
                 {
                     var bundle = bundleList[i];
                     long bundleSize = EditorUtil.GetUnityDirectorySize(bundle.BundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                    resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize)));
+                    resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize),bundle.ResourceObjectList.Count));
                 }
                 resourceObjectLabel.Clear();
                 hasChanged = ResourceWindowDataProxy.ResourceDataset.IsChanged;
@@ -176,7 +176,7 @@ namespace Cosmos.Editor.Resource
                             {
                                 bundleList.Add(bundle);
                                 long bundleSize = EditorUtil.GetUnityDirectorySize(path, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize));
+                                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize),bundle.ResourceObjectList.Count);
                                 resourceBundleLabel.AddBundle(bundleInfo);
                                 ResourceWindowDataProxy.ResourceDataset.IsChanged = true;
                                 hasChanged = true;
@@ -291,7 +291,7 @@ namespace Cosmos.Editor.Resource
                     }
                 }
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize));
+                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize),bundle.ResourceObjectList.Count);
                 validBundleInfo.Add(bundleInfo);
 
                 var bundlePercent = i / (float)bundleLength;

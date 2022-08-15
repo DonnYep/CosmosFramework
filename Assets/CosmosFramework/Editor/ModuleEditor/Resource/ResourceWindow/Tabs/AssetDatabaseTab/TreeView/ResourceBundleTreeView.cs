@@ -63,8 +63,8 @@ namespace Cosmos.Editor.Resource
                 menu.AddItem(new GUIContent("Delete all bundle"), false, DeleteAll);
                 menu.AddItem(new GUIContent("Reset bundle name"), false, ResetBundleName, id);
                 menu.AddItem(new GUIContent("Reset all bundle name"), false, ResetAllBundleName);
-                menu.AddItem(new GUIContent("Copy bundle name to clipboard"), false, CopyBundleNameToClipboard,id);
-                menu.AddItem(new GUIContent("Copy bundle path to clipboard"), false, CopyBundlePathToClipboard,id);
+                menu.AddItem(new GUIContent("Copy bundle name to clipboard"), false, CopyBundleNameToClipboard, id);
+                menu.AddItem(new GUIContent("Copy bundle path to clipboard"), false, CopyBundlePathToClipboard, id);
             }
             else if (selected.Count > 1)
             {
@@ -110,7 +110,7 @@ namespace Cosmos.Editor.Resource
                 if (canUse)
                 {
                     var bundleInfo = bundleList[args.itemID];
-                    bundleList[args.itemID] = new ResourceBundleInfo(newName, bundleInfo.BundlePath, bundleInfo.BundleSize);
+                    bundleList[args.itemID] = new ResourceBundleInfo(newName, bundleInfo.BundlePath, bundleInfo.BundleSize, bundleInfo.ObjectCount);
                     item.displayName = newName;
                     onRenameBundle?.Invoke(args.itemID, newName);
                 }
@@ -137,7 +137,7 @@ namespace Cosmos.Editor.Resource
             {
                 for (int i = 0; i < bundleList.Count; i++)
                 {
-                    var item = new ResourceBundleTreeViewItem(i, 1, bundleList[i].BundleName, assetIcon) { BundleSize = bundleList[i].BundleSize };
+                    var item = new ResourceBundleTreeViewItem(i, 1, bundleList[i].BundleName, assetIcon) { BundleSize = bundleList[i].BundleSize, ObjectCount = bundleList[i].ObjectCount };
                     allItems.Add(item);
                 }
                 SetupParentsAndChildrenFromDepths(root, allItems);
@@ -160,6 +160,12 @@ namespace Cosmos.Editor.Resource
                     }
                     break;
                 case 1:
+                    {
+                        var lablCellRect = new Rect(cellRect.x + 4, cellRect.y, cellRect.width, cellRect.height);
+                        DefaultGUI.Label(lablCellRect, treeView.ObjectCount.ToString(), args.selected, args.focused);
+                    }
+                    break;
+                case 2:
                     {
                         var iconRect = new Rect(cellRect.x + 2, cellRect.y, cellRect.height, cellRect.height);
                         if (treeView.icon != null)
@@ -209,7 +215,7 @@ namespace Cosmos.Editor.Resource
             var item = FindItem(itemId, rootItem);
             var bundleInfo = bundleList[itemId];
             var bundleName = ResourceUtility.BundleNameFilter(bundleInfo.BundlePath);
-            var newBundleInfo = new ResourceBundleInfo(bundleName, bundleInfo.BundlePath, bundleInfo.BundleSize);
+            var newBundleInfo = new ResourceBundleInfo(bundleName, bundleInfo.BundlePath, bundleInfo.BundleSize, bundleInfo.ObjectCount);
             bundleList[itemId] = newBundleInfo;
             item.displayName = newBundleInfo.BundleName;
             onRenameBundle?.Invoke(itemId, bundleInfo.BundlePath);
@@ -222,7 +228,7 @@ namespace Cosmos.Editor.Resource
                 var item = FindItem(i, rootItem);
                 var bundleInfo = bundleList[i];
                 var bundleName = ResourceUtility.BundleNameFilter(bundleInfo.BundlePath);
-                var newBundleInfo = new ResourceBundleInfo(bundleName, bundleInfo.BundlePath, bundleInfo.BundleSize);
+                var newBundleInfo = new ResourceBundleInfo(bundleName, bundleInfo.BundlePath, bundleInfo.BundleSize, bundleInfo.ObjectCount);
                 bundleList[i] = newBundleInfo;
                 item.displayName = newBundleInfo.BundleName;
                 onRenameBundle?.Invoke(i, bundleInfo.BundlePath);

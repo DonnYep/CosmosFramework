@@ -79,16 +79,28 @@ namespace Cosmos.Editor.Resource
                 },
                 new MultiColumnHeaderState.Column
                 {
+                    headerContent = new GUIContent("Amount"),
+                    headerTextAlignment = TextAlignment.Left,
+                    sortingArrowAlignment = TextAlignment.Left,
+                    sortedAscending = false,
+                    minWidth=36,
+                    width=56,
+                    maxWidth=80,
+                    autoResize = true,
+                },
+                new MultiColumnHeaderState.Column
+                {
                     headerContent = new GUIContent("Bundle"),
                     headerTextAlignment = TextAlignment.Left,
                     sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
                     minWidth=192,
-                    width = 768,
+                    width = 256,
                     maxWidth=1024,
                     autoResize = false,
                     canSort=true
                 }
+
             };
             var state = new MultiColumnHeaderState(columns);
             return state;
