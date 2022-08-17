@@ -6,11 +6,11 @@ public class WelcomePanel : UGUIUIForm
     InputField inputMsg;
     void Awake()
     {
-        GetUILable<Button>("BtnShowInfo").onClick.AddListener(ShowInfo);
-        GetUILable<Button>("BtnHideInfo").onClick.AddListener(HideInfo);
-        GetUILable<Button>("BtnQuit").onClick.AddListener(Quit);
-        info = GetUILable<Image>("TxtInfo").transform.Find("Info").GetComponent<Text>();
-        inputMsg = GetUILable<InputField>("InputMsg");
+        GetUILabel<Button>("BtnShowInfo").onClick.AddListener(ShowInfo);
+        GetUILabel<Button>("BtnHideInfo").onClick.AddListener(HideInfo);
+        GetUILabel<Button>("BtnQuit").onClick.AddListener(Quit);
+        info = GetUILabel<Image>("TxtInfo").transform.Find("Info").GetComponent<Text>();
+        inputMsg = GetUILabel<InputField>("InputMsg");
     }
     void ShowInfo()
     {

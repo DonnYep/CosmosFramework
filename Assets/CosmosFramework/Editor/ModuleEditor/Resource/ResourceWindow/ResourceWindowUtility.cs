@@ -126,7 +126,7 @@ namespace Cosmos.Editor.Resource
                     headerTextAlignment = TextAlignment.Left,
                     sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
-                  minWidth=64,
+                    minWidth=64,
                     width=72,
                     maxWidth=128,
                     autoResize = true,

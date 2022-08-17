@@ -20,11 +20,11 @@ public class InventoryPanel : UGUIUIForm
     }
     void Awake()
     {
-        BtnLoad = GetUILable<Button>("BtnLoad");
-        BtnQuit = GetUILable<Button>("BtnQuit");
-        BtnSave = GetUILable<Button>("BtnSave");
-        BtnUpdate = GetUILable<Button>("BtnUpdate");
-        TxtDescription = GetUILable<Text>("TxtDescription");
+        BtnLoad = GetUILabel<Button>("BtnLoad");
+        BtnQuit = GetUILabel<Button>("BtnQuit");
+        BtnSave = GetUILabel<Button>("BtnSave");
+        BtnUpdate = GetUILabel<Button>("BtnUpdate");
+        TxtDescription = GetUILabel<Text>("TxtDescription");
         SlotContext = gameObject.GetComponentInChildren<SlotContext>();
     }
     void Start()

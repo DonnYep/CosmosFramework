@@ -170,9 +170,9 @@ namespace Cosmos.Editor.Resource
                         var iconRect = new Rect(cellRect.x + 2, cellRect.y, cellRect.height, cellRect.height);
                         if (treeView.icon != null)
                             GUI.DrawTexture(iconRect, treeView.icon, ScaleMode.ScaleToFit);
-                        var lableCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-                        DefaultGUI.Label(lableCellRect, treeView.displayName, args.selected, args.focused);
-                        latestBundleCellRect = lableCellRect;
+                        var labelCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
+                        DefaultGUI.Label(labelCellRect, treeView.displayName, args.selected, args.focused);
+                        latestBundleCellRect = labelCellRect;
                     }
                     break;
             }

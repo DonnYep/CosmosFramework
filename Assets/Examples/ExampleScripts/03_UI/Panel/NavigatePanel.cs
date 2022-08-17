@@ -12,12 +12,12 @@ public class NavigatePanel : UGUIUIForm
     public Button BtnOpGroup { get; private set; }
     void Awake()
     {
-        BtnWelcome = GetUILable<Button>("BtnWelcome");
-        BtnInventory = GetUILable<Button>("BtnInventory");
-        BtnStore = GetUILable<Button>("BtnStore");
-        BtnStatus = GetUILable<Button>("BtnStatus");
-        BtnSetting = GetUILable<Button>("BtnSetting");
-        BtnOpGroup = GetUILable<Button>("BtnOpGroup");
+        BtnWelcome = GetUILabel<Button>("BtnWelcome");
+        BtnInventory = GetUILabel<Button>("BtnInventory");
+        BtnStore = GetUILabel<Button>("BtnStore");
+        BtnStatus = GetUILabel<Button>("BtnStatus");
+        BtnSetting = GetUILabel<Button>("BtnSetting");
+        BtnOpGroup = GetUILabel<Button>("BtnOpGroup");
         MVC.RegisterMediator(new MED_Navigate(this));
     }
 }

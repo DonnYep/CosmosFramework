@@ -51,7 +51,7 @@ namespace Cosmos.Editor.Resource
         }
         void OnGUI()
         {
-            DrawLables();
+            DrawLabels();
         }
         void OnDisable()
         {
@@ -66,7 +66,7 @@ namespace Cosmos.Editor.Resource
             assetBundleTab.OnDisable();
             assetDatasetTab.OnDisable();
         }
-        void DrawLables()
+        void DrawLabels()
         {
             EditorGUILayout.BeginVertical();
             windowData.SelectedTabIndex = GUILayout.Toolbar(windowData.SelectedTabIndex, tabArray);

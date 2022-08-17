@@ -11,9 +11,9 @@ namespace Cosmos.UI
     [DisallowMultipleComponent]
     public abstract class UGUIUIForm : MonoBehaviour, IUIForm
     {
-        struct UILableInfo
+        struct UILabelInfo
         {
-            public UILableInfo(Type uIType, UIBehaviour uIBehaviour)
+            public UILabelInfo(Type uIType, UIBehaviour uIBehaviour)
             {
                 UIType = uIType;
                 UIBehaviour = uIBehaviour;
@@ -73,10 +73,10 @@ namespace Cosmos.UI
         /// <inheritdoc/>
         public UIAssetInfo UIAssetInfo { get; set; }
         /// <summary>
-        /// Name===[Lnk=== UILableInfo]；
+        /// Name===[Lnk=== UILabelInfo]；
         /// </summary>
-        Dictionary<string, LinkedList<UILableInfo>> uiLableDict
-            = new Dictionary<string, LinkedList<UILableInfo>>();
+        Dictionary<string, LinkedList<UILabelInfo>> uiLabelDict
+            = new Dictionary<string, LinkedList<UILabelInfo>>();
 
         ///<inheritdoc/>
         public virtual void OnInit()
@@ -98,9 +98,9 @@ namespace Cosmos.UI
         {
             Utility.Debug.LogInfo($"{UIFormName} OnRelease");
         }
-        protected bool HasLable<T>(string lableName)
+        protected bool HasLabel<T>(string lableName)
         {
-            if (uiLableDict.ContainsKey(lableName))
+            if (uiLabelDict.ContainsKey(lableName))
                 return true;
             var go = transform.FindChildren(lableName);
             var comp = go.GetComponent<T>();
@@ -115,11 +115,11 @@ namespace Cosmos.UI
         /// <typeparam name="T">控件类型</typeparam>
         /// <param name="lableName">控件名</param>
         /// <returns>控件组件</returns>
-        protected T GetUILable<T>(string lableName)
+        protected T GetUILabel<T>(string lableName)
             where T : UIBehaviour
         {
             T comp = null;
-            if (uiLableDict.TryGetValue(lableName, out var lnk))
+            if (uiLabelDict.TryGetValue(lableName, out var lnk))
             {
                 Type type = typeof(T);
                 foreach (var info in lnk)
@@ -135,7 +135,7 @@ namespace Cosmos.UI
                     comp = gameObject.GetComponentInChildren<T>(lableName);
                     if (comp == null)
                         return null;
-                    lnk.AddLast(new UILableInfo(typeof(T), comp));
+                    lnk.AddLast(new UILabelInfo(typeof(T), comp));
                 }
             }
             else
@@ -143,9 +143,9 @@ namespace Cosmos.UI
                 comp = gameObject.GetComponentInChildren<T>(lableName);
                 if (comp == null)
                     return null;
-                lnk = new LinkedList<UILableInfo>();
-                lnk.AddLast(new UILableInfo(typeof(T), comp));
-                uiLableDict.Add(lableName, lnk);
+                lnk = new LinkedList<UILabelInfo>();
+                lnk.AddLast(new UILabelInfo(typeof(T), comp));
+                uiLabelDict.Add(lableName, lnk);
             }
             return comp;
         }
