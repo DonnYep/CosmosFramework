@@ -115,35 +115,6 @@ namespace Cosmos
 
         #region 获取Description
 
-        /// <summary>
-        /// 获取枚举值的Description信息
-        /// </summary>
-        /// <param name ="this">枚举值</param>
-        /// <param name ="args">要格式化的对象</param>
-        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
-        public static string GetDescription(this Enum @this, params object[] args)
-        {
-            if (@this == null)
-            {
-                throw new ArgumentNullException(nameof(@this));
-            }
-
-            var type = @this.GetType();
-            if (!Enum.IsDefined(type, @this))
-            {
-                return @this.ToString();
-            }
-
-            FieldInfo fi = type.GetField(@this.ToString());
-            var attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-            var text = attributes.Length > 0 ? attributes[0].Description : @this.ToString();
-            if (args is { Length: > 0 })
-            {
-                return string.Format(text, args);
-            }
-
-            return text;
-        }
 
         /// <summary>
         ///	根据成员信息获取Description信息
