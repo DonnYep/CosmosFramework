@@ -8,7 +8,7 @@ namespace Cosmos.Editor.Config
     {
         static bool logPathExists = false;
         public static EditorConfigData EditorConfigData { get; private set; }
-        [MenuItem("Window/Cosmos/EditorTool/EditorConfig")]
+        [MenuItem("Window/Cosmos/Tools/EditorConfig")]
         public static void OpenWindow()
         {
             var window = GetWindow<EditorConfigWindow>();

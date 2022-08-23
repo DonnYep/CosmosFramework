@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +25,6 @@ namespace Cosmos
                 }
             }
         }
-
         /// <summary>
         /// 以文件流的形式复制大文件(异步方式)
         /// </summary>
@@ -50,7 +46,6 @@ namespace Cosmos
                 }).ConfigureAwait(true);
             }
         }
-
         /// <summary>
         /// 将内存流转储成文件
         /// </summary>
@@ -65,7 +60,6 @@ namespace Cosmos
                 fs.Flush();
             }
         }
-
         /// <summary>
         /// 计算文件的 MD5 值
         /// </summary>
@@ -75,7 +69,6 @@ namespace Cosmos
         {
             return HashFile(@this, "md5");
         }
-
         /// <summary>
         /// 计算文件的 sha1 值
         /// </summary>
@@ -85,7 +78,6 @@ namespace Cosmos
         {
             return HashFile(@this, "sha1");
         }
-
         /// <summary>
         /// 计算文件的哈希值
         /// </summary>

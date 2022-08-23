@@ -23,7 +23,7 @@ namespace Cosmos.Editor.Resource
         {
             this.titleContent = new GUIContent("ResourceWindow");
         }
-        [MenuItem("Window/Cosmos/Module/Resource/ResourceWindow")]
+        [MenuItem("Window/Cosmos/Module/Resource")]
         public static void OpenWindow()
         {
             var window = GetWindow<ResourceWindow>();

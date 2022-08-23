@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Cosmos.Editor
 {
     public class HierachyFinderWindow : EditorWindow{
-        [MenuItem("Window/Cosmos/EditorTool/HierachyFinder")]
+        [MenuItem("Window/Cosmos/Tools/HierachyFinder")]
         public static void OpenWindow()
         {
             var window = GetWindow<HierachyFinderWindow>();
@@ -43,15 +43,15 @@ namespace Cosmos.Editor
         List<Transform> missingCompTrans = new List<Transform>();
         int missCompTransCount;
 
-        int selectedBar =0;
-        string[] barArray = new string[] { "MonoReference", "ChildCount", "MonoCount", "FindByName", "MissingComp" };
+        int selectedTab =0;
+        string[] tabArray = new string[] { "MonoReference", "ChildCount", "MonoCount", "FindByName", "MissingComp" };
 
         private void OnGUI()
         {
             m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
-            selectedBar = GUILayout.Toolbar(selectedBar, barArray);
+            selectedTab = GUILayout.Toolbar(selectedTab, tabArray);
             GUILayout.Space(16);
-            switch (selectedBar)
+            switch (selectedTab)
             {
                 case 0:
                     DrawMonoReference();

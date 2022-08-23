@@ -431,13 +431,15 @@ where T : Component
             public static Texture2D CameraScreenshotAsTexture(Camera camera, TextureFormat textureFormat)
             {
                 var oldRenderTexture = camera.targetTexture;
+                var width = camera.pixelWidth;
+                var height = camera.pixelHeight;
                 RenderTexture renderTexture;
-                renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
+                renderTexture = new RenderTexture(width, height, 24);
                 camera.targetTexture = renderTexture;
                 camera.Render();
-                Texture2D texture2D = new Texture2D(renderTexture.width, renderTexture.height, textureFormat, false);
+                Texture2D texture2D = new Texture2D(width, height, textureFormat, false);
                 RenderTexture.active = renderTexture;
-                texture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+                texture2D.ReadPixels(new Rect(0, 0, width, height), 0, 0);
                 texture2D.Apply();
                 RenderTexture.active = null;
                 camera.targetTexture = oldRenderTexture;
