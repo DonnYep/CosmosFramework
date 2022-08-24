@@ -9,7 +9,7 @@ namespace Cosmos
         /// <summary>
         /// 使用的数量；
         /// </summary>
-        readonly int accquiredCount;
+        readonly int acquiredCount;
         /// <summary>
         /// 释放的数量；
         /// </summary>
@@ -17,17 +17,17 @@ namespace Cosmos
         /// <summary>
         /// 池中存余的数量；
         /// </summary>
-        readonly int poolAccquireCount;
+        readonly int poolAcquireCount;
         public Type ReferenceType { get { return referenceType; } }
-        public int AccquiredCount { get { return accquiredCount; } }
+        public int AcquiredCount { get { return acquiredCount; } }
         public int ReleasedCount { get { return releasedCount; } }
-        public int PoolAccquireCount { get { return poolAccquireCount; } }
-        public ReferencePoolInfo(Type referenceType, int accquiredCount, int releasedCount, int poolAccquireCount)
+        public int PoolAcquireCount { get { return poolAcquireCount; } }
+        public ReferencePoolInfo(Type referenceType, int acquiredCount, int releasedCount, int poolAcquireCount)
         {
             this.referenceType = referenceType;
-            this.accquiredCount = accquiredCount;
+            this.acquiredCount = acquiredCount;
             this.releasedCount = releasedCount;
-            this.poolAccquireCount = poolAccquireCount;
+            this.poolAcquireCount = poolAcquireCount;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Cosmos.Resource
         [SerializeField]
         string bundlePath;
         [SerializeField]
-        List<string> dependList=new List<string>();
+        List<string> dependentList=new List<string>();
         [SerializeField]
         List<ResourceObject> resourceObjectList=new List<ResourceObject>();
         /// <summary>
@@ -45,15 +45,15 @@ namespace Cosmos.Resource
         /// <summary>
         /// 资源的依赖项；
         /// </summary>
-        public List<string> DependList
+        public List<string> DependentList
         {
             get
             {
-                if (dependList == null)
-                    dependList = new List<string>();
-                return dependList;
+                if (dependentList == null)
+                    dependentList = new List<string>();
+                return dependentList;
             }
-            set { dependList = value; }
+            set { dependentList = value; }
         }
         /// <summary>
         /// 资源对象列表；
