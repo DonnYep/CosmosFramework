@@ -401,13 +401,15 @@ namespace Cosmos.Resource
             if (!hasBundle)
                 yield break; //若bundle信息为空，则终止；
             bundleWarpper.ReferenceCount++; //AB包引用计数增加
-            var dependList = bundleWarpper.ResourceBundle.DependList;
-            var length = dependList.Count;
-            for (int i = 0; i < length; i++)
+            var dependentList = bundleWarpper.ResourceBundle.DependentList;
+            var dependentLength = dependentList.Count;
+            for (int i = 0; i < dependentLength; i++)
             {
-                var dependentABName = dependList[i];
-                if (resourceBundleWarpperDict.ContainsKey(bundleName))
-                    yield return EnumLoadDependenciesAssetBundleAsync(dependentABName);
+                var dependentBundleName = dependentList[i];
+                if (resourceBundleWarpperDict.TryGetValue(dependentBundleName, out var dependentBundleWarpper))
+                {
+                    dependentBundleWarpper.ReferenceCount++;
+                }
             }
         }
         /// <summary>
@@ -416,15 +418,16 @@ namespace Cosmos.Resource
         void UnloadDependenciesAssetBundle(ResourceBundleWarpper resourceBundleWarpper, int decrementCount = 1)
         {
             resourceBundleWarpper.ReferenceCount -= decrementCount;
-            var dependBundleNames = resourceBundleWarpper.ResourceBundle.DependList;
-            var dependBundleNameLength = dependBundleNames.Count;
+            var dependentList= resourceBundleWarpper.ResourceBundle.DependentList;
+            var dependentLength = dependentList.Count;
             //遍历查询依赖包
-            for (int i = 0; i < dependBundleNameLength; i++)
+            for (int i = 0; i < dependentLength; i++)
             {
-                var dependBundleName = dependBundleNames[i];
-                if (!resourceBundleWarpperDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
-                    continue;
-                UnloadDependenciesAssetBundle(dependBundleWarpper, decrementCount);
+                var dependentBundleName = dependentList[i];
+                if (resourceBundleWarpperDict.TryGetValue(dependentBundleName, out var dependentBundleWarpper))
+                {
+                    dependentBundleWarpper.ReferenceCount-=decrementCount;
+                }
             }
         }
         bool PeekResourceObject(string assetName, out ResourceObject resourceObject)

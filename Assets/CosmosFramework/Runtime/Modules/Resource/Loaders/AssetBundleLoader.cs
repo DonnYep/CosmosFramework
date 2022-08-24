@@ -443,14 +443,14 @@ namespace Cosmos.Resource
             }
             else
                 bundleWarpper.ReferenceCount++; //AB包引用计数增加
-            var dependList = bundleWarpper.ResourceBundle.DependList;
-            var length = dependList.Count;
-            for (int i = 0; i < length; i++)
+            var dependentList = bundleWarpper.ResourceBundle.DependentList;
+            var dependentLength = dependentList.Count;
+            for (int i = 0; i < dependentLength; i++)
             {
-                var dependentABName = dependList[i];
-                if (resourceBundleWarpperDict.TryGetValue(bundleName, out var dependBundleWarpper))
+                var dependentABName = dependentList[i];
+                if (resourceBundleWarpperDict.TryGetValue(bundleName, out var dependentBundleWarpper))
                 {
-                    if (dependBundleWarpper.AssetBundle == null)
+                    if (dependentBundleWarpper.AssetBundle == null)
                     {
                         var abPath = Path.Combine(ResourceDataProxy.Instance.BundlePath, dependentABName);
                         var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.Instance.EncryptionOffset);
@@ -458,12 +458,12 @@ namespace Cosmos.Resource
                         var bundle = abReq.assetBundle;
                         if (bundle != null)
                         {
-                            dependBundleWarpper.AssetBundle = bundle;
-                            dependBundleWarpper.ReferenceCount++; //AB包引用计数增加
+                            dependentBundleWarpper.AssetBundle = bundle;
+                            dependentBundleWarpper.ReferenceCount++; //AB包引用计数增加
                         }
                     }
                     else
-                        dependBundleWarpper.ReferenceCount++; //AB包引用计数增加
+                        dependentBundleWarpper.ReferenceCount++; //AB包引用计数增加
                 }
             }
         }
@@ -479,18 +479,18 @@ namespace Cosmos.Resource
                 //卸载AssetBundle；
                 resourceBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
             }
-            var dependBundleNames = resourceBundleWarpper.ResourceBundle.DependList;
-            var dependBundleNameLength = dependBundleNames.Count;
+            var dependentList = resourceBundleWarpper.ResourceBundle.DependentList;
+            var dependentLength = dependentList.Count;
             //遍历查询依赖包
-            for (int i = 0; i < dependBundleNameLength; i++)
+            for (int i = 0; i < dependentLength; i++)
             {
-                var dependBundleName = dependBundleNames[i];
-                if (resourceBundleWarpperDict.TryGetValue(dependBundleName, out var dependBundleWarpper))
+                var dependentBundleName = dependentList[i];
+                if (resourceBundleWarpperDict.TryGetValue(dependentBundleName, out var dependentBundleWarpper))
                 {
-                    dependBundleWarpper.ReferenceCount -= count;
-                    if (dependBundleWarpper.ReferenceCount <= 0)
+                    dependentBundleWarpper.ReferenceCount -= count;
+                    if (dependentBundleWarpper.ReferenceCount <= 0)
                     {
-                        dependBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                        dependentBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
                     }
                 }
             }
