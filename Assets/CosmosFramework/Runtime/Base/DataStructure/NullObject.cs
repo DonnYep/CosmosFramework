@@ -76,7 +76,9 @@ namespace Cosmos
             {
                 return IsNull();
             }
-            if (obj is not NullObject<T> nullObject)
+            var type = obj.GetType();
+            var nullObject = (NullObject<T>)obj;
+            if (type != typeof(NullObject<T>))
             {
                 return false;
             }
