@@ -1,4 +1,4 @@
-﻿// a magnificent receive pipe to shield us from all of life's complexities.
+// a magnificent receive pipe to shield us from all of life's complexities.
 // safely sends messages from receive thread to main thread.
 // -> thread safety built in
 // -> byte[] pooling coming in the future
