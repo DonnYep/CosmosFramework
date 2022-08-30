@@ -1,6 +1,7 @@
 ﻿using System;
 using Cosmos.Network;
-using kcp;
+using kcp2k;
+
 namespace Cosmos
 {
     //================================================
@@ -22,10 +23,12 @@ namespace Cosmos
     /// </summary>
     public class KCPServerChannel : INetworkServerChannel
     {
-        KcpServerService server;
+        KcpServerEndPoint server;
+
         Action<int> onConnected;
         Action<int> onDisconnected;
         Action<int, byte[]> onDataReceived;
+        Action<int, string> onError;
         Action onAbort;
         public event Action OnAbort
         {
@@ -47,113 +50,103 @@ namespace Cosmos
             add { onDataReceived += value; }
             remove { onDataReceived -= value; }
         }
-        public int Port { get; private set; }
-
-        public bool Active
+        public event Action<int, string> OnError
         {
-            get
-            {
-                if (server.Server == null)
-                    return false;
-                return server.Server.IsActive();
-            }
+            add { onError += value; }
+            remove { onError -= value; }
         }
-        public NetworkChannelKey NetworkChannelKey { get; private set; }
+        ///<inheritdoc/>
+        public int Port { get; private set; }
+        ///<inheritdoc/>
+        public bool Active { get { return server.IsActive(); } }
+        ///<inheritdoc/>
+        public string ChannelName { get; set; }
+        ///<inheritdoc/>
+        public string IPAddress { get { return server.IPAddress; } }
         public KCPServerChannel(string channelName, ushort port)
         {
-            NetworkChannelKey = new NetworkChannelKey(channelName, $"localhost:{port}");
-            KCPLog.Info = (s) => Utility.Debug.LogInfo(s);
-            KCPLog.Warning = (s) => Utility.Debug.LogWarning(s);
-            KCPLog.Error = (s) => Utility.Debug.LogError(s);
+            this.ChannelName = channelName;
+            Log.Info = (s) => Utility.Debug.LogInfo(s);
+            Log.Warning = (s) => Utility.Debug.LogWarning(s);
+            Log.Error = (s) => Utility.Debug.LogError(s);
             this.Port = port;
-            server = new KcpServerService();
-            server.Port = port;
+            server = new KcpServerEndPoint(
+                (connectionId) => onConnected?.Invoke(connectionId),
+                OnReceiveDataHandler,
+                (connectionId) => onDisconnected?.Invoke(connectionId),
+                OnErrorHandler,
+                false,
+                true,
+                10
+            );
         }
-        /// <summary>
-        /// 服务端启动服务器；
-        /// </summary>
+        ///<inheritdoc/>
         public bool StartServer()
         {
             if (Active)
                 return false;
-            server.ServiceSetup();
-            server.ServiceUnpause();
-            server.OnServerDataReceived += OnReceiveDataHandler;
-            server.OnServerDisconnected += OnDisconnectedHandler;
-            server.OnServerConnected += OnConnectedHandler;
-            server.ServiceConnect();
+            server.Start((ushort)Port);
             return true;
         }
+        ///<inheritdoc/>
         public void StopServer()
         {
-            server?.ServicePause();
-            server.OnServerDataReceived -= OnReceiveDataHandler;
-            server.OnServerDisconnected -= OnDisconnectedHandler;
-            server.OnServerConnected -= OnConnectedHandler;
-            server?.ServerServiceStop();
+            server.Stop();
         }
+        ///<inheritdoc/>
         public void TickRefresh()
         {
-            server?.ServiceTick();
+            server.Tick();
         }
-        /// <summary>
-        /// 与已经连接的connectionId断开连接；
-        /// </summary>
-        /// <param name="connectionId">连接Id</param>
-        public void Disconnect(int connectionId)
+        ///<inheritdoc/>
+        public bool Disconnect(int connectionId)
         {
-            server?.ServiceDisconnect(connectionId);
+            server.Disconnect(connectionId);
+            return true;
         }
-        /// <summary>
-        /// 发送数据到remote;
-        /// 默认为可靠类型；
-        /// </summary>
-        /// <param name="data">数据</param>
-        /// <param name="connectionId">连接Id</param>
+        ///<inheritdoc/>
         public bool SendMessage(int connectionId, byte[] data)
         {
             return SendMessage(NetworkReliableType.Reliable, connectionId, data);
         }
         public bool SendMessage(NetworkReliableType reliableType, int connectionId, byte[] data)
         {
-            if (!Active)
-                return false;
             var segment = new ArraySegment<byte>(data);
             var byteType = (byte)reliableType;
-            server?.ServiceSend((KcpChannel)byteType, segment, connectionId);
+            var channelId = (KcpChannel)byteType;
+            switch (channelId)
+            {
+                case KcpChannel.Unreliable:
+                    server.Send(connectionId, segment, KcpChannel.Unreliable);
+                    break;
+                default:
+                    server.Send(connectionId, segment, KcpChannel.Reliable);
+                    break;
+            }
             return true;
         }
-        /// <summary>
-        /// 获取连接Id的地址；
-        /// </summary>
-        /// <param name="connectionId">连接Id</param>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public string GetConnectionAddress(int connectionId)
         {
-            return server.Server.GetClientAddress(connectionId);
+            return server.GetClientEndPoint(connectionId).Address.ToString();
         }
+        ///<inheritdoc/>
         public void AbortChannnel()
         {
             StopServer();
-            NetworkChannelKey = NetworkChannelKey.None;
             onAbort?.Invoke();
+            onAbort = null;
         }
-        void OnDisconnectedHandler(int conv)
+        void OnErrorHandler(int connectionId, ErrorCode error, string reason)
         {
-            onDisconnected?.Invoke(conv);
+            onError?.Invoke(connectionId, $"{error}-{reason}");
         }
-        void OnConnectedHandler(int conv)
-        {
-            onConnected?.Invoke(conv);
-        }
-        void OnReceiveDataHandler(int conv, ArraySegment<byte> arrSeg, int Channel)
+        void OnReceiveDataHandler(int conv, ArraySegment<byte> arrSeg, KcpChannel Channel)
         {
             var rcvLen = arrSeg.Count;
             var rcvData = new byte[rcvLen];
             Array.Copy(arrSeg.Array, 1, rcvData, 0, rcvLen);
             onDataReceived?.Invoke(conv, rcvData);
         }
-
-
     }
 }

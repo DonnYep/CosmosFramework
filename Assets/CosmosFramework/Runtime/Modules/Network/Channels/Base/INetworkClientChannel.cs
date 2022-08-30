@@ -16,13 +16,25 @@ namespace Cosmos.Network
         /// 断开连接回调；
         /// </summary>
         event Action OnDisconnected;
-        string IPAddress { get; }
         /// <summary>
         /// client是否连接成功；
         /// </summary>
         bool IsConnect { get; }
+        /// <summary>
+        /// 与服务器连接
+        /// </summary>
+        /// <param name="ip">地址</param>
+        /// <param name="port">端口</param>
         void Connect(string ip, int port);
+        /// <summary>
+        /// 发送数据，默认为可靠类型；
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <returns>发送结果</returns>
         bool SendMessage(byte[] data);
+        /// <summary>
+        /// 断开连接；
+        /// </summary>
         void Disconnect();
     }
 }

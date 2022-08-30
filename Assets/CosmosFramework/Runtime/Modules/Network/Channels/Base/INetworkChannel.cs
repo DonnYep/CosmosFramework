@@ -7,13 +7,17 @@ namespace Cosmos.Network
     public interface INetworkChannel
     {
         /// <summary>
-        /// 端口
+        /// 网络地址；
+        /// </summary>
+        string IPAddress { get; }
+        /// <summary>
+        /// 端口；
         /// </summary>
         int Port { get; }
         /// <summary>
-        /// 通道的唯一识别key；
+        /// 通道名；
         /// </summary>
-        NetworkChannelKey NetworkChannelKey { get; }
+        string ChannelName { get; set; }
         /// <summary>
         /// 当通道被终止；
         /// </summary>
@@ -22,6 +26,9 @@ namespace Cosmos.Network
         /// 终结通道；
         /// </summary>
         void AbortChannnel();
+        /// <summary>
+        /// 刷新通道；
+        /// </summary>
         void TickRefresh();
     }
 }

@@ -1,12 +1,12 @@
 {
-    "name": "CosmosRuntime",
+    "name": "kcp",
+    "rootNamespace": "",
     "references": [
-        "GUID:f39eb216e5034409abcd117541a8ba44",
-        "GUID:8490b44537e10514c8a7a8ebc485d127"
+        "GUID:63c380d6dae6946209ed0832388a657c"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,

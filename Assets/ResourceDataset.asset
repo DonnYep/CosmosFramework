@@ -236,7 +236,7 @@ MonoBehaviour:
   resourceBundleList:
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
-    dependList: []
+    dependentList: []
     resourceObjectList:
     - assetName: AmbientAudio
       assetPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
@@ -260,7 +260,7 @@ MonoBehaviour:
       extension: .mp3
   - bundleName: material
     bundlePath: Assets/Examples/AssetBundleTest/Material
-    dependList: []
+    dependentList: []
     resourceObjectList:
     - assetName: Alpha_Body_MAT
       assetPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
@@ -280,7 +280,7 @@ MonoBehaviour:
       extension: .mat
   - bundleName: model
     bundlePath: Assets/Examples/AssetBundleTest/Model
-    dependList: []
+    dependentList: []
     resourceObjectList:
     - assetName: LM_XBotIdle
       assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
@@ -308,7 +308,7 @@ MonoBehaviour:
       extension: .fbx
   - bundleName: photo
     bundlePath: Assets/Examples/AssetBundleTest/Photo
-    dependList: []
+    dependentList: []
     resourceObjectList:
     - assetName: CB1024
       assetPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
@@ -328,11 +328,7 @@ MonoBehaviour:
       extension: .psd
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
-    dependList:
-    - audio
-    - material
-    - model
-    - texture
+    dependentList: []
     resourceObjectList:
     - assetName: AudioSource
       assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
@@ -416,7 +412,7 @@ MonoBehaviour:
       extension: .prefab
   - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text
-    dependList: []
+    dependentList: []
     resourceObjectList:
     - assetName: ABMapSchema
       assetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
@@ -428,7 +424,7 @@ MonoBehaviour:
       extension: .csv
   - bundleName: texture
     bundlePath: Assets/Examples/AssetBundleTest/Texture
-    dependList: []
+    dependentList: []
     resourceObjectList:
     - assetName: Tex_5195
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
@@ -484,7 +480,7 @@ MonoBehaviour:
       extension: .png
   - bundleName: video
     bundlePath: Assets/Examples/AssetBundleTest/Video
-    dependList: []
+    dependentList: []
     resourceObjectList:
     - assetName: HowToMakeAMultiplayerGameInUnity2021.1
       assetPath: Assets/Examples/AssetBundleTest/Video/HowToMakeAMultiplayerGameInUnity2021.1.mp4

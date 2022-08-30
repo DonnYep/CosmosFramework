@@ -43,7 +43,7 @@ namespace Cosmos.Lockstep
         {
             if (!IsConnected)
                 return;
-            CosmosEntry.NetworkManager.RemoveChannel(networkChannel.NetworkChannelKey, out _);
+            CosmosEntry.NetworkManager.RemoveChannel(networkChannel.ChannelName, out _);
             networkChannel?.Disconnect();
         }
         public void SendMessage(byte[] data)
