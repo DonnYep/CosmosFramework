@@ -1,7 +1,4 @@
-﻿using Cosmos;
-using Cosmos.Input;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Cosmos.Input;
 using UnityEngine;
 using Protocol;
 

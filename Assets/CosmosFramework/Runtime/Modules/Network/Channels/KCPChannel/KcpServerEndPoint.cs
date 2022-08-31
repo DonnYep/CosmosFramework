@@ -1,6 +1,6 @@
 ﻿using System;
 using kcp2k;
-namespace Cosmos
+namespace Cosmos.Network
 {
     public class KcpServerEndPoint : KcpServer
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using Cosmos.Network;
 namespace Cosmos.Lockstep
 {
     [Module]

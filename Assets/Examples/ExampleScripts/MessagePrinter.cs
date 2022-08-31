@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Cosmos.Test{
+namespace Cosmos.Test
+{
     public class MessagePrinter: MonoBehaviour {
         public void PrintMessage(string message)
         {

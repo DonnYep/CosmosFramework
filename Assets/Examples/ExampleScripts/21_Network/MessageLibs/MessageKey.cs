@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Cosmos.Test
+﻿namespace Cosmos.Test
 {
     public struct MessageKey
     {

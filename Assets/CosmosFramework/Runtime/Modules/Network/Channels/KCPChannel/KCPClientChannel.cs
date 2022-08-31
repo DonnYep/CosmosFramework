@@ -1,8 +1,7 @@
 ﻿using System;
-using Cosmos.Network;
 using kcp2k;
 
-namespace Cosmos
+namespace Cosmos.Network
 {
     //================================================
     /*
