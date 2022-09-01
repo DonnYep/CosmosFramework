@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Cosmos.Data
+namespace Cosmos.DataNode
 {
     //================================================
     /*
@@ -16,9 +16,9 @@ namespace Cosmos.Data
     internal sealed partial class DataNodeManager : Module, IDataNodeManager
     {
         #region Properties
-        private static readonly string[] EmptyStringArray = new string[] { };
-        private static readonly string[] PathSplitSeparator = new string[] { ".", "/", "\\" };
-        private const string RootName = "<Root>";
+        static readonly string[] emptyStringArray = new string[] { };
+        static readonly string[] pathSplitSeparator = new string[] { ".", "/", "\\" };
+        const string ROOT_NAME = "<ROOT>";
         private DataNode rootNode;
         ///<inheritdoc/>
         public IDataNode Root
@@ -31,17 +31,17 @@ namespace Cosmos.Data
         #endregion
         #region Methods
         ///<inheritdoc/>
-        public T GetData<T>(string path) where T : Variable
+        public T GetData<T>(string path) where T : IDataVariable
         {
             return GetData<T>(path, null);
         }
         ///<inheritdoc/>
-        public Variable GetData(string path)
+        public IDataVariable GetData(string path)
         {
             return GetData(path, null);
         }
         ///<inheritdoc/>
-        public T GetData<T>(string path, IDataNode node) where T : Variable
+        public T GetData<T>(string path, IDataNode node) where T : IDataVariable
         {
             IDataNode current = GetNode(path, node);
             if (current == null)
@@ -52,7 +52,7 @@ namespace Cosmos.Data
             return current.GetData<T>();
         }
         ///<inheritdoc/>
-        public Variable GetData(string path, IDataNode node)
+        public IDataVariable GetData(string path, IDataNode node)
         {
             IDataNode current = GetNode(path, node);
             if (current == null)
@@ -63,23 +63,23 @@ namespace Cosmos.Data
             return current.GetData();
         }
         ///<inheritdoc/>
-        public void SetData<T>(string path, T data) where T : Variable
+        public void SetData<T>(string path, T data) where T : IDataVariable
         {
             SetData(path, data, null);
         }
         ///<inheritdoc/>
-        public void SetData(string path, Variable data)
+        public void SetData(string path, IDataVariable data)
         {
             SetData(path, data, null);
         }
         ///<inheritdoc/>
-        public void SetData<T>(string path, T data, IDataNode node) where T : Variable
+        public void SetData<T>(string path, T data, IDataNode node) where T : IDataVariable
         {
             IDataNode current = GetOrAddNode(path, node);
             current.SetData(data);
         }
         ///<inheritdoc/>
-        public void SetData(string path, Variable data, IDataNode node)
+        public void SetData(string path, IDataVariable data, IDataNode node)
         {
             IDataNode current = GetOrAddNode(path, node);
             current.SetData(data);
@@ -152,7 +152,7 @@ namespace Cosmos.Data
         }
         protected override void OnInitialization()
         {
-            rootNode = DataNode.Create(RootName, null);
+            rootNode = DataNode.Create(ROOT_NAME, null);
         }
         /// <summary>
         /// 数据结点路径切分工具函数；
@@ -163,9 +163,9 @@ namespace Cosmos.Data
         {
             if (string.IsNullOrEmpty(path))
             {
-                return EmptyStringArray;
+                return emptyStringArray;
             }
-            return path.Split(PathSplitSeparator, StringSplitOptions.RemoveEmptyEntries);
+            return path.Split(pathSplitSeparator, StringSplitOptions.RemoveEmptyEntries);
         }
         #endregion
     }

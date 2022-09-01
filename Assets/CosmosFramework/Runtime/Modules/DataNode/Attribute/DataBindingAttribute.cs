@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Cosmos.Data
+namespace Cosmos.DataNode
 {
     /// <summary>
     ///  数据绑定标记 

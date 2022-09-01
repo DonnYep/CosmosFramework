@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-namespace Cosmos.Data
+namespace Cosmos.DataNode
 {
     /// <summary>
     /// 数据结点接口。
@@ -27,23 +27,23 @@ namespace Cosmos.Data
         /// </summary>
         /// <typeparam name="T">要获取的数据类型。</typeparam>
         /// <returns>指定类型的数据。</returns>
-        T GetData<T>() where T : Variable;
+        T GetData<T>() where T : IDataVariable;
         /// <summary>
         /// 获取数据结点的数据。
         /// </summary>
         /// <returns>数据结点数据。</returns>
-        Variable GetData();
+        IDataVariable GetData();
         /// <summary>
         /// 设置数据结点的数据。
         /// </summary>
         /// <typeparam name="T">要设置的数据类型。</typeparam>
         /// <param name="data">要设置的数据。</param>
-        void SetData<T>(T data) where T : Variable;
+        void SetData<T>(T data) where T : IDataVariable;
         /// <summary>
         /// 设置数据结点的数据。
         /// </summary>
         /// <param name="data">要设置的数据。</param>
-        void SetData(Variable data);
+        void SetData(IDataVariable data);
         /// <summary>
         /// 根据索引检查是否存在子数据结点。
         /// </summary>
