@@ -26,33 +26,10 @@ namespace Cosmos.UI
         public bool Active
         {
             get { return active; }
-            set
-            {
-                if (active != value)
-                {
-                    active = value;
-                    if (active)
-                        OnOpen();
-                    else
-                        OnClose();
-                }
-            }
+            set { active = value; }
         }
         /// <inheritdoc/>
-        public int Priority
-        {
-            get { return priority; }
-            set
-            {
-                if (value > 10000)
-                    priority = 10000;
-                else if (value < 0)
-                    priority = 0;
-                var peerComps = gameObject.GetComponentsInPeer<UGUIUIForm>(transform);
-                Utility.Unity.SortCompsByAscending(peerComps, (comp) => comp.Priority);
-            }
-        }
-        protected int priority = 100;
+        public virtual int Order { get; set; }
         /// <inheritdoc/>
         public object Handle { get { return gameObject; } }
         string uiFormName;
@@ -87,6 +64,11 @@ namespace Cosmos.UI
         public virtual void OnOpen()
         {
             gameObject.SetActive(true);
+        }
+        ///<inheritdoc/>
+        public virtual void OnOrderChange(int index)
+        {
+            transform.SetSiblingIndex(index);
         }
         ///<inheritdoc/>
         public virtual void OnClose()
@@ -149,5 +131,7 @@ namespace Cosmos.UI
             }
             return comp;
         }
+
+
     }
 }

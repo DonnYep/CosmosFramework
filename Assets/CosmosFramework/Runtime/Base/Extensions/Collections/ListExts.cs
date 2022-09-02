@@ -6,7 +6,7 @@ namespace Cosmos
 {
     public static class ListExts
     {
-        private static readonly Random _rnd = new Random();
+        private static readonly Random random = new Random();
         public static TValue RemoveLast<TValue>(this List<TValue> @this)
         {
             var index = @this.Count - 1;
@@ -32,7 +32,7 @@ namespace Cosmos
         }
         public static T RandomItem<T>(this IList<T> @this, Random rnd = null)
         {
-            return @this[(rnd ?? _rnd).Next(@this.Count)];
+            return @this[(rnd ?? random).Next(@this.Count)];
         }
         public static void InsertRange<T>(this IList<T> @this, int index, IEnumerable<T> items)
         {

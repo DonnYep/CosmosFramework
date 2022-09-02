@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Cosmos;
-using System;
 /// <summary>
 /// 算法案例类
 /// </summary>
