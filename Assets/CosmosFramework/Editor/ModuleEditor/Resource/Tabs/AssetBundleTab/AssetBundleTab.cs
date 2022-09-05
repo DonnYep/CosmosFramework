@@ -2,7 +2,7 @@
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-using Unity.EditorCoroutines.Editor;
+using Cosmos.Unity.EditorCoroutines.Editor;
 using System.Collections;
 using Cosmos.Resource;
 

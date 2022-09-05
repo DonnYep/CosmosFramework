@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Unity.EditorCoroutines.Editor
+namespace Cosmos.Unity.EditorCoroutines.Editor
 {
     public static class EditorWindowCoroutineExtension
     {

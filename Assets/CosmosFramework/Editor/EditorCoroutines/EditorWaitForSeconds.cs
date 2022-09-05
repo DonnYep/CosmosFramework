@@ -1,4 +1,4 @@
-﻿namespace Unity.EditorCoroutines.Editor
+﻿namespace Cosmos.Unity.EditorCoroutines.Editor
 {
     /// <summary>
     /// Suspends the <see cref="EditorCoroutine">EditorCoroutine</see> execution for the given amount of seconds, using unscaled time. 

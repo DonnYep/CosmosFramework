@@ -5,7 +5,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using System.Collections;
 using System.IO;
-using Unity.EditorCoroutines.Editor;
+using Cosmos.Unity.EditorCoroutines.Editor;
 using System.Linq;
 
 namespace Cosmos.Editor.Resource

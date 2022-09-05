@@ -23,6 +23,10 @@ namespace Cosmos.UI
             {
                 return other.UIFormName == UIFormName;
             }
+            public override bool Equals(object obj)
+            {
+                return Equals(obj as UIFormInfo);
+            }
         }
     }
 }
