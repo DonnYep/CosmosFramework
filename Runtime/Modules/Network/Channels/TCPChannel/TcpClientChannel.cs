@@ -5,9 +5,11 @@ namespace Cosmos.Network
     public class TcpClientChannel : INetworkClientChannel
     {
         Client client;
-        string channelName;
-        public bool IsConnect { get { return client.Connected; } }
         Action onAbort;
+        ///<inheritdoc/>
+        public string ChannelName { get; set; }
+        ///<inheritdoc/>
+        public bool IsConnect { get { return client.Connected; } }
         public event Action OnAbort
         {
             add { onAbort += value; }
@@ -29,49 +31,53 @@ namespace Cosmos.Network
             add { client.OnDisconnected += value; }
             remove { client.OnDisconnected -= value; }
         }
-        public NetworkChannelKey NetworkChannelKey { get; private set; }
+        ///<inheritdoc/>
         public int Port { get; private set; }
+        ///<inheritdoc/>
         public string IPAddress { get; private set; }
         public TcpClientChannel(string channelName)
         {
-            this.channelName = channelName;
+            this.ChannelName = channelName;
             client = new Client(TcpConstants.MaxMessageSize);
             Log.Info = (s) => Utility.Debug.LogInfo(s);
             Log.Warning = (s) => Utility.Debug.LogWarning(s);
             Log.Error = (s) => Utility.Debug.LogError(s);
         }
+        ///<inheritdoc/>
         public void Connect(string ip, int port)
         {
-            NetworkChannelKey = new NetworkChannelKey(channelName, $"{ip}:{port}");
             this.IPAddress = ip;
             this.Port = port;
             client.Connect(IPAddress, Port);
-            client.OnData += OnReceiveDataHandler;
+            client.OnData = OnReceiveDataHandler;
         }
+        ///<inheritdoc/>
         public void TickRefresh()
         {
             client.Tick(100);
         }
+        ///<inheritdoc/>
         public bool SendMessage(byte[] data)
         {
             var segment = new ArraySegment<byte>(data);
             return client.Send(segment);
         }
+        ///<inheritdoc/>
         public void Disconnect()
         {
             client.Disconnect();
+            client.OnData = null;
             onDataReceived = null;
         }
+        ///<inheritdoc/>
         public void AbortChannnel()
         {
             Disconnect();
-            NetworkChannelKey = NetworkChannelKey.None;
             onAbort?.Invoke();
         }
         void OnReceiveDataHandler(ArraySegment<byte> arrSeg)
         {
             onDataReceived?.Invoke(arrSeg.Array);
         }
-
     }
 }

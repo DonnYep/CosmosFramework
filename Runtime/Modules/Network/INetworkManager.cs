@@ -6,6 +6,8 @@
     *与客户端。客户端与服务器通道两条线并行，并且维护各自的逻辑；
     *
     *2、此模块线程安全；
+    *
+    *3、网络模块只维护通道，具体操作需要根据通道本身作处理；
     */
     //================================================
     public interface INetworkManager : IModuleManager
@@ -15,16 +17,12 @@
         /// </summary>
         int NetworkChannelCount { get; }
         /// <summary>
-        /// 通道key；
-        /// </summary>
-        NetworkChannelKey[] NetworkChannelKeys { get; }
-        /// <summary>
         /// 添加通道；
         /// </summary>
-        /// <param name="channelKey">通道key</param>
+        /// <param name="channeName">通道名</param>
         /// <param name="channel">通道</param>
         /// <returns>是否添加成功</returns>
-        bool AddChannel(NetworkChannelKey channelKey, INetworkChannel channel);
+        bool AddChannel(string channeName, INetworkChannel channel);
         /// <summary>
         /// 添加或更新通道；
         /// </summary>
@@ -39,23 +37,23 @@
         /// <summary>
         /// 移除通道；
         /// </summary>
-        /// <param name="channelKey">通道key</param>
+        /// <param name="channelName">通道名</param>
         /// <param name="channel">通道</param>
         /// <returns>是否移除成功</returns>
-        bool RemoveChannel(NetworkChannelKey channelKey, out INetworkChannel channel);
+        bool RemoveChannel(string channelName, out INetworkChannel channel);
         /// <summary>
         /// 获取一个通道；
         /// </summary>
-        /// <param name="channelKey">通道key</param>
+        /// <param name="channelName">通道名</param>
         /// <param name="channel">通道</param>
         /// <returns>是否获取成功</returns>
-        bool PeekChannel(NetworkChannelKey channelKey, out INetworkChannel channel);
+        bool PeekChannel(string channelName, out INetworkChannel channel);
         /// <summary>
         /// 是否存在通道；
         /// </summary>
-        /// <param name="channelKey">通道key</param>
+        /// <param name="channelName">通道名</param>
         /// <returns>是否存在通道</returns>
-        bool HasChannel(NetworkChannelKey channelKey);
+        bool HasChannel(string channelName);
         /// <summary>
         /// 获取所有存在的通道；
         /// </summary>
@@ -66,14 +64,14 @@
         /// 若通道存在，则返回具体的信息；若不存在，则返回NetworkChannelInfo.None；
         /// <see cref="NetworkChannelInfo "/>
         /// </summary>
-        /// <param name="channelKey">通道key</param>
+        /// <param name="channelName">通道名</param>
         /// <returns>通道的信息</returns>
-        NetworkChannelInfo GetChannelInfo(NetworkChannelKey channelKey);
+        NetworkChannelInfo GetChannelInfo(string channelName);
         /// <summary>
         /// 弃用&终结通道；
         /// </summary>
-        /// <param name="channelKey">通道key</param>
+        /// <param name="channelName">通道名</param>
         /// <returns>是否存在key</returns>
-        bool AbortChannel(NetworkChannelKey channelKey);
+        bool AbortChannel(string channelName);
     }
 }

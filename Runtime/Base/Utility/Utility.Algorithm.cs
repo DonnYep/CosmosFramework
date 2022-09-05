@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Collections.Generic;
 namespace Cosmos
 {
     public static partial class Utility
@@ -19,7 +20,7 @@ namespace Cosmos
             /// <param name="handler">排序条件</param>
             /// <param name="start">起始位</param>
             /// <param name="end">结束位</param>
-            public static void SortByDescend<T, K>(T[] array, Func<T, K> handler, int start, int end)
+            public static void SortByDescend<T, K>(IList<T> array, Func<T, K> handler, int start, int end)
                 where K : IComparable<K>
             {
                 if (array == null)
@@ -55,7 +56,7 @@ namespace Cosmos
             /// <param name="handler">排序条件</param>
             /// <param name="start">起始位</param>
             /// <param name="end">结束位</param>
-            public static void SortByAscend<T, K>(T[] array, Func<T, K> handler, int start, int end)
+            public static void SortByAscend<T, K>(IList<T> array, Func<T, K> handler, int start, int end)
                 where K : IComparable<K>
             {
                 if (array == null)
@@ -89,12 +90,12 @@ namespace Cosmos
             /// <typeparam name="K">比较类型</typeparam>
             /// <param name="array">需要排序的数组对象</param>
             /// <param name="handler">排序条件</param>
-            public static void SortByAscend<T, K>(T[] array, Func<T, K> handler)
+            public static void SortByAscend<T, K>(IList<T> array, Func<T, K> handler)
                 where K : IComparable<K>
             {
-                for (int i = 0; i < array.Length; i++)
+                for (int i = 0; i < array.Count; i++)
                 {
-                    for (int j = 0; j < array.Length; j++)
+                    for (int j = 0; j < array.Count; j++)
                     {
                         if (handler(array[i]).CompareTo(handler(array[j])) < 0)
                         {
@@ -112,12 +113,12 @@ namespace Cosmos
             /// <typeparam name="K">比较类型</typeparam>
             /// <param name="array">需要排序的数组对象</param>
             /// <param name="handler">排序条件</param>
-            public static void SortByDescend<T, K>(T[] array, Func<T, K> handler)
+            public static void SortByDescend<T, K>(IList<T> array, Func<T, K> handler)
                 where K : IComparable<K>
             {
-                for (int i = 0; i < array.Length; i++)
+                for (int i = 0; i < array.Count; i++)
                 {
-                    for (int j = 0; j < array.Length; j++)
+                    for (int j = 0; j < array.Count; j++)
                     {
                         if (handler(array[i]).CompareTo(handler(array[j])) > 0)
                         {
@@ -131,7 +132,7 @@ namespace Cosmos
             /// <summary>
             ///  获取最小
             /// </summary>
-            public static T Min<T, K>(T[] array, Func<T, K> handler)
+            public static T Min<T, K>(IList<T> array, Func<T, K> handler)
             where K : IComparable<K>
             {
                 T temp = default(T);
@@ -148,7 +149,7 @@ namespace Cosmos
             /// <summary>
             /// 获取最大值
             /// </summary>
-            public static T Max<T, K>(T[] array, Func<T, K> handler)
+            public static T Max<T, K>(IList<T> array, Func<T, K> handler)
             where K : IComparable<K>
             {
                 T temp = default(T);
@@ -165,10 +166,10 @@ namespace Cosmos
             /// <summary>
             /// 获得传入元素某个符合条件的所有对象
             /// </summary>
-            public static T Find<T>(T[] array, Predicate<T> handler)
+            public static T Find<T>(IList<T> array, Predicate<T> handler)
             {
                 T temp = default(T);
-                for (int i = 0; i < array.Length; i++)
+                for (int i = 0; i < array.Count; i++)
                 {
                     if (handler(array[i]))
                     {
@@ -180,11 +181,11 @@ namespace Cosmos
             /// <summary>
             /// 获得传入元素某个符合条件的所有对象
             /// </summary>
-            public static T[] FindAll<T>(T[] array, Predicate<T> handler)
+            public static T[] FindAll<T>(IList<T> array, Predicate<T> handler)
             {
-                var dstArray = new T[array.Length];
+                var dstArray = new T[array.Count];
                 int idx = 0;
-                for (int i = 0; i < array.Length; i++)
+                for (int i = 0; i < array.Count; i++)
                 {
                     if (handler(array[i]))
                     {
@@ -199,11 +200,11 @@ namespace Cosmos
             /// 泛型二分查找，需要传入升序数组
             /// </summary>
             /// <returns>返回对象在数组中的序号，若不存在，则返回-1</returns>
-            public static int BinarySearch<T, K>(T[] array, K target, Func<T, K> handler)
+            public static int BinarySearch<T, K>(IList<T> array, K target, Func<T, K> handler)
                 where K : IComparable<K>
             {
                 int first = 0;
-                int last = array.Length - 1;
+                int last = array.Count - 1;
                 while (first <= last)
                 {
                     int mid = first + (last - first) / 2;
@@ -291,7 +292,7 @@ namespace Cosmos
             /// <param name="array">传入的数组</param>
             /// <param name="idxA">序号A</param>
             /// <param name="idxB">序号B</param>
-            public static void Swap<T>(T[] array, int idxA, int idxB)
+            public static void Swap<T>(IList<T> array, int idxA, int idxB)
             {
                 T temp = array[idxA];
                 array[idxA] = array[idxB];
@@ -302,13 +303,13 @@ namespace Cosmos
             /// </summary>
             /// <typeparam name="T">数组类型</typeparam>
             /// <param name="array">数组</param>
-            public static void Disrupt<T>(T[] array)
+            public static void Disrupt<T>(IList<T> array)
             {
                 int index = 0;
                 T tmp;
-                for (int i = 0; i < array.Length; i++)
+                for (int i = 0; i < array.Count; i++)
                 {
-                    index = RandomRange(0, array.Length);
+                    index = RandomRange(0, array.Count);
                     if (index != i)
                     {
                         tmp = array[i];
@@ -360,10 +361,10 @@ namespace Cosmos
             /// <typeparam name="T">可比数据类型</typeparam>
             /// <param name="array">源数据</param>
             /// <returns>去重后的数据</returns>
-            public static T[] Distinct<T>(T[] array)
-                where T:IComparable
+            public static T[] Distinct<T>(IList<T> array)
+                where T : IComparable
             {
-                var length = array.Length;
+                var length = array.Count;
                 T[] dst = new T[length];
                 T temp = array[0];
                 int idx = 0;

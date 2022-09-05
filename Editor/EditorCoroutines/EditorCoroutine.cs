@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Unity.EditorCoroutines.Editor
+namespace Cosmos.Unity.EditorCoroutines.Editor
 {
     /// <summary>
     /// A handle to an EditorCoroutine, can be passed to <see cref="EditorCoroutineUtility">EditorCoroutineUtility</see> methods to control lifetime.
@@ -38,16 +38,16 @@ namespace Unity.EditorCoroutines.Editor
                 var dataType = DataType.None;
                 double targetTime = -1;
 
-                if(type == typeof(EditorWaitForSeconds))
+                if (type == typeof(EditorWaitForSeconds))
                 {
                     targetTime = EditorApplication.timeSinceStartup + (yield as EditorWaitForSeconds).WaitTime;
                     dataType = DataType.WaitForSeconds;
                 }
-                else if(type == typeof(EditorCoroutine))
+                else if (type == typeof(EditorCoroutine))
                 {
                     dataType = DataType.EditorCoroutine;
                 }
-                else if(type == typeof(AsyncOperation) || type.IsSubclassOf(typeof(AsyncOperation)))
+                else if (type == typeof(AsyncOperation) || type.IsSubclassOf(typeof(AsyncOperation)))
                 {
                     dataType = DataType.AsyncOP;
                 }
@@ -74,9 +74,9 @@ namespace Unity.EditorCoroutines.Editor
                         break;
                 }
 
-                if(advance)
+                if (advance)
                 {
-                    data = default(ProcessorData); 
+                    data = default(ProcessorData);
                     return enumerator.MoveNext();
                 }
                 return true;
@@ -123,7 +123,7 @@ namespace Unity.EditorCoroutines.Editor
         private bool ProcessIEnumeratorRecursive(IEnumerator enumerator)
         {
             var root = enumerator;
-            while(enumerator.Current as IEnumerator != null)
+            while (enumerator.Current as IEnumerator != null)
             {
                 kIEnumeratorProcessingStack.Push(enumerator);
                 enumerator = enumerator.Current as IEnumerator;

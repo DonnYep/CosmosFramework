@@ -1,4 +1,4 @@
-﻿namespace Cosmos
+﻿namespace Cosmos.Network
 {
     public class TcpConstants
     {

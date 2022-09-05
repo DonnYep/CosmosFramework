@@ -3,22 +3,10 @@ using UnityEngine;
 namespace Cosmos.UI
 {
     /// <summary>
-    /// UIForm资源帮助体，负责处理资源加载销毁；
+    /// UIForm资源帮助体，处理资源加载与释放；
     /// </summary>
     public interface IUIFormAssetHelper
     {
-        /// <summary>
-        /// 附加UIForm到一个UIForm上；
-        /// </summary>
-        /// <param name="src">挂载到其他对象</param>
-        /// <param name="dst">被其他对象挂载</param>
-        void AttachTo(IUIForm src, IUIForm dst);
-        /// <summary>
-        /// 移除挂载；
-        /// </summary>
-        /// <param name="src">原本挂在其他form的对象</param>
-        /// <param name="dst">原本被其他对象挂着的form</param>
-        void DetachFrom(IUIForm src, IUIForm dst);
         /// <summary>
         /// 异步实例化UIForm；
         /// </summary>

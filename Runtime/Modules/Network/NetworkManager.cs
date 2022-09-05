@@ -18,34 +18,32 @@ namespace Cosmos.Network
         /// <summary>
         /// ChannelName===INetworkChannel
         /// </summary>
-        ConcurrentDictionary<NetworkChannelKey, INetworkChannel> channelDict;
+        ConcurrentDictionary<string, INetworkChannel> channelDict;
         ///<inheritdoc/>
         public int NetworkChannelCount { get { return channelDict.Count; } }
         ///<inheritdoc/>
-        public NetworkChannelKey[] NetworkChannelKeys { get { return channelDict.Keys.ToArray(); } }
-        ///<inheritdoc/>
         public bool AddChannel(INetworkChannel channel)
         {
-            var channelKey = channel.NetworkChannelKey;
-            return channelDict.TryAdd(channelKey, channel);
+            var channelName = channel.ChannelName;
+            return channelDict.TryAdd(channelName, channel);
         }
         ///<inheritdoc/>
-        public bool AddChannel(NetworkChannelKey channelKey, INetworkChannel channel)
+        public bool AddChannel(string channelName, INetworkChannel channel)
         {
-            return channelDict.TryAdd(channelKey, channel);
+            return channelDict.TryAdd(channelName, channel);
         }
         ///<inheritdoc/>
         public void AddOrUpdateChannel(INetworkChannel channel)
         {
-            var channelKey = channel.NetworkChannelKey;
-            if(channelDict.Remove(channelKey,out var oldChannel))
+            var channelName = channel.ChannelName;
+            if(channelDict.Remove(channelName,out var oldChannel))
                 oldChannel.AbortChannnel();
-            channelDict.TryAdd(channelKey, channel);
+            channelDict.TryAdd(channelName, channel);
         }
         ///<inheritdoc/>
-        public bool RemoveChannel(NetworkChannelKey channelKey, out INetworkChannel channel)
+        public bool RemoveChannel(string channelName, out INetworkChannel channel)
         {
-            if (channelDict.TryRemove(channelKey, out channel))
+            if (channelDict.TryRemove(channelName, out channel))
             {
                 channel.AbortChannnel();
                 return true;
@@ -53,14 +51,14 @@ namespace Cosmos.Network
             return false;
         }
         ///<inheritdoc/>
-        public bool PeekChannel(NetworkChannelKey channelKey, out INetworkChannel channel)
+        public bool PeekChannel(string channelName, out INetworkChannel channel)
         {
-            return channelDict.TryGetValue(channelKey, out channel);
+            return channelDict.TryGetValue(channelName, out channel);
         }
         ///<inheritdoc/>
-        public bool HasChannel(NetworkChannelKey channelKey)
+        public bool HasChannel(string channelName)
         {
-            return channelDict.ContainsKey(channelKey);
+            return channelDict.ContainsKey(channelName);
         }
         ///<inheritdoc/>
         public INetworkChannel[] GetAllChannels()
@@ -68,22 +66,22 @@ namespace Cosmos.Network
             return channelDict.Values.ToArray();
         }
         ///<inheritdoc/>
-        public NetworkChannelInfo GetChannelInfo(NetworkChannelKey channelKey)
+        public NetworkChannelInfo GetChannelInfo(string channelName)
         {
-            if (channelDict.TryGetValue(channelKey, out var channel))
+            if (channelDict.TryGetValue(channelName, out var channel))
             {
                 var info = new NetworkChannelInfo();
-                info.IPAddress = channel.NetworkChannelKey.ChannelIPAddress;
-                info.Name = channel.NetworkChannelKey.ChannelName;
+                info.IPAddress = channel.IPAddress;
+                info.Name = channel.ChannelName;
                 info.ChannelType = channel.GetType();
                 return info;
             }
             return NetworkChannelInfo.None;
         }
         ///<inheritdoc/>
-        public bool AbortChannel(NetworkChannelKey channelKey)
+        public bool AbortChannel(string channelName)
         {
-            if (channelDict.TryRemove(channelKey, out var channel))
+            if (channelDict.TryRemove(channelName, out var channel))
             {
                 channel.AbortChannnel();
                 return true;
@@ -93,7 +91,7 @@ namespace Cosmos.Network
         protected override void OnInitialization()
         {
             IsPause = false;
-            channelDict = new ConcurrentDictionary<NetworkChannelKey, INetworkChannel>();
+            channelDict = new ConcurrentDictionary<string, INetworkChannel>();
         }
         protected override void OnTermination()
         {

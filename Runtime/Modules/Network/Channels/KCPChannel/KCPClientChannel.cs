@@ -1,7 +1,7 @@
 ﻿using System;
-using Cosmos.Network;
-using kcp;
-namespace Cosmos
+using kcp2k;
+
+namespace Cosmos.Network
 {
     //================================================
     /*
@@ -23,12 +23,16 @@ namespace Cosmos
     /// </summary>
     public class KCPClientChannel : INetworkClientChannel
     {
-        string channelName;
-        KcpClientService kcpClientService;
+        ///<inheritdoc/>
+        public string ChannelName { get; set; }
+
+        KcpClient client;
+
         Action onConnected;
         Action onDisconnected;
         Action<byte[]> onDataReceived;
         Action onAbort;
+        Action<string> onError;
         public event Action OnAbort
         {
             add { onAbort += value; }
@@ -49,47 +53,48 @@ namespace Cosmos
             add { onDataReceived += value; }
             remove { onDataReceived -= value; }
         }
-        public NetworkProtocol NetworkProtocol { get; set; }
-        public bool IsConnect { get; private set; }
-        public NetworkChannelKey NetworkChannelKey { get; private set; }
-
+        public event Action<string> OnError
+        {
+            add { onError += value; }
+            remove { onError -= value; }
+        }
+        ///<inheritdoc/>
+        public bool IsConnect { get { return client.connected; } }
+        ///<inheritdoc/>
         public int Port { get; private set; }
+        ///<inheritdoc/>
         public string IPAddress { get; private set; }
-
         public KCPClientChannel(string channelName)
         {
-            this.channelName = channelName;
-            KCPLog.Info = (s) => Utility.Debug.LogInfo(s);
-            KCPLog.Warning = (s) => Utility.Debug.LogWarning(s);
-            KCPLog.Error = (s) => Utility.Debug.LogError(s);
+            this.ChannelName = channelName;
+            Log.Info = (s) => Utility.Debug.LogInfo(s);
+            Log.Warning = (s) => Utility.Debug.LogWarning(s);
+            Log.Error = (s) => Utility.Debug.LogError(s);
+            client = new KcpClient(
+                OnConnectHandler,
+                OnReceiveDataHandler,
+                OnDisconnectHandler,
+                OnErrorHandler
+            );
         }
+        ///<inheritdoc/>
         public void Connect(string ip, int port)
         {
             this.IPAddress = ip;
             this.Port = port;
-            NetworkChannelKey = new NetworkChannelKey(channelName, $"{ip}:{port}");
-            kcpClientService = new KcpClientService();
-            kcpClientService.ServiceSetup();
-            kcpClientService.OnClientDataReceived += OnReceiveDataHandler;
-            kcpClientService.OnClientConnected += OnConnectHandler;
-            kcpClientService.OnClientDisconnected += OnDisconnectHandler;
-            kcpClientService.ServiceUnpause();
-            kcpClientService.Port = (ushort)Port;
-            kcpClientService.ServiceConnect(IPAddress);
+            client.Connect(IPAddress, (ushort)port, true, 10);
         }
+        ///<inheritdoc/>
         public void TickRefresh()
         {
-            kcpClientService?.ServiceTick();
+            client?.Tick();
         }
+        ///<inheritdoc/>
         public void Disconnect()
         {
-            kcpClientService?.ServiceDisconnect();
+            client.Disconnect();
         }
-        /// <summary>
-        /// 发送数据到remote;
-        /// 默认为可靠类型；
-        /// </summary>
-        /// <param name="data">数据</param>
+        ///<inheritdoc/>
         public bool SendMessage(byte[] data)
         {
             return SendMessage(NetworkReliableType.Reliable, data);
@@ -105,19 +110,26 @@ namespace Cosmos
                 return false;
             var arraySegment = new ArraySegment<byte>(data);
             var byteType = (byte)reliableType;
-            kcpClientService?.ServiceSend((KcpChannel)byteType, arraySegment);
+            var channelId = (KcpChannel)byteType;
+            switch (channelId)
+            {
+                case KcpChannel.Unreliable:
+                    client.Send(arraySegment, KcpChannel.Unreliable);
+                    break;
+                default:
+                    client.Send(arraySegment, KcpChannel.Reliable);
+                    break;
+            }
             return true;
         }
+        ///<inheritdoc/>
         public void AbortChannnel()
         {
             Disconnect();
-            NetworkChannelKey = NetworkChannelKey.None;
             onAbort?.Invoke();
         }
         void OnDisconnectHandler()
         {
-            IsConnect = false;
-            Utility.Debug.LogError($"{NetworkChannelKey} disconnected ! ");
             onDisconnected?.Invoke();
             onConnected = null;
             onDisconnected = null;
@@ -125,16 +137,18 @@ namespace Cosmos
         }
         void OnConnectHandler()
         {
-            IsConnect = true;
-            Utility.Debug.LogWarning($"{NetworkChannelKey} connected ! ");
             onConnected?.Invoke();
         }
-        void OnReceiveDataHandler(ArraySegment<byte> arrSeg, byte channel)
+        void OnReceiveDataHandler(ArraySegment<byte> arrSeg, KcpChannel channel)
         {
             var rcvLen = arrSeg.Count;
             var rcvData = new byte[rcvLen];
             Array.Copy(arrSeg.Array, arrSeg.Offset, rcvData, 0, rcvLen);
             onDataReceived?.Invoke(rcvData);
+        }
+        void OnErrorHandler(ErrorCode error, string reason)
+        {
+            onError?.Invoke($"{error}-{reason}");
         }
     }
 }

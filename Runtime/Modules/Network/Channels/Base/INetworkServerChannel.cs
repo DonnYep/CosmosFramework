@@ -36,6 +36,12 @@ namespace Cosmos.Network
         /// <param name="connectionId">连接Id</param>
         bool SendMessage(int connectionId,byte[] data);
         /// <summary>
+        /// 与连接Id断开连接
+        /// </summary>
+        /// <param name="connectionId">连接Id</param>
+        /// <returns>断开结果</returns>
+        bool Disconnect(int connectionId);
+        /// <summary>
         /// 获取连接Id的地址；
         /// </summary>
         /// <param name="connectionId">连接Id</param>

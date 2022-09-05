@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-namespace Cosmos.Data
+namespace Cosmos.DataNode
 {
     internal sealed partial class DataNodeManager
     {
@@ -11,7 +11,7 @@ namespace Cosmos.Data
         {
             private static readonly DataNode[] EmptyDataNodeArray = new DataNode[] { };
             private string nodeName;
-            private Variable nodeData;
+            private IDataVariable nodeData;
             private DataNode nodeParent;
             private List<DataNode> nodeChilds;
 
@@ -51,7 +51,7 @@ namespace Cosmos.Data
             {
                 get
                 {
-                    return nodeParent == null ? nodeName : $"{nodeParent.FullName}{PathSplitSeparator[0]}{nodeName}";
+                    return nodeParent == null ? nodeName : $"{nodeParent.FullName}{pathSplitSeparator[0]}{nodeName}";
                 }
             }
             /// <summary>
@@ -79,7 +79,7 @@ namespace Cosmos.Data
             /// </summary>
             /// <typeparam name="T">要获取的数据类型。</typeparam>
             /// <returns>指定类型的数据。</returns>
-            public T GetData<T>() where T : Variable
+            public T GetData<T>() where T : IDataVariable
             {
                 return (T)nodeData;
             }
@@ -87,7 +87,7 @@ namespace Cosmos.Data
             /// 获取数据结点的数据。
             /// </summary>
             /// <returns>数据结点数据。</returns>
-            public Variable GetData()
+            public IDataVariable GetData()
             {
                 return nodeData;
             }
@@ -96,15 +96,15 @@ namespace Cosmos.Data
             /// </summary>
             /// <typeparam name="T">要设置的数据类型。</typeparam>
             /// <param name="data">要设置的数据。</param>
-            public void SetData<T>(T data) where T : Variable
+            public void SetData<T>(T data) where T : IDataVariable
             {
-                SetData((Variable)data);
+                SetData((IDataVariable)data);
             }
             /// <summary>
             /// 设置数据结点的数据。
             /// </summary>
             /// <param name="data">要设置的数据。</param>
-            public void SetData(Variable data)
+            public void SetData(IDataVariable data)
             {
                 if (nodeData != null)
                 {
@@ -328,7 +328,7 @@ namespace Cosmos.Data
                     return false;
                 }
 
-                foreach (string pathSplitSeparator in PathSplitSeparator)
+                foreach (string pathSplitSeparator in pathSplitSeparator)
                 {
                     if (name.Contains(pathSplitSeparator))
                     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Unity.EditorCoroutines.Editor
+namespace Cosmos.Unity.EditorCoroutines.Editor
 {
     public static class EditorCoroutineUtility
     {

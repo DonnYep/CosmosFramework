@@ -5,9 +5,7 @@ namespace Cosmos.Network
     public class TcpServerChannel : INetworkServerChannel
     {
         Server server;
-        /// <summary>
-        ///  check if the server is running
-        /// </summary>
+        ///<inheritdoc/>
         public bool Active { get { return server.Active; } }
         Action onAbort;
         public event Action OnAbort
@@ -31,57 +29,72 @@ namespace Cosmos.Network
             add { server.OnDisconnected += value; }
             remove { server.OnDisconnected -= value; }
         }
-        public NetworkChannelKey NetworkChannelKey { get; private set; }
+        ///<inheritdoc/>
+        public string ChannelName { get; set; }
+        ///<inheritdoc/>
         public int Port { get; private set; }
+        ///<inheritdoc/>
+        public string IPAddress 
+        {
+            get { return server.listener.LocalEndpoint.ToString(); } 
+        }
         public TcpServerChannel(string channelName, int port)
         {
-            NetworkChannelKey = new NetworkChannelKey(channelName, $"localhost:{port}");
+            this.ChannelName = channelName;
             server = new Server(TcpConstants.MaxMessageSize);
             Log.Info = (s) => Utility.Debug.LogInfo(s);
             Log.Warning = (s) => Utility.Debug.LogWarning(s);
             Log.Error = (s) => Utility.Debug.LogError(s);
             this.Port = port;
         }
+        ///<inheritdoc/>
         public bool StartServer()
         {
             if (server.Start(Port))
             {
-                server.OnData += OnReceiveDataHandler;
+                server.OnData = OnReceiveDataHandler;
                 return true;
             }
             return false;
         }
+        ///<inheritdoc/>
         public bool Disconnect(int connectionId)
         {
             if (server.Disconnect(connectionId))
             {
-                server.OnData -= OnReceiveDataHandler;
                 return true;
             }
             return false;
         }
+        ///<inheritdoc/>
         public string GetConnectionAddress(int connectionId)
         {
             return server.GetClientAddress(connectionId);
         }
+        ///<inheritdoc/>
         public bool SendMessage(int connectionId, byte[] data)
         {
             var segment = new ArraySegment<byte>(data);
             return server.Send(connectionId, segment);
         }
+        ///<inheritdoc/>
         public void TickRefresh()
         {
             server.Tick(100);
         }
+        ///<inheritdoc/>
         public void StopServer()
         {
             server.Stop();
+            server.OnData = null;
+            onDataReceived = null;
         }
+        ///<inheritdoc/>
         public void AbortChannnel()
         {
             StopServer();
-            NetworkChannelKey = NetworkChannelKey.None;
             onAbort?.Invoke();
+            onAbort = null;
         }
         void OnReceiveDataHandler(int conv, ArraySegment<byte> arrSeg)
         {

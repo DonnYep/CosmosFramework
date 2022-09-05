@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using Unity.EditorCoroutines.Editor;
+using Cosmos.Unity.EditorCoroutines.Editor;
 namespace Cosmos.Editor
 {
     public static partial class EditorUtil

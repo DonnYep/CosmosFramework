@@ -1,7 +1,7 @@
 ﻿using Cosmos.Audio;
 using Cosmos.Config;
 using Cosmos.Controller;
-using Cosmos.Data;
+using Cosmos.DataNode;
 using Cosmos.DataTable;
 using Cosmos.Download;
 using Cosmos.Entity;

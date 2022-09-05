@@ -1,4 +1,4 @@
-﻿// IMPORTANT
+// IMPORTANT
 // force all thread functions to be STATIC.
 // => Common.Send/ReceiveLoop is EXTREMELY DANGEROUS because it's too easy to
 //    accidentally share Common state between threads.
