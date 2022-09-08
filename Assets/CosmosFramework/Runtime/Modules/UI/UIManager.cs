@@ -48,10 +48,14 @@ namespace Cosmos.UI
         /// UIFormInfo缓存；
         /// </summary>
         List<UIFormInfo> uiFormInfoCache;
-
-
-        LinkedList<UIFormInfo> activeUIForms = new LinkedList<UIFormInfo>();
-        LinkedList<UIFormInfo> deactiveUIForms = new LinkedList<UIFormInfo>();
+        /// <summary>
+        /// 激活的UI链表；
+        /// </summary>
+        LinkedList<UIFormInfo> activeUILnk;
+        /// <summary>
+        /// 失活的UI链表；
+        /// </summary>
+        LinkedList<UIFormInfo> deactiveUILnk;
         #endregion
         #region Methods
         /// <inheritdoc/>
@@ -329,6 +333,8 @@ namespace Cosmos.UI
             loadingUIForms = new HashSet<string>();
             uiFormsToRelease = new HashSet<string>();
             uiFormsToClose = new HashSet<string>();
+            activeUILnk = new LinkedList<UIFormInfo>();
+            deactiveUILnk=new LinkedList<UIFormInfo>();
         }
         [TickRefresh]
         void TickRefresh()
@@ -405,7 +411,7 @@ namespace Cosmos.UI
         void OnUIFormActive(UIFormInfo uiFormInfo)
         {
             uiFormInfo.Order = uiFormInfo.UIForm.Order;
-            var current = activeUIForms.First;
+            var current = activeUILnk.First;
             var added = false;
             while (current != null && current.Value != null)
             {
@@ -413,7 +419,7 @@ namespace Cosmos.UI
                 {
                     //若激活的uiFormInfo.Order<当前节点uiFormInfo.Order，则插入当前节点之前
                     //Order示例：0<1(current.Previous)=(1 插入到current.Previous之前)<2(current)
-                    activeUIForms.AddBefore(current, uiFormInfo);
+                    activeUILnk.AddBefore(current, uiFormInfo);
                     added = true;
                     break;
                 }
@@ -421,11 +427,11 @@ namespace Cosmos.UI
             }
             if (!added)
             {
-                activeUIForms.AddLast(uiFormInfo);
+                activeUILnk.AddLast(uiFormInfo);
             }
-            deactiveUIForms.Remove(uiFormInfo);
+            deactiveUILnk.Remove(uiFormInfo);
             var index = 0;
-            foreach (var info in activeUIForms)
+            foreach (var info in activeUILnk)
             {
                 info.UIForm.OnOrderChange(index);
                 index++;
@@ -433,16 +439,16 @@ namespace Cosmos.UI
         }
         void OnUIFormDeactive(UIFormInfo uiFormInfo)
         {
-            activeUIForms.Remove(uiFormInfo);
-            deactiveUIForms.AddLast(uiFormInfo);
+            activeUILnk.Remove(uiFormInfo);
+            deactiveUILnk.AddLast(uiFormInfo);
         }
         void OnUIFormOrderChange(UIFormInfo uiFormInfo)
         {
             if (!uiFormInfo.IsOpened)//若为非激活状态，则返回
                 return;
             //若为激活状态，则移除队列，并重新添加到链表中；
-            activeUIForms.Remove(uiFormInfo);
-            var current = activeUIForms.First;
+            activeUILnk.Remove(uiFormInfo);
+            var current = activeUILnk.First;
             var added = false;
             while (current != null && current.Value != null)
             {
@@ -450,7 +456,7 @@ namespace Cosmos.UI
                 {
                     //若激活的uiFormInfo.Order<当前节点uiFormInfo.Order，则插入当前节点之前
                     //Order示例：0<1(current.Previous)=(1 插入到current.Previous之前)<2(current)
-                    activeUIForms.AddBefore(current, uiFormInfo);
+                    activeUILnk.AddBefore(current, uiFormInfo);
                     added = true;
                     break;
                 }
@@ -458,7 +464,7 @@ namespace Cosmos.UI
             }
             if (!added)
             {
-                activeUIForms.AddLast(uiFormInfo);
+                activeUILnk.AddLast(uiFormInfo);
             }
         }
         #endregion
