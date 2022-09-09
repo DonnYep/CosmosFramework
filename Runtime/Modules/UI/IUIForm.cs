@@ -27,7 +27,7 @@
         /// </summary>
         void OnOpen();
         /// <summary>
-        /// 当顺序更改；
+        /// 顺序更改，当且仅当激活状态下会被触发；
         /// </summary>
         /// <param name="index">当前顺序id</param>
         void OnOrderChange(int index);
