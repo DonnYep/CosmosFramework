@@ -67,14 +67,14 @@ namespace Cosmos.UI
         public Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback = null)
         {
             CheckUIAssetInfoValid(assetInfo, uiType);
-            if (uiFormInfoLoadedDict.TryGetValue(assetInfo.UIFormName, out var uiInfo))
+            var uiFormName = assetInfo.UIFormName;
+            if (uiFormInfoLoadedDict.TryGetValue(uiFormName, out var uiInfo))
             {
                 uiInfo.UIForm.Active = true;
                 return null;
             }
             else
             {
-                var uiFormName = assetInfo.UIFormName;
                 var canLoad = loadingUIForms.Add(uiFormName);
                 if (!canLoad)//处于加载名单中
                 {
@@ -334,7 +334,7 @@ namespace Cosmos.UI
             uiFormsToRelease = new HashSet<string>();
             uiFormsToClose = new HashSet<string>();
             activeUILnk = new LinkedList<UIFormInfo>();
-            deactiveUILnk=new LinkedList<UIFormInfo>();
+            deactiveUILnk = new LinkedList<UIFormInfo>();
         }
         [TickRefresh]
         void TickRefresh()
