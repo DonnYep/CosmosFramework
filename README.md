@@ -58,7 +58,7 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 
 - **Network**:网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP、TCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可实现(Client-Server)模式。支持async/await语法。
 
-- **UI**:UI模块。基于UGUI实现。提供UI常用功能，如优先级、现实隐藏、获取与设置组别等。扩展方法对按钮等一些常用组件进行了扩展，无需手动实现按钮抬起、按下等接口实现即可监听。支持常用UIBehaiour类型的triggerEvent。
+- **UI**:UI模块。抽象化的UI组件，可自定义扩展多种UI方案以及UI的加载方式。支持激活失活，面板优先级，组别设置等功能，使用更轻便。框架提供了基于UGUI实现的面板类与资源加载帮助体也可使用自定义扩展类型。目前稳定兼容FGUI。
 
 - **Main**:模块中心。自定义模块与扩展模块都存于此。自定义模块按照内置模块相同格式写入后，可享有完全同等与内置模块的生命周期与权限。几乎与内置模块无异。此主模块的内置轮询池:FixedRefreshHandler、LateRefreshHandler、RefreshHandler、ElapseRefreshHandler可对需要统一进行轮询管理的对象进行统一轮询，减少由于过多的Update等mono回调导致的性能损耗。
 
