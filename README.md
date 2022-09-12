@@ -13,14 +13,17 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 <a name="导航"></a>
 
 # 导航
-- [环境](#环境)
-- [模块简介](#模块简介)
-- [内置数据结构、工具](#内置数据结构、工具)
-- [内置架构 PureMVC](#内置架构-PureMVC)
-- [注意事项](#注意事项)
-- [UPM](#UPM)
-- [其他](#其他)
-- [Librarylink](#Library-link)
+- [English](#english)
+- [CosmosFramework](#cosmosframework)
+- [导航](#导航)
+  - [环境](#环境)
+  - [模块简介](#模块简介)
+  - [内置数据结构、工具](#内置数据结构工具)
+  - [内置架构 PureMVC](#内置架构-puremvc)
+  - [注意事项](#注意事项)
+  - [UPM](#upm)
+  - [其他](#其他)
+  - [Library link](#library-link)
 
 <a name="环境"></a>
 
@@ -58,7 +61,7 @@ CosmosFramework是一款轻量级的Unity开发框架。拥有丰富的Unity方�
 
 - **Network**:网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP、TCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可实现(Client-Server)模式。支持async/await语法。
 
-- **UI**:UI模块。抽象化的UI组件，可自定义扩展多种UI方案以及UI的加载方式。支持激活失活，面板优先级，组别设置等功能，使用更轻便。框架提供了基于UGUI实现的面板类与资源加载帮助体也可使用自定义扩展类型。目前稳定兼容FGUI。
+- **UI**:UI模块。抽象实现UI面板以及UI的加载方式。支持激活，失活，面板优先级，组别设置等功能，使用更轻便。框架提供了基于UGUI实现的面板类与资源加载帮助体。其他UI方案可自行扩展，目前稳定兼容FGUI。
 
 - **Main**:模块中心。自定义模块与扩展模块都存于此。自定义模块按照内置模块相同格式写入后，可享有完全同等与内置模块的生命周期与权限。几乎与内置模块无异。此主模块的内置轮询池:FixedRefreshHandler、LateRefreshHandler、RefreshHandler、ElapseRefreshHandler可对需要统一进行轮询管理的对象进行统一轮询，减少由于过多的Update等mono回调导致的性能损耗。
 
