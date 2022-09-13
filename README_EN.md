@@ -13,14 +13,17 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 <a name="Navigation"></a>
 
 # Navigation
-- [Environment](#Environment)
-- [Module Introduction](#Module-Introduction)
-- [Built-in data tructures,tools](#Built-in-data-structures,tools)
-- [Built-in Architecture PureMVC](#Built-in-Architecture-PureMVC)
-- [Cautions](#Cautions)
-- [UPM](#UPM)
-- [Other](#Other)
-- [Library link](#Library-link)
+- [中文](#中文)
+- [CosmosFramework](#cosmosframework)
+- [Navigation](#navigation)
+  - [Environment](#environment)
+  - [Module Introduction](#module-introduction)
+  - [Built-in data structures,tools](#built-in-data-structurestools)
+  - [Built-in Architecture PureMVC](#built-in-architecture-puremvc)
+  - [Cautions](#cautions)
+  - [UPM](#upm)
+  - [Other](#other)
+  - [Library link](#library-link)
 
 <a name="Environment"></a>
 
@@ -58,7 +61,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **Network** : Network module. A variety of high-speed and reliable UDP protocols are provided, such as RUDP, SUDP, KCP, TCP, etc. The KCP protocol is used by default. Network in the form of channel (Channel) to distinguish each connection, support a variety of network types connected at the same time. Can be implemented (Client-Server) mode. Support async/await syntax.
 
-- **UI** : UI module. Based on UGUI implementation. Provide UI common functions, such as priority, reality hiding, getting and setting group. Extension method extends some common components such as buttons, so that you can listen to the interface implementation without manually implementing buttons lift, press, etc. Support commonly used UIBehaiour type triggerEvent.
+- **UI** :  UI module.Abstract implementation of UI panels and the way UI is loaded. Support for activation, deactivation, panel priority, group settings and other functions , the use of more lightweight . Framework provides a panel based on the implementation of UGUI class and resource loading help body . Other UI programs can be extended by themselves , currently stable and compatible with FGUI.
 
 - **Main** : Module Center. Both custom modules and extensions are stored here. Custom modules are written in the same format as the built-in modules and have exactly the same lifecycle and permissions as the built-in modules. It is almost identical to the built-in module. The built-in polling pools of this main module: FixedRefreshHandler, LateRefreshHandler, RefreshHandler, ElapseRefreshHandler can poll the objects that need to be polled uniformly, reducing the performance loss caused by too many update and other mono callbacks. performance loss caused by too many update and other mono callbacks.
 
