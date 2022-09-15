@@ -33,6 +33,5 @@ namespace Cosmos.WebRequest
         {
             ReferencePool.Release(requestTask);
         }
-
     }
 }

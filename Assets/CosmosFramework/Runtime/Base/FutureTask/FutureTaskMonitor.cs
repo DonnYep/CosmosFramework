@@ -7,7 +7,7 @@ namespace Cosmos
         DateTime previousTimeSinceStartup;
         Dictionary<int, FutureTask> futureTaskDict = new Dictionary<int, FutureTask>();
         List<FutureTask> futureTaskCache = new List<FutureTask>();
-        bool isPause=false;
+        bool isPause = false;
         public bool IsPause { get { return isPause; } set { isPause = value; } }
         public void Termination()
         {
@@ -19,9 +19,9 @@ namespace Cosmos
         }
         internal FutureTaskInfo GetFutureTaskInfo(int futureTaskId)
         {
-            if( futureTaskDict.TryGetValue(futureTaskId, out var futureTask))
+            if (futureTaskDict.TryGetValue(futureTaskId, out var futureTask))
             {
-                FutureTaskInfo info = new FutureTaskInfo(futureTask.FutureTaskId,futureTask.ElapsedTime, futureTask.Description);
+                FutureTaskInfo info = new FutureTaskInfo(futureTask.FutureTaskId, futureTask.ElapsedTime, futureTask.Description);
                 return info;
             }
             return FutureTaskInfo.None;
@@ -32,9 +32,9 @@ namespace Cosmos
         }
         internal bool RemoveFutureTask(int futureTaskId)
         {
-            if (futureTaskDict.Remove(futureTaskId,out var futureTask))
+            if (futureTaskDict.Remove(futureTaskId, out var futureTask))
             {
-                ReferencePool.Release(futureTask);
+                futureTask.Release();
                 return true;
             }
             else
