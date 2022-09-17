@@ -95,7 +95,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **Editor** : Editor provides methods to retrieve objects and components commonly used in Hierarchy, and EditorConfig provides the ability to automatically create code headers for code generation.
 
-- **FutureTask**:Asynchronous task detection, supports multi-threaded and concurrent asynchronous progress detection. The detection function needs to be passed in Func<bool> format, and asynchronous detection ends when the condition returns true; Note: FutureTask itself is not a concurrent process, and cannot execute asynchronous tasks instead of a concurrent process. The await/async syntax is not supported at the moment.
+- **FutureTask**:Asynchronous task detection, supports multi-threaded and concurrent asynchronous progress detection. The detection function needs to be passed in Func<bool> format, and asynchronous detection ends when the condition returns true. Support async/await syntax, you can use await statement to wait for the task to complete.
 
 - **Pool**:Pool data structure. Includes thread-safe and non-thread-safe types. Object pools, reference pools and cache pools of other modules in the framework are implemented using "Pool".
     
