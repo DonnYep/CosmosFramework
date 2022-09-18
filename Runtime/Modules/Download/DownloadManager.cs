@@ -107,13 +107,10 @@ namespace Cosmos.Download
             if (this.downloader != null)
             {
                 this.downloader.CancelDownload();
-                FutureTask.Detection(() => this.downloader.Downloading, (ft) =>
-                {
-                    this.downloader.Release();
-                    this.downloader = newDownloader;
-                    this.downloader.DeleteFailureFile = deleteFailureFile;
-                    this.downloader.DownloadTimeout = downloadTimeout;
-                });
+                this.downloader.Release();
+                this.downloader = newDownloader;
+                this.downloader.DeleteFailureFile = deleteFailureFile;
+                this.downloader.DownloadTimeout = downloadTimeout;
             }
         }
         ///<inheritdoc/>

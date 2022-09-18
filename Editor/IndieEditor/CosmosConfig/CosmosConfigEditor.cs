@@ -132,37 +132,25 @@ namespace Cosmos.Editor
                             else
                             {
                                 sp_ResourceBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_ResourceBundlePath.stringValue);
-                                string path = string.Empty;
-                                switch (bundlePathType)
-                                {
-                                    case ResourceBundlePathType.StreamingAssets:
-                                        path = Utility.IO.WebPathCombine(UnityEngine.Application.streamingAssetsPath, sp_ResourceBundlePath.stringValue);
-                                        break;
-                                    case ResourceBundlePathType.PersistentDataPath:
-                                        path = Utility.IO.WebPathCombine(UnityEngine.Application.persistentDataPath, sp_ResourceBundlePath.stringValue);
-                                        break;
-                                }
-                                EditorGUILayout.LabelField($"BundlPath {path}");
+                            }
+                            assetBundleEncrytion = EditorGUILayout.ToggleLeft("AssetBundleEncrytion", assetBundleEncrytion);
+                            if (assetBundleEncrytion != sp_AssetBundleEncrytion.boolValue)
+                            {
+                                sp_AssetBundleEncrytion.boolValue = assetBundleEncrytion;
+                            }
+                            if (assetBundleEncrytion)
+                            {
+                                sp_AssetBundleEncrytionOffset.intValue = EditorGUILayout.IntField("AssetBundleEncrytionOffset", sp_AssetBundleEncrytionOffset.intValue);
+                            }
 
-                                assetBundleEncrytion = EditorGUILayout.ToggleLeft("AssetBundleEncrytion", assetBundleEncrytion);
-                                if (assetBundleEncrytion != sp_AssetBundleEncrytion.boolValue)
-                                {
-                                    sp_AssetBundleEncrytion.boolValue = assetBundleEncrytion;
-                                }
-                                if (assetBundleEncrytion)
-                                {
-                                    sp_AssetBundleEncrytionOffset.intValue = EditorGUILayout.IntField("AssetBundleEncrytionOffset", sp_AssetBundleEncrytionOffset.intValue);
-                                }
-
-                                buildInfoEncrytion = EditorGUILayout.ToggleLeft("BuildInfoEncrytion", buildInfoEncrytion);
-                                if (buildInfoEncrytion != sp_BuildInfoEncrytion.boolValue)
-                                {
-                                    sp_BuildInfoEncrytion.boolValue = buildInfoEncrytion;
-                                }
-                                if (buildInfoEncrytion)
-                                {
-                                    sp_BuildInfoEncrytionKey.stringValue = EditorGUILayout.TextField("BuildInfoEncrytionKey", sp_BuildInfoEncrytionKey.stringValue);
-                                }
+                            buildInfoEncrytion = EditorGUILayout.ToggleLeft("BuildInfoEncrytion", buildInfoEncrytion);
+                            if (buildInfoEncrytion != sp_BuildInfoEncrytion.boolValue)
+                            {
+                                sp_BuildInfoEncrytion.boolValue = buildInfoEncrytion;
+                            }
+                            if (buildInfoEncrytion)
+                            {
+                                sp_BuildInfoEncrytionKey.stringValue = EditorGUILayout.TextField("BuildInfoEncrytionKey", sp_BuildInfoEncrytionKey.stringValue);
                             }
                         }
                         break;
@@ -212,12 +200,12 @@ namespace Cosmos.Editor
             Array.Copy(msgPackSrc, 0, messagePackHelpers, 1, msgPackSrc.Length);
 
             var srcLoaders = Utility.Assembly.GetDerivedTypeNames<IResourceLoadHelper>();
-           var filteredLoader = resourceLoaders = srcLoaders.Where(l =>
-            {
-                return l != typeof(AssetDatabaseLoader).FullName &&
-                  l != typeof(ResourcesLoader).FullName &&
-                  l != typeof(AssetBundleLoader).FullName;
-            }).ToArray();
+            var filteredLoader = resourceLoaders = srcLoaders.Where(l =>
+             {
+                 return l != typeof(AssetDatabaseLoader).FullName &&
+                   l != typeof(ResourcesLoader).FullName &&
+                   l != typeof(AssetBundleLoader).FullName;
+             }).ToArray();
             resourceLoaders = new string[filteredLoader.Length + 1];
             resourceLoaders[0] = CosmosConfig.NONE;
             Array.Copy(srcLoaders, 0, resourceLoaders, 1, filteredLoader.Length);
