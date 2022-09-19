@@ -2,7 +2,7 @@
 
 namespace Cosmos
 {
-    public static class CollectionExts
+    public static class ICollectionExts
     {
         public static void AddRange<T>(this ICollection<T> @this, IEnumerable<T> items)
         {
