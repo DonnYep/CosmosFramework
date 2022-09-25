@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cosmos
 {
-    public static class EnumerableExts
+    public static class IEnumerableExts
     {
         private static readonly Random _rnd = new Random();
         public static IEnumerable<T> Concat<T>(params IEnumerable<T>[] enumerables)
@@ -137,7 +137,6 @@ namespace Cosmos
         {
             return string.Concat(@this);
         }
-
         public static string ConcatString(this IEnumerable<string> @this)
         {
             return string.Concat(@this);

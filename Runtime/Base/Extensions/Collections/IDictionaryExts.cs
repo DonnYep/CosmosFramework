@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cosmos
 {
-    public static class DictionaryExts
+    public static class IDictionaryExts
     {
         public static IDictionary<TValue, TKey> Invert<TKey, TValue>(this IDictionary<TKey, TValue> @this)
         {
@@ -106,6 +106,13 @@ namespace Cosmos
             if (isSuccess)
                 return value;
             return value;
+        }
+        public static void ForEach<TKey, TValue>(this IDictionary<TKey, TValue> @this, Action<TKey, TValue> callback)
+        {
+            foreach (var item in @this)
+            {
+                callback(item.Key, item.Value);
+            }
         }
     }
 }

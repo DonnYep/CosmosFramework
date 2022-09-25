@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
  namespace Cosmos
 {
-    public static class EnumeratorExts
+    public static class IEnumeratorExts
     {
         public static IEnumerator<T> Cast<T>(this IEnumerator @this)
         {
