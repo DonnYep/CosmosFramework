@@ -320,7 +320,11 @@ namespace Cosmos.Editor.Resource
             yield return null;
             EditorUtility.ClearProgressBar();
             EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
+#if UNITY_2021_1_OR_NEWER
+            AssetDatabase.SaveAssetIfDirty(so);
+#elif UNITY_2019_1_OR_NEWER
             AssetDatabase.SaveAssets();
+#endif
             {
                 //这么处理是为了bundleLable能够在编辑器页面一下刷新，放在协程里逐步更新，使用体验并不是很好。
                 resourceBundleLabel.Clear();

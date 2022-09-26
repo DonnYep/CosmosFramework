@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
-using System;
-namespace Cosmos{
+namespace Cosmos
+{
     public class EventListener : MonoBehaviour
     {
         /// <summary>

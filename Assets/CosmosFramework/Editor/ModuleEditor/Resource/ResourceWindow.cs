@@ -147,7 +147,12 @@ namespace Cosmos.Editor.Resource
             so.hideFlags = HideFlags.NotEditable;
             AssetDatabase.CreateAsset(so, "Assets/New ResourceDataset.asset");
             EditorUtility.SetDirty(so);
+
+#if UNITY_2021_1_OR_NEWER
+            AssetDatabase.SaveAssetIfDirty(so);
+#elif UNITY_2019_1_OR_NEWER
             AssetDatabase.SaveAssets();
+#endif
             AssetDatabase.Refresh();
             var dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>("Assets/New ResourceDataset.asset");
             EditorUtil.Debug.LogInfo("ResourceDataset created successfully");
