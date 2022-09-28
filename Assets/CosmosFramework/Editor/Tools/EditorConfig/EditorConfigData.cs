@@ -4,10 +4,11 @@ namespace Cosmos.Editor.Config
     [Serializable]
     public class EditorConfigData 
     {
-        public bool ConsoleDebugLog { get; set; }
-        public bool OutputDebugLog { get; set; }
-        public string LogOutputDirectory { get; set; }
-        public bool EnableScriptHeader { get; set; }
-        public string HeaderAuthor { get; set; }
+        public bool ConsoleDebugLog;
+        public bool OutputDebugLog;
+        public string LogOutputDirectory;
+        public bool EnableScriptHeader;
+        public string HeaderAuthor;
+        public string AuthorMail;
     }
 }
