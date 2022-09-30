@@ -14,6 +14,22 @@ namespace Cosmos.UI
     public interface IUIManager : IModuleManager
     {
         /// <summary>
+        /// UIForm激活回调；
+        /// </summary>
+        event Action<IUIForm> OnUIFormActiveCallback;
+        /// <summary>
+        /// UIForm失活回调；
+        /// </summary>
+        event Action<IUIForm> OnUIFormDeactiveCallback;
+        /// <summary>
+        /// UIForm释放回调；
+        /// </summary>
+        event Action<IUIForm> OnUIFormReleaseCallback;
+        /// <summary>
+        /// UIForm加载完成回调；
+        /// </summary>
+        event Action<IUIForm> OnUIFormLoadCallback;
+        /// <summary>
         /// 设置ui资产加载帮助体；
         /// </summary>
         /// <param name="helper">帮助体对象</param>
