@@ -42,6 +42,15 @@ namespace Cosmos
             {
                 return Process.Start(filePath);
             }
+            /// <summary>
+            /// 获取当前应用的物理内存使用情况；
+            /// </summary>
+            /// <returns>byte长度</returns>
+            public static long GetMemoryUsage()
+            {
+                Process currentProcess = Process.GetCurrentProcess();
+                return currentProcess.WorkingSet64;
+            }
         }
     }
 }
