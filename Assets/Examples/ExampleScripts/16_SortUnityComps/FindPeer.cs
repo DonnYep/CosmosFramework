@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Cosmos;
+﻿using UnityEngine;
 namespace Cosmos.Test
 {
     public class FindPeer : MonoBehaviour

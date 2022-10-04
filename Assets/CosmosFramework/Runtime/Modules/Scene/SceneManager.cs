@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using Cosmos.Resource;
 
 namespace Cosmos.Scene
 {
