@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cosmos
 {
     /// <summary>
-    /// 圆形
+    /// 圆形；
     /// </summary>
     public class Circle
     {
@@ -27,45 +23,39 @@ namespace Cosmos
         }
 
         /// <summary>
-        /// 圆心坐标
+        /// 圆心坐标；
         /// </summary>
         public Point2D Center { get; }
 
         /// <summary>
-        /// 半径
+        /// 半径；
         /// </summary>
         public double Radius { get; }
 
         /// <summary>
-        /// 是否相交
+        /// 是否相交；
         /// </summary>
-        /// <param name="that"></param>
-        /// <returns></returns>
-        public bool IsCrossWith(Circle that)
+        public bool IsCrossWith(Circle other)
         {
-            var dis = Math.Sqrt(Math.Pow(that.Center.X - Center.X, 2) + Math.Pow(that.Center.Y - Center.Y, 2));
-            return that.Radius - Radius < dis && dis < that.Radius + Radius;
+            var dis = Math.Sqrt(Math.Pow(other.Center.X - Center.X, 2) + Math.Pow(other.Center.Y - Center.Y, 2));
+            return other.Radius - Radius < dis && dis < other.Radius + Radius;
         }
 
         /// <summary>
-        /// 是否相切
+        /// 是否相切；
         /// </summary>
-        /// <param name="that"></param>
-        /// <returns></returns>
-        public bool IsIntersectWith(Circle that)
+        public bool IsIntersectWith(Circle other)
         {
-            var dis = Math.Sqrt(Math.Pow(that.Center.X - Center.X, 2) + Math.Pow(that.Center.Y - Center.Y, 2));
-            return Math.Abs(that.Radius - Radius - dis) < 1e-7 || Math.Abs(dis - (that.Radius + Radius)) < 1e-7;
+            var dis = Math.Sqrt(Math.Pow(other.Center.X - Center.X, 2) + Math.Pow(other.Center.Y - Center.Y, 2));
+            return Math.Abs(other.Radius - Radius - dis) < 1e-7 || Math.Abs(dis - (other.Radius + Radius)) < 1e-7;
         }
 
         /// <summary>
-        /// 是否相离
+        /// 是否相离；
         /// </summary>
-        /// <param name="that"></param>
-        /// <returns></returns>
-        public bool IsSeparateWith(Circle that)
+        public bool IsSeparateWith(Circle other)
         {
-            return !IsCrossWith(that) && !IsIntersectWith(that);
+            return !IsCrossWith(other) && !IsIntersectWith(other);
         }
     }
 }
