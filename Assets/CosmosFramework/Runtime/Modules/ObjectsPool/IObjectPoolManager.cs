@@ -7,6 +7,14 @@ namespace Cosmos.ObjectPool
     public interface IObjectPoolManager : IModuleManager
     {
         /// <summary>
+        /// 对象池注册成功；
+        /// </summary>
+        event Action<ObjectPoolRegisterSuccessEventArgs> ObjectPoolRegisterSuccess;
+        /// <summary>
+        /// 对象池注册失败；
+        /// </summary>
+        event Action<ObjectPoolRegisterFailureEventArgs> ObjectPoolRegisterFailure;
+        /// <summary>
         /// 对象池的数量；
         /// </summary>
         int PoolCount { get; }

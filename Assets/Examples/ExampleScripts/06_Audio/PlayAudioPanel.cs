@@ -24,15 +24,15 @@ public class PlayAudioPanel : MonoBehaviour
     void Start()
     {
         CosmosEntry.AudioManager.AudioRegisterSuccess += AudioRegisterSuccess;
-        CosmosEntry.AudioManager.AudioRegistFailure += AudioRegistFailure; ;
+        CosmosEntry.AudioManager.AudioRegisterFailure += AudioRegistFailure; ;
         var audioAssetInfo = new AudioAssetInfo("AudioTechHouse", "AudioTechHouse");
         CosmosEntry.AudioManager.RegistAudioAsync(audioAssetInfo);
     }
-    void AudioRegisterSuccess(AudioRegistSuccessEventArgs eventArgs)
+    void AudioRegisterSuccess(AudioRegisterSuccessEventArgs eventArgs)
     {
         Utility.Debug.LogInfo($" {eventArgs.AudioName} Register success", DebugColor.green);
     }
-    void AudioRegistFailure(AudioRegistFailureEventArgs eventArgs)
+    void AudioRegistFailure(AudioRegisterFailureEventArgs eventArgs)
     {
         Utility.Debug.LogError($" {eventArgs.AudioName} Register Failure");
     }

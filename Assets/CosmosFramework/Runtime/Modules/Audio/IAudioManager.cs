@@ -21,11 +21,11 @@ namespace Cosmos.Audio
         /// 声音注册失败事件；
         /// 回调中参数为失败的资源名称；
         /// </summary>
-        event Action<AudioRegistFailureEventArgs> AudioRegistFailure;
+        event Action<AudioRegisterFailureEventArgs> AudioRegisterFailure;
         /// <summary>
         /// 声音注册成功事件；
         /// </summary>
-        event Action<AudioRegistSuccessEventArgs> AudioRegisterSuccess;
+        event Action<AudioRegisterSuccessEventArgs> AudioRegisterSuccess;
         /// <summary>
         /// 可播放的声音数量；
         /// </summary>
