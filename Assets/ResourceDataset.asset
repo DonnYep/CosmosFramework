@@ -233,6 +233,14 @@ MonoBehaviour:
     assetPath: Assets/Examples/AssetBundleTest/Video/HowToMakeAMultiplayerGameInUnity2021.1.mp4
     bundleName: video
     extension: .mp4
+  - assetName: SceneTarget
+    assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
+    bundleName: scene
+    extension: .unity
+  - assetName: TestAddtiveScene
+    assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
+    bundleName: scene
+    extension: .unity
   resourceBundleList:
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
@@ -328,7 +336,11 @@ MonoBehaviour:
       extension: .psd
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
-    dependentList: []
+    dependentList:
+    - audio
+    - material
+    - model
+    - texture
     resourceObjectList:
     - assetName: AudioSource
       assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
@@ -486,6 +498,22 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Video/HowToMakeAMultiplayerGameInUnity2021.1.mp4
       bundleName: video
       extension: .mp4
+  - bundleName: scene
+    bundlePath: Assets/Examples/AssetBundleTest/Scene
+    dependentList:
+    - material
+    - model
+    - prefab
+    - texture
+    resourceObjectList:
+    - assetName: SceneTarget
+      assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
+      bundleName: scene
+      extension: .unity
+    - assetName: TestAddtiveScene
+      assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
+      bundleName: scene
+      extension: .unity
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp
@@ -542,3 +570,12 @@ MonoBehaviour:
   - .signal
   - .guiskin
   isChanged: 0
+  resourceSceneList:
+  - assetName: SceneTarget
+    assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
+    bundleName: scene
+    extension: .unity
+  - assetName: TestAddtiveScene
+    assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
+    bundleName: scene
+    extension: .unity

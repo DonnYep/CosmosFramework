@@ -41,10 +41,12 @@ namespace Cosmos.Editor.Resource
             var bundles = ResourceWindowDataProxy.ResourceDataset.ResourceBundleList;
             var objects = ResourceWindowDataProxy.ResourceDataset.ResourceObjectList;
             var extensions = ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
+            var scenes = ResourceWindowDataProxy.ResourceDataset.ResourceSceneList;
             var lowerExtensions = extensions.Select(s => s.ToLower()).ToArray();
             extensions.Clear();
             extensions.AddRange(lowerExtensions);
             objects.Clear();
+            scenes.Clear();
             var bundleLength = bundles.Count;
 
             List<ResourceBundleInfo> validBundleInfo = new List<ResourceBundleInfo>();
@@ -77,6 +79,10 @@ namespace Cosmos.Editor.Resource
                         var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(lowerExtFilePath), lowerExtFilePath, bundle.BundleName, lowerFileExt);
                         objects.Add(resourceObject);
                         bundle.ResourceObjectList.Add(resourceObject);
+                        if (lowerFileExt == ResourceConstants.UNITY_SCENE_EXTENSION)//表示为场景资源
+                        {
+                            scenes.Add(resourceObject);
+                        }
                     }
                 }
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
