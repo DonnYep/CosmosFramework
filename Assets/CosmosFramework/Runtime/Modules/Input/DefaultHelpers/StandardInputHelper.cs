@@ -20,7 +20,7 @@ namespace Cosmos
         /// UpperLower轴线值
         /// </summary>
         float upperLowerValue = 0;
-        public void OnStart()
+        public void OnInitialization()
         {
             inputManager.RegisterVirtualButton(InputButtonType._MouseLeft);
             inputManager.RegisterVirtualButton(InputButtonType._MouseRight);
@@ -35,7 +35,7 @@ namespace Cosmos
             inputManager.RegisterVirtualAxis(InputAxisType._Vertical);
             inputManager.RegisterVirtualAxis(InputAxisType._UpperLower);
         }
-        public void OnRun()
+        public void OnRefresh()
         {
             if (UnityEngine.Input.GetKeyDown(KeyCode.LeftShift)) inputManager.SetButtonDown(InputButtonType._LeftShift);
             else if (UnityEngine.Input.GetKeyUp(KeyCode.LeftShift)) inputManager.SetButtonUp(InputButtonType._LeftShift);
@@ -74,7 +74,7 @@ namespace Cosmos
             else upperLowerValue = 0;
             inputManager.SetVirtualMousePosition(UnityEngine.Input.mousePosition);
         }
-        public void OnShutdown()
+        public void OnTermination()
         {
             inputManager.DeregisterVirtualButton(InputButtonType._MouseLeft);
             inputManager.DeregisterVirtualButton(InputButtonType._MouseRight);

@@ -4,6 +4,18 @@ namespace Cosmos.Input
     public interface IInputManager : IModuleManager
     {
         /// <summary>
+        /// 虚拟轴线数量；
+        /// </summary>
+        int VirtualAxisCount { get; }
+        /// <summary>
+        /// 虚拟按钮数量；
+        /// </summary>
+        int VirtualButtonCount { get; }
+        /// <summary>
+        /// 鼠标位置；
+        /// </summary>
+        Vector3 MousePosition { get; }
+        /// <summary>
         /// 是否启用虚拟输入；
         /// </summary>
         bool IsEnableInputDevice { get; set; }
@@ -45,10 +57,7 @@ namespace Cosmos.Input
         /// <param name="name">按键名称</param>
         void DeregisterVirtualAxis(string name);
 
-        /// <summary>
-        /// 鼠标位置
-        /// </summary>
-        Vector3 MousePosition { get; }
+
         /// <summary>
         /// 获得轴线
         /// </summary>

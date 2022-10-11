@@ -2,104 +2,112 @@
 using UnityEngine;
 namespace Cosmos.Input
 {
-    public sealed class VirtualInput
+    internal sealed class VirtualInput
     {
-        Dictionary<string, VirtualAxis> virtualAxes = new Dictionary<string, VirtualAxis>();
-        Dictionary<string, VirtualButton> virtualButtons = new Dictionary<string, VirtualButton>();
+        Dictionary<string, InputVirtualAxis> virtualAxisDict = new Dictionary<string, InputVirtualAxis>();
+        Dictionary<string, InputVirtualButton> virtualButtonDict = new Dictionary<string, InputVirtualButton>();
         Vector3 virtualMousePosition;
+        public int VirtualAxisCount
+        {
+            get { return virtualAxisDict.Count; }
+        }
+        public int VirtualButtonCount
+        {
+            get { return virtualButtonDict.Count; }
+        }
         public bool IsExistVirtualAxis(string name)
         {
-            return virtualAxes.ContainsKey(name);
+            return virtualAxisDict.ContainsKey(name);
         }
         public bool IsExistVirtualButton(string name)
         {
-            return virtualButtons.ContainsKey(name);
+            return virtualButtonDict.ContainsKey(name);
         }
         public void RegisterVirtualAxis(string name)
         {
-            if (virtualAxes.ContainsKey(name))
+            if (virtualAxisDict.ContainsKey(name))
                 Utility.Debug.LogError("virtual Aixs is allready register, axis name: " + name);
             else
-                virtualAxes.Add(name, new VirtualAxis(name));
+                virtualAxisDict.Add(name, new InputVirtualAxis(name));
         }
         public void RegisterVirtualButton(string name)
         {
-            if (virtualButtons.ContainsKey(name))
+            if (virtualButtonDict.ContainsKey(name))
                 Utility.Debug.LogError("virtual Button is allready register, button name: " + name);
             else
-                virtualButtons.Add(name, new VirtualButton(name));
+                virtualButtonDict.Add(name, new InputVirtualButton(name));
         }
         public void DeregisterVirtualAxis(string name)
         {
-            if (virtualAxes.ContainsKey(name))
-                virtualAxes.Remove(name);
+            if (virtualAxisDict.ContainsKey(name))
+                virtualAxisDict.Remove(name);
         }
         public void DeregisterVirtualButton(string name)
         {
-            if (virtualButtons.ContainsKey(name))
-                virtualButtons.Remove(name);
+            if (virtualButtonDict.ContainsKey(name))
+                virtualButtonDict.Remove(name);
         }
         public bool GetButton(string name)
         {
             if (!IsExistVirtualButton(name))
                 RegisterVirtualButton(name);
-            return virtualButtons[name].GetButton;
+            return virtualButtonDict[name].GetButton;
         }
         public bool GetButtonDown(string name)
         {
             if (!IsExistVirtualButton(name))
                 RegisterVirtualButton(name);
-            return virtualButtons[name].GetButtonDown;
+            return virtualButtonDict[name].GetButtonDown;
         }
         public bool GetButtonUp(string name)
         {
             if (!IsExistVirtualButton(name))
                 RegisterVirtualButton(name);
-            return virtualButtons[name].GetButtonUp;
+            return virtualButtonDict[name].GetButtonUp;
         }
-        public float GetAxis(string name,bool raw)
+        public float GetAxis(string name, bool raw)
         {
             if (!IsExistVirtualAxis(name))
                 RegisterVirtualAxis(name);
-            return raw ? virtualAxes[name].GetValueYaw : virtualAxes[name].GetValue;
+            return raw ? virtualAxisDict[name].GetValueYaw : virtualAxisDict[name].GetValue;
         }
         public void SetButtonDown(string name)
         {
             if (!IsExistVirtualButton(name))
                 RegisterVirtualButton(name);
-            virtualButtons[name].Pressed();
+            virtualButtonDict[name].Pressed();
         }
         public void SetButtonUp(string name)
         {
             if (!IsExistVirtualButton(name))
                 RegisterVirtualButton(name);
-            virtualButtons[name].Released();
+            virtualButtonDict[name].Released();
         }
         public void SetAxisPositive(string name)
         {
-            if (!IsExistVirtualAxis(name)) 
+            if (!IsExistVirtualAxis(name))
                 RegisterVirtualAxis(name);
-            virtualAxes[name].Update(1);
+            virtualAxisDict[name].Update(1);
         }
         public void SetAxisNegative(string name)
         {
             if (!IsExistVirtualAxis(name))
                 RegisterVirtualAxis(name);
-            virtualAxes[name].Update(-1);
+            virtualAxisDict[name].Update(-1);
         }
         public void SetAxisZero(string name)
         {
             if (!IsExistVirtualAxis(name))
                 RegisterVirtualAxis(name);
-            virtualAxes[name].Update(0);
+            virtualAxisDict[name].Update(0);
         }
-        public void SetAxis(string name,float value)
+        public void SetAxis(string name, float value)
         {
             if (!IsExistVirtualAxis(name))
                 RegisterVirtualAxis(name);
-            virtualAxes[name].Update(value);
+            virtualAxisDict[name].Update(value);
         }
-        public void SetVirtualMousePosition(float x,float y,float z)
+        public void SetVirtualMousePosition(float x, float y, float z)
         {
             virtualMousePosition.Set(x, y, z);
         }
@@ -108,46 +116,5 @@ namespace Cosmos.Input
             virtualMousePosition = value;
         }
         public Vector3 MousePosition { get { return virtualMousePosition; } }
-    }
-    public sealed class VirtualButton
-    {
-        public string Name { get; private set; }
-        int lastPressedFrame = -5;
-        int releasedFrame = -5;
-        bool pressed = false;
-        public VirtualButton(string name)
-        {
-            Name = name;
-        }
-        public void Pressed()
-        {
-            if (pressed)
-                return;
-            pressed = true;
-            lastPressedFrame = Time.frameCount;
-        }
-        public void Released()
-        {
-            pressed = false;
-            releasedFrame = Time.frameCount;
-        }
-        public bool GetButton { get { return pressed; } }
-        public bool GetButtonDown { get { return (lastPressedFrame - Time.frameCount == -1); } }
-        public bool GetButtonUp { get { return releasedFrame == Time.frameCount - 1; } }
-    }
-    public sealed class VirtualAxis
-    {
-        public string Name { get; private set; }
-        float value;
-        public VirtualAxis(string name)
-        {
-            Name = name;
-        }
-        public void Update(float value)
-        {
-            this.value = value;
-        }
-        public float GetValue { get { return value; } }
-        public float GetValueYaw { get { if (value < 0) return -1; else if (value > 0) return 1; else return 0; } }
     }
 }
