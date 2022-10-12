@@ -2,11 +2,15 @@
 using UnityEngine;
 namespace Cosmos.Input
 {
-    internal sealed class VirtualInput
+    internal sealed class InputVirtualDevice
     {
         Dictionary<string, InputVirtualAxis> virtualAxisDict = new Dictionary<string, InputVirtualAxis>();
         Dictionary<string, InputVirtualButton> virtualButtonDict = new Dictionary<string, InputVirtualButton>();
         Vector3 virtualMousePosition;
+        public Vector3 MousePosition 
+        { 
+            get { return virtualMousePosition; } 
+        }
         public int VirtualAxisCount
         {
             get { return virtualAxisDict.Count; }
@@ -115,6 +119,5 @@ namespace Cosmos.Input
         {
             virtualMousePosition = value;
         }
-        public Vector3 MousePosition { get { return virtualMousePosition; } }
     }
 }
