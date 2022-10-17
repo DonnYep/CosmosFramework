@@ -327,7 +327,7 @@ namespace Cosmos.Editor.Resource
             EditorUtility.ClearProgressBar();
             EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
 #if UNITY_2021_1_OR_NEWER
-            AssetDatabase.SaveAssetIfDirty(so);
+            AssetDatabase.SaveAssetIfDirty(ResourceWindowDataProxy.ResourceDataset);
 #elif UNITY_2019_1_OR_NEWER
             AssetDatabase.SaveAssets();
 #endif
