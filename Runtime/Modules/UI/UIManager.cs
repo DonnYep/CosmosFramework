@@ -56,6 +56,36 @@ namespace Cosmos.UI
         /// 失活的UI链表；
         /// </summary>
         LinkedList<UIFormInfo> deactiveUILnk;
+
+        Action<IUIForm> onUIFormActiveCallback;
+        Action<IUIForm> onUIFormDeactiveCallback;
+        Action<IUIForm> onUIFormReleaseCallback;
+        Action<IUIForm> onUIFormLoadCallback;
+
+        /// <inheritdoc/>
+        public event Action<IUIForm> OnUIFormActiveCallback
+        {
+            add { onUIFormActiveCallback += value; }
+            remove { onUIFormActiveCallback -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<IUIForm> OnUIFormDeactiveCallback
+        {
+            add { onUIFormDeactiveCallback += value; }
+            remove { onUIFormDeactiveCallback -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<IUIForm> OnUIFormReleaseCallback
+        {
+            add { onUIFormReleaseCallback += value; }
+            remove { onUIFormReleaseCallback -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<IUIForm> OnUIFormLoadCallback
+        {
+            add { onUIFormLoadCallback += value; }
+            remove { onUIFormLoadCallback -= value; }
+        }
         #endregion
         #region Methods
         /// <inheritdoc/>
@@ -162,6 +192,7 @@ namespace Cosmos.UI
                 uiFormAssetHelper.ReleaseUIForm(uiForm);
 
                 uiFormInfoCache.Remove(uiFormInfo);
+                onUIFormReleaseCallback?.Invoke(uiForm);
             }
             else
             {
@@ -381,6 +412,8 @@ namespace Cosmos.UI
             {
                 //若在释放名单中，不做初始化，不调用任何生命周期，直接释放。
                 uiFormAssetHelper.ReleaseUIForm(uiForm);
+                //直接释放，并触发回调。
+                onUIFormReleaseCallback?.Invoke(uiForm);
                 return;
             }
             uiForm.UIAssetInfo = assetInfo;
@@ -407,6 +440,8 @@ namespace Cosmos.UI
             //加载完毕并执行完生命周期后，添加到缓存中。
             if (!uiFormInfoCache.Contains(uiFormInfo))
                 uiFormInfoCache.Add(uiFormInfo);
+            //触发加载完成回调。
+            onUIFormLoadCallback?.Invoke(uiForm);
         }
         void OnUIFormActive(UIFormInfo uiFormInfo)
         {
@@ -436,11 +471,15 @@ namespace Cosmos.UI
                 info.UIForm.OnOrderChange(index);
                 index++;
             }
+            //触发激活回调。
+            onUIFormActiveCallback?.Invoke(uiFormInfo.UIForm);
         }
         void OnUIFormDeactive(UIFormInfo uiFormInfo)
         {
             activeUILnk.Remove(uiFormInfo);
             deactiveUILnk.AddLast(uiFormInfo);
+            //触发失活回调。
+            onUIFormDeactiveCallback?.Invoke(uiFormInfo.UIForm);
         }
         void OnUIFormOrderChange(UIFormInfo uiFormInfo)
         {

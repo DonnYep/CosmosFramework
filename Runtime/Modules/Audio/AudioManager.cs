@@ -39,16 +39,16 @@ namespace Cosmos.Audio
         /// 声音组池；
         /// </summary>
         AudioGroupPool audioGroupPool;
-        Action<AudioRegistSuccessEventArgs> audioRegisterSuccess;
-        Action<AudioRegistFailureEventArgs> audioRegisterFailure;
+        Action<AudioRegisterSuccessEventArgs> audioRegisterSuccess;
+        Action<AudioRegisterFailureEventArgs> audioRegisterFailure;
         ///<inheritdoc/>
-        public event Action<AudioRegistFailureEventArgs> AudioRegistFailure
+        public event Action<AudioRegisterFailureEventArgs> AudioRegisterFailure
         {
             add { audioRegisterFailure += value; }
             remove { audioRegisterFailure -= value; }
         }
         ///<inheritdoc/>
-        public event Action<AudioRegistSuccessEventArgs> AudioRegisterSuccess
+        public event Action<AudioRegisterSuccessEventArgs> AudioRegisterSuccess
         {
             add { audioRegisterSuccess += value; }
             remove { audioRegisterSuccess -= value; }
@@ -308,9 +308,9 @@ namespace Cosmos.Audio
         }
         void OnAudioRegistFailure(string audioName, string audioGroupName)
         {
-            var eventArgs = AudioRegistFailureEventArgs.Create(audioName, audioGroupName);
+            var eventArgs = AudioRegisterFailureEventArgs.Create(audioName, audioGroupName);
             audioRegisterFailure?.Invoke(eventArgs);
-            AudioRegistFailureEventArgs.Release(eventArgs);
+            AudioRegisterFailureEventArgs.Release(eventArgs);
         }
         void OnAudioRegistSuccess(AudioObject audioObject)
         {
@@ -327,9 +327,9 @@ namespace Cosmos.Audio
                 }
                 group.AddOrUpdateAudio(audioName, audioObject);
             }
-            var eventArgs = AudioRegistSuccessEventArgs.Create(audioName, audioGroupName, audioObject.AudioClip);
+            var eventArgs = AudioRegisterSuccessEventArgs.Create(audioName, audioGroupName, audioObject.AudioClip);
             audioRegisterSuccess?.Invoke(eventArgs);
-            AudioRegistSuccessEventArgs.Release(eventArgs);
+            AudioRegisterSuccessEventArgs.Release(eventArgs);
         }
     }
 }

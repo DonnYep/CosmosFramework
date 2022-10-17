@@ -9,118 +9,140 @@ namespace Cosmos.Input
     [Module]
     internal sealed class InputManager : Module, IInputManager
     {
-        ///<inheritdoc/>
-        public bool IsEnableInputDevice { get; set; } = true;
-        VirtualInput inputModule = new VirtualInput();
+        bool isEnableInputDevice = true;
+        InputVirtualDevice inputVirtualDevice;
         IInputHelper inputHelper;
+        ///<inheritdoc/>
+        public int VirtualAxisCount
+        {
+            get { return inputVirtualDevice.VirtualAxisCount; }
+        }
+        ///<inheritdoc/>
+        public int VirtualButtonCount
+        {
+            get { return inputVirtualDevice.VirtualButtonCount; }
+        }
+        ///<inheritdoc/>
+        public Vector3 MousePosition
+        {
+            get { return inputVirtualDevice.MousePosition; }
+        }
+        ///<inheritdoc/>
+        public bool IsEnableInputDevice
+        {
+            get { return isEnableInputDevice; }
+            set { isEnableInputDevice = value; }
+        }
         ///<inheritdoc/>
         public void SetInputHelper(IInputHelper helper)
         {
-            inputHelper?.OnShutdown();
+            inputHelper?.OnTermination();
             inputHelper = helper;
-            inputHelper?.OnStart();
+            inputHelper?.OnInitialization();
         }
         ///<inheritdoc/>
         public bool IsExistVirtualAxis(string name)
         {
-            return inputModule.IsExistVirtualAxis(name);
+            return inputVirtualDevice.IsExistVirtualAxis(name);
         }
         ///<inheritdoc/>
         public bool IsExistVirtualButton(string name)
         {
-            return inputModule.IsExistVirtualButton(name);
+            return inputVirtualDevice.IsExistVirtualButton(name);
         }
         ///<inheritdoc/>
         public void RegisterVirtualButton(string name)
         {
-            inputModule.RegisterVirtualButton(name);
+            inputVirtualDevice.RegisterVirtualButton(name);
         }
         ///<inheritdoc/>
         public void DeregisterVirtualButton(string name)
         {
-            inputModule.DeregisterVirtualButton(name);
+            inputVirtualDevice.DeregisterVirtualButton(name);
         }
         ///<inheritdoc/>
         public void RegisterVirtualAxis(string name)
         {
-            inputModule.RegisterVirtualAxis(name);
+            inputVirtualDevice.RegisterVirtualAxis(name);
         }
         ///<inheritdoc/>
         public void DeregisterVirtualAxis(string name)
         {
-            inputModule.DeregisterVirtualAxis(name);
+            inputVirtualDevice.DeregisterVirtualAxis(name);
         }
-        ///<inheritdoc/>
-        public Vector3 MousePosition { get { return inputModule.MousePosition; } }
+
         ///<inheritdoc/>
         public float GetAxis(string name)
         {
-            return inputModule.GetAxis(name, false);
+            return inputVirtualDevice.GetAxis(name, false);
         }
         ///<inheritdoc/>
         public float GetAxisRaw(string name)
         {
-            return inputModule.GetAxis(name, true);
+            return inputVirtualDevice.GetAxis(name, true);
         }
         ///<inheritdoc/>
         public bool GetButtonDown(string name)
         {
-            return inputModule.GetButtonDown(name);
+            return inputVirtualDevice.GetButtonDown(name);
         }
         ///<inheritdoc/>
         public bool GetButton(string name)
         {
-            return inputModule.GetButton(name);
+            return inputVirtualDevice.GetButton(name);
         }
         ///<inheritdoc/>
         public bool GetButtonUp(string name)
         {
-            return inputModule.GetButtonUp(name);
+            return inputVirtualDevice.GetButtonUp(name);
         }
         ///<inheritdoc/>
         public void SetButtonDown(string name)
         {
-            inputModule.SetButtonDown(name);
+            inputVirtualDevice.SetButtonDown(name);
         }
         ///<inheritdoc/>
         public void SetButtonUp(string name)
         {
-            inputModule.SetButtonUp(name);
+            inputVirtualDevice.SetButtonUp(name);
         }
         ///<inheritdoc/>
         public void SetVirtualMousePosition(Vector3 value)
         {
-            inputModule.SetVirtualMousePosition(value);
+            inputVirtualDevice.SetVirtualMousePosition(value);
         }
         ///<inheritdoc/>
         public void SetVirtualMousePosition(float x, float y, float z)
         {
-            inputModule.SetVirtualMousePosition(x, y, z);
+            inputVirtualDevice.SetVirtualMousePosition(x, y, z);
         }
         ///<inheritdoc/>
         public void SetAxisPositive(string name)
         {
-            inputModule.SetAxisPositive(name);
+            inputVirtualDevice.SetAxisPositive(name);
         }
         ///<inheritdoc/>
         public void SetAxisNegative(string name)
         {
-            inputModule.SetAxisNegative(name);
+            inputVirtualDevice.SetAxisNegative(name);
         }
         ///<inheritdoc/>
         public void SetAxisZero(string name)
         {
-            inputModule.SetAxisZero(name);
+            inputVirtualDevice.SetAxisZero(name);
         }
         ///<inheritdoc/>
         public void SetAxis(string name, float value)
         {
-            inputModule.SetAxis(name, value);
+            inputVirtualDevice.SetAxis(name, value);
+        }
+        protected override void OnInitialization()
+        {
+            inputVirtualDevice = new InputVirtualDevice();
         }
         protected override void OnTermination()
         {
-            base.OnTermination();
-            inputHelper?.OnShutdown();
+            inputHelper?.OnTermination();
         }
         [TickRefresh]
         void OnRefresh()
@@ -128,7 +150,7 @@ namespace Cosmos.Input
             if (IsPause)
                 return;
             if (IsEnableInputDevice)
-                inputHelper?.OnRun();
+                inputHelper?.OnRefresh();
         }
     }
 }

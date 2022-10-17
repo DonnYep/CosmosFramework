@@ -57,6 +57,7 @@ namespace Cosmos.Resource
                     var resourceObject = resourceObjectList[i];
                     resourceObjectWarpperDict.TryAdd(resourceObject.AssetPath, new ResourceObjectWarpper(resourceObject));
                 }
+                resourceAddress.AddResourceObjects(resourceObjectList);
             }
         }
         ///<inheritdoc/> 

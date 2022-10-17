@@ -1,6 +1,6 @@
 ﻿namespace Cosmos.Audio
 {
-    public class AudioRegistFailureEventArgs : GameEventArgs
+    public class AudioRegisterFailureEventArgs : GameEventArgs
     {
         public string AudioName { get; private set; }
         public string AudioGroupName { get; private set; }
@@ -10,14 +10,14 @@
             AudioName = string.Empty;
             AudioGroupName = string.Empty;
         }
-        internal static AudioRegistFailureEventArgs Create(string audioName,string audioGroupName)
+        internal static AudioRegisterFailureEventArgs Create(string audioName,string audioGroupName)
         {
-            var eventArgs = ReferencePool.Acquire<AudioRegistFailureEventArgs>();
+            var eventArgs = ReferencePool.Acquire<AudioRegisterFailureEventArgs>();
             eventArgs.AudioName = audioName;
             eventArgs.AudioGroupName = audioGroupName;
             return eventArgs;
         }
-        internal static void Release(AudioRegistFailureEventArgs eventArgs)
+        internal static void Release(AudioRegisterFailureEventArgs eventArgs)
         {
             ReferencePool.Release(eventArgs);
         }

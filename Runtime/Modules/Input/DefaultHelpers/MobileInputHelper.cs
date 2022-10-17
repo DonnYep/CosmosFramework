@@ -5,7 +5,7 @@ namespace Cosmos
     public class MobileInputHelper : IInputHelper
     {
         IInputManager inputManager = CosmosEntry.InputManager;
-        public void OnStart()
+        public void OnInitialization()
         {
             inputManager.RegisterVirtualButton(InputButtonType._MouseLeft);
             inputManager.RegisterVirtualButton(InputButtonType._MouseRight);
@@ -18,7 +18,7 @@ namespace Cosmos
             inputManager.RegisterVirtualAxis(InputAxisType._Vertical);
             inputManager.RegisterVirtualAxis(InputAxisType._UpperLower);
         }
-        public void OnRun()
+        public void OnRefresh()
         {
             if (UnityEngine.Input.touchCount == 1 && UnityEngine.Input.GetTouch(0).phase == TouchPhase.Began)
                 inputManager.SetButtonDown(InputButtonType._MouseLeft);
@@ -39,7 +39,7 @@ namespace Cosmos
             else
                 inputManager.SetVirtualMousePosition(Vector3.zero);
         }
-        public void OnShutdown()
+        public void OnTermination()
         {
             inputManager.DeregisterVirtualButton(InputButtonType._MouseLeft);
             inputManager.DeregisterVirtualButton(InputButtonType._MouseRight);

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 namespace Cosmos.Audio
 {
-    public class AudioRegistSuccessEventArgs : GameEventArgs
+    public class AudioRegisterSuccessEventArgs : GameEventArgs
     {
         public string AudioName { get; private set; }
         public string AudioGroupName { get; private set; }
@@ -12,15 +12,15 @@ namespace Cosmos.Audio
             AudioGroupName = string.Empty;
             AudioClip = null;
         }
-        internal static AudioRegistSuccessEventArgs Create(string audioName, string audioGroupName,AudioClip audioClip)
+        internal static AudioRegisterSuccessEventArgs Create(string audioName, string audioGroupName,AudioClip audioClip)
         {
-            var eventArgs = ReferencePool.Acquire< AudioRegistSuccessEventArgs>();
+            var eventArgs = ReferencePool.Acquire< AudioRegisterSuccessEventArgs>();
             eventArgs.AudioName = audioName;
             eventArgs.AudioGroupName = audioGroupName;
             eventArgs.AudioClip = audioClip;
             return eventArgs;
         }
-        internal static void Release(AudioRegistSuccessEventArgs eventArgs)
+        internal static void Release(AudioRegisterSuccessEventArgs eventArgs)
         {
             ReferencePool.Release(eventArgs);
         }

@@ -69,6 +69,7 @@ namespace Cosmos.Resource
                     {
                         //默认返回第一个
                         assetPath = lnk.First.Value.AssetPath;
+                        return true;
                     }
                 }
                 else

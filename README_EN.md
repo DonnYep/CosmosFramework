@@ -7,7 +7,7 @@
 
 # CosmosFramework
 
-CosmosFramework is a lightweight Unity development framework . Has a rich Unity method extensions and toolchain. async/await syntax support, multi-network channel support.The framework follows the unityPackage specification and is recommended to be imported for use through UPM.
+CosmosFramework is a lightweight Unity development framework . Has a rich Unity method extensions and toolchain. async/await syntax support, multi-network channel support,complete packaging pipeline. Support for automated deployment.The framework follows the unityPackage specification and is recommended to be imported for use through UPM.
 * [CosmosFramework Wiki](https://github.com/DonnYep/CosmosFramework/wiki)<br/>
 
 <a name="Navigation"></a>
@@ -45,7 +45,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **ObjectsPool** : Object pool module. Provides commonly used functions such as entity object generation and recycling. The underlying implementation uses the data structure Pool.
 
-- **Resource** : Resource module.Three built-in loading modes: AssetDatabase, AssetBundle and Resource. AssetDatabase and AssetBundle modes support reference counting, and resource bundles are automatically loaded or unloaded according to the reference count. In addition, this module supports custom loading schemes. The corresponding editor for the Resource module is located at Window>Cosmos>Module>Resource.
+- **Resource** : Resource module.Three built-in loading modes: AssetDatabase, AssetBundle and Resource. AssetDatabase and AssetBundle modes support reference counting, and resource bundles  automatically manage the loading or unloading of package bodies based on reference counts. the Runtime loader can be customized with loading schemes. Support for automated pipelines, such as Jenkins build deployments, etc. The editor corresponding to the resource module is located at Window>Cosmos>Module>Resource.Use the AssetDatabase mode during the development phase and the AssetBundle mode when building the app. If you need to use Unity Resource as the loading scheme, switch to Resource mode.
 
 - **Scene** : Scene module. Provide common asynchronous and synchronous loading of embedded scenes. Support custom implementation of loading methods.
 
@@ -95,7 +95,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **Editor** : Editor provides methods to retrieve objects and components commonly used in Hierarchy, and EditorConfig provides the ability to automatically create code headers for code generation.
 
-- **FutureTask**:Asynchronous task detection, supports multi-threaded and concurrent asynchronous progress detection. The detection function needs to be passed in Func<bool> format, and asynchronous detection ends when the condition returns true. Support async/await syntax, you can use await statement to wait for the task to complete.
+- **FutureTask**:Asynchronous task detection, supports multi-threaded and concurrent asynchronous progress detection. The detection function needs to be passed in Func<bool> format. Asynchronous detection ends when the condition return value is true. Support async/await syntax, you can use await statement to wait for the task to complete.
 
 - **Pool**:Pool data structure. Includes thread-safe and non-thread-safe types. Object pools, reference pools and cache pools of other modules in the framework are implemented using "Pool".
     

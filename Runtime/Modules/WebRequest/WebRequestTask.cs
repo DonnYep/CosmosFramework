@@ -22,7 +22,7 @@ namespace Cosmos.WebRequest
         public static WebRequestTask Create(string url, UnityWebRequest webRequest, WebRequestType requestType)
         {
             var requestTask = ReferencePool.Acquire<WebRequestTask>();
-            requestTask.TaskId = taskIndex++;
+            requestTask.TaskId = GetTaskId();
             requestTask.URL = url;
             requestTask.UnityWebRequest = webRequest;
             requestTask.WebRequestType = requestType;
@@ -32,6 +32,13 @@ namespace Cosmos.WebRequest
         public static void Release(WebRequestTask requestTask)
         {
             ReferencePool.Release(requestTask);
+        }
+        static long GetTaskId()
+        {
+            taskIndex++;
+            if (taskIndex > long.MaxValue)
+                taskIndex = 0;
+            return taskIndex;
         }
     }
 }

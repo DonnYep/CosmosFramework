@@ -16,6 +16,8 @@ namespace Cosmos.Resource
         List<string> resourceAvailableExtenisonList;
         [SerializeField]
         bool isChanged;
+        [SerializeField]
+        List<ResourceObject> resourceSceneList;
         /// <summary>
         /// 资源对象数量；
         /// </summary>
@@ -64,6 +66,18 @@ namespace Cosmos.Resource
         /// 是否做出了修改
         /// </summary>
         public bool IsChanged { get { return isChanged; } set { isChanged = value; } }
+        /// <summary>
+        /// 资源包；
+        /// </summary>
+        public List<ResourceObject> ResourceSceneList
+        {
+            get
+            {
+                if (resourceSceneList== null)
+                    resourceSceneList = new List<ResourceObject>();
+                return resourceSceneList;
+            }
+        }
         /// <summary>
         /// 清空资源包与资源实体；
         /// </summary>

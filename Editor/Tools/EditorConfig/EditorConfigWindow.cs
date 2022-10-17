@@ -99,10 +99,11 @@ namespace Cosmos.Editor.Config
             if (EditorConfigData.EnableScriptHeader)
             {
                 GUILayout.Space(16);
-                EditorGUILayout.LabelField("输入作者名称");
                 GUILayout.BeginHorizontal();
-                EditorConfigData.HeaderAuthor = EditorGUILayout.TextField("Author", EditorConfigData.HeaderAuthor);
+                EditorConfigData.HeaderAuthor = EditorGUILayout.TextField("Author name", EditorConfigData.HeaderAuthor);
                 GUILayout.EndHorizontal();
+                EditorConfigData.AuthorMail= EditorGUILayout.TextField("Author mail", EditorConfigData.AuthorMail);
+
             }
             GUI.color = Color.white;
             EditorGUILayout.Space();

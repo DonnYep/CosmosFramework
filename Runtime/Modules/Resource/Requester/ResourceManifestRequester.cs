@@ -24,6 +24,8 @@ namespace Cosmos.Resource
         public void StopRequestManifest()
         {
             webRequestManager.RemoveTask(taskId);
+            webRequestManager.OnSuccessCallback -= OnSuccessCallback;
+            webRequestManager.OnFailureCallback -= OnFailureCallback;
         }
         void OnSuccessCallback(WebRequestSuccessEventArgs eventArgs)
         {

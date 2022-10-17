@@ -84,6 +84,27 @@ namespace Cosmos
                 return @this;
             return @this.Substring(0, @this.Length - 1);
         }
-
+        /// <summary>
+        /// 字符串转时间
+        /// </summary>
+        public static DateTime ToDateTime(this string @this)
+        {
+            DateTime.TryParse(@this, out var result);
+            return result;
+        }
+        /// <summary>
+        /// 字符串转Guid
+        /// </summary>
+        public static Guid ToGuid(this string @this)
+        {
+            return Guid.Parse(@this);
+        }
+        /// <summary>
+        /// 转换成字节数组
+        /// </summary>
+        public static byte[] ToByteArray(this string @this)
+        {
+            return Encoding.UTF8.GetBytes(@this);
+        }
     }
 }

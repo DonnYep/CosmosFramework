@@ -5,14 +5,14 @@
         /// <summary>
         /// 设备启动
         /// </summary>
-        void OnStart();
+        void OnInitialization();
         /// <summary>
         /// 设备运行
         /// </summary>
-        void OnRun();
+        void OnRefresh();
         /// <summary>
         /// 设备关闭
         /// </summary>
-        void OnShutdown();
+        void OnTermination();
     }
 }

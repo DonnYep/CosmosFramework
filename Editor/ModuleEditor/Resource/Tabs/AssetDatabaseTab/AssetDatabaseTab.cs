@@ -252,10 +252,12 @@ namespace Cosmos.Editor.Resource
             var bundles = ResourceWindowDataProxy.ResourceDataset.ResourceBundleList;
             var objects = ResourceWindowDataProxy.ResourceDataset.ResourceObjectList;
             var extensions = ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
+            var scenes = ResourceWindowDataProxy.ResourceDataset.ResourceSceneList;
             var lowerExtensions = extensions.Select(s => s.ToLower()).ToArray();
             extensions.Clear();
             extensions.AddRange(lowerExtensions);
             objects.Clear();
+            scenes.Clear();
             var bundleLength = bundles.Count;
 
             List<ResourceBundleInfo> validBundleInfo = new List<ResourceBundleInfo>();
@@ -281,13 +283,17 @@ namespace Cosmos.Editor.Resource
                     var srcFilePath = files[j].Replace("\\", "/");
                     var srcFileExt = Path.GetExtension(srcFilePath);
                     var lowerFileExt = srcFileExt.ToLower();
-                    if (extensions.Contains(srcFileExt))
+                    if (extensions.Contains(lowerFileExt))
                     {
                         //统一使用小写的文件后缀名
                         var lowerExtFilePath= srcFilePath.Replace(srcFileExt,lowerFileExt);
                         var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(lowerExtFilePath), lowerExtFilePath, bundle.BundleName, lowerFileExt);
                         objects.Add(resourceObject);
                         bundle.ResourceObjectList.Add(resourceObject);
+                        if (lowerFileExt == ResourceConstants.UNITY_SCENE_EXTENSION)//表示为场景资源
+                        {
+                            scenes.Add(resourceObject);
+                        }
                     }
                 }
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
@@ -320,7 +326,11 @@ namespace Cosmos.Editor.Resource
             yield return null;
             EditorUtility.ClearProgressBar();
             EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
+#if UNITY_2021_1_OR_NEWER
+            AssetDatabase.SaveAssetIfDirty(ResourceWindowDataProxy.ResourceDataset);
+#elif UNITY_2019_1_OR_NEWER
             AssetDatabase.SaveAssets();
+#endif
             {
                 //这么处理是为了bundleLable能够在编辑器页面一下刷新，放在协程里逐步更新，使用体验并不是很好。
                 resourceBundleLabel.Clear();

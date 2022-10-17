@@ -26,6 +26,22 @@ namespace Cosmos.ObjectPool
             remove { elapseRefreshHandler -= value; }
         }
         ObjectPoolAssetHelper objectPoolAssetHelper;
+
+        Action<ObjectPoolRegisterSuccessEventArgs> objectPoolRegisterSuccess;
+        Action<ObjectPoolRegisterFailureEventArgs> objectPoolRegisterFailure;
+
+        /// <inheritdoc/>
+        public event Action<ObjectPoolRegisterSuccessEventArgs> ObjectPoolRegisterSuccess
+        {
+            add { objectPoolRegisterSuccess += value; }
+            remove { objectPoolRegisterSuccess -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<ObjectPoolRegisterFailureEventArgs> ObjectPoolRegisterFailure
+        {
+            add { objectPoolRegisterFailure += value; }
+            remove { objectPoolRegisterFailure -= value; }
+        }
         #endregion
 
         #region Methods
@@ -43,15 +59,20 @@ namespace Cosmos.ObjectPool
                           poolDict.TryAdd(poolName, pool);
                           ElapseRefreshHandler += pool.OnElapseRefresh;
                           callback?.Invoke(pool);
+                          OnObjectPoolRegisterSuccess(assetInfo.PoolName, pool);
                       }
                       else
                       {
-                          throw new ArgumentException($"{ info.AssetName} not exist.");
+                          OnObjectPoolRegisterFailure(assetInfo.PoolName,assetInfo.AssetName);
                       }
                   });
             }
             else
-                throw new ArgumentException($"object pool :{assetInfo.PoolName} is exist.");
+            {
+                var hasPool = poolDict.TryGetValue(assetInfo.PoolName, out var pool);
+                callback?.Invoke(pool);
+                return null;
+            }
         }
         /// <inheritdoc/>
         public async Task<IObjectPool> RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo)
@@ -68,10 +89,14 @@ namespace Cosmos.ObjectPool
                 var pool = ObjectPool.Create(spawnAsset, poolName, default);
                 poolDict.TryAdd(poolName, pool);
                 ElapseRefreshHandler += pool.OnElapseRefresh;
+                OnObjectPoolRegisterSuccess(poolName, pool);
                 return pool;
             }
             else
-                throw new ArgumentException($"object pool :{poolName} is exist.");
+            {
+                poolDict.TryGetValue(poolName, out var pool);
+                return pool;
+            }
         }
         /// <inheritdoc/>
         public void DeregisterObjectPool(string poolName)
@@ -131,6 +156,18 @@ namespace Cosmos.ObjectPool
             if (IsPause)
                 return;
             elapseRefreshHandler?.Invoke(deltatime);
+        }
+        void OnObjectPoolRegisterSuccess(string poolName, IObjectPool objectPool)
+        {
+            var eventArgs = ObjectPoolRegisterSuccessEventArgs.Create(poolName, objectPool);
+            objectPoolRegisterSuccess?.Invoke(eventArgs);
+            ObjectPoolRegisterSuccessEventArgs.Release(eventArgs);
+        }
+        void OnObjectPoolRegisterFailure( string poolName,string assetName)
+        {
+            var eventArgs = ObjectPoolRegisterFailureEventArgs.Create(poolName, $"{ assetName} not exist.");
+            objectPoolRegisterFailure?.Invoke(eventArgs);
+            ObjectPoolRegisterFailureEventArgs.Release(eventArgs);
         }
         #endregion
     }
