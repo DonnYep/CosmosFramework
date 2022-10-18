@@ -241,6 +241,14 @@ MonoBehaviour:
     assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
     bundleName: scene
     extension: .unity
+  - assetName: 24_Procedure_PloyState
+    assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
+    bundleName: procedure_scenes
+    extension: .unity
+  - assetName: 24_Procedure_YBotState
+    assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
+    bundleName: procedure_scenes
+    extension: .unity
   resourceBundleList:
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
@@ -514,6 +522,21 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
       bundleName: scene
       extension: .unity
+  - bundleName: procedure_scenes
+    bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
+    dependentList:
+    - material
+    - model
+    - prefab
+    resourceObjectList:
+    - assetName: 24_Procedure_PloyState
+      assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
+      bundleName: procedure_scenes
+      extension: .unity
+    - assetName: 24_Procedure_YBotState
+      assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
+      bundleName: procedure_scenes
+      extension: .unity
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp
@@ -578,4 +601,12 @@ MonoBehaviour:
   - assetName: TestAddtiveScene
     assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
     bundleName: scene
+    extension: .unity
+  - assetName: 24_Procedure_PloyState
+    assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
+    bundleName: procedure_scenes
+    extension: .unity
+  - assetName: 24_Procedure_YBotState
+    assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
+    bundleName: procedure_scenes
     extension: .unity

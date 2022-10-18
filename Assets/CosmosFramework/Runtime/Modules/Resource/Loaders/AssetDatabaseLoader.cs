@@ -294,7 +294,12 @@ namespace Cosmos.Resource
             }
             yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
             LoadSceneMode loadSceneMode = info.Additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
-            var operation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+            AsyncOperation operation = null;
+#if UNITY_EDITOR
+            operation = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(resourceObject.AssetPath, new LoadSceneParameters(loadSceneMode));
+#else
+            operation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+#endif
             if (operation == null)
             {
                 //为空表示场景不存在
