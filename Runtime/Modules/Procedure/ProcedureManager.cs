@@ -43,9 +43,9 @@ namespace Cosmos.Procedure
         {
             if (type == null)
                 throw new ArgumentNullException("Type is invalid !");
-            if (procedureStateType.IsAssignableFrom(type))
+            if (!procedureStateType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
-            procedureFsm.SetDefaultState(type);
+            procedureFsm.ChangeState(type);
         }
         /// <inheritdoc/>
         public bool HasProcedure<T>() where T : ProcedureState
@@ -57,7 +57,7 @@ namespace Cosmos.Procedure
         {
             if (type == null)
                 throw new ArgumentNullException("Type is invalid !");
-            if (procedureStateType.IsAssignableFrom(type))
+            if (!procedureStateType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
             return procedureFsm.HasState(type);
         }
@@ -66,7 +66,7 @@ namespace Cosmos.Procedure
         {
             if (type == null)
                 throw new ArgumentNullException("Type is invalid !");
-            if (procedureStateType.IsAssignableFrom(type))
+            if (!procedureStateType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
             node = null;
             var rst = procedureFsm.PeekState(type, out var state);
@@ -101,7 +101,7 @@ namespace Cosmos.Procedure
         {
             if (type == null)
                 throw new ArgumentNullException("Type is invalid !");
-            if (procedureStateType.IsAssignableFrom(type))
+            if (!procedureStateType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
             return procedureFsm.RemoveState(type);
         }
