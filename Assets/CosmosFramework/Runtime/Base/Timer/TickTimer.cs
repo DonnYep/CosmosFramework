@@ -133,7 +133,7 @@ namespace Cosmos
         }
         public bool PauseTask(int taskId)
         {
-            if (!taskDict.TryRemove(taskId, out TickTask task))
+            if (!taskDict.TryGetValue(taskId, out TickTask task))
                 return false;
             task.IsPause = true;
                 var remainTime= task.DestTime - GetUTCMilliseconds();
@@ -142,7 +142,7 @@ namespace Cosmos
         }
         public bool UnPauseTask(int taskId)
         {
-            if (!taskDict.TryRemove(taskId, out TickTask task))
+            if (!taskDict.TryGetValue(taskId, out TickTask task))
                 return false;
             task.IsPause = false;
             task.DestTime = task.PauseRemainTime + GetUTCMilliseconds();
