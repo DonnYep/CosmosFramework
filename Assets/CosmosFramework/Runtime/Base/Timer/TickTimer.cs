@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Cosmos
 {
-  /// <summary>
+    /// <summary>
     /// 计时器，需要从外部调用轮询。
     /// 所有逻辑线程安全；
     /// </summary>
@@ -136,7 +136,7 @@ namespace Cosmos
             if (!taskDict.TryGetValue(taskId, out TickTask task))
                 return false;
             task.IsPause = true;
-                var remainTime= task.DestTime - GetUTCMilliseconds();
+            var remainTime = task.DestTime - GetUTCMilliseconds();
             task.PauseRemainTime = remainTime > 0 ? remainTime : 0;
             return true;
         }
@@ -170,7 +170,7 @@ namespace Cosmos
                     //循环次数++，若循环idx比循环总数小，则进入下次循环；
                     if (task.LoopIndex < task.LoopCount)
                     {
-                        task.DestTime = task.StartTime + task.IntervalTime * (task.LoopIndex + 1);
+                        task.DestTime = nowTime + task.IntervalTime;
                         task.TaskCallback.Invoke(task.TaskId);
                     }
                     else
