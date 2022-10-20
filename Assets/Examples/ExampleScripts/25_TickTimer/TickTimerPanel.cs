@@ -8,6 +8,7 @@ public class TickTimerPanel : MonoBehaviour
     Button btnRun;
     Button btnPause;
     Button btnUnpause;
+    Button btnStop;
     Text txtCountdown;
     int tickTaskId;
     int callCount = 0;
@@ -17,10 +18,12 @@ public class TickTimerPanel : MonoBehaviour
         btnRun = gameObject.GetComponentInChildren<Button>("BtnRun");
         btnPause = gameObject.GetComponentInChildren<Button>("BtnPause");
         btnUnpause = gameObject.GetComponentInChildren<Button>("BtnUnpause");
+        btnStop = gameObject.GetComponentInChildren<Button>("BtnStop");
         txtCountdown = gameObject.GetComponentInChildren<Text>("TxtCountdown");
         btnRun.onClick.AddListener(OnRunClick);
         btnPause.onClick.AddListener(OnPauseClick);
         btnUnpause.onClick.AddListener(OnUnPauseClick);
+        btnStop.onClick.AddListener(OnStopClick);
     }
     void Update()
     {
@@ -36,13 +39,24 @@ public class TickTimerPanel : MonoBehaviour
     }
     void OnPauseClick()
     {
+        if (!hasOneTaskRun)
+            return;
         tickTimer.PauseTask(tickTaskId);
         txtCountdown.text = $"Task call count: {callCount} PAUSE";
     }
     void OnUnPauseClick()
     {
+        if (!hasOneTaskRun)
+            return;
         tickTimer.UnPauseTask(tickTaskId);
         txtCountdown.text = $"Task call count: {callCount}";
+    }
+    void OnStopClick()
+    {
+        if (!hasOneTaskRun)
+            return;
+        tickTimer.RemoveTask(tickTaskId);
+        txtCountdown.text = $"No task run";
     }
     void OnTickTaskCallback(int id)
     {
@@ -52,5 +66,6 @@ public class TickTimerPanel : MonoBehaviour
     {
         Utility.Debug.LogInfo($"tick task {id} cancel");
         hasOneTaskRun = false;
+        callCount = 0;
     }
 }
