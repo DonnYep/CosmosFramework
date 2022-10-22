@@ -114,6 +114,21 @@ namespace Cosmos.Editor.Resource
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 importer.assetBundleName = string.Empty;
             }
+
+            if (buildParams.CopyToStreamingAssets)
+            {
+                string streamingAssetPath = string.Empty;
+                if (buildParams.UseStreamingAssetsRelativePath)
+                    streamingAssetPath = Path.Combine(Application.streamingAssetsPath, buildParams.StreamingAssetsRelativePath);
+                else
+                    streamingAssetPath = Application.streamingAssetsPath;
+                var buildPath = buildParams.AssetBundleBuildPath;
+                if (Directory.Exists(buildPath))
+                {
+                    Utility.IO.Copy(buildPath, streamingAssetPath);
+                }
+            }
+
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
             AssetDatabase.RemoveUnusedAssetBundleNames();
             System.GC.Collect();

@@ -39,5 +39,18 @@ namespace Cosmos.Editor.Resource
         /// AB偏移量；
         /// </summary>
         public int AssetBundleOffsetValue;
+        /// <summary>
+        /// 拷贝到streamingAsset文件；
+        /// </summary>
+        public bool CopyToStreamingAssets;
+        /// <summary>
+        /// 使用StreamingAsset相对路径；
+        /// </summary>
+        public bool UseStreamingAssetsRelativePath;
+        /// <summary>
+        /// 拷贝到的StreamingAssets相对路径；
+        /// </summary>
+        public string StreamingAssetsRelativePath;
+
     }
 }
