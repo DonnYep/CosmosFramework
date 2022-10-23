@@ -67,6 +67,12 @@ namespace Cosmos
         Queue<TickTask> taskQueue;
         bool usePool;
         public bool UsePool { get { return usePool; } }
+        bool pause;
+        public bool Pause
+        {
+            get { return pause; }
+            set { pause = value; }
+        }
         /// <summary>
         /// 计时器构造函数；
         /// </summary>
@@ -77,6 +83,7 @@ namespace Cosmos
             this.usePool = usePool;
             if (usePool)
                 taskQueue = new Queue<TickTask>();
+            pause = false;
         }
         /// <summary>
         /// 添加任务；
@@ -157,6 +164,8 @@ namespace Cosmos
         /// </summary>
         public void TickRefresh()
         {
+            if (pause)
+                return;
             try
             {
                 double nowTime = GetUTCMilliseconds();
@@ -197,6 +206,7 @@ namespace Cosmos
         /// </summary>
         public void Reset()
         {
+            pause = false;
             taskDict.Clear();
             if (usePool)
                 taskQueue.Clear();

@@ -11,6 +11,8 @@ namespace Cosmos.UI
         public string AssetName { get; private set; }
         public string UIFormName { get; private set; }
         public string UIGroupName { get; private set; }
+        public UIAssetInfo(string assetName)
+    : this(assetName, assetName, string.Empty) { }
         public UIAssetInfo(string assetName, string uiGroupName)
             : this(assetName, assetName, uiGroupName) { }
         public UIAssetInfo(string assetName, string uiFormName, string uiGroupName)

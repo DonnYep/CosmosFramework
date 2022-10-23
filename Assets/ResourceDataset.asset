@@ -229,10 +229,6 @@ MonoBehaviour:
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
     bundleName: texture
     extension: .png
-  - assetName: HowToMakeAMultiplayerGameInUnity2021.1
-    assetPath: Assets/Examples/AssetBundleTest/Video/HowToMakeAMultiplayerGameInUnity2021.1.mp4
-    bundleName: video
-    extension: .mp4
   - assetName: SceneTarget
     assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
     bundleName: scene
@@ -248,6 +244,34 @@ MonoBehaviour:
   - assetName: 24_Procedure_YBotState
     assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
     bundleName: procedure_scenes
+    extension: .unity
+  - assetName: EntityEnemy
+    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityEnemy.prefab
+    bundleName: entity_prefabs
+    extension: .prefab
+  - assetName: EntityGameLauncherPanel
+    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLauncherPanel.prefab
+    bundleName: entity_prefabs
+    extension: .prefab
+  - assetName: EntityGameLoadingSlider
+    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLoadingSlider.prefab
+    bundleName: entity_prefabs
+    extension: .prefab
+  - assetName: EntityPlayer
+    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityPlayer.prefab
+    bundleName: entity_prefabs
+    extension: .prefab
+  - assetName: UICanvas
+    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/UICanvas.prefab
+    bundleName: entity_prefabs
+    extension: .prefab
+  - assetName: 23_EntityLauncher
+    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/23_EntityLauncher.unity
+    bundleName: entity_scene
+    extension: .unity
+  - assetName: EntityGame
+    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
+    bundleName: entity_scene
     extension: .unity
   resourceBundleList:
   - bundleName: audio
@@ -498,14 +522,6 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
       bundleName: texture
       extension: .png
-  - bundleName: video
-    bundlePath: Assets/Examples/AssetBundleTest/Video
-    dependentList: []
-    resourceObjectList:
-    - assetName: HowToMakeAMultiplayerGameInUnity2021.1
-      assetPath: Assets/Examples/AssetBundleTest/Video/HowToMakeAMultiplayerGameInUnity2021.1.mp4
-      bundleName: video
-      extension: .mp4
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
     dependentList:
@@ -536,6 +552,42 @@ MonoBehaviour:
     - assetName: 24_Procedure_YBotState
       assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
       bundleName: procedure_scenes
+      extension: .unity
+  - bundleName: entity_prefabs
+    bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
+    dependentList: []
+    resourceObjectList:
+    - assetName: EntityEnemy
+      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityEnemy.prefab
+      bundleName: entity_prefabs
+      extension: .prefab
+    - assetName: EntityGameLauncherPanel
+      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLauncherPanel.prefab
+      bundleName: entity_prefabs
+      extension: .prefab
+    - assetName: EntityGameLoadingSlider
+      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLoadingSlider.prefab
+      bundleName: entity_prefabs
+      extension: .prefab
+    - assetName: EntityPlayer
+      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityPlayer.prefab
+      bundleName: entity_prefabs
+      extension: .prefab
+    - assetName: UICanvas
+      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/UICanvas.prefab
+      bundleName: entity_prefabs
+      extension: .prefab
+  - bundleName: entity_scene
+    bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
+    dependentList: []
+    resourceObjectList:
+    - assetName: 23_EntityLauncher
+      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/23_EntityLauncher.unity
+      bundleName: entity_scene
+      extension: .unity
+    - assetName: EntityGame
+      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
+      bundleName: entity_scene
       extension: .unity
   resourceAvailableExtenisonList:
   - .3ds
@@ -609,4 +661,12 @@ MonoBehaviour:
   - assetName: 24_Procedure_YBotState
     assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
     bundleName: procedure_scenes
+    extension: .unity
+  - assetName: 23_EntityLauncher
+    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/23_EntityLauncher.unity
+    bundleName: entity_scene
+    extension: .unity
+  - assetName: EntityGame
+    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
+    bundleName: entity_scene
     extension: .unity
