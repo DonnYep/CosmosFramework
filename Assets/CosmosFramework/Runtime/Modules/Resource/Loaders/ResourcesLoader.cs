@@ -164,9 +164,11 @@ namespace Cosmos.Resource
                 yield return new WaitForEndOfFrame();
             }
             progress?.Invoke(1);
+            yield return null;
             if (condition != null)
                 yield return new WaitUntil(condition);
             operation.allowSceneActivation = true;
+            yield return null;
             callback?.Invoke();
         }
         IEnumerator EnumUnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback = null)
@@ -195,8 +197,10 @@ namespace Cosmos.Resource
                 yield return new WaitForEndOfFrame();
             }
             progress?.Invoke(1);
+            yield return null;
             if (condition != null)
                 yield return new WaitUntil(condition);
+            yield return null;
             callback?.Invoke();
         }
         IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
@@ -224,6 +228,7 @@ namespace Cosmos.Resource
             }
             loadSceneList.Clear();
             progress?.Invoke(1);
+            yield return null;
             callback?.Invoke();
         }
         IEnumerator EnumLoadAllAssetAsync(string assetBundleName, Action<float> progress, Action<Object[]> callback)
@@ -231,8 +236,8 @@ namespace Cosmos.Resource
             if (string.IsNullOrEmpty(assetBundleName))
                 yield break;
             var assets = Resources.LoadAll(assetBundleName);
-            callback?.Invoke(assets);
             progress?.Invoke(1);
+            callback?.Invoke(assets);
         }
         void OnSceneUnloaded(UnityEngine.SceneManagement.Scene scene)
         {

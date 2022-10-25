@@ -4,17 +4,18 @@ using UnityEngine;
 
 public class EntityAnimator : MonoBehaviour
 {
-    int verticalHash = Animator.StringToHash("Vertical");
-    int inputHash = Animator.StringToHash("Input");
-    int attackIndexHash = Animator.StringToHash("AttackIndex");
-    void Start()
+    int idleHash = Animator.StringToHash("Idle");
+    int attackHash = Animator.StringToHash("Attack");
+    int moveHash = Animator.StringToHash("Move");
+    int deathHash = Animator.StringToHash("Death");
+    int hitHash = Animator.StringToHash("Hit");
+    Animator animator;
+    private void Awake()
     {
-        
+        animator = GetComponent<Animator>();
     }
-
-    // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

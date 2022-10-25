@@ -263,8 +263,8 @@ namespace Cosmos.Resource
             assets = assetList.ToArray();
             OnResourceBundleAllAssetLoad(bundleName);
 #endif
-            callback?.Invoke(assets);
             progress?.Invoke(1);
+            callback?.Invoke(assets);
         }
         IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {

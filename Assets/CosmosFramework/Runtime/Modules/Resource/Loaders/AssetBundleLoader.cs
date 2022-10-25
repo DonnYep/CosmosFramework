@@ -422,6 +422,7 @@ namespace Cosmos.Resource
             }
             loadSceneList.Clear();
             progress?.Invoke(1);
+            yield return null;
             callback?.Invoke();
         }
         /// <summary>
