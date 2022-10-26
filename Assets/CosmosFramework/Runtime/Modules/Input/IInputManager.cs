@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 namespace Cosmos.Input
 {
-    public interface IInputManager : IModuleManager
+    public interface IInputManager : IModuleManager, IModuleInstance
     {
         /// <summary>
         /// 虚拟轴线数量；

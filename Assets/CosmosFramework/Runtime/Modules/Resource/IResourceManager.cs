@@ -18,7 +18,7 @@ namespace Cosmos.Resource
     * 4、默认提供两种加载模式，分别为 Resource与AssetBundle；
     */
     //================================================
-    public interface IResourceManager : IModuleManager
+    public interface IResourceManager : IModuleManager, IModuleInstance
     {
         /// <summary>
         /// 当前资源的加载模式；

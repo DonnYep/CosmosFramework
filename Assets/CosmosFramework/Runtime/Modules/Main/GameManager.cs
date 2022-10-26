@@ -136,14 +136,6 @@ namespace Cosmos
         {
             return moduleDict.ContainsKey(type);
         }
-        /// <summary>
-        ///  key=>IModuleManager；value=>Module
-        /// </summary>
-        internal static bool HasModuleType<T>()
-         where T : class, IModuleManager
-        {
-            return interfaceModuleDict.ContainsKey(typeof(T));
-        }
         internal static void Dispose()
         {
             OnDeactive();

@@ -9,7 +9,7 @@ namespace Cosmos
     /// </summary>
     [DisallowMultipleComponent]
     //[DefaultExecutionOrder(-1000)]
-    public sealed class MonoGameManager: MonoSingleton<MonoGameManager>
+    public sealed class MonoGameManager : MonoSingleton<MonoGameManager>
     {
         DateTime previousTimeSinceStartup;
         /// <summary>
@@ -55,32 +55,56 @@ namespace Cosmos
             moduleMountDict = new Dictionary<Type, GameObject>();
         }
         public int ModuleCount { get { return GameManager.ModuleCount; } }
-
-        public GameObject GetModuleInstance<T>() where T : class, IModuleManager
+        public GameObject GetModuleGameObject(IModuleInstance module)
         {
-            Type interfaceType = typeof(T);
-            var hasType = GameManager.HasModuleType<T>();
+            var type = module.GetType();
+            var hasType = GameManager.HasModule(type);
             if (!hasType)
                 return null;
             GameObject moduleMount;
-            var hasMount = moduleMountDict.TryGetValue(interfaceType, out moduleMount);
+            var hasMount = moduleMountDict.TryGetValue(type, out moduleMount);
             if (!hasMount)
             {
-                moduleMount = new GameObject(interfaceType.Name + "-->>Instance");
+                moduleMount = new GameObject(type.Name + "-->>Instance");
                 moduleMount.transform.SetParent(transform);
-                moduleMountDict[interfaceType] = moduleMount;
+                moduleMountDict[type] = moduleMount;
             }
             else
             {
                 if (moduleMount == null)
                 {
-                    moduleMount = new GameObject(interfaceType.Name + "-->>Instance");
+                    moduleMount = new GameObject(type.Name + "-->>Instance");
                     moduleMount.transform.SetParent(transform);
-                    moduleMountDict[interfaceType] = moduleMount;
+                    moduleMountDict[type] = moduleMount;
                 }
             }
             return moduleMount;
         }
+        //public GameObject GetModuleInstance<T>() where T : class, IModuleManager
+        //{
+        //    Type interfaceType = typeof(T);
+        //    var hasType = GameManager.HasModuleType<T>();
+        //    if (!hasType)
+        //        return null;
+        //    GameObject moduleMount;
+        //    var hasMount = moduleMountDict.TryGetValue(interfaceType, out moduleMount);
+        //    if (!hasMount)
+        //    {
+        //        moduleMount = new GameObject(interfaceType.Name + "-->>Instance");
+        //        moduleMount.transform.SetParent(transform);
+        //        moduleMountDict[interfaceType] = moduleMount;
+        //    }
+        //    else
+        //    {
+        //        if (moduleMount == null)
+        //        {
+        //            moduleMount = new GameObject(interfaceType.Name + "-->>Instance");
+        //            moduleMount.transform.SetParent(transform);
+        //            moduleMountDict[interfaceType] = moduleMount;
+        //        }
+        //    }
+        //    return moduleMount;
+        //}
         /// <summary>
         /// 清除单个实例，有一个默认参数。
         /// 默认延迟为0，表示立刻删除、
@@ -142,7 +166,7 @@ namespace Cosmos
         {
             if (IsPause)
                 return;
-            GameManager.OnLateRefresh ();
+            GameManager.OnLateRefresh();
         }
         private void OnApplicationQuit()
         {

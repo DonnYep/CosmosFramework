@@ -18,7 +18,7 @@ namespace Cosmos.Controller
     * 5、控制器模块已与unity解耦
     */
     //================================================
-    public interface IControllerManager : IModuleManager
+    public interface IControllerManager : IModuleManager, IModuleInstance
     {
         /// <summary>
         /// 控制器组的数量；

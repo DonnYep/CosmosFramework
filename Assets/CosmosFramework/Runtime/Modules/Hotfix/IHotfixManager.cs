@@ -5,7 +5,7 @@
      * 1、热修复模块；
      */
     //================================================
-    public interface IHotfixManager:IModuleManager
+    public interface IHotfixManager:IModuleManager, IModuleInstance
     {
         void SetHelper(IHotfixHelper helper);
         object PeekType(string typeName);
