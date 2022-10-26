@@ -263,8 +263,8 @@ namespace Cosmos.Resource
             assets = assetList.ToArray();
             OnResourceBundleAllAssetLoad(bundleName);
 #endif
-            callback?.Invoke(assets);
             progress?.Invoke(1);
+            callback?.Invoke(assets);
         }
         IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
@@ -329,9 +329,11 @@ namespace Cosmos.Resource
                 yield return null;
             }
             progress?.Invoke(1);
+            yield return null;
             if (condition != null)
                 yield return new WaitUntil(condition);
             operation.allowSceneActivation = true;
+            yield return null;
             callback?.Invoke();
         }
         /// <summary>
@@ -366,8 +368,10 @@ namespace Cosmos.Resource
                 yield return null;
             }
             progress?.Invoke(1);
+            yield return null;
             if (condition != null)
                 yield return new WaitUntil(condition);
+            yield return null;
             callback?.Invoke();
         }
         IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
@@ -391,10 +395,11 @@ namespace Cosmos.Resource
                     yield return null;
                 }
                 overallProgress = overallIndexPercent + (unitResRatio * 1);
-                progress?.Invoke(overallProgress / 100); ;
+                progress?.Invoke(overallProgress / 100);
             }
             loadSceneList.Clear();
             progress?.Invoke(1);
+            yield return null;
             callback?.Invoke();
         }
         /// <summary>
@@ -424,7 +429,7 @@ namespace Cosmos.Resource
         void UnloadDependenciesAssetBundle(ResourceBundleWarpper resourceBundleWarpper, int decrementCount = 1)
         {
             resourceBundleWarpper.ReferenceCount -= decrementCount;
-            var dependentList= resourceBundleWarpper.ResourceBundle.DependentList;
+            var dependentList = resourceBundleWarpper.ResourceBundle.DependentList;
             var dependentLength = dependentList.Count;
             //遍历查询依赖包
             for (int i = 0; i < dependentLength; i++)
@@ -432,7 +437,7 @@ namespace Cosmos.Resource
                 var dependentBundleName = dependentList[i];
                 if (resourceBundleWarpperDict.TryGetValue(dependentBundleName, out var dependentBundleWarpper))
                 {
-                    dependentBundleWarpper.ReferenceCount-=decrementCount;
+                    dependentBundleWarpper.ReferenceCount -= decrementCount;
                 }
             }
         }

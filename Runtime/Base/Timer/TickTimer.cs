@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Cosmos
 {
-  /// <summary>
+    /// <summary>
     /// 计时器，需要从外部调用轮询。
     /// 所有逻辑线程安全；
     /// </summary>
@@ -67,6 +67,12 @@ namespace Cosmos
         Queue<TickTask> taskQueue;
         bool usePool;
         public bool UsePool { get { return usePool; } }
+        bool pause;
+        public bool Pause
+        {
+            get { return pause; }
+            set { pause = value; }
+        }
         /// <summary>
         /// 计时器构造函数；
         /// </summary>
@@ -77,6 +83,7 @@ namespace Cosmos
             this.usePool = usePool;
             if (usePool)
                 taskQueue = new Queue<TickTask>();
+            pause = false;
         }
         /// <summary>
         /// 添加任务；
@@ -136,7 +143,7 @@ namespace Cosmos
             if (!taskDict.TryGetValue(taskId, out TickTask task))
                 return false;
             task.IsPause = true;
-                var remainTime= task.DestTime - GetUTCMilliseconds();
+            var remainTime = task.DestTime - GetUTCMilliseconds();
             task.PauseRemainTime = remainTime > 0 ? remainTime : 0;
             return true;
         }
@@ -157,6 +164,8 @@ namespace Cosmos
         /// </summary>
         public void TickRefresh()
         {
+            if (pause)
+                return;
             try
             {
                 double nowTime = GetUTCMilliseconds();
@@ -170,7 +179,7 @@ namespace Cosmos
                     //循环次数++，若循环idx比循环总数小，则进入下次循环；
                     if (task.LoopIndex < task.LoopCount)
                     {
-                        task.DestTime = task.StartTime + task.IntervalTime * (task.LoopIndex + 1);
+                        task.DestTime = nowTime + task.IntervalTime;
                         task.TaskCallback.Invoke(task.TaskId);
                     }
                     else
@@ -197,6 +206,7 @@ namespace Cosmos
         /// </summary>
         public void Reset()
         {
+            pause = false;
             taskDict.Clear();
             if (usePool)
                 taskQueue.Clear();

@@ -11,7 +11,7 @@ namespace Cosmos.UI
      * 参照UGUI的支持库写法即可。
      */
     //================================================
-    public interface IUIManager : IModuleManager
+    public interface IUIManager : IModuleManager, IModuleInstance
     {
         /// <summary>
         /// UIForm激活回调；
@@ -81,6 +81,26 @@ namespace Cosmos.UI
         /// </summary>
         /// <param name="uiGroupName">UI组的名字</param>
         void ReleaseUIGroup(string uiGroupName);
+        /// <summary>
+        /// 激活已加载的UIForm；
+        /// </summary>
+        /// <param name="uiFormName">UI资源的名称</param>
+        void ActiveUIForm(string uiFormName);
+        /// <summary>
+        /// 激活已加载的UIForm；
+        /// </summary>
+        /// <param name="uiForm">已加载的UIForm</param>
+        void ActiveUIForm(IUIForm uiForm);
+        /// <summary>
+        /// 失活已加载的UIForm；
+        /// </summary>
+        /// <param name="uiFormName">UI资源的名称</param>
+        void DeactiveUIForm(string uiFormName);
+        /// <summary>
+        /// 失活已加载的UIForm；
+        /// </summary>
+        /// <param name="uiForm">已加载的UIForm</param>
+        void DeactiveUIForm(IUIForm uiForm);
         /// <summary>
         /// 失活整个ui组；
         /// </summary>

@@ -20,7 +20,7 @@ namespace Cosmos.Procedure
      * 7、OnDestroy函数在ProcedureNode被从ProcedureManager移除时触发。
      */
     //================================================
-    public interface IProcedureManager: IModuleManager
+    public interface IProcedureManager: IModuleManager, IModuleInstance
     {
         /// <summary>
         /// 流程节点数量；

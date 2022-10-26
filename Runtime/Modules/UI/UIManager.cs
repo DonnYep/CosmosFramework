@@ -240,6 +240,44 @@ namespace Cosmos.UI
             }
         }
         /// <inheritdoc/>
+        public void ActiveUIForm(string uiFormName)
+        {
+            Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
+            var hasUIForm = uiFormInfoLoadedDict.TryGetValue(uiFormName, out var form);
+            if (hasUIForm)
+                form.UIForm.Active = true;
+        }
+        /// <inheritdoc/>
+        public void ActiveUIForm(IUIForm uiForm)
+        {
+            if (uiForm == null)
+                throw new ArgumentNullException("UIForm is invalid.");
+            var uiFormName = uiForm.UIAssetInfo.UIFormName;
+            Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
+            var hasUIForm = uiFormInfoLoadedDict.TryGetValue(uiFormName, out var form);
+            if (hasUIForm)
+                form.UIForm.Active = true;
+        }
+        /// <inheritdoc/>
+        public void DeactiveUIForm(string uiFormName)
+        {
+            Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
+            var hasUIForm = uiFormInfoLoadedDict.TryGetValue(uiFormName, out var form);
+            if (hasUIForm)
+                form.UIForm.Active = false;
+        }
+        /// <inheritdoc/>
+        public void DeactiveUIForm(IUIForm uiForm)
+        {
+            if (uiForm == null)
+                throw new ArgumentNullException("UIForm is invalid.");
+            var uiFormName = uiForm.UIAssetInfo.UIFormName;
+            Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
+            var hasUIForm = uiFormInfoLoadedDict.TryGetValue(uiFormName, out var form);
+            if (hasUIForm)
+                form.UIForm.Active = false;
+        }
+        /// <inheritdoc/>
         public void ActiveUIGroup(string uiGroupName)
         {
             if (uiGroupDict.TryGetValue(uiGroupName, out var group))
@@ -262,7 +300,7 @@ namespace Cosmos.UI
         {
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
             var rst = uiFormInfoLoadedDict.TryGetValue(uiFormName, out var form);
-            uiForm = form as T;
+            uiForm = form.UIForm as T;
             return rst;
         }
         /// <inheritdoc/>

@@ -14,7 +14,7 @@ namespace Cosmos.WebRequest
     * 
     */
     //================================================
-    public interface IWebRequestManager : IModuleManager
+    public interface IWebRequestManager : IModuleManager, IModuleInstance
     {
         /// <summary>
         /// 任务数量

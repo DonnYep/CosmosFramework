@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Cosmos.Event
 {
-    public interface IEventManager: IModuleManager
+    public interface IEventManager: IModuleManager, IModuleInstance
     {
         /// <summary>
         /// 当前注册的事件总数；

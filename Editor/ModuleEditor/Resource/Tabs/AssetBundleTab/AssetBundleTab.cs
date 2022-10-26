@@ -8,7 +8,7 @@ using Cosmos.Resource;
 
 namespace Cosmos.Editor.Resource
 {
-    public class AssetBundleTab:ResourceWindowTabBase
+    public class AssetBundleTab : ResourceWindowTabBase
     {
         public Func<EditorCoroutine> BuildDataset;
         public const string AssetBundleTabDataName = "ResourceEditor_AsseBundleTabData.json";
@@ -32,6 +32,8 @@ namespace Cosmos.Editor.Resource
             DrawPathOptions();
             GUILayout.Space(16);
             DrawEncryption();
+            GUILayout.Space(16);
+            DrawBuildDoneOption();
             GUILayout.Space(16);
             EditorGUILayout.BeginHorizontal();
             {
@@ -57,7 +59,10 @@ namespace Cosmos.Editor.Resource
                         BuildedAssetsEncryption = tabData.BuildedAssetsEncryption,
                         BuildIedAssetsEncryptionKey = tabData.BuildIedAssetsEncryptionKey,
                         BuildTarget = tabData.BuildTarget,
-                        BuildVersion = tabData.BuildVersion
+                        BuildVersion = tabData.BuildVersion,
+                        CopyToStreamingAssets = tabData.CopyToStreamingAssets,
+                        UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
+                        StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath
                     };
                     EditorUtil.Coroutine.StartCoroutine(BuildAssetBundle(buildParams, ResourceWindowDataProxy.ResourceDataset));
                 }
@@ -161,6 +166,24 @@ namespace Cosmos.Editor.Resource
             }
             EditorGUILayout.EndVertical();
         }
+        void DrawBuildDoneOption()
+        {
+            EditorGUILayout.LabelField("Build Done Options", EditorStyles.boldLabel);
+            EditorGUILayout.BeginVertical();
+            {
+                tabData.CopyToStreamingAssets = EditorGUILayout.ToggleLeft("Copy to streaming assets", tabData.CopyToStreamingAssets);
+                if (tabData.CopyToStreamingAssets)
+                {
+                    tabData.UseStreamingAssetsRelativePath = EditorGUILayout.ToggleLeft("Use streaming assets relative path", tabData.UseStreamingAssetsRelativePath);
+                    if (tabData.UseStreamingAssetsRelativePath)
+                    {
+                        EditorGUILayout.LabelField("StreamingAssets  relative path");
+                        tabData.StreamingAssetsRelativePath = EditorGUILayout.TextField("Relative path", tabData.StreamingAssetsRelativePath);
+                    }
+                }
+            }
+            EditorGUILayout.EndVertical();
+        }
         void GetTabData()
         {
             try
@@ -183,7 +206,7 @@ namespace Cosmos.Editor.Resource
             ResourceManifest resourceManifest = new ResourceManifest();
             assetBundleBuilder.PrepareBuildAssetBundle(buildParams, dataset, ref resourceManifest);
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
-            assetBundleBuilder.ProcessAssetBundle(buildParams, dataset, unityManifest,ref resourceManifest);
+            assetBundleBuilder.ProcessAssetBundle(buildParams, dataset, unityManifest, ref resourceManifest);
         }
         BuildAssetBundleOptions GetBuildAssetBundleOptions()
         {

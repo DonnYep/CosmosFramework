@@ -10,7 +10,7 @@
     *3、网络模块只维护通道，具体操作需要根据通道本身作处理；
     */
     //================================================
-    public interface INetworkManager : IModuleManager
+    public interface INetworkManager : IModuleManager, IModuleInstance
     {
         /// <summary>
         /// 通道数量；

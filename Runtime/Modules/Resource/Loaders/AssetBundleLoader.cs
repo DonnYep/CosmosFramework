@@ -360,9 +360,11 @@ namespace Cosmos.Resource
                 yield return null;
             }
             progress?.Invoke(1);
+            yield return null;
             if (condition != null)
                 yield return new WaitUntil(condition);
             operation.allowSceneActivation = true;
+            yield return null;
             callback?.Invoke();
         }
         IEnumerator EnumUnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
@@ -389,8 +391,10 @@ namespace Cosmos.Resource
                 yield return null;
             }
             progress?.Invoke(1);
+            yield return null;
             if (condition != null)
                 yield return new WaitUntil(condition);
+            yield return null;
             callback?.Invoke();
         }
         IEnumerator EnumUnloadAllSceneAsync(Action<float> progress, Action callback)
@@ -418,6 +422,7 @@ namespace Cosmos.Resource
             }
             loadSceneList.Clear();
             progress?.Invoke(1);
+            yield return null;
             callback?.Invoke();
         }
         /// <summary>
