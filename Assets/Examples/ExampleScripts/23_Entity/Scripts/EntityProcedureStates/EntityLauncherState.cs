@@ -23,7 +23,7 @@ public class EntityLauncherState : ProcedureState
         //设置UGUI资源方案
         CosmosEntry.UIManager.SetUIFormAssetHelper(new UGUIAssetHelper(mainUICanvas.transform));
         var sld = await CosmosEntry.UIManager.OpenUIFormAsync<EntityGameLoadingSlider>(new UIAssetInfo("EntityGameLoadingSlider"));
-        await new WaitForNextFrame();
+        //await new WaitForNextFrame();
         sld.Active = false;
         await CosmosEntry.UIManager.OpenUIFormAsync<EntityGameLauncherPanel>(new UIAssetInfo("EntityGameLauncherPanel"));
     }

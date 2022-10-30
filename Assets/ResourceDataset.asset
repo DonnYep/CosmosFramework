@@ -245,6 +245,10 @@ MonoBehaviour:
     assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
     bundleName: procedure_scenes
     extension: .unity
+  - assetName: EntityBullet
+    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityBullet.prefab
+    bundleName: entity_prefabs
+    extension: .prefab
   - assetName: EntityEnemy
     assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityEnemy.prefab
     bundleName: entity_prefabs
@@ -265,10 +269,6 @@ MonoBehaviour:
     assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/UICanvas.prefab
     bundleName: entity_prefabs
     extension: .prefab
-  - assetName: 23_EntityLauncher
-    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/23_EntityLauncher.unity
-    bundleName: entity_scene
-    extension: .unity
   - assetName: EntityGame
     assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
     bundleName: entity_scene
@@ -557,6 +557,10 @@ MonoBehaviour:
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
     dependentList: []
     resourceObjectList:
+    - assetName: EntityBullet
+      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityBullet.prefab
+      bundleName: entity_prefabs
+      extension: .prefab
     - assetName: EntityEnemy
       assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityEnemy.prefab
       bundleName: entity_prefabs
@@ -581,10 +585,6 @@ MonoBehaviour:
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
     dependentList: []
     resourceObjectList:
-    - assetName: 23_EntityLauncher
-      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/23_EntityLauncher.unity
-      bundleName: entity_scene
-      extension: .unity
     - assetName: EntityGame
       assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
       bundleName: entity_scene
@@ -661,10 +661,6 @@ MonoBehaviour:
   - assetName: 24_Procedure_YBotState
     assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
     bundleName: procedure_scenes
-    extension: .unity
-  - assetName: 23_EntityLauncher
-    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/23_EntityLauncher.unity
-    bundleName: entity_scene
     extension: .unity
   - assetName: EntityGame
     assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
