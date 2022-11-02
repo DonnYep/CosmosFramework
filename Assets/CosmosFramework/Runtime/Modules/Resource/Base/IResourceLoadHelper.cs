@@ -7,7 +7,8 @@ namespace Cosmos.Resource
     /// </summary>
     public interface IResourceLoadHelper : IDisposable
     {
-        /// <summary>l
+        
+        /// <summary>
         /// 加载资源（异步）；
         /// </summary>
         /// <typeparam name="T">资源类型</typeparam>

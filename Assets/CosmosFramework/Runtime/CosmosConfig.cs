@@ -26,7 +26,7 @@ namespace Cosmos
 
         [SerializeField] ResourceDataset resourceDataset;
         [SerializeField] ResourceBundlePathType resourceBundlePathType;
-        [SerializeField] string resourceBundlePath;
+        [SerializeField] string relativeBundlePath;
         [SerializeField] string customeResourceBundlePath;
 
         [SerializeField] bool assetBundleEncrytion = false;
@@ -39,10 +39,10 @@ namespace Cosmos
         /// <summary>
         /// AB包所在位置；
         /// </summary>
-        public string ResourceBundlePath
+        public string RelativeBundlePath
         {
-            get { return resourceBundlePath; }
-            set { resourceBundlePath = value; }
+            get { return relativeBundlePath; }
+            set { relativeBundlePath = value; }
         }
         /// <summary>
         /// AB包所在位置的路径类型；
@@ -75,20 +75,42 @@ namespace Cosmos
                         break;
                     case ResourceLoadMode.AssetBundle:
                         {
-                            if (string.IsNullOrEmpty(resourceBundlePath))
-                                throw new Exception("Relative Bundle Path is invalid !");
-                            string bundleFolderPath = string.Empty;
-                            switch (resourceBundlePathType)
+                            string manifestPath = string.Empty;
+                            if (!string.IsNullOrEmpty(relativeBundlePath))
                             {
-                                case ResourceBundlePathType.StreamingAssets:
-                                    bundleFolderPath = Path.Combine(Application.streamingAssetsPath, resourceBundlePath);
-                                    break;
-                                case ResourceBundlePathType.PersistentDataPath:
-                                    bundleFolderPath = Path.Combine(Application.persistentDataPath, resourceBundlePath);
-                                    break;
+                                switch (resourceBundlePathType)
+                                {
+                                    case ResourceBundlePathType.StreamingAssets:
+                                        manifestPath = Path.Combine(Application.streamingAssetsPath, relativeBundlePath, ResourceConstants.RESOURCE_MANIFEST);
+                                        ResourceDataProxy.BundlePath = Path.Combine(Application.streamingAssetsPath, relativeBundlePath);
+                                        break;
+                                    case ResourceBundlePathType.PersistentDataPath:
+                                        manifestPath = Path.Combine(Application.persistentDataPath, relativeBundlePath, ResourceConstants.RESOURCE_MANIFEST);
+                                        ResourceDataProxy.BundlePath = Path.Combine(Application.persistentDataPath, relativeBundlePath);
+                                        break;
+                                }
                             }
-                            ResourceManifestRequester manifestRequester = new ResourceManifestRequester(CosmosEntry.WebRequestManager, OnManifestSuccess, OnManifestFailure);
-                            manifestRequester.StartRequestManifest(bundleFolderPath);
+                            else
+                            {
+                                switch (resourceBundlePathType)
+                                {
+                                    case ResourceBundlePathType.StreamingAssets:
+                                        manifestPath = Path.Combine(Application.streamingAssetsPath, ResourceConstants.RESOURCE_MANIFEST);
+                                        ResourceDataProxy.BundlePath = Path.Combine(Application.streamingAssetsPath);
+                                        break;
+                                    case ResourceBundlePathType.PersistentDataPath:
+                                        manifestPath = Path.Combine(Application.persistentDataPath, ResourceConstants.RESOURCE_MANIFEST);
+                                        ResourceDataProxy.BundlePath = Path.Combine(Application.persistentDataPath);
+                                        break;
+                                }
+                            }
+                            if (assetBundleEncrytion)
+                                ResourceDataProxy.EncryptionOffset = assetBundleEncrytionOffset;
+                            if (buildInfoEncrytion)
+                                ResourceDataProxy.BuildInfoEncryptionKey = buildInfoEncrytionKey;
+                            var assetBundleLoader = new AssetBundleLoader();
+                            assetBundleLoader.InitLoader(CosmosEntry.WebRequestManager, manifestPath);
+                            CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
                         }
                         break;
                     case ResourceLoadMode.AssetDatabase:
@@ -130,20 +152,6 @@ namespace Cosmos
                 if (messagePackHelper != null)
                     Utility.MessagePack.SetHelper((Utility.MessagePack.IMessagePackHelper)messagePackHelper);
             }
-        }
-        void OnManifestFailure(string errorMessage)
-        {
-            Utility.Debug.LogError("ResourceManifest deserialization failed , check your file !");
-        }
-        void OnManifestSuccess(ResourceManifest resourceManifest)
-        {
-            if (assetBundleEncrytion)
-                ResourceDataProxy.Instance.EncryptionOffset = assetBundleEncrytionOffset;
-            if (buildInfoEncrytion)
-                ResourceDataProxy.Instance.BuildInfoEncryptionKey = buildInfoEncrytionKey;
-            var assetBundleLoader = new AssetBundleLoader();
-            assetBundleLoader.InitLoader(resourceManifest);
-            CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
         }
     }
 }
