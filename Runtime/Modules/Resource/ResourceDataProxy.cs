@@ -1,9 +1,9 @@
 ﻿namespace Cosmos.Resource
 {
-    internal class ResourceDataProxy : Singleton<ResourceDataProxy>
+    internal class ResourceDataProxy 
     {
-        public ulong EncryptionOffset { get; set; }
-        public string BundlePath { get; set; }
-        public string BuildInfoEncryptionKey { get; set; }
+        public static ulong EncryptionOffset { get; set; }
+        public static string BundlePath { get; set; }
+        public static string BuildInfoEncryptionKey { get; set; }
     }
 }

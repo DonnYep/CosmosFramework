@@ -29,13 +29,13 @@ namespace Cosmos.Event
             }
         }
         ///<inheritdoc/>
-        public void RemoveListener(string eventKey, EventHandler<GameEventArgs> hander)
+        public void RemoveListener(string eventKey, EventHandler<GameEventArgs> handler)
         {
             if (string.IsNullOrEmpty(eventKey))
                 throw new ArgumentNullException("EventKey is invalid !");
             if (eventDict.TryGetValue(eventKey, out var node))
             {
-                node.EventHandler -= hander;
+                node.EventHandler -= handler;
                 if (node.ListenerCount <= 0)
                 {
                     eventDict.Remove(eventKey);

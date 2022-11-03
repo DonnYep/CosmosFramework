@@ -17,8 +17,8 @@ namespace Cosmos.Event
         /// 移除事件，假如事件在字典中已经为空，则自动注销，无需手动
         /// </summary>
         /// <param name="eventKey">事件的key，可以是对象，字符</param>
-        /// <param name="hander">事件处理者</param>
-        void RemoveListener(string eventKey, EventHandler<GameEventArgs> hander);
+        /// <param name="handler">事件处理者</param>
+        void RemoveListener(string eventKey, EventHandler<GameEventArgs> handler);
         /// <summary>
         /// 事件分发
         /// </summary>

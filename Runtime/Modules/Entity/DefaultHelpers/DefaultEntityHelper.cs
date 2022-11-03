@@ -37,7 +37,6 @@ namespace Cosmos
             go.transform.SetParent(SingleRoot.transform);
             return go;
         }
-
         public void ReleaseEntity(object entityInstance)
         {
             var go = entityInstance.As<GameObject>();

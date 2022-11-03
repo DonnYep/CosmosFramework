@@ -1,4 +1,4 @@
-﻿namespace Cosmos.Input
+﻿namespace Cosmos
 {
     /// <summary>
     /// 输入按键类型

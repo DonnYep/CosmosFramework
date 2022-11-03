@@ -17,15 +17,15 @@ namespace Cosmos.Resource
         }
         public void StartRequestManifest(string url)
         {
-            webRequestManager.AddDownloadTextTask(url);
             webRequestManager.OnSuccessCallback += OnSuccessCallback;
             webRequestManager.OnFailureCallback += OnFailureCallback;
+            webRequestManager.AddDownloadTextTask(url);
         }
         public void StopRequestManifest()
         {
-            webRequestManager.RemoveTask(taskId);
             webRequestManager.OnSuccessCallback -= OnSuccessCallback;
             webRequestManager.OnFailureCallback -= OnFailureCallback;
+            webRequestManager.RemoveTask(taskId);
         }
         void OnSuccessCallback(WebRequestSuccessEventArgs eventArgs)
         {

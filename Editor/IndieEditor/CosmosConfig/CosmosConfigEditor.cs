@@ -18,7 +18,7 @@ namespace Cosmos.Editor
         SerializedProperty sp_ResourceLoaderIndex;
         SerializedProperty sp_ResourceDataset;
         SerializedProperty sp_ResourceBundlePathType;
-        SerializedProperty sp_ResourceBundlePath;
+        SerializedProperty sp_RelativeBundlePath;
         SerializedProperty sp_CustomeResourceBundlePath;
 
         SerializedProperty sp_AssetBundleEncrytion;
@@ -131,7 +131,7 @@ namespace Cosmos.Editor
                             }
                             else
                             {
-                                sp_ResourceBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_ResourceBundlePath.stringValue);
+                                sp_RelativeBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_RelativeBundlePath.stringValue);
                             }
                             assetBundleEncrytion = EditorGUILayout.ToggleLeft("AssetBundleEncrytion", assetBundleEncrytion);
                             if (assetBundleEncrytion != sp_AssetBundleEncrytion.boolValue)
@@ -229,7 +229,7 @@ namespace Cosmos.Editor
             sp_RunInBackground = targetObject.FindProperty("runInBackground");
             sp_ResourceDataset = targetObject.FindProperty("resourceDataset");
             sp_ResourceBundlePathType = targetObject.FindProperty("resourceBundlePathType");
-            sp_ResourceBundlePath = targetObject.FindProperty("resourceBundlePath");
+            sp_RelativeBundlePath = targetObject.FindProperty("relativeBundlePath");
             sp_CustomeResourceBundlePath = targetObject.FindProperty("customeResourceBundlePath");
 
             sp_AssetBundleEncrytion = targetObject.FindProperty("assetBundleEncrytion");

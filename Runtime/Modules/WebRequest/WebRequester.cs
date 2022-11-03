@@ -85,8 +85,12 @@ namespace Cosmos.WebRequest
         /// </summary>
         public void StopRequestTasks()
         {
-            if (Coroutine != null)
-                Utility.Unity.StopCoroutine(Coroutine);
+            try
+            {
+                if (Coroutine != null)
+                    Utility.Unity.StopCoroutine(Coroutine);
+            }
+            catch { }
             CurrentWebRequest?.Abort();
             InExecution = false;
         }
