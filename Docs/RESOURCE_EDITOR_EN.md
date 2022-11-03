@@ -1,3 +1,3 @@
-# [中文](Docs/RESOURCE_EDITOR.md) 
+# [中文](RESOURCE_EDITOR.md) 
 
 # ResourceEditor

@@ -1,3 +1,3 @@
-# [English](Docs/RESOURCE_EDITOR_EN.md) 
+# [English](RESOURCE_EDITOR_EN.md) 
 
 # ResourceEditor
