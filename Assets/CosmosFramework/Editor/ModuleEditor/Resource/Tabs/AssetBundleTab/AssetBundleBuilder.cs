@@ -24,7 +24,6 @@ namespace Cosmos.Editor.Resource
             {
                 var bundle = bundles[i];
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                var bundleName = string.Empty;
                 //这里获取绝对ab绝对路径下，所有资源的bytes，生成唯一MD5 hash
                 var path = Path.Combine(EditorUtil.ApplicationPath(), bundle.BundlePath);
                 var hash = ResourceUtility.CreateDirectoryMd5(path);
@@ -32,16 +31,17 @@ namespace Cosmos.Editor.Resource
                 {
                     case AssetBundleNameType.DefaultName:
                         {
-                            bundleName = bundle.BundleName;
+                            importer.assetBundleName = bundle.BundleName;
+                            bundle.BundleKey = bundle.BundleName;
                         }
                         break;
                     case AssetBundleNameType.HashInstead:
                         {
-                            bundleName = hash;
+                            importer.assetBundleName = hash;
+                            bundle.BundleKey = hash;
                         }
                         break;
                 }
-                importer.assetBundleName = bundleName;
                 var bundleBuildInfo = new ResourceManifest.ResourceBundleBuildInfo()
                 {
                     BundleHash = hash,
@@ -49,7 +49,7 @@ namespace Cosmos.Editor.Resource
                     BundleSize = 0
                 };
                 //这里存储hash与bundle，打包出来的包体长度在下一个流程处理
-                resourceManifest.ResourceBundleBuildInfoDict.Add(bundleName, bundleBuildInfo);
+                resourceManifest.ResourceBundleBuildInfoDict.Add(bundle.BundleName, bundleBuildInfo);
             }
             for (int i = 0; i < bundleLength; i++)
             {

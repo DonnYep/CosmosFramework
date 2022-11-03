@@ -15,9 +15,11 @@ namespace Cosmos.Resource
         [SerializeField]
         string bundlePath;
         [SerializeField]
-        List<string> dependentList=new List<string>();
+        string bundleKey;
         [SerializeField]
-        List<ResourceObject> resourceObjectList=new List<ResourceObject>();
+        List<string> dependentList = new List<string>();
+        [SerializeField]
+        List<ResourceObject> resourceObjectList = new List<ResourceObject>();
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
@@ -33,6 +35,14 @@ namespace Cosmos.Resource
                 }
                 bundleName = srcValue;
             }
+        }
+        /// <summary>
+        /// AB加载时候使用的名称；
+        /// </summary>
+        public string BundleKey
+        {
+            get { return bundleKey; }
+            set { bundleKey = value; }
         }
         /// <summary>
         /// AB包在Assets目录下的地址；

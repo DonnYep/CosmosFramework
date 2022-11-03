@@ -462,7 +462,7 @@ namespace Cosmos.Resource
                 yield break; //若bundle信息为空，则终止；
             if (bundleWarpper.AssetBundle == null)
             {
-                var abPath = Path.Combine(ResourceDataProxy.BundlePath, bundleName);
+                var abPath = Path.Combine(ResourceDataProxy.BundlePath, bundleWarpper.ResourceBundle.BundleKey);
                 var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.EncryptionOffset);
                 yield return abReq;
                 var bundle = abReq.assetBundle;
@@ -609,7 +609,6 @@ namespace Cosmos.Resource
             resourceObjectWarpper.ReferenceCount--;
             UnloadDependenciesAssetBundle(resourceBundleWarpper);
         }
-
         void OnManifestFailure(string errorMessage)
         {
             Utility.Debug.LogError("ResourceManifest deserialization failed , check your file !");
