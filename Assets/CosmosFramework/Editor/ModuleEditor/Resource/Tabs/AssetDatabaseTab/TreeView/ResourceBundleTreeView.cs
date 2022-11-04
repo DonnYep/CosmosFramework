@@ -127,7 +127,7 @@ namespace Cosmos.Editor.Resource
         }
         protected override Rect GetRenameRect(Rect rowRect, int row, TreeViewItem item)
         {
-            return new Rect(latestBundleCellRect.x, latestBundleCellRect.height * row, latestBundleCellRect.width, latestBundleCellRect.height);
+            return new Rect(latestBundleCellRect.x + 2, latestBundleCellRect.height * row, latestBundleCellRect.width, latestBundleCellRect.height);
         }
         protected override TreeViewItem BuildRoot()
         {

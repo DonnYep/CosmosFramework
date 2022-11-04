@@ -276,6 +276,7 @@ MonoBehaviour:
   resourceBundleList:
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
+    bundleKey: 
     dependentList: []
     resourceObjectList:
     - assetName: AmbientAudio
@@ -300,6 +301,7 @@ MonoBehaviour:
       extension: .mp3
   - bundleName: material
     bundlePath: Assets/Examples/AssetBundleTest/Material
+    bundleKey: 
     dependentList: []
     resourceObjectList:
     - assetName: Alpha_Body_MAT
@@ -320,6 +322,7 @@ MonoBehaviour:
       extension: .mat
   - bundleName: model
     bundlePath: Assets/Examples/AssetBundleTest/Model
+    bundleKey: 
     dependentList: []
     resourceObjectList:
     - assetName: LM_XBotIdle
@@ -348,6 +351,7 @@ MonoBehaviour:
       extension: .fbx
   - bundleName: photo
     bundlePath: Assets/Examples/AssetBundleTest/Photo
+    bundleKey: 
     dependentList: []
     resourceObjectList:
     - assetName: CB1024
@@ -368,6 +372,7 @@ MonoBehaviour:
       extension: .psd
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
+    bundleKey: 
     dependentList:
     - audio
     - material
@@ -456,6 +461,7 @@ MonoBehaviour:
       extension: .prefab
   - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text
+    bundleKey: 
     dependentList: []
     resourceObjectList:
     - assetName: ABMapSchema
@@ -468,6 +474,7 @@ MonoBehaviour:
       extension: .csv
   - bundleName: texture
     bundlePath: Assets/Examples/AssetBundleTest/Texture
+    bundleKey: 
     dependentList: []
     resourceObjectList:
     - assetName: Tex_5195
@@ -524,6 +531,7 @@ MonoBehaviour:
       extension: .png
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
+    bundleKey: 
     dependentList:
     - material
     - model
@@ -540,6 +548,7 @@ MonoBehaviour:
       extension: .unity
   - bundleName: procedure_scenes
     bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
+    bundleKey: 
     dependentList:
     - material
     - model
@@ -555,6 +564,7 @@ MonoBehaviour:
       extension: .unity
   - bundleName: entity_prefabs
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
+    bundleKey: 
     dependentList: []
     resourceObjectList:
     - assetName: EntityBullet
@@ -583,6 +593,7 @@ MonoBehaviour:
       extension: .prefab
   - bundleName: entity_scene
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
+    bundleKey: 
     dependentList: []
     resourceObjectList:
     - assetName: EntityGame
