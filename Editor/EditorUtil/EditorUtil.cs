@@ -8,7 +8,7 @@ namespace Cosmos.Editor
 {
     public static partial class EditorUtil
     {
-        public const string EDITOR_CACHE_FOLDER_NAME= "CosmosFramework";
+        public const string EDITOR_CACHE_FOLDER_NAME = "CosmosFramework";
         public static string LibraryPath
         {
             get
@@ -180,7 +180,7 @@ namespace Cosmos.Editor
             if (!Directory.Exists(fullPath))
                 return 0;
             DirectoryInfo directory = new DirectoryInfo(fullPath);
-            var allFiles = directory.GetFiles();
+            var allFiles = directory.GetFiles("*.*", SearchOption.AllDirectories);
             long totalSize = 0;
             foreach (var file in allFiles)
             {

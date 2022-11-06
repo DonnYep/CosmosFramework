@@ -3,7 +3,7 @@ using System;
 
 namespace Cosmos.Resource
 {
-    public class ResourceManifestRequester
+    internal class ResourceManifestRequester
     {
         readonly IWebRequestManager webRequestManager;
         readonly Action<ResourceManifest> onSuccess;
