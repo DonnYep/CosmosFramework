@@ -19,6 +19,10 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         Rect latestBundleCellRect;
         string originalName;
+        /// <summary>
+        /// 正在重命名的itemId
+        /// </summary>
+        int renamingItemId = -1;
         public ResourceBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
@@ -85,8 +89,7 @@ namespace Cosmos.Editor.Resource
         protected override bool CanRename(TreeViewItem item)
         {
             originalName = item.displayName;
-            item.displayName = null;
-            BeginRename(item);
+            renamingItemId = item.id;
             return item != null;
         }
         protected override void RenameEnded(RenameEndedArgs args)
@@ -124,6 +127,7 @@ namespace Cosmos.Editor.Resource
                 item.displayName = originalName;
             }
             base.RenameEnded(args);
+            renamingItemId = -1;
         }
         protected override Rect GetRenameRect(Rect rowRect, int row, TreeViewItem item)
         {
@@ -171,7 +175,8 @@ namespace Cosmos.Editor.Resource
                         if (treeView.icon != null)
                             GUI.DrawTexture(iconRect, treeView.icon, ScaleMode.ScaleToFit);
                         var labelCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-                        DefaultGUI.Label(labelCellRect, treeView.displayName, args.selected, args.focused);
+                        if (treeView.id != renamingItemId)
+                            DefaultGUI.Label(labelCellRect, treeView.displayName, args.selected, args.focused);
                         latestBundleCellRect = labelCellRect;
                     }
                     break;

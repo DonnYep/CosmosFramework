@@ -76,34 +76,33 @@ namespace Cosmos
                     case ResourceLoadMode.AssetBundle:
                         {
                             string manifestPath = string.Empty;
+                            string bundlePath = string.Empty;
+                            string prefix = string.Empty;
+#if UNITY_EDITOR || UNITY_ANDROID || UNITY_STANDALONE
+#elif UNITY_IOS && !UNITY_EDITOR
+                        prefix=@"file://";
+#endif
+                            switch (resourceBundlePathType)
+                            {
+                                case ResourceBundlePathType.StreamingAssets:
+                                    bundlePath = Application.streamingAssetsPath;
+                                    break;
+                                case ResourceBundlePathType.PersistentDataPath:
+                                    bundlePath = Application.persistentDataPath;
+                                    break;
+                            }
                             if (!string.IsNullOrEmpty(relativeBundlePath))
                             {
-                                switch (resourceBundlePathType)
-                                {
-                                    case ResourceBundlePathType.StreamingAssets:
-                                        manifestPath = Path.Combine(Application.streamingAssetsPath, relativeBundlePath, ResourceConstants.RESOURCE_MANIFEST);
-                                        ResourceDataProxy.BundlePath = Path.Combine(Application.streamingAssetsPath, relativeBundlePath);
-                                        break;
-                                    case ResourceBundlePathType.PersistentDataPath:
-                                        manifestPath = Path.Combine(Application.persistentDataPath, relativeBundlePath, ResourceConstants.RESOURCE_MANIFEST);
-                                        ResourceDataProxy.BundlePath = Path.Combine(Application.persistentDataPath, relativeBundlePath);
-                                        break;
-                                }
+                                manifestPath = Path.Combine(bundlePath, relativeBundlePath, ResourceConstants.RESOURCE_MANIFEST);
+                                ResourceDataProxy.BundlePath = Path.Combine(bundlePath, relativeBundlePath);
                             }
                             else
                             {
-                                switch (resourceBundlePathType)
-                                {
-                                    case ResourceBundlePathType.StreamingAssets:
-                                        manifestPath = Path.Combine(Application.streamingAssetsPath, ResourceConstants.RESOURCE_MANIFEST);
-                                        ResourceDataProxy.BundlePath = Path.Combine(Application.streamingAssetsPath);
-                                        break;
-                                    case ResourceBundlePathType.PersistentDataPath:
-                                        manifestPath = Path.Combine(Application.persistentDataPath, ResourceConstants.RESOURCE_MANIFEST);
-                                        ResourceDataProxy.BundlePath = Path.Combine(Application.persistentDataPath);
-                                        break;
-                                }
+                                manifestPath = Path.Combine(bundlePath, ResourceConstants.RESOURCE_MANIFEST);
+                                ResourceDataProxy.BundlePath = bundlePath;
                             }
+                            manifestPath = prefix + manifestPath;
+                            ResourceDataProxy.BundlePath = prefix + ResourceDataProxy.BundlePath;
                             if (assetBundleEncrytion)
                                 ResourceDataProxy.EncryptionOffset = assetBundleEncrytionOffset;
                             if (buildInfoEncrytion)
