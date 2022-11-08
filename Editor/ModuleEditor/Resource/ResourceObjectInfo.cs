@@ -9,24 +9,27 @@ namespace Cosmos.Editor.Resource
         public string AssetBundleName;
         public string FileSize;
         public string Extension;
-        public ResourceObjectInfo(string objectName, string assetPath, string assetBundleName, string fileSize, string extension)
+        public bool Vaild;
+        public ResourceObjectInfo(string objectName, string assetPath, string assetBundleName, string fileSize, string extension, bool vaild)
         {
             ObjectName = objectName;
             AssetPath = assetPath;
             FileSize = fileSize;
             AssetBundleName = assetBundleName;
             Extension = extension;
+            Vaild = vaild;
         }
         public bool Equals(ResourceObjectInfo other)
         {
             return other.ObjectName == this.ObjectName &&
                 other.AssetPath == this.AssetPath &&
                 other.AssetBundleName == this.AssetBundleName &&
-                other.Extension == this.Extension;
+                other.Extension == this.Extension &&
+                other.Vaild == this.Vaild;
         }
         public override int GetHashCode()
         {
-            return $"{ObjectName}{FileSize}{AssetPath}{AssetBundleName}".GetHashCode();
+            return $"{ObjectName}{FileSize}{AssetPath}{AssetBundleName}{Vaild}".GetHashCode();
         }
     }
 }

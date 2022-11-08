@@ -28,6 +28,7 @@ namespace Cosmos.Editor.Resource
             Reload();
             showAlternatingRowBackgrounds = true;
             showBorder = true;
+            multiColumnHeader.sortingChanged += OnMultiColumnHeaderSortingChanged;
         }
         public void Clear()
         {
@@ -141,7 +142,8 @@ namespace Cosmos.Editor.Resource
             {
                 for (int i = 0; i < bundleList.Count; i++)
                 {
-                    var item = new ResourceBundleTreeViewItem(i, 1, bundleList[i].BundleName, assetIcon) { BundleSize = bundleList[i].BundleSize, ObjectCount = bundleList[i].ObjectCount };
+                    var bundleSize = EditorUtility.FormatBytes(bundleList[i].BundleSize);
+                    var item = new ResourceBundleTreeViewItem(i, 1, bundleList[i].BundleName, assetIcon) { BundleSize = bundleSize, ObjectCount = bundleList[i].ObjectCount };
                     allItems.Add(item);
                 }
                 SetupParentsAndChildrenFromDepths(root, allItems);
@@ -152,6 +154,45 @@ namespace Cosmos.Editor.Resource
         {
             base.SelectionChanged(selectedIds);
             onSelectionChanged?.Invoke(selectedIds);
+        }
+        void OnMultiColumnHeaderSortingChanged(MultiColumnHeader multiColumnHeader)
+        {
+            var sortedColumns = multiColumnHeader.state.sortedColumns;
+            if (sortedColumns.Length == 0)
+                return;
+            var sortedType = sortedColumns[0];
+            var ascending = multiColumnHeader.IsSortedAscending(sortedType);
+            switch (sortedType)
+            {
+                case 0:
+                    {
+                        //Size
+                        if (ascending)
+                            bundleList.Sort((lhs, rhs) => lhs.BundleSize.CompareTo(rhs.BundleSize));
+                        else
+                            bundleList.Sort((lhs, rhs) => rhs.BundleSize.CompareTo(lhs.BundleSize));
+                    }
+                    break;
+                case 1:
+                    {
+                        //Amount
+                        if (ascending)
+                            bundleList.Sort((lhs, rhs) => lhs.ObjectCount.CompareTo(rhs.ObjectCount));
+                        else
+                            bundleList.Sort((lhs, rhs) => rhs.ObjectCount.CompareTo(lhs.ObjectCount));
+                    }
+                    break;
+                case 2:
+                    {
+                        //Bundle
+                        if (ascending)
+                            bundleList.Sort((lhs, rhs) => lhs.BundleName.CompareTo(rhs.BundleName));
+                        else
+                            bundleList.Sort((lhs, rhs) => rhs.BundleName.CompareTo(lhs.BundleName));
+                    }
+                    break;
+            }
+            Reload();
         }
         void DrawCellGUI(Rect cellRect, ResourceBundleTreeViewItem treeView, int column, ref RowGUIArgs args)
         {

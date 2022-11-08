@@ -23,7 +23,7 @@ namespace Cosmos.Editor.Resource
         }
         public static void BuildiOSAssetBundle()
         {
-            BuildAssetBundle( BuildTarget.iOS);
+            BuildAssetBundle(BuildTarget.iOS);
         }
         public static void BuildAssetBundle(BuildTarget buildTarget)
         {
@@ -86,7 +86,7 @@ namespace Cosmos.Editor.Resource
                     }
                 }
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize), bundle.ResourceObjectList.Count);
+                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
                 validBundleInfo.Add(bundleInfo);
 
                 var bundlePercent = i / (float)bundleLength;
