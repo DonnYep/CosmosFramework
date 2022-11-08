@@ -12,8 +12,8 @@ namespace Cosmos.Editor.Resource
             Reload();
             showAlternatingRowBackgrounds = true;
             showBorder = true;
+            multiColumnHeader.sortingChanged += OnMultiColumnHeaderSortingChanged;
         }
-
         public void AddObject(ResourceObjectInfo objectInfo)
         {
             if (!objectList.Contains(objectInfo))
@@ -58,9 +58,8 @@ namespace Cosmos.Editor.Resource
                     var obj = AssetDatabase.LoadMainAssetAtPath(objectInfo.AssetPath);
                     Texture2D objectIcon = null;
                     Texture2D stateIcon = null;
-                    bool isValidAsset = obj != null;
                     string objectState = string.Empty;
-                    if (isValidAsset)
+                    if (objectList[i].Vaild)
                     {
                         objectIcon = EditorUtil.ToTexture2D(EditorGUIUtility.ObjectContent(obj, obj.GetType()).image);
                         objectState = "VALID";
@@ -94,6 +93,72 @@ namespace Cosmos.Editor.Resource
             {
                 DrawCellGUI(args.GetCellRect(i), args.item as ResourceObjectTreeViewItem, args.GetColumn(i), ref args);
             }
+        }
+        void OnMultiColumnHeaderSortingChanged(MultiColumnHeader multiColumnHeader)
+        {
+            var sortedColumns = multiColumnHeader.state.sortedColumns;
+            if (sortedColumns.Length == 0)
+                return;
+            var sortedType = sortedColumns[0];
+            var ascending = multiColumnHeader.IsSortedAscending(sortedType);
+            switch (sortedType)
+            {
+                case 0:
+                    {
+                        //Name
+                        if (ascending)
+                            objectList.Sort((lhs, rhs) => lhs.ObjectName.CompareTo(rhs.ObjectName));
+                        else
+                            objectList.Sort((lhs, rhs) => rhs.ObjectName.CompareTo(lhs.ObjectName));
+                    }
+                    break;
+                case 1:
+                    {
+                        //Extension
+                        if (ascending)
+                            objectList.Sort((lhs, rhs) => lhs.Extension.CompareTo(rhs.Extension));
+                        else
+                            objectList.Sort((lhs, rhs) => rhs.Extension.CompareTo(lhs.Extension));
+                    }
+                    break;
+                case 2:
+                    {
+                        //State
+                        if (ascending)
+                            objectList.Sort((lhs, rhs) => lhs.Vaild.CompareTo(rhs.Vaild));
+                        else
+                            objectList.Sort((lhs, rhs) => rhs.Vaild.CompareTo(lhs.Vaild));
+                    }
+                    break;
+                case 3:
+                    {
+                        //Size
+                        if (ascending)
+                            objectList.Sort((lhs, rhs) => lhs.FileSize.CompareTo(rhs.FileSize));
+                        else
+                            objectList.Sort((lhs, rhs) => rhs.FileSize.CompareTo(lhs.FileSize));
+                    }
+                    break;
+                case 4:
+                    {
+                        //AssetBundle
+                        if (ascending)
+                            objectList.Sort((lhs, rhs) => lhs.AssetBundleName.CompareTo(rhs.AssetBundleName));
+                        else
+                            objectList.Sort((lhs, rhs) => rhs.AssetBundleName.CompareTo(lhs.AssetBundleName));
+                    }
+                    break;
+                case 5:
+                    {
+                        //AssetPath
+                        if (ascending)
+                            objectList.Sort((lhs, rhs) => lhs.AssetPath.CompareTo(rhs.AssetPath));
+                        else
+                            objectList.Sort((lhs, rhs) => rhs.AssetPath.CompareTo(lhs.AssetPath));
+                    }
+                    break;
+            }
+            Reload();
         }
         void DrawCellGUI(Rect cellRect, ResourceObjectTreeViewItem treeView, int column, ref RowGUIArgs args)
         {

@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Cosmos.Editor.Resource
 {
-    public class AssetDatabaseTab: ResourceWindowTabBase
+    public class AssetDatabaseTab : ResourceWindowTabBase
     {
         ResourceBundleLabel resourceBundleLabel = new ResourceBundleLabel();
         ResourceObjectLabel resourceObjectLabel = new ResourceObjectLabel();
@@ -39,7 +39,7 @@ namespace Cosmos.Editor.Resource
                 {
                     var bundle = bundleList[i];
                     long bundleSize = EditorUtil.GetUnityDirectorySize(bundle.BundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                    resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize),bundle.ResourceObjectList.Count));
+                    resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count));
                 }
                 hasChanged = ResourceWindowDataProxy.ResourceDataset.IsChanged;
                 DisplaySelectedBundle();
@@ -103,7 +103,7 @@ namespace Cosmos.Editor.Resource
                 {
                     var bundle = bundleList[i];
                     long bundleSize = EditorUtil.GetUnityDirectorySize(bundle.BundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                    resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize),bundle.ResourceObjectList.Count));
+                    resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count));
                 }
                 resourceObjectLabel.Clear();
                 hasChanged = ResourceWindowDataProxy.ResourceDataset.IsChanged;
@@ -176,7 +176,7 @@ namespace Cosmos.Editor.Resource
                             {
                                 bundleList.Add(bundle);
                                 long bundleSize = EditorUtil.GetUnityDirectorySize(path, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize),bundle.ResourceObjectList.Count);
+                                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
                                 resourceBundleLabel.AddBundle(bundleInfo);
                                 ResourceWindowDataProxy.ResourceDataset.IsChanged = true;
                                 hasChanged = true;
@@ -286,7 +286,7 @@ namespace Cosmos.Editor.Resource
                     if (extensions.Contains(lowerFileExt))
                     {
                         //统一使用小写的文件后缀名
-                        var lowerExtFilePath= srcFilePath.Replace(srcFileExt,lowerFileExt);
+                        var lowerExtFilePath = srcFilePath.Replace(srcFileExt, lowerFileExt);
                         var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(lowerExtFilePath), lowerExtFilePath, bundle.BundleName, lowerFileExt);
                         objects.Add(resourceObject);
                         bundle.ResourceObjectList.Add(resourceObject);
@@ -297,7 +297,7 @@ namespace Cosmos.Editor.Resource
                     }
                 }
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, EditorUtility.FormatBytes(bundleSize),bundle.ResourceObjectList.Count);
+                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
                 validBundleInfo.Add(bundleInfo);
 
                 var bundlePercent = i / (float)bundleLength;
@@ -364,7 +364,8 @@ namespace Cosmos.Editor.Resource
                 {
                     var obj = objects[j];
                     var assetPath = obj.AssetPath;
-                    var objInfo = new ResourceObjectInfo(obj.AssetName, assetPath, obj.BundleName, EditorUtil.GetAssetFileSize(assetPath), obj.Extension);
+                    var valid = AssetDatabase.LoadMainAssetAtPath(obj.AssetPath) != null;
+                    var objInfo = new ResourceObjectInfo(obj.AssetName, assetPath, obj.BundleName, EditorUtil.GetAssetFileSize(assetPath), obj.Extension, valid);
                     resourceObjectLabel.AddObject(objInfo);
                 }
                 var progress = Mathf.RoundToInt((float)i / (idlen - 1) * 100); ;
