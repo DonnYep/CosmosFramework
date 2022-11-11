@@ -5,7 +5,7 @@ namespace Cosmos.Entity
     {
         string EntityGroupName { get; }
         int EntityCount { get; }
-        object EntityAsset { get; }
+        EntityObject EntityObjectAsset { get; }
         IEntity EntityRoot { get; }
         IObjectPool ObjectPool { get; }
         IEntityGroupHelper EntityGroupHelper { get; }

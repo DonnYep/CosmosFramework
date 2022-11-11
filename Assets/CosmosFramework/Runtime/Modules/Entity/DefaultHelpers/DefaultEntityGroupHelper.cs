@@ -30,15 +30,15 @@ namespace Cosmos
                 return deactiveRoot;
             }
         }
-        public void OnEntitySpawn(object entityInstance)
+        public void OnEntitySpawn(EntityObject entityObject)
         {
-            var go = entityInstance.As<GameObject>();
+            var go = entityObject.gameObject;
             go.SetActive(true);
             go.transform.SetAlignParent(ActiveRoot.transform);
         }
-        public void OnEntityDespawn(object entityInstance)
+        public void OnEntityDespawn(EntityObject entityObject)
         {
-            var go = entityInstance.As<GameObject>();
+            var go = entityObject.gameObject;
             go.SetActive(false);
             go.transform.SetAlignParent(DeactiveRoot.transform);
         }

@@ -2,7 +2,7 @@
 {
     public interface IEntityGroupHelper
     {
-        void OnEntitySpawn(object entityInstance);
-        void OnEntityDespawn(object entityInstance);
+        void OnEntitySpawn(EntityObject entityObject);
+        void OnEntityDespawn(EntityObject  entityObject);
     }
 }

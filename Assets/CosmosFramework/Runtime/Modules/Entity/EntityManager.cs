@@ -50,6 +50,7 @@ namespace Cosmos.Entity
         IObjectPoolManager objectPoolManager;
         IResourceManager resourceManager;
         IEntityGroupHelper defaultEntityGroupHelper;
+        Random random;
         #endregion
         #region Methods
         ///<inheritdoc/>
@@ -79,7 +80,7 @@ namespace Cosmos.Entity
                 await resourceManager.LoadPrefabAsync(entityAssetInfo.AssetName, (entityAsset) =>
                 {
                     entityGroupHelper = entityGroupHelper != null ? entityGroupHelper : defaultEntityGroupHelper;
-                    var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset, entityGroupHelper);
+                    var entityGroup = EntityGroup.Create(entityAssetInfo.EntityGroupName, entityAsset.GetComponent<EntityObject>(), entityGroupHelper);
                     if (entityAssetInfo.UseObjectPool)
                     {
                         var objectPool = objectPoolManager.RegisterObjectPool(entityAssetInfo.EntityGroupName, entityAsset);
@@ -152,15 +153,15 @@ namespace Cosmos.Entity
             var entity = entityGroup.GetEntity(entityName);
             if (entity == null)
             {
-                object entityInstance = null;
+                EntityObject entityInstance = null;
                 if (entityGroup.UseObjectPool)
                 {
-                    entityInstance = entityGroup.ObjectPool.Spawn();
+                    entityInstance = entityGroup.ObjectPool.Spawn().GetComponent<EntityObject>();
                     entityGroup.EntityGroupHelper.OnEntitySpawn(entityInstance);
                 }
                 else
                 {
-                    entityInstance = entityHelper.InstantiateEntity(entityGroup.EntityAsset);
+                    entityInstance = entityHelper.InstantiateEntity(entityGroup.EntityObjectAsset);
                 }
                 entity = Entity.Create(entityId, entityName, entityInstance, entityGroup);
 
@@ -189,15 +190,15 @@ namespace Cosmos.Entity
             var entity = entityGroup.GetEntity(entityId);
             if (entity == null)
             {
-                object entityInstance = null;
+                EntityObject entityInstance = null;
                 if (entityGroup.UseObjectPool)
                 {
-                    entityInstance = entityGroup.ObjectPool.Spawn();
+                    entityInstance = entityGroup.ObjectPool.Spawn().GetComponent<EntityObject>();
                     entityGroup.EntityGroupHelper.OnEntitySpawn(entityInstance);
                 }
                 else
                 {
-                    entityInstance = entityHelper.InstantiateEntity(entityGroup.EntityAsset);
+                    entityInstance = entityHelper.InstantiateEntity(entityGroup.EntityObjectAsset);
                 }
                 entity = Entity.Create(entityId, entityName, entityInstance, entityGroup);
                 entityGroup.AddEntity(entity);
@@ -342,6 +343,9 @@ namespace Cosmos.Entity
         {
             entityGroupDict = new Dictionary<string, EntityGroup>();
             entityIdDict = new Dictionary<int, IEntity>();
+            int seed = Guid.NewGuid().GetHashCode();
+            random = new Random(seed);
+
         }
         protected override void OnPreparatory()
         {
@@ -352,10 +356,10 @@ namespace Cosmos.Entity
         }
         int GenerateEntityId()
         {
-            var id = Utility.Algorithm.RandomRange(0, int.MaxValue);
+            var id = RandomRange(0, int.MaxValue);
             while (entityIdDict.ContainsKey(id))
             {
-                id = Utility.Algorithm.RandomRange(0, int.MaxValue);
+                id = RandomRange(0, int.MaxValue);
             }
             return id;
         }
@@ -369,15 +373,20 @@ namespace Cosmos.Entity
             var entityGroup = (EntityGroup)entity.EntityGroup;
             if (entityGroup != null)
             {
-                entityGroup.ObjectPool.Despawn(entity.EntityInstance.CastTo<UnityEngine.GameObject>());
-                entityGroup.EntityGroupHelper.OnEntityDespawn(entity.EntityInstance);
+                entityGroup.ObjectPool.Despawn(entity.EntityObject.gameObject);
+                entityGroup.EntityGroupHelper.OnEntityDespawn(entity.EntityObject);
                 entityGroup.RemoveEntity(entity);
             }
             else
             {
-                entityHelper.ReleaseEntity(entity.EntityInstance);
+                entityHelper.ReleaseEntity(entity.EntityObject);
             }
             Entity.Release(entity.CastTo<Entity>());
+        }
+        int RandomRange(int minValue, int maxValue)
+        {
+            int result = random.Next(minValue, maxValue);
+            return result;
         }
         #endregion
     }

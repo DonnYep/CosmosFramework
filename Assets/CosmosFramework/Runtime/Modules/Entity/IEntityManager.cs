@@ -75,7 +75,6 @@ namespace Cosmos.Entity
         /// <param name="entityId">自定义的实体id;</param>
         /// <returns>是否存在</returns>
         bool HasEntity(int entityId);
-
         /// <summary>
         /// 激活&添加实体对象；
         /// </summary>

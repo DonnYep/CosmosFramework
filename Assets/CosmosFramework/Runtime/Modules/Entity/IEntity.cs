@@ -1,7 +1,7 @@
 ﻿namespace Cosmos.Entity
 {
     /// <summary>
-    /// 与unity耦合的实体对象，当前版本中使用的是此实体对象
+    /// 实体接口；
     /// </summary>
     public interface IEntity
     {
@@ -16,7 +16,7 @@
         /// <summary>
         /// 实体索引的具体对象；
         /// </summary>
-        object EntityInstance { get; }
+        EntityObject EntityObject{ get; }
         /// <summary>
         /// 实体所属的实体组
         /// </summary>
@@ -39,6 +39,5 @@
         /// </summary>
         /// <returns>所有子实体的数组</returns>
         IEntity[] GetChildEntities();
-        void OnRefresh();
     }
 }

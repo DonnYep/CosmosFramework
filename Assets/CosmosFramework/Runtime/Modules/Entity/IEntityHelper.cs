@@ -5,14 +5,14 @@
         /// <summary>
         /// 实例化实体；
         /// </summary>
-        /// <param name="entityAsset">实体资源</param>
+        /// <param name="entityObjectAsset">实体资源</param>
         /// <returns>实体对象</returns>
-        object InstantiateEntity(object entityAsset);
+        EntityObject InstantiateEntity(EntityObject entityObjectAsset);
         /// <summary>
         /// 释放实体；
         /// </summary>
-        /// <param name="entityInstance">实体实例</param>
-        void ReleaseEntity(object entityInstance);
+        /// <param name="entityObject">实体对象</param>
+        void ReleaseEntity(EntityObject entityObject);
         void AttachToParent(IEntity childEntity, IEntity parentEntity);
         void DeatchFromParent(IEntity entity);
     }

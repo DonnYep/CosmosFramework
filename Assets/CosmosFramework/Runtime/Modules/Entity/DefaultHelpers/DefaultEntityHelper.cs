@@ -20,27 +20,26 @@ namespace Cosmos
         }
         public void AttachToParent(IEntity childEntity, IEntity parentEntity)
         {
-            var childGo = childEntity.EntityInstance.CastTo<GameObject>();
-            var parentGo = parentEntity.EntityInstance.CastTo<GameObject>();
+            var childGo = childEntity.EntityObject.gameObject;
+            var parentGo = parentEntity.EntityObject.gameObject;
             childGo.transform.SetParent(parentGo.transform);
         }
         public void DeatchFromParent(IEntity entity)
         {
-            var childGo = entity.EntityInstance.CastTo<GameObject>();
+            var childGo = entity.EntityObject.gameObject;
             childGo.transform.SetParent(SingleRoot.transform);
             childGo.transform.ResetLocalTransform();
         }
-        public object InstantiateEntity(object entityAsset)
+        public EntityObject InstantiateEntity(EntityObject entityObjectAsset)
         {
-            var resGo = entityAsset.CastTo<GameObject>();
+            var resGo = entityObjectAsset;
             var go = GameObject.Instantiate(resGo);
             go.transform.SetParent(SingleRoot.transform);
             return go;
         }
-        public void ReleaseEntity(object entityInstance)
+        public void ReleaseEntity(EntityObject entityObject)
         {
-            var go = entityInstance.As<GameObject>();
-            GameObject.Destroy(go);
+            GameObject.Destroy(entityObject);
         }
     }
 }

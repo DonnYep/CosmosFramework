@@ -12,7 +12,7 @@ namespace Cosmos.Entity
 
             public string EntityGroupName { get; private set; }
             public int EntityCount { get { return entityLinkedList.Count; } }
-            public object EntityAsset { get; private set; }
+            public  EntityObject EntityObjectAsset { get; private set; }
             public IEntity EntityRoot { get; private set; }
             public object EntityRootInstance { get; private set; }
             public IObjectPool ObjectPool { get; private set; }
@@ -119,17 +119,17 @@ namespace Cosmos.Entity
             {
                 EntityGroupName = string.Empty;
                 entityLinkedList.Clear();
-                EntityAsset = null;
+                EntityObjectAsset = null;
                 EntityRoot = null;
                 ObjectPool = null;
                 UseObjectPool = false;
                 EntityGroupHelper = null;
             }
-            public static EntityGroup Create(string name, object entityAsset, IEntityGroupHelper  entityGroupHelper)
+            public static EntityGroup Create(string name, EntityObject entityObjectAsset, IEntityGroupHelper  entityGroupHelper)
             {
                 var entityGroup = entityGroupPool.Spawn();
                 entityGroup.EntityGroupName = name;
-                entityGroup.EntityAsset = entityAsset;
+                entityGroup.EntityObjectAsset = entityObjectAsset;
                 entityGroup.EntityGroupHelper= entityGroupHelper;
                 return entityGroup;
             }

@@ -22,8 +22,8 @@ public class EntityEnmeySpanwer : MonoBehaviour
         for (int i = 0; i < length; i++)
         {
             var entity = entityManager.ShowEntity(spanwEntityName);
-            var ei = entity.EntityInstance;
-            var go = ei.CastTo<GameObject>();
+            var ei = entity.EntityObject;
+            var go = ei.gameObject;
             go.transform.SetAlignParent(spawnPoints[i]);
             var enmeyController = go.GetComponent<EntityEnmeyController>();
             enmeyController.EntityId = entity.EntityId;
