@@ -26,7 +26,7 @@ public class PlayAudioPanel : MonoBehaviour
         CosmosEntry.AudioManager.AudioRegisterSuccess += AudioRegisterSuccess;
         CosmosEntry.AudioManager.AudioRegisterFailure += AudioRegistFailure; ;
         var audioAssetInfo = new AudioAssetInfo("AudioTechHouse", "AudioTechHouse");
-        CosmosEntry.AudioManager.RegistAudioAsync(audioAssetInfo);
+        CosmosEntry.AudioManager.RegisterAudioAsync(audioAssetInfo);
     }
     void AudioRegisterSuccess(AudioRegisterSuccessEventArgs eventArgs)
     {

@@ -48,7 +48,7 @@ namespace Cosmos.Audio
         ///注册声音；
         ///若声音原始存在，则更新，若不存在，则加载；
         /// </summary>
-        void RegistAudioAsync(AudioAssetInfo audioAssetInfo);
+        void RegisterAudioAsync(AudioAssetInfo audioAssetInfo);
         /// <summary>
         /// 注销声音；
         /// </summary>
