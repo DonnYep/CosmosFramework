@@ -21,14 +21,14 @@ public class EntityEnmeySpanwer : MonoBehaviour
         var length = spawnPoints.Length;
         for (int i = 0; i < length; i++)
         {
-            entityManager.ShowEntity(EntityContants.EntityEnmey, out var entity);
-            entity.Handle.transform.SetAlignParent(spawnPoints[spawnPointIndex]);
+            entityManager.ShowEntity(EntityContants.EntityEnmey, out var entityObject);
+            entityObject.Handle.transform.SetAlignParent(spawnPoints[spawnPointIndex]);
             spawnPointIndex++;
-            Utility.Debug.LogInfo($"ShowEntity==={entity.EntityName}={entity.EntityObjectId}");
-            entity.As<EntityEnmeyController>().onDeath = OnEnemyDeath;
+            Utility.Debug.LogInfo($"ShowEntity==={entityObject.EntityName}={entityObject.EntityObjectId}");
+            entityObject.As<EnmeyEntity>().onDeath = OnEnemyDeath;
         }
     }
-    async void OnEnemyDeath(EntityEnmeyController entityEnmey)
+    async void OnEnemyDeath(EnmeyEntity entityEnmey)
     {
         await new WaitForSeconds(deactiveEntityTime);
         entityManager.HideEntity(entityEnmey.EntityName, entityEnmey.EntityObjectId);

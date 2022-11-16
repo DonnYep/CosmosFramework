@@ -27,8 +27,8 @@ public class EntityLauncherState : ProcedureState
         //await new WaitForNextFrame();
         sld.Active = false;
         await CosmosEntry.UIManager.OpenUIFormAsync<EntityGameLauncherPanel>(new UIAssetInfo("EntityGameLauncherPanel"));
-        CosmosEntry.EntityManager.RegisterEntityAsync<EntityEnmeyController>(new EntityAssetInfo(EntityContants.EntityEnmey));
-        CosmosEntry.EntityManager.RegisterEntityAsync<EntityBulletController>(new EntityAssetInfo(EntityContants.EntityBullet));
+        CosmosEntry.EntityManager.RegisterEntityAsync<EnmeyEntity>(new EntityAssetInfo(EntityContants.EntityEnmey));
+        CosmosEntry.EntityManager.RegisterEntityAsync<BulletEntity>(new EntityAssetInfo(EntityContants.EntityBullet));
     }
     public override void OnUpdate(SimpleFsm<IProcedureManager> fsm)
     {

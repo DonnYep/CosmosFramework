@@ -2,7 +2,7 @@
 using UnityEngine;
 using Cosmos;
 using Cosmos.Entity;
-public class EntityBulletController : EntityObject
+public class BulletEntity: EntityObject
 {
     float moveDuration;
     float speed;

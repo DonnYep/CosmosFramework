@@ -19,19 +19,19 @@ public class EntityAblilty : MonoBehaviour
     private void SpawnBullet()
     {
         entityManager.ShowEntity(EntityContants.EntityBullet, out var entityObject);
-        var eb = entityObject as EntityBulletController;
-        eb.onHit = (hit) => { entityManager.HideEntityObject(eb); OnBulletHit(hit); };
-        eb.transform.position = transform.position + transform.forward * 0.5f + new Vector3(0, 1.5f, 0);
-        eb.transform.eulerAngles = transform.eulerAngles;
-        eb.Speed = bulletSpeed;
-        eb.MoveDuration = bulletMoveDuration;
-        eb.OnShoot();
+        var bullet = entityObject as BulletEntity;
+        bullet.onHit = (hit) => { entityManager.HideEntityObject(bullet); OnBulletHit(hit); };
+        bullet.transform.position = transform.position + transform.forward * 0.5f + new Vector3(0, 1.5f, 0);
+        bullet.transform.eulerAngles = transform.eulerAngles;
+        bullet.Speed = bulletSpeed;
+        bullet.MoveDuration = bulletMoveDuration;
+        bullet.OnShoot();
     }
     void OnBulletHit(GameObject hitGo)
     {
         if (hitGo == null)
             return;
-        var comp = hitGo.GetComponent<EntityEnmeyController>();
+        var comp = hitGo.GetComponent<EnmeyEntity>();
         if (comp != null)
         {
             comp.Damage(damage);

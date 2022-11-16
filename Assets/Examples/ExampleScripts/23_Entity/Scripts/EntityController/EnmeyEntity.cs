@@ -3,14 +3,14 @@ using Cosmos.Entity;
 using System;
 
 [RequireComponent(typeof(EntityAnimator))]
-public class EntityEnmeyController : EntityObject
+public class EnmeyEntity: EntityObject
 {
     EntityAnimator entityAnimator;
     [SerializeField] int health = 200;
     bool death = false;
     bool onHitAnim = false;
     CapsuleCollider capsuleCollider;
-    public Action<EntityEnmeyController> onDeath;
+    public Action<EnmeyEntity> onDeath;
     public int Heath
     {
         get { return health; }

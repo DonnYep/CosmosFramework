@@ -35,11 +35,6 @@ namespace Cosmos.Entity
             gameObject.SetActive(false);
         }
         public virtual void OnRecycle() { }
-        public virtual void OnRelease() { }
-        public void OnAttached(EntityObject entity) { }
-        public void OnAttachTo(EntityObject entity) { }
-        public void OnDetached(EntityObject entity) { }
-        public void OnDetachFrom(EntityObject entity) { }
         public bool Equals(EntityObject other)
         {
             return other.EntityName == this.EntityName &&
