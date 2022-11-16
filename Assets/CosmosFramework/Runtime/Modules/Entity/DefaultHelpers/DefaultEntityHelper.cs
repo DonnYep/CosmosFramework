@@ -1,45 +1,21 @@
 ﻿using Cosmos.Entity;
+using System;
 using UnityEngine;
 
 namespace Cosmos
 {
     public class DefaultEntityHelper : IEntityHelper
     {
-        GameObject m_SingleRoot;
-        GameObject SingleRoot
+        public EntityObject InstantiateEntity(GameObject entityAsset, Type entityObjectType)
         {
-            get
-            {
-                if (m_SingleRoot == null)
-                {
-                    m_SingleRoot = new GameObject("SingleEntities");
-                    m_SingleRoot.transform.SetAlignParent(CosmosEntry.EntityManager.Instance().transform);
-                }
-                return m_SingleRoot;
-            }
-        }
-        public void AttachToParent(IEntity childEntity, IEntity parentEntity)
-        {
-            var childGo = childEntity.EntityObject.gameObject;
-            var parentGo = parentEntity.EntityObject.gameObject;
-            childGo.transform.SetParent(parentGo.transform);
-        }
-        public void DeatchFromParent(IEntity entity)
-        {
-            var childGo = entity.EntityObject.gameObject;
-            childGo.transform.SetParent(SingleRoot.transform);
-            childGo.transform.ResetLocalTransform();
-        }
-        public EntityObject InstantiateEntity(EntityObject entityObjectAsset)
-        {
-            var resGo = entityObjectAsset;
-            var go = GameObject.Instantiate(resGo);
-            go.transform.SetParent(SingleRoot.transform);
-            return go;
+            var go = GameObject.Instantiate(entityAsset);
+            var entity = go.GetOrAddComponent(entityObjectType) as EntityObject;
+            return entity;
         }
         public void ReleaseEntity(EntityObject entityObject)
         {
-            GameObject.Destroy(entityObject);
+            var go = entityObject.As<GameObject>();
+            GameObject.Destroy(go);
         }
     }
 }

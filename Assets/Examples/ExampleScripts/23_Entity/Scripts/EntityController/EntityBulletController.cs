@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using Cosmos;
-public class EntityBulletController : MonoBehaviour
+using Cosmos.Entity;
+public class EntityBulletController : EntityObject
 {
     float moveDuration;
     float speed;
@@ -35,5 +36,14 @@ public class EntityBulletController : MonoBehaviour
         {
             onHit?.Invoke(null);
         }
+    }
+    public override void OnHide()
+    {
+        base.OnHide();
+        transform.ResetWorldTransform();
+    }
+    public override void OnRecycle()
+    {
+        base.OnRecycle();
     }
 }

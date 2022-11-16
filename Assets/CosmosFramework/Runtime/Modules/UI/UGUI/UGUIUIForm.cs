@@ -131,7 +131,5 @@ namespace Cosmos.UI
             }
             return comp;
         }
-
-
     }
 }

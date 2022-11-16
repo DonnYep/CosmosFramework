@@ -22,7 +22,7 @@ namespace Cosmos
             this.capacity = capacity;
         }
         public Pool(Func<T> objectGenerator, Action<T> objectSpawn, Action<T> objectDesapwn):this(0,objectGenerator,objectSpawn,objectDesapwn,null) { }
-        public Pool(Func<T> objectGenerator, Action<T> objectDesapwn) :this(0,objectGenerator,null,objectDesapwn,null){ }
+        public Pool(Func<T> objectGenerator, Action<T> objectDespawn) :this(0,objectGenerator,null,objectDespawn,null){ }
         public Pool(Func<T> objectGenerator) : this(0,objectGenerator, null,null,null){}
         public T Spawn()
         {

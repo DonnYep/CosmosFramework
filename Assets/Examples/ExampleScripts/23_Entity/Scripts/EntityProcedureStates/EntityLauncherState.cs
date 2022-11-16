@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cosmos;
 using Cosmos.UI;
+using Cosmos.Entity;
 
 public class EntityLauncherState : ProcedureState
 {
@@ -26,6 +27,8 @@ public class EntityLauncherState : ProcedureState
         //await new WaitForNextFrame();
         sld.Active = false;
         await CosmosEntry.UIManager.OpenUIFormAsync<EntityGameLauncherPanel>(new UIAssetInfo("EntityGameLauncherPanel"));
+        CosmosEntry.EntityManager.RegisterEntityAsync<EntityEnmeyController>(new EntityAssetInfo(EntityContants.EntityEnmey));
+        CosmosEntry.EntityManager.RegisterEntityAsync<EntityBulletController>(new EntityAssetInfo(EntityContants.EntityBullet));
     }
     public override void OnUpdate(SimpleFsm<IProcedureManager> fsm)
     {

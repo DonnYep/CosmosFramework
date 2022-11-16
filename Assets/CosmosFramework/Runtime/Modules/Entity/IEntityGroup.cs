@@ -1,20 +1,14 @@
-﻿using Cosmos.ObjectPool;
+﻿using System.Collections.Generic;
+
 namespace Cosmos.Entity
 {
     public interface IEntityGroup
     {
         string EntityGroupName { get; }
+        IEnumerable<string> EntityNames { get; }
         int EntityCount { get; }
-        EntityObject EntityObjectAsset { get; }
-        IEntity EntityRoot { get; }
-        IObjectPool ObjectPool { get; }
-        IEntityGroupHelper EntityGroupHelper { get; }
         bool HasEntity(string entityName);
-        bool HasEntity(int entityId);
-        IEntity GetEntity(int entityId);
-        IEntity GetEntity(string entityName);
-        IEntity[] GetEntities(string entityName);
-        IEntity[] GetAllChildEntities();
-        void ClearChildEntities();
+        bool AddEntity(string entityName);
+        bool RemoveEntity(string entityName);
     }
 }

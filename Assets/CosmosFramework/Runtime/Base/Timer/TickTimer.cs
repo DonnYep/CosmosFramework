@@ -86,6 +86,18 @@ namespace Cosmos
             pause = false;
         }
         /// <summary>
+        /// 添加一次性任务；
+        /// 若任务添加成功，则返回大于0的TaskId；
+        /// 若任务添加失败，则返回-1；
+        /// </summary>
+        /// <param name="delayTime">毫秒级别时间延迟</param>
+        /// <param name="taskCallback">执行回调</param>
+        /// <returns>添加事件成功后返回的ID</returns>
+        public int AddTask(int delayTime, Action<int> taskCallback)
+        {
+            return AddTask(delayTime, 0, taskCallback, null, 1);
+        }
+        /// <summary>
         /// 添加任务；
         /// 若任务添加成功，则返回大于0的TaskId；
         /// 若任务添加失败，则返回-1；

@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using Cosmos.Entity;
 using System;
+
 [RequireComponent(typeof(EntityAnimator))]
-public class EntityEnmeyController : MonoBehaviour
+public class EntityEnmeyController : EntityObject
 {
-    public int EntityId { get; set; }
     EntityAnimator entityAnimator;
     [SerializeField] int health = 200;
     bool death = false;
@@ -38,20 +39,26 @@ public class EntityEnmeyController : MonoBehaviour
                 entityAnimator.Hit();
         }
     }
-    public void ResetController()
+    public override void OnInit(string entityName, int entityInstanceId, string entityGroupName)
+    {
+        base.OnInit(entityName, entityInstanceId, entityGroupName);
+        entityAnimator = GetComponent<EntityAnimator>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
+        entityAnimator.OnHitOff += OnHitOff;
+    }
+    public override void OnHide()
+    {
+        gameObject.SetActive(false);
+        ResetController();
+    }
+    void ResetController()
     {
         health = 200;
         onHitAnim = false;
         capsuleCollider.enabled = true;
         death = false;
     }
-    private void Awake()
-    {
-        entityAnimator = GetComponent<EntityAnimator>();
-        entityAnimator.OnHitOff += OnHitOff;
-        capsuleCollider = GetComponent<CapsuleCollider>();
-    }
-    private void OnHitOff()
+    void OnHitOff()
     {
         onHitAnim = false;
     }

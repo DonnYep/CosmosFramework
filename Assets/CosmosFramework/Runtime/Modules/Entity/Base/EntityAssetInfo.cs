@@ -8,13 +8,15 @@ namespace Cosmos.Entity
     public struct EntityAssetInfo
     {
         public string AssetName { get; private set; }
+        public string EntityName { get; private set; }
         public string EntityGroupName { get; private set; }
-        public bool UseObjectPool { get; private set; }
-        public EntityAssetInfo(string entityGroupName, string assetName, bool useObjectPool = false)
+        public EntityAssetInfo(string assetName) : this(assetName, assetName, string.Empty) { }
+        public EntityAssetInfo(string assetName, string entityName) : this(assetName, entityName, string.Empty) { }
+        public EntityAssetInfo(string assetName, string entityName, string entityGroupName)
         {
-            this.EntityGroupName = entityGroupName;
             this.AssetName = assetName;
-            this.UseObjectPool = useObjectPool;
+            this.EntityName = entityName;
+            this.EntityGroupName = entityGroupName;
         }
     }
 }
