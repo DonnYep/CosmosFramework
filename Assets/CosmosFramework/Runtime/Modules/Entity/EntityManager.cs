@@ -13,7 +13,7 @@ namespace Cosmos.Entity
      */
     //================================================
     [Module]
-    internal partial class EntityManager : Module, IEntityManager
+    internal sealed partial class EntityManager : Module, IEntityManager
     {
         #region Properties
         ///<inheritdoc/>
@@ -327,7 +327,7 @@ namespace Cosmos.Entity
                 }
             }
             entityDict.Add(entityAssetInfo.EntityName, entity);
-            var successArgs = EntityRegisterSuccessEventArgs.Create(entityAssetInfo.AssetName, entityAssetInfo.EntityName, groupName);
+            var successArgs = EntityRegisterSuccessEventArgs.Create(entityAssetInfo.AssetName, entityAssetInfo.EntityName, groupName, entityObjectType);
             entityRegisterSuccess?.Invoke(successArgs);
             EntityRegisterSuccessEventArgs.Release(successArgs);
         }
