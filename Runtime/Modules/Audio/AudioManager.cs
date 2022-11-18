@@ -72,15 +72,15 @@ namespace Cosmos.Audio
             this.audioPlayHelper = helper;
         }
         ///<inheritdoc/>
-        public void RegistAudioAsync(AudioAssetInfo audioAssetInfo)
+        public void RegisterAudioAsync(AudioAssetInfo audioAssetInfo)
         {
             Utility.Text.IsStringValid(audioAssetInfo.AssetName, "AudioName is invalid !");
             audioAssetHelper.LoadAudioAsync(audioAssetInfo, audioObj =>
             {
-                OnAudioRegistSuccess(audioObj);
+                OnAudioRegisterSuccess(audioObj);
             }, () =>
             {
-                OnAudioRegistFailure(audioAssetInfo.AssetName, audioAssetInfo.AudioGroupName);
+                OnAudioRegisterFailure(audioAssetInfo.AssetName, audioAssetInfo.AudioGroupName);
             });
         }
         ///<inheritdoc/>
@@ -306,13 +306,13 @@ namespace Cosmos.Audio
         {
             audioPlayHelper?.TickRefresh();
         }
-        void OnAudioRegistFailure(string audioName, string audioGroupName)
+        void OnAudioRegisterFailure(string audioName, string audioGroupName)
         {
             var eventArgs = AudioRegisterFailureEventArgs.Create(audioName, audioGroupName);
             audioRegisterFailure?.Invoke(eventArgs);
             AudioRegisterFailureEventArgs.Release(eventArgs);
         }
-        void OnAudioRegistSuccess(AudioObject audioObject)
+        void OnAudioRegisterSuccess(AudioObject audioObject)
         {
             var audioName = audioObject.AudioName;
             var audioGroupName = audioObject.AudioGroupName;
