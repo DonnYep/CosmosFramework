@@ -105,5 +105,17 @@ namespace Cosmos.Entity
         /// </summary>
         /// <param name="entityGroupName">实体组名</param>
         void DissolveEntityGroup(string entityGroupName);
+        /// <summary>
+        /// 获取实体的信息；
+        /// </summary>
+        /// <param name="entityName">实体名</param>
+        /// <returns>实体信息</returns>
+        EntityInfo GetEntityInfo(string entityName);
+        /// <summary>
+        /// 获取实体组的信息；
+        /// </summary>
+        /// <param name="entityGroupName">实体组名</param>
+        /// <returns>实体组信息</returns>
+        EntityGroupInfo GetEntityGroupInfo(string entityGroupName);
     }
 }

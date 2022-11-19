@@ -297,6 +297,30 @@ namespace Cosmos.Entity
             entityGroupDict.Remove(entityGroupName);
             EntityGroup.Release(entityGroup);
         }
+        ///<inheritdoc/>
+        public EntityInfo GetEntityInfo(string entityName)
+        {
+            if (string.IsNullOrEmpty(entityName))
+            {
+                throw new ArgumentNullException("Entity name is invalid.");
+            }
+            var hasEntity = entityDict.TryGetValue(entityName, out var entity);
+            if (!hasEntity)
+                return EntityInfo.None;
+            return entity.GetEntityInfo();
+        }
+        ///<inheritdoc/>
+        public EntityGroupInfo GetEntityGroupInfo(string entityGroupName)
+        {
+            if (string.IsNullOrEmpty(entityGroupName))
+            {
+                throw new ArgumentNullException("Entity group name is invalid.");
+            }
+            var hasGroup = entityGroupDict.TryGetValue(entityGroupName, out var entityGroup);
+            if (!hasGroup)
+                return EntityGroupInfo.None;
+            return entityGroup.GetEntityGroupInfo();
+        }
         protected override void OnInitialization()
         {
             entityGroupDict = new Dictionary<string, EntityGroup>();

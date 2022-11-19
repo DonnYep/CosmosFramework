@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
-
+using System.Linq;
 namespace Cosmos.Entity
 {
     internal sealed partial class EntityManager
@@ -51,6 +51,11 @@ namespace Cosmos.Entity
                     entityObject.OnHide();
                     entityObjectPool.Despawn(entityObject);
                 }
+            }
+            public EntityInfo GetEntityInfo()
+            {
+                var entityInfo = new EntityInfo(EntityName, entityObjectDict.Count, entityObjectDict.Keys.ToArray());
+                return entityInfo;
             }
             public bool Equals(Entity other)
             {

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace Cosmos.Entity
 {
     internal partial class EntityManager
@@ -42,6 +44,11 @@ namespace Cosmos.Entity
             {
                 EntityGroupName = string.Empty;
                 entityNameHash.Clear();
+            }
+            public EntityGroupInfo GetEntityGroupInfo()
+            {
+                var entityGroupInfo = new EntityGroupInfo(EntityGroupName, entityNameHash.ToArray());
+                return entityGroupInfo;
             }
             public static EntityGroup Create(string groupName)
             {
