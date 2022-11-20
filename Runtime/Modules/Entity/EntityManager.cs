@@ -97,6 +97,7 @@ namespace Cosmos.Entity
             if (!hasEntity)
                 return;
             var entityGroupName = entity.EntityGroupName;
+            Entity.Release(entity);
             if (string.IsNullOrEmpty(entityGroupName))
                 return;
             var hasGroup = entityGroupDict.TryGetValue(entityGroupName, out var entityGroup);
@@ -160,7 +161,7 @@ namespace Cosmos.Entity
             return hasEntity;
         }
         ///<inheritdoc/>
-        public void HideEntity(string entityName, int entityObjectId)
+        public void HideEntityObject(string entityName, int entityObjectId)
         {
             if (string.IsNullOrEmpty(entityName))
             {
@@ -176,7 +177,7 @@ namespace Cosmos.Entity
             entity.HideEntityObject(entityObjectId);
         }
         ///<inheritdoc/>
-        public void HideEntity(string entityName)
+        public void HideEntities(string entityName)
         {
             if (string.IsNullOrEmpty(entityName))
             {
@@ -250,7 +251,7 @@ namespace Cosmos.Entity
                 return;
             foreach (var entityName in entityGroup.EntityNames)
             {
-                HideEntity(entityName);
+                HideEntities(entityName);
             }
         }
         ///<inheritdoc/>
@@ -296,6 +297,30 @@ namespace Cosmos.Entity
             }
             entityGroupDict.Remove(entityGroupName);
             EntityGroup.Release(entityGroup);
+        }
+        ///<inheritdoc/>
+        public EntityInfo GetEntityInfo(string entityName)
+        {
+            if (string.IsNullOrEmpty(entityName))
+            {
+                throw new ArgumentNullException("Entity name is invalid.");
+            }
+            var hasEntity = entityDict.TryGetValue(entityName, out var entity);
+            if (!hasEntity)
+                return EntityInfo.None;
+            return entity.GetEntityInfo();
+        }
+        ///<inheritdoc/>
+        public EntityGroupInfo GetEntityGroupInfo(string entityGroupName)
+        {
+            if (string.IsNullOrEmpty(entityGroupName))
+            {
+                throw new ArgumentNullException("Entity group name is invalid.");
+            }
+            var hasGroup = entityGroupDict.TryGetValue(entityGroupName, out var entityGroup);
+            if (!hasGroup)
+                return EntityGroupInfo.None;
+            return entityGroup.GetEntityGroupInfo();
         }
         protected override void OnInitialization()
         {

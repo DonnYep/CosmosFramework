@@ -67,13 +67,13 @@ namespace Cosmos.Entity
         /// 隐藏实体；
         /// </summary>
         /// <param name="entityName">实体名</param>
-        void HideEntity(string entityName);
+        void HideEntities(string entityName);
         /// <summary>
         /// 隐藏实体；
         /// </summary>
         /// <param name="entityName">实体名</param>
         /// <param name="entityObjectId">实体实例Id</param>
-        void HideEntity(string entityName, int entityObjectId);
+        void HideEntityObject(string entityName, int entityObjectId);
         /// <summary>
         ///  隐藏实体；
         /// </summary>
@@ -105,5 +105,17 @@ namespace Cosmos.Entity
         /// </summary>
         /// <param name="entityGroupName">实体组名</param>
         void DissolveEntityGroup(string entityGroupName);
+        /// <summary>
+        /// 获取实体的信息；
+        /// </summary>
+        /// <param name="entityName">实体名</param>
+        /// <returns>实体信息</returns>
+        EntityInfo GetEntityInfo(string entityName);
+        /// <summary>
+        /// 获取实体组的信息；
+        /// </summary>
+        /// <param name="entityGroupName">实体组名</param>
+        /// <returns>实体组信息</returns>
+        EntityGroupInfo GetEntityGroupInfo(string entityGroupName);
     }
 }

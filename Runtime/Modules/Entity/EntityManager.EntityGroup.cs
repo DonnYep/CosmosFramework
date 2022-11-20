@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace Cosmos.Entity
 {
     internal partial class EntityManager
@@ -7,7 +9,7 @@ namespace Cosmos.Entity
         /// <summary>
         /// 实体组，实体组用于分组管理实体对象。
         /// </summary>
-        private class EntityGroup : IEntityGroup
+        private class EntityGroup
         {
             static readonly Pool<EntityGroup> entityGroupPool
                 = new Pool<EntityGroup>
@@ -42,6 +44,11 @@ namespace Cosmos.Entity
             {
                 EntityGroupName = string.Empty;
                 entityNameHash.Clear();
+            }
+            public EntityGroupInfo GetEntityGroupInfo()
+            {
+                var entityGroupInfo = new EntityGroupInfo(EntityGroupName, entityNameHash.ToArray());
+                return entityGroupInfo;
             }
             public static EntityGroup Create(string groupName)
             {
