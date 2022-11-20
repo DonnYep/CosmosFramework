@@ -31,7 +31,7 @@ public class EntityEnmeySpanwer : MonoBehaviour
     async void OnEnemyDeath(EnmeyEntity entityEnmey)
     {
         await new WaitForSeconds(deactiveEntityTime);
-        entityManager.HideEntity(entityEnmey.EntityName, entityEnmey.EntityObjectId);
+        entityManager.HideEntityObject(entityEnmey.EntityName, entityEnmey.EntityObjectId);
         await new WaitForSeconds(respawnTime);
         entityManager.ShowEntity(entityEnmey.EntityName, out _);
     }

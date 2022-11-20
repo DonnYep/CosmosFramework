@@ -9,7 +9,7 @@ namespace Cosmos.Entity
         /// <summary>
         /// 实体组，实体组用于分组管理实体对象。
         /// </summary>
-        private class EntityGroup : IEntityGroup
+        private class EntityGroup
         {
             static readonly Pool<EntityGroup> entityGroupPool
                 = new Pool<EntityGroup>
