@@ -290,5 +290,46 @@ namespace Cosmos
                 GameObject.Destroy(@this.GetChild(i).gameObject);
             }
         }
+        /// <summary>
+        /// 获取第一个子物体
+        /// </summary>
+        /// <param name="findActiveObject">激活条件</param>
+        public static Transform GetFirstChild(this Transform @this, bool findActiveObject = true)
+        {
+            if (@this == null || @this.childCount == 0)
+                return null;
+
+            if (findActiveObject == false)
+                return @this.GetChild(0);
+
+            for (int i = 0; i < @this.childCount; i++)
+            {
+                Transform target = @this.GetChild(i);
+                if (target.gameObject.activeSelf)
+                    return target;
+            }
+            return null;
+        }
+        /// <summary>
+        /// 获取最后一个子物体
+        /// </summary>
+        /// <param name="findActiveObject">激活条件</param>
+        public static Transform GetLastChild(this Transform @this, bool findActiveObject = true)
+        {
+            if (@this == null || @this.childCount == 0)
+                return null;
+
+            if (findActiveObject == false)
+                return @this.GetChild(@this.childCount - 1);
+
+            for (int i = @this.childCount - 1; i >= 0; i--)
+            {
+                Transform target = @this.GetChild(i);
+                if (target.gameObject.activeSelf)
+                    return target;
+            }
+            return null;
+        }
+
     }
 }
