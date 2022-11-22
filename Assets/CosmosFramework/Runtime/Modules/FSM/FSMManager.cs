@@ -26,6 +26,8 @@ namespace Cosmos.FSM
         List<FSMBase> fsmCache = new List<FSMBase>();
         ///<inheritdoc/>
         public int FSMCount { get { return fsmDict.Count; } }
+        ///<inheritdoc/>
+        public int FSMGroupCount { get { return fsmGroupDict.Count; } }
         #endregion
 
         #region Methods
