@@ -106,7 +106,7 @@ namespace Cosmos.ObjectPool
                 ElapseRefreshHandler -= pool.OnElapseRefresh;
                 if (!string.IsNullOrEmpty(pool.ObjectPoolAssetInfo.PoolName))
                     objectPoolAssetHelper.UnloadObjectAsset(pool.ObjectPoolAssetInfo);
-                ObjectPool.Release(pool.CastTo<ObjectPool>());
+                ObjectPool.Release(pool);
             }
         }
         /// <inheritdoc/>

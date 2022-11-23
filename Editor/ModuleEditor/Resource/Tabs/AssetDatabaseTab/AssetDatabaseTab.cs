@@ -18,7 +18,21 @@ namespace Cosmos.Editor.Resource
         AssetDatabaseTabData tabData;
         bool hasChanged = false;
         bool loadingMultiSelection = false;
-        int loadingProgress;
+        /// <summary>
+        /// 对象的加载进度；
+        /// </summary>
+        int loadingObjectProgress;
+        /// <summary>
+        /// 加载的ab包数量；
+        /// </summary>
+        int loadingBundleLength;
+        /// <summary>
+        /// 当前加载的ab包序号；
+        /// </summary>
+        int currentLoadingBundleIndex;
+        /// <summary>
+        /// 选中的协程；
+        /// </summary>
         EditorCoroutine selectionCoroutine;
         public override void OnEnable()
         {
@@ -67,7 +81,9 @@ namespace Cosmos.Editor.Resource
                 {
                     if (loadingMultiSelection)
                     {
-                        EditorGUILayout.LabelField($"Object loading . . .  {loadingProgress}%");
+                        EditorGUILayout.LabelField($"Loading Progress . . .  {currentLoadingBundleIndex}/{loadingBundleLength}");
+
+                        EditorGUILayout.LabelField($"Object loading . . .  {loadingObjectProgress}%");
                     }
                     else
                     {
@@ -218,6 +234,8 @@ namespace Cosmos.Editor.Resource
         }
         void OnSelectionChanged(IList<int> selectedIds)
         {
+            if (selectionCoroutine != null)
+                EditorUtil.Coroutine.StopCoroutine(selectionCoroutine);
             selectionCoroutine = EditorUtil.Coroutine.StartCoroutine(EnumSelectionChanged(selectedIds));
         }
         void OnRenameBundle(int id, string newName)
@@ -352,9 +370,15 @@ namespace Cosmos.Editor.Resource
             loadingMultiSelection = true;
             var bundles = ResourceWindowDataProxy.ResourceDataset.ResourceBundleList;
             var idlen = selectedIds.Count;
+            loadingBundleLength = idlen;
+
             resourceObjectLabel.Clear();
+            loadingObjectProgress = 0;
+            currentLoadingBundleIndex = 0;
             for (int i = 0; i < idlen; i++)
             {
+                currentLoadingBundleIndex++;
+
                 var id = selectedIds[i];
                 if (id >= bundles.Count)
                     continue;
@@ -367,12 +391,13 @@ namespace Cosmos.Editor.Resource
                     var valid = AssetDatabase.LoadMainAssetAtPath(obj.AssetPath) != null;
                     var objInfo = new ResourceObjectInfo(obj.AssetName, assetPath, obj.BundleName, EditorUtil.GetAssetFileSize(assetPath), obj.Extension, valid);
                     resourceObjectLabel.AddObject(objInfo);
+
+                    var progress = Mathf.RoundToInt((float)j / (objectLength - 1) * 100);
+                    loadingObjectProgress = progress > 0 ? progress : 0;
+                    yield return null;
                 }
-                var progress = Mathf.RoundToInt((float)i / (idlen - 1) * 100); ;
-                loadingProgress = progress > 0 ? progress : 0;
-                yield return null;
             }
-            loadingProgress = 100;
+            yield return null;
 
             loadingMultiSelection = false;
             tabData.SelectedBundleIds.Clear();

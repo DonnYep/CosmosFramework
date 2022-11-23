@@ -16,6 +16,10 @@ namespace Cosmos.FSM
         /// </summary>
         int FSMCount { get; }
         /// <summary>
+        /// 状态机组数量；
+        /// </summary>
+        int FSMGroupCount { get; }
+        /// <summary>
         /// 获取状态机；
         /// </summary>
         /// <typeparam name="T">拥有者类型</typeparam>

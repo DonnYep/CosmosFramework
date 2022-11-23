@@ -18,5 +18,10 @@ namespace Cosmos
         {
             return new Vector3(@this.x, y, @this.y);
         }
+        public static Vector2 Rotate(this Vector2 @this, float angle, Vector2 pivot = default(Vector2))
+        {
+            Vector2 rotated = Quaternion.Euler(new Vector3(0f, 0f, angle)) * (@this - pivot);
+            return rotated + pivot;
+        }
     }
 }
