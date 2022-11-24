@@ -14,6 +14,7 @@ namespace Cosmos.Editor.Resource
         public Action<IList<int>> onDelete;
         public Action onAllDelete;
         public Action<int, string> onRenameBundle;
+        public Action<IList<string>> onSort;
         /// <summary>
         /// 上一行的cellRect
         /// </summary>
@@ -23,6 +24,7 @@ namespace Cosmos.Editor.Resource
         /// 正在重命名的itemId
         /// </summary>
         int renamingItemId = -1;
+        List<string>sortedBundleNames=new List<string>();
         public ResourceBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
@@ -192,6 +194,13 @@ namespace Cosmos.Editor.Resource
                     }
                     break;
             }
+            sortedBundleNames.Clear();
+            var bundleLength = bundleList.Count;
+            for (int i = 0; i < bundleLength; i++)
+            {
+                sortedBundleNames.Add(bundleList[i].BundleName);
+            }
+            onSort?.Invoke(sortedBundleNames);
             Reload();
         }
         void DrawCellGUI(Rect cellRect, ResourceBundleTreeViewItem treeView, int column, ref RowGUIArgs args)

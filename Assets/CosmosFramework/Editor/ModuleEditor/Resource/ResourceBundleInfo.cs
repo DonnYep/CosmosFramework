@@ -31,8 +31,7 @@ namespace Cosmos.Editor.Resource
         public long BundleSize { get; private set; }
         public bool Equals(ResourceBundleInfo other)
         {
-            return other.BundleName == this.BundleName &&
-                other.BundlePath == this.BundlePath; ;
+            return other.BundleName == this.BundleName;
         }
         public override int GetHashCode()
         {

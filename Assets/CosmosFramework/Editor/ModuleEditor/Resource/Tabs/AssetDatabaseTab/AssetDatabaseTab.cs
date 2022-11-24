@@ -42,6 +42,7 @@ namespace Cosmos.Editor.Resource
             resourceBundleLabel.OnDelete += OnBundleDelete;
             resourceBundleLabel.OnSelectionChanged += OnSelectionChanged;
             resourceBundleLabel.OnRenameBundle += OnRenameBundle;
+            resourceBundleLabel.OnSort += OnBundleSort; ;
             GetTabData();
             if (ResourceWindowDataProxy.ResourceDataset != null)
             {
@@ -69,6 +70,7 @@ namespace Cosmos.Editor.Resource
             {
                 if (hasChanged)
                     EditorGUILayout.HelpBox("Dataset has been changed, please \"Build Dataset\" !", MessageType.Warning);
+                tabData.AsynchronousRefresh = EditorGUILayout.ToggleLeft("Asynchronous refresh", tabData.AsynchronousRefresh);
                 EditorGUILayout.BeginHorizontal();
                 {
                     DrawDragRect();
@@ -246,6 +248,36 @@ namespace Cosmos.Editor.Resource
             var dstBundle = bundles[id];
             dstBundle.BundleName = newName;
             EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
+            ResourceWindowDataProxy.ResourceDataset.IsChanged = true;
+            hasChanged = true;
+        }
+        void OnBundleSort(IList<string> sortedNames)
+        {
+            if (ResourceWindowDataProxy.ResourceDataset == null)
+                return;
+            var bundleArray = ResourceWindowDataProxy.ResourceDataset.ResourceBundleList.ToArray();
+            ResourceWindowDataProxy.ResourceDataset.ResourceBundleList.Clear();
+            var length = sortedNames.Count;
+            var bundleLength = bundleArray.Length;
+            for (int i = 0; i < length; i++)
+            {
+                var name = sortedNames[i];
+                for (int j = 0; j < bundleLength; j++)
+                {
+                    var bundle = bundleArray[j];
+                    if (bundle.BundleName == name)
+                    {
+                        ResourceWindowDataProxy.ResourceDataset.ResourceBundleList.Add(bundle);
+                        continue;
+                    }
+                }
+            }
+            EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
+#if UNITY_2021_1_OR_NEWER
+            AssetDatabase.SaveAssetIfDirty(ResourceWindowDataProxy.ResourceDataset);
+#elif UNITY_2019_1_OR_NEWER
+            AssetDatabase.SaveAssets();
+#endif
         }
         void GetTabData()
         {
@@ -391,9 +423,17 @@ namespace Cosmos.Editor.Resource
                     var valid = AssetDatabase.LoadMainAssetAtPath(obj.AssetPath) != null;
                     var objInfo = new ResourceObjectInfo(obj.AssetName, assetPath, obj.BundleName, EditorUtil.GetAssetFileSize(assetPath), obj.Extension, valid);
                     resourceObjectLabel.AddObject(objInfo);
-
                     var progress = Mathf.RoundToInt((float)j / (objectLength - 1) * 100);
                     loadingObjectProgress = progress > 0 ? progress : 0;
+                    if (tabData.AsynchronousRefresh)
+                    {
+                        resourceObjectLabel.Reload();
+                        yield return null;
+                    }
+                }
+                if (!tabData.AsynchronousRefresh)
+                {
+                    resourceObjectLabel.Reload();
                     yield return null;
                 }
             }

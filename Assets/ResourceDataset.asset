@@ -13,82 +13,6 @@ MonoBehaviour:
   m_Name: ResourceDataset
   m_EditorClassIdentifier: 
   resourceObjectList:
-  - assetName: AmbientAudio
-    assetPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
-    bundleName: audio
-    extension: .mp3
-  - assetName: Audio00
-    assetPath: Assets/Examples/AssetBundleTest/Audio/Audio00.mp3
-    bundleName: audio
-    extension: .mp3
-  - assetName: Audio01
-    assetPath: Assets/Examples/AssetBundleTest/Audio/Audio01.mp3
-    bundleName: audio
-    extension: .mp3
-  - assetName: AudioFashion
-    assetPath: Assets/Examples/AssetBundleTest/Audio/AudioFashion.mp3
-    bundleName: audio
-    extension: .mp3
-  - assetName: AudioTechHouse
-    assetPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
-    bundleName: audio
-    extension: .mp3
-  - assetName: Alpha_Body_MAT
-    assetPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
-    bundleName: material
-    extension: .mat
-  - assetName: BlueMat
-    assetPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
-    bundleName: material
-    extension: .mat
-  - assetName: GreyMaterial.Default
-    assetPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
-    bundleName: material
-    extension: .mat
-  - assetName: RedMat
-    assetPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
-    bundleName: material
-    extension: .mat
-  - assetName: LM_XBotIdle
-    assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
-    bundleName: model
-    extension: .anim
-  - assetName: LM_XBotWalking
-    assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
-    bundleName: model
-    extension: .anim
-  - assetName: LM_YBotIdle
-    assetPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
-    bundleName: model
-    extension: .anim
-  - assetName: LM_YBotWalk
-    assetPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
-    bundleName: model
-    extension: .anim
-  - assetName: XBot_TPose
-    assetPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
-    bundleName: model
-    extension: .fbx
-  - assetName: YBot_TPose
-    assetPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
-    bundleName: model
-    extension: .fbx
-  - assetName: CB1024
-    assetPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
-    bundleName: photo
-    extension: .tga
-  - assetName: CB2048
-    assetPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
-    bundleName: photo
-    extension: .tga
-  - assetName: CheckBoard_2048
-    assetPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
-    bundleName: photo
-    extension: .jpg
-  - assetName: Grid2048
-    assetPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
-    bundleName: photo
-    extension: .psd
   - assetName: AudioSource
     assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
     bundleName: prefab
@@ -169,14 +93,6 @@ MonoBehaviour:
     assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
     bundleName: prefab
     extension: .prefab
-  - assetName: ABMapSchema
-    assetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
-    bundleName: text
-    extension: .json
-  - assetName: SampleCSV
-    assetPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
-    bundleName: text
-    extension: .csv
   - assetName: Tex_5195
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
     bundleName: texture
@@ -229,22 +145,30 @@ MonoBehaviour:
     assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
     bundleName: texture
     extension: .png
-  - assetName: SceneTarget
-    assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
-    bundleName: scene
-    extension: .unity
-  - assetName: TestAddtiveScene
-    assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
-    bundleName: scene
-    extension: .unity
-  - assetName: 24_Procedure_PloyState
-    assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
-    bundleName: procedure_scenes
-    extension: .unity
-  - assetName: 24_Procedure_YBotState
-    assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
-    bundleName: procedure_scenes
-    extension: .unity
+  - assetName: LM_XBotIdle
+    assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
+    bundleName: model
+    extension: .anim
+  - assetName: LM_XBotWalking
+    assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
+    bundleName: model
+    extension: .anim
+  - assetName: LM_YBotIdle
+    assetPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
+    bundleName: model
+    extension: .anim
+  - assetName: LM_YBotWalk
+    assetPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
+    bundleName: model
+    extension: .anim
+  - assetName: XBot_TPose
+    assetPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
+    bundleName: model
+    extension: .fbx
+  - assetName: YBot_TPose
+    assetPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
+    bundleName: model
+    extension: .fbx
   - assetName: EntityBullet
     assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityBullet.prefab
     bundleName: entity_prefabs
@@ -269,11 +193,108 @@ MonoBehaviour:
     assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/UICanvas.prefab
     bundleName: entity_prefabs
     extension: .prefab
+  - assetName: AmbientAudio
+    assetPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
+    bundleName: audio
+    extension: .mp3
+  - assetName: Audio00
+    assetPath: Assets/Examples/AssetBundleTest/Audio/Audio00.mp3
+    bundleName: audio
+    extension: .mp3
+  - assetName: Audio01
+    assetPath: Assets/Examples/AssetBundleTest/Audio/Audio01.mp3
+    bundleName: audio
+    extension: .mp3
+  - assetName: AudioFashion
+    assetPath: Assets/Examples/AssetBundleTest/Audio/AudioFashion.mp3
+    bundleName: audio
+    extension: .mp3
+  - assetName: AudioTechHouse
+    assetPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
+    bundleName: audio
+    extension: .mp3
+  - assetName: CB1024
+    assetPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
+    bundleName: photo
+    extension: .tga
+  - assetName: CB2048
+    assetPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
+    bundleName: photo
+    extension: .tga
+  - assetName: CheckBoard_2048
+    assetPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
+    bundleName: photo
+    extension: .jpg
+  - assetName: Grid2048
+    assetPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
+    bundleName: photo
+    extension: .psd
+  - assetName: Alpha_Body_MAT
+    assetPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
+    bundleName: material
+    extension: .mat
+  - assetName: BlueMat
+    assetPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
+    bundleName: material
+    extension: .mat
+  - assetName: GreyMaterial.Default
+    assetPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
+    bundleName: material
+    extension: .mat
+  - assetName: RedMat
+    assetPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
+    bundleName: material
+    extension: .mat
+  - assetName: ABMapSchema
+    assetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
+    bundleName: text
+    extension: .json
+  - assetName: SampleCSV
+    assetPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
+    bundleName: text
+    extension: .csv
+  - assetName: SceneTarget
+    assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
+    bundleName: scene
+    extension: .unity
+  - assetName: TestAddtiveScene
+    assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
+    bundleName: scene
+    extension: .unity
+  - assetName: 24_Procedure_PloyState
+    assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
+    bundleName: procedure_scenes
+    extension: .unity
+  - assetName: 24_Procedure_YBotState
+    assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
+    bundleName: procedure_scenes
+    extension: .unity
   - assetName: EntityGame
     assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
     bundleName: entity_scene
     extension: .unity
   resourceBundleList:
+  - bundleName: photo
+    bundlePath: Assets/Examples/AssetBundleTest/Photo
+    bundleKey: 
+    dependentList: []
+    resourceObjectList:
+    - assetName: CB1024
+      assetPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
+      bundleName: photo
+      extension: .tga
+    - assetName: CB2048
+      assetPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
+      bundleName: photo
+      extension: .tga
+    - assetName: CheckBoard_2048
+      assetPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
+      bundleName: photo
+      extension: .jpg
+    - assetName: Grid2048
+      assetPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
+      bundleName: photo
+      extension: .psd
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
     bundleKey: 
@@ -299,27 +320,6 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
       bundleName: audio
       extension: .mp3
-  - bundleName: material
-    bundlePath: Assets/Examples/AssetBundleTest/Material
-    bundleKey: 
-    dependentList: []
-    resourceObjectList:
-    - assetName: Alpha_Body_MAT
-      assetPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
-      bundleName: material
-      extension: .mat
-    - assetName: BlueMat
-      assetPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
-      bundleName: material
-      extension: .mat
-    - assetName: GreyMaterial.Default
-      assetPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
-      bundleName: material
-      extension: .mat
-    - assetName: RedMat
-      assetPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
-      bundleName: material
-      extension: .mat
   - bundleName: model
     bundlePath: Assets/Examples/AssetBundleTest/Model
     bundleKey: 
@@ -349,27 +349,63 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
       bundleName: model
       extension: .fbx
-  - bundleName: photo
-    bundlePath: Assets/Examples/AssetBundleTest/Photo
+  - bundleName: texture
+    bundlePath: Assets/Examples/AssetBundleTest/Texture
     bundleKey: 
     dependentList: []
     resourceObjectList:
-    - assetName: CB1024
-      assetPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
-      bundleName: photo
-      extension: .tga
-    - assetName: CB2048
-      assetPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
-      bundleName: photo
-      extension: .tga
-    - assetName: CheckBoard_2048
-      assetPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
-      bundleName: photo
-      extension: .jpg
-    - assetName: Grid2048
-      assetPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
-      bundleName: photo
-      extension: .psd
+    - assetName: Tex_5195
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5196
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5196.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5197
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5197.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5199
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5199.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5203
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5203.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5205
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5205.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5206
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5206.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5207
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5207.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5208
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5208.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5209
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5209.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5210
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5210.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5211
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5211.png
+      bundleName: texture
+      extension: .png
+    - assetName: Tex_5212
+      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
+      bundleName: texture
+      extension: .png
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
     bundleKey: 
@@ -459,76 +495,6 @@ MonoBehaviour:
       assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
       bundleName: prefab
       extension: .prefab
-  - bundleName: text
-    bundlePath: Assets/Examples/AssetBundleTest/Text
-    bundleKey: 
-    dependentList: []
-    resourceObjectList:
-    - assetName: ABMapSchema
-      assetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
-      bundleName: text
-      extension: .json
-    - assetName: SampleCSV
-      assetPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
-      bundleName: text
-      extension: .csv
-  - bundleName: texture
-    bundlePath: Assets/Examples/AssetBundleTest/Texture
-    bundleKey: 
-    dependentList: []
-    resourceObjectList:
-    - assetName: Tex_5195
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5196
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5196.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5197
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5197.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5199
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5199.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5203
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5203.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5205
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5205.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5206
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5206.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5207
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5207.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5208
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5208.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5209
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5209.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5210
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5210.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5211
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5211.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5212
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
-      bundleName: texture
-      extension: .png
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
     bundleKey: 
@@ -545,22 +511,6 @@ MonoBehaviour:
     - assetName: TestAddtiveScene
       assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
       bundleName: scene
-      extension: .unity
-  - bundleName: procedure_scenes
-    bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
-    bundleKey: 
-    dependentList:
-    - material
-    - model
-    - prefab
-    resourceObjectList:
-    - assetName: 24_Procedure_PloyState
-      assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
-      bundleName: procedure_scenes
-      extension: .unity
-    - assetName: 24_Procedure_YBotState
-      assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
-      bundleName: procedure_scenes
       extension: .unity
   - bundleName: entity_prefabs
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
@@ -591,6 +541,22 @@ MonoBehaviour:
       assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/UICanvas.prefab
       bundleName: entity_prefabs
       extension: .prefab
+  - bundleName: procedure_scenes
+    bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
+    bundleKey: 
+    dependentList:
+    - material
+    - model
+    - prefab
+    resourceObjectList:
+    - assetName: 24_Procedure_PloyState
+      assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
+      bundleName: procedure_scenes
+      extension: .unity
+    - assetName: 24_Procedure_YBotState
+      assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
+      bundleName: procedure_scenes
+      extension: .unity
   - bundleName: entity_scene
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
     bundleKey: 
@@ -600,6 +566,40 @@ MonoBehaviour:
       assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
       bundleName: entity_scene
       extension: .unity
+  - bundleName: material
+    bundlePath: Assets/Examples/AssetBundleTest/Material
+    bundleKey: 
+    dependentList: []
+    resourceObjectList:
+    - assetName: Alpha_Body_MAT
+      assetPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
+      bundleName: material
+      extension: .mat
+    - assetName: BlueMat
+      assetPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
+      bundleName: material
+      extension: .mat
+    - assetName: GreyMaterial.Default
+      assetPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
+      bundleName: material
+      extension: .mat
+    - assetName: RedMat
+      assetPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
+      bundleName: material
+      extension: .mat
+  - bundleName: text
+    bundlePath: Assets/Examples/AssetBundleTest/Text
+    bundleKey: 
+    dependentList: []
+    resourceObjectList:
+    - assetName: ABMapSchema
+      assetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
+      bundleName: text
+      extension: .json
+    - assetName: SampleCSV
+      assetPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
+      bundleName: text
+      extension: .csv
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp

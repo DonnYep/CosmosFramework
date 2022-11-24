@@ -95,7 +95,7 @@ namespace Cosmos.Editor.Resource
                     sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
                     minWidth=192,
-                    width = 256,
+                    width = 384,
                     maxWidth=1024,
                     autoResize = false,
                     canSort=true

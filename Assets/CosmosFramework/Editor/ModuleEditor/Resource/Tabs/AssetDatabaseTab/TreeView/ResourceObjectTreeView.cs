@@ -19,15 +19,6 @@ namespace Cosmos.Editor.Resource
             if (!objectList.Contains(objectInfo))
             {
                 objectList.Add(objectInfo);
-                Reload();
-            }
-        }
-        public void RemoveObject(ResourceObjectInfo objectInfo)
-        {
-            if (objectList.Contains(objectInfo))
-            {
-                objectList.Remove(objectInfo);
-                Reload();
             }
         }
         public void Clear()
