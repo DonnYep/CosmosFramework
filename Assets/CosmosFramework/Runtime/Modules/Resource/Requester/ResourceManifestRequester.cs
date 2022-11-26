@@ -19,13 +19,17 @@ namespace Cosmos.Resource
         {
             webRequestManager.OnSuccessCallback += OnSuccessCallback;
             webRequestManager.OnFailureCallback += OnFailureCallback;
-            webRequestManager.AddDownloadTextTask(url);
+            taskId = webRequestManager.AddDownloadTextTask(url);
         }
         public void StopRequestManifest()
         {
             webRequestManager.OnSuccessCallback -= OnSuccessCallback;
             webRequestManager.OnFailureCallback -= OnFailureCallback;
             webRequestManager.RemoveTask(taskId);
+        }
+        public void Clear()
+        {
+            StopRequestManifest();
         }
         void OnSuccessCallback(WebRequestSuccessEventArgs eventArgs)
         {

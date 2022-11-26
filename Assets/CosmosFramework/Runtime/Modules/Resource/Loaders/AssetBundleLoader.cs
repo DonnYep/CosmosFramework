@@ -41,19 +41,19 @@ namespace Cosmos.Resource
         ResourceManifestRequester manifestRequester;
         bool manifestAcquired = false;
         bool requestDone = false;
-        public AssetBundleLoader()
+        public AssetBundleLoader(IWebRequestManager webRequestManager)
         {
             loadSceneList = new List<string>();
             resourceAddress = new ResourceAddress();
             resourceBundleWarpperDict = new Dictionary<string, ResourceBundleWarpper>();
             resourceObjectWarpperDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
+            manifestRequester = new ResourceManifestRequester(webRequestManager, OnManifestSuccess, OnManifestFailure);
         }
-        public void InitLoader(IWebRequestManager webRequestManager, string bundleFolderPath)
+        public void InitLoader(string bundleFolderPath)
         {
             SceneManager.sceneUnloaded += OnSceneUnloaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
-            manifestRequester = new ResourceManifestRequester(webRequestManager, OnManifestSuccess, OnManifestFailure);
             manifestRequester.StartRequestManifest(bundleFolderPath);
         }
         ///<inheritdoc/> 
@@ -150,6 +150,10 @@ namespace Cosmos.Resource
             loadedSceneDict.Clear();
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
+            manifestAcquired = false;
+            requestDone = false;
+            resourceManifest = null;
+            manifestRequester.Clear();
         }
         IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress = null)
         {

@@ -13,6 +13,7 @@ namespace Cosmos.Editor
         SerializedProperty sp_LaunchAppDomainModules;
         SerializedProperty sp_PrintModulePreparatory;
 
+        SerializedProperty sp_AutoInitResource;
         SerializedProperty sp_ResourceLoadMode;
         SerializedProperty sp_ResourceLoaderName;
         SerializedProperty sp_ResourceLoaderIndex;
@@ -91,14 +92,14 @@ namespace Cosmos.Editor
             EditorGUILayout.Space(16);
             {
                 EditorGUILayout.LabelField("Module", EditorStyles.boldLabel);
-                launchAppDomainModules = EditorGUILayout.Toggle("LaunchAppDomainModules", launchAppDomainModules);
+                launchAppDomainModules = EditorGUILayout.ToggleLeft("LaunchAppDomainModules", launchAppDomainModules);
                 if (launchAppDomainModules != sp_LaunchAppDomainModules.boolValue)
                 {
                     sp_LaunchAppDomainModules.boolValue = launchAppDomainModules;
                 }
                 if (sp_LaunchAppDomainModules.boolValue)
                 {
-                    sp_PrintModulePreparatory.boolValue = EditorGUILayout.Toggle("PrintModulePreparatory", sp_PrintModulePreparatory.boolValue);
+                    sp_PrintModulePreparatory.boolValue = EditorGUILayout.ToggleLeft("PrintModulePreparatory", sp_PrintModulePreparatory.boolValue);
                 }
             }
 
@@ -107,76 +108,80 @@ namespace Cosmos.Editor
             EditorGUILayout.BeginVertical();
             {
                 EditorGUILayout.LabelField("ResourceLoadConfig", EditorStyles.boldLabel);
-                resourceLoadModeIndex = EditorGUILayout.Popup("ResourceLoadMode", resourceLoadModeIndex, resourceLoadModes);
-                if (resourceLoadModeIndex != sp_ResourceLoadMode.enumValueIndex)
+                sp_AutoInitResource.boolValue = EditorGUILayout.ToggleLeft("AutoInitResource", sp_AutoInitResource.boolValue);
+                if (sp_AutoInitResource.boolValue)
                 {
-                    sp_ResourceLoadMode.enumValueIndex = resourceLoadModeIndex;
-                }
-                var resourceLoadMode = (ResourceLoadMode)resourceLoadModeIndex;
-                switch (resourceLoadMode)
-                {
-                    case ResourceLoadMode.Resource:
-                        break;
-                    case ResourceLoadMode.AssetBundle:
-                        {
-                            resourceBundlePathTypeIndex = EditorGUILayout.Popup("ResourceBundlePathType", resourceBundlePathTypeIndex, resourceBundlePathTypes);
-                            if (resourceBundlePathTypeIndex != sp_ResourceBundlePathType.enumValueIndex)
+                    resourceLoadModeIndex = EditorGUILayout.Popup("ResourceLoadMode", resourceLoadModeIndex, resourceLoadModes);
+                    if (resourceLoadModeIndex != sp_ResourceLoadMode.enumValueIndex)
+                    {
+                        sp_ResourceLoadMode.enumValueIndex = resourceLoadModeIndex;
+                    }
+                    var resourceLoadMode = (ResourceLoadMode)resourceLoadModeIndex;
+                    switch (resourceLoadMode)
+                    {
+                        case ResourceLoadMode.Resource:
+                            break;
+                        case ResourceLoadMode.AssetBundle:
                             {
-                                sp_ResourceBundlePathType.enumValueIndex = resourceBundlePathTypeIndex;
-                            }
-                            var bundlePathType = (ResourceBundlePathType)resourceBundlePathTypeIndex;
-                            if (bundlePathType == ResourceBundlePathType.CustomePath)
-                            {
-                                sp_CustomeResourceBundlePath.stringValue = EditorGUILayout.TextField("CustomePath", sp_CustomeResourceBundlePath.stringValue);
-                            }
-                            else
-                            {
-                                sp_RelativeBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_RelativeBundlePath.stringValue);
-                            }
-                            assetBundleEncrytion = EditorGUILayout.ToggleLeft("AssetBundleEncrytion", assetBundleEncrytion);
-                            if (assetBundleEncrytion != sp_AssetBundleEncrytion.boolValue)
-                            {
-                                sp_AssetBundleEncrytion.boolValue = assetBundleEncrytion;
-                            }
-                            if (assetBundleEncrytion)
-                            {
-                                sp_AssetBundleEncrytionOffset.intValue = EditorGUILayout.IntField("AssetBundleEncrytionOffset", sp_AssetBundleEncrytionOffset.intValue);
-                            }
+                                resourceBundlePathTypeIndex = EditorGUILayout.Popup("ResourceBundlePathType", resourceBundlePathTypeIndex, resourceBundlePathTypes);
+                                if (resourceBundlePathTypeIndex != sp_ResourceBundlePathType.enumValueIndex)
+                                {
+                                    sp_ResourceBundlePathType.enumValueIndex = resourceBundlePathTypeIndex;
+                                }
+                                var bundlePathType = (ResourceBundlePathType)resourceBundlePathTypeIndex;
+                                if (bundlePathType == ResourceBundlePathType.CustomePath)
+                                {
+                                    sp_CustomeResourceBundlePath.stringValue = EditorGUILayout.TextField("CustomePath", sp_CustomeResourceBundlePath.stringValue);
+                                }
+                                else
+                                {
+                                    sp_RelativeBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_RelativeBundlePath.stringValue);
+                                }
+                                assetBundleEncrytion = EditorGUILayout.ToggleLeft("AssetBundleEncrytion", assetBundleEncrytion);
+                                if (assetBundleEncrytion != sp_AssetBundleEncrytion.boolValue)
+                                {
+                                    sp_AssetBundleEncrytion.boolValue = assetBundleEncrytion;
+                                }
+                                if (assetBundleEncrytion)
+                                {
+                                    sp_AssetBundleEncrytionOffset.intValue = EditorGUILayout.IntField("AssetBundleEncrytionOffset", sp_AssetBundleEncrytionOffset.intValue);
+                                }
 
-                            buildInfoEncrytion = EditorGUILayout.ToggleLeft("BuildInfoEncrytion", buildInfoEncrytion);
-                            if (buildInfoEncrytion != sp_BuildInfoEncrytion.boolValue)
-                            {
-                                sp_BuildInfoEncrytion.boolValue = buildInfoEncrytion;
+                                buildInfoEncrytion = EditorGUILayout.ToggleLeft("BuildInfoEncrytion", buildInfoEncrytion);
+                                if (buildInfoEncrytion != sp_BuildInfoEncrytion.boolValue)
+                                {
+                                    sp_BuildInfoEncrytion.boolValue = buildInfoEncrytion;
+                                }
+                                if (buildInfoEncrytion)
+                                {
+                                    sp_BuildInfoEncrytionKey.stringValue = EditorGUILayout.TextField("BuildInfoEncrytionKey", sp_BuildInfoEncrytionKey.stringValue);
+                                }
                             }
-                            if (buildInfoEncrytion)
+                            break;
+                        case ResourceLoadMode.AssetDatabase:
                             {
-                                sp_BuildInfoEncrytionKey.stringValue = EditorGUILayout.TextField("BuildInfoEncrytionKey", sp_BuildInfoEncrytionKey.stringValue);
+                                sp_ResourceDataset.objectReferenceValue = (ResourceDataset)EditorGUILayout.
+                                    ObjectField("ResourceDataset", sp_ResourceDataset.objectReferenceValue, typeof(ResourceDataset), false);
                             }
-                        }
-                        break;
-                    case ResourceLoadMode.AssetDatabase:
-                        {
-                            sp_ResourceDataset.objectReferenceValue = (ResourceDataset)EditorGUILayout.
-                                ObjectField("ResourceDataset", sp_ResourceDataset.objectReferenceValue, typeof(ResourceDataset), false);
-                        }
-                        break;
-                    case ResourceLoadMode.CustomLoader:
-                        {
-                            resourceLoaderIndex = EditorGUILayout.Popup("ResourceLoadHelper", resourceLoaderIndex, resourceLoaders);
-                            if (resourceLoaderIndex != sp_ResourceLoaderIndex.intValue)
+                            break;
+                        case ResourceLoadMode.CustomLoader:
                             {
-                                sp_ResourceLoaderIndex.intValue = resourceLoaderIndex;
-                                sp_ResourceLoaderName.stringValue = resourceLoaders[sp_ResourceLoaderIndex.intValue];
+                                resourceLoaderIndex = EditorGUILayout.Popup("ResourceLoadHelper", resourceLoaderIndex, resourceLoaders);
+                                if (resourceLoaderIndex != sp_ResourceLoaderIndex.intValue)
+                                {
+                                    sp_ResourceLoaderIndex.intValue = resourceLoaderIndex;
+                                    sp_ResourceLoaderName.stringValue = resourceLoaders[sp_ResourceLoaderIndex.intValue];
+                                }
                             }
-                        }
-                        break;
+                            break;
+                    }
                 }
             }
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.Space(16);
             EditorGUILayout.LabelField("Application", EditorStyles.boldLabel);
-            runInBackground = EditorGUILayout.Toggle("RunInBackground", runInBackground);
+            runInBackground = EditorGUILayout.ToggleLeft("RunInBackground", runInBackground);
             if (runInBackground != sp_RunInBackground.boolValue)
                 sp_RunInBackground.boolValue = runInBackground;
 
@@ -215,6 +220,7 @@ namespace Cosmos.Editor
 
             sp_LaunchAppDomainModules = targetObject.FindProperty("launchAppDomainModules");
             sp_PrintModulePreparatory = targetObject.FindProperty("printModulePreparatory");
+            sp_AutoInitResource = targetObject.FindProperty("autoInitResource");
             sp_ResourceLoadMode = targetObject.FindProperty("resourceLoadMode");
             sp_ResourceLoaderName = targetObject.FindProperty("resourceLoaderName");
             sp_ResourceLoaderIndex = targetObject.FindProperty("resourceLoaderIndex");
