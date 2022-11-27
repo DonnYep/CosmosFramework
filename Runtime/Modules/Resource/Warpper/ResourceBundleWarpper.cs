@@ -5,7 +5,7 @@ namespace Cosmos.Resource
     /// <summary>
     /// 资源包对象包装者
     /// </summary>
-    public class ResourceBundleWarpper
+    internal class ResourceBundleWarpper
     {
         int referenceCount;
         ResourceBundle resourceBundle;

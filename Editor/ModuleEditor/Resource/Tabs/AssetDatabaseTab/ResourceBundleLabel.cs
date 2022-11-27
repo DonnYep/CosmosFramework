@@ -32,6 +32,11 @@ namespace Cosmos.Editor.Resource
             add { treeView.onRenameBundle += value; }
             remove { treeView.onRenameBundle -= value; }
         }
+        public event Action<IList<string>> OnSort
+        {
+            add { treeView.onSort += value; }
+            remove { treeView.onSort -= value; }
+        }
         public void OnEnable()
         {
             searchField = new SearchField();

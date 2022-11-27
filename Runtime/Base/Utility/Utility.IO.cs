@@ -612,12 +612,12 @@ namespace Cosmos
             /// </summary>
             /// <param name="path">路径</param>
             /// <returns>文件夹大小</returns>
-            public static long GetDirectorySize(string path)
+            public static long GetDirectorySize(string path, string searchPattern = ".")
             {
                 if (!Directory.Exists(path))
                     return 0;
                 DirectoryInfo directory = new DirectoryInfo(path);
-                var allFiles = directory.GetFiles();
+                var allFiles = directory.GetFiles(searchPattern, SearchOption.AllDirectories);
                 long totalSize = 0;
                 foreach (var file in allFiles)
                 {

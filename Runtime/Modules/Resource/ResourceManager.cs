@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 using Object = UnityEngine.Object;
+using Cosmos.WebRequest;
 namespace Cosmos.Resource
 {
     //================================================
@@ -23,9 +24,24 @@ namespace Cosmos.Resource
         #region Properties
         Dictionary<ResourceLoadMode, ResourceLoadChannel> loadChannelDict;
         IResourceLoadHelper currentLoadHelper;
-        ResourceLoadMode currentResourceLoadMode;
+        ResourceManifestRequester resourceManifestRequester;
+
+        Action<ResourceRequestManifestSuccessEventArgs> resourceRequestManifestSuccess;
+        Action<ResourceRequestManifestFailureEventArgs> resourceRequestManifestFailure;
         /// <inheritdoc/>
-        public ResourceLoadMode ResourceLoadMode { get { return currentResourceLoadMode; } }
+        public event Action<ResourceRequestManifestSuccessEventArgs> ResourceRequestManifestSuccess
+        {
+            add { resourceRequestManifestSuccess += value; }
+            remove { resourceRequestManifestSuccess -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<ResourceRequestManifestFailureEventArgs> ResourceRequestManifestFailure
+        {
+            add { resourceRequestManifestFailure += value; }
+            remove { resourceRequestManifestFailure -= value; }
+        }
+        /// <inheritdoc/>
+        public ResourceLoadMode ResourceLoadMode { get { return ResourceDataProxy.ResourceLoadMode; } }
         #endregion
         #region Methods
         /// <inheritdoc/>
@@ -34,16 +50,19 @@ namespace Cosmos.Resource
             if (loadHelper == null)
                 throw new ArgumentNullException($"IResourceLoadHelper is invalid !");
             var channel = new ResourceLoadChannel(resourceLoadMode, loadHelper);
-            loadChannelDict[resourceLoadMode] = channel;
-            this.currentResourceLoadMode = resourceLoadMode;
+            if (loadChannelDict.TryRemove(resourceLoadMode, out var previouseChannel))
+                previouseChannel.ResourceLoadHelper.OnTerminate();
+            loadChannelDict.Add(resourceLoadMode, channel);
+            ResourceDataProxy.ResourceLoadMode = resourceLoadMode;
             currentLoadHelper = channel.ResourceLoadHelper;
+            currentLoadHelper.OnInitialize();
         }
         /// <inheritdoc/>
         public void SwitchLoadMode(ResourceLoadMode resourceLoadMode)
         {
             if (loadChannelDict.TryGetValue(resourceLoadMode, out var channel))
             {
-                this.currentResourceLoadMode = resourceLoadMode;
+                ResourceDataProxy.ResourceLoadMode = resourceLoadMode;
                 currentLoadHelper = channel.ResourceLoadHelper;
             }
             else
@@ -52,13 +71,33 @@ namespace Cosmos.Resource
             }
         }
         /// <inheritdoc/>
+        public void ResetLoadHeper(ResourceLoadMode resourceLoadMode)
+        {
+            if (loadChannelDict.TryRemove(resourceLoadMode, out var channel))
+                channel.ResourceLoadHelper.Reset();
+        }
+        /// <inheritdoc/>
         public void AddOrUpdateLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper)
         {
             if (Utility.Assert.IsNull(loadHelper))
                 throw new ArgumentNullException($"IResourceLoadHelper is invalid !");
-            loadChannelDict[resourceLoadMode] = new ResourceLoadChannel(resourceLoadMode, loadHelper);
-            if (currentResourceLoadMode == resourceLoadMode)
+            if (loadChannelDict.TryRemove(resourceLoadMode, out var previouseChannel))
+                previouseChannel.ResourceLoadHelper.OnTerminate();
+            var newChannel = new ResourceLoadChannel(resourceLoadMode, loadHelper);
+            loadChannelDict.Add(resourceLoadMode, newChannel);
+            newChannel.ResourceLoadHelper.OnInitialize();
+            if (ResourceDataProxy.ResourceLoadMode == resourceLoadMode)
                 currentLoadHelper = loadHelper;
+        }
+        /// <inheritdoc/>
+        public void StartRequestManifest(string manifestPath)
+        {
+            resourceManifestRequester.StartRequestManifest(manifestPath);
+        }
+        /// <inheritdoc/>
+        public void StopRequestManifest()
+        {
+            resourceManifestRequester.StopRequestManifest();
         }
         /// <inheritdoc/>
         public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null)
@@ -191,6 +230,28 @@ namespace Cosmos.Resource
         protected override void OnInitialization()
         {
             loadChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();
+        }
+        protected override void OnPreparatory()
+        {
+            var webRequestManager = GameManager.GetModule<IWebRequestManager>();
+            resourceManifestRequester = new ResourceManifestRequester(webRequestManager, OnRequestManifestSuccess, OnRequestManifestFailure);
+            resourceManifestRequester.OnInitialize();
+        }
+        protected override void OnTermination()
+        {
+            resourceManifestRequester.OnTerminate();
+        }
+        void OnRequestManifestSuccess(string manifestPath, ResourceManifest resourceManifest)
+        {
+            var eventArgs = ResourceRequestManifestSuccessEventArgs.Create(manifestPath, ResourceLoadMode, ResourceDataProxy.ResourceBundlePathType, resourceManifest);
+            resourceRequestManifestSuccess?.Invoke(eventArgs);
+            ResourceRequestManifestSuccessEventArgs.Release(eventArgs);
+        }
+        void OnRequestManifestFailure(string manifestPath, string errorMessage)
+        {
+            var eventArgs = ResourceRequestManifestFailureEventArgs.Create(manifestPath, ResourceLoadMode, ResourceDataProxy.ResourceBundlePathType, errorMessage);
+            resourceRequestManifestFailure?.Invoke(eventArgs);
+            ResourceRequestManifestFailureEventArgs.Release(eventArgs);
         }
         #endregion
     }

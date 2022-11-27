@@ -21,13 +21,13 @@ namespace Cosmos.Editor.Resource
         {
             treeView.Clear();
         }
+        public void Reload()
+        {
+            treeView.Reload();
+        }
         public void AddObject(ResourceObjectInfo objectInfo)
         {
             treeView.AddObject(objectInfo);
-        }
-        public void RemoveObject(ResourceObjectInfo objectInfo)
-        {
-            treeView.RemoveObject(objectInfo);
         }
         public void OnGUI(Rect rect)
         {

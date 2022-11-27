@@ -24,6 +24,14 @@ namespace Cosmos.Resource
         /// 当前资源的加载模式；
         /// </summary>
         ResourceLoadMode ResourceLoadMode { get; }
+        /// <summary>
+        /// 请求资源文件清单成功事件；
+        /// </summary>
+        event Action<ResourceRequestManifestSuccessEventArgs> ResourceRequestManifestSuccess;
+        /// <summary>
+        /// 请求资源文件清单失败事件；
+        /// </summary>
+        event Action<ResourceRequestManifestFailureEventArgs> ResourceRequestManifestFailure;
         #region Methods
         /// <summary>
         /// 设置默认的加载方式；
@@ -37,11 +45,25 @@ namespace Cosmos.Resource
         /// <param name="resourceLoadMode">加载模式</param>
         void SwitchLoadMode(ResourceLoadMode resourceLoadMode);
         /// <summary>
+        /// 重置加载器；
+        /// </summary>
+        /// <param name="resourceLoadMode">加载模式</param>
+        void ResetLoadHeper(ResourceLoadMode resourceLoadMode);
+        /// <summary>
         /// 添加者更新替换内置的加载帮助体；
         /// </summary>
         /// <param name="resourceLoadMode">加载模式</param>
         /// <param name="loadHelper">加载帮助对象</param>
         void AddOrUpdateLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper);
+        /// <summary>
+        /// 请求文件清单；
+        /// </summary>
+        /// <param name="manifestPath">文件清单地址</param>
+        void StartRequestManifest(string manifestPath);
+        /// <summary>
+        /// 停止请求文件清单；
+        /// </summary>
+        void StopRequestManifest();
         /// <summary>
         /// 加载资源（异步），增加一个引用计数；
         /// </summary>

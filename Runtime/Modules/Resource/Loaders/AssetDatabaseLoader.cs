@@ -9,7 +9,6 @@ namespace Cosmos.Resource
 {
     public class AssetDatabaseLoader : IResourceLoadHelper
     {
-        ResourceDataset resourceDataset;
         /// <summary>
         /// assetPath===resourceObjectWarpper
         /// 理论上资源地址在unity中应该是唯一的。
@@ -41,11 +40,14 @@ namespace Cosmos.Resource
             resourceObjectWarpperDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
         }
-        public void InitLoader(ResourceDataset resourceDataset)
+        ///<inheritdoc/> 
+        public void OnInitialize()
         {
             SceneManager.sceneUnloaded += OnSceneUnloaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
-            this.resourceDataset = resourceDataset;
+        }
+        public void SetResourceDataset(ResourceDataset resourceDataset)
+        {
             var resourceBundleList = resourceDataset.ResourceBundleList;
             foreach (var resourceBundle in resourceBundleList)
             {
@@ -144,7 +146,16 @@ namespace Cosmos.Resource
             }
         }
         ///<inheritdoc/> 
-        public void Dispose()
+        public void Reset()
+        {
+            resourceObjectWarpperDict.Clear();
+            resourceBundleWarpperDict.Clear();
+            loadSceneList.Clear();
+            resourceAddress.Clear();
+            loadedSceneDict.Clear();
+        }
+        ///<inheritdoc/> 
+        public void OnTerminate()
         {
             resourceObjectWarpperDict.Clear();
             resourceBundleWarpperDict.Clear();

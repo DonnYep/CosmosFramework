@@ -24,6 +24,9 @@ namespace Cosmos.Resource
         {
             loadSceneList = new List<string>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
+        }
+        public void OnInitialize()
+        {
             SceneManager.sceneUnloaded += OnSceneUnloaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -90,7 +93,13 @@ namespace Cosmos.Resource
             Resources.UnloadUnusedAssets();
         }
         ///<inheritdoc/> 
-        public void Dispose()
+        public void Reset()
+        {
+            loadSceneList.Clear();
+            loadedSceneDict.Clear();
+        }
+        ///<inheritdoc/> 
+        public void OnTerminate()
         {
             loadSceneList.Clear();
             loadedSceneDict.Clear();

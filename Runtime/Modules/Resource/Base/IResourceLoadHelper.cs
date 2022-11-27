@@ -5,9 +5,12 @@ namespace Cosmos.Resource
     /// <summary>
     ///资源加载适配接口
     /// </summary>
-    public interface IResourceLoadHelper : IDisposable
+    public interface IResourceLoadHelper 
     {
-        
+        /// <summary>
+        /// 初始化；
+        /// </summary>
+        void OnInitialize();
         /// <summary>
         /// 加载资源（异步）；
         /// </summary>
@@ -99,5 +102,13 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
         void ReleaseAllAsset(bool unloadAllLoadedObjects = false);
+        /// <summary>
+        /// 重置loader;
+        /// </summary>
+        void Reset();
+        /// <summary>
+        /// 被终结移除；
+        /// </summary>
+        void OnTerminate();
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     /// 资产对象包装者
     /// </summary>
-    public class ResourceObjectWarpper
+    internal class ResourceObjectWarpper
     {
         int referenceCount;
         ResourceObject resourceObject;

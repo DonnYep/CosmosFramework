@@ -24,10 +24,10 @@ namespace Cosmos
 
         [SerializeField] bool runInBackground;
 
+        [SerializeField] bool autoInitResource=true;
         [SerializeField] ResourceDataset resourceDataset;
         [SerializeField] ResourceBundlePathType resourceBundlePathType;
         [SerializeField] string relativeBundlePath;
-        [SerializeField] string customeResourceBundlePath;
 
         [SerializeField] bool assetBundleEncrytion = false;
         [SerializeField] ulong assetBundleEncrytionOffset = 16;
@@ -36,29 +36,70 @@ namespace Cosmos
         [SerializeField] string buildInfoEncrytionKey = "CosmosBundlesKey";
 
         public const string NONE = "<NONE>";
-        /// <summary>
-        /// AB包所在位置；
-        /// </summary>
-        public string RelativeBundlePath
+        public void LoadResource()
         {
-            get { return relativeBundlePath; }
-            set { relativeBundlePath = value; }
-        }
-        /// <summary>
-        /// AB包所在位置的路径类型；
-        /// </summary>
-        public ResourceBundlePathType ResourceBundlePathType
-        {
-            get { return resourceBundlePathType; }
-            set { resourceBundlePathType = value; }
-        }
-        /// <summary>
-        /// 自定义AB地址
-        /// </summary>
-        public string CustomeResourceBundlePath
-        {
-            get { return customeResourceBundlePath; }
-            set { customeResourceBundlePath = value; }
+            switch (resourceLoadMode)
+            {
+                case ResourceLoadMode.Resource:
+                    CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new ResourcesLoader());
+                    break;
+                case ResourceLoadMode.AssetBundle:
+                    {
+                        string manifestPath = string.Empty;
+                        string bundlePath = string.Empty;
+                        string prefix = string.Empty;
+#if UNITY_EDITOR || UNITY_ANDROID || UNITY_STANDALONE
+#elif UNITY_IOS && !UNITY_EDITOR
+                        prefix=@"file://";
+#endif
+                        switch (resourceBundlePathType)
+                        {
+                            case ResourceBundlePathType.StreamingAssets:
+                                bundlePath = Application.streamingAssetsPath;
+                                break;
+                            case ResourceBundlePathType.PersistentDataPath:
+                                bundlePath = Application.persistentDataPath;
+                                break;
+                        }
+                        ResourceDataProxy.ResourceBundlePathType = resourceBundlePathType;
+                        if (!string.IsNullOrEmpty(relativeBundlePath))
+                        {
+                            manifestPath = Path.Combine(bundlePath, relativeBundlePath, ResourceConstants.RESOURCE_MANIFEST);
+                            ResourceDataProxy.BundlePath = Path.Combine(bundlePath, relativeBundlePath);
+                        }
+                        else
+                        {
+                            manifestPath = Path.Combine(bundlePath, ResourceConstants.RESOURCE_MANIFEST);
+                            ResourceDataProxy.BundlePath = bundlePath;
+                        }
+                        manifestPath = prefix + manifestPath;
+                        ResourceDataProxy.BundlePath = prefix + ResourceDataProxy.BundlePath;
+                        if (assetBundleEncrytion)
+                            ResourceDataProxy.EncryptionOffset = assetBundleEncrytionOffset;
+                        if (buildInfoEncrytion)
+                            ResourceDataProxy.BuildInfoEncryptionKey = buildInfoEncrytionKey;
+                        var assetBundleLoader = new AssetBundleLoader();
+                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
+                        CosmosEntry.ResourceManager.StartRequestManifest(manifestPath);
+                    }
+                    break;
+                case ResourceLoadMode.AssetDatabase:
+                    var assetDatabaseLoader = new AssetDatabaseLoader();
+                    assetDatabaseLoader.SetResourceDataset(resourceDataset);
+                    CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetDatabaseLoader);
+                    break;
+                case ResourceLoadMode.CustomLoader:
+                    {
+                        if (string.IsNullOrEmpty(resourceLoaderName) || resourceLoaderName == NONE)
+                        {
+                            throw new Exception("CustomLoader is invalid !");
+                        }
+                        var loadHelper = Utility.Assembly.GetTypeInstance(resourceLoaderName);
+                        if (loadHelper != null)
+                            CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, (IResourceLoadHelper)loadHelper);
+                    }
+                    break;
+            }
         }
         protected virtual void Awake()
         {
@@ -68,66 +109,9 @@ namespace Cosmos
             if (launchAppDomainModules)
             {
                 CosmosEntry.LaunchAppDomainModules();
-                switch (resourceLoadMode)
+                if (autoInitResource)
                 {
-                    case ResourceLoadMode.Resource:
-                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new ResourcesLoader());
-                        break;
-                    case ResourceLoadMode.AssetBundle:
-                        {
-                            string manifestPath = string.Empty;
-                            string bundlePath = string.Empty;
-                            string prefix = string.Empty;
-#if UNITY_EDITOR || UNITY_ANDROID || UNITY_STANDALONE
-#elif UNITY_IOS && !UNITY_EDITOR
-                        prefix=@"file://";
-#endif
-                            switch (resourceBundlePathType)
-                            {
-                                case ResourceBundlePathType.StreamingAssets:
-                                    bundlePath = Application.streamingAssetsPath;
-                                    break;
-                                case ResourceBundlePathType.PersistentDataPath:
-                                    bundlePath = Application.persistentDataPath;
-                                    break;
-                            }
-                            if (!string.IsNullOrEmpty(relativeBundlePath))
-                            {
-                                manifestPath = Path.Combine(bundlePath, relativeBundlePath, ResourceConstants.RESOURCE_MANIFEST);
-                                ResourceDataProxy.BundlePath = Path.Combine(bundlePath, relativeBundlePath);
-                            }
-                            else
-                            {
-                                manifestPath = Path.Combine(bundlePath, ResourceConstants.RESOURCE_MANIFEST);
-                                ResourceDataProxy.BundlePath = bundlePath;
-                            }
-                            manifestPath = prefix + manifestPath;
-                            ResourceDataProxy.BundlePath = prefix + ResourceDataProxy.BundlePath;
-                            if (assetBundleEncrytion)
-                                ResourceDataProxy.EncryptionOffset = assetBundleEncrytionOffset;
-                            if (buildInfoEncrytion)
-                                ResourceDataProxy.BuildInfoEncryptionKey = buildInfoEncrytionKey;
-                            var assetBundleLoader = new AssetBundleLoader();
-                            assetBundleLoader.InitLoader(CosmosEntry.WebRequestManager, manifestPath);
-                            CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
-                        }
-                        break;
-                    case ResourceLoadMode.AssetDatabase:
-                        var assetDatabaseLoader = new AssetDatabaseLoader();
-                        assetDatabaseLoader.InitLoader(resourceDataset);
-                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetDatabaseLoader);
-                        break;
-                    case ResourceLoadMode.CustomLoader:
-                        {
-                            if (string.IsNullOrEmpty(resourceLoaderName) || resourceLoaderName == NONE)
-                            {
-                                throw new Exception("CustomLoader is invalid !");
-                            }
-                            var loadHelper = Utility.Assembly.GetTypeInstance(resourceLoaderName);
-                            if (loadHelper != null)
-                                CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, (IResourceLoadHelper)loadHelper);
-                        }
-                        break;
+                    LoadResource();
                 }
             }
         }
