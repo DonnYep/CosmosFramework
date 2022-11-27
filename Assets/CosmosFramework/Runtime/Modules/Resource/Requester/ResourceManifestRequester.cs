@@ -6,30 +6,32 @@ namespace Cosmos.Resource
     internal class ResourceManifestRequester
     {
         readonly IWebRequestManager webRequestManager;
-        readonly Action<ResourceManifest> onSuccess;
-        readonly Action<string> onFailure;
+        readonly Action<string, ResourceManifest> onSuccess;
+        readonly Action<string, string> onFailure;
         long taskId;
-        public ResourceManifestRequester(IWebRequestManager webRequestManager, Action<ResourceManifest> onSuccess, Action<string> onFailure)
+        public ResourceManifestRequester(IWebRequestManager webRequestManager, Action<string, ResourceManifest> onSuccess, Action<string,string> onFailure)
         {
             this.webRequestManager = webRequestManager;
             this.onSuccess = onSuccess;
             this.onFailure = onFailure;
         }
-        public void StartRequestManifest(string url)
+        public void OnInitialize()
         {
             webRequestManager.OnSuccessCallback += OnSuccessCallback;
             webRequestManager.OnFailureCallback += OnFailureCallback;
+        }
+        public void OnTerminate()
+        {
+            webRequestManager.OnSuccessCallback -= OnSuccessCallback;
+            webRequestManager.OnFailureCallback -= OnFailureCallback;
+        }
+        public void StartRequestManifest(string url)
+        {
             taskId = webRequestManager.AddDownloadTextTask(url);
         }
         public void StopRequestManifest()
         {
-            webRequestManager.OnSuccessCallback -= OnSuccessCallback;
-            webRequestManager.OnFailureCallback -= OnFailureCallback;
             webRequestManager.RemoveTask(taskId);
-        }
-        public void Clear()
-        {
-            StopRequestManifest();
         }
         void OnSuccessCallback(WebRequestSuccessEventArgs eventArgs)
         {
@@ -37,16 +39,16 @@ namespace Cosmos.Resource
             try
             {
                 var resourceManifest = Utility.Json.ToObject<ResourceManifest>(manifestJson);
-                onSuccess?.Invoke(resourceManifest);
+                onSuccess?.Invoke(eventArgs.URL, resourceManifest);
             }
             catch (Exception e)
             {
-                onFailure?.Invoke(e.ToString());
+                onFailure?.Invoke(eventArgs.URL, e.ToString());
             }
         }
         void OnFailureCallback(WebRequestFailureEventArgs eventArgs)
         {
-            onFailure?.Invoke(eventArgs.ErrorMessage);
+            onFailure?.Invoke(eventArgs.URL, eventArgs.ErrorMessage);
         }
     }
 }

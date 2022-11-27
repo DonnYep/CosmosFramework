@@ -7,7 +7,6 @@ using Cosmos.Download;
 using Cosmos.Entity;
 using Cosmos.Event;
 using Cosmos.FSM;
-using Cosmos.Hotfix;
 using Cosmos.Input;
 using Cosmos.Network;
 using Cosmos.ObjectPool;
@@ -67,7 +66,6 @@ namespace Cosmos
         public static INetworkManager NetworkManager { get { return GetModule<INetworkManager>(); } }
         public static IResourceManager ResourceManager { get { return GetModule<IResourceManager>(); } }
         public static IUIManager UIManager { get { return GetModule<IUIManager>(); } }
-        public static IHotfixManager HotfixManager { get { return GetModule<IHotfixManager>(); } }
         public static IDataNodeManager DataNodeManager { get { return GetModule<IDataNodeManager>(); } }
         public static IEntityManager EntityManager { get { return GetModule<IEntityManager>(); } }
         public static IEventManager EventManager { get { return GetModule<IEventManager>(); } }

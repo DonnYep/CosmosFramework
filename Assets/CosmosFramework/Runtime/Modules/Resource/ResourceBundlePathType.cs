@@ -7,6 +7,5 @@
     {
         StreamingAssets=0,
         PersistentDataPath=1,
-        CustomePath=2
     }
 }

@@ -16,7 +16,7 @@ namespace Cosmos.Resource
      *  4、初始化时自动填充所有资源地址。
     */
     //================================================
-    public class ResourceAddress
+    internal class ResourceAddress
     {
         /// <summary>
         /// assetName===[Lnk===ResourceObject]

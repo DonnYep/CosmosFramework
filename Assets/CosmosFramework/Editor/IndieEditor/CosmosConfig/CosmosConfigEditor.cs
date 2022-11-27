@@ -20,8 +20,7 @@ namespace Cosmos.Editor
         SerializedProperty sp_ResourceDataset;
         SerializedProperty sp_ResourceBundlePathType;
         SerializedProperty sp_RelativeBundlePath;
-        SerializedProperty sp_CustomeResourceBundlePath;
-
+        
         SerializedProperty sp_AssetBundleEncrytion;
         SerializedProperty sp_AssetBundleEncrytionOffset;
         SerializedProperty sp_BuildInfoEncrytion;
@@ -128,15 +127,7 @@ namespace Cosmos.Editor
                                 {
                                     sp_ResourceBundlePathType.enumValueIndex = resourceBundlePathTypeIndex;
                                 }
-                                var bundlePathType = (ResourceBundlePathType)resourceBundlePathTypeIndex;
-                                if (bundlePathType == ResourceBundlePathType.CustomePath)
-                                {
-                                    sp_CustomeResourceBundlePath.stringValue = EditorGUILayout.TextField("CustomePath", sp_CustomeResourceBundlePath.stringValue);
-                                }
-                                else
-                                {
-                                    sp_RelativeBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_RelativeBundlePath.stringValue);
-                                }
+                                sp_RelativeBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_RelativeBundlePath.stringValue);
                                 assetBundleEncrytion = EditorGUILayout.ToggleLeft("AssetBundleEncrytion", assetBundleEncrytion);
                                 if (assetBundleEncrytion != sp_AssetBundleEncrytion.boolValue)
                                 {
@@ -236,7 +227,6 @@ namespace Cosmos.Editor
             sp_ResourceDataset = targetObject.FindProperty("resourceDataset");
             sp_ResourceBundlePathType = targetObject.FindProperty("resourceBundlePathType");
             sp_RelativeBundlePath = targetObject.FindProperty("relativeBundlePath");
-            sp_CustomeResourceBundlePath = targetObject.FindProperty("customeResourceBundlePath");
 
             sp_AssetBundleEncrytion = targetObject.FindProperty("assetBundleEncrytion");
             sp_AssetBundleEncrytionOffset = targetObject.FindProperty("assetBundleEncrytionOffset");

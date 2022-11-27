@@ -5,7 +5,6 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
-using Cosmos.WebRequest;
 namespace Cosmos.Resource
 {
     /// <summary>
@@ -13,7 +12,6 @@ namespace Cosmos.Resource
     /// </summary>
     public class AssetBundleLoader : IResourceLoadHelper
     {
-        ResourceManifest resourceManifest;
         /// <summary>
         /// assetPath===resourceObjectWarpper
         /// 理论上资源地址在unity中应该是唯一的。
@@ -38,23 +36,25 @@ namespace Cosmos.Resource
         /// 主动加载的场景列表；
         /// </summary>
         readonly List<string> loadSceneList;
-        ResourceManifestRequester manifestRequester;
         bool manifestAcquired = false;
         bool requestDone = false;
-        public AssetBundleLoader(IWebRequestManager webRequestManager)
+        bool abort = false;
+        public AssetBundleLoader()
         {
             loadSceneList = new List<string>();
             resourceAddress = new ResourceAddress();
             resourceBundleWarpperDict = new Dictionary<string, ResourceBundleWarpper>();
             resourceObjectWarpperDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
-            manifestRequester = new ResourceManifestRequester(webRequestManager, OnManifestSuccess, OnManifestFailure);
         }
-        public void InitLoader(string bundleFolderPath)
+        ///<inheritdoc/> 
+        public void OnInitialize()
         {
             SceneManager.sceneUnloaded += OnSceneUnloaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
-            manifestRequester.StartRequestManifest(bundleFolderPath);
+            CosmosEntry.ResourceManager.ResourceRequestManifestFailure += RequestManifestFailure;
+            CosmosEntry.ResourceManager.ResourceRequestManifestSuccess += RequestManifestSuccess;
+            abort = false;
         }
         ///<inheritdoc/> 
         public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null) where T : Object
@@ -141,7 +141,19 @@ namespace Cosmos.Resource
             }
         }
         ///<inheritdoc/> 
-        public void Dispose()
+        public void Reset()
+        {
+            resourceObjectWarpperDict.Clear();
+            resourceBundleWarpperDict.Clear();
+            loadSceneList.Clear();
+            resourceAddress.Clear();
+            loadedSceneDict.Clear();
+            manifestAcquired = false;
+            requestDone = false;
+            abort = false;
+        }
+        ///<inheritdoc/> 
+        public void OnTerminate()
         {
             resourceObjectWarpperDict.Clear();
             resourceBundleWarpperDict.Clear();
@@ -152,13 +164,13 @@ namespace Cosmos.Resource
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
             manifestAcquired = false;
             requestDone = false;
-            resourceManifest = null;
-            manifestRequester.Clear();
+            abort = true;
+            CosmosEntry.ResourceManager.ResourceRequestManifestFailure -= RequestManifestFailure;
+            CosmosEntry.ResourceManager.ResourceRequestManifestSuccess -= RequestManifestSuccess;
         }
         IEnumerator EnumLoadAssetAsync(string assetName, Type type, Action<Object> callback, Action<float> progress = null)
         {
-
-            yield return new WaitUntil(() => requestDone);
+            yield return new WaitUntil(() => requestDone || abort);
             if (!manifestAcquired)
             {
                 progress?.Invoke(1);
@@ -215,7 +227,7 @@ namespace Cosmos.Resource
         }
         IEnumerator EnumLoadAssetWithSubAssetsAsync(string assetName, Type type, Action<Object[]> callback, Action<float> progress)
         {
-            yield return new WaitUntil(() => requestDone);
+            yield return new WaitUntil(() => requestDone || abort);
             if (!manifestAcquired)
             {
                 progress?.Invoke(1);
@@ -272,7 +284,7 @@ namespace Cosmos.Resource
         }
         IEnumerator EnumLoadAllAssetAsync(string bundleName, Action<float> progress, Action<Object[]> callback)
         {
-            yield return new WaitUntil(() => requestDone);
+            yield return new WaitUntil(() => requestDone || abort);
             if (!manifestAcquired)
             {
                 progress?.Invoke(1);
@@ -319,7 +331,7 @@ namespace Cosmos.Resource
         }
         IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
-            yield return new WaitUntil(() => requestDone);
+            yield return new WaitUntil(() => requestDone || abort);
             if (!manifestAcquired)
             {
                 progress?.Invoke(1);
@@ -392,7 +404,7 @@ namespace Cosmos.Resource
         }
         IEnumerator EnumUnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
         {
-            yield return new WaitUntil(() => requestDone);
+            yield return new WaitUntil(() => requestDone || abort);
             if (!manifestAcquired)
             {
                 progress?.Invoke(1);
@@ -613,15 +625,10 @@ namespace Cosmos.Resource
             resourceObjectWarpper.ReferenceCount--;
             UnloadDependenciesAssetBundle(resourceBundleWarpper);
         }
-        void OnManifestFailure(string errorMessage)
+        void RequestManifestSuccess(ResourceRequestManifestSuccessEventArgs args)
         {
-            Utility.Debug.LogError("ResourceManifest deserialization failed , check your file !");
-            manifestAcquired = false;
-            requestDone = true;
-        }
-        void OnManifestSuccess(ResourceManifest resourceManifest)
-        {
-            this.resourceManifest = resourceManifest;
+            Reset();
+            var resourceManifest = args.ResourceManifest;
             var bundleBuildInfoDict = resourceManifest.ResourceBundleBuildInfoDict;
             foreach (var bundleBuildInfo in bundleBuildInfoDict.Values)
             {
@@ -637,6 +644,12 @@ namespace Cosmos.Resource
                 resourceAddress.AddResourceObjects(resourceObjectList);
             }
             manifestAcquired = true;
+            requestDone = true;
+        }
+        void RequestManifestFailure(ResourceRequestManifestFailureEventArgs args)
+        {
+            Utility.Debug.LogError("ResourceManifest deserialization failed , check your file !");
+            manifestAcquired = false;
             requestDone = true;
         }
     }

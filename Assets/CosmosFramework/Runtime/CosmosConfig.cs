@@ -28,7 +28,6 @@ namespace Cosmos
         [SerializeField] ResourceDataset resourceDataset;
         [SerializeField] ResourceBundlePathType resourceBundlePathType;
         [SerializeField] string relativeBundlePath;
-        [SerializeField] string customeResourceBundlePath;
 
         [SerializeField] bool assetBundleEncrytion = false;
         [SerializeField] ulong assetBundleEncrytionOffset = 16;
@@ -37,30 +36,6 @@ namespace Cosmos
         [SerializeField] string buildInfoEncrytionKey = "CosmosBundlesKey";
 
         public const string NONE = "<NONE>";
-        /// <summary>
-        /// AB包所在位置；
-        /// </summary>
-        public string RelativeBundlePath
-        {
-            get { return relativeBundlePath; }
-            set { relativeBundlePath = value; }
-        }
-        /// <summary>
-        /// AB包所在位置的路径类型；
-        /// </summary>
-        public ResourceBundlePathType ResourceBundlePathType
-        {
-            get { return resourceBundlePathType; }
-            set { resourceBundlePathType = value; }
-        }
-        /// <summary>
-        /// 自定义AB地址
-        /// </summary>
-        public string CustomeResourceBundlePath
-        {
-            get { return customeResourceBundlePath; }
-            set { customeResourceBundlePath = value; }
-        }
         public void LoadResource()
         {
             switch (resourceLoadMode)
@@ -86,6 +61,7 @@ namespace Cosmos
                                 bundlePath = Application.persistentDataPath;
                                 break;
                         }
+                        ResourceDataProxy.ResourceBundlePathType = resourceBundlePathType;
                         if (!string.IsNullOrEmpty(relativeBundlePath))
                         {
                             manifestPath = Path.Combine(bundlePath, relativeBundlePath, ResourceConstants.RESOURCE_MANIFEST);
@@ -102,14 +78,14 @@ namespace Cosmos
                             ResourceDataProxy.EncryptionOffset = assetBundleEncrytionOffset;
                         if (buildInfoEncrytion)
                             ResourceDataProxy.BuildInfoEncryptionKey = buildInfoEncrytionKey;
-                        var assetBundleLoader = new AssetBundleLoader(CosmosEntry.WebRequestManager);
-                        assetBundleLoader.InitLoader(manifestPath);
+                        var assetBundleLoader = new AssetBundleLoader();
                         CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
+                        CosmosEntry.ResourceManager.StartRequestManifest(manifestPath);
                     }
                     break;
                 case ResourceLoadMode.AssetDatabase:
                     var assetDatabaseLoader = new AssetDatabaseLoader();
-                    assetDatabaseLoader.InitLoader(resourceDataset);
+                    assetDatabaseLoader.SetResourceDataset(resourceDataset);
                     CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetDatabaseLoader);
                     break;
                 case ResourceLoadMode.CustomLoader:

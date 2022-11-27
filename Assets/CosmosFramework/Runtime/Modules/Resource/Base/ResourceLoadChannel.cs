@@ -3,7 +3,7 @@
     /// <summary>
     /// 资源加载通道；
     /// </summary>
-    public class ResourceLoadChannel
+    internal class ResourceLoadChannel
     {
         readonly IResourceLoadHelper resourceLoadHelper;
         readonly ResourceLoadMode resourceLoadMode;
