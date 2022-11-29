@@ -2,16 +2,20 @@
 namespace Cosmos.Editor.Hotfix
 {
     [Serializable]
-    public class HotfixWindowData
+    public class HotUpdateWindowData
     {
         /// <summary>
         /// 编译完成的程序集路径；
         /// </summary>
-        public string CompiledAssemblyPath { get; set; }
+        public string CompiledDllPath { get; set; }
         /// <summary>
         /// 拷贝到工程的相对路径；
         /// </summary>
-        public string AssetsRelativePath{ get; set; }
+        public string DllPastePath { get; set; }
+        /// <summary>
+        /// 绝对路径；
+        /// </summary>
+        public string FullDllPastePath { get; set; }
         /// <summary>
         /// 追加后缀名；
         /// </summary>
@@ -23,18 +27,18 @@ namespace Cosmos.Editor.Hotfix
         /// <summary>
         /// 开启自动加载；
         /// </summary>
-        public bool AutoLoadHotfixCode { get; set; }
-        public HotfixWindowData()
+        public bool AutoLoadHotUpdateCode { get; set; }
+        public HotUpdateWindowData()
         {
-            AutoLoadHotfixCode = false;
+            AutoLoadHotUpdateCode = false;
             AppendExtension = true;
             Extension = ".bytes";
         }
         public void Reset()
         {
-            CompiledAssemblyPath = string.Empty;
-            AssetsRelativePath = string.Empty;
-            AutoLoadHotfixCode = false;
+            CompiledDllPath = string.Empty;
+            DllPastePath= string.Empty;
+            AutoLoadHotUpdateCode = false;
             AppendExtension = true;
             Extension = ".bytes";
         }
