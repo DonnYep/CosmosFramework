@@ -8,6 +8,7 @@ namespace Cosmos
     {
         public static class Converter
         {
+            [ThreadStatic]//每个静态类型字段对于每一个线程都是唯一的
             static StringBuilder stringBuilderCache = new StringBuilder(1024);
             /// <summary>
             ///从UFT-8编码到Base64； 

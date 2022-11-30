@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+
 namespace Cosmos.Editor.Hotfix
 {
     [Serializable]
@@ -7,15 +9,15 @@ namespace Cosmos.Editor.Hotfix
         /// <summary>
         /// 编译完成的程序集路径；
         /// </summary>
-        public string CompiledDllPath { get; set; }
+        public string AssembliesPath { get; set; }
         /// <summary>
         /// 拷贝到工程的相对路径；
         /// </summary>
-        public string DllPastePath { get; set; }
+        public string AssembliesPastePath { get; set; }
         /// <summary>
         /// 绝对路径；
         /// </summary>
-        public string FullDllPastePath { get; set; }
+        public string FullAssembliesPastePath { get; set; }
         /// <summary>
         /// 追加后缀名；
         /// </summary>
@@ -24,23 +26,19 @@ namespace Cosmos.Editor.Hotfix
         /// 追加的后缀名；
         /// </summary>
         public string Extension { get; set; }
-        /// <summary>
-        /// 开启自动加载；
-        /// </summary>
-        public bool AutoLoadHotUpdateCode { get; set; }
         public HotUpdateWindowData()
         {
-            AutoLoadHotUpdateCode = false;
+            AssembliesPath = Utility.IO.WebPathCombine(Directory.GetCurrentDirectory());
             AppendExtension = true;
-            Extension = ".bytes";
+            Extension = HotUpdateWindowConstants.AppendExtension;
+            AssembliesPastePath = "HotUpdate";
         }
         public void Reset()
         {
-            CompiledDllPath = string.Empty;
-            DllPastePath= string.Empty;
-            AutoLoadHotUpdateCode = false;
+            AssembliesPath = Utility.IO.WebPathCombine(Directory.GetCurrentDirectory());
+            AssembliesPastePath = "HotUpdate";
             AppendExtension = true;
-            Extension = ".bytes";
+            Extension = HotUpdateWindowConstants.AppendExtension;
         }
     }
 }
