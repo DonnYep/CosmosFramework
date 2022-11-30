@@ -366,16 +366,22 @@ namespace Cosmos
             {
                 var length = array.Count;
                 T[] dst = new T[length];
-                T temp = array[0];
                 int idx = 0;
                 for (int i = 0; i < length; i++)
                 {
-                    if (temp.CompareTo(array[i]) != 0)
+                    bool isDuplicate = false;
+                    for (int j = 0; j < i; j++)
                     {
-                        temp = array[i];
-                        dst[idx] = temp;
+                        if (array[i].CompareTo(array[j]) == 0)
+                        {
+                            isDuplicate = true;
+                            break;
+                        }
+                    }
+                    if (!isDuplicate)
+                    {
+                        dst[idx] = array[i];
                         idx++;
-                        continue;
                     }
                 }
                 Array.Resize(ref dst, idx);
