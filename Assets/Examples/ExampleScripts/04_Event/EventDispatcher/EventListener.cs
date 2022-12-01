@@ -14,7 +14,7 @@ namespace Cosmos
         public string EventKey { get { return selectedKeyContent; } }
         [Header("通过事件中心分发事件，这里使用unityAction注册事件")]
         public UnityEvent actions;
-        private void Awake()
+        private void Start()
         {
             Register();
             Utility.Debug.LogInfo("RegisterEvent:\n"+ this.gameObject.name, this.gameObject);
