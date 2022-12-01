@@ -95,18 +95,18 @@ namespace Cosmos
                 value.y = (float)Math.Round(value.y, decimals);
                 return value;
             }
-            public static T ChildComp<T>(Transform go, string subNode)
+            public static T ChildComp<T>(Transform go, string name)
       where T : Component
             {
-                var child = go.FindChildren( subNode);
+                var child = go.FindChildren( name);
                 if (child == null)
                     return null;
                 return child.GetComponent<T>();
             }
-            public static T ParentComp<T>(Transform go, string parentNode)
+            public static T ParentComp<T>(Transform go, string name)
 where T : Component
             {
-                var parent = Parent(go, parentNode);
+                var parent = Parent(go, name);
                 if (parent == null)
                     return null;
                 return parent.GetComponent<T>();
@@ -140,11 +140,11 @@ where T : Component
             /// 查找同级别
             /// </summary>
             /// <param name="go">同级别当前对象</param>
-            /// <param name="peerNode">同级别目标对象名称</param>
+            /// <param name="name">同级别目标对象名称</param>
             /// <returns>查找到的目标对象</returns>
-            public static Transform Peer(Transform go, string peerNode)
+            public static Transform Peer(Transform go, string name)
             {
-                Transform tran = go.parent.Find(peerNode);
+                Transform tran = go.parent.Find(name);
                 if (tran == null)
                     return null;
                 return tran;
@@ -235,10 +235,10 @@ where T : Component
                     comps[i].transform.SetSiblingIndex(i);
                 }
             }
-            public static Transform Parent(Transform go, string parentNode)
+            public static Transform Parent(Transform go, string name)
             {
                 var par = go.GetComponentsInParent<Transform>();
-                return Algorithm.Find(par, p => p.gameObject.name == parentNode);
+                return Algorithm.Find(par, p => p.gameObject.name == name);
             }
             /// <summary>
             /// 判断是否是路径；

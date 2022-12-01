@@ -153,9 +153,9 @@ namespace Cosmos
         /// 查找所有符合名称的子节点
         /// </summary>
         /// <param name="this">目标对象</param>
-        /// <param name="subNode">子级别目标对象名称</param>
+        /// <param name="name">子级别目标对象名称</param>
         /// <returns>名字符合的对象数组</returns>
-        public static Transform[] FindChildrens(this Transform @this, string subNode)
+        public static Transform[] FindChildrens(this Transform @this, string name)
         {
             var trans = @this.GetComponentsInChildren<Transform>();
             var length = trans.Length;
@@ -163,7 +163,7 @@ namespace Cosmos
             int idx = 0;
             for (int i = 0; i < length; i++)
             {
-                if (trans[i].name.Contains(subNode))
+                if (trans[i].name.Contains(name))
                 {
                     dst[idx] = trans[i];
                     idx++;
@@ -172,13 +172,13 @@ namespace Cosmos
             Array.Resize(ref dst, idx);
             return dst;
         }
-        public static Transform FindChildren(this Transform @this, string subNode)
+        public static Transform FindChildren(this Transform @this, string name)
         {
             var trans = @this.GetComponentsInChildren<Transform>();
             var length = trans.Length;
             for (int i = 1; i < length; i++)
             {
-                if (trans[i].name.Equals(subNode))
+                if (trans[i].name.Equals(name))
                     return trans[i];
             }
             return null;
@@ -199,12 +199,26 @@ namespace Cosmos
             else
                 return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
         }
-        public static Transform FindPeer(this Transform @this, string peerNode)
+        public static Transform FindPeer(this Transform @this, string name)
         {
-            Transform tran = @this.parent.Find(peerNode);
+            Transform tran = @this.parent.Find(name);
             if (tran == null)
                 return null;
             return tran;
+        }
+        public static Transform FindParent(this Transform @this, string name)
+        {
+            var parentTransforms = @this.parent.GetComponentsInParent<Transform>();
+            Transform parent = null;
+            foreach (var tran in parentTransforms)
+            {
+                if (tran.name == name)
+                {
+                    parent = tran;
+                    break;
+                }
+            }
+            return parent;
         }
         /// <summary>
         /// 查找同级别下所有目标组件；

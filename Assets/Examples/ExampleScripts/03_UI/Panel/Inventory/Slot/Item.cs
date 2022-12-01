@@ -12,6 +12,7 @@ public class Item : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public ItemDataset ItemDataSet { get { return itemDataSet; } }
     Transform previouseParent;
     Transform dragParent;
+    Transform root;
     public Transform DragParent { get { return dragParent; } set { dragParent = value; } }
     string itemDescription;
     public Transform PreviouseParent { get { return previouseParent; } set { previouseParent = value; } }
@@ -22,7 +23,7 @@ public class Item : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
             return;
         transform.position = eventData.position;
         GetComponent<CanvasGroup>().blocksRaycasts = false;
-        DragParent = transform.parent.parent.parent;
+        DragParent = root;
         PreviouseParent = transform.parent;
         transform.parent = DragParent;
     }
@@ -36,28 +37,38 @@ public class Item : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     {
         if (!Dragable)
             return;
-        if (eventData.pointerCurrentRaycast.gameObject.name == "Item")
+        bool invalidDrag = false;
+        var raycastTarget = eventData.pointerCurrentRaycast.gameObject;
+        if (raycastTarget == null)
         {
-            transform.SetParent(eventData.pointerCurrentRaycast.gameObject.transform.parent);
-            eventData.pointerCurrentRaycast.gameObject.transform.SetParent(PreviouseParent);
-            eventData.pointerCurrentRaycast.gameObject.transform.ResetLocalTransform();
-            GetComponent<CanvasGroup>().blocksRaycasts = true;
+            transform.SetParent(PreviouseParent);
             transform.ResetLocalTransform();
+            GetComponent<CanvasGroup>().blocksRaycasts = true;
+            return;
         }
-        else
-        if (eventData.pointerCurrentRaycast.gameObject.name == "Slot")
+        if (raycastTarget.name == "Item")
         {
-            transform.SetParent(eventData.pointerCurrentRaycast.gameObject.transform);
+            transform.SetParent(raycastTarget.transform.parent);
+            raycastTarget.transform.SetParent(PreviouseParent);
+            raycastTarget.gameObject.transform.ResetLocalTransform();
             transform.ResetLocalTransform();
-            GetComponent<CanvasGroup>().blocksRaycasts = true;
+            invalidDrag = true;
+
+        }
+        else if (raycastTarget.name == "Slot")
+        {
+            transform.SetParent(raycastTarget.gameObject.transform);
+            transform.ResetLocalTransform();
+            invalidDrag = true;
         }
         else
         {
             transform.SetParent(PreviouseParent);
             transform.ResetLocalTransform();
-            GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
-        MVC.Dispatch(new NotifyArgs(MVCEventDefine.CMD_Inventory, new InventoryEventArgs(InvCmd.Flush)));
+        GetComponent<CanvasGroup>().blocksRaycasts = true;
+        if (invalidDrag)
+            MVC.Dispatch(new NotifyArgs(MVCEventDefine.CMD_Inventory, new InventoryEventArgs(InvCmd.Flush)));
     }
     public void SetItem(ItemDataset item)
     {
@@ -86,6 +97,7 @@ public class Item : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         imgItem = GetComponent<Image>();
         txtNumber = GetComponentInChildren<Text>();
         PreviouseParent = transform.parent;
+        root = transform.FindParent("Root");
     }
     void IItemClick()
     {
