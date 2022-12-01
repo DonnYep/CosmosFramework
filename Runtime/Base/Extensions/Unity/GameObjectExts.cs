@@ -71,7 +71,7 @@ namespace Cosmos
             }
             return component;
         }
-        public static T GetComponentInParent<T>(this GameObject @this, string parentName)
+        public static T GetComponentInParent<T>(this GameObject @this, string name)
 where T : Component
         {
             var parent = @this.GetComponentsInParent<Transform>();
@@ -79,7 +79,7 @@ where T : Component
             Transform parentTrans = null;
             for (int i = 0; i < length; i++)
             {
-                if (parent[i].name == parentName)
+                if (parent[i].name == name)
                 {
                     parentTrans = parent[i];
                     break;
@@ -90,7 +90,7 @@ where T : Component
             var comp = parentTrans.GetComponent<T>();
             return comp;
         }
-        public static T GetOrAddComponentInParent<T>(this GameObject @this, string parentName)
+        public static T GetOrAddComponentInParent<T>(this GameObject @this, string name)
 where T : Component
         {
             var parent = @this.GetComponentsInParent<Transform>();
@@ -98,7 +98,7 @@ where T : Component
             Transform parentTrans = null;
             for (int i = 0; i < length; i++)
             {
-                if (parent[i].name == parentName)
+                if (parent[i].name == name)
                 {
                     parentTrans = parent[i];
                     break;
@@ -113,7 +113,7 @@ where T : Component
             }
             return comp;
         }
-        public static T GetComponentInChildren<T>(this GameObject @this, string childName)
+        public static T GetComponentInChildren<T>(this GameObject @this, string name)
             where T : Component
         {
             var childs = @this.GetComponentsInChildren<Transform>();
@@ -121,7 +121,7 @@ where T : Component
             Transform childTrans = null;
             for (int i = 0; i < length; i++)
             {
-                if (childs[i].name == childName)
+                if (childs[i].name == name)
                 {
                     childTrans = childs[i];
                     break;
@@ -132,7 +132,7 @@ where T : Component
             var comp = childTrans.GetComponent<T>();
             return comp;
         }
-        public static T GetOrAddComponentInChildren<T>(this GameObject @this, string childName)
+        public static T GetOrAddComponentInChildren<T>(this GameObject @this, string name)
     where T : Component
         {
             var childs = @this.GetComponentsInChildren<Transform>();
@@ -140,7 +140,7 @@ where T : Component
             Transform childTrans = null;
             for (int i = 0; i < length; i++)
             {
-                if (childs[i].name == childName)
+                if (childs[i].name == name)
                 {
                     childTrans = childs[i];
                     break;
@@ -153,20 +153,20 @@ where T : Component
                 comp = childTrans.gameObject.AddComponent<T>();
             return comp;
         }
-        public static T GetComponentInPeer<T>(this GameObject @this, string peerName)
+        public static T GetComponentInPeer<T>(this GameObject @this, string name)
 where T : Component
         {
-            Transform tran = @this.transform.parent.Find(peerName);
+            Transform tran = @this.transform.parent.Find(name);
             if (tran != null)
             {
                 return tran.GetComponent<T>();
             }
             return null;
         }
-        public static T GetOrAddComponentInPeer<T>(this GameObject @this, string peerName)
+        public static T GetOrAddComponentInPeer<T>(this GameObject @this, string name)
 where T : Component
         {
-            Transform tran = @this.transform.parent.Find(peerName);
+            Transform tran = @this.transform.parent.Find(name);
             if (tran != null)
             {
                 var comp = tran.GetComponent<T>();
@@ -213,7 +213,7 @@ where T : Component
             }
             return @this;
         }
-        public static GameObject TryRemoveComponent(this GameObject @this, System.Type type)
+        public static GameObject TryRemoveComponent(this GameObject @this, Type type)
         {
             var t = @this.GetComponent(type);
 
@@ -243,7 +243,7 @@ where T : Component
             }
             return @this;
         }
-        public static GameObject TryRemoveComponents<T>(this GameObject @this, System.Type type)
+        public static GameObject TryRemoveComponents<T>(this GameObject @this, Type type)
         {
             var t = @this.GetComponents(type);
 
@@ -288,12 +288,12 @@ where T : Component
         /// 获取或创建GameObject
         /// </summary>
         /// <param name="@this"></param>
-        public static GameObject FindOrCreateGameObject(this GameObject @this, string GameObjectName)
+        public static GameObject FindOrCreateGameObject(this GameObject @this, string name)
         {
-            var trans = @this.transform.Find(GameObjectName);
+            var trans = @this.transform.Find(name);
             if (trans == null)
             {
-                var go = new GameObject(GameObjectName).SetParent(@this);
+                var go = new GameObject(name).SetParent(@this);
                 return go;
             }
             else
@@ -305,20 +305,20 @@ where T : Component
         /// 获取或创建GameObject
         /// </summary>
         /// <param name="@this"></param>
-        public static GameObject FindOrCreateGo(this GameObject @this, string GameObjectName)
+        public static GameObject FindOrCreateGo(this GameObject @this, string name)
         {
-            return @this.FindOrCreateGameObject(GameObjectName);
+            return @this.FindOrCreateGameObject(name);
         }
         /// <summary>
         /// 获取或创建GameObject
         /// </summary>
         /// <param name="@this"></param>
-        public static GameObject FindOrCreateGameObject(this GameObject @this, string GameObjectName, params System.Type[] Components)
+        public static GameObject FindOrCreateGameObject(this GameObject @this, string name, params Type[] Components)
         {
-            var trans = @this.transform.Find(GameObjectName);
+            var trans = @this.transform.Find(name);
             if (trans == null)
             {
-                var go = new GameObject(GameObjectName, Components).SetParent(@this);
+                var go = new GameObject(name, Components).SetParent(@this);
                 return go;
             }
             else
@@ -326,14 +326,14 @@ where T : Component
                 return trans.gameObject;
             }
         }
-        public static GameObject CreateGameObject(this GameObject @this, string GameObjectName)
+        public static GameObject CreateGameObject(this GameObject @this, string name)
         {
-            var go = new GameObject(GameObjectName).SetParent(@this);
+            var go = new GameObject(name).SetParent(@this);
             return go;
         }
-        public static GameObject CreateGameObject(this GameObject @this, string GameObjectName, params System.Type[] Components)
+        public static GameObject CreateGameObject(this GameObject @this, string name, params Type[] Components)
         {
-            var go = new GameObject(GameObjectName, Components).SetParent(@this);
+            var go = new GameObject(name, Components).SetParent(@this);
             return go;
         }
         /// <summary>
@@ -425,7 +425,7 @@ where T : Component
         /// <param name="@this">Game object</param>
         /// <param name="type">组件类型</param>
         /// <returns>True when component is attached.</returns>
-        public static bool HasComponent(this GameObject @this, System.Type type)
+        public static bool HasComponent(this GameObject @this, Type type)
         {
             return @this.GetComponent(type) != null;
         }
