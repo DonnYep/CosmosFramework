@@ -93,6 +93,7 @@ namespace Cosmos.Editor.Resource
         {
             originalName = item.displayName;
             renamingItemId = item.id;
+            BeginRename(item);
             return item != null;
         }
         protected override void RenameEnded(RenameEndedArgs args)
