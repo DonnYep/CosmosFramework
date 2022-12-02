@@ -96,6 +96,35 @@ namespace Cosmos
                     return buffer;
                 }
             }
+
+            ///// <summary>
+            ///// 创建一个与文件夹同级的压缩文件；
+            ///// </summary>
+            ///// <param name="sourceDirectoryName">文件夹名</param>
+            ///// <param name="includeBaseDirectory">包含基类文件夹</param>
+            //public static void CreateZipFromDirectory(string sourceDirectoryName, bool includeBaseDirectory = false)
+            //{
+            //    if (!Directory.Exists(sourceDirectoryName))
+            //        return;
+            //    var archivePath = sourceDirectoryName + ".zip";
+            //    if (File.Exists(archivePath))
+            //        File.Delete(archivePath);
+            //    System.IO.Compression.ZipFile.CreateFromDirectory(sourceDirectoryName, archivePath, CompressionLevel.Fastest, includeBaseDirectory);
+            //}
+            ///// <summary>
+            ///// 解压zip文件；
+            ///// </summary>
+            ///// <param name="sourceArchiveFileName">zip文件地址</param>
+            ///// <param name="destinationDirectory">解压到的文件地址</param>
+            //public static void ExtractZipToDirectory(string sourceArchiveFileName, string destinationDirectory)
+            //{
+            //    var ext = Path.GetExtension(sourceArchiveFileName).ToLower();
+            //    if (ext != ".zip")
+            //        return;
+            //    if (!File.Exists(sourceArchiveFileName))
+            //        return;
+            //    System.IO.Compression.ZipFile.ExtractToDirectory(sourceArchiveFileName, destinationDirectory);
+            //}
         }
     }
 }

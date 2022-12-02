@@ -125,7 +125,7 @@ namespace Cosmos.Editor.Resource
                 var buildPath = buildParams.AssetBundleBuildPath;
                 if (Directory.Exists(buildPath))
                 {
-                    Utility.IO.Copy(buildPath, streamingAssetPath);
+                    Utility.IO.CopyDirectory(buildPath, streamingAssetPath);
                 }
             }
 
