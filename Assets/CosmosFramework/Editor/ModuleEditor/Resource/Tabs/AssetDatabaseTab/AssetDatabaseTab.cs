@@ -181,7 +181,7 @@ namespace Cosmos.Editor.Resource
                             var isInSameBundle = ResourceWindowUtility.CheckAssetsAndScenesInOneAssetBundle(path);
                             if (isInSameBundle)
                             {
-                                var invalidBundleName = ResourceUtility.BundleNameFilter(path);
+                                var invalidBundleName = ResourceUtility.FilterName(path);
                                 EditorUtil.Debug.LogError($"Cannot mark assets and scenes in one AssetBundle. AssetBundle name is {invalidBundleName}");
                                 continue;
                             }

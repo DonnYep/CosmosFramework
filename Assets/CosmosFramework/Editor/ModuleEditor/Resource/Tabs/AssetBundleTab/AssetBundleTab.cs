@@ -120,8 +120,8 @@ namespace Cosmos.Editor.Resource
                 versionValid = !string.IsNullOrEmpty(tabData.BuildVersion);
                 if (versionValid)
                 {
-                    var version = tabData.BuildVersion.Replace(".", "_");
-                    tabData.AssetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildTarget.ToString(), version);
+                    tabData.BuildVersion = ResourceUtility.FilterName(tabData.BuildVersion);
+                    tabData.AssetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildTarget.ToString(), tabData.BuildVersion);
                 }
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);

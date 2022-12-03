@@ -102,7 +102,7 @@ namespace Cosmos.Editor.Resource
             var newName = args.newName;
             if (!string.IsNullOrWhiteSpace(newName))
             {
-                newName = ResourceUtility.BundleNameFilter(newName);
+                newName = ResourceUtility.FilterName(newName);
                 //防止重名
                 var canUse = true;
                 var length = bundleList.Count;
@@ -270,7 +270,7 @@ namespace Cosmos.Editor.Resource
             var itemId = Convert.ToInt32(context);
             var item = FindItem(itemId, rootItem);
             var bundleInfo = bundleList[itemId];
-            var bundleName = ResourceUtility.BundleNameFilter(bundleInfo.BundlePath);
+            var bundleName = ResourceUtility.FilterName(bundleInfo.BundlePath);
             var newBundleInfo = new ResourceBundleInfo(bundleName, bundleInfo.BundlePath, bundleInfo.BundleSize, bundleInfo.ObjectCount);
             bundleList[itemId] = newBundleInfo;
             item.displayName = newBundleInfo.BundleName;
@@ -283,7 +283,7 @@ namespace Cosmos.Editor.Resource
             {
                 var item = FindItem(i, rootItem);
                 var bundleInfo = bundleList[i];
-                var bundleName = ResourceUtility.BundleNameFilter(bundleInfo.BundlePath);
+                var bundleName = ResourceUtility.FilterName(bundleInfo.BundlePath);
                 var newBundleInfo = new ResourceBundleInfo(bundleName, bundleInfo.BundlePath, bundleInfo.BundleSize, bundleInfo.ObjectCount);
                 bundleList[i] = newBundleInfo;
                 item.displayName = newBundleInfo.BundleName;

@@ -84,12 +84,12 @@ namespace Cosmos.Editor.Resource
             BuildedAssetsEncryption = false;
             BuildIedAssetsEncryptionKey = "CosmosBundlesKey";
             AssetBundleNameType = AssetBundleNameType.HashInstead;
-            BuildVersion = "Alpha";
+            BuildVersion = "0.0.1";
             ForceRebuildAssetBundle = false;
             DisableWriteTypeTree = false;
             DeterministicAssetBundle = false;
             IgnoreTypeTreeChanges = false;
-            StreamingAssetsRelativePath = "Alpha";
+            StreamingAssetsRelativePath = BuildVersion;
         }
     }
 }

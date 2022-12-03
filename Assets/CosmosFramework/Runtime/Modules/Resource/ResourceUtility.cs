@@ -9,13 +9,13 @@ namespace Cosmos.Resource
     public class ResourceUtility
     {
         /// <summary>
-        /// 报名过滤
+        /// 包名过滤
         /// </summary>
         /// <param name="bundleName">原始包名</param>
         /// <returns>过滤后的名</returns>
-        public static string BundleNameFilter(string bundleName)
+        public static string FilterName(string bundleName)
         {
-            return bundleName.Replace("\\", "_").Replace("/", "_").Replace(".", "_").ToLower();
+            return bundleName.Replace("\\", "_").Replace("/", "_").Replace(".", "_").Replace(",","_").Replace(";","_").ToLower();
         }
         /// <summary>
         /// 获取文件夹的MD5；

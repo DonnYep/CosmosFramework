@@ -348,10 +348,10 @@ MonoBehaviour:
     bundlePath: Assets/Examples/AssetBundleTest/Scene
     bundleKey: 7bdd42cdfdee6066dfedbfaf33b8cded
     dependentList:
-    - 3fe16adbafe77bff7c919125c0cdb0c7
-    - 7aae7a543ef750edf8ec41a497a31491
-    - 68cf059d128b5ecf0b07bcb34d5f79ab
-    - 0502fbef8668dbd98bd016d766260b0a
+    - material
+    - model
+    - prefab
+    - texture
     resourceObjectList:
     - assetName: SceneTarget
       assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
@@ -365,9 +365,9 @@ MonoBehaviour:
     bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
     bundleKey: 21d3ec040ff6225c515f227a929c5eee
     dependentList:
-    - 3fe16adbafe77bff7c919125c0cdb0c7
-    - 7aae7a543ef750edf8ec41a497a31491
-    - 0502fbef8668dbd98bd016d766260b0a
+    - material
+    - model
+    - prefab
     resourceObjectList:
     - assetName: 24_Procedure_PloyState
       assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
@@ -381,10 +381,10 @@ MonoBehaviour:
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
     bundleKey: 3fe16adbafe77bff7c919125c0cdb0c7
     dependentList:
-    - 7aae7a543ef750edf8ec41a497a31491
-    - 68cf059d128b5ecf0b07bcb34d5f79ab
-    - 0502fbef8668dbd98bd016d766260b0a
-    - ed47e6f35abfea84ec74480d2e315ebf
+    - audio
+    - material
+    - model
+    - texture
     resourceObjectList:
     - assetName: AudioSource
       assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
