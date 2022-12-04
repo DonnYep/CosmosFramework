@@ -181,23 +181,35 @@ namespace Cosmos
                     directory.Delete();
                 }
             }
-            /// <summary>
-            /// 拷贝文件夹的内容到另一个文件夹；
-            /// </summary>
-            /// <param name="sourceDirectory">原始地址</param>
-            /// <param name="targetDirectory">目标地址</param>
-            public static void Copy(string sourceDirectory, string targetDirectory)
+            public static void CopyFile(string sourceFileName, string destFileName, bool overwrite = true)
             {
-                DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
-                DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
-                CopyAll(diSource, diTarget);
+                if (File.Exists(sourceFileName))
+                {
+                    var directory = Path.GetDirectoryName(destFileName);
+                    if (!Directory.Exists(directory))
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
+                    File.Copy(sourceFileName, destFileName, overwrite);
+                }
             }
             /// <summary>
             /// 拷贝文件夹的内容到另一个文件夹；
             /// </summary>
             /// <param name="source">原始地址</param>
             /// <param name="target">目标地址</param>
-            public static void CopyAll(DirectoryInfo source, DirectoryInfo target)
+            public static void CopyDirectory(string source, string target)
+            {
+                DirectoryInfo diSource = new DirectoryInfo(source);
+                DirectoryInfo diTarget = new DirectoryInfo(target);
+                CopyDirectoryRecursively(diSource, diTarget);
+            }
+            /// <summary>
+            /// 拷贝所有文件夹的内容到另一个文件夹；
+            /// </summary>
+            /// <param name="source">原始地址</param>
+            /// <param name="target">目标地址</param>
+            public static void CopyDirectoryRecursively(DirectoryInfo source, DirectoryInfo target)
             {
                 Directory.CreateDirectory(target.FullName);
                 //复制所有文件到新地址
@@ -210,7 +222,7 @@ namespace Cosmos
                 {
                     DirectoryInfo nextTargetSubDir =
                         target.CreateSubdirectory(diSourceSubDir.Name);
-                    CopyAll(diSourceSubDir, nextTargetSubDir);
+                    CopyDirectoryRecursively(diSourceSubDir, nextTargetSubDir);
                 }
             }
             public static void DeleteFile(string fileFullPath)

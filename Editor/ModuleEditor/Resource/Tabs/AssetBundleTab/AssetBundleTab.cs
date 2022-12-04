@@ -93,7 +93,7 @@ namespace Cosmos.Editor.Resource
                     tabData.DisableWriteTypeTree = false;
 
                 //打包输出的资源加密，如buildInfo，assetbundle 文件名加密
-                tabData.AssetBundleNameType = (AssetBundleNameType)EditorGUILayout.EnumPopup("Build assets name type ", tabData.AssetBundleNameType);
+                tabData.AssetBundleNameType = (AssetBundleNameType)EditorGUILayout.EnumPopup("Build bundle name type ", tabData.AssetBundleNameType);
             }
             EditorGUILayout.EndVertical();
         }
@@ -120,12 +120,12 @@ namespace Cosmos.Editor.Resource
                 versionValid = !string.IsNullOrEmpty(tabData.BuildVersion);
                 if (versionValid)
                 {
-                    var version = tabData.BuildVersion.Replace(".", "_");
-                    tabData.AssetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildTarget.ToString(), version);
+                    tabData.BuildVersion = ResourceUtility.FilterName(tabData.BuildVersion);
+                    tabData.AssetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildTarget.ToString(), tabData.BuildVersion);
                 }
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
-                EditorGUILayout.LabelField("AssetBundle build path", tabData.AssetBundleBuildPath);
+                EditorGUILayout.LabelField("Bundle build path", tabData.AssetBundleBuildPath);
             }
             EditorGUILayout.EndVertical();
         }

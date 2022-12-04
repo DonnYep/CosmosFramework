@@ -51,9 +51,9 @@ namespace Cosmos
 #elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
 #endif
-                    callback?.Invoke(-1);
-                else
                     callback?.Invoke(Convert.ToInt64(size));
+                else
+                    callback?.Invoke(-1);
             }
         }
     }

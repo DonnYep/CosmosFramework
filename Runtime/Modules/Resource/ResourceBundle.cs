@@ -31,7 +31,7 @@ namespace Cosmos.Resource
                 var srcValue = value;
                 if (!string.IsNullOrEmpty(srcValue))
                 {
-                    srcValue = ResourceUtility.BundleNameFilter(srcValue);
+                    srcValue = ResourceUtility.FilterName(srcValue);
                 }
                 bundleName = srcValue;
             }
