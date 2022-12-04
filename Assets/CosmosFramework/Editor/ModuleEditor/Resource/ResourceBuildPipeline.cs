@@ -1,10 +1,8 @@
 ﻿using Cosmos.Resource;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEngine;
 namespace Cosmos.Editor.Resource
 {
     public class ResourceBuildPipeline
@@ -12,32 +10,76 @@ namespace Cosmos.Editor.Resource
         static AssetBundleBuilder assetBundleBuilder = new AssetBundleBuilder();
         static ResourceDataset dataset;
         static string ResourceDatasetPath = "Assets/ResourceDataset.asset";
-        public static void BuildActivePlatformAssetBundle()
+        public static void BuildActivePlatformAssetBundleNameByDefault()
+        {
+            var buildTarget = EditorUserBuildSettings.activeBuildTarget;
+            BuildAssetBundle(buildTarget, false);
+        }
+        public static void BuildActivePlatformAssetBundleNameByHash()
         {
             var buildTarget = EditorUserBuildSettings.activeBuildTarget;
             BuildAssetBundle(buildTarget);
         }
-        public static void BuildAndroidAssetBundle()
+        public static void BuildStandaloneWindowsAssetBundleNameByDefault()
+        {
+            BuildAssetBundle(BuildTarget.StandaloneWindows, false);
+        }
+        public static void BuildStandaloneWindowsAssetBundleNameByHash()
+        {
+            BuildAssetBundle(BuildTarget.StandaloneWindows);
+        }
+        public static void BuildAndroidAssetBundleNameByDefault()
+        {
+            BuildAssetBundle(BuildTarget.Android, false);
+        }
+        public static void BuildAndroidAssetBundleNamedByHash()
         {
             BuildAssetBundle(BuildTarget.Android);
         }
-        public static void BuildiOSAssetBundle()
+        public static void BuildIOSAssetBundleNameByDefault()
+        {
+            BuildAssetBundle(BuildTarget.iOS, false);
+        }
+        public static void BuildIOSAssetBundleNameByHash()
         {
             BuildAssetBundle(BuildTarget.iOS);
         }
-        public static void BuildAssetBundle(BuildTarget buildTarget)
+        public static void BuildAssetBundle(BuildTarget buildTarget, bool nameByHash = true)
         {
             dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceDatasetPath);
-            AssetBundleBuildParams buildParams = new AssetBundleBuildParams();
+            ResourceWindowDataProxy.ResourceDataset = dataset;
+            BuildDataset();
+            var tabData = new AssetBundleTabData();
+            BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
+            options |= BuildAssetBundleOptions.ChunkBasedCompression;
+            if (nameByHash)
+                tabData.AssetBundleNameType = AssetBundleNameType.HashInstead;
+            else
+                tabData.AssetBundleNameType = AssetBundleNameType.DefaultName;
+            var buildParams = new AssetBundleBuildParams()
+            {
+                AssetBundleBuildPath = tabData.AssetBundleBuildPath,
+                AssetBundleEncryption = tabData.AssetBundleEncryption,
+                AssetBundleOffsetValue = tabData.AssetBundleOffsetValue,
+                BuildAssetBundleOptions = options,
+                AssetBundleNameType = tabData.AssetBundleNameType,
+                BuildedAssetsEncryption = tabData.BuildedAssetsEncryption,
+                BuildIedAssetsEncryptionKey = tabData.BuildIedAssetsEncryptionKey,
+                BuildTarget = buildTarget,
+                BuildVersion = tabData.BuildVersion,
+                CopyToStreamingAssets = tabData.CopyToStreamingAssets,
+                UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
+                StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath
+            };
             ResourceManifest resourceManifest = new ResourceManifest();
             assetBundleBuilder.PrepareBuildAssetBundle(buildParams, dataset, ref resourceManifest);
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
             assetBundleBuilder.ProcessAssetBundle(buildParams, dataset, unityManifest, ref resourceManifest);
         }
-        static IEnumerator EnumBuildDataset()
+        static void BuildDataset()
         {
             if (ResourceWindowDataProxy.ResourceDataset == null)
-                yield break;
+                return;
             var bundles = ResourceWindowDataProxy.ResourceDataset.ResourceBundleList;
             var objects = ResourceWindowDataProxy.ResourceDataset.ResourceObjectList;
             var extensions = ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
@@ -72,7 +114,7 @@ namespace Cosmos.Editor.Resource
                     var srcFilePath = files[j].Replace("\\", "/");
                     var srcFileExt = Path.GetExtension(srcFilePath);
                     var lowerFileExt = srcFileExt.ToLower();
-                    if (extensions.Contains(srcFileExt))
+                    if (extensions.Contains(lowerFileExt))
                     {
                         //统一使用小写的文件后缀名
                         var lowerExtFilePath = srcFilePath.Replace(srcFileExt, lowerFileExt);
@@ -88,13 +130,7 @@ namespace Cosmos.Editor.Resource
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
                 var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
                 validBundleInfo.Add(bundleInfo);
-
-                var bundlePercent = i / (float)bundleLength;
-                EditorUtility.DisplayProgressBar("BuildDataset building", $"building bundle : {Mathf.RoundToInt(bundlePercent * 100)}%", bundlePercent);
-                yield return null;
             }
-            EditorUtility.DisplayProgressBar("BuildDataset building", $"building bundle : {100}%", 1);
-            //yield return null;
             for (int i = 0; i < invalidBundles.Count; i++)
             {
                 bundles.Remove(invalidBundles[i]);
@@ -112,13 +148,13 @@ namespace Cosmos.Editor.Resource
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 importer.assetBundleName = string.Empty;
             }
-            yield return null;
-            EditorUtility.ClearProgressBar();
             EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
+#if UNITY_2021_1_OR_NEWER
+            AssetDatabase.SaveAssetIfDirty(ResourceWindowDataProxy.ResourceDataset);
+#elif UNITY_2019_1_OR_NEWER
             AssetDatabase.SaveAssets();
-
+#endif
             ResourceWindowDataProxy.ResourceDataset.IsChanged = false;
-            yield return null;
         }
     }
 }

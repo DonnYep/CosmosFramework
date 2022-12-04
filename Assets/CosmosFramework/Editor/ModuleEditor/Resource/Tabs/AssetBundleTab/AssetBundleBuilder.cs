@@ -2,6 +2,9 @@
 using UnityEditor;
 using UnityEngine;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+
 namespace Cosmos.Editor.Resource
 {
     /// <summary>
@@ -61,12 +64,15 @@ namespace Cosmos.Editor.Resource
         }
         public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
         {
-            var bundleNames = unityManifest.GetAllAssetBundles();
-            var bundleNameLength = bundleNames.Length;
-            for (int i = 0; i < bundleNameLength; i++)
+            Dictionary<string, ResourceBundle> bundleKeyDict = null;
+            if (buildParams.AssetBundleNameType == AssetBundleNameType.HashInstead)
+                bundleKeyDict = dataset.ResourceBundleList.ToDictionary(bundle => bundle.BundleKey);
+            var bundleKeys = unityManifest.GetAllAssetBundles();
+            var bundleKeyLength = bundleKeys.Length;
+            for (int i = 0; i < bundleKeyLength; i++)
             {
-                var bundleName = bundleNames[i];
-                var bundlePath = Path.Combine(buildParams.AssetBundleBuildPath, bundleName);
+                var bundleKey = bundleKeys[i];
+                var bundlePath = Path.Combine(buildParams.AssetBundleBuildPath, bundleKey);
                 long bundleSize = 0;
                 if (buildParams.AssetBundleEncryption)
                 {
@@ -78,6 +84,21 @@ namespace Cosmos.Editor.Resource
                 {
                     var bundleBytes = File.ReadAllBytes(bundlePath);
                     bundleSize = bundleBytes.LongLength;
+                }
+                var bundleName = string.Empty;
+                switch (buildParams.AssetBundleNameType)
+                {
+                    case AssetBundleNameType.DefaultName:
+                        {
+                            bundleName = bundleKey;
+                        }
+                        break;
+                    case AssetBundleNameType.HashInstead:
+                        {
+                            if (bundleKeyDict.TryGetValue(bundleKey, out var bundle))
+                                bundleName = bundle.BundleName;
+                        }
+                        break;
                 }
                 if (resourceManifest.ResourceBundleBuildInfoDict.TryGetValue(bundleName, out var resourceBundleBuildInfo))
                 {

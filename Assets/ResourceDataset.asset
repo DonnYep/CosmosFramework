@@ -276,7 +276,7 @@ MonoBehaviour:
   resourceBundleList:
   - bundleName: texture
     bundlePath: Assets/Examples/AssetBundleTest/Texture
-    bundleKey: 68cf059d128b5ecf0b07bcb34d5f79ab
+    bundleKey: texture
     dependentList: []
     resourceObjectList:
     - assetName: Tex_5195
@@ -333,7 +333,7 @@ MonoBehaviour:
       extension: .png
   - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text
-    bundleKey: 574e905d9902fa0875cec5d2858941ee
+    bundleKey: text
     dependentList: []
     resourceObjectList:
     - assetName: ABMapSchema
@@ -346,7 +346,7 @@ MonoBehaviour:
       extension: .csv
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
-    bundleKey: 7bdd42cdfdee6066dfedbfaf33b8cded
+    bundleKey: scene
     dependentList:
     - material
     - model
@@ -363,7 +363,7 @@ MonoBehaviour:
       extension: .unity
   - bundleName: procedure_scenes
     bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
-    bundleKey: 21d3ec040ff6225c515f227a929c5eee
+    bundleKey: procedure_scenes
     dependentList:
     - material
     - model
@@ -379,7 +379,7 @@ MonoBehaviour:
       extension: .unity
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
-    bundleKey: 3fe16adbafe77bff7c919125c0cdb0c7
+    bundleKey: prefab
     dependentList:
     - audio
     - material
@@ -468,7 +468,7 @@ MonoBehaviour:
       extension: .prefab
   - bundleName: photo
     bundlePath: Assets/Examples/AssetBundleTest/Photo
-    bundleKey: dc74cb87b57bb2b4cdb4d4f78441c887
+    bundleKey: photo
     dependentList: []
     resourceObjectList:
     - assetName: CB1024
@@ -489,7 +489,7 @@ MonoBehaviour:
       extension: .psd
   - bundleName: model
     bundlePath: Assets/Examples/AssetBundleTest/Model
-    bundleKey: 7aae7a543ef750edf8ec41a497a31491
+    bundleKey: model
     dependentList: []
     resourceObjectList:
     - assetName: LM_XBotIdle
@@ -518,7 +518,7 @@ MonoBehaviour:
       extension: .fbx
   - bundleName: material
     bundlePath: Assets/Examples/AssetBundleTest/Material
-    bundleKey: 0502fbef8668dbd98bd016d766260b0a
+    bundleKey: material
     dependentList: []
     resourceObjectList:
     - assetName: Alpha_Body_MAT
@@ -539,7 +539,7 @@ MonoBehaviour:
       extension: .mat
   - bundleName: entity_scene
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
-    bundleKey: cbc8565703120201286aed31aca4db77
+    bundleKey: entity_scene
     dependentList: []
     resourceObjectList:
     - assetName: EntityGame
@@ -548,7 +548,7 @@ MonoBehaviour:
       extension: .unity
   - bundleName: entity_prefabs
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
-    bundleKey: 43932d0d706250df6d4a042fbf86275b
+    bundleKey: entity_prefabs
     dependentList: []
     resourceObjectList:
     - assetName: EntityBullet
@@ -577,7 +577,7 @@ MonoBehaviour:
       extension: .prefab
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
-    bundleKey: ed47e6f35abfea84ec74480d2e315ebf
+    bundleKey: audio
     dependentList: []
     resourceObjectList:
     - assetName: AmbientAudio
