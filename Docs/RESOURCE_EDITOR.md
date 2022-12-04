@@ -12,7 +12,9 @@
 * AssetDatabase与AssetBundle模式支持引用计数，资源包会根据引用计数自动管理包体的加载或卸载。
   
 * ResourceDataset是resource模块的配置文件，AssetDatabase加载资源与AssetBundle构建ab都依赖此配置。此文件可在ResourceEditor中生成。
-  
+ 
+-----
+
 ## ResourceEditor
 
 ### AssetDatabaseTab
@@ -29,13 +31,16 @@
 
 * 案例中包含有一个ResourceDataset，可查看此文件。
 
+-----
+
+#### AssetBundleTab Menu
+
+* 右键点击bundle，显示功能菜单。
 ![AssetDatabaseTab_BundleRightClick](Images/ResourceEditor/AssetDatabaseTab_BundleRightClick.png)
 
-* 右键点击Bundle，显示bundle的功能菜单。
 
+* 右键点击object，显示功能菜单。
 ![AssetDatabaseTab_ObjectRightClick](Images/ResourceEditor/AssetDatabaseTab_ObjectRightClick.png)
-
-* 右键点击object，显示bundle的功能菜单。
 
 ### AssetBundleTab
 ![AssetBundleTab](Images/ResourceEditor/AssetBundleTab.png)
@@ -47,18 +52,20 @@
     * 3.点击`Build assetbundle`按钮构建。
   
 * 构建完成的assetbundle输出地址可在此页面的`Bundle build path`中查看。
-* 
+
 #### Build bundle name type
 
 * AssetBundleTab构建时可通过`Build bundle name type`选择assetbundle构建后的资源名称。
   
 * 使用`Hash Instead`，构建出来的ab以hash命名。
   
-![AssetBundlesNameByDefault](Images/ResourceEditor/AssetBundlesNameByDefault.png)
+![AssetBundlesNameByHash](Images/ResourceEditor/AssetBundlesNameByHash.png)
 
 * 使用`Default Name`构建出来的ab与AssetDatabaseTab面板中看到的命名相同。
 
-![AssetBundlesNameByHash](Images/ResourceEditor/AssetBundlesNameByHash.png)
+![AssetBundlesNameByDefault](Images/ResourceEditor/AssetBundlesNameByDefault.png)
+
+-----
 
 ### AssetDatasetTab
 ![AssetDatasetTab](Images/ResourceEditor/AssetDatasetTab.png)

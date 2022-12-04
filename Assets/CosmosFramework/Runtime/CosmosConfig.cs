@@ -5,7 +5,7 @@ using System;
 
 namespace Cosmos
 {
-    [DefaultExecutionOrder(2000)]
+    [DisallowMultipleComponent]
     public class CosmosConfig : MonoBehaviour
     {
         [SerializeField] bool launchAppDomainModules = true;
