@@ -17,6 +17,7 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 - [CosmosFramework](#cosmosframework)
 - [导航](#导航)
   - [环境](#环境)
+  - [启动框架](#启动框架)
   - [模块简介](#模块简介)
   - [内置数据结构、工具](#内置数据结构工具)
   - [内置架构 PureMVC](#内置架构-puremvc)
@@ -25,11 +26,20 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
   - [其他](#其他)
   - [Library link](#library-link)
 
+- [ResourceEditor文档](Docs/RESOURCE_EDITOR.md)
+
 <a name="环境"></a>
 
 ## 环境
 
 - Unity版本:2018及以上,DOTNET API版本:4.x。
+
+<a name="启动框架"></a>
+
+## 启动框架
+
+![CosmosConfig](Docs/Images/Common/CosmosConfig.png)
+- 在游戏入口处添加CosmosConfig组件，添加后即可启动框架。
 
 <a name="模块简介"></a>
 
@@ -56,8 +66,6 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 - **Entity**:游戏实体模块。管理游戏运行时的实体对象。实体支持组分类，通过传入资源地址可以直接管理资源实体对象的生成、回收等操作，内置对象池生成。
 
 - **Input**:输入适配模块。通过虚拟按键模拟各个平台的输入，传入不同的输入适配器可适配不同平台的输入方式。
-
-- **Hotfix**:热更新模块。此模块适用于基于C#的热更方案。（此方案未完善）
 
 - **Network**:网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP、TCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可实现(Client-Server)模式。支持async/await语法。
 
@@ -119,11 +127,6 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 
 ## 注意事项
 
-- 项目启动:
-    将CosmosConfig挂载于合适的GameObject上，运行Unity。若CosmosConfig上的PrintModulePreparatory处于true状态，则控制台会显示初始化信息。  自此，项目启动完成。
-    
-- 部分带有Helper的模块可由使用者进行自定义实现，也可使用提供的Default对象；
-
 - 内置案例地址:Assets\Examples\ 。
 
 <a name="UPM"></a>
@@ -141,8 +144,9 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 ## 其他
 
 - 部分模块演示请观看视频:
+    - https://www.bilibili.com/video/BV11P4y1U7vB
     - https://www.bilibili.com/video/BV1x741157eR
-    - https://www.bilibili.com/video/BV17u411Z7Ni/
+    - https://www.bilibili.com/video/BV17u411Z7Ni
     
 <a name="Library-link"></a>
 

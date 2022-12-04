@@ -17,6 +17,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 - [CosmosFramework](#cosmosframework)
 - [Navigation](#navigation)
   - [Environment](#environment)
+  - [Launch CosmosFramework](#Launch-CosmosFramework)
   - [Module Introduction](#module-introduction)
   - [Built-in data structures,tools](#built-in-data-structurestools)
   - [Built-in Architecture PureMVC](#built-in-architecture-puremvc)
@@ -25,11 +26,20 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
   - [Other](#other)
   - [Library link](#library-link)
 
+- [ResourceEditorDocumentation](Docs/RESOURCE_EDITOR_EN.md)
+
 <a name="Environment"></a>
 
 ## Environment
 
 - Unity version:2018 and above,DOTNET API version:4.x.
+
+<a name="Launch-CosmosFramework"></a>
+
+## Launch CosmosFramework
+
+![CosmosConfig](Docs/Images/Common/CosmosConfig.png)
+- Add the CosmosConfig component to the game entry and add it to start the framework.
 
 <a name="Module-Introduction"></a>
 
@@ -45,7 +55,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **ObjectsPool** : Object pool module. Provides commonly used functions such as entity object generation and recycling. The underlying implementation uses the data structure Pool.
 
-- **Resource** : Resource module.Three built-in loading modes: AssetDatabase, AssetBundle and Resource. AssetDatabase and AssetBundle modes support reference counting, and resource bundles  automatically manage the loading or unloading of package bodies based on reference counts. the Runtime loader can be customized with loading schemes. Support for automated pipelines, such as Jenkins build deployments, etc. The editor corresponding to the resource module is located at Window>Cosmos>Module>Resource.Use the AssetDatabase mode during the development phase and the AssetBundle mode when building the app. If you need to use Unity Resource as the loading scheme, switch to Resource mode.
+- **Resource** : Resource module.Three built-in loading modes: AssetDatabase, AssetBundle and Resource. AssetDatabase and AssetBundle modes support reference counting, and resource bundles  automatically manage the loading or unloading of package bodies based on reference counts. the Runtime loader can be customized with loading schemes. Support for automated pipelines, such as Jenkins build deployments, etc. The editor corresponding to the resource module is located at Window>Cosmos>Module>Resource.Use the AssetDatabase mode during the development phase and the AssetBundle mode when building the app. If you need to use Unity Resource as the loading scheme, switch to Resource mode.[ResourceEditorDoc](Docs/RESOURCE_EDITOR_EN.md).
 
 - **Scene** : Scene module. Provide common asynchronous and synchronous loading of embedded scenes. Support custom implementation of loading methods.
 
@@ -56,8 +66,6 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 - **Entity** : Game Entity Module. Manage the game runtime entity objects. Entity support group classification, by passing in the resource address can directly manage the resource entity object generation, recycling and other operations, built-in object pool generation.
 
 - **Input** : Input adaptation module. The input of each platform is simulated by virtual keys, and different input adapters can be passed in to adapt the input methods of different platforms.
-
-- **Hotfix** : Hot update module. This module is for C#-based hot update solutions. (This solution is not completed.)
 
 - **Network** : Network module. A variety of high-speed and reliable UDP protocols are provided, such as RUDP, SUDP, KCP, TCP, etc. The KCP protocol is used by default. Network in the form of channel (Channel) to distinguish each connection, support a variety of network types connected at the same time. Can be implemented (Client-Server) mode. Support async/await syntax.
 
@@ -119,11 +127,6 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 ## Cautions
 
-- Project Launch:
-    Mount CosmosConfig on a suitable GameObject and run Unity. if PrintModulePreparatory on CosmosConfig is in true state, the console will show the initialization message.  Since then, the project startup is complete.
-    
-- Some of the modules with Helper can be custom implemented by the user or can use the Default object provided.
-
 - Built-in case address:Assets\Examples\ .
 
 <a name="UPM"></a>
@@ -140,8 +143,9 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 ## Other
 
 - For a demonstration, please watch the video:
+    - https://www.bilibili.com/video/BV11P4y1U7vB
     - https://www.bilibili.com/video/BV1x741157eR
-    - https://www.bilibili.com/video/BV17u411Z7Ni/
+    - https://www.bilibili.com/video/BV17u411Z7Ni
     
 <a name="Library-link"></a>
 
