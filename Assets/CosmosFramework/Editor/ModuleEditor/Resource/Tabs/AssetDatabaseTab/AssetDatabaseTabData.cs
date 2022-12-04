@@ -7,16 +7,6 @@ namespace Cosmos.Editor.Resource
     public class AssetDatabaseTabData
     {
         List<int> selectedBundleIds;
-
-        bool asynchronousRefresh;
-        /// <summary>
-        /// 逐步刷新；
-        /// </summary>
-        public bool AsynchronousRefresh
-        {
-            get { return asynchronousRefresh; }
-            set { asynchronousRefresh = value; }
-        }
         /// <summary>
         /// 当前被选择的bundleId集合
         /// </summary>

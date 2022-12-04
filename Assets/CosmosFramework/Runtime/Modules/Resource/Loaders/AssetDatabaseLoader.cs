@@ -423,7 +423,7 @@ namespace Cosmos.Resource
             if (!hasBundle)
                 yield break; //若bundle信息为空，则终止；
             bundleWarpper.ReferenceCount++; //AB包引用计数增加
-            var dependentList = bundleWarpper.ResourceBundle.DependentList;
+            var dependentList = bundleWarpper.ResourceBundle.DependenBundleKeytList;
             var dependentLength = dependentList.Count;
             for (int i = 0; i < dependentLength; i++)
             {
@@ -440,7 +440,7 @@ namespace Cosmos.Resource
         void UnloadDependenciesAssetBundle(ResourceBundleWarpper resourceBundleWarpper, int decrementCount = 1)
         {
             resourceBundleWarpper.ReferenceCount -= decrementCount;
-            var dependentList = resourceBundleWarpper.ResourceBundle.DependentList;
+            var dependentList = resourceBundleWarpper.ResourceBundle.DependenBundleKeytList;
             var dependentLength = dependentList.Count;
             //遍历查询依赖包
             for (int i = 0; i < dependentLength; i++)

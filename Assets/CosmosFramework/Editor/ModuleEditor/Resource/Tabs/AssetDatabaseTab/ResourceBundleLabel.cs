@@ -55,6 +55,10 @@ namespace Cosmos.Editor.Resource
         {
             treeView.Clear();
         }
+        public void Reload()
+        {
+            treeView.Reload();
+        }
         public bool AddBundle(ResourceBundleInfo bundleInfo)
         {
             return treeView.AddBundle(bundleInfo);

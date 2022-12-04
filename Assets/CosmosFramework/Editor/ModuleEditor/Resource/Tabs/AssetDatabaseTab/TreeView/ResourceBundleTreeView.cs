@@ -42,7 +42,6 @@ namespace Cosmos.Editor.Resource
             if (!bundleList.Contains(bundleInfo))
             {
                 bundleList.Add(bundleInfo);
-                Reload();
                 return true;
             }
             return false;

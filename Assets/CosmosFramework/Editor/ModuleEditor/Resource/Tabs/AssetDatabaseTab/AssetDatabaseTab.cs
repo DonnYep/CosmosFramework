@@ -56,6 +56,7 @@ namespace Cosmos.Editor.Resource
                     long bundleSize = EditorUtil.GetUnityDirectorySize(bundle.BundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
                     resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count));
                 }
+                resourceBundleLabel.Reload();
                 hasChanged = ResourceWindowDataProxy.ResourceDataset.IsChanged;
                 DisplaySelectedBundle();
             }
@@ -70,7 +71,6 @@ namespace Cosmos.Editor.Resource
             {
                 if (hasChanged)
                     EditorGUILayout.HelpBox("Dataset has been changed, please \"Build Dataset\" !", MessageType.Warning);
-                tabData.AsynchronousRefresh = EditorGUILayout.ToggleLeft("Asynchronous refresh", tabData.AsynchronousRefresh);
                 EditorGUILayout.BeginHorizontal();
                 {
                     DrawDragRect();
@@ -123,6 +123,7 @@ namespace Cosmos.Editor.Resource
                     long bundleSize = EditorUtil.GetUnityDirectorySize(bundle.BundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
                     resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count));
                 }
+                resourceBundleLabel.Reload();
                 resourceObjectLabel.Clear();
                 hasChanged = ResourceWindowDataProxy.ResourceDataset.IsChanged;
                 DisplaySelectedBundle();
@@ -201,6 +202,7 @@ namespace Cosmos.Editor.Resource
                             }
                         }
                     }
+                    resourceBundleLabel.Reload();
                 }
             }
         }
@@ -364,8 +366,8 @@ namespace Cosmos.Editor.Resource
             {
                 var bundle = bundles[i];
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                bundle.DependentList.Clear();
-                bundle.DependentList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                bundle.DependenBundleKeytList.Clear();
+                bundle.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
             for (int i = 0; i < bundles.Count; i++)
             {
@@ -381,14 +383,13 @@ namespace Cosmos.Editor.Resource
 #elif UNITY_2019_1_OR_NEWER
             AssetDatabase.SaveAssets();
 #endif
+            resourceBundleLabel.Clear();
+            for (int i = 0; i < validBundleInfo.Count; i++)
             {
-                //这么处理是为了bundleLable能够在编辑器页面一下刷新，放在协程里逐步更新，使用体验并不是很好。
-                resourceBundleLabel.Clear();
-                for (int i = 0; i < validBundleInfo.Count; i++)
-                {
-                    resourceBundleLabel.AddBundle(validBundleInfo[i]);
-                }
+                resourceBundleLabel.AddBundle(validBundleInfo[i]);
             }
+            resourceBundleLabel.Reload();
+
             ResourceWindowDataProxy.ResourceDataset.IsChanged = false;
             hasChanged = false;
             yield return null;
@@ -405,6 +406,8 @@ namespace Cosmos.Editor.Resource
             loadingBundleLength = idlen;
 
             resourceObjectLabel.Clear();
+            resourceObjectLabel.Reload();
+
             loadingObjectProgress = 0;
             currentLoadingBundleIndex = 0;
             for (int i = 0; i < idlen; i++)
@@ -425,17 +428,9 @@ namespace Cosmos.Editor.Resource
                     resourceObjectLabel.AddObject(objInfo);
                     var progress = Mathf.RoundToInt((float)j / (objectLength - 1) * 100);
                     loadingObjectProgress = progress > 0 ? progress : 0;
-                    if (tabData.AsynchronousRefresh)
-                    {
-                        resourceObjectLabel.Reload();
-                        yield return null;
-                    }
                 }
-                if (!tabData.AsynchronousRefresh)
-                {
-                    resourceObjectLabel.Reload();
-                    yield return null;
-                }
+                yield return null;
+                resourceObjectLabel.Reload();
             }
             yield return null;
 

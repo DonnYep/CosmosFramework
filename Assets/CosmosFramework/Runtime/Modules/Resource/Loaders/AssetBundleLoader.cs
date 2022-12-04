@@ -24,6 +24,10 @@ namespace Cosmos.Resource
         /// </summary>
         readonly Dictionary<string, ResourceBundleWarpper> resourceBundleWarpperDict;
         /// <summary>
+        /// bundleKey===bundleName
+        /// </summary>
+        readonly Dictionary<string, string> resourceBundleKeyDict;
+        /// <summary>
         /// 被加载的场景字典；
         /// SceneName===Scene
         /// </summary>
@@ -43,6 +47,7 @@ namespace Cosmos.Resource
         {
             loadSceneList = new List<string>();
             resourceAddress = new ResourceAddress();
+            resourceBundleKeyDict= new Dictionary<string, string>();
             resourceBundleWarpperDict = new Dictionary<string, ResourceBundleWarpper>();
             resourceObjectWarpperDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
@@ -145,6 +150,7 @@ namespace Cosmos.Resource
         {
             resourceObjectWarpperDict.Clear();
             resourceBundleWarpperDict.Clear();
+            resourceBundleKeyDict.Clear();
             loadSceneList.Clear();
             resourceAddress.Clear();
             loadedSceneDict.Clear();
@@ -490,16 +496,17 @@ namespace Cosmos.Resource
             }
             else
                 bundleWarpper.ReferenceCount++; //AB包引用计数增加
-            var dependentList = bundleWarpper.ResourceBundle.DependentList;
+            var dependentList = bundleWarpper.ResourceBundle.DependenBundleKeytList;
             var dependentLength = dependentList.Count;
             for (int i = 0; i < dependentLength; i++)
             {
-                var dependentABName = dependentList[i];
-                if (resourceBundleWarpperDict.TryGetValue(bundleName, out var dependentBundleWarpper))
+                var dependentBundleKey = dependentList[i];
+                resourceBundleKeyDict.TryGetValue(dependentBundleKey, out var dependentBundleName);
+                if (resourceBundleWarpperDict.TryGetValue(dependentBundleName, out var dependentBundleWarpper))
                 {
                     if (dependentBundleWarpper.AssetBundle == null)
                     {
-                        var abPath = Path.Combine(ResourceDataProxy.BundlePath, dependentABName);
+                        var abPath = Path.Combine(ResourceDataProxy.BundlePath, dependentBundleKey);
                         var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.EncryptionOffset);
                         yield return abReq;
                         var bundle = abReq.assetBundle;
@@ -526,7 +533,7 @@ namespace Cosmos.Resource
                 //卸载AssetBundle；
                 resourceBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
             }
-            var dependentList = resourceBundleWarpper.ResourceBundle.DependentList;
+            var dependentList = resourceBundleWarpper.ResourceBundle.DependenBundleKeytList;
             var dependentLength = dependentList.Count;
             //遍历查询依赖包
             for (int i = 0; i < dependentLength; i++)
@@ -634,6 +641,7 @@ namespace Cosmos.Resource
             {
                 var resourceBundle = bundleBuildInfo.ResourceBundle;
                 resourceBundleWarpperDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle));
+                resourceBundleKeyDict.TryAdd(resourceBundle.BundleKey, resourceBundle.BundleName);
                 var resourceObjectList = resourceBundle.ResourceObjectList;
                 var objectLength = resourceObjectList.Count;
                 for (int i = 0; i < objectLength; i++)

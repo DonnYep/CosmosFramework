@@ -139,8 +139,8 @@ namespace Cosmos.Editor.Resource
             {
                 var bundle = bundles[i];
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                bundle.DependentList.Clear();
-                bundle.DependentList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                bundle.DependenBundleKeytList.Clear();
+                bundle.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
             for (int i = 0; i < bundles.Count; i++)
             {

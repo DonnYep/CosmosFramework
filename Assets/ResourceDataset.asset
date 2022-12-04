@@ -277,7 +277,7 @@ MonoBehaviour:
   - bundleName: texture
     bundlePath: Assets/Examples/AssetBundleTest/Texture
     bundleKey: texture
-    dependentList: []
+    dependentBundleKeyList: []
     resourceObjectList:
     - assetName: Tex_5195
       assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
@@ -334,7 +334,7 @@ MonoBehaviour:
   - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text
     bundleKey: text
-    dependentList: []
+    dependentBundleKeyList: []
     resourceObjectList:
     - assetName: ABMapSchema
       assetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
@@ -347,7 +347,7 @@ MonoBehaviour:
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
     bundleKey: scene
-    dependentList:
+    dependentBundleKeyList:
     - material
     - model
     - prefab
@@ -364,7 +364,7 @@ MonoBehaviour:
   - bundleName: procedure_scenes
     bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
     bundleKey: procedure_scenes
-    dependentList:
+    dependentBundleKeyList:
     - material
     - model
     - prefab
@@ -380,7 +380,7 @@ MonoBehaviour:
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
     bundleKey: prefab
-    dependentList:
+    dependentBundleKeyList:
     - audio
     - material
     - model
@@ -469,7 +469,7 @@ MonoBehaviour:
   - bundleName: photo
     bundlePath: Assets/Examples/AssetBundleTest/Photo
     bundleKey: photo
-    dependentList: []
+    dependentBundleKeyList: []
     resourceObjectList:
     - assetName: CB1024
       assetPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
@@ -490,7 +490,7 @@ MonoBehaviour:
   - bundleName: model
     bundlePath: Assets/Examples/AssetBundleTest/Model
     bundleKey: model
-    dependentList: []
+    dependentBundleKeyList: []
     resourceObjectList:
     - assetName: LM_XBotIdle
       assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
@@ -519,7 +519,7 @@ MonoBehaviour:
   - bundleName: material
     bundlePath: Assets/Examples/AssetBundleTest/Material
     bundleKey: material
-    dependentList: []
+    dependentBundleKeyList: []
     resourceObjectList:
     - assetName: Alpha_Body_MAT
       assetPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
@@ -540,7 +540,7 @@ MonoBehaviour:
   - bundleName: entity_scene
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
     bundleKey: entity_scene
-    dependentList: []
+    dependentBundleKeyList: []
     resourceObjectList:
     - assetName: EntityGame
       assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
@@ -549,7 +549,7 @@ MonoBehaviour:
   - bundleName: entity_prefabs
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
     bundleKey: entity_prefabs
-    dependentList: []
+    dependentBundleKeyList: []
     resourceObjectList:
     - assetName: EntityBullet
       assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityBullet.prefab
@@ -578,7 +578,7 @@ MonoBehaviour:
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
     bundleKey: audio
-    dependentList: []
+    dependentBundleKeyList: []
     resourceObjectList:
     - assetName: AmbientAudio
       assetPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
