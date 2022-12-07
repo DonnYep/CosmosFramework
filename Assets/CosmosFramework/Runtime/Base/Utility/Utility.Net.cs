@@ -97,7 +97,7 @@ namespace Cosmos
             }
             /// <summary>
             /// Ping URL是否存在；
-            /// Ping的过程本身是阻塞的，谨慎使用！；
+            /// Ping的过程本身是阻塞的，谨慎使用！
             /// </summary>
             /// <param name="url">资源地址</param>
             /// <returns>是否存在</returns>

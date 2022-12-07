@@ -655,6 +655,7 @@ MonoBehaviour:
   - .physicmaterial
   - .signal
   - .guiskin
+  - .dds
   isChanged: 0
   resourceSceneList:
   - assetName: SceneTarget
