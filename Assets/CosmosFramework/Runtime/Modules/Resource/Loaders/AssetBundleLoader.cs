@@ -47,7 +47,7 @@ namespace Cosmos.Resource
         {
             loadSceneList = new List<string>();
             resourceAddress = new ResourceAddress();
-            resourceBundleKeyDict= new Dictionary<string, string>();
+            resourceBundleKeyDict = new Dictionary<string, string>();
             resourceBundleWarpperDict = new Dictionary<string, ResourceBundleWarpper>();
             resourceObjectWarpperDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
@@ -531,7 +531,11 @@ namespace Cosmos.Resource
             {
                 //当包体的引用计数小于等于0时，则表示该包已经未被依赖。
                 //卸载AssetBundle；
-                resourceBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                if (resourceBundleWarpper.AssetBundle != null)
+                {
+                    resourceBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                    resourceBundleWarpper.AssetBundle = null;
+                }
             }
             var dependentList = resourceBundleWarpper.ResourceBundle.DependenBundleKeytList;
             var dependentLength = dependentList.Count;
@@ -542,9 +546,12 @@ namespace Cosmos.Resource
                 if (resourceBundleWarpperDict.TryGetValue(dependentBundleName, out var dependentBundleWarpper))
                 {
                     dependentBundleWarpper.ReferenceCount -= count;
-                    if (dependentBundleWarpper.ReferenceCount <= 0)
+                    if (dependentBundleWarpper.ReferenceCount > 0)
+                        continue;
+                    if (dependentBundleWarpper.AssetBundle != null)
                     {
                         dependentBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                        dependentBundleWarpper.AssetBundle = null;
                     }
                 }
             }

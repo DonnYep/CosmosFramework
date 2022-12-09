@@ -276,7 +276,7 @@ MonoBehaviour:
   resourceBundleList:
   - bundleName: texture
     bundlePath: Assets/Examples/AssetBundleTest/Texture
-    bundleKey: texture
+    bundleKey: 92ba5ab088319e2d8b04da28a85cc589
     dependentBundleKeyList: []
     resourceObjectList:
     - assetName: Tex_5195
@@ -333,7 +333,7 @@ MonoBehaviour:
       extension: .png
   - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text
-    bundleKey: text
+    bundleKey: 8f573e261d42c326ba532f750fa98f43
     dependentBundleKeyList: []
     resourceObjectList:
     - assetName: ABMapSchema
@@ -346,12 +346,12 @@ MonoBehaviour:
       extension: .csv
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
-    bundleKey: scene
+    bundleKey: 83ebf1430f1b95213c3806009bcfa985
     dependentBundleKeyList:
-    - material
-    - model
-    - prefab
-    - texture
+    - 1e1f8e4702b2ecd0840b7ff9acd5486b
+    - 92ba5ab088319e2d8b04da28a85cc589
+    - 85982cd123bcdf5039205f2a6af5b1e3
+    - bc393f615c775b0523f6d4c33ffd522d
     resourceObjectList:
     - assetName: SceneTarget
       assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
@@ -363,11 +363,11 @@ MonoBehaviour:
       extension: .unity
   - bundleName: procedure_scenes
     bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
-    bundleKey: procedure_scenes
+    bundleKey: 874f2fde712f6faeb89eca08b85eb960
     dependentBundleKeyList:
-    - material
-    - model
-    - prefab
+    - 1e1f8e4702b2ecd0840b7ff9acd5486b
+    - 85982cd123bcdf5039205f2a6af5b1e3
+    - bc393f615c775b0523f6d4c33ffd522d
     resourceObjectList:
     - assetName: 24_Procedure_PloyState
       assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
@@ -379,12 +379,12 @@ MonoBehaviour:
       extension: .unity
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
-    bundleKey: prefab
+    bundleKey: bc393f615c775b0523f6d4c33ffd522d
     dependentBundleKeyList:
-    - audio
-    - material
-    - model
-    - texture
+    - 1e1f8e4702b2ecd0840b7ff9acd5486b
+    - 85cfcb341456da4a695c7f72e0b4ff07
+    - 92ba5ab088319e2d8b04da28a85cc589
+    - 85982cd123bcdf5039205f2a6af5b1e3
     resourceObjectList:
     - assetName: AudioSource
       assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
@@ -468,7 +468,7 @@ MonoBehaviour:
       extension: .prefab
   - bundleName: photo
     bundlePath: Assets/Examples/AssetBundleTest/Photo
-    bundleKey: photo
+    bundleKey: 1d0e725573ab7a82136a8c34825b2b64
     dependentBundleKeyList: []
     resourceObjectList:
     - assetName: CB1024
@@ -489,7 +489,7 @@ MonoBehaviour:
       extension: .psd
   - bundleName: model
     bundlePath: Assets/Examples/AssetBundleTest/Model
-    bundleKey: model
+    bundleKey: 85982cd123bcdf5039205f2a6af5b1e3
     dependentBundleKeyList: []
     resourceObjectList:
     - assetName: LM_XBotIdle
@@ -518,7 +518,7 @@ MonoBehaviour:
       extension: .fbx
   - bundleName: material
     bundlePath: Assets/Examples/AssetBundleTest/Material
-    bundleKey: material
+    bundleKey: 1e1f8e4702b2ecd0840b7ff9acd5486b
     dependentBundleKeyList: []
     resourceObjectList:
     - assetName: Alpha_Body_MAT
@@ -539,7 +539,7 @@ MonoBehaviour:
       extension: .mat
   - bundleName: entity_scene
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
-    bundleKey: entity_scene
+    bundleKey: 2674bd29d453fc5c5d38cfce862b9827
     dependentBundleKeyList: []
     resourceObjectList:
     - assetName: EntityGame
@@ -548,7 +548,7 @@ MonoBehaviour:
       extension: .unity
   - bundleName: entity_prefabs
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
-    bundleKey: entity_prefabs
+    bundleKey: 8df91f531c3f885c737705ad61b24a4f
     dependentBundleKeyList: []
     resourceObjectList:
     - assetName: EntityBullet
@@ -577,7 +577,7 @@ MonoBehaviour:
       extension: .prefab
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
-    bundleKey: audio
+    bundleKey: 85cfcb341456da4a695c7f72e0b4ff07
     dependentBundleKeyList: []
     resourceObjectList:
     - assetName: AmbientAudio

@@ -8,7 +8,7 @@ namespace Cosmos.Download
     /// <summary>
     /// 文件下载器；
     /// </summary>
-    public class UnityWebDownloader : IDownloader
+    public class Downloader : IDownloader
     {
         #region events
         Action<DownloadStartEventArgs> onDownloadStart;
@@ -65,24 +65,6 @@ namespace Cosmos.Download
         /// 下载中的资源总数；
         /// </summary>
         public int DownloadingCount { get { return pendingTasks.Count; } }
-        /// <summary>
-        /// 是否删除本地下载失败的文件；
-        /// </summary>
-        public bool DeleteFailureFile { get; set; }
-        /// <summary>
-        /// 任务过期时间，以秒为单位；
-        /// </summary>
-        public float DownloadTimeout
-        {
-            get { return downloadTimeout; }
-            set
-            {
-                if (value <= 0) downloadTimeout = 0;
-                else
-                    downloadTimeout = value;
-            }
-        }
-        float downloadTimeout;
         /// <summary>
         /// 下载任务数量；
         /// </summary>
@@ -226,9 +208,16 @@ namespace Cosmos.Download
             using (UnityWebRequest request = UnityWebRequest.Get(uri))
             {
                 Downloading = true;
-                request.downloadHandler = new DownloadHandlerFile(downloadTask.DownloadPath);
+                var append = DownloadDataProxy.DownloadAppend;
+                var deleteFailureFile = DownloadDataProxy.DeleteFileOnAbort;
+#if UNITY_2019_1_OR_NEWER
+                var handler= new DownloadHandlerFile(downloadTask.DownloadPath, append) {  removeFileOnAbort=deleteFailureFile};
+#elif UNITY_2018_1_OR_NEWER
+                var handler= new DownloadHandlerFile(downloadTask.DownloadPath) {  removeFileOnAbort=deleteFailureFile};
+#endif
+                request.downloadHandler = handler;
                 unityWebRequest = request;
-                var timeout = Convert.ToInt32(downloadTimeout);
+                var timeout = Convert.ToInt32(DownloadDataProxy.DownloadTimeout);
                 if (timeout > 0)
                     request.timeout = timeout;
                 var startEventArgs = DownloadStartEventArgs.Create(uri, fileDownloadPath);
@@ -265,10 +254,6 @@ namespace Cosmos.Download
                     DownloadFailureEventArgs.Release(failureEventArgs);
                     failureTasks.Add(downloadTask);
                     OnFileDownloading(uri, fileDownloadPath, 1);
-                    if (DeleteFailureFile)
-                    {
-                        Utility.IO.DeleteFile(fileDownloadPath);
-                    }
                     unityWebRequest = null;
                 }
             }
@@ -285,7 +270,7 @@ namespace Cosmos.Download
             var overallIndexPercent = 100 * ((float)currentDownloadTaskIndex / downloadTaskCount);
             var overallProgress = overallIndexPercent + (UnitResRatio * (individualPercent));
             var eventArgs = DonwloadOverallEventArgs.Create(uri, downloadPath, overallProgress, individualPercent);
-            onDownloadOverall.Invoke(eventArgs);
+            onDownloadOverall?.Invoke(eventArgs);
             DonwloadOverallEventArgs.Release(eventArgs);
         }
         /// <summary>
