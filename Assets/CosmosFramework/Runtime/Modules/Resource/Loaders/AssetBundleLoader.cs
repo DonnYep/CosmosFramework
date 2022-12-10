@@ -432,12 +432,15 @@ namespace Cosmos.Resource
                 yield break;
             }
             var operation = SceneManager.UnloadSceneAsync(scene);
-            while (!operation.isDone)
+            if (operation != null)
             {
-                progress?.Invoke(operation.progress);
-                if (operation.progress >= 0.9f)
-                    break;
-                yield return null;
+                while (!operation.isDone)
+                {
+                    progress?.Invoke(operation.progress);
+                    if (operation.progress >= 0.9f)
+                        break;
+                    yield return null;
+                }
             }
             progress?.Invoke(1);
             yield return null;
