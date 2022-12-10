@@ -284,7 +284,6 @@ namespace Cosmos.Resource
             {
                 progress?.Invoke(1);
                 SceneManager.SetActiveScene(loadedScene);
-                yield return null;
                 callback?.Invoke();
                 yield break;
             }
