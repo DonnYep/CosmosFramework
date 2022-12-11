@@ -22,6 +22,7 @@ namespace Cosmos
         Fix64 OffsetX;
         Fix64 OffsetY;
         public SquareGridFix64(Fix64 cellSideLength, uint cellSection) : this(cellSideLength, cellSection, Fix64.Zero, Fix64.Zero, Fix64.Zero) { }
+        public SquareGridFix64(Fix64 cellSideLength, uint cellSection, Fix64 bufferRange) : this(cellSideLength, cellSection, Fix64.Zero, Fix64.Zero, bufferRange) { }
         public SquareGridFix64(Fix64 cellSideLength, uint cellSection, Fix64 centerX, Fix64 centerY) : this(cellSideLength, cellSection, centerX, centerY, Fix64.Zero) { }
         public SquareGridFix64(Fix64 cellSideLength, uint cellSection, Fix64 centerX, Fix64 centerY, Fix64 bufferRange)
         {
@@ -82,8 +83,6 @@ namespace Cosmos
             {
                 for (int y = -1; y <= 1; y++)
                 {
-                    if (y == 0 && x == 0)
-                        continue;
                     int idxX = col + x;
                     int idxY = row + y;
                     if (idxX <= CellSection - 1 && idxX >= 0 && idxY <= CellSection - 1 && idxY >= 0)
@@ -103,7 +102,6 @@ namespace Cosmos
                 }
             }
             var dstSquares = new SquareFix64[dstIdx + 1];
-            dstSquares[0] = square2d[col, row];
             Array.Copy(srcSquares, 0, dstSquares, 1, dstIdx);
             return dstSquares;
         }
@@ -117,7 +115,7 @@ namespace Cosmos
         /// <returns>获取到的临近地块</returns>
         public SquareFix64[] GetNearbySquares(Fix64 posX, Fix64 posY, int level = 0)
         {
-            if (!IsOverlapping(posX, posY))
+            if (!IsOverlappingBufferZone(posX, posY))
                 return new SquareFix64[0];
             if (!IsOverlapping(posX, posY))
                 return new SquareFix64[0];
@@ -146,7 +144,6 @@ namespace Cosmos
                 }
             }
             var dstSquares = new SquareFix64[idx];
-            dstSquares[0] = square2d[col, row];
             Array.Copy(neabySquares, 0, dstSquares, 0, idx);
             return dstSquares;
         }

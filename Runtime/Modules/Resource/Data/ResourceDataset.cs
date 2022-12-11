@@ -9,8 +9,6 @@ namespace Cosmos.Resource
     public class ResourceDataset : ScriptableObject, IDisposable
     {
         [SerializeField]
-        List<ResourceObject> resourceObjectList;
-        [SerializeField]
         List<ResourceBundle> resourceBundleList;
         [SerializeField]
         List<string> resourceAvailableExtenisonList;
@@ -19,25 +17,9 @@ namespace Cosmos.Resource
         [SerializeField]
         List<ResourceObject> resourceSceneList;
         /// <summary>
-        /// 资源对象数量；
-        /// </summary>
-        public int ResourceObjectCount { get { return ResourceObjectList.Count; } }
-        /// <summary>
         /// 资源包数量；
         /// </summary>
         public int ResourceBundleCount { get { return resourceBundleList.Count; } }
-        /// <summary>
-        /// 资源对象列表；
-        /// </summary>
-        public List<ResourceObject> ResourceObjectList
-        {
-            get
-            {
-                if (resourceObjectList == null)
-                    resourceObjectList = new List<ResourceObject>();
-                return resourceObjectList;
-            }
-        }
         /// <summary>
         /// 资源包；
         /// </summary>
@@ -84,7 +66,6 @@ namespace Cosmos.Resource
         public void Clear()
         {
             ResourceBundleList.Clear();
-            ResourceObjectList.Clear();
         }
         /// <summary>
         /// 释放当前dataset；
@@ -92,7 +73,6 @@ namespace Cosmos.Resource
         public void Dispose()
         {
             ResourceBundleList.Clear();
-            ResourceObjectList.Clear();
             ResourceAvailableExtenisonList.Clear();
         }
     }

@@ -57,9 +57,9 @@ namespace Cosmos.Editor.Resource
             for (int i = 0; i < bundleLength; i++)
             {
                 var bundle = bundles[i];
-                bundle.DependentList.Clear();
+                bundle.DependenBundleKeytList.Clear();
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                bundle.DependentList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                bundle.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
         }
         public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)

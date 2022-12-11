@@ -54,39 +54,27 @@ namespace Cosmos.Download
         }
         #endregion
         ///<inheritdoc/>
-        public bool DeleteFailureFile
+        public bool DeleteFileOnAbort
         {
-            get { return downloader.DeleteFailureFile; }
-            set
-            {
-                downloader.DeleteFailureFile = value;
-                deleteFailureFile = value;
-            }
+            get { return DownloadDataProxy.DeleteFileOnAbort; }
+            set { DownloadDataProxy.DeleteFileOnAbort = value; }
+        }
+        ///<inheritdoc/>
+        public bool DownloadAppend
+        {
+            get { return DownloadDataProxy.DownloadAppend; }
+            set { DownloadDataProxy.DownloadAppend = value; }
         }
         ///<inheritdoc/>
         public float DownloadTimeout
         {
-            get { return downloader.DownloadTimeout; }
-            set
-            {
-                if (value <= 0)
-                    downloadTimeout = 0;
-                downloader.DownloadTimeout = downloadTimeout;
-            }
+            get { return DownloadDataProxy.DownloadTimeout; }
+            set { DownloadDataProxy.DownloadTimeout = value; }
         }
         ///<inheritdoc/>
         public bool Downloading { get { return downloader.Downloading; } }
         ///<inheritdoc/>
         public int DownloadingCount { get { return downloader.DownloadingCount; } }
-
-        /// <summary>
-        /// 是否删除本地下载失败的文件；
-        /// </summary>
-        bool deleteFailureFile;
-        /// <summary>
-        ///任务过期时间，以秒为单位
-        /// </summary>
-        float downloadTimeout;
         /// <summary>
         /// 下载器；
         /// </summary>
@@ -109,8 +97,6 @@ namespace Cosmos.Download
                 this.downloader.CancelDownload();
                 this.downloader.Release();
                 this.downloader = newDownloader;
-                this.downloader.DeleteFailureFile = deleteFailureFile;
-                this.downloader.DownloadTimeout = downloadTimeout;
             }
         }
         ///<inheritdoc/>
@@ -191,10 +177,8 @@ namespace Cosmos.Download
         }
         protected override void OnInitialization()
         {
-            var unityWebDownloader = new UnityWebDownloader();
+            var unityWebDownloader = new Downloader();
             downloader = unityWebDownloader;
-            downloader.DeleteFailureFile = deleteFailureFile;
-            downloader.DownloadTimeout = downloadTimeout;
             downloadUrlHelper = new DefaultDownloadUrlHelper();
             downloadRequester = new DefaultDownloadRequester();
         }

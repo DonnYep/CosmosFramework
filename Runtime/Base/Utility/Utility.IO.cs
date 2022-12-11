@@ -181,6 +181,31 @@ namespace Cosmos
                     directory.Delete();
                 }
             }
+            /// <summary>
+            /// 拷贝文件到文件夹；
+            /// </summary>
+            /// <param name="sourceFileName">文件地址</param>
+            /// <param name="folderPath">文件夹</param>
+            /// <param name="overwrite">是否覆写</param>
+            public static void CopyFileToDirectory(string sourceFileName, string folderPath, bool overwrite = true)
+            {
+                if (File.Exists(sourceFileName))
+                {
+                    var fileName= Path.GetDirectoryName(sourceFileName);
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    var destFileName = Path.Combine(folderPath, fileName);
+                    File.Copy(sourceFileName, destFileName, overwrite);
+                }
+            }
+            /// <summary>
+            /// 拷贝文件到新地址
+            /// </summary>
+            /// <param name="sourceFileName">原文件地址</param>
+            /// <param name="destFileName">目标文件地址</param>
+            /// <param name="overwrite">是否覆写</param>
             public static void CopyFile(string sourceFileName, string destFileName, bool overwrite = true)
             {
                 if (File.Exists(sourceFileName))

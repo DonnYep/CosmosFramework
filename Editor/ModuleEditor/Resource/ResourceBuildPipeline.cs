@@ -81,17 +81,15 @@ namespace Cosmos.Editor.Resource
             if (ResourceWindowDataProxy.ResourceDataset == null)
                 return;
             var bundles = ResourceWindowDataProxy.ResourceDataset.ResourceBundleList;
-            var objects = ResourceWindowDataProxy.ResourceDataset.ResourceObjectList;
             var extensions = ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
             var scenes = ResourceWindowDataProxy.ResourceDataset.ResourceSceneList;
             var lowerExtensions = extensions.Select(s => s.ToLower()).ToArray();
             extensions.Clear();
             extensions.AddRange(lowerExtensions);
-            objects.Clear();
             scenes.Clear();
             var bundleLength = bundles.Count;
 
-            List<ResourceBundleInfo> validBundleInfo = new List<ResourceBundleInfo>();
+            List<ResourceBundleItem> validBundleItems = new List<ResourceBundleItem>();
             List<ResourceBundle> invalidBundles = new List<ResourceBundle>();
 
             for (int i = 0; i < bundleLength; i++)
@@ -119,7 +117,6 @@ namespace Cosmos.Editor.Resource
                         //统一使用小写的文件后缀名
                         var lowerExtFilePath = srcFilePath.Replace(srcFileExt, lowerFileExt);
                         var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(lowerExtFilePath), lowerExtFilePath, bundle.BundleName, lowerFileExt);
-                        objects.Add(resourceObject);
                         bundle.ResourceObjectList.Add(resourceObject);
                         if (lowerFileExt == ResourceConstants.UNITY_SCENE_EXTENSION)//表示为场景资源
                         {
@@ -128,8 +125,8 @@ namespace Cosmos.Editor.Resource
                     }
                 }
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
-                validBundleInfo.Add(bundleInfo);
+                var bundleItem = new ResourceBundleItem(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
+                validBundleItems.Add(bundleItem);
             }
             for (int i = 0; i < invalidBundles.Count; i++)
             {
@@ -139,8 +136,8 @@ namespace Cosmos.Editor.Resource
             {
                 var bundle = bundles[i];
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                bundle.DependentList.Clear();
-                bundle.DependentList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                bundle.DependenBundleKeytList.Clear();
+                bundle.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
             for (int i = 0; i < bundles.Count; i++)
             {

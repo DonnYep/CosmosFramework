@@ -25,9 +25,9 @@ namespace Cosmos.Editor.Resource
         {
             treeView.Reload();
         }
-        public void AddObject(ResourceObjectInfo objectInfo)
+        public void AddObject(ResourceObjectItem objectItem)
         {
-            treeView.AddObject(objectInfo);
+            treeView.AddObject(objectItem);
         }
         public void OnGUI(Rect rect)
         {

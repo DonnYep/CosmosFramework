@@ -24,6 +24,10 @@ namespace Cosmos.Resource
         /// </summary>
         readonly Dictionary<string, ResourceBundleWarpper> resourceBundleWarpperDict;
         /// <summary>
+        /// bundleKey===bundleName
+        /// </summary>
+        readonly Dictionary<string, string> resourceBundleKeyDict;
+        /// <summary>
         /// 被加载的场景字典；
         /// SceneName===Scene
         /// </summary>
@@ -43,6 +47,7 @@ namespace Cosmos.Resource
         {
             loadSceneList = new List<string>();
             resourceAddress = new ResourceAddress();
+            resourceBundleKeyDict = new Dictionary<string, string>();
             resourceBundleWarpperDict = new Dictionary<string, ResourceBundleWarpper>();
             resourceObjectWarpperDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
@@ -145,6 +150,7 @@ namespace Cosmos.Resource
         {
             resourceObjectWarpperDict.Clear();
             resourceBundleWarpperDict.Clear();
+            resourceBundleKeyDict.Clear();
             loadSceneList.Clear();
             resourceAddress.Clear();
             loadedSceneDict.Clear();
@@ -399,6 +405,7 @@ namespace Cosmos.Resource
             if (condition != null)
                 yield return new WaitUntil(condition);
             operation.allowSceneActivation = true;
+            yield return operation.isDone;
             yield return null;
             callback?.Invoke();
         }
@@ -425,6 +432,14 @@ namespace Cosmos.Resource
                 yield break;
             }
             var operation = SceneManager.UnloadSceneAsync(scene);
+            if (operation == null)
+            {
+                OnSceneUnloaded(scene);
+                progress?.Invoke(1);
+                yield return null;
+                callback?.Invoke();
+                yield break;
+            }
             while (!operation.isDone)
             {
                 progress?.Invoke(operation.progress);
@@ -436,6 +451,7 @@ namespace Cosmos.Resource
             yield return null;
             if (condition != null)
                 yield return new WaitUntil(condition);
+            yield return operation.isDone;
             yield return null;
             callback?.Invoke();
         }
@@ -446,18 +462,22 @@ namespace Cosmos.Resource
             var unitResRatio = 100f / sceneCount;
             int currentSceneIndex = 0;
             float overallProgress = 0;
-            foreach (var sceneName in loadSceneList)
+            var loadSceneArr = loadSceneList.ToArray();
+            foreach (var sceneName in loadSceneArr)
             {
                 var overallIndexPercent = 100 * ((float)currentSceneIndex / sceneCount);
                 currentSceneIndex++;
                 if (!loadedSceneDict.TryGetValue(sceneName, out var scene))
                     continue;
-                var ao = SceneManager.UnloadSceneAsync(scene);
-                while (!ao.isDone)
+                var operation = SceneManager.UnloadSceneAsync(scene);
+                if (operation != null)
                 {
-                    overallProgress = overallIndexPercent + (unitResRatio * ao.progress);
-                    progress?.Invoke(overallProgress / 100);
-                    yield return null;
+                    while (!operation.isDone)
+                    {
+                        overallProgress = overallIndexPercent + (unitResRatio * operation.progress);
+                        progress?.Invoke(overallProgress / 100);
+                        yield return null;
+                    }
                 }
                 overallProgress = overallIndexPercent + (unitResRatio * 1);
                 progress?.Invoke(overallProgress / 100);
@@ -490,16 +510,17 @@ namespace Cosmos.Resource
             }
             else
                 bundleWarpper.ReferenceCount++; //AB包引用计数增加
-            var dependentList = bundleWarpper.ResourceBundle.DependentList;
+            var dependentList = bundleWarpper.ResourceBundle.DependenBundleKeytList;
             var dependentLength = dependentList.Count;
             for (int i = 0; i < dependentLength; i++)
             {
-                var dependentABName = dependentList[i];
-                if (resourceBundleWarpperDict.TryGetValue(bundleName, out var dependentBundleWarpper))
+                var dependentBundleKey = dependentList[i];
+                resourceBundleKeyDict.TryGetValue(dependentBundleKey, out var dependentBundleName);
+                if (resourceBundleWarpperDict.TryGetValue(dependentBundleName, out var dependentBundleWarpper))
                 {
                     if (dependentBundleWarpper.AssetBundle == null)
                     {
-                        var abPath = Path.Combine(ResourceDataProxy.BundlePath, dependentABName);
+                        var abPath = Path.Combine(ResourceDataProxy.BundlePath, dependentBundleKey);
                         var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.EncryptionOffset);
                         yield return abReq;
                         var bundle = abReq.assetBundle;
@@ -524,9 +545,13 @@ namespace Cosmos.Resource
             {
                 //当包体的引用计数小于等于0时，则表示该包已经未被依赖。
                 //卸载AssetBundle；
-                resourceBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                if (resourceBundleWarpper.AssetBundle != null)
+                {
+                    resourceBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                    resourceBundleWarpper.AssetBundle = null;
+                }
             }
-            var dependentList = resourceBundleWarpper.ResourceBundle.DependentList;
+            var dependentList = resourceBundleWarpper.ResourceBundle.DependenBundleKeytList;
             var dependentLength = dependentList.Count;
             //遍历查询依赖包
             for (int i = 0; i < dependentLength; i++)
@@ -535,9 +560,12 @@ namespace Cosmos.Resource
                 if (resourceBundleWarpperDict.TryGetValue(dependentBundleName, out var dependentBundleWarpper))
                 {
                     dependentBundleWarpper.ReferenceCount -= count;
-                    if (dependentBundleWarpper.ReferenceCount <= 0)
+                    if (dependentBundleWarpper.ReferenceCount > 0)
+                        continue;
+                    if (dependentBundleWarpper.AssetBundle != null)
                     {
                         dependentBundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                        dependentBundleWarpper.AssetBundle = null;
                     }
                 }
             }
@@ -634,6 +662,7 @@ namespace Cosmos.Resource
             {
                 var resourceBundle = bundleBuildInfo.ResourceBundle;
                 resourceBundleWarpperDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle));
+                resourceBundleKeyDict.TryAdd(resourceBundle.BundleKey, resourceBundle.BundleName);
                 var resourceObjectList = resourceBundle.ResourceObjectList;
                 var objectLength = resourceObjectList.Count;
                 for (int i = 0; i < objectLength; i++)

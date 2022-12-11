@@ -40,9 +40,13 @@ namespace Cosmos.Download
         /// </summary>
         event Action<DownloadAndWriteFinishEventArgs> OnDownloadAndWriteFinish;
         /// <summary>
-        /// 是否删除本地下载失败的文件；
+        /// 终止时删除下载中的文件
         /// </summary>
-        bool DeleteFailureFile { get; set; }
+        bool DeleteFileOnAbort { get; set; }
+        /// <summary>
+        /// 下载时追加写入；
+        /// </summary>
+        bool DownloadAppend { get; set; }
         /// <summary>
         /// 任务过期时间，以秒为单位；
         /// </summary>
