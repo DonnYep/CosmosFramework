@@ -9,27 +9,25 @@ namespace Cosmos.Resource
     public class ResourceDataset : ScriptableObject, IDisposable
     {
         [SerializeField]
-        List<ResourceBundle> resourceBundleList;
+        List<ResourceBundleInfo> resourceBundleInfoList;
         [SerializeField]
         List<string> resourceAvailableExtenisonList;
         [SerializeField]
         bool isChanged;
-        [SerializeField]
-        List<ResourceObject> resourceSceneList;
         /// <summary>
         /// 资源包数量；
         /// </summary>
-        public int ResourceBundleCount { get { return resourceBundleList.Count; } }
+        public int ResourceBundleCount { get { return resourceBundleInfoList.Count; } }
         /// <summary>
         /// 资源包；
         /// </summary>
-        public List<ResourceBundle> ResourceBundleList
+        public List<ResourceBundleInfo> ResourceBundleInfoList
         {
             get
             {
-                if (resourceBundleList == null)
-                    resourceBundleList = new List<ResourceBundle>();
-                return resourceBundleList;
+                if (resourceBundleInfoList == null)
+                    resourceBundleInfoList = new List<ResourceBundleInfo>();
+                return resourceBundleInfoList;
             }
         }
         /// <summary>
@@ -49,30 +47,18 @@ namespace Cosmos.Resource
         /// </summary>
         public bool IsChanged { get { return isChanged; } set { isChanged = value; } }
         /// <summary>
-        /// 资源包；
-        /// </summary>
-        public List<ResourceObject> ResourceSceneList
-        {
-            get
-            {
-                if (resourceSceneList== null)
-                    resourceSceneList = new List<ResourceObject>();
-                return resourceSceneList;
-            }
-        }
-        /// <summary>
         /// 清空资源包与资源实体；
         /// </summary>
         public void Clear()
         {
-            ResourceBundleList.Clear();
+            ResourceBundleInfoList.Clear();
         }
         /// <summary>
         /// 释放当前dataset；
         /// </summary>
         public void Dispose()
         {
-            ResourceBundleList.Clear();
+            ResourceBundleInfoList.Clear();
             ResourceAvailableExtenisonList.Clear();
         }
     }

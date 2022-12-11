@@ -20,30 +20,52 @@ namespace Cosmos.Editor.Resource
 
             var assetBundleNameType = buildParams.AssetBundleNameType;
 
-            var bundles = dataset.ResourceBundleList;
-            var bundleLength = bundles.Count;
+            var bundleInfos = dataset.ResourceBundleInfoList;
+            var bundleInfoLength = bundleInfos.Count;
 
-            for (int i = 0; i < bundleLength; i++)
+            for (int i = 0; i < bundleInfoLength; i++)
             {
-                var bundle = bundles[i];
-                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
+                var bundleInfo = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
                 //这里获取绝对ab绝对路径下，所有资源的bytes，生成唯一MD5 hash
-                var path = Path.Combine(EditorUtil.ApplicationPath(), bundle.BundlePath);
+                var path = Path.Combine(EditorUtil.ApplicationPath(), bundleInfo.BundlePath);
                 var hash = ResourceUtility.CreateDirectoryMd5(path);
+                var bundleKey = string.Empty;
                 switch (assetBundleNameType)
                 {
                     case AssetBundleNameType.DefaultName:
                         {
-                            importer.assetBundleName = bundle.BundleName;
-                            bundle.BundleKey = bundle.BundleName;
+                            importer.assetBundleName = bundleInfo.BundleName;
+                            bundleKey = bundleInfo.BundleName;
                         }
                         break;
                     case AssetBundleNameType.HashInstead:
                         {
                             importer.assetBundleName = hash;
-                            bundle.BundleKey = hash;
+                            bundleKey = hash;
                         }
                         break;
+                }
+                var bundle = new ResourceBundle()
+                {
+                    BundleKey = bundleKey,
+                    BundleName = bundleInfo.BundleName,
+                    BundlePath = bundleInfo.BundlePath,
+                };
+                bundle.DependenBundleKeytList.AddRange(bundleInfo.DependenBundleKeytList);
+                var objectInfoList = bundleInfo.ResourceObjectInfoList;
+                var objectInfoLength = objectInfoList.Count;
+                for (int j = 0; j < objectInfoLength; j++)
+                {
+                    var objectInfo = objectInfoList[j];
+                    var resourceObject = new ResourceObject()
+                    {
+                        ObjectName = objectInfo.ObjectName,
+                        ObjectPath = objectInfo.ObjectPath,
+                        BundleName = objectInfo.BundleName,
+                        Extension = objectInfo.Extension
+                    };
+                    bundle.ResourceObjectList.Add(resourceObject);
                 }
                 var bundleBuildInfo = new ResourceManifest.ResourceBundleBuildInfo()
                 {
@@ -52,11 +74,11 @@ namespace Cosmos.Editor.Resource
                     BundleSize = 0
                 };
                 //这里存储hash与bundle，打包出来的包体长度在下一个流程处理
-                resourceManifest.ResourceBundleBuildInfoDict.Add(bundle.BundleName, bundleBuildInfo);
+                resourceManifest.ResourceBundleBuildInfoDict.Add(bundleInfo.BundleName, bundleBuildInfo);
             }
-            for (int i = 0; i < bundleLength; i++)
+            for (int i = 0; i < bundleInfoLength; i++)
             {
-                var bundle = bundles[i];
+                var bundle = bundleInfos[i];
                 bundle.DependenBundleKeytList.Clear();
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 bundle.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
@@ -64,9 +86,9 @@ namespace Cosmos.Editor.Resource
         }
         public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
         {
-            Dictionary<string, ResourceBundle> bundleKeyDict = null;
+            Dictionary<string, ResourceBundleInfo> bundleKeyDict = null;
             if (buildParams.AssetBundleNameType == AssetBundleNameType.HashInstead)
-                bundleKeyDict = dataset.ResourceBundleList.ToDictionary(bundle => bundle.BundleKey);
+                bundleKeyDict = dataset.ResourceBundleInfoList.ToDictionary(bundle => bundle.BundleKey);
             var bundleKeys = unityManifest.GetAllAssetBundles();
             var bundleKeyLength = bundleKeys.Length;
             for (int i = 0; i < bundleKeyLength; i++)
@@ -95,8 +117,8 @@ namespace Cosmos.Editor.Resource
                         break;
                     case AssetBundleNameType.HashInstead:
                         {
-                            if (bundleKeyDict.TryGetValue(bundleKey, out var bundle))
-                                bundleName = bundle.BundleName;
+                            if (bundleKeyDict.TryGetValue(bundleKey, out var bundleInfo))
+                                bundleName = bundleInfo.BundleName;
                         }
                         break;
                 }
@@ -127,11 +149,11 @@ namespace Cosmos.Editor.Resource
             Utility.IO.DeleteFile(buildVersionPath);
             Utility.IO.DeleteFile(buildVersionManifestPath);
 
-            var bundles = dataset.ResourceBundleList;
-            var bundleLength = bundles.Count;
-            for (int i = 0; i < bundleLength; i++)
+            var bundleInfos = dataset.ResourceBundleInfoList;
+            var bundleInfoLength = bundleInfos.Count;
+            for (int i = 0; i < bundleInfoLength; i++)
             {
-                var bundle = bundles[i];
+                var bundle = bundleInfos[i];
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 importer.assetBundleName = string.Empty;
             }

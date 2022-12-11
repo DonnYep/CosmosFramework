@@ -2,11 +2,13 @@
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEditor;
+using Cosmos.Resource;
+
 namespace Cosmos.Editor.Resource
 {
     public class ResourceObjectTreeView : TreeView
     {
-        List<ResourceObjectItem> objectItemList = new List<ResourceObjectItem>();
+        List<ResourceObjectInfo> objectInfoList = new List<ResourceObjectInfo>();
         public ResourceObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
@@ -14,16 +16,16 @@ namespace Cosmos.Editor.Resource
             showBorder = true;
             multiColumnHeader.sortingChanged += OnMultiColumnHeaderSortingChanged;
         }
-        public void AddObject(ResourceObjectItem objectItem)
+        public void AddObject(ResourceObjectInfo objectInfo)
         {
-            if (!objectItemList.Contains(objectItem))
+            if (!objectInfoList.Contains(objectInfo))
             {
-                objectItemList.Add(objectItem);
+                objectInfoList.Add(objectInfo);
             }
         }
         public void Clear()
         {
-            objectItemList.Clear();
+            objectInfoList.Clear();
             Reload();
         }
         protected override void ContextClickedItem(int id)
@@ -36,42 +38,26 @@ namespace Cosmos.Editor.Resource
         protected override void DoubleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            EditorUtil.PingAndActiveObject(objectItemList[id].AssetPath);
+            EditorUtil.PingAndActiveObject(objectInfoList[id].ObjectPath);
         }
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
             var allItems = new List<TreeViewItem>();
             {
-                for (int i = 0; i < objectItemList.Count; i++)
+                for (int i = 0; i < objectInfoList.Count; i++)
                 {
-                    var objectInfo = objectItemList[i];
-                    var obj = AssetDatabase.LoadMainAssetAtPath(objectInfo.AssetPath);
-                    Texture2D objectIcon = null;
-                    Texture2D stateIcon = null;
-                    string objectState = string.Empty;
-                    if (objectItemList[i].Vaild)
-                    {
-                        objectIcon = EditorUtil.ToTexture2D(EditorGUIUtility.ObjectContent(obj, obj.GetType()).image);
-                        objectState = "VALID";
-                        stateIcon = ResourceWindowUtility.GetAssetValidIcon();
-                    }
-                    else
-                    {
-                        objectIcon = EditorGUIUtility.FindTexture("console.erroricon");
-                        objectState = "INVALID";
-                        stateIcon = ResourceWindowUtility.GetAssetInvalidIcon();
-                    }
-                    var item = new ResourceObjectTreeViewItem(i, 1, objectInfo.AssetPath, objectIcon)
+                    var objectInfo = objectInfoList[i];
+                    var treeViewItem = new ResourceObjectTreeViewItem(i, 1, objectInfo.ObjectPath, objectInfo.ObjectIcon)
                     {
                         ObjectName = objectInfo.ObjectName,
-                        ObjectState = objectState,
-                        ObjectStateIcon = stateIcon,
-                        ObjectSize = objectInfo.FileSize,
-                        ObjectBundleName = objectInfo.AssetBundleName,
+                        ObjectState = objectInfo.ObjectState,
+                        ObjectStateIcon = objectInfo.ObjectStateIcon,
+                        ObjectSize = objectInfo.ObjectFormatBytes,
+                        ObjectBundleName = objectInfo.BundleName,
                         ObjectExtension = objectInfo.Extension
                     };
-                    allItems.Add(item);
+                    allItems.Add(treeViewItem);
                 }
                 SetupParentsAndChildrenFromDepths(root, allItems);
                 return root;
@@ -98,54 +84,54 @@ namespace Cosmos.Editor.Resource
                     {
                         //Name
                         if (ascending)
-                            objectItemList.Sort((lhs, rhs) => lhs.ObjectName.CompareTo(rhs.ObjectName));
+                            objectInfoList.Sort((lhs, rhs) => lhs.ObjectName.CompareTo(rhs.ObjectName));
                         else
-                            objectItemList.Sort((lhs, rhs) => rhs.ObjectName.CompareTo(lhs.ObjectName));
+                            objectInfoList.Sort((lhs, rhs) => rhs.ObjectName.CompareTo(lhs.ObjectName));
                     }
                     break;
                 case 1:
                     {
                         //Extension
                         if (ascending)
-                            objectItemList.Sort((lhs, rhs) => lhs.Extension.CompareTo(rhs.Extension));
+                            objectInfoList.Sort((lhs, rhs) => lhs.Extension.CompareTo(rhs.Extension));
                         else
-                            objectItemList.Sort((lhs, rhs) => rhs.Extension.CompareTo(lhs.Extension));
+                            objectInfoList.Sort((lhs, rhs) => rhs.Extension.CompareTo(lhs.Extension));
                     }
                     break;
                 case 2:
                     {
                         //State
                         if (ascending)
-                            objectItemList.Sort((lhs, rhs) => lhs.Vaild.CompareTo(rhs.Vaild));
+                            objectInfoList.Sort((lhs, rhs) => lhs.ObjectState.CompareTo(rhs.ObjectState));
                         else
-                            objectItemList.Sort((lhs, rhs) => rhs.Vaild.CompareTo(lhs.Vaild));
+                            objectInfoList.Sort((lhs, rhs) => rhs.ObjectState.CompareTo(lhs.ObjectState));
                     }
                     break;
                 case 3:
                     {
                         //Size
                         if (ascending)
-                            objectItemList.Sort((lhs, rhs) => lhs.FileSize.CompareTo(rhs.FileSize));
+                            objectInfoList.Sort((lhs, rhs) => lhs.ObjectSize.CompareTo(rhs.ObjectSize));
                         else
-                            objectItemList.Sort((lhs, rhs) => rhs.FileSize.CompareTo(lhs.FileSize));
+                            objectInfoList.Sort((lhs, rhs) => rhs.ObjectSize.CompareTo(lhs.ObjectSize));
                     }
                     break;
                 case 4:
                     {
                         //AssetBundle
                         if (ascending)
-                            objectItemList.Sort((lhs, rhs) => lhs.AssetBundleName.CompareTo(rhs.AssetBundleName));
+                            objectInfoList.Sort((lhs, rhs) => lhs.BundleName.CompareTo(rhs.BundleName));
                         else
-                            objectItemList.Sort((lhs, rhs) => rhs.AssetBundleName.CompareTo(lhs.AssetBundleName));
+                            objectInfoList.Sort((lhs, rhs) => rhs.BundleName.CompareTo(lhs.BundleName));
                     }
                     break;
                 case 5:
                     {
                         //AssetPath
                         if (ascending)
-                            objectItemList.Sort((lhs, rhs) => lhs.AssetPath.CompareTo(rhs.AssetPath));
+                            objectInfoList.Sort((lhs, rhs) => lhs.ObjectPath.CompareTo(rhs.ObjectPath));
                         else
-                            objectItemList.Sort((lhs, rhs) => rhs.AssetPath.CompareTo(lhs.AssetPath));
+                            objectInfoList.Sort((lhs, rhs) => rhs.ObjectPath.CompareTo(lhs.ObjectPath));
                     }
                     break;
             }
@@ -199,13 +185,13 @@ namespace Cosmos.Editor.Resource
         void CopyNameToClipboard(object context)
         {
             var id = System.Convert.ToInt32(context);
-            var path = objectItemList[id].ObjectName;
+            var path = objectInfoList[id].ObjectName;
             GUIUtility.systemCopyBuffer = path;
         }
         void CopyAssetPathToClipboard(object context)
         {
             var id = System.Convert.ToInt32(context);
-            var path = objectItemList[id].AssetPath;
+            var path = objectInfoList[id].ObjectPath;
             GUIUtility.systemCopyBuffer = path;
         }
     }

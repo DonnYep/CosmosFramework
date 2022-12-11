@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.Resource;
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -59,9 +60,9 @@ namespace Cosmos.Editor.Resource
         {
             treeView.Reload();
         }
-        public bool AddBundle(ResourceBundleItem bundleItem)
+        public bool AddBundle(ResourceBundleInfo bundleInfo)
         {
-            return treeView.AddBundle(bundleItem);
+            return treeView.AddBundle(bundleInfo);
         }
         public void SetSelection(IList<int> selectedIds)
         {

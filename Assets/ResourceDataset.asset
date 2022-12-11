@@ -12,333 +12,631 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dc04719925482441b02b4e0785f1973, type: 3}
   m_Name: ResourceDataset
   m_EditorClassIdentifier: 
-  resourceBundleList:
-  - bundleName: texture
-    bundlePath: Assets/Examples/AssetBundleTest/Texture
-    bundleKey: 92ba5ab088319e2d8b04da28a85cc589
-    dependentBundleKeyList: []
-    resourceObjectList:
-    - assetName: Tex_5195
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5196
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5196.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5197
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5197.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5199
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5199.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5203
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5203.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5205
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5205.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5206
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5206.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5207
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5207.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5208
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5208.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5209
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5209.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5210
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5210.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5211
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5211.png
-      bundleName: texture
-      extension: .png
-    - assetName: Tex_5212
-      assetPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
-      bundleName: texture
-      extension: .png
-  - bundleName: text
-    bundlePath: Assets/Examples/AssetBundleTest/Text
-    bundleKey: 8f573e261d42c326ba532f750fa98f43
-    dependentBundleKeyList: []
-    resourceObjectList:
-    - assetName: ABMapSchema
-      assetPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
-      bundleName: text
-      extension: .json
-    - assetName: SampleCSV
-      assetPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
-      bundleName: text
-      extension: .csv
-  - bundleName: scene
-    bundlePath: Assets/Examples/AssetBundleTest/Scene
-    bundleKey: 83ebf1430f1b95213c3806009bcfa985
-    dependentBundleKeyList:
-    - material
-    - model
-    - prefab
-    - texture
-    resourceObjectList:
-    - assetName: SceneTarget
-      assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
-      bundleName: scene
-      extension: .unity
-    - assetName: TestAddtiveScene
-      assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
-      bundleName: scene
-      extension: .unity
-  - bundleName: procedure_scenes
-    bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
-    bundleKey: 874f2fde712f6faeb89eca08b85eb960
-    dependentBundleKeyList:
-    - material
-    - model
-    - prefab
-    resourceObjectList:
-    - assetName: 24_Procedure_PloyState
-      assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
-      bundleName: procedure_scenes
-      extension: .unity
-    - assetName: 24_Procedure_YBotState
-      assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
-      bundleName: procedure_scenes
-      extension: .unity
+  resourceBundleInfoList:
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
-    bundleKey: bc393f615c775b0523f6d4c33ffd522d
+    bundleKey: prefab
+    bundleSize: 360065
+    bundleFormatBytes: 351.6 KB
     dependentBundleKeyList:
-    - audio
-    - material
-    - model
-    - texture
-    resourceObjectList:
-    - assetName: AudioSource
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    - ed47e6f35abfea84ec74480d2e315ebf
+    resourceObjectInfoList:
+    - objectName: AudioSource
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
       bundleName: prefab
+      objectSize: 3148
+      objectFormatBytes: 3.1 KB
       extension: .prefab
-    - assetName: Capsule
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/Capsule.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Capsule
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/Capsule.prefab
       bundleName: prefab
+      objectSize: 2785
+      objectFormatBytes: 2.7 KB
       extension: .prefab
-    - assetName: Cube
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/Cube.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Cube
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/Cube.prefab
       bundleName: prefab
+      objectSize: 2781
+      objectFormatBytes: 2.7 KB
       extension: .prefab
-    - assetName: Cylinder
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/Cylinder.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Cylinder
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/Cylinder.prefab
       bundleName: prefab
+      objectSize: 2824
+      objectFormatBytes: 2.8 KB
       extension: .prefab
-    - assetName: Label
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/Label.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Label
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/Label.prefab
       bundleName: prefab
+      objectSize: 13749
+      objectFormatBytes: 13.4 KB
       extension: .prefab
-    - assetName: Sphere
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/Sphere.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Sphere
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/Sphere.prefab
       bundleName: prefab
+      objectSize: 2769
+      objectFormatBytes: 2.7 KB
       extension: .prefab
-    - assetName: Mat_ObjectPool_Blue
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Blue.mat
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Mat_ObjectPool_Blue
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Blue.mat
       bundleName: prefab
+      objectSize: 2295
+      objectFormatBytes: 2.2 KB
       extension: .mat
-    - assetName: Mat_ObjectPool_Green
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Green.mat
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Mat_ObjectPool_Green
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Green.mat
       bundleName: prefab
+      objectSize: 2128
+      objectFormatBytes: 2.1 KB
       extension: .mat
-    - assetName: Mat_ObjectPool_Red
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Red.mat
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Mat_ObjectPool_Red
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Red.mat
       bundleName: prefab
+      objectSize: 2134
+      objectFormatBytes: 2.1 KB
       extension: .mat
-    - assetName: ResPrefab_Capsule
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Capsule.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: ResPrefab_Capsule
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Capsule.prefab
       bundleName: prefab
+      objectSize: 3244
+      objectFormatBytes: 3.2 KB
       extension: .prefab
-    - assetName: ResPrefab_Cube
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Cube.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: ResPrefab_Cube
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Cube.prefab
       bundleName: prefab
+      objectSize: 3240
+      objectFormatBytes: 3.2 KB
       extension: .prefab
-    - assetName: ResPrefab_Sphere
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Sphere.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: ResPrefab_Sphere
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Sphere.prefab
       bundleName: prefab
+      objectSize: 3233
+      objectFormatBytes: 3.2 KB
       extension: .prefab
-    - assetName: AC_XBot_Idle
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/AC_XBot_Idle.controller
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: AC_XBot_Idle
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/XBot/AC_XBot_Idle.controller
       bundleName: prefab
+      objectSize: 2113
+      objectFormatBytes: 2.1 KB
       extension: .controller
-    - assetName: AC_XBot_Walking
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/AC_XBot_Walking.controller
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: AC_XBot_Walking
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/XBot/AC_XBot_Walking.controller
       bundleName: prefab
+      objectSize: 2842
+      objectFormatBytes: 2.8 KB
       extension: .controller
-    - assetName: XBot_Idle
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/XBot_Idle.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: XBot_Idle
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/XBot/XBot_Idle.prefab
       bundleName: prefab
+      objectSize: 76661
+      objectFormatBytes: 74.9 KB
       extension: .prefab
-    - assetName: XBot_Walking
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/XBot/XBot_Walking.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: XBot_Walking
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/XBot/XBot_Walking.prefab
       bundleName: prefab
+      objectSize: 75121
+      objectFormatBytes: 73.4 KB
       extension: .prefab
-    - assetName: AC_YBot_Idle
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/AC_YBot_Idle.controller
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: AC_YBot_Idle
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/YBot/AC_YBot_Idle.controller
       bundleName: prefab
+      objectSize: 2842
+      objectFormatBytes: 2.8 KB
       extension: .controller
-    - assetName: AC_YBot_Walking
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/AC_YBot_Walking.controller
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: AC_YBot_Walking
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/YBot/AC_YBot_Walking.controller
       bundleName: prefab
+      objectSize: 2841
+      objectFormatBytes: 2.8 KB
       extension: .controller
-    - assetName: YBot_Idle
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Idle.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: YBot_Idle
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Idle.prefab
       bundleName: prefab
+      objectSize: 76634
+      objectFormatBytes: 74.8 KB
       extension: .prefab
-    - assetName: YBot_Walking
-      assetPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: YBot_Walking
+      objectPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
       bundleName: prefab
+      objectSize: 76681
+      objectFormatBytes: 74.9 KB
       extension: .prefab
-  - bundleName: photo
-    bundlePath: Assets/Examples/AssetBundleTest/Photo
-    bundleKey: 1d0e725573ab7a82136a8c34825b2b64
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+  - bundleName: texture
+    bundlePath: Assets/Examples/AssetBundleTest/Texture
+    bundleKey: texture
+    bundleSize: 709776
+    bundleFormatBytes: 0.7 MB
     dependentBundleKeyList: []
-    resourceObjectList:
-    - assetName: CB1024
-      assetPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
-      bundleName: photo
-      extension: .tga
-    - assetName: CB2048
-      assetPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
-      bundleName: photo
-      extension: .tga
-    - assetName: CheckBoard_2048
-      assetPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
-      bundleName: photo
-      extension: .jpg
-    - assetName: Grid2048
-      assetPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
-      bundleName: photo
-      extension: .psd
-  - bundleName: model
+    resourceObjectInfoList:
+    - objectName: Tex_5195
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
+      bundleName: texture
+      objectSize: 10803
+      objectFormatBytes: 10.5 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5196
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5196.png
+      bundleName: texture
+      objectSize: 61533
+      objectFormatBytes: 60.1 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5197
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5197.png
+      bundleName: texture
+      objectSize: 56368
+      objectFormatBytes: 55.0 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5199
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5199.png
+      bundleName: texture
+      objectSize: 16081
+      objectFormatBytes: 15.7 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5203
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5203.png
+      bundleName: texture
+      objectSize: 7031
+      objectFormatBytes: 6.9 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5205
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5205.png
+      bundleName: texture
+      objectSize: 41616
+      objectFormatBytes: 40.6 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5206
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5206.png
+      bundleName: texture
+      objectSize: 7925
+      objectFormatBytes: 7.7 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5207
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5207.png
+      bundleName: texture
+      objectSize: 41058
+      objectFormatBytes: 40.1 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5208
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5208.png
+      bundleName: texture
+      objectSize: 234473
+      objectFormatBytes: 229.0 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5209
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5209.png
+      bundleName: texture
+      objectSize: 128522
+      objectFormatBytes: 125.5 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5210
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5210.png
+      bundleName: texture
+      objectSize: 22748
+      objectFormatBytes: 22.2 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5211
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5211.png
+      bundleName: texture
+      objectSize: 64121
+      objectFormatBytes: 62.6 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Tex_5212
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
+      bundleName: texture
+      objectSize: 17497
+      objectFormatBytes: 17.1 KB
+      extension: .png
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+  - bundleName: assets_examples_assetbundletest_model
     bundlePath: Assets/Examples/AssetBundleTest/Model
-    bundleKey: 85982cd123bcdf5039205f2a6af5b1e3
+    bundleKey: assets_examples_assetbundletest_model
+    bundleSize: 6008044
+    bundleFormatBytes: 5.7 MB
     dependentBundleKeyList: []
-    resourceObjectList:
-    - assetName: LM_XBotIdle
-      assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
-      bundleName: model
+    resourceObjectInfoList:
+    - objectName: LM_XBotIdle
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
+      bundleName: assets_examples_assetbundletest_model
+      objectSize: 776073
+      objectFormatBytes: 0.7 MB
       extension: .anim
-    - assetName: LM_XBotWalking
-      assetPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
-      bundleName: model
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: LM_XBotWalking
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
+      bundleName: assets_examples_assetbundletest_model
+      objectSize: 299736
+      objectFormatBytes: 292.7 KB
       extension: .anim
-    - assetName: LM_YBotIdle
-      assetPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
-      bundleName: model
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: LM_YBotIdle
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
+      bundleName: assets_examples_assetbundletest_model
+      objectSize: 422883
+      objectFormatBytes: 413.0 KB
       extension: .anim
-    - assetName: LM_YBotWalk
-      assetPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
-      bundleName: model
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: LM_YBotWalk
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
+      bundleName: assets_examples_assetbundletest_model
+      objectSize: 387880
+      objectFormatBytes: 378.8 KB
       extension: .anim
-    - assetName: XBot_TPose
-      assetPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
-      bundleName: model
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: XBot_TPose
+      objectPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
+      bundleName: assets_examples_assetbundletest_model
+      objectSize: 1961312
+      objectFormatBytes: 1.9 MB
       extension: .fbx
-    - assetName: YBot_TPose
-      assetPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
-      bundleName: model
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: YBot_TPose
+      objectPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
+      bundleName: assets_examples_assetbundletest_model
+      objectSize: 2160160
+      objectFormatBytes: 2.1 MB
       extension: .fbx
-  - bundleName: material
-    bundlePath: Assets/Examples/AssetBundleTest/Material
-    bundleKey: 1e1f8e4702b2ecd0840b7ff9acd5486b
-    dependentBundleKeyList: []
-    resourceObjectList:
-    - assetName: Alpha_Body_MAT
-      assetPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
-      bundleName: material
-      extension: .mat
-    - assetName: BlueMat
-      assetPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
-      bundleName: material
-      extension: .mat
-    - assetName: GreyMaterial.Default
-      assetPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
-      bundleName: material
-      extension: .mat
-    - assetName: RedMat
-      assetPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
-      bundleName: material
-      extension: .mat
-  - bundleName: entity_scene
-    bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
-    bundleKey: 2674bd29d453fc5c5d38cfce862b9827
-    dependentBundleKeyList: []
-    resourceObjectList:
-    - assetName: EntityGame
-      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
-      bundleName: entity_scene
-      extension: .unity
-  - bundleName: entity_prefabs
-    bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
-    bundleKey: 8df91f531c3f885c737705ad61b24a4f
-    dependentBundleKeyList: []
-    resourceObjectList:
-    - assetName: EntityBullet
-      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityBullet.prefab
-      bundleName: entity_prefabs
-      extension: .prefab
-    - assetName: EntityEnemy
-      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityEnemy.prefab
-      bundleName: entity_prefabs
-      extension: .prefab
-    - assetName: EntityGameLauncherPanel
-      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLauncherPanel.prefab
-      bundleName: entity_prefabs
-      extension: .prefab
-    - assetName: EntityGameLoadingSlider
-      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLoadingSlider.prefab
-      bundleName: entity_prefabs
-      extension: .prefab
-    - assetName: EntityPlayer
-      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityPlayer.prefab
-      bundleName: entity_prefabs
-      extension: .prefab
-    - assetName: UICanvas
-      assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/UICanvas.prefab
-      bundleName: entity_prefabs
-      extension: .prefab
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
-    bundleKey: 85cfcb341456da4a695c7f72e0b4ff07
+    bundleKey: audio
+    bundleSize: 6986559
+    bundleFormatBytes: 6.7 MB
     dependentBundleKeyList: []
-    resourceObjectList:
-    - assetName: AmbientAudio
-      assetPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
+    resourceObjectInfoList:
+    - objectName: AmbientAudio
+      objectPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
       bundleName: audio
+      objectSize: 403374
+      objectFormatBytes: 393.9 KB
       extension: .mp3
-    - assetName: Audio00
-      assetPath: Assets/Examples/AssetBundleTest/Audio/Audio00.mp3
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Audio00
+      objectPath: Assets/Examples/AssetBundleTest/Audio/Audio00.mp3
       bundleName: audio
+      objectSize: 148135
+      objectFormatBytes: 144.7 KB
       extension: .mp3
-    - assetName: Audio01
-      assetPath: Assets/Examples/AssetBundleTest/Audio/Audio01.mp3
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Audio01
+      objectPath: Assets/Examples/AssetBundleTest/Audio/Audio01.mp3
       bundleName: audio
+      objectSize: 12899
+      objectFormatBytes: 12.6 KB
       extension: .mp3
-    - assetName: AudioFashion
-      assetPath: Assets/Examples/AssetBundleTest/Audio/AudioFashion.mp3
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: AudioFashion
+      objectPath: Assets/Examples/AssetBundleTest/Audio/AudioFashion.mp3
       bundleName: audio
+      objectSize: 4454400
+      objectFormatBytes: 4.2 MB
       extension: .mp3
-    - assetName: AudioTechHouse
-      assetPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: AudioTechHouse
+      objectPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
       bundleName: audio
+      objectSize: 1967751
+      objectFormatBytes: 1.9 MB
       extension: .mp3
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+  - bundleName: assets_examples_assetbundletest_material
+    bundlePath: Assets/Examples/AssetBundleTest/Material
+    bundleKey: assets_examples_assetbundletest_material
+    bundleSize: 8513
+    bundleFormatBytes: 8.3 KB
+    dependentBundleKeyList: []
+    resourceObjectInfoList:
+    - objectName: Alpha_Body_MAT
+      objectPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
+      bundleName: assets_examples_assetbundletest_material
+      objectSize: 2134
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: BlueMat
+      objectPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
+      bundleName: assets_examples_assetbundletest_material
+      objectSize: 2127
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: GreyMaterial.Default
+      objectPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
+      bundleName: assets_examples_assetbundletest_material
+      objectSize: 2145
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: RedMat
+      objectPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
+      bundleName: assets_examples_assetbundletest_material
+      objectSize: 2107
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+  - bundleName: assets_examples_assetbundletest_photo
+    bundlePath: Assets/Examples/AssetBundleTest/Photo
+    bundleKey: assets_examples_assetbundletest_photo
+    bundleSize: 21600736
+    bundleFormatBytes: 20.6 MB
+    dependentBundleKeyList: []
+    resourceObjectInfoList:
+    - objectName: CB1024
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
+      bundleName: assets_examples_assetbundletest_photo
+      objectSize: 3145772
+      objectFormatBytes: 3.0 MB
+      extension: .tga
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: CB2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
+      bundleName: assets_examples_assetbundletest_photo
+      objectSize: 12582956
+      objectFormatBytes: 12.0 MB
+      extension: .tga
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: CheckBoard_2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
+      bundleName: assets_examples_assetbundletest_photo
+      objectSize: 1553908
+      objectFormatBytes: 1.5 MB
+      extension: .jpg
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: Grid2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
+      bundleName: assets_examples_assetbundletest_photo
+      objectSize: 4318100
+      objectFormatBytes: 4.1 MB
+      extension: .psd
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+  - bundleName: scene
+    bundlePath: Assets/Examples/AssetBundleTest/Scene
+    bundleKey: scene
+    bundleSize: 324120
+    bundleFormatBytes: 316.5 KB
+    dependentBundleKeyList:
+    - 3fe16adbafe77bff7c919125c0cdb0c7
+    - 7aae7a543ef750edf8ec41a497a31491
+    - 68cf059d128b5ecf0b07bcb34d5f79ab
+    - 0502fbef8668dbd98bd016d766260b0a
+    resourceObjectInfoList:
+    - objectName: SceneTarget
+      objectPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
+      bundleName: scene
+      objectSize: 310029
+      objectFormatBytes: 302.8 KB
+      extension: .unity
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: TestAddtiveScene
+      objectPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
+      bundleName: scene
+      objectSize: 14091
+      objectFormatBytes: 13.8 KB
+      extension: .unity
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+  - bundleName: assets_examples_assetbundletest_text
+    bundlePath: Assets/Examples/AssetBundleTest/Text
+    bundleKey: assets_examples_assetbundletest_text
+    bundleSize: 7565
+    bundleFormatBytes: 7.4 KB
+    dependentBundleKeyList: []
+    resourceObjectInfoList:
+    - objectName: ABMapSchema
+      objectPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
+      bundleName: assets_examples_assetbundletest_text
+      objectSize: 6720
+      objectFormatBytes: 6.6 KB
+      extension: .json
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - objectName: SampleCSV
+      objectPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
+      bundleName: assets_examples_assetbundletest_text
+      objectSize: 845
+      objectFormatBytes: 0.8 KB
+      extension: .csv
+      objectIcon: {fileID: 0}
+      objectState: VALID
+      objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
+        type: 0}
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp
@@ -396,24 +694,3 @@ MonoBehaviour:
   - .guiskin
   - .dds
   isChanged: 0
-  resourceSceneList:
-  - assetName: SceneTarget
-    assetPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
-    bundleName: scene
-    extension: .unity
-  - assetName: TestAddtiveScene
-    assetPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
-    bundleName: scene
-    extension: .unity
-  - assetName: 24_Procedure_PloyState
-    assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
-    bundleName: procedure_scenes
-    extension: .unity
-  - assetName: 24_Procedure_YBotState
-    assetPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
-    bundleName: procedure_scenes
-    extension: .unity
-  - assetName: EntityGame
-    assetPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
-    bundleName: entity_scene
-    extension: .unity

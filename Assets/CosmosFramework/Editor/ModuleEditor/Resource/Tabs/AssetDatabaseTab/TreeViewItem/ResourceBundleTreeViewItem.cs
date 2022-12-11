@@ -4,7 +4,7 @@ namespace Cosmos.Editor.Resource
 {
     public class ResourceBundleTreeViewItem : TreeViewItem
     {
-        string bundleSize;
+        string bundleFormatSize;
         int objectCount;
         public ResourceBundleTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
         {
@@ -13,15 +13,15 @@ namespace Cosmos.Editor.Resource
         /// <summary>
         /// 包体大小；
         /// </summary>
-        public string BundleSize
+        public string BundleFormatSize
         {
             get
             {
-                if (string.IsNullOrEmpty(bundleSize))
+                if (string.IsNullOrEmpty(bundleFormatSize))
                     return "<UNKONW>";
-                return bundleSize;
+                return bundleFormatSize;
             }
-            set { bundleSize = value; }
+            set { bundleFormatSize = value; }
         }
         public int ObjectCount
         {

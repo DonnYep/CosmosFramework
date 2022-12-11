@@ -80,33 +80,30 @@ namespace Cosmos.Editor.Resource
         {
             if (ResourceWindowDataProxy.ResourceDataset == null)
                 return;
-            var bundles = ResourceWindowDataProxy.ResourceDataset.ResourceBundleList;
+            var bundleInfos = ResourceWindowDataProxy.ResourceDataset.ResourceBundleInfoList;
             var extensions = ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
-            var scenes = ResourceWindowDataProxy.ResourceDataset.ResourceSceneList;
             var lowerExtensions = extensions.Select(s => s.ToLower()).ToArray();
             extensions.Clear();
             extensions.AddRange(lowerExtensions);
-            scenes.Clear();
-            var bundleLength = bundles.Count;
+            var bundleInfoLength = bundleInfos.Count;
 
-            List<ResourceBundleItem> validBundleItems = new List<ResourceBundleItem>();
-            List<ResourceBundle> invalidBundles = new List<ResourceBundle>();
+            List<ResourceBundleInfo> invalidBundleInfos = new List<ResourceBundleInfo>();
 
-            for (int i = 0; i < bundleLength; i++)
+            for (int i = 0; i < bundleInfoLength; i++)
             {
-                var bundle = bundles[i];
-                var bundlePath = bundle.BundlePath;
+                var bundleInfo = bundleInfos[i];
+                var bundlePath = bundleInfo.BundlePath;
                 if (!AssetDatabase.IsValidFolder(bundlePath))
                 {
-                    invalidBundles.Add(bundle);
+                    invalidBundleInfos.Add(bundleInfo);
                     continue;
                 }
-                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                importer.assetBundleName = bundle.BundleName;
+                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
+                importer.assetBundleName = bundleInfo.BundleName;
 
                 var files = Utility.IO.GetAllFiles(bundlePath);
                 var fileLength = files.Length;
-                bundle.ResourceObjectList.Clear();
+                bundleInfo.ResourceObjectInfoList.Clear();
                 for (int j = 0; j < fileLength; j++)
                 {
                     var srcFilePath = files[j].Replace("\\", "/");
@@ -116,32 +113,51 @@ namespace Cosmos.Editor.Resource
                     {
                         //统一使用小写的文件后缀名
                         var lowerExtFilePath = srcFilePath.Replace(srcFileExt, lowerFileExt);
-                        var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(lowerExtFilePath), lowerExtFilePath, bundle.BundleName, lowerFileExt);
-                        bundle.ResourceObjectList.Add(resourceObject);
-                        if (lowerFileExt == ResourceConstants.UNITY_SCENE_EXTENSION)//表示为场景资源
+
+                        var resourceObjectInfo = new ResourceObjectInfo()
                         {
-                            scenes.Add(resourceObject);
+                            BundleName = bundleInfo.BundleName,
+                            Extension = lowerFileExt,
+                            ObjectName = Path.GetFileNameWithoutExtension(lowerExtFilePath),
+                            ObjectPath = lowerExtFilePath,
+                            ObjectSize = EditorUtil.GetAssetFileSizeLength(lowerExtFilePath),
+                            ObjectFormatBytes = EditorUtil.GetAssetFileSize(lowerExtFilePath),
+                        };
+                        var asset = AssetDatabase.LoadMainAssetAtPath(resourceObjectInfo.ObjectPath);
+                        if (asset != null)
+                        {
+                            resourceObjectInfo.ObjectIcon = EditorUtil.ToTexture2D(EditorGUIUtility.ObjectContent(asset, asset.GetType()).image);
+                            resourceObjectInfo.ObjectState = "VALID";
+                            resourceObjectInfo.ObjectStateIcon = ResourceWindowUtility.GetAssetValidIcon();
                         }
+                        else
+                        {
+                            resourceObjectInfo.ObjectIcon = EditorGUIUtility.FindTexture("console.erroricon");
+                            resourceObjectInfo.ObjectState = "INVALID";
+                            resourceObjectInfo.ObjectStateIcon = ResourceWindowUtility.GetAssetInvalidIcon();
+                        }
+                        bundleInfo.ResourceObjectInfoList.Add(resourceObjectInfo);
                     }
                 }
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                var bundleItem = new ResourceBundleItem(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
-                validBundleItems.Add(bundleItem);
+                bundleInfo.BundleSize = bundleSize;
+                bundleInfo.BundleKey = bundleInfo.BundleName;
+                bundleInfo.BundleFormatSize = EditorUtility.FormatBytes(bundleSize);
             }
-            for (int i = 0; i < invalidBundles.Count; i++)
+            for (int i = 0; i < invalidBundleInfos.Count; i++)
             {
-                bundles.Remove(invalidBundles[i]);
+                bundleInfos.Remove(invalidBundleInfos[i]);
             }
-            for (int i = 0; i < bundles.Count; i++)
+            for (int i = 0; i < bundleInfos.Count; i++)
             {
-                var bundle = bundles[i];
+                var bundle = bundleInfos[i];
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 bundle.DependenBundleKeytList.Clear();
                 bundle.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
-            for (int i = 0; i < bundles.Count; i++)
+            for (int i = 0; i < bundleInfos.Count; i++)
             {
-                var bundle = bundles[i];
+                var bundle = bundleInfos[i];
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 importer.assetBundleName = string.Empty;
             }

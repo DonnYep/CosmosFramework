@@ -8,7 +8,7 @@ namespace Cosmos.Editor.Resource
 {
     public class ResourceBundleTreeView : TreeView
     {
-        readonly List<ResourceBundleItem> bundleItemList = new List<ResourceBundleItem>();
+        readonly List<ResourceBundleInfo> bundleInfoList = new List<ResourceBundleInfo>();
 
         public Action<IList<int>> onSelectionChanged;
         public Action<IList<int>> onDelete;
@@ -24,7 +24,7 @@ namespace Cosmos.Editor.Resource
         /// 正在重命名的itemId
         /// </summary>
         int renamingItemId = -1;
-        List<string>sortedBundleNames=new List<string>();
+        List<string> sortedBundleNames = new List<string>();
         public ResourceBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
@@ -34,30 +34,30 @@ namespace Cosmos.Editor.Resource
         }
         public void Clear()
         {
-            bundleItemList.Clear();
+            bundleInfoList.Clear();
             Reload();
         }
-        public bool AddBundle(ResourceBundleItem bundleItem)
+        public bool AddBundle(ResourceBundleInfo bundleInfo)
         {
-            if (!bundleItemList.Contains(bundleItem))
+            if (!bundleInfoList.Contains(bundleInfo))
             {
-                bundleItemList.Add(bundleItem);
+                bundleInfoList.Add(bundleInfo);
                 return true;
             }
             return false;
         }
-        public void RemoveBundle(ResourceBundleItem bundleItem)
+        public void RemoveBundle(ResourceBundleInfo bundleInfo)
         {
-            if (bundleItemList.Contains(bundleItem))
+            if (bundleInfoList.Contains(bundleInfo))
             {
-                bundleItemList.Remove(bundleItem);
+                bundleInfoList.Remove(bundleInfo);
                 Reload();
             }
         }
         protected override void DoubleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            EditorUtil.PingAndActiveObject(bundleItemList[id].BundlePath);
+            EditorUtil.PingAndActiveObject(bundleInfoList[id].BundlePath);
         }
         protected override void ContextClickedItem(int id)
         {
@@ -104,10 +104,10 @@ namespace Cosmos.Editor.Resource
                 newName = ResourceUtility.FilterName(newName);
                 //防止重名
                 var canUse = true;
-                var length = bundleItemList.Count;
+                var length = bundleInfoList.Count;
                 for (int i = 0; i < length; i++)
                 {
-                    if (bundleItemList[i].BundleName == newName)
+                    if (bundleInfoList[i].BundleName == newName)
                     {
                         canUse = false;
                         break;
@@ -115,8 +115,8 @@ namespace Cosmos.Editor.Resource
                 }
                 if (canUse)
                 {
-                    var bundleInfo = bundleItemList[args.itemID];
-                    bundleItemList[args.itemID] = new ResourceBundleItem(newName, bundleInfo.BundlePath, bundleInfo.BundleSize, bundleInfo.ObjectCount);
+                    var bundleInfo = bundleInfoList[args.itemID];
+                    bundleInfo.BundleName= newName;
                     item.displayName = newName;
                     onRenameBundle?.Invoke(args.itemID, newName);
                 }
@@ -142,10 +142,14 @@ namespace Cosmos.Editor.Resource
             var assetIcon = ResourceWindowUtility.GetFolderIcon();
             var allItems = new List<TreeViewItem>();
             {
-                for (int i = 0; i < bundleItemList.Count; i++)
+                for (int i = 0; i < bundleInfoList.Count; i++)
                 {
-                    var bundleSize = EditorUtility.FormatBytes(bundleItemList[i].BundleSize);
-                    var item = new ResourceBundleTreeViewItem(i, 1, bundleItemList[i].BundleName, assetIcon) { BundleSize = bundleSize, ObjectCount = bundleItemList[i].ObjectCount };
+                    var bundleInfo = bundleInfoList[i];
+                    var item = new ResourceBundleTreeViewItem(i, 1, bundleInfo.BundleName, assetIcon) 
+                    {
+                        BundleFormatSize = bundleInfo.BundleFormatSize, 
+                        ObjectCount = bundleInfo.ResourceObjectInfoList.Count
+                    };
                     allItems.Add(item);
                 }
                 SetupParentsAndChildrenFromDepths(root, allItems);
@@ -170,35 +174,35 @@ namespace Cosmos.Editor.Resource
                     {
                         //Size
                         if (ascending)
-                            bundleItemList.Sort((lhs, rhs) => lhs.BundleSize.CompareTo(rhs.BundleSize));
+                            bundleInfoList.Sort((lhs, rhs) => lhs.BundleSize.CompareTo(rhs.BundleSize));
                         else
-                            bundleItemList.Sort((lhs, rhs) => rhs.BundleSize.CompareTo(lhs.BundleSize));
+                            bundleInfoList.Sort((lhs, rhs) => rhs.BundleSize.CompareTo(lhs.BundleSize));
                     }
                     break;
                 case 1:
                     {
                         //Amount
                         if (ascending)
-                            bundleItemList.Sort((lhs, rhs) => lhs.ObjectCount.CompareTo(rhs.ObjectCount));
+                            bundleInfoList.Sort((lhs, rhs) => lhs.ResourceObjectInfoList.Count.CompareTo(rhs.ResourceObjectInfoList.Count));
                         else
-                            bundleItemList.Sort((lhs, rhs) => rhs.ObjectCount.CompareTo(lhs.ObjectCount));
+                            bundleInfoList.Sort((lhs, rhs) => rhs.ResourceObjectInfoList.Count.CompareTo(lhs.ResourceObjectInfoList.Count));
                     }
                     break;
                 case 2:
                     {
                         //Bundle
                         if (ascending)
-                            bundleItemList.Sort((lhs, rhs) => lhs.BundleName.CompareTo(rhs.BundleName));
+                            bundleInfoList.Sort((lhs, rhs) => lhs.BundleName.CompareTo(rhs.BundleName));
                         else
-                            bundleItemList.Sort((lhs, rhs) => rhs.BundleName.CompareTo(lhs.BundleName));
+                            bundleInfoList.Sort((lhs, rhs) => rhs.BundleName.CompareTo(lhs.BundleName));
                     }
                     break;
             }
             sortedBundleNames.Clear();
-            var bundleLength = bundleItemList.Count;
+            var bundleLength = bundleInfoList.Count;
             for (int i = 0; i < bundleLength; i++)
             {
-                sortedBundleNames.Add(bundleItemList[i].BundleName);
+                sortedBundleNames.Add(bundleInfoList[i].BundleName);
             }
             onSort?.Invoke(sortedBundleNames);
             Reload();
@@ -210,7 +214,7 @@ namespace Cosmos.Editor.Resource
                 case 0:
                     {
                         var lablCellRect = new Rect(cellRect.x + 4, cellRect.y, cellRect.width, cellRect.height);
-                        DefaultGUI.Label(lablCellRect, treeView.BundleSize, args.selected, args.focused);
+                        DefaultGUI.Label(lablCellRect, treeView.BundleFormatSize, args.selected, args.focused);
                     }
                     break;
                 case 1:
@@ -234,7 +238,7 @@ namespace Cosmos.Editor.Resource
         }
         void DeleteAll()
         {
-            bundleItemList.Clear();
+            bundleInfoList.Clear();
             onAllDelete?.Invoke();
             Reload();
         }
@@ -244,16 +248,16 @@ namespace Cosmos.Editor.Resource
             {
                 var list = context as IList<int>;
                 var length = list.Count;
-                var rmbundleItems = new ResourceBundleItem[length];
+                var rmbundleInfos = new ResourceBundleInfo[length];
                 for (int i = 0; i < length; i++)
                 {
                     var rmid = list[i];
-                    rmbundleItems[i] = bundleItemList[rmid];
+                    rmbundleInfos[i] = bundleInfoList[rmid];
                 }
-                var rmlen = rmbundleItems.Length;
+                var rmlen = rmbundleInfos.Length;
                 for (int i = 0; i < rmlen; i++)
                 {
-                    bundleItemList.Remove(rmbundleItems[i]);
+                    bundleInfoList.Remove(rmbundleInfos[i]);
                 }
                 onDelete?.Invoke(list);
                 SetSelection(new int[0]);
@@ -268,37 +272,35 @@ namespace Cosmos.Editor.Resource
         {
             var itemId = Convert.ToInt32(context);
             var item = FindItem(itemId, rootItem);
-            var bundleInfo = bundleItemList[itemId];
+            var bundleInfo = bundleInfoList[itemId];
             var bundleName = ResourceUtility.FilterName(bundleInfo.BundlePath);
-            var newBundleItem = new ResourceBundleItem(bundleName, bundleInfo.BundlePath, bundleInfo.BundleSize, bundleInfo.ObjectCount);
-            bundleItemList[itemId] = newBundleItem;
-            item.displayName = newBundleItem.BundleName;
+            bundleInfo.BundleName= bundleName;
+            item.displayName = bundleInfo.BundleName;
             onRenameBundle?.Invoke(itemId, bundleInfo.BundlePath);
         }
         void ResetAllBundleName()
         {
-            var length = bundleItemList.Count;
+            var length = bundleInfoList.Count;
             for (int i = 0; i < length; i++)
             {
                 var item = FindItem(i, rootItem);
-                var bundleInfo = bundleItemList[i];
+                var bundleInfo = bundleInfoList[i];
                 var bundleName = ResourceUtility.FilterName(bundleInfo.BundlePath);
-                var newBundleItem = new ResourceBundleItem(bundleName, bundleInfo.BundlePath, bundleInfo.BundleSize, bundleInfo.ObjectCount);
-                bundleItemList[i] = newBundleItem;
-                item.displayName = newBundleItem.BundleName;
+                bundleInfo.BundleName = bundleName;
+                item.displayName = bundleInfo.BundleName;
                 onRenameBundle?.Invoke(i, bundleInfo.BundlePath);
             }
         }
         void CopyBundleNameToClipboard(object context)
         {
             var id = Convert.ToInt32(context);
-            var bundle = bundleItemList[id];
+            var bundle = bundleInfoList[id];
             GUIUtility.systemCopyBuffer = bundle.BundleName;
         }
         void CopyBundlePathToClipboard(object context)
         {
             var id = Convert.ToInt32(context);
-            var bundle = bundleItemList[id];
+            var bundle = bundleInfoList[id];
             GUIUtility.systemCopyBuffer = bundle.BundlePath;
         }
     }
