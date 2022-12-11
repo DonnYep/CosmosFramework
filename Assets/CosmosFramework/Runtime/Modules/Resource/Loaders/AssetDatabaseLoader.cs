@@ -344,6 +344,7 @@ namespace Cosmos.Resource
             if (condition != null)
                 yield return new WaitUntil(condition);
             operation.allowSceneActivation = true;
+            yield return operation.isDone;
             yield return null;
             callback?.Invoke();
         }
@@ -371,6 +372,14 @@ namespace Cosmos.Resource
                 yield break;
             }
             var operation = SceneManager.UnloadSceneAsync(scene);
+            if (operation == null)
+            {
+                OnSceneUnloaded(scene);
+                progress?.Invoke(1);
+                yield return null;
+                callback?.Invoke();
+                yield break;
+            }
             while (!operation.isDone)
             {
                 progress?.Invoke(operation.progress);
@@ -382,6 +391,7 @@ namespace Cosmos.Resource
             yield return null;
             if (condition != null)
                 yield return new WaitUntil(condition);
+            yield return operation.isDone;
             yield return null;
             callback?.Invoke();
         }
@@ -392,18 +402,22 @@ namespace Cosmos.Resource
             var unitResRatio = 100f / sceneCount;
             int currentSceneIndex = 0;
             float overallProgress = 0;
-            foreach (var sceneName in loadSceneList)
+            var loadSceneArr = loadSceneList.ToArray();
+            foreach (var sceneName in loadSceneArr)
             {
                 var overallIndexPercent = 100 * ((float)currentSceneIndex / sceneCount);
                 currentSceneIndex++;
                 if (!loadedSceneDict.TryGetValue(sceneName, out var scene))
                     continue;
-                var ao = SceneManager.UnloadSceneAsync(scene);
-                while (!ao.isDone)
+                var operation = SceneManager.UnloadSceneAsync(scene);
+                if (operation != null)
                 {
-                    overallProgress = overallIndexPercent + (unitResRatio * ao.progress);
-                    progress?.Invoke(overallProgress / 100);
-                    yield return null;
+                    while (!operation.isDone)
+                    {
+                        overallProgress = overallIndexPercent + (unitResRatio * operation.progress);
+                        progress?.Invoke(overallProgress / 100);
+                        yield return null;
+                    }
                 }
                 overallProgress = overallIndexPercent + (unitResRatio * 1);
                 progress?.Invoke(overallProgress / 100);

@@ -6,7 +6,7 @@ namespace Cosmos.Editor.Resource
 {
     public class ResourceObjectTreeView : TreeView
     {
-        List<ResourceObjectInfo> objectList = new List<ResourceObjectInfo>();
+        List<ResourceObjectItem> objectItemList = new List<ResourceObjectItem>();
         public ResourceObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
@@ -14,16 +14,16 @@ namespace Cosmos.Editor.Resource
             showBorder = true;
             multiColumnHeader.sortingChanged += OnMultiColumnHeaderSortingChanged;
         }
-        public void AddObject(ResourceObjectInfo objectInfo)
+        public void AddObject(ResourceObjectItem objectItem)
         {
-            if (!objectList.Contains(objectInfo))
+            if (!objectItemList.Contains(objectItem))
             {
-                objectList.Add(objectInfo);
+                objectItemList.Add(objectItem);
             }
         }
         public void Clear()
         {
-            objectList.Clear();
+            objectItemList.Clear();
             Reload();
         }
         protected override void ContextClickedItem(int id)
@@ -36,21 +36,21 @@ namespace Cosmos.Editor.Resource
         protected override void DoubleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            EditorUtil.PingAndActiveObject(objectList[id].AssetPath);
+            EditorUtil.PingAndActiveObject(objectItemList[id].AssetPath);
         }
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
             var allItems = new List<TreeViewItem>();
             {
-                for (int i = 0; i < objectList.Count; i++)
+                for (int i = 0; i < objectItemList.Count; i++)
                 {
-                    var objectInfo = objectList[i];
+                    var objectInfo = objectItemList[i];
                     var obj = AssetDatabase.LoadMainAssetAtPath(objectInfo.AssetPath);
                     Texture2D objectIcon = null;
                     Texture2D stateIcon = null;
                     string objectState = string.Empty;
-                    if (objectList[i].Vaild)
+                    if (objectItemList[i].Vaild)
                     {
                         objectIcon = EditorUtil.ToTexture2D(EditorGUIUtility.ObjectContent(obj, obj.GetType()).image);
                         objectState = "VALID";
@@ -98,54 +98,54 @@ namespace Cosmos.Editor.Resource
                     {
                         //Name
                         if (ascending)
-                            objectList.Sort((lhs, rhs) => lhs.ObjectName.CompareTo(rhs.ObjectName));
+                            objectItemList.Sort((lhs, rhs) => lhs.ObjectName.CompareTo(rhs.ObjectName));
                         else
-                            objectList.Sort((lhs, rhs) => rhs.ObjectName.CompareTo(lhs.ObjectName));
+                            objectItemList.Sort((lhs, rhs) => rhs.ObjectName.CompareTo(lhs.ObjectName));
                     }
                     break;
                 case 1:
                     {
                         //Extension
                         if (ascending)
-                            objectList.Sort((lhs, rhs) => lhs.Extension.CompareTo(rhs.Extension));
+                            objectItemList.Sort((lhs, rhs) => lhs.Extension.CompareTo(rhs.Extension));
                         else
-                            objectList.Sort((lhs, rhs) => rhs.Extension.CompareTo(lhs.Extension));
+                            objectItemList.Sort((lhs, rhs) => rhs.Extension.CompareTo(lhs.Extension));
                     }
                     break;
                 case 2:
                     {
                         //State
                         if (ascending)
-                            objectList.Sort((lhs, rhs) => lhs.Vaild.CompareTo(rhs.Vaild));
+                            objectItemList.Sort((lhs, rhs) => lhs.Vaild.CompareTo(rhs.Vaild));
                         else
-                            objectList.Sort((lhs, rhs) => rhs.Vaild.CompareTo(lhs.Vaild));
+                            objectItemList.Sort((lhs, rhs) => rhs.Vaild.CompareTo(lhs.Vaild));
                     }
                     break;
                 case 3:
                     {
                         //Size
                         if (ascending)
-                            objectList.Sort((lhs, rhs) => lhs.FileSize.CompareTo(rhs.FileSize));
+                            objectItemList.Sort((lhs, rhs) => lhs.FileSize.CompareTo(rhs.FileSize));
                         else
-                            objectList.Sort((lhs, rhs) => rhs.FileSize.CompareTo(lhs.FileSize));
+                            objectItemList.Sort((lhs, rhs) => rhs.FileSize.CompareTo(lhs.FileSize));
                     }
                     break;
                 case 4:
                     {
                         //AssetBundle
                         if (ascending)
-                            objectList.Sort((lhs, rhs) => lhs.AssetBundleName.CompareTo(rhs.AssetBundleName));
+                            objectItemList.Sort((lhs, rhs) => lhs.AssetBundleName.CompareTo(rhs.AssetBundleName));
                         else
-                            objectList.Sort((lhs, rhs) => rhs.AssetBundleName.CompareTo(lhs.AssetBundleName));
+                            objectItemList.Sort((lhs, rhs) => rhs.AssetBundleName.CompareTo(lhs.AssetBundleName));
                     }
                     break;
                 case 5:
                     {
                         //AssetPath
                         if (ascending)
-                            objectList.Sort((lhs, rhs) => lhs.AssetPath.CompareTo(rhs.AssetPath));
+                            objectItemList.Sort((lhs, rhs) => lhs.AssetPath.CompareTo(rhs.AssetPath));
                         else
-                            objectList.Sort((lhs, rhs) => rhs.AssetPath.CompareTo(lhs.AssetPath));
+                            objectItemList.Sort((lhs, rhs) => rhs.AssetPath.CompareTo(lhs.AssetPath));
                     }
                     break;
             }
@@ -199,13 +199,13 @@ namespace Cosmos.Editor.Resource
         void CopyNameToClipboard(object context)
         {
             var id = System.Convert.ToInt32(context);
-            var path = objectList[id].ObjectName;
+            var path = objectItemList[id].ObjectName;
             GUIUtility.systemCopyBuffer = path;
         }
         void CopyAssetPathToClipboard(object context)
         {
             var id = System.Convert.ToInt32(context);
-            var path = objectList[id].AssetPath;
+            var path = objectItemList[id].AssetPath;
             GUIUtility.systemCopyBuffer = path;
         }
     }

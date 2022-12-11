@@ -54,7 +54,7 @@ namespace Cosmos.Editor.Resource
                 {
                     var bundle = bundleList[i];
                     long bundleSize = EditorUtil.GetUnityDirectorySize(bundle.BundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                    resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count));
+                    resourceBundleLabel.AddBundle(new ResourceBundleItem(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count));
                 }
                 resourceBundleLabel.Reload();
                 hasChanged = ResourceWindowDataProxy.ResourceDataset.IsChanged;
@@ -121,7 +121,7 @@ namespace Cosmos.Editor.Resource
                 {
                     var bundle = bundleList[i];
                     long bundleSize = EditorUtil.GetUnityDirectorySize(bundle.BundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                    resourceBundleLabel.AddBundle(new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count));
+                    resourceBundleLabel.AddBundle(new ResourceBundleItem(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count));
                 }
                 resourceBundleLabel.Reload();
                 resourceObjectLabel.Clear();
@@ -195,8 +195,8 @@ namespace Cosmos.Editor.Resource
                             {
                                 bundleList.Add(bundle);
                                 long bundleSize = EditorUtil.GetUnityDirectorySize(path, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
-                                resourceBundleLabel.AddBundle(bundleInfo);
+                                var bundleItem = new ResourceBundleItem(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
+                                resourceBundleLabel.AddBundle(bundleItem);
                                 ResourceWindowDataProxy.ResourceDataset.IsChanged = true;
                                 hasChanged = true;
                             }
@@ -302,17 +302,15 @@ namespace Cosmos.Editor.Resource
             if (ResourceWindowDataProxy.ResourceDataset == null)
                 yield break;
             var bundles = ResourceWindowDataProxy.ResourceDataset.ResourceBundleList;
-            var objects = ResourceWindowDataProxy.ResourceDataset.ResourceObjectList;
             var extensions = ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
             var scenes = ResourceWindowDataProxy.ResourceDataset.ResourceSceneList;
             var lowerExtensions = extensions.Select(s => s.ToLower()).ToArray();
             extensions.Clear();
             extensions.AddRange(lowerExtensions);
-            objects.Clear();
             scenes.Clear();
             var bundleLength = bundles.Count;
 
-            List<ResourceBundleInfo> validBundleInfo = new List<ResourceBundleInfo>();
+            List<ResourceBundleItem> validBundleItems = new List<ResourceBundleItem>();
             List<ResourceBundle> invalidBundles = new List<ResourceBundle>();
 
             for (int i = 0; i < bundleLength; i++)
@@ -340,7 +338,6 @@ namespace Cosmos.Editor.Resource
                         //统一使用小写的文件后缀名
                         var lowerExtFilePath = srcFilePath.Replace(srcFileExt, lowerFileExt);
                         var resourceObject = new ResourceObject(Path.GetFileNameWithoutExtension(lowerExtFilePath), lowerExtFilePath, bundle.BundleName, lowerFileExt);
-                        objects.Add(resourceObject);
                         bundle.ResourceObjectList.Add(resourceObject);
                         if (lowerFileExt == ResourceConstants.UNITY_SCENE_EXTENSION)//表示为场景资源
                         {
@@ -349,8 +346,8 @@ namespace Cosmos.Editor.Resource
                     }
                 }
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                var bundleInfo = new ResourceBundleInfo(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
-                validBundleInfo.Add(bundleInfo);
+                var bundleItem = new ResourceBundleItem(bundle.BundleName, bundle.BundlePath, bundleSize, bundle.ResourceObjectList.Count);
+                validBundleItems.Add(bundleItem);
 
                 var bundlePercent = i / (float)bundleLength;
                 EditorUtility.DisplayProgressBar("BuildDataset building", $"building bundle : {Mathf.RoundToInt(bundlePercent * 100)}%", bundlePercent);
@@ -384,9 +381,9 @@ namespace Cosmos.Editor.Resource
             AssetDatabase.SaveAssets();
 #endif
             resourceBundleLabel.Clear();
-            for (int i = 0; i < validBundleInfo.Count; i++)
+            for (int i = 0; i < validBundleItems.Count; i++)
             {
-                resourceBundleLabel.AddBundle(validBundleInfo[i]);
+                resourceBundleLabel.AddBundle(validBundleItems[i]);
             }
             resourceBundleLabel.Reload();
 
@@ -424,7 +421,7 @@ namespace Cosmos.Editor.Resource
                     var obj = objects[j];
                     var assetPath = obj.AssetPath;
                     var valid = AssetDatabase.LoadMainAssetAtPath(obj.AssetPath) != null;
-                    var objInfo = new ResourceObjectInfo(obj.AssetName, assetPath, obj.BundleName, EditorUtil.GetAssetFileSize(assetPath), obj.Extension, valid);
+                    var objInfo = new ResourceObjectItem(obj.AssetName, assetPath, obj.BundleName, EditorUtil.GetAssetFileSize(assetPath), obj.Extension, valid);
                     resourceObjectLabel.AddObject(objInfo);
                     var progress = Mathf.RoundToInt((float)j / (objectLength - 1) * 100);
                     loadingObjectProgress = progress > 0 ? progress : 0;
