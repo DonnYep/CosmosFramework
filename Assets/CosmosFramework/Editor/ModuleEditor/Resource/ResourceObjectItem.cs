@@ -2,7 +2,7 @@
 
 namespace Cosmos.Editor.Resource
 {
-    public struct ResourceObjectInfo : IEquatable<ResourceObjectInfo>
+    public struct ResourceObjectItem : IEquatable<ResourceObjectItem>
     {
         public string ObjectName;
         public string AssetPath;
@@ -10,7 +10,7 @@ namespace Cosmos.Editor.Resource
         public string FileSize;
         public string Extension;
         public bool Vaild;
-        public ResourceObjectInfo(string objectName, string assetPath, string assetBundleName, string fileSize, string extension, bool vaild)
+        public ResourceObjectItem(string objectName, string assetPath, string assetBundleName, string fileSize, string extension, bool vaild)
         {
             ObjectName = objectName;
             AssetPath = assetPath;
@@ -19,7 +19,7 @@ namespace Cosmos.Editor.Resource
             Extension = extension;
             Vaild = vaild;
         }
-        public bool Equals(ResourceObjectInfo other)
+        public bool Equals(ResourceObjectItem other)
         {
             return other.ObjectName == this.ObjectName &&
                 other.AssetPath == this.AssetPath &&
