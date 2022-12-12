@@ -1,12 +1,11 @@
 ﻿using System;
 using UnityEngine;
+using Cosmos;
+
 namespace Cosmos.Resource
 {
-    /// <summary>
-    /// 资源对象
-    /// </summary>
     [Serializable]
-    public class ResourceObject : IEquatable<ResourceObject>
+    public class ResourceObjectInfo : IEquatable<ResourceObjectInfo>
     {
         [SerializeField]
         string objectName;
@@ -15,7 +14,15 @@ namespace Cosmos.Resource
         [SerializeField]
         string bundleName;
         [SerializeField]
+        long objectSize;
+        [SerializeField]
+        string objectFormatBytes;
+        [SerializeField]
         string extension;
+        [SerializeField]
+        string objectState;
+        Texture2D objectStateIcon;
+        Texture2D objectIcon;
         /// <summary>
         /// 资源名
         /// </summary>
@@ -40,6 +47,19 @@ namespace Cosmos.Resource
             get { return bundleName; }
             set { bundleName = value; }
         }
+        public long ObjectSize
+        {
+            get { return objectSize; }
+            set { objectSize = value; }
+        }
+        /// <summary>
+        /// 资源比特大小；
+        /// </summary>
+        public string ObjectFormatBytes
+        {
+            get { return objectFormatBytes; }
+            set { objectFormatBytes = value; }
+        }
         /// <summary>
         /// 后缀名；
         /// </summary>
@@ -48,8 +68,30 @@ namespace Cosmos.Resource
             get { return extension; }
             set { extension = value; }
         }
-        public ResourceObject() { }
-        public bool Equals(ResourceObject other)
+        public Texture2D ObjectIcon
+        {
+            get { return objectIcon; }
+            set { objectIcon = value; }
+        }
+        public string ObjectState
+        {
+            get { return objectState; }
+            set { objectState = value; }
+        }
+        public Texture2D ObjectStateIcon
+        {
+            get { return objectStateIcon; }
+            set { objectStateIcon = value; }
+        }
+        public ResourceObjectInfo() { }
+        public ResourceObjectInfo(string objectName, string objectPath, string bundleName, string extension)
+        {
+            this.objectName = objectName;
+            this.objectPath = objectPath;
+            this.bundleName = bundleName;
+            this.extension = extension;
+        }
+        public bool Equals(ResourceObjectInfo other)
         {
             return other.Extension == this.Extension &&
                 other.BundleName == this.BundleName &&
@@ -58,7 +100,7 @@ namespace Cosmos.Resource
         }
         public override bool Equals(object obj)
         {
-            return (obj is ResourceObject) && Equals((ResourceObject)obj);
+            return (obj is ResourceObjectInfo) && Equals((ResourceObjectInfo)obj);
         }
         public override int GetHashCode()
         {

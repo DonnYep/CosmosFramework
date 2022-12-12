@@ -26,14 +26,23 @@ namespace Cosmos.Resource
         {
             resourceObjectLnkDict = new Dictionary<string, LinkedList<ResourceObject>>();
         }
+        public void AddResourceObject(ResourceObject resourceObject)
+        {
+            if (!resourceObjectLnkDict.TryGetValue(resourceObject.ObjectName, out var lnk))
+            {
+                lnk = new LinkedList<ResourceObject>();
+                resourceObjectLnkDict.Add(resourceObject.ObjectName, lnk);
+            }
+            lnk.AddLast(resourceObject);
+        }
         public void AddResourceObjects(IEnumerable<ResourceObject> resourceObjects)
         {
             foreach (var resourceObject in resourceObjects)
             {
-                if (!resourceObjectLnkDict.TryGetValue(resourceObject.AssetName, out var lnk))
+                if (!resourceObjectLnkDict.TryGetValue(resourceObject.ObjectName, out var lnk))
                 {
                     lnk = new LinkedList<ResourceObject>();
-                    resourceObjectLnkDict.Add(resourceObject.AssetName, lnk);
+                    resourceObjectLnkDict.Add(resourceObject.ObjectName, lnk);
                 }
                 lnk.AddLast(resourceObject);
             }
@@ -42,11 +51,11 @@ namespace Cosmos.Resource
         {
             foreach (var resourceObject in resourceObjects)
             {
-                if (resourceObjectLnkDict.TryGetValue(resourceObject.AssetName, out var lnk))
+                if (resourceObjectLnkDict.TryGetValue(resourceObject.ObjectName, out var lnk))
                 {
                     lnk.Remove(resourceObject);
                     if (lnk.Count == 0)
-                        resourceObjectLnkDict.Remove(resourceObject.AssetName);
+                        resourceObjectLnkDict.Remove(resourceObject.ObjectName);
                 }
             }
         }
@@ -68,7 +77,7 @@ namespace Cosmos.Resource
                     if (resourceObjectLnkDict.TryGetValue(assetName, out var lnk))
                     {
                         //默认返回第一个
-                        assetPath = lnk.First.Value.AssetPath;
+                        assetPath = lnk.First.Value.ObjectPath;
                         return true;
                     }
                 }
@@ -85,7 +94,7 @@ namespace Cosmos.Resource
                             //返回后缀名匹配的
                             if (resourceObject.Extension == lowerExt)
                             {
-                                assetPath = resourceObject.AssetPath;
+                                assetPath = resourceObject.ObjectPath;
                                 break;
                             }
                         }

@@ -48,18 +48,33 @@ namespace Cosmos.Resource
         }
         public void SetResourceDataset(ResourceDataset resourceDataset)
         {
-            var resourceBundleList = resourceDataset.ResourceBundleList;
-            foreach (var resourceBundle in resourceBundleList)
+            var resourceBundleInfoList = resourceDataset.ResourceBundleInfoList;
+            foreach (var resourceBundleInfo in resourceBundleInfoList)
             {
-                resourceBundleWarpperDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle));
-                var resourceObjectList = resourceBundle.ResourceObjectList;
-                var objectLength = resourceObjectList.Count;
+                var resourceBundle = new ResourceBundle()
+                {
+                    BundleKey = resourceBundleInfo.BundleKey,
+                    BundleName = resourceBundleInfo.BundleName,
+                    BundlePath = resourceBundleInfo.BundlePath,
+                };
+                resourceBundle.DependenBundleKeytList.AddRange(resourceBundleInfo.DependenBundleKeytList);
+                var resourceObjectInfoList = resourceBundleInfo.ResourceObjectInfoList;
+                var objectLength = resourceObjectInfoList.Count;
                 for (int i = 0; i < objectLength; i++)
                 {
-                    var resourceObject = resourceObjectList[i];
-                    resourceObjectWarpperDict.TryAdd(resourceObject.AssetPath, new ResourceObjectWarpper(resourceObject));
+                    var resourceObjectInfo = resourceObjectInfoList[i];
+                    var resourceObject = new ResourceObject()
+                    {
+                        ObjectName = resourceObjectInfo.ObjectName,
+                        ObjectPath = resourceObjectInfo.ObjectPath,
+                        BundleName = resourceObjectInfo.BundleName,
+                        Extension = resourceObjectInfo.Extension
+                    };
+                    resourceObjectWarpperDict.TryAdd(resourceObjectInfo.ObjectPath, new ResourceObjectWarpper(resourceObject));
+                    resourceAddress.AddResourceObject(resourceObject);
+                    resourceBundle.ResourceObjectList.Add(resourceObject);
                 }
-                resourceAddress.AddResourceObjects(resourceObjectList);
+                resourceBundleWarpperDict.TryAdd(resourceBundleInfo.BundleName, new ResourceBundleWarpper(resourceBundle));
             }
         }
         ///<inheritdoc/> 
@@ -194,8 +209,8 @@ namespace Cosmos.Resource
                 yield break;
             }
 #if UNITY_EDITOR
-            if (!string.IsNullOrEmpty(resourceObject.AssetPath))
-                asset = UnityEditor.AssetDatabase.LoadAssetAtPath(resourceObject.AssetPath, type);
+            if (!string.IsNullOrEmpty(resourceObject.ObjectPath))
+                asset = UnityEditor.AssetDatabase.LoadAssetAtPath(resourceObject.ObjectPath, type);
             if (asset != null)
             {
                 OnResourceObjectLoad(resourceObject);
@@ -233,7 +248,7 @@ namespace Cosmos.Resource
                 yield break;
             }
 #if UNITY_EDITOR
-            assets = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(resourceObject.AssetPath);
+            assets = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(resourceObject.ObjectPath);
             if (assets != null)
             {
                 OnResourceObjectLoad(resourceObject);
@@ -264,10 +279,10 @@ namespace Cosmos.Resource
             var resourceObjects = bundleWarpper.ResourceBundle.ResourceObjectList;
             foreach (var resourceObject in resourceObjects)
             {
-                var hasObject = resourceObjectWarpperDict.TryGetValue(resourceObject.AssetName, out var objectWarpper);
+                var hasObject = resourceObjectWarpperDict.TryGetValue(resourceObject.ObjectName, out var objectWarpper);
                 if (hasObject)
                 {
-                    var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(resourceObject.AssetPath, typeof(Object));
+                    var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(resourceObject.ObjectPath, typeof(Object));
                     assetList.Add(asset);
                 }
             }
@@ -307,7 +322,7 @@ namespace Cosmos.Resource
             LoadSceneMode loadSceneMode = info.Additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
             AsyncOperation operation = null;
 #if UNITY_EDITOR
-            operation = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(resourceObject.AssetPath, new LoadSceneParameters(loadSceneMode));
+            operation = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(resourceObject.ObjectPath, new LoadSceneParameters(loadSceneMode));
 #else
             operation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
 #endif
@@ -485,7 +500,7 @@ namespace Cosmos.Resource
         {
             var count = objectWarpper.ReferenceCount;
             objectWarpper.ReferenceCount = 0;
-            if (resourceBundleWarpperDict.TryGetValue(objectWarpper.ResourceObject.AssetName, out var bundleWarpper))
+            if (resourceBundleWarpperDict.TryGetValue(objectWarpper.ResourceObject.ObjectName, out var bundleWarpper))
             {
                 UnloadDependenciesAssetBundle(bundleWarpper, count);
             }
@@ -518,7 +533,7 @@ namespace Cosmos.Resource
         /// </summary>ram>
         void OnResourceObjectLoad(ResourceObject resourceObject)
         {
-            if (!resourceObjectWarpperDict.TryGetValue(resourceObject.AssetPath, out var resourceObjectWarpper))
+            if (!resourceObjectWarpperDict.TryGetValue(resourceObject.ObjectPath, out var resourceObjectWarpper))
                 return;
             resourceObjectWarpper.ReferenceCount++;
         }

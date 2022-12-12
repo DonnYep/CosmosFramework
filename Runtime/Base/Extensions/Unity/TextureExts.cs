@@ -152,5 +152,17 @@ namespace Cosmos
 
             return newImg;
         }
+        /// <summary>
+        ///转换texture为texture2d; 
+        /// </summary>
+        public static Texture2D ToTexture2D(this Texture @this)
+        {
+            return Texture2D.CreateExternalTexture(
+                @this.width,
+                @this.height,
+                TextureFormat.RGB24,
+                false, false,
+                @this.GetNativeTexturePtr());
+        }
     }
 }

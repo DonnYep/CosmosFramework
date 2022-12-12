@@ -239,7 +239,7 @@ namespace Cosmos.Download
                     {
                         Downloading = false;
                         var downloadedData = new DownloadedData(uri, fileDownloadPath);
-                        var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath);
+                        var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath,handler.data.Length);
                         onDownloadSuccess?.Invoke(successEventArgs);
                         OnFileDownloading(uri, fileDownloadPath, 1);
                         DownloadSuccessEventArgs.Release(successEventArgs);
