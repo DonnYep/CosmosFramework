@@ -19,10 +19,10 @@ MonoBehaviour:
     bundleSize: 360065
     bundleFormatBytes: 351.6 KB
     dependentBundleKeyList:
-    - 7aae7a543ef750edf8ec41a497a31491
-    - 68cf059d128b5ecf0b07bcb34d5f79ab
-    - 0502fbef8668dbd98bd016d766260b0a
-    - ed47e6f35abfea84ec74480d2e315ebf
+    - audio
+    - material
+    - model
+    - texture
     resourceObjectInfoList:
     - objectName: AudioSource
       objectPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
@@ -361,16 +361,16 @@ MonoBehaviour:
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
-  - bundleName: assets_examples_assetbundletest_model
+  - bundleName: model
     bundlePath: Assets/Examples/AssetBundleTest/Model
-    bundleKey: assets_examples_assetbundletest_model
+    bundleKey: model
     bundleSize: 6008044
     bundleFormatBytes: 5.7 MB
     dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: LM_XBotIdle
       objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
-      bundleName: assets_examples_assetbundletest_model
+      bundleName: model
       objectSize: 776073
       objectFormatBytes: 0.7 MB
       extension: .anim
@@ -380,7 +380,7 @@ MonoBehaviour:
         type: 0}
     - objectName: LM_XBotWalking
       objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
-      bundleName: assets_examples_assetbundletest_model
+      bundleName: model
       objectSize: 299736
       objectFormatBytes: 292.7 KB
       extension: .anim
@@ -390,7 +390,7 @@ MonoBehaviour:
         type: 0}
     - objectName: LM_YBotIdle
       objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
-      bundleName: assets_examples_assetbundletest_model
+      bundleName: model
       objectSize: 422883
       objectFormatBytes: 413.0 KB
       extension: .anim
@@ -400,7 +400,7 @@ MonoBehaviour:
         type: 0}
     - objectName: LM_YBotWalk
       objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
-      bundleName: assets_examples_assetbundletest_model
+      bundleName: model
       objectSize: 387880
       objectFormatBytes: 378.8 KB
       extension: .anim
@@ -410,7 +410,7 @@ MonoBehaviour:
         type: 0}
     - objectName: XBot_TPose
       objectPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
-      bundleName: assets_examples_assetbundletest_model
+      bundleName: model
       objectSize: 1961312
       objectFormatBytes: 1.9 MB
       extension: .fbx
@@ -420,7 +420,7 @@ MonoBehaviour:
         type: 0}
     - objectName: YBot_TPose
       objectPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
-      bundleName: assets_examples_assetbundletest_model
+      bundleName: model
       objectSize: 2160160
       objectFormatBytes: 2.1 MB
       extension: .fbx
@@ -485,16 +485,16 @@ MonoBehaviour:
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
-  - bundleName: assets_examples_assetbundletest_material
+  - bundleName: material
     bundlePath: Assets/Examples/AssetBundleTest/Material
-    bundleKey: assets_examples_assetbundletest_material
+    bundleKey: material
     bundleSize: 8513
     bundleFormatBytes: 8.3 KB
     dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: Alpha_Body_MAT
       objectPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
-      bundleName: assets_examples_assetbundletest_material
+      bundleName: material
       objectSize: 2134
       objectFormatBytes: 2.1 KB
       extension: .mat
@@ -504,7 +504,7 @@ MonoBehaviour:
         type: 0}
     - objectName: BlueMat
       objectPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
-      bundleName: assets_examples_assetbundletest_material
+      bundleName: material
       objectSize: 2127
       objectFormatBytes: 2.1 KB
       extension: .mat
@@ -514,7 +514,7 @@ MonoBehaviour:
         type: 0}
     - objectName: GreyMaterial.Default
       objectPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
-      bundleName: assets_examples_assetbundletest_material
+      bundleName: material
       objectSize: 2145
       objectFormatBytes: 2.1 KB
       extension: .mat
@@ -524,7 +524,7 @@ MonoBehaviour:
         type: 0}
     - objectName: RedMat
       objectPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
-      bundleName: assets_examples_assetbundletest_material
+      bundleName: material
       objectSize: 2107
       objectFormatBytes: 2.1 KB
       extension: .mat
@@ -532,16 +532,16 @@ MonoBehaviour:
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
-  - bundleName: assets_examples_assetbundletest_photo
+  - bundleName: photo
     bundlePath: Assets/Examples/AssetBundleTest/Photo
-    bundleKey: assets_examples_assetbundletest_photo
+    bundleKey: photo
     bundleSize: 21600736
     bundleFormatBytes: 20.6 MB
     dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: CB1024
       objectPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
-      bundleName: assets_examples_assetbundletest_photo
+      bundleName: photo
       objectSize: 3145772
       objectFormatBytes: 3.0 MB
       extension: .tga
@@ -551,7 +551,7 @@ MonoBehaviour:
         type: 0}
     - objectName: CB2048
       objectPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
-      bundleName: assets_examples_assetbundletest_photo
+      bundleName: photo
       objectSize: 12582956
       objectFormatBytes: 12.0 MB
       extension: .tga
@@ -561,7 +561,7 @@ MonoBehaviour:
         type: 0}
     - objectName: CheckBoard_2048
       objectPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
-      bundleName: assets_examples_assetbundletest_photo
+      bundleName: photo
       objectSize: 1553908
       objectFormatBytes: 1.5 MB
       extension: .jpg
@@ -571,7 +571,7 @@ MonoBehaviour:
         type: 0}
     - objectName: Grid2048
       objectPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
-      bundleName: assets_examples_assetbundletest_photo
+      bundleName: photo
       objectSize: 4318100
       objectFormatBytes: 4.1 MB
       extension: .psd
@@ -585,10 +585,10 @@ MonoBehaviour:
     bundleSize: 324120
     bundleFormatBytes: 316.5 KB
     dependentBundleKeyList:
-    - 3fe16adbafe77bff7c919125c0cdb0c7
-    - 7aae7a543ef750edf8ec41a497a31491
-    - 68cf059d128b5ecf0b07bcb34d5f79ab
-    - 0502fbef8668dbd98bd016d766260b0a
+    - material
+    - model
+    - prefab
+    - texture
     resourceObjectInfoList:
     - objectName: SceneTarget
       objectPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
@@ -610,16 +610,16 @@ MonoBehaviour:
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
-  - bundleName: assets_examples_assetbundletest_text
+  - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text
-    bundleKey: assets_examples_assetbundletest_text
+    bundleKey: text
     bundleSize: 7565
     bundleFormatBytes: 7.4 KB
     dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: ABMapSchema
       objectPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
-      bundleName: assets_examples_assetbundletest_text
+      bundleName: text
       objectSize: 6720
       objectFormatBytes: 6.6 KB
       extension: .json
@@ -629,7 +629,7 @@ MonoBehaviour:
         type: 0}
     - objectName: SampleCSV
       objectPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
-      bundleName: assets_examples_assetbundletest_text
+      bundleName: text
       objectSize: 845
       objectFormatBytes: 0.8 KB
       extension: .csv

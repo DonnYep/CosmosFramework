@@ -78,10 +78,10 @@ namespace Cosmos.Editor.Resource
             }
             for (int i = 0; i < bundleInfoLength; i++)
             {
-                var bundle = bundleInfos[i];
-                bundle.DependenBundleKeytList.Clear();
-                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                bundle.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                var bundleInfo = bundleInfos[i];
+                bundleInfo.DependenBundleKeytList.Clear();
+                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
+                bundleInfo.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
         }
         public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
@@ -151,13 +151,30 @@ namespace Cosmos.Editor.Resource
 
             var bundleInfos = dataset.ResourceBundleInfoList;
             var bundleInfoLength = bundleInfos.Count;
+
+            #region 还原dataset在editor环境下的依赖
+            //这段还原dataset在editor模式的依赖
+            for (int i = 0; i < bundleInfoLength; i++)
+            {
+                var bundle = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
+                importer.assetBundleName = bundle.BundleName;
+            }
+            for (int i = 0; i < bundleInfoLength; i++)
+            {
+                var bundleInfo = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
+                bundleInfo.DependenBundleKeytList.Clear();
+                bundleInfo.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+            }
+            #endregion
+
             for (int i = 0; i < bundleInfoLength; i++)
             {
                 var bundle = bundleInfos[i];
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 importer.assetBundleName = string.Empty;
             }
-
             if (buildParams.CopyToStreamingAssets)
             {
                 string streamingAssetPath = string.Empty;

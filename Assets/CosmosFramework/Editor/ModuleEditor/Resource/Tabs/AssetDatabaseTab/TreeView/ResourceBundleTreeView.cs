@@ -35,7 +35,6 @@ namespace Cosmos.Editor.Resource
         public void Clear()
         {
             bundleInfoList.Clear();
-            Reload();
         }
         public bool AddBundle(ResourceBundleInfo bundleInfo)
         {

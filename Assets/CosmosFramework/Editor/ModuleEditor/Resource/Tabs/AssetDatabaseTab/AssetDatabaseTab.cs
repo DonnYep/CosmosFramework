@@ -382,15 +382,15 @@ namespace Cosmos.Editor.Resource
             }
             for (int i = 0; i < bundleInfos.Count; i++)
             {
-                var bundle = bundleInfos[i];
-                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                bundle.DependenBundleKeytList.Clear();
-                bundle.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                var bundleInfo = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
+                bundleInfo.DependenBundleKeytList.Clear();
+                bundleInfo.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
             for (int i = 0; i < bundleInfos.Count; i++)
             {
-                var bundle = bundleInfos[i];
-                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
+                var bundleInfo = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
                 importer.assetBundleName = string.Empty;
             }
             yield return null;
