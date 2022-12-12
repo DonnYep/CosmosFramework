@@ -30,7 +30,8 @@ MonoBehaviour:
       objectSize: 3148
       objectFormatBytes: 3.1 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -40,7 +41,8 @@ MonoBehaviour:
       objectSize: 2785
       objectFormatBytes: 2.7 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -50,7 +52,8 @@ MonoBehaviour:
       objectSize: 2781
       objectFormatBytes: 2.7 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -60,7 +63,8 @@ MonoBehaviour:
       objectSize: 2824
       objectFormatBytes: 2.8 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -70,7 +74,8 @@ MonoBehaviour:
       objectSize: 13749
       objectFormatBytes: 13.4 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -80,7 +85,8 @@ MonoBehaviour:
       objectSize: 2769
       objectFormatBytes: 2.7 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -90,7 +96,8 @@ MonoBehaviour:
       objectSize: 2295
       objectFormatBytes: 2.2 KB
       extension: .mat
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6121920372263969469, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -100,7 +107,8 @@ MonoBehaviour:
       objectSize: 2128
       objectFormatBytes: 2.1 KB
       extension: .mat
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6121920372263969469, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -110,7 +118,8 @@ MonoBehaviour:
       objectSize: 2134
       objectFormatBytes: 2.1 KB
       extension: .mat
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6121920372263969469, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -120,7 +129,8 @@ MonoBehaviour:
       objectSize: 3244
       objectFormatBytes: 3.2 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -130,7 +140,8 @@ MonoBehaviour:
       objectSize: 3240
       objectFormatBytes: 3.2 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -140,7 +151,8 @@ MonoBehaviour:
       objectSize: 3233
       objectFormatBytes: 3.2 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -150,7 +162,8 @@ MonoBehaviour:
       objectSize: 2113
       objectFormatBytes: 2.1 KB
       extension: .controller
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 7898662586513280550, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -160,7 +173,8 @@ MonoBehaviour:
       objectSize: 2842
       objectFormatBytes: 2.8 KB
       extension: .controller
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 7898662586513280550, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -170,7 +184,8 @@ MonoBehaviour:
       objectSize: 76661
       objectFormatBytes: 74.9 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -180,7 +195,8 @@ MonoBehaviour:
       objectSize: 75121
       objectFormatBytes: 73.4 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -190,7 +206,8 @@ MonoBehaviour:
       objectSize: 2842
       objectFormatBytes: 2.8 KB
       extension: .controller
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 7898662586513280550, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -200,7 +217,8 @@ MonoBehaviour:
       objectSize: 2841
       objectFormatBytes: 2.8 KB
       extension: .controller
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 7898662586513280550, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -210,7 +228,8 @@ MonoBehaviour:
       objectSize: 76634
       objectFormatBytes: 74.8 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -220,7 +239,8 @@ MonoBehaviour:
       objectSize: 76681
       objectFormatBytes: 74.9 KB
       extension: .prefab
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -6840528455795640641, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -237,7 +257,7 @@ MonoBehaviour:
       objectSize: 10803
       objectFormatBytes: 10.5 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: dec26c9b9866d0243a987189baf6b337, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -247,7 +267,7 @@ MonoBehaviour:
       objectSize: 61533
       objectFormatBytes: 60.1 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 1e34e557915db4a4f8f7a752c9531d8f, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -257,7 +277,7 @@ MonoBehaviour:
       objectSize: 56368
       objectFormatBytes: 55.0 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 6f8e0d25c9e876c4cb70e08cf0e045a6, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -267,7 +287,7 @@ MonoBehaviour:
       objectSize: 16081
       objectFormatBytes: 15.7 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: d28fb4b702176814d9732b67778b108c, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -277,7 +297,7 @@ MonoBehaviour:
       objectSize: 7031
       objectFormatBytes: 6.9 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 2bb1654c86a898c42828b88b4b4c6937, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -287,7 +307,7 @@ MonoBehaviour:
       objectSize: 41616
       objectFormatBytes: 40.6 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: a8a8e36d801f1924ba6938cf94a4c966, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -297,7 +317,7 @@ MonoBehaviour:
       objectSize: 7925
       objectFormatBytes: 7.7 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: da8a4983babec844f8705d4f58f70fd8, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -307,7 +327,7 @@ MonoBehaviour:
       objectSize: 41058
       objectFormatBytes: 40.1 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 268377231c605724ab7d718e346f6494, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -317,7 +337,7 @@ MonoBehaviour:
       objectSize: 234473
       objectFormatBytes: 229.0 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: dc937d9b4ed15c948a0678e27adf0d38, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -327,7 +347,7 @@ MonoBehaviour:
       objectSize: 128522
       objectFormatBytes: 125.5 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 5212c03c6382d5247bcb66c813ef5e19, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -337,7 +357,7 @@ MonoBehaviour:
       objectSize: 22748
       objectFormatBytes: 22.2 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 11810b65a0db1a64ab3637c8b61625ef, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -347,7 +367,7 @@ MonoBehaviour:
       objectSize: 64121
       objectFormatBytes: 62.6 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: ffc631fa0b8b774429731fcb1c533780, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -357,7 +377,7 @@ MonoBehaviour:
       objectSize: 17497
       objectFormatBytes: 17.1 KB
       extension: .png
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 0c6a7150c5c0ba248bfe339b605eca02, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -374,7 +394,8 @@ MonoBehaviour:
       objectSize: 776073
       objectFormatBytes: 0.7 MB
       extension: .anim
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 4551485860617614474, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -384,7 +405,8 @@ MonoBehaviour:
       objectSize: 299736
       objectFormatBytes: 292.7 KB
       extension: .anim
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 4551485860617614474, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -394,7 +416,8 @@ MonoBehaviour:
       objectSize: 422883
       objectFormatBytes: 413.0 KB
       extension: .anim
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 4551485860617614474, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -404,7 +427,8 @@ MonoBehaviour:
       objectSize: 387880
       objectFormatBytes: 378.8 KB
       extension: .anim
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 4551485860617614474, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -414,7 +438,8 @@ MonoBehaviour:
       objectSize: 1961312
       objectFormatBytes: 1.9 MB
       extension: .fbx
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2654186429131687520, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -424,7 +449,8 @@ MonoBehaviour:
       objectSize: 2160160
       objectFormatBytes: 2.1 MB
       extension: .fbx
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2654186429131687520, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -441,7 +467,8 @@ MonoBehaviour:
       objectSize: 403374
       objectFormatBytes: 393.9 KB
       extension: .mp3
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6209032750877799845, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -451,7 +478,8 @@ MonoBehaviour:
       objectSize: 148135
       objectFormatBytes: 144.7 KB
       extension: .mp3
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6209032750877799845, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -461,7 +489,8 @@ MonoBehaviour:
       objectSize: 12899
       objectFormatBytes: 12.6 KB
       extension: .mp3
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6209032750877799845, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -471,7 +500,8 @@ MonoBehaviour:
       objectSize: 4454400
       objectFormatBytes: 4.2 MB
       extension: .mp3
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6209032750877799845, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -481,7 +511,8 @@ MonoBehaviour:
       objectSize: 1967751
       objectFormatBytes: 1.9 MB
       extension: .mp3
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6209032750877799845, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -498,7 +529,8 @@ MonoBehaviour:
       objectSize: 2134
       objectFormatBytes: 2.1 KB
       extension: .mat
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6121920372263969469, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -508,7 +540,8 @@ MonoBehaviour:
       objectSize: 2127
       objectFormatBytes: 2.1 KB
       extension: .mat
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6121920372263969469, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -518,7 +551,8 @@ MonoBehaviour:
       objectSize: 2145
       objectFormatBytes: 2.1 KB
       extension: .mat
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6121920372263969469, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -528,7 +562,8 @@ MonoBehaviour:
       objectSize: 2107
       objectFormatBytes: 2.1 KB
       extension: .mat
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 6121920372263969469, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -545,7 +580,7 @@ MonoBehaviour:
       objectSize: 3145772
       objectFormatBytes: 3.0 MB
       extension: .tga
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 9f27d685deb3d7f4cb3821e2f5e23685, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -555,7 +590,7 @@ MonoBehaviour:
       objectSize: 12582956
       objectFormatBytes: 12.0 MB
       extension: .tga
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 2f0badb80fc00ff4cbd58530eb619dc8, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -565,7 +600,7 @@ MonoBehaviour:
       objectSize: 1553908
       objectFormatBytes: 1.5 MB
       extension: .jpg
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 0e3849890faadeb4b9167c3d3a3c496a, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -575,7 +610,7 @@ MonoBehaviour:
       objectSize: 4318100
       objectFormatBytes: 4.1 MB
       extension: .psd
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 2800000, guid: 51d6f0242df93ba41a181740af589fe3, type: 3}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -596,7 +631,8 @@ MonoBehaviour:
       objectSize: 310029
       objectFormatBytes: 302.8 KB
       extension: .unity
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -4890957673588117743, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -606,7 +642,8 @@ MonoBehaviour:
       objectSize: 14091
       objectFormatBytes: 13.8 KB
       extension: .unity
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: -4890957673588117743, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -623,7 +660,8 @@ MonoBehaviour:
       objectSize: 6720
       objectFormatBytes: 6.6 KB
       extension: .json
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 1831301468445745894, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}
@@ -633,7 +671,8 @@ MonoBehaviour:
       objectSize: 845
       objectFormatBytes: 0.8 KB
       extension: .csv
-      objectIcon: {fileID: 0}
+      objectIcon: {fileID: 1831301468445745894, guid: 0000000000000000d000000000000000,
+        type: 0}
       objectState: VALID
       objectStateIcon: {fileID: 3364580505226664849, guid: 0000000000000000d000000000000000,
         type: 0}

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Cosmos;
 
 namespace Cosmos.Resource
 {
@@ -19,11 +20,9 @@ namespace Cosmos.Resource
         [SerializeField]
         string extension;
         [SerializeField]
-        Texture2D objectIcon;
-        [SerializeField]
         string objectState;
-        [SerializeField]
         Texture2D objectStateIcon;
+        Texture2D objectIcon;
         /// <summary>
         /// 资源名
         /// </summary>
@@ -50,7 +49,7 @@ namespace Cosmos.Resource
         }
         public long ObjectSize
         {
-            get { return objectSize;}
+            get { return objectSize; }
             set { objectSize = value; }
         }
         /// <summary>
