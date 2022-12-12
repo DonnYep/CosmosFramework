@@ -14,7 +14,7 @@
             ".unity",".mat",".mask",".overridecontroller",".tif",".spriteatlas",
             ".mp3",".ogg",".aiff",".tga",".dds",".bytes",".json",".asset",".mp4",
             ".xls",".xlsx",".docx",".doc",".mov",".rendertexture",".csv",".fbx",".mixer",
-            ".flare",".playable",".physicmaterial",".signal",".guiskin",".dds"
+            ".flare",".playable",".physicmaterial",".signal",".guiskin",".dds",".otf"
         };
     }
 }

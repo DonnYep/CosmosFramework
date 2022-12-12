@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using Cosmos.Resource;
+using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ namespace Cosmos.Editor.Resource
         {
             treeView.Reload();
         }
-        public void AddObject(ResourceObjectItem objectItem)
+        public void AddObject(ResourceObjectInfo objectItem)
         {
             treeView.AddObject(objectItem);
         }

@@ -589,7 +589,7 @@ namespace Cosmos.Resource
         {
             var count = objectWarpper.ReferenceCount;
             objectWarpper.ReferenceCount = 0;
-            if (resourceBundleWarpperDict.TryGetValue(objectWarpper.ResourceObject.AssetName, out var bundleWarpper))
+            if (resourceBundleWarpperDict.TryGetValue(objectWarpper.ResourceObject.ObjectName, out var bundleWarpper))
             {
                 UnloadDependenciesAssetBundle(bundleWarpper, count);
             }
@@ -622,7 +622,7 @@ namespace Cosmos.Resource
         /// </summary>ram>
         void OnResourceObjectLoad(ResourceObject resourceObject)
         {
-            if (!resourceObjectWarpperDict.TryGetValue(resourceObject.AssetPath, out var resourceObjectWarpper))
+            if (!resourceObjectWarpperDict.TryGetValue(resourceObject.ObjectPath, out var resourceObjectWarpper))
                 return;
             resourceObjectWarpper.ReferenceCount++;
         }
@@ -668,7 +668,7 @@ namespace Cosmos.Resource
                 for (int i = 0; i < objectLength; i++)
                 {
                     var resourceObject = resourceObjectList[i];
-                    resourceObjectWarpperDict.TryAdd(resourceObject.AssetPath, new ResourceObjectWarpper(resourceObject));
+                    resourceObjectWarpperDict.TryAdd(resourceObject.ObjectPath, new ResourceObjectWarpper(resourceObject));
                 }
                 resourceAddress.AddResourceObjects(resourceObjectList);
             }
