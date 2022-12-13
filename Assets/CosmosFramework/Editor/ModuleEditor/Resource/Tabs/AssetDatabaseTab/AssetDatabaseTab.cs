@@ -34,6 +34,10 @@ namespace Cosmos.Editor.Resource
         /// 选中的协程；
         /// </summary>
         EditorCoroutine selectionCoroutine;
+        /// <summary>
+        /// 构建dataset协程
+        /// </summary>
+        EditorCoroutine buildDatasetCoroutine;
         public override void OnEnable()
         {
             resourceBundleLabel.OnEnable();
@@ -63,6 +67,10 @@ namespace Cosmos.Editor.Resource
         public override void OnDisable()
         {
             SaveTabData();
+            if (selectionCoroutine != null)
+                EditorUtil.Coroutine.StopCoroutine(selectionCoroutine);
+            if (buildDatasetCoroutine != null)
+                EditorUtil.Coroutine.StopCoroutine(buildDatasetCoroutine);
         }
         public override void OnGUI(Rect rect)
         {
@@ -140,7 +148,10 @@ namespace Cosmos.Editor.Resource
         }
         public EditorCoroutine BuildDataset()
         {
-            return EditorUtil.Coroutine.StartCoroutine(EnumBuildDataset());
+            if (buildDatasetCoroutine != null)
+                EditorUtil.Coroutine.StopCoroutine(buildDatasetCoroutine);
+            buildDatasetCoroutine = EditorUtil.Coroutine.StartCoroutine(EnumBuildDataset());
+            return buildDatasetCoroutine;
         }
         void DrawDragRect()
         {
@@ -250,7 +261,7 @@ namespace Cosmos.Editor.Resource
             var bundles = ResourceWindowDataProxy.ResourceDataset.ResourceBundleInfoList;
             var dstBundle = bundles[id];
             dstBundle.BundleName = newName;
-            dstBundle.BundleKey= newName;
+            dstBundle.BundleKey = newName;
             EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
             ResourceWindowDataProxy.ResourceDataset.IsChanged = true;
             hasChanged = true;
@@ -344,15 +355,15 @@ namespace Cosmos.Editor.Resource
                             Extension = lowerFileExt,
                             ObjectName = Path.GetFileNameWithoutExtension(lowerExtFilePath),
                             ObjectPath = lowerExtFilePath,
-                            ObjectSize= EditorUtil.GetAssetFileSizeLength(lowerExtFilePath),
+                            ObjectSize = EditorUtil.GetAssetFileSizeLength(lowerExtFilePath),
                             ObjectFormatBytes = EditorUtil.GetAssetFileSize(lowerExtFilePath),
                         };
                         var asset = AssetDatabase.LoadMainAssetAtPath(resourceObjectInfo.ObjectPath);
                         if (asset != null)
                         {
-                            resourceObjectInfo.ObjectIcon = EditorUtil.ToTexture2D(EditorGUIUtility.ObjectContent(asset, asset.GetType()).image);
-                            resourceObjectInfo.ObjectState= "VALID";
-                            resourceObjectInfo.ObjectStateIcon= ResourceWindowUtility.GetAssetValidIcon();
+                            resourceObjectInfo.ObjectIcon = AssetDatabase.GetCachedIcon(lowerExtFilePath) as Texture2D;
+                            resourceObjectInfo.ObjectState = "VALID";
+                            resourceObjectInfo.ObjectStateIcon = ResourceWindowUtility.GetAssetValidIcon();
                         }
                         else
                         {
@@ -365,7 +376,7 @@ namespace Cosmos.Editor.Resource
                 }
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
                 bundleInfo.BundleSize = bundleSize;
-                bundleInfo.BundleKey= bundleInfo.BundleName;
+                bundleInfo.BundleKey = bundleInfo.BundleName;
                 bundleInfo.BundleFormatSize = EditorUtility.FormatBytes(bundleSize);
 
                 resourceBundleLabel.AddBundle(bundleInfo);
