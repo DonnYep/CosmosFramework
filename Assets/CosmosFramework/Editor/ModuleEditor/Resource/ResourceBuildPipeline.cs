@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEngine;
+
 namespace Cosmos.Editor.Resource
 {
     public class ResourceBuildPipeline
@@ -126,7 +128,7 @@ namespace Cosmos.Editor.Resource
                         var asset = AssetDatabase.LoadMainAssetAtPath(resourceObjectInfo.ObjectPath);
                         if (asset != null)
                         {
-                            resourceObjectInfo.ObjectIcon = EditorUtil.ToTexture2D(EditorGUIUtility.ObjectContent(asset, asset.GetType()).image);
+                            resourceObjectInfo.ObjectIcon = AssetDatabase.GetCachedIcon(lowerExtFilePath) as Texture2D;
                             resourceObjectInfo.ObjectState = "VALID";
                             resourceObjectInfo.ObjectStateIcon = ResourceWindowUtility.GetAssetValidIcon();
                         }
