@@ -52,7 +52,7 @@ namespace Cosmos.Editor.Resource
                     BundleName = bundleInfo.BundleName,
                     BundlePath = bundleInfo.BundlePath,
                 };
-                bundle.DependenBundleKeytList.AddRange(bundleInfo.DependenBundleKeytList);
+                bundle.DependentBundleKeytList.AddRange(bundleInfo.DependentBundleKeyList);
                 var objectInfoList = bundleInfo.ResourceObjectInfoList;
                 var objectInfoLength = objectInfoList.Count;
                 for (int j = 0; j < objectInfoLength; j++)
@@ -79,9 +79,9 @@ namespace Cosmos.Editor.Resource
             for (int i = 0; i < bundleInfoLength; i++)
             {
                 var bundleInfo = bundleInfos[i];
-                bundleInfo.DependenBundleKeytList.Clear();
+                bundleInfo.DependentBundleKeyList.Clear();
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
-                bundleInfo.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                bundleInfo.DependentBundleKeyList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
         }
         public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
@@ -164,8 +164,8 @@ namespace Cosmos.Editor.Resource
             {
                 var bundleInfo = bundleInfos[i];
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
-                bundleInfo.DependenBundleKeytList.Clear();
-                bundleInfo.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                bundleInfo.DependentBundleKeyList.Clear();
+                bundleInfo.DependentBundleKeyList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
             #endregion
 
