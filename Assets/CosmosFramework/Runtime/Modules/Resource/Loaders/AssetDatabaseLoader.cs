@@ -57,7 +57,7 @@ namespace Cosmos.Resource
                     BundleName = resourceBundleInfo.BundleName,
                     BundlePath = resourceBundleInfo.BundlePath,
                 };
-                resourceBundle.DependenBundleKeytList.AddRange(resourceBundleInfo.DependenBundleKeytList);
+                resourceBundle.DependentBundleKeytList.AddRange(resourceBundleInfo.DependentBundleKeyList);
                 var resourceObjectInfoList = resourceBundleInfo.ResourceObjectInfoList;
                 var objectLength = resourceObjectInfoList.Count;
                 for (int i = 0; i < objectLength; i++)
@@ -452,7 +452,7 @@ namespace Cosmos.Resource
             if (!hasBundle)
                 yield break; //若bundle信息为空，则终止；
             bundleWarpper.ReferenceCount++; //AB包引用计数增加
-            var dependentList = bundleWarpper.ResourceBundle.DependenBundleKeytList;
+            var dependentList = bundleWarpper.ResourceBundle.DependentBundleKeytList;
             var dependentLength = dependentList.Count;
             for (int i = 0; i < dependentLength; i++)
             {
@@ -469,7 +469,7 @@ namespace Cosmos.Resource
         void UnloadDependenciesAssetBundle(ResourceBundleWarpper resourceBundleWarpper, int decrementCount = 1)
         {
             resourceBundleWarpper.ReferenceCount -= decrementCount;
-            var dependentList = resourceBundleWarpper.ResourceBundle.DependenBundleKeytList;
+            var dependentList = resourceBundleWarpper.ResourceBundle.DependentBundleKeytList;
             var dependentLength = dependentList.Count;
             //遍历查询依赖包
             for (int i = 0; i < dependentLength; i++)
