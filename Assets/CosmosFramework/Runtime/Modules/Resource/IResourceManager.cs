@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.Resource.State;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -222,6 +223,20 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
         void ReleaseAllAsset(bool unloadAllLoadedObjects = false);
+        /// <summary>
+        /// 获取bundle状态信息；
+        /// </summary>
+        /// <param name="bundleName">资源包名</param>
+        /// <param name="bundleState">资源包状态</param>
+        /// <returns>是否存在</returns>
+        bool GetBundleState(string bundleName, out ResourceBundleState bundleState);
+        /// <summary>
+        /// 获取object信息；
+        /// </summary>
+        /// <param name="objectName">资源对象名</param>
+        /// <param name="objectState">资源对象状态</param>
+        /// <returns>是否存在</returns>
+        bool GetObjectState(string objectName, out ResourceObjectState objectState);
         #endregion
     }
 }

@@ -204,10 +204,6 @@ namespace Cosmos.Editor.Resource
                             };
                             if (!bundleInfoList.Contains(bundleInfo))
                             {
-                                long bundleSize = EditorUtil.GetUnityDirectorySize(path, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-
-                                bundleInfo.BundleSize = bundleSize;
-                                bundleInfo.BundleFormatBytes = EditorUtility.FormatBytes(bundleSize);
                                 bundleInfoList.Add(bundleInfo);
                                 bundleInfo.BundleKey = bundleInfo.BundleName;
                                 resourceBundleLabel.AddBundle(bundleInfo);

@@ -15,10 +15,11 @@ namespace Cosmos.Resource.State
         /// <summary>
         /// 资源包引用计数；
         /// </summary>
-        public string ResourceBundleReferenceName;
+        public int ResourceBundleReferenceCount;
         /// <summary>
         /// 包中对象的数量；
         /// </summary>
         public int ResourceObjectCount;
+        public static readonly ResourceBundleState Default = new ResourceBundleState();
     }
 }
