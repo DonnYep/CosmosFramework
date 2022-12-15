@@ -23,11 +23,11 @@ namespace Cosmos
             /// <summary>
             /// MD5加密，返回16位加密后的大写16进制字符
             /// </summary>
-            /// <param name="strData">需要加密的字符</param>
+            /// <param name="context">需要加密的字符</param>
             /// <returns>加密后的结果</returns>
-            public static string MD5Encrypt16(string strData)
+            public static string MD5Encrypt16(string context)
             {
-                byte[] md5Bytes = Encoding.UTF8.GetBytes(strData);
+                byte[] md5Bytes = Encoding.UTF8.GetBytes(context);
                 MD5 md5 = new MD5CryptoServiceProvider();
                 byte[] cryptString = md5.ComputeHash(md5Bytes);
                 stringBuilderCache.Clear();
@@ -40,11 +40,11 @@ namespace Cosmos
             /// <summary>
             /// MD5加密，返回32位加密后的大写16进制字符
             /// </summary>
-            /// <param name="strData">需要加密的字符</param>
+            /// <param name="context">需要加密的字符</param>
             /// <returns>加密后的结果</returns>
-            public static string MD5Encrypt32(string strData)
+            public static string MD5Encrypt32(string context)
             {
-                byte[] md5Bytes = Encoding.UTF8.GetBytes(strData);
+                byte[] md5Bytes = Encoding.UTF8.GetBytes(context);
                 MD5 md5 = new MD5CryptoServiceProvider();
                 byte[] cryptString = md5.ComputeHash(md5Bytes);
                 stringBuilderCache.Clear();
@@ -59,11 +59,11 @@ namespace Cosmos
             /// <summary>
             /// Base64加密，返回24位加密后的字符
             /// </summary>
-            /// <param name="strData">需要加密的字符</param>
+            /// <param name="context">需要加密的字符</param>
             /// <returns>加密后的结果</returns>
-            public static string Base64Encrypt(string strData)
+            public static string Base64Encrypt(string context)
             {
-                byte[] md5Bytes = Encoding.UTF8.GetBytes(strData);
+                byte[] md5Bytes = Encoding.UTF8.GetBytes(context);
                 MD5 md5 = MD5.Create();
                 byte[] cryptString = md5.ComputeHash(md5Bytes);
                 return Convert.ToBase64String(cryptString);
@@ -72,12 +72,12 @@ namespace Cosmos
             /// 生成8位密钥；
             /// 注意：此工具类中提供的对称加密需要为16，24，32位密钥；
             /// </summary>
-            /// <param name="srckey">原始密钥信息</param>
+            /// <param name="key">原始密钥信息</param>
             /// <returns>加密后的值</returns>
-            public static byte[] Generate8BytesAESKey(string srckey)
+            public static byte[] Generate8BytesAESKey(string key)
             {
                 var dstLen = 8;
-                var srcBytes = Encoding.UTF8.GetBytes(srckey);
+                var srcBytes = Encoding.UTF8.GetBytes(key);
                 byte[] dstBytes = new byte[dstLen];
                 var srcLen = srcBytes.Length;
                 if (srcLen > dstLen)
@@ -96,12 +96,12 @@ namespace Cosmos
             /// <summary>
             /// 生成16位密钥；
             /// </summary>
-            /// <param name="srckey">原始密钥信息</param>
+            /// <param name="key">原始密钥信息</param>
             /// <returns>加密后的值</returns>
-            public static byte[] Generate16BytesAESKey(string srckey)
+            public static byte[] Generate16BytesAESKey(string key)
             {
                 var dstLen = 16;
-                var srcBytes = Encoding.UTF8.GetBytes(srckey);
+                var srcBytes = Encoding.UTF8.GetBytes(key);
                 byte[] dstBytes = new byte[dstLen];
                 var srcLen = srcBytes.Length;
                 if (srcLen > dstLen)
@@ -120,12 +120,12 @@ namespace Cosmos
             /// <summary>
             /// 生成24位密钥；
             /// </summary>
-            /// <param name="srckey">原始密钥信息</param>
+            /// <param name="key">原始密钥信息</param>
             /// <returns>加密后的值</returns>
-            public static byte[] Generate24BytesAESKey(string srckey)
+            public static byte[] Generate24BytesAESKey(string key)
             {
                 var dstLen = 24;
-                var srcBytes = Encoding.UTF8.GetBytes(srckey);
+                var srcBytes = Encoding.UTF8.GetBytes(key);
                 byte[] dstBytes = new byte[dstLen];
                 var srcLen = srcBytes.Length;
                 if (srcLen > dstLen)
@@ -144,12 +144,12 @@ namespace Cosmos
             /// <summary>
             /// 生成32位密钥；
             /// </summary>
-            /// <param name="srckey">原始密钥信息</param>
+            /// <param name="key">原始密钥信息</param>
             /// <returns>加密后的值</returns>
-            public static byte[] Generate32BytesAESKey(string srckey)
+            public static byte[] Generate32BytesAESKey(string key)
             {
                 var dstLen = 32;
-                var srcBytes = Encoding.UTF8.GetBytes(srckey);
+                var srcBytes = Encoding.UTF8.GetBytes(key);
                 byte[] dstBytes = new byte[dstLen];
                 var srcLen = srcBytes.Length;
                 if (srcLen > dstLen)
@@ -166,33 +166,47 @@ namespace Cosmos
                 return dstBytes;
             }
             /// <summary>
-            /// 加密算法HMACSHA1
+            /// 加密算法HMACSHA1 base64
             /// </summary>
-            /// <param name="encrpytedStr">被加密的数据</param>
-            /// <param name="strKey">加密密码</param>
+            /// <param name="context">被加密的数据</param>
+            /// <param name="key">加密密码</param>
             /// <returns>加密后的字段</returns>
-            public static string HMACSHA1(string encrpytedStr, string strKey)
+            public static string HmacSHA1ToBase64(string context, string key)
             {
                 string encrpytedResult = string.Empty;
-                using (HMACSHA1 mac = new HMACSHA1(Encoding.UTF8.GetBytes(strKey)))
+                using (HMACSHA1 mac = new HMACSHA1(Encoding.UTF8.GetBytes(key)))
                 {
-                    byte[] hashMsg = mac.ComputeHash(Encoding.UTF8.GetBytes(encrpytedStr));
+                    byte[] hashMsg = mac.ComputeHash(Encoding.UTF8.GetBytes(context));
                     encrpytedResult = Convert.ToBase64String(hashMsg);
                 }
                 return encrpytedResult;
             }
             /// <summary>
+            /// 加密算法HMACSHA1
+            /// </summary>
+            /// <param name="context">被加密的数据</param>
+            /// <param name="key">加密密码</param>
+            /// <returns>加密后的字段</returns>
+            public static string HmacSHA1(string context, string key)
+            {
+                using (HMACSHA1 mac = new HMACSHA1(Encoding.UTF8.GetBytes(key)))
+                {
+                    byte[] hash= mac.ComputeHash(Encoding.UTF8.GetBytes(context));
+                    return BitConverter.ToString(hash).Replace("-", "");
+                }
+            }
+            /// <summary>
             /// 加密算法HMACSHA1，输出16位字符串；
             /// </summary>
-            /// <param name="encrpytedStr">被加密的数据</param>
-            /// <param name="strKey">加密密码</param>
+            /// <param name="context">被加密的数据</param>
+            /// <param name="key">加密密码</param>
             /// <returns>加密后的字段</returns>
-            public static string HMACSHA1ToHex(string encrpytedStr, string strKey)
+            public static string HmacSHA1ToHex(string context, string key)
             {
                 string encrpytedResult = string.Empty;
-                using (HMACSHA1 mac = new HMACSHA1(Encoding.UTF8.GetBytes(strKey)))
+                using (HMACSHA1 mac = new HMACSHA1(Encoding.UTF8.GetBytes(key)))
                 {
-                    byte[] hashBytes = mac.ComputeHash(Encoding.UTF8.GetBytes(encrpytedStr));
+                    byte[] hashBytes = mac.ComputeHash(Encoding.UTF8.GetBytes(context));
                     int length = hashBytes.Length;
                     stringBuilderCache.Clear();
                     for (int i = 0; i < length; i++)
@@ -206,31 +220,45 @@ namespace Cosmos
             /// <summary>
             /// 加密算法HMACSHA256
             /// </summary>
-            /// <param name="encrpytedStr">被加密的数据</param>
-            /// <param name="strKey">加密密码</param>
+            /// <param name="context">被加密的数据</param>
+            /// <param name="key">加密密钥</param>
             /// <returns>加密后的字段</returns>
-            public static string HMACSHA256(string encrpytedStr, string strKey)
+            public static string HmacSHA256(string context, string key)
             {
-                string encrpytedResult = string.Empty;
-                using (HMACSHA256 mac = new HMACSHA256(Encoding.UTF8.GetBytes(strKey)))
+                using (HMACSHA256 mac = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
                 {
-                    byte[] hashMsg = mac.ComputeHash(Encoding.UTF8.GetBytes(encrpytedStr));
-                    encrpytedResult = Convert.ToBase64String(hashMsg);
+                    byte[] hash= mac.ComputeHash(Encoding.UTF8.GetBytes(context));
+                    return BitConverter.ToString(hash).Replace("-", "");
                 }
-                return encrpytedResult;
+            }
+            /// <summary>
+            /// 加密算法HMACSHA256 base64
+            /// </summary>
+            /// <param name="context">被加密的数据</param>
+            /// <param name="key">加密密钥</param>
+            /// <returns>加密后的字段</returns>
+            public static string HmacSHA256ToBase64(string context, string key)
+            {
+                var keyBytes = Encoding.UTF8.GetBytes(key);
+                var textBytes = Encoding.UTF8.GetBytes(context);
+                using (HMACSHA256 mac = new HMACSHA256(keyBytes))
+                {
+                    byte[] hash = mac.ComputeHash(textBytes);
+                    return Convert.ToBase64String(hash);
+                }
             }
             /// <summary>
             /// 加密算法HMACSHA256，输出16位字符串；
             /// </summary>
-            /// <param name="encrpytedStr">被加密的数据</param>
-            /// <param name="strKey">加密密码</param>
+            /// <param name="context">被加密的数据</param>
+            /// <param name="key">加密密码</param>
             /// <returns>加密后的字段</returns>
-            public static string HMACSHA256ToHex(string encrpytedStr, string strKey)
+            public static string HmacSHA256ToHex(string context, string key)
             {
                 string encrpytedResult = string.Empty;
-                using (HMACSHA256 mac = new HMACSHA256(Encoding.UTF8.GetBytes(strKey)))
+                using (HMACSHA256 mac = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
                 {
-                    byte[] hashBytes = mac.ComputeHash(Encoding.UTF8.GetBytes(encrpytedStr));
+                    byte[] hashBytes = mac.ComputeHash(Encoding.UTF8.GetBytes(context));
                     int length = hashBytes.Length;
                     stringBuilderCache.Clear();
                     for (int i = 0; i < length; i++)
