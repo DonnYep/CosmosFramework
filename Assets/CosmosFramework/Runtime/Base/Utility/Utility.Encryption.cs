@@ -57,16 +57,22 @@ namespace Cosmos
                 return stringBuilderCache.ToString();
             }
             /// <summary>
-            /// Base64加密，返回24位加密后的字符
+            /// MD5加密 ；
             /// </summary>
             /// <param name="context">需要加密的字符</param>
             /// <returns>加密后的结果</returns>
-            public static string Base64Encrypt(string context)
+            public static string MD5Encrypt(string context)
             {
                 byte[] md5Bytes = Encoding.UTF8.GetBytes(context);
                 MD5 md5 = MD5.Create();
-                byte[] cryptString = md5.ComputeHash(md5Bytes);
-                return Convert.ToBase64String(cryptString);
+                byte[] cryptBytes = md5.ComputeHash(md5Bytes);
+                int length = cryptBytes.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    //X大写的16进制，x小写
+                    stringBuilderCache.Append(cryptBytes[i].ToString("X2"));
+                }
+                return stringBuilderCache.ToString();
             }
             /// <summary>
             /// 生成8位密钥；
@@ -191,7 +197,7 @@ namespace Cosmos
             {
                 using (HMACSHA1 mac = new HMACSHA1(Encoding.UTF8.GetBytes(key)))
                 {
-                    byte[] hash= mac.ComputeHash(Encoding.UTF8.GetBytes(context));
+                    byte[] hash = mac.ComputeHash(Encoding.UTF8.GetBytes(context));
                     return BitConverter.ToString(hash).Replace("-", "");
                 }
             }
@@ -227,7 +233,7 @@ namespace Cosmos
             {
                 using (HMACSHA256 mac = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
                 {
-                    byte[] hash= mac.ComputeHash(Encoding.UTF8.GetBytes(context));
+                    byte[] hash = mac.ComputeHash(Encoding.UTF8.GetBytes(context));
                     return BitConverter.ToString(hash).Replace("-", "");
                 }
             }
