@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.Resource.State;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -159,6 +160,38 @@ namespace Cosmos.Resource
             {
                 bundleWarpper.ReferenceCount = 0;
             }
+        }
+        ///<inheritdoc/> 
+        public bool GetBundleState(string bundleName, out ResourceBundleState bundleState)
+        {
+            bundleState = ResourceBundleState.Default;
+            var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
+            bundleState = new ResourceBundleState()
+            {
+                ResourceBundleName = bundleWarpper.ResourceBundle.BundleName,
+                ResourceBundleReferenceCount = bundleWarpper.ReferenceCount,
+                ResourceObjectCount = bundleWarpper.ResourceBundle.ResourceObjectList.Count
+            };
+            return hasBundle;
+        }
+        ///<inheritdoc/> 
+        public bool GetObjectState(string objectName, out ResourceObjectState objectState)
+        {
+            objectState = ResourceObjectState.Default;
+            var hasObject = PeekResourceObject(objectName, out var resourceObject);
+            if (!hasObject)
+                return false;
+            if (!resourceObjectWarpperDict.TryGetValue(resourceObject.ObjectPath, out var resourceObjectWarpper))
+                return false;
+            objectState = new ResourceObjectState()
+            {
+                ResourceBundleName = resourceObject.BundleName,
+                ResourceExtension = resourceObject.Extension,
+                ResourceObjectName = resourceObject.ObjectName,
+                ResourceObjectPath = resourceObject.ObjectPath,
+                ResourceReferenceCount = resourceObjectWarpper.ReferenceCount
+            };
+            return hasObject;
         }
         ///<inheritdoc/> 
         public void Reset()

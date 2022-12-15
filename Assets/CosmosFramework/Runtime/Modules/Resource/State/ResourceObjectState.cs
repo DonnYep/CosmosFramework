@@ -22,10 +22,6 @@ namespace Cosmos.Resource.State
         /// </summary>
         public string ResourceBundleName;
         /// <summary>
-        /// 资源对象类型；
-        /// </summary>
-        public string ResourceObjectType;
-        /// <summary>
         /// 资源扩展名；
         /// </summary>
         public string ResourceExtension;
@@ -33,5 +29,6 @@ namespace Cosmos.Resource.State
         /// 引用次数；
         /// </summary>
         public int ResourceReferenceCount;
+        public static readonly ResourceObjectState Default = new ResourceObjectState();
     }
 }
