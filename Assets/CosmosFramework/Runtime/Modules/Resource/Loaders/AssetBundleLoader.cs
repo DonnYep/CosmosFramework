@@ -143,7 +143,11 @@ namespace Cosmos.Resource
             foreach (var bundleWarpper in resourceBundleWarpperDict.Values)
             {
                 bundleWarpper.ReferenceCount = 0;
-                bundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                if (bundleWarpper.AssetBundle != null)
+                {
+                    bundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                    bundleWarpper.AssetBundle = null;
+                }
             }
         }
         ///<inheritdoc/> 
