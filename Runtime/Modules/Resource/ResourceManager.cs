@@ -4,6 +4,8 @@ using System;
 using System.Threading.Tasks;
 using Object = UnityEngine.Object;
 using Cosmos.WebRequest;
+using Cosmos.Resource.State;
+
 namespace Cosmos.Resource
 {
     //================================================
@@ -226,6 +228,16 @@ namespace Cosmos.Resource
         public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
         {
             currentLoadHelper.ReleaseAllAsset(unloadAllLoadedObjects);
+        }
+        /// <inheritdoc/>
+        public bool GetBundleState(string bundleName,out ResourceBundleState bundleState)
+        {
+            return currentLoadHelper.GetBundleState(bundleName,out bundleState);
+        }
+        /// <inheritdoc/>
+        public bool GetObjectState(string objectName,out ResourceObjectState objectState)
+        {
+            return currentLoadHelper.GetObjectState(objectName, out objectState);
         }
         protected override void OnInitialization()
         {

@@ -21,15 +21,15 @@ namespace Cosmos.Editor.Resource
         /// <summary>
         /// 对象的加载进度；
         /// </summary>
-        int loadingObjectProgress;
+        int loadingObjectInfoProgress;
         /// <summary>
         /// 加载的ab包数量；
         /// </summary>
-        int loadingBundleLength;
+        int loadingBundleInfoLength;
         /// <summary>
         /// 当前加载的ab包序号；
         /// </summary>
-        int currentLoadingBundleIndex;
+        int currentLoadingBundleInfoIndex;
         /// <summary>
         /// 选中的协程；
         /// </summary>
@@ -90,9 +90,9 @@ namespace Cosmos.Editor.Resource
                 {
                     if (loadingMultiSelection)
                     {
-                        EditorGUILayout.LabelField($"Loading Progress . . .  {currentLoadingBundleIndex}/{loadingBundleLength}");
+                        EditorGUILayout.LabelField($"Loading Progress . . .  {currentLoadingBundleInfoIndex}/{loadingBundleInfoLength}");
 
-                        EditorGUILayout.LabelField($"Object loading . . .  {loadingObjectProgress}%");
+                        EditorGUILayout.LabelField($"Object loading . . .  {loadingObjectInfoProgress}%");
                     }
                     else
                     {
@@ -111,6 +111,8 @@ namespace Cosmos.Editor.Resource
                         ResourceWindowDataProxy.ResourceDataset.Clear();
                         resourceBundleLabel.Clear();
                         resourceObjectLabel.Clear();
+                        resourceBundleLabel.Reload();
+                        resourceObjectLabel.Reload();
                     }
                     EditorGUILayout.EndHorizontal();
                 }
@@ -202,10 +204,6 @@ namespace Cosmos.Editor.Resource
                             };
                             if (!bundleInfoList.Contains(bundleInfo))
                             {
-                                long bundleSize = EditorUtil.GetUnityDirectorySize(path, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-
-                                bundleInfo.BundleSize = bundleSize;
-                                bundleInfo.BundleFormatSize = EditorUtility.FormatBytes(bundleSize);
                                 bundleInfoList.Add(bundleInfo);
                                 bundleInfo.BundleKey = bundleInfo.BundleName;
                                 resourceBundleLabel.AddBundle(bundleInfo);
@@ -377,7 +375,7 @@ namespace Cosmos.Editor.Resource
                 long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
                 bundleInfo.BundleSize = bundleSize;
                 bundleInfo.BundleKey = bundleInfo.BundleName;
-                bundleInfo.BundleFormatSize = EditorUtility.FormatBytes(bundleSize);
+                bundleInfo.BundleFormatBytes = EditorUtility.FormatBytes(bundleSize);
 
                 resourceBundleLabel.AddBundle(bundleInfo);
 
@@ -395,8 +393,8 @@ namespace Cosmos.Editor.Resource
             {
                 var bundleInfo = bundleInfos[i];
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
-                bundleInfo.DependenBundleKeytList.Clear();
-                bundleInfo.DependenBundleKeytList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                bundleInfo.DependentBundleKeyList.Clear();
+                bundleInfo.DependentBundleKeyList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
             }
             for (int i = 0; i < bundleInfos.Count; i++)
             {
@@ -425,30 +423,30 @@ namespace Cosmos.Editor.Resource
             if (ResourceWindowDataProxy.ResourceDataset == null)
                 yield break;
             loadingMultiSelection = true;
-            var bundles = ResourceWindowDataProxy.ResourceDataset.ResourceBundleInfoList;
+            var bundleInfos = ResourceWindowDataProxy.ResourceDataset.ResourceBundleInfoList;
             var idlen = selectedIds.Count;
-            loadingBundleLength = idlen;
+            loadingBundleInfoLength = idlen;
 
             resourceObjectLabel.Clear();
             resourceObjectLabel.Reload();
 
-            loadingObjectProgress = 0;
-            currentLoadingBundleIndex = 0;
+            loadingObjectInfoProgress = 0;
+            currentLoadingBundleInfoIndex = 0;
             for (int i = 0; i < idlen; i++)
             {
-                currentLoadingBundleIndex++;
+                currentLoadingBundleInfoIndex++;
 
                 var id = selectedIds[i];
-                if (id >= bundles.Count)
+                if (id >= bundleInfos.Count)
                     continue;
-                var objectInfos = bundles[id].ResourceObjectInfoList;
+                var objectInfos = bundleInfos[id].ResourceObjectInfoList;
                 var objectInfoLength = objectInfos.Count;
                 for (int j = 0; j < objectInfoLength; j++)
                 {
                     var objectInfo = objectInfos[j];
                     resourceObjectLabel.AddObject(objectInfo);
                     var progress = Mathf.RoundToInt((float)j / (objectInfoLength - 1) * 100);
-                    loadingObjectProgress = progress > 0 ? progress : 0;
+                    loadingObjectInfoProgress = progress > 0 ? progress : 0;
                 }
                 yield return null;
                 resourceObjectLabel.Reload();

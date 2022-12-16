@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+
 namespace Cosmos.Resource
 {
-    /// <summary>
-    /// 资源包，AssetBundle；
-    /// 存储AssetBundle信息；
-    /// </summary>
     [Serializable]
-    public class ResourceBundle : IEquatable<ResourceBundle>
+    public class ResourceBundleInfo : IEquatable<ResourceBundleInfo>
     {
         [SerializeField]
         string bundleName;
@@ -17,9 +14,13 @@ namespace Cosmos.Resource
         [SerializeField]
         string bundleKey;
         [SerializeField]
+        long bundleSize;
+        [SerializeField]
+        string bundleFormatBytes;
+        [SerializeField]
         List<string> dependentBundleKeyList = new List<string>();
         [SerializeField]
-        List<ResourceObject> resourceObjectList = new List<ResourceObject>();
+        List<ResourceObjectInfo> resourceObjectInfoList = new List<ResourceObjectInfo>();
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
@@ -37,14 +38,6 @@ namespace Cosmos.Resource
             }
         }
         /// <summary>
-        /// AB加载时候使用的名称；
-        /// </summary>
-        public string BundleKey
-        {
-            get { return bundleKey; }
-            set { bundleKey = value; }
-        }
-        /// <summary>
         /// AB包在Assets目录下的地址；
         /// </summary>
         public string BundlePath
@@ -53,9 +46,33 @@ namespace Cosmos.Resource
             set { bundlePath = value; }
         }
         /// <summary>
+        /// AB加载时候使用的名称；
+        /// </summary>
+        public string BundleKey
+        {
+            get { return bundleKey; }
+            set { bundleKey = value; }
+        }
+        /// <summary>
+        /// Bundle尺寸；
+        /// </summary>
+        public long BundleSize
+        {
+            get { return bundleSize; }
+            set { bundleSize = value; }
+        }
+        /// <summary>
+        /// Bundle比特文件大小；
+        /// </summary>
+        public string BundleFormatBytes
+        {
+            get { return bundleFormatBytes; }
+            set { bundleFormatBytes = value; }
+        }
+        /// <summary>
         /// 资源的依赖项；
         /// </summary>
-        public List<string> DependenBundleKeytList
+        public List<string> DependentBundleKeyList
         {
             get
             {
@@ -68,23 +85,20 @@ namespace Cosmos.Resource
         /// <summary>
         /// 资源对象列表；
         /// </summary>
-        public List<ResourceObject> ResourceObjectList
+        public List<ResourceObjectInfo> ResourceObjectInfoList
         {
             get
             {
-                if (resourceObjectList == null)
-                    resourceObjectList = new List<ResourceObject>();
-                return resourceObjectList;
+                if (resourceObjectInfoList == null)
+                    resourceObjectInfoList = new List<ResourceObjectInfo>();
+                return resourceObjectInfoList;
             }
-            set { resourceObjectList = value; }
+            set { resourceObjectInfoList = value; }
         }
-        public bool Equals(ResourceBundle other)
+        public bool Equals(ResourceBundleInfo other)
         {
-            return other.BundleName == this.BundleName;
-        }
-        public override int GetHashCode()
-        {
-            return $"{bundleName}".GetHashCode();
+            return other.BundleName == this.BundleName ||
+                other.BundlePath == this.BundlePath;
         }
     }
 }

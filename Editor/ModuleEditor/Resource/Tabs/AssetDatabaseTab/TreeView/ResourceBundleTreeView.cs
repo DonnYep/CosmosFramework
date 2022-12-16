@@ -146,7 +146,7 @@ namespace Cosmos.Editor.Resource
                     var bundleInfo = bundleInfoList[i];
                     var item = new ResourceBundleTreeViewItem(i, 1, bundleInfo.BundleName, assetIcon) 
                     {
-                        BundleFormatSize = bundleInfo.BundleFormatSize, 
+                        BundleFormatSize = bundleInfo.BundleFormatBytes, 
                         ObjectCount = bundleInfo.ResourceObjectInfoList.Count
                     };
                     allItems.Add(item);

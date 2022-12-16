@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.Resource.State;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -91,6 +92,18 @@ namespace Cosmos.Resource
         public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
         {
             Resources.UnloadUnusedAssets();
+        }
+        ///<inheritdoc/> 
+        public bool GetBundleState(string bundleName, out ResourceBundleState bundleState)
+        {
+            bundleState = ResourceBundleState.Default;
+            return false;
+        }
+        ///<inheritdoc/> 
+        public bool GetObjectState(string objectName, out ResourceObjectState objectState)
+        {
+            objectState = ResourceObjectState.Default;
+            return false;
         }
         ///<inheritdoc/> 
         public void Reset()
