@@ -11,17 +11,23 @@ public class AwaitableTest : MonoBehaviour
         await StartCoroutine(EnumRun());
         await new WaitForSeconds(3);
         await EnumRun();
-        Debug.LogError("AwaitableTest >>> After Coroutine Start");
+        Debug.Log("AwaitableTest >>> After Coroutine Start");
         await EnumWait();
         var task = Task.Run(async
            () =>
            {
                await Task.Delay(3000);
                Debug.Log("Task.Delay(3000) run Done");
-               return 40;
            });
-        await task.AsCoroutine();
-        Debug.Log("await Task.Delay(3000) Done");
+        await task;
+        var routineTask = Task.Run(async
+           () =>
+        {
+            await Task.Delay(1000);
+            Debug.Log("routineTask delay 1000  run Done");
+        });
+        await routineTask.AsCoroutine();
+        Debug.Log("await routineTask  delay 3000 Done");
     }
     IEnumerator EnumRun()
     {
