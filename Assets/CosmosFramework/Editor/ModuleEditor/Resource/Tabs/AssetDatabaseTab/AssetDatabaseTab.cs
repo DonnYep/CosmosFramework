@@ -42,11 +42,11 @@ namespace Cosmos.Editor.Resource
         {
             resourceBundleLabel.OnEnable();
             resourceObjectLabel.OnEnable();
-            resourceBundleLabel.OnAllDelete += OnAllBundleDelete;
-            resourceBundleLabel.OnDelete += OnBundleDelete;
+            resourceBundleLabel.OnAllBundleDelete += OnAllBundleDelete;
+            resourceBundleLabel.OnBundleDelete += OnBundleDelete;
             resourceBundleLabel.OnSelectionChanged += OnSelectionChanged;
-            resourceBundleLabel.OnRenameBundle += OnRenameBundle;
-            resourceBundleLabel.OnSort += OnBundleSort; ;
+            resourceBundleLabel.OnBundleRenamed += OnRenameBundle;
+            resourceBundleLabel.OnBundleSort += OnBundleSort; ;
             GetTabData();
             if (ResourceWindowDataProxy.ResourceDataset != null)
             {
@@ -220,10 +220,12 @@ namespace Cosmos.Editor.Resource
         {
             ResourceWindowDataProxy.ResourceDataset.ResourceBundleInfoList.Clear();
             resourceObjectLabel.Clear();
+            resourceObjectLabel.Reload();
             tabData.SelectedBundleIds.Clear();
             ResourceWindowDataProxy.ResourceDataset.IsChanged = true;
+            EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
         }
-        void OnBundleDelete(IList<int> bundleIds)
+        void OnBundleDelete(IList<int> bundleIds, IList<int> selectedIds)
         {
             if (ResourceWindowDataProxy.ResourceDataset == null)
                 return;
@@ -244,7 +246,7 @@ namespace Cosmos.Editor.Resource
             }
             ResourceWindowDataProxy.ResourceDataset.IsChanged = true;
             hasChanged = true;
-            resourceObjectLabel.Clear();
+            OnSelectionChanged(selectedIds);
         }
         void OnSelectionChanged(IList<int> selectedIds)
         {
@@ -264,7 +266,7 @@ namespace Cosmos.Editor.Resource
             ResourceWindowDataProxy.ResourceDataset.IsChanged = true;
             hasChanged = true;
         }
-        void OnBundleSort(IList<string> sortedNames)
+        void OnBundleSort(IList<string> sortedNames,IList<int> selectedIds)
         {
             if (ResourceWindowDataProxy.ResourceDataset == null)
                 return;
@@ -291,6 +293,7 @@ namespace Cosmos.Editor.Resource
 #elif UNITY_2019_1_OR_NEWER
             AssetDatabase.SaveAssets();
 #endif
+            OnSelectionChanged(selectedIds);
         }
         void GetTabData()
         {

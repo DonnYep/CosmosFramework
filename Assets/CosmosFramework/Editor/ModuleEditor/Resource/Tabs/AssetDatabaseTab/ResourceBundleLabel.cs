@@ -13,30 +13,30 @@ namespace Cosmos.Editor.Resource
         TreeViewState treeViewState;
         ResourceBundleTreeView treeView;
 
-        public event Action<IList<int>> OnDelete
+        public event Action<IList<int>,IList<int>> OnBundleDelete
         {
-            add { treeView.onDelete += value; }
-            remove { treeView.onDelete -= value; }
+            add { treeView.onBundleDelete += value; }
+            remove { treeView.onBundleDelete -= value; }
         }
-        public event Action OnAllDelete
+        public event Action OnAllBundleDelete
         {
-            add { treeView.onAllDelete += value; }
-            remove { treeView.onAllDelete -= value; }
+            add { treeView.onAllBundleDelete += value; }
+            remove { treeView.onAllBundleDelete -= value; }
         }
         public event Action<IList<int>> OnSelectionChanged
         {
-            add { treeView.onSelectionChanged += value; }
-            remove { treeView.onSelectionChanged -= value; }
+            add { treeView.onBundleSelectionChanged += value; }
+            remove { treeView.onBundleSelectionChanged -= value; }
         }
-        public event Action<int, string> OnRenameBundle
+        public event Action<int, string> OnBundleRenamed
         {
-            add { treeView.onRenameBundle += value; }
-            remove { treeView.onRenameBundle -= value; }
+            add { treeView.onBundleRenamed += value; }
+            remove { treeView.onBundleRenamed -= value; }
         }
-        public event Action<IList<string>> OnSort
+        public event Action<IList<string>,IList<int>> OnBundleSort
         {
-            add { treeView.onSort += value; }
-            remove { treeView.onSort -= value; }
+            add { treeView.onBundleSort += value; }
+            remove { treeView.onBundleSort -= value; }
         }
         public void OnEnable()
         {
