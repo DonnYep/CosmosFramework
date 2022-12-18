@@ -142,7 +142,7 @@ namespace Cosmos.Resource
             }
         }
         ///<inheritdoc/> 
-        public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        public void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects)
         {
             if (resourceBundleWarpperDict.TryGetValue(assetBundleName, out var bundleWarpper))
             {
@@ -150,7 +150,7 @@ namespace Cosmos.Resource
             }
         }
         ///<inheritdoc/> 
-        public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
+        public void UnloadAllAsset(bool unloadAllLoadedObjects )
         {
             foreach (var objectWarpper in resourceObjectWarpperDict.Values)
             {

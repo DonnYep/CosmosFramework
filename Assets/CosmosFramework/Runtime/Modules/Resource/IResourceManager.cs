@@ -22,6 +22,10 @@ namespace Cosmos.Resource
     public interface IResourceManager : IModuleManager, IModuleInstance
     {
         /// <summary>
+        /// 当资源包被卸载时一同卸载已经被加载的资源；
+        /// </summary>
+        bool UnloadAllLoadedObjectsWhenBundleUnload { get; set; }
+        /// <summary>
         /// 当前资源的加载模式；
         /// </summary>
         ResourceLoadMode ResourceLoadMode { get; }
@@ -213,16 +217,16 @@ namespace Cosmos.Resource
         /// <param name="assetNames">资源名合集</param>
         void UnloadAssets(IEnumerable<string> assetNames);
         /// <summary>
+        /// 释放所有资源（同步），引用计数归零;
+        /// </summary>
+        /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
+        void UnloadAllAsset(bool unloadAllLoadedObjects);
+        /// <summary>
         /// 释放资源包（同步），引用计数归零；
         /// </summary>
         /// <param name="assetBundleName">资源包名</param>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false);
-        /// <summary>
-        /// 释放所有资源（同步），引用计数归零;
-        /// </summary>
-        /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        void ReleaseAllAsset(bool unloadAllLoadedObjects = false);
+        void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects );
         /// <summary>
         /// 获取bundle状态信息；
         /// </summary>

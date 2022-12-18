@@ -126,7 +126,7 @@ namespace Cosmos.Resource
             }
         }
         ///<inheritdoc/> 
-        public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        public void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects)
         {
             if (resourceBundleWarpperDict.TryGetValue(assetBundleName, out var bundleWarpper))
             {
@@ -134,7 +134,7 @@ namespace Cosmos.Resource
             }
         }
         ///<inheritdoc/> 
-        public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
+        public void UnloadAllAsset(bool unloadAllLoadedObjects)
         {
             foreach (var objectWarpper in resourceObjectWarpperDict.Values)
             {
@@ -143,7 +143,11 @@ namespace Cosmos.Resource
             foreach (var bundleWarpper in resourceBundleWarpperDict.Values)
             {
                 bundleWarpper.ReferenceCount = 0;
-                bundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                if (bundleWarpper.AssetBundle != null)
+                {
+                    bundleWarpper.AssetBundle?.Unload(unloadAllLoadedObjects);
+                    bundleWarpper.AssetBundle = null;
+                }
             }
         }
         ///<inheritdoc/> 
@@ -571,7 +575,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 递归减少包体引用计数；
         /// </summary>
-        void UnloadDependenciesAssetBundle(ResourceBundleWarpper resourceBundleWarpper, int count = 1, bool unloadAllLoadedObjects = false)
+        void UnloadDependenciesAssetBundle(ResourceBundleWarpper resourceBundleWarpper, int count , bool unloadAllLoadedObjects)
         {
             resourceBundleWarpper.ReferenceCount -= count;
             if (resourceBundleWarpper.ReferenceCount <= 0)
@@ -624,7 +628,7 @@ namespace Cosmos.Resource
             objectWarpper.ReferenceCount = 0;
             if (resourceBundleWarpperDict.TryGetValue(objectWarpper.ResourceObject.ObjectName, out var bundleWarpper))
             {
-                UnloadDependenciesAssetBundle(bundleWarpper, count);
+                UnloadDependenciesAssetBundle(bundleWarpper, count, ResourceDataProxy.UnloadAllLoadedObjectsWhenBundleUnload);
             }
         }
         /// <summary>
@@ -684,7 +688,7 @@ namespace Cosmos.Resource
             if (!resourceBundleWarpperDict.TryGetValue(resourceObjectWarpper.ResourceObject.BundleName, out var resourceBundleWarpper))
                 return;
             resourceObjectWarpper.ReferenceCount--;
-            UnloadDependenciesAssetBundle(resourceBundleWarpper);
+            UnloadDependenciesAssetBundle(resourceBundleWarpper,1, ResourceDataProxy.UnloadAllLoadedObjectsWhenBundleUnload);
         }
         void RequestManifestSuccess(ResourceRequestManifestSuccessEventArgs args)
         {

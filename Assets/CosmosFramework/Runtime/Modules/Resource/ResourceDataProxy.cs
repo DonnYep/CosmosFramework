@@ -7,5 +7,6 @@
         public static string BuildInfoEncryptionKey { get; set; }
         public  static ResourceBundlePathType ResourceBundlePathType { get; set; }
         public  static ResourceLoadMode  ResourceLoadMode{ get; set; }
+        public  static bool UnloadAllLoadedObjectsWhenBundleUnload { get; set; }
     }
 }

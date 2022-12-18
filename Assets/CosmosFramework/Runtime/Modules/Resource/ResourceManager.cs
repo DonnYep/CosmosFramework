@@ -44,6 +44,12 @@ namespace Cosmos.Resource
         }
         /// <inheritdoc/>
         public ResourceLoadMode ResourceLoadMode { get { return ResourceDataProxy.ResourceLoadMode; } }
+        /// <inheritdoc/>
+        public bool UnloadAllLoadedObjectsWhenBundleUnload
+        {
+            get { return ResourceDataProxy.UnloadAllLoadedObjectsWhenBundleUnload; }
+            set { ResourceDataProxy.UnloadAllLoadedObjectsWhenBundleUnload = value; }
+        }
         #endregion
         #region Methods
         /// <inheritdoc/>
@@ -220,22 +226,22 @@ namespace Cosmos.Resource
             }
         }
         /// <inheritdoc/>
-        public void ReleaseAssetBundle(string assetBundleName, bool unloadAllLoadedObjects = false)
+        public void UnloadAllAsset(bool unloadAllLoadedObjects)
         {
-            currentLoadHelper.ReleaseAssetBundle(assetBundleName, unloadAllLoadedObjects);
+            currentLoadHelper.UnloadAllAsset(unloadAllLoadedObjects);
         }
         /// <inheritdoc/>
-        public void ReleaseAllAsset(bool unloadAllLoadedObjects = false)
+        public void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects)
         {
-            currentLoadHelper.ReleaseAllAsset(unloadAllLoadedObjects);
+            currentLoadHelper.UnloadAssetBundle(assetBundleName, unloadAllLoadedObjects);
         }
         /// <inheritdoc/>
-        public bool GetBundleState(string bundleName,out ResourceBundleState bundleState)
+        public bool GetBundleState(string bundleName, out ResourceBundleState bundleState)
         {
-            return currentLoadHelper.GetBundleState(bundleName,out bundleState);
+            return currentLoadHelper.GetBundleState(bundleName, out bundleState);
         }
         /// <inheritdoc/>
-        public bool GetObjectState(string objectName,out ResourceObjectState objectState)
+        public bool GetObjectState(string objectName, out ResourceObjectState objectState)
         {
             return currentLoadHelper.GetObjectState(objectName, out objectState);
         }
