@@ -10,11 +10,11 @@ namespace Cosmos.Editor.Resource
     {
         readonly List<ResourceBundleInfo> bundleInfoList = new List<ResourceBundleInfo>();
 
-        public Action<IList<int>> onSelectionChanged;
-        public Action<IList<int>> onDelete;
-        public Action onAllDelete;
-        public Action<int, string> onRenameBundle;
-        public Action<IList<string>> onSort;
+        public Action<IList<int>> onBundleSelectionChanged;
+        public Action<IList<int>,IList<int>> onBundleDelete;
+        public Action onAllBundleDelete;
+        public Action<int, string> onBundleRenamed;
+        public Action<IList<string>,IList<int>> onBundleSort;
         /// <summary>
         /// 上一行的cellRect
         /// </summary>
@@ -117,7 +117,7 @@ namespace Cosmos.Editor.Resource
                     var bundleInfo = bundleInfoList[args.itemID];
                     bundleInfo.BundleName= newName;
                     item.displayName = newName;
-                    onRenameBundle?.Invoke(args.itemID, newName);
+                    onBundleRenamed?.Invoke(args.itemID, newName);
                 }
                 else
                 {
@@ -158,7 +158,7 @@ namespace Cosmos.Editor.Resource
         protected override void SelectionChanged(IList<int> selectedIds)
         {
             base.SelectionChanged(selectedIds);
-            onSelectionChanged?.Invoke(selectedIds);
+            onBundleSelectionChanged?.Invoke(selectedIds);
         }
         void OnMultiColumnHeaderSortingChanged(MultiColumnHeader multiColumnHeader)
         {
@@ -203,7 +203,7 @@ namespace Cosmos.Editor.Resource
             {
                 sortedBundleNames.Add(bundleInfoList[i].BundleName);
             }
-            onSort?.Invoke(sortedBundleNames);
+            onBundleSort?.Invoke(sortedBundleNames,GetSelection());
             Reload();
         }
         void DrawCellGUI(Rect cellRect, ResourceBundleTreeViewItem treeView, int column, ref RowGUIArgs args)
@@ -238,7 +238,7 @@ namespace Cosmos.Editor.Resource
         void DeleteAll()
         {
             bundleInfoList.Clear();
-            onAllDelete?.Invoke();
+            onAllBundleDelete?.Invoke();
             Reload();
         }
         void Delete(object context)
@@ -247,18 +247,17 @@ namespace Cosmos.Editor.Resource
             {
                 var list = context as IList<int>;
                 var length = list.Count;
-                var rmbundleInfos = new ResourceBundleInfo[length];
+                var rmBundleInfos = new ResourceBundleInfo[length];
                 for (int i = 0; i < length; i++)
                 {
-                    var rmid = list[i];
-                    rmbundleInfos[i] = bundleInfoList[rmid];
+                    var rmId = list[i];
+                    rmBundleInfos[i] = bundleInfoList[rmId];
                 }
-                var rmlen = rmbundleInfos.Length;
-                for (int i = 0; i < rmlen; i++)
+                for (int i = 0; i < length; i++)
                 {
-                    bundleInfoList.Remove(rmbundleInfos[i]);
+                    bundleInfoList.Remove(rmBundleInfos[i]);
                 }
-                onDelete?.Invoke(list);
+                onBundleDelete?.Invoke(list,GetSelection());
                 SetSelection(new int[0]);
                 Reload();
             }
@@ -275,7 +274,7 @@ namespace Cosmos.Editor.Resource
             var bundleName = ResourceUtility.FilterName(bundleInfo.BundlePath);
             bundleInfo.BundleName= bundleName;
             item.displayName = bundleInfo.BundleName;
-            onRenameBundle?.Invoke(itemId, bundleInfo.BundlePath);
+            onBundleRenamed?.Invoke(itemId, bundleInfo.BundlePath);
         }
         void ResetAllBundleName()
         {
@@ -287,7 +286,7 @@ namespace Cosmos.Editor.Resource
                 var bundleName = ResourceUtility.FilterName(bundleInfo.BundlePath);
                 bundleInfo.BundleName = bundleName;
                 item.displayName = bundleInfo.BundleName;
-                onRenameBundle?.Invoke(i, bundleInfo.BundlePath);
+                onBundleRenamed?.Invoke(i, bundleInfo.BundlePath);
             }
         }
         void CopyBundleNameToClipboard(object context)
