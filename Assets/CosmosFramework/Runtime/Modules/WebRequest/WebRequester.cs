@@ -107,15 +107,7 @@ namespace Cosmos.WebRequest
             {
                 var task = taskList[0];
                 CurrentTask = task;
-                switch (task.WebRequestType)
-                {
-                    case WebRequestType.DownLoad:
-                        yield return DownloadRequest(task);
-                        break;
-                    case WebRequestType.Upload:
-                        yield return UploadRequest(task);
-                        break;
-                }
+                yield return WebRequest(task);
                 taskList.RemoveFirst();
                 taskDict.Remove(task.TaskId);
                 WebRequestTask.Release(task);
@@ -126,7 +118,7 @@ namespace Cosmos.WebRequest
             }
             InExecution = false;
         }
-        IEnumerator DownloadRequest(WebRequestTask webRequestTask)
+        IEnumerator WebRequest(WebRequestTask webRequestTask)
         {
             var unityWebRequest = webRequestTask.UnityWebRequest;
             var taskId = webRequestTask.TaskId;
@@ -140,51 +132,16 @@ namespace Cosmos.WebRequest
                 request.SendWebRequest();
                 while (!request.isDone)
                 {
-                    var updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, request.downloadProgress, request);
-                    onUpdateCallback?.Invoke(updateEventArgs);
-                    WebRequestUpdateEventArgs.Release(updateEventArgs);
-                    yield return null;
-                }
-#if UNITY_2020_1_OR_NEWER
-                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
-#elif UNITY_2018_1_OR_NEWER
-                if (!request.isNetworkError && !request.isHttpError)
-#endif
-                {
-                    if (request.isDone)
+                    WebRequestUpdateEventArgs updateEventArgs = null;
+                    switch (webRequestTask.WebRequestType)
                     {
-                        var updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, 1, request);
-                        onUpdateCallback?.Invoke(updateEventArgs);
-                        WebRequestUpdateEventArgs.Release(updateEventArgs);
-                        var successEventArgs = WebRequestSuccessEventArgs.Create(taskId, url, request.downloadHandler.data, request);
-                        onSuccessCallback?.Invoke(successEventArgs);
-                        WebRequestSuccessEventArgs.Release(successEventArgs);
+                        case WebRequestType.DownLoad:
+                            updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, request.downloadProgress, request);
+                            break;
+                        case WebRequestType.Upload:
+                            updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, request.uploadProgress, request);
+                            break;
                     }
-                }
-                else
-                {
-                    var failureEventArgs = WebRequestFailureEventArgs.Create(taskId, url, request.error, request);
-                    onFailureCallback?.Invoke(failureEventArgs);
-                    WebRequestFailureEventArgs.Release(failureEventArgs);
-                }
-                CurrentWebRequest = null;
-            }
-        }
-        IEnumerator UploadRequest(WebRequestTask webRequestTask)
-        {
-            var unityWebRequest = webRequestTask.UnityWebRequest;
-            var taskId = webRequestTask.TaskId;
-            var url = unityWebRequest.url;
-            using (UnityWebRequest request = unityWebRequest)
-            {
-                var startEventArgs = WebRequestStartEventArgs.Create(taskId, url, request);
-                onStartCallback?.Invoke(startEventArgs);
-                WebRequestStartEventArgs.Release(startEventArgs);
-                CurrentWebRequest = request;
-                request.SendWebRequest();
-                while (!request.isDone)
-                {
-                    var updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, request.uploadProgress, request);
                     onUpdateCallback?.Invoke(updateEventArgs);
                     WebRequestUpdateEventArgs.Release(updateEventArgs);
                     yield return null;
