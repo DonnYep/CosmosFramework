@@ -93,10 +93,6 @@ namespace Cosmos.Download
         /// 下载结束时间；
         /// </summary>
         DateTime downloadEndTime;
-        ///// <summary>
-        ///// 下载配置；
-        ///// </summary>
-        //DownloadConfig downloadConfig;
         /// <summary>
         /// web下载client;
         /// </summary>
