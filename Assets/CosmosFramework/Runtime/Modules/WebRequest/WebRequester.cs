@@ -32,6 +32,14 @@ namespace Cosmos.WebRequest
         /// </summary>
         public Action<WebRequestFailureEventArgs> onFailureCallback;
         /// <summary>
+        /// 获取文件长度失败回调；
+        /// </summary>
+        public Action<WebRequestGetContentLengthFailureEventArgs> onGetContentLengthFailureCallback;
+        /// <summary>
+        /// 获取文件长度成功回调；
+        /// </summary>
+        public Action<WebRequestGetContentLengthSuccessEventArgs> onGetContentLengthSuccessCallback;
+        /// <summary>
         /// 所有任务完成回调；
         /// </summary>
         public Action<WebRequestAllTaskCompleteEventArgs> onAllTaskCompleteCallback;
@@ -107,7 +115,10 @@ namespace Cosmos.WebRequest
             {
                 var task = taskList[0];
                 CurrentTask = task;
-                yield return WebRequest(task);
+                if (task.WebRequestType == WebRequestType.ContentLength)
+                    yield return GetContentLengthRequest(task);
+                else
+                    yield return WebRequest(task);
                 taskList.RemoveFirst();
                 taskDict.Remove(task.TaskId);
                 WebRequestTask.Release(task);
@@ -169,6 +180,30 @@ namespace Cosmos.WebRequest
                     WebRequestFailureEventArgs.Release(failureEventArgs);
                 }
                 CurrentWebRequest = null;
+            }
+        }
+        IEnumerator GetContentLengthRequest(WebRequestTask webRequestTask)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Head(webRequestTask.URL))
+            {
+                yield return request.SendWebRequest();
+                var size = request.GetRequestHeader("Content-Length");
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
+#elif UNITY_2018_1_OR_NEWER
+                if (!request.isNetworkError && !request.isHttpError)
+#endif
+                {
+                    var eventArgs = WebRequestGetContentLengthSuccessEventArgs.Create(webRequestTask.TaskId, webRequestTask.URL, Convert.ToInt64(size));
+                    onGetContentLengthSuccessCallback?.Invoke(eventArgs);
+                    WebRequestGetContentLengthSuccessEventArgs.Release(eventArgs);
+                }
+                else
+                {
+                    var eventArgs = WebRequestGetContentLengthFailureEventArgs.Create(webRequestTask.TaskId, webRequestTask.URL, request.error);
+                    onGetContentLengthFailureCallback?.Invoke(eventArgs);
+                    WebRequestGetContentLengthFailureEventArgs.Release(eventArgs);
+                }
             }
         }
     }
