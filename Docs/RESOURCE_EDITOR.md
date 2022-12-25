@@ -12,6 +12,11 @@
 * AssetDatabase与AssetBundle模式支持引用计数，资源包会根据引用计数自动管理包体的加载或卸载。
   
 * ResourceDataset是resource模块的配置文件，AssetDatabase加载资源与AssetBundle构建ab都依赖此配置。此文件可在ResourceEditor中生成。
+
+* AssetDatabase与AssetBundle模式加载支持以下寻址方式：
+  * 资源名。(e.g. MyConfig)
+  * 资源名.后缀名。(e.g. MyConfig.json)
+  * Assets下的完整路径。(e.g. Assets/Config/MyConfig.json)
  
 -----
 

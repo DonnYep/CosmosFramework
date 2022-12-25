@@ -12,7 +12,11 @@
 * AssetDatabase and AssetBundle modes support reference counting, and resource packages automatically manage the loading or unloading of package bodies based on the reference count.
   
 * ResourceDataset is the configuration file of resource module, which is relied on by AssetDatabase to load resources and AssetBundle to build ab. This file can be generated in ResourceEditor.
- 
+
+* The AssetDatabase and AssetBundle modes support the following addressing methods.
+  * ResourceName.(e.g. MyConfig)
+  * ResourceName.Extension((e.g. MyConfig.json))
+  * AssetsPath.((e.g. Assets/Config/MyConfig.json))
 -----
 
 ## ResourceEditor
