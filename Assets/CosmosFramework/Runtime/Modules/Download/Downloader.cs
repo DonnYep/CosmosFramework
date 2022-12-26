@@ -261,7 +261,7 @@ namespace Cosmos.Download
         /// <param name="uri">资源地址</param>
         /// <param name="downloadPath">下载到本地的目录</param>
         /// <param name="individualPercent">资源个体百分比0~1</param>
-        /// <param name="individualPercent">下载的长度</param>
+        /// <param name="downloadedBytes">下载的长度</param>
         void OnFileDownloading(string uri, string downloadPath, float individualPercent, ulong downloadedBytes)
         {
             var overallIndexPercent = 100 * ((float)currentDownloadTaskIndex / downloadTaskCount);
