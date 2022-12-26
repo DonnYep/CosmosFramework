@@ -207,7 +207,7 @@ namespace Cosmos.Download
                 var append = DownloadDataProxy.DownloadAppend;
                 var deleteFailureFile = DownloadDataProxy.DeleteFileOnAbort;
 #if UNITY_2019_1_OR_NEWER
-                var handler= new DownloadHandlerFile(downloadTask.DownloadPath, append) {  removeFileOnAbort=deleteFailureFile};
+                var handler = new DownloadHandlerFile(downloadTask.DownloadPath, append) { removeFileOnAbort = deleteFailureFile };
 #elif UNITY_2018_1_OR_NEWER
                 var handler= new DownloadHandlerFile(downloadTask.DownloadPath) {  removeFileOnAbort=deleteFailureFile};
 #endif
@@ -222,7 +222,7 @@ namespace Cosmos.Download
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
                 {
-                    OnFileDownloading(uri, fileDownloadPath, request.downloadProgress);
+                    OnFileDownloading(uri, fileDownloadPath, request.downloadProgress, request.downloadedBytes);
                     yield return null;
                 }
 #if UNITY_2020_1_OR_NEWER
@@ -235,9 +235,9 @@ namespace Cosmos.Download
                     {
                         Downloading = false;
                         var downloadedData = new DownloadedData(uri, fileDownloadPath);
-                        var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath,handler.data.Length);
+                        var successEventArgs = DownloadSuccessEventArgs.Create(uri, fileDownloadPath, handler.data.Length);
                         onDownloadSuccess?.Invoke(successEventArgs);
-                        OnFileDownloading(uri, fileDownloadPath, 1);
+                        OnFileDownloading(uri, fileDownloadPath, 1, request.downloadedBytes);
                         DownloadSuccessEventArgs.Release(successEventArgs);
                         successTasks.Add(downloadTask);
                     }
@@ -249,7 +249,7 @@ namespace Cosmos.Download
                     onDownloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
                     failureTasks.Add(downloadTask);
-                    OnFileDownloading(uri, fileDownloadPath, 1);
+                    OnFileDownloading(uri, fileDownloadPath, 1, 0);
                     unityWebRequest = null;
                 }
             }
@@ -261,11 +261,12 @@ namespace Cosmos.Download
         /// <param name="uri">资源地址</param>
         /// <param name="downloadPath">下载到本地的目录</param>
         /// <param name="individualPercent">资源个体百分比0~1</param>
-        void OnFileDownloading(string uri, string downloadPath, float individualPercent)
+        /// <param name="individualPercent">下载的长度</param>
+        void OnFileDownloading(string uri, string downloadPath, float individualPercent, ulong downloadedBytes)
         {
             var overallIndexPercent = 100 * ((float)currentDownloadTaskIndex / downloadTaskCount);
-            var overallProgress = overallIndexPercent + (UnitResRatio * (individualPercent));
-            var eventArgs = DonwloadOverallEventArgs.Create(uri, downloadPath, overallProgress, individualPercent);
+            var overallProgress = overallIndexPercent + (UnitResRatio * individualPercent);
+            var eventArgs = DonwloadOverallEventArgs.Create(uri, downloadPath, overallProgress, individualPercent, downloadedBytes);
             onDownloadOverall?.Invoke(eventArgs);
             DonwloadOverallEventArgs.Release(eventArgs);
         }
