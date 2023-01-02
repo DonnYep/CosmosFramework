@@ -9,6 +9,7 @@ namespace Cosmos.Resource.Verifiy
 {
     /// <summary>
     /// 资源文件校验器；
+    /// 用于校验bundle文件是否完整；
     /// </summary>
     public class ResourceVerifier
     {
@@ -18,10 +19,14 @@ namespace Cosmos.Resource.Verifiy
             add { onVerified += value; }
             remove { onVerified -= value; }
         }
-        List<ResourceVerifiyInfo> verifiyResult = new List<ResourceVerifiyInfo>();
         List<ResourceVerifiyTask> tasks = new List<ResourceVerifiyTask>();
-
+        List<ResourceVerifiyInfo> verifiyResult = new List<ResourceVerifiyInfo>();
         Coroutine coroutine;
+        /// <summary>
+        /// 校验文件清单；
+        /// </summary>
+        /// <param name="manifest">文件清单</param>
+        /// <param name="bundlePath">持久化路径</param>
         public void VerifiyManifest(ResourceManifest manifest, string bundlePath)
         {
             tasks.Clear();
@@ -29,10 +34,13 @@ namespace Cosmos.Resource.Verifiy
             foreach (var bundleBuildInfo in manifest.ResourceBundleBuildInfoDict.Values)
             {
                 var url = Path.Combine(bundlePath, bundleBuildInfo.ResourceBundle.BundleKey);
-                tasks.Add(new ResourceVerifiyTask(url, bundleBuildInfo.ResourceBundle.BundleName, bundleBuildInfo.BundleSize));
+                tasks.Add(ResourceVerifiyTask.Create(url, bundleBuildInfo.ResourceBundle.BundleName, bundleBuildInfo.BundleSize));
             }
-            coroutine = Utility.Unity.StartCoroutine(MultipleVerifiy(tasks));
+            coroutine = Utility.Unity.StartCoroutine(MultipleVerifiy());
         }
+        /// <summary>
+        /// 停止校验
+        /// </summary>
         public void StopVerifiy()
         {
             if (coroutine != null)
@@ -47,12 +55,13 @@ namespace Cosmos.Resource.Verifiy
             tasks.Clear();
             verifiyResult.Clear();
         }
-        IEnumerator MultipleVerifiy(List<ResourceVerifiyTask> tasks)
+        IEnumerator MultipleVerifiy()
         {
             while (tasks.Count > 0)
             {
-                var task = tasks[0];
+                var task = tasks.RemoveFirst();
                 yield return VerifiyContentLength(task);
+                ResourceVerifiyTask.Release(task);
             }
             onVerified?.Invoke(verifiyResult.ToArray());
         }
