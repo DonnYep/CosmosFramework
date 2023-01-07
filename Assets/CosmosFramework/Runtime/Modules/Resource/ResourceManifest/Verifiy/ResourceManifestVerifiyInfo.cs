@@ -6,7 +6,7 @@ namespace Cosmos.Resource.Verifiy
     /// Bundle用于校验时的数据；
     /// </summary>
     [StructLayout(LayoutKind.Auto)]
-    public struct ResourceVerifiyInfo : IEquatable<ResourceVerifiyInfo>
+    public struct ResourceManifestVerifiyInfo : IEquatable<ResourceManifestVerifiyInfo>
     {
         /// <summary>
         /// 文件的地址；
@@ -24,14 +24,14 @@ namespace Cosmos.Resource.Verifiy
         /// 是否与清单上的信息相等；
         /// </summary>
         public bool IsEqual;
-        public ResourceVerifiyInfo(string url, string bundleName, bool verified, bool isEqual)
+        public ResourceManifestVerifiyInfo(string url, string bundleName, bool verified, bool isEqual)
         {
             Url = url;
             BundleName = bundleName;
             Verified = verified;
             IsEqual = isEqual;
         }
-        public bool Equals(ResourceVerifiyInfo other)
+        public bool Equals(ResourceManifestVerifiyInfo other)
         {
             return Url == other.Url &&
                 BundleName == other.BundleName &&
