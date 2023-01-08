@@ -18,19 +18,25 @@
         /// 当前资源的下载缓存路径；
         /// </summary>
         public string DownloadPath { get; private set; }
+        /// <summary>
+        /// 资源下载的长度；
+        /// </summary>
+        public ulong DownloadedBytes { get; private set; }
         public override void Release()
         {
             URI = null;
             DownloadPath = null;
             OverallProgress = 0;
+            DownloadedBytes = 0;
         }
-        public static DonwloadOverallEventArgs Create(string uri, string downloadPath, float overallProgress,float individualProgress)
+        public static DonwloadOverallEventArgs Create(string uri, string downloadPath, float overallProgress,float individualProgress, ulong downloadedBytes)
         {
             var eventArgs = ReferencePool.Acquire<DonwloadOverallEventArgs>();
             eventArgs.URI = uri;
             eventArgs.OverallProgress= overallProgress;
             eventArgs.DownloadPath = downloadPath;
             eventArgs.IndividualProgress= individualProgress;
+            eventArgs.DownloadedBytes= downloadedBytes;
             return eventArgs;
         }
         public static void Release(DonwloadOverallEventArgs eventArgs)

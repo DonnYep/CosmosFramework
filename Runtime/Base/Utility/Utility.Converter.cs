@@ -15,7 +15,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="context">需要解码的内容</param>
             /// <returns>解码后的内容</returns>
-            public static string DecodeToBase64(string context)
+            public static string DecodeFromBase64(string context)
             {
                 return Encoding.UTF8.GetString(Convert.FromBase64String(context));
             }
@@ -100,7 +100,7 @@ namespace Cosmos
             /// <param name="bytes">byte长度</param>
             /// <param name="decimals">保留的小数长度</param>
             /// <returns>格式化后的单位</returns>
-            public static string FormatBytesSize(long bytes, int decimals = 2)
+            public static string FormatBytes(long bytes, int decimals = 2)
             {
                 string[] suffix = { "Byte", "KB", "MB", "GB", "TB" };
                 int i = 0;

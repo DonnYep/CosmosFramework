@@ -4,6 +4,7 @@
     {
         None,
         DownLoad,
-        Upload
+        Upload,
+        ContentLength
     }
 }
