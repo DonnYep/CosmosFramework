@@ -43,6 +43,7 @@ namespace Cosmos.Editor.Resource
                         {
                             importer.assetBundleName = hash;
                             bundleKey = hash;
+                            bundleInfo.BundleKey = hash;
                         }
                         break;
                 }
@@ -153,12 +154,13 @@ namespace Cosmos.Editor.Resource
             var bundleInfoLength = bundleInfos.Count;
 
             #region 还原dataset在editor环境下的依赖
-            //这段还原dataset在editor模式的依赖
+            //这段还原dataset在editor模式的依赖，并还原bundleKey；
             for (int i = 0; i < bundleInfoLength; i++)
             {
-                var bundle = bundleInfos[i];
-                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                importer.assetBundleName = bundle.BundleName;
+                var bundleInfo = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
+                importer.assetBundleName = bundleInfo.BundleName;
+                bundleInfo.BundleKey = bundleInfo.BundleName;
             }
             for (int i = 0; i < bundleInfoLength; i++)
             {
