@@ -32,5 +32,9 @@ namespace Cosmos.Resource.Verifiy
                 ResourceBundleName == other.ResourceBundleName &&
                 ResourceBundleLengthMatched == other.ResourceBundleLengthMatched;
         }
+        public override string ToString()
+        {
+            return $"Url: {Url} ;ResourceBundleName: {ResourceBundleName};ResourceBundleLengthMatched: {ResourceBundleLengthMatched}";
+        }
     }
 }
