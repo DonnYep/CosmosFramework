@@ -16,9 +16,13 @@ MonoBehaviour:
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
     bundleKey: prefab
-    bundleSize: 360065
-    bundleFormatBytes: 351.6 KB
-    dependentBundleKeyList: []
+    bundleSize: 353508
+    bundleFormatBytes: 345.2 KB
+    dependentBundleKeyList:
+    - audio
+    - material
+    - model
+    - texture
     resourceObjectInfoList:
     - objectName: AudioSource
       objectPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
@@ -61,27 +65,6 @@ MonoBehaviour:
       objectSize: 2769
       objectFormatBytes: 2.7 KB
       extension: .prefab
-      objectState: VALID
-    - objectName: Mat_ObjectPool_Blue
-      objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Blue.mat
-      bundleName: prefab
-      objectSize: 2295
-      objectFormatBytes: 2.2 KB
-      extension: .mat
-      objectState: VALID
-    - objectName: Mat_ObjectPool_Green
-      objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Green.mat
-      bundleName: prefab
-      objectSize: 2128
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectState: VALID
-    - objectName: Mat_ObjectPool_Red
-      objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/Mat_ObjectPool_Red.mat
-      bundleName: prefab
-      objectSize: 2134
-      objectFormatBytes: 2.1 KB
-      extension: .mat
       objectState: VALID
     - objectName: ResPrefab_Capsule
       objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Capsule.prefab
@@ -352,8 +335,8 @@ MonoBehaviour:
   - bundleName: material
     bundlePath: Assets/Examples/AssetBundleTest/Material
     bundleKey: material
-    bundleSize: 8513
-    bundleFormatBytes: 8.3 KB
+    bundleSize: 15070
+    bundleFormatBytes: 14.7 KB
     dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: Alpha_Body_MAT
@@ -381,6 +364,27 @@ MonoBehaviour:
       objectPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
       bundleName: material
       objectSize: 2107
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectState: VALID
+    - objectName: Mat_ObjectPool_Blue
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Blue.mat
+      bundleName: material
+      objectSize: 2295
+      objectFormatBytes: 2.2 KB
+      extension: .mat
+      objectState: VALID
+    - objectName: Mat_ObjectPool_Green
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Green.mat
+      bundleName: material
+      objectSize: 2128
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectState: VALID
+    - objectName: Mat_ObjectPool_Red
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Red.mat
+      bundleName: material
+      objectSize: 2134
       objectFormatBytes: 2.1 KB
       extension: .mat
       objectState: VALID
