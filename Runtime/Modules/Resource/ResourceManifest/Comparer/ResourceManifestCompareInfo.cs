@@ -28,5 +28,9 @@ namespace Cosmos.Resource.Comparer
                 other.ResouceBundleSize == this.ResouceBundleSize &&
                 other.ResourceBundleHash == this.ResourceBundleHash;
         }
+        public override string ToString()
+        {
+            return $"ResouceBundleName: {ResouceBundleName}; ResouceBundleKey: {ResouceBundleKey}; ResouceBundleSize: {ResouceBundleSize}; ResourceBundleHash :{ResourceBundleHash}";
+        }
     }
 }

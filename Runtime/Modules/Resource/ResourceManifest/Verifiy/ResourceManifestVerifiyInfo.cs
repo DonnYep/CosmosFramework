@@ -15,28 +15,26 @@ namespace Cosmos.Resource.Verifiy
         /// <summary>
         /// 包的名称；
         /// </summary>
-        public string BundleName;
+        public string ResourceBundleName;
         /// <summary>
-        /// 是否被校验；
+        /// 文件长度是否匹配；
         /// </summary>
-        public bool Verified;
-        /// <summary>
-        /// 是否与清单上的信息相等；
-        /// </summary>
-        public bool IsEqual;
-        public ResourceManifestVerifiyInfo(string url, string bundleName, bool verified, bool isEqual)
+        public bool ResourceBundleLengthMatched;
+        public ResourceManifestVerifiyInfo(string url, string bundleName, bool matched)
         {
             Url = url;
-            BundleName = bundleName;
-            Verified = verified;
-            IsEqual = isEqual;
+            ResourceBundleName = bundleName;
+            ResourceBundleLengthMatched = matched;
         }
         public bool Equals(ResourceManifestVerifiyInfo other)
         {
             return Url == other.Url &&
-                BundleName == other.BundleName &&
-                Verified == other.Verified &&
-                IsEqual == other.IsEqual;
+                ResourceBundleName == other.ResourceBundleName &&
+                ResourceBundleLengthMatched == other.ResourceBundleLengthMatched;
+        }
+        public override string ToString()
+        {
+            return $"Url: {Url} ;ResourceBundleName: {ResourceBundleName};ResourceBundleLengthMatched: {ResourceBundleLengthMatched}";
         }
     }
 }

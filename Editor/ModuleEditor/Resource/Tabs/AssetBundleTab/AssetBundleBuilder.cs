@@ -26,6 +26,9 @@ namespace Cosmos.Editor.Resource
             for (int i = 0; i < bundleInfoLength; i++)
             {
                 var bundleInfo = bundleInfos[i];
+                //过滤空包。若文件夹被标记为bundle，且不包含内容，则unity会过滤。因此遵循unity的规范；
+                if (bundleInfo.ResourceObjectInfoList.Count <= 0)
+                    continue;
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
                 //这里获取绝对ab绝对路径下，所有资源的bytes，生成唯一MD5 hash
                 var path = Path.Combine(EditorUtil.ApplicationPath(), bundleInfo.BundlePath);
@@ -53,7 +56,6 @@ namespace Cosmos.Editor.Resource
                     BundleName = bundleInfo.BundleName,
                     BundlePath = bundleInfo.BundlePath,
                 };
-                bundle.DependentBundleKeytList.AddRange(bundleInfo.DependentBundleKeyList);
                 var objectInfoList = bundleInfo.ResourceObjectInfoList;
                 var objectInfoLength = objectInfoList.Count;
                 for (int j = 0; j < objectInfoLength; j++)
@@ -83,6 +85,11 @@ namespace Cosmos.Editor.Resource
                 bundleInfo.DependentBundleKeyList.Clear();
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
                 bundleInfo.DependentBundleKeyList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                if (resourceManifest.ResourceBundleBuildInfoDict.TryGetValue(bundleInfo.BundleName, out var bundleBuildInfo))
+                {
+                    bundleBuildInfo.ResourceBundle.DependentBundleKeytList.Clear();
+                    bundleBuildInfo.ResourceBundle.DependentBundleKeytList.AddRange(bundleInfo.DependentBundleKeyList);
+                }
             }
         }
         public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
