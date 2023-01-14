@@ -48,8 +48,7 @@ namespace Cosmos
                         string manifestPath = string.Empty;
                         string bundlePath = string.Empty;
                         string prefix = string.Empty;
-#if UNITY_EDITOR_WIN || UNITY_ANDROID || UNITY_STANDALONE
-#elif UNITY_IOS ||UNITY_EDITOR_OSX||UNITY_STANDALONE_OSX
+#if UNITY_IOS ||UNITY_EDITOR_OSX||UNITY_STANDALONE_OSX
                         prefix=@"file://";
 #endif
                         switch (resourceBundlePathType)
@@ -73,7 +72,6 @@ namespace Cosmos
                             ResourceDataProxy.BundlePath = bundlePath;
                         }
                         manifestPath = prefix + manifestPath;
-                        //ResourceDataProxy.BundlePath = ResourceDataProxy.BundlePath;
                         //webrequest需要加file://，System.IO不需要加。加载器使用的是unity原生的assetbundle.loadxxxx，属于IO，因此无需加前缀；
                         if (assetBundleEncrytion)
                             ResourceDataProxy.EncryptionOffset = assetBundleEncrytionOffset;
