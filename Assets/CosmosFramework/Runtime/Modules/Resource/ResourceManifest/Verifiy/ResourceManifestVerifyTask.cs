@@ -1,12 +1,12 @@
 ﻿using System;
-namespace Cosmos.Resource.Verifiy
+namespace Cosmos.Resource.Verify
 {
-    internal class ResourceManifestVerifiyTask : IEquatable<ResourceManifestVerifiyTask>, IReference
+    internal class ResourceManifestVerifyTask : IEquatable<ResourceManifestVerifyTask>, IReference
     {
         public string Url { get; private set; }
         public string ResourceBundleName { get; private set; }
         public long ResourceBundleSize { get; private set; }
-        public bool Equals(ResourceManifestVerifiyTask other)
+        public bool Equals(ResourceManifestVerifyTask other)
         {
             return other.Url == this.Url &&
                 other.ResourceBundleName == this.ResourceBundleName;
@@ -17,15 +17,15 @@ namespace Cosmos.Resource.Verifiy
             ResourceBundleName = string.Empty;
             ResourceBundleSize = 0;
         }
-        public static ResourceManifestVerifiyTask Create(string url, string resourceBundleName, long resourceBundleSize)
+        public static ResourceManifestVerifyTask Create(string url, string resourceBundleName, long resourceBundleSize)
         {
-            var task = ReferencePool.Acquire<ResourceManifestVerifiyTask>();
+            var task = ReferencePool.Acquire<ResourceManifestVerifyTask>();
             task.Url = url;
             task.ResourceBundleName = resourceBundleName;
             task.ResourceBundleSize = resourceBundleSize;
             return task;
         }
-        public static void Release(ResourceManifestVerifiyTask task)
+        public static void Release(ResourceManifestVerifyTask task)
         {
             ReferencePool.Release(task);
         }
