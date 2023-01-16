@@ -1,12 +1,12 @@
 ﻿using System.Runtime.InteropServices;
 using System;
-namespace Cosmos.Resource.Verifiy
+namespace Cosmos.Resource.Verify
 {
     /// <summary>
     /// Bundle用于校验时的数据；
     /// </summary>
     [StructLayout(LayoutKind.Auto)]
-    public struct ResourceManifestVerifiyInfo : IEquatable<ResourceManifestVerifiyInfo>
+    public struct ResourceManifestVerifyInfo : IEquatable<ResourceManifestVerifyInfo>
     {
         /// <summary>
         /// 文件的地址；
@@ -20,13 +20,13 @@ namespace Cosmos.Resource.Verifiy
         /// 文件长度是否匹配；
         /// </summary>
         public bool ResourceBundleLengthMatched;
-        public ResourceManifestVerifiyInfo(string url, string bundleName, bool matched)
+        public ResourceManifestVerifyInfo(string url, string bundleName, bool matched)
         {
             Url = url;
             ResourceBundleName = bundleName;
             ResourceBundleLengthMatched = matched;
         }
-        public bool Equals(ResourceManifestVerifiyInfo other)
+        public bool Equals(ResourceManifestVerifyInfo other)
         {
             return Url == other.Url &&
                 ResourceBundleName == other.ResourceBundleName &&
