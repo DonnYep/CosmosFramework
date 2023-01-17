@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Cosmos.Resource.Comparer
+namespace Cosmos.Resource.Compare
 {
     /// <summary>
     /// 文件清单校验结果；
@@ -8,20 +8,20 @@ namespace Cosmos.Resource.Comparer
     public class ResourceManifestCompareResult
     {
         /// <summary>
-        /// 名称一致但是hash不同的文件；
+        /// 有改动的文件；
         /// </summary>
-        public ResourceManifestCompareInfo[] ExpiredInfos;
+        public ResourceManifestCompareInfo[] ChangedInfos;
         /// <summary>
         /// 新增的文件；
         /// </summary>
-        public ResourceManifestCompareInfo[] AddedInfos;
+        public ResourceManifestCompareInfo[] NewlyAddedInfos;
         /// <summary>
-        /// 需要删除的文件；
+        /// 过期无效的文件；
         /// </summary>
-        public ResourceManifestCompareInfo[] RemovedInfos;
+        public ResourceManifestCompareInfo[] ExpiredInfos;
         /// <summary>
-        /// 相同的文件；
+        /// 未更改的文件；
         /// </summary>
-        public ResourceManifestCompareInfo[] MatchedInfos;
+        public ResourceManifestCompareInfo[] UnchangedInfos;
     }
 }

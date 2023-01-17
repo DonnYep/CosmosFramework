@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Cosmos.Resource.Comparer
+namespace Cosmos.Resource.Compare
 {
     public class ResourceManifestComparer
     {
@@ -13,10 +13,10 @@ namespace Cosmos.Resource.Comparer
         public void CompareManifest(ResourceManifest sourceManifest, ResourceManifest comparisonManifest, out ResourceManifestCompareResult result)
         {
             result = new ResourceManifestCompareResult();
-            List<ResourceManifestCompareInfo> removed = new List<ResourceManifestCompareInfo>();
             List<ResourceManifestCompareInfo> expired = new List<ResourceManifestCompareInfo>();
-            List<ResourceManifestCompareInfo> added = new List<ResourceManifestCompareInfo>();
-            List<ResourceManifestCompareInfo> matched = new List<ResourceManifestCompareInfo>();
+            List<ResourceManifestCompareInfo> changed = new List<ResourceManifestCompareInfo>();
+            List<ResourceManifestCompareInfo> newlyAdded = new List<ResourceManifestCompareInfo>();
+            List<ResourceManifestCompareInfo> unchanged = new List<ResourceManifestCompareInfo>();
             //这里使用src的文件清单遍历comparison的文件清单;
             foreach (var srcBundleBuildInfoKeyValue in sourceManifest.ResourceBundleBuildInfoDict)
             {
@@ -26,7 +26,7 @@ namespace Cosmos.Resource.Comparer
                 if (!comparisonManifest.ResourceBundleBuildInfoDict.TryGetValue(srcBundleBuildInfoKeyValue.Key, out var cmpBundleBuildInfo))
                 {
                     //如果comparison中不存在，表示资源已经过期，加入到移除的列表中；
-                    removed.Add(info);
+                    expired.Add(info);
                 }
                 else
                 {
@@ -34,12 +34,12 @@ namespace Cosmos.Resource.Comparer
                     if (srcBundleInfo.BundleHash != cmpBundleBuildInfo.BundleHash)
                     {
                         //Hash不一致，表示需要更新；
-                        expired.Add(info);
+                        changed.Add(info);
                     }
                     else
                     {
                         //Hash一致，无需更新；
-                        matched.Add(info);
+                        unchanged.Add(info);
                     }
                 }
             }
@@ -49,13 +49,13 @@ namespace Cosmos.Resource.Comparer
                 if (!sourceManifest.ResourceBundleBuildInfoDict.ContainsKey(cmpBundleBuildInfoKeyValue.Key))
                 {
                     //source中不存在，表示为新增资源；
-                    added.Add(new ResourceManifestCompareInfo(cmpBundleInfo.ResourceBundle.BundleName, cmpBundleInfo.ResourceBundle.BundleKey, cmpBundleInfo.BundleSize, cmpBundleInfo.BundleHash));
+                    newlyAdded.Add(new ResourceManifestCompareInfo(cmpBundleInfo.ResourceBundle.BundleName, cmpBundleInfo.ResourceBundle.BundleKey, cmpBundleInfo.BundleSize, cmpBundleInfo.BundleHash));
                 }
             }
+            result.ChangedInfos = changed.ToArray();
+            result.NewlyAddedInfos= newlyAdded.ToArray();
             result.ExpiredInfos = expired.ToArray();
-            result.AddedInfos = added.ToArray();
-            result.RemovedInfos = removed.ToArray();
-            result.MatchedInfos = matched.ToArray();
+            result.UnchangedInfos = unchanged.ToArray();
         }
     }
 }
