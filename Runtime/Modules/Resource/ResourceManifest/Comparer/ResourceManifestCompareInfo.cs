@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-namespace Cosmos.Resource.Comparer
+namespace Cosmos.Resource.Compare
 {
     [Serializable]
     [StructLayout(LayoutKind.Auto)]

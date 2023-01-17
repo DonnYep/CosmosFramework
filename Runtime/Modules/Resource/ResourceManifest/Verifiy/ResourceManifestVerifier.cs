@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using System.IO;
 using UnityEngine;
 
-namespace Cosmos.Resource.Verifiy
+namespace Cosmos.Resource.Verify
 {
     /// <summary>
     /// 资源文件校验器；
@@ -13,37 +13,45 @@ namespace Cosmos.Resource.Verifiy
     /// </summary>
     public class ResourceManifestVerifier
     {
-        Action<ResourceManifestVerifierResult> onVerified;
-        public event Action<ResourceManifestVerifierResult> OnVerified
+        Action<ResourceManifestVerifyResult> onVerified;
+        public event Action<ResourceManifestVerifyResult> OnVerified
         {
             add { onVerified += value; }
             remove { onVerified -= value; }
         }
-        List<ResourceManifestVerifiyTask> tasks = new List<ResourceManifestVerifiyTask>();
-        List<ResourceManifestVerifiyInfo> verifiySuccessInfos = new List<ResourceManifestVerifiyInfo>();
-        List<ResourceManifestVerifiyInfo> verifiyFailureInfos = new List<ResourceManifestVerifiyInfo>();
+        List<ResourceManifestVerifyTask> tasks = new List<ResourceManifestVerifyTask>();
+        List<ResourceManifestVerifyInfo> verificationSuccessInfos = new List<ResourceManifestVerifyInfo>();
+        List<ResourceManifestVerifyInfo> verificationFailureInfos = new List<ResourceManifestVerifyInfo>();
         Coroutine coroutine;
+        bool verificationInProgress;
+        public bool VerificationInProgress
+        {
+            get { return verificationInProgress; }
+        }
         /// <summary>
         /// 校验文件清单；
         /// </summary>
         /// <param name="manifest">文件清单</param>
         /// <param name="bundlePath">持久化路径</param>
-        public void VerifiyManifest(ResourceManifest manifest, string bundlePath)
+        public void VerifyManifest(ResourceManifest manifest, string bundlePath)
         {
+            if (verificationInProgress)
+                return;
+            verificationInProgress = true;
             tasks.Clear();
-            verifiySuccessInfos.Clear();
-            verifiyFailureInfos.Clear();
+            verificationSuccessInfos.Clear();
+            verificationFailureInfos.Clear();
             foreach (var bundleBuildInfo in manifest.ResourceBundleBuildInfoDict.Values)
             {
                 var url = Path.Combine(bundlePath, bundleBuildInfo.ResourceBundle.BundleKey);
-                tasks.Add(ResourceManifestVerifiyTask.Create(url, bundleBuildInfo.ResourceBundle.BundleName, bundleBuildInfo.BundleSize));
+                tasks.Add(ResourceManifestVerifyTask.Create(url, bundleBuildInfo.ResourceBundle.BundleName, bundleBuildInfo.BundleSize));
             }
-            coroutine = Utility.Unity.StartCoroutine(MultipleVerifiy());
+            coroutine = Utility.Unity.StartCoroutine(MultipleVerify());
         }
         /// <summary>
-        /// 停止校验
+        /// 停止校验；
         /// </summary>
-        public void StopVerifiy()
+        public void StopVerify()
         {
             if (coroutine != null)
                 Utility.Unity.StopCoroutine(coroutine);
@@ -51,34 +59,36 @@ namespace Cosmos.Resource.Verifiy
             for (int i = 0; i < length; i++)
             {
                 var task = tasks[i];
-                verifiyFailureInfos.Add(new ResourceManifestVerifiyInfo(task.Url, task.ResourceBundleName, false));
+                verificationFailureInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, false));
             }
-            var result = new ResourceManifestVerifierResult()
+            var result = new ResourceManifestVerifyResult()
             {
-                VerifiyFailureInfos = verifiyFailureInfos.ToArray(),
-                VerifiySuccessInfos = verifiySuccessInfos.ToArray()
+                VerificationFailureInfos = verificationFailureInfos.ToArray(),
+                VerificationSuccessInfos = verificationSuccessInfos.ToArray()
             };
+            verificationInProgress = false;
             onVerified?.Invoke(result);
             tasks.Clear();
-            verifiySuccessInfos.Clear();
-            verifiyFailureInfos.Clear();
+            verificationSuccessInfos.Clear();
+            verificationFailureInfos.Clear();
         }
-        IEnumerator MultipleVerifiy()
+        IEnumerator MultipleVerify()
         {
             while (tasks.Count > 0)
             {
                 var task = tasks.RemoveFirst();
-                yield return VerifiyContentLength(task);
-                ResourceManifestVerifiyTask.Release(task);
+                yield return VerifyContentLength(task);
+                ResourceManifestVerifyTask.Release(task);
             }
-            var result = new ResourceManifestVerifierResult()
+            var result = new ResourceManifestVerifyResult()
             {
-                VerifiyFailureInfos = verifiyFailureInfos.ToArray(),
-                VerifiySuccessInfos = verifiySuccessInfos.ToArray()
+                VerificationFailureInfos = verificationFailureInfos.ToArray(),
+                VerificationSuccessInfos = verificationSuccessInfos.ToArray()
             };
+            verificationInProgress = false;
             onVerified?.Invoke(result);
         }
-        IEnumerator VerifiyContentLength(ResourceManifestVerifiyTask task)
+        IEnumerator VerifyContentLength(ResourceManifestVerifyTask task)
         {
             using (UnityWebRequest request = UnityWebRequest.Head(task.Url))
             {
@@ -96,11 +106,11 @@ namespace Cosmos.Resource.Verifiy
                     {
                         bundleLengthMatched = true;
                     }
-                    verifiySuccessInfos.Add(new ResourceManifestVerifiyInfo(task.Url, task.ResourceBundleName, bundleLengthMatched));
+                    verificationSuccessInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, bundleLengthMatched));
                 }
                 else
                 {
-                    verifiyFailureInfos.Add(new ResourceManifestVerifiyInfo(task.Url, task.ResourceBundleName, false));
+                    verificationFailureInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, false));
                 }
             }
         }
