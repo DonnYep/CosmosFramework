@@ -5,10 +5,10 @@
         /// <summary>
         /// 校验成功的信息；
         /// </summary>
-        public ResourceManifestVerifyInfo[] VerifySuccessInfos; 
+        public ResourceManifestVerifyInfo[] VerificationSuccessInfos; 
         /// <summary>
         /// 校验失败的信息；
         /// </summary>
-        public ResourceManifestVerifyInfo[] VerifyFailureInfos; 
+        public ResourceManifestVerifyInfo[] VerificationFailureInfos; 
     }
 }

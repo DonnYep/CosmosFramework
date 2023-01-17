@@ -18,11 +18,7 @@ MonoBehaviour:
     bundleKey: prefab
     bundleSize: 353508
     bundleFormatBytes: 345.2 KB
-    dependentBundleKeyList:
-    - audio
-    - material
-    - model
-    - texture
+    dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: AudioSource
       objectPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
