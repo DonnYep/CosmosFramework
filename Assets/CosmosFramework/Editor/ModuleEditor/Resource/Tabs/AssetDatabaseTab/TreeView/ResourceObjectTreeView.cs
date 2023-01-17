@@ -52,7 +52,6 @@ namespace Cosmos.Editor.Resource
                     {
                         ObjectName = objectInfo.ObjectName,
                         ObjectState = objectInfo.ObjectState,
-                        ObjectStateIcon = objectInfo.ObjectStateIcon,
                         ObjectSize = objectInfo.ObjectFormatBytes,
                         ObjectBundleName = objectInfo.BundleName,
                         ObjectExtension = objectInfo.Extension
@@ -146,8 +145,8 @@ namespace Cosmos.Editor.Resource
                         var iconRect = new Rect(cellRect.x + 4, cellRect.y, cellRect.height, cellRect.height);
                         if (treeView.icon != null)
                             GUI.DrawTexture(iconRect, treeView.icon, ScaleMode.ScaleToFit);
-                        var lablCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-                        DefaultGUI.Label(lablCellRect, treeView.ObjectName, args.selected, args.focused);
+                        var labelCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
+                        DefaultGUI.Label(labelCellRect, treeView.ObjectName, args.selected, args.focused);
                     }
                     break;
                 case 1:
@@ -158,11 +157,21 @@ namespace Cosmos.Editor.Resource
                 case 2:
                     {
                         var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
-                        if (treeView.icon != null)
-                            GUI.DrawTexture(iconRect, treeView.ObjectStateIcon, ScaleMode.ScaleToFit);
-                        var lablCellRect = new Rect(cellRect.x + iconRect.width + 2, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-
-                        DefaultGUI.Label(lablCellRect, treeView.ObjectState, args.selected, args.focused);
+                        var labelCellRect = new Rect(cellRect.x + iconRect.width + 2, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
+                        GUIStyle objectStateStyle= new GUIStyle();
+                        objectStateStyle.fontStyle = FontStyle.Bold;
+                        //DefaultGUI.Label(labelCellRect, treeView.ObjectState, args.selected, args.focused);
+                        var objectState = treeView.ObjectState;
+                        switch (objectState)
+                        {
+                            case ResourceEditorConstant.ObjectInvalidState:
+                                objectStateStyle.normal.textColor = Color.red;
+                                break;
+                            case ResourceEditorConstant.ObjectValidState:
+                                objectStateStyle.normal.textColor = Color.green;
+                                break;
+                        }
+                        GUI.Label(labelCellRect, treeView.ObjectState, objectStateStyle);
                     }
                     break;
                 case 3:

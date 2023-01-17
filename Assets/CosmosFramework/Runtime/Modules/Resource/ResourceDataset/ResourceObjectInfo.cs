@@ -21,7 +21,6 @@ namespace Cosmos.Resource
         string extension;
         [SerializeField]
         string objectState;
-        Texture2D objectStateIcon;
         Texture2D objectIcon;
         /// <summary>
         /// 资源名
@@ -77,11 +76,6 @@ namespace Cosmos.Resource
         {
             get { return objectState; }
             set { objectState = value; }
-        }
-        public Texture2D ObjectStateIcon
-        {
-            get { return objectStateIcon; }
-            set { objectStateIcon = value; }
         }
         public ResourceObjectInfo() { }
         public ResourceObjectInfo(string objectName, string objectPath, string bundleName, string extension)

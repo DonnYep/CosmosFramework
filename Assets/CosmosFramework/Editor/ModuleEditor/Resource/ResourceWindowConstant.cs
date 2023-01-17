@@ -16,5 +16,8 @@
             ".xls",".xlsx",".docx",".doc",".mov",".rendertexture",".csv",".fbx",".mixer",
             ".flare",".playable",".physicmaterial",".signal",".guiskin",".dds",".otf"
         };
+        public const string ObjectValidState = "VALID";
+        public const string ObjectInvalidState = "INVALID";
+
     }
 }
