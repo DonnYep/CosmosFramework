@@ -14,7 +14,6 @@ namespace Cosmos.Editor.Resource
         /// 当前对象状态，INVALID , VALID
         /// </summary>
         public string ObjectState { get; set; }
-        public Texture2D ObjectStateIcon { get; set; }
         /// <summary>
         /// 文件大小；
         /// </summary>
