@@ -387,6 +387,19 @@ namespace Cosmos
                 Array.Resize(ref dst, idx);
                 return dst;
             }
+            /// <summary>
+            /// 产生正态分布的随机数
+            /// </summary>
+            /// <param name="mean">均值</param>
+            /// <param name="stdDev">方差</param>
+            /// <returns>随机数</returns>
+            public static double NextGauss( double mean, double stdDev)
+            {
+                double u1 = 1.0 - random.NextDouble();
+                double u2 = 1.0 - random.NextDouble();
+                double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+                return mean + stdDev * randStdNormal;
+            }
         }
     }
 }
