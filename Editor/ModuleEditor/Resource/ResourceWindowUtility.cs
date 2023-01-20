@@ -54,14 +54,6 @@ namespace Cosmos.Editor.Resource
         {
             return EditorGUIUtility.FindTexture("Refresh");
         }
-        public static Texture2D GetAssetInvalidIcon()
-        {
-            return EditorGUIUtility.FindTexture("TestFailed");
-        }
-        public static Texture2D GetAssetValidIcon()
-        {
-            return EditorGUIUtility.FindTexture("TestPassed");
-        }
         public static MultiColumnHeaderState CreateResourceBundleMultiColumnHeader()
         {
             var columns = new[]

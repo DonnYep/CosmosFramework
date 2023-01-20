@@ -129,14 +129,12 @@ namespace Cosmos.Editor.Resource
                         if (asset != null)
                         {
                             resourceObjectInfo.ObjectIcon = AssetDatabase.GetCachedIcon(lowerExtFilePath) as Texture2D;
-                            resourceObjectInfo.ObjectState = "VALID";
-                            resourceObjectInfo.ObjectStateIcon = ResourceWindowUtility.GetAssetValidIcon();
+                            resourceObjectInfo.ObjectState = ResourceEditorConstant.ObjectValidState;
                         }
                         else
                         {
                             resourceObjectInfo.ObjectIcon = EditorGUIUtility.FindTexture("console.erroricon");
-                            resourceObjectInfo.ObjectState = "INVALID";
-                            resourceObjectInfo.ObjectStateIcon = ResourceWindowUtility.GetAssetInvalidIcon();
+                            resourceObjectInfo.ObjectState = ResourceEditorConstant.ObjectInvalidState;
                         }
                         bundleInfo.ResourceObjectInfoList.Add(resourceObjectInfo);
                     }
