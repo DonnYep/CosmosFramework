@@ -186,7 +186,7 @@ namespace Cosmos.Resource
         ///<inheritdoc/> 
         public ResourceVersion GetResourceVersion()
         {
-            var version = resourceManifest == null ? "<NULL>" : resourceManifest.BuildVersion;
+            var version = resourceManifest == null ? Constants.NULL : resourceManifest.BuildVersion;
             return new ResourceVersion(version, "Build by resouce pipeline");
         }
         ///<inheritdoc/> 
