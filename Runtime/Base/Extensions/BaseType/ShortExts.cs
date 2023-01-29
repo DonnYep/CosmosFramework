@@ -1,12 +1,15 @@
 ﻿using System;
+
 namespace Cosmos
 {
-    public static class IntExts
+    public static class ShortExts
     {
         /// <summary>
         /// 转换成字节数组
         /// </summary>
-        public static byte[] GetBytes(this int @this)
+        /// <param name="@this">short</param>
+        /// <returns>组内容</returns>
+        public static byte[] GetBytes(this short @this)
         {
             return BitConverter.GetBytes(@this);
         }
