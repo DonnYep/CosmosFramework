@@ -4,34 +4,34 @@ using System;
 namespace Cosmos.Resource
 {
     /// <summary>
-    /// AssetBundle 模式下资源寻址数据对象
-    /// 文件清单，记录AB包体与资源的包含关系
+    /// AssetBundle mode use only;
+    /// Manifest of resource;
     /// </summary>
     [Serializable]
     public class ResourceManifest
     {
         /// <summary>
-        /// 包体打包后的信息
+        /// Build info of resource;
         /// </summary>
         [Serializable]
         public class ResourceBundleBuildInfo
         {
             /// <summary>
-            /// 打包后的包大小；
+            /// Size of assetbundle;
             /// </summary>
             public long BundleSize;
             /// <summary>
-            /// 包体的Hash
+            /// Hash of assetbundle
             /// </summary>
             public string BundleHash;
             /// <summary>
-            /// 包体数据；
+            /// Resource bundle pack;
             /// </summary>
             public ResourceBundle ResourceBundle;
         }
         Dictionary<string, ResourceBundleBuildInfo> resourceBundleBuildInfoDict;
         /// <summary>
-        /// 打包的版本；
+        /// Build version of assetbundle
         /// </summary>
         public string BuildVersion { get; set; }
         /// <summary>

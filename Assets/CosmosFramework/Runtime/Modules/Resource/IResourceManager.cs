@@ -241,6 +241,11 @@ namespace Cosmos.Resource
         /// <param name="objectState">资源对象状态</param>
         /// <returns>是否存在</returns>
         bool GetObjectState(string objectName, out ResourceObjectState objectState);
+        /// <summary>
+        /// Get version of resource.
+        /// </summary>
+        /// <returns>resource version</returns>
+        ResourceVersion GetResourceVersion();
         #endregion
     }
 }
