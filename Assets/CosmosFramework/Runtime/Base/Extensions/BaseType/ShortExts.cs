@@ -7,11 +7,11 @@ namespace Cosmos
         /// <summary>
         /// 转换成字节数组
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static byte[] GetBytes(this short value)
+        /// <param name="@this">short</param>
+        /// <returns>组内容</returns>
+        public static byte[] GetBytes(this short @this)
         {
-            return BitConverter.GetBytes(value);
+            return BitConverter.GetBytes(@this);
         }
     }
 }
