@@ -245,6 +245,11 @@ namespace Cosmos.Resource
         {
             return currentLoadHelper.GetObjectState(objectName, out objectState);
         }
+        /// <inheritdoc/>
+        public ResourceVersion GetResourceVersion()
+        {
+            return currentLoadHelper.GetResourceVersion();
+        }
         protected override void OnInitialization()
         {
             loadChannelDict = new Dictionary<ResourceLoadMode, ResourceLoadChannel>();

@@ -106,6 +106,11 @@ namespace Cosmos.Resource
             return false;
         }
         ///<inheritdoc/> 
+        public ResourceVersion GetResourceVersion()
+        {
+            return new ResourceVersion("Built-in_Resources", "Unity Built-in Resources");
+        }
+        ///<inheritdoc/> 
         public void Reset()
         {
             loadSceneList.Clear();

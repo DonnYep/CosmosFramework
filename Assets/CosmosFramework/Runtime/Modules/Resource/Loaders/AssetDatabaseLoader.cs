@@ -194,6 +194,11 @@ namespace Cosmos.Resource
             return hasObject;
         }
         ///<inheritdoc/> 
+        public ResourceVersion GetResourceVersion()
+        {
+            return new ResourceVersion("ResourceDataset", "ResourceDataset for runtime ,editor only");
+        }
+        ///<inheritdoc/> 
         public void Reset()
         {
             resourceObjectWarpperDict.Clear();
