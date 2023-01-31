@@ -1,5 +1,4 @@
-﻿using Cosmos.Resource;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Cosmos.Scene

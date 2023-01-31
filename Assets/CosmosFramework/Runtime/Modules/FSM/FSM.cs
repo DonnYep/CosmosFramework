@@ -22,7 +22,7 @@ namespace Cosmos.FSM
         public override int FSMStateCount { get { return fsmStateDict.Count; } }
         public override bool IsRunning { get { return currentState != null; } }
         public override Type OwnerType { get { return typeof(T); } }
-        public override string CurrentStateName { get { return currentState != null ? currentState.GetType().FullName : "<NULL>"; } }
+        public override string CurrentStateName { get { return currentState != null ? currentState.GetType().FullName : Constants.NULL; } }
         #endregion
 
         #region Lifecycle
