@@ -2,21 +2,15 @@
 {
     public class DownloadSuccessEventArgs : GameEventArgs
     {
-        public string URI { get; private set; }
-        public string DownloadPath { get; private set; }
-        public int DownloadLength { get; private set; }
+        public DownloadCompletedInfo DownloadCompletedInfo { get; private set; }
         public override void Release()
         {
-            URI = null;
-            DownloadPath = null;
-            DownloadLength = 0;
+            DownloadCompletedInfo = default;
         }
-        public static DownloadSuccessEventArgs Create(string uri, string downloadPath,int downloadLength)
+        public static DownloadSuccessEventArgs Create(DownloadCompletedInfo completedInfo)
         {
             var eventArgs = ReferencePool.Acquire<DownloadSuccessEventArgs>();
-            eventArgs.URI = uri;
-            eventArgs.DownloadPath = downloadPath;
-            eventArgs.DownloadLength = downloadLength;
+            eventArgs.DownloadCompletedInfo = completedInfo;
             return eventArgs;
         }
         public static void Release(DownloadSuccessEventArgs eventArgs)

@@ -41,16 +41,16 @@ namespace Cosmos.Download
             remove { downloader.OnDownloadFailure -= value; }
         }
         ///<inheritdoc/>
-        public event Action<DonwloadOverallEventArgs> OnDownloadOverall
+        public event Action<DonwloadOverallProgressEventArgs> OnDownloadOverallProgress
         {
-            add { downloader.OnDownloadOverall += value; }
-            remove { downloader.OnDownloadOverall -= value; }
+            add { downloader.OnDownloadOverallProgress += value; }
+            remove { downloader.OnDownloadOverallProgress -= value; }
         }
         ///<inheritdoc/>
-        public event Action<DownloadAndWriteFinishEventArgs> OnDownloadAndWriteFinish
+        public event Action<AllDownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted
         {
-            add { downloader.OnDownloadAndWriteFinish += value; }
-            remove { downloader.OnDownloadAndWriteFinish -= value; }
+            add { downloader.OnAllDownloadTaskCompleted += value; }
+            remove { downloader.OnAllDownloadTaskCompleted -= value; }
         }
         #endregion
         ///<inheritdoc/>
