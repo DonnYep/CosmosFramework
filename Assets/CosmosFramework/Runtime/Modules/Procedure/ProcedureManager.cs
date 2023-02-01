@@ -22,12 +22,22 @@ namespace Cosmos.Procedure
     [Module]
     internal class ProcedureManager : Module, IProcedureManager
     {
-        SimpleFsm<IProcedureManager> procedureFsm;
+        ProcedureFsm<IProcedureManager> procedureFsm;
         Type procedureStateType = typeof(ProcedureState);
+        Action<ProcedureChangedEventArgs> onProcedureChanged;
         /// <inheritdoc/>
         public int ProcedureCount { get { return procedureFsm.StateCount; } }
         /// <inheritdoc/>
-        public ProcedureState CurrentProcedureNode { get { return procedureFsm.CurrentState as ProcedureState; } }
+        public ProcedureState CurrentProcedureNode
+        {
+            get { return procedureFsm.CurrentState as ProcedureState; }
+        }
+        /// <inheritdoc/>
+        public event Action<ProcedureChangedEventArgs> OnProcedureChanged
+        {
+            add { onProcedureChanged += value; }
+            remove { onProcedureChanged -= value; }
+        }
         /// <inheritdoc/>
         public void AddProcedures(params ProcedureState[] nodes)
         {
@@ -107,16 +117,24 @@ namespace Cosmos.Procedure
         }
         protected override void OnInitialization()
         {
-            procedureFsm = new SimpleFsm<IProcedureManager>(this);
+            procedureFsm = new ProcedureFsm<IProcedureManager>(this, "ProcedureFsm");
+            procedureFsm.OnProcedureChanged += ProcedureChanged;
         }
         protected override void OnTermination()
         {
             procedureFsm.ClearAllState();
+            procedureFsm.OnProcedureChanged -= ProcedureChanged;
         }
         [TickRefresh]
         void TickRefresh()
         {
             procedureFsm.Refresh();
+        }
+        void ProcedureChanged(Type exitedStateType, Type enteredStateType)
+        {
+            var changedEventArgs = ProcedureChangedEventArgs.Create(exitedStateType, enteredStateType);
+            onProcedureChanged?.Invoke(changedEventArgs);
+            ProcedureChangedEventArgs.Release(changedEventArgs);
         }
     }
 }

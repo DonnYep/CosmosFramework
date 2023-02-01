@@ -31,6 +31,10 @@ namespace Cosmos.Procedure
         /// </summary>
         ProcedureState CurrentProcedureNode { get; }
         /// <summary>
+        /// Procedure state change event
+        /// </summary>
+        event Action<ProcedureChangedEventArgs> OnProcedureChanged;
+        /// <summary>
         /// 添加多个流程；
         /// </summary>
         /// <param name="nodes">流程集合</param>
