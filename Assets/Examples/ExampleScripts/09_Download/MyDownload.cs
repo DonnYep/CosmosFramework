@@ -22,8 +22,8 @@ public class MyDownload : MonoBehaviour
         CosmosEntry.DownloadManager.OnDownloadSuccess += OnDownloadSucess;
         CosmosEntry.DownloadManager.OnDownloadFailure += OnDownloadFailure;
         CosmosEntry.DownloadManager.OnDownloadStart += OnDownloadStart;
-        CosmosEntry.DownloadManager.OnDownloadOverall += OnDownloadOverall;
-        CosmosEntry.DownloadManager.OnDownloadAndWriteFinish += OnDownloadFinish;
+        CosmosEntry.DownloadManager.OnDownloadOverallProgress += OnDownloadOverall;
+        CosmosEntry.DownloadManager.OnAllDownloadTaskCompleted+= OnDownloadFinish;
         CosmosEntry.DownloadManager.AddUrlDownload(srcUrl, downloadPath);
         CosmosEntry.DownloadManager.LaunchDownload();
     }
@@ -32,7 +32,7 @@ public class MyDownload : MonoBehaviour
         if (uriText != null)
             uriText.text = eventArgs.URI;
     }
-    void OnDownloadOverall(DonwloadOverallEventArgs eventArgs)
+    void OnDownloadOverall(DonwloadOverallProgressEventArgs eventArgs)
     {
         var overallProgress = (float)Math.Round(eventArgs.OverallProgress, 1);
         if (text != null)
@@ -46,18 +46,18 @@ public class MyDownload : MonoBehaviour
     }
     void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
     {
-       Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.URI}");
+       Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.DownloadCompletedInfo.URI}");
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
-        Utility.Debug.LogError($"DownloadFailure {eventArgs.URI}\n{eventArgs.ErrorMessage}");
+        Utility.Debug.LogError($"DownloadFailure {eventArgs.DownloadCompletedInfo.URI}\n{eventArgs.ErrorMessage}");
     }
-    void OnDownloadFinish(DownloadAndWriteFinishEventArgs eventArgs)
+    void OnDownloadFinish(AllDownloadTasksCompletedEventArgs eventArgs)
     {
         if (text != null)
         {
             text.text = "100%   Done";
         }
-        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.DownloadAndWriteTimeSpan}",DebugColor.green);
+        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.AllDownloadTasksCompletedTimeSpan}",DebugColor.green);
     }
 }
