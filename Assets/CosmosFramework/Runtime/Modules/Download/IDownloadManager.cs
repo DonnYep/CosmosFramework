@@ -50,7 +50,7 @@ namespace Cosmos.Download
         /// <summary>
         /// 任务过期时间，以秒为单位；
         /// </summary>
-        float DownloadTimeout { get; set; }
+        int DownloadTimeout { get; set; }
         /// <summary>
         /// 是否正在下载；
         /// </summary>

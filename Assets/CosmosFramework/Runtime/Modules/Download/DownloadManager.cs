@@ -66,7 +66,7 @@ namespace Cosmos.Download
             set { DownloadDataProxy.DownloadAppend = value; }
         }
         ///<inheritdoc/>
-        public float DownloadTimeout
+        public int DownloadTimeout
         {
             get { return DownloadDataProxy.DownloadTimeout; }
             set { DownloadDataProxy.DownloadTimeout = value; }

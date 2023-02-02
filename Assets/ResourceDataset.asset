@@ -137,11 +137,7 @@ MonoBehaviour:
     bundleKey: scene
     bundleSize: 324120
     bundleFormatBytes: 316.5 KB
-    dependentBundleKeyList:
-    - material
-    - model
-    - prefab
-    - texture
+    dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: SceneTarget
       objectPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
@@ -162,11 +158,7 @@ MonoBehaviour:
     bundleKey: prefab
     bundleSize: 353508
     bundleFormatBytes: 345.2 KB
-    dependentBundleKeyList:
-    - audio
-    - material
-    - model
-    - texture
+    dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: AudioSource
       objectPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
@@ -469,13 +461,6 @@ MonoBehaviour:
       objectFormatBytes: 1.9 MB
       extension: .mp3
       objectState: VALID
-  - bundleName: nullbundle
-    bundlePath: Assets/Examples/AssetBundleTest/NullBundle
-    bundleKey: nullbundle
-    bundleSize: 0
-    bundleFormatBytes: 0 B
-    dependentBundleKeyList: []
-    resourceObjectInfoList: []
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp

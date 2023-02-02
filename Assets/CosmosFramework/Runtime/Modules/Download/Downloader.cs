@@ -214,7 +214,7 @@ namespace Cosmos.Download
 #endif
                 request.downloadHandler = handler;
                 unityWebRequest = request;
-                var timeout = Convert.ToInt32(DownloadDataProxy.DownloadTimeout);
+                var timeout = DownloadDataProxy.DownloadTimeout;
                 if (timeout > 0)
                     request.timeout = timeout;
                 var startEventArgs = DownloadStartEventArgs.Create(uri, fileDownloadPath);
@@ -255,7 +255,7 @@ namespace Cosmos.Download
                     onDownloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
                     failedInfos.Add(completedInfo);
-                    OnFileDownloading(uri, fileDownloadPath, 1, 0);
+                    OnFileDownloading(uri, fileDownloadPath, 1, request.downloadedBytes);
                     unityWebRequest = null;
                 }
             }
@@ -284,9 +284,7 @@ namespace Cosmos.Download
             canDownload = false;
             Downloading = false;
             downloadEndTime = DateTime.Now;
-            var successUris = successedInfos.ToArray();
-            var failureUris = failedInfos.ToArray();
-            var eventArgs = AllDownloadTasksCompletedEventArgs.Create(successUris, failureUris, downloadEndTime - downloadStartTime);
+            var eventArgs = AllDownloadTasksCompletedEventArgs.Create(successedInfos.ToArray(), failedInfos.ToArray(), downloadEndTime - downloadStartTime);
             onAllDownloadTaskCompleted?.Invoke(eventArgs);
             AllDownloadTasksCompletedEventArgs.Release(eventArgs);
             //清理下载配置缓存；
@@ -299,6 +297,12 @@ namespace Cosmos.Download
         void OnCancelDownload()
         {
             unityWebRequest?.Abort();
+            //foreach (var task in pendingTasks)
+            //{
+            //    var completedInfo = new DownloadCompletedInfo(task.URI, task.DownloadPath, 0, TimeSpan.Zero);
+            //    failedInfos.Add(completedInfo);
+            //}
+            //todo 这里需要将pending列表中的任务变更为下载失败
             pendingTasks.Clear();
             pendingTaskDict.Clear();
             downloadTaskCount = 0;
