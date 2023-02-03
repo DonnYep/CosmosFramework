@@ -20,11 +20,16 @@ namespace Cosmos.Resource.Verify
         /// 文件长度是否匹配；
         /// </summary>
         public bool ResourceBundleLengthMatched;
-        public ResourceManifestVerifyInfo(string url, string bundleName, bool matched)
+        /// <summary>
+        /// 请求到的文件长度
+        /// </summary>
+        public long RequestedBundleLength;
+        public ResourceManifestVerifyInfo(string url, string bundleName, bool matched, long requestedBundleLength)
         {
             Url = url;
             ResourceBundleName = bundleName;
             ResourceBundleLengthMatched = matched;
+            RequestedBundleLength = requestedBundleLength;
         }
         public bool Equals(ResourceManifestVerifyInfo other)
         {
@@ -34,7 +39,7 @@ namespace Cosmos.Resource.Verify
         }
         public override string ToString()
         {
-            return $"Url: {Url} ;ResourceBundleName: {ResourceBundleName};ResourceBundleLengthMatched: {ResourceBundleLengthMatched}";
+            return $"Url: {Url} ;ResourceBundleName: {ResourceBundleName};ResourceBundleLengthMatched: {ResourceBundleLengthMatched}; RequestedBundleLength: {RequestedBundleLength}";
         }
     }
 }
