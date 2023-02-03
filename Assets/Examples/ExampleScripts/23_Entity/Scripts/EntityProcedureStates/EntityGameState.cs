@@ -4,7 +4,7 @@ using UnityEngine;
 using Cosmos.Procedure;
 using Cosmos;
 
-public class EntityGameState : ProcedureState
+public class EntityGameState : ProcedureNode
 {
     float progressVar;
     float currentProgress;
@@ -13,10 +13,10 @@ public class EntityGameState : ProcedureState
 
     EntityGameLoadingSlider loadingSlider;
 
-    public override void OnDestroy(ProcedureFsm<IProcedureManager> fsm)
+    public override void OnDestroy(ProcedureProcessor<IProcedureManager> fsm)
     {
     }
-    public override void OnEnter(ProcedureFsm<IProcedureManager> fsm)
+    public override void OnEnter(ProcedureProcessor<IProcedureManager> fsm)
     {
         isLoading = true;
         progressVar = 0;
@@ -25,18 +25,18 @@ public class EntityGameState : ProcedureState
         loadingSlider.Active = true;
         CosmosEntry.SceneManager.LoadSceneAsync(new SceneAssetInfo("EntityGame"), ProgressProvider, OnSceneLoading, LoadDoneCodition, OnSceneLoaded);
     }
-    public override void OnExit(ProcedureFsm<IProcedureManager> fsm)
+    public override void OnExit(ProcedureProcessor<IProcedureManager> fsm)
     {
         progressVar = 0;
         currentProgress = 0;
         durTime = 0;
         ;
     }
-    public override void OnInit(ProcedureFsm<IProcedureManager> fsm)
+    public override void OnInit(ProcedureProcessor<IProcedureManager> fsm)
     {
 
     }
-    public override void OnUpdate(ProcedureFsm<IProcedureManager> fsm)
+    public override void OnUpdate(ProcedureProcessor<IProcedureManager> fsm)
     {
         if (isLoading)
         {

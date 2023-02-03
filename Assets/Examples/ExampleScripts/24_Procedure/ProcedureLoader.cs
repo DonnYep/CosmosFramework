@@ -4,10 +4,10 @@ public class ProcedureLoader : MonoBehaviour
 {
     public void RunYBotState()
     {
-        CosmosEntry.ProcedureManager.RunProcedure<YBotState>();
+        CosmosEntry.ProcedureManager.RunProcedureNode<YBotState>();
     }
     public void RunPolyState()
     {
-        CosmosEntry.ProcedureManager.RunProcedure<PloyState>();
+        CosmosEntry.ProcedureManager.RunProcedureNode<PloyState>();
     }
 }

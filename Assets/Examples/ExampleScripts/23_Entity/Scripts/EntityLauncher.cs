@@ -6,8 +6,8 @@ public class EntityLauncher : MonoBehaviour
     {
         var launcherState = new EntityLauncherState();
         var gameState = new EntityGameState();
-        CosmosEntry.ProcedureManager.AddProcedures(gameState, launcherState);
-        CosmosEntry.ProcedureManager.RunProcedure<EntityLauncherState>();
+        CosmosEntry.ProcedureManager.AddProcedureNodes(gameState, launcherState);
+        CosmosEntry.ProcedureManager.RunProcedureNode<EntityLauncherState>();
         CosmosEntry.InputManager.SetInputHelper(new StandardInputHelper());
     }
 }

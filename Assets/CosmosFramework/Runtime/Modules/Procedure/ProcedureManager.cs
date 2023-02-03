@@ -22,119 +22,119 @@ namespace Cosmos.Procedure
     [Module]
     internal class ProcedureManager : Module, IProcedureManager
     {
-        ProcedureFsm<IProcedureManager> procedureFsm;
-        Type procedureStateType = typeof(ProcedureState);
-        Action<ProcedureChangedEventArgs> onProcedureChanged;
+        ProcedureProcessor<IProcedureManager> procedureFsm;
+        Type procedureNodeType = typeof(ProcedureNode);
+        Action<ProcedureNodeChangedEventArgs> procedureNodeChanged;
         /// <inheritdoc/>
-        public int ProcedureCount { get { return procedureFsm.StateCount; } }
+        public int ProcedureNodeCount { get { return procedureFsm.NodeCount; } }
         /// <inheritdoc/>
-        public ProcedureState CurrentProcedureNode
+        public ProcedureNode CurrentProcedureNode
         {
-            get { return procedureFsm.CurrentState as ProcedureState; }
+            get { return procedureFsm.CurrentNode as ProcedureNode; }
         }
         /// <inheritdoc/>
-        public event Action<ProcedureChangedEventArgs> OnProcedureChanged
+        public event Action<ProcedureNodeChangedEventArgs> ProcedureNodeChanged
         {
-            add { onProcedureChanged += value; }
-            remove { onProcedureChanged -= value; }
+            add { procedureNodeChanged += value; }
+            remove { procedureNodeChanged -= value; }
         }
         /// <inheritdoc/>
-        public void AddProcedures(params ProcedureState[] nodes)
+        public void AddProcedureNodes(params ProcedureNode[] nodes)
         {
-            procedureFsm.AddStates(nodes);
+            procedureFsm.AddNodes(nodes);
         }
         /// <inheritdoc/>
-        public void RunProcedure<T>() where T : ProcedureState
+        public void RunProcedureNode<T>() where T : ProcedureNode
         {
-            RunProcedure(typeof(T));
+            RunProcedureNode(typeof(T));
         }
         /// <inheritdoc/>
-        public void RunProcedure(Type type)
+        public void RunProcedureNode(Type type)
         {
             if (type == null)
                 throw new ArgumentNullException("Type is invalid !");
-            if (!procedureStateType.IsAssignableFrom(type))
+            if (!procedureNodeType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
-            procedureFsm.ChangeState(type);
+            procedureFsm.ChangeNode(type);
         }
         /// <inheritdoc/>
-        public bool HasProcedure<T>() where T : ProcedureState
+        public bool HasProcedureNode<T>() where T : ProcedureNode
         {
-            return HasProcedure(typeof(T));
+            return HasProcedureNode(typeof(T));
         }
         /// <inheritdoc/>
-        public bool HasProcedure(Type type)
+        public bool HasProcedureNode(Type type)
         {
             if (type == null)
                 throw new ArgumentNullException("Type is invalid !");
-            if (!procedureStateType.IsAssignableFrom(type))
+            if (!procedureNodeType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
-            return procedureFsm.HasState(type);
+            return procedureFsm.HasNode(type);
         }
         /// <inheritdoc/>
-        public bool PeekProcedure(Type type, out ProcedureState node)
+        public bool PeekProcedureNode(Type type, out ProcedureNode node)
         {
             if (type == null)
                 throw new ArgumentNullException("Type is invalid !");
-            if (!procedureStateType.IsAssignableFrom(type))
+            if (!procedureNodeType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
             node = null;
-            var rst = procedureFsm.PeekState(type, out var state);
+            var rst = procedureFsm.PeekNode(type, out var _node);
             if (rst)
             {
-                node = state as ProcedureState;
+                node = _node as ProcedureNode;
             }
             return rst;
         }
         /// <inheritdoc/>
-        public bool PeekProcedure<T>(out ProcedureState node) where T : ProcedureState
+        public bool PeekProcedureNode<T>(out ProcedureNode node) where T : ProcedureNode
         {
             var type = typeof(T);
-            return PeekProcedure(type, out node);
+            return PeekProcedureNode(type, out node);
         }
         /// <inheritdoc/>
-        public void RemoveProcedures(params Type[] types)
+        public void RemoveProcedureNodes(params Type[] types)
         {
             var length = types.Length;
             for (int i = 0; i < length; i++)
             {
-                RemoveProcedure(types[i]);
+                RemoveProcedureNode(types[i]);
             }
         }
         /// <inheritdoc/>
-        public bool RemoveProcedure<T>() where T : ProcedureState
+        public bool RemoveProcedureNode<T>() where T : ProcedureNode
         {
-            return RemoveProcedure(typeof(T));
+            return RemoveProcedureNode(typeof(T));
         }
         /// <inheritdoc/>
-        public bool RemoveProcedure(Type type)
+        public bool RemoveProcedureNode(Type type)
         {
             if (type == null)
                 throw new ArgumentNullException("Type is invalid !");
-            if (!procedureStateType.IsAssignableFrom(type))
+            if (!procedureNodeType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
-            return procedureFsm.RemoveState(type);
+            return procedureFsm.RemoveNode(type);
         }
         protected override void OnInitialization()
         {
-            procedureFsm = new ProcedureFsm<IProcedureManager>(this, "ProcedureFsm");
-            procedureFsm.OnProcedureChanged += ProcedureChanged;
+            procedureFsm = new ProcedureProcessor<IProcedureManager>(this);
+            procedureFsm.ProcedureNodeChanged += ProcedureNodeChangedCallback;
         }
         protected override void OnTermination()
         {
-            procedureFsm.ClearAllState();
-            procedureFsm.OnProcedureChanged -= ProcedureChanged;
+            procedureFsm.ClearAllNode();
+            procedureFsm.ProcedureNodeChanged -= ProcedureNodeChangedCallback;
         }
         [TickRefresh]
         void TickRefresh()
         {
             procedureFsm.Refresh();
         }
-        void ProcedureChanged(Type exitedStateType, Type enteredStateType)
+        void ProcedureNodeChangedCallback(Type exitedNodeType, Type enteredNodeType)
         {
-            var changedEventArgs = ProcedureChangedEventArgs.Create(exitedStateType, enteredStateType);
-            onProcedureChanged?.Invoke(changedEventArgs);
-            ProcedureChangedEventArgs.Release(changedEventArgs);
+            var changedEventArgs = ProcedureNodeChangedEventArgs.Create(exitedNodeType, enteredNodeType);
+            procedureNodeChanged?.Invoke(changedEventArgs);
+            ProcedureNodeChangedEventArgs.Release(changedEventArgs);
         }
     }
 }
