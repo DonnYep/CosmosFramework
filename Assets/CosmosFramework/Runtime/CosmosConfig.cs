@@ -35,7 +35,6 @@ namespace Cosmos
         [SerializeField] bool buildInfoEncrytion = false;
         [SerializeField] string buildInfoEncrytionKey = "CosmosBundlesKey";
 
-        public const string NONE = "<NONE>";
         public void LoadResource()
         {
             switch (resourceLoadMode)
@@ -89,7 +88,7 @@ namespace Cosmos
                     break;
                 case ResourceLoadMode.CustomLoader:
                     {
-                        if (string.IsNullOrEmpty(resourceLoaderName) || resourceLoaderName == NONE)
+                        if (string.IsNullOrEmpty(resourceLoaderName) || resourceLoaderName == Constants.NONE)
                         {
                             throw new Exception("CustomLoader is invalid !");
                         }
@@ -116,19 +115,19 @@ namespace Cosmos
         }
         void LoadHelpers()
         {
-            if (!string.IsNullOrEmpty(debugHelperName) && debugHelperName != NONE)
+            if (!string.IsNullOrEmpty(debugHelperName) && debugHelperName != Constants.NONE)
             {
                 var debugHelper = Utility.Assembly.GetTypeInstance(debugHelperName);
                 if (debugHelper != null)
                     Utility.Debug.SetHelper((Utility.Debug.IDebugHelper)debugHelper);
             }
-            if (!string.IsNullOrEmpty(jsonHelperName) && jsonHelperName != NONE)
+            if (!string.IsNullOrEmpty(jsonHelperName) && jsonHelperName != Constants.NONE)
             {
                 var jsonHelper = Utility.Assembly.GetTypeInstance(jsonHelperName);
                 if (jsonHelper != null)
                     Utility.Json.SetHelper((Utility.Json.IJsonHelper)jsonHelper);
             }
-            if (!string.IsNullOrEmpty(messagePackHelperName) && messagePackHelperName != NONE)
+            if (!string.IsNullOrEmpty(messagePackHelperName) && messagePackHelperName != Constants.NONE)
             {
                 var messagePackHelper = Utility.Assembly.GetTypeInstance(messagePackHelperName);
                 if (messagePackHelper != null)
