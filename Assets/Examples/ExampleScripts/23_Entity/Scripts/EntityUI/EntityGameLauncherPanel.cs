@@ -15,6 +15,6 @@ public class EntityGameLauncherPanel : UGUIUIForm
     }
     void OnStartGameClick()
     {
-        CosmosEntry.ProcedureManager.RunProcedure<EntityGameState>();
+        CosmosEntry.ProcedureManager.RunProcedureNode<EntityGameState>();
     }
 }

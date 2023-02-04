@@ -3,18 +3,18 @@ using Cosmos;
 using Cosmos.UI;
 using Cosmos.Entity;
 
-public class EntityLauncherState : ProcedureState
+public class EntityLauncherState : ProcedureNode
 {
-    public override void OnDestroy(ProcedureFsm<IProcedureManager> fsm)
+    public override void OnDestroy(ProcedureProcessor<IProcedureManager> fsm)
     {
     }
-    public override void OnEnter(ProcedureFsm<IProcedureManager> fsm)
+    public override void OnEnter(ProcedureProcessor<IProcedureManager> fsm)
     {
     }
-    public override void OnExit(ProcedureFsm<IProcedureManager> fsm)
+    public override void OnExit(ProcedureProcessor<IProcedureManager> fsm)
     {
     }
-    public async override void OnInit(ProcedureFsm<IProcedureManager> fsm)
+    public async override void OnInit(ProcedureProcessor<IProcedureManager> fsm)
     {
         var mainUICanvas = await CosmosEntry.ResourceManager.LoadPrefabAsync("UICanvas", true);
         mainUICanvas.transform.SetAlignParent(CosmosEntry.UIManager.Instance().transform);
@@ -27,7 +27,7 @@ public class EntityLauncherState : ProcedureState
         CosmosEntry.EntityManager.RegisterEntityAsync<EnmeyEntity>(new EntityAssetInfo(EntityContants.EntityEnmey));
         CosmosEntry.EntityManager.RegisterEntityAsync<BulletEntity>(new EntityAssetInfo(EntityContants.EntityBullet));
     }
-    public override void OnUpdate(ProcedureFsm<IProcedureManager> fsm)
+    public override void OnUpdate(ProcedureProcessor<IProcedureManager> fsm)
     {
     }
 }

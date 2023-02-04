@@ -3,7 +3,7 @@
     /// <summary>
     /// 流程节点基类；
     /// </summary>
-    public abstract class ProcedureState : ProcedureFsmState<IProcedureManager>
+    public abstract class ProcedureNode : ProcedureNodeBase<IProcedureManager>
     {
         /*
          * 1、流程节点的生命周期按照顺序依次为:OnInit>OnEnter>OnUpdate>OnExit>OnDestroy;
