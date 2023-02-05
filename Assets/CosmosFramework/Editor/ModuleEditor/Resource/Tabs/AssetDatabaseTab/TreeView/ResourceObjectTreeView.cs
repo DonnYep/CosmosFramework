@@ -48,10 +48,22 @@ namespace Cosmos.Editor.Resource
                 for (int i = 0; i < objectInfoList.Count; i++)
                 {
                     var objectInfo = objectInfoList[i];
-                    var treeViewItem = new ResourceObjectTreeViewItem(i, 1, objectInfo.ObjectPath, objectInfo.ObjectIcon)
+                    Texture2D icon = null;
+                    var validState = string.Empty;
+                    if (objectInfo.ObjectVaild)
+                    {
+                        icon = AssetDatabase.GetCachedIcon(objectInfo.ObjectPath) as Texture2D;
+                        validState = ResourceEditorConstant.ObjectValidState;
+                    }
+                    else
+                    {
+                        icon = EditorGUIUtility.FindTexture("console.erroricon");
+                        validState = ResourceEditorConstant.ObjectInvalidState;
+                    }
+                    var treeViewItem = new ResourceObjectTreeViewItem(i, 1, objectInfo.ObjectPath, icon)
                     {
                         ObjectName = objectInfo.ObjectName,
-                        ObjectState = objectInfo.ObjectState,
+                        ObjectState = validState,
                         ObjectSize = objectInfo.ObjectFormatBytes,
                         ObjectBundleName = objectInfo.BundleName,
                         ObjectExtension = objectInfo.Extension
@@ -101,9 +113,9 @@ namespace Cosmos.Editor.Resource
                     {
                         //State
                         if (ascending)
-                            objectInfoList.Sort((lhs, rhs) => lhs.ObjectState.CompareTo(rhs.ObjectState));
+                            objectInfoList.Sort((lhs, rhs) => lhs.ObjectVaild.CompareTo(rhs.ObjectVaild));
                         else
-                            objectInfoList.Sort((lhs, rhs) => rhs.ObjectState.CompareTo(lhs.ObjectState));
+                            objectInfoList.Sort((lhs, rhs) => rhs.ObjectVaild.CompareTo(lhs.ObjectVaild));
                     }
                     break;
                 case 3:
@@ -158,7 +170,7 @@ namespace Cosmos.Editor.Resource
                     {
                         var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
                         var labelCellRect = new Rect(cellRect.x + iconRect.width + 2, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-                        GUIStyle objectStateStyle= new GUIStyle();
+                        GUIStyle objectStateStyle = new GUIStyle();
                         objectStateStyle.fontStyle = FontStyle.Bold;
                         //DefaultGUI.Label(labelCellRect, treeView.ObjectState, args.selected, args.focused);
                         var objectState = treeView.ObjectState;

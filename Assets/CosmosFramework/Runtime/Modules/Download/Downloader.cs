@@ -189,6 +189,7 @@ namespace Cosmos.Download
                 var downloadTask = pendingTasks.RemoveFirst();
                 currentDownloadTaskIndex = downloadTaskCount - pendingTasks.Count - 1;
                 yield return EnumDownloadSingleFile(downloadTask);
+                pendingTaskDict.Remove(downloadTask.URI);
             }
             OnDownloadedPendingFiles();
         }
