@@ -1,6 +1,6 @@
 ﻿namespace Cosmos.Download
 {
-    public class DonwloadOverallEventArgs : GameEventArgs
+    public class DonwloadOverallProgressEventArgs : GameEventArgs
     {
         /// <summary>
         /// 当前正在下载的uri资源；
@@ -29,9 +29,9 @@
             OverallProgress = 0;
             DownloadedBytes = 0;
         }
-        public static DonwloadOverallEventArgs Create(string uri, string downloadPath, float overallProgress,float individualProgress, ulong downloadedBytes)
+        public static DonwloadOverallProgressEventArgs Create(string uri, string downloadPath, float overallProgress,float individualProgress, ulong downloadedBytes)
         {
-            var eventArgs = ReferencePool.Acquire<DonwloadOverallEventArgs>();
+            var eventArgs = ReferencePool.Acquire<DonwloadOverallProgressEventArgs>();
             eventArgs.URI = uri;
             eventArgs.OverallProgress= overallProgress;
             eventArgs.DownloadPath = downloadPath;
@@ -39,7 +39,7 @@
             eventArgs.DownloadedBytes= downloadedBytes;
             return eventArgs;
         }
-        public static void Release(DonwloadOverallEventArgs eventArgs)
+        public static void Release(DonwloadOverallProgressEventArgs eventArgs)
         {
             ReferencePool.Release(eventArgs);
         }

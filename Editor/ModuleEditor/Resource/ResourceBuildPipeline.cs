@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEngine;
 
 namespace Cosmos.Editor.Resource
 {
@@ -125,17 +124,7 @@ namespace Cosmos.Editor.Resource
                             ObjectSize = EditorUtil.GetAssetFileSizeLength(lowerExtFilePath),
                             ObjectFormatBytes = EditorUtil.GetAssetFileSize(lowerExtFilePath),
                         };
-                        var asset = AssetDatabase.LoadMainAssetAtPath(resourceObjectInfo.ObjectPath);
-                        if (asset != null)
-                        {
-                            resourceObjectInfo.ObjectIcon = AssetDatabase.GetCachedIcon(lowerExtFilePath) as Texture2D;
-                            resourceObjectInfo.ObjectState = ResourceEditorConstant.ObjectValidState;
-                        }
-                        else
-                        {
-                            resourceObjectInfo.ObjectIcon = EditorGUIUtility.FindTexture("console.erroricon");
-                            resourceObjectInfo.ObjectState = ResourceEditorConstant.ObjectInvalidState;
-                        }
+                        resourceObjectInfo.ObjectVaild = AssetDatabase.LoadMainAssetAtPath(resourceObjectInfo.ObjectPath) != null;
                         bundleInfo.ResourceObjectInfoList.Add(resourceObjectInfo);
                     }
                 }

@@ -152,7 +152,7 @@ namespace Cosmos.Editor
         public static string GetAssetFileSize(string assetPath)
         {
             if (!assetPath.StartsWith("Assets"))
-                return "<NULL>";
+                return Constants.NULL;
             var fullPath = Path.Combine(ApplicationPath(), assetPath);
             var len = Utility.IO.GetFileSize(fullPath);
             return EditorUtility.FormatBytes(len);

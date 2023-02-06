@@ -20,7 +20,7 @@ namespace Cosmos.Editor
         SerializedProperty sp_ResourceDataset;
         SerializedProperty sp_ResourceBundlePathType;
         SerializedProperty sp_RelativeBundlePath;
-        
+
         SerializedProperty sp_AssetBundleEncrytion;
         SerializedProperty sp_AssetBundleEncrytionOffset;
         SerializedProperty sp_BuildInfoEncrytion;
@@ -182,17 +182,17 @@ namespace Cosmos.Editor
         {
             var debugSrc = Utility.Assembly.GetDerivedTypeNames<Utility.Debug.IDebugHelper>();
             debugHelpers = new string[debugSrc.Length + 1];
-            debugHelpers[0] = CosmosConfig.NONE;
+            debugHelpers[0] = Constants.NONE;
             Array.Copy(debugSrc, 0, debugHelpers, 1, debugSrc.Length);
 
             var jsonSrc = Utility.Assembly.GetDerivedTypeNames<Utility.Json.IJsonHelper>();
             jsonHelpers = new string[jsonSrc.Length + 1];
-            jsonHelpers[0] = CosmosConfig.NONE;
+            jsonHelpers[0] = Constants.NONE;
             Array.Copy(jsonSrc, 0, jsonHelpers, 1, jsonSrc.Length);
 
             var msgPackSrc = Utility.Assembly.GetDerivedTypeNames<Utility.MessagePack.IMessagePackHelper>();
             messagePackHelpers = new string[msgPackSrc.Length + 1];
-            messagePackHelpers[0] = CosmosConfig.NONE;
+            messagePackHelpers[0] = Constants.NONE;
             Array.Copy(msgPackSrc, 0, messagePackHelpers, 1, msgPackSrc.Length);
 
             var srcLoaders = Utility.Assembly.GetDerivedTypeNames<IResourceLoadHelper>();
@@ -203,7 +203,7 @@ namespace Cosmos.Editor
                    l != typeof(AssetBundleLoader).FullName;
              }).ToArray();
             resourceLoaders = new string[filteredLoader.Length + 1];
-            resourceLoaders[0] = CosmosConfig.NONE;
+            resourceLoaders[0] = Constants.NONE;
             Array.Copy(srcLoaders, 0, resourceLoaders, 1, filteredLoader.Length);
 
             cosmosConfig = target as CosmosConfig;

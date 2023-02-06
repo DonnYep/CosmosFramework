@@ -22,7 +22,7 @@ namespace Cosmos.Editor.Resource
             get
             {
                 if (string.IsNullOrEmpty(objectSize))
-                    return "<NULL>";
+                    return Constants.NULL;
                 return objectSize;
             }
             set { objectSize = value; }

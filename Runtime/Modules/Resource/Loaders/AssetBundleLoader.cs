@@ -44,6 +44,7 @@ namespace Cosmos.Resource
         bool manifestAcquired = false;
         bool requestDone = false;
         bool abort = false;
+        ResourceManifest resourceManifest;
         public AssetBundleLoader()
         {
             loadSceneList = new List<string>();
@@ -181,6 +182,12 @@ namespace Cosmos.Resource
                 ResourceReferenceCount = resourceObjectWarpper.ReferenceCount
             };
             return hasObject;
+        }
+        ///<inheritdoc/> 
+        public ResourceVersion GetResourceVersion()
+        {
+            var version = resourceManifest == null ? Constants.NULL : resourceManifest.BuildVersion;
+            return new ResourceVersion(version, "Build by resouce pipeline");
         }
         ///<inheritdoc/> 
         public void Reset()
@@ -575,7 +582,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 递归减少包体引用计数；
         /// </summary>
-        void UnloadDependenciesAssetBundle(ResourceBundleWarpper resourceBundleWarpper, int count , bool unloadAllLoadedObjects)
+        void UnloadDependenciesAssetBundle(ResourceBundleWarpper resourceBundleWarpper, int count, bool unloadAllLoadedObjects)
         {
             resourceBundleWarpper.ReferenceCount -= count;
             if (resourceBundleWarpper.ReferenceCount <= 0)
@@ -688,12 +695,12 @@ namespace Cosmos.Resource
             if (!resourceBundleWarpperDict.TryGetValue(resourceObjectWarpper.ResourceObject.BundleName, out var resourceBundleWarpper))
                 return;
             resourceObjectWarpper.ReferenceCount--;
-            UnloadDependenciesAssetBundle(resourceBundleWarpper,1, ResourceDataProxy.UnloadAllLoadedObjectsWhenBundleUnload);
+            UnloadDependenciesAssetBundle(resourceBundleWarpper, 1, ResourceDataProxy.UnloadAllLoadedObjectsWhenBundleUnload);
         }
         void RequestManifestSuccess(ResourceRequestManifestSuccessEventArgs args)
         {
             Reset();
-            var resourceManifest = args.ResourceManifest;
+            resourceManifest = args.ResourceManifest;
             var bundleBuildInfoDict = resourceManifest.ResourceBundleBuildInfoDict;
             foreach (var bundleBuildInfo in bundleBuildInfoDict.Values)
             {
@@ -718,7 +725,5 @@ namespace Cosmos.Resource
             manifestAcquired = false;
             requestDone = true;
         }
-
-
     }
 }

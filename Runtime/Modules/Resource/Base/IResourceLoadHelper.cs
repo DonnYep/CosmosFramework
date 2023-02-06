@@ -118,6 +118,11 @@ namespace Cosmos.Resource
         /// <returns>是否存在</returns>
         bool GetObjectState(string objectName, out ResourceObjectState objectState);
         /// <summary>
+        /// Get version of resource.
+        /// </summary>
+        /// <returns>resource version</returns>
+        ResourceVersion GetResourceVersion();
+        /// <summary>
         /// 重置loader;
         /// </summary>
         void Reset();

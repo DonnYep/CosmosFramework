@@ -31,7 +31,7 @@ namespace Cosmos.DataNode
         }
         public override string ToString()
         {
-            return (value != null) ? value.ToString() : "<NULL>";
+            return (value != null) ? value.ToString() : Constants.NULL;
         }
     }
 }

@@ -21,11 +21,11 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载整体进度事件；
         /// </summary>
-        event Action<DonwloadOverallEventArgs> OnDownloadOverall;
+        event Action<DonwloadOverallProgressEventArgs> OnDownloadOverallProgress;
         /// <summary>
         /// 整体下载并写入完成事件
         /// </summary>
-        event Action<DownloadAndWriteFinishEventArgs> OnDownloadAndWriteFinish;
+        event Action<AllDownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted;
         /// <summary>
         /// 是否正在下载；
         /// </summary>

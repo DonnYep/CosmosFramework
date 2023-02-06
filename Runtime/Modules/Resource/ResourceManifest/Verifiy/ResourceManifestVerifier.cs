@@ -59,7 +59,7 @@ namespace Cosmos.Resource.Verify
             for (int i = 0; i < length; i++)
             {
                 var task = tasks[i];
-                verificationFailureInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, false));
+                verificationFailureInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, false, 0));
             }
             var result = new ResourceManifestVerifyResult()
             {
@@ -106,11 +106,11 @@ namespace Cosmos.Resource.Verify
                     {
                         bundleLengthMatched = true;
                     }
-                    verificationSuccessInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, bundleLengthMatched));
+                    verificationSuccessInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, bundleLengthMatched, bundleLength));
                 }
                 else
                 {
-                    verificationFailureInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, false));
+                    verificationFailureInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, false, 0));
                 }
             }
         }
