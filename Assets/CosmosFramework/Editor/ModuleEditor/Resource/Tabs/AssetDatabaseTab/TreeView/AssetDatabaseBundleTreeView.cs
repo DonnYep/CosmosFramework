@@ -6,7 +6,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceBundleTreeView : TreeView
+    public class AssetDatabaseBundleTreeView : TreeView
     {
         readonly List<ResourceBundleInfo> bundleInfoList = new List<ResourceBundleInfo>();
 
@@ -25,7 +25,7 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         int renamingItemId = -1;
         List<string> sortedBundleNames = new List<string>();
-        public ResourceBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
+        public AssetDatabaseBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
             showAlternatingRowBackgrounds = true;
@@ -84,7 +84,7 @@ namespace Cosmos.Editor.Resource
             var length = args.GetNumVisibleColumns();
             for (int i = 0; i < length; i++)
             {
-                DrawCellGUI(args.GetCellRect(i), args.item as ResourceBundleTreeViewItem, args.GetColumn(i), ref args);
+                DrawCellGUI(args.GetCellRect(i), args.item as AssetDatabaseBundleTreeViewItem, args.GetColumn(i), ref args);
             }
         }
         protected override bool CanRename(TreeViewItem item)
@@ -144,7 +144,7 @@ namespace Cosmos.Editor.Resource
                 for (int i = 0; i < bundleInfoList.Count; i++)
                 {
                     var bundleInfo = bundleInfoList[i];
-                    var item = new ResourceBundleTreeViewItem(i, 1, bundleInfo.BundleName, assetIcon) 
+                    var item = new AssetDatabaseBundleTreeViewItem(i, 1, bundleInfo.BundleName, assetIcon) 
                     {
                         BundleFormatSize = bundleInfo.BundleFormatBytes, 
                         ObjectCount = bundleInfo.ResourceObjectInfoList.Count
@@ -206,7 +206,7 @@ namespace Cosmos.Editor.Resource
             onBundleSort?.Invoke(sortedBundleNames,GetSelection());
             Reload();
         }
-        void DrawCellGUI(Rect cellRect, ResourceBundleTreeViewItem treeView, int column, ref RowGUIArgs args)
+        void DrawCellGUI(Rect cellRect, AssetDatabaseBundleTreeViewItem treeView, int column, ref RowGUIArgs args)
         {
             switch (column)
             {
