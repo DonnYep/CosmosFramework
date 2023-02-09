@@ -7,11 +7,11 @@ using UnityEngine;
 
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceBundleLabel
+    public class AssetDatabaseBundleLabel
     {
         SearchField searchField;
         TreeViewState treeViewState;
-        ResourceBundleTreeView treeView;
+        AssetDatabaseBundleTreeView treeView;
 
         public event Action<IList<int>,IList<int>> OnBundleDelete
         {
@@ -43,7 +43,7 @@ namespace Cosmos.Editor.Resource
             searchField = new SearchField();
             treeViewState = new TreeViewState();
             var multiColumnHeaderState = new MultiColumnHeader(ResourceWindowUtility.CreateResourceBundleMultiColumnHeader());
-            treeView = new ResourceBundleTreeView(treeViewState, multiColumnHeaderState);
+            treeView = new AssetDatabaseBundleTreeView(treeViewState, multiColumnHeaderState);
             searchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
         }
         public void OnGUI(Rect rect)

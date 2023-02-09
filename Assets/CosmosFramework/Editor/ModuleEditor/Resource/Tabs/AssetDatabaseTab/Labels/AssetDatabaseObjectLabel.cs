@@ -5,17 +5,17 @@ using UnityEngine;
 
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceObjectLabel
+    public class AssetDatabaseObjectLabel
     {
         SearchField searchField;
         TreeViewState treeViewState;
-        ResourceObjectTreeView treeView;
+        AssetDatabaseObjectTreeView treeView;
         public void OnEnable()
         {
             searchField = new SearchField();
             treeViewState = new TreeViewState();
             var multiColumnHeaderState = new MultiColumnHeader(ResourceWindowUtility.CreateResourceObjectMultiColumnHeader());
-            treeView = new ResourceObjectTreeView(treeViewState, multiColumnHeaderState);
+            treeView = new AssetDatabaseObjectTreeView(treeViewState, multiColumnHeaderState);
             searchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
         }
         public void Clear()

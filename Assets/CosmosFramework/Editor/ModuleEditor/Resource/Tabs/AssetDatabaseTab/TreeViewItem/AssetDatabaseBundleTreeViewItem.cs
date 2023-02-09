@@ -2,11 +2,11 @@
 using UnityEngine;
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceBundleTreeViewItem : TreeViewItem
+    public class AssetDatabaseBundleTreeViewItem : TreeViewItem
     {
         string bundleFormatSize;
         int objectCount;
-        public ResourceBundleTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
+        public AssetDatabaseBundleTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
         {
             this.icon = icon;
         }

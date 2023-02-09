@@ -2,10 +2,10 @@
 using UnityEngine;
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceObjectTreeViewItem : TreeViewItem
+    public class AssetDatabaseObjectTreeViewItem : TreeViewItem
     {
         string objectSize;
-        public ResourceObjectTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
+        public AssetDatabaseObjectTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
         {
             this.icon = icon;
         }

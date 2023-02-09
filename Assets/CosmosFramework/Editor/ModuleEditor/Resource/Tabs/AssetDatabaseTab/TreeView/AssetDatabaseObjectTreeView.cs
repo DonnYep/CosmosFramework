@@ -6,10 +6,10 @@ using Cosmos.Resource;
 
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceObjectTreeView : TreeView
+    public class AssetDatabaseObjectTreeView : TreeView
     {
         List<ResourceObjectInfo> objectInfoList = new List<ResourceObjectInfo>();
-        public ResourceObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
+        public AssetDatabaseObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
             showAlternatingRowBackgrounds = true;
@@ -60,7 +60,7 @@ namespace Cosmos.Editor.Resource
                         icon = EditorGUIUtility.FindTexture("console.erroricon");
                         validState = ResourceEditorConstant.ObjectInvalidState;
                     }
-                    var treeViewItem = new ResourceObjectTreeViewItem(i, 1, objectInfo.ObjectPath, icon)
+                    var treeViewItem = new AssetDatabaseObjectTreeViewItem(i, 1, objectInfo.ObjectPath, icon)
                     {
                         ObjectName = objectInfo.ObjectName,
                         ObjectState = validState,
@@ -79,7 +79,7 @@ namespace Cosmos.Editor.Resource
             var length = args.GetNumVisibleColumns();
             for (int i = 0; i < length; i++)
             {
-                DrawCellGUI(args.GetCellRect(i), args.item as ResourceObjectTreeViewItem, args.GetColumn(i), ref args);
+                DrawCellGUI(args.GetCellRect(i), args.item as AssetDatabaseObjectTreeViewItem, args.GetColumn(i), ref args);
             }
         }
         void OnMultiColumnHeaderSortingChanged(MultiColumnHeader multiColumnHeader)
@@ -148,7 +148,7 @@ namespace Cosmos.Editor.Resource
             }
             Reload();
         }
-        void DrawCellGUI(Rect cellRect, ResourceObjectTreeViewItem treeView, int column, ref RowGUIArgs args)
+        void DrawCellGUI(Rect cellRect, AssetDatabaseObjectTreeViewItem treeView, int column, ref RowGUIArgs args)
         {
             switch (column)
             {
