@@ -18,7 +18,7 @@ namespace Cosmos.Editor.Resource
             get
             {
                 if (string.IsNullOrEmpty(bundleFormatSize))
-                    return "<UNKONW>";
+                    return ResourceEditorConstant.UNKONM;
                 return bundleFormatSize;
             }
             set { bundleFormatSize = value; }
