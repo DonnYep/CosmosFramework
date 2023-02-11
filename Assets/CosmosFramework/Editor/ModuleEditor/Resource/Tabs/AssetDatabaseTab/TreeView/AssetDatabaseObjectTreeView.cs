@@ -53,12 +53,12 @@ namespace Cosmos.Editor.Resource
                     if (objectInfo.ObjectVaild)
                     {
                         icon = AssetDatabase.GetCachedIcon(objectInfo.ObjectPath) as Texture2D;
-                        validState = ResourceEditorConstant.ObjectValidState;
+                        validState = ResourceEditorConstant.VALID;
                     }
                     else
                     {
                         icon = EditorGUIUtility.FindTexture("console.erroricon");
-                        validState = ResourceEditorConstant.ObjectInvalidState;
+                        validState = ResourceEditorConstant.INVALID;
                     }
                     var treeViewItem = new AssetDatabaseObjectTreeViewItem(i, 1, objectInfo.ObjectPath, icon)
                     {
@@ -176,10 +176,10 @@ namespace Cosmos.Editor.Resource
                         var objectState = treeView.ObjectState;
                         switch (objectState)
                         {
-                            case ResourceEditorConstant.ObjectInvalidState:
+                            case ResourceEditorConstant.INVALID:
                                 objectStateStyle.normal.textColor = Color.red;
                                 break;
-                            case ResourceEditorConstant.ObjectValidState:
+                            case ResourceEditorConstant.VALID:
                                 objectStateStyle.normal.textColor = Color.green;
                                 break;
                         }
