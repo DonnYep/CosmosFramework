@@ -375,7 +375,8 @@ namespace Cosmos.Editor.Resource
                 yield return null;
             }
             EditorUtility.DisplayProgressBar("BuildDataset building", $"building bundle : {100}%", 1);
-            //yield return null;
+            //设置AssetImporter后刷新
+            AssetDatabase.Refresh();
             for (int i = 0; i < invalidBundleInfos.Count; i++)
             {
                 bundleInfos.Remove(invalidBundleInfos[i]);
@@ -402,10 +403,10 @@ namespace Cosmos.Editor.Resource
             AssetDatabase.SaveAssets();
 #endif
             bundleLabel.Reload();
-
             ResourceWindowDataProxy.ResourceDataset.IsChanged = false;
             hasChanged = false;
             yield return null;
+            AssetDatabase.Refresh();
             SaveTabData();
             DisplaySelectedBundle();
         }

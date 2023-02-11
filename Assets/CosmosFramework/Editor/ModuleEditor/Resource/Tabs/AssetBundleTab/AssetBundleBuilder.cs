@@ -79,6 +79,8 @@ namespace Cosmos.Editor.Resource
                 //这里存储hash与bundle，打包出来的包体长度在下一个流程处理
                 resourceManifest.ResourceBundleBuildInfoDict.Add(bundleInfo.BundleName, bundleBuildInfo);
             }
+            //refresh assetbundle
+            AssetDatabase.Refresh();
             for (int i = 0; i < bundleInfoLength; i++)
             {
                 var bundleInfo = bundleInfos[i];
@@ -184,6 +186,8 @@ namespace Cosmos.Editor.Resource
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 importer.assetBundleName = string.Empty;
             }
+            //refresh assetbundle
+            AssetDatabase.Refresh();
             if (buildParams.CopyToStreamingAssets)
             {
                 string streamingAssetPath = string.Empty;
