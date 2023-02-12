@@ -15,6 +15,11 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public string ObjectState { get; set; }
         /// <summary>
+        /// 状态是否有效；
+        /// </summary>
+        public bool ObjectValid { get; set; }
+        public Texture2D ObjectValidIcon { get; set; }
+        /// <summary>
         /// 文件大小；
         /// </summary>
         public string ObjectSize
