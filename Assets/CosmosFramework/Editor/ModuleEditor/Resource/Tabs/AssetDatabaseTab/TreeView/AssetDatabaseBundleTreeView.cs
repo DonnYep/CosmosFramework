@@ -79,6 +79,11 @@ namespace Cosmos.Editor.Resource
             }
             menu.ShowAsContext();
         }
+        protected override void SingleClickedItem(int id)
+        {
+            base.SingleClickedItem(id);
+            EditorUtil.ActiveObject(bundleInfoList[id].BundlePath);
+        }
         protected override void RowGUI(RowGUIArgs args)
         {
             var length = args.GetNumVisibleColumns();
