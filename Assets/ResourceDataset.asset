@@ -18,7 +18,6 @@ MonoBehaviour:
     bundleKey: texture
     bundleSize: 709776
     bundleFormatBytes: 0.7 MB
-    dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: Tex_5195
       objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
@@ -111,12 +110,12 @@ MonoBehaviour:
       objectFormatBytes: 17.1 KB
       extension: .png
       objectValid: 1
+    dependentBundleKeyList: []
   - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text
     bundleKey: text
     bundleSize: 7565
     bundleFormatBytes: 7.4 KB
-    dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: ABMapSchema
       objectPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
@@ -132,16 +131,12 @@ MonoBehaviour:
       objectFormatBytes: 0.8 KB
       extension: .csv
       objectValid: 1
+    dependentBundleKeyList: []
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
     bundleKey: scene
     bundleSize: 324120
     bundleFormatBytes: 316.5 KB
-    dependentBundleKeyList:
-    - material
-    - model
-    - prefab
-    - texture
     resourceObjectInfoList:
     - objectName: SceneTarget
       objectPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
@@ -157,16 +152,16 @@ MonoBehaviour:
       objectFormatBytes: 13.8 KB
       extension: .unity
       objectValid: 1
+    dependentBundleKeyList:
+    - material
+    - model
+    - prefab
+    - texture
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
     bundleKey: prefab
     bundleSize: 353508
     bundleFormatBytes: 345.2 KB
-    dependentBundleKeyList:
-    - audio
-    - material
-    - model
-    - texture
     resourceObjectInfoList:
     - objectName: AudioSource
       objectPath: Assets/Examples/AssetBundleTest/Prefab/AudioSource.prefab
@@ -287,12 +282,16 @@ MonoBehaviour:
       objectFormatBytes: 74.9 KB
       extension: .prefab
       objectValid: 1
+    dependentBundleKeyList:
+    - audio
+    - material
+    - model
+    - texture
   - bundleName: photo
     bundlePath: Assets/Examples/AssetBundleTest/Photo
     bundleKey: photo
     bundleSize: 21600736
     bundleFormatBytes: 20.6 MB
-    dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: CB1024
       objectPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
@@ -322,12 +321,12 @@ MonoBehaviour:
       objectFormatBytes: 4.1 MB
       extension: .psd
       objectValid: 1
+    dependentBundleKeyList: []
   - bundleName: model
     bundlePath: Assets/Examples/AssetBundleTest/Model
     bundleKey: model
     bundleSize: 6008044
     bundleFormatBytes: 5.7 MB
-    dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: LM_XBotIdle
       objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
@@ -371,12 +370,12 @@ MonoBehaviour:
       objectFormatBytes: 2.1 MB
       extension: .fbx
       objectValid: 1
+    dependentBundleKeyList: []
   - bundleName: material
     bundlePath: Assets/Examples/AssetBundleTest/Material
     bundleKey: material
     bundleSize: 15070
     bundleFormatBytes: 14.7 KB
-    dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: Alpha_Body_MAT
       objectPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
@@ -427,12 +426,12 @@ MonoBehaviour:
       objectFormatBytes: 2.1 KB
       extension: .mat
       objectValid: 1
+    dependentBundleKeyList: []
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
     bundleKey: audio
     bundleSize: 6986559
     bundleFormatBytes: 6.7 MB
-    dependentBundleKeyList: []
     resourceObjectInfoList:
     - objectName: AmbientAudio
       objectPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
@@ -469,6 +468,7 @@ MonoBehaviour:
       objectFormatBytes: 1.9 MB
       extension: .mp3
       objectValid: 1
+    dependentBundleKeyList: []
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp

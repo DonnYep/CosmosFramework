@@ -11,10 +11,10 @@ namespace Cosmos.Editor.Resource
         readonly List<ResourceBundleInfo> bundleInfoList = new List<ResourceBundleInfo>();
 
         public Action<IList<int>> onBundleSelectionChanged;
-        public Action<IList<int>,IList<int>> onBundleDelete;
+        public Action<IList<int>, IList<int>> onBundleDelete;
         public Action onAllBundleDelete;
         public Action<int, string> onBundleRenamed;
-        public Action<IList<string>,IList<int>> onBundleSort;
+        public Action<IList<string>, IList<int>> onBundleSort;
         /// <summary>
         /// 上一行的cellRect
         /// </summary>
@@ -115,7 +115,7 @@ namespace Cosmos.Editor.Resource
                 if (canUse)
                 {
                     var bundleInfo = bundleInfoList[args.itemID];
-                    bundleInfo.BundleName= newName;
+                    bundleInfo.BundleName = newName;
                     item.displayName = newName;
                     onBundleRenamed?.Invoke(args.itemID, newName);
                 }
@@ -138,15 +138,21 @@ namespace Cosmos.Editor.Resource
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
-            var assetIcon = ResourceWindowUtility.GetFolderIcon();
+            var folderIcon = ResourceWindowUtility.GetFolderIcon();
+            var folderEmptyIcon = ResourceWindowUtility.GetFolderEmptyIcon();
+            Texture2D icon = null;
             var allItems = new List<TreeViewItem>();
             {
                 for (int i = 0; i < bundleInfoList.Count; i++)
                 {
                     var bundleInfo = bundleInfoList[i];
-                    var item = new AssetDatabaseBundleTreeViewItem(i, 1, bundleInfo.BundleName, assetIcon) 
+                    if (bundleInfo.ResourceObjectInfoList.Count == 0)
+                        icon = folderEmptyIcon;
+                    else
+                        icon = folderIcon;
+                    var item = new AssetDatabaseBundleTreeViewItem(i, 1, bundleInfo.BundleName, icon)
                     {
-                        BundleFormatSize = bundleInfo.BundleFormatBytes, 
+                        BundleFormatSize = bundleInfo.BundleFormatBytes,
                         ObjectCount = bundleInfo.ResourceObjectInfoList.Count
                     };
                     allItems.Add(item);
@@ -203,7 +209,7 @@ namespace Cosmos.Editor.Resource
             {
                 sortedBundleNames.Add(bundleInfoList[i].BundleName);
             }
-            onBundleSort?.Invoke(sortedBundleNames,GetSelection());
+            onBundleSort?.Invoke(sortedBundleNames, GetSelection());
             Reload();
         }
         void DrawCellGUI(Rect cellRect, AssetDatabaseBundleTreeViewItem treeView, int column, ref RowGUIArgs args)
@@ -257,7 +263,7 @@ namespace Cosmos.Editor.Resource
                 {
                     bundleInfoList.Remove(rmBundleInfos[i]);
                 }
-                onBundleDelete?.Invoke(list,GetSelection());
+                onBundleDelete?.Invoke(list, GetSelection());
                 SetSelection(new int[0]);
                 Reload();
             }
@@ -272,7 +278,7 @@ namespace Cosmos.Editor.Resource
             var item = FindItem(itemId, rootItem);
             var bundleInfo = bundleInfoList[itemId];
             var bundleName = ResourceUtility.FilterName(bundleInfo.BundlePath);
-            bundleInfo.BundleName= bundleName;
+            bundleInfo.BundleName = bundleName;
             item.displayName = bundleInfo.BundleName;
             onBundleRenamed?.Invoke(itemId, bundleInfo.BundlePath);
         }
