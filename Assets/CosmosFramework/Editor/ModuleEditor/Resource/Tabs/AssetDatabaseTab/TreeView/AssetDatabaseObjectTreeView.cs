@@ -40,6 +40,11 @@ namespace Cosmos.Editor.Resource
             base.SingleClickedItem(id);
             EditorUtil.PingAndActiveObject(objectInfoList[id].ObjectPath);
         }
+        protected override void SingleClickedItem(int id)
+        {
+            base.SingleClickedItem(id);
+            EditorUtil.ActiveObject(objectInfoList[id].ObjectPath);
+        }
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
