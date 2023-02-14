@@ -12,8 +12,8 @@ namespace Cosmos.Editor.Resource
         SearchField searchField;
         TreeViewState treeViewState;
         AssetDatabaseBundleTreeView treeView;
-
-        public event Action<IList<int>,IList<int>> OnBundleDelete
+        public int BundleCount { get { return treeView.BundleCount; } }
+        public event Action<IList<int>, IList<int>> OnBundleDelete
         {
             add { treeView.onBundleDelete += value; }
             remove { treeView.onBundleDelete -= value; }
@@ -33,7 +33,7 @@ namespace Cosmos.Editor.Resource
             add { treeView.onBundleRenamed += value; }
             remove { treeView.onBundleRenamed -= value; }
         }
-        public event Action<IList<string>,IList<int>> OnBundleSort
+        public event Action<IList<string>, IList<int>> OnBundleSort
         {
             add { treeView.onBundleSort += value; }
             remove { treeView.onBundleSort -= value; }
@@ -66,16 +66,16 @@ namespace Cosmos.Editor.Resource
         }
         public void SetSelection(IList<int> selectedIds)
         {
-            treeView.SetSelection(selectedIds);
+            treeView.SetSelection(selectedIds, TreeViewSelectionOptions.None);
         }
         void DrawTreeView(Rect rect)
         {
-            var width = rect.width * 0.382f;
+            var width = rect.width * ResourceEditorConstant.MIN_WIDTH;
             GUILayout.BeginVertical(GUILayout.MaxWidth(width));
             {
                 GUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField("Search bundle", EditorStyles.boldLabel, GUILayout.MaxWidth(128));
+                    EditorGUILayout.LabelField(ResourceEditorConstant.SERACH, GUILayout.MaxWidth(48));
                     treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
                 }
                 GUILayout.EndHorizontal();
