@@ -9,6 +9,7 @@ namespace Cosmos.Editor.Resource
     public class AssetDatabaseObjectTreeView : TreeView
     {
         List<ResourceObjectInfo> objectInfoList = new List<ResourceObjectInfo>();
+        public int ObjectCount { get { return objectInfoList.Count; } }
         public AssetDatabaseObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();

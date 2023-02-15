@@ -25,6 +25,7 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         int renamingItemId = -1;
         List<string> sortedBundleNames = new List<string>();
+        public int BundleCount { get { return bundleInfoList.Count; }}
         public AssetDatabaseBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();

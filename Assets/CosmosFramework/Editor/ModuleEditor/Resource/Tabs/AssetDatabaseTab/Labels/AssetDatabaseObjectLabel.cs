@@ -10,6 +10,7 @@ namespace Cosmos.Editor.Resource
         SearchField searchField;
         TreeViewState treeViewState;
         AssetDatabaseObjectTreeView treeView;
+        public int ObjectCount { get { return treeView.ObjectCount; } }
         public void OnEnable()
         {
             searchField = new SearchField();
@@ -38,11 +39,12 @@ namespace Cosmos.Editor.Resource
         }
         void DrawTreeView(Rect rect)
         {
-            GUILayout.BeginVertical(GUILayout.MaxWidth(rect.width * 0.618f));
+            var width = rect.width * ResourceEditorConstant.MAX_WIDTH;
+            GUILayout.BeginVertical(GUILayout.MaxWidth(width));
             {
                 GUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField("Search object", EditorStyles.boldLabel,GUILayout.MaxWidth(128));
+                    EditorGUILayout.LabelField(ResourceEditorConstant.SERACH, GUILayout.MaxWidth(48));
                     treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
                 }
                 GUILayout.EndHorizontal();
