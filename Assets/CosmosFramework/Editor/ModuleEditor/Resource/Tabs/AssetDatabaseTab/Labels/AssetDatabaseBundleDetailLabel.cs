@@ -61,11 +61,11 @@ namespace Cosmos.Editor.Resource
                 {
                     EditorGUILayout.LabelField(ResourceEditorConstant.SERACH, GUILayout.MaxWidth(48));
                     treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
-                    if (GUILayout.Button("ExpandAll", GUILayout.MaxWidth(92)))
+                    if (GUILayout.Button("ExpandAll", EditorStyles.miniButton, GUILayout.MaxWidth(92)))
                     {
                         treeView.ExpandAll();
                     }
-                    if (GUILayout.Button("CollapseAll", GUILayout.MaxWidth(92)))
+                    if (GUILayout.Button("CollapseAll", EditorStyles.miniButton, GUILayout.MaxWidth(92)))
                     {
                         treeView.CollapseAll();
                     }

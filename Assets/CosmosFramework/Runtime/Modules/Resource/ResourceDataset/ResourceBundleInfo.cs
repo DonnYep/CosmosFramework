@@ -21,6 +21,8 @@ namespace Cosmos.Resource
         List<ResourceObjectInfo> resourceObjectInfoList = new List<ResourceObjectInfo>();
         [SerializeField]
         List<string> dependentBundleKeyList = new List<string>();
+
+        List<ResourceBundleInfo> resourceSubBundleInfoList = new List<ResourceBundleInfo>();
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
@@ -94,6 +96,19 @@ namespace Cosmos.Resource
                 return dependentBundleKeyList;
             }
             set { dependentBundleKeyList = value; }
+        }
+        /// <summary>
+        /// 此bundle的子bundle文件
+        /// </summary>
+        public List<ResourceBundleInfo> ResourceSubBundleInfoList
+        {
+            get
+            {
+                if (resourceSubBundleInfoList == null)
+                    resourceSubBundleInfoList = new List<ResourceBundleInfo>();
+                return resourceSubBundleInfoList;
+            }
+            set { resourceSubBundleInfoList = value; }
         }
         public bool Equals(ResourceBundleInfo other)
         {

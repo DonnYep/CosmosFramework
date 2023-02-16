@@ -240,8 +240,8 @@ namespace Cosmos.Editor.Resource
                         if (!(obj is MonoScript) && (obj is DefaultAsset))
                         {
                             var bundleInfoList = ResourceWindowDataProxy.ResourceDataset.ResourceBundleInfoList;
-                            var isInSameBundle = ResourceWindowUtility.CheckAssetsAndScenesInOneAssetBundle(path);
-                            if (isInSameBundle)
+                            var isSceneInSameBundle = ResourceWindowUtility.CheckAssetsAndScenesInOneAssetBundle(path);
+                            if (isSceneInSameBundle)
                             {
                                 var invalidBundleName = ResourceUtility.FilterName(path);
                                 EditorUtil.Debug.LogError($"Cannot mark assets and scenes in one AssetBundle. AssetBundle name is {invalidBundleName}");
@@ -459,6 +459,7 @@ namespace Cosmos.Editor.Resource
 
             bundleLabel.Reload();
             ResourceWindowDataProxy.ResourceDataset.IsChanged = false;
+            ResourceWindowDataProxy.ResourceDataset.RegenerateBundleInfoDict();
             hasChanged = false;
             yield return null;
             AssetDatabase.Refresh();
