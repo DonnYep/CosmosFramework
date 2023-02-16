@@ -35,10 +35,10 @@ namespace Cosmos.Editor
                             handler.Invoke(assets[i]);
                         }
                     }
-                    var subFolder = AssetDatabase.GetSubFolders(folder);
-                    if (subFolder != null)
+                    var subFolders = AssetDatabase.GetSubFolders(folder);
+                    if (subFolders != null)
                     {
-                        foreach (var subF in subFolder)
+                        foreach (var subF in subFolders)
                         {
                             TraverseFolderFile(subF, handler);
                         }
@@ -98,88 +98,6 @@ namespace Cosmos.Editor
                     }
                 });
                 return pathList.ToArray();
-            }
-            public static EditorCoroutine DownloadAssetBundleAsync(string url, Action<float> progress, Action<AssetBundle> downloadedCallback)
-            {
-                return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequestAssetBundle.GetAssetBundle(url), progress, (UnityWebRequest req) =>
-                {
-                    AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(req);
-                    if (bundle)
-                    {
-                        downloadedCallback?.Invoke(bundle);
-                    }
-                }));
-            }
-            public static EditorCoroutine DownloadAssetBundlesAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<AssetBundle[]> downloadedCallback)
-            {
-                return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequests(urls, overallProgress, progress, downloadedCallback));
-            }
-            public static EditorCoroutine DownloadAssetBundleBytesAsync(string url, Action<float> progress, Action<byte[]> downloadedCallback)
-            {
-                return EditorUtil.Coroutine.StartCoroutine(EnumUnityWebRequest(UnityWebRequest.Get(url), progress, (UnityWebRequest req) =>
-                {
-                    var bundleBytes = req.downloadHandler.data;
-                    if (bundleBytes != null)
-                    {
-                        downloadedCallback?.Invoke(bundleBytes);
-                    }
-                }));
-            }
-            public static EditorCoroutine DownloadAssetBundlesBytesAsync(string[] urls, Action<float> overallProgress, Action<float> progress, Action<IList<byte[]>> downloadedCallback)
-            {
-                return EditorUtil.Coroutine.StartCoroutine(EnumBytesUnityWebRequests(urls, overallProgress, progress, downloadedCallback));
-            }
-            static IEnumerator EnumUnityWebRequests(string[] urls, Action<float> overallProgress, Action<float> progress, Action<AssetBundle[]> downloadedCallback)
-            {
-                var length = urls.Length;
-                var count = length - 1;
-                var assetBundleList = new List<AssetBundle>();
-                for (int i = 0; i < length; i++)
-                {
-                    overallProgress?.Invoke((float)i / (float)count);
-                    yield return DownloadAssetBundleAsync(urls[i], progress, (request) => { assetBundleList.Add(request); });
-                }
-                downloadedCallback.Invoke(assetBundleList.ToArray());
-            }
-            static IEnumerator EnumBytesUnityWebRequests(string[] urls, Action<float> overallProgress, Action<float> progress, Action<IList<byte[]>> downloadedCallback)
-            {
-                var length = urls.Length;
-                var count = length - 1;
-                var assetBundleList = new List<byte[]>();
-                for (int i = 0; i < length; i++)
-                {
-                    overallProgress?.Invoke((float)i / (float)count);
-                    yield return DownloadAssetBundleBytesAsync(urls[i], progress, (request) => { assetBundleList.Add(request); });
-                }
-                downloadedCallback.Invoke(assetBundleList);
-            }
-            static IEnumerator EnumUnityWebRequest(UnityWebRequest unityWebRequest, Action<float> progress, Action<UnityWebRequest> downloadedCallback)
-            {
-                using (UnityWebRequest request = unityWebRequest)
-                {
-                    request.SendWebRequest();
-                    while (!request.isDone)
-                    {
-                        progress?.Invoke(request.downloadProgress);
-                        yield return null;
-                    }
-#if UNITY_2020_1_OR_NEWER
-                    if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
-#elif UNITY_2018_1_OR_NEWER
-                    if (!request.isNetworkError && !request.isHttpError)
-#endif
-                    {
-                        if (request.isDone)
-                        {
-                            progress?.Invoke(1);
-                            downloadedCallback(request);
-                        }
-                    }
-                    else
-                    {
-                        throw new ArgumentException($"UnityWebRequest：{request.url } : {request.error } ！");
-                    }
-                }
             }
         }
     }

@@ -26,13 +26,17 @@ namespace Cosmos.Editor.Resource
             }
             return false;
         }
-        /// <summary>
-        /// 获取原生资产icon
-        /// </summary>
-        /// <returns>icon</returns>
-        public static Texture2D GetAssetIcon()
+        public static Texture2D GetSceneHierarchyWindowIcon()
         {
-            return EditorGUIUtility.FindTexture("Prefab Icon");
+            return EditorGUIUtility.FindTexture("UnityEditor.SceneHierarchyWindow");
+        }
+        public static Texture2D GetD_FolderEmptyIcon()
+        {
+            return EditorGUIUtility.FindTexture("d_FolderEmpty Icon");
+        }
+        public static Texture2D GetD_FolderIcon()
+        {
+            return EditorGUIUtility.FindTexture("d_Folder Icon");
         }
         /// <summary>
         /// 获取原生场景资源icon
@@ -53,6 +57,10 @@ namespace Cosmos.Editor.Resource
         public static Texture2D GetFolderEmptyIcon()
         {
             return EditorGUIUtility.FindTexture("FolderEmpty Icon");
+        }
+        public static Texture2D GetFindDependenciesIcon()
+        {
+            return EditorGUIUtility.FindTexture("UnityEditor.FindDependencies");
         }
         public static Texture2D GetAssetRefreshIcon()
         {

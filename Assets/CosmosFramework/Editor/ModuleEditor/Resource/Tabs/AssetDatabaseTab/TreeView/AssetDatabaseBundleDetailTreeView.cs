@@ -41,6 +41,7 @@ namespace Cosmos.Editor.Resource
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
             var folderIcon = ResourceWindowUtility.GetFolderIcon();
             var folderEmptyIcon = ResourceWindowUtility.GetFolderEmptyIcon();
+            var dependenciesIcon = ResourceWindowUtility.GetFindDependenciesIcon();
             Texture2D icon = null;
             var bundleItemList = new List<TreeViewItem>();
             {
@@ -55,18 +56,11 @@ namespace Cosmos.Editor.Resource
                     var formatBytesItem = new TreeViewItem((i + 1) * ResourceEditorConstant.MULTIPLE_VALUE, 2, $"FormatBytes: {bundleInfo.BundleFormatBytes}");
                     var dependentLen = bundleInfo.DependentBundleKeyList.Count;
                     var dependentString = string.Empty;
-                    Texture2D dependentItemIcon = null;
                     if (dependentLen == 0)
-                    {
-                        dependentItemIcon = folderEmptyIcon;
                         dependentString = Constants.NONE;
-                    }
                     else
-                    {
-                        dependentItemIcon = folderIcon;
-                        dependentString = "<COUNT> " + dependentLen.ToString();
-                    }
-                    var dependentItem = new TreeViewItem((i + 1) * ResourceEditorConstant.MULTIPLE_VALUE + 1, 2, $"Dependencies: - {dependentString}") { icon = dependentItemIcon };
+                        dependentString = "Count: " + dependentLen.ToString();
+                    var dependentItem = new TreeViewItem((i + 1) * ResourceEditorConstant.MULTIPLE_VALUE + 1, 2, $"Dependencies: - {dependentString}") { icon = dependenciesIcon };
                     var bundleSubItemList = new List<TreeViewItem>() { formatBytesItem, dependentItem };
                     //理论上bundle不会有上百万个，因此依赖区间使用百万位扩充
                     SetupParentsAndChildrenFromDepths(bundleItem, bundleSubItemList);
@@ -87,6 +81,28 @@ namespace Cosmos.Editor.Resource
                 }
                 SetupParentsAndChildrenFromDepths(root, bundleItemList);
                 return root;
+            }
+        }
+        protected override void DoubleClickedItem(int id)
+        {
+            base.DoubleClickedItem(id);
+            var items = FindRows(new int[] { id });
+            var item = items[0];
+            var has = ResourceWindowDataProxy.ResourceDataset.PeekResourceBundleInfo(item.displayName, out var bundleInfo);
+            if (has)
+            {
+                EditorUtil.PingAndActiveObject(bundleInfo.BundlePath);
+            }
+        }
+        protected override void SingleClickedItem(int id)
+        {
+            base.SingleClickedItem(id);
+            var items = FindRows(new int[] { id });
+            var item = items[0];
+            var has = ResourceWindowDataProxy.ResourceDataset.PeekResourceBundleInfo(item.displayName, out var bundleInfo);
+            if (has)
+            {
+                EditorUtil.ActiveObject(bundleInfo.BundlePath);
             }
         }
     }

@@ -19,7 +19,7 @@
         public const string VALID = "VALID";
         public const string INVALID = "INVALID";
         public const string UNKONM = "< UNKONW > ";
-        public const int MULTIPLE_VALUE = 1000000;
+        public const int MULTIPLE_VALUE = 10000;
         public const string SERACH = "Search";
         public const float MAX_WIDTH = 0.618f;
         public const float MIN_WIDTH = 0.382f;

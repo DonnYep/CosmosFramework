@@ -20,7 +20,7 @@ namespace Cosmos.Editor.Resource
 
             var assetBundleNameType = buildParams.AssetBundleNameType;
 
-            var bundleInfos = dataset.ResourceBundleInfoList;
+            var bundleInfos = dataset.GetResourceBundleInfos();
             var bundleInfoLength = bundleInfos.Count;
 
             for (int i = 0; i < bundleInfoLength; i++)
@@ -98,7 +98,7 @@ namespace Cosmos.Editor.Resource
         {
             Dictionary<string, ResourceBundleInfo> bundleKeyDict = null;
             if (buildParams.AssetBundleNameType == AssetBundleNameType.HashInstead)
-                bundleKeyDict = dataset.ResourceBundleInfoList.ToDictionary(bundle => bundle.BundleKey);
+                bundleKeyDict = dataset.GetResourceBundleInfos().ToDictionary(bundle => bundle.BundleKey);
             var bundleKeys = unityManifest.GetAllAssetBundles();
             var bundleKeyLength = bundleKeys.Length;
             for (int i = 0; i < bundleKeyLength; i++)
@@ -159,7 +159,7 @@ namespace Cosmos.Editor.Resource
             Utility.IO.DeleteFile(buildVersionPath);
             Utility.IO.DeleteFile(buildVersionManifestPath);
 
-            var bundleInfos = dataset.ResourceBundleInfoList;
+            var bundleInfos = dataset.GetResourceBundleInfos();
             var bundleInfoLength = bundleInfos.Count;
 
             #region 还原dataset在editor环境下的依赖
