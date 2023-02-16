@@ -38,6 +38,16 @@ namespace Cosmos.Editor.Resource
             add { treeView.onBundleSort += value; }
             remove { treeView.onBundleSort -= value; }
         }
+        public event Action<IList<int>> OnMarkAsSplittable
+        {
+            add { treeView.onMarkAsSplittable += value; }
+            remove { treeView.onMarkAsSplittable -= value; }
+        }
+        public event Action<IList<int>> OnMarkAsUnsplittable
+        {
+            add { treeView.onMarkAsUnsplittable += value; }
+            remove { treeView.onMarkAsUnsplittable -= value; }
+        }
         public void OnEnable()
         {
             searchField = new SearchField();

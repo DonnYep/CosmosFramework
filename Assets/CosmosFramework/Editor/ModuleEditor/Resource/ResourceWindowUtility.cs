@@ -26,17 +26,9 @@ namespace Cosmos.Editor.Resource
             }
             return false;
         }
-        public static Texture2D GetSceneHierarchyWindowIcon()
+        public static Texture2D GetHorizontalLayoutGroupIcon()
         {
-            return EditorGUIUtility.FindTexture("UnityEditor.SceneHierarchyWindow");
-        }
-        public static Texture2D GetD_FolderEmptyIcon()
-        {
-            return EditorGUIUtility.FindTexture("d_FolderEmpty Icon");
-        }
-        public static Texture2D GetD_FolderIcon()
-        {
-            return EditorGUIUtility.FindTexture("d_Folder Icon");
+            return EditorGUIUtility.FindTexture("HorizontalLayoutGroup Icon");
         }
         /// <summary>
         /// 获取原生场景资源icon
@@ -74,6 +66,11 @@ namespace Cosmos.Editor.Resource
         {
             return EditorGUIUtility.FindTexture("TestPassed");
         }
+        public static Texture2D GetIgnoredcon()
+        {
+            return EditorGUIUtility.FindTexture("TestIgnored");
+            //return EditorGUIUtility.FindTexture("TestNormal");
+        }
         public static MultiColumnHeaderState CreateResourceBundleMultiColumnHeader()
         {
             var columns = new[]
@@ -91,7 +88,7 @@ namespace Cosmos.Editor.Resource
                 },
                 new MultiColumnHeaderState.Column
                 {
-                    headerContent = new GUIContent("Amount"),
+                    headerContent = new GUIContent("Count"),
                     headerTextAlignment = TextAlignment.Left,
                     sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
@@ -99,6 +96,18 @@ namespace Cosmos.Editor.Resource
                     width=56,
                     maxWidth=80,
                     autoResize = true,
+                },
+                new MultiColumnHeaderState.Column
+                {
+                    headerContent = new GUIContent("Splittable"),
+                    headerTextAlignment = TextAlignment.Left,
+                    sortingArrowAlignment = TextAlignment.Left,
+                    sortedAscending = false,
+                    minWidth=48,
+                    width=64,
+                    maxWidth=80,
+                    autoResize = false,
+                    canSort=true
                 },
                 new MultiColumnHeaderState.Column
                 {
@@ -112,7 +121,6 @@ namespace Cosmos.Editor.Resource
                     autoResize = false,
                     canSort=true
                 }
-
             };
             var state = new MultiColumnHeaderState(columns);
             return state;

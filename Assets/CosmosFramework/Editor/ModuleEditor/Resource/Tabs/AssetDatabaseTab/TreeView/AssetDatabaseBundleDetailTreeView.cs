@@ -42,6 +42,7 @@ namespace Cosmos.Editor.Resource
             var folderIcon = ResourceWindowUtility.GetFolderIcon();
             var folderEmptyIcon = ResourceWindowUtility.GetFolderEmptyIcon();
             var dependenciesIcon = ResourceWindowUtility.GetFindDependenciesIcon();
+            var subBundleIcom = ResourceWindowUtility.GetHorizontalLayoutGroupIcon();
             Texture2D icon = null;
             var bundleItemList = new List<TreeViewItem>();
             {
@@ -60,25 +61,60 @@ namespace Cosmos.Editor.Resource
                         dependentString = Constants.NONE;
                     else
                         dependentString = "Count: " + dependentLen.ToString();
-                    var dependentItem = new TreeViewItem((i + 1) * ResourceEditorConstant.MULTIPLE_VALUE + 1, 2, $"Dependencies: - {dependentString}") { icon = dependenciesIcon };
-                    var bundleSubItemList = new List<TreeViewItem>() { formatBytesItem, dependentItem };
-                    //理论上bundle不会有上百万个，因此依赖区间使用百万位扩充
-                    SetupParentsAndChildrenFromDepths(bundleItem, bundleSubItemList);
+
+                    var dependentRootItem = new TreeViewItem((i + 1) * ResourceEditorConstant.MULTIPLE_VALUE + 1, 2, $"Dependencies: - {dependentString}") { icon = dependenciesIcon };
+
+
+                    var subBundleLen = bundleInfo.ResourceSubBundleInfoList.Count;
+                    var subBundleString = string.Empty;
+                    if (!bundleInfo.Splittable)
+                    {
+                        subBundleString = Constants.NONE;
+                    }
+                    else
+                    {
+                        if (subBundleLen == 0)
+                            subBundleString = Constants.NONE;
+                        else
+                            subBundleString = "Count: " + subBundleLen.ToString();
+                    }
+                    var subBundleRootItem = new TreeViewItem((i + 1) * ResourceEditorConstant.MULTIPLE_VALUE + 2, 2, $"SubBundles: - {subBundleString}") { icon = dependenciesIcon };
+
+                    var subBundleItemList = new List<TreeViewItem>();
+
+                    if (bundleInfo.Splittable)
+                    {
+                        var subBundleLength = bundleInfo.ResourceSubBundleInfoList.Count;
+                        for (int j = 0; j < subBundleLength; j++)
+                        {
+                            var subBundle = bundleInfo.ResourceSubBundleInfoList[j];
+                            int subBundleItemId = subBundleRootItem.id + j + 2 + ResourceEditorConstant.SBU_MULTIPLE_VALUE;//拆分子包区间数值
+                            var subBundleItem = new TreeViewItem(subBundleItemId, 3, subBundle.BundleName)
+                            {
+                                icon = subBundleIcom
+                            };
+                            subBundleItemList.Add(subBundleItem);
+                            SetupParentsAndChildrenFromDepths(subBundleRootItem, subBundleItemList);
+                        }
+                    }
+                    var bundleSubItemList = new List<TreeViewItem>() { formatBytesItem, dependentRootItem, subBundleRootItem };
 
                     var dependentItemList = new List<TreeViewItem>();
-                    bundleItemList.Add(bundleItem);
                     for (int j = 0; j < dependentLen; j++)
                     {
                         var bundleKey = bundleInfo.DependentBundleKeyList[j];
-                        int depentId = dependentItem.id + j + 1;
-                        var depentItem = new TreeViewItem(depentId, 3, bundleKey)
+                        int dependentItemId = dependentRootItem.id + j + 2;
+                        var dependentItem = new TreeViewItem(dependentItemId, 3, bundleKey)
                         {
                             icon = folderIcon
                         };
-                        dependentItemList.Add(depentItem);
-                        SetupParentsAndChildrenFromDepths(dependentItem, dependentItemList);
+                        dependentItemList.Add(dependentItem);
+                        SetupParentsAndChildrenFromDepths(dependentRootItem, dependentItemList);
                     }
+                    bundleItemList.Add(bundleItem);
+                    SetupParentsAndChildrenFromDepths(bundleItem, bundleSubItemList);
                 }
+
                 SetupParentsAndChildrenFromDepths(root, bundleItemList);
                 return root;
             }
