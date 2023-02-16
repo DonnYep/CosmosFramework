@@ -44,7 +44,7 @@ namespace Cosmos.Editor.Resource
                     splitBundleCount = 0;
             }
         }
-        public Texture2D SplittableeIcon { get; set; }
+        public Texture2D SplittableIcon { get; set; }
         public Texture2D UnsplitBundleIcon { get; set; }
         public bool Splittable{ get; set; }
     }
