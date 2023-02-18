@@ -77,6 +77,7 @@ namespace Cosmos.Resource
         }
         public void RegenerateBundleInfoDict()
         {
+            resourceBundleInfoDict?.Clear();
             resourceBundleInfoDict = GetResourceBundleInfos().ToDictionary((b)=>b.BundleName);
         }
         /// <summary>

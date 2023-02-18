@@ -13,150 +13,6 @@ MonoBehaviour:
   m_Name: ResourceDataset
   m_EditorClassIdentifier: 
   resourceBundleInfoList:
-  - bundleName: texture
-    bundlePath: Assets/Examples/AssetBundleTest/Texture
-    bundleKey: texture
-    bundleSize: 709776
-    bundleFormatBytes: 0.7 MB
-    resourceObjectInfoList:
-    - objectName: Tex_5195
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
-      bundleName: texture
-      objectSize: 10803
-      objectFormatBytes: 10.5 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5196
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5196.png
-      bundleName: texture
-      objectSize: 61533
-      objectFormatBytes: 60.1 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5197
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5197.png
-      bundleName: texture
-      objectSize: 56368
-      objectFormatBytes: 55.0 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5199
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5199.png
-      bundleName: texture
-      objectSize: 16081
-      objectFormatBytes: 15.7 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5203
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5203.png
-      bundleName: texture
-      objectSize: 7031
-      objectFormatBytes: 6.9 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5205
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5205.png
-      bundleName: texture
-      objectSize: 41616
-      objectFormatBytes: 40.6 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5206
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5206.png
-      bundleName: texture
-      objectSize: 7925
-      objectFormatBytes: 7.7 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5207
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5207.png
-      bundleName: texture
-      objectSize: 41058
-      objectFormatBytes: 40.1 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5208
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5208.png
-      bundleName: texture
-      objectSize: 234473
-      objectFormatBytes: 229.0 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5209
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5209.png
-      bundleName: texture
-      objectSize: 128522
-      objectFormatBytes: 125.5 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5210
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5210.png
-      bundleName: texture
-      objectSize: 22748
-      objectFormatBytes: 22.2 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5211
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5211.png
-      bundleName: texture
-      objectSize: 64121
-      objectFormatBytes: 62.6 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5212
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
-      bundleName: texture
-      objectSize: 17497
-      objectFormatBytes: 17.1 KB
-      extension: .png
-      objectValid: 1
-    dependentBundleKeyList: []
-  - bundleName: text
-    bundlePath: Assets/Examples/AssetBundleTest/Text
-    bundleKey: text
-    bundleSize: 7565
-    bundleFormatBytes: 7.4 KB
-    resourceObjectInfoList:
-    - objectName: ABMapSchema
-      objectPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
-      bundleName: text
-      objectSize: 6720
-      objectFormatBytes: 6.6 KB
-      extension: .json
-      objectValid: 1
-    - objectName: SampleCSV
-      objectPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
-      bundleName: text
-      objectSize: 845
-      objectFormatBytes: 0.8 KB
-      extension: .csv
-      objectValid: 1
-    dependentBundleKeyList: []
-  - bundleName: scene
-    bundlePath: Assets/Examples/AssetBundleTest/Scene
-    bundleKey: scene
-    bundleSize: 324120
-    bundleFormatBytes: 316.5 KB
-    resourceObjectInfoList:
-    - objectName: SceneTarget
-      objectPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
-      bundleName: scene
-      objectSize: 310029
-      objectFormatBytes: 302.8 KB
-      extension: .unity
-      objectValid: 1
-    - objectName: TestAddtiveScene
-      objectPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
-      bundleName: scene
-      objectSize: 14091
-      objectFormatBytes: 13.8 KB
-      extension: .unity
-      objectValid: 1
-    dependentBundleKeyList:
-    - material
-    - model
-    - prefab
-    - texture
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
     bundleKey: prefab
@@ -285,92 +141,7 @@ MonoBehaviour:
     dependentBundleKeyList:
     - audio
     - material
-    - model
     - texture
-  - bundleName: photo
-    bundlePath: Assets/Examples/AssetBundleTest/Photo
-    bundleKey: photo
-    bundleSize: 21600736
-    bundleFormatBytes: 20.6 MB
-    resourceObjectInfoList:
-    - objectName: CB1024
-      objectPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
-      bundleName: photo
-      objectSize: 3145772
-      objectFormatBytes: 3.0 MB
-      extension: .tga
-      objectValid: 1
-    - objectName: CB2048
-      objectPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
-      bundleName: photo
-      objectSize: 12582956
-      objectFormatBytes: 12.0 MB
-      extension: .tga
-      objectValid: 1
-    - objectName: CheckBoard_2048
-      objectPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
-      bundleName: photo
-      objectSize: 1553908
-      objectFormatBytes: 1.5 MB
-      extension: .jpg
-      objectValid: 1
-    - objectName: Grid2048
-      objectPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
-      bundleName: photo
-      objectSize: 4318100
-      objectFormatBytes: 4.1 MB
-      extension: .psd
-      objectValid: 1
-    dependentBundleKeyList: []
-  - bundleName: model
-    bundlePath: Assets/Examples/AssetBundleTest/Model
-    bundleKey: model
-    bundleSize: 6008044
-    bundleFormatBytes: 5.7 MB
-    resourceObjectInfoList:
-    - objectName: LM_XBotIdle
-      objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
-      bundleName: model
-      objectSize: 776073
-      objectFormatBytes: 0.7 MB
-      extension: .anim
-      objectValid: 1
-    - objectName: LM_XBotWalking
-      objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
-      bundleName: model
-      objectSize: 299736
-      objectFormatBytes: 292.7 KB
-      extension: .anim
-      objectValid: 1
-    - objectName: LM_YBotIdle
-      objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
-      bundleName: model
-      objectSize: 422883
-      objectFormatBytes: 413.0 KB
-      extension: .anim
-      objectValid: 1
-    - objectName: LM_YBotWalk
-      objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
-      bundleName: model
-      objectSize: 387880
-      objectFormatBytes: 378.8 KB
-      extension: .anim
-      objectValid: 1
-    - objectName: XBot_TPose
-      objectPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
-      bundleName: model
-      objectSize: 1961312
-      objectFormatBytes: 1.9 MB
-      extension: .fbx
-      objectValid: 1
-    - objectName: YBot_TPose
-      objectPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
-      bundleName: model
-      objectSize: 2160160
-      objectFormatBytes: 2.1 MB
-      extension: .fbx
-      objectValid: 1
-    dependentBundleKeyList: []
   - bundleName: material
     bundlePath: Assets/Examples/AssetBundleTest/Material
     bundleKey: material
@@ -469,6 +240,234 @@ MonoBehaviour:
       extension: .mp3
       objectValid: 1
     dependentBundleKeyList: []
+  - bundleName: model
+    bundlePath: Assets/Examples/AssetBundleTest/Model
+    bundleKey: model
+    bundleSize: 6008044
+    bundleFormatBytes: 5.7 MB
+    resourceObjectInfoList:
+    - objectName: LM_XBotIdle
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
+      bundleName: model
+      objectSize: 776073
+      objectFormatBytes: 0.7 MB
+      extension: .anim
+      objectValid: 1
+    - objectName: LM_XBotWalking
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
+      bundleName: model
+      objectSize: 299736
+      objectFormatBytes: 292.7 KB
+      extension: .anim
+      objectValid: 1
+    - objectName: LM_YBotIdle
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
+      bundleName: model
+      objectSize: 422883
+      objectFormatBytes: 413.0 KB
+      extension: .anim
+      objectValid: 1
+    - objectName: LM_YBotWalk
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
+      bundleName: model
+      objectSize: 387880
+      objectFormatBytes: 378.8 KB
+      extension: .anim
+      objectValid: 1
+    - objectName: XBot_TPose
+      objectPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
+      bundleName: model
+      objectSize: 1961312
+      objectFormatBytes: 1.9 MB
+      extension: .fbx
+      objectValid: 1
+    - objectName: YBot_TPose
+      objectPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
+      bundleName: model
+      objectSize: 2160160
+      objectFormatBytes: 2.1 MB
+      extension: .fbx
+      objectValid: 1
+    dependentBundleKeyList: []
+  - bundleName: photo
+    bundlePath: Assets/Examples/AssetBundleTest/Photo
+    bundleKey: photo
+    bundleSize: 21600736
+    bundleFormatBytes: 20.6 MB
+    resourceObjectInfoList:
+    - objectName: CB1024
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
+      bundleName: photo
+      objectSize: 3145772
+      objectFormatBytes: 3.0 MB
+      extension: .tga
+      objectValid: 1
+    - objectName: CB2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
+      bundleName: photo
+      objectSize: 12582956
+      objectFormatBytes: 12.0 MB
+      extension: .tga
+      objectValid: 1
+    - objectName: CheckBoard_2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
+      bundleName: photo
+      objectSize: 1553908
+      objectFormatBytes: 1.5 MB
+      extension: .jpg
+      objectValid: 1
+    - objectName: Grid2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
+      bundleName: photo
+      objectSize: 4318100
+      objectFormatBytes: 4.1 MB
+      extension: .psd
+      objectValid: 1
+    dependentBundleKeyList: []
+  - bundleName: scene
+    bundlePath: Assets/Examples/AssetBundleTest/Scene
+    bundleKey: scene
+    bundleSize: 324120
+    bundleFormatBytes: 316.5 KB
+    resourceObjectInfoList:
+    - objectName: SceneTarget
+      objectPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
+      bundleName: scene
+      objectSize: 310029
+      objectFormatBytes: 302.8 KB
+      extension: .unity
+      objectValid: 1
+    - objectName: TestAddtiveScene
+      objectPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
+      bundleName: scene
+      objectSize: 14091
+      objectFormatBytes: 13.8 KB
+      extension: .unity
+      objectValid: 1
+    dependentBundleKeyList:
+    - assets_examples_assetbundletest_prefab_ybot
+    - material
+    - model
+    - texture
+  - bundleName: text
+    bundlePath: Assets/Examples/AssetBundleTest/Text
+    bundleKey: text
+    bundleSize: 7565
+    bundleFormatBytes: 7.4 KB
+    resourceObjectInfoList:
+    - objectName: ABMapSchema
+      objectPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
+      bundleName: text
+      objectSize: 6720
+      objectFormatBytes: 6.6 KB
+      extension: .json
+      objectValid: 1
+    - objectName: SampleCSV
+      objectPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
+      bundleName: text
+      objectSize: 845
+      objectFormatBytes: 0.8 KB
+      extension: .csv
+      objectValid: 1
+    dependentBundleKeyList: []
+  - bundleName: texture
+    bundlePath: Assets/Examples/AssetBundleTest/Texture
+    bundleKey: texture
+    bundleSize: 709776
+    bundleFormatBytes: 0.7 MB
+    resourceObjectInfoList:
+    - objectName: Tex_5195
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
+      bundleName: texture
+      objectSize: 10803
+      objectFormatBytes: 10.5 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5196
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5196.png
+      bundleName: texture
+      objectSize: 61533
+      objectFormatBytes: 60.1 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5197
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5197.png
+      bundleName: texture
+      objectSize: 56368
+      objectFormatBytes: 55.0 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5199
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5199.png
+      bundleName: texture
+      objectSize: 16081
+      objectFormatBytes: 15.7 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5203
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5203.png
+      bundleName: texture
+      objectSize: 7031
+      objectFormatBytes: 6.9 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5205
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5205.png
+      bundleName: texture
+      objectSize: 41616
+      objectFormatBytes: 40.6 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5206
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5206.png
+      bundleName: texture
+      objectSize: 7925
+      objectFormatBytes: 7.7 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5207
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5207.png
+      bundleName: texture
+      objectSize: 41058
+      objectFormatBytes: 40.1 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5208
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5208.png
+      bundleName: texture
+      objectSize: 234473
+      objectFormatBytes: 229.0 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5209
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5209.png
+      bundleName: texture
+      objectSize: 128522
+      objectFormatBytes: 125.5 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5210
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5210.png
+      bundleName: texture
+      objectSize: 22748
+      objectFormatBytes: 22.2 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5211
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5211.png
+      bundleName: texture
+      objectSize: 64121
+      objectFormatBytes: 62.6 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5212
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
+      bundleName: texture
+      objectSize: 17497
+      objectFormatBytes: 17.1 KB
+      extension: .png
+      objectValid: 1
+    dependentBundleKeyList: []
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp
@@ -525,4 +524,4 @@ MonoBehaviour:
   - .signal
   - .guiskin
   - .dds
-  isChanged: 0
+  isChanged: 1

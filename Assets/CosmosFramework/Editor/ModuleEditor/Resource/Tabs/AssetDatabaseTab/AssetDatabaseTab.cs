@@ -49,7 +49,9 @@ namespace Cosmos.Editor.Resource
             bundleLabel.OnBundleDelete += OnBundleDelete;
             bundleLabel.OnSelectionChanged += OnSelectionChanged;
             bundleLabel.OnBundleRenamed += OnRenameBundle;
-            bundleLabel.OnBundleSort += OnBundleSort; ;
+            bundleLabel.OnBundleSort += OnBundleSort;
+            bundleLabel.OnMarkAsSplittable += OnMarkAsSplittable;
+            bundleLabel.OnMarkAsUnsplittable += OnMarkAsUnsplittable;
             GetTabData();
             if (ResourceWindowDataProxy.ResourceDataset != null)
             {
@@ -68,6 +70,9 @@ namespace Cosmos.Editor.Resource
                 DisplaySelectedBundle();
             }
         }
+
+
+
         public override void OnDisable()
         {
             SaveTabData();
@@ -99,7 +104,7 @@ namespace Cosmos.Editor.Resource
                     {
                         EditorGUILayout.BeginHorizontal();
                         {
-                            tabData.labelTabIndex = EditorGUILayout.Popup(tabData.labelTabIndex, tabArray, EditorStyles.toolbarPopup,GUILayout.MaxWidth(128));
+                            tabData.labelTabIndex = EditorGUILayout.Popup(tabData.labelTabIndex, tabArray, EditorStyles.toolbarPopup, GUILayout.MaxWidth(128));
                             using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
                             {
                                 if (tabData.labelTabIndex == 0)
@@ -348,6 +353,18 @@ namespace Cosmos.Editor.Resource
 #endif
             OnSelectionChanged(selectedIds);
         }
+        void OnMarkAsSplittable(IList<int> bundleIds)
+        {
+            EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
+            ResourceWindowDataProxy.ResourceDataset.IsChanged = true;
+            hasChanged = true;
+        }
+        void OnMarkAsUnsplittable(IList<int> bundleIds)
+        {
+            EditorUtility.SetDirty(ResourceWindowDataProxy.ResourceDataset);
+            ResourceWindowDataProxy.ResourceDataset.IsChanged = true;
+            hasChanged = true;
+        }
         void GetTabData()
         {
             try
@@ -388,41 +405,115 @@ namespace Cosmos.Editor.Resource
                     invalidBundleInfos.Add(bundleInfo);
                     continue;
                 }
-                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
-                importer.assetBundleName = bundleInfo.BundleName;
+                #region splittable
+                //if (bundleInfo.Splittable)
+                //{
+                //    bundleInfo.ResourceSubBundleInfoList.Clear();
+                //    var subBundlePaths = AssetDatabase.GetSubFolders(bundlePath);
+                //    for (int j = 0; j < subBundlePaths.Length; j++)
+                //    {
+                //        var subBundlePath = subBundlePaths[j];
+                //        var isSceneInSameBundle = ResourceWindowUtility.CheckAssetsAndScenesInOneAssetBundle(subBundlePath);
+                //        if (isSceneInSameBundle)
+                //        {
+                //            var invalidBundleName = ResourceUtility.FilterName(subBundlePath);
+                //            EditorUtil.Debug.LogError($"Cannot mark assets and scenes in one AssetBundle. AssetBundle name is {invalidBundleName}");
+                //            continue;
+                //        }
+                //        var subBundleInfo = new ResourceBundleInfo()
+                //        {
+                //            BundleName = subBundlePath,
+                //            BundlePath = subBundlePath
+                //        };
+                //        var contain = bundleInfo.ResourceSubBundleInfoList.Contains(subBundleInfo);
+                //        if (contain)
+                //        {
+                //            continue;
+                //        }
 
-                var files = Utility.IO.GetAllFiles(bundlePath);
-                var fileLength = files.Length;
-                bundleInfo.ResourceObjectInfoList.Clear();
-                for (int j = 0; j < fileLength; j++)
+                //        bundleInfo.ResourceSubBundleInfoList.Add(subBundleInfo);
+                //        subBundleInfo.BundleKey = subBundleInfo.BundleName;
+
+                //        var subImporter = AssetImporter.GetAtPath(subBundleInfo.BundlePath);
+                //        subImporter.assetBundleName = subBundleInfo.BundleName;
+                //        var files = Utility.IO.GetAllFiles(subBundlePath);
+                //        var fileLength = files.Length;
+                //        subBundleInfo.ResourceObjectInfoList.Clear();
+                //        for (int k = 0; k < fileLength; k++)
+                //        {
+                //            var srcFilePath = files[k].Replace("\\", "/");
+                //            var srcFileExt = Path.GetExtension(srcFilePath);
+                //            var lowerFileExt = srcFileExt.ToLower();
+                //            if (extensions.Contains(lowerFileExt))
+                //            {
+                //                //统一使用小写的文件后缀名
+                //                var lowerExtFilePath = srcFilePath.Replace(srcFileExt, lowerFileExt);
+
+                //                var resourceObjectInfo = new ResourceObjectInfo()
+                //                {
+                //                    BundleName = subBundleInfo.BundleName,
+                //                    Extension = lowerFileExt,
+                //                    ObjectName = Path.GetFileNameWithoutExtension(lowerExtFilePath),
+                //                    ObjectPath = lowerExtFilePath,
+                //                    ObjectSize = EditorUtil.GetAssetFileSizeLength(lowerExtFilePath),
+                //                    ObjectFormatBytes = EditorUtil.GetAssetFileSize(lowerExtFilePath),
+                //                };
+                //                resourceObjectInfo.ObjectVaild = AssetDatabase.LoadMainAssetAtPath(resourceObjectInfo.ObjectPath) != null;
+                //                subBundleInfo.ResourceObjectInfoList.Add(resourceObjectInfo);
+                //            }
+                //            long subBundleSize = EditorUtil.GetUnityDirectorySize(subBundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
+                //            subBundleInfo.BundleSize = subBundleSize;
+                //            subBundleInfo.BundleKey = bundleInfo.BundleName;
+                //            subBundleInfo.BundleFormatBytes = EditorUtility.FormatBytes(subBundleSize);
+                //        }
+                //    }
+
+                //    long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
+                //    bundleInfo.BundleSize = bundleSize;
+                //    bundleInfo.BundleKey = bundleInfo.BundleName;
+                //    bundleInfo.BundleFormatBytes = EditorUtility.FormatBytes(bundleSize);
+                //    bundleLabel.AddBundle(bundleInfo);
+                //}
+                //else
+                #endregion
                 {
-                    var srcFilePath = files[j].Replace("\\", "/");
-                    var srcFileExt = Path.GetExtension(srcFilePath);
-                    var lowerFileExt = srcFileExt.ToLower();
-                    if (extensions.Contains(lowerFileExt))
+                    bundleInfo.ResourceSubBundleInfoList.Clear();
+                    var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
+                    importer.assetBundleName = bundleInfo.BundleName;
+
+                    var files = Utility.IO.GetAllFiles(bundlePath);
+                    var fileLength = files.Length;
+                    bundleInfo.ResourceObjectInfoList.Clear();
+                    for (int j = 0; j < fileLength; j++)
                     {
-                        //统一使用小写的文件后缀名
-                        var lowerExtFilePath = srcFilePath.Replace(srcFileExt, lowerFileExt);
-
-                        var resourceObjectInfo = new ResourceObjectInfo()
+                        var srcFilePath = files[j].Replace("\\", "/");
+                        var srcFileExt = Path.GetExtension(srcFilePath);
+                        var lowerFileExt = srcFileExt.ToLower();
+                        if (extensions.Contains(lowerFileExt))
                         {
-                            BundleName = bundleInfo.BundleName,
-                            Extension = lowerFileExt,
-                            ObjectName = Path.GetFileNameWithoutExtension(lowerExtFilePath),
-                            ObjectPath = lowerExtFilePath,
-                            ObjectSize = EditorUtil.GetAssetFileSizeLength(lowerExtFilePath),
-                            ObjectFormatBytes = EditorUtil.GetAssetFileSize(lowerExtFilePath),
-                        };
-                        resourceObjectInfo.ObjectVaild = AssetDatabase.LoadMainAssetAtPath(resourceObjectInfo.ObjectPath) != null;
-                        bundleInfo.ResourceObjectInfoList.Add(resourceObjectInfo);
-                    }
-                }
-                long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
-                bundleInfo.BundleSize = bundleSize;
-                bundleInfo.BundleKey = bundleInfo.BundleName;
-                bundleInfo.BundleFormatBytes = EditorUtility.FormatBytes(bundleSize);
+                            //统一使用小写的文件后缀名
+                            var lowerExtFilePath = srcFilePath.Replace(srcFileExt, lowerFileExt);
 
-                bundleLabel.AddBundle(bundleInfo);
+                            var resourceObjectInfo = new ResourceObjectInfo()
+                            {
+                                BundleName = bundleInfo.BundleName,
+                                Extension = lowerFileExt,
+                                ObjectName = Path.GetFileNameWithoutExtension(lowerExtFilePath),
+                                ObjectPath = lowerExtFilePath,
+                                ObjectSize = EditorUtil.GetAssetFileSizeLength(lowerExtFilePath),
+                                ObjectFormatBytes = EditorUtil.GetAssetFileSize(lowerExtFilePath),
+                            };
+                            resourceObjectInfo.ObjectVaild = AssetDatabase.LoadMainAssetAtPath(resourceObjectInfo.ObjectPath) != null;
+                            bundleInfo.ResourceObjectInfoList.Add(resourceObjectInfo);
+                        }
+                    }
+                    long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
+                    bundleInfo.BundleSize = bundleSize;
+                    bundleInfo.BundleKey = bundleInfo.BundleName;
+                    bundleInfo.BundleFormatBytes = EditorUtility.FormatBytes(bundleSize);
+
+                    bundleLabel.AddBundle(bundleInfo);
+                }
 
                 var bundlePercent = i / (float)bundleLength;
                 EditorUtility.DisplayProgressBar("BuildDataset building", $"building bundle : {Mathf.RoundToInt(bundlePercent * 100)}%", bundlePercent);

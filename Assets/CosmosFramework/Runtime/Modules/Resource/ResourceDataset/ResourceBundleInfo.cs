@@ -23,6 +23,7 @@ namespace Cosmos.Resource
         List<string> dependentBundleKeyList = new List<string>();
 
         List<ResourceBundleInfo> resourceSubBundleInfoList = new List<ResourceBundleInfo>();
+        bool splittable;
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
@@ -109,6 +110,14 @@ namespace Cosmos.Resource
                 return resourceSubBundleInfoList;
             }
             set { resourceSubBundleInfoList = value; }
+        }
+        /// <summary>
+        /// bundle splittable.If true ,bundle will generate subbunbdle.
+        /// </summary>
+        public bool Splittable
+        {
+            get { return splittable; }
+            set { splittable = value; }
         }
         public bool Equals(ResourceBundleInfo other)
         {
