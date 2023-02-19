@@ -6,7 +6,7 @@ namespace Cosmos.Editor.Resource
     {
         string bundleFormatSize;
         int objectCount;
-        int splitBundleCount;
+        int splittedBundleCount;
         public AssetDatabaseBundleTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
         {
             this.icon = icon;
@@ -34,18 +34,18 @@ namespace Cosmos.Editor.Resource
                     objectCount = 0;
             }
         }
-        public int SplitBundleCount
+        public int SplittedBundleCount
         {
-            get { return splitBundleCount; }
+            get { return splittedBundleCount; }
             set
             {
-                splitBundleCount = value;
-                if (splitBundleCount <= 0)
-                    splitBundleCount = 0;
+                splittedBundleCount = value;
+                if (splittedBundleCount <= 0)
+                    splittedBundleCount = 0;
             }
         }
         public Texture2D SplittableIcon { get; set; }
-        public Texture2D UnsplitBundleIcon { get; set; }
+        public Texture2D UnsplittableIcon { get; set; }
         public bool Splittable{ get; set; }
     }
 }

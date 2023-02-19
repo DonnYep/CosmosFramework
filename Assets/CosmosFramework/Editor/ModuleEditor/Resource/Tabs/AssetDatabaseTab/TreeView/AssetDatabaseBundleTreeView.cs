@@ -1,5 +1,6 @@
 ﻿using Cosmos.Resource;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -155,7 +156,6 @@ namespace Cosmos.Editor.Resource
             var folderEmptyIcon = ResourceWindowUtility.GetFolderEmptyIcon();
             var splittableIcon = ResourceWindowUtility.GetValidIcon();
             var unsplittableIcon = ResourceWindowUtility.GetIgnoredcon();
-
             Texture2D icon = null;
             var treeItemList = new List<TreeViewItem>();
             {
@@ -170,9 +170,9 @@ namespace Cosmos.Editor.Resource
                     {
                         BundleFormatSize = bundleInfo.BundleFormatBytes,
                         ObjectCount = bundleInfo.ResourceObjectInfoList.Count,
-                        SplitBundleCount = bundleInfo.ResourceSubBundleInfoList.Count,
+                        SplittedBundleCount = bundleInfo.ResourceSubBundleInfoList.Count,
                         SplittableIcon = splittableIcon,
-                        UnsplitBundleIcon=unsplittableIcon,
+                        UnsplittableIcon = unsplittableIcon,
                         Splittable = bundleInfo.Splittable
                     };
                     treeItemList.Add(item);
@@ -217,9 +217,9 @@ namespace Cosmos.Editor.Resource
                     {
                         //Split
                         if (ascending)
-                            bundleInfoList.Sort((lhs, rhs) => lhs.ResourceSubBundleInfoList.Count.CompareTo(rhs.ResourceSubBundleInfoList.Count));
+                            bundleInfoList.OrderBy((b) => b.Splittable).ThenBy((b) => { return b.ResourceObjectInfoList.Count; });
                         else
-                            bundleInfoList.Sort((lhs, rhs) => rhs.ResourceSubBundleInfoList.Count.CompareTo(lhs.ResourceSubBundleInfoList.Count));
+                            bundleInfoList.OrderByDescending((b) => b.Splittable).ThenByDescending((b) => { return b.ResourceObjectInfoList.Count; });
                     }
                     break;
                 case 3:
@@ -260,19 +260,18 @@ namespace Cosmos.Editor.Resource
                 case 2:
                     {
                         var splittable = treeView.Splittable;
+                        var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
                         if (splittable)
                         {
-                            var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
                             if (treeView.SplittableIcon != null)
                                 GUI.DrawTexture(iconRect, treeView.SplittableIcon, ScaleMode.ScaleToFit);
                             var labelCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-                            DefaultGUI.Label(labelCellRect, treeView.SplitBundleCount.ToString(), args.selected, args.focused);
+                            DefaultGUI.Label(labelCellRect, treeView.SplittedBundleCount.ToString(), args.selected, args.focused);
                         }
                         else
                         {
-                            var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
-                            if (treeView.UnsplitBundleIcon!= null)
-                                GUI.DrawTexture(iconRect, treeView.UnsplitBundleIcon, ScaleMode.ScaleToFit);
+                            if (treeView.UnsplittableIcon != null)
+                                GUI.DrawTexture(iconRect, treeView.UnsplittableIcon, ScaleMode.ScaleToFit);
                         }
                     }
                     break;
