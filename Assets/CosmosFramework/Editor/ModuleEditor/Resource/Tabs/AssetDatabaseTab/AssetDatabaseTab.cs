@@ -70,9 +70,6 @@ namespace Cosmos.Editor.Resource
                 DisplaySelectedBundle();
             }
         }
-
-
-
         public override void OnDisable()
         {
             SaveTabData();
@@ -405,10 +402,10 @@ namespace Cosmos.Editor.Resource
                     invalidBundleInfos.Add(bundleInfo);
                     continue;
                 }
+                bundleInfo.ResourceSubBundleInfoList.Clear();
                 #region splittable
                 //if (bundleInfo.Splittable)
                 //{
-                //    bundleInfo.ResourceSubBundleInfoList.Clear();
                 //    var subBundlePaths = AssetDatabase.GetSubFolders(bundlePath);
                 //    for (int j = 0; j < subBundlePaths.Length; j++)
                 //    {
@@ -477,7 +474,6 @@ namespace Cosmos.Editor.Resource
                 //else
                 #endregion
                 {
-                    bundleInfo.ResourceSubBundleInfoList.Clear();
                     var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
                     importer.assetBundleName = bundleInfo.BundleName;
 
