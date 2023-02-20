@@ -66,8 +66,14 @@ namespace Cosmos.Resource
             for (int i = 0; i < length; i++)
             {
                 var bundleInfo = ResourceBundleInfoList[i];
-                infoList.Add(bundleInfo);
-                GetResourceBundleInfoRecursive(bundleInfo, ref infoList);
+                if (bundleInfo.Splittable)
+                {
+                    GetResourceBundleInfoRecursive(bundleInfo, ref infoList);
+                }
+                else
+                {
+                    infoList.Add(bundleInfo);
+                }
             }
             return infoList;
         }
@@ -78,7 +84,7 @@ namespace Cosmos.Resource
         public void RegenerateBundleInfoDict()
         {
             resourceBundleInfoDict?.Clear();
-            resourceBundleInfoDict = GetResourceBundleInfos().ToDictionary((b)=>b.BundleName);
+            resourceBundleInfoDict = GetResourceBundleInfos().ToDictionary((b) => b.BundleName);
         }
         /// <summary>
         /// 清空资源包与资源实体；
@@ -102,8 +108,14 @@ namespace Cosmos.Resource
             for (int i = 0; i < length; i++)
             {
                 var subBundleInfo = subBundleInfos[i];
-                infoList.Add(subBundleInfo);
-                GetResourceBundleInfoRecursive(subBundleInfo, ref infoList);
+                if (subBundleInfo.Splittable)
+                {
+                    GetResourceBundleInfoRecursive(subBundleInfo, ref infoList);
+                }
+                else
+                {
+                    infoList.Add(subBundleInfo);
+                }
             }
         }
     }
