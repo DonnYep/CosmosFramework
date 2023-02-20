@@ -323,6 +323,7 @@ MonoBehaviour:
     dependentBundleKeyList:
     - audio
     - material
+    - model
     - texture
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
@@ -345,9 +346,9 @@ MonoBehaviour:
       extension: .unity
       objectValid: 1
     dependentBundleKeyList:
-    - assets_examples_assetbundletest_prefab_ybot
     - material
     - model
+    - prefab
     - texture
   - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text

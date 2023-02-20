@@ -9,11 +9,8 @@ namespace Cosmos.Resource
     /// </summary>
     public class ResourceDataset : ScriptableObject, IDisposable
     {
-        [SerializeField]
         List<ResourceBundleInfo> resourceBundleInfoList;
-        [SerializeField]
         List<string> resourceAvailableExtenisonList;
-        [SerializeField]
         bool isChanged;
         Dictionary<string, ResourceBundleInfo> resourceBundleInfoDict;
         /// <summary>
