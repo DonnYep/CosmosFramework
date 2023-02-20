@@ -376,7 +376,8 @@ namespace Cosmos.Editor.Resource
                 for (int i = 0; i < length; i++)
                 {
                     var item = items[i];
-                    var has = ResourceWindowDataProxy.ResourceDataset.PeekResourceBundleInfo(item.displayName, out var bundleInfo);
+                    var bundleInfo = ResourceWindowDataProxy.ResourceDataset.ResourceBundleInfoList.Find((b) => b.BundleName == item.displayName);
+                    var has = bundleInfo != null;
                     if (has)
                     {
                         bundleInfo.Splittable = true;
@@ -401,7 +402,8 @@ namespace Cosmos.Editor.Resource
                 for (int i = 0; i < length; i++)
                 {
                     var item = items[i];
-                    var has = ResourceWindowDataProxy.ResourceDataset.PeekResourceBundleInfo(item.displayName, out var bundleInfo);
+                    var bundleInfo = ResourceWindowDataProxy.ResourceDataset.ResourceBundleInfoList.Find((b) => b.BundleName == item.displayName);
+                    var has = bundleInfo != null;
                     if (has)
                     {
                         bundleInfo.Splittable = false;

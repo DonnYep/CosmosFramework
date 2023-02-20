@@ -13,6 +13,188 @@ MonoBehaviour:
   m_Name: ResourceDataset
   m_EditorClassIdentifier: 
   resourceBundleInfoList:
+  - bundleName: audio
+    bundlePath: Assets/Examples/AssetBundleTest/Audio
+    bundleKey: audio
+    bundleSize: 6986559
+    bundleFormatBytes: 6.7 MB
+    resourceObjectInfoList:
+    - objectName: AmbientAudio
+      objectPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
+      bundleName: audio
+      objectSize: 403374
+      objectFormatBytes: 393.9 KB
+      extension: .mp3
+      objectValid: 1
+    - objectName: Audio00
+      objectPath: Assets/Examples/AssetBundleTest/Audio/Audio00.mp3
+      bundleName: audio
+      objectSize: 148135
+      objectFormatBytes: 144.7 KB
+      extension: .mp3
+      objectValid: 1
+    - objectName: Audio01
+      objectPath: Assets/Examples/AssetBundleTest/Audio/Audio01.mp3
+      bundleName: audio
+      objectSize: 12899
+      objectFormatBytes: 12.6 KB
+      extension: .mp3
+      objectValid: 1
+    - objectName: AudioFashion
+      objectPath: Assets/Examples/AssetBundleTest/Audio/AudioFashion.mp3
+      bundleName: audio
+      objectSize: 4454400
+      objectFormatBytes: 4.2 MB
+      extension: .mp3
+      objectValid: 1
+    - objectName: AudioTechHouse
+      objectPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
+      bundleName: audio
+      objectSize: 1967751
+      objectFormatBytes: 1.9 MB
+      extension: .mp3
+      objectValid: 1
+    dependentBundleKeyList: []
+  - bundleName: material
+    bundlePath: Assets/Examples/AssetBundleTest/Material
+    bundleKey: material
+    bundleSize: 15070
+    bundleFormatBytes: 14.7 KB
+    resourceObjectInfoList:
+    - objectName: Alpha_Body_MAT
+      objectPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
+      bundleName: material
+      objectSize: 2134
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: BlueMat
+      objectPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
+      bundleName: material
+      objectSize: 2127
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: GreyMaterial.Default
+      objectPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
+      bundleName: material
+      objectSize: 2145
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: RedMat
+      objectPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
+      bundleName: material
+      objectSize: 2107
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: Mat_ObjectPool_Blue
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Blue.mat
+      bundleName: material
+      objectSize: 2295
+      objectFormatBytes: 2.2 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: Mat_ObjectPool_Green
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Green.mat
+      bundleName: material
+      objectSize: 2128
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: Mat_ObjectPool_Red
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Red.mat
+      bundleName: material
+      objectSize: 2134
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    dependentBundleKeyList: []
+  - bundleName: model
+    bundlePath: Assets/Examples/AssetBundleTest/Model
+    bundleKey: model
+    bundleSize: 6008044
+    bundleFormatBytes: 5.7 MB
+    resourceObjectInfoList:
+    - objectName: LM_XBotIdle
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
+      bundleName: model
+      objectSize: 776073
+      objectFormatBytes: 0.7 MB
+      extension: .anim
+      objectValid: 1
+    - objectName: LM_XBotWalking
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
+      bundleName: model
+      objectSize: 299736
+      objectFormatBytes: 292.7 KB
+      extension: .anim
+      objectValid: 1
+    - objectName: LM_YBotIdle
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
+      bundleName: model
+      objectSize: 422883
+      objectFormatBytes: 413.0 KB
+      extension: .anim
+      objectValid: 1
+    - objectName: LM_YBotWalk
+      objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
+      bundleName: model
+      objectSize: 387880
+      objectFormatBytes: 378.8 KB
+      extension: .anim
+      objectValid: 1
+    - objectName: XBot_TPose
+      objectPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
+      bundleName: model
+      objectSize: 1961312
+      objectFormatBytes: 1.9 MB
+      extension: .fbx
+      objectValid: 1
+    - objectName: YBot_TPose
+      objectPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
+      bundleName: model
+      objectSize: 2160160
+      objectFormatBytes: 2.1 MB
+      extension: .fbx
+      objectValid: 1
+    dependentBundleKeyList: []
+  - bundleName: photo
+    bundlePath: Assets/Examples/AssetBundleTest/Photo
+    bundleKey: photo
+    bundleSize: 21600736
+    bundleFormatBytes: 20.6 MB
+    resourceObjectInfoList:
+    - objectName: CB1024
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
+      bundleName: photo
+      objectSize: 3145772
+      objectFormatBytes: 3.0 MB
+      extension: .tga
+      objectValid: 1
+    - objectName: CB2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
+      bundleName: photo
+      objectSize: 12582956
+      objectFormatBytes: 12.0 MB
+      extension: .tga
+      objectValid: 1
+    - objectName: CheckBoard_2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
+      bundleName: photo
+      objectSize: 1553908
+      objectFormatBytes: 1.5 MB
+      extension: .jpg
+      objectValid: 1
+    - objectName: Grid2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
+      bundleName: photo
+      objectSize: 4318100
+      objectFormatBytes: 4.1 MB
+      extension: .psd
+      objectValid: 1
+    dependentBundleKeyList: []
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
     bundleKey: prefab
@@ -142,188 +324,6 @@ MonoBehaviour:
     - audio
     - material
     - texture
-  - bundleName: material
-    bundlePath: Assets/Examples/AssetBundleTest/Material
-    bundleKey: material
-    bundleSize: 15070
-    bundleFormatBytes: 14.7 KB
-    resourceObjectInfoList:
-    - objectName: Alpha_Body_MAT
-      objectPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
-      bundleName: material
-      objectSize: 2134
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: BlueMat
-      objectPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
-      bundleName: material
-      objectSize: 2127
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: GreyMaterial.Default
-      objectPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
-      bundleName: material
-      objectSize: 2145
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: RedMat
-      objectPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
-      bundleName: material
-      objectSize: 2107
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: Mat_ObjectPool_Blue
-      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Blue.mat
-      bundleName: material
-      objectSize: 2295
-      objectFormatBytes: 2.2 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: Mat_ObjectPool_Green
-      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Green.mat
-      bundleName: material
-      objectSize: 2128
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: Mat_ObjectPool_Red
-      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Red.mat
-      bundleName: material
-      objectSize: 2134
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    dependentBundleKeyList: []
-  - bundleName: audio
-    bundlePath: Assets/Examples/AssetBundleTest/Audio
-    bundleKey: audio
-    bundleSize: 6986559
-    bundleFormatBytes: 6.7 MB
-    resourceObjectInfoList:
-    - objectName: AmbientAudio
-      objectPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
-      bundleName: audio
-      objectSize: 403374
-      objectFormatBytes: 393.9 KB
-      extension: .mp3
-      objectValid: 1
-    - objectName: Audio00
-      objectPath: Assets/Examples/AssetBundleTest/Audio/Audio00.mp3
-      bundleName: audio
-      objectSize: 148135
-      objectFormatBytes: 144.7 KB
-      extension: .mp3
-      objectValid: 1
-    - objectName: Audio01
-      objectPath: Assets/Examples/AssetBundleTest/Audio/Audio01.mp3
-      bundleName: audio
-      objectSize: 12899
-      objectFormatBytes: 12.6 KB
-      extension: .mp3
-      objectValid: 1
-    - objectName: AudioFashion
-      objectPath: Assets/Examples/AssetBundleTest/Audio/AudioFashion.mp3
-      bundleName: audio
-      objectSize: 4454400
-      objectFormatBytes: 4.2 MB
-      extension: .mp3
-      objectValid: 1
-    - objectName: AudioTechHouse
-      objectPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
-      bundleName: audio
-      objectSize: 1967751
-      objectFormatBytes: 1.9 MB
-      extension: .mp3
-      objectValid: 1
-    dependentBundleKeyList: []
-  - bundleName: model
-    bundlePath: Assets/Examples/AssetBundleTest/Model
-    bundleKey: model
-    bundleSize: 6008044
-    bundleFormatBytes: 5.7 MB
-    resourceObjectInfoList:
-    - objectName: LM_XBotIdle
-      objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotIdle.anim
-      bundleName: model
-      objectSize: 776073
-      objectFormatBytes: 0.7 MB
-      extension: .anim
-      objectValid: 1
-    - objectName: LM_XBotWalking
-      objectPath: Assets/Examples/AssetBundleTest/Model/LM_XBotWalking.anim
-      bundleName: model
-      objectSize: 299736
-      objectFormatBytes: 292.7 KB
-      extension: .anim
-      objectValid: 1
-    - objectName: LM_YBotIdle
-      objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotIdle.anim
-      bundleName: model
-      objectSize: 422883
-      objectFormatBytes: 413.0 KB
-      extension: .anim
-      objectValid: 1
-    - objectName: LM_YBotWalk
-      objectPath: Assets/Examples/AssetBundleTest/Model/LM_YBotWalk.anim
-      bundleName: model
-      objectSize: 387880
-      objectFormatBytes: 378.8 KB
-      extension: .anim
-      objectValid: 1
-    - objectName: XBot_TPose
-      objectPath: Assets/Examples/AssetBundleTest/Model/XBot_TPose.fbx
-      bundleName: model
-      objectSize: 1961312
-      objectFormatBytes: 1.9 MB
-      extension: .fbx
-      objectValid: 1
-    - objectName: YBot_TPose
-      objectPath: Assets/Examples/AssetBundleTest/Model/YBot_TPose.fbx
-      bundleName: model
-      objectSize: 2160160
-      objectFormatBytes: 2.1 MB
-      extension: .fbx
-      objectValid: 1
-    dependentBundleKeyList: []
-  - bundleName: photo
-    bundlePath: Assets/Examples/AssetBundleTest/Photo
-    bundleKey: photo
-    bundleSize: 21600736
-    bundleFormatBytes: 20.6 MB
-    resourceObjectInfoList:
-    - objectName: CB1024
-      objectPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
-      bundleName: photo
-      objectSize: 3145772
-      objectFormatBytes: 3.0 MB
-      extension: .tga
-      objectValid: 1
-    - objectName: CB2048
-      objectPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
-      bundleName: photo
-      objectSize: 12582956
-      objectFormatBytes: 12.0 MB
-      extension: .tga
-      objectValid: 1
-    - objectName: CheckBoard_2048
-      objectPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
-      bundleName: photo
-      objectSize: 1553908
-      objectFormatBytes: 1.5 MB
-      extension: .jpg
-      objectValid: 1
-    - objectName: Grid2048
-      objectPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
-      bundleName: photo
-      objectSize: 4318100
-      objectFormatBytes: 4.1 MB
-      extension: .psd
-      objectValid: 1
-    dependentBundleKeyList: []
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
     bundleKey: scene

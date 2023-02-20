@@ -6,7 +6,7 @@ namespace Cosmos.Editor.Resource
     [Serializable]
     public class AssetDatabaseTabData
     {
-        public int labelTabIndex;
+        public int LabelTabIndex;
 
         List<int> selectedBundleIds;
         /// <summary>
