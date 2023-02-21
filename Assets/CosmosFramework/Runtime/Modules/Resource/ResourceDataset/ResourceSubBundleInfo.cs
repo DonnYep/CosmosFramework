@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cosmos.Resource
 {
     [Serializable]
-    public class ResourceBundleInfo : IEquatable<ResourceBundleInfo>
+    public class ResourceSubBundleInfo : IEquatable<ResourceSubBundleInfo>
     {
         [SerializeField]
         string bundleName;
@@ -21,9 +21,6 @@ namespace Cosmos.Resource
         List<ResourceObjectInfo> resourceObjectInfoList = new List<ResourceObjectInfo>();
         [SerializeField]
         List<string> dependentBundleKeyList = new List<string>();
-        [SerializeField]
-        List<ResourceSubBundleInfo> resourceSubBundleInfoList = new List<ResourceSubBundleInfo>();
-        bool splittable;
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
@@ -98,28 +95,7 @@ namespace Cosmos.Resource
             }
             set { dependentBundleKeyList = value; }
         }
-        /// <summary>
-        /// 此bundle的子bundle文件
-        /// </summary>
-        public List<ResourceSubBundleInfo> ResourceSubBundleInfoList
-        {
-            get
-            {
-                if (resourceSubBundleInfoList == null)
-                    resourceSubBundleInfoList = new List<ResourceSubBundleInfo>();
-                return resourceSubBundleInfoList;
-            }
-            set { resourceSubBundleInfoList = value; }
-        }
-        /// <summary>
-        /// bundle splittable.If true ,bundle will generate subbunbdle.
-        /// </summary>
-        public bool Splittable
-        {
-            get { return splittable; }
-            set { splittable = value; }
-        }
-        public bool Equals(ResourceBundleInfo other)
+        public bool Equals(ResourceSubBundleInfo other)
         {
             return other.BundleName == this.BundleName ||
                 other.BundlePath == this.BundlePath;
