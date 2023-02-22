@@ -13,7 +13,6 @@ namespace Cosmos.Resource
         List<ResourceBundleInfo> resourceBundleInfoList;
         [SerializeField]
         List<string> resourceAvailableExtenisonList;
-        [SerializeField]
         bool isChanged;
         Dictionary<string, ResourceBundleInfo> resourceBundleInfoDict;
         /// <summary>
@@ -68,7 +67,23 @@ namespace Cosmos.Resource
                 var bundleInfo = ResourceBundleInfoList[i];
                 if (bundleInfo.Splittable)
                 {
-                    GetResourceBundleInfoRecursive(bundleInfo, ref infoList);
+                    var subBundleInfoList = bundleInfo.ResourceSubBundleInfoList;
+                    var subBundleLength = subBundleInfoList.Count;
+                    for (int j = 0; j < subBundleLength; j++)
+                    {
+                        var subBundleInfo = subBundleInfoList[j];
+                        var newBundleInfo = new ResourceBundleInfo()
+                        {
+                            BundleName = subBundleInfo.BundleKey,
+                            BundlePath = subBundleInfo.BundlePath,
+                            BundleKey = subBundleInfo.BundleKey,
+                            BundleSize = subBundleInfo.BundleSize,
+                            BundleFormatBytes = subBundleInfo.BundleFormatBytes,
+                        };
+                        newBundleInfo.DependentBundleKeyList.AddRange(subBundleInfo.DependentBundleKeyList);
+                        newBundleInfo.ResourceObjectInfoList.AddRange(subBundleInfo.ResourceObjectInfoList);
+                        infoList.Add(newBundleInfo);
+                    }
                 }
                 else
                 {
@@ -107,15 +122,7 @@ namespace Cosmos.Resource
             var length = subBundleInfos.Count;
             for (int i = 0; i < length; i++)
             {
-                var subBundleInfo = subBundleInfos[i];
-                if (subBundleInfo.Splittable)
-                {
-                    GetResourceBundleInfoRecursive(subBundleInfo, ref infoList);
-                }
-                else
-                {
-                    infoList.Add(subBundleInfo);
-                }
+                //var subBundleInfo = subBundleInfos[i];
             }
         }
     }
