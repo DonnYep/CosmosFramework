@@ -34,7 +34,7 @@ namespace Cosmos.Network
         ///<inheritdoc/>
         public int Port { get; private set; }
         ///<inheritdoc/>
-        public string IPAddress 
+        public string Host 
         {
             get { return server.listener.LocalEndpoint.ToString(); } 
         }

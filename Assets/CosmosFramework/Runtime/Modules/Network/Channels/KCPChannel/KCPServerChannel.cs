@@ -61,7 +61,7 @@ namespace Cosmos.Network
         ///<inheritdoc/>
         public string ChannelName { get; set; }
         ///<inheritdoc/>
-        public string IPAddress { get { return server.IPAddress; } }
+        public string Host { get { return server.IPAddress; } }
         public KCPServerChannel(string channelName, ushort port)
         {
             this.ChannelName = channelName;

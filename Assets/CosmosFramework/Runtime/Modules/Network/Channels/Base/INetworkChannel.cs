@@ -9,7 +9,7 @@ namespace Cosmos.Network
         /// <summary>
         /// 网络地址；
         /// </summary>
-        string IPAddress { get; }
+        string Host { get; }
         /// <summary>
         /// 端口；
         /// </summary>

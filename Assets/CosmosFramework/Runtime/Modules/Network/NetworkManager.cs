@@ -71,7 +71,7 @@ namespace Cosmos.Network
             if (channelDict.TryGetValue(channelName, out var channel))
             {
                 var info = new NetworkChannelInfo();
-                info.IPAddress = channel.IPAddress;
+                info.Host = channel.Host;
                 info.Name = channel.ChannelName;
                 info.ChannelType = channel.GetType();
                 return info;

@@ -23,9 +23,9 @@ namespace Cosmos.Network
         /// <summary>
         /// 与服务器连接
         /// </summary>
-        /// <param name="ip">地址</param>
+        /// <param name="host">地址</param>
         /// <param name="port">端口</param>
-        void Connect(string ip, int port);
+        void Connect(string host, int port);
         /// <summary>
         /// 发送数据，默认为可靠类型；
         /// </summary>

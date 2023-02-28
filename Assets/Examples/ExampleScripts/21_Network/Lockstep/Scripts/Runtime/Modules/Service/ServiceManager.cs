@@ -6,7 +6,7 @@ namespace Cosmos.Lockstep
     public class ServiceManager : Module, IServiceManager
     {
         public bool IsConnected { get; private set; }
-        public string IP { get; private set; }
+        public string Host { get; private set; }
         public ushort Port { get; private set; }
         Action onConnected;
         public event Action OnConnected
@@ -27,7 +27,7 @@ namespace Cosmos.Lockstep
             remove { onReceiveData -= value; }
         }
         KCPClientChannel networkChannel;
-        public void Connect(string ip, ushort port)
+        public void Connect(string host, ushort port)
         {
             if (IsConnected)
                 return;
@@ -35,9 +35,9 @@ namespace Cosmos.Lockstep
             networkChannel.OnDataReceived+= OnReceiveDataHandle;
             networkChannel.OnDisconnected += OnDisconnectedHandle;
             networkChannel.OnConnected += OnConnectedHandle;
-            networkChannel.Connect(ip,port);
+            networkChannel.Connect(host,port);
             CosmosEntry.NetworkManager.AddOrUpdateChannel(networkChannel);
-            IP = ip;
+            Host = host;
             Port = port;
         }
         public void Disconnect()

@@ -63,7 +63,7 @@ namespace Cosmos.Network
         ///<inheritdoc/>
         public int Port { get; private set; }
         ///<inheritdoc/>
-        public string IPAddress { get; private set; }
+        public string Host { get; private set; }
         public KCPClientChannel(string channelName)
         {
             this.ChannelName = channelName;
@@ -78,11 +78,11 @@ namespace Cosmos.Network
             );
         }
         ///<inheritdoc/>
-        public void Connect(string ip, int port)
+        public void Connect(string host, int port)
         {
-            this.IPAddress = ip;
+            this.Host = host;
             this.Port = port;
-            client.Connect(IPAddress, (ushort)port, true, 10);
+            client.Connect(Host, (ushort)port, true, 10);
         }
         ///<inheritdoc/>
         public void TickRefresh()
