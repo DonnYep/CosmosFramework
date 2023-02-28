@@ -19,9 +19,9 @@ namespace Cosmos.Lockstep
         {
             var hostStr = iptHost.text;
             var hosts = hostStr.Split(':');
-            var ip = hosts[0];
+            var host = hosts[0];
             var port = ushort.Parse(hosts[1]);
-            GameEntry.ServiceManager.Connect(ip, port);
+            GameEntry.ServiceManager.Connect(host, port);
         }
         void DisconnectClick()
         {

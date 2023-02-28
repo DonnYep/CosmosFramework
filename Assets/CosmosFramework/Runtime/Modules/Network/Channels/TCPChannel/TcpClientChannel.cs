@@ -34,7 +34,7 @@ namespace Cosmos.Network
         ///<inheritdoc/>
         public int Port { get; private set; }
         ///<inheritdoc/>
-        public string IPAddress { get; private set; }
+        public string Host { get; private set; }
         public TcpClientChannel(string channelName)
         {
             this.ChannelName = channelName;
@@ -44,11 +44,11 @@ namespace Cosmos.Network
             Log.Error = (s) => Utility.Debug.LogError(s);
         }
         ///<inheritdoc/>
-        public void Connect(string ip, int port)
+        public void Connect(string host, int port)
         {
-            this.IPAddress = ip;
+            this.Host = host;
             this.Port = port;
-            client.Connect(IPAddress, Port);
+            client.Connect(Host, Port);
             client.OnData = OnReceiveDataHandler;
         }
         ///<inheritdoc/>

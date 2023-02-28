@@ -6,11 +6,11 @@ namespace Cosmos.Network
     {
         INetworkClientChannel channel;
         Action continuation;
-        public WaitConnectedAwaiter(INetworkClientChannel clientChannel, string ip, int port)
+        public WaitConnectedAwaiter(INetworkClientChannel clientChannel, string host, int port)
         {
             this.channel = clientChannel;
             clientChannel.OnConnected += OnConnected;
-            clientChannel.Connect(ip,port);
+            clientChannel.Connect(host,port);
         }
         public void OnCompleted(Action continuation)
         {
