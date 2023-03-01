@@ -23,11 +23,7 @@ namespace Cosmos.Network
         /// 启动服务器；
         /// </summary>
         /// <returns>启动是否成功</returns>
-        bool StartServer();
-        /// <summary>
-        /// 停止服务器；
-        /// </summary>
-        void StopServer();
+        bool Start();
         /// <summary>
         /// 发送数据到remote;
         /// 默认为可靠类型；

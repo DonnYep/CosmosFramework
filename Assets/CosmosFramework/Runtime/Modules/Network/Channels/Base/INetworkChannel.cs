@@ -19,13 +19,9 @@ namespace Cosmos.Network
         /// </summary>
         string ChannelName { get; set; }
         /// <summary>
-        /// 当通道被终止；
-        /// </summary>
-        event Action OnAbort;
-        /// <summary>
         /// 终结通道；
         /// </summary>
-        void AbortChannnel();
+        void Close();
         /// <summary>
         /// 刷新通道；
         /// </summary>

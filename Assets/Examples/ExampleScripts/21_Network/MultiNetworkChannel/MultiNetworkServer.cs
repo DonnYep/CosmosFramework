@@ -44,11 +44,11 @@ public class MultiNetworkServer : MonoBehaviour
     #region TCP_SERVER
     void TcpStartServer()
     {
-        tcpServerChannel.StartServer();
+        tcpServerChannel.Start();
     }
     void TcpStopServer()
     {
-        tcpServerChannel.StopServer();
+        tcpServerChannel.Close();
     }
     void TcpServer_OnConnected(int conv)
     {
@@ -67,11 +67,11 @@ public class MultiNetworkServer : MonoBehaviour
     #region KCP_SERVER
     void KcpStartServer()
     {
-        kcpServerChannel.StartServer();
+        kcpServerChannel.Start();
     }
     void KcpStopServer()
     {
-        kcpServerChannel.StopServer();
+        kcpServerChannel.Close();
     }
     void KcpServer_OnConnected(int conv)
     {

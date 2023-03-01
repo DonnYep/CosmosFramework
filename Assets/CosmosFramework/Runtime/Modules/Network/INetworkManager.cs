@@ -40,7 +40,7 @@
         /// <param name="channelName">通道名</param>
         /// <param name="channel">通道</param>
         /// <returns>是否移除成功</returns>
-        bool RemoveChannel(string channelName, out INetworkChannel channel);
+        bool CloseChannel(string channelName, out INetworkChannel channel);
         /// <summary>
         /// 获取一个通道；
         /// </summary>
@@ -67,11 +67,5 @@
         /// <param name="channelName">通道名</param>
         /// <returns>通道的信息</returns>
         NetworkChannelInfo GetChannelInfo(string channelName);
-        /// <summary>
-        /// 弃用&终结通道；
-        /// </summary>
-        /// <param name="channelName">通道名</param>
-        /// <returns>是否存在key</returns>
-        bool AbortChannel(string channelName);
     }
 }
