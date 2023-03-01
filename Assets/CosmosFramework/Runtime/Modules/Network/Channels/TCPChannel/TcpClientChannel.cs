@@ -70,7 +70,7 @@ namespace Cosmos.Network
             onDataReceived = null;
         }
         ///<inheritdoc/>
-        public void AbortChannnel()
+        public void Close()
         {
             Disconnect();
             onAbort?.Invoke();

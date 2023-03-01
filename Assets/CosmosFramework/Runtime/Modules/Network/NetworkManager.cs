@@ -37,15 +37,15 @@ namespace Cosmos.Network
         {
             var channelName = channel.ChannelName;
             if(channelDict.Remove(channelName,out var oldChannel))
-                oldChannel.AbortChannnel();
+                oldChannel.Close();
             channelDict.TryAdd(channelName, channel);
         }
         ///<inheritdoc/>
-        public bool RemoveChannel(string channelName, out INetworkChannel channel)
+        public bool CloseChannel(string channelName, out INetworkChannel channel)
         {
             if (channelDict.TryRemove(channelName, out channel))
             {
-                channel.AbortChannnel();
+                channel.Close();
                 return true;
             }
             return false;
@@ -78,16 +78,6 @@ namespace Cosmos.Network
             }
             return NetworkChannelInfo.None;
         }
-        ///<inheritdoc/>
-        public bool AbortChannel(string channelName)
-        {
-            if (channelDict.TryRemove(channelName, out var channel))
-            {
-                channel.AbortChannnel();
-                return true;
-            }
-            return false;
-        }
         protected override void OnInitialization()
         {
             IsPause = false;
@@ -97,7 +87,7 @@ namespace Cosmos.Network
         {
             foreach (var channel in channelDict)
             {
-                channel.Value.AbortChannnel();
+                channel.Value.Close();
             }
             channelDict.Clear();
         }

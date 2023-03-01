@@ -31,13 +31,7 @@ namespace Cosmos.Network
         Action onConnected;
         Action onDisconnected;
         Action<byte[]> onDataReceived;
-        Action onAbort;
         Action<string> onError;
-        public event Action OnAbort
-        {
-            add { onAbort += value; }
-            remove { onAbort -= value; }
-        }
         public event Action OnConnected
         {
             add { onConnected += value; }
@@ -90,11 +84,6 @@ namespace Cosmos.Network
             client?.Tick();
         }
         ///<inheritdoc/>
-        public void Disconnect()
-        {
-            client.Disconnect();
-        }
-        ///<inheritdoc/>
         public bool SendMessage(byte[] data)
         {
             return SendMessage(NetworkReliableType.Reliable, data);
@@ -123,10 +112,9 @@ namespace Cosmos.Network
             return true;
         }
         ///<inheritdoc/>
-        public void AbortChannnel()
+        public void Close()
         {
-            Disconnect();
-            onAbort?.Invoke();
+            client.Disconnect();
         }
         void OnDisconnectHandler()
         {

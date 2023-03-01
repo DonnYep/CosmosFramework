@@ -51,8 +51,8 @@ public class MultiNetworkClient : MonoBehaviour
     }
     void OnDestroy()
     {
-        tcpClientChannel.AbortChannnel();
-        kcpClientChannel.AbortChannnel();
+        tcpClientChannel.Close();
+        kcpClientChannel.Close();
     }
     #region TCP_CLIENT
     void TcpConnectC2S()
@@ -89,7 +89,7 @@ public class MultiNetworkClient : MonoBehaviour
     }
     void KcpDisconnectC2S()
     {
-        kcpClientChannel.Disconnect();
+        kcpClientChannel.Close();
     }
     void KcpSendMessageC2S()
     {

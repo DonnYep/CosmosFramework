@@ -28,12 +28,6 @@ namespace Cosmos.Network
         Action<int> onDisconnected;
         Action<int, byte[]> onDataReceived;
         Action<int, string> onError;
-        Action onAbort;
-        public event Action OnAbort
-        {
-            add { onAbort += value; }
-            remove { onAbort -= value; }
-        }
         public event Action<int> OnConnected
         {
             add { onConnected += value; }
@@ -80,17 +74,12 @@ namespace Cosmos.Network
             );
         }
         ///<inheritdoc/>
-        public bool StartServer()
+        public bool Start()
         {
             if (Active)
                 return false;
             server.Start((ushort)Port);
             return true;
-        }
-        ///<inheritdoc/>
-        public void StopServer()
-        {
-            server.Stop();
         }
         ///<inheritdoc/>
         public void TickRefresh()
@@ -130,11 +119,9 @@ namespace Cosmos.Network
             return server.GetClientEndPoint(connectionId).Address.ToString();
         }
         ///<inheritdoc/>
-        public void AbortChannnel()
+        public void Close()
         {
-            StopServer();
-            onAbort?.Invoke();
-            onAbort = null;
+            server.Stop();
         }
         void OnErrorHandler(int connectionId, ErrorCode error, string reason)
         {

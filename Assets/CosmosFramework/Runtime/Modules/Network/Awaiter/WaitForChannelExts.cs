@@ -11,9 +11,5 @@ namespace Cosmos.Network
         {
             return await new WaitReceiveDataAwaiter(@this);
         }
-        public async static Task DisconnectAsync(this INetworkClientChannel @this)
-        {
-            await new WaitDisconnectedAwaiter(@this);
-        }
     }
 }

@@ -48,7 +48,7 @@ namespace Cosmos.Network
             this.Port = port;
         }
         ///<inheritdoc/>
-        public bool StartServer()
+        public bool Start()
         {
             if (server.Start(Port))
             {
@@ -83,16 +83,11 @@ namespace Cosmos.Network
             server.Tick(100);
         }
         ///<inheritdoc/>
-        public void StopServer()
+        public void Close()
         {
             server.Stop();
             server.OnData = null;
             onDataReceived = null;
-        }
-        ///<inheritdoc/>
-        public void AbortChannnel()
-        {
-            StopServer();
             onAbort?.Invoke();
             onAbort = null;
         }

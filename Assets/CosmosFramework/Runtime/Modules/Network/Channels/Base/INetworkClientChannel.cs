@@ -32,9 +32,5 @@ namespace Cosmos.Network
         /// <param name="data">数据</param>
         /// <returns>发送结果</returns>
         bool SendMessage(byte[] data);
-        /// <summary>
-        /// 断开连接；
-        /// </summary>
-        void Disconnect();
     }
 }
