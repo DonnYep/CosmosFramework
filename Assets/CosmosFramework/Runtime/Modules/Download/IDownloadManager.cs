@@ -34,11 +34,11 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载整体进度事件；
         /// </summary>
-        event Action<DonwloadOverallProgressEventArgs> OnDownloadOverallProgress;
+        event Action<DonwloadUpdateEventArgs> OnDownloadOverallProgress;
         /// <summary>
         /// 整体下载并写入完成事件
         /// </summary>
-        event Action<AllDownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted;
+        event Action<DownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted;
         /// <summary>
         /// 终止时删除下载中的文件
         /// </summary>

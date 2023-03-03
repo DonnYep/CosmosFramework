@@ -6,19 +6,19 @@ namespace Cosmos.Download
         /// <summary>
         /// URI绝对路径；
         /// </summary>
-        public string URI { get; private set; }
+        public string DownloadUri { get; private set; }
         /// <summary>
         /// 本地资源的绝对路径；
         /// </summary>
-        public string DownloadPath{ get; private set; }
+        public string DownloadPath { get; private set; }
         /// <summary>
         /// 下载任务的构造函数；
         /// </summary>
-        /// <param name="uri">URI绝对路径</param>
+        /// <param name="downloadUri">URI绝对路径</param>
         /// <param name="downloadPath">本地资源的绝对路径</param>
-        public DownloadTask(string uri, string downloadPath)
+        public DownloadTask(string downloadUri, string downloadPath)
         {
-            URI = uri;
+            DownloadUri = downloadUri;
             DownloadPath = downloadPath;
         }
         public bool Equals(DownloadTask other)
@@ -26,7 +26,7 @@ namespace Cosmos.Download
             bool result = false;
             if (this.GetType() == other.GetType())
             {
-                result = this.URI==other.URI && this.DownloadPath==other.DownloadPath;
+                result = this.DownloadUri == other.DownloadUri && this.DownloadPath == other.DownloadPath;
             }
             return result;
         }

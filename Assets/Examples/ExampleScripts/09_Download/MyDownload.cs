@@ -30,11 +30,12 @@ public class MyDownload : MonoBehaviour
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
     {
         if (uriText != null)
-            uriText.text = eventArgs.URI;
+            uriText.text = eventArgs.DownloadInfo.DownloadUri;
     }
-    void OnDownloadOverall(DonwloadOverallProgressEventArgs eventArgs)
+    void OnDownloadOverall(DonwloadUpdateEventArgs eventArgs)
     {
-        var overallProgress = (float)Math.Round(eventArgs.OverallProgress, 1);
+        var progress=eventArgs.CurrentDownloadTaskIndex / (float)eventArgs.DownloadTaskCount;
+        var overallProgress = (float)Math.Round(progress, 1);
         if (text != null)
         {
             text.text = overallProgress + "%";
@@ -46,18 +47,18 @@ public class MyDownload : MonoBehaviour
     }
     void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
     {
-       Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.DownloadCompletedInfo.URI}");
+       Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.DownloadInfo.DownloadUri}");
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
-        Utility.Debug.LogError($"DownloadFailure {eventArgs.DownloadCompletedInfo.URI}\n{eventArgs.ErrorMessage}");
+        Utility.Debug.LogError($"DownloadFailure {eventArgs.DownloadInfo.DownloadUri}\n{eventArgs.ErrorMessage}");
     }
-    void OnDownloadFinish(AllDownloadTasksCompletedEventArgs eventArgs)
+    void OnDownloadFinish(DownloadTasksCompletedEventArgs eventArgs)
     {
         if (text != null)
         {
             text.text = "100%   Done";
         }
-        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.AllDownloadTasksCompletedTimeSpan}",DebugColor.green);
+        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.TimeSpan}",DebugColor.green);
     }
 }
