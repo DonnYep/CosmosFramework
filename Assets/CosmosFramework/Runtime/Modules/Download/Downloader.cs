@@ -281,7 +281,7 @@ namespace Cosmos.Download
                 else
                 {
                     var timeSpan = DateTime.Now - fileDownloadStartTime;
-                    var downloadInfo = new DownloadInfo(downloadUri, downloadPath, request.downloadedBytes, 0, timeSpan);
+                    var downloadInfo = new DownloadInfo(downloadUri, downloadPath, request.downloadedBytes, operation.progress, timeSpan);
                     var failureEventArgs = DownloadFailureEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount, request.error);
                     onDownloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);

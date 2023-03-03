@@ -110,40 +110,40 @@ namespace Cosmos.Download
             this.downloadRequester = helper;
         }
         ///<inheritdoc/>
-        public void AddUriDownload(string uri, string downloadPath)
+        public void AddUriDownload(string downloadUri, string downloadPath)
         {
-            Utility.Text.IsStringValid(uri, "URI is invalid !");
+            Utility.Text.IsStringValid(downloadUri, "URI is invalid !");
             Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
-            downloader.AddDownload(uri, downloadPath);
+            downloader.AddDownload(downloadUri, downloadPath);
         }
         ///<inheritdoc/>
-        public void AddUrlDownload(string url, string downloadRootPath)
+        public void AddUrlDownload(string downloadUrl, string downloadRootPath)
         {
-            Utility.Text.IsStringValid(url, "DownloadPath is invalid !");
+            Utility.Text.IsStringValid(downloadUrl, "DownloadPath is invalid !");
             Utility.Text.IsStringValid(downloadRootPath, "DownloadRootPath is invalid !");
-            var relUris = downloadUrlHelper.ParseUrlToRelativeUris(url);
+            var relUris = downloadUrlHelper.ParseUrlToRelativeUris(downloadUrl);
             var length = relUris.Length;
             for (int i = 0; i < length; i++)
             {
-                var absUri = Path.Combine(url, relUris[i]);
+                var absUri = Path.Combine(downloadUrl, relUris[i]);
                 var absDownloadPath = Path.Combine(downloadRootPath, relUris[i]);
                 AddUriDownload(absUri, absDownloadPath);
             }
         }
         ///<inheritdoc/>
-        public void RemoveUriDownload(string uri)
+        public void RemoveUriDownload(string downloadUri)
         {
-            Utility.Text.IsStringValid(uri, "URI is invalid !");
-            downloader.RemoveDownload(uri);
+            Utility.Text.IsStringValid(downloadUri, "URI is invalid !");
+            downloader.RemoveDownload(downloadUri);
         }
         ///<inheritdoc/>
-        public void RemoveUrisDownload(string[] uris)
+        public void RemoveUrisDownload(string[] downloadUris)
         {
-            if (uris == null)
+            if (downloadUris == null)
                 throw new ArgumentNullException("URIs is invalid !");
-            var length = uris.Length;
+            var length = downloadUris.Length;
             for (int i = 0; i < length; i++)
-                RemoveUriDownload(uris[i]);
+                RemoveUriDownload(downloadUris[i]);
         }
         ///<inheritdoc/>
         public void RemoveAllDownload()
@@ -151,18 +151,18 @@ namespace Cosmos.Download
             downloader.RemoveAllDownload();
         }
         ///<inheritdoc/>
-        public void GetUriFileSizeAsync(string uri, Action<long> callback)
+        public void GetUriFileSizeAsync(string downloadUri, Action<long> callback)
         {
-            Utility.Text.IsStringValid(uri, "URI is invalid !");
+            Utility.Text.IsStringValid(downloadUri, "URI is invalid !");
             if (callback == null)
                 throw new ArgumentNullException("Callback is invalid !");
-            downloadRequester.GetUriFileSizeAsync(uri, callback);
+            downloadRequester.GetUriFileSizeAsync(downloadUri, callback);
         }
         ///<inheritdoc/>
-        public void GetUrlFilesSizeAsync(string url, Action<long> callback)
+        public void GetUrlFilesSizeAsync(string downloadUrl, Action<long> callback)
         {
-            Utility.Text.IsStringValid(url, "URL is invalid !");
-            var relUris = downloadUrlHelper.ParseUrlToRelativeUris(url);
+            Utility.Text.IsStringValid(downloadUrl, "URL is invalid !");
+            var relUris = downloadUrlHelper.ParseUrlToRelativeUris(downloadUrl);
             downloadRequester.GetUriFilesSizeAsync(relUris, callback);
         }
         ///<inheritdoc/>
