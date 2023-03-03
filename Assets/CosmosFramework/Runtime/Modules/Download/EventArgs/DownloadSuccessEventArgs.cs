@@ -2,15 +2,21 @@
 {
     public class DownloadSuccessEventArgs : GameEventArgs
     {
-        public DownloadCompletedInfo DownloadCompletedInfo { get; private set; }
+        public DownloadInfo DownloadInfo { get; private set; }
+        public int CurrentDownloadTaskIndex { get; private set; }
+        public int DownloadTaskCount { get; private set; }
         public override void Release()
         {
-            DownloadCompletedInfo = default;
+            DownloadInfo = default;
+            CurrentDownloadTaskIndex = 0;
+            DownloadTaskCount = 0;
         }
-        public static DownloadSuccessEventArgs Create(DownloadCompletedInfo completedInfo)
+        public static DownloadSuccessEventArgs Create(DownloadInfo info, int currentTaskIndex, int taskCount)
         {
             var eventArgs = ReferencePool.Acquire<DownloadSuccessEventArgs>();
-            eventArgs.DownloadCompletedInfo = completedInfo;
+            eventArgs.DownloadInfo = info;
+            eventArgs.CurrentDownloadTaskIndex = currentTaskIndex;
+            eventArgs.DownloadTaskCount = taskCount;
             return eventArgs;
         }
         public static void Release(DownloadSuccessEventArgs eventArgs)

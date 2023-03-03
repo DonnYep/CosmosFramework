@@ -41,13 +41,13 @@ namespace Cosmos.Download
             remove { downloader.OnDownloadFailure -= value; }
         }
         ///<inheritdoc/>
-        public event Action<DonwloadOverallProgressEventArgs> OnDownloadOverallProgress
+        public event Action<DonwloadUpdateEventArgs> OnDownloadOverallProgress
         {
             add { downloader.OnDownloadOverallProgress += value; }
             remove { downloader.OnDownloadOverallProgress -= value; }
         }
         ///<inheritdoc/>
-        public event Action<AllDownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted
+        public event Action<DownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted
         {
             add { downloader.OnAllDownloadTaskCompleted += value; }
             remove { downloader.OnAllDownloadTaskCompleted -= value; }
@@ -114,7 +114,7 @@ namespace Cosmos.Download
         {
             Utility.Text.IsStringValid(uri, "URI is invalid !");
             Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
-            downloader.AddUriDownload(uri, downloadPath);
+            downloader.AddDownload(uri, downloadPath);
         }
         ///<inheritdoc/>
         public void AddUrlDownload(string url, string downloadRootPath)
@@ -134,7 +134,7 @@ namespace Cosmos.Download
         public void RemoveUriDownload(string uri)
         {
             Utility.Text.IsStringValid(uri, "URI is invalid !");
-            downloader.RemoveUriDownload(uri);
+            downloader.RemoveDownload(uri);
         }
         ///<inheritdoc/>
         public void RemoveUrisDownload(string[] uris)
