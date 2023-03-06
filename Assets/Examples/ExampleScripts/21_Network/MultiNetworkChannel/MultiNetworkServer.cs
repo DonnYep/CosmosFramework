@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class MultiNetworkServer : MonoBehaviour
 {
     TcpServerChannel tcpServerChannel;
-    KCPServerChannel kcpServerChannel;
+    KcpServerChannel kcpServerChannel;
 
     [Header("TCP")]
     [SerializeField] Button btnTcpStartServer;
@@ -19,7 +19,7 @@ public class MultiNetworkServer : MonoBehaviour
     void Start()
     {
         tcpServerChannel = new TcpServerChannel("TEST_TCP_SERVER", MultiNetworkConstants.TCP_PORT);
-        kcpServerChannel = new KCPServerChannel("TEST_KCP_SERVER", MultiNetworkConstants.KCP_PORT);
+        kcpServerChannel = new KcpServerChannel("TEST_KCP_SERVER", MultiNetworkConstants.KCP_PORT);
 
         tcpServerChannel.OnConnected += TcpServer_OnConnected;
         tcpServerChannel.OnDisconnected += TcpServer_OnDisconnected;
