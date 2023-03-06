@@ -26,12 +26,12 @@ namespace Cosmos.Lockstep
             add { onReceiveData += value; }
             remove { onReceiveData -= value; }
         }
-        KCPClientChannel networkChannel;
+        KcpClientChannel networkChannel;
         public void Connect(string host, ushort port)
         {
             if (IsConnected)
                 return;
-            networkChannel = new KCPClientChannel("Lockstep");
+            networkChannel = new KcpClientChannel("Lockstep");
             networkChannel.OnDataReceived+= OnReceiveDataHandle;
             networkChannel.OnDisconnected += OnDisconnectedHandle;
             networkChannel.OnConnected += OnConnectedHandle;

@@ -20,7 +20,7 @@ namespace Cosmos.Network
     /// <summary>
     /// / KCP服务端通道；
     /// </summary>
-    public class KCPServerChannel : INetworkServerChannel
+    public class KcpServerChannel : INetworkServerChannel
     {
         KcpServerEndPoint server;
 
@@ -56,7 +56,7 @@ namespace Cosmos.Network
         public string ChannelName { get; set; }
         ///<inheritdoc/>
         public string Host { get { return server.IPAddress; } }
-        public KCPServerChannel(string channelName, ushort port)
+        public KcpServerChannel(string channelName, ushort port)
         {
             this.ChannelName = channelName;
             Log.Info = (s) => Utility.Debug.LogInfo(s);
@@ -95,9 +95,9 @@ namespace Cosmos.Network
         ///<inheritdoc/>
         public bool SendMessage(int connectionId, byte[] data)
         {
-            return SendMessage(NetworkReliableType.Reliable, connectionId, data);
+            return SendMessage(KcpReliableType.Reliable, connectionId, data);
         }
-        public bool SendMessage(NetworkReliableType reliableType, int connectionId, byte[] data)
+        public bool SendMessage(KcpReliableType reliableType, int connectionId, byte[] data)
         {
             var segment = new ArraySegment<byte>(data);
             var byteType = (byte)reliableType;

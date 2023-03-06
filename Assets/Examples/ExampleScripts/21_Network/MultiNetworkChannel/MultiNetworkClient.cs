@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class MultiNetworkClient : MonoBehaviour
 {
     TcpClientChannel tcpClientChannel;
-    KCPClientChannel kcpClientChannel;
+    KcpClientChannel kcpClientChannel;
 
     [Header("TCP")]
     [SerializeField] Button btnTcpConnectC2S;
@@ -22,7 +22,7 @@ public class MultiNetworkClient : MonoBehaviour
     void Start()
     {
         tcpClientChannel = new TcpClientChannel("TEST_TCP_CLIENT");
-        kcpClientChannel = new KCPClientChannel("TEST_KCP_CLIENT");
+        kcpClientChannel = new KcpClientChannel("TEST_KCP_CLIENT");
 
         tcpClientChannel.OnConnected += TcpClient_OnConnected;
         tcpClientChannel.OnDataReceived += TcpClient_OnDataReceived;

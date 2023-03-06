@@ -21,7 +21,7 @@ namespace Cosmos.Network
     /// <summary>
     /// KCP客户端通道；
     /// </summary>
-    public class KCPClientChannel : INetworkClientChannel
+    public class KcpClientChannel : INetworkClientChannel
     {
         ///<inheritdoc/>
         public string ChannelName { get; set; }
@@ -58,7 +58,7 @@ namespace Cosmos.Network
         public int Port { get; private set; }
         ///<inheritdoc/>
         public string Host { get; private set; }
-        public KCPClientChannel(string channelName)
+        public KcpClientChannel(string channelName)
         {
             this.ChannelName = channelName;
             Log.Info = (s) => Utility.Debug.LogInfo(s);
@@ -86,14 +86,14 @@ namespace Cosmos.Network
         ///<inheritdoc/>
         public bool SendMessage(byte[] data)
         {
-            return SendMessage(NetworkReliableType.Reliable, data);
+            return SendMessage(KcpReliableType.Reliable, data);
         }
         /// <summary>
         ///发送消息到remote;
         /// </summary>
         /// <param name="reliableType">消息可靠类型</param>
         /// <param name="data">数据</param>
-        public bool SendMessage(NetworkReliableType reliableType, byte[] data)
+        public bool SendMessage(KcpReliableType reliableType, byte[] data)
         {
             if (!IsConnect)
                 return false;
