@@ -7,13 +7,14 @@ using System;
 
 public class MyDownload : MonoBehaviour
 {
-    [SerializeField]string srcUrl;
+    [SerializeField] string srcUrl;
     [Header("文件下载到的绝对路径")]
-    [SerializeField]string downloadPath;
-    [SerializeField]Slider slider;
-    [SerializeField]Text text;
-    [SerializeField]Text uriText;
-    void  Start()
+    [SerializeField] string downloadPath;
+    [SerializeField] Slider slider;
+    [SerializeField] Text text;
+    [SerializeField] Text uriText;
+    int downloadTaskId;
+    void Start()
     {
         if (string.IsNullOrEmpty(srcUrl) || string.IsNullOrEmpty(downloadPath))
             return;
@@ -23,8 +24,8 @@ public class MyDownload : MonoBehaviour
         CosmosEntry.DownloadManager.OnDownloadFailure += OnDownloadFailure;
         CosmosEntry.DownloadManager.OnDownloadStart += OnDownloadStart;
         CosmosEntry.DownloadManager.OnDownloadOverallProgress += OnDownloadOverall;
-        CosmosEntry.DownloadManager.OnAllDownloadTaskCompleted+= OnDownloadFinish;
-        CosmosEntry.DownloadManager.AddUrlDownload(srcUrl, downloadPath);
+        CosmosEntry.DownloadManager.OnAllDownloadTaskCompleted += OnDownloadFinish;
+        downloadTaskId = CosmosEntry.DownloadManager.AddDownload(srcUrl, downloadPath);
         CosmosEntry.DownloadManager.LaunchDownload();
     }
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
@@ -34,7 +35,7 @@ public class MyDownload : MonoBehaviour
     }
     void OnDownloadOverall(DonwloadUpdateEventArgs eventArgs)
     {
-        var progress=eventArgs.CurrentDownloadTaskIndex / (float)eventArgs.DownloadTaskCount;
+        var progress = eventArgs.CurrentDownloadTaskIndex / (float)eventArgs.DownloadTaskCount;
         var overallProgress = (float)Math.Round(progress, 1);
         if (text != null)
         {
@@ -47,11 +48,13 @@ public class MyDownload : MonoBehaviour
     }
     void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
     {
-       Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.DownloadInfo.DownloadUri}");
+        if (eventArgs.DownloadInfo.DownloadId == downloadTaskId)
+            Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.DownloadInfo.DownloadUri}");
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
-        Utility.Debug.LogError($"DownloadFailure {eventArgs.DownloadInfo.DownloadUri}\n{eventArgs.ErrorMessage}");
+        if (eventArgs.DownloadInfo.DownloadId == downloadTaskId)
+            Utility.Debug.LogError($"DownloadFailure {eventArgs.DownloadInfo.DownloadUri}\n{eventArgs.ErrorMessage}");
     }
     void OnDownloadFinish(DownloadTasksCompletedEventArgs eventArgs)
     {
@@ -59,6 +62,6 @@ public class MyDownload : MonoBehaviour
         {
             text.text = "100%   Done";
         }
-        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.TimeSpan}",DebugColor.green);
+        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.TimeSpan}", DebugColor.green);
     }
 }

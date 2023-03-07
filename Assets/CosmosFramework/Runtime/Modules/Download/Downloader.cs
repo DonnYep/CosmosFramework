@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.Networking;
 namespace Cosmos.Download
 {
@@ -10,6 +9,7 @@ namespace Cosmos.Download
     /// </summary>
     public class Downloader : IDownloader
     {
+        static int downloadIndex = 0;
         #region events
         Action<DownloadStartEventArgs> onDownloadStart;
         Action<DownloadSuccessEventArgs> onDownloadSuccess;
@@ -76,7 +76,7 @@ namespace Cosmos.Download
         /// <summary>
         /// 挂起的下载任务字典缓存；
         /// </summary>
-        Dictionary<string, DownloadTask> pendingTaskDict = new Dictionary<string, DownloadTask>();
+        Dictionary<int, DownloadTask> pendingTaskDict = new Dictionary<int, DownloadTask>();
         /// <summary>
         /// 下载成功的任务;
         /// </summary>
@@ -106,36 +106,27 @@ namespace Cosmos.Download
         /// </summary>
         bool canDownload;
 
-        /// <summary>
-        /// 添加URI下载；
-        /// </summary>
-        /// <param name="downloadUri">统一资源名称</param>
-        /// <param name="downloadPath">下载到地址的绝对路径</param>
-        public void AddDownload(string downloadUri, string downloadPath)
+        /// <inheritdoc/>
+        public int AddDownload(string downloadUri, string downloadPath)
         {
-            if (!pendingTaskDict.ContainsKey(downloadUri))
-            {
-                var downloadTask = new DownloadTask(downloadUri, downloadPath);
-                pendingTaskDict.Add(downloadUri, downloadTask);
-                pendingTasks.Add(downloadTask);
-                downloadTaskCount++;
-            }
+            var downloadTask = new DownloadTask(downloadIndex++, downloadUri, downloadPath);
+            pendingTaskDict.Add(downloadTask.DownloadId, downloadTask);
+            pendingTasks.Add(downloadTask);
+            downloadTaskCount++;
+            return downloadTask.DownloadId;
         }
-        /// <summary>
-        /// 移除URI下载；
-        /// </summary>
-        /// <param name="downloadUri">统一资源名称</param>
-        public void RemoveDownload(string downloadUri)
+        /// <inheritdoc/>
+        public bool RemoveDownload(int downloadId)
         {
-            if (pendingTaskDict.Remove(downloadUri, out var downloadTask))
+            if (pendingTaskDict.Remove(downloadId, out var downloadTask))
             {
                 pendingTasks.Remove(downloadTask);
                 downloadTaskCount--;
+                return true;
             }
+            return false;
         }
-        /// <summary>
-        /// 启动下载；
-        /// </summary>
+        /// <inheritdoc/>
         public void LaunchDownload()
         {
             if (Downloading)
@@ -149,23 +140,17 @@ namespace Cosmos.Download
             downloadStartTime = DateTime.Now;
             Utility.Unity.StartCoroutine(RunDownloadMultipleFiles());
         }
-        /// <summary>
-        /// 移除所有下载；
-        /// </summary>
+        /// <inheritdoc/>
         public void RemoveAllDownload()
         {
             OnCancelDownload();
         }
-        /// <summary>
-        /// 取消下载；
-        /// </summary>
+        /// <inheritdoc/>
         public void CancelDownload()
         {
             OnCancelDownload();
         }
-        /// <summary>
-        /// 释放下载器；
-        /// </summary>
+        /// <inheritdoc/>
         public void Release()
         {
             onDownloadStart = null;
@@ -187,7 +172,7 @@ namespace Cosmos.Download
                 var downloadTask = pendingTasks.RemoveFirst();
                 currentDownloadTaskIndex = downloadTaskCount - pendingTasks.Count - 1;
                 yield return RunDownloadSingleFile(downloadTask);
-                pendingTaskDict.Remove(downloadTask.DownloadUri);
+                pendingTaskDict.Remove(downloadTask.DownloadId);
             }
             OnPendingTasksCompleted();
             Downloading = false;
@@ -211,13 +196,13 @@ namespace Cosmos.Download
                 {
                     var fileLength = long.Parse(request.GetRequestHeader("Content-Length"));
                     var timeSpan = DateTime.Now - startTime;
-                    var info = new DownloadInfo(downloadUri, downloadPath, 0, fileLength, timeSpan);
+                    var info = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, 0, fileLength, timeSpan);
 
                 }
                 else
                 {
                     var timeSpan = DateTime.Now - startTime;
-                    var info = new DownloadInfo(downloadUri, downloadPath, 0, 0, timeSpan);
+                    var info = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, 0, 0, timeSpan);
 
                 }
             }
@@ -247,7 +232,7 @@ namespace Cosmos.Download
 
                 {
                     var timeSpan = DateTime.Now - fileDownloadStartTime;
-                    var downloadInfo = new DownloadInfo(downloadUri, downloadPath, 0, 0, timeSpan);
+                    var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, 0, 0, timeSpan);
                     var startEventArgs = DownloadStartEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount);
                     onDownloadStart?.Invoke(startEventArgs);
                     DownloadStartEventArgs.Release(startEventArgs);
@@ -257,7 +242,7 @@ namespace Cosmos.Download
                 while (!operation.isDone && canDownload)
                 {
                     var timeSpan = DateTime.Now - fileDownloadStartTime;
-                    var downloadInfo = new DownloadInfo(downloadUri, downloadPath, request.downloadedBytes, operation.progress, timeSpan);
+                    var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, request.downloadedBytes, operation.progress, timeSpan);
                     OnFileDownloading(downloadInfo);
                     yield return null;
                 }
@@ -270,7 +255,7 @@ namespace Cosmos.Download
                     if (request.isDone)
                     {
                         var timeSpan = DateTime.Now - fileDownloadStartTime;
-                        var downloadInfo = new DownloadInfo(downloadUri, downloadPath, request.downloadedBytes, 1, timeSpan);
+                        var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, request.downloadedBytes, 1, timeSpan);
                         var successEventArgs = DownloadSuccessEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount);
                         onDownloadSuccess?.Invoke(successEventArgs);
                         OnFileDownloading(downloadInfo);
@@ -281,7 +266,7 @@ namespace Cosmos.Download
                 else
                 {
                     var timeSpan = DateTime.Now - fileDownloadStartTime;
-                    var downloadInfo = new DownloadInfo(downloadUri, downloadPath, request.downloadedBytes, operation.progress, timeSpan);
+                    var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, request.downloadedBytes, operation.progress, timeSpan);
                     var failureEventArgs = DownloadFailureEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount, request.error);
                     onDownloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);

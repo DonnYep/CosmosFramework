@@ -3,6 +3,7 @@ namespace Cosmos.Download
 {
     internal struct DownloadTask : IEquatable<DownloadTask>
     {
+        public int DownloadId { get; private set; }
         /// <summary>
         /// URI绝对路径；
         /// </summary>
@@ -16,8 +17,9 @@ namespace Cosmos.Download
         /// </summary>
         /// <param name="downloadUri">URI绝对路径</param>
         /// <param name="downloadPath">本地资源的绝对路径</param>
-        public DownloadTask(string downloadUri, string downloadPath)
+        public DownloadTask(int dwnloadId, string downloadUri, string downloadPath)
         {
+            DownloadId = dwnloadId;
             DownloadUri = downloadUri;
             DownloadPath = downloadPath;
         }
@@ -26,7 +28,9 @@ namespace Cosmos.Download
             bool result = false;
             if (this.GetType() == other.GetType())
             {
-                result = this.DownloadUri == other.DownloadUri && this.DownloadPath == other.DownloadPath;
+                result = this.DownloadUri == other.DownloadUri &&
+                    this.DownloadPath == other.DownloadPath &&
+                    this.DownloadId == other.DownloadId;
             }
             return result;
         }

@@ -9,18 +9,21 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载数据的构造；
         /// </summary>
+        /// <param name="downloadId"> 下载Id</param>
         /// <param name="downloadUri"> 资源定位地址</param>
         /// <param name="downloadPath">下载后存储的路径</param>c
         /// <param name="downloadedLength">length of downloaded file</param>
         /// <param name="timeSpan">download time</param>
-        public DownloadInfo(string downloadUri, string downloadPath, ulong downloadedLength,float downloadProgress, TimeSpan timeSpan)
+        public DownloadInfo(int downloadId,string downloadUri, string downloadPath, ulong downloadedLength,float downloadProgress, TimeSpan timeSpan)
         {
+            DownloadId= downloadId;
             DownloadUri = downloadUri;
             DownloadPath = downloadPath;
             DownloadedLength = downloadedLength;
             DownloadProgress= downloadProgress;
             DownloadTimeSpan = timeSpan;
         }
+        public int  DownloadId{ get; private set; }
         /// <summary>
         /// 资源定位地址；
         /// </summary>
@@ -48,7 +51,7 @@ namespace Cosmos.Download
         }
         public override string ToString()
         {
-            return $"URI: {DownloadUri}; DownloadPath: {DownloadPath}; DownloadedLength: {DownloadedLength};DownloadProgress: {DownloadProgress} ; DownloadTimeSpan: {DownloadTimeSpan}";
+            return $"DownloadId:{DownloadId} ;URI: {DownloadUri}; DownloadPath: {DownloadPath}; DownloadedLength: {DownloadedLength};DownloadProgress: {DownloadProgress} ; DownloadTimeSpan: {DownloadTimeSpan}";
         }
     }
 }
