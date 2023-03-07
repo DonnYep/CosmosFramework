@@ -80,23 +80,19 @@ namespace Cosmos.Download
         /// </summary>
         /// <param name="downloadUri">统一资源名称</param>
         /// <param name="downloadPath">下载到地址的绝对路径</param>
-        void AddUriDownload(string downloadUri, string downloadPath);
-        /// <summary>
-        /// 将URL添加到下载队列，并下载当前URL页面下的所有文件到本地；
-        /// </summary>
-        /// <param name="downloadUrl">统一资源定位符</param>
-        /// <param name="downloadRootPath">下载到地址的根目录</param>
-        void AddUrlDownload(string downloadUrl, string downloadRootPath);
+        /// <returns>下载序号</returns>
+        int AddDownload(string downloadUri, string downloadPath);
         /// <summary>
         /// 移除URI下载；
         /// </summary>
-        /// <param name="downloadUri">统一资源名称</param>
-        void RemoveUriDownload(string downloadUri);
+        /// <param name="downloadId">下载序号</param>
+        /// <returns>移除结果</returns>
+        bool RemoveDownload(int downloadId);
         /// <summary>
         /// 移除多个URI下载；
         /// </summary>
-        /// <param name="downloadUris">统一资源名称数组</param>
-        void RemoveUrisDownload(string[] downloadUris);
+        /// <param name="downloadIds">下载序号集合</param>
+        void RemoveDownloads(int[] downloadIds);
         /// <summary>
         /// 移除所有下载；
         /// </summary>

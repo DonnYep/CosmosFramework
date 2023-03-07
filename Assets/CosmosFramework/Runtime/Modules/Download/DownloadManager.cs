@@ -110,40 +110,23 @@ namespace Cosmos.Download
             this.downloadRequester = helper;
         }
         ///<inheritdoc/>
-        public void AddUriDownload(string downloadUri, string downloadPath)
+        public int AddDownload(string downloadUri, string downloadPath)
         {
             Utility.Text.IsStringValid(downloadUri, "URI is invalid !");
             Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
-            downloader.AddDownload(downloadUri, downloadPath);
+            return downloader.AddDownload(downloadUri, downloadPath);
         }
         ///<inheritdoc/>
-        public void AddUrlDownload(string downloadUrl, string downloadRootPath)
+        public bool RemoveDownload(int downloadId)
         {
-            Utility.Text.IsStringValid(downloadUrl, "DownloadPath is invalid !");
-            Utility.Text.IsStringValid(downloadRootPath, "DownloadRootPath is invalid !");
-            var relUris = downloadUrlHelper.ParseUrlToRelativeUris(downloadUrl);
-            var length = relUris.Length;
+            return downloader.RemoveDownload(downloadId);
+        }
+        ///<inheritdoc/>
+        public void RemoveDownloads(int[] downloadIds)
+        {
+            var length = downloadIds.Length;
             for (int i = 0; i < length; i++)
-            {
-                var absUri = Path.Combine(downloadUrl, relUris[i]);
-                var absDownloadPath = Path.Combine(downloadRootPath, relUris[i]);
-                AddUriDownload(absUri, absDownloadPath);
-            }
-        }
-        ///<inheritdoc/>
-        public void RemoveUriDownload(string downloadUri)
-        {
-            Utility.Text.IsStringValid(downloadUri, "URI is invalid !");
-            downloader.RemoveDownload(downloadUri);
-        }
-        ///<inheritdoc/>
-        public void RemoveUrisDownload(string[] downloadUris)
-        {
-            if (downloadUris == null)
-                throw new ArgumentNullException("URIs is invalid !");
-            var length = downloadUris.Length;
-            for (int i = 0; i < length; i++)
-                RemoveUriDownload(downloadUris[i]);
+                RemoveDownload(downloadIds[i]);
         }
         ///<inheritdoc/>
         public void RemoveAllDownload()
