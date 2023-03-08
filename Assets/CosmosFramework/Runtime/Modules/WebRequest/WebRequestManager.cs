@@ -141,6 +141,11 @@ namespace Cosmos.WebRequest
             return webRequester.RemoveTask(taskId);
         }
         /// <inheritdoc/>
+        public bool HasTask(long taskId)
+        {
+            return webRequester.HasTask(taskId);
+        }
+        /// <inheritdoc/>
         public void StartRequestTasks()
         {
             webRequester.StartRequestTasks();
