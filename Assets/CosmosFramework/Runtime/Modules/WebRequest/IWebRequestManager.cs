@@ -112,6 +112,12 @@ namespace Cosmos.WebRequest
         /// <returns>移除结果</returns>
         bool RemoveTask(long taskId);
         /// <summary>
+        /// 是否存在任务；
+        /// </summary>
+        /// <param name="taskId">任务id</param>
+        /// <returns>存在结果</returns>
+        bool HasTask(long taskId);
+        /// <summary>
         /// 开始执行请求任务；
         /// </summary>
         void StartRequestTasks();
