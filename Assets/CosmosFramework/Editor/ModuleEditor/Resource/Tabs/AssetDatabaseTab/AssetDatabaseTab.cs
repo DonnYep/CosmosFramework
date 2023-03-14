@@ -86,9 +86,9 @@ namespace Cosmos.Editor.Resource
                     EditorGUILayout.HelpBox("Dataset has been changed, please \"Build Dataset\" !", MessageType.Warning);
                 EditorGUILayout.BeginHorizontal();
                 {
-                    DrawDragRect();
-                    EditorGUILayout.BeginVertical();
+                    var dragRect = EditorGUILayout.BeginVertical();
                     {
+                        DrawDragRect(dragRect);
                         using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
                         {
                             GUILayout.Label($"Resource bundle count: {bundleLabel.BundleCount}", EditorStyles.boldLabel);
@@ -207,9 +207,13 @@ namespace Cosmos.Editor.Resource
             buildDatasetCoroutine = EditorUtil.Coroutine.StartCoroutine(EnumBuildDataset());
             return buildDatasetCoroutine;
         }
-        void DrawDragRect()
+        void DrawDragRect(Rect dragRect)
         {
             if (ResourceWindowDataProxy.ResourceDataset == null)
+                return;
+            var mousePositon = UnityEngine.Event.current.mousePosition;
+            var overlapDragRect = mousePositon.x > 0 && mousePositon.x < dragRect.width && mousePositon.y > 128 && mousePositon.y < dragRect.height + 64;
+            if (!overlapDragRect)
                 return;
             if (UnityEngine.Event.current.type == EventType.DragUpdated)
             {
