@@ -20,7 +20,7 @@ namespace Cosmos.Editor.Resource
 
             var assetBundleNameType = buildParams.AssetBundleNameType;
 
-            var bundleInfos = dataset.ResourceBundleInfoList;
+            var bundleInfos = dataset.GetResourceBundleInfos();
             var bundleInfoLength = bundleInfos.Count;
 
             for (int i = 0; i < bundleInfoLength; i++)
@@ -79,6 +79,8 @@ namespace Cosmos.Editor.Resource
                 //这里存储hash与bundle，打包出来的包体长度在下一个流程处理
                 resourceManifest.ResourceBundleBuildInfoDict.Add(bundleInfo.BundleName, bundleBuildInfo);
             }
+            //refresh assetbundle
+            AssetDatabase.Refresh();
             for (int i = 0; i < bundleInfoLength; i++)
             {
                 var bundleInfo = bundleInfos[i];
@@ -96,7 +98,7 @@ namespace Cosmos.Editor.Resource
         {
             Dictionary<string, ResourceBundleInfo> bundleKeyDict = null;
             if (buildParams.AssetBundleNameType == AssetBundleNameType.HashInstead)
-                bundleKeyDict = dataset.ResourceBundleInfoList.ToDictionary(bundle => bundle.BundleKey);
+                bundleKeyDict = dataset.GetResourceBundleInfos().ToDictionary(bundle => bundle.BundleKey);
             var bundleKeys = unityManifest.GetAllAssetBundles();
             var bundleKeyLength = bundleKeys.Length;
             for (int i = 0; i < bundleKeyLength; i++)
@@ -157,7 +159,7 @@ namespace Cosmos.Editor.Resource
             Utility.IO.DeleteFile(buildVersionPath);
             Utility.IO.DeleteFile(buildVersionManifestPath);
 
-            var bundleInfos = dataset.ResourceBundleInfoList;
+            var bundleInfos = dataset.GetResourceBundleInfos();
             var bundleInfoLength = bundleInfos.Count;
 
             #region 还原dataset在editor环境下的依赖
@@ -184,6 +186,8 @@ namespace Cosmos.Editor.Resource
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 importer.assetBundleName = string.Empty;
             }
+            //refresh assetbundle
+            AssetDatabase.Refresh();
             if (buildParams.CopyToStreamingAssets)
             {
                 string streamingAssetPath = string.Empty;

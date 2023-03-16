@@ -56,15 +56,7 @@ namespace Cosmos.WebRequest
         }
         public bool RemoveTask(long taskId)
         {
-            if (taskDict.Remove(taskId, out var webRequestTask))
-            {
-                taskList.Remove(webRequestTask);
-                return true;
-            }
-            return false;
-        }
-        public bool StopTask(long taskId)
-        {
+            WebRequestTask webRequestTask = default;
             if (CurrentTask != null)
             {
                 if (CurrentTask.TaskId == taskId)
@@ -72,11 +64,23 @@ namespace Cosmos.WebRequest
                     CurrentWebRequest.Abort();
                 }
                 else
-                    return RemoveTask(taskId);
+                {
+                    if (taskDict.Remove(taskId, out webRequestTask))
+                    {
+                        taskList.Remove(webRequestTask);
+                        return true;
+                    }
+                    return false;
+                }
             }
-            return RemoveTask(taskId);
+            if (taskDict.Remove(taskId, out webRequestTask))
+            {
+                taskList.Remove(webRequestTask);
+                return true;
+            }
+            return false;
         }
-        public bool HashTask(long taskId)
+        public bool HasTask(long taskId)
         {
             return taskDict.ContainsKey(taskId);
         }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.Networking;
 namespace Cosmos.Download
 {
@@ -10,12 +9,13 @@ namespace Cosmos.Download
     /// </summary>
     public class Downloader : IDownloader
     {
+        static int downloadIndex = 0;
         #region events
         Action<DownloadStartEventArgs> onDownloadStart;
         Action<DownloadSuccessEventArgs> onDownloadSuccess;
         Action<DownloadFailureEventArgs> onDownloadFailure;
-        Action<DonwloadOverallProgressEventArgs> onDownloadOverall;
-        Action<AllDownloadTasksCompletedEventArgs> onAllDownloadTaskCompleted;
+        Action<DonwloadUpdateEventArgs> onDownloadOverall;
+        Action<DownloadTasksCompletedEventArgs> onAllDownloadTaskCompleted;
         /// <summary>
         /// 下载开始事件；
         /// </summary>
@@ -43,7 +43,7 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载整体进度事件；
         /// </summary>
-        public event Action<DonwloadOverallProgressEventArgs> OnDownloadOverallProgress
+        public event Action<DonwloadUpdateEventArgs> OnDownloadOverallProgress
         {
             add { onDownloadOverall += value; }
             remove { onDownloadOverall -= value; }
@@ -51,7 +51,7 @@ namespace Cosmos.Download
         /// <summary>
         /// 整体下载并写入完成事件
         /// </summary>
-        public event Action<AllDownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted
+        public event Action<DownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted
         {
             add { onAllDownloadTaskCompleted += value; }
             remove { onAllDownloadTaskCompleted -= value; }
@@ -76,15 +76,15 @@ namespace Cosmos.Download
         /// <summary>
         /// 挂起的下载任务字典缓存；
         /// </summary>
-        Dictionary<string, DownloadTask> pendingTaskDict = new Dictionary<string, DownloadTask>();
+        Dictionary<int, DownloadTask> pendingTaskDict = new Dictionary<int, DownloadTask>();
         /// <summary>
         /// 下载成功的任务;
         /// </summary>
-        List<DownloadCompletedInfo> successedInfos = new List<DownloadCompletedInfo>();
+        List<DownloadInfo> successedInfos = new List<DownloadInfo>();
         /// <summary>
         /// 下载失败的任务;
         /// </summary>
-        List<DownloadCompletedInfo> failedInfos = new List<DownloadCompletedInfo>();
+        List<DownloadInfo> failedInfos = new List<DownloadInfo>();
         /// <summary>
         /// 下载开始时间；
         /// </summary>
@@ -98,10 +98,6 @@ namespace Cosmos.Download
         /// </summary>
         UnityWebRequest unityWebRequest;
         /// <summary>
-        /// 单位资源的百分比比率；
-        /// </summary>
-        float UnitResRatio { get { return 100f / downloadTaskCount; } }
-        /// <summary>
         /// 当前下载的序号；
         /// </summary>
         int currentDownloadTaskIndex = 0;
@@ -110,65 +106,51 @@ namespace Cosmos.Download
         /// </summary>
         bool canDownload;
 
-        /// <summary>
-        /// 添加URI下载；
-        /// </summary>
-        /// <param name="uri">统一资源名称</param>
-        /// <param name="downloadPath">下载到地址的绝对路径</param>
-        public void AddUriDownload(string uri, string downloadPath)
+        /// <inheritdoc/>
+        public int AddDownload(string downloadUri, string downloadPath)
         {
-            if (!pendingTaskDict.ContainsKey(uri))
-            {
-                var dt = new DownloadTask(uri, downloadPath);
-                pendingTaskDict.Add(uri, dt);
-                pendingTasks.Add(dt);
-                downloadTaskCount++;
-            }
+            var downloadTask = new DownloadTask(downloadIndex++, downloadUri, downloadPath);
+            pendingTaskDict.Add(downloadTask.DownloadId, downloadTask);
+            pendingTasks.Add(downloadTask);
+            downloadTaskCount++;
+            return downloadTask.DownloadId;
         }
-        /// <summary>
-        /// 移除URI下载；
-        /// </summary>
-        /// <param name="uri">统一资源名称</param>
-        public void RemoveUriDownload(string uri)
+        /// <inheritdoc/>
+        public bool RemoveDownload(int downloadId)
         {
-            if (pendingTaskDict.Remove(uri, out var downloadTask))
+            if (pendingTaskDict.Remove(downloadId, out var downloadTask))
             {
                 pendingTasks.Remove(downloadTask);
                 downloadTaskCount--;
+                return true;
             }
+            return false;
         }
-        /// <summary>
-        /// 启动下载；
-        /// </summary>
+        /// <inheritdoc/>
         public void LaunchDownload()
         {
+            if (Downloading)
+                return;
             canDownload = true;
             if (pendingTasks.Count == 0 || !canDownload)
             {
                 canDownload = false;
                 return;
             }
-            Downloading = true;
             downloadStartTime = DateTime.Now;
-            Utility.Unity.StartCoroutine(EnumDownloadMultipleFiles());
+            Utility.Unity.StartCoroutine(RunDownloadMultipleFiles());
         }
-        /// <summary>
-        /// 移除所有下载；
-        /// </summary>
+        /// <inheritdoc/>
         public void RemoveAllDownload()
         {
             OnCancelDownload();
         }
-        /// <summary>
-        /// 取消下载；
-        /// </summary>
+        /// <inheritdoc/>
         public void CancelDownload()
         {
             OnCancelDownload();
         }
-        /// <summary>
-        /// 释放下载器；
-        /// </summary>
+        /// <inheritdoc/>
         public void Release()
         {
             onDownloadStart = null;
@@ -182,30 +164,61 @@ namespace Cosmos.Download
         /// 多文件下载迭代器方法；
         /// </summary>
         /// <returns>迭代器接口</returns>
-        IEnumerator EnumDownloadMultipleFiles()
+        IEnumerator RunDownloadMultipleFiles()
         {
+            Downloading = true;
             while (pendingTasks.Count > 0)
             {
                 var downloadTask = pendingTasks.RemoveFirst();
                 currentDownloadTaskIndex = downloadTaskCount - pendingTasks.Count - 1;
-                yield return EnumDownloadSingleFile(downloadTask);
-                pendingTaskDict.Remove(downloadTask.URI);
+                yield return RunDownloadSingleFile(downloadTask);
+                pendingTaskDict.Remove(downloadTask.DownloadId);
             }
-            OnDownloadedPendingFiles();
+            OnPendingTasksCompleted();
+            Downloading = false;
+        }
+        IEnumerator RunGetContentLength(DownloadTask downloadTask)
+        {
+            var startTime = DateTime.Now;
+            var downloadUri = downloadTask.DownloadUri;
+            var downloadPath = downloadTask.DownloadPath;
+            using (UnityWebRequest request = UnityWebRequest.Head(downloadUri))
+            {
+                //这部分通过header获取需要下载的文件大小
+                unityWebRequest = request;
+                request.timeout = DownloadDataProxy.DownloadTimeout;
+                yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError&& canDownload)
+#elif UNITY_2018_1_OR_NEWER
+                if (!request.isNetworkError && !request.isHttpError)
+#endif
+                {
+                    var fileLength = long.Parse(request.GetRequestHeader("Content-Length"));
+                    var timeSpan = DateTime.Now - startTime;
+                    var info = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, 0, fileLength, timeSpan);
+
+                }
+                else
+                {
+                    var timeSpan = DateTime.Now - startTime;
+                    var info = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, 0, 0, timeSpan);
+
+                }
+            }
         }
         /// <summary>
         /// 单文件下载迭代器方法；
         /// </summary>
         /// <param name="downloadTask">下载任务对象</param>
         /// <returns>迭代器接口</returns>
-        IEnumerator EnumDownloadSingleFile(DownloadTask downloadTask)
+        IEnumerator RunDownloadSingleFile(DownloadTask downloadTask)
         {
             var fileDownloadStartTime = DateTime.Now;
-            var uri = downloadTask.URI;
-            var fileDownloadPath = downloadTask.DownloadPath;
-            using (UnityWebRequest request = UnityWebRequest.Get(uri))
+            var downloadUri = downloadTask.DownloadUri;
+            var downloadPath = downloadTask.DownloadPath;
+            using (UnityWebRequest request = UnityWebRequest.Get(downloadUri))
             {
-                Downloading = true;
                 var append = DownloadDataProxy.DownloadAppend;
                 var deleteFailureFile = DownloadDataProxy.DeleteFileOnAbort;
 #if UNITY_2019_1_OR_NEWER
@@ -215,16 +228,22 @@ namespace Cosmos.Download
 #endif
                 request.downloadHandler = handler;
                 unityWebRequest = request;
-                var timeout = DownloadDataProxy.DownloadTimeout;
-                if (timeout > 0)
-                    request.timeout = timeout;
-                var startEventArgs = DownloadStartEventArgs.Create(uri, fileDownloadPath);
-                onDownloadStart?.Invoke(startEventArgs);
-                DownloadStartEventArgs.Release(startEventArgs);
+                request.timeout = DownloadDataProxy.DownloadTimeout;
+
+                {
+                    var timeSpan = DateTime.Now - fileDownloadStartTime;
+                    var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, 0, 0, timeSpan);
+                    var startEventArgs = DownloadStartEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount);
+                    onDownloadStart?.Invoke(startEventArgs);
+                    DownloadStartEventArgs.Release(startEventArgs);
+                }
+
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
                 {
-                    OnFileDownloading(uri, fileDownloadPath, request.downloadProgress, request.downloadedBytes);
+                    var timeSpan = DateTime.Now - fileDownloadStartTime;
+                    var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, request.downloadedBytes, operation.progress, timeSpan);
+                    OnFileDownloading(downloadInfo);
                     yield return null;
                 }
 #if UNITY_2020_1_OR_NEWER
@@ -235,59 +254,47 @@ namespace Cosmos.Download
                 {
                     if (request.isDone)
                     {
-                        Downloading = false;
-                        var fileDownloadEndTime = DateTime.Now;
-                        var timeSpan = fileDownloadEndTime - fileDownloadStartTime;
-                        var completedInfo = new DownloadCompletedInfo(uri, fileDownloadPath, request.downloadedBytes, timeSpan);
-                        var successEventArgs = DownloadSuccessEventArgs.Create(completedInfo);
+                        var timeSpan = DateTime.Now - fileDownloadStartTime;
+                        var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, request.downloadedBytes, 1, timeSpan);
+                        var successEventArgs = DownloadSuccessEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount);
                         onDownloadSuccess?.Invoke(successEventArgs);
-                        OnFileDownloading(uri, fileDownloadPath, 1, request.downloadedBytes);
+                        OnFileDownloading(downloadInfo);
                         DownloadSuccessEventArgs.Release(successEventArgs);
-                        successedInfos.Add(completedInfo);
+                        successedInfos.Add(downloadInfo);
                     }
                 }
                 else
                 {
-                    Downloading = false;
-                    var fileDownloadEndTime = DateTime.Now;
-                    var timeSpan = fileDownloadEndTime - fileDownloadStartTime;
-                    var completedInfo = new DownloadCompletedInfo(uri, fileDownloadPath, request.downloadedBytes, timeSpan);
-                    var failureEventArgs = DownloadFailureEventArgs.Create(completedInfo, request.error);
+                    var timeSpan = DateTime.Now - fileDownloadStartTime;
+                    var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, request.downloadedBytes, operation.progress, timeSpan);
+                    var failureEventArgs = DownloadFailureEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount, request.error);
                     onDownloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
-                    failedInfos.Add(completedInfo);
-                    OnFileDownloading(uri, fileDownloadPath, 1, request.downloadedBytes);
+                    failedInfos.Add(downloadInfo);
+                    OnFileDownloading(downloadInfo);
                     unityWebRequest = null;
                 }
             }
         }
         /// <summary>
         /// 处理整体进度；
-        /// individualPercent 为0~1；
         /// </summary>
-        /// <param name="uri">资源地址</param>
-        /// <param name="downloadPath">下载到本地的目录</param>
-        /// <param name="individualPercent">资源个体百分比0~1</param>
-        /// <param name="downloadedBytes">下载的长度</param>
-        void OnFileDownloading(string uri, string downloadPath, float individualPercent, ulong downloadedBytes)
+        void OnFileDownloading(DownloadInfo info)
         {
-            var overallIndexPercent = 100 * ((float)currentDownloadTaskIndex / downloadTaskCount);
-            var overallProgress = overallIndexPercent + (UnitResRatio * individualPercent);
-            var eventArgs = DonwloadOverallProgressEventArgs.Create(uri, downloadPath, overallProgress, individualPercent, downloadedBytes);
+            var eventArgs = DonwloadUpdateEventArgs.Create(info, currentDownloadTaskIndex, downloadTaskCount);
             onDownloadOverall?.Invoke(eventArgs);
-            DonwloadOverallProgressEventArgs.Release(eventArgs);
+            DonwloadUpdateEventArgs.Release(eventArgs);
         }
         /// <summary>
         /// 当Pending uri的文件全部下载完成；
         /// </summary>
-        void OnDownloadedPendingFiles()
+        void OnPendingTasksCompleted()
         {
             canDownload = false;
-            Downloading = false;
             downloadEndTime = DateTime.Now;
-            var eventArgs = AllDownloadTasksCompletedEventArgs.Create(successedInfos.ToArray(), failedInfos.ToArray(), downloadEndTime - downloadStartTime);
+            var eventArgs = DownloadTasksCompletedEventArgs.Create(successedInfos.ToArray(), failedInfos.ToArray(), downloadEndTime - downloadStartTime, downloadTaskCount);
             onAllDownloadTaskCompleted?.Invoke(eventArgs);
-            AllDownloadTasksCompletedEventArgs.Release(eventArgs);
+            DownloadTasksCompletedEventArgs.Release(eventArgs);
             //清理下载配置缓存；
             failedInfos.Clear();
             successedInfos.Clear();
@@ -310,6 +317,7 @@ namespace Cosmos.Download
             failedInfos.Clear();
             successedInfos.Clear();
             canDownload = false;
+            Downloading = false;
         }
     }
 }

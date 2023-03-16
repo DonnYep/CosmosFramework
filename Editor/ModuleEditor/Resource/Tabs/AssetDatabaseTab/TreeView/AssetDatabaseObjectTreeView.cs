@@ -6,10 +6,11 @@ using Cosmos.Resource;
 
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceObjectTreeView : TreeView
+    public class AssetDatabaseObjectTreeView : TreeView
     {
         List<ResourceObjectInfo> objectInfoList = new List<ResourceObjectInfo>();
-        public ResourceObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
+        public int ObjectCount { get { return objectInfoList.Count; } }
+        public AssetDatabaseObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
             showAlternatingRowBackgrounds = true;
@@ -40,33 +41,45 @@ namespace Cosmos.Editor.Resource
             base.SingleClickedItem(id);
             EditorUtil.PingAndActiveObject(objectInfoList[id].ObjectPath);
         }
+        protected override void SingleClickedItem(int id)
+        {
+            base.SingleClickedItem(id);
+            EditorUtil.ActiveObject(objectInfoList[id].ObjectPath);
+        }
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
             var allItems = new List<TreeViewItem>();
             {
+                Texture2D validIcon = ResourceWindowUtility.GetValidIcon();
+                Texture2D invalidIcon = ResourceWindowUtility.GetInvalidIcon();
                 for (int i = 0; i < objectInfoList.Count; i++)
                 {
                     var objectInfo = objectInfoList[i];
-                    Texture2D icon = null;
+                    Texture2D objectIcon = null;
+                    Texture2D objectValidIcon = null;
                     var validState = string.Empty;
                     if (objectInfo.ObjectVaild)
                     {
-                        icon = AssetDatabase.GetCachedIcon(objectInfo.ObjectPath) as Texture2D;
-                        validState = ResourceEditorConstant.ObjectValidState;
+                        objectIcon = AssetDatabase.GetCachedIcon(objectInfo.ObjectPath) as Texture2D;
+                        validState = ResourceEditorConstant.VALID;
+                        objectValidIcon = validIcon;
                     }
                     else
                     {
-                        icon = EditorGUIUtility.FindTexture("console.erroricon");
-                        validState = ResourceEditorConstant.ObjectInvalidState;
+                        objectIcon = EditorGUIUtility.FindTexture("DefaultAsset Icon");
+                        validState = ResourceEditorConstant.INVALID;
+                        objectValidIcon = invalidIcon;
                     }
-                    var treeViewItem = new ResourceObjectTreeViewItem(i, 1, objectInfo.ObjectPath, icon)
+                    var treeViewItem = new AssetDatabaseObjectTreeViewItem(i, 1, objectInfo.ObjectPath, objectIcon)
                     {
                         ObjectName = objectInfo.ObjectName,
                         ObjectState = validState,
                         ObjectSize = objectInfo.ObjectFormatBytes,
                         ObjectBundleName = objectInfo.BundleName,
-                        ObjectExtension = objectInfo.Extension
+                        ObjectExtension = objectInfo.Extension,
+                        ObjectValid = objectInfo.ObjectVaild,
+                        ObjectValidIcon = objectValidIcon
                     };
                     allItems.Add(treeViewItem);
                 }
@@ -79,7 +92,7 @@ namespace Cosmos.Editor.Resource
             var length = args.GetNumVisibleColumns();
             for (int i = 0; i < length; i++)
             {
-                DrawCellGUI(args.GetCellRect(i), args.item as ResourceObjectTreeViewItem, args.GetColumn(i), ref args);
+                DrawCellGUI(args.GetCellRect(i), args.item as AssetDatabaseObjectTreeViewItem, args.GetColumn(i), ref args);
             }
         }
         void OnMultiColumnHeaderSortingChanged(MultiColumnHeader multiColumnHeader)
@@ -148,7 +161,7 @@ namespace Cosmos.Editor.Resource
             }
             Reload();
         }
-        void DrawCellGUI(Rect cellRect, ResourceObjectTreeViewItem treeView, int column, ref RowGUIArgs args)
+        void DrawCellGUI(Rect cellRect, AssetDatabaseObjectTreeViewItem treeView, int column, ref RowGUIArgs args)
         {
             switch (column)
             {
@@ -169,21 +182,17 @@ namespace Cosmos.Editor.Resource
                 case 2:
                     {
                         var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
-                        var labelCellRect = new Rect(cellRect.x + iconRect.width + 2, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-                        GUIStyle objectStateStyle = new GUIStyle();
-                        objectStateStyle.fontStyle = FontStyle.Bold;
+                        GUI.DrawTexture(iconRect, treeView.ObjectValidIcon, ScaleMode.ScaleToFit);
+                        //var labelCellRect = new Rect(cellRect.x + iconRect.width + 2, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
+                        //GUIStyle objectStateStyle = new GUIStyle();
+                        //objectStateStyle.fontStyle = FontStyle.Bold;
                         //DefaultGUI.Label(labelCellRect, treeView.ObjectState, args.selected, args.focused);
-                        var objectState = treeView.ObjectState;
-                        switch (objectState)
-                        {
-                            case ResourceEditorConstant.ObjectInvalidState:
-                                objectStateStyle.normal.textColor = Color.red;
-                                break;
-                            case ResourceEditorConstant.ObjectValidState:
-                                objectStateStyle.normal.textColor = Color.green;
-                                break;
-                        }
-                        GUI.Label(labelCellRect, treeView.ObjectState, objectStateStyle);
+                        //var valid = treeView.ObjectValid;
+                        //if (!valid)
+                        //    objectStateStyle.normal.textColor = Color.red;
+                        //else
+                        //    objectStateStyle.normal.textColor = Color.green;
+                        //GUI.Label(labelCellRect, treeView.ObjectState, objectStateStyle);
                     }
                     break;
                 case 3:

@@ -6,7 +6,7 @@ namespace Cosmos.Network
     public struct NetworkChannelInfo
     {
         public string Name;
-        public string IPAddress;
+        public string Host;
         public Type ChannelType;
         public readonly static NetworkChannelInfo None = new NetworkChannelInfo();
     }

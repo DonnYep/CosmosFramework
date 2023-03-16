@@ -1,20 +1,23 @@
 ﻿using Cosmos.Resource;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceBundleTreeView : TreeView
+    public class AssetDatabaseBundleTreeView : TreeView
     {
         readonly List<ResourceBundleInfo> bundleInfoList = new List<ResourceBundleInfo>();
 
         public Action<IList<int>> onBundleSelectionChanged;
-        public Action<IList<int>,IList<int>> onBundleDelete;
+        public Action<IList<int>, IList<int>> onBundleDelete;
         public Action onAllBundleDelete;
         public Action<int, string> onBundleRenamed;
-        public Action<IList<string>,IList<int>> onBundleSort;
+        public Action<IList<string>, IList<int>> onBundleSort;
+        public Action<IList<int>> onMarkAsSplittable;
+        public Action<IList<int>> onMarkAsUnsplittable;
         /// <summary>
         /// 上一行的cellRect
         /// </summary>
@@ -25,7 +28,8 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         int renamingItemId = -1;
         List<string> sortedBundleNames = new List<string>();
-        public ResourceBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
+        public int BundleCount { get { return bundleInfoList.Count; } }
+        public AssetDatabaseBundleTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
             showAlternatingRowBackgrounds = true;
@@ -64,27 +68,37 @@ namespace Cosmos.Editor.Resource
             GenericMenu menu = new GenericMenu();
             if (selected.Count == 1)
             {
-                menu.AddItem(new GUIContent("Delete bundle"), false, Delete, selected);
-                menu.AddItem(new GUIContent("Delete all bundle"), false, DeleteAll);
-                menu.AddItem(new GUIContent("Reset bundle name"), false, ResetBundleName, id);
+                menu.AddItem(new GUIContent("Delete bundle"), false, DeleteBundles, selected);
+                menu.AddItem(new GUIContent("Delete all bundle"), false, DeleteAllBundles);
+                menu.AddItem(new GUIContent("Reset bundle name"), false, ResetBundlesName, selected);
                 menu.AddItem(new GUIContent("Reset all bundle name"), false, ResetAllBundleName);
                 menu.AddItem(new GUIContent("Copy bundle name to clipboard"), false, CopyBundleNameToClipboard, id);
                 menu.AddItem(new GUIContent("Copy bundle path to clipboard"), false, CopyBundlePathToClipboard, id);
+                menu.AddItem(new GUIContent("Mark as splittable"), false, SplitBundles, selected);
+                menu.AddItem(new GUIContent("Mark as unsplittable"), false, MergeBundles, selected);
             }
             else if (selected.Count > 1)
             {
-                menu.AddItem(new GUIContent("Delete bundle"), false, Delete, selected);
-                menu.AddItem(new GUIContent("Delete all bundles"), false, DeleteAll);
+                menu.AddItem(new GUIContent("Delete bundles"), false, DeleteBundles, selected);
+                menu.AddItem(new GUIContent("Delete all bundles"), false, DeleteAllBundles);
+                menu.AddItem(new GUIContent("Reset bundles name"), false, ResetBundlesName, selected);
                 menu.AddItem(new GUIContent("Reset the names of all bundles"), false, ResetAllBundleName);
+                menu.AddItem(new GUIContent("Mark as splittable"), false, SplitBundles, selected);
+                menu.AddItem(new GUIContent("Mark as unsplittable"), false, MergeBundles, selected);
             }
             menu.ShowAsContext();
+        }
+        protected override void SingleClickedItem(int id)
+        {
+            base.SingleClickedItem(id);
+            EditorUtil.ActiveObject(bundleInfoList[id].BundlePath);
         }
         protected override void RowGUI(RowGUIArgs args)
         {
             var length = args.GetNumVisibleColumns();
             for (int i = 0; i < length; i++)
             {
-                DrawCellGUI(args.GetCellRect(i), args.item as ResourceBundleTreeViewItem, args.GetColumn(i), ref args);
+                DrawCellGUI(args.GetCellRect(i), args.item as AssetDatabaseBundleTreeViewItem, args.GetColumn(i), ref args);
             }
         }
         protected override bool CanRename(TreeViewItem item)
@@ -115,7 +129,7 @@ namespace Cosmos.Editor.Resource
                 if (canUse)
                 {
                     var bundleInfo = bundleInfoList[args.itemID];
-                    bundleInfo.BundleName= newName;
+                    bundleInfo.BundleName = newName;
                     item.displayName = newName;
                     onBundleRenamed?.Invoke(args.itemID, newName);
                 }
@@ -138,20 +152,32 @@ namespace Cosmos.Editor.Resource
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
-            var assetIcon = ResourceWindowUtility.GetFolderIcon();
-            var allItems = new List<TreeViewItem>();
+            var folderIcon = ResourceWindowUtility.GetFolderIcon();
+            var folderEmptyIcon = ResourceWindowUtility.GetFolderEmptyIcon();
+            var splittableIcon = ResourceWindowUtility.GetValidIcon();
+            var unsplittableIcon = ResourceWindowUtility.GetIgnoredcon();
+            Texture2D icon = null;
+            var treeItemList = new List<TreeViewItem>();
             {
                 for (int i = 0; i < bundleInfoList.Count; i++)
                 {
                     var bundleInfo = bundleInfoList[i];
-                    var item = new ResourceBundleTreeViewItem(i, 1, bundleInfo.BundleName, assetIcon) 
+                    if (bundleInfo.ResourceObjectInfoList.Count == 0)
+                        icon = folderEmptyIcon;
+                    else
+                        icon = folderIcon;
+                    var item = new AssetDatabaseBundleTreeViewItem(i, 1, bundleInfo.BundleName, icon)
                     {
-                        BundleFormatSize = bundleInfo.BundleFormatBytes, 
-                        ObjectCount = bundleInfo.ResourceObjectInfoList.Count
+                        BundleFormatSize = bundleInfo.BundleFormatBytes,
+                        ObjectCount = bundleInfo.ResourceObjectInfoList.Count,
+                        SplittedBundleCount = bundleInfo.ResourceSubBundleInfoList.Count,
+                        SplittableIcon = splittableIcon,
+                        UnsplittableIcon = unsplittableIcon,
+                        Splittable = bundleInfo.Splittable
                     };
-                    allItems.Add(item);
+                    treeItemList.Add(item);
                 }
-                SetupParentsAndChildrenFromDepths(root, allItems);
+                SetupParentsAndChildrenFromDepths(root, treeItemList);
                 return root;
             }
         }
@@ -189,6 +215,15 @@ namespace Cosmos.Editor.Resource
                     break;
                 case 2:
                     {
+                        //Split
+                        if (ascending)
+                            bundleInfoList.OrderBy((b) => b.Splittable).ThenBy((b) => { return b.ResourceObjectInfoList.Count; });
+                        else
+                            bundleInfoList.OrderByDescending((b) => b.Splittable).ThenByDescending((b) => { return b.ResourceObjectInfoList.Count; });
+                    }
+                    break;
+                case 3:
+                    {
                         //Bundle
                         if (ascending)
                             bundleInfoList.Sort((lhs, rhs) => lhs.BundleName.CompareTo(rhs.BundleName));
@@ -203,10 +238,10 @@ namespace Cosmos.Editor.Resource
             {
                 sortedBundleNames.Add(bundleInfoList[i].BundleName);
             }
-            onBundleSort?.Invoke(sortedBundleNames,GetSelection());
+            onBundleSort?.Invoke(sortedBundleNames, GetSelection());
             Reload();
         }
-        void DrawCellGUI(Rect cellRect, ResourceBundleTreeViewItem treeView, int column, ref RowGUIArgs args)
+        void DrawCellGUI(Rect cellRect, AssetDatabaseBundleTreeViewItem treeView, int column, ref RowGUIArgs args)
         {
             switch (column)
             {
@@ -224,6 +259,24 @@ namespace Cosmos.Editor.Resource
                     break;
                 case 2:
                     {
+                        var splittable = treeView.Splittable;
+                        var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
+                        if (splittable)
+                        {
+                            if (treeView.SplittableIcon != null)
+                                GUI.DrawTexture(iconRect, treeView.SplittableIcon, ScaleMode.ScaleToFit);
+                            var labelCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
+                            DefaultGUI.Label(labelCellRect, treeView.SplittedBundleCount.ToString(), args.selected, args.focused);
+                        }
+                        else
+                        {
+                            if (treeView.UnsplittableIcon != null)
+                                GUI.DrawTexture(iconRect, treeView.UnsplittableIcon, ScaleMode.ScaleToFit);
+                        }
+                    }
+                    break;
+                case 3:
+                    {
                         var iconRect = new Rect(cellRect.x + 2, cellRect.y, cellRect.height, cellRect.height);
                         if (treeView.icon != null)
                             GUI.DrawTexture(iconRect, treeView.icon, ScaleMode.ScaleToFit);
@@ -235,13 +288,13 @@ namespace Cosmos.Editor.Resource
                     break;
             }
         }
-        void DeleteAll()
+        void DeleteAllBundles()
         {
             bundleInfoList.Clear();
             onAllBundleDelete?.Invoke();
             Reload();
         }
-        void Delete(object context)
+        void DeleteBundles(object context)
         {
             try
             {
@@ -257,7 +310,7 @@ namespace Cosmos.Editor.Resource
                 {
                     bundleInfoList.Remove(rmBundleInfos[i]);
                 }
-                onBundleDelete?.Invoke(list,GetSelection());
+                onBundleDelete?.Invoke(list, GetSelection());
                 SetSelection(new int[0]);
                 Reload();
             }
@@ -266,15 +319,27 @@ namespace Cosmos.Editor.Resource
                 EditorUtil.Debug.LogError(e);
             }
         }
-        void ResetBundleName(object context)
+        void ResetBundlesName(object context)
         {
-            var itemId = Convert.ToInt32(context);
-            var item = FindItem(itemId, rootItem);
-            var bundleInfo = bundleInfoList[itemId];
-            var bundleName = ResourceUtility.FilterName(bundleInfo.BundlePath);
-            bundleInfo.BundleName= bundleName;
-            item.displayName = bundleInfo.BundleName;
-            onBundleRenamed?.Invoke(itemId, bundleInfo.BundlePath);
+            try
+            {
+                var list = context as IList<int>;
+                var length = list.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    var itemId = list[i];
+                    var item = FindItem(itemId, rootItem);
+                    var bundleInfo = bundleInfoList[itemId];
+                    var bundleName = ResourceUtility.FilterName(bundleInfo.BundlePath);
+                    bundleInfo.BundleName = bundleName;
+                    item.displayName = bundleInfo.BundleName;
+                    onBundleRenamed?.Invoke(itemId, bundleInfo.BundlePath);
+                }
+            }
+            catch (Exception e)
+            {
+                EditorUtil.Debug.LogError(e);
+            }
         }
         void ResetAllBundleName()
         {
@@ -300,6 +365,58 @@ namespace Cosmos.Editor.Resource
             var id = Convert.ToInt32(context);
             var bundle = bundleInfoList[id];
             GUIUtility.systemCopyBuffer = bundle.BundlePath;
+        }
+        void SplitBundles(object context)
+        {
+            try
+            {
+                var list = context as IList<int>;
+                var items = FindRows(list);
+                var length = items.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    var item = items[i];
+                    var bundleInfo = ResourceWindowDataProxy.ResourceDataset.ResourceBundleInfoList.Find((b) => b.BundleName == item.displayName);
+                    var has = bundleInfo != null;
+                    if (has)
+                    {
+                        bundleInfo.Splittable = true;
+                    }
+                }
+                if (length > 0)
+                    onMarkAsSplittable?.Invoke(list);
+                Reload();
+            }
+            catch (Exception e)
+            {
+                EditorUtil.Debug.LogError(e);
+            }
+        }
+        void MergeBundles(object context)
+        {
+            try
+            {
+                var list = context as IList<int>;
+                var items = FindRows(list);
+                var length = items.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    var item = items[i];
+                    var bundleInfo = ResourceWindowDataProxy.ResourceDataset.ResourceBundleInfoList.Find((b) => b.BundleName == item.displayName);
+                    var has = bundleInfo != null;
+                    if (has)
+                    {
+                        bundleInfo.Splittable = false;
+                    }
+                }
+                if (length > 0)
+                    onMarkAsUnsplittable?.Invoke(list);
+                Reload();
+            }
+            catch (Exception e)
+            {
+                EditorUtil.Debug.LogError(e);
+            }
         }
     }
 }

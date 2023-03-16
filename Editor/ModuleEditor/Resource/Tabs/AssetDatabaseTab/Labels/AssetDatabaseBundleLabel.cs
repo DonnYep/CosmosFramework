@@ -7,13 +7,13 @@ using UnityEngine;
 
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceBundleLabel
+    public class AssetDatabaseBundleLabel
     {
         SearchField searchField;
         TreeViewState treeViewState;
-        ResourceBundleTreeView treeView;
-
-        public event Action<IList<int>,IList<int>> OnBundleDelete
+        AssetDatabaseBundleTreeView treeView;
+        public int BundleCount { get { return treeView.BundleCount; } }
+        public event Action<IList<int>, IList<int>> OnBundleDelete
         {
             add { treeView.onBundleDelete += value; }
             remove { treeView.onBundleDelete -= value; }
@@ -33,17 +33,27 @@ namespace Cosmos.Editor.Resource
             add { treeView.onBundleRenamed += value; }
             remove { treeView.onBundleRenamed -= value; }
         }
-        public event Action<IList<string>,IList<int>> OnBundleSort
+        public event Action<IList<string>, IList<int>> OnBundleSort
         {
             add { treeView.onBundleSort += value; }
             remove { treeView.onBundleSort -= value; }
+        }
+        public event Action<IList<int>> OnMarkAsSplittable
+        {
+            add { treeView.onMarkAsSplittable += value; }
+            remove { treeView.onMarkAsSplittable -= value; }
+        }
+        public event Action<IList<int>> OnMarkAsUnsplittable
+        {
+            add { treeView.onMarkAsUnsplittable += value; }
+            remove { treeView.onMarkAsUnsplittable -= value; }
         }
         public void OnEnable()
         {
             searchField = new SearchField();
             treeViewState = new TreeViewState();
             var multiColumnHeaderState = new MultiColumnHeader(ResourceWindowUtility.CreateResourceBundleMultiColumnHeader());
-            treeView = new ResourceBundleTreeView(treeViewState, multiColumnHeaderState);
+            treeView = new AssetDatabaseBundleTreeView(treeViewState, multiColumnHeaderState);
             searchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
         }
         public void OnGUI(Rect rect)
@@ -66,16 +76,16 @@ namespace Cosmos.Editor.Resource
         }
         public void SetSelection(IList<int> selectedIds)
         {
-            treeView.SetSelection(selectedIds);
+            treeView.SetSelection(selectedIds, TreeViewSelectionOptions.None);
         }
         void DrawTreeView(Rect rect)
         {
-            var width = rect.width * 0.382f;
+            var width = rect.width * ResourceEditorConstant.MIN_WIDTH;
             GUILayout.BeginVertical(GUILayout.MaxWidth(width));
             {
                 GUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField("Search bundle", EditorStyles.boldLabel, GUILayout.MaxWidth(128));
+                    EditorGUILayout.LabelField(ResourceEditorConstant.SERACH, GUILayout.MaxWidth(48));
                     treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
                 }
                 GUILayout.EndHorizontal();

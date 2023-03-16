@@ -21,11 +21,11 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载整体进度事件；
         /// </summary>
-        event Action<DonwloadOverallProgressEventArgs> OnDownloadOverallProgress;
+        event Action<DonwloadUpdateEventArgs> OnDownloadOverallProgress;
         /// <summary>
         /// 整体下载并写入完成事件
         /// </summary>
-        event Action<AllDownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted;
+        event Action<DownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted;
         /// <summary>
         /// 是否正在下载；
         /// </summary>
@@ -37,14 +37,16 @@ namespace Cosmos.Download
         /// <summary>
         /// 添加URI下载；
         /// </summary>
-        /// <param name="uri">统一资源名称</param>
+        /// <param name="downloadUri">统一资源名称</param>
         /// <param name="downloadPath">下载到地址的绝对路径</param>
-        void AddUriDownload(string uri, string downloadPath);
+        /// <returns>下载序列号</returns>
+        int AddDownload(string downloadUri, string downloadPath);
         /// <summary>
         /// 移除URI下载；
         /// </summary>
-        /// <param name="uri">统一资源名称</param>
-        void RemoveUriDownload(string uri);
+        /// <param name="downloadId">下载序号</param>
+        /// <returns>移除结果</returns>
+        bool RemoveDownload(int  downloadId);
         /// <summary>
         /// 移除所有下载；
         /// </summary>

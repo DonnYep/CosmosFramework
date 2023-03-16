@@ -2,11 +2,12 @@
 using UnityEngine;
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceBundleTreeViewItem : TreeViewItem
+    public class AssetDatabaseBundleTreeViewItem : TreeViewItem
     {
         string bundleFormatSize;
         int objectCount;
-        public ResourceBundleTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
+        int splittedBundleCount;
+        public AssetDatabaseBundleTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
         {
             this.icon = icon;
         }
@@ -18,7 +19,7 @@ namespace Cosmos.Editor.Resource
             get
             {
                 if (string.IsNullOrEmpty(bundleFormatSize))
-                    return "<UNKONW>";
+                    return ResourceEditorConstant.UNKONM;
                 return bundleFormatSize;
             }
             set { bundleFormatSize = value; }
@@ -33,5 +34,18 @@ namespace Cosmos.Editor.Resource
                     objectCount = 0;
             }
         }
+        public int SplittedBundleCount
+        {
+            get { return splittedBundleCount; }
+            set
+            {
+                splittedBundleCount = value;
+                if (splittedBundleCount <= 0)
+                    splittedBundleCount = 0;
+            }
+        }
+        public Texture2D SplittableIcon { get; set; }
+        public Texture2D UnsplittableIcon { get; set; }
+        public bool Splittable{ get; set; }
     }
 }

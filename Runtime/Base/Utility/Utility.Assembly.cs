@@ -904,6 +904,30 @@ where K : class
                 return property.GetValue(obj);
             }
             /// <summary>
+            /// 获取非实例对象属性
+            /// </summary>
+            /// <param name="type">类型</param>
+            /// <param name="propertyName">属性名</param>
+            /// <returns>属性值</returns>
+            public static object GetNonInstancePropertyValue(Type type, string propertyName)
+            {
+                var property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
+                return property.GetValue(propertyName);
+            }
+            /// <summary>
+            /// 获取属性
+            /// </summary>
+            /// <param name="type">类型</param>
+            /// <param name="propertyName">属性名</param>
+            /// <returns>属性信息</returns>
+            public static PropertyInfo GetProperty(Type type, string propertyName)
+            {
+                var property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic);
+                if (property == null)
+                    throw new NullReferenceException($"Type : {type} can not find property: {propertyName} !");
+                return property;
+            }
+            /// <summary>
             /// 获取对象字段值;
             /// </summary>
             /// <param name="obj">目标对象</param>

@@ -20,7 +20,7 @@ namespace Cosmos.Network
     /// <summary>
     /// / KCP服务端通道；
     /// </summary>
-    public class KCPServerChannel : INetworkServerChannel
+    public class KcpServerChannel : INetworkServerChannel
     {
         KcpServerEndPoint server;
 
@@ -28,12 +28,6 @@ namespace Cosmos.Network
         Action<int> onDisconnected;
         Action<int, byte[]> onDataReceived;
         Action<int, string> onError;
-        Action onAbort;
-        public event Action OnAbort
-        {
-            add { onAbort += value; }
-            remove { onAbort -= value; }
-        }
         public event Action<int> OnConnected
         {
             add { onConnected += value; }
@@ -61,8 +55,8 @@ namespace Cosmos.Network
         ///<inheritdoc/>
         public string ChannelName { get; set; }
         ///<inheritdoc/>
-        public string IPAddress { get { return server.IPAddress; } }
-        public KCPServerChannel(string channelName, ushort port)
+        public string Host { get { return server.IPAddress; } }
+        public KcpServerChannel(string channelName, ushort port)
         {
             this.ChannelName = channelName;
             Log.Info = (s) => Utility.Debug.LogInfo(s);
@@ -80,17 +74,12 @@ namespace Cosmos.Network
             );
         }
         ///<inheritdoc/>
-        public bool StartServer()
+        public bool Start()
         {
             if (Active)
                 return false;
             server.Start((ushort)Port);
             return true;
-        }
-        ///<inheritdoc/>
-        public void StopServer()
-        {
-            server.Stop();
         }
         ///<inheritdoc/>
         public void TickRefresh()
@@ -106,9 +95,9 @@ namespace Cosmos.Network
         ///<inheritdoc/>
         public bool SendMessage(int connectionId, byte[] data)
         {
-            return SendMessage(NetworkReliableType.Reliable, connectionId, data);
+            return SendMessage(KcpReliableType.Reliable, connectionId, data);
         }
-        public bool SendMessage(NetworkReliableType reliableType, int connectionId, byte[] data)
+        public bool SendMessage(KcpReliableType reliableType, int connectionId, byte[] data)
         {
             var segment = new ArraySegment<byte>(data);
             var byteType = (byte)reliableType;
@@ -130,11 +119,9 @@ namespace Cosmos.Network
             return server.GetClientEndPoint(connectionId).Address.ToString();
         }
         ///<inheritdoc/>
-        public void AbortChannnel()
+        public void Close()
         {
-            StopServer();
-            onAbort?.Invoke();
-            onAbort = null;
+            server.Stop();
         }
         void OnErrorHandler(int connectionId, ErrorCode error, string reason)
         {

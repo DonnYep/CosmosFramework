@@ -34,11 +34,11 @@ namespace Cosmos.Download
         /// <summary>
         /// 下载整体进度事件；
         /// </summary>
-        event Action<DonwloadOverallProgressEventArgs> OnDownloadOverallProgress;
+        event Action<DonwloadUpdateEventArgs> OnDownloadOverallProgress;
         /// <summary>
         /// 整体下载并写入完成事件
         /// </summary>
-        event Action<AllDownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted;
+        event Action<DownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted;
         /// <summary>
         /// 终止时删除下载中的文件
         /// </summary>
@@ -78,25 +78,21 @@ namespace Cosmos.Download
         /// <summary>
         /// 添加URI下载；
         /// </summary>
-        /// <param name="uri">统一资源名称</param>
+        /// <param name="downloadUri">统一资源名称</param>
         /// <param name="downloadPath">下载到地址的绝对路径</param>
-        void AddUriDownload(string uri, string downloadPath);
-        /// <summary>
-        /// 将URL添加到下载队列，并下载当前URL页面下的所有文件到本地；
-        /// </summary>
-        /// <param name="url">统一资源定位符</param>
-        /// <param name="downloadRootPath">下载到地址的根目录</param>
-        void AddUrlDownload(string url, string downloadRootPath);
+        /// <returns>下载序号</returns>
+        int AddDownload(string downloadUri, string downloadPath);
         /// <summary>
         /// 移除URI下载；
         /// </summary>
-        /// <param name="uri">统一资源名称</param>
-        void RemoveUriDownload(string uri);
+        /// <param name="downloadId">下载序号</param>
+        /// <returns>移除结果</returns>
+        bool RemoveDownload(int downloadId);
         /// <summary>
         /// 移除多个URI下载；
         /// </summary>
-        /// <param name="uris">统一资源名称数组</param>
-        void RemoveUrisDownload(string[] uris);
+        /// <param name="downloadIds">下载序号集合</param>
+        void RemoveDownloads(int[] downloadIds);
         /// <summary>
         /// 移除所有下载；
         /// </summary>
@@ -105,16 +101,16 @@ namespace Cosmos.Download
         /// 获取URI单个文件的大小；
         /// 若获取到，则回调传入正确的数值，否则就传入-1；
         /// </summary>
-        /// <param name="uri">统一资源名称</param>
+        /// <param name="downloadUri">统一资源名称</param>
         /// <param name="callback">回调</param>
-        void GetUriFileSizeAsync(string uri, Action<long> callback);
+        void GetUriFileSizeAsync(string downloadUri, Action<long> callback);
         /// <summary>
         /// 获取一个URL地址下的所有文件的总和大小；
         /// 若获取到，则回调传入正确的数值，否则就传入-1；
         /// </summary>
-        /// <param name="url">统一资源定位符</param>
+        /// <param name="downloadUrl">统一资源定位符</param>
         /// <param name="callback">回调</param>
-        void GetUrlFilesSizeAsync(string url, Action<long> callback);
+        void GetUrlFilesSizeAsync(string downloadUrl, Action<long> callback);
         /// <summary>
         /// 设置完成下载配置后启动下载；
         void LaunchDownload();

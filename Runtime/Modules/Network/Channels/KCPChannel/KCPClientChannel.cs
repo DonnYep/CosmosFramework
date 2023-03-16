@@ -21,7 +21,7 @@ namespace Cosmos.Network
     /// <summary>
     /// KCP客户端通道；
     /// </summary>
-    public class KCPClientChannel : INetworkClientChannel
+    public class KcpClientChannel : INetworkClientChannel
     {
         ///<inheritdoc/>
         public string ChannelName { get; set; }
@@ -31,13 +31,7 @@ namespace Cosmos.Network
         Action onConnected;
         Action onDisconnected;
         Action<byte[]> onDataReceived;
-        Action onAbort;
         Action<string> onError;
-        public event Action OnAbort
-        {
-            add { onAbort += value; }
-            remove { onAbort -= value; }
-        }
         public event Action OnConnected
         {
             add { onConnected += value; }
@@ -63,8 +57,8 @@ namespace Cosmos.Network
         ///<inheritdoc/>
         public int Port { get; private set; }
         ///<inheritdoc/>
-        public string IPAddress { get; private set; }
-        public KCPClientChannel(string channelName)
+        public string Host { get; private set; }
+        public KcpClientChannel(string channelName)
         {
             this.ChannelName = channelName;
             Log.Info = (s) => Utility.Debug.LogInfo(s);
@@ -78,11 +72,11 @@ namespace Cosmos.Network
             );
         }
         ///<inheritdoc/>
-        public void Connect(string ip, int port)
+        public void Connect(string host, int port)
         {
-            this.IPAddress = ip;
+            this.Host = host;
             this.Port = port;
-            client.Connect(IPAddress, (ushort)port, true, 10);
+            client.Connect(Host, (ushort)port, true, 10);
         }
         ///<inheritdoc/>
         public void TickRefresh()
@@ -90,21 +84,16 @@ namespace Cosmos.Network
             client?.Tick();
         }
         ///<inheritdoc/>
-        public void Disconnect()
-        {
-            client.Disconnect();
-        }
-        ///<inheritdoc/>
         public bool SendMessage(byte[] data)
         {
-            return SendMessage(NetworkReliableType.Reliable, data);
+            return SendMessage(KcpReliableType.Reliable, data);
         }
         /// <summary>
         ///发送消息到remote;
         /// </summary>
         /// <param name="reliableType">消息可靠类型</param>
         /// <param name="data">数据</param>
-        public bool SendMessage(NetworkReliableType reliableType, byte[] data)
+        public bool SendMessage(KcpReliableType reliableType, byte[] data)
         {
             if (!IsConnect)
                 return false;
@@ -123,10 +112,9 @@ namespace Cosmos.Network
             return true;
         }
         ///<inheritdoc/>
-        public void AbortChannnel()
+        public void Close()
         {
-            Disconnect();
-            onAbort?.Invoke();
+            client.Disconnect();
         }
         void OnDisconnectHandler()
         {

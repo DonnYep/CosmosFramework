@@ -2,10 +2,10 @@
 using UnityEngine;
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceObjectTreeViewItem : TreeViewItem
+    public class AssetDatabaseObjectTreeViewItem : TreeViewItem
     {
         string objectSize;
-        public ResourceObjectTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
+        public AssetDatabaseObjectTreeViewItem(int id, int depth, string displayName, Texture2D icon) : base(id, depth, displayName)
         {
             this.icon = icon;
         }
@@ -14,6 +14,11 @@ namespace Cosmos.Editor.Resource
         /// 当前对象状态，INVALID , VALID
         /// </summary>
         public string ObjectState { get; set; }
+        /// <summary>
+        /// 状态是否有效；
+        /// </summary>
+        public bool ObjectValid { get; set; }
+        public Texture2D ObjectValidIcon { get; set; }
         /// <summary>
         /// 文件大小；
         /// </summary>
