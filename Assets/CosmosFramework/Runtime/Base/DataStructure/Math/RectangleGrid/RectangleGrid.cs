@@ -45,7 +45,7 @@ namespace Cosmos
             var height = cellHeight * columnCount;
             CellHeight = cellHeight;
             CellWidth = cellWidth;
-            rectangle2d = new Rectangle[rowCount, rowCount];
+            rectangle2d = new Rectangle[rowCount, columnCount];
             WidthBufferZoneRange = widthBufferRange >= 0 ? widthBufferRange : 0;
             HeightBufferZoneRange = heightBufferRange >= 0 ? heightBufferRange : 0;
             GridArea = new Rectangle(centerX, centerY, width, height);
@@ -55,9 +55,9 @@ namespace Cosmos
 
             var centerOffsetX = cellWidth / 2 + OffsetX;
             var centerOffsetY = cellHeight / 2 + OffsetY;
-            for (int i = 0; i < ColumnCount; i++)
+            for (int i = 0; i < RowCount; i++)
             {
-                for (int j = 0; j < RowCount; j++)
+                for (int j = 0; j < ColumnCount; j++)
                 {
                     rectangle2d[i, j] = new Rectangle(j * CellWidth + centerOffsetX, i * CellHeight + centerOffsetY, CellWidth, CellHeight);
                     rectangle1d[i * ColumnCount + j] = rectangle2d[i, j];

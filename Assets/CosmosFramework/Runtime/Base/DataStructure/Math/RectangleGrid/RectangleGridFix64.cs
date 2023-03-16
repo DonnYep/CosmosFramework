@@ -47,7 +47,7 @@ namespace Cosmos
             var height = cellHeight * (Fix64)columnCount;
             CellHeight = cellHeight;
             CellWidth = cellWidth;
-            rectangle2d = new RectangleFix64[rowCount, rowCount];
+            rectangle2d = new RectangleFix64[rowCount, columnCount];
             WidthBufferZoneRange = widthBufferRange >= Fix64.Zero ? widthBufferRange : Fix64.Zero;
             HeightBufferZoneRange = heightBufferRange >= Fix64.Zero ? heightBufferRange : Fix64.Zero;
             GridArea = new RectangleFix64(centerX, centerY, width, height);
@@ -58,9 +58,9 @@ namespace Cosmos
 
             var centerOffsetX = cellWidth / (Fix64)2 + OffsetX;
             var centerOffsetY = cellHeight / (Fix64)2 + OffsetY;
-            for (int i = 0; i < ColumnCount; i++)
+            for (int i = 0; i < RowCount; i++)
             {
-                for (int j = 0; j < RowCount; j++)
+                for (int j = 0; j < ColumnCount; j++)
                 {
                     rectangle2d[i, j] = new RectangleFix64((Fix64)j * CellWidth + centerOffsetX, (Fix64)i * CellHeight + centerOffsetY, CellWidth, CellHeight);
                     rectangle1d[i * ColumnCount + j] = rectangle2d[i, j];
