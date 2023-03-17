@@ -326,7 +326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellSideLength: 128
-  divided: 8
+  divided: {x: 7, y: 6}
   center: {x: 0, y: 0}
   cellBufferZoneBound: 24
   cellZoneColor: {r: 0, g: 0.89716387, b: 1, a: 1}
@@ -484,6 +484,14 @@ MonoBehaviour:
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
   messagePackHelperName: <NONE>
   runInBackground: 0
+  autoInitResource: 1
+  resourceDataset: {fileID: 0}
+  resourceBundlePathType: 0
+  relativeBundlePath: 
+  assetBundleEncrytion: 0
+  assetBundleEncrytionOffset: 16
+  buildInfoEncrytion: 0
+  buildInfoEncrytionKey: CosmosBundlesKey
 --- !u!4 &1445863190
 Transform:
   m_ObjectHideFlags: 0
@@ -510,19 +518,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 435fb9601448fe144854aeece9140fde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  QuarkBuildPath: 0
-  EnableRelativeBuildPath: 0
-  RelativeBuildPath: 
-  Url: 
-  PingUrl: 0
-  QuarkAssetLoadMode: 1
-  QuarkAssetDataset: {fileID: 11400000, guid: e4ef4e912cff6e24f8901a67d27afba9, type: 2}
-  QuarkDownloadedPath: 0
-  EnableRelativeLoadPath: 0
-  RelativeLoadPath: 
-  BuildInfoAESEncryptionKey: 
-  EncryptionOffset: 0
-  CustomeAbsolutePath: 
 --- !u!1 &1569567838
 GameObject:
   m_ObjectHideFlags: 0
