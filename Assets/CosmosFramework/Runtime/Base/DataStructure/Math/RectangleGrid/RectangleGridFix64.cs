@@ -58,12 +58,14 @@ namespace Cosmos
 
             var centerOffsetX = cellWidth / (Fix64)2 + OffsetX;
             var centerOffsetY = cellHeight / (Fix64)2 + OffsetY;
-            for (int i = 0; i < RowCount; i++)
+            for (int y = 0; y < columnCount; y++)
             {
-                for (int j = 0; j < ColumnCount; j++)
+                for (int x = 0; x < rowCount; x++)
                 {
-                    rectangle2d[i, j] = new RectangleFix64((Fix64)j * CellWidth + centerOffsetX, (Fix64)i * CellHeight + centerOffsetY, CellWidth, CellHeight);
-                    rectangle1d[i * ColumnCount + j] = rectangle2d[i, j];
+                    var xCenter = (Fix64)x * CellWidth + centerOffsetX;
+                    var yCenter = (Fix64)y * CellWidth + centerOffsetY;
+                    rectangle2d[y, x] = new RectangleFix64(xCenter, yCenter, CellWidth, CellHeight);
+                    rectangle1d[y * ColumnCount + x] = rectangle2d[y, x];
                 }
             }
         }
@@ -103,11 +105,11 @@ namespace Cosmos
                 {
                     if (y == 0 && x == 0)
                         continue;
-                    int idxX = col + x;
-                    int idxY = row + y;
+                    int idxX = row + x;
+                    int idxY = col + y;
                     if (idxX <= RowCount - 1 && idxX >= 0 && idxY <= ColumnCount - 1 && idxY >= 0)
                     {
-                        neighborSquares[idx++] = rectangle2d[idxX, idxY];
+                        neighborSquares[idx++] = rectangle2d[idxY, idxX];
                     }
                 }
             }
@@ -153,11 +155,11 @@ namespace Cosmos
             {
                 for (int y = -level; y <= level; y++)
                 {
-                    int idxX = col + x;
-                    int idxY = row + y;
-                    if (idxX < RowCount && idxX >= 0 && idxY < ColumnCount && idxY >= 0)
+                    int idxX = row + x;
+                    int idxY = col + y;
+                    if (idxX < RowCount - 1 && idxX >= 0 && idxY < ColumnCount - 1 && idxY >= 0)
                     {
-                        neabySquares[idx] = rectangle2d[idxX, idxY];
+                        neabySquares[idx] = rectangle2d[idxY, idxX];
                         idx++;
                     }
                 }

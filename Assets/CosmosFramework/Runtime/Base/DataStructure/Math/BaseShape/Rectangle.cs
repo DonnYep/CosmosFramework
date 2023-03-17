@@ -3,10 +3,10 @@ namespace Cosmos
 {
     public struct Rectangle : IEquatable<Rectangle>
     {
-        public float CenterX { get; set; }
-        public float CenterY { get; set; }
-        public float Width { get; set; }
-        public float Height { get; set; }
+        public float CenterX { get; private set; }
+        public float CenterY { get; private set; }
+        public float Width { get; private set; }
+        public float Height { get; private set; }
         public float Top { get { return CenterY + HalfHeight; } }
         public float Bottom { get { return CenterY - HalfHeight; } }
         public float Left { get { return CenterX - HalfWidth; } }

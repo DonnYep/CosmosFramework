@@ -5,7 +5,7 @@ namespace Cosmos.Test
     public class SquareGridRender : MonoBehaviour
     {
         [SerializeField] float cellSideLength = 5;
-        [SerializeField] uint divided;
+        [SerializeField] Vector2Int divided;
 
         [SerializeField] Vector2 center;
         [SerializeField] float cellBufferZoneBound = 8;
@@ -15,22 +15,22 @@ namespace Cosmos.Test
         [SerializeField] Transform supervisor;
 
         [SerializeField] GameObject squareTilePrefab;
-        SquareGrid squareGrid;
+        RectangleGrid squareGrid;
 
         GameObject normalTileRoot;
-        Dictionary<Square, SquareTileComponent> squareTileDict
-            = new Dictionary<Square, SquareTileComponent>();
+        Dictionary<Rectangle, SquareTileComponent> squareTileDict
+            = new Dictionary<Rectangle, SquareTileComponent>();
 
-        List<Square> highlightCache = new List<Square>();
+        List<Rectangle> highlightCache = new List<Rectangle>();
         private void Start()
         {
             normalTileRoot = new GameObject("NormalTileRoot");
             normalTileRoot.transform.SetParent(transform);
             normalTileRoot.transform.ResetLocalTransform();
 
-            squareGrid = new SquareGrid(cellSideLength, divided, center.x, center.y, cellBufferZoneBound);
+            squareGrid = new RectangleGrid(cellSideLength, cellSideLength, (uint)divided.x, (uint)divided.y, center.x, center.y, cellBufferZoneBound, cellBufferZoneBound);
 
-            var squares = squareGrid.GetAllSquares();
+            var squares = squareGrid.GetAllRectangles();
             var length = squares.Length;
             for (int i = 0; i < length; i++)
             {
@@ -52,7 +52,7 @@ namespace Cosmos.Test
         {
             var pos = new Vector2(supervisor.position.x, supervisor.position.z);
             highlightCache.Clear();
-            highlightCache.AddRange(squareGrid.GetSquares(pos.x, pos.y));
+            highlightCache.AddRange(squareGrid.GetRectangles(pos.x, pos.y));
             foreach (var st in squareTileDict)
             {
                 st.Value.SquareTileHighlight(highlightCache.Contains(st.Key));
@@ -67,16 +67,16 @@ namespace Cosmos.Test
         }
         void DrawSquareGrid()
         {
-            var squares = squareGrid.GetAllSquares();
+            var squares = squareGrid.GetAllRectangles();
             var slength = squares.Length;
             for (int i = 0; i < slength; i++)
             {
                 Gizmos.color = cellZoneColor;
                 var pos = new Vector3(squares[i].CenterX, 0, squares[i].CenterY);
-                var size = new Vector3(squareGrid.CellSideLength, 6, squareGrid.CellSideLength);
+                var size = new Vector3(squareGrid.CellWidth, 6, squareGrid.CellHeight);
                 Gizmos.DrawWireCube(pos, size);
                 Gizmos.color = bufferZoneColor;
-                var cellSize = new Vector3(squareGrid.CellSideLength + cellBufferZoneBound * 2, 8, squareGrid.CellSideLength + cellBufferZoneBound * 2);
+                var cellSize = new Vector3(squareGrid.CellWidth + cellBufferZoneBound * 2, 8, squareGrid.CellHeight + cellBufferZoneBound * 2);
                 Gizmos.DrawWireCube(pos, cellSize);
             }
             if (true)
@@ -86,7 +86,7 @@ namespace Cosmos.Test
                 {
                     var curSquare = highlightCache[i];
                     Gizmos.color = heightLightColor;
-                    var hlSize = new Vector3(curSquare.SideLength, 1, curSquare.SideLength);
+                    var hlSize = new Vector3(curSquare.Width, 1, curSquare.Height);
                     var hlPos = new Vector3(curSquare.CenterX, 0, curSquare.CenterY);
                     Gizmos.DrawCube(hlPos, hlSize);
                 }
