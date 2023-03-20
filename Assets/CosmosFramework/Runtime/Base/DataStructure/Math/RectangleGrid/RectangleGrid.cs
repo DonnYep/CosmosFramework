@@ -2,8 +2,8 @@
 namespace Cosmos
 {
     /// <summary>
-    /// Cartesian coordinates
-    /// 参考二维笛卡尔坐标系
+    /// https://www.digitalocean.com/community/tutorials/two-dimensional-array-in-c-plus-plus
+    /// 存储位参考二维数组
     /// </summary>
     public struct RectangleGrid : IEquatable<RectangleGrid>
     {
@@ -135,7 +135,7 @@ namespace Cosmos
         /// <returns>获取到的临近地块</returns>
         public Rectangle[] GetNearbyRectangles(float posX, float posY, int level = 0)
         {
-            if (!IsOverlapping(posX, posY))
+            if (!IsOverlappingBufferZone(posX, posY))
                 return new Rectangle[0];
             if (!IsOverlapping(posX, posY))
                 return new Rectangle[0];
