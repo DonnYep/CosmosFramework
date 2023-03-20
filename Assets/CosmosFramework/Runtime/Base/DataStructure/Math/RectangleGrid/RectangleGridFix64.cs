@@ -138,7 +138,7 @@ namespace Cosmos
         /// <returns>获取到的临近地块</returns>
         public RectangleFix64[] GetNearbyRectangles(Fix64 posX, Fix64 posY, int level = 0)
         {
-            if (!IsOverlapping(posX, posY))
+            if (!IsOverlappingBufferZone(posX, posY))
                 return new RectangleFix64[0];
             if (!IsOverlapping(posX, posY))
                 return new RectangleFix64[0];
