@@ -19,7 +19,7 @@ namespace Cosmos
         /// </summary>
         public abstract void Dispose();
         /// <summary>
-        /// 仅仅在Editor模式下使用
+        /// 仅在Editor模式下使用
         /// </summary>
         public virtual void Preview() { }
         /// <summary>
