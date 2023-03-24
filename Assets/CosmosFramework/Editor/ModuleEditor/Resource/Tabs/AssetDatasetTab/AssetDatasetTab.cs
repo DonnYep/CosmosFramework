@@ -16,7 +16,7 @@ namespace Cosmos.Editor.Resource
         bool datasetAssigned = false;
         public override void OnGUI(Rect rect)
         {
-            EditorGUILayout.LabelField("Resource Available Extenison", EditorStyles.boldLabel);
+            //EditorGUILayout.LabelField("Resource Available Extenison", EditorStyles.boldLabel);
             GUILayout.Space(8);
             GUILayout.BeginHorizontal();
             {
@@ -45,9 +45,15 @@ namespace Cosmos.Editor.Resource
                 }
             }
             GUILayout.EndHorizontal();
+
+            using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
+            {
+                GUILayout.Label($"Resource available extension count : {extensionList.Count}", EditorStyles.boldLabel);
+            }
+
             GUILayout.BeginHorizontal();
             {
-                EditorGUILayout.LabelField("Search extension", EditorStyles.boldLabel, GUILayout.MaxWidth(128));
+                EditorGUILayout.LabelField("Search", GUILayout.MaxWidth(128));
                 searchText = searchField.OnToolbarGUI(searchText);
                 DrawSearchList();
             }
@@ -60,7 +66,7 @@ namespace Cosmos.Editor.Resource
         {
             searchField = new SearchField();
             reorderableList = new ReorderableList(extensionList, typeof(string), true, true, true, true);
-            reorderableList.drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, $"Extension count : {extensionList.Count}");
+            reorderableList.drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, "Extension list");
             reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
                 rect.y += 2f;
