@@ -274,6 +274,14 @@ namespace Cosmos
                 return result;
             }
             /// <summary>
+            /// 返回一个0.0~1.0之间的随机数
+            /// </summary>
+            /// <returns>随机数</returns>
+            public static double RandomDouble()
+            {
+                return random.NextDouble();
+            }
+            /// <summary>
             /// 交换两个值
             /// </summary>
             /// <typeparam name="T">传入的对象类型</typeparam>

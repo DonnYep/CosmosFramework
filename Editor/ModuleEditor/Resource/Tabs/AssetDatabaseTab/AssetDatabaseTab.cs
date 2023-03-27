@@ -464,7 +464,7 @@ namespace Cosmos.Editor.Resource
                             }
                             long subBundleSize = EditorUtil.GetUnityDirectorySize(subBundlePath, ResourceWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList);
                             subBundleInfo.BundleSize = subBundleSize;
-                            subBundleInfo.BundleKey = bundleInfo.BundleName;
+                            subBundleInfo.BundleKey = subBundleInfo.BundleName;
                             subBundleInfo.BundleFormatBytes = EditorUtility.FormatBytes(subBundleSize);
                         }
                     }
