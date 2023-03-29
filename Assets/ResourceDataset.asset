@@ -13,149 +13,6 @@ MonoBehaviour:
   m_Name: ResourceDataset
   m_EditorClassIdentifier: 
   resourceBundleInfoList:
-  - bundleName: texture
-    bundlePath: Assets/Examples/AssetBundleTest/Texture
-    bundleKey: texture
-    bundleSize: 709776
-    bundleFormatBytes: 0.7 MB
-    resourceObjectInfoList:
-    - objectName: Tex_5195
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
-      bundleName: texture
-      objectSize: 10803
-      objectFormatBytes: 10.5 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5196
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5196.png
-      bundleName: texture
-      objectSize: 61533
-      objectFormatBytes: 60.1 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5197
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5197.png
-      bundleName: texture
-      objectSize: 56368
-      objectFormatBytes: 55.0 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5199
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5199.png
-      bundleName: texture
-      objectSize: 16081
-      objectFormatBytes: 15.7 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5203
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5203.png
-      bundleName: texture
-      objectSize: 7031
-      objectFormatBytes: 6.9 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5205
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5205.png
-      bundleName: texture
-      objectSize: 41616
-      objectFormatBytes: 40.6 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5206
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5206.png
-      bundleName: texture
-      objectSize: 7925
-      objectFormatBytes: 7.7 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5207
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5207.png
-      bundleName: texture
-      objectSize: 41058
-      objectFormatBytes: 40.1 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5208
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5208.png
-      bundleName: texture
-      objectSize: 234473
-      objectFormatBytes: 229.0 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5209
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5209.png
-      bundleName: texture
-      objectSize: 128522
-      objectFormatBytes: 125.5 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5210
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5210.png
-      bundleName: texture
-      objectSize: 22748
-      objectFormatBytes: 22.2 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5211
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5211.png
-      bundleName: texture
-      objectSize: 64121
-      objectFormatBytes: 62.6 KB
-      extension: .png
-      objectValid: 1
-    - objectName: Tex_5212
-      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
-      bundleName: texture
-      objectSize: 17497
-      objectFormatBytes: 17.1 KB
-      extension: .png
-      objectValid: 1
-    dependentBundleKeyList: []
-    resourceSubBundleInfoList: []
-  - bundleName: text
-    bundlePath: Assets/Examples/AssetBundleTest/Text
-    bundleKey: text
-    bundleSize: 7565
-    bundleFormatBytes: 7.4 KB
-    resourceObjectInfoList:
-    - objectName: ABMapSchema
-      objectPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
-      bundleName: text
-      objectSize: 6720
-      objectFormatBytes: 6.6 KB
-      extension: .json
-      objectValid: 1
-    - objectName: SampleCSV
-      objectPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
-      bundleName: text
-      objectSize: 845
-      objectFormatBytes: 0.8 KB
-      extension: .csv
-      objectValid: 1
-    dependentBundleKeyList: []
-    resourceSubBundleInfoList: []
-  - bundleName: scene
-    bundlePath: Assets/Examples/AssetBundleTest/Scene
-    bundleKey: scene
-    bundleSize: 324120
-    bundleFormatBytes: 316.5 KB
-    resourceObjectInfoList:
-    - objectName: SceneTarget
-      objectPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
-      bundleName: scene
-      objectSize: 310029
-      objectFormatBytes: 302.8 KB
-      extension: .unity
-      objectValid: 1
-    - objectName: TestAddtiveScene
-      objectPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
-      bundleName: scene
-      objectSize: 14091
-      objectFormatBytes: 13.8 KB
-      extension: .unity
-      objectValid: 1
-    dependentBundleKeyList: []
-    resourceSubBundleInfoList: []
   - bundleName: prefab
     bundlePath: Assets/Examples/AssetBundleTest/Prefab
     bundleKey: prefab
@@ -310,7 +167,8 @@ MonoBehaviour:
         objectFormatBytes: 3.2 KB
         extension: .prefab
         objectValid: 1
-      dependentBundleKeyList: []
+      dependentBundleKeyList:
+      - assets_examples_assetbundletest_material_objectpoolresmats
     - bundleName: assets_examples_assetbundletest_prefab_xbot
       bundlePath: Assets/Examples/AssetBundleTest/Prefab/XBot
       bundleKey: assets_examples_assetbundletest_prefab_xbot
@@ -381,6 +239,234 @@ MonoBehaviour:
         extension: .prefab
         objectValid: 1
       dependentBundleKeyList: []
+  - bundleName: material
+    bundlePath: Assets/Examples/AssetBundleTest/Material
+    bundleKey: material
+    bundleSize: 15070
+    bundleFormatBytes: 14.7 KB
+    resourceObjectInfoList:
+    - objectName: Alpha_Body_MAT
+      objectPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
+      bundleName: material
+      objectSize: 2134
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: BlueMat
+      objectPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
+      bundleName: material
+      objectSize: 2127
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: GreyMaterial.Default
+      objectPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
+      bundleName: material
+      objectSize: 2145
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: RedMat
+      objectPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
+      bundleName: material
+      objectSize: 2107
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: Mat_ObjectPool_Blue
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Blue.mat
+      bundleName: material
+      objectSize: 2295
+      objectFormatBytes: 2.2 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: Mat_ObjectPool_Green
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Green.mat
+      bundleName: material
+      objectSize: 2128
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: Mat_ObjectPool_Red
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Red.mat
+      bundleName: material
+      objectSize: 2134
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    dependentBundleKeyList: []
+    resourceSubBundleInfoList:
+    - bundleName: assets_examples_assetbundletest_material_objectpoolresmats
+      bundlePath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats
+      bundleKey: assets_examples_assetbundletest_material_objectpoolresmats
+      bundleSize: 6557
+      bundleFormatBytes: 6.4 KB
+      resourceObjectInfoList:
+      - objectName: Mat_ObjectPool_Blue
+        objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Blue.mat
+        bundleName: assets_examples_assetbundletest_material_objectpoolresmats
+        objectSize: 2295
+        objectFormatBytes: 2.2 KB
+        extension: .mat
+        objectValid: 1
+      - objectName: Mat_ObjectPool_Green
+        objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Green.mat
+        bundleName: assets_examples_assetbundletest_material_objectpoolresmats
+        objectSize: 2128
+        objectFormatBytes: 2.1 KB
+        extension: .mat
+        objectValid: 1
+      - objectName: Mat_ObjectPool_Red
+        objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Red.mat
+        bundleName: assets_examples_assetbundletest_material_objectpoolresmats
+        objectSize: 2134
+        objectFormatBytes: 2.1 KB
+        extension: .mat
+        objectValid: 1
+      dependentBundleKeyList: []
+  - bundleName: texture
+    bundlePath: Assets/Examples/AssetBundleTest/Texture
+    bundleKey: texture
+    bundleSize: 709776
+    bundleFormatBytes: 0.7 MB
+    resourceObjectInfoList:
+    - objectName: Tex_5195
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5195.png
+      bundleName: texture
+      objectSize: 10803
+      objectFormatBytes: 10.5 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5196
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5196.png
+      bundleName: texture
+      objectSize: 61533
+      objectFormatBytes: 60.1 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5197
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5197.png
+      bundleName: texture
+      objectSize: 56368
+      objectFormatBytes: 55.0 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5199
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5199.png
+      bundleName: texture
+      objectSize: 16081
+      objectFormatBytes: 15.7 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5203
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5203.png
+      bundleName: texture
+      objectSize: 7031
+      objectFormatBytes: 6.9 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5205
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5205.png
+      bundleName: texture
+      objectSize: 41616
+      objectFormatBytes: 40.6 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5206
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5206.png
+      bundleName: texture
+      objectSize: 7925
+      objectFormatBytes: 7.7 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5207
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5207.png
+      bundleName: texture
+      objectSize: 41058
+      objectFormatBytes: 40.1 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5208
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5208.png
+      bundleName: texture
+      objectSize: 234473
+      objectFormatBytes: 229.0 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5209
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5209.png
+      bundleName: texture
+      objectSize: 128522
+      objectFormatBytes: 125.5 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5210
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5210.png
+      bundleName: texture
+      objectSize: 22748
+      objectFormatBytes: 22.2 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5211
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5211.png
+      bundleName: texture
+      objectSize: 64121
+      objectFormatBytes: 62.6 KB
+      extension: .png
+      objectValid: 1
+    - objectName: Tex_5212
+      objectPath: Assets/Examples/AssetBundleTest/Texture/Tex_5212.png
+      bundleName: texture
+      objectSize: 17497
+      objectFormatBytes: 17.1 KB
+      extension: .png
+      objectValid: 1
+    dependentBundleKeyList: []
+    resourceSubBundleInfoList: []
+  - bundleName: text
+    bundlePath: Assets/Examples/AssetBundleTest/Text
+    bundleKey: text
+    bundleSize: 7565
+    bundleFormatBytes: 7.4 KB
+    resourceObjectInfoList:
+    - objectName: ABMapSchema
+      objectPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
+      bundleName: text
+      objectSize: 6720
+      objectFormatBytes: 6.6 KB
+      extension: .json
+      objectValid: 1
+    - objectName: SampleCSV
+      objectPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
+      bundleName: text
+      objectSize: 845
+      objectFormatBytes: 0.8 KB
+      extension: .csv
+      objectValid: 1
+    dependentBundleKeyList: []
+    resourceSubBundleInfoList: []
+  - bundleName: scene
+    bundlePath: Assets/Examples/AssetBundleTest/Scene
+    bundleKey: scene
+    bundleSize: 324120
+    bundleFormatBytes: 316.5 KB
+    resourceObjectInfoList:
+    - objectName: SceneTarget
+      objectPath: Assets/Examples/AssetBundleTest/Scene/SceneTarget.unity
+      bundleName: scene
+      objectSize: 310029
+      objectFormatBytes: 302.8 KB
+      extension: .unity
+      objectValid: 1
+    - objectName: TestAddtiveScene
+      objectPath: Assets/Examples/AssetBundleTest/Scene/TestAddtiveScene.unity
+      bundleName: scene
+      objectSize: 14091
+      objectFormatBytes: 13.8 KB
+      extension: .unity
+      objectValid: 1
+    dependentBundleKeyList: []
+    resourceSubBundleInfoList: []
   - bundleName: photo
     bundlePath: Assets/Examples/AssetBundleTest/Photo
     bundleKey: photo
@@ -467,91 +553,6 @@ MonoBehaviour:
       objectValid: 1
     dependentBundleKeyList: []
     resourceSubBundleInfoList: []
-  - bundleName: material
-    bundlePath: Assets/Examples/AssetBundleTest/Material
-    bundleKey: material
-    bundleSize: 15070
-    bundleFormatBytes: 14.7 KB
-    resourceObjectInfoList:
-    - objectName: Alpha_Body_MAT
-      objectPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
-      bundleName: material
-      objectSize: 2134
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: BlueMat
-      objectPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
-      bundleName: material
-      objectSize: 2127
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: GreyMaterial.Default
-      objectPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
-      bundleName: material
-      objectSize: 2145
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: RedMat
-      objectPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
-      bundleName: material
-      objectSize: 2107
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: Mat_ObjectPool_Blue
-      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Blue.mat
-      bundleName: material
-      objectSize: 2295
-      objectFormatBytes: 2.2 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: Mat_ObjectPool_Green
-      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Green.mat
-      bundleName: material
-      objectSize: 2128
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: Mat_ObjectPool_Red
-      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Red.mat
-      bundleName: material
-      objectSize: 2134
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    dependentBundleKeyList: []
-    resourceSubBundleInfoList:
-    - bundleName: assets_examples_assetbundletest_material_objectpoolresmats
-      bundlePath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats
-      bundleKey: assets_examples_assetbundletest_material_objectpoolresmats
-      bundleSize: 6557
-      bundleFormatBytes: 6.4 KB
-      resourceObjectInfoList:
-      - objectName: Mat_ObjectPool_Blue
-        objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Blue.mat
-        bundleName: assets_examples_assetbundletest_material_objectpoolresmats
-        objectSize: 2295
-        objectFormatBytes: 2.2 KB
-        extension: .mat
-        objectValid: 1
-      - objectName: Mat_ObjectPool_Green
-        objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Green.mat
-        bundleName: assets_examples_assetbundletest_material_objectpoolresmats
-        objectSize: 2128
-        objectFormatBytes: 2.1 KB
-        extension: .mat
-        objectValid: 1
-      - objectName: Mat_ObjectPool_Red
-        objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Red.mat
-        bundleName: assets_examples_assetbundletest_material_objectpoolresmats
-        objectSize: 2134
-        objectFormatBytes: 2.1 KB
-        extension: .mat
-        objectValid: 1
-      dependentBundleKeyList: []
   - bundleName: audio
     bundlePath: Assets/Examples/AssetBundleTest/Audio
     bundleKey: audio
