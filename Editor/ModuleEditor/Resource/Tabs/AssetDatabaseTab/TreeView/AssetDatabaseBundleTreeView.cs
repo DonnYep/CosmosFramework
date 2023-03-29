@@ -216,10 +216,17 @@ namespace Cosmos.Editor.Resource
                 case 2:
                     {
                         //Split
+                        ResourceBundleInfo[] orderedList;
                         if (ascending)
-                            bundleInfoList.OrderBy((b) => b.Splittable).ThenBy((b) => { return b.ResourceObjectInfoList.Count; });
+                        {
+                            orderedList = bundleInfoList.OrderBy((b) => b.Splittable).ThenBy((b) => { return b.ResourceSubBundleInfoList.Count; }).ToArray();
+                        }
                         else
-                            bundleInfoList.OrderByDescending((b) => b.Splittable).ThenByDescending((b) => { return b.ResourceObjectInfoList.Count; });
+                        {
+                            orderedList = bundleInfoList.OrderByDescending((b) => b.Splittable).ThenByDescending((b) => { return b.ResourceSubBundleInfoList.Count; }).ToArray();
+                        }
+                        bundleInfoList.Clear();
+                        bundleInfoList.AddRange(orderedList);
                     }
                     break;
                 case 3:
