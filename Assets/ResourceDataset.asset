@@ -203,7 +203,8 @@ MonoBehaviour:
         objectFormatBytes: 73.4 KB
         extension: .prefab
         objectValid: 1
-      dependentBundleKeyList: []
+      dependentBundleKeyList:
+      - model
     - bundleName: assets_examples_assetbundletest_prefab_ybot
       bundlePath: Assets/Examples/AssetBundleTest/Prefab/YBot
       bundleKey: assets_examples_assetbundletest_prefab_ybot
@@ -238,7 +239,8 @@ MonoBehaviour:
         objectFormatBytes: 74.9 KB
         extension: .prefab
         objectValid: 1
-      dependentBundleKeyList: []
+      dependentBundleKeyList:
+      - model
   - bundleName: material
     bundlePath: Assets/Examples/AssetBundleTest/Material
     bundleKey: material
@@ -465,7 +467,10 @@ MonoBehaviour:
       objectFormatBytes: 13.8 KB
       extension: .unity
       objectValid: 1
-    dependentBundleKeyList: []
+    dependentBundleKeyList:
+    - assets_examples_assetbundletest_prefab_ybot
+    - model
+    - texture
     resourceSubBundleInfoList: []
   - bundleName: photo
     bundlePath: Assets/Examples/AssetBundleTest/Photo
