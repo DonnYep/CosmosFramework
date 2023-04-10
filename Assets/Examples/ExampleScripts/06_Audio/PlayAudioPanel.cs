@@ -9,6 +9,7 @@ public class PlayAudioPanel : MonoBehaviour
     Button btnUnPause;
     Button btnStop;
     [SerializeField] [Range(0,10)]float fadeTime;
+    [SerializeField] [Range(0, 1)] float volume=1;
     void Awake()
     {
         btnPlay = gameObject.GetComponentInChildren<Button>("Play");
@@ -41,6 +42,7 @@ public class PlayAudioPanel : MonoBehaviour
         var ap = AudioParams.Default;
         ap.Loop = true;
         ap.FadeInTime= fadeTime;
+        ap.Volume = volume;
         CosmosEntry.AudioManager.PlayAudio("AudioTechHouse", ap, AudioPlayInfo.Default);
         Utility.Debug.LogInfo("PlayAudio");
     }

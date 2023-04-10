@@ -6,13 +6,24 @@ namespace Cosmos.Audio
     /// <summary>
     /// 声音代理对象；
     /// </summary>
-    public class AudioProxy: IAudioProxy
+    public class AudioProxy : IAudioProxy
     {
         public bool IsFading { get; set; }
         public AudioSource AudioSource { get; set; }
         Coroutine currentCoroutine;
-        public void OnPlay(float fadeTime)
+        AudioParams audioParams;
+        public void OnPlay(float fadeTime, AudioParams audioParams)
         {
+            this.audioParams = audioParams;
+            AudioSource.loop = audioParams.Loop;
+            AudioSource.priority = audioParams.Priority;
+            AudioSource.pitch = audioParams.Pitch;
+            AudioSource.panStereo = audioParams.StereoPan;
+            AudioSource.spatialBlend = audioParams.SpatialBlend;
+            AudioSource.reverbZoneMix = audioParams.ReverbZoneMix;
+            AudioSource.dopplerLevel = audioParams.DopplerLevel;
+            AudioSource.spread = audioParams.Spread;
+            AudioSource.maxDistance = audioParams.MaxDistance;
             if (currentCoroutine != null)
                 Utility.Unity.StopCoroutine(currentCoroutine);
             currentCoroutine = Utility.Unity.StartCoroutine(EnumFadeInPlay(fadeTime));
@@ -54,12 +65,12 @@ namespace Cosmos.Audio
             }
             AudioSource.volume = 0;
             AudioSource.Play();
-            while (AudioSource.volume < 1.0f)
+            while (AudioSource.volume < audioParams.Volume)
             {
                 AudioSource.volume += Time.deltaTime / fadeTime;
                 yield return null;
             }
-            AudioSource.volume = 1f;
+            AudioSource.volume = audioParams.Volume;
             IsFading = false;
         }
         IEnumerator EnumFadeInUnPause(float fadeTime)
@@ -73,12 +84,12 @@ namespace Cosmos.Audio
             }
             AudioSource.volume = 0;
             AudioSource.UnPause();
-            while (AudioSource.volume < 1.0f)
+            while (AudioSource.volume < audioParams.Volume)
             {
                 AudioSource.volume += Time.deltaTime / fadeTime;
                 yield return null;
             }
-            AudioSource.volume = 1f;
+            AudioSource.volume = audioParams.Volume;
             IsFading = false;
         }
         IEnumerator EnumFadeOutPause(float fadeTime)
