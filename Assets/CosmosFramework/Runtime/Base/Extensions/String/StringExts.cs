@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Cosmos
 {
@@ -105,6 +106,13 @@ namespace Cosmos
         public static byte[] ToByteArray(this string @this)
         {
             return Encoding.UTF8.GetBytes(@this);
+        }
+        /// <summary>
+        /// 根据正则替换
+        /// </summary>
+        public static string Replace(this string @this, Regex regex, string replacement)
+        {
+            return regex.Replace(@this, replacement);
         }
     }
 }
