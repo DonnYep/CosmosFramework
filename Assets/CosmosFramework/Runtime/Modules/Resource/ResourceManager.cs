@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Threading.Tasks;
 using Object = UnityEngine.Object;
 using Cosmos.WebRequest;
 using Cosmos.Resource.State;
@@ -158,59 +157,6 @@ namespace Cosmos.Resource
         public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
         {
             return currentLoadHelper.UnloadSceneAsync(info, progress, condition, callback);
-        }
-        /// <inheritdoc/>
-        public async Task<T> LoadAssetAsync<T>(string assetName)
-            where T : Object
-        {
-            T asset = null;
-            await currentLoadHelper.LoadAssetAsync<T>(assetName, a => asset = a, null);
-            return asset;
-        }
-        /// <inheritdoc/>
-        public async Task<Object> LoadAssetAsync(string assetName, Type type)
-        {
-            Object asset = null;
-            await currentLoadHelper.LoadAssetAsync(assetName, type, a => asset = a, null);
-            return asset;
-        }
-        /// <inheritdoc/>
-        public async Task<GameObject> LoadPrefabAsync(string assetName, bool instantiate = false)
-        {
-            GameObject go = null;
-            await currentLoadHelper.LoadAssetAsync<GameObject>(assetName, (asset) =>
-            {
-                if (instantiate)
-                {
-                    if (asset != null)
-                        go = GameObject.Instantiate(asset);
-                }
-                else
-                    go = asset;
-            }, null);
-            return go;
-        }
-        /// <inheritdoc/>
-        public async Task<Object[]> LoadAllAssetAsync(string assetPack, Action<float> progress = null)
-        {
-            Object[] assets = null;
-            await currentLoadHelper.LoadAllAssetAsync(assetPack, (a) => { assets = a; }, progress);
-            return assets;
-        }
-        /// <inheritdoc/>
-        public async Task LoadSceneAsync(SceneAssetInfo info)
-        {
-            await currentLoadHelper.LoadSceneAsync(info, null, null, null, null);
-        }
-        /// <inheritdoc/>
-        public async Task LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition)
-        {
-            await currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, condition, null);
-        }
-        /// <inheritdoc/>
-        public async Task UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition)
-        {
-            await currentLoadHelper.UnloadSceneAsync(info, progress, condition, null);
         }
         /// <inheritdoc/>
         public void UnloadAsset(string assetName)

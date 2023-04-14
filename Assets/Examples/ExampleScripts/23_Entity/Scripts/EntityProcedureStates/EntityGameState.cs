@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cosmos.Procedure;
 using Cosmos;
+using Cosmos.Extensions;
 
 public class EntityGameState : ProcedureNode
 {
