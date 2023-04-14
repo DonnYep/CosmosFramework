@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Cosmos;
+using Cosmos.Extensions;
 public class MyUILoader : MonoBehaviour
 {
     async void Start()

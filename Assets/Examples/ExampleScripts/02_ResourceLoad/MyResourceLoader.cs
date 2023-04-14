@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using Cosmos;
+using Cosmos.Extensions;
+
 public class MyResourceLoader : MonoBehaviour
 {
     void Start()

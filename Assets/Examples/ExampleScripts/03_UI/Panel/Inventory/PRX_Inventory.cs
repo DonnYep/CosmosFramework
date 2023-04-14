@@ -1,4 +1,5 @@
 ﻿using Cosmos;
+using Cosmos.Extensions;
 using PureMVC;
 using UnityEngine;
 public class PRX_Inventory : Proxy
