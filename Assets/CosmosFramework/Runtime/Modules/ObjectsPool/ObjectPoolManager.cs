@@ -75,13 +75,6 @@ namespace Cosmos.ObjectPool
             }
         }
         /// <inheritdoc/>
-        public async Task<IObjectPool> RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo)
-        {
-            IObjectPool pool = null;
-            await RegisterObjectPoolAsync(assetInfo, (p) => { pool = p; });
-            return pool;
-        }
-        /// <inheritdoc/>
         public IObjectPool RegisterObjectPool(string poolName, GameObject spawnAsset)
         {
             if (!HasObjectPool(poolName))
