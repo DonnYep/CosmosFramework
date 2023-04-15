@@ -3,29 +3,33 @@ namespace LiteMVC
 {
     public static class MVCExts
     {
-        public static void Bind<T>(this IObservable @this, Action<T> action)
+        public static IObservable Bind<T>(this IObservable @this, Action<T> action)
         {
             if (action == null)
                 throw new ArgumentNullException($"action is empty!");
             MVC.Bind(action);
+            return @this;
         }
-        public static void Bind<T>(this IObservable @this, string eventName, Action<T> action)
+        public static IObservable Bind<T>(this IObservable @this, string eventName, Action<T> action)
         {
             if (action == null)
                 throw new ArgumentNullException($"action is empty!");
             MVC.Bind(eventName, action);
+            return @this;
         }
-        public static void Unbind<T>(this IObservable @this, Action<T> action)
+        public static IObservable Unbind<T>(this IObservable @this, Action<T> action)
         {
             if (action == null)
                 throw new ArgumentNullException($"action is empty!");
             MVC.Unbind(action);
+            return @this;
         }
-        public static void Unbind<T>(this IObservable @this, string eventName, Action<T> action)
+        public static IObservable Unbind<T>(this IObservable @this, string eventName, Action<T> action)
         {
             if (action == null)
                 throw new ArgumentNullException($"action is empty!");
             MVC.Unbind(eventName, action);
+            return @this;
         }
         public static bool HasBind<T>(this IObservable @this)
         {
@@ -35,13 +39,15 @@ namespace LiteMVC
         {
             return MVC.HasBind<T>(eventName);
         }
-        public static void Dispatch<T>(this IObservable @this, T data)
+        public static IObservable Dispatch<T>(this IObservable @this, T data)
         {
             MVC.Dispatch(string.Empty, data);
+            return @this;
         }
-        public static void Dispatch<T>(this IObservable @this, string eventName, T data)
+        public static IObservable Dispatch<T>(this IObservable @this, string eventName, T data)
         {
             MVC.Dispatch(eventName, data);
+            return @this;
         }
         public static int BindCount<T>(this IObservable @this)
         {

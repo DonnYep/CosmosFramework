@@ -26,6 +26,22 @@ namespace Cosmos
                 domainAssemblies = assemblies;
             }
             /// <summary>
+            /// 从域程序集中获取类；
+            /// </summary>
+            /// <param name="typeName">类型完全限定名</param>
+            /// <returns>类型</returns>
+            public static Type GetType(string typeName)
+            {
+                Type type = null;
+                foreach (var assembly in domainAssemblies)
+                {
+                    type = assembly.GetType(typeName);
+                    if (type != null)
+                        break;
+                }
+                return type;
+            }
+            /// <summary>
             /// 获取AppDomain中指定的程序集
             /// </summary>
             /// <param name="assemblyName">程序集名</param>

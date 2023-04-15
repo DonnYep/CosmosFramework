@@ -1,7 +1,6 @@
 ﻿using Cosmos.Resource.State;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -143,69 +142,6 @@ namespace Cosmos.Resource
         /// <param name="callback">场景卸载完毕后的回调<</param>
         /// <returns>协程对象</returns>
         Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback);
-        /// <summary>
-        /// 加载资源（异步），增加一个引用计数；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <typeparam name="T">资源类型</typeparam>
-        /// <param name="assetName">资源信息</param>
-        /// <returns>加载task</returns>
-        Task<T> LoadAssetAsync<T>(string assetName) where T : Object;
-        /// <summary>
-        /// 加载资源（异步），增加一个引用计数；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <param name="assetName">资源信息</param>
-        /// <param name="type">资源类型</param>
-        /// <returns>加载task</returns>
-        Task<Object> LoadAssetAsync(string assetName, Type type);
-        /// <summary>
-        ///  加载资源（异步），增加一个引用计数；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <param name="assetName">资源信息</param>
-        /// <param name="instantiate">是否实例化对象</param>
-        /// <returns>加载task</returns>
-        Task<GameObject> LoadPrefabAsync(string assetName, bool instantiate = false);
-        /// <summary>
-        ///  加载资源包种的所有资源（异步），增加一个引用计数；
-        /// </summary>
-        /// <param name="assetBundleName">资源包</param>
-        /// <param name="progress">加载中事件</param>
-        /// <returns>加载task</returns>
-        Task<Object[]> LoadAllAssetAsync(string assetBundleName, Action<float> progress = null);
-        /// <summary>
-        /// 加载场景（异步）；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <returns>Task异步任务</returns>
-        Task LoadSceneAsync(SceneAssetInfo info);
-        /// <summary>
-        /// 加载场景（异步），增加一个引用计数；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <param name="progressProvider">自定义的加载进度0-1</param>
-        /// <param name="progress">加载场景进度回调</param>
-        /// <param name="condition">加载场景完成的条件</param>
-        /// <returns>Task异步任务</returns>
-        Task LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition);
-        /// <summary>
-        /// 卸载场景（异步），增加一个引用计数；
-        /// 须使用await获取结果；
-        /// aysnc/await机制是使用状态机切换上下文。使用Task.Result会阻塞当前线程导致aysnc/await无法切换回线程上下文，引发锁死；
-        /// </summary>
-        /// <param name="info">资源信息</param>
-        /// <param name="progress">卸载场景的进度</param>
-        /// <param name="condition">卸载场景完成的条件</param>
-        /// <returns>Task异步任务</returns>
-        Task UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition);
         /// <summary>
         /// 卸载资源（同步），减少一个引用计数；
         /// </summary>

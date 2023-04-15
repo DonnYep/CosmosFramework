@@ -26,13 +26,6 @@ namespace Cosmos.ObjectPool
         /// <returns>协程对象</returns>
         Coroutine RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo, Action<IObjectPool> callback);
         /// <summary>
-        /// 异步注册对象池；
-        /// 须使用await获取结果；
-        /// </summary>
-        /// <param name="assetInfo">对象池资源信息</param>
-        /// <returns>Task异步任务</returns>
-        Task<IObjectPool> RegisterObjectPoolAsync(ObjectPoolAssetInfo assetInfo);
-        /// <summary>
         /// 注册自定义资源对象池；
         /// </summary>
         /// <param name="poolName">对象池名</param>

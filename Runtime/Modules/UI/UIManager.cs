@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Cosmos.UI
 {
@@ -94,7 +93,7 @@ namespace Cosmos.UI
             this.uiFormAssetHelper = helper;
         }
         /// <inheritdoc/>
-        public Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback = null)
+        public Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback)
         {
             CheckUIAssetInfoValid(assetInfo, uiType);
             var uiFormName = assetInfo.UIFormName;
@@ -130,7 +129,7 @@ namespace Cosmos.UI
             }
         }
         /// <inheritdoc/>
-        public Coroutine OpenUIFormAsync<T>(UIAssetInfo assetInfo, Action<T> callback = null)
+        public Coroutine OpenUIFormAsync<T>(UIAssetInfo assetInfo, Action<T> callback)
             where T : class, IUIForm
         {
             var type = typeof(T);
@@ -142,21 +141,6 @@ namespace Cosmos.UI
             }
             else
                 return OpenUIFormAsync(assetInfo, typeof(T), uiForm => { callback?.Invoke(uiForm as T); });
-        }
-        /// <inheritdoc/>
-        public async Task<T> OpenUIFormAsync<T>(UIAssetInfo assetInfo)
-            where T : class, IUIForm
-        {
-            T uiForm = null;
-            await OpenUIFormAsync<T>(assetInfo, pnl => uiForm = pnl);
-            return uiForm;
-        }
-        /// <inheritdoc/>
-        public async Task<IUIForm> OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType)
-        {
-            IUIForm uiForm = null;
-            await OpenUIFormAsync(assetInfo, uiType, pnl => uiForm = pnl);
-            return uiForm;
         }
         /// <inheritdoc/>
         public void ReleaseUIForm(string uiFormName)

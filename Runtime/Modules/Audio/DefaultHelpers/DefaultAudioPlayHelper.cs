@@ -16,10 +16,6 @@ namespace Cosmos
         List<string> deactiveCache;
         const string prefix = "SND-";
         long latestTime;
-        /// <summary>
-        /// 间隔5秒；
-        /// </summary>
-        const int intervalSecond = 5;
         bool mute;
         public bool Mute
         {
@@ -46,13 +42,13 @@ namespace Cosmos
         {
             if (playingDict.TryGetValue(audioObject.AudioName, out var playingProxy))
             {
-                playingProxy.OnPlay(audioParams.FadeInTime);
+                playingProxy.OnPlay(audioParams.FadeInTime,audioParams);
                 return;
             }
             if (pauseDict.TryRemove(audioObject.AudioName, out var pausedProxy))
             {
                 playingDict.Add(audioObject.AudioName, pausedProxy);
-                pausedProxy.OnPlay(audioParams.FadeInTime);
+                pausedProxy.OnPlay(audioParams.FadeInTime, audioParams);
                 return;
             }
             var audioSource = pool.Spawn();
@@ -65,20 +61,10 @@ namespace Cosmos
             else
                 audioSource.transform.SetParent(audioPlayInfo.BindObject);
             audioSource.clip = audioObject.AudioClip;
-            audioSource.loop = audioParams.Loop;
-            audioSource.priority = audioParams.Priority;
-            audioSource.volume = audioParams.Volume;
-            audioSource.pitch = audioParams.Pitch;
-            audioSource.panStereo = audioParams.StereoPan;
-            audioSource.spatialBlend = audioParams.SpatialBlend;
-            audioSource.reverbZoneMix = audioParams.ReverbZoneMix;
-            audioSource.dopplerLevel = audioParams.DopplerLevel;
-            audioSource.spread = audioParams.Spread;
-            audioSource.maxDistance = audioParams.MaxDistance;
 
             var audioProxy = audioProxyPool.Spawn();
             audioProxy.AudioSource = audioSource;
-            audioProxy.OnPlay(audioParams.FadeInTime);
+            audioProxy.OnPlay(audioParams.FadeInTime, audioParams);
             playingDict[audioObject.AudioName] = audioProxy;
         }
         public void PauseAudio(AudioObject audioObject, float fadeTime)
@@ -152,7 +138,7 @@ namespace Cosmos
             {
                 return;
             }
-            latestTime = now + intervalSecond;
+            latestTime = now + AudioConstant.CheckPlayingIntervalSecond;
             var activeLength = playingDict.Count;
             if (activeLength == 0)
                 return;

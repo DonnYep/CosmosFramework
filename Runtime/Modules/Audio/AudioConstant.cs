@@ -16,5 +16,10 @@
         public const float DopplerLevel = 1;
         public const int Spread = 0;
         public const float MaxDistance = 500;
+
+        /// <summary>
+        /// 检查播放间隔，5秒；
+        /// </summary>
+        public const int CheckPlayingIntervalSecond = 5;
     }
 }

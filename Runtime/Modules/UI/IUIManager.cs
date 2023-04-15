@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using UnityEngine;
 namespace Cosmos.UI
 {
@@ -41,7 +40,7 @@ namespace Cosmos.UI
         /// <param name="uiType">目标组件的type类型</param>
         /// <param name="callback">加载完成后的回调</param>
         /// <returns>协程对象</returns>
-        Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback = null);
+        Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback);
         /// <summary>
         /// 通过UIAssetInfo加载UI对象
         /// </summary>
@@ -49,21 +48,7 @@ namespace Cosmos.UI
         /// <param name="assetInfo">传入的assetInfo对象</param>
         /// <param name="callback">加载完成后的回调</param>
         /// <returns>协程对象</returns>
-        Coroutine OpenUIFormAsync<T>(UIAssetInfo assetInfo, Action<T> callback = null) where T : class, IUIForm;
-        /// <summary>
-        /// 通过UIAssetInfo加载UI对象
-        /// </summary>
-        /// <typeparam name="T">目标UI组件</typeparam>
-        /// <param name="assetInfo">传入的assetInfo对象</param>
-        /// <returns>Task异步任务</returns>
-        Task<T> OpenUIFormAsync<T>(UIAssetInfo assetInfo) where T : class, IUIForm;
-        /// <summary>
-        ///  通过UIAssetInfo加载UI对象
-        /// </summary>
-        /// <param name="assetInfo">传入的assetInfo对象</param>
-        /// <param name="uiType">目标组件的type类型</param>
-        /// <returns>Task异步任务</returns>
-        Task<IUIForm> OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType);
+        Coroutine OpenUIFormAsync<T>(UIAssetInfo assetInfo, Action<T> callback) where T : class, IUIForm;
         /// <summary>
         /// 释放UIForm；
         /// 此操作会释放UIForm对象；
