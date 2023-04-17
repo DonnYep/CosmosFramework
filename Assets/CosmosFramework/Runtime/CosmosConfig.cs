@@ -35,6 +35,7 @@ namespace Cosmos
         [SerializeField] bool buildInfoEncrytion = false;
         [SerializeField] string buildInfoEncrytionKey = "CosmosBundlesKey";
 
+        [SerializeField] bool drawDebugWindow;
         public void LoadResource()
         {
             switch (resourceLoadMode)
