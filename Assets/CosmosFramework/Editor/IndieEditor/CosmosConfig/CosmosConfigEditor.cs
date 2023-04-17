@@ -37,6 +37,8 @@ namespace Cosmos.Editor
 
         SerializedProperty sp_RunInBackground;
 
+        SerializedProperty sp_DrawDebugWindow;
+
         string[] debugHelpers;
         string[] jsonHelpers;
         string[] messagePackHelpers;
@@ -58,7 +60,7 @@ namespace Cosmos.Editor
         string[] resourceBundlePathTypes;
 
         bool runInBackground;
-
+        bool drawDebugWindow;
         public override void OnInspectorGUI()
         {
             targetObject.Update();
@@ -176,6 +178,12 @@ namespace Cosmos.Editor
             if (runInBackground != sp_RunInBackground.boolValue)
                 sp_RunInBackground.boolValue = runInBackground;
 
+            EditorGUILayout.Space(16);
+            EditorGUILayout.LabelField("Debug", EditorStyles.boldLabel);
+            drawDebugWindow = EditorGUILayout.ToggleLeft("DrawDebugWindow", drawDebugWindow);
+            if (drawDebugWindow != sp_DrawDebugWindow.boolValue)
+                sp_DrawDebugWindow.boolValue = drawDebugWindow;
+
             targetObject.ApplyModifiedProperties();
         }
         private void OnEnable()
@@ -232,6 +240,8 @@ namespace Cosmos.Editor
             sp_AssetBundleEncrytionOffset = targetObject.FindProperty("assetBundleEncrytionOffset");
             sp_BuildInfoEncrytion = targetObject.FindProperty("buildInfoEncrytion");
             sp_BuildInfoEncrytionKey = targetObject.FindProperty("buildInfoEncrytionKey");
+
+            sp_DrawDebugWindow = targetObject.FindProperty("drawDebugWindow");
 
             resourceLoadModes = Enum.GetNames(typeof(ResourceLoadMode));
             resourceBundlePathTypes = Enum.GetNames(typeof(ResourceBundlePathType));
