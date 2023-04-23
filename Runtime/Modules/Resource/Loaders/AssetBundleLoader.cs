@@ -25,6 +25,10 @@ namespace Cosmos.Resource
         /// </summary>
         readonly Dictionary<string, ResourceBundleWarpper> resourceBundleWarpperDict;
         /// <summary>
+        /// AB异步请求记录
+        /// </summary>
+        readonly Dictionary<string, AssetBundleCreateRequest> abRequestDict;
+        /// <summary>
         /// bundleKey===bundleName
         /// </summary>
         readonly Dictionary<string, string> resourceBundleKeyDict;
@@ -53,6 +57,7 @@ namespace Cosmos.Resource
             resourceBundleWarpperDict = new Dictionary<string, ResourceBundleWarpper>();
             resourceObjectWarpperDict = new Dictionary<string, ResourceObjectWarpper>();
             loadedSceneDict = new Dictionary<string, UnityEngine.SceneManagement.Scene>();
+            abRequestDict = new Dictionary<string, AssetBundleCreateRequest>();
         }
         ///<inheritdoc/> 
         public void OnInitialize()
@@ -543,8 +548,17 @@ namespace Cosmos.Resource
             if (bundleWarpper.AssetBundle == null)
             {
                 var abPath = Path.Combine(ResourceDataProxy.BundlePath, bundleWarpper.ResourceBundle.BundleKey);
-                var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.EncryptionOffset);
-                yield return abReq;
+                if (abRequestDict.TryGetValue(abPath, out var abReq))
+                {
+                    yield return new WaitUntil(() => abReq.isDone);
+                }
+                else
+                {
+                    abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.EncryptionOffset);
+                    abRequestDict.Add(abPath, abReq);
+                    yield return abReq;
+                }
+                abRequestDict.Remove(abPath);
                 var bundle = abReq.assetBundle;
                 if (bundle != null)
                 {
@@ -565,8 +579,17 @@ namespace Cosmos.Resource
                     if (dependentBundleWarpper.AssetBundle == null)
                     {
                         var abPath = Path.Combine(ResourceDataProxy.BundlePath, dependentBundleKey);
-                        var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.EncryptionOffset);
-                        yield return abReq;
+                        if (abRequestDict.TryGetValue(abPath, out var abReq))
+                        {
+                            yield return new WaitUntil(() => abReq.isDone);
+                        }
+                        else
+                        {
+                            abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.EncryptionOffset);
+                            abRequestDict.Add(abPath,abReq);
+                            yield return abReq;
+                        }
+                        abRequestDict.Remove(abPath);
                         var bundle = abReq.assetBundle;
                         if (bundle != null)
                         {
