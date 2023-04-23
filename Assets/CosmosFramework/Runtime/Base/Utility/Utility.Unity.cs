@@ -98,7 +98,7 @@ namespace Cosmos
             public static T ChildComp<T>(Transform go, string name)
       where T : Component
             {
-                var child = go.FindChildren( name);
+                var child = go.FindChildren(name);
                 if (child == null)
                     return null;
                 return child.GetComponent<T>();
@@ -492,6 +492,10 @@ where T : Component
             public static Coroutine StartCoroutine(Action handler, Action callback)
             {
                 return CoroutineHelper.StartCoroutine(handler, callback);
+            }
+            public static void AddCoroutine(IEnumerator routine)
+            {
+                CoroutineHelper.AddCoroutine(routine);
             }
             /// <summary>
             /// 延时协程；

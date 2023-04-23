@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cosmos
 {
     [DisallowMultipleComponent]
-    public class CoroutineHelper:MonoBehaviour,ICoroutineHelper
+    public class CoroutineHelper : MonoBehaviour, ICoroutineHelper
     {
+        List<IEnumerator> routineList = new List<IEnumerator>();
         public Coroutine PredicateCoroutine(Func<bool> handler, Action callBack)
         {
             return StartCoroutine(EnumPredicateCoroutine(handler, callBack));
@@ -29,7 +31,7 @@ namespace Cosmos
         {
             return StartCoroutine(EnumCoroutine(handler));
         }
-        public Coroutine StartCoroutine(Action handler,Action callback)
+        public Coroutine StartCoroutine(Action handler, Action callback)
         {
             return StartCoroutine(EnumCoroutine(handler, callback));
         }
@@ -42,6 +44,19 @@ namespace Cosmos
         public Coroutine StartCoroutine(Coroutine routine, Action callBack)
         {
             return StartCoroutine(EnumCoroutine(routine, callBack));
+        }
+        public void AddCoroutine(IEnumerator routine)
+        {
+            routineList.Add(routine);
+        }
+        void Update()
+        {
+            while (routineList.Count > 0)
+            {
+                var routine = routineList[0];
+                routineList.RemoveAt(0);
+                StartCoroutine(routine);
+            }
         }
         IEnumerator EnumDelay(float delay, Action callBack)
         {
@@ -58,7 +73,7 @@ namespace Cosmos
             handler?.Invoke();
             yield return null;
         }
-        IEnumerator EnumCoroutine(Action handler,Action callack)
+        IEnumerator EnumCoroutine(Action handler, Action callack)
         {
             yield return StartCoroutine(handler);
             callack?.Invoke();
