@@ -10,6 +10,7 @@ namespace Cosmos
         Coroutine StartCoroutine(IEnumerator routine);
         Coroutine StartCoroutine(Action handler);
         Coroutine StartCoroutine(Action handler, Action callback);
+        void AddCoroutine(IEnumerator routine);
         /// <summary>
         /// 延时协程；
         /// </summary>
