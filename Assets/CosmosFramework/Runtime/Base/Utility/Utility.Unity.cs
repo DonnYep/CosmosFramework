@@ -10,12 +10,12 @@ namespace Cosmos
     public static partial class Utility
     {
         /// <summary>
-        /// 这个类封装了所有跟Unity相关的工具函数，是所有Utiltiy中需要引入UnityEngine的类
+        /// 这个类封装了所有跟Unity相关的工具函数
         /// </summary>
         public static class Unity
         {
-            static ICoroutineHelper coroutineHelper;
-            static ICoroutineHelper CoroutineHelper
+            static CoroutineHelper coroutineHelper;
+            static CoroutineHelper CoroutineHelper
             {
                 get
                 {
