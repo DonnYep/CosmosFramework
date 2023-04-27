@@ -540,6 +540,17 @@ where T : Component
                 CoroutineHelper.StopCoroutine(routine);
             }
             #endregion
+
+            #region UnityThread
+            public static void PostToUnityThread(Action<object> postCallback)
+            {
+                UnityThreadSync.Instance.PostToUnityThread(postCallback);
+            }
+            public static void SendToUnityThread(Action<object> postCallback)
+            {
+                UnityThreadSync.Instance.SendToUnityThread(postCallback);
+            }
+            #endregion
         }
     }
 }
