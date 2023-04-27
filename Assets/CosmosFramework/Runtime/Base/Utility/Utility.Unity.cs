@@ -546,6 +546,10 @@ where T : Component
             {
                 UnityThreadSync.Instance.PostToUnityThread(postCallback);
             }
+            public static void SendToUnityThread(Action<object> postCallback)
+            {
+                UnityThreadSync.Instance.SendToUnityThread(postCallback);
+            }
             #endregion
         }
     }
