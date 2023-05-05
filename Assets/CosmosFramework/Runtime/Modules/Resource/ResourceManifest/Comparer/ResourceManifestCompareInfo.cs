@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 namespace Cosmos.Resource.Compare
 {
     [Serializable]
-    [StructLayout(LayoutKind.Auto)]
     public struct ResourceManifestCompareInfo : IEquatable<ResourceManifestCompareInfo>
     {
         public string ResouceBundleName;

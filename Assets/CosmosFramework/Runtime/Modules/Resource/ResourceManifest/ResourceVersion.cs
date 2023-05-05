@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 namespace Cosmos.Resource
 {
-    [StructLayout(LayoutKind.Auto)]
     public struct ResourceVersion : IEquatable<ResourceVersion>
     {
         /// <summary>
