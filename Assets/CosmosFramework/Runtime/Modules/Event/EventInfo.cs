@@ -1,7 +1,5 @@
-﻿using System.Runtime.InteropServices;
-namespace Cosmos.Event
+﻿namespace Cosmos.Event
 {
-    [StructLayout(LayoutKind.Auto)]
     public struct EventInfo
     {
         public string EventKey { get; private set; }

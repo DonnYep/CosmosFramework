@@ -1,10 +1,8 @@
-﻿using System.Runtime.InteropServices;
-namespace Cosmos
+﻿namespace Cosmos
 {
     /// <summary>
     /// AB包中场景资源的信息；
     /// </summary>
-    [StructLayout(LayoutKind.Auto)]
     public struct SceneAssetInfo
     {
         public int Priority { get; private set; }

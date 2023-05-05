@@ -1,7 +1,5 @@
-﻿using System.Runtime.InteropServices;
-namespace Cosmos
+﻿namespace Cosmos
 {
-    [StructLayout(LayoutKind.Auto)]
     public struct ObjectPoolAssetInfo 
     {
         public string AssetName { get; private set; }

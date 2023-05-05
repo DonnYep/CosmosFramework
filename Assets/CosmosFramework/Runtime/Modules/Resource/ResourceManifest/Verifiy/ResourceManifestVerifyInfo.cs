@@ -1,11 +1,9 @@
-﻿using System.Runtime.InteropServices;
-using System;
+﻿using System;
 namespace Cosmos.Resource.Verify
 {
     /// <summary>
     /// Bundle用于校验时的数据；
     /// </summary>
-    [StructLayout(LayoutKind.Auto)]
     public struct ResourceManifestVerifyInfo : IEquatable<ResourceManifestVerifyInfo>
     {
         /// <summary>
