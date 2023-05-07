@@ -67,7 +67,7 @@ namespace Cosmos.Editor.Resource
                 BuildedAssetsEncryption = tabData.BuildedAssetsEncryption,
                 BuildIedAssetsEncryptionKey = tabData.BuildIedAssetsEncryptionKey,
                 BuildTarget = buildTarget,
-                BuildVersion = tabData.BuildVersion,
+                BuildVersion = $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}",
                 CopyToStreamingAssets = tabData.CopyToStreamingAssets,
                 UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
                 StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath

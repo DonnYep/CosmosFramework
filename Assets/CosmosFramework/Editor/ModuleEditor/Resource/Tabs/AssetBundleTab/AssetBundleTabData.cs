@@ -47,6 +47,10 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public string BuildVersion;
         /// <summary>
+        /// 内部构建的版本号
+        /// </summary>
+        public int InternalBuildVersion;
+        /// <summary>
         /// AB偏移加密；
         /// </summary>
         public bool AssetBundleEncryption;
@@ -84,13 +88,14 @@ namespace Cosmos.Editor.Resource
             BuildedAssetsEncryption = false;
             BuildIedAssetsEncryptionKey = "CosmosBundlesKey";
             AssetBundleNameType = AssetBundleNameType.HashInstead;
-            BuildVersion = "0_0_1";
+            BuildVersion = "0.0.1";
+            InternalBuildVersion = 0;
             ForceRebuildAssetBundle = false;
             DisableWriteTypeTree = false;
             DeterministicAssetBundle = false;
             IgnoreTypeTreeChanges = false;
             StreamingAssetsRelativePath = BuildVersion;
-            AssetBundleBuildPath = Utility.IO.WebPathCombine(BuildPath, BuildVersion);
+            AssetBundleBuildPath = Utility.IO.WebPathCombine(BuildPath, $"{BuildVersion}_{InternalBuildVersion}");
         }
     }
 }
