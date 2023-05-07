@@ -59,7 +59,7 @@ namespace Cosmos.Editor.Resource
                         BuildedAssetsEncryption = tabData.BuildedAssetsEncryption,
                         BuildIedAssetsEncryptionKey = tabData.BuildIedAssetsEncryptionKey,
                         BuildTarget = tabData.BuildTarget,
-                        BuildVersion = tabData.BuildVersion,
+                        BuildVersion = $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}",
                         CopyToStreamingAssets = tabData.CopyToStreamingAssets,
                         UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
                         StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath
@@ -100,10 +100,13 @@ namespace Cosmos.Editor.Resource
         void DrawPathOptions()
         {
             EditorGUILayout.LabelField("Path Options", EditorStyles.boldLabel);
-            bool versionValid = false;
             EditorGUILayout.BeginVertical();
             {
                 tabData.BuildVersion = EditorGUILayout.TextField("Build version", tabData.BuildVersion);
+                tabData.InternalBuildVersion = EditorGUILayout.IntField("Internal build version", tabData.InternalBuildVersion);
+                if (tabData.InternalBuildVersion < 0)
+                    tabData.InternalBuildVersion = 0;
+
                 EditorGUILayout.BeginHorizontal();
                 {
                     tabData.BuildPath = EditorGUILayout.TextField("Build path", tabData.BuildPath.Trim());
@@ -117,11 +120,9 @@ namespace Cosmos.Editor.Resource
                     }
                 }
                 EditorGUILayout.EndHorizontal();
-                versionValid = !string.IsNullOrEmpty(tabData.BuildVersion);
-                if (versionValid)
+                if (!string.IsNullOrEmpty(tabData.BuildVersion))
                 {
-                    tabData.BuildVersion = ResourceUtility.FilterName(tabData.BuildVersion);
-                    tabData.AssetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildTarget.ToString(), tabData.BuildVersion);
+                    tabData.AssetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildTarget.ToString(), $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}");
                 }
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
