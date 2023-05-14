@@ -19,6 +19,14 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public AssetBundleNameType AssetBundleNameType;
         /// <summary>
+        /// 构建handler的名称
+        /// </summary>
+        public string BuildHandlerName;
+        /// <summary>
+        /// 构建handler的序号
+        /// </summary>
+        public int BuildHandlerIndex;
+        /// <summary>
         /// 不会在AssetBundle中包含类型信息;
         /// </summary>
         public bool DisableWriteTypeTree;
@@ -82,8 +90,9 @@ namespace Cosmos.Editor.Resource
         {
             AssetBundleCompressType = AssetBundleCompressType.ChunkBasedCompression_LZ4;
             BuildTarget = BuildTarget.StandaloneWindows;
-            BuildPath = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), "AssetBundles");
-            AssetBundleEncryption = false;
+            BuildHandlerName = Constants.NONE;
+            BuildHandlerIndex = 0;
+            BuildPath = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), "AssetBundles"); AssetBundleEncryption = false;
             AssetBundleOffsetValue = 16;
             BuildedAssetsEncryption = false;
             BuildIedAssetsEncryptionKey = "CosmosBundlesKey";

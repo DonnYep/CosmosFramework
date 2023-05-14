@@ -16,9 +16,11 @@ namespace Cosmos.Editor.Resource
         AssetBundleBuilder assetBundleBuilder = new AssetBundleBuilder();
         Vector2 scrollPosition;
         bool isAesKeyInvalid = false;
+        string[] buildHandlers;
         public override void OnEnable()
         {
             GetTabData();
+            GetBuildHandlers();
         }
         public override void OnDisable()
         {
@@ -81,6 +83,12 @@ namespace Cosmos.Editor.Resource
             {
                 tabData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("Build target", tabData.BuildTarget);
                 tabData.AssetBundleCompressType = (AssetBundleCompressType)EditorGUILayout.EnumPopup("Build compression type", tabData.AssetBundleCompressType);
+
+                tabData.BuildHandlerIndex = EditorGUILayout.Popup("Build handler", tabData.BuildHandlerIndex, buildHandlers);
+                if (tabData.BuildHandlerIndex < buildHandlers.Length)
+                {
+                    tabData.BuildHandlerName = buildHandlers[tabData.BuildHandlerIndex];
+                }
 
                 tabData.ForceRebuildAssetBundle = EditorGUILayout.ToggleLeft("Force rebuild assetBundle", tabData.ForceRebuildAssetBundle);
                 tabData.DisableWriteTypeTree = EditorGUILayout.ToggleLeft("Disable write type tree", tabData.DisableWriteTypeTree);
@@ -201,13 +209,38 @@ namespace Cosmos.Editor.Resource
         {
             EditorUtil.SaveData(AssetBundleTabDataName, tabData);
         }
+        void GetBuildHandlers()
+        {
+            var srcBuildHandlers = Utility.Assembly.GetDerivedTypeNames<IResourceBuildHandler>();
+            buildHandlers = new string[srcBuildHandlers.Length + 1];
+            buildHandlers[0] = Constants.NONE;
+            Array.Copy(srcBuildHandlers, 0, buildHandlers, 1, srcBuildHandlers.Length);
+
+            var buildHandlerMaxIndex = buildHandlers.Length - 1;
+            if (tabData.BuildHandlerIndex > buildHandlerMaxIndex)
+            {
+                tabData.BuildHandlerIndex = buildHandlerMaxIndex;
+            }
+        }
         IEnumerator BuildAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset)
         {
             yield return BuildDataset.Invoke();
             ResourceManifest resourceManifest = new ResourceManifest();
-            assetBundleBuilder.PrepareBuildAssetBundle(buildParams, dataset, ref resourceManifest);
+            var bundleInfos = dataset.GetResourceBundleInfos();
+            assetBundleBuilder.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(tabData.BuildHandlerName);
+            if (resourceBuildHandler != null)
+            {
+                resourceBuildHandler.OnBuildPrepared(buildParams);
+            }
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
-            assetBundleBuilder.ProcessAssetBundle(buildParams, dataset, unityManifest, ref resourceManifest);
+            assetBundleBuilder.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
+            assetBundleBuilder.PorcessManifest(buildParams, ref resourceManifest);
+            if (resourceBuildHandler != null)
+            {
+                resourceBuildHandler.OnBuildComplete(buildParams);
+            }
+
         }
         BuildAssetBundleOptions GetBuildAssetBundleOptions()
         {

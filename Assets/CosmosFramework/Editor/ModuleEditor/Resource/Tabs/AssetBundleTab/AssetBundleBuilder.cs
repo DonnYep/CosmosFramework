@@ -13,7 +13,7 @@ namespace Cosmos.Editor.Resource
     /// </summary>
     public class AssetBundleBuilder
     {
-        public void PrepareBuildAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, ref ResourceManifest resourceManifest)
+        public void PrepareBuildAssetBundle(AssetBundleBuildParams buildParams, List<ResourceBundleInfo> bundleInfos , ref ResourceManifest resourceManifest)
         {
             if (Directory.Exists(buildParams.AssetBundleBuildPath))
                 Utility.IO.DeleteFolder(buildParams.AssetBundleBuildPath);
@@ -21,7 +21,6 @@ namespace Cosmos.Editor.Resource
 
             var assetBundleNameType = buildParams.AssetBundleNameType;
 
-            var bundleInfos = dataset.GetResourceBundleInfos();
             var bundleInfoLength = bundleInfos.Count;
 
             for (int i = 0; i < bundleInfoLength; i++)
@@ -95,11 +94,11 @@ namespace Cosmos.Editor.Resource
                 }
             }
         }
-        public void ProcessAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
+        public void ProcessAssetBundle(AssetBundleBuildParams buildParams, List<ResourceBundleInfo> bundleInfos,  AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
         {
             Dictionary<string, ResourceBundleInfo> bundleKeyDict = null;
             if (buildParams.AssetBundleNameType == AssetBundleNameType.HashInstead)
-                bundleKeyDict = dataset.GetResourceBundleInfos().ToDictionary(bundle => bundle.BundleKey);
+                bundleKeyDict = bundleInfos.ToDictionary(bundle => bundle.BundleKey);
             var bundleKeys = unityManifest.GetAllAssetBundles();
             var bundleKeyLength = bundleKeys.Length;
             for (int i = 0; i < bundleKeyLength; i++)
@@ -141,26 +140,7 @@ namespace Cosmos.Editor.Resource
                 var bundleManifestPath = Utility.Text.Append(bundlePath, ".manifest");
                 Utility.IO.DeleteFile(bundleManifestPath);
             }
-            //这段生成resourceManifest.json文件
-            var encryptionKey = buildParams.BuildIedAssetsEncryptionKey;
-            var encrypt = buildParams.BuildedAssetsEncryption;
-            resourceManifest.BuildVersion = buildParams.BuildVersion;
-            var manifestJson = EditorUtil.Json.ToJson(resourceManifest);
-            var manifestContext = manifestJson;
-            if (encrypt)
-            {
-                var key = ResourceUtility.GenerateBytesAESKey(encryptionKey);
-                manifestContext = Utility.Encryption.AESEncryptStringToString(manifestJson, key);
-            }
-            Utility.IO.WriteTextFile(buildParams.AssetBundleBuildPath, ResourceConstants.RESOURCE_MANIFEST, manifestContext);
 
-            //删除生成文对应的主manifest文件
-            var buildVersionPath = Path.Combine(buildParams.AssetBundleBuildPath, buildParams.BuildVersion);
-            var buildVersionManifestPath = Utility.Text.Append(buildVersionPath, ".manifest");
-            Utility.IO.DeleteFile(buildVersionPath);
-            Utility.IO.DeleteFile(buildVersionManifestPath);
-
-            var bundleInfos = dataset.GetResourceBundleInfos();
             var bundleInfoLength = bundleInfos.Count;
 
             #region 还原dataset在editor环境下的依赖
@@ -206,6 +186,27 @@ namespace Cosmos.Editor.Resource
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
             AssetDatabase.RemoveUnusedAssetBundleNames();
             System.GC.Collect();
+        }
+        public void PorcessManifest(AssetBundleBuildParams buildParams, ref ResourceManifest resourceManifest)
+        {
+            //这段生成resourceManifest.json文件
+            var encryptionKey = buildParams.BuildIedAssetsEncryptionKey;
+            var encrypt = buildParams.BuildedAssetsEncryption;
+            resourceManifest.BuildVersion = buildParams.BuildVersion;
+            var manifestJson = EditorUtil.Json.ToJson(resourceManifest);
+            var manifestContext = manifestJson;
+            if (encrypt)
+            {
+                var key = ResourceUtility.GenerateBytesAESKey(encryptionKey);
+                manifestContext = Utility.Encryption.AESEncryptStringToString(manifestJson, key);
+            }
+            Utility.IO.WriteTextFile(buildParams.AssetBundleBuildPath, ResourceConstants.RESOURCE_MANIFEST, manifestContext);
+
+            //删除生成文对应的主manifest文件
+            var buildVersionPath = Path.Combine(buildParams.AssetBundleBuildPath, buildParams.BuildVersion);
+            var buildVersionManifestPath = Utility.Text.Append(buildVersionPath, ".manifest");
+            Utility.IO.DeleteFile(buildVersionPath);
+            Utility.IO.DeleteFile(buildVersionManifestPath);
         }
     }
 }
