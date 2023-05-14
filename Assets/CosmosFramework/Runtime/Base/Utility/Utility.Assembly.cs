@@ -85,6 +85,20 @@ namespace Cosmos
                 }
                 return inst;
             }
+            public static T GetTypeInstance<T>(string typeName)
+            {
+                T inst = default;
+                foreach (var a in domainAssemblies)
+                {
+                    var dstType = a.GetType(typeName);
+                    if (dstType != null)
+                    {
+                        inst = (T)Activator.CreateInstance(dstType);
+                        break;
+                    }
+                }
+                return inst;
+            }
             /// <summary>
             /// 反射工具，得到反射类的对象；
             /// 不可反射Mono子类，被反射对象必须是具有无参公共构造 
