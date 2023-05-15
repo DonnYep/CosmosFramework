@@ -1,5 +1,4 @@
-﻿using Cosmos.Resource;
-namespace Cosmos.Editor.Resource
+﻿namespace Cosmos.Editor.Resource
 {
     public interface IResourceBuildHandler
     {
