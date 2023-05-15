@@ -540,6 +540,48 @@ namespace Cosmos
                     return stringBuilderCache.ToString();
                 }
             }
+            /// <summary>
+            /// 异或加密
+            /// </summary>
+            /// <param name="context">需要加密的内容</param>
+            /// <param name="key">密钥</param>
+            /// <returns>加密后的内容</returns>
+            public static byte[] XorEncrypt(byte[] context, byte[] key)
+            {
+                byte[] outputBytes = new byte[context.Length];
+                var cntLength = outputBytes.Length;
+                var keyLength = key.Length;
+                for (int i = 0; i < cntLength; i++)
+                {
+                    outputBytes[i] = (byte)(context[i] ^ key[i % keyLength]);
+                }
+                return outputBytes;
+            }
+
+             //X | Y | Result
+             //==============
+             //0 | 0 | 0
+             //1 | 0 | 1
+             //0 | 1 | 1
+             //1 | 1 | 0
+
+            /// <summary>
+            /// 异或解密
+            /// </summary>
+            /// <param name="context">需要解密的内容</param>
+            /// <param name="key">密钥</param>
+            /// <returns>解密后的内容</returns>
+            public static byte[] XorDecrypt(byte[] context, byte[] key)
+            {
+                byte[] outputBytes = new byte[context.Length];
+                var cntLength = outputBytes.Length;
+                var keyLength = key.Length;
+                for (int i = 0; i < cntLength; i++)
+                {
+                    outputBytes[i] = (byte)(context[i] ^ key[i % keyLength]);
+                }
+                return outputBytes;
+            }
         }
     }
 }
