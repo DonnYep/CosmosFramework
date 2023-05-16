@@ -558,12 +558,12 @@ namespace Cosmos
                 return outputBytes;
             }
 
-             //X | Y | Result
-             //==============
-             //0 | 0 | 0
-             //1 | 0 | 1
-             //0 | 1 | 1
-             //1 | 1 | 0
+            //X | Y | Result
+            //==============
+            //0 | 0 | 0
+            //1 | 0 | 1
+            //0 | 1 | 1
+            //1 | 1 | 0
 
             /// <summary>
             /// 异或解密
@@ -581,6 +581,25 @@ namespace Cosmos
                     outputBytes[i] = (byte)(context[i] ^ key[i % keyLength]);
                 }
                 return outputBytes;
+            }
+
+            /// <summary>
+            /// Generate MD5
+            /// </summary>
+            /// <param name="context">bytes</param>
+            /// <returns>hash</returns>
+            public static string GenerateMD5(byte[] context)
+            {
+                using (var hash = MD5Cng.Create())
+                {
+                    byte[] data = hash.ComputeHash(context);
+                    var sBuilder = new StringBuilder();
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        sBuilder.Append(data[i].ToString("x2"));
+                    }
+                    return sBuilder.ToString();
+                }
             }
         }
     }
