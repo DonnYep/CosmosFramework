@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 namespace Cosmos.Entity
 {
-    [StructLayout(LayoutKind.Auto)]
     public struct EntityInfo : IEquatable<EntityInfo>
     {
         public string EntityName;

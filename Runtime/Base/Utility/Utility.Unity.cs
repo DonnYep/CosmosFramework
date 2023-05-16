@@ -10,12 +10,12 @@ namespace Cosmos
     public static partial class Utility
     {
         /// <summary>
-        /// 这个类封装了所有跟Unity相关的工具函数，是所有Utiltiy中需要引入UnityEngine的类
+        /// 这个类封装了所有跟Unity相关的工具函数
         /// </summary>
         public static class Unity
         {
-            static ICoroutineHelper coroutineHelper;
-            static ICoroutineHelper CoroutineHelper
+            static CoroutineHelper coroutineHelper;
+            static CoroutineHelper CoroutineHelper
             {
                 get
                 {
@@ -98,7 +98,7 @@ namespace Cosmos
             public static T ChildComp<T>(Transform go, string name)
       where T : Component
             {
-                var child = go.FindChildren( name);
+                var child = go.FindChildren(name);
                 if (child == null)
                     return null;
                 return child.GetComponent<T>();
@@ -493,6 +493,10 @@ where T : Component
             {
                 return CoroutineHelper.StartCoroutine(handler, callback);
             }
+            public static void AddCoroutine(IEnumerator routine)
+            {
+                CoroutineHelper.AddCoroutine(routine);
+            }
             /// <summary>
             /// 延时协程；
             /// </summary>
@@ -534,6 +538,17 @@ where T : Component
             public static void StopCoroutine(Coroutine routine)
             {
                 CoroutineHelper.StopCoroutine(routine);
+            }
+            #endregion
+
+            #region UnityThread
+            public static void PostToUnityThread(Action<object> postCallback)
+            {
+                UnityThreadSync.Instance.PostToUnityThread(postCallback);
+            }
+            public static void SendToUnityThread(Action<object> postCallback)
+            {
+                UnityThreadSync.Instance.SendToUnityThread(postCallback);
             }
             #endregion
         }

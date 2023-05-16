@@ -16,13 +16,11 @@ namespace Cosmos.ObjectPool
             get { return expireTime; }
             set
             {
-                if (value < 0)
-                {
-                    throw new ArgumentException("ExpireTime is invalid.");
-                }
-                if (expireTime == value)
-                    return;
                 expireTime = value;
+                if (expireTime < 0)
+                {
+                    expireTime = 0;
+                }
             }
         }
         public int ReleaseInterval
@@ -30,13 +28,11 @@ namespace Cosmos.ObjectPool
             get { return releaseInterval; }
             set
             {
-                if (value < 0)
-                {
-                    throw new ArgumentException("ReleaseInterval is invalid.");
-                }
-                if (value == releaseInterval)
-                    return;
                 releaseInterval = value;
+                if (releaseInterval < 0)
+                {
+                    releaseInterval = 0;
+                }
             }
         }
         public int Capacity
@@ -44,13 +40,11 @@ namespace Cosmos.ObjectPool
             get { return capacity; }
             set
             {
-                if (value <= 0)
-                {
-                    throw new ArgumentException("capacity is invalid.");
-                }
-                if (value == capacity)
-                    return;
                 capacity = value;
+                if (capacity <= 0)
+                {
+                    capacity = 0;
+                }
             }
         }
         public string ObjectPoolName { get; private set; }

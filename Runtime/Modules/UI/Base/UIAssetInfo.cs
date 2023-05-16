@@ -1,11 +1,9 @@
-﻿using System.Runtime.InteropServices;
-using System;
+﻿using System;
 namespace Cosmos.UI
 {
     /// <summary>
     /// UI资源信息；
     /// </summary>
-    [StructLayout(LayoutKind.Auto)]
     public struct UIAssetInfo : IEquatable<UIAssetInfo>
     {
         public string AssetName { get; private set; }

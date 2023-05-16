@@ -19,6 +19,14 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public AssetBundleNameType AssetBundleNameType;
         /// <summary>
+        /// 构建handler的名称
+        /// </summary>
+        public string BuildHandlerName;
+        /// <summary>
+        /// 构建handler的序号
+        /// </summary>
+        public int BuildHandlerIndex;
+        /// <summary>
         /// 不会在AssetBundle中包含类型信息;
         /// </summary>
         public bool DisableWriteTypeTree;
@@ -46,6 +54,10 @@ namespace Cosmos.Editor.Resource
         /// 打包的版本；
         /// </summary>
         public string BuildVersion;
+        /// <summary>
+        /// 内部构建的版本号
+        /// </summary>
+        public int InternalBuildVersion;
         /// <summary>
         /// AB偏移加密；
         /// </summary>
@@ -78,19 +90,21 @@ namespace Cosmos.Editor.Resource
         {
             AssetBundleCompressType = AssetBundleCompressType.ChunkBasedCompression_LZ4;
             BuildTarget = BuildTarget.StandaloneWindows;
-            BuildPath = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), "AssetBundles");
-            AssetBundleEncryption = false;
+            BuildHandlerName = Constants.NONE;
+            BuildHandlerIndex = 0;
+            BuildPath = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), "AssetBundles"); AssetBundleEncryption = false;
             AssetBundleOffsetValue = 16;
             BuildedAssetsEncryption = false;
             BuildIedAssetsEncryptionKey = "CosmosBundlesKey";
             AssetBundleNameType = AssetBundleNameType.HashInstead;
-            BuildVersion = "0_0_1";
+            BuildVersion = "0.0.1";
+            InternalBuildVersion = 0;
             ForceRebuildAssetBundle = false;
             DisableWriteTypeTree = false;
             DeterministicAssetBundle = false;
             IgnoreTypeTreeChanges = false;
             StreamingAssetsRelativePath = BuildVersion;
-            AssetBundleBuildPath = Utility.IO.WebPathCombine(BuildPath, BuildVersion);
+            AssetBundleBuildPath = Utility.IO.WebPathCombine(BuildPath, $"{BuildVersion}_{InternalBuildVersion}");
         }
     }
 }

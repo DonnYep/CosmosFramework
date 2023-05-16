@@ -1,7 +1,5 @@
-﻿using System.Runtime.InteropServices;
-namespace Cosmos.Audio
+﻿namespace Cosmos.Audio
 {
-    [StructLayout(LayoutKind.Auto)]
     public struct AudioAssetInfo 
     {
         /// <summary>

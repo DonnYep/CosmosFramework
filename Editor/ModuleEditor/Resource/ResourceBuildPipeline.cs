@@ -67,15 +67,17 @@ namespace Cosmos.Editor.Resource
                 BuildedAssetsEncryption = tabData.BuildedAssetsEncryption,
                 BuildIedAssetsEncryptionKey = tabData.BuildIedAssetsEncryptionKey,
                 BuildTarget = buildTarget,
-                BuildVersion = tabData.BuildVersion,
+                BuildVersion = $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}",
                 CopyToStreamingAssets = tabData.CopyToStreamingAssets,
                 UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
                 StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath
             };
             ResourceManifest resourceManifest = new ResourceManifest();
-            assetBundleBuilder.PrepareBuildAssetBundle(buildParams, dataset, ref resourceManifest);
+            var bundleInfos = dataset.GetResourceBundleInfos();
+            assetBundleBuilder.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
-            assetBundleBuilder.ProcessAssetBundle(buildParams, dataset, unityManifest, ref resourceManifest);
+            assetBundleBuilder.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
+            assetBundleBuilder.PorcessManifest(buildParams, ref resourceManifest);
         }
         static void BuildDataset()
         {
