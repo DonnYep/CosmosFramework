@@ -13,7 +13,6 @@ namespace Cosmos.Editor.Resource
         public Func<EditorCoroutine> BuildDataset;
         public const string AssetBundleTabDataName = "ResourceEditor_AsseBundleTabData.json";
         AssetBundleTabData tabData;
-        AssetBundleBuilder assetBundleBuilder = new AssetBundleBuilder();
         Vector2 scrollPosition;
         bool isAesKeyInvalid = false;
         string[] buildHandlers;
@@ -51,15 +50,15 @@ namespace Cosmos.Editor.Resource
                         EditorUtil.Debug.LogError("Encryption key should be 16,24 or 32 bytes long");
                         return;
                     }
-                    var buildParams = new AssetBundleBuildParams()
+                    var buildParams = new ResourceBuildParams()
                     {
                         AssetBundleBuildPath = tabData.AssetBundleBuildPath,
                         AssetBundleEncryption = tabData.AssetBundleEncryption,
                         AssetBundleOffsetValue = tabData.AssetBundleOffsetValue,
                         BuildAssetBundleOptions = GetBuildAssetBundleOptions(),
                         AssetBundleNameType = tabData.AssetBundleNameType,
-                        BuildedAssetsEncryption = tabData.BuildedAssetsEncryption,
-                        BuildIedAssetsEncryptionKey = tabData.BuildIedAssetsEncryptionKey,
+                        EncryptManifest = tabData.EncryptManifest,
+                        ManifestEncryptionKey = tabData.ManifestEncryptionKey,
                         BuildTarget = tabData.BuildTarget,
                         BuildVersion = $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}",
                         CopyToStreamingAssets = tabData.CopyToStreamingAssets,
@@ -143,11 +142,11 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.LabelField("Encryption Options", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical();
             {
-                tabData.BuildedAssetsEncryption = EditorGUILayout.ToggleLeft("Build info encryption", tabData.BuildedAssetsEncryption);
-                if (tabData.BuildedAssetsEncryption)
+                tabData.EncryptManifest = EditorGUILayout.ToggleLeft("Build info encryption", tabData.EncryptManifest);
+                if (tabData.EncryptManifest)
                 {
-                    tabData.BuildIedAssetsEncryptionKey = EditorGUILayout.TextField("Build info encryption key", tabData.BuildIedAssetsEncryptionKey);
-                    var aesKeyStr = tabData.BuildIedAssetsEncryptionKey;
+                    tabData.ManifestEncryptionKey = EditorGUILayout.TextField("Build info encryption key", tabData.ManifestEncryptionKey);
+                    var aesKeyStr = tabData.ManifestEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
                     EditorGUILayout.LabelField($"Assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");
                     if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32 && aesKeyLength != 0)
@@ -222,20 +221,20 @@ namespace Cosmos.Editor.Resource
                 tabData.BuildHandlerIndex = buildHandlerMaxIndex;
             }
         }
-        IEnumerator BuildAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset)
+        IEnumerator BuildAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset)
         {
             yield return BuildDataset.Invoke();
             ResourceManifest resourceManifest = new ResourceManifest();
             var bundleInfos = dataset.GetResourceBundleInfos();
-            assetBundleBuilder.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
             var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(tabData.BuildHandlerName);
             if (resourceBuildHandler != null)
             {
                 resourceBuildHandler.OnBuildPrepared(buildParams);
             }
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
-            assetBundleBuilder.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
-            assetBundleBuilder.PorcessManifest(buildParams, ref resourceManifest);
+            ResourceBuildController.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
+            ResourceBuildController.PorcessManifest(buildParams, ref resourceManifest);
             if (resourceBuildHandler != null)
             {
                 resourceBuildHandler.OnBuildComplete(buildParams);

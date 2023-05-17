@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 namespace Cosmos.Editor.Resource
 {
-    public struct AssetBundleBuildParams
+    public struct ResourceBuildParams
     {
         /// <summary>
         /// AB打包到的平台
@@ -24,13 +24,13 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public string BuildVersion;
         /// <summary>
-        /// 打包输出资源加密；
+        /// 加密manifest
         /// </summary>
-        public bool BuildedAssetsEncryption;
+        public bool EncryptManifest;
         /// <summary>
-        /// 打包输出资源加密密钥；
+        /// Manifest加密密钥；
         /// </summary>
-        public string BuildIedAssetsEncryptionKey;
+        public string ManifestEncryptionKey;
         /// <summary>
         /// AB偏移加密；
         /// </summary>
