@@ -4,16 +4,96 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System;
 
 namespace Cosmos.Editor.Resource
 {
     /// <summary>
     /// AB打包构建器
     /// </summary>
-    public class AssetBundleBuilder
+    public class ResourceBuildController
     {
-        public void PrepareBuildAssetBundle(AssetBundleBuildParams buildParams, List<ResourceBundleInfo> bundleInfos , ref ResourceManifest resourceManifest)
+        public static void BuildDataset(ResourceDataset dataset)
+        {
+            if (dataset == null)
+                return;
+            var bundleInfos = dataset.ResourceBundleInfoList;
+            var extensions = dataset.ResourceAvailableExtenisonList;
+            var lowerExtensions = extensions.Select(s => s.ToLower()).ToArray();
+            extensions.Clear();
+            extensions.AddRange(lowerExtensions);
+            var bundleInfoLength = bundleInfos.Count;
+
+            List<ResourceBundleInfo> invalidBundleInfos = new List<ResourceBundleInfo>();
+
+            for (int i = 0; i < bundleInfoLength; i++)
+            {
+                var bundleInfo = bundleInfos[i];
+                var bundlePath = bundleInfo.BundlePath;
+                if (!AssetDatabase.IsValidFolder(bundlePath))
+                {
+                    invalidBundleInfos.Add(bundleInfo);
+                    continue;
+                }
+                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
+                importer.assetBundleName = bundleInfo.BundleName;
+
+                var files = Utility.IO.GetAllFiles(bundlePath);
+                var fileLength = files.Length;
+                bundleInfo.ResourceObjectInfoList.Clear();
+                for (int j = 0; j < fileLength; j++)
+                {
+                    var srcFilePath = files[j].Replace("\\", "/");
+                    var srcFileExt = Path.GetExtension(srcFilePath);
+                    var lowerFileExt = srcFileExt.ToLower();
+                    if (extensions.Contains(lowerFileExt))
+                    {
+                        //统一使用小写的文件后缀名
+                        var lowerExtFilePath = srcFilePath.Replace(srcFileExt, lowerFileExt);
+
+                        var resourceObjectInfo = new ResourceObjectInfo()
+                        {
+                            BundleName = bundleInfo.BundleName,
+                            Extension = lowerFileExt,
+                            ObjectName = Path.GetFileNameWithoutExtension(lowerExtFilePath),
+                            ObjectPath = lowerExtFilePath,
+                            ObjectSize = EditorUtil.GetAssetFileSizeLength(lowerExtFilePath),
+                            ObjectFormatBytes = EditorUtil.GetAssetFileSize(lowerExtFilePath),
+                        };
+                        resourceObjectInfo.ObjectVaild = AssetDatabase.LoadMainAssetAtPath(resourceObjectInfo.ObjectPath) != null;
+                        bundleInfo.ResourceObjectInfoList.Add(resourceObjectInfo);
+                    }
+                }
+                long bundleSize = EditorUtil.GetUnityDirectorySize(bundlePath, dataset.ResourceAvailableExtenisonList);
+                bundleInfo.BundleSize = bundleSize;
+                bundleInfo.BundleKey = bundleInfo.BundleName;
+                bundleInfo.BundleFormatBytes = EditorUtility.FormatBytes(bundleSize);
+            }
+            for (int i = 0; i < invalidBundleInfos.Count; i++)
+            {
+                bundleInfos.Remove(invalidBundleInfos[i]);
+            }
+            for (int i = 0; i < bundleInfos.Count; i++)
+            {
+                var bundle = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
+                bundle.DependentBundleKeyList.Clear();
+                bundle.DependentBundleKeyList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+            }
+            for (int i = 0; i < bundleInfos.Count; i++)
+            {
+                var bundle = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
+                importer.assetBundleName = string.Empty;
+            }
+            EditorUtility.SetDirty(dataset);
+#if UNITY_2021_1_OR_NEWER
+            AssetDatabase.SaveAssetIfDirty(dataset);
+#elif UNITY_2019_1_OR_NEWER
+            AssetDatabase.SaveAssets();
+#endif
+            dataset.IsChanged = false;
+        }
+        public static void PrepareBuildAssetBundle(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, ref ResourceManifest resourceManifest)
         {
             if (Directory.Exists(buildParams.AssetBundleBuildPath))
                 Utility.IO.DeleteFolder(buildParams.AssetBundleBuildPath);
@@ -94,7 +174,7 @@ namespace Cosmos.Editor.Resource
                 }
             }
         }
-        public void ProcessAssetBundle(AssetBundleBuildParams buildParams, List<ResourceBundleInfo> bundleInfos,  AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
+        public static void ProcessAssetBundle(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
         {
             Dictionary<string, ResourceBundleInfo> bundleKeyDict = null;
             if (buildParams.AssetBundleNameType == AssetBundleNameType.HashInstead)
@@ -187,11 +267,11 @@ namespace Cosmos.Editor.Resource
             AssetDatabase.RemoveUnusedAssetBundleNames();
             System.GC.Collect();
         }
-        public void PorcessManifest(AssetBundleBuildParams buildParams, ref ResourceManifest resourceManifest)
+        public static void PorcessManifest(ResourceBuildParams buildParams, ref ResourceManifest resourceManifest)
         {
             //这段生成resourceManifest.json文件
-            var encryptionKey = buildParams.BuildIedAssetsEncryptionKey;
-            var encrypt = buildParams.BuildedAssetsEncryption;
+            var encryptionKey = buildParams.ManifestEncryptionKey;
+            var encrypt = buildParams.EncryptManifest;
             resourceManifest.BuildVersion = buildParams.BuildVersion;
             var manifestJson = EditorUtil.Json.ToJson(resourceManifest);
             var manifestContext = manifestJson;
@@ -207,6 +287,18 @@ namespace Cosmos.Editor.Resource
             var buildVersionManifestPath = Utility.Text.Append(buildVersionPath, ".manifest");
             Utility.IO.DeleteFile(buildVersionPath);
             Utility.IO.DeleteFile(buildVersionManifestPath);
+        }
+        public static void BuildAssetBundle(ResourceDataset dataset, ResourceBuildParams buildParams)
+        {
+            if (dataset == null)
+                return;
+            BuildDataset(dataset);
+            ResourceManifest resourceManifest = new ResourceManifest();
+            var bundleInfos = dataset.GetResourceBundleInfos();
+            PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
+            ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
+            PorcessManifest(buildParams, ref resourceManifest);
         }
     }
 }
