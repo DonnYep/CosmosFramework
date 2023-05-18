@@ -19,6 +19,10 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public AssetBundleNameType AssetBundleNameType;
         /// <summary>
+        /// 增量构建
+        /// </summary>
+        public bool IncrementalBuild;
+        /// <summary>
         /// 构建handler的名称
         /// </summary>
         public string BuildHandlerName;
