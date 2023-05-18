@@ -101,6 +101,8 @@ namespace Cosmos.Editor.Resource
 
                 //打包输出的资源加密，如buildInfo，assetbundle 文件名加密
                 tabData.AssetBundleNameType = (AssetBundleNameType)EditorGUILayout.EnumPopup("Build bundle name type ", tabData.AssetBundleNameType);
+
+                tabData.IncrementalBuild = EditorGUILayout.ToggleLeft("Incremental build", tabData.IncrementalBuild);
             }
             EditorGUILayout.EndVertical();
         }
