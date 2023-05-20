@@ -179,9 +179,9 @@ namespace Cosmos.Editor.Resource
                     headerTextAlignment = TextAlignment.Left,
                     sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
-                    minWidth=64,
-                    width=96,
-                    maxWidth=384,
+                    minWidth=128,
+                    width=256,
+                    maxWidth=512,
                     autoResize = true,
                 },
                 new MultiColumnHeaderState.Column
@@ -190,9 +190,9 @@ namespace Cosmos.Editor.Resource
                     headerTextAlignment = TextAlignment.Left,
                     sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
-                    minWidth=192,
-                    width=768,
-                    maxWidth=1024,
+                    minWidth=256,
+                    width=1024,
+                    maxWidth=1536,
                     autoResize = true,
                 }
             };
