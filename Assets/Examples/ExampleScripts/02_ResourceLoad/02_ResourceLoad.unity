@@ -352,6 +352,15 @@ MonoBehaviour:
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
   messagePackHelperName: Cosmos.MessagePackHelper
   runInBackground: 0
+  autoInitResource: 1
+  resourceDataset: {fileID: 0}
+  resourceBundlePathType: 0
+  relativeBundlePath: win
+  assetBundleEncrytion: 1
+  assetBundleEncrytionOffset: 16
+  manifestEncrytion: 0
+  manifestEncrytionKey: CosmosBundlesKey
+  drawDebugWindow: 0
 --- !u!114 &1179096885
 MonoBehaviour:
   m_ObjectHideFlags: 0
