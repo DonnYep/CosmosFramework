@@ -544,7 +544,7 @@ namespace Cosmos.Resource
             //DONE
             var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
             if (!hasBundle)
-                yield break; //若bundle信息为空，则终止；
+                yield break; //若bundleWrapper信息为空，则终止；
             yield return EnumLoadAssetBundleAsync(bundleName);
             var dependentBundleKeyList = bundleWarpper.ResourceBundle.DependentBundleKeytList;
             var dependentBundleKeyLength = dependentBundleKeyList.Count;
@@ -563,7 +563,7 @@ namespace Cosmos.Resource
         {
             var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
             if (!hasBundle)
-                yield break; //若bundle信息为空，则终止；
+                yield break; //若bundleWrapper信息为空，则终止；
             if (bundleWarpper.AssetBundle == null)
             {
                 var abPath = Path.Combine(ResourceDataProxy.BundlePath, bundleWarpper.ResourceBundle.BundleKey);
@@ -573,13 +573,11 @@ namespace Cosmos.Resource
                 }
                 else
                 {
-                    abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.EncryptionOffset);
+                    abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.BundleEncryptionOffset);
                     abRequestDict.Add(abPath, abReq);
                     yield return abReq;
                 }
                 abRequestDict.Remove(abPath);
-                //var abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.EncryptionOffset);
-                //yield return abReq;
                 var bundle = abReq.assetBundle;
                 if (bundle != null)
                 {

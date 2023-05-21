@@ -112,35 +112,7 @@ MonoBehaviour:
       extension: .mat
       objectValid: 1
     dependentBundleKeyList: []
-    resourceSubBundleInfoList:
-    - bundleName: assets_examples_assetbundletest_material_objectpoolresmats
-      bundlePath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats
-      bundleKey: assets_examples_assetbundletest_material_objectpoolresmats
-      bundleSize: 6557
-      bundleFormatBytes: 6.4 KB
-      resourceObjectInfoList:
-      - objectName: Mat_ObjectPool_Blue
-        objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Blue.mat
-        bundleName: assets_examples_assetbundletest_material_objectpoolresmats
-        objectSize: 2295
-        objectFormatBytes: 2.2 KB
-        extension: .mat
-        objectValid: 1
-      - objectName: Mat_ObjectPool_Green
-        objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Green.mat
-        bundleName: assets_examples_assetbundletest_material_objectpoolresmats
-        objectSize: 2128
-        objectFormatBytes: 2.1 KB
-        extension: .mat
-        objectValid: 1
-      - objectName: Mat_ObjectPool_Red
-        objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Red.mat
-        bundleName: assets_examples_assetbundletest_material_objectpoolresmats
-        objectSize: 2134
-        objectFormatBytes: 2.1 KB
-        extension: .mat
-        objectValid: 1
-      dependentBundleKeyList: []
+    resourceSubBundleInfoList: []
   - bundleName: model
     bundlePath: Assets/Examples/AssetBundleTest/Model
     bundleKey: model
@@ -352,109 +324,12 @@ MonoBehaviour:
       objectFormatBytes: 74.9 KB
       extension: .prefab
       objectValid: 1
-    dependentBundleKeyList: []
-    resourceSubBundleInfoList:
-    - bundleName: assets_examples_assetbundletest_prefab_objectpoolresprefab
-      bundlePath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab
-      bundleKey: assets_examples_assetbundletest_prefab_objectpoolresprefab
-      bundleSize: 9717
-      bundleFormatBytes: 9.5 KB
-      resourceObjectInfoList:
-      - objectName: ResPrefab_Capsule
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Capsule.prefab
-        bundleName: assets_examples_assetbundletest_prefab_objectpoolresprefab
-        objectSize: 3244
-        objectFormatBytes: 3.2 KB
-        extension: .prefab
-        objectValid: 1
-      - objectName: ResPrefab_Cube
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Cube.prefab
-        bundleName: assets_examples_assetbundletest_prefab_objectpoolresprefab
-        objectSize: 3240
-        objectFormatBytes: 3.2 KB
-        extension: .prefab
-        objectValid: 1
-      - objectName: ResPrefab_Sphere
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/ObjectPoolResPrefab/ResPrefab_Sphere.prefab
-        bundleName: assets_examples_assetbundletest_prefab_objectpoolresprefab
-        objectSize: 3233
-        objectFormatBytes: 3.2 KB
-        extension: .prefab
-        objectValid: 1
-      dependentBundleKeyList:
-      - assets_examples_assetbundletest_material_objectpoolresmats
-    - bundleName: assets_examples_assetbundletest_prefab_xbot
-      bundlePath: Assets/Examples/AssetBundleTest/Prefab/XBot
-      bundleKey: assets_examples_assetbundletest_prefab_xbot
-      bundleSize: 156737
-      bundleFormatBytes: 153.1 KB
-      resourceObjectInfoList:
-      - objectName: AC_XBot_Idle
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/XBot/AC_XBot_Idle.controller
-        bundleName: assets_examples_assetbundletest_prefab_xbot
-        objectSize: 2113
-        objectFormatBytes: 2.1 KB
-        extension: .controller
-        objectValid: 1
-      - objectName: AC_XBot_Walking
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/XBot/AC_XBot_Walking.controller
-        bundleName: assets_examples_assetbundletest_prefab_xbot
-        objectSize: 2842
-        objectFormatBytes: 2.8 KB
-        extension: .controller
-        objectValid: 1
-      - objectName: XBot_Idle
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/XBot/XBot_Idle.prefab
-        bundleName: assets_examples_assetbundletest_prefab_xbot
-        objectSize: 76661
-        objectFormatBytes: 74.9 KB
-        extension: .prefab
-        objectValid: 1
-      - objectName: XBot_Walking
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/XBot/XBot_Walking.prefab
-        bundleName: assets_examples_assetbundletest_prefab_xbot
-        objectSize: 75121
-        objectFormatBytes: 73.4 KB
-        extension: .prefab
-        objectValid: 1
-      dependentBundleKeyList:
-      - model
-    - bundleName: assets_examples_assetbundletest_prefab_ybot
-      bundlePath: Assets/Examples/AssetBundleTest/Prefab/YBot
-      bundleKey: assets_examples_assetbundletest_prefab_ybot
-      bundleSize: 158998
-      bundleFormatBytes: 155.3 KB
-      resourceObjectInfoList:
-      - objectName: AC_YBot_Idle
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/YBot/AC_YBot_Idle.controller
-        bundleName: assets_examples_assetbundletest_prefab_ybot
-        objectSize: 2842
-        objectFormatBytes: 2.8 KB
-        extension: .controller
-        objectValid: 1
-      - objectName: AC_YBot_Walking
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/YBot/AC_YBot_Walking.controller
-        bundleName: assets_examples_assetbundletest_prefab_ybot
-        objectSize: 2841
-        objectFormatBytes: 2.8 KB
-        extension: .controller
-        objectValid: 1
-      - objectName: YBot_Idle
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Idle.prefab
-        bundleName: assets_examples_assetbundletest_prefab_ybot
-        objectSize: 76634
-        objectFormatBytes: 74.8 KB
-        extension: .prefab
-        objectValid: 1
-      - objectName: YBot_Walking
-        objectPath: Assets/Examples/AssetBundleTest/Prefab/YBot/YBot_Walking.prefab
-        bundleName: assets_examples_assetbundletest_prefab_ybot
-        objectSize: 76681
-        objectFormatBytes: 74.9 KB
-        extension: .prefab
-        objectValid: 1
-      dependentBundleKeyList:
-      - model
+    dependentBundleKeyList:
+    - audio
+    - material
+    - model
+    - texture
+    resourceSubBundleInfoList: []
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
     bundleKey: scene
@@ -476,8 +351,9 @@ MonoBehaviour:
       extension: .unity
       objectValid: 1
     dependentBundleKeyList:
-    - assets_examples_assetbundletest_prefab_ybot
+    - material
     - model
+    - prefab
     - texture
     resourceSubBundleInfoList: []
   - bundleName: text

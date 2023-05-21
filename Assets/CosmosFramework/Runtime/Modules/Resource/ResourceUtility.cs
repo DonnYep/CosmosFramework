@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Cosmos.Resource
 {
-    public class ResourceUtility
+    public static partial class ResourceUtility
     {
         /// <summary>
         /// 包名过滤
@@ -13,7 +13,7 @@ namespace Cosmos.Resource
         /// <returns>过滤后的名</returns>
         public static string FilterName(string bundleName)
         {
-            return bundleName.Replace("\\", "_").Replace("/", "_").Replace(".", "_").Replace(",","_").Replace(";","_").ToLower();
+            return bundleName.Replace("\\", "_").Replace("/", "_").Replace(".", "_").Replace(",", "_").Replace(";", "_").ToLower();
         }
         /// <summary>
         /// 生成文件夹的md5

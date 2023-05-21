@@ -9,7 +9,7 @@ namespace Cosmos.Resource
         readonly Action<string, ResourceManifest> onSuccess;
         readonly Action<string, string> onFailure;
         long taskId;
-        public ResourceManifestRequester(IWebRequestManager webRequestManager, Action<string, ResourceManifest> onSuccess, Action<string,string> onFailure)
+        public ResourceManifestRequester(IWebRequestManager webRequestManager, Action<string, ResourceManifest> onSuccess, Action<string, string> onFailure)
         {
             this.webRequestManager = webRequestManager;
             this.onSuccess = onSuccess;
@@ -35,10 +35,10 @@ namespace Cosmos.Resource
         }
         void OnSuccessCallback(WebRequestSuccessEventArgs eventArgs)
         {
-            var manifestJson = eventArgs.GetText();
+            var manifestContext = eventArgs.GetText();
             try
             {
-                var resourceManifest = Utility.Json.ToObject<ResourceManifest>(manifestJson);
+                var resourceManifest = ResourceUtility.Manifest.Deserialize(manifestContext, ResourceDataProxy.ManifestEncryptionKey);
                 onSuccess?.Invoke(eventArgs.URL, resourceManifest);
             }
             catch (Exception e)

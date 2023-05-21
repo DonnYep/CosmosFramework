@@ -131,7 +131,7 @@ namespace Cosmos.Editor.Resource
                 EditorGUILayout.EndHorizontal();
                 if (!string.IsNullOrEmpty(tabData.BuildVersion))
                 {
-                    tabData.AssetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildTarget.ToString(), $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}");
+                    tabData.AssetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString(), $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}");
                 }
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
@@ -237,6 +237,7 @@ namespace Cosmos.Editor.Resource
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
             ResourceBuildController.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
             ResourceBuildController.PorcessManifest(buildParams, ref resourceManifest);
+            ResourceBuildController.BuildDoneOption(buildParams);
             if (resourceBuildHandler != null)
             {
                 resourceBuildHandler.OnBuildComplete(buildParams);

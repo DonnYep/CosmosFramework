@@ -32,8 +32,8 @@ namespace Cosmos
         [SerializeField] bool assetBundleEncrytion = false;
         [SerializeField] ulong assetBundleEncrytionOffset = 16;
 
-        [SerializeField] bool buildInfoEncrytion = false;
-        [SerializeField] string buildInfoEncrytionKey = "CosmosBundlesKey";
+        [SerializeField] bool manifestEncrytion = false;
+        [SerializeField] string manifestEncrytionKey = "CosmosBundlesKey";
 
         [SerializeField] bool drawDebugWindow;
         public void LoadResource()
@@ -74,9 +74,13 @@ namespace Cosmos
                         manifestPath = prefix + manifestPath;
                         //webrequest需要加file://，System.IO不需要加。加载器使用的是unity原生的assetbundle.loadxxxx，属于IO，因此无需加前缀；
                         if (assetBundleEncrytion)
-                            ResourceDataProxy.EncryptionOffset = assetBundleEncrytionOffset;
-                        if (buildInfoEncrytion)
-                            ResourceDataProxy.BuildInfoEncryptionKey = buildInfoEncrytionKey;
+                            ResourceDataProxy.BundleEncryptionOffset = assetBundleEncrytionOffset;
+                        else
+                            ResourceDataProxy.BundleEncryptionOffset = 0;
+                        if (manifestEncrytion)
+                            ResourceDataProxy.ManifestEncryptionKey = manifestEncrytionKey;
+                        else
+                            ResourceDataProxy.ManifestEncryptionKey = string.Empty;
                         var assetBundleLoader = new AssetBundleLoader();
                         CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
                         CosmosEntry.ResourceManager.StartRequestManifest(manifestPath);

@@ -248,21 +248,6 @@ namespace Cosmos.Editor.Resource
                 importer.assetBundleName = string.Empty;
             }
             //refresh assetbundle
-            AssetDatabase.Refresh();
-            if (buildParams.CopyToStreamingAssets)
-            {
-                string streamingAssetPath = string.Empty;
-                if (buildParams.UseStreamingAssetsRelativePath)
-                    streamingAssetPath = Path.Combine(Application.streamingAssetsPath, buildParams.StreamingAssetsRelativePath);
-                else
-                    streamingAssetPath = Application.streamingAssetsPath;
-                var buildPath = buildParams.AssetBundleBuildPath;
-                if (Directory.Exists(buildPath))
-                {
-                    Utility.IO.CopyDirectory(buildPath, streamingAssetPath);
-                }
-            }
-
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
             AssetDatabase.RemoveUnusedAssetBundleNames();
             System.GC.Collect();
@@ -288,6 +273,23 @@ namespace Cosmos.Editor.Resource
             Utility.IO.DeleteFile(buildVersionPath);
             Utility.IO.DeleteFile(buildVersionManifestPath);
         }
+        public static void BuildDoneOption(ResourceBuildParams buildParams)
+        {
+            if (buildParams.CopyToStreamingAssets)
+            {
+                string streamingAssetPath = string.Empty;
+                if (buildParams.UseStreamingAssetsRelativePath)
+                    streamingAssetPath = Path.Combine(Application.streamingAssetsPath, buildParams.StreamingAssetsRelativePath);
+                else
+                    streamingAssetPath = Application.streamingAssetsPath;
+                var buildPath = buildParams.AssetBundleBuildPath;
+                if (Directory.Exists(buildPath))
+                {
+                    Utility.IO.CopyDirectory(buildPath, streamingAssetPath);
+                }
+            }
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+        }
         public static void BuildAssetBundle(ResourceDataset dataset, ResourceBuildParams buildParams)
         {
             if (dataset == null)
@@ -299,6 +301,7 @@ namespace Cosmos.Editor.Resource
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
             ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
             PorcessManifest(buildParams, ref resourceManifest);
+            BuildDoneOption(buildParams);
         }
     }
 }

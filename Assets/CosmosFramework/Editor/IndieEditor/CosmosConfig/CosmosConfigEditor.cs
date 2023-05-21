@@ -23,8 +23,8 @@ namespace Cosmos.Editor
 
         SerializedProperty sp_AssetBundleEncrytion;
         SerializedProperty sp_AssetBundleEncrytionOffset;
-        SerializedProperty sp_BuildInfoEncrytion;
-        SerializedProperty sp_BuildInfoEncrytionKey;
+        SerializedProperty sp_ManifestEncrytion;
+        SerializedProperty sp_ManifestEncrytionKey;
 
 
         SerializedProperty sp_DebugHelperIndex;
@@ -48,7 +48,7 @@ namespace Cosmos.Editor
         int messagePackHelperIndex;
 
         bool assetBundleEncrytion;
-        bool buildInfoEncrytion;
+        bool manifestEncrytion;
 
         bool launchAppDomainModules;
         int resourceLoadModeIndex;
@@ -137,17 +137,17 @@ namespace Cosmos.Editor
                                 }
                                 if (assetBundleEncrytion)
                                 {
-                                    sp_AssetBundleEncrytionOffset.intValue = EditorGUILayout.IntField("AssetBundleEncrytionOffset", sp_AssetBundleEncrytionOffset.intValue);
+                                    sp_AssetBundleEncrytionOffset.intValue = EditorGUILayout.IntField("Offset", sp_AssetBundleEncrytionOffset.intValue);
                                 }
 
-                                buildInfoEncrytion = EditorGUILayout.ToggleLeft("BuildInfoEncrytion", buildInfoEncrytion);
-                                if (buildInfoEncrytion != sp_BuildInfoEncrytion.boolValue)
+                                manifestEncrytion = EditorGUILayout.ToggleLeft("ManifestEncrytion", manifestEncrytion);
+                                if (manifestEncrytion != sp_ManifestEncrytion.boolValue)
                                 {
-                                    sp_BuildInfoEncrytion.boolValue = buildInfoEncrytion;
+                                    sp_ManifestEncrytion.boolValue = manifestEncrytion;
                                 }
-                                if (buildInfoEncrytion)
+                                if (manifestEncrytion)
                                 {
-                                    sp_BuildInfoEncrytionKey.stringValue = EditorGUILayout.TextField("BuildInfoEncrytionKey", sp_BuildInfoEncrytionKey.stringValue);
+                                    sp_ManifestEncrytionKey.stringValue = EditorGUILayout.TextField("Key", sp_ManifestEncrytionKey.stringValue);
                                 }
                             }
                             break;
@@ -238,8 +238,8 @@ namespace Cosmos.Editor
 
             sp_AssetBundleEncrytion = targetObject.FindProperty("assetBundleEncrytion");
             sp_AssetBundleEncrytionOffset = targetObject.FindProperty("assetBundleEncrytionOffset");
-            sp_BuildInfoEncrytion = targetObject.FindProperty("buildInfoEncrytion");
-            sp_BuildInfoEncrytionKey = targetObject.FindProperty("buildInfoEncrytionKey");
+            sp_ManifestEncrytion = targetObject.FindProperty("manifestEncrytion");
+            sp_ManifestEncrytionKey = targetObject.FindProperty("manifestEncrytionKey");
 
             sp_DrawDebugWindow = targetObject.FindProperty("drawDebugWindow");
 
@@ -263,7 +263,7 @@ namespace Cosmos.Editor
             resourceBundlePathTypeIndex = sp_ResourceBundlePathType.enumValueIndex;
 
             assetBundleEncrytion = sp_AssetBundleEncrytion.boolValue;
-            buildInfoEncrytion = sp_BuildInfoEncrytion.boolValue;
+            manifestEncrytion = sp_ManifestEncrytion.boolValue;
 
             targetObject.ApplyModifiedProperties();
         }
