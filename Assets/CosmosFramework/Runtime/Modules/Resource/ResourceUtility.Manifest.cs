@@ -11,7 +11,7 @@
             }
             public static string Serialize(ResourceManifest manifest, byte[] keyBytes)
             {
-                var manifestJson = Utility.Json.ToJson(manifest);
+                var manifestJson = LitJson.JsonMapper.ToJson(manifest);
                 var hasKey = keyBytes != null && keyBytes.Length > 0;
                 string context = string.Empty;
                 if (hasKey)
@@ -36,7 +36,7 @@
                     {
                         context = Utility.Encryption.AESDecryptStringToString(manifestContext, keyBytes);
                     }
-                    manifest = Utility.Json.ToObject<ResourceManifest>(context);
+                    manifest = LitJson.JsonMapper.ToObject<ResourceManifest>(context);
                 }
                 catch { }
                 return manifest;
