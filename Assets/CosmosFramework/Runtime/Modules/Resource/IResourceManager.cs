@@ -63,7 +63,8 @@ namespace Cosmos.Resource
         /// 请求文件清单；
         /// </summary>
         /// <param name="manifestPath">文件清单地址</param>
-        void StartRequestManifest(string manifestPath);
+        /// <param name="manifestEncryptionKey">文件解密密钥 [NULLABLE] </param>
+        void StartRequestManifest(string manifestPath, string manifestEncryptionKey);
         /// <summary>
         /// 停止请求文件清单；
         /// </summary>

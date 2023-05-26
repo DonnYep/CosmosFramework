@@ -83,7 +83,7 @@ namespace Cosmos
                             ResourceDataProxy.ManifestEncryptionKey = string.Empty;
                         var assetBundleLoader = new AssetBundleLoader();
                         CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
-                        CosmosEntry.ResourceManager.StartRequestManifest(manifestPath);
+                        CosmosEntry.ResourceManager.StartRequestManifest(manifestPath, ResourceDataProxy.ManifestEncryptionKey);
                     }
                     break;
                 case ResourceLoadMode.AssetDatabase:
