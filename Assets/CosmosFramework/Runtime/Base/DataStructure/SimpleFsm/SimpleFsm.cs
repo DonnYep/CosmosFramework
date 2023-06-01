@@ -161,6 +161,7 @@ namespace Cosmos
         /// </summary>
         public void ClearAllState()
         {
+            currentState?.OnExit(this);
             foreach (var state in typeStateDict.Values)
             {
                 state?.OnDestroy(this);
