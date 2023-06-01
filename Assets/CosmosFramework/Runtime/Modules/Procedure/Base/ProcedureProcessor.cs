@@ -131,6 +131,7 @@ namespace Cosmos.Procedure
         /// </summary>
         public void ClearAllNode()
         {
+            currentNode?.OnExit(this);
             foreach (var state in typeNodeDict.Values)
             {
                 state?.OnDestroy(this);
