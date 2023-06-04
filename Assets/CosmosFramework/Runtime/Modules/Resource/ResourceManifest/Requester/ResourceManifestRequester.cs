@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Cosmos.Resource
+ namespace Cosmos.Resource
 {
     internal class ResourceManifestRequester
     {
