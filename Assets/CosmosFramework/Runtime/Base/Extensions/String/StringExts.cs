@@ -17,7 +17,7 @@ namespace Cosmos
         }
         public static bool Contains(this string @this, IEnumerable<string> keys, bool ignoreCase = true)
         {
-            if (keys is not ICollection<string> array)
+            if (!(keys is ICollection<string> array))
             {
                 array = keys.ToArray();
             }
