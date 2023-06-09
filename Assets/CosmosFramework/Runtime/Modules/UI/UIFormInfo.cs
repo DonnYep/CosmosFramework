@@ -14,6 +14,7 @@ namespace Cosmos.UI
         {
             get { return order; }
         }
+        public readonly static UIFormInfo None=new UIFormInfo();
         public UIFormInfo(UIAssetInfo uiAssetInfo, bool isOpened, int order)
         {
             this.uiAssetInfo = uiAssetInfo;
