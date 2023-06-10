@@ -383,6 +383,39 @@ namespace Cosmos.UI
             }
         }
         /// <inheritdoc/>
+        public UIFormInfo[] GetUIGroupFormInfos(string uiGroupName)
+        {
+            uiFormInfoFilterCache.Clear();
+            if (uiGroupDict.TryGetValue(uiGroupName, out var group))
+            {
+                var uiForms = group.GetAllUIForm();
+                var length = uiForms.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    var uiForm = uiForms[i];
+                    var uiFormName = uiForm.UIAssetInfo.UIFormName;
+                    if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
+                    {
+                        var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
+                        uiFormInfoFilterCache.Add(uiFormInfo);
+                    }
+                }
+            }
+            var infos = uiFormInfoFilterCache.ToArray();
+            uiFormInfoFilterCache.Clear();
+            return infos;
+        }
+        /// <inheritdoc/>
+        public UIFormInfo GetUIFormInfo(string uiFormName)
+        {
+            if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
+            {
+                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
+                return uiFormInfo;
+            }
+            return UIFormInfo.None;
+        }
+        /// <inheritdoc/>
         public UIFormInfo[] GetOpenedUIFormInfos()
         {
             uiFormInfoFilterCache.Clear();

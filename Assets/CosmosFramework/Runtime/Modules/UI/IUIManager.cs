@@ -138,6 +138,18 @@ namespace Cosmos.UI
         /// <param name="uiFormName">UI资源的名称</param>
         void UngroupUIForm(string uiFormName);
         /// <summary>
+        /// 获取UIForm组中所有UIForm的信息
+        /// </summary>
+        /// <param name="uiGroupName">UI组的名字</param>
+        /// <returns>UIForm infos</returns>
+        UIFormInfo[] GetUIGroupFormInfos(string uiGroupName);
+        /// <summary>
+        /// 获取UIForm的信息
+        /// </summary>
+        /// <param name="uiFormName">UI资源的名称</param>
+        /// <returns>UIForm info</returns>
+        UIFormInfo GetUIFormInfo(string uiFormName);
+        /// <summary>
         /// 获取打开的UI界面
         /// </summary>
         /// <returns>UIForm infos</returns>
