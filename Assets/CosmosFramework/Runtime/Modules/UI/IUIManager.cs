@@ -159,6 +159,12 @@ namespace Cosmos.UI
         /// </summary>
         /// <returns>UIForm infos</returns>
         UIFormInfo[] GetClosedUIFormInfos();
+        /// <summary>
+        /// 通过条件选择组中的UIFormInfo；
+        /// </summary>
+        /// <param name="condition">条件委托</param>
+        /// <returns>符合条件的UIForm info</returns>
+        UIFormInfo[] FindUIFormInfos(Predicate<IUIForm> condition);
 
     }
 }

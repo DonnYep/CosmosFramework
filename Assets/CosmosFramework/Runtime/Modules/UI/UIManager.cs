@@ -101,9 +101,9 @@ namespace Cosmos.UI
         {
             CheckUIAssetInfoValid(assetInfo, uiType);
             var uiFormName = assetInfo.UIFormName;
-            if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiInfo))
+            if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
             {
-                uiInfo.UIForm.Active = true;
+                uiFormState.UIForm.Active = true;
                 return null;
             }
             else
@@ -138,9 +138,9 @@ namespace Cosmos.UI
         {
             var type = typeof(T);
             CheckUIAssetInfoValid(assetInfo, type);
-            if (uiFormStateLoadedDict.TryGetValue(assetInfo.UIFormName, out var uiInfo))
+            if (uiFormStateLoadedDict.TryGetValue(assetInfo.UIFormName, out var uiFormState))
             {
-                uiInfo.UIForm.Active = true;
+                uiFormState.UIForm.Active = true;
                 return null;
             }
             else
@@ -150,8 +150,8 @@ namespace Cosmos.UI
         public void ReleaseUIForm(string uiFormName)
         {
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiForm);
-            ReleaseUIForm(uiForm.UIForm);
+            uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState);
+            ReleaseUIForm(uiFormState.UIForm);
         }
         /// <inheritdoc/>
         public void ReleaseUIForm(IUIForm uiForm)
@@ -160,10 +160,10 @@ namespace Cosmos.UI
                 throw new ArgumentNullException("UIForm is invalid.");
             var uiFormName = uiForm.UIAssetInfo.UIFormName;
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            if (uiFormStateLoadedDict.Remove(uiFormName, out var uiFormInfo))
+            if (uiFormStateLoadedDict.Remove(uiFormName, out var uiFormState))
             {
                 //处理已经加载完成的UIForm
-                if (uiFormInfo.UIForm != uiForm)
+                if (uiFormState.UIForm != uiForm)
                     throw new ArgumentException($"{uiFormName}'s ptr is not equal !");//指针不一致
                 if (!string.IsNullOrEmpty(uiForm.UIAssetInfo.UIGroupName))
                 {
@@ -174,12 +174,12 @@ namespace Cosmos.UI
                 }
                 if (uiForm.Active)
                     uiForm.Active = false;
-                if (uiFormInfo.IsOpened)
+                if (uiFormState.IsOpened)
                     uiForm.OnClose();
                 uiForm.OnRelease();
                 uiFormAssetHelper.ReleaseUIForm(uiForm);
 
-                uiFormStateCache.Remove(uiFormInfo);
+                uiFormStateCache.Remove(uiFormState);
                 onUIFormReleaseCallback?.Invoke(uiForm);
             }
             else
@@ -205,12 +205,12 @@ namespace Cosmos.UI
                     var uiForm = uiForms[i];
                     if (uiForm.Active)
                         uiForm.Active = false;
-                    uiFormStateLoadedDict.Remove(uiForm.UIAssetInfo.UIFormName, out var uiFormInfo);
-                    if (uiFormInfo.IsOpened)
+                    uiFormStateLoadedDict.Remove(uiForm.UIAssetInfo.UIFormName, out var uiFormState);
+                    if (uiFormState.IsOpened)
                         uiForm.OnClose();
                     uiForm.OnRelease();
                     uiFormAssetHelper.ReleaseUIForm(uiForms[i]);
-                    uiFormStateCache.Remove(uiFormInfo);
+                    uiFormStateCache.Remove(uiFormState);
                 }
                 uiGroupDict.Remove(uiGroupName, out var uiFormGroup);
                 UIFormGroup.Release(uiFormGroup as UIFormGroup);
@@ -242,17 +242,17 @@ namespace Cosmos.UI
                 throw new ArgumentNullException("UIForm is invalid.");
             var uiFormName = uiForm.UIAssetInfo.UIFormName;
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            var hasUIForm = uiFormStateLoadedDict.TryGetValue(uiFormName, out var form);
+            var hasUIForm = uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState);
             if (hasUIForm)
-                form.UIForm.Active = true;
+                uiFormState.UIForm.Active = true;
         }
         /// <inheritdoc/>
         public void DeactiveUIForm(string uiFormName)
         {
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            var hasUIForm = uiFormStateLoadedDict.TryGetValue(uiFormName, out var form);
+            var hasUIForm = uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState);
             if (hasUIForm)
-                form.UIForm.Active = false;
+                uiFormState.UIForm.Active = false;
         }
         /// <inheritdoc/>
         public void DeactiveUIForm(IUIForm uiForm)
@@ -261,9 +261,9 @@ namespace Cosmos.UI
                 throw new ArgumentNullException("UIForm is invalid.");
             var uiFormName = uiForm.UIAssetInfo.UIFormName;
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            var hasUIForm = uiFormStateLoadedDict.TryGetValue(uiFormName, out var form);
+            var hasUIForm = uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState);
             if (hasUIForm)
-                form.UIForm.Active = false;
+                uiFormState.UIForm.Active = false;
         }
         /// <inheritdoc/>
         public void ActiveUIGroup(string uiGroupName)
@@ -287,8 +287,8 @@ namespace Cosmos.UI
             where T : class, IUIForm
         {
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            var rst = uiFormStateLoadedDict.TryGetValue(uiFormName, out var form);
-            uiForm = form.UIForm as T;
+            var rst = uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState);
+            uiForm = uiFormState.UIForm as T;
             return rst;
         }
         /// <inheritdoc/>
@@ -296,9 +296,9 @@ namespace Cosmos.UI
         {
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
             uiForm = default;
-            if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormInfo))
+            if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
             {
-                uiForm = uiFormInfo.UIForm;
+                uiForm = uiFormState.UIForm;
                 return true;
             }
             return false;
@@ -321,9 +321,9 @@ namespace Cosmos.UI
                 throw new ArgumentNullException("Handler is invalid !");
             var dst = new IUIForm[uiFormStateLoadedDict.Count];
             int idx = 0;
-            foreach (var uiFormInfo in uiFormStateLoadedDict.Values)
+            foreach (var uiFormState in uiFormStateLoadedDict.Values)
             {
-                var uiForm = uiFormInfo.UIForm;
+                var uiForm = uiFormState.UIForm;
                 if (condition.Invoke(uiForm))
                 {
                     dst[idx] = uiForm;
@@ -365,8 +365,8 @@ namespace Cosmos.UI
         public void UngroupUIForm(string uiFormName)
         {
             Utility.Text.IsStringValid(uiFormName, "UIFormName is invalid !");
-            var uiFormInfo = uiFormStateLoadedDict[uiFormName];
-            var uiForm = uiFormInfo.UIForm;
+            var uiFormState = uiFormStateLoadedDict[uiFormName];
+            var uiForm = uiFormState.UIForm;
             if (!string.IsNullOrEmpty(uiForm.UIAssetInfo.UIGroupName))
             {
                 if (uiGroupDict.TryGetValue(uiForm.UIAssetInfo.UIGroupName, out var group))
@@ -440,6 +440,24 @@ namespace Cosmos.UI
                     continue;
                 var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
                 uiFormInfoFilterCache.Add(uiFormInfo);
+            }
+            var infos = uiFormInfoFilterCache.ToArray();
+            uiFormInfoFilterCache.Clear();
+            return infos;
+        }
+        /// <inheritdoc/>
+        public UIFormInfo[] FindUIFormInfos(Predicate<IUIForm> condition)
+        {
+            uiFormInfoFilterCache.Clear();
+            foreach (var uiFormState in uiFormStateLoadedDict.Values)
+            {
+                var uiForm = uiFormState.UIForm;
+                if (condition.Invoke(uiForm))
+                {
+                    var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
+
+                    uiFormInfoFilterCache.Add(uiFormInfo);
+                }
             }
             var infos = uiFormInfoFilterCache.ToArray();
             uiFormInfoFilterCache.Clear();
