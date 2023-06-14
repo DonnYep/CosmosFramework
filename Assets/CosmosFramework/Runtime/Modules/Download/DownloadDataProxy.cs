@@ -30,5 +30,11 @@
                     downloadTimeout = 0;
             }
         }
+        static int redirectLimit = 32;
+        public static int RedirectLimit
+        {
+            get { return redirectLimit; }
+            set { redirectLimit = value; }
+        }
     }
 }

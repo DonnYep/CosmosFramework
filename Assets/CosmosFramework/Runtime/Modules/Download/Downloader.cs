@@ -105,6 +105,14 @@ namespace Cosmos.Download
         /// 当前是否可下载；
         /// </summary>
         bool canDownload;
+        /// <summary>
+        /// 总共需要下载的文件大小
+        /// </summary>
+        long totalRequiredDownloadLength;
+        /// <summary>
+        /// 已经下载的文件大小
+        /// </summary>
+        long completedDownloadLength;
 
         /// <inheritdoc/>
         public int AddDownload(string downloadUri, string downloadPath)
@@ -177,36 +185,6 @@ namespace Cosmos.Download
             OnPendingTasksCompleted();
             Downloading = false;
         }
-        IEnumerator RunGetContentLength(DownloadTask downloadTask)
-        {
-            var startTime = DateTime.Now;
-            var downloadUri = downloadTask.DownloadUri;
-            var downloadPath = downloadTask.DownloadPath;
-            using (UnityWebRequest request = UnityWebRequest.Head(downloadUri))
-            {
-                //这部分通过header获取需要下载的文件大小
-                unityWebRequest = request;
-                request.timeout = DownloadDataProxy.DownloadTimeout;
-                yield return request.SendWebRequest();
-#if UNITY_2020_1_OR_NEWER
-                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError&& canDownload)
-#elif UNITY_2018_1_OR_NEWER
-                if (!request.isNetworkError && !request.isHttpError)
-#endif
-                {
-                    var fileLength = long.Parse(request.GetRequestHeader("Content-Length"));
-                    var timeSpan = DateTime.Now - startTime;
-                    var info = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, 0, fileLength, timeSpan);
-
-                }
-                else
-                {
-                    var timeSpan = DateTime.Now - startTime;
-                    var info = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, 0, 0, timeSpan);
-
-                }
-            }
-        }
         /// <summary>
         /// 单文件下载迭代器方法；
         /// </summary>
@@ -214,9 +192,30 @@ namespace Cosmos.Download
         /// <returns>迭代器接口</returns>
         IEnumerator RunDownloadSingleFile(DownloadTask downloadTask)
         {
-            var fileDownloadStartTime = DateTime.Now;
             var downloadUri = downloadTask.DownloadUri;
             var downloadPath = downloadTask.DownloadPath;
+//            using (UnityWebRequest request = UnityWebRequest.Head(downloadUri))
+//            {
+//                //这部分通过header获取需要下载的文件大小
+//                unityWebRequest = request;
+//                request.timeout = DownloadDataProxy.DownloadTimeout;
+//                request.redirectLimit = DownloadDataProxy.RedirectLimit;
+//                yield return request.SendWebRequest();
+//#if UNITY_2020_1_OR_NEWER
+//                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError&& canDownload)
+//#elif UNITY_2018_1_OR_NEWER
+//                if (!request.isNetworkError && !request.isHttpError)
+//#endif
+//                {
+//                    var fileLength = long.Parse(request.GetRequestHeader("Content-Length"));
+//                    totalRequiredDownloadLength += fileLength;
+//                }
+//                else
+//                {
+//                    //yield break;
+//                }
+//            }
+            var fileDownloadStartTime = DateTime.Now;
             using (UnityWebRequest request = UnityWebRequest.Get(downloadUri))
             {
                 var append = DownloadDataProxy.DownloadAppend;
@@ -229,7 +228,7 @@ namespace Cosmos.Download
                 request.downloadHandler = handler;
                 unityWebRequest = request;
                 request.timeout = DownloadDataProxy.DownloadTimeout;
-
+                request.redirectLimit = DownloadDataProxy.RedirectLimit;
                 {
                     var timeSpan = DateTime.Now - fileDownloadStartTime;
                     var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, 0, 0, timeSpan);
@@ -237,7 +236,6 @@ namespace Cosmos.Download
                     onDownloadStart?.Invoke(startEventArgs);
                     DownloadStartEventArgs.Release(startEventArgs);
                 }
-
                 var operation = request.SendWebRequest();
                 while (!operation.isDone && canDownload)
                 {
