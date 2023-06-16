@@ -16,7 +16,6 @@ namespace Cosmos.UI
     internal sealed partial class UIManager : Module, IUIManager
     {
         #region Properties
-        /// <inheritdoc/>
         Type uiFromBaseType = typeof(IUIForm);
         /// <summary>
         /// UI资产帮助体；
@@ -175,12 +174,14 @@ namespace Cosmos.UI
                 if (uiForm.Active)
                     uiForm.Active = false;
                 if (uiFormState.IsOpened)
+                {
                     uiForm.OnClose();
+                    OnUIFormDeactive(uiFormState);
+                }
                 uiForm.OnRelease();
+                OnUIFormRelease(uiFormState);
                 uiFormAssetHelper.ReleaseUIForm(uiForm);
-
                 uiFormStateCache.Remove(uiFormState);
-                onUIFormReleaseCallback?.Invoke(uiForm);
             }
             else
             {
@@ -207,8 +208,12 @@ namespace Cosmos.UI
                         uiForm.Active = false;
                     uiFormStateLoadedDict.Remove(uiForm.UIAssetInfo.UIFormName, out var uiFormState);
                     if (uiFormState.IsOpened)
+                    {
                         uiForm.OnClose();
+                        OnUIFormDeactive(uiFormState);
+                    }
                     uiForm.OnRelease();
+                    OnUIFormRelease(uiFormState);
                     uiFormAssetHelper.ReleaseUIForm(uiForms[i]);
                     uiFormStateCache.Remove(uiFormState);
                 }
@@ -588,6 +593,10 @@ namespace Cosmos.UI
             deactiveUILnk.AddLast(uiFormInfo);
             //触发失活回调。
             onUIFormDeactiveCallback?.Invoke(uiFormInfo.UIForm);
+        }
+        void OnUIFormRelease(UIFormState uiFormState)
+        {
+            onUIFormReleaseCallback?.Invoke(uiFormState.UIForm);
         }
         void OnUIFormOrderChange(UIFormState uiFormInfo)
         {
