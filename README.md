@@ -92,7 +92,7 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 
 - **DataStructure**:常用数据结构。链表、双向链表、双向字典、二叉树、四叉树、AStar、LRU、线程锁等数据结构。
 
-- **Extensions**:静态扩展库。提供Unit以及C#原生的相关扩展方法。
+- **Extensions**:静态扩展库。提供Unity以及C#原生的相关扩展方法。
 
 - **Awaitable** :此工具提供了async/await语法在unity环境中的支持。可以像写c#原生异步一样,在Unity中写异步。支持Task异步，Task执行完成后会回到主线程，使用时按照正常格式写即可。
 
