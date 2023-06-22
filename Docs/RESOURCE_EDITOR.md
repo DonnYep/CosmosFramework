@@ -1,6 +1,21 @@
 # [English](RESOURCE_EDITOR_EN.md) 
 
+
+<a name="ResourceModule"></a>
+
 # ResourceModule
+- [ResourceRuntime](#ResourceRuntime)
+  - [LoadRuntimeAsset](#Load-Runtime-Asset)
+  - [UnloadRuntimeAsset](#Unload-Runtime-Asset)
+  - [UnloadRuntimeAssetBundle](#Unload-Runtime-AssetBundle)
+- [ResourceEditor](#ResourceEditor)
+  - [AssetDatabaseTab](#AssetDatabaseTab)
+    - [AssetBundleTabMenu](#AssetBundleTab-Menu)
+  - [AssetBundleTab](#AssetBundleTab)
+    - [BuildBundleNameType](#Build-Bundle-Name-Type)
+  - [AssetDatasetTab](#AssetDatasetTab)
+
+<a name="ResourceRuntime"></a>
 
 ## ResourceRuntime
 
@@ -13,14 +28,72 @@
   
 * ResourceDataset是resource模块的配置文件，AssetDatabase加载资源与AssetBundle构建ab都依赖此配置。此文件可在ResourceEditor中生成。
 
-* AssetDatabase与AssetBundle模式加载支持以下寻址方式：
+* AssetDatabase与AssetBundle模式支持以下寻址方式：
   * 资源名。(e.g. MyConfig)
   * 资源名.后缀名。(e.g. MyConfig.json)
   * Assets下的完整路径。(e.g. Assets/Config/MyConfig.json)
- 
+
+<a name="Load-Runtime-Asset"></a>
+
+  ### Load Runtime Asset
+
+  * Resource加载均为异步加载，异步方式包含Coroutine&callback加载与async/await加载。
+
+  * 资源加载遵循ResourceRuntime的三种寻址方式
+
+```csharp
+    async void LoadAsync()
+    {
+        //async/await加载
+        var go = await CosmosEntry.ResourceManager.LoadPrefabAsync("Prefabs/ResCube", true);
+    }
+        //Coroutine&callback加载
+    void LoadCubeAsync()
+    {
+        CosmosEntry.ResourceManager.LoadPrefabAsync("Prefabs/ResCube", (go) =>
+         {
+             go.transform.position = new Vector3(3, 0, 0);
+         }, null, true);
+    }
+
+```
+<a name="Unload-Runtime-Asset"></a>
+
+  ### Unload Runtime Asset
+
+  * 资源卸载遵循ResourceRuntime的三种寻址方式
+
+ ```csharp
+    void UnloadAsset()
+    {
+        //资源名卸载
+        CosmosEntry.ResourceManager.UnloadAsset("MyText");
+        //资源名.后缀名卸载
+        CosmosEntry.ResourceManager.UnloadAsset("MyText.json");
+        //Assets下的完整路径卸载
+        CosmosEntry.ResourceManager.UnloadAsset("Assets/Configs/MyText.json");
+    }
+```
+
+<a name="Unload-Runtime-AssetBundle"></a>
+
+  ### Unload Runtime AssetBundle
+
+ ```csharp
+    void UnloadAssetBundle()
+    {
+        //卸载assetbundle
+        CosmosEntry.UnloadAssetBundle.UnloadAsset("MyBundle",true);
+    }
+```
+
 -----
 
+<a name="ResourceEditor"></a>
+
 ## ResourceEditor
+
+<a name="AssetDatabaseTab"></a>
 
 ### AssetDatabaseTab
 ![AssetDatabaseTab_Multiselect](Images/ResourceEditor/AssetDatabaseTab_Multiselect.png)
@@ -38,6 +111,8 @@
 
 -----
 
+<a name="AssetBundleTab-Menu"></a>
+
 #### AssetBundleTab Menu
 
 * 右键点击bundle，显示功能菜单。
@@ -46,6 +121,8 @@
 
 * 右键点击object，显示功能菜单。
 ![AssetDatabaseTab_ObjectRightClick](Images/ResourceEditor/AssetDatabaseTab_ObjectRightClick.png)
+
+<a name="AssetBundleTab"></a>
 
 ### AssetBundleTab
 ![AssetBundleTab](Images/ResourceEditor/AssetBundleTab.png)
@@ -58,7 +135,9 @@
   
 * 构建完成的assetbundle输出地址可在此页面的`Bundle build path`中查看。
 
-#### Build bundle name type
+<a name="Build-Bundle-Name-Type"></a>
+
+#### Build Bundle Name Type
 
 * AssetBundleTab构建时可通过`Build bundle name type`选择assetbundle构建后的资源名称。
   
@@ -72,9 +151,13 @@
 
 -----
 
+<a name="AssetDatasetTab"></a>
+
 ### AssetDatasetTab
 ![AssetDatasetTab](Images/ResourceEditor/AssetDatasetTab.png)
 
 * 此页面为ResourceDataset可识别的文件后缀名列表。
   
 * 若自定义的文件因为后缀名无法被识别，则在此页面添加对应的后缀名，重新在AssetBundleTab或AssetDatabaseTab中构建。
+
+**[Back to top](#ResourceModule)**
