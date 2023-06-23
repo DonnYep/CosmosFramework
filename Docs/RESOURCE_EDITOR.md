@@ -32,6 +32,7 @@
   * 资源名。(e.g. MyConfig)
   * 资源名.后缀名。(e.g. MyConfig.json)
   * Assets下的完整路径。(e.g. Assets/Config/MyConfig.json)
+-----
 
 <a name="Load-Runtime-Asset"></a>
 
@@ -39,7 +40,7 @@
 
   * Resource加载均为异步加载，异步方式包含Coroutine&callback加载与async/await加载。
 
-  * 资源加载遵循ResourceRuntime的三种寻址方式
+  * 资源加载遵循ResourceRuntime的三种寻址方式。
 
 ```csharp
     async void LoadAsync()
@@ -47,9 +48,9 @@
         //async/await加载
         var go = await CosmosEntry.ResourceManager.LoadPrefabAsync("Prefabs/ResCube", true);
     }
-        //Coroutine&callback加载
     void LoadCubeAsync()
     {
+        //Coroutine&callback加载
         CosmosEntry.ResourceManager.LoadPrefabAsync("Prefabs/ResCube", (go) =>
          {
              go.transform.position = new Vector3(3, 0, 0);
