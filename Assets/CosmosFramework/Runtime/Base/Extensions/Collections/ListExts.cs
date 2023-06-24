@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Cosmos
 {
@@ -76,6 +77,49 @@ namespace Cosmos
         {
             @this.Clear();
             @this.AddRangeUntyped(items);
+        }
+        /// <summary>
+        /// 改变元素的索引位置
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this">集合</param>
+        /// <param name="item">元素</param>
+        /// <param name="index">索引值</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IList<T> ChangeIndex<T>(this IList<T> @this, T item, int index)
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            ChangeIndexInternal(@this, item, index);
+            return @this;
+        }
+
+        /// <summary>
+        /// 改变元素的索引位置
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this">集合</param>
+        /// <param name="condition">元素定位条件</param>
+        /// <param name="index">索引值</param>
+        public static IList<T> ChangeIndex<T>(this IList<T> @this, Func<T, bool> condition, int index)
+        {
+            var item = @this.FirstOrDefault(condition);
+            if (item != null)
+            {
+                ChangeIndexInternal(@this, item, index);
+            }
+            return @this;
+        }
+
+        private static void ChangeIndexInternal<T>(IList<T> list, T item, int index)
+        {
+            index = Math.Max(0, index);
+            index = Math.Min(list.Count - 1, index);
+            list.Remove(item);
+            list.Insert(index, item);
         }
         private static int WrapIndex(int index, int count)
         {
