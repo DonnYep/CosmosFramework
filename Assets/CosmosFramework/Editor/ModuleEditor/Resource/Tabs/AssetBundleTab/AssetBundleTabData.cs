@@ -19,9 +19,9 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public AssetBundleNameType AssetBundleNameType;
         /// <summary>
-        /// 增量构建
+        /// 构建类型，增量或全量
         /// </summary>
-        public bool IncrementalBuild;
+        public ResourceBuildType ResourceBuildType;
         /// <summary>
         /// 构建handler的名称
         /// </summary>
@@ -50,6 +50,10 @@ namespace Cosmos.Editor.Resource
         /// AB打包输出的绝对路径；
         /// </summary>
         public string AssetBundleBuildPath;
+        /// <summary>
+        /// AB打包输出文件夹
+        /// </summary>
+        public string AssetBundleBuildDirectory;
         /// <summary>
         /// AB输出目录；
         /// </summary>

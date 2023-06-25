@@ -5,6 +5,7 @@ using UnityEngine;
 using Cosmos.Unity.EditorCoroutines.Editor;
 using System.Collections;
 using Cosmos.Resource;
+using System.Collections.Generic;
 
 namespace Cosmos.Editor.Resource
 {
@@ -60,10 +61,13 @@ namespace Cosmos.Editor.Resource
                         EncryptManifest = tabData.EncryptManifest,
                         ManifestEncryptionKey = tabData.ManifestEncryptionKey,
                         BuildTarget = tabData.BuildTarget,
-                        BuildVersion = $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}",
+                        ResourceBuildType = tabData.ResourceBuildType,
+                        BuildVersion = tabData.BuildVersion,
+                        InternalBuildVersion = tabData.InternalBuildVersion,
                         CopyToStreamingAssets = tabData.CopyToStreamingAssets,
                         UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
-                        StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath
+                        StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath,
+                        AssetBundleBuildDirectory = tabData.AssetBundleBuildDirectory
                     };
                     EditorUtil.Coroutine.StartCoroutine(BuildAssetBundle(buildParams, ResourceWindowDataProxy.ResourceDataset));
                 }
@@ -89,6 +93,8 @@ namespace Cosmos.Editor.Resource
                     tabData.BuildHandlerName = buildHandlers[tabData.BuildHandlerIndex];
                 }
 
+                tabData.ResourceBuildType = (ResourceBuildType)EditorGUILayout.EnumPopup("Build type", tabData.ResourceBuildType);
+
                 tabData.ForceRebuildAssetBundle = EditorGUILayout.ToggleLeft("Force rebuild assetBundle", tabData.ForceRebuildAssetBundle);
                 tabData.DisableWriteTypeTree = EditorGUILayout.ToggleLeft("Disable write type tree", tabData.DisableWriteTypeTree);
                 if (tabData.DisableWriteTypeTree)
@@ -102,7 +108,6 @@ namespace Cosmos.Editor.Resource
                 //打包输出的资源加密，如buildInfo，assetbundle 文件名加密
                 tabData.AssetBundleNameType = (AssetBundleNameType)EditorGUILayout.EnumPopup("Build bundle name type ", tabData.AssetBundleNameType);
 
-                tabData.IncrementalBuild = EditorGUILayout.ToggleLeft("Incremental build", tabData.IncrementalBuild);
             }
             EditorGUILayout.EndVertical();
         }
@@ -112,9 +117,13 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.BeginVertical();
             {
                 tabData.BuildVersion = EditorGUILayout.TextField("Build version", tabData.BuildVersion);
-                tabData.InternalBuildVersion = EditorGUILayout.IntField("Internal build version", tabData.InternalBuildVersion);
-                if (tabData.InternalBuildVersion < 0)
-                    tabData.InternalBuildVersion = 0;
+
+                if (tabData.ResourceBuildType == ResourceBuildType.Full)
+                {
+                    tabData.InternalBuildVersion = EditorGUILayout.IntField("Internal build version", tabData.InternalBuildVersion);
+                    if (tabData.InternalBuildVersion < 0)
+                        tabData.InternalBuildVersion = 0;
+                }
 
                 EditorGUILayout.BeginHorizontal();
                 {
@@ -129,9 +138,15 @@ namespace Cosmos.Editor.Resource
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+                tabData.AssetBundleBuildDirectory = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString());
                 if (!string.IsNullOrEmpty(tabData.BuildVersion))
                 {
-                    tabData.AssetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString(), $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}");
+                    var assetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString(), $"{tabData.BuildVersion}");
+                    if (tabData.ResourceBuildType == ResourceBuildType.Full)
+                    {
+                        assetBundleBuildPath += tabData.InternalBuildVersion.ToString();
+                    }
+                    tabData.AssetBundleBuildPath = assetBundleBuildPath;
                 }
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
@@ -227,8 +242,20 @@ namespace Cosmos.Editor.Resource
         {
             yield return BuildDataset.Invoke();
             ResourceManifest resourceManifest = new ResourceManifest();
+            switch (buildParams.ResourceBuildType)
+            {
+                case ResourceBuildType.Full:
+                    BuildFullAssetBundle(buildParams, dataset, resourceManifest);
+                    break;
+                case ResourceBuildType.Incremental:
+                    BuildIncrementalAssetBundle(buildParams, dataset, resourceManifest);
+                    break;
+            }
+        }
+        void BuildFullAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset, ResourceManifest resourceManifest)
+        {
             var bundleInfos = dataset.GetResourceBundleInfos();
-            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, true, ref resourceManifest);
             var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(tabData.BuildHandlerName);
             if (resourceBuildHandler != null)
             {
@@ -242,7 +269,70 @@ namespace Cosmos.Editor.Resource
             {
                 resourceBuildHandler.OnBuildComplete(buildParams);
             }
+        }
+        void BuildIncrementalAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset, ResourceManifest resourceManifest)
+        {
+            var bundleInfos = dataset.GetResourceBundleInfos();
+            ResourceBuildController.CompareIncrementalBuildCache(buildParams, bundleInfos, out var cacheCompareResult);
 
+            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, false, ref resourceManifest);
+            var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(tabData.BuildHandlerName);
+            if (resourceBuildHandler != null)
+            {
+                resourceBuildHandler.OnBuildPrepared(buildParams);
+            }
+
+            var needBuildBundles = new List<ResourceBundleCacheInfo>();
+            needBuildBundles.AddRange(cacheCompareResult.Changed);
+            needBuildBundles.AddRange(cacheCompareResult.NewlyAdded);
+            var length = needBuildBundles.Count;
+            var abBuildList = new List<AssetBundleBuild>();
+
+            if (length > 0)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    AssetBundleBuild assetBundleBuild = default;
+                    var cacheInfo = needBuildBundles[i];
+                    switch (buildParams.AssetBundleNameType)
+                    {
+                        case AssetBundleNameType.DefaultName:
+                            {
+                                assetBundleBuild = new AssetBundleBuild()
+                                {
+                                    assetBundleName = cacheInfo.BundleName,
+                                    assetNames = cacheInfo.AssetNames
+                                };
+                            }
+                            break;
+                        case AssetBundleNameType.HashInstead:
+                            {
+                                assetBundleBuild = new AssetBundleBuild()
+                                {
+                                    assetBundleName = cacheInfo.BundleHash,
+                                    assetNames = cacheInfo.AssetNames
+                                };
+                            }
+                            break;
+                    }
+                    abBuildList.Add(assetBundleBuild);
+                }
+
+                var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, abBuildList.ToArray(), buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
+
+                ResourceBuildController.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
+                ResourceBuildController.PorcessManifest(buildParams, ref resourceManifest);
+                ResourceBuildController.BuildDoneOption(buildParams);
+                if (resourceBuildHandler != null)
+                {
+                    resourceBuildHandler.OnBuildComplete(buildParams);
+                }
+                ResourceBuildController.GenerateIncrementalBuildLog(buildParams, cacheCompareResult);
+            }
+            else
+            {
+                EditorUtil.Debug.LogInfo("No bundle changed !");
+            }
         }
         BuildAssetBundleOptions GetBuildAssetBundleOptions()
         {

@@ -28,5 +28,6 @@
         public const float MAX_WIDTH = 0.618f;
         public const float MIN_WIDTH = 0.382f;
         public const string RESOURCE_BUILD_CACHE = "ResourceBuildCache.json";
+        public const string RESOURCE_BUILD_LOG= "ResourceBuildLog.json";
     }
 }

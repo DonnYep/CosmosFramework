@@ -93,11 +93,14 @@ namespace Cosmos.Editor.Resource
 #endif
             dataset.IsChanged = false;
         }
-        public static void PrepareBuildAssetBundle(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, ref ResourceManifest resourceManifest)
+        public static void PrepareBuildAssetBundle(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, bool clearAssetBundleBuildPath, ref ResourceManifest resourceManifest)
         {
-            if (Directory.Exists(buildParams.AssetBundleBuildPath))
-                Utility.IO.DeleteFolder(buildParams.AssetBundleBuildPath);
-            Directory.CreateDirectory(buildParams.AssetBundleBuildPath);
+            if (clearAssetBundleBuildPath)
+            {
+                if (Directory.Exists(buildParams.AssetBundleBuildPath))
+                    Utility.IO.DeleteFolder(buildParams.AssetBundleBuildPath);
+                Directory.CreateDirectory(buildParams.AssetBundleBuildPath);
+            }
 
             var assetBundleNameType = buildParams.AssetBundleNameType;
 
@@ -290,6 +293,123 @@ namespace Cosmos.Editor.Resource
             }
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
+        public static void CompareIncrementalBuildCache(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, out ResourceBuildCacheCompareResult cacheCompareResult)
+        {
+            cacheCompareResult = new ResourceBuildCacheCompareResult();
+            ResourceBuildCache buildCache = default;
+            try
+            {
+                var buildCacheWritePath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceEditorConstant.RESOURCE_BUILD_CACHE);
+                var cacheJson = Utility.IO.ReadTextFileContent(buildCacheWritePath);
+                buildCache = EditorUtil.Json.ToObject<ResourceBuildCache>(cacheJson);
+            }
+            catch
+            {
+                buildCache = new ResourceBuildCache()
+                {
+                    BundleCacheInfoList = new List<ResourceBundleCacheInfo>()
+                };
+            }
+
+            var newlyAdded = new List<ResourceBundleCacheInfo>();
+            var changed = new List<ResourceBundleCacheInfo>();
+            var expired = new List<ResourceBundleCacheInfo>();
+            var unchanged = new List<ResourceBundleCacheInfo>();
+
+            var newBundleCacheInfoList = new List<ResourceBundleCacheInfo>();
+            var srcBundleCacheInfoList = buildCache.BundleCacheInfoList;
+            var srcBundleCacheInfoDict = srcBundleCacheInfoList.ToDictionary(b => b.BundlePath);
+            var cmpBundleCacheInfoList = new List<ResourceBundleCacheInfo>();
+            foreach (var bundleInfo in bundleInfos)
+            {
+                if (bundleInfo.ResourceObjectInfoList.Count <= 0)
+                    continue;
+                var bundlePath = bundleInfo.BundlePath;
+                var bundleName = bundleInfo.BundleName;
+                var path = Path.Combine(EditorUtil.ApplicationPath(), bundlePath);
+                var hash = ResourceUtility.CreateDirectoryMd5(path);
+                var assetNames = bundleInfo.ResourceObjectInfoList.Select(obj => obj.ObjectPath).ToArray();
+                var cmpCacheInfo = new ResourceBundleCacheInfo()
+                {
+                    BundleName = bundleName,
+                    BundlePath = bundlePath,
+                    BundleHash = hash,
+                    AssetNames = assetNames,
+                };
+                cmpBundleCacheInfoList.Add(cmpCacheInfo);
+            }
+            var cmpCacheInfoDict = cmpBundleCacheInfoList.ToDictionary(b => b.BundlePath);
+            var nameType = buildParams.AssetBundleNameType;
+            var abBuildPath = buildParams.AssetBundleBuildPath;
+            foreach (var srcCacheInfo in srcBundleCacheInfoDict.Values)
+            {
+                var filePath = string.Empty;
+                switch (nameType)
+                {
+                    case AssetBundleNameType.DefaultName:
+                        filePath = Path.Combine(abBuildPath, srcCacheInfo.BundleName);
+                        break;
+                    case AssetBundleNameType.HashInstead:
+                        filePath = Path.Combine(abBuildPath, srcCacheInfo.BundleHash);
+                        break;
+                }
+                if (!cmpCacheInfoDict.TryGetValue(srcCacheInfo.BundlePath, out var cmpCacheInfo))
+                {
+                    //现有资源不存在，表示为过期
+                    expired.Add(srcCacheInfo);
+                    Utility.IO.DeleteFile(filePath);
+                }
+                else
+                {
+                    if (srcCacheInfo.BundleHash != cmpCacheInfo.BundleHash)
+                    {
+                        changed.Add(cmpCacheInfo);
+                        Utility.IO.DeleteFile(filePath);
+                    }
+                    else
+                    {
+                        if (File.Exists(filePath))
+                        {
+                            unchanged.Add(cmpCacheInfo);
+                        }
+                        else
+                        {
+                            changed.Add(cmpCacheInfo);
+                        }
+                    }
+                    newBundleCacheInfoList.Add(cmpCacheInfo);
+                }
+            }
+            foreach (var cmpCacheInfo in cmpCacheInfoDict.Values)
+            {
+                if (!srcBundleCacheInfoDict.TryGetValue(cmpCacheInfo.BundlePath, out var srcCacheInfo))
+                {
+                    newlyAdded.Add(cmpCacheInfo);
+                    newBundleCacheInfoList.Add(cmpCacheInfo);
+                }
+            }
+            cacheCompareResult.NewlyAdded = newlyAdded.ToArray();
+            cacheCompareResult.Changed = changed.ToArray();
+            cacheCompareResult.Expired = expired.ToArray();
+            cacheCompareResult.Unchanged = unchanged.ToArray();
+            cacheCompareResult.BundleCacheInfoList = newBundleCacheInfoList;
+        }
+        public static void GenerateIncrementalBuildLog(ResourceBuildParams buildParams, ResourceBuildCacheCompareResult cacheCompareResult)
+        {
+            var newBuildCache = new ResourceBuildCache()
+            {
+                BuildVerison = buildParams.BuildVersion,
+                InternalBuildVerison = buildParams.InternalBuildVersion,
+                BundleCacheInfoList = cacheCompareResult.BundleCacheInfoList
+            };
+            var cacheJson = EditorUtil.Json.ToJson(newBuildCache);
+            var cachePath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceEditorConstant.RESOURCE_BUILD_CACHE);
+            Utility.IO.OverwriteTextFile(cachePath, cacheJson);
+
+            var logJson = EditorUtil.Json.ToJson(cacheCompareResult);
+            var logPath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceEditorConstant.RESOURCE_BUILD_LOG);
+            Utility.IO.OverwriteTextFile(logPath, logJson);
+        }
         public static void BuildAssetBundle(ResourceDataset dataset, ResourceBuildParams buildParams)
         {
             if (dataset == null)
@@ -297,7 +417,7 @@ namespace Cosmos.Editor.Resource
             BuildDataset(dataset);
             ResourceManifest resourceManifest = new ResourceManifest();
             var bundleInfos = dataset.GetResourceBundleInfos();
-            PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            PrepareBuildAssetBundle(buildParams, bundleInfos, true, ref resourceManifest);
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
             ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
             PorcessManifest(buildParams, ref resourceManifest);

@@ -20,9 +20,21 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public string AssetBundleBuildPath;
         /// <summary>
+        /// AB打包输出文件夹
+        /// </summary>
+        public string AssetBundleBuildDirectory;
+        /// <summary>
+        /// 构建类型，增量或全量
+        /// </summary>
+        public ResourceBuildType ResourceBuildType;
+        /// <summary>
         /// 打包的版本；
         /// </summary>
         public string BuildVersion;
+        /// <summary>
+        /// 内部版本号
+        /// </summary>
+        public int InternalBuildVersion;
         /// <summary>
         /// 加密manifest
         /// </summary>
