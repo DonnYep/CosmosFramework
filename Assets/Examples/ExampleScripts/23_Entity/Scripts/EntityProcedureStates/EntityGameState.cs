@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Cosmos.Procedure;
 using Cosmos;
 using Cosmos.Extensions;

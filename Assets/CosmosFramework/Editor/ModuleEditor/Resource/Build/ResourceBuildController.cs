@@ -93,13 +93,16 @@ namespace Cosmos.Editor.Resource
 #endif
             dataset.IsChanged = false;
         }
-        public static void PrepareBuildAssetBundle(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, bool clearAssetBundleBuildPath, ref ResourceManifest resourceManifest)
+        public static void PrepareBuildAssetBundle(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, ref ResourceManifest resourceManifest)
         {
-            if (clearAssetBundleBuildPath)
+            switch (buildParams.ResourceBuildType)
             {
-                if (Directory.Exists(buildParams.AssetBundleBuildPath))
-                    Utility.IO.DeleteFolder(buildParams.AssetBundleBuildPath);
-                Directory.CreateDirectory(buildParams.AssetBundleBuildPath);
+                case ResourceBuildType.Full:
+                    Utility.IO.EmptyFolder(buildParams.AssetBundleBuildPath);
+                    break;
+                case ResourceBuildType.Incremental:
+                    Utility.IO.CreateFolder(buildParams.AssetBundleBuildPath);
+                    break;
             }
 
             var assetBundleNameType = buildParams.AssetBundleNameType;
@@ -244,12 +247,6 @@ namespace Cosmos.Editor.Resource
             }
             #endregion
 
-            for (int i = 0; i < bundleInfoLength; i++)
-            {
-                var bundle = bundleInfos[i];
-                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                importer.assetBundleName = string.Empty;
-            }
             //refresh assetbundle
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
             AssetDatabase.RemoveUnusedAssetBundleNames();
@@ -271,7 +268,16 @@ namespace Cosmos.Editor.Resource
             Utility.IO.WriteTextFile(buildParams.AssetBundleBuildPath, ResourceConstants.RESOURCE_MANIFEST, manifestContext);
 
             //删除生成文对应的主manifest文件
-            var buildVersionPath = Path.Combine(buildParams.AssetBundleBuildPath, buildParams.BuildVersion);
+            string buildVersionPath = string.Empty;
+            switch (buildParams.ResourceBuildType)
+            {
+                case ResourceBuildType.Full:
+                    buildVersionPath = Path.Combine(buildParams.AssetBundleBuildPath, $"{buildParams.BuildVersion}_{buildParams.InternalBuildVersion}");
+                    break;
+                case ResourceBuildType.Incremental:
+                    buildVersionPath = Path.Combine(buildParams.AssetBundleBuildPath, buildParams.BuildVersion);
+                    break;
+            }
             var buildVersionManifestPath = Utility.Text.Append(buildVersionPath, ".manifest");
             Utility.IO.DeleteFile(buildVersionPath);
             Utility.IO.DeleteFile(buildVersionManifestPath);
@@ -410,6 +416,16 @@ namespace Cosmos.Editor.Resource
             var logPath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceEditorConstant.RESOURCE_BUILD_LOG);
             Utility.IO.OverwriteTextFile(logPath, logJson);
         }
+        public static void RevertAssetBundlesName(List<ResourceBundleInfo> bundleInfos)
+        {
+            var bundleInfoLength = bundleInfos.Count;
+            for (int i = 0; i < bundleInfoLength; i++)
+            {
+                var bundle = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
+                importer.assetBundleName = string.Empty;
+            }
+        }
         public static void BuildAssetBundle(ResourceDataset dataset, ResourceBuildParams buildParams)
         {
             if (dataset == null)
@@ -417,11 +433,12 @@ namespace Cosmos.Editor.Resource
             BuildDataset(dataset);
             ResourceManifest resourceManifest = new ResourceManifest();
             var bundleInfos = dataset.GetResourceBundleInfos();
-            PrepareBuildAssetBundle(buildParams, bundleInfos, true, ref resourceManifest);
+            PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
             ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
             PorcessManifest(buildParams, ref resourceManifest);
             BuildDoneOption(buildParams);
+            RevertAssetBundlesName(bundleInfos);
         }
     }
 }

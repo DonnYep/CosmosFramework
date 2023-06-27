@@ -144,7 +144,7 @@ namespace Cosmos.Editor.Resource
                     var assetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString(), $"{tabData.BuildVersion}");
                     if (tabData.ResourceBuildType == ResourceBuildType.Full)
                     {
-                        assetBundleBuildPath += tabData.InternalBuildVersion.ToString();
+                        assetBundleBuildPath += $"_{tabData.InternalBuildVersion}";
                     }
                     tabData.AssetBundleBuildPath = assetBundleBuildPath;
                 }
@@ -255,7 +255,7 @@ namespace Cosmos.Editor.Resource
         void BuildFullAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset, ResourceManifest resourceManifest)
         {
             var bundleInfos = dataset.GetResourceBundleInfos();
-            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, true, ref resourceManifest);
+            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
             var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(tabData.BuildHandlerName);
             if (resourceBuildHandler != null)
             {
@@ -269,13 +269,14 @@ namespace Cosmos.Editor.Resource
             {
                 resourceBuildHandler.OnBuildComplete(buildParams);
             }
+            ResourceBuildController.RevertAssetBundlesName(bundleInfos);
         }
         void BuildIncrementalAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset, ResourceManifest resourceManifest)
         {
             var bundleInfos = dataset.GetResourceBundleInfos();
             ResourceBuildController.CompareIncrementalBuildCache(buildParams, bundleInfos, out var cacheCompareResult);
 
-            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, false, ref resourceManifest);
+            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
             var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(tabData.BuildHandlerName);
             if (resourceBuildHandler != null)
             {
@@ -290,6 +291,7 @@ namespace Cosmos.Editor.Resource
 
             if (length > 0)
             {
+                EditorUtil.Debug.LogInfo($"{length } bundles  changed !");
                 for (int i = 0; i < length; i++)
                 {
                     AssetBundleBuild assetBundleBuild = default;
@@ -317,7 +319,6 @@ namespace Cosmos.Editor.Resource
                     }
                     abBuildList.Add(assetBundleBuild);
                 }
-
                 var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, abBuildList.ToArray(), buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
 
                 ResourceBuildController.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
@@ -333,6 +334,7 @@ namespace Cosmos.Editor.Resource
             {
                 EditorUtil.Debug.LogInfo("No bundle changed !");
             }
+            ResourceBuildController.RevertAssetBundlesName(bundleInfos);
         }
         BuildAssetBundleOptions GetBuildAssetBundleOptions()
         {

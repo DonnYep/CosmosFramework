@@ -5,6 +5,6 @@ namespace Cosmos.Editor.Resource
     {
         public string BuildVerison;
         public int InternalBuildVerison;
-        public IList<ResourceBundleCacheInfo> BundleCacheInfoList;
+        public List<ResourceBundleCacheInfo> BundleCacheInfoList;
     }
 }
