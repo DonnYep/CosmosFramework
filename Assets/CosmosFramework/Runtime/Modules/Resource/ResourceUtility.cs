@@ -6,6 +6,19 @@ namespace Cosmos.Resource
 {
     public static partial class ResourceUtility
     {
+        public static string Prefix
+        {
+            get
+            {
+                string prefix = string.Empty;
+#if UNITY_IOS
+#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+                prefix=@"file://";
+#endif
+#endif
+                return prefix;
+            }
+        }
         /// <summary>
         /// 包名过滤
         /// </summary>

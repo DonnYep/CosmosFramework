@@ -47,10 +47,7 @@ namespace Cosmos
                     {
                         string manifestPath = string.Empty;
                         string bundlePath = string.Empty;
-                        string prefix = string.Empty;
-#if UNITY_IOS ||UNITY_EDITOR_OSX||UNITY_STANDALONE_OSX
-                        prefix=@"file://";
-#endif
+                        string prefix = ResourceUtility.Prefix;
                         switch (resourceBundlePathType)
                         {
                             case ResourceBundlePathType.StreamingAssets:
