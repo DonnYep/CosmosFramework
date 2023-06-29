@@ -66,7 +66,7 @@ namespace Cosmos.FSM
             return CreateFSM(string.Empty, owner, string.Empty, states);
         }
         ///<inheritdoc/>
-        public IFSM<T> CreateFSM<T>(T owner, params FSMState<T>[] states) where T :class
+        public IFSM<T> CreateFSM<T>(T owner, params FSMState<T>[] states) where T : class
         {
             return CreateFSM(string.Empty, owner, string.Empty, states);
         }
@@ -83,7 +83,7 @@ namespace Cosmos.FSM
             return CreateFSM(string.Empty, owner, fsmGroupName, states);
         }
         ///<inheritdoc/>
-        public IFSM<T> CreateFSM<T>(string name, T owner, IList<FSMState<T>> states)where T:class
+        public IFSM<T> CreateFSM<T>(string name, T owner, IList<FSMState<T>> states) where T : class
         {
             return CreateFSM<T>(name, owner, string.Empty, states);
         }
@@ -102,7 +102,7 @@ namespace Cosmos.FSM
             if (string.IsNullOrEmpty(fsmGroupName))
             {
                 if (fsmDict.ContainsKey(fsmKey))
-                    throw new ArgumentException("FSMManager : FSM is exists" + type.ToString());
+                    throw new ArgumentException($"FSMManager : FSM {type} is exists");
                 fsm = FSM<T>.Create(name, owner, states);
                 fsmDict.Add(fsmKey, fsm);
             }
@@ -137,7 +137,7 @@ namespace Cosmos.FSM
             if (string.IsNullOrEmpty(fsmGroupName))
             {
                 if (fsmDict.ContainsKey(fsmKey))
-                    throw new ArgumentException("FSMManager : FSM is exists" + type.ToString());
+                    throw new ArgumentException($"FSMManager : FSM {type} is exists");
                 fsm = FSM<T>.Create(name, owner, states);
                 fsmDict.Add(fsmKey, fsm);
             }

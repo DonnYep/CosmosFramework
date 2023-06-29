@@ -29,13 +29,13 @@ public class FSMTester : MonoSingleton<FSMTester>
         fsmManager = CosmosEntry.FSMManager;
 
         var enterState = new EnterRangeState();
-        var enterTrigger = new EnterTestTrigger();
+        var enterTransition = new EnterTestTransition();
 
         var exitState = new ExitRangeState();
-        var exitTrigger = new ExitTestTrigger();
+        var exitTransition = new ExitTestTransition();
 
-        exitState.AddTrigger(enterTrigger, enterState);
-        enterState.AddTrigger(exitTrigger, exitState);
+        exitState.AddTransition(enterTransition, enterState);
+        enterState.AddTransition(exitTransition, exitState);
 
         fsmA = fsmManager.CreateFSM("FSMTesterA", objectA, exitState, enterState);
         fsmA.DefaultState = exitState;
