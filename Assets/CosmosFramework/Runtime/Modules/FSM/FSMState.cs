@@ -46,5 +46,10 @@ namespace Cosmos.FSM
         public abstract void OnStateExit(IFSM<T> fsm);
         public virtual void OnTermination(IFSM<T> fsm) { }
         #endregion
+        public virtual void Release()
+        {
+            transitionList.Clear();
+            transitionStateDict.Clear();
+        }
     }
 }
