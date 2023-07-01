@@ -11,10 +11,8 @@ namespace Cosmos.Resource
             get
             {
                 string prefix = string.Empty;
-#if UNITY_IOS
-#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+#if UNITY_IOS||UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
                 prefix=@"file://";
-#endif
 #endif
                 return prefix;
             }
