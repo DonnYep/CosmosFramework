@@ -1,30 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Cosmos
 {
     public abstract class BasicFsmState<T> where T : class
     {
         List<BasicFsmTransition<T>> transitionList = new List<BasicFsmTransition<T>>();
-        Dictionary<BasicFsmTransition<T>, BasicFsmState<T>> transitionStateDict
-            = new Dictionary<BasicFsmTransition<T>, BasicFsmState<T>>();
-        public void AddTransition(BasicFsmTransition<T> trigger, BasicFsmState<T> state)
+        Dictionary<BasicFsmTransition<T>, Type> transitionStateDict
+            = new Dictionary<BasicFsmTransition<T>, Type>();
+        public void AddTransition(BasicFsmTransition<T> transition, Type stateType)
         {
-            if (transitionStateDict.ContainsKey(trigger))
+            if (transitionStateDict.ContainsKey(transition))
                 return;
-            transitionStateDict.Add(trigger, state);
-            transitionList.Add(trigger);
+            if (!this.GetType().IsAssignableFrom(stateType))
+                throw new ArgumentException($"State type {stateType.FullName} is invalid !");
+            transitionStateDict.Add(transition, stateType);
+            transitionList.Add(transition);
         }
-        public void RemoveTransition(BasicFsmTransition<T> trigger)
+        public void RemoveTransition(BasicFsmTransition<T> transition)
         {
-            if (!transitionStateDict.ContainsKey(trigger))
+            if (!transitionStateDict.ContainsKey(transition))
                 return;
-            transitionStateDict.Remove(trigger);
-            transitionList.Remove(trigger);
+            transitionStateDict.Remove(transition);
+            transitionList.Remove(transition);
         }
-        public BasicFsmState<T> GetTransitionState(BasicFsmTransition<T> trigger)
+        public Type GetTransitionStateType(BasicFsmTransition<T> transition)
         {
-            if (transitionStateDict.ContainsKey(trigger))
-                return transitionStateDict[trigger];
+            if (transitionStateDict.ContainsKey(transition))
+                return transitionStateDict[transition];
             return null;
         }
         public virtual void OnInit(BasicFsm<T> fsm) { }
@@ -36,7 +39,7 @@ namespace Cosmos
             {
                 if (transitionList[i].Handler(fsm))
                 {
-                    fsm.ChangeState(GetTransitionState(transitionList[i]).GetType());
+                    fsm.ChangeState(GetTransitionStateType(transitionList[i]));
                     return;
                 }
             }

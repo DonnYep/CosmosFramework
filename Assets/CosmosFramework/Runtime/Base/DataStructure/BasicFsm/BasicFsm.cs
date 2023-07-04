@@ -6,7 +6,6 @@ namespace Cosmos
          where T : class
     {
         Type stateBaseType = typeof(BasicFsmState<T>);
-
         BasicFsmState<T> currentState;
         T owner;
         public T Owner { get { return owner; } private set { owner = value; } }
@@ -87,28 +86,45 @@ namespace Cosmos
                 return state;
             return null;
         }
-        public static BasicFsm<T> Create(string name, T owner, params BasicFsmState<T>[] states)
+        public void AddStates(params BasicFsmState<T>[] states)
         {
             if (states == null || states.Length < 1)
                 throw new ArgumentNullException("FSM owner is invalid");
-            //从引用池获得同类
-            BasicFsm<T> fsm = new BasicFsm<T>();
-            fsm.Name = name;
-            fsm.Owner = owner;
-            for (int i = 0; i < states.Length; i++)
+            var stateLength = states.Length;
+            for (int i = 0; i < stateLength; i++)
             {
                 if (states[i] == null)
                     throw new ArgumentNullException("FSM owner is invalid");
                 Type type = states[i].GetType();
-                if (fsm.HasState(type))
+                if (HasState(type))
                     throw new ArgumentException($"FSM state {states[i].GetType().FullName} is is already exist");
                 else
                 {
-                    states[i].OnInit(fsm);
-                    fsm.fsmStateDict.Add(type, states[i]);
+                    states[i].OnInit(this);
+                    fsmStateDict.Add(type, states[i]);
                 }
             }
-            return fsm;
+        }
+        public bool Removetate<TState>()
+    where TState : BasicFsmState<T>
+        {
+            return Removetate(typeof(TState));
+        }
+        public bool Removetate(Type stateType)
+        {
+            if (stateType == null)
+                throw new ArgumentNullException("State type is invaild !");
+            if (!stateBaseType.IsAssignableFrom(stateType))
+                throw new ArgumentNullException($"State type {stateType.FullName} is invaild !");
+            if (currentState != null)
+            {
+                if (currentState.GetType() == stateType)
+                {
+                    currentState?.OnExit(this);
+                    currentState = null;
+                }
+            }
+            return fsmStateDict.Remove(stateType);
         }
     }
 }
