@@ -1,17 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 namespace Cosmos.FSM
 {
     public abstract class FSMState<T> where T : class
     {
         #region Properties
         List<FSMTransition<T>> transitionList = new List<FSMTransition<T>>();
-        Dictionary<FSMTransition<T>, FSMState<T>> transitionStateDict
-            = new Dictionary<FSMTransition<T>, FSMState<T>>();
-        public void AddTransition(FSMTransition<T> transition, FSMState<T> state)
+        Dictionary<FSMTransition<T>, Type> transitionStateDict
+            = new Dictionary<FSMTransition<T>, Type>();
+        public void AddTransition(FSMTransition<T> transition, Type stateType)
         {
             if (transitionStateDict.ContainsKey(transition))
                 return;
-            transitionStateDict.Add(transition, state);
+            if (!this.GetType().IsAssignableFrom(stateType))
+                throw new ArgumentException($"State type {stateType.FullName} is invalid !");
+            transitionStateDict.Add(transition, stateType);
             transitionList.Add(transition);
         }
         public void RemoveTransition(FSMTransition<T> transition)
@@ -21,7 +24,7 @@ namespace Cosmos.FSM
             transitionStateDict.Remove(transition);
             transitionList.Remove(transition);
         }
-        public FSMState<T> GetTransitionState(FSMTransition<T> transition)
+        public Type GetTransitionState(FSMTransition<T> transition)
         {
             if (transitionStateDict.ContainsKey(transition))
                 return transitionStateDict[transition];
@@ -38,7 +41,7 @@ namespace Cosmos.FSM
             {
                 if (transitionList[i].Handler(fsm))
                 {
-                    fsm.ChangeState(GetTransitionState(transitionList[i]).GetType());
+                    fsm.ChangeState(GetTransitionState(transitionList[i]));
                     return;
                 }
             }

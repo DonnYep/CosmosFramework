@@ -34,8 +34,8 @@ public class FSMTester : MonoSingleton<FSMTester>
         var exitState = new ExitRangeState();
         var exitTransition = new ExitTestTransition();
 
-        exitState.AddTransition(enterTransition, enterState);
-        enterState.AddTransition(exitTransition, exitState);
+        exitState.AddTransition(enterTransition, typeof(EnterRangeState));
+        enterState.AddTransition(exitTransition, typeof(ExitRangeState));
 
         fsmA = fsmManager.CreateFSM("FSMTesterA", objectA, exitState, enterState);
         fsmA.DefaultState = exitState;
