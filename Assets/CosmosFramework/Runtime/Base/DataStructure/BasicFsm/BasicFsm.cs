@@ -8,17 +8,28 @@ namespace Cosmos
         Type stateBaseType = typeof(BasicFsmState<T>);
         BasicFsmState<T> currentState;
         T owner;
-        public T Owner { get { return owner; } private set { owner = value; } }
+        public T Owner
+        {
+            get { return owner; }
+            private set { owner = value; }
+        }
         string name;
         public string Name
         {
             get { return name; }
             set { name = value ?? string.Empty; }
         }
-        Dictionary<Type, BasicFsmState<T>> fsmStateDict = new Dictionary<Type, BasicFsmState<T>>();
+        Dictionary<Type, BasicFsmState<T>> fsmStateDict
+            = new Dictionary<Type, BasicFsmState<T>>();
         public int FsmStateCount { get { return fsmStateDict.Count; } }
         public bool IsRunning { get { return currentState != null; } }
         public bool Pause { get; set; }
+        public BasicFsm(T owner) : this(owner, string.Empty) { }
+        public BasicFsm(T owner, string name)
+        {
+            this.owner = owner;
+            this.name = name;
+        }
         public void Update()
         {
             if (Pause)
