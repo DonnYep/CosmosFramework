@@ -262,16 +262,6 @@ namespace Cosmos
                 GameObject.Destroy(@this.GetChild(i).gameObject);
             }
         }
-        /// <summary>
-        /// 设置并对其到父对象；
-        /// </summary>
-        public static void SetAlignParent(this Transform @this, Transform parent)
-        {
-            @this.SetParent(parent);
-            @this.localPosition = Vector3.zero;
-            @this.localRotation = Quaternion.Euler(Vector3.zero);
-            @this.localScale = Vector3.one;
-        }
         public static void ResetWorldTransform(this Transform @this)
         {
             @this.position = Vector3.zero;
@@ -344,6 +334,25 @@ namespace Cosmos
             }
             return null;
         }
-
+        /// <summary>
+        /// 设置并对其到父对象；
+        /// </summary>
+        public static void SetAlignParent(this Transform @this, Transform parent)
+        {
+            @this.SetParent(parent);
+            @this.localPosition = Vector3.zero;
+            @this.localRotation = Quaternion.Euler(Vector3.zero);
+            @this.localScale = Vector3.one;
+        }
+        public static Transform SetParentChild(this Transform @this, Transform parent, string name)
+        {
+            var child = FindChildren(parent, name);
+            if (child != null)
+            {
+                @this.SetParent(child);
+                return @this;
+            }
+            return null;
+        }
     }
 }
