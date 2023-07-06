@@ -250,7 +250,66 @@ where T : Component
             {
                 return path.Contains("\\") || path.Contains("/");
             }
+            public static void DrawCircle(Vector3 position, float radius, int segments, Color color)
+            {
+                //https://dev-tut.com/2022/unity-draw-a-circle-part2/
+                if (radius <= 0.0f || segments <= 0)
+                {
+                    return;
+                }
 
+                float angleStep = (360.0f / segments);
+
+                angleStep *= Mathf.Deg2Rad;
+
+                Vector3 lineStart = Vector3.zero;
+                Vector3 lineEnd = Vector3.zero;
+
+                for (int i = 0; i < segments; i++)
+                {
+                    lineStart.x = Mathf.Cos(angleStep * i);
+                    lineStart.y = Mathf.Sin(angleStep * i);
+
+                    lineEnd.x = Mathf.Cos(angleStep * (i + 1));
+                    lineEnd.y = Mathf.Sin(angleStep * (i + 1));
+
+                    lineStart *= radius;
+                    lineEnd *= radius;
+
+                    lineStart += position;
+                    lineEnd += position;
+
+                    UnityEngine.Debug.DrawLine(lineStart, lineEnd, color);
+                }
+            }
+            /// <summary>
+            /// debug only !
+            /// </summary>
+            public static void DrawString(string text, Vector3 worldPosition, Color textColor, Vector2 anchor, float textSize = 15f)
+            {
+#if UNITY_EDITOR
+                var view = UnityEditor.SceneView.currentDrawingSceneView;
+                if (!view)
+                    return;
+                Vector3 screenPosition = view.camera.WorldToScreenPoint(worldPosition);
+                if (screenPosition.y < 0 || screenPosition.y > view.camera.pixelHeight || screenPosition.x < 0 || screenPosition.x > view.camera.pixelWidth || screenPosition.z < 0)
+                    return;
+                var pixelRatio = UnityEditor.HandleUtility.GUIPointToScreenPixelCoordinate(Vector2.right).x - UnityEditor.HandleUtility.GUIPointToScreenPixelCoordinate(Vector2.zero).x;
+                UnityEditor.Handles.BeginGUI();
+                var style = new GUIStyle(GUI.skin.label)
+                {
+                    fontSize = (int)textSize,
+                    normal = new GUIStyleState() { textColor = textColor }
+                };
+                Vector2 size = style.CalcSize(new GUIContent(text)) * pixelRatio;
+                var alignedPosition =
+                    ((Vector2)screenPosition +
+                    size * ((anchor + Vector2.left + Vector2.up) / 2f)) * (Vector2.right + Vector2.down) +
+                    Vector2.up * view.camera.pixelHeight;
+                GUI.Label(new Rect(alignedPosition / pixelRatio, size / pixelRatio), text, style);
+                UnityEditor.Handles.EndGUI();
+#endif
+            }
             /// <summary>
             /// 角度转向量 
             /// </summary>

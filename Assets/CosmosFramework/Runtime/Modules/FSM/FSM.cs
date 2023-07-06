@@ -55,7 +55,7 @@ namespace Cosmos.FSM
             if (defaultState == null)
                 return;
             Type type = defaultState.GetType();
-            if (!typeof(FSMState<T>).IsAssignableFrom(type))
+            if (!stateBaseType.IsAssignableFrom(type))
                 throw new ArgumentException($"State type {type.FullName} is invalid");
             FSMState<T> state = GetState(type);
             if (state == null)
