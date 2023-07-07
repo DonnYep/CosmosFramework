@@ -536,6 +536,24 @@ where T : Component
             #endregion
 
             #region  Coroutine
+            /// <summary>
+            /// 加入延迟任务
+            /// </summary>
+            /// <param name="delay">延迟时间，delay>=0</param>
+            /// <param name="action">触发的事件</param>
+            /// <returns>任务Id</returns>
+            public static int AddDelayTask(float delay, Action action)
+            {
+                return CoroutineHelper.AddDelayTask(delay, action);
+            }
+            /// <summary>
+            /// 移除延迟任务，已触发的则自动移除
+            /// </summary>
+            /// <param name="taskId">任务Id</param>
+            public static void RemoveDelayTask(int taskId)
+            {
+                CoroutineHelper.RemoveDelayTask(taskId);
+            }
             public static Coroutine StartCoroutine(Coroutine routine, Action callBack)
             {
                 return CoroutineHelper.StartCoroutine(routine, callBack);
