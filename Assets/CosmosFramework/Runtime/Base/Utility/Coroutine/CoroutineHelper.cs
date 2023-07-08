@@ -8,7 +8,7 @@ namespace Cosmos
     [DisallowMultipleComponent]
     public class CoroutineHelper : MonoBehaviour
     {
-        class DelayTask : IEquatable<DelayTask>
+        class DelayTask : IEquatable<DelayTask>, IReference
         {
             public int TaskId;
             public float Delay;
@@ -17,6 +17,14 @@ namespace Cosmos
             public bool Equals(DelayTask other)
             {
                 return other.TaskId == this.TaskId;
+            }
+
+            public void Release()
+            {
+                TaskId = -1;
+                Delay = 0;
+                CurrentTime = 0;
+                Action = null;
             }
         }
         List<IEnumerator> routineList = new List<IEnumerator>();
@@ -34,16 +42,19 @@ namespace Cosmos
         {
             if (delay < 0)
                 delay = 0;
-            var delayTask = new DelayTask()
-            {
-                TaskId = taskIndex,
-                CurrentTime = 0,
-                Delay = delay,
-                Action = action,
-            };
+            var delayTask = ReferencePool.Acquire<DelayTask>();
+            delayTask.TaskId = taskIndex;
+            delayTask.CurrentTime = 0;
+            delayTask.Delay = delay;
+            delayTask.Action = action;
+
             taskList.Add(delayTask);
             taskDict.Add(delayTask.TaskId, delayTask);
-            taskIndex++;
+            if (taskIndex == int.MaxValue)
+                taskIndex = 0;
+            else
+                taskIndex++;
+
             return delayTask.TaskId;
         }
         /// <summary>
@@ -55,7 +66,13 @@ namespace Cosmos
             if (taskDict.TryRemove(taskId, out var delayTask))
             {
                 taskList.Remove(delayTask);
+                ReferencePool.Release(delayTask);
             }
+        }
+        public void StopAllDelayTask()
+        {
+            taskList.Clear();
+            taskDict.Clear();
         }
         /// <summary>
         /// 条件协程；
@@ -138,8 +155,7 @@ namespace Cosmos
             for (int i = 0; i < removeCount; i++)
             {
                 var removeTask = removeList[i];
-                taskList.Remove(removeTask);
-                taskDict.Remove(removeTask.TaskId);
+                RemoveDelayTask(removeTask.TaskId);
             }
         }
         IEnumerator EnumDelay(float delay, Action callBack)

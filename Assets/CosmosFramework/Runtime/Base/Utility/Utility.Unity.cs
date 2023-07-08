@@ -546,6 +546,10 @@ where T : Component
             {
                 return CoroutineHelper.AddDelayTask(delay, action);
             }
+            public static void StopAllDelayTask()
+            {
+                CoroutineHelper.StopAllDelayTask();
+            }
             /// <summary>
             /// 移除延迟任务，已触发的则自动移除
             /// </summary>
