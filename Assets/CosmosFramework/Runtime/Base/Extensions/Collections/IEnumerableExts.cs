@@ -183,5 +183,19 @@ namespace Cosmos
         {
             return new SortedSet<TKey>(@this.Select(keySelector), comparer);
         }
+        /// <summary>
+        /// 按字段属性判等取差集
+        /// </summary>
+        public static IEnumerable<TFirst> ExceptBy<TFirst, TSecond>(this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, bool> condition)
+        {
+            return first.Where(f => !second.Any(s => condition(f, s)));
+        }
+        /// <summary>
+        /// 按字段属性判等取交集
+        /// </summary>
+        public static IEnumerable<TFirst> IntersectBy<TFirst, TSecond>(this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, bool> condition)
+        {
+            return first.Where(f => second.Any(s => condition(f, s)));
+        }
     }
 }
