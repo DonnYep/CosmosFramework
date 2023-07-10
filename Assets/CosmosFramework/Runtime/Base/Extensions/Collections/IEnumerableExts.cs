@@ -184,6 +184,32 @@ namespace Cosmos
             return new SortedSet<TKey>(@this.Select(keySelector), comparer);
         }
         /// <summary>
+        /// 对比两个集合哪些是新增的、删除的、修改的
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="condition">对比因素条件</param>
+        /// <returns></returns>
+        public static (List<T1> adds, List<T2> remove, List<T1> updates) CompareChanges<T1, T2>(this IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
+        {
+            if (first == null)
+                first = new List<T1>();
+            if (second == null)
+                second = new List<T2>();
+            var firstSource = first as ICollection<T1>;
+            if (firstSource == null)
+                firstSource = first.ToList();
+            var secondSource = second as ICollection<T2>;
+            if (secondSource == null)
+                second.ToList();
+            var add = firstSource.ExceptBy(secondSource, condition).ToList();
+            var remove = secondSource.ExceptBy(firstSource, (s, f) => condition(f, s)).ToList();
+            var update = firstSource.IntersectBy(secondSource, condition).ToList();
+            return (add, remove, update);
+        }
+        /// <summary>
         /// 按字段属性判等取差集
         /// </summary>
         public static IEnumerable<TFirst> ExceptBy<TFirst, TSecond>(this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, bool> condition)
