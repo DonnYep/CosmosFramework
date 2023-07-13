@@ -57,17 +57,17 @@ namespace Cosmos
             }
             /// <summary>
             /// 反射工具，得到反射类的对象；
-            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造
             /// </summary>
             /// <param name="type">类型</param>
+            /// <param name="args">构造参数</param>
             /// <returns>实例化后的对象</returns>
-            public static object GetTypeInstance(Type type)
+            public static object GetTypeInstance(Type type, params object[] args)
             {
-                return Activator.CreateInstance(type);
+                return Activator.CreateInstance(type, args);
             }
             /// <summary>
             /// 反射工具，得到反射类的对象；
-            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造 
+            /// 被反射对象必须是具有无参公共构造 
             /// </summary>
             /// <param name="typeName">类型名</param>
             /// <returns>实例化后的对象</returns>
@@ -85,6 +85,33 @@ namespace Cosmos
                 }
                 return inst;
             }
+            /// <summary>
+            /// 反射工具，得到反射类的对象；
+            /// </summary>
+            /// <param name="typeName">类型名</param>
+            /// <param name="args">构造参数</param>
+            /// <returns>实例化后的对象</returns>
+            public static object GetTypeInstance(string typeName, object[] args)
+            {
+                object inst = null;
+                foreach (var a in domainAssemblies)
+                {
+                    var dstType = a.GetType(typeName);
+                    if (dstType != null)
+                    {
+                        inst = Activator.CreateInstance(dstType, args);
+                        break;
+                    }
+                }
+                return inst;
+            }
+            /// <summary>
+            /// 反射工具，得到反射类的对象；
+            /// 被反射对象必须是具有无参公共构造 ，强转至泛型类型。
+            /// </summary>
+            /// <typeparam name="T">类型</typeparam>
+            /// <param name="typeName">类型名</param>
+            /// <returns>实例化后的对象</returns>
             public static T GetTypeInstance<T>(string typeName)
             {
                 T inst = default;
@@ -101,7 +128,7 @@ namespace Cosmos
             }
             /// <summary>
             /// 反射工具，得到反射类的对象；
-            /// 不可反射Mono子类，被反射对象必须是具有无参公共构造 
+            /// 被反射对象必须是具有无参公共构造 
             /// </summary>
             /// <param name="typeName">类型名</param>
             /// <param name="assemblies">程序集集合</param>
@@ -115,6 +142,27 @@ namespace Cosmos
                     if (dstType != null)
                     {
                         inst = Activator.CreateInstance(dstType);
+                        break;
+                    }
+                }
+                return inst;
+            }
+            /// <summary>
+            /// 反射工具，得到反射类的对象；
+            /// </summary>
+            /// <param name="typeName">类型名</param>
+            /// <param name="args">构造参数</param>
+            /// <param name="assemblies">程序集集合</param>
+            /// <returns>实例化后的对象</returns>
+            public static object GetTypeInstance(string typeName, object[] args, params System.Reflection.Assembly[] assemblies)
+            {
+                object inst = null;
+                foreach (var a in assemblies)
+                {
+                    var dstType = a.GetType(typeName);
+                    if (dstType != null)
+                    {
+                        inst = Activator.CreateInstance(dstType, args);
                         break;
                     }
                 }
