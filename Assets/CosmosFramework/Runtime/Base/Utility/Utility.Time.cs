@@ -203,6 +203,38 @@ namespace Cosmos
                 sTemp += (lTicks % 3600 % 60).ToString().PadLeft(2, '0');
                 return sTemp;
             }
+            /// <summary>
+            /// 获取指定年份中指定月的天数
+            /// </summary>
+            public static int GetDaysOfMonth(int year, int month)
+            {
+                return month switch
+                {
+                    1 => 31,
+                    2 => (IsLeapYear(year) ? 29 : 28),
+                    3 => 31,
+                    4 => 30,
+                    5 => 31,
+                    6 => 30,
+                    7 => 31,
+                    8 => 31,
+                    9 => 30,
+                    10 => 31,
+                    11 => 30,
+                    12 => 31,
+                    _ => 0
+                };
+            }
+            /// <summary>
+            /// 是否为闰年
+            /// </summary>
+            public static bool IsLeapYear(int iYear)
+            {
+                //形式参数为年份
+                //例如：2003
+                var n = iYear;
+                return n % 400 == 0 || n % 4 == 0 && n % 100 != 0;
+            }
         }
     }
 }
