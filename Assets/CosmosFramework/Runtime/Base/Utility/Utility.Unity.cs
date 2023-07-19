@@ -250,6 +250,34 @@ where T : Component
             {
                 return path.Contains("\\") || path.Contains("/");
             }
+            /// <summary>
+            /// 获取一个圆内随机点
+            /// </summary>
+            /// <param name="center">中心点</param>
+            /// <param name="radius">半径</param>
+            /// <returns>圆内随机点</returns>
+            public static Vector2 GetRandomPointInCircle(Vector2 center, float radius)
+            {
+                if (radius < 0)
+                    radius = 0;
+                var rndPtr = UnityEngine.Random.insideUnitCircle * radius;
+                var rndPos = rndPtr + center;
+                return rndPos;
+            }
+            /// <summary>
+            /// 获取一个球内随机点
+            /// </summary>
+            /// <param name="center">中心点</param>
+            /// <param name="radius">半径</param>
+            /// <returns>球内随机点</returns>
+            public static Vector3 GetRandomPointInSphere(Vector3 center, float radius)
+            {
+                if (radius < 0)
+                    radius = 0;
+                var rndPtr = UnityEngine.Random.insideUnitSphere * radius;
+                var rndPos = rndPtr + center;
+                return rndPos;
+            }
             public static void DrawCircle(Vector3 position, float radius, int segments, Color color)
             {
                 //https://dev-tut.com/2022/unity-draw-a-circle-part2/
