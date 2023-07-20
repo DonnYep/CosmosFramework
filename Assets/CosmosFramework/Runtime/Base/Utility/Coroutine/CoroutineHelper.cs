@@ -147,7 +147,10 @@ namespace Cosmos
                     {
                         task.Action?.Invoke();
                     }
-                    catch { }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
                     removeList.Add(task);
                 }
             }
