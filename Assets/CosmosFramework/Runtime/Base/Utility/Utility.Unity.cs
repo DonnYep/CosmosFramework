@@ -265,6 +265,24 @@ where T : Component
                 return rndPos;
             }
             /// <summary>
+            /// 获取一个圆内随机点
+            /// </summary>
+            /// <param name="center">中心点</param>
+            /// <param name="miniRadius">最小半径</param>
+            /// <param name="maxRadius">最大半径</param>
+            /// <returns>圆内随机点</returns>
+            public static Vector2 GetRandomPointInCircle(Vector2 center, float miniRadius, float maxRadius)
+            {
+                if (miniRadius < 0)
+                    miniRadius = 0;
+                if (maxRadius < miniRadius)
+                    maxRadius = miniRadius;
+                var randomRadius = UnityEngine.Random.Range(miniRadius, maxRadius);
+                var rndPtr = UnityEngine.Random.insideUnitCircle * randomRadius;
+                var rndPos = rndPtr + center;
+                return rndPos;
+            }
+            /// <summary>
             /// 获取一个球内随机点
             /// </summary>
             /// <param name="center">中心点</param>
@@ -275,6 +293,24 @@ where T : Component
                 if (radius < 0)
                     radius = 0;
                 var rndPtr = UnityEngine.Random.insideUnitSphere * radius;
+                var rndPos = rndPtr + center;
+                return rndPos;
+            }
+            /// <summary>
+            /// 获取一个球内随机点
+            /// </summary>
+            /// <param name="center">中心点</param>
+            /// <param name="miniRadius">最小半径</param>
+            /// <param name="maxRadius">最大半径</param>
+            /// <returns>球内随机点</returns>
+            public static Vector3 GetRandomPointInSphere(Vector3 center, float miniRadius, float maxRadius)
+            {
+                if (miniRadius < 0)
+                    miniRadius = 0;
+                if (maxRadius < miniRadius)
+                    maxRadius = miniRadius;
+                var randomRadius = UnityEngine.Random.Range(miniRadius, maxRadius);
+                var rndPtr = UnityEngine.Random.insideUnitSphere * randomRadius;
                 var rndPos = rndPtr + center;
                 return rndPos;
             }
