@@ -425,6 +425,9 @@ namespace Cosmos.Editor.Resource
                 var importer = AssetImporter.GetAtPath(bundle.BundlePath);
                 importer.assetBundleName = string.Empty;
             }
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+            AssetDatabase.RemoveUnusedAssetBundleNames();
+            System.GC.Collect();
         }
         public static void BuildAssetBundle(ResourceDataset dataset, ResourceBuildParams buildParams)
         {
