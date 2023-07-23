@@ -29,6 +29,8 @@ namespace Cosmos.Editor.Resource
         public override void OnGUI(Rect rect)
         {
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+            DrawPrebuildOptions();
+            GUILayout.Space(16);
             DrawBuildOptions();
             GUILayout.Space(16);
             DrawPathOptions();
@@ -69,6 +71,8 @@ namespace Cosmos.Editor.Resource
                         StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath,
                         AssetBundleBuildDirectory = tabData.AssetBundleBuildDirectory
                     };
+                    if (tabData.ForceRemoveAllAssetBundleNames)
+                        AssetBundleCommand.ForceRemoveAllAssetBundleNames();
                     EditorUtil.Coroutine.StartCoroutine(BuildAssetBundle(buildParams, ResourceWindowDataProxy.ResourceDataset));
                 }
                 if (GUILayout.Button("Reset options"))
@@ -78,6 +82,19 @@ namespace Cosmos.Editor.Resource
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndScrollView();
+        }
+        void DrawPrebuildOptions()
+        {
+            EditorGUILayout.LabelField("Prebuild Options", EditorStyles.boldLabel);
+            EditorGUILayout.BeginVertical();
+            {
+                tabData.ForceRemoveAllAssetBundleNames = EditorGUILayout.ToggleLeft("Force remove all assetBundle names", tabData.ForceRemoveAllAssetBundleNames);
+                if (tabData.ForceRemoveAllAssetBundleNames)
+                {
+                    EditorGUILayout.HelpBox("This operation will force remove all assetBundle names in this project", MessageType.Warning);
+                }
+            }
+            EditorGUILayout.EndVertical();
         }
         void DrawBuildOptions()
         {

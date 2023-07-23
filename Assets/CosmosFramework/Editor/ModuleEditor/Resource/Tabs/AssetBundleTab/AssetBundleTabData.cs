@@ -47,6 +47,10 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public bool IgnoreTypeTreeChanges;
         /// <summary>
+        /// 强制移除工程中所有的ab标签
+        /// </summary>
+        public bool ForceRemoveAllAssetBundleNames;
+        /// <summary>
         /// AB打包输出的绝对路径；
         /// </summary>
         public string AssetBundleBuildPath;
