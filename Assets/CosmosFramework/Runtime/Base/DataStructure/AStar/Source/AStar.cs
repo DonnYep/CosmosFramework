@@ -146,7 +146,8 @@ namespace Cosmos
         public IList<Node> FindPath(float srcPosX, float srcPosY, float dstPosX, float dstPosY)
         {
             var srcNode = GetNode(srcPosX, srcPosY);
-            var dstNode = GetNode(dstPosX, dstPosY);
+            var dstNode = GetObstacleNearsetNode(dstPosX, dstPosY);
+            //var dstNode = GetNode(dstPosX, dstPosY);
             if (srcNode == null || dstNode == null)
                 return null;
             List<Node> openList = SpawnNodeList();
@@ -344,6 +345,52 @@ namespace Cosmos
                     nodeArray[x, y] = new Node(x, y, nodeCenterX, nodeCenterY, nodeSideLength, false);
                 }
             }
+        }
+        protected Node GetObstacleNearsetNode(float posX, float posY)
+        {
+            var node = GetNode(posX, posY);
+            if (!node.IsObstacle)
+                return node;
+            List<Node> openList = SpawnNodeList();
+            List<Node> closedList = SpawnNodeList();
+            Node nearsetNode = null;
+            openList.Add(node);
+            while (openList.Count > 0)
+            {
+                var currentNode = openList[0];
+                var openLength = openList.Count;
+                for (int i = 0; i < openLength; i++)
+                {
+                    var openNode = openList[i];
+                    if (openNode.FCost <= currentNode.FCost && openNode.HCost < currentNode.HCost)
+                    {
+                        currentNode = openNode;
+                    }
+                }
+                openList.Remove(currentNode);
+                closedList.Add(currentNode);
+
+                var nodeNeighbors = GetNeighboringNodes(currentNode);
+                foreach (var neighborNode in nodeNeighbors)
+                {
+                    if (neighborNode.IsObstacle || closedList.Contains(neighborNode))
+                    {
+                        openList.Add(neighborNode);
+                    }
+                    else
+                    {
+                        nearsetNode = neighborNode;
+                        break;
+                    }
+                }
+                if( nearsetNode!=null)
+                {
+                    break;
+                }
+            }
+            DespawnNodeList(openList);
+            DespawnNodeList(closedList);
+            return nearsetNode;
         }
         List<Node> SpawnNodeList()
         {
