@@ -221,27 +221,7 @@ namespace Cosmos
         /// <returns>目标节点数组</returns>
         public virtual IList<Node> GetNeighboringNodes(Node node)
         {
-            var w = GridSizeX - 1;
-            var h = GridSizeY - 1;
-            Node[] srcNodes = new Node[8];
-            int idx = 0;
-            for (int x = -1; x <= 1; x++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    if (y == 0 && x == 0)
-                        continue;
-                    int idxX = node.IndexX + x;
-                    int idxY = node.IndexY + y;
-                    if (idxX <= w && idxX >= 0 && idxY <= h && idxY >= 0)
-                    {
-                        srcNodes[idx++] = nodeArray[idxX, idxY];
-                    }
-                }
-            }
-            var dstNodes = new Node[idx];
-            Array.Copy(srcNodes, 0, dstNodes, 0, idx);
-            return dstNodes;
+            return GeCrossNeighboringNodes(node);
         }
         public void Clear()
         {
@@ -276,6 +256,58 @@ namespace Cosmos
             var x = Math.Abs(a.IndexX - b.IndexX);
             var y = Math.Abs(a.IndexY - b.IndexY);
             return (int)Math.Floor(Math.Sqrt(x * x + y * y) * 14);
+        }
+        /// <summary>
+        /// 十字形临近结点
+        /// </summary>
+        protected IList<Node> GeCrossNeighboringNodes(Node node)
+        {
+            Node[] srcNodes = new Node[4];
+            var x = node.IndexX;
+            var y = node.IndexY;
+            var leftX = x - 1;
+            var rightX = x + 1;
+            var upY = y + 1;
+            var downY = y - 1;
+            int idx = 0;
+            if (leftX >= 0)
+                srcNodes[idx++] = nodeArray[leftX, y];
+            if (rightX <= GridSizeX - 1)
+                srcNodes[idx++] = nodeArray[rightX, y];
+            if (upY <= GridSizeY - 1)
+                srcNodes[idx++] = nodeArray[x, upY];
+            if (downY >= 0)
+                srcNodes[idx++] = nodeArray[x, downY];
+            var dstNodes = new Node[idx];
+            Array.Copy(srcNodes, 0, dstNodes, 0, idx);
+            return dstNodes;
+        }
+        /// <summary>
+        /// 九宫格临近结点
+        /// </summary>
+        protected IList<Node> GetNineNeighboringNodes(Node node)
+        {
+            var w = GridSizeX - 1;
+            var h = GridSizeY - 1;
+            Node[] srcNodes = new Node[8];
+            int idx = 0;
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    if (y == 0 && x == 0)
+                        continue;
+                    int idxX = node.IndexX + x;
+                    int idxY = node.IndexY + y;
+                    if (idxX <= w && idxX >= 0 && idxY <= h && idxY >= 0)
+                    {
+                        srcNodes[idx++] = nodeArray[idxX, idxY];
+                    }
+                }
+            }
+            var dstNodes = new Node[idx];
+            Array.Copy(srcNodes, 0, dstNodes, 0, idx);
+            return dstNodes;
         }
         protected IList<Node> GetFinalPath(Node src, Node dst)
         {
