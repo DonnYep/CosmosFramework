@@ -147,6 +147,7 @@ namespace Cosmos
         {
             var srcNode = GetNode(srcPosX, srcPosY);
             var dstNode = GetNode(dstPosX, dstPosY);
+            //var dstNode = GetObstacleNearsetNode(dstPosX, dstPosY);
             if (srcNode == null || dstNode == null)
                 return null;
             List<Node> openList = SpawnNodeList();
@@ -177,8 +178,11 @@ namespace Cosmos
                 var nodeNeighbors = GetNeighboringNodes(currentNode);
                 foreach (var neighborNode in nodeNeighbors)
                 {
-                    if (neighborNode.IsObstacle || closedList.Contains(neighborNode))
+                    if (closedList.Contains(neighborNode))
+                        continue;
+                    if (neighborNode.IsObstacle)
                     {
+                        closedList.Add(neighborNode);
                         continue;
                     }
                     int moveCost = currentNode.GCost + GetDistance(currentNode, neighborNode);
@@ -221,10 +225,11 @@ namespace Cosmos
         /// <returns>目标节点数组</returns>
         public virtual IList<Node> GetNeighboringNodes(Node node)
         {
-            return GeCrossNeighboringNodes(node);
+            return GetCrossNeighboringNodes(node);
         }
-        public void Clear()
+        public virtual void Clear()
         {
+            nodeArray = new Node[0, 0];
             nodeListQueue.Clear();
         }
         public bool Equals(AStar other)
@@ -236,13 +241,13 @@ namespace Cosmos
                 && other.GridSizeY == GridSizeY;
         }
         protected abstract int GetDistance(Node a, Node b);
-        protected int GetManhattanDistance(Node a, Node b)
+        protected virtual int GetManhattanDistance(Node a, Node b)
         {
             var x = Math.Abs(a.IndexX - b.IndexX);
             var y = Math.Abs(a.IndexY - b.IndexY);
             return (x + y) * 10;
         }
-        protected int GetDiagonalDistance(Node a, Node b)
+        protected virtual int GetDiagonalDistance(Node a, Node b)
         {
             var x = Math.Abs(a.IndexX - b.IndexX);
             var y = Math.Abs(a.IndexY - b.IndexY);
@@ -251,16 +256,16 @@ namespace Cosmos
             else
                 return 14 * x + 10 * (y - x);
         }
-        protected int GetEuclideanDistance(Node a, Node b)
+        protected virtual int GetEuclideanDistance(Node a, Node b)
         {
             var x = Math.Abs(a.IndexX - b.IndexX);
             var y = Math.Abs(a.IndexY - b.IndexY);
-            return (int)Math.Floor(Math.Sqrt(x * x + y * y) * 14);
+            return (int)Math.Ceiling(Math.Sqrt(x * x + y * y) * 14);
         }
         /// <summary>
         /// 十字形临近结点
         /// </summary>
-        protected IList<Node> GeCrossNeighboringNodes(Node node)
+        protected IList<Node> GetCrossNeighboringNodes(Node node)
         {
             Node[] srcNodes = new Node[4];
             var x = node.IndexX;
@@ -345,7 +350,42 @@ namespace Cosmos
                 }
             }
         }
-        List<Node> SpawnNodeList()
+        protected virtual Node GetObstacleNearsetNode(float posX, float posY)
+        {
+            var node = GetNode(posX, posY);
+            if (!node.IsObstacle)
+                return node;
+            List<Node> openList = SpawnNodeList();
+            Node nearsetNode = null;
+            openList.Add(node);
+            while (openList.Count > 0)
+            {
+                var currentNode = openList[0];
+                var nodeNeighbors = GetCrossNeighboringNodes(currentNode);
+                openList.Remove(currentNode);
+                foreach (var neighborNode in nodeNeighbors)
+                {
+                    if (neighborNode.IsObstacle)
+                    {
+                        if (!openList.Contains(neighborNode))
+                        {
+                            openList.Add(neighborNode);
+                        }
+                    }
+                    else
+                    {
+                        //判断节点是否是被obstacle包围
+                        nearsetNode = neighborNode;
+                        break;
+                    }
+                }
+                if (nearsetNode != null)
+                    break;
+            }
+            DespawnNodeList(openList);
+            return nearsetNode;
+        }
+        protected List<Node> SpawnNodeList()
         {
             if (nodeListQueue.Count > 0)
             {
@@ -358,7 +398,7 @@ namespace Cosmos
                 return obj;
             }
         }
-        void DespawnNodeList(List<Node> lst)
+        protected void DespawnNodeList(List<Node> lst)
         {
             if (lst == null)
                 return;
