@@ -29,5 +29,9 @@
         /// Escape按键
         /// </summary>
         public static readonly string _Escape = "Escape";
+        /// <summary>
+        /// Space按键
+        /// </summary>
+        public static readonly string _Space= "Space";
     }
 }
