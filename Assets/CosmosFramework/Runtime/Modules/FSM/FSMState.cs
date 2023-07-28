@@ -12,7 +12,7 @@ namespace Cosmos.FSM
         {
             if (transitionStateDict.ContainsKey(transition))
                 return;
-            if (!this.GetType().IsAssignableFrom(stateType))
+            if (!typeof(FSMState<T>).IsAssignableFrom(stateType))
                 throw new ArgumentException($"State type {stateType.FullName} is invalid !");
             transitionStateDict.Add(transition, stateType);
             transitionList.Add(transition);

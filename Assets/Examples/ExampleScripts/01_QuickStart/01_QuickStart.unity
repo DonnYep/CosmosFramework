@@ -346,8 +346,18 @@ MonoBehaviour:
   resourceLoaderIndex: 0
   debugHelperIndex: 1
   jsonHelperIndex: 1
-  messagePackHelperIndex: 1
+  messagePackHelperIndex: 0
   debugHelperName: Cosmos.StandaloneDebugHelper
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
-  messagePackHelperName: Cosmos.MessagePackHelper
+  messagePackHelperName: <NONE>
   runInBackground: 0
+  resourceDataset: {fileID: 0}
+  resourceBundlePathType: 0
+  relativeBundlePath: 
+  assetBundleEncrytion: 0
+  assetBundleEncrytionOffset: 16
+  manifestEncrytion: 0
+  manifestEncrytionKey: CosmosBundlesKey
+  drawDebugWindow: 0
+  inputHelperIndex: 0
+  inputHelperName: <NONE>

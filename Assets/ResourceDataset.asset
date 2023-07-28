@@ -477,6 +477,96 @@ MonoBehaviour:
       objectValid: 1
     dependentBundleKeyList: []
     resourceSubBundleInfoList: []
+  - bundleName: assets_examples_examplescripts_23_entity_entityprefabs
+    bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
+    bundleKey: assets_examples_examplescripts_23_entity_entityprefabs
+    bundleSize: 198234
+    bundleFormatBytes: 193.6 KB
+    resourceObjectInfoList:
+    - objectName: EntityBullet
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityBullet.prefab
+      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
+      objectSize: 7773
+      objectFormatBytes: 7.6 KB
+      extension: .prefab
+      objectValid: 1
+    - objectName: EntityEnemy
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityEnemy.prefab
+      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
+      objectSize: 80280
+      objectFormatBytes: 78.4 KB
+      extension: .prefab
+      objectValid: 1
+    - objectName: EntityGameLauncherPanel
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLauncherPanel.prefab
+      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
+      objectSize: 11734
+      objectFormatBytes: 11.5 KB
+      extension: .prefab
+      objectValid: 1
+    - objectName: EntityGameLoadingSlider
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLoadingSlider.prefab
+      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
+      objectSize: 12140
+      objectFormatBytes: 11.9 KB
+      extension: .prefab
+      objectValid: 1
+    - objectName: EntityPlayer
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityPlayer.prefab
+      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
+      objectSize: 81367
+      objectFormatBytes: 79.5 KB
+      extension: .prefab
+      objectValid: 1
+    - objectName: UICanvas
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/UICanvas.prefab
+      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
+      objectSize: 4940
+      objectFormatBytes: 4.8 KB
+      extension: .prefab
+      objectValid: 1
+    dependentBundleKeyList: []
+    resourceSubBundleInfoList: []
+  - bundleName: assets_examples_examplescripts_23_entity_entityscenes
+    bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
+    bundleKey: assets_examples_examplescripts_23_entity_entityscenes
+    bundleSize: 30886
+    bundleFormatBytes: 30.2 KB
+    resourceObjectInfoList:
+    - objectName: EntityGame
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
+      bundleName: assets_examples_examplescripts_23_entity_entityscenes
+      objectSize: 30886
+      objectFormatBytes: 30.2 KB
+      extension: .unity
+      objectValid: 1
+    dependentBundleKeyList: []
+    resourceSubBundleInfoList: []
+  - bundleName: assets_examples_examplescripts_24_procedure_procedurescenes
+    bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
+    bundleKey: assets_examples_examplescripts_24_procedure_procedurescenes
+    bundleSize: 57634
+    bundleFormatBytes: 56.3 KB
+    resourceObjectInfoList:
+    - objectName: 24_Procedure_PloyState
+      objectPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
+      bundleName: assets_examples_examplescripts_24_procedure_procedurescenes
+      objectSize: 32004
+      objectFormatBytes: 31.3 KB
+      extension: .unity
+      objectValid: 1
+    - objectName: 24_Procedure_YBotState
+      objectPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
+      bundleName: assets_examples_examplescripts_24_procedure_procedurescenes
+      objectSize: 25630
+      objectFormatBytes: 25.0 KB
+      extension: .unity
+      objectValid: 1
+    dependentBundleKeyList:
+    - material
+    - model
+    - prefab
+    resourceSubBundleInfoList: []
   resourceAvailableExtenisonList:
   - .3ds
   - .bmp

@@ -51,8 +51,6 @@ namespace Cosmos.Event
             {
                 eventDict[eventKey].DispatchEvent(sender, args);
             }
-            else
-                throw new ArgumentNullException($"EventKey {eventKey} has not  registered !");
         }
         ///<inheritdoc/>
         public bool DeregisterEvent(string eventKey)

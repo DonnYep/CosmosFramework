@@ -887,12 +887,14 @@ MonoBehaviour:
   runInBackground: 0
   resourceDataset: {fileID: 0}
   resourceBundlePathType: 0
-  resourceBundlePath: 
-  customeResourceBundlePath: 
+  relativeBundlePath: 
   assetBundleEncrytion: 0
   assetBundleEncrytionOffset: 16
-  buildInfoEncrytion: 0
-  buildInfoEncrytionKey: CosmosBundlesKey
+  manifestEncrytion: 0
+  manifestEncrytionKey: CosmosBundlesKey
+  drawDebugWindow: 0
+  inputHelperIndex: 0
+  inputHelperName: <NONE>
 --- !u!4 &1445863190
 Transform:
   m_ObjectHideFlags: 0

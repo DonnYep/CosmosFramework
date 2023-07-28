@@ -23,7 +23,6 @@ public class AxisSubscriber : MonoBehaviour
         slider = GetComponentInChildren<Slider>();
         text = GetComponentsInChildren<Text>()[1];
         inputManager = CosmosEntry.InputManager;
-        inputManager.SetInputHelper(new StandardInputHelper());
         controller = CosmosEntry.ControllerManager.CreateController("AxisSubscriber", this);
     }
     [TickRefresh]
