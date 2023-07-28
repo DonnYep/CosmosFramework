@@ -334,3 +334,13 @@ MonoBehaviour:
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
   messagePackHelperName: <NONE>
   runInBackground: 0
+  resourceDataset: {fileID: 0}
+  resourceBundlePathType: 0
+  relativeBundlePath: 
+  assetBundleEncrytion: 0
+  assetBundleEncrytionOffset: 16
+  manifestEncrytion: 0
+  manifestEncrytionKey: CosmosBundlesKey
+  drawDebugWindow: 0
+  inputHelperIndex: 0
+  inputHelperName: <NONE>

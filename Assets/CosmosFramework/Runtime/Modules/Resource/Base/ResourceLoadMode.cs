@@ -2,9 +2,10 @@
 {
     public enum ResourceLoadMode : byte
     {
-        Resource = 0,
-        AssetBundle = 1,
-        AssetDatabase= 2,
-        CustomLoader=3 //自定义加载方案
+        NONE=0,
+        Resource = 1,
+        AssetBundle = 2,
+        AssetDatabase= 3,
+        CustomLoader=4 //自定义加载方案
     }
 }

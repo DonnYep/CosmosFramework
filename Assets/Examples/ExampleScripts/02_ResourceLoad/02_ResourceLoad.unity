@@ -342,7 +342,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchAppDomainModules: 1
   printModulePreparatory: 0
-  resourceLoadMode: 0
+  resourceLoadMode: 1
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
   debugHelperIndex: 1
@@ -352,7 +352,6 @@ MonoBehaviour:
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
   messagePackHelperName: Cosmos.MessagePackHelper
   runInBackground: 0
-  autoInitResource: 1
   resourceDataset: {fileID: 0}
   resourceBundlePathType: 0
   relativeBundlePath: win
@@ -361,6 +360,8 @@ MonoBehaviour:
   manifestEncrytion: 0
   manifestEncrytionKey: CosmosBundlesKey
   drawDebugWindow: 0
+  inputHelperIndex: 0
+  inputHelperName: <NONE>
 --- !u!114 &1179096885
 MonoBehaviour:
   m_ObjectHideFlags: 0

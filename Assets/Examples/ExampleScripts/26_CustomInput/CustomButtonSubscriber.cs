@@ -8,7 +8,7 @@ public class CustomButtonSubscriber : MonoBehaviour
     void Start()
     {
         inputManager = CosmosEntry.InputManager;
-        inputManager.SetInputHelper(new CustomInputHelper());
+        //inputManager.SetInputHelper(new CustomInputHelper());
     }
     void Update()
     {

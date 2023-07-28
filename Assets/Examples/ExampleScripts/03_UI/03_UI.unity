@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchAppDomainModules: 1
   printModulePreparatory: 0
-  resourceLoadMode: 0
+  resourceLoadMode: 1
   resourceLoaderName: Cosmos.Resource.ResourcesLoader
   resourceLoaderIndex: 2
   debugHelperIndex: 1
@@ -191,12 +191,14 @@ MonoBehaviour:
   runInBackground: 0
   resourceDataset: {fileID: 0}
   resourceBundlePathType: 0
-  resourceBundlePath: 
-  customeResourceBundlePath: 
+  relativeBundlePath: 
   assetBundleEncrytion: 0
   assetBundleEncrytionOffset: 16
-  buildInfoEncrytion: 0
-  buildInfoEncrytionKey: CosmosBundlesKey
+  manifestEncrytion: 0
+  manifestEncrytionKey: CosmosBundlesKey
+  drawDebugWindow: 0
+  inputHelperIndex: 0
+  inputHelperName: <NONE>
 --- !u!1 &1049725160
 GameObject:
   m_ObjectHideFlags: 0

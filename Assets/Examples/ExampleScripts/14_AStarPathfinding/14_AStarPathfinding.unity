@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -382,7 +382,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchAppDomainModules: 1
   printModulePreparatory: 0
-  resourceLoadMode: 0
+  resourceLoadMode: 1
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
   debugHelperIndex: 0
@@ -392,7 +392,6 @@ MonoBehaviour:
   jsonHelperName: <NONE>
   messagePackHelperName: <NONE>
   runInBackground: 0
-  autoInitResource: 1
   resourceDataset: {fileID: 0}
   resourceBundlePathType: 0
   relativeBundlePath: 
@@ -401,6 +400,8 @@ MonoBehaviour:
   manifestEncrytion: 0
   manifestEncrytionKey: CosmosBundlesKey
   drawDebugWindow: 0
+  inputHelperIndex: 0
+  inputHelperName: <NONE>
 --- !u!4 &1445863190
 Transform:
   m_ObjectHideFlags: 0

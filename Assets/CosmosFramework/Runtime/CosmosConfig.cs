@@ -24,7 +24,6 @@ namespace Cosmos
 
         [SerializeField] bool runInBackground;
 
-        [SerializeField] bool autoInitResource = true;
         [SerializeField] ResourceDataset resourceDataset;
         [SerializeField] ResourceBundlePathType resourceBundlePathType;
         [SerializeField] string relativeBundlePath;
@@ -36,6 +35,9 @@ namespace Cosmos
         [SerializeField] string manifestEncrytionKey = "CosmosBundlesKey";
 
         [SerializeField] bool drawDebugWindow;
+
+        [SerializeField] int inputHelperIndex;
+        [SerializeField] string inputHelperName;
         public void LoadResource()
         {
             switch (resourceLoadMode)
@@ -109,10 +111,8 @@ namespace Cosmos
             if (launchAppDomainModules)
             {
                 CosmosEntry.LaunchAppDomainModules();
-                if (autoInitResource)
-                {
-                    LoadResource();
-                }
+                LoadResource();
+                SetInputHelper();
             }
         }
         void LoadHelpers()
@@ -134,6 +134,15 @@ namespace Cosmos
                 var messagePackHelper = Utility.Assembly.GetTypeInstance(messagePackHelperName);
                 if (messagePackHelper != null)
                     Utility.MessagePack.SetHelper((Utility.MessagePack.IMessagePackHelper)messagePackHelper);
+            }
+        }
+        void SetInputHelper()
+        {
+            if (!string.IsNullOrEmpty(inputHelperName) && inputHelperName != Constants.NONE)
+            {
+                var inputHelper = Utility.Assembly.GetTypeInstance<Cosmos.Input.IInputHelper>(inputHelperName);
+                if (inputHelper != null)
+                    CosmosEntry.InputManager.SetInputHelper(inputHelper);
             }
         }
     }

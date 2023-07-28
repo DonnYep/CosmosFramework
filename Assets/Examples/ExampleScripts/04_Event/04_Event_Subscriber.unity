@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4388,6 +4388,16 @@ MonoBehaviour:
   jsonHelperName: Cosmos.Test.NewtonjsonHelper
   messagePackHelperName: <NONE>
   runInBackground: 0
+  resourceDataset: {fileID: 0}
+  resourceBundlePathType: 0
+  relativeBundlePath: 
+  assetBundleEncrytion: 0
+  assetBundleEncrytionOffset: 16
+  manifestEncrytion: 0
+  manifestEncrytionKey: CosmosBundlesKey
+  drawDebugWindow: 0
+  inputHelperIndex: 0
+  inputHelperName: <NONE>
 --- !u!4 &1865920171
 Transform:
   m_ObjectHideFlags: 0

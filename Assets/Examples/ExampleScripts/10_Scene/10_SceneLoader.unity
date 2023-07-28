@@ -555,6 +555,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   root: {fileID: 1118674985}
+  targetLevel: SceneTarget
 --- !u!1 &1118674985
 GameObject:
   m_ObjectHideFlags: 0
@@ -1235,7 +1236,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchAppDomainModules: 1
   printModulePreparatory: 0
-  resourceLoadMode: 2
+  resourceLoadMode: 3
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
   debugHelperIndex: 1
@@ -1247,12 +1248,14 @@ MonoBehaviour:
   runInBackground: 0
   resourceDataset: {fileID: 11400000, guid: ac9e1ddf21f63234c848d5250d3e43c6, type: 2}
   resourceBundlePathType: 0
-  resourceBundlePath: 
-  customeResourceBundlePath: 
+  relativeBundlePath: 
   assetBundleEncrytion: 0
   assetBundleEncrytionOffset: 16
-  buildInfoEncrytion: 0
-  buildInfoEncrytionKey: CosmosBundlesKey
+  manifestEncrytion: 0
+  manifestEncrytionKey: CosmosBundlesKey
+  drawDebugWindow: 0
+  inputHelperIndex: 0
+  inputHelperName: <NONE>
 --- !u!4 &2100953922
 Transform:
   m_ObjectHideFlags: 0
