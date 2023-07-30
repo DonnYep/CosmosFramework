@@ -42,6 +42,8 @@ namespace Cosmos.Editor
         SerializedProperty sp_InputHelperIndex;
         SerializedProperty sp_InputHelperName;
 
+        SerializedProperty sp_ModuleConfigFoldout;
+
         string[] debugHelpers;
         string[] jsonHelpers;
         string[] messagePackHelpers;
@@ -69,6 +71,8 @@ namespace Cosmos.Editor
 
         bool runInBackground;
         bool drawDebugWindow;
+
+        bool moduleConfigFoldout;
         public override void OnInspectorGUI()
         {
             targetObject.Update();
@@ -85,10 +89,20 @@ namespace Cosmos.Editor
             DrawApplicationConfig();
             EditorGUILayout.Space(16);
 
-            DrawResourceModuleConfig();
-            EditorGUILayout.Space(16);
+            moduleConfigFoldout = EditorGUILayout.Foldout(moduleConfigFoldout, "MoudleConfig", EditorStyles.foldoutHeader);
+            if (sp_ModuleConfigFoldout.boolValue != moduleConfigFoldout)
+            {
+                sp_ModuleConfigFoldout.boolValue = moduleConfigFoldout;
+            }
+            if (moduleConfigFoldout)
+            {
+                EditorGUILayout.Space(16);
 
-            DrawInputModuleConfig();
+                DrawResourceModuleConfig();
+                EditorGUILayout.Space(16);
+
+                DrawInputModuleConfig();
+            }
 
             targetObject.ApplyModifiedProperties();
         }
@@ -156,6 +170,7 @@ namespace Cosmos.Editor
             sp_InputHelperIndex = targetObject.FindProperty("inputHelperIndex");
             sp_InputHelperName = targetObject.FindProperty("inputHelperName");
 
+            sp_ModuleConfigFoldout = targetObject.FindProperty("moduleConfigFoldout");
             resourceLoadModes = Enum.GetNames(typeof(ResourceLoadMode));
             resourceBundlePathTypes = Enum.GetNames(typeof(ResourceBundlePathType));
             RefreshConfig();
@@ -180,6 +195,8 @@ namespace Cosmos.Editor
 
             inputHelperIndex = sp_InputHelperIndex.intValue;
             sp_InputHelperName.stringValue = InputHelperNames[inputHelperIndex];
+
+            moduleConfigFoldout = sp_ModuleConfigFoldout.boolValue;
 
             targetObject.ApplyModifiedProperties();
         }
