@@ -38,6 +38,8 @@ namespace Cosmos
 
         [SerializeField] int inputHelperIndex;
         [SerializeField] string inputHelperName;
+
+        [SerializeField] bool moduleConfigFoldout;
         public void LoadResource()
         {
             switch (resourceLoadMode)
