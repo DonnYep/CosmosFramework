@@ -320,7 +320,7 @@ namespace Cosmos.Editor
             }
 
             EditorGUILayout.Space(8);
-            printLogWhenAssetNotExists = EditorGUILayout.ToggleLeft("PrintLogWhenAssetLoadFail", printLogWhenAssetNotExists);
+            printLogWhenAssetNotExists = EditorGUILayout.ToggleLeft("PrintLogWhenAssetNotExists", printLogWhenAssetNotExists);
             if (printLogWhenAssetNotExists != sp_PrintLogWhenAssetNotExists.boolValue)
             {
                 sp_PrintLogWhenAssetNotExists.boolValue = printLogWhenAssetNotExists;
