@@ -242,6 +242,7 @@ namespace Cosmos.Resource
             {
                 progress?.Invoke(1);
                 callback?.Invoke(asset);
+                OnResourceObjectNotExists(assetName);
                 yield break;
             }
             if (string.IsNullOrEmpty(bundleName))
@@ -278,6 +279,10 @@ namespace Cosmos.Resource
             {
                 OnResourceObjectLoad(resourceObject);
             }
+            else
+            {
+                OnResourceObjectNotExists(assetName);
+            }
             callback?.Invoke(asset);
         }
         IEnumerator EnumLoadAssetWithSubAssetsAsync(string assetName, Type type, Action<Object[]> callback, Action<float> progress)
@@ -299,6 +304,7 @@ namespace Cosmos.Resource
             {
                 progress?.Invoke(1);
                 callback?.Invoke(assets);
+                OnResourceObjectNotExists(assetName);
                 yield break;
             }
             if (string.IsNullOrEmpty(bundleName))
@@ -334,6 +340,10 @@ namespace Cosmos.Resource
             if (assets != null)
             {
                 OnResourceObjectLoad(resourceObject);
+            }
+            else
+            {
+                OnResourceObjectNotExists(assetName);
             }
             callback?.Invoke(assets);
         }
@@ -409,6 +419,7 @@ namespace Cosmos.Resource
             {
                 progress?.Invoke(1);
                 callback?.Invoke();
+                OnResourceObjectNotExists(sceneName);
                 yield break;
             }
             if (string.IsNullOrEmpty(bundleName))
@@ -425,6 +436,7 @@ namespace Cosmos.Resource
                 //为空表示场景不存在
                 progress?.Invoke(1);
                 callback?.Invoke();
+                OnResourceObjectNotExists(sceneName);
                 yield break;
             }
             loadSceneList.Add(info.SceneName);
@@ -706,6 +718,13 @@ namespace Cosmos.Resource
                 return;
             resourceObjectWarpper.ReferenceCount--;
             UnloadDependenciesAssetBundle(resourceBundleWarpper, 1, ResourceDataProxy.UnloadAllLoadedObjectsWhenBundleUnload);
+        }
+        void OnResourceObjectNotExists(string assetName)
+        {
+            if (ResourceDataProxy.PrintLogWhenAssetNotExists)
+            {
+                Utility.Debug.LogError($"{assetName} not found!");
+            }
         }
         void RequestManifestSuccess(ResourceRequestManifestSuccessEventArgs args)
         {

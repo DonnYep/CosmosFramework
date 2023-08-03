@@ -150,7 +150,7 @@ namespace Cosmos.Resource
             }
         }
         ///<inheritdoc/> 
-        public void UnloadAllAsset(bool unloadAllLoadedObjects )
+        public void UnloadAllAsset(bool unloadAllLoadedObjects)
         {
             foreach (var objectWarpper in resourceObjectWarpperDict.Values)
             {
@@ -230,6 +230,7 @@ namespace Cosmos.Resource
             {
                 progress?.Invoke(1);
                 callback?.Invoke(asset);
+                OnResourceObjectNotExists(assetName);
                 yield break;
             }
             if (string.IsNullOrEmpty(bundleName))
@@ -253,6 +254,10 @@ namespace Cosmos.Resource
             {
                 OnResourceObjectLoad(resourceObject);
             }
+            else
+            {
+                OnResourceObjectNotExists(assetName);
+            }
 #endif
             progress?.Invoke(1);
             callback?.Invoke(asset);
@@ -269,6 +274,7 @@ namespace Cosmos.Resource
             {
                 progress?.Invoke(1);
                 callback?.Invoke(assets);
+                OnResourceObjectNotExists(assetName);
                 yield break;
             }
             if (string.IsNullOrEmpty(bundleName))
@@ -290,6 +296,10 @@ namespace Cosmos.Resource
             if (assets != null)
             {
                 OnResourceObjectLoad(resourceObject);
+            }
+            else
+            {
+                OnResourceObjectNotExists(assetName);
             }
 #endif
             progress?.Invoke(1);
@@ -323,6 +333,10 @@ namespace Cosmos.Resource
                     var asset = UnityEditor.AssetDatabase.LoadAssetAtPath(resourceObject.ObjectPath, typeof(Object));
                     assetList.Add(asset);
                 }
+                else
+                {
+                    OnResourceObjectNotExists(resourceObject.ObjectName);
+                }
             }
             assets = assetList.ToArray();
             OnResourceBundleAllAssetLoad(bundleName);
@@ -348,6 +362,7 @@ namespace Cosmos.Resource
             {
                 progress?.Invoke(1);
                 callback?.Invoke();
+                OnResourceObjectNotExists(sceneName);
                 yield break;
             }
             if (string.IsNullOrEmpty(bundleName))
@@ -369,6 +384,7 @@ namespace Cosmos.Resource
                 //为空表示场景不存在
                 progress?.Invoke(1);
                 callback?.Invoke();
+                OnResourceObjectNotExists(sceneName);
                 yield break;
             }
             loadSceneList.Add(sceneName);
@@ -601,6 +617,13 @@ namespace Cosmos.Resource
                 return;
             resourceObjectWarpper.ReferenceCount--;
             UnloadDependenciesAssetBundle(resourceBundleWarpper);
+        }
+        void OnResourceObjectNotExists(string assetName)
+        {
+            if (ResourceDataProxy.PrintLogWhenAssetNotExists)
+            {
+                Utility.Debug.LogError($"{assetName} not found!");
+            }
         }
     }
 }
