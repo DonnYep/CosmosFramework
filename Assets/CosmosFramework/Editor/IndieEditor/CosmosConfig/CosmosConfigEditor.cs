@@ -20,6 +20,7 @@ namespace Cosmos.Editor
         SerializedProperty sp_ResourceDataset;
         SerializedProperty sp_ResourceBundlePathType;
         SerializedProperty sp_RelativeBundlePath;
+        SerializedProperty sp_PrintLogWhenAssetNotExists;
 
         SerializedProperty sp_AssetBundleEncrytion;
         SerializedProperty sp_AssetBundleEncrytionOffset;
@@ -64,6 +65,7 @@ namespace Cosmos.Editor
         string[] resourceLoadModes;
         string[] resourceBundlePathTypes;
 
+        bool printLogWhenAssetNotExists;
 
         int inputHelperIndex;
         string[] InputHelperNames;
@@ -159,6 +161,7 @@ namespace Cosmos.Editor
             sp_ResourceDataset = targetObject.FindProperty("resourceDataset");
             sp_ResourceBundlePathType = targetObject.FindProperty("resourceBundlePathType");
             sp_RelativeBundlePath = targetObject.FindProperty("relativeBundlePath");
+            sp_PrintLogWhenAssetNotExists = targetObject.FindProperty("printLogWhenAssetNotExists");
 
             sp_AssetBundleEncrytion = targetObject.FindProperty("assetBundleEncrytion");
             sp_AssetBundleEncrytionOffset = targetObject.FindProperty("assetBundleEncrytionOffset");
@@ -197,6 +200,7 @@ namespace Cosmos.Editor
             sp_InputHelperName.stringValue = InputHelperNames[inputHelperIndex];
 
             moduleConfigFoldout = sp_ModuleConfigFoldout.boolValue;
+            printLogWhenAssetNotExists = sp_PrintLogWhenAssetNotExists.boolValue;
 
             targetObject.ApplyModifiedProperties();
         }
@@ -313,6 +317,13 @@ namespace Cosmos.Editor
                         }
                     }
                     break;
+            }
+
+            EditorGUILayout.Space(8);
+            printLogWhenAssetNotExists = EditorGUILayout.ToggleLeft("PrintLogWhenAssetLoadFail", printLogWhenAssetNotExists);
+            if (printLogWhenAssetNotExists != sp_PrintLogWhenAssetNotExists.boolValue)
+            {
+                sp_PrintLogWhenAssetNotExists.boolValue = printLogWhenAssetNotExists;
             }
         }
         void DrawInputModuleConfig()

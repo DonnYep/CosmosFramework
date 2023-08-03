@@ -13,6 +13,7 @@ namespace Cosmos
         [SerializeField] ResourceLoadMode resourceLoadMode;
         [SerializeField] string resourceLoaderName;
         [SerializeField] int resourceLoaderIndex;
+        [SerializeField] bool printLogWhenAssetNotExists;
 
         [SerializeField] int debugHelperIndex;
         [SerializeField] int jsonHelperIndex;
@@ -42,6 +43,7 @@ namespace Cosmos
         [SerializeField] bool moduleConfigFoldout;
         public void LoadResource()
         {
+            ResourceDataProxy.PrintLogWhenAssetNotExists = printLogWhenAssetNotExists;
             switch (resourceLoadMode)
             {
                 case ResourceLoadMode.Resource:
