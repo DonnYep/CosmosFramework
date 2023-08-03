@@ -4,8 +4,19 @@ using System.Text;
 
 namespace Cosmos.Resource
 {
-    public class ResourceUtility
+    public static partial class ResourceUtility
     {
+        public static string Prefix
+        {
+            get
+            {
+                string prefix = string.Empty;
+#if UNITY_IOS||UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+                prefix=@"file://";
+#endif
+                return prefix;
+            }
+        }
         /// <summary>
         /// 包名过滤
         /// </summary>
@@ -13,7 +24,7 @@ namespace Cosmos.Resource
         /// <returns>过滤后的名</returns>
         public static string FilterName(string bundleName)
         {
-            return bundleName.Replace("\\", "_").Replace("/", "_").Replace(".", "_").Replace(",","_").Replace(";","_").ToLower();
+            return bundleName.Replace("\\", "_").Replace("/", "_").Replace(".", "_").Replace(",", "_").Replace(";", "_").ToLower();
         }
         /// <summary>
         /// 生成文件夹的md5

@@ -19,6 +19,10 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public AssetBundleNameType AssetBundleNameType;
         /// <summary>
+        /// 构建类型，增量或全量
+        /// </summary>
+        public ResourceBuildType ResourceBuildType;
+        /// <summary>
         /// 构建handler的名称
         /// </summary>
         public string BuildHandlerName;
@@ -43,9 +47,17 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public bool IgnoreTypeTreeChanges;
         /// <summary>
+        /// 强制移除工程中所有的ab标签
+        /// </summary>
+        public bool ForceRemoveAllAssetBundleNames;
+        /// <summary>
         /// AB打包输出的绝对路径；
         /// </summary>
         public string AssetBundleBuildPath;
+        /// <summary>
+        /// AB打包输出文件夹
+        /// </summary>
+        public string AssetBundleBuildDirectory;
         /// <summary>
         /// AB输出目录；
         /// </summary>
@@ -67,13 +79,13 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public int AssetBundleOffsetValue;
         /// <summary>
-        /// 打包输出资源加密；
+        /// 加密manifest
         /// </summary>
-        public bool BuildedAssetsEncryption;
+        public bool EncryptManifest;
         /// <summary>
-        /// 打包输出资源加密密钥；
+        /// 文件清单加密密钥；
         /// </summary>
-        public string BuildIedAssetsEncryptionKey;
+        public string ManifestEncryptionKey;
         /// <summary>
         /// 拷贝到streamingAsset文件；
         /// </summary>
@@ -94,8 +106,8 @@ namespace Cosmos.Editor.Resource
             BuildHandlerIndex = 0;
             BuildPath = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), "AssetBundles"); AssetBundleEncryption = false;
             AssetBundleOffsetValue = 16;
-            BuildedAssetsEncryption = false;
-            BuildIedAssetsEncryptionKey = "CosmosBundlesKey";
+            EncryptManifest = false;
+            ManifestEncryptionKey = "CosmosBundlesKey";
             AssetBundleNameType = AssetBundleNameType.HashInstead;
             BuildVersion = "0.0.1";
             InternalBuildVersion = 0;

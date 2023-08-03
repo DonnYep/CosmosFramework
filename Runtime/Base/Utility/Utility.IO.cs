@@ -94,11 +94,9 @@ namespace Cosmos
             }
             public static void CreateFolder(string path)
             {
-                var dir = new DirectoryInfo(path);
-                if (!dir.Exists)
+                if (!Directory.Exists(path))
                 {
-                    dir.Create();
-                    Utility.Debug.LogInfo("Path:" + path + "Folder is created");
+                    Directory.CreateDirectory(path);
                 }
             }
             public static void CreateFolder(string path, string folderName)
@@ -191,7 +189,7 @@ namespace Cosmos
             {
                 if (File.Exists(sourceFileName))
                 {
-                    var fileName= Path.GetDirectoryName(sourceFileName);
+                    var fileName = Path.GetDirectoryName(sourceFileName);
                     if (!Directory.Exists(folderPath))
                     {
                         Directory.CreateDirectory(folderPath);
@@ -673,6 +671,15 @@ namespace Cosmos
                     totalSize += file.Length;
                 }
                 return totalSize;
+            }
+            /// <summary>
+            /// 清空文件夹
+            /// </summary>
+            /// <param name="path">地址</param>
+            public static void EmptyFolder(string path)
+            {
+                DeleteFolder(path);
+                CreateFolder(path);
             }
         }
     }

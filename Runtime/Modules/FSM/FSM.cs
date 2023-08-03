@@ -7,6 +7,7 @@ namespace Cosmos.FSM
          where T : class
     {
         #region Properties
+        Type stateBaseType = typeof(FSMState<T>);
         T owner;
         public T Owner { get { return owner; } private set { owner = value; } }
         FSMState<T> currentState;
@@ -22,7 +23,13 @@ namespace Cosmos.FSM
         public override int FSMStateCount { get { return fsmStateDict.Count; } }
         public override bool IsRunning { get { return currentState != null; } }
         public override Type OwnerType { get { return typeof(T); } }
-        public override string CurrentStateName { get { return currentState != null ? currentState.GetType().FullName : Constants.NULL; } }
+        public override string CurrentStateName
+        {
+            get
+            {
+                return currentState != null ? currentState.GetType().FullName : Constants.NULL;
+            }
+        }
         #endregion
 
         #region Lifecycle
@@ -48,8 +55,8 @@ namespace Cosmos.FSM
             if (defaultState == null)
                 return;
             Type type = defaultState.GetType();
-            if (!typeof(FSMState<T>).IsAssignableFrom(type))
-                throw new ArgumentException("State type is invalid" + type.FullName);
+            if (!stateBaseType.IsAssignableFrom(type))
+                throw new ArgumentException($"State type {type.FullName} is invalid");
             FSMState<T> state = GetState(type);
             if (state == null)
                 return;
@@ -63,26 +70,14 @@ namespace Cosmos.FSM
         {
             if (IsRunning)
                 return;
-            if (stateType == null)
-                return;
-            if (!typeof(FSMState<T>).IsAssignableFrom(stateType))
-                throw new ArgumentException("State type is invalid" + stateType.FullName);
-            FSMState<T> state = GetState(stateType);
-            if (state == null)
-                return;
-            currentState = state;
-            currentState.OnStateEnter(this);
+            ChangeState(stateType);
         }
         public void Start<TState>()
             where TState : FSMState<T>
         {
             if (IsRunning)
                 return;
-            var state = GetState<TState>();
-            if (state == null)
-                return;
-            currentState = state;
-            currentState.OnStateEnter(this);
+            ChangeState<TState>();
         }
         /// <summary>
         /// FSM轮询，由拥有者轮询调用
@@ -91,7 +86,7 @@ namespace Cosmos.FSM
         {
             if (Pause)
                 return;
-            currentState?.Reason(this);
+            currentState?.RefreshTransition(this);
             currentState?.OnStateStay(this);
         }
         public override void Shutdown()
@@ -105,8 +100,8 @@ namespace Cosmos.FSM
         {
             if (stateType == null)
                 throw new ArgumentNullException("State type is invalid !");
-            if (!typeof(FSMState<T>).IsAssignableFrom(stateType))
-                throw new ArgumentException("State type is invalid !" + stateType.FullName);
+            if (!stateBaseType.IsAssignableFrom(stateType))
+                throw new ArgumentException($"State type {stateType.FullName} is invalid !");
             return fsmStateDict.ContainsKey(stateType);
         }
         public bool HasState(FSMState<T> state)
@@ -125,15 +120,15 @@ namespace Cosmos.FSM
         }
         public void ChangeState(Type stateType)
         {
-            if (currentState == null)
-                throw new ArgumentNullException("Current state is invalid");
             FSMState<T> state = null;
+            if (!stateBaseType.IsAssignableFrom(stateType))
+                throw new ArgumentException($"State type {stateType.FullName} is invalid");
             state = GetState(stateType);
             if (state == null)
-                throw new ArgumentNullException("FSM" + currentState.ToString() + " can not change state to " + state.ToString() + " which is not exist");
-            currentState.OnStateExit(this);
+                throw new ArgumentNullException($"FSM {currentState} can not change state to {state} which is not exist");
+            currentState?.OnStateExit(this);
             currentState = state;
-            currentState.OnStateEnter(this);
+            currentState?.OnStateEnter(this);
         }
         public void GetAllState(out List<FSMState<T>> result)
         {
@@ -147,8 +142,8 @@ namespace Cosmos.FSM
         {
             if (stateType == null)
                 throw new ArgumentNullException("State type is invaild !");
-            if (!typeof(FSMState<T>).IsAssignableFrom(stateType))
-                throw new ArgumentNullException("State type is invaild !" + stateType.FullName);
+            if (!stateBaseType.IsAssignableFrom(stateType))
+                throw new ArgumentNullException($"State type {stateType.FullName} is invaild !");
             FSMState<T> state = null;
             if (fsmStateDict.TryGetValue(stateType, out state))
                 return state;
@@ -187,7 +182,7 @@ namespace Cosmos.FSM
                     throw new ArgumentNullException("FSM owner is invalid");
                 Type type = states[i].GetType();
                 if (fsm.HasState(type))
-                    throw new ArgumentException("FSM state is is already exist " + states[i].GetType().FullName);
+                    throw new ArgumentException($"FSM state {states[i].GetType().FullName} is is already exist");
                 else
                 {
                     states[i].OnInitialization(fsm);
@@ -211,7 +206,7 @@ namespace Cosmos.FSM
                     throw new ArgumentNullException("FSM owner is invalid");
                 Type type = states[i].GetType();
                 if (fsm.HasState(type))
-                    throw new ArgumentException("FSM state is is already exist " + states[i].GetType().FullName);
+                    throw new ArgumentException($"FSM state {states[i].GetType()} is is already exist");
                 else
                 {
                     states[i].OnInitialization(fsm);

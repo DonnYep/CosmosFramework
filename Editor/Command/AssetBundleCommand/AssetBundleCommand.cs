@@ -15,6 +15,7 @@ namespace Cosmos.Editor
             {
                 AssetDatabase.RemoveAssetBundleName(bundleName, true);
             }
+            AssetDatabase.Refresh();
             EditorUtil.Debug.LogInfo("Force remove all assetBundle names done");
         }
     }

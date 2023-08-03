@@ -1,6 +1,20 @@
 # [中文](RESOURCE_EDITOR.md) 
 
+<a name="ResourceModule"></a>
+
 # ResourceModule
+- [ResourceRuntime](#ResourceRuntime)
+  - [LoadRuntimeAsset](#Load-Runtime-Asset)
+  - [UnloadRuntimeAsset](#Unload-Runtime-Asset)
+  - [UnloadRuntimeAssetBundle](#Unload-Runtime-AssetBundle)
+- [ResourceEditor](#ResourceEditor)
+  - [AssetDatabaseTab](#AssetDatabaseTab)
+    - [AssetBundleTabMenu](#AssetBundleTab-Menu)
+  - [AssetBundleTab](#AssetBundleTab)
+    - [BuildBundleNameType](#Build-Bundle-Name-Type)
+  - [AssetDatasetTab](#AssetDatasetTab)
+
+<a name="ResourceRuntime"></a>
 
 ## ResourceRuntime
 
@@ -19,7 +33,64 @@
   * AssetsPath.((e.g. Assets/Config/MyConfig.json))
 -----
 
+<a name="Load-Runtime-Asset"></a>
+
+  ### Load Runtime Asset
+
+  * Resource loading is asynchronous, asynchronous methods include Coroutine & callback loading and async/await loading.
+
+  * Resource loading follows the three addressing methods of ResourceRuntime.
+
+```csharp
+    async void LoadAsync()
+    {
+        //async/await load
+        var go = await CosmosEntry.ResourceManager.LoadPrefabAsync("Prefabs/ResCube", true);
+    }
+    void LoadCubeAsync()
+    {
+        //Coroutine&callback load
+        CosmosEntry.ResourceManager.LoadPrefabAsync("Prefabs/ResCube", (go) =>
+         {
+             go.transform.position = new Vector3(3, 0, 0);
+         }, null, true);
+    }
+
+```
+<a name="Unload-Runtime-Asset"></a>
+
+  ### Unload Runtime Asset
+
+  * Resource unload follows the three addressing methods of ResourceRuntime.
+
+ ```csharp
+    void UnloadAsset()
+    {
+        //Resource name unload
+        CosmosEntry.ResourceManager.UnloadAsset("MyText");
+        //ResourceName.Extension unload
+        CosmosEntry.ResourceManager.UnloadAsset("MyText.json");
+        //AssetsPath unload
+        CosmosEntry.ResourceManager.UnloadAsset("Assets/Configs/MyText.json");
+    }
+```
+
+<a name="Unload-Runtime-AssetBundle"></a>
+
+  ### Unload Runtime AssetBundle
+
+ ```csharp
+    void UnloadAssetBundle()
+    {
+        //unload assetbundle
+        CosmosEntry.UnloadAssetBundle.UnloadAsset("MyBundle",true);
+    }
+```
+<a name="ResourceEditor"></a>
+
 ## ResourceEditor
+
+<a name="AssetDatabaseTab"></a>
 
 ### AssetDatabaseTab
 ![AssetDatabaseTab_Multiselect](Images/ResourceEditor/AssetDatabaseTab_Multiselect.png)
@@ -37,6 +108,8 @@
 
 -----
 
+<a name="AssetBundleTab-Menu"></a>
+
 #### AssetBundleTab Menu
 
 * Right-click the bundle to display the function menu.
@@ -45,6 +118,8 @@
 
 * Right-click the OBJECT to display the function menu.
 ![AssetDatabaseTab_ObjectRightClick](Images/ResourceEditor/AssetDatabaseTab_ObjectRightClick.png)
+
+<a name="AssetBundleTab"></a>
 
 ### AssetBundleTab
 ![AssetBundleTab](Images/ResourceEditor/AssetBundleTab.png)
@@ -57,7 +132,9 @@
   
 * The output address of the completed assetbundle can be viewed in the `Bundle build path` on this page.
 
-#### Build bundle name type
+<a name="Build-Bundle-Name-Type"></a>
+
+#### Build Bundle Name Type
 
 * AssetBundleTab builds with `Build bundle name type` to select the name of the resource after the assetbundle is built.
   
@@ -70,6 +147,8 @@
 ![AssetBundlesNameByDefault](Images/ResourceEditor/AssetBundlesNameByDefault.png)
 
 -----
+
+<a name="AssetDatasetTab"></a>
 
 ### AssetDatasetTab
 ![AssetDatasetTab](Images/ResourceEditor/AssetDatasetTab.png)

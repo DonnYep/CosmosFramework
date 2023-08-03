@@ -590,7 +590,11 @@ namespace Cosmos
             /// <returns>hash</returns>
             public static string GenerateMD5(byte[] context)
             {
+#if NET_STANDARD_2_0
+                using (var hash = MD5.Create())
+#elif NET_4_6
                 using (var hash = MD5Cng.Create())
+#endif
                 {
                     byte[] data = hash.ComputeHash(context);
                     var sBuilder = new StringBuilder();

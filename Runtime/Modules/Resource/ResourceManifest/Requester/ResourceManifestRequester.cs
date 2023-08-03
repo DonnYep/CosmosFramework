@@ -1,5 +1,6 @@
 ﻿using Cosmos.WebRequest;
 using System;
+using System.Collections.Generic;
 
 namespace Cosmos.Resource
 {
@@ -8,9 +9,10 @@ namespace Cosmos.Resource
         readonly IWebRequestManager webRequestManager;
         readonly Action<string, ResourceManifest> onSuccess;
         readonly Action<string, string> onFailure;
-        long taskId;
-        public ResourceManifestRequester(IWebRequestManager webRequestManager, Action<string, ResourceManifest> onSuccess, Action<string,string> onFailure)
+        Dictionary<long, string> taskKeyDict;
+        public ResourceManifestRequester(IWebRequestManager webRequestManager, Action<string, ResourceManifest> onSuccess, Action<string, string> onFailure)
         {
+            taskKeyDict = new Dictionary<long, string>();
             this.webRequestManager = webRequestManager;
             this.onSuccess = onSuccess;
             this.onFailure = onFailure;
@@ -25,20 +27,26 @@ namespace Cosmos.Resource
             webRequestManager.OnSuccessCallback -= OnSuccessCallback;
             webRequestManager.OnFailureCallback -= OnFailureCallback;
         }
-        public void StartRequestManifest(string url)
+        public void StartRequestManifest(string url, string manifestEncryptionKey)
         {
-            taskId = webRequestManager.AddDownloadTextTask(url);
+            var taskId = webRequestManager.AddDownloadTextTask(url);
+            taskKeyDict.TryAdd(taskId, manifestEncryptionKey);
         }
         public void StopRequestManifest()
         {
-            webRequestManager.RemoveTask(taskId);
+            foreach (var tk in taskKeyDict)
+            {
+                webRequestManager.RemoveTask(tk.Key);
+            }
+            taskKeyDict.Clear();
         }
         void OnSuccessCallback(WebRequestSuccessEventArgs eventArgs)
         {
-            var manifestJson = eventArgs.GetText();
+            var manifestContext = eventArgs.GetText();
             try
             {
-                var resourceManifest = Utility.Json.ToObject<ResourceManifest>(manifestJson);
+                taskKeyDict.Remove(eventArgs.TaskId, out var key);
+                var resourceManifest = ResourceUtility.Manifest.Deserialize(manifestContext, key);
                 onSuccess?.Invoke(eventArgs.URL, resourceManifest);
             }
             catch (Exception e)
@@ -48,6 +56,7 @@ namespace Cosmos.Resource
         }
         void OnFailureCallback(WebRequestFailureEventArgs eventArgs)
         {
+            taskKeyDict.Remove(eventArgs.TaskId);
             onFailure?.Invoke(eventArgs.URL, eventArgs.ErrorMessage);
         }
     }

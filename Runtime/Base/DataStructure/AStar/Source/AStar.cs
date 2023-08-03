@@ -47,7 +47,7 @@ namespace Cosmos
             public int HCost { get; set; }
             /// <summary>
             /// 距离的代价；
-            /// Manhattan or Euclidean distance；
+            /// Manhattan ,Diagonal or Euclidean distance；
             /// </summary>
             public int FCost { get { return GCost + HCost; } }
             /// <summary>
@@ -167,18 +167,21 @@ namespace Cosmos
                 openList.Remove(currentNode);
                 closedList.Add(currentNode);
 
-                if (currentNode == dstNode)
+                if (currentNode == null || currentNode == dstNode)
                 {
                     var finalPath = GetFinalPath(srcNode, dstNode);
                     DespawnNodeList(openList);
                     DespawnNodeList(closedList);
                     return finalPath;
                 }
-                var nodeNeighbors = GetNeighboringNodes(currentNode);
+                var nodeNeighbors = GetNeighborNodes(currentNode);
                 foreach (var neighborNode in nodeNeighbors)
                 {
-                    if (neighborNode.IsObstacle || closedList.Contains(neighborNode))
+                    if (closedList.Contains(neighborNode))
+                        continue;
+                    if (neighborNode.IsObstacle)
                     {
+                        closedList.Add(neighborNode);
                         continue;
                     }
                     int moveCost = currentNode.GCost + GetDistance(currentNode, neighborNode);
@@ -209,17 +212,169 @@ namespace Cosmos
             }
             return nodes;
         }
-        public IList<Node> GetNeighboringNodes(float posX, float posY)
+        public IList<Node> GetNeighborNodes(float posX, float posY)
         {
             var node = GetNode(posX, posY);
-            return GetNeighboringNodes(node);
+            return GetNeighborNodes(node);
         }
         /// <summary>
         /// 获取临近除自身的九宫格节点；
         /// </summary>
         /// <param name="node">被查找的节点</param>
         /// <returns>目标节点数组</returns>
-        public virtual IList<Node> GetNeighboringNodes(Node node)
+        public virtual IList<Node> GetNeighborNodes(Node node)
+        {
+            return GetSquareNeighborNodesWithoutObstacle(node);
+        }
+        public virtual void Clear()
+        {
+            nodeArray = new Node[0, 0];
+            nodeListQueue.Clear();
+        }
+        public bool Equals(AStar other)
+        {
+            return other.NodeSideLength == NodeSideLength
+                && other.GridCenterX == GridCenterX
+                && other.GridCenterY == GridCenterY
+                && other.GridSizeX == GridSizeX
+                && other.GridSizeY == GridSizeY;
+        }
+        protected abstract int GetDistance(Node lhs, Node rhs);
+        protected virtual int GetManhattanDistance(Node lhs, Node rhs)
+        {
+            var x = Math.Abs(lhs.IndexX - rhs.IndexX);
+            var y = Math.Abs(lhs.IndexY - rhs.IndexY);
+            return (x + y) * 10;
+        }
+        protected virtual int GetDiagonalDistance(Node lhs, Node rhs)
+        {
+            var x = Math.Abs(lhs.IndexX - rhs.IndexX);
+            var y = Math.Abs(lhs.IndexY - rhs.IndexY);
+            if (x > y)
+                return 14 * y + 10 * (x - y);
+            else
+                return 14 * x + 10 * (y - x);
+        }
+        protected virtual int GetEuclideanDistance(Node lhs, Node rhs)
+        {
+            var x = Math.Abs(lhs.IndexX - rhs.IndexX);
+            var y = Math.Abs(lhs.IndexY - rhs.IndexY);
+            return (int)Math.Ceiling(Math.Sqrt(x * x + y * y) * 14);
+        }
+        /// <summary>
+        /// 十字形临近节点
+        /// </summary>
+        protected IList<Node> GetCrossNeighborNodes(Node node)
+        {
+            Node[] srcNodes = new Node[4];
+            var x = node.IndexX;
+            var y = node.IndexY;
+            var leftX = x - 1;
+            var rightX = x + 1;
+            var upY = y + 1;
+            var downY = y - 1;
+            int idx = 0;
+            if (leftX >= 0)
+                srcNodes[idx++] = nodeArray[leftX, y];
+            if (rightX <= GridSizeX - 1)
+                srcNodes[idx++] = nodeArray[rightX, y];
+            if (upY <= GridSizeY - 1)
+                srcNodes[idx++] = nodeArray[x, upY];
+            if (downY >= 0)
+                srcNodes[idx++] = nodeArray[x, downY];
+            var dstNodes = new Node[idx];
+            Array.Copy(srcNodes, 0, dstNodes, 0, idx);
+            return dstNodes;
+        }
+        /// <summary>
+        /// 九宫格临近节点，过滤obstacle
+        /// </summary>
+        protected virtual IList<Node> GetSquareNeighborNodesWithoutObstacle(Node node)
+        {
+            var neighbourNodeList = SpawnNodeList();
+            Node neighbourUpperLeft = null;
+            Node neighbourUpper = null;
+            Node neighbourUpperRight = null;
+            Node neighbourLeft = null;
+            Node neighbourRight = null;
+            Node neighbourLowerLeft = null;
+            Node neighbourLower = null;
+            Node neighbourLowerRight = null;
+            var w = GridSizeX - 1;
+            var h = GridSizeY - 1;
+
+            int right = node.IndexX + 1;
+            int upper = node.IndexY + 1;
+            int left = node.IndexX - 1;
+            int lower = node.IndexY - 1;
+            if (left <= w && left >= 0 && upper <= h && upper >= 0)
+            {
+                neighbourUpperLeft = nodeArray[left, upper];
+                neighbourNodeList.Add(neighbourUpperLeft);
+            }
+            if (upper <= h && upper >= 0)
+            {
+                neighbourUpper = nodeArray[node.IndexX, upper];
+                neighbourNodeList.Add(neighbourUpper);
+            }
+            if (right <= w && right >= 0 && upper <= h && upper >= 0)
+            {
+                neighbourUpperRight = nodeArray[right, upper];
+                neighbourNodeList.Add(neighbourUpperRight);
+            }
+            if (left <= w && left >= 0)
+            {
+                neighbourLeft = nodeArray[left, node.IndexY];
+                neighbourNodeList.Add(neighbourLeft);
+            }
+            if (right <= w && right >= 0)
+            {
+                neighbourRight = nodeArray[right, node.IndexY];
+                neighbourNodeList.Add(neighbourRight);
+            }
+            if (left <= w && left >= 0 && lower <= h && lower >= 0)
+            {
+                neighbourLowerLeft = nodeArray[left, lower];
+                neighbourNodeList.Add(neighbourLowerLeft);
+            }
+            if (lower <= h && lower >= 0)
+            {
+                neighbourLower = nodeArray[node.IndexX, lower];
+                neighbourNodeList.Add(neighbourLower);
+            }
+            if (right <= w && right >= 0 && lower <= h && lower >= 0)
+            {
+                neighbourLowerRight = nodeArray[right, lower];
+                neighbourNodeList.Add(neighbourLowerRight);
+            }
+            if (neighbourRight == null || neighbourRight.IsObstacle)
+            {
+                neighbourNodeList.Remove(neighbourUpperRight);
+                neighbourNodeList.Remove(neighbourLowerRight);
+            }
+            if (neighbourLeft == null || neighbourLeft.IsObstacle)
+            {
+                neighbourNodeList.Remove(neighbourUpperLeft);
+                neighbourNodeList.Remove(neighbourUpperLeft);
+            }
+            if (neighbourUpper == null || neighbourUpper.IsObstacle)
+            {
+                neighbourNodeList.Remove(neighbourUpperRight);
+                neighbourNodeList.Remove(neighbourUpperLeft);
+            }
+            if (neighbourLower == null || neighbourLower.IsObstacle)
+            {
+                neighbourNodeList.Remove(neighbourLowerLeft);
+                neighbourNodeList.Remove(neighbourLowerRight);
+            }
+            var neighbourNodeArray = neighbourNodeList.ToArray();
+            DespawnNodeList(neighbourNodeList);
+            return neighbourNodeArray;
+        }
+        /// <summary>
+        /// 九宫格临近节点，不过滤obstacle
+        /// </summary>
+        protected virtual IList<Node> GetSquareNeighborNodesWithObstacle(Node node)
         {
             var w = GridSizeX - 1;
             var h = GridSizeY - 1;
@@ -243,45 +398,11 @@ namespace Cosmos
             Array.Copy(srcNodes, 0, dstNodes, 0, idx);
             return dstNodes;
         }
-        public void Clear()
-        {
-            nodeListQueue.Clear();
-        }
-        public bool Equals(AStar other)
-        {
-            return other.NodeSideLength == NodeSideLength
-                && other.GridCenterX == GridCenterX
-                && other.GridCenterY == GridCenterY
-                && other.GridSizeX == GridSizeX
-                && other.GridSizeY == GridSizeY;
-        }
-        protected abstract int GetDistance(Node a, Node b);
-        protected int GetManhattanDistance(Node a, Node b)
-        {
-            var x = Math.Abs(a.IndexX - b.IndexX);
-            var y = Math.Abs(a.IndexY - b.IndexY);
-            return (x + y) * 10;
-        }
-        protected int GetDiagonalDistance(Node a, Node b)
-        {
-            var x = Math.Abs(a.IndexX - b.IndexX);
-            var y = Math.Abs(a.IndexY - b.IndexY);
-            if (x > y)
-                return 14 * y + 10 * (x - y);
-            else
-                return 14 * x + 10 * (y - x);
-        }
-        protected int GetEuclideanDistance(Node a, Node b)
-        {
-            var x = Math.Abs(a.IndexX - b.IndexX);
-            var y = Math.Abs(a.IndexY - b.IndexY);
-            return (int)Math.Floor(Math.Sqrt(x * x + y * y) * 14);
-        }
         protected IList<Node> GetFinalPath(Node src, Node dst)
         {
             var nodePath = SpawnNodeList();
             Node currentNode = dst;
-            while (currentNode != src)
+            while (currentNode != null && currentNode != src)
             {
                 nodePath.Add(currentNode);
                 currentNode = currentNode.ParentNode;
@@ -313,7 +434,7 @@ namespace Cosmos
                 }
             }
         }
-        List<Node> SpawnNodeList()
+        protected List<Node> SpawnNodeList()
         {
             if (nodeListQueue.Count > 0)
             {
@@ -326,7 +447,7 @@ namespace Cosmos
                 return obj;
             }
         }
-        void DespawnNodeList(List<Node> lst)
+        protected void DespawnNodeList(List<Node> lst)
         {
             if (lst == null)
                 return;

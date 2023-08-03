@@ -49,35 +49,38 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 
 - **Config**:游戏常用配置模块。用户可在游戏初始化时读取配置文件，并缓存于配置模块。运行时在其他所需位置读取对应配置的数据。
 
-- **Event**:事件中心模块。使用标准事件模型，提供了监听、移除、派发等常用事件功能。提供事件观测方法，可实时检测事件状态。
-
-- **FSM**:有限状态机模块。完全抽象的有限状态机，可针对不同类型的拥有者做状态机实现。
-
-- **ObjectsPool**:对象池模块。提供常用的实体对象生成回收等功能。底层使用数据结构Pool进行实现。
-
-- **Resource**:资源加载模块。内置提供AssetDatabase、AssetBundle以及Resource三种加载模式。AssetDatabase与AssetBundle模式支持引用计数，资源包会根据引用计数自动管理包体的加载或卸载。Runtime加载器可自定义加载方案。支持自动化流水线，如Jenkins构建部署等。资源模块对应的编辑器位于Window>Cosmos>Module>Resource。开发阶段阶段使用AssetDatabase模式，构建app时使用AssetBundle模式。若需要使用Unity Resource作为加载方案，则切换为Resource模式。
-
-- **Scene**:场景加载模块。提供常用的异步、同步加载嵌入的场景功能。支持自定义实现加载方式。
+- **Controller**:控制器模块。使用此模块进行注册后，无需生成实体对象(GameObject)也可进行轮询管理。此模块提供Update轮询。
 
 - **DataNode**:数据缓存模块。数据以树形结构存储于此模块中，可通过web地址格式或者逗号分隔符获取对应数据的对象。
 
 - **DataTable**:数据表模块。在此模块中，数据行以对象形式存储于数据表中。数据表可实时增删改查，并通过自定义的反序列化方式生成所需要的数据对象。
 
+- **Download**:下载模块。支持localhost本地文件下载与http文件下载。文件下载时以byte流异步增量写入本地。下载中支持动态添加、移除下载任务；
+
 - **Entity**:游戏实体模块。管理游戏运行时的实体对象。实体支持组分类，通过传入资源地址可以直接管理资源实体对象的生成、回收等操作，内置对象池生成。
+
+- **Event**:事件中心模块。使用标准事件模型，提供了监听、移除、派发等常用事件功能。提供事件观测方法，可实时检测事件状态。
+
+- **FSM**:有限状态机模块。完全抽象的有限状态机，可针对不同类型的拥有者做状态机实现。
 
 - **Input**:输入适配模块。通过虚拟按键模拟各个平台的输入，传入不同的输入适配器可适配不同平台的输入方式。
 
+- **Main**:模块中心。自定义模块与扩展模块都存于此。自定义模块按照内置模块相同格式写入后，可享有完全同等与内置模块的生命周期与权限。几乎与内置模块无异。此主模块的内置轮询池:FixedRefreshHandler、LateRefreshHandler、RefreshHandler、ElapseRefreshHandler可对需要统一进行轮询管理的对象进行统一轮询，减少由于过多的Update等mono回调导致的性能损耗。
+
 - **Network**:网络模块。提供了多种高速可靠的UDP协议，如RUDP、SUDP、KCP、TCP等，默认使用KCP协议。网络以通道(Channel)形式区分各个连接，支持多种网络类型同时连接。可实现(Client-Server)模式。支持async/await语法。
+
+- **ObjectsPool**:对象池模块。提供常用的实体对象生成回收等功能。底层使用数据结构Pool进行实现。
+
+- **Procedure**:流程节点模块。方便管理运行时执行的逻辑节点，如热游戏启动节点，资源校验节点，下载资源节点，进入游戏节点等。将每个操作封装为节点，则大大有利于项目维护。
+
+- **Resource**:资源加载模块。内置提供AssetDatabase、AssetBundle以及Resource三种加载模式。AssetDatabase与AssetBundle模式支持引用计数，资源包会根据引用计数自动管理包体的加载或卸载。Runtime加载器可自定义加载方案。支持自动化流水线，如Jenkins构建部署等。资源模块对应的编辑器位于Window>Cosmos>Module>Resource。开发阶段阶段使用AssetDatabase模式，构建app时使用AssetBundle模式。若需要使用Unity Resource作为加载方案，则切换为Resource模式。
+
+- **Scene**:场景加载模块。提供常用的异步、同步加载嵌入的场景功能。支持自定义实现加载方式。
 
 - **UI**:UI模块。抽象实现UI面板以及UI的加载方式。支持激活，失活，面板优先级，组别设置等功能，使用更轻便。框架提供了基于UGUI实现的面板类与资源加载帮助体。其他UI方案可自行扩展，目前稳定兼容FGUI。
 
-- **Main**:模块中心。自定义模块与扩展模块都存于此。自定义模块按照内置模块相同格式写入后，可享有完全同等与内置模块的生命周期与权限。几乎与内置模块无异。此主模块的内置轮询池:FixedRefreshHandler、LateRefreshHandler、RefreshHandler、ElapseRefreshHandler可对需要统一进行轮询管理的对象进行统一轮询，减少由于过多的Update等mono回调导致的性能损耗。
-
-- **Controller**:控制器模块。使用此模块进行注册后，无需生成实体对象(GameObject)也可进行轮询管理。此模块提供Update轮询。
-
 - **WebRequest**:UnityWebRequest模块，可用于加载持久化资源、网络资源下载等需求。支持获取AssetBundle、AudioClip、Texture2D、string。当资源获取到后，用户可通过WebRequestCallback对资源进行操作。
 
-- **Download**:下载模块。支持localhost本地文件下载与http文件下载。文件下载时以byte流异步增量写入本地。下载中支持动态添加、移除下载任务；
 
 <a name="内置数据结构、工具"></a>
 
@@ -89,7 +92,7 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 
 - **DataStructure**:常用数据结构。链表、双向链表、双向字典、二叉树、四叉树、AStar、LRU、线程锁等数据结构。
 
-- **Extensions**:静态扩展工具。提供Unity的扩展以及C# Collections 常用数据结构的原生扩展。
+- **Extensions**:静态扩展库。提供Unity以及C#原生的相关扩展方法。
 
 - **Awaitable** :此工具提供了async/await语法在unity环境中的支持。可以像写c#原生异步一样,在Unity中写异步。支持Task异步，Task执行完成后会回到主线程，使用时按照正常格式写即可。
 
@@ -151,6 +154,8 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 <a name="Library-link"></a>
 
 ## Library link
+
+- HybridCLR:https://github.com/focus-creative-games/hybridclr
 
 - CosmosEngine:https://github.com/DonnYep/CosmosEngine
 

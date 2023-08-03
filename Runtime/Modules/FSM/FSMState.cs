@@ -1,50 +1,58 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 namespace Cosmos.FSM
 {
-    public abstract class FSMState<T> where T:class
+    public abstract class FSMState<T> where T : class
     {
         #region Properties
-        List<FSMTrigger<T>> triggerList = new List<FSMTrigger<T>>();
-        Dictionary<FSMTrigger<T>, FSMState<T>> triggerStateDict 
-            = new Dictionary<FSMTrigger<T>, FSMState<T>>();
-        public void AddTrigger(FSMTrigger<T> trigger,FSMState<T> state)
+        List<FSMTransition<T>> transitionList = new List<FSMTransition<T>>();
+        Dictionary<FSMTransition<T>, Type> transitionStateDict
+            = new Dictionary<FSMTransition<T>, Type>();
+        public void AddTransition(FSMTransition<T> transition, Type stateType)
         {
-            if (triggerStateDict.ContainsKey(trigger))
+            if (transitionStateDict.ContainsKey(transition))
                 return;
-            triggerStateDict.Add(trigger, state);
-            triggerList.Add(trigger);
+            if (!typeof(FSMState<T>).IsAssignableFrom(stateType))
+                throw new ArgumentException($"State type {stateType.FullName} is invalid !");
+            transitionStateDict.Add(transition, stateType);
+            transitionList.Add(transition);
         }
-        public void RemoveTrigger(FSMTrigger<T> trigger)
+        public void RemoveTransition(FSMTransition<T> transition)
         {
-            if (!triggerStateDict.ContainsKey(trigger))
+            if (!transitionStateDict.ContainsKey(transition))
                 return;
-            triggerStateDict.Remove(trigger);
-            triggerList.Remove(trigger);
+            transitionStateDict.Remove(transition);
+            transitionList.Remove(transition);
         }
-        public FSMState<T> GetTriggeredState(FSMTrigger<T> trigger)
+        public Type GetTransitionState(FSMTransition<T> transition)
         {
-            if (triggerStateDict.ContainsKey(trigger))
-                return triggerStateDict[trigger];
+            if (transitionStateDict.ContainsKey(transition))
+                return transitionStateDict[transition];
             return null;
         }
         #endregion
         #region Lifecycle
         public virtual void OnInitialization(IFSM<T> fsm) { }
         public abstract void OnStateEnter(IFSM<T> fsm);
-        public abstract void OnStateExit(IFSM<T> fsm);
-        public virtual void OnTermination(IFSM<T> fsm) { }
-        public virtual void Reason(IFSM<T> fsm)
+        public abstract void OnStateStay(IFSM<T> fsm);
+        public virtual void RefreshTransition(IFSM<T> fsm)
         {
-            for (int i = 0; i < triggerList.Count; i++)
+            for (int i = 0; i < transitionList.Count; i++)
             {
-                if (triggerList[i].Handler(fsm))
+                if (transitionList[i].Handler(fsm))
                 {
-                    fsm.ChangeState(GetTriggeredState(triggerList[i]).GetType());
+                    fsm.ChangeState(GetTransitionState(transitionList[i]));
                     return;
                 }
             }
         }
-        public abstract void OnStateStay(IFSM<T> fsm);
+        public abstract void OnStateExit(IFSM<T> fsm);
+        public virtual void OnTermination(IFSM<T> fsm) { }
         #endregion
+        public virtual void Release()
+        {
+            transitionList.Clear();
+            transitionStateDict.Clear();
+        }
     }
 }

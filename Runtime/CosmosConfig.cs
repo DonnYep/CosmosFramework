@@ -13,6 +13,7 @@ namespace Cosmos
         [SerializeField] ResourceLoadMode resourceLoadMode;
         [SerializeField] string resourceLoaderName;
         [SerializeField] int resourceLoaderIndex;
+        [SerializeField] bool printLogWhenAssetNotExists;
 
         [SerializeField] int debugHelperIndex;
         [SerializeField] int jsonHelperIndex;
@@ -24,7 +25,6 @@ namespace Cosmos
 
         [SerializeField] bool runInBackground;
 
-        [SerializeField] bool autoInitResource = true;
         [SerializeField] ResourceDataset resourceDataset;
         [SerializeField] ResourceBundlePathType resourceBundlePathType;
         [SerializeField] string relativeBundlePath;
@@ -32,12 +32,18 @@ namespace Cosmos
         [SerializeField] bool assetBundleEncrytion = false;
         [SerializeField] ulong assetBundleEncrytionOffset = 16;
 
-        [SerializeField] bool buildInfoEncrytion = false;
-        [SerializeField] string buildInfoEncrytionKey = "CosmosBundlesKey";
+        [SerializeField] bool manifestEncrytion = false;
+        [SerializeField] string manifestEncrytionKey = "CosmosBundlesKey";
 
         [SerializeField] bool drawDebugWindow;
+
+        [SerializeField] int inputHelperIndex;
+        [SerializeField] string inputHelperName;
+
+        [SerializeField] bool moduleConfigFoldout;
         public void LoadResource()
         {
+            ResourceDataProxy.PrintLogWhenAssetNotExists = printLogWhenAssetNotExists;
             switch (resourceLoadMode)
             {
                 case ResourceLoadMode.Resource:
@@ -47,10 +53,7 @@ namespace Cosmos
                     {
                         string manifestPath = string.Empty;
                         string bundlePath = string.Empty;
-                        string prefix = string.Empty;
-#if UNITY_IOS ||UNITY_EDITOR_OSX||UNITY_STANDALONE_OSX
-                        prefix=@"file://";
-#endif
+                        string prefix = ResourceUtility.Prefix;
                         switch (resourceBundlePathType)
                         {
                             case ResourceBundlePathType.StreamingAssets:
@@ -74,12 +77,16 @@ namespace Cosmos
                         manifestPath = prefix + manifestPath;
                         //webrequest需要加file://，System.IO不需要加。加载器使用的是unity原生的assetbundle.loadxxxx，属于IO，因此无需加前缀；
                         if (assetBundleEncrytion)
-                            ResourceDataProxy.EncryptionOffset = assetBundleEncrytionOffset;
-                        if (buildInfoEncrytion)
-                            ResourceDataProxy.BuildInfoEncryptionKey = buildInfoEncrytionKey;
+                            ResourceDataProxy.BundleEncryptionOffset = assetBundleEncrytionOffset;
+                        else
+                            ResourceDataProxy.BundleEncryptionOffset = 0;
+                        if (manifestEncrytion)
+                            ResourceDataProxy.ManifestEncryptionKey = manifestEncrytionKey;
+                        else
+                            ResourceDataProxy.ManifestEncryptionKey = string.Empty;
                         var assetBundleLoader = new AssetBundleLoader();
                         CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
-                        CosmosEntry.ResourceManager.StartRequestManifest(manifestPath);
+                        CosmosEntry.ResourceManager.StartRequestManifest(manifestPath, ResourceDataProxy.ManifestEncryptionKey);
                     }
                     break;
                 case ResourceLoadMode.AssetDatabase:
@@ -108,10 +115,8 @@ namespace Cosmos
             if (launchAppDomainModules)
             {
                 CosmosEntry.LaunchAppDomainModules();
-                if (autoInitResource)
-                {
-                    LoadResource();
-                }
+                LoadResource();
+                SetInputHelper();
             }
         }
         void LoadHelpers()
@@ -133,6 +138,15 @@ namespace Cosmos
                 var messagePackHelper = Utility.Assembly.GetTypeInstance(messagePackHelperName);
                 if (messagePackHelper != null)
                     Utility.MessagePack.SetHelper((Utility.MessagePack.IMessagePackHelper)messagePackHelper);
+            }
+        }
+        void SetInputHelper()
+        {
+            if (!string.IsNullOrEmpty(inputHelperName) && inputHelperName != Constants.NONE)
+            {
+                var inputHelper = Utility.Assembly.GetTypeInstance<Cosmos.Input.IInputHelper>(inputHelperName);
+                if (inputHelper != null)
+                    CosmosEntry.InputManager.SetInputHelper(inputHelper);
             }
         }
     }

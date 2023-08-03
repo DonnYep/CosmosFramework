@@ -5,6 +5,7 @@ using UnityEngine;
 using Cosmos.Unity.EditorCoroutines.Editor;
 using System.Collections;
 using Cosmos.Resource;
+using System.Collections.Generic;
 
 namespace Cosmos.Editor.Resource
 {
@@ -13,7 +14,6 @@ namespace Cosmos.Editor.Resource
         public Func<EditorCoroutine> BuildDataset;
         public const string AssetBundleTabDataName = "ResourceEditor_AsseBundleTabData.json";
         AssetBundleTabData tabData;
-        AssetBundleBuilder assetBundleBuilder = new AssetBundleBuilder();
         Vector2 scrollPosition;
         bool isAesKeyInvalid = false;
         string[] buildHandlers;
@@ -29,6 +29,8 @@ namespace Cosmos.Editor.Resource
         public override void OnGUI(Rect rect)
         {
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+            DrawPrebuildOptions();
+            GUILayout.Space(16);
             DrawBuildOptions();
             GUILayout.Space(16);
             DrawPathOptions();
@@ -51,21 +53,26 @@ namespace Cosmos.Editor.Resource
                         EditorUtil.Debug.LogError("Encryption key should be 16,24 or 32 bytes long");
                         return;
                     }
-                    var buildParams = new AssetBundleBuildParams()
+                    var buildParams = new ResourceBuildParams()
                     {
                         AssetBundleBuildPath = tabData.AssetBundleBuildPath,
                         AssetBundleEncryption = tabData.AssetBundleEncryption,
                         AssetBundleOffsetValue = tabData.AssetBundleOffsetValue,
                         BuildAssetBundleOptions = GetBuildAssetBundleOptions(),
                         AssetBundleNameType = tabData.AssetBundleNameType,
-                        BuildedAssetsEncryption = tabData.BuildedAssetsEncryption,
-                        BuildIedAssetsEncryptionKey = tabData.BuildIedAssetsEncryptionKey,
+                        EncryptManifest = tabData.EncryptManifest,
+                        ManifestEncryptionKey = tabData.ManifestEncryptionKey,
                         BuildTarget = tabData.BuildTarget,
-                        BuildVersion = $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}",
+                        ResourceBuildType = tabData.ResourceBuildType,
+                        BuildVersion = tabData.BuildVersion,
+                        InternalBuildVersion = tabData.InternalBuildVersion,
                         CopyToStreamingAssets = tabData.CopyToStreamingAssets,
                         UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
-                        StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath
+                        StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath,
+                        AssetBundleBuildDirectory = tabData.AssetBundleBuildDirectory
                     };
+                    if (tabData.ForceRemoveAllAssetBundleNames)
+                        AssetBundleCommand.ForceRemoveAllAssetBundleNames();
                     EditorUtil.Coroutine.StartCoroutine(BuildAssetBundle(buildParams, ResourceWindowDataProxy.ResourceDataset));
                 }
                 if (GUILayout.Button("Reset options"))
@@ -75,6 +82,19 @@ namespace Cosmos.Editor.Resource
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndScrollView();
+        }
+        void DrawPrebuildOptions()
+        {
+            EditorGUILayout.LabelField("Prebuild Options", EditorStyles.boldLabel);
+            EditorGUILayout.BeginVertical();
+            {
+                tabData.ForceRemoveAllAssetBundleNames = EditorGUILayout.ToggleLeft("Force remove all assetBundle names", tabData.ForceRemoveAllAssetBundleNames);
+                if (tabData.ForceRemoveAllAssetBundleNames)
+                {
+                    EditorGUILayout.HelpBox("This operation will force remove all assetBundle names in this project", MessageType.Warning);
+                }
+            }
+            EditorGUILayout.EndVertical();
         }
         void DrawBuildOptions()
         {
@@ -90,6 +110,8 @@ namespace Cosmos.Editor.Resource
                     tabData.BuildHandlerName = buildHandlers[tabData.BuildHandlerIndex];
                 }
 
+                tabData.ResourceBuildType = (ResourceBuildType)EditorGUILayout.EnumPopup("Build type", tabData.ResourceBuildType);
+
                 tabData.ForceRebuildAssetBundle = EditorGUILayout.ToggleLeft("Force rebuild assetBundle", tabData.ForceRebuildAssetBundle);
                 tabData.DisableWriteTypeTree = EditorGUILayout.ToggleLeft("Disable write type tree", tabData.DisableWriteTypeTree);
                 if (tabData.DisableWriteTypeTree)
@@ -102,6 +124,7 @@ namespace Cosmos.Editor.Resource
 
                 //打包输出的资源加密，如buildInfo，assetbundle 文件名加密
                 tabData.AssetBundleNameType = (AssetBundleNameType)EditorGUILayout.EnumPopup("Build bundle name type ", tabData.AssetBundleNameType);
+
             }
             EditorGUILayout.EndVertical();
         }
@@ -111,9 +134,13 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.BeginVertical();
             {
                 tabData.BuildVersion = EditorGUILayout.TextField("Build version", tabData.BuildVersion);
-                tabData.InternalBuildVersion = EditorGUILayout.IntField("Internal build version", tabData.InternalBuildVersion);
-                if (tabData.InternalBuildVersion < 0)
-                    tabData.InternalBuildVersion = 0;
+
+                if (tabData.ResourceBuildType == ResourceBuildType.Full)
+                {
+                    tabData.InternalBuildVersion = EditorGUILayout.IntField("Internal build version", tabData.InternalBuildVersion);
+                    if (tabData.InternalBuildVersion < 0)
+                        tabData.InternalBuildVersion = 0;
+                }
 
                 EditorGUILayout.BeginHorizontal();
                 {
@@ -128,9 +155,15 @@ namespace Cosmos.Editor.Resource
                     }
                 }
                 EditorGUILayout.EndHorizontal();
+                tabData.AssetBundleBuildDirectory = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString());
                 if (!string.IsNullOrEmpty(tabData.BuildVersion))
                 {
-                    tabData.AssetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildTarget.ToString(), $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}");
+                    var assetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString(), $"{tabData.BuildVersion}");
+                    if (tabData.ResourceBuildType == ResourceBuildType.Full)
+                    {
+                        assetBundleBuildPath += $"_{tabData.InternalBuildVersion}";
+                    }
+                    tabData.AssetBundleBuildPath = assetBundleBuildPath;
                 }
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
@@ -143,11 +176,11 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.LabelField("Encryption Options", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical();
             {
-                tabData.BuildedAssetsEncryption = EditorGUILayout.ToggleLeft("Build info encryption", tabData.BuildedAssetsEncryption);
-                if (tabData.BuildedAssetsEncryption)
+                tabData.EncryptManifest = EditorGUILayout.ToggleLeft("Build info encryption", tabData.EncryptManifest);
+                if (tabData.EncryptManifest)
                 {
-                    tabData.BuildIedAssetsEncryptionKey = EditorGUILayout.TextField("Build info encryption key", tabData.BuildIedAssetsEncryptionKey);
-                    var aesKeyStr = tabData.BuildIedAssetsEncryptionKey;
+                    tabData.ManifestEncryptionKey = EditorGUILayout.TextField("Build info encryption key", tabData.ManifestEncryptionKey);
+                    var aesKeyStr = tabData.ManifestEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
                     EditorGUILayout.LabelField($"Assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");
                     if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32 && aesKeyLength != 0)
@@ -222,25 +255,103 @@ namespace Cosmos.Editor.Resource
                 tabData.BuildHandlerIndex = buildHandlerMaxIndex;
             }
         }
-        IEnumerator BuildAssetBundle(AssetBundleBuildParams buildParams, ResourceDataset dataset)
+        IEnumerator BuildAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset)
         {
             yield return BuildDataset.Invoke();
             ResourceManifest resourceManifest = new ResourceManifest();
+            switch (buildParams.ResourceBuildType)
+            {
+                case ResourceBuildType.Full:
+                    BuildFullAssetBundle(buildParams, dataset, resourceManifest);
+                    break;
+                case ResourceBuildType.Incremental:
+                    BuildIncrementalAssetBundle(buildParams, dataset, resourceManifest);
+                    break;
+            }
+        }
+        void BuildFullAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset, ResourceManifest resourceManifest)
+        {
             var bundleInfos = dataset.GetResourceBundleInfos();
-            assetBundleBuilder.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
             var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(tabData.BuildHandlerName);
             if (resourceBuildHandler != null)
             {
                 resourceBuildHandler.OnBuildPrepared(buildParams);
             }
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
-            assetBundleBuilder.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
-            assetBundleBuilder.PorcessManifest(buildParams, ref resourceManifest);
+            ResourceBuildController.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
+            ResourceBuildController.PorcessManifest(buildParams, ref resourceManifest);
+            ResourceBuildController.BuildDoneOption(buildParams);
             if (resourceBuildHandler != null)
             {
                 resourceBuildHandler.OnBuildComplete(buildParams);
             }
+            ResourceBuildController.RevertAssetBundlesName(bundleInfos);
+        }
+        void BuildIncrementalAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset, ResourceManifest resourceManifest)
+        {
+            var bundleInfos = dataset.GetResourceBundleInfos();
+            ResourceBuildController.CompareIncrementalBuildCache(buildParams, bundleInfos, out var cacheCompareResult);
 
+            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(tabData.BuildHandlerName);
+            if (resourceBuildHandler != null)
+            {
+                resourceBuildHandler.OnBuildPrepared(buildParams);
+            }
+
+            var needBuildBundles = new List<ResourceBundleCacheInfo>();
+            needBuildBundles.AddRange(cacheCompareResult.Changed);
+            needBuildBundles.AddRange(cacheCompareResult.NewlyAdded);
+            var length = needBuildBundles.Count;
+            var abBuildList = new List<AssetBundleBuild>();
+
+            if (length > 0)
+            {
+                EditorUtil.Debug.LogInfo($"{length } bundles  changed !");
+                for (int i = 0; i < length; i++)
+                {
+                    AssetBundleBuild assetBundleBuild = default;
+                    var cacheInfo = needBuildBundles[i];
+                    switch (buildParams.AssetBundleNameType)
+                    {
+                        case AssetBundleNameType.DefaultName:
+                            {
+                                assetBundleBuild = new AssetBundleBuild()
+                                {
+                                    assetBundleName = cacheInfo.BundleName,
+                                    assetNames = cacheInfo.AssetNames
+                                };
+                            }
+                            break;
+                        case AssetBundleNameType.HashInstead:
+                            {
+                                assetBundleBuild = new AssetBundleBuild()
+                                {
+                                    assetBundleName = cacheInfo.BundleHash,
+                                    assetNames = cacheInfo.AssetNames
+                                };
+                            }
+                            break;
+                    }
+                    abBuildList.Add(assetBundleBuild);
+                }
+                var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, abBuildList.ToArray(), buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
+
+                ResourceBuildController.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
+                ResourceBuildController.PorcessManifest(buildParams, ref resourceManifest);
+                ResourceBuildController.BuildDoneOption(buildParams);
+                if (resourceBuildHandler != null)
+                {
+                    resourceBuildHandler.OnBuildComplete(buildParams);
+                }
+                ResourceBuildController.GenerateIncrementalBuildLog(buildParams, cacheCompareResult);
+            }
+            else
+            {
+                EditorUtil.Debug.LogInfo("No bundle changed !");
+            }
+            ResourceBuildController.RevertAssetBundlesName(bundleInfos);
         }
         BuildAssetBundleOptions GetBuildAssetBundleOptions()
         {

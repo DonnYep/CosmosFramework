@@ -97,9 +97,9 @@ namespace Cosmos.Resource
                 currentLoadHelper = loadHelper;
         }
         /// <inheritdoc/>
-        public void StartRequestManifest(string manifestPath)
+        public void StartRequestManifest(string manifestPath, string manifestEncryptionKey)
         {
-            resourceManifestRequester.StartRequestManifest(manifestPath);
+            resourceManifestRequester.StartRequestManifest(manifestPath, manifestEncryptionKey);
         }
         /// <inheritdoc/>
         public void StopRequestManifest()

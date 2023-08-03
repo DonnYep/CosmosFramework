@@ -345,6 +345,11 @@ where T : Component
             @this.transform.SetParent(parentGameObject.transform);
             return @this;
         }
+        public static GameObject SetParent(this GameObject @this, Transform parent)
+        {
+            @this.transform.SetParent(parent);
+            return @this;
+        }
         /// <summary>
         /// 设置世界坐标
         /// </summary>
