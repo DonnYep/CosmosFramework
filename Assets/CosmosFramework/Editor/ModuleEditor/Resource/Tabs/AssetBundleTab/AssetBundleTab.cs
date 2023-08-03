@@ -2,7 +2,6 @@
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-using Cosmos.Unity.EditorCoroutines.Editor;
 using System.Collections;
 using Cosmos.Resource;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ namespace Cosmos.Editor.Resource
 {
     public class AssetBundleTab : ResourceWindowTabBase
     {
-        public Func<EditorCoroutine> BuildDataset;
+        public Func<Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine> BuildDataset;
         public const string AssetBundleTabDataName = "ResourceEditor_AsseBundleTabData.json";
         AssetBundleTabData tabData;
         Vector2 scrollPosition;
