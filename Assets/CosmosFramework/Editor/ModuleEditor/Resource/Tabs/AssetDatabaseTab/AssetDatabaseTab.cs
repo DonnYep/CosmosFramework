@@ -5,7 +5,6 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using System.Collections;
 using System.IO;
-using Cosmos.Unity.EditorCoroutines.Editor;
 using System.Linq;
 
 namespace Cosmos.Editor.Resource
@@ -35,11 +34,11 @@ namespace Cosmos.Editor.Resource
         /// <summary>
         /// 选中的协程；
         /// </summary>
-        EditorCoroutine selectionCoroutine;
+        Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine selectionCoroutine;
         /// <summary>
         /// 构建dataset协程
         /// </summary>
-        EditorCoroutine buildDatasetCoroutine;
+        Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine buildDatasetCoroutine;
         public override void OnEnable()
         {
             bundleLabel.OnEnable();
@@ -200,7 +199,7 @@ namespace Cosmos.Editor.Resource
             tabData.SelectedBundleIds.Clear();
             hasChanged = false;
         }
-        public EditorCoroutine BuildDataset()
+        public Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine BuildDataset()
         {
             if (buildDatasetCoroutine != null)
                 EditorUtil.Coroutine.StopCoroutine(buildDatasetCoroutine);

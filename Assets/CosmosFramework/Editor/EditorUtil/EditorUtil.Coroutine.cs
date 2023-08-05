@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Cosmos.Unity.EditorCoroutines.Editor;
 namespace Cosmos.Editor
 {
     public static partial class EditorUtil
@@ -14,17 +13,17 @@ namespace Cosmos.Editor
             /// EditorCoroutine 嵌套协程无法识别 yield return IEnumerator；
             /// 嵌套协程尽量使用yield return EditorCoroutine；
             /// </summary>
-            public static EditorCoroutine StartCoroutine(IEnumerator coroutine)
+            public static Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine StartCoroutine(IEnumerator coroutine)
             {
-                return EditorCoroutineUtility.StartCoroutineOwnerless(coroutine);
+                return Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutineUtility.StartCoroutineOwnerless(coroutine);
             }
-            public static void StopCoroutine(EditorCoroutine coroutine)
+            public static void StopCoroutine(Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine coroutine)
             {
-                EditorCoroutineUtility.StopCoroutine(coroutine);
+                Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutineUtility.StopCoroutine(coroutine);
             }
             public static void StopCoroutine(IEnumerator coroutine)
             {
-                EditorCoroutineUtility.StartCoroutineOwnerless(coroutine);
+                Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutineUtility.StartCoroutineOwnerless(coroutine);
             }
         }
     }

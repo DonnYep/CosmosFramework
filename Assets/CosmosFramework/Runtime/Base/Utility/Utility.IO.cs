@@ -2,6 +2,7 @@
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System;
+using System.Collections.Generic;
 
 namespace Cosmos
 {
@@ -248,11 +249,36 @@ namespace Cosmos
                     CopyDirectoryRecursively(diSourceSubDir, nextTargetSubDir);
                 }
             }
+            /// <summary>
+            /// 安全删除文件
+            /// </summary>
+            /// <param name="fileFullPath">文件地址</param>
             public static void DeleteFile(string fileFullPath)
             {
                 if (File.Exists(fileFullPath))
                 {
                     File.Delete(fileFullPath);
+                }
+            }
+            /// <summary>
+            /// 通过文件名删除文件夹下的文件。
+            /// 部分操作平台存在使用File.Delete()无法删除文件的情况，此方法能处理此问题。
+            /// </summary>
+            /// <param name="directoryPath">文件夹地址</param>
+            /// <param name="fileNames">文件名集合</param>
+            public static void DeleteDirectoryFiles(string directoryPath, IEnumerable<string> fileNames)
+            {
+                if (!Directory.Exists(directoryPath))
+                    return;
+                if (fileNames == null)
+                    return;
+                var fileNameHash = new HashSet<string>();
+                fileNameHash.AddRange(fileNames);
+                var dirInfo = new DirectoryInfo(directoryPath);
+                var fileInfos = dirInfo.GetFiles();
+                foreach (var fileInfo in fileInfos)
+                {
+                    fileInfo.Delete();
                 }
             }
             /// <summary>
