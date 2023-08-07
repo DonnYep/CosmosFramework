@@ -156,7 +156,7 @@ namespace Cosmos.Editor.Resource
                     };
                     bundle.ResourceObjectList.Add(resourceObject);
                 }
-                var bundleBuildInfo = new ResourceManifest.ResourceBundleBuildInfo()
+                var bundleBuildInfo = new ResourceBundleBuildInfo()
                 {
                     BundleHash = hash,
                     ResourceBundle = bundle,
@@ -258,6 +258,7 @@ namespace Cosmos.Editor.Resource
             var encryptionKey = buildParams.ManifestEncryptionKey;
             var encrypt = buildParams.EncryptManifest;
             resourceManifest.BuildVersion = buildParams.BuildVersion;
+            resourceManifest.BuildHash= System.Guid.NewGuid().ToString();
             var manifestJson = EditorUtil.Json.ToJson(resourceManifest);
             var manifestContext = manifestJson;
             if (encrypt)

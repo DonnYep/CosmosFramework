@@ -25,7 +25,10 @@ namespace Cosmos
                 mute = value;
                 foreach (var audioProxy in playingDict)
                 {
-                    audioProxy.Value.AudioSource.mute = value;
+                    if (audioProxy.Value.AudioSource != null)
+                    {
+                        audioProxy.Value.AudioSource.mute = value;
+                    }
                 }
             }
         }
@@ -42,7 +45,7 @@ namespace Cosmos
         {
             if (playingDict.TryGetValue(audioObject.AudioName, out var playingProxy))
             {
-                playingProxy.OnPlay(audioParams.FadeInTime,audioParams);
+                playingProxy.OnPlay(audioParams.FadeInTime, audioParams);
                 return;
             }
             if (pauseDict.TryRemove(audioObject.AudioName, out var pausedProxy))
@@ -100,7 +103,7 @@ namespace Cosmos
         }
         public void SetAudioParam(AudioObject audioObject, AudioParams audioParams)
         {
-            IAudioProxy audioProxy= null;
+            IAudioProxy audioProxy = null;
             if (playingDict.TryGetValue(audioObject.AudioName, out audioProxy)
                 || pauseDict.TryGetValue(audioObject.AudioName, out audioProxy))
             {

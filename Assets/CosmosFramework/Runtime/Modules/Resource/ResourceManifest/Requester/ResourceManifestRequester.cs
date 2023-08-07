@@ -46,7 +46,7 @@ namespace Cosmos.Resource
             try
             {
                 taskKeyDict.Remove(eventArgs.TaskId, out var key);
-                var resourceManifest = ResourceUtility.Manifest.Deserialize(manifestContext, key);
+                var resourceManifest = ResourceUtility.Manifest.DeserializeManifest(manifestContext, key);
                 onSuccess?.Invoke(eventArgs.URL, resourceManifest);
             }
             catch (Exception e)
