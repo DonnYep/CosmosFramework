@@ -278,7 +278,8 @@ namespace Cosmos
                 var fileInfos = dirInfo.GetFiles();
                 foreach (var fileInfo in fileInfos)
                 {
-                    fileInfo.Delete();
+                    if (fileNameHash.Contains(fileInfo.Name))
+                        fileInfo.Delete();
                 }
             }
             /// <summary>
