@@ -51,11 +51,13 @@ namespace Cosmos.Resource
         /// 生成对称加密的密钥；
         /// </summary>
         /// <param name="srcKey"></param>
-        /// <returns></returns>
+        /// <returns>生成的密钥</returns>
         public static byte[] GenerateBytesAESKey(string srcKey)
         {
-            var keyLength = Encoding.UTF8.GetBytes(srcKey).Length;
             byte[] key = new byte[0];
+            if (string.IsNullOrEmpty(srcKey))
+                return key;
+            var keyLength = Encoding.UTF8.GetBytes(srcKey).Length;
             if (keyLength == 8)
             {
                 key = Utility.Encryption.Generate8BytesAESKey(srcKey);

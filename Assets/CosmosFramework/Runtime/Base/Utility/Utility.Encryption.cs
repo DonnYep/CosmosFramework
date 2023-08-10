@@ -82,6 +82,8 @@ namespace Cosmos
             /// <returns>加密后的值</returns>
             public static byte[] Generate8BytesAESKey(string key)
             {
+                if (string.IsNullOrEmpty(key))
+                    return new byte[0];
                 var dstLen = 8;
                 var srcBytes = Encoding.UTF8.GetBytes(key);
                 byte[] dstBytes = new byte[dstLen];
@@ -106,6 +108,8 @@ namespace Cosmos
             /// <returns>加密后的值</returns>
             public static byte[] Generate16BytesAESKey(string key)
             {
+                if (string.IsNullOrEmpty(key))
+                    return new byte[0];
                 var dstLen = 16;
                 var srcBytes = Encoding.UTF8.GetBytes(key);
                 byte[] dstBytes = new byte[dstLen];
@@ -130,6 +134,8 @@ namespace Cosmos
             /// <returns>加密后的值</returns>
             public static byte[] Generate24BytesAESKey(string key)
             {
+                if (string.IsNullOrEmpty(key))
+                    return new byte[0];
                 var dstLen = 24;
                 var srcBytes = Encoding.UTF8.GetBytes(key);
                 byte[] dstBytes = new byte[dstLen];
@@ -154,6 +160,8 @@ namespace Cosmos
             /// <returns>加密后的值</returns>
             public static byte[] Generate32BytesAESKey(string key)
             {
+                if (string.IsNullOrEmpty(key))
+                    return new byte[0];
                 var dstLen = 32;
                 var srcBytes = Encoding.UTF8.GetBytes(key);
                 byte[] dstBytes = new byte[dstLen];
