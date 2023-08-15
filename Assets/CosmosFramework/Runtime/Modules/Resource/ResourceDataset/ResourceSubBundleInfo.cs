@@ -20,7 +20,7 @@ namespace Cosmos.Resource
         [SerializeField]
         List<ResourceObjectInfo> resourceObjectInfoList = new List<ResourceObjectInfo>();
         [SerializeField]
-        List<string> dependentBundleKeyList = new List<string>();
+        List<ResourceBundleDependency> bundleDependencies = new List<ResourceBundleDependency>();
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
@@ -85,15 +85,15 @@ namespace Cosmos.Resource
         /// <summary>
         /// 资源的依赖项；
         /// </summary>
-        public List<string> DependentBundleKeyList
+        public List<ResourceBundleDependency> BundleDependencies
         {
             get
             {
-                if (dependentBundleKeyList == null)
-                    dependentBundleKeyList = new List<string>();
-                return dependentBundleKeyList;
+                if (bundleDependencies == null)
+                    bundleDependencies = new List<ResourceBundleDependency>();
+                return bundleDependencies;
             }
-            set { dependentBundleKeyList = value; }
+            set { bundleDependencies = value; }
         }
         public bool Equals(ResourceSubBundleInfo other)
         {

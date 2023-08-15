@@ -630,8 +630,19 @@ namespace Cosmos.Editor.Resource
             if (!bundleInfo.Splittable)
             {
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
-                bundleInfo.DependentBundleKeyList.Clear();
-                bundleInfo.DependentBundleKeyList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                bundleInfo.BundleDependencies.Clear();
+                var dependencies = AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true);
+                var dependenciesLength = dependencies.Length;
+                for (int j = 0; j < dependenciesLength; j++)
+                {
+                    var dependency = dependencies[j];
+                    var bundleDependency = new ResourceBundleDependency()
+                    {
+                        BundleKey = dependency,
+                        BundleName = dependency
+                    };
+                    bundleInfo.BundleDependencies.Add(bundleDependency);
+                }
             }
             else
             {
@@ -641,8 +652,19 @@ namespace Cosmos.Editor.Resource
                 {
                     var subBundleInfo = subBundleInfoList[i];
                     var subImporter = AssetImporter.GetAtPath(subBundleInfo.BundlePath);
-                    subBundleInfo.DependentBundleKeyList.Clear();
-                    subBundleInfo.DependentBundleKeyList.AddRange(AssetDatabase.GetAssetBundleDependencies(subImporter.assetBundleName, true));
+                    subBundleInfo.BundleDependencies.Clear();
+                    var subDependencies = AssetDatabase.GetAssetBundleDependencies(subImporter.assetBundleName, true);
+                    var subDependenciesLength = subDependencies.Length;
+                    for (int j = 0; j < subDependenciesLength; j++)
+                    {
+                        var subDependency = subDependencies[j];
+                        var subBundleDependency = new ResourceBundleDependency()
+                        {
+                            BundleKey = subDependency,
+                            BundleName = subDependency
+                        };
+                        subBundleInfo.BundleDependencies.Add(subBundleDependency);
+                    }
                 }
             }
         }

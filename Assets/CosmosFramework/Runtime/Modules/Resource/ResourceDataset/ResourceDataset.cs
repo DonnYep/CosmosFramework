@@ -80,7 +80,7 @@ namespace Cosmos.Resource
                             BundleSize = subBundleInfo.BundleSize,
                             BundleFormatBytes = subBundleInfo.BundleFormatBytes,
                         };
-                        newBundleInfo.DependentBundleKeyList.AddRange(subBundleInfo.DependentBundleKeyList);
+                        newBundleInfo.BundleDependencies.AddRange(subBundleInfo.BundleDependencies);
                         newBundleInfo.ResourceObjectInfoList.AddRange(subBundleInfo.ResourceObjectInfoList);
                         infoList.Add(newBundleInfo);
                     }
