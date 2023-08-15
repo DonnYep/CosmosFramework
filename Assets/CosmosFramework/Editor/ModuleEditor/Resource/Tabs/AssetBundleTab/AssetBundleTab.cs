@@ -68,7 +68,8 @@ namespace Cosmos.Editor.Resource
                         CopyToStreamingAssets = tabData.CopyToStreamingAssets,
                         UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
                         StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath,
-                        AssetBundleBuildDirectory = tabData.AssetBundleBuildDirectory
+                        AssetBundleBuildDirectory = tabData.AssetBundleBuildDirectory,
+                        ClearStreamingAssetsDestinationPath = tabData.ClearStreamingAssetsDestinationPath
                     };
                     if (tabData.ForceRemoveAllAssetBundleNames)
                         AssetBundleCommand.ForceRemoveAllAssetBundleNames();
@@ -215,12 +216,21 @@ namespace Cosmos.Editor.Resource
                 tabData.CopyToStreamingAssets = EditorGUILayout.ToggleLeft("Copy to streaming assets", tabData.CopyToStreamingAssets);
                 if (tabData.CopyToStreamingAssets)
                 {
+                    tabData.ClearStreamingAssetsDestinationPath = EditorGUILayout.ToggleLeft("Clear streaming assets destination path", tabData.ClearStreamingAssetsDestinationPath);
                     tabData.UseStreamingAssetsRelativePath = EditorGUILayout.ToggleLeft("Use streaming assets relative path", tabData.UseStreamingAssetsRelativePath);
+                    string destinationPath = string.Empty;
                     if (tabData.UseStreamingAssetsRelativePath)
                     {
                         EditorGUILayout.LabelField("StreamingAssets  relative path");
                         tabData.StreamingAssetsRelativePath = EditorGUILayout.TextField("Relative path", tabData.StreamingAssetsRelativePath);
+                        destinationPath = Utility.IO.WebPathCombine(Application.streamingAssetsPath, tabData.StreamingAssetsRelativePath);
                     }
+                    else
+                    {
+                        destinationPath = Application.streamingAssetsPath;
+                    }
+
+                    EditorGUILayout.LabelField("Destination path", destinationPath);
                 }
             }
             EditorGUILayout.EndVertical();

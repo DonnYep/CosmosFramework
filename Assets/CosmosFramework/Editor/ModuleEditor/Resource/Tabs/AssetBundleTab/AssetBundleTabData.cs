@@ -98,6 +98,10 @@ namespace Cosmos.Editor.Resource
         /// 拷贝到的StreamingAssets相对路径；
         /// </summary>
         public string StreamingAssetsRelativePath;
+        /// <summary>
+        /// 清空拷贝到的StreamingAssets路径
+        /// </summary>
+        public bool ClearStreamingAssetsDestinationPath;
         public AssetBundleTabData()
         {
             AssetBundleCompressType = AssetBundleCompressType.ChunkBasedCompression_LZ4;

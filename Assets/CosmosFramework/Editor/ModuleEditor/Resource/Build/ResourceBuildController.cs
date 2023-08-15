@@ -72,17 +72,33 @@ namespace Cosmos.Editor.Resource
             {
                 bundleInfos.Remove(invalidBundleInfos[i]);
             }
+            var bundleDict = bundleInfos.ToDictionary(d => d.BundleKey);
+
             for (int i = 0; i < bundleInfos.Count; i++)
             {
-                var bundle = bundleInfos[i];
-                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
-                bundle.DependentBundleKeyList.Clear();
-                bundle.DependentBundleKeyList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                var bundleInfo = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
+                bundleInfo.BundleDependencies.Clear();
+                var dependencies = AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true);
+                var dependenciesLength = dependencies.Length;
+                for (int j = 0; j < dependenciesLength; j++)
+                {
+                    var dependency = dependencies[j];
+                    if (bundleDict.TryGetValue(dependency, out var resourceBundleInfo))
+                    {
+                        var bundleDependency = new ResourceBundleDependency()
+                        {
+                            BundleKey = resourceBundleInfo.BundleKey,
+                            BundleName = resourceBundleInfo.BundleName
+                        };
+                        bundleInfo.BundleDependencies.Add(bundleDependency);
+                    }
+                }
             }
             for (int i = 0; i < bundleInfos.Count; i++)
             {
-                var bundle = bundleInfos[i];
-                var importer = AssetImporter.GetAtPath(bundle.BundlePath);
+                var bundleInfo = bundleInfos[i];
+                var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
                 importer.assetBundleName = string.Empty;
             }
             EditorUtility.SetDirty(dataset);
@@ -167,24 +183,38 @@ namespace Cosmos.Editor.Resource
             }
             //refresh assetbundle
             AssetDatabase.Refresh();
+            var bundleDict = bundleInfos.ToDictionary(d => d.BundleKey);
             for (int i = 0; i < bundleInfoLength; i++)
             {
                 var bundleInfo = bundleInfos[i];
-                bundleInfo.DependentBundleKeyList.Clear();
+                bundleInfo.BundleDependencies.Clear();
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
-                bundleInfo.DependentBundleKeyList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                var dependencies = AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true);
+                var dependenciesLength = dependencies.Length;
+                for (int j = 0; j < dependenciesLength; j++)
+                {
+                    var dependency = dependencies[j];
+                    if (bundleDict.TryGetValue(dependency, out var resourceBundleInfo))
+                    {
+                        var bundleDependency = new ResourceBundleDependency()
+                        {
+                            BundleKey = resourceBundleInfo.BundleKey,
+                            BundleName = resourceBundleInfo.BundleName
+                        };
+                        bundleInfo.BundleDependencies.Add(bundleDependency);
+                    }
+                }
                 if (resourceManifest.ResourceBundleBuildInfoDict.TryGetValue(bundleInfo.BundleName, out var bundleBuildInfo))
                 {
-                    bundleBuildInfo.ResourceBundle.DependentBundleKeytList.Clear();
-                    bundleBuildInfo.ResourceBundle.DependentBundleKeytList.AddRange(bundleInfo.DependentBundleKeyList);
+                    bundleBuildInfo.ResourceBundle.BundleDependencies.Clear();
+                    bundleBuildInfo.ResourceBundle.BundleDependencies.AddRange(bundleInfo.BundleDependencies);
                 }
             }
         }
         public static void ProcessAssetBundle(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
         {
-            Dictionary<string, ResourceBundleInfo> bundleKeyDict = null;
-            if (buildParams.AssetBundleNameType == AssetBundleNameType.HashInstead)
-                bundleKeyDict = bundleInfos.ToDictionary(bundle => bundle.BundleKey);
+            Dictionary<string, ResourceBundleInfo> bundleDict = null;
+            bundleDict = bundleInfos.ToDictionary(bundle => bundle.BundleKey);
             var bundleKeys = unityManifest.GetAllAssetBundles();
             var bundleKeyLength = bundleKeys.Length;
             for (int i = 0; i < bundleKeyLength; i++)
@@ -213,7 +243,7 @@ namespace Cosmos.Editor.Resource
                         break;
                     case AssetBundleNameType.HashInstead:
                         {
-                            if (bundleKeyDict.TryGetValue(bundleKey, out var bundleInfo))
+                            if (bundleDict.TryGetValue(bundleKey, out var bundleInfo))
                                 bundleName = bundleInfo.BundleName;
                         }
                         break;
@@ -242,8 +272,22 @@ namespace Cosmos.Editor.Resource
             {
                 var bundleInfo = bundleInfos[i];
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
-                bundleInfo.DependentBundleKeyList.Clear();
-                bundleInfo.DependentBundleKeyList.AddRange(AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true));
+                bundleInfo.BundleDependencies.Clear();
+                var dependencies = AssetDatabase.GetAssetBundleDependencies(importer.assetBundleName, true);
+                var dependenciesLength = dependencies.Length;
+                for (int j = 0; j < dependenciesLength; j++)
+                {
+                    var dependency = dependencies[j];
+                    if (bundleDict.TryGetValue(dependency, out var resourceBundleInfo))
+                    {
+                        var bundleDependency = new ResourceBundleDependency()
+                        {
+                            BundleKey = resourceBundleInfo.BundleKey,
+                            BundleName = resourceBundleInfo.BundleName
+                        };
+                        bundleInfo.BundleDependencies.Add(bundleDependency);
+                    }
+                }
             }
             #endregion
 
@@ -258,7 +302,7 @@ namespace Cosmos.Editor.Resource
             var encryptionKey = buildParams.ManifestEncryptionKey;
             var encrypt = buildParams.EncryptManifest;
             resourceManifest.BuildVersion = buildParams.BuildVersion;
-            resourceManifest.BuildHash= System.Guid.NewGuid().ToString();
+            resourceManifest.BuildHash = System.Guid.NewGuid().ToString();
             var manifestJson = EditorUtil.Json.ToJson(resourceManifest);
             var manifestContext = manifestJson;
             if (encrypt)
@@ -293,6 +337,10 @@ namespace Cosmos.Editor.Resource
                 else
                     streamingAssetPath = Application.streamingAssetsPath;
                 var buildPath = buildParams.AssetBundleBuildPath;
+                if (buildParams.ClearStreamingAssetsDestinationPath)
+                {
+                    Utility.IO.EmptyFolder(streamingAssetPath);
+                }
                 if (Directory.Exists(buildPath))
                 {
                     Utility.IO.CopyDirectory(buildPath, streamingAssetPath);

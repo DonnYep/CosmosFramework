@@ -120,7 +120,7 @@ namespace Cosmos.Editor.Resource
                 windowData.ResourceDatasetPath = string.Empty;
             }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Space(12);
+            GUILayout.Space(8);
             switch (windowData.SelectedTabIndex)
             {
                 case 0:

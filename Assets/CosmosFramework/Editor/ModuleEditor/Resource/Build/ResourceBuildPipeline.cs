@@ -64,7 +64,8 @@ namespace Cosmos.Editor.Resource
                 BuildVersion = $"{tabData.BuildVersion}_{tabData.InternalBuildVersion}",
                 CopyToStreamingAssets = tabData.CopyToStreamingAssets,
                 UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
-                StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath
+                StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath,
+                ClearStreamingAssetsDestinationPath = true
             };
             ResourceBuildController.BuildAssetBundle(dataset, buildParams);
         }

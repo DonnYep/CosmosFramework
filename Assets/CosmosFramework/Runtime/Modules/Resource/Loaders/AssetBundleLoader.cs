@@ -558,12 +558,12 @@ namespace Cosmos.Resource
             if (!hasBundle)
                 yield break; //若bundleWrapper信息为空，则终止；
             yield return EnumLoadAssetBundleAsync(bundleName);
-            var dependentBundleKeyList = bundleWarpper.ResourceBundle.DependentBundleKeytList;
-            var dependentBundleKeyLength = dependentBundleKeyList.Count;
-            for (int i = 0; i < dependentBundleKeyLength; i++)
+            var bundleDependencies = bundleWarpper.ResourceBundle.BundleDependencies;
+            var bundleDependenciesLength = bundleDependencies.Count;
+            for (int i = 0; i < bundleDependenciesLength; i++)
             {
-                var dependentBundleKey = dependentBundleKeyList[i];
-                var hasDependentBundle = resourceBundleKeyDict.TryGetValue(dependentBundleKey, out var dependentBundleName);
+                var bundleDependency = bundleDependencies[i];
+                var hasDependentBundle = resourceBundleKeyDict.TryGetValue(bundleDependency.BundleKey, out var dependentBundleName);
                 if (hasDependentBundle)
                 {
                     yield return EnumLoadAssetBundleAsync(dependentBundleName);
@@ -617,13 +617,13 @@ namespace Cosmos.Resource
                     resourceBundleWarpper.AssetBundle = null;
                 }
             }
-            var dependentBundleKeyList = resourceBundleWarpper.ResourceBundle.DependentBundleKeytList;
-            var dependentBundleKeyLength = dependentBundleKeyList.Count;
+            var bundleDependencies = resourceBundleWarpper.ResourceBundle.BundleDependencies;
+            var bundleDependenciesLength = bundleDependencies.Count;
             //遍历查询依赖包
-            for (int i = 0; i < dependentBundleKeyLength; i++)
+            for (int i = 0; i < bundleDependenciesLength; i++)
             {
-                var dependentBundleName = dependentBundleKeyList[i];
-                if (resourceBundleWarpperDict.TryGetValue(dependentBundleName, out var dependentBundleWarpper))
+                var bundleDependency = bundleDependencies[i];
+                if (resourceBundleWarpperDict.TryGetValue(bundleDependency.BundleKey, out var dependentBundleWarpper))
                 {
                     dependentBundleWarpper.ReferenceCount -= count;
                     if (dependentBundleWarpper.ReferenceCount > 0)

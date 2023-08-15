@@ -55,7 +55,7 @@ namespace Cosmos.Editor.Resource
                     icon = folderIcon;
                 var bundleItem = new TreeViewItem(i, 1, bundleInfo.BundleName) { icon = icon };
                 var formatBytesItem = new TreeViewItem((i + 1) * ResourceEditorConstant.MULTIPLE_VALUE, 2, $"FormatBytes: {bundleInfo.BundleFormatBytes}");
-                var dependentLen = bundleInfo.DependentBundleKeyList.Count;
+                var dependentLen = bundleInfo.BundleDependencies.Count;
                 var dependentString = string.Empty;
                 if (dependentLen == 0)
                     dependentString = Constants.NONE;
@@ -101,9 +101,9 @@ namespace Cosmos.Editor.Resource
                 var dependentItemList = new List<TreeViewItem>();
                 for (int j = 0; j < dependentLen; j++)
                 {
-                    var bundleKey = bundleInfo.DependentBundleKeyList[j];
+                    var bundleDependency = bundleInfo.BundleDependencies[j];
                     int dependentItemId = dependentRootItem.id + j + 2;
-                    var dependentItem = new TreeViewItem(dependentItemId, 3, bundleKey)
+                    var dependentItem = new TreeViewItem(dependentItemId, 3, bundleDependency.BundleName)
                     {
                         icon = folderIcon
                     };
