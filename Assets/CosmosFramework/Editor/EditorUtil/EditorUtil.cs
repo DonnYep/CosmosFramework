@@ -151,15 +151,6 @@ namespace Cosmos.Editor
             var scenes = EditorBuildSettings.scenes;
             return scenes.Select(s => s.path).ToArray();
         }
-        public static Texture2D ToTexture2D(Texture texture)
-        {
-            return Texture2D.CreateExternalTexture(
-                texture.width,
-                texture.height,
-                TextureFormat.RGB24,
-                false, false,
-                texture.GetNativeTexturePtr());
-        }
         /// <summary>
         /// 过滤字段，过滤绝对路径到Assets目录下的相对路径；
         /// </summary>
@@ -208,6 +199,22 @@ namespace Cosmos.Editor
                     totalSize += file.Length;
             }
             return totalSize;
+        }
+        public static T CreateScriptableObject<T>(string path, HideFlags hideFlags = HideFlags.None) where T : ScriptableObject
+        {
+            var so = ScriptableObject.CreateInstance<T>();
+            so.hideFlags = hideFlags;
+            AssetDatabase.CreateAsset(so, path);
+            EditorUtility.SetDirty(so);
+            EditorUtility.FocusProjectWindow();
+            Selection.activeObject = so;
+#if UNITY_2021_1_OR_NEWER
+            AssetDatabase.SaveAssetIfDirty(so);
+#elif UNITY_2019_1_OR_NEWER
+            AssetDatabase.SaveAssets();
+#endif
+            AssetDatabase.Refresh();
+            return so;
         }
     }
 }
