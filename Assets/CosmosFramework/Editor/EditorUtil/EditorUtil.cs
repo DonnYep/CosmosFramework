@@ -216,5 +216,17 @@ namespace Cosmos.Editor
             AssetDatabase.Refresh();
             return so;
         }
+        public static void SaveScriptableObject(ScriptableObject scriptableObject)
+        {
+            if (scriptableObject == null)
+                return;
+            EditorUtility.SetDirty(scriptableObject);
+#if UNITY_2021_1_OR_NEWER
+            AssetDatabase.SaveAssetIfDirty(scriptableObject);
+#elif UNITY_2019_1_OR_NEWER
+            AssetDatabase.SaveAssets();
+#endif
+            AssetDatabase.Refresh();
+        }
     }
 }

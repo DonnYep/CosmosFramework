@@ -55,7 +55,7 @@ namespace Cosmos.Editor.Resource
             if (ResourceBuilderWindowDataProxy.ResourceDataset != null)
             {
                 windowData.ResourceDatasetPath = AssetDatabase.GetAssetPath(ResourceBuilderWindowDataProxy.ResourceDataset);
-                EditorUtility.SetDirty(ResourceBuilderWindowDataProxy.ResourceDataset);
+                EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
             }
             SaveWindowData();
             assetDatabaseTab.OnDisable();
