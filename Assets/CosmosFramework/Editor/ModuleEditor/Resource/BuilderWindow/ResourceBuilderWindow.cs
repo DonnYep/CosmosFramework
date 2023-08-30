@@ -29,11 +29,11 @@ namespace Cosmos.Editor.Resource
         {
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
             if (assetBundleTab == null)
-                assetBundleTab = new AssetBundleTab();
+                assetBundleTab = new AssetBundleTab(this);
             if (assetDatabaseTab == null)
-                assetDatabaseTab = new AssetDatabaseTab();
+                assetDatabaseTab = new AssetDatabaseTab(this);
             if (assetDatasetTab == null)
-                assetDatasetTab = new AssetDatasetTab();
+                assetDatasetTab = new AssetDatasetTab(this);
             GetWindowData();
             if (!string.IsNullOrEmpty(windowData.ResourceDatasetPath))
             {

@@ -69,7 +69,10 @@ namespace Cosmos.Editor.Resource
         public static Texture2D GetIgnoredcon()
         {
             return EditorGUIUtility.FindTexture("TestIgnored");
-            //return EditorGUIUtility.FindTexture("TestNormal");
+        }
+        public static Texture2D GetFilterByTypeIcon()
+        {
+            return EditorGUIUtility.FindTexture("FilterByType");
         }
         public static MultiColumnHeaderState CreateResourceBundleMultiColumnHeader()
         {
@@ -128,8 +131,19 @@ namespace Cosmos.Editor.Resource
         public static MultiColumnHeaderState CreateResourceObjectMultiColumnHeader()
         {
             var columns = new[]
-            {
-            new MultiColumnHeaderState.Column
+            {     
+                new MultiColumnHeaderState.Column
+                {
+                    headerContent = new GUIContent(GetFilterByTypeIcon()),
+                    headerTextAlignment = TextAlignment.Center,
+                    sortingArrowAlignment = TextAlignment.Center,
+                    sortedAscending = false,
+                    minWidth=28,
+                    width=28,
+                    maxWidth=28,
+                    autoResize = true,
+                },
+                new MultiColumnHeaderState.Column
                 {
                     headerContent = new GUIContent("Name"),
                     headerTextAlignment = TextAlignment.Left,
