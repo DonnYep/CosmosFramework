@@ -3,19 +3,25 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEditor;
 using Cosmos.Resource;
+using System;
 
 namespace Cosmos.Editor.Resource
 {
     public class AssetDatabaseObjectTreeView : TreeView
     {
         List<ResourceObjectInfo> objectInfoList = new List<ResourceObjectInfo>();
+        public Action<List<ResourceObjectInfo>> onObjectInfoSelectionChanged;
+        List<ResourceObjectInfo> selectedObjectInfos = new List<ResourceObjectInfo>();
         public int ObjectCount { get { return objectInfoList.Count; } }
+        GUIStyle invalidStyle;
         public AssetDatabaseObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
             showAlternatingRowBackgrounds = true;
             showBorder = true;
             multiColumnHeader.sortingChanged += OnMultiColumnHeaderSortingChanged;
+            invalidStyle = new GUIStyle();
+            invalidStyle.normal.textColor = Color.gray;
         }
         public void AddObject(ResourceObjectInfo objectInfo)
         {
@@ -27,6 +33,8 @@ namespace Cosmos.Editor.Resource
         public void Clear()
         {
             objectInfoList.Clear();
+            selectedObjectInfos.Clear();
+            onObjectInfoSelectionChanged?.Invoke(selectedObjectInfos);
             Reload();
         }
         protected override void ContextClickedItem(int id)
@@ -45,6 +53,18 @@ namespace Cosmos.Editor.Resource
         {
             base.SingleClickedItem(id);
             EditorUtil.ActiveObject(objectInfoList[id].ObjectPath);
+        }
+        protected override void SelectionChanged(IList<int> selectedIds)
+        {
+            base.SelectionChanged(selectedIds);
+            selectedObjectInfos.Clear();
+            var length = selectedIds.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var idx = selectedIds[i];
+                selectedObjectInfos.Add(objectInfoList[idx]);
+            }
+            onObjectInfoSelectionChanged?.Invoke(selectedObjectInfos);
         }
         protected override TreeViewItem BuildRoot()
         {
@@ -93,6 +113,65 @@ namespace Cosmos.Editor.Resource
             for (int i = 0; i < length; i++)
             {
                 DrawCellGUI(args.GetCellRect(i), args.item as AssetDatabaseObjectTreeViewItem, args.GetColumn(i), ref args);
+            }
+        }
+        void DrawCellGUI(Rect cellRect, AssetDatabaseObjectTreeViewItem treeView, int column, ref RowGUIArgs args)
+        {
+            switch (column)
+            {
+                case 0:
+                    {
+                        var iconRect = new Rect(cellRect.x + 8, cellRect.y, cellRect.height, cellRect.height);
+                        if (treeView.icon != null)
+                            GUI.DrawTexture(iconRect, treeView.icon, ScaleMode.ScaleToFit);
+                    }
+                    break;
+                case 1:
+                    {
+                        if (!treeView.ObjectValid)
+                            GUI.Label(cellRect, treeView.ObjectName, invalidStyle);
+                        else
+                            DefaultGUI.Label(cellRect, treeView.ObjectName, args.selected, args.focused);
+                    }
+                    break;
+                case 2:
+                    {
+                        if (!treeView.ObjectValid)
+                            GUI.Label(cellRect, treeView.ObjectExtension, invalidStyle);
+                        else
+                            DefaultGUI.Label(cellRect, treeView.ObjectExtension, args.selected, args.focused);
+                    }
+                    break;
+                case 3:
+                    {
+                        var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
+                        GUI.DrawTexture(iconRect, treeView.ObjectValidIcon, ScaleMode.ScaleToFit);
+                    }
+                    break;
+                case 4:
+                    {
+                        if (!treeView.ObjectValid)
+                            GUI.Label(cellRect, treeView.ObjectSize, invalidStyle);
+                        else
+                            DefaultGUI.Label(cellRect, treeView.ObjectSize, args.selected, args.focused);
+                    }
+                    break;
+                case 5:
+                    {
+                        if (!treeView.ObjectValid)
+                            GUI.Label(cellRect, treeView.ObjectBundleName, invalidStyle);
+                        else
+                            DefaultGUI.Label(cellRect, treeView.ObjectBundleName, args.selected, args.focused);
+                    }
+                    break;
+                case 6:
+                    {
+                        if (!treeView.ObjectValid)
+                            GUI.Label(cellRect, treeView.displayName, invalidStyle);
+                        else
+                            DefaultGUI.Label(cellRect, treeView.displayName, args.selected, args.focused);
+                    }
+                    break;
             }
         }
         void OnMultiColumnHeaderSortingChanged(MultiColumnHeader multiColumnHeader)
@@ -162,62 +241,6 @@ namespace Cosmos.Editor.Resource
                     break;
             }
             Reload();
-        }
-        void DrawCellGUI(Rect cellRect, AssetDatabaseObjectTreeViewItem treeView, int column, ref RowGUIArgs args)
-        {
-            switch (column)
-            {
-                case 0:
-                    {
-                        var iconRect = new Rect(cellRect.x + 8, cellRect.y, cellRect.height, cellRect.height);
-                        if (treeView.icon != null)
-                            GUI.DrawTexture(iconRect, treeView.icon, ScaleMode.ScaleToFit);
-                    }
-                    break;
-                case 1:
-                    {
-                        DefaultGUI.Label(cellRect, treeView.ObjectName, args.selected, args.focused);
-                    }
-                    break;
-                case 2:
-                    {
-                        DefaultGUI.Label(cellRect, treeView.ObjectExtension, args.selected, args.focused);
-                    }
-                    break;
-                case 3:
-                    {
-                        var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
-                        GUI.DrawTexture(iconRect, treeView.ObjectValidIcon, ScaleMode.ScaleToFit);
-                        //var labelCellRect = new Rect(cellRect.x + iconRect.width + 2, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-                        //GUIStyle objectStateStyle = new GUIStyle();
-                        //objectStateStyle.fontStyle = FontStyle.Bold;
-                        //DefaultGUI.Label(labelCellRect, treeView.ObjectState, args.selected, args.focused);
-                        //var valid = treeView.ObjectValid;
-                        //if (!valid)
-                        //    objectStateStyle.normal.textColor = Color.red;
-                        //else
-                        //    objectStateStyle.normal.textColor = Color.green;
-                        //GUI.Label(labelCellRect, treeView.ObjectState, objectStateStyle);
-                    }
-                    break;
-                case 4:
-                    {
-                        DefaultGUI.Label(cellRect, treeView.ObjectSize, args.selected, args.focused);
-
-                    }
-                    break;
-                case 5:
-                    {
-                        DefaultGUI.Label(cellRect, treeView.ObjectBundleName, args.selected, args.focused);
-                    }
-                    break;
-                case 6:
-                    {
-                        DefaultGUI.Label(cellRect, treeView.displayName, args.selected, args.focused);
-
-                    }
-                    break;
-            }
         }
         void CopyNameToClipboard(object context)
         {

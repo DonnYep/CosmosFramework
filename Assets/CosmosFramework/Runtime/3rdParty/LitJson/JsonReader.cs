@@ -16,7 +16,7 @@ using System.IO;
 using System.Text;
 
 
-namespace LitJson
+namespace Cosmos.LitJson
 {
     public enum JsonToken
     {

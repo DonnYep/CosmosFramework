@@ -13,46 +13,25 @@ MonoBehaviour:
   m_Name: BuildResourceDataset
   m_EditorClassIdentifier: 
   resourceBundleInfoList:
-  - bundleName: assets_examples_assetbundletest_audio
-    bundlePath: Assets/Examples/AssetBundleTest/Audio
-    bundleKey: assets_examples_assetbundletest_audio
-    bundleSize: 6986559
-    bundleFormatBytes: 6.7 MB
+  - bundleName: assets_examples_assetbundletest_text
+    bundlePath: Assets/Examples/AssetBundleTest/Text
+    bundleKey: assets_examples_assetbundletest_text
+    bundleSize: 7565
+    bundleFormatBytes: 7.4 KB
     resourceObjectInfoList:
-    - objectName: AmbientAudio
-      objectPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
-      bundleName: assets_examples_assetbundletest_audio
-      objectSize: 403374
-      objectFormatBytes: 393.9 KB
-      extension: .mp3
+    - objectName: ABMapSchema
+      objectPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
+      bundleName: assets_examples_assetbundletest_text
+      objectSize: 6720
+      objectFormatBytes: 6.6 KB
+      extension: .json
       objectValid: 1
-    - objectName: Audio00
-      objectPath: Assets/Examples/AssetBundleTest/Audio/Audio00.mp3
-      bundleName: assets_examples_assetbundletest_audio
-      objectSize: 148135
-      objectFormatBytes: 144.7 KB
-      extension: .mp3
-      objectValid: 1
-    - objectName: Audio01
-      objectPath: Assets/Examples/AssetBundleTest/Audio/Audio01.mp3
-      bundleName: assets_examples_assetbundletest_audio
-      objectSize: 12899
-      objectFormatBytes: 12.6 KB
-      extension: .mp3
-      objectValid: 1
-    - objectName: AudioFashion
-      objectPath: Assets/Examples/AssetBundleTest/Audio/AudioFashion.mp3
-      bundleName: assets_examples_assetbundletest_audio
-      objectSize: 4454400
-      objectFormatBytes: 4.2 MB
-      extension: .mp3
-      objectValid: 1
-    - objectName: AudioTechHouse
-      objectPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
-      bundleName: assets_examples_assetbundletest_audio
-      objectSize: 1967751
-      objectFormatBytes: 1.9 MB
-      extension: .mp3
+    - objectName: SampleCSV
+      objectPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
+      bundleName: assets_examples_assetbundletest_text
+      objectSize: 845
+      objectFormatBytes: 0.8 KB
+      extension: .csv
       objectValid: 1
     bundleDependencies: []
     resourceSubBundleInfoList: []
@@ -196,6 +175,49 @@ MonoBehaviour:
       objectSize: 4318100
       objectFormatBytes: 4.1 MB
       extension: .psd
+      objectValid: 1
+    bundleDependencies: []
+    resourceSubBundleInfoList: []
+  - bundleName: assets_examples_assetbundletest_audio
+    bundlePath: Assets/Examples/AssetBundleTest/Audio
+    bundleKey: assets_examples_assetbundletest_audio
+    bundleSize: 6986559
+    bundleFormatBytes: 6.7 MB
+    resourceObjectInfoList:
+    - objectName: AmbientAudio
+      objectPath: Assets/Examples/AssetBundleTest/Audio/AmbientAudio.mp3
+      bundleName: assets_examples_assetbundletest_audio
+      objectSize: 403374
+      objectFormatBytes: 393.9 KB
+      extension: .mp3
+      objectValid: 1
+    - objectName: Audio00
+      objectPath: Assets/Examples/AssetBundleTest/Audio/Audio00.mp3
+      bundleName: assets_examples_assetbundletest_audio
+      objectSize: 148135
+      objectFormatBytes: 144.7 KB
+      extension: .mp3
+      objectValid: 1
+    - objectName: Audio01
+      objectPath: Assets/Examples/AssetBundleTest/Audio/Audio01.mp3
+      bundleName: assets_examples_assetbundletest_audio
+      objectSize: 12899
+      objectFormatBytes: 12.6 KB
+      extension: .mp3
+      objectValid: 1
+    - objectName: AudioFashion
+      objectPath: Assets/Examples/AssetBundleTest/Audio/AudioFashion.mp3
+      bundleName: assets_examples_assetbundletest_audio
+      objectSize: 4454400
+      objectFormatBytes: 4.2 MB
+      extension: .mp3
+      objectValid: 1
+    - objectName: AudioTechHouse
+      objectPath: Assets/Examples/AssetBundleTest/Audio/AudioTechHouse.mp3
+      bundleName: assets_examples_assetbundletest_audio
+      objectSize: 1967751
+      objectFormatBytes: 1.9 MB
+      extension: .mp3
       objectValid: 1
     bundleDependencies: []
     resourceSubBundleInfoList: []
@@ -363,28 +385,6 @@ MonoBehaviour:
       bundleName: assets_examples_assetbundletest_prefab
     - bundleKey: assets_examples_assetbundletest_texture
       bundleName: assets_examples_assetbundletest_texture
-    resourceSubBundleInfoList: []
-  - bundleName: assets_examples_assetbundletest_text
-    bundlePath: Assets/Examples/AssetBundleTest/Text
-    bundleKey: assets_examples_assetbundletest_text
-    bundleSize: 7565
-    bundleFormatBytes: 7.4 KB
-    resourceObjectInfoList:
-    - objectName: ABMapSchema
-      objectPath: Assets/Examples/AssetBundleTest/Text/ABMapSchema.json
-      bundleName: assets_examples_assetbundletest_text
-      objectSize: 6720
-      objectFormatBytes: 6.6 KB
-      extension: .json
-      objectValid: 1
-    - objectName: SampleCSV
-      objectPath: Assets/Examples/AssetBundleTest/Text/SampleCSV.csv
-      bundleName: assets_examples_assetbundletest_text
-      objectSize: 845
-      objectFormatBytes: 0.8 KB
-      extension: .csv
-      objectValid: 1
-    bundleDependencies: []
     resourceSubBundleInfoList: []
   - bundleName: assets_examples_assetbundletest_texture
     bundlePath: Assets/Examples/AssetBundleTest/Texture
