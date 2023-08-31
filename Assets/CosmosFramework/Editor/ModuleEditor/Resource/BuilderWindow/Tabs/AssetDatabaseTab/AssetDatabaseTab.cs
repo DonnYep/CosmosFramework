@@ -40,14 +40,12 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine buildDatasetCoroutine;
 
-        int selectedObjectCount;
         long selectedObjectSize;
-
-        long totalObjectSize;
 
         int selectedBundleCount;
         long selectedBundleSize;
 
+        long totalObjectSize;
         long totoalBundleSize;
 
         Rect horizontalSplitterRect;
@@ -131,7 +129,7 @@ namespace Cosmos.Editor.Resource
                             if (tabData.LabelTabIndex == 0)
                             {
                                 GUILayout.Label($"Amount: {objectLabel.ObjectCount}/{GetTotalObjectFormatSize()}", EditorStyles.boldLabel);
-                                GUILayout.Label($"Selected: {selectedObjectCount}/{GetSelectedObjectFormatSize()}", EditorStyles.boldLabel);
+                                GUILayout.Label($"Selected: {objectLabel.SelectedCount}/{GetSelectedObjectFormatSize()}", EditorStyles.boldLabel);
                             }
                             else if (tabData.LabelTabIndex == 1)
                             {
@@ -178,13 +176,7 @@ namespace Cosmos.Editor.Resource
                     if (ResourceBuilderWindowDataProxy.ResourceDataset == null)
                         return;
                     ResourceBuilderWindowDataProxy.ResourceDataset.Clear();
-                    bundleDetailLabel.Clear();
-                    bundleLabel.Clear();
-                    objectLabel.Clear();
-
-                    bundleDetailLabel.Reload();
-                    bundleLabel.Reload();
-                    objectLabel.Reload();
+                    ClearLabels();
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -216,21 +208,9 @@ namespace Cosmos.Editor.Resource
         }
         public override void OnDatasetUnassign()
         {
-            bundleLabel.Clear();
-            bundleLabel.Reload();
-            bundleDetailLabel.Clear();
-            bundleDetailLabel.Reload();
-            objectLabel.Clear();
-            objectLabel.Reload();
+            ClearLabels();
             tabData.SelectedBundleIds.Clear();
             hasChanged = false;
-
-            totoalBundleSize = 0;
-            selectedBundleCount = 0;
-            selectedBundleSize = 0;
-
-            totalObjectSize = 0;
-            selectedObjectCount = 0;
         }
         public Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine BuildDataset()
         {
@@ -394,9 +374,9 @@ namespace Cosmos.Editor.Resource
         }
         void OnObjectInfoSelectionChanged(List<ResourceObjectInfo> selected)
         {
-            selectedObjectCount = selected.Count;
+            var length = selected.Count;
             selectedObjectSize = 0;
-            for (int i = 0; i < selectedObjectCount; i++)
+            for (int i = 0; i < length; i++)
             {
                 selectedObjectSize += selected[i].ObjectSize;
             }
@@ -753,6 +733,20 @@ namespace Cosmos.Editor.Resource
             ParentWindow.Repaint();
             if (UnityEngine.Event.current.type == EventType.MouseUp)
                 resizingHorizontalSplitter = false;
+        }
+        void ClearLabels()
+        {
+            bundleLabel.Clear();
+            bundleLabel.Reload();
+            bundleDetailLabel.Clear();
+            bundleDetailLabel.Reload();
+            objectLabel.Clear();
+            objectLabel.Reload();
+
+            totoalBundleSize = 0;
+            selectedBundleCount = 0;
+            selectedBundleSize = 0;
+            totalObjectSize = 0;
         }
         string GetTotalBundleFormatSize()
         {

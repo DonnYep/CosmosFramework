@@ -9,10 +9,11 @@ namespace Cosmos.Editor.Resource
 {
     public class AssetDatabaseObjectTreeView : TreeView
     {
-        List<ResourceObjectInfo> objectInfoList = new List<ResourceObjectInfo>();
+        readonly List<ResourceObjectInfo> objectInfoList = new List<ResourceObjectInfo>();
+        readonly List<ResourceObjectInfo> selectedObjectInfos = new List<ResourceObjectInfo>();
         public Action<List<ResourceObjectInfo>> onObjectInfoSelectionChanged;
-        List<ResourceObjectInfo> selectedObjectInfos = new List<ResourceObjectInfo>();
         public int ObjectCount { get { return objectInfoList.Count; } }
+        public int SelectedCount { get { return selectedObjectInfos.Count; } }
         GUIStyle invalidStyle;
         public AssetDatabaseObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {

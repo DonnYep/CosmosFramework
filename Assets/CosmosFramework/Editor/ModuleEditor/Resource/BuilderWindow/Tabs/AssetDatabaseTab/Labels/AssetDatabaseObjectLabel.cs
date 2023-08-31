@@ -18,6 +18,7 @@ namespace Cosmos.Editor.Resource
             remove { treeView.onObjectInfoSelectionChanged -= value; }
         }
         public int ObjectCount { get { return treeView.ObjectCount; } }
+        public int SelectedCount { get { return treeView.SelectedCount; } }
         public void OnEnable()
         {
             searchField = new SearchField();
