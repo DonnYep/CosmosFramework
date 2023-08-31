@@ -80,8 +80,7 @@ namespace Cosmos.Editor.Resource
         }
         void DrawTreeView(Rect rect)
         {
-            var width = rect.width * ResourceBuilderWindowConstant.MIN_WIDTH;
-            GUILayout.BeginVertical(GUILayout.MaxWidth(width));
+            GUILayout.BeginVertical(GUILayout.Width(rect.width));
             {
                 GUILayout.BeginHorizontal();
                 {

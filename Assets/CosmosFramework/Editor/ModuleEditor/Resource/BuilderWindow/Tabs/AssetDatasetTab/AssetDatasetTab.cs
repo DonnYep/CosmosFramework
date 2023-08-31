@@ -14,6 +14,11 @@ namespace Cosmos.Editor.Resource
         string searchText;
         List<string> extensionList = new List<string>();
         bool datasetAssigned = false;
+
+        public AssetDatasetTab(EditorWindow parentWindow) : base(parentWindow)
+        {
+        }
+
         public override void OnGUI(Rect rect)
         {
             //EditorGUILayout.LabelField("Resource Available Extenison", EditorStyles.boldLabel);

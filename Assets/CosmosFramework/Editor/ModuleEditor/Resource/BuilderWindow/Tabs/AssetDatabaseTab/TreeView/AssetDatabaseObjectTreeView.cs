@@ -104,7 +104,9 @@ namespace Cosmos.Editor.Resource
             var ascending = multiColumnHeader.IsSortedAscending(sortedType);
             switch (sortedType)
             {
-                case 0:
+                case 0://Icon
+                    break;
+                case 1:
                     {
                         //Name
                         if (ascending)
@@ -113,7 +115,7 @@ namespace Cosmos.Editor.Resource
                             objectInfoList.Sort((lhs, rhs) => rhs.ObjectName.CompareTo(lhs.ObjectName));
                     }
                     break;
-                case 1:
+                case 2:
                     {
                         //Extension
                         if (ascending)
@@ -122,7 +124,7 @@ namespace Cosmos.Editor.Resource
                             objectInfoList.Sort((lhs, rhs) => rhs.Extension.CompareTo(lhs.Extension));
                     }
                     break;
-                case 2:
+                case 3:
                     {
                         //State
                         if (ascending)
@@ -131,7 +133,7 @@ namespace Cosmos.Editor.Resource
                             objectInfoList.Sort((lhs, rhs) => rhs.ObjectVaild.CompareTo(lhs.ObjectVaild));
                     }
                     break;
-                case 3:
+                case 4:
                     {
                         //Size
                         if (ascending)
@@ -140,7 +142,7 @@ namespace Cosmos.Editor.Resource
                             objectInfoList.Sort((lhs, rhs) => rhs.ObjectSize.CompareTo(lhs.ObjectSize));
                     }
                     break;
-                case 4:
+                case 5:
                     {
                         //AssetBundle
                         if (ascending)
@@ -149,7 +151,7 @@ namespace Cosmos.Editor.Resource
                             objectInfoList.Sort((lhs, rhs) => rhs.BundleName.CompareTo(lhs.BundleName));
                     }
                     break;
-                case 5:
+                case 6:
                     {
                         //AssetPath
                         if (ascending)
@@ -167,19 +169,22 @@ namespace Cosmos.Editor.Resource
             {
                 case 0:
                     {
-                        var iconRect = new Rect(cellRect.x + 4, cellRect.y, cellRect.height, cellRect.height);
+                        var iconRect = new Rect(cellRect.x + 8, cellRect.y, cellRect.height, cellRect.height);
                         if (treeView.icon != null)
                             GUI.DrawTexture(iconRect, treeView.icon, ScaleMode.ScaleToFit);
-                        var labelCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-                        DefaultGUI.Label(labelCellRect, treeView.ObjectName, args.selected, args.focused);
                     }
                     break;
                 case 1:
                     {
-                        DefaultGUI.Label(cellRect, treeView.ObjectExtension, args.selected, args.focused);
+                        DefaultGUI.Label(cellRect, treeView.ObjectName, args.selected, args.focused);
                     }
                     break;
                 case 2:
+                    {
+                        DefaultGUI.Label(cellRect, treeView.ObjectExtension, args.selected, args.focused);
+                    }
+                    break;
+                case 3:
                     {
                         var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
                         GUI.DrawTexture(iconRect, treeView.ObjectValidIcon, ScaleMode.ScaleToFit);
@@ -195,19 +200,21 @@ namespace Cosmos.Editor.Resource
                         //GUI.Label(labelCellRect, treeView.ObjectState, objectStateStyle);
                     }
                     break;
-                case 3:
-                    {
-                        DefaultGUI.Label(cellRect, treeView.ObjectSize, args.selected, args.focused);
-                    }
-                    break;
                 case 4:
                     {
-                        DefaultGUI.Label(cellRect, treeView.ObjectBundleName, args.selected, args.focused);
+                        DefaultGUI.Label(cellRect, treeView.ObjectSize, args.selected, args.focused);
+
                     }
                     break;
                 case 5:
                     {
+                        DefaultGUI.Label(cellRect, treeView.ObjectBundleName, args.selected, args.focused);
+                    }
+                    break;
+                case 6:
+                    {
                         DefaultGUI.Label(cellRect, treeView.displayName, args.selected, args.focused);
+
                     }
                     break;
             }

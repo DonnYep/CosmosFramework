@@ -16,6 +16,11 @@ namespace Cosmos.Editor.Resource
         Vector2 scrollPosition;
         bool isAesKeyInvalid = false;
         string[] buildHandlers;
+
+        public AssetBundleTab(EditorWindow parentWindow) : base(parentWindow)
+        {
+        }
+
         public override void OnEnable()
         {
             GetTabData();

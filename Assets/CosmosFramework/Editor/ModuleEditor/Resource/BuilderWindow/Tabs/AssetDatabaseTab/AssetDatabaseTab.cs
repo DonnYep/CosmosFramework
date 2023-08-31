@@ -39,8 +39,24 @@ namespace Cosmos.Editor.Resource
         /// 构建dataset协程
         /// </summary>
         Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine buildDatasetCoroutine;
+
+        Rect dragRect;
+        Rect horizontalSplitterRect;
+        Rect rightRect;
+        Rect leftRect;
+        Rect treeViewRect;
+        bool resizingHorizontalSplitter = false;
+        float horizontalSplitterPercent;
+        bool rectSplitterInited;
+
+        public AssetDatabaseTab(EditorWindow parentWindow) : base(parentWindow)
+        {
+        }
+
         public override void OnEnable()
         {
+            rectSplitterInited = false;
+            horizontalSplitterPercent = ResourceBuilderWindowConstant.MIN_WIDTH;
             bundleLabel.OnEnable();
             bundleDetailLabel.OnEnable();
             objectLabel.OnEnable();
@@ -79,20 +95,23 @@ namespace Cosmos.Editor.Resource
         }
         public override void OnGUI(Rect rect)
         {
+            HandleHorizontalResize();
+
             EditorGUILayout.BeginVertical();
             {
                 if (hasChanged)
                     EditorGUILayout.HelpBox("Dataset has been changed, please \"Build Dataset\" !", MessageType.Warning);
-                EditorGUILayout.BeginHorizontal();
+                treeViewRect = EditorGUILayout.BeginHorizontal();
                 {
-                    var dragRect = EditorGUILayout.BeginVertical();
+                    dragRect = EditorGUILayout.BeginVertical();
                     {
                         DrawDragRect(dragRect);
-                        using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
+                        var width = GUILayout.Width(ParentWindow.position.width * horizontalSplitterPercent-3);
+                        using (var scope = new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
                         {
-                            GUILayout.Label($"Resource bundle count: {bundleLabel.BundleCount}", EditorStyles.boldLabel);
+                            EditorGUILayout.LabelField($"Resource bundle count: {bundleLabel.BundleCount}", EditorStyles.boldLabel, width);
                         }
-                        bundleLabel.OnGUI(rect);
+                        bundleLabel.OnGUI(leftRect);
                     }
                     EditorGUILayout.EndVertical();
 
@@ -117,11 +136,11 @@ namespace Cosmos.Editor.Resource
 
                         if (tabData.LabelTabIndex == 0)
                         {
-                            objectLabel.OnGUI(rect);
+                            objectLabel.OnGUI(rightRect);
                         }
                         else if (tabData.LabelTabIndex == 1)
                         {
-                            bundleDetailLabel.OnGUI(rect);
+                            bundleDetailLabel.OnGUI(rightRect);
                         }
                     }
                     EditorGUILayout.EndVertical();
@@ -162,8 +181,8 @@ namespace Cosmos.Editor.Resource
                     }
                     EditorGUILayout.EndHorizontal();
                 }
-                EditorGUILayout.EndVertical();
             }
+            EditorGUILayout.EndVertical();
         }
         public override void OnDatasetAssign()
         {
@@ -369,17 +388,17 @@ namespace Cosmos.Editor.Resource
         {
             try
             {
-                tabData = EditorUtil.GetData<AssetDatabaseTabData>(ResourceEditorConstants.CACHE_RELATIVE_PATH,AssetDatabaseTabDataName);
+                tabData = EditorUtil.GetData<AssetDatabaseTabData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetDatabaseTabDataName);
             }
             catch
             {
                 tabData = new AssetDatabaseTabData();
-                EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH,AssetDatabaseTabDataName, tabData);
+                EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetDatabaseTabDataName, tabData);
             }
         }
         void SaveTabData()
         {
-            EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH,AssetDatabaseTabDataName, tabData);
+            EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetDatabaseTabDataName, tabData);
         }
         IEnumerator EnumBuildDataset()
         {
@@ -686,6 +705,36 @@ namespace Cosmos.Editor.Resource
                     subImporter.assetBundleName = string.Empty;
                 }
             }
+        }
+        void HandleHorizontalResize()
+        {
+            var position = ParentWindow.position;
+            EditorGUIUtility.AddCursorRect(horizontalSplitterRect, MouseCursor.ResizeHorizontal);
+            if (UnityEngine.Event.current.type == EventType.MouseDown && horizontalSplitterRect.Contains(UnityEngine.Event.current.mousePosition))
+                resizingHorizontalSplitter = true;
+
+            var leftWidth = position.width * horizontalSplitterPercent;
+            var rightWidth = position.width * (1 - horizontalSplitterPercent);
+
+            if (!rectSplitterInited)
+            {
+                horizontalSplitterRect = new Rect(leftWidth, position.y + 80, 5, 2048);
+                rightRect = new Rect(0, 0, rightWidth, position.height);
+                leftRect = new Rect(0, 0, leftWidth, position.height);
+                ParentWindow.Repaint();
+                rectSplitterInited = true;
+            }
+            if (resizingHorizontalSplitter)
+            {
+                horizontalSplitterPercent = Mathf.Clamp(UnityEngine.Event.current.mousePosition.x / position.width, 0.1f, 0.9f);
+            }
+            horizontalSplitterRect.height = treeViewRect.height;
+            horizontalSplitterRect.x = leftWidth;
+            leftRect.width = leftWidth;
+            rightRect.width = rightWidth;
+            ParentWindow.Repaint();
+            if (UnityEngine.Event.current.type == EventType.MouseUp)
+                resizingHorizontalSplitter = false;
         }
     }
 }
