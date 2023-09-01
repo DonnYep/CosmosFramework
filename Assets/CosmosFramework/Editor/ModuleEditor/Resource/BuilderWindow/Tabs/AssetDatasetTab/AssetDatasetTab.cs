@@ -31,9 +31,7 @@ namespace Cosmos.Editor.Resource
                         return;
                     extensionList.Clear();
                     ResourceBuilderWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList.Clear();
-                    EditorUtility.SetDirty(ResourceBuilderWindowDataProxy.ResourceDataset);
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
+                    EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
                 }
                 if (GUILayout.Button("Reset extensions"))
                 {
@@ -44,9 +42,7 @@ namespace Cosmos.Editor.Resource
                     extensionList.AddRange(ResourceBuilderWindowConstant.Extensions);
                     datasetExtensionList.Clear();
                     datasetExtensionList.AddRange(ResourceBuilderWindowConstant.Extensions);
-                    EditorUtility.SetDirty(ResourceBuilderWindowDataProxy.ResourceDataset);
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
+                    EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
                 }
             }
             GUILayout.EndHorizontal();
@@ -90,9 +86,7 @@ namespace Cosmos.Editor.Resource
                         return;
                     var datasetExtList = ResourceBuilderWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
                     datasetExtList[index] = lowerStr;
-                    EditorUtility.SetDirty(ResourceBuilderWindowDataProxy.ResourceDataset);
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
+                    EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
                 }
             };
             if (ResourceBuilderWindowDataProxy.ResourceDataset != null)
@@ -111,9 +105,7 @@ namespace Cosmos.Editor.Resource
                 var datasetExtList = ResourceBuilderWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
                 datasetExtList.Clear();
                 datasetExtList.AddRange(extensionList);
-                EditorUtility.SetDirty(ResourceBuilderWindowDataProxy.ResourceDataset);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
+                EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
             };
             reorderableList.onRemoveCallback = (list) =>
             {

@@ -10,7 +10,7 @@ namespace Cosmos.Editor.Resource
     public class AssetDatabaseBundleTreeView : TreeView
     {
         readonly List<ResourceBundleInfo> bundleInfoList = new List<ResourceBundleInfo>();
-
+        public Rect TreeViewRect { get { return treeViewRect; } }
         public Action<IList<int>> onBundleSelectionChanged;
         public Action<IList<int>, IList<int>> onBundleDelete;
         public Action onAllBundleDelete;
@@ -317,8 +317,8 @@ namespace Cosmos.Editor.Resource
                 {
                     bundleInfoList.Remove(rmBundleInfos[i]);
                 }
-                onBundleDelete?.Invoke(list, GetSelection());
                 SetSelection(new int[0]);
+                onBundleDelete?.Invoke(list, GetSelection());
                 Reload();
             }
             catch (Exception e)

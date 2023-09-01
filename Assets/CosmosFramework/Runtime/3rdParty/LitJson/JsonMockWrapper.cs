@@ -15,7 +15,7 @@ using System.Collections;
 using System.Collections.Specialized;
 
 
-namespace LitJson
+namespace Cosmos.LitJson
 {
     public class JsonMockWrapper : IJsonWrapper
     {

@@ -9,7 +9,7 @@
 #endregion
 
 
-namespace LitJson
+namespace Cosmos.LitJson
 {
     internal enum ParserToken
     {

@@ -48,6 +48,7 @@ namespace Cosmos.Editor.Resource
             add { treeView.onMarkAsUnsplittable += value; }
             remove { treeView.onMarkAsUnsplittable -= value; }
         }
+        public Rect LabelTreeViewRect { get { return treeView.TreeViewRect; } }
         public void OnEnable()
         {
             searchField = new SearchField();
@@ -80,18 +81,18 @@ namespace Cosmos.Editor.Resource
         }
         void DrawTreeView(Rect rect)
         {
-            GUILayout.BeginVertical(GUILayout.Width(rect.width));
+            EditorGUILayout.BeginVertical(GUILayout.Width(rect.width));
             {
-                GUILayout.BeginHorizontal();
+                EditorGUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField(ResourceBuilderWindowConstant.SERACH, GUILayout.MaxWidth(48));
+                    EditorGUILayout.LabelField(ResourceBuilderWindowConstant.SERACH, GUILayout.MinWidth(0), GUILayout.MaxWidth(48));
                     treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
                 }
-                GUILayout.EndHorizontal();
+                EditorGUILayout.EndHorizontal();
                 Rect viewRect = GUILayoutUtility.GetRect(32, 8192, 32, 8192);
                 treeView.OnGUI(viewRect);
             }
-            GUILayout.EndVertical();
+            EditorGUILayout.EndVertical();
         }
     }
 }

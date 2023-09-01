@@ -17,7 +17,7 @@ using System.IO;
 using System.Reflection;
 
 
-namespace LitJson
+namespace Cosmos.LitJson
 {
     internal struct PropertyMetadata
     {

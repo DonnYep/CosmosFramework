@@ -1,4 +1,6 @@
 ﻿using Cosmos.Resource;
+using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -10,7 +12,13 @@ namespace Cosmos.Editor.Resource
         SearchField searchField;
         TreeViewState treeViewState;
         AssetDatabaseObjectTreeView treeView;
+        public event Action<List<ResourceObjectInfo>> OnObjectInfoSelectionChanged
+        {
+            add { treeView.onObjectInfoSelectionChanged += value; }
+            remove { treeView.onObjectInfoSelectionChanged -= value; }
+        }
         public int ObjectCount { get { return treeView.ObjectCount; } }
+        public int SelectedCount { get { return treeView.SelectedCount; } }
         public void OnEnable()
         {
             searchField = new SearchField();
