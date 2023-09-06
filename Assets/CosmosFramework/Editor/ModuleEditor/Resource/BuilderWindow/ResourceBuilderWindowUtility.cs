@@ -91,13 +91,13 @@ namespace Cosmos.Editor.Resource
                 },
                 new MultiColumnHeaderState.Column
                 {
-                    headerContent = new GUIContent("Count"),
+                    headerContent = new GUIContent("ObjectCount"),
                     headerTextAlignment = TextAlignment.Left,
                     sortingArrowAlignment = TextAlignment.Left,
                     sortedAscending = false,
                     minWidth=36,
-                    width=56,
-                    maxWidth=80,
+                    width=86,
+                    maxWidth=108,
                     autoResize = true,
                 },
                 new MultiColumnHeaderState.Column
