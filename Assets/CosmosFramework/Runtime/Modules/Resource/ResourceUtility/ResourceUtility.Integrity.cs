@@ -39,6 +39,54 @@ namespace Cosmos.Resource
                     bundleIndex++;
                 }
             }
+            public static void VerifyResourceIntegrity(ResourceManifest manifest, string path, out ResourceIntegrityResult result)
+            {
+                if (string.IsNullOrEmpty(path))
+                    throw new ArgumentNullException("path is invalid !");
+                result = new ResourceIntegrityResult();
+                result.ResourceIntegrityInfos = new ResourceIntegrityInfo[manifest.ResourceBundleBuildInfoDict.Count];
+                int bundleIndex = 0;
+                foreach (var bundleBuildInfo in manifest.ResourceBundleBuildInfoDict.Values)
+                {
+                    var bundleKey = bundleBuildInfo.ResourceBundle.BundleKey;
+                    var bundleName = bundleBuildInfo.ResourceBundle.BundleName;
+                    var recordedBudleSize = bundleBuildInfo.BundleSize;
+                    var bundlePath = Path.Combine(path, bundleKey);
+                    long dectededBundleSize = 0;
+                    if (File.Exists(bundlePath))
+                    {
+                        var fileInfo = new FileInfo(bundlePath);
+                        dectededBundleSize = fileInfo.Length;
+                    }
+                    var integrityInfo = new ResourceIntegrityInfo(recordedBudleSize, dectededBundleSize, bundleKey, bundleName);
+                    result.ResourceIntegrityInfos[bundleIndex] = integrityInfo;
+                    bundleIndex++;
+                }
+            }
+            public static void VerifyResourceIntegrity(ResourceMergedManifest mergedManifest, string path, out ResourceIntegrityResult result)
+            {
+                if (string.IsNullOrEmpty(path))
+                    throw new ArgumentNullException("path is invalid !");
+                result = new ResourceIntegrityResult();
+                result.ResourceIntegrityInfos = new ResourceIntegrityInfo[mergedManifest.MergedBundleBuildInfoList.Count];
+                int bundleIndex = 0;
+                foreach (var bundleBuildInfo in mergedManifest.MergedBundleBuildInfoList)
+                {
+                    var bundleKey = bundleBuildInfo.ResourceBundleBuildInfo.ResourceBundle.BundleKey;
+                    var bundleName = bundleBuildInfo.ResourceBundleBuildInfo.ResourceBundle.BundleName;
+                    var recordedBudleSize = bundleBuildInfo.ResourceBundleBuildInfo.BundleSize;
+                    var bundlePath = Path.Combine(path, bundleKey);
+                    long dectededBundleSize = 0;
+                    if (File.Exists(bundlePath))
+                    {
+                        var fileInfo = new FileInfo(bundlePath);
+                        dectededBundleSize = fileInfo.Length;
+                    }
+                    var integrityInfo = new ResourceIntegrityInfo(recordedBudleSize, dectededBundleSize, bundleKey, bundleName);
+                    result.ResourceIntegrityInfos[bundleIndex] = integrityInfo;
+                    bundleIndex++;
+                }
+            }
         }
     }
 }
