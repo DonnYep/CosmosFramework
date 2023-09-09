@@ -257,7 +257,7 @@ namespace Cosmos.Editor.Resource
                         if (!(obj is MonoScript) && (obj is DefaultAsset))
                         {
                             var bundleInfoList = ResourceBuilderWindowDataProxy.ResourceDataset.ResourceBundleInfoList;
-                            var isSceneInSameBundle = ResourceBuilderWindowUtility.CheckAssetsAndScenesInOneAssetBundle(path);
+                            var isSceneInSameBundle = ResourceEditorUtility.CheckAssetsAndScenesInOneAssetBundle(path);
                             if (isSceneInSameBundle)
                             {
                                 var invalidBundleName = ResourceUtility.FilterName(path);
@@ -534,7 +534,7 @@ namespace Cosmos.Editor.Resource
             for (int j = 0; j < subBundlePaths.Length; j++)
             {
                 var subBundlePath = subBundlePaths[j];
-                var isSceneInSameBundle = ResourceBuilderWindowUtility.CheckAssetsAndScenesInOneAssetBundle(subBundlePath);
+                var isSceneInSameBundle = ResourceEditorUtility.CheckAssetsAndScenesInOneAssetBundle(subBundlePath);
                 if (isSceneInSameBundle)
                 {
                     var invalidBundleName = ResourceUtility.FilterName(subBundlePath);

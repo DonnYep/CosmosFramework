@@ -7,6 +7,10 @@ namespace Cosmos.Editor.Resource
     public class AssetBundleTabData
     {
         /// <summary>
+        /// 使用构建预设
+        /// </summary>
+        public bool UseBuildProfile;
+        /// <summary>
         /// AB打包到的平台
         /// </summary>
         public BuildTarget BuildTarget;
@@ -108,7 +112,7 @@ namespace Cosmos.Editor.Resource
             BuildTarget = BuildTarget.StandaloneWindows;
             BuildHandlerName = Constants.NONE;
             BuildHandlerIndex = 0;
-            BuildPath = Utility.IO.WebPathCombine(EditorUtil.ApplicationPath(), "AssetBundles"); AssetBundleEncryption = false;
+            BuildPath = Utility.IO.RegularPathCombine(EditorUtil.ApplicationPath(), "AssetBundles"); AssetBundleEncryption = false;
             AssetBundleOffsetValue = 16;
             EncryptManifest = false;
             ManifestEncryptionKey = "CosmosBundlesKey";
@@ -120,7 +124,7 @@ namespace Cosmos.Editor.Resource
             DeterministicAssetBundle = false;
             IgnoreTypeTreeChanges = false;
             StreamingAssetsRelativePath = BuildVersion;
-            AssetBundleBuildPath = Utility.IO.WebPathCombine(BuildPath, $"{BuildVersion}_{InternalBuildVersion}");
+            AssetBundleBuildPath = Utility.IO.RegularPathCombine(BuildPath, $"{BuildVersion}_{InternalBuildVersion}");
         }
     }
 }
