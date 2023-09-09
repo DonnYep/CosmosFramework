@@ -152,10 +152,10 @@ namespace Cosmos.Editor.Resource
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
-            var folderIcon = ResourceBuilderWindowUtility.GetFolderIcon();
-            var folderEmptyIcon = ResourceBuilderWindowUtility.GetFolderEmptyIcon();
-            var splittableIcon = ResourceBuilderWindowUtility.GetValidIcon();
-            var unsplittableIcon = ResourceBuilderWindowUtility.GetIgnoredcon();
+            var folderIcon = ResourceEditorUtility.GetFolderIcon();
+            var folderEmptyIcon = ResourceEditorUtility.GetFolderEmptyIcon();
+            var splittableIcon = ResourceEditorUtility.GetValidIcon();
+            var unsplittableIcon = ResourceEditorUtility.GetIgnoredcon();
             Texture2D icon = null;
             var treeItemList = new List<TreeViewItem>();
             {

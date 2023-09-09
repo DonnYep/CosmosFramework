@@ -33,59 +33,28 @@ namespace Cosmos.Editor.Resource
         public override void OnGUI(Rect rect)
         {
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            DrawPrebuildOptions();
-            GUILayout.Space(16);
-            DrawBuildOptions();
-            GUILayout.Space(16);
-            DrawPathOptions();
-            GUILayout.Space(16);
-            DrawEncryption();
-            GUILayout.Space(16);
-            DrawBuildDoneOption();
-            GUILayout.Space(16);
-            EditorGUILayout.BeginHorizontal();
+
+            EditorGUILayout.LabelField("Profile Options", EditorStyles.boldLabel);
+            tabData.UseBuildProfile = EditorGUILayout.ToggleLeft("Use build profile", tabData.UseBuildProfile);
+            if (tabData.UseBuildProfile)
             {
-                if (GUILayout.Button("Build assetBundle"))
-                {
-                    if (ResourceBuilderWindowDataProxy.ResourceDataset == null)
-                    {
-                        EditorUtil.Debug.LogError("ResourceDataset is invalid !");
-                        return;
-                    }
-                    if (!isAesKeyInvalid)
-                    {
-                        EditorUtil.Debug.LogError("Encryption key should be 16,24 or 32 bytes long");
-                        return;
-                    }
-                    var buildParams = new ResourceBuildParams()
-                    {
-                        AssetBundleBuildPath = tabData.AssetBundleBuildPath,
-                        AssetBundleEncryption = tabData.AssetBundleEncryption,
-                        AssetBundleOffsetValue = tabData.AssetBundleOffsetValue,
-                        BuildAssetBundleOptions = GetBuildAssetBundleOptions(),
-                        AssetBundleNameType = tabData.AssetBundleNameType,
-                        EncryptManifest = tabData.EncryptManifest,
-                        ManifestEncryptionKey = tabData.ManifestEncryptionKey,
-                        BuildTarget = tabData.BuildTarget,
-                        ResourceBuildType = tabData.ResourceBuildType,
-                        BuildVersion = tabData.BuildVersion,
-                        InternalBuildVersion = tabData.InternalBuildVersion,
-                        CopyToStreamingAssets = tabData.CopyToStreamingAssets,
-                        UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
-                        StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath,
-                        AssetBundleBuildDirectory = tabData.AssetBundleBuildDirectory,
-                        ClearStreamingAssetsDestinationPath = tabData.ClearStreamingAssetsDestinationPath
-                    };
-                    if (tabData.ForceRemoveAllAssetBundleNames)
-                        AssetBundleCommand.ForceRemoveAllAssetBundleNames();
-                    EditorUtil.Coroutine.StartCoroutine(BuildAssetBundle(buildParams, ResourceBuilderWindowDataProxy.ResourceDataset));
-                }
-                if (GUILayout.Button("Reset options"))
-                {
-                    tabData = new AssetBundleTabData();
-                }
+                EditorGUILayout.HelpBox("Using build profile", MessageType.Info);
             }
-            EditorGUILayout.EndHorizontal();
+            else
+            {
+                GUILayout.Space(16);
+                DrawPrebuildOptions();
+                GUILayout.Space(16);
+                DrawBuildOptions();
+                GUILayout.Space(16);
+                DrawPathOptions();
+                GUILayout.Space(16);
+                DrawEncryption();
+                GUILayout.Space(16);
+                DrawBuildDoneOption();
+            }
+            GUILayout.Space(16);
+            DrawBuildButton();
             EditorGUILayout.EndScrollView();
         }
         void DrawPrebuildOptions()
@@ -160,10 +129,10 @@ namespace Cosmos.Editor.Resource
                     }
                 }
                 EditorGUILayout.EndHorizontal();
-                tabData.AssetBundleBuildDirectory = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString());
+                tabData.AssetBundleBuildDirectory = Utility.IO.RegularPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString());
                 if (!string.IsNullOrEmpty(tabData.BuildVersion))
                 {
-                    var assetBundleBuildPath = Utility.IO.WebPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString(), $"{tabData.BuildVersion}");
+                    var assetBundleBuildPath = Utility.IO.RegularPathCombine(tabData.BuildPath, tabData.BuildVersion, tabData.BuildTarget.ToString(), $"{tabData.BuildVersion}");
                     if (tabData.ResourceBuildType == ResourceBuildType.Full)
                     {
                         assetBundleBuildPath += $"_{tabData.InternalBuildVersion}";
@@ -228,7 +197,7 @@ namespace Cosmos.Editor.Resource
                     {
                         EditorGUILayout.LabelField("StreamingAssets  relative path");
                         tabData.StreamingAssetsRelativePath = EditorGUILayout.TextField("Relative path", tabData.StreamingAssetsRelativePath);
-                        destinationPath = Utility.IO.WebPathCombine(Application.streamingAssetsPath, tabData.StreamingAssetsRelativePath);
+                        destinationPath = Utility.IO.RegularPathCombine(Application.streamingAssetsPath, tabData.StreamingAssetsRelativePath);
                     }
                     else
                     {
@@ -239,6 +208,54 @@ namespace Cosmos.Editor.Resource
                 }
             }
             EditorGUILayout.EndVertical();
+        }
+        void DrawBuildButton()
+        {
+            EditorGUILayout.BeginHorizontal();
+            {
+                var buttonWidth = EditorGUIUtility.currentViewWidth / 2;
+                if (GUILayout.Button("Build assetBundle", GUILayout.MaxWidth(buttonWidth)))
+                {
+                    if (ResourceBuilderWindowDataProxy.ResourceDataset == null)
+                    {
+                        EditorUtil.Debug.LogError("ResourceDataset is invalid !");
+                        return;
+                    }
+                    if (!isAesKeyInvalid)
+                    {
+                        EditorUtil.Debug.LogError("Encryption key should be 16,24 or 32 bytes long");
+                        return;
+                    }
+                    var buildParams = new ResourceBuildParams()
+                    {
+                        AssetBundleBuildPath = tabData.AssetBundleBuildPath,
+                        AssetBundleEncryption = tabData.AssetBundleEncryption,
+                        AssetBundleOffsetValue = tabData.AssetBundleOffsetValue,
+                        BuildAssetBundleOptions = GetBuildAssetBundleOptions(),
+                        AssetBundleNameType = tabData.AssetBundleNameType,
+                        EncryptManifest = tabData.EncryptManifest,
+                        ManifestEncryptionKey = tabData.ManifestEncryptionKey,
+                        BuildTarget = tabData.BuildTarget,
+                        ResourceBuildType = tabData.ResourceBuildType,
+                        BuildVersion = tabData.BuildVersion,
+                        InternalBuildVersion = tabData.InternalBuildVersion,
+                        CopyToStreamingAssets = tabData.CopyToStreamingAssets,
+                        UseStreamingAssetsRelativePath = tabData.UseStreamingAssetsRelativePath,
+                        StreamingAssetsRelativePath = tabData.StreamingAssetsRelativePath,
+                        AssetBundleBuildDirectory = tabData.AssetBundleBuildDirectory,
+                        ClearStreamingAssetsDestinationPath = tabData.ClearStreamingAssetsDestinationPath
+                    };
+                    if (tabData.ForceRemoveAllAssetBundleNames)
+                        AssetBundleCommand.ForceRemoveAllAssetBundleNames();
+                    EditorUtil.Coroutine.StartCoroutine(BuildAssetBundle(buildParams, ResourceBuilderWindowDataProxy.ResourceDataset));
+                }
+                if (GUILayout.Button("Reset options", GUILayout.MaxWidth(buttonWidth)))
+                {
+                    tabData = new AssetBundleTabData();
+                    ParentWindow.Repaint();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
         }
         void GetTabData()
         {

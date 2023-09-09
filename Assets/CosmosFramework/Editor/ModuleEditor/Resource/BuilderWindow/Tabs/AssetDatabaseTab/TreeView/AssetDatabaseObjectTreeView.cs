@@ -72,8 +72,8 @@ namespace Cosmos.Editor.Resource
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
             var allItems = new List<TreeViewItem>();
             {
-                Texture2D validIcon = ResourceBuilderWindowUtility.GetValidIcon();
-                Texture2D invalidIcon = ResourceBuilderWindowUtility.GetInvalidIcon();
+                Texture2D validIcon = ResourceEditorUtility.GetValidIcon();
+                Texture2D invalidIcon = ResourceEditorUtility.GetInvalidIcon();
                 for (int i = 0; i < objectInfoList.Count; i++)
                 {
                     var objectInfo = objectInfoList[i];

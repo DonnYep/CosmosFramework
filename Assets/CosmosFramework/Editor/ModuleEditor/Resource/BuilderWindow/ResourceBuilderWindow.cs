@@ -43,7 +43,7 @@ namespace Cosmos.Editor.Resource
             assetBundleTab.OnEnable();
             assetDatasetTab.OnEnable();
             ((AssetBundleTab)assetBundleTab).BuildDataset = ((AssetDatabaseTab)assetDatabaseTab).BuildDataset;
-            refreshIcon = ResourceBuilderWindowUtility.GetAssetRefreshIcon();
+            refreshIcon = ResourceEditorUtility.GetAssetRefreshIcon();
         }
         protected override void OnGUI()
         {

@@ -39,10 +39,10 @@ namespace Cosmos.Editor.Resource
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
-            var folderIcon = ResourceBuilderWindowUtility.GetFolderIcon();
-            var folderEmptyIcon = ResourceBuilderWindowUtility.GetFolderEmptyIcon();
-            var dependenciesIcon = ResourceBuilderWindowUtility.GetFindDependenciesIcon();
-            var subBundleIcom = ResourceBuilderWindowUtility.GetHorizontalLayoutGroupIcon();
+            var folderIcon = ResourceEditorUtility.GetFolderIcon();
+            var folderEmptyIcon = ResourceEditorUtility.GetFolderEmptyIcon();
+            var dependenciesIcon = ResourceEditorUtility.GetFindDependenciesIcon();
+            var subBundleIcom = ResourceEditorUtility.GetHorizontalLayoutGroupIcon();
             Texture2D icon = null;
             var bundleItemList = new List<TreeViewItem>();
             var bundleInfoLength = bundleInfoList.Count;

@@ -4,6 +4,7 @@ using Cosmos;
 [CreateAssetMenu(fileName = "NewStringContent", menuName = "CosmosFramework/StringContent")]
 public class StringContent : DatasetBase
 {
+    [SerializeField]
     public string[] content;
     public string[] Content
     {

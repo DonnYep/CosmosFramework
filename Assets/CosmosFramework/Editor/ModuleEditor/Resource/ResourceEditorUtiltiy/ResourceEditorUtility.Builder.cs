@@ -1,83 +1,16 @@
-﻿using System.IO;
-using System.Linq;
-using UnityEditor;
-using UnityEditor.IMGUI.Controls;
+﻿using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceBuilderWindowUtility
+    public partial class ResourceEditorUtility
     {
-        /// <summary>
-        /// 检测资源与场景是否同处于一个AB包中；
-        /// </summary>
-        /// <param name="bundlePath">包地址</param>
-        /// <returns>是否处于同一个包</returns>
-        public static bool CheckAssetsAndScenesInOneAssetBundle(string bundlePath)
+        public static class Builder
         {
-            if (File.Exists(bundlePath))//若是文件
-                return false;
-            var exts = Directory.GetFiles(bundlePath, ".", SearchOption.AllDirectories).Select(path => Path.GetExtension(path)).ToHashSet();
-            exts.Remove(".meta");
-            if (exts.Contains(".unity"))
+            public static MultiColumnHeaderState CreateResourceBundleMultiColumnHeader()
             {
-                exts.Remove(".unity");
-                return exts.Count != 0;
-            }
-            return false;
-        }
-        public static Texture2D GetHorizontalLayoutGroupIcon()
-        {
-            return EditorGUIUtility.FindTexture("HorizontalLayoutGroup Icon");
-        }
-        /// <summary>
-        /// 获取原生场景资源icon
-        /// </summary>
-        /// <returns>icon</returns>
-        public static Texture2D GetSceneIcon()
-        {
-            return EditorGUIUtility.FindTexture("SceneAsset Icon");
-        }
-        /// <summary>
-        /// 获取原生Folder资源icon
-        /// </summary>
-        /// <returns>icon</returns>
-        public static Texture2D GetFolderIcon()
-        {
-            return EditorGUIUtility.FindTexture("Folder Icon");
-        }
-        public static Texture2D GetFolderEmptyIcon()
-        {
-            return EditorGUIUtility.FindTexture("FolderEmpty Icon");
-        }
-        public static Texture2D GetFindDependenciesIcon()
-        {
-            return EditorGUIUtility.FindTexture("UnityEditor.FindDependencies");
-        }
-        public static Texture2D GetAssetRefreshIcon()
-        {
-            return EditorGUIUtility.FindTexture("Refresh");
-        }
-        public static Texture2D GetInvalidIcon()
-        {
-            return EditorGUIUtility.FindTexture("TestFailed");
-        }
-        public static Texture2D GetValidIcon()
-        {
-            return EditorGUIUtility.FindTexture("TestPassed");
-        }
-        public static Texture2D GetIgnoredcon()
-        {
-            return EditorGUIUtility.FindTexture("TestIgnored");
-        }
-        public static Texture2D GetFilterByTypeIcon()
-        {
-            return EditorGUIUtility.FindTexture("FilterByType");
-        }
-        public static MultiColumnHeaderState CreateResourceBundleMultiColumnHeader()
-        {
-            var columns = new[]
-            {
+                var columns = new[]
+                {
                 new MultiColumnHeaderState.Column
                 {
                     headerContent = new GUIContent("Size"),
@@ -125,13 +58,13 @@ namespace Cosmos.Editor.Resource
                     canSort=true
                 }
             };
-            var state = new MultiColumnHeaderState(columns);
-            return state;
-        }
-        public static MultiColumnHeaderState CreateResourceObjectMultiColumnHeader()
-        {
-            var columns = new[]
-            {     
+                var state = new MultiColumnHeaderState(columns);
+                return state;
+            }
+            public static MultiColumnHeaderState CreateResourceObjectMultiColumnHeader()
+            {
+                var columns = new[]
+                {
                 new MultiColumnHeaderState.Column
                 {
                     headerContent = new GUIContent(GetFilterByTypeIcon()),
@@ -211,8 +144,9 @@ namespace Cosmos.Editor.Resource
                 }
             };
 
-            var state = new MultiColumnHeaderState(columns);
-            return state;
+                var state = new MultiColumnHeaderState(columns);
+                return state;
+            }
         }
     }
 }
