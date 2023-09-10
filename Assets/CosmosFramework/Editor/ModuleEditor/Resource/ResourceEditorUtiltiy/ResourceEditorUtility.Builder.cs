@@ -1,4 +1,6 @@
-﻿using UnityEditor.IMGUI.Controls;
+﻿using System;
+using UnityEditor;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 namespace Cosmos.Editor.Resource
@@ -146,6 +148,39 @@ namespace Cosmos.Editor.Resource
 
                 var state = new MultiColumnHeaderState(columns);
                 return state;
+            }
+            public static BuildAssetBundleOptions GetBuildAssetBundleOptions(AssetBundleCompressType compressType, bool disableWriteTypeTree, bool deterministicAssetBundle, bool forceRebuildAssetBundle, bool ignoreTypeTreeChanges)
+            {
+                BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
+                switch (compressType)
+                {
+                    case AssetBundleCompressType.Uncompressed:
+                        options |= BuildAssetBundleOptions.UncompressedAssetBundle;
+                        break;
+                    case AssetBundleCompressType.StandardCompression_LZMA:
+                        //None=StandardCompression_LZMA
+                        break;
+                    case AssetBundleCompressType.ChunkBasedCompression_LZ4:
+                        options |= BuildAssetBundleOptions.ChunkBasedCompression;
+                        break;
+                }
+                if (disableWriteTypeTree)
+                    options |= BuildAssetBundleOptions.DisableWriteTypeTree;
+                if (deterministicAssetBundle)
+                    options |= BuildAssetBundleOptions.DeterministicAssetBundle;
+                if (forceRebuildAssetBundle)
+                    options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
+                if (ignoreTypeTreeChanges)
+                    options |= BuildAssetBundleOptions.IgnoreTypeTreeChanges;
+                return options;
+            }
+            public static string[] GetBuildHandlers()
+            {
+                var srcBuildHandlers = Utility.Assembly.GetDerivedTypeNames<IResourceBuildHandler>();
+                var buildHandlers = new string[srcBuildHandlers.Length + 1];
+                buildHandlers[0] = Constants.NONE;
+                Array.Copy(srcBuildHandlers, 0, buildHandlers, 1, srcBuildHandlers.Length);
+                return buildHandlers;
             }
         }
     }
