@@ -34,11 +34,11 @@ namespace Cosmos.Editor.Resource
         {
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
-            EditorGUILayout.LabelField("Profile Options", EditorStyles.boldLabel);
-            tabData.UseBuildProfile = EditorGUILayout.ToggleLeft("Use build profile", tabData.UseBuildProfile);
+            EditorGUILayout.LabelField("Build Type Options", EditorStyles.boldLabel);
+            tabData.UseBuildProfile = EditorGUILayout.ToggleLeft("Use build settings", tabData.UseBuildProfile);
             if (tabData.UseBuildProfile)
             {
-                EditorGUILayout.HelpBox("Using build profile", MessageType.Info);
+                EditorGUILayout.HelpBox("Using build settings", MessageType.Info);
             }
             else
             {
