@@ -39,6 +39,7 @@ namespace Cosmos.Editor
         SerializedProperty sp_RunInBackground;
 
         SerializedProperty sp_DrawDebugWindow;
+        SerializedProperty sp_DisableDebugLog;
 
         SerializedProperty sp_InputHelperIndex;
         SerializedProperty sp_InputHelperName;
@@ -73,6 +74,7 @@ namespace Cosmos.Editor
 
         bool runInBackground;
         bool drawDebugWindow;
+        bool disableDebugLog;
 
         bool moduleConfigFoldout;
         public override void OnInspectorGUI()
@@ -169,6 +171,7 @@ namespace Cosmos.Editor
             sp_ManifestEncrytionKey = targetObject.FindProperty("manifestEncrytionKey");
 
             sp_DrawDebugWindow = targetObject.FindProperty("drawDebugWindow");
+            sp_DisableDebugLog = targetObject.FindProperty("disableDebugLog");
 
             sp_InputHelperIndex = targetObject.FindProperty("inputHelperIndex");
             sp_InputHelperName = targetObject.FindProperty("inputHelperName");
@@ -201,6 +204,8 @@ namespace Cosmos.Editor
 
             moduleConfigFoldout = sp_ModuleConfigFoldout.boolValue;
             printLogWhenAssetNotExists = sp_PrintLogWhenAssetNotExists.boolValue;
+
+            disableDebugLog = sp_DisableDebugLog.boolValue;
 
             targetObject.ApplyModifiedProperties();
         }
@@ -251,6 +256,11 @@ namespace Cosmos.Editor
         void DrawDebugConfig()
         {
             EditorGUILayout.LabelField("Debug", EditorStyles.boldLabel);
+
+            disableDebugLog = EditorGUILayout.ToggleLeft("DisableDebugLog", disableDebugLog);
+            if (disableDebugLog != sp_DisableDebugLog.boolValue)
+                sp_DisableDebugLog.boolValue = disableDebugLog;
+
             drawDebugWindow = EditorGUILayout.ToggleLeft("DrawDebugWindow", drawDebugWindow);
             if (drawDebugWindow != sp_DrawDebugWindow.boolValue)
                 sp_DrawDebugWindow.boolValue = drawDebugWindow;
