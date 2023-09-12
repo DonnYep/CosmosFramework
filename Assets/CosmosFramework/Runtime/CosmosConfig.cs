@@ -36,6 +36,7 @@ namespace Cosmos
         [SerializeField] string manifestEncrytionKey = "CosmosBundlesKey";
 
         [SerializeField] bool drawDebugWindow;
+        [SerializeField] bool disableDebugLog = false;
 
         [SerializeField] int inputHelperIndex;
         [SerializeField] string inputHelperName;
@@ -112,6 +113,7 @@ namespace Cosmos
             LoadHelpers();
             CosmosEntry.PrintModulePreparatory = printModulePreparatory;
             Application.runInBackground = runInBackground;
+            Utility.Debug.DisableDebugLog = disableDebugLog;
             if (launchAppDomainModules)
             {
                 CosmosEntry.LaunchAppDomainModules();
