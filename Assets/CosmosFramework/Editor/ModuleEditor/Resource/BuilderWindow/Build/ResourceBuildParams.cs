@@ -12,6 +12,10 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public BuildAssetBundleOptions BuildAssetBundleOptions;
         /// <summary>
+        /// 强制移除工程中所有的ab标签
+        /// </summary>
+        public bool ForceRemoveAllAssetBundleNames;
+        /// <summary>
         /// AB包名称类型
         /// </summary>
         public AssetBundleNameType AssetBundleNameType;
@@ -67,5 +71,9 @@ namespace Cosmos.Editor.Resource
         /// 清空拷贝到的StreamingAssets路径
         /// </summary>
         public bool ClearStreamingAssetsDestinationPath;
+        /// <summary>
+        /// 构建handler的完全限定名
+        /// </summary>
+        public string BuildHandlerName;
     }
 }
