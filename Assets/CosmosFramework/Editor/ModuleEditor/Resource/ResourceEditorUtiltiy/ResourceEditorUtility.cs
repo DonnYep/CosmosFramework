@@ -73,5 +73,13 @@ namespace Cosmos.Editor.Resource
         {
             return EditorGUIUtility.FindTexture("FilterByType");
         }
+        public static Texture2D GetCreateAddNewIcon()
+        {
+            return EditorGUIUtility.FindTexture("CreateAddNew");
+        }
+        public static Texture2D GetSaveActiveIcon()
+        {
+            return EditorGUIUtility.FindTexture("SaveActive");
+        }
     }
 }

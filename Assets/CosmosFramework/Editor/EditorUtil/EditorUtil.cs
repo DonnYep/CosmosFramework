@@ -74,7 +74,7 @@ namespace Cosmos.Editor
             var obj = EditorUtil.Json.ToObject<T>(json);
             return obj;
         }
-        public static T GetData<T>(string relativePath,string fileName)
+        public static T GetData<T>(string relativePath, string fileName)
     where T : class, new()
         {
             var filePath = Utility.IO.PathCombine(LibraryPath, relativePath, fileName);
@@ -202,6 +202,11 @@ namespace Cosmos.Editor
         }
         public static T CreateScriptableObject<T>(string path, HideFlags hideFlags = HideFlags.None) where T : ScriptableObject
         {
+            var dir = Path.GetDirectoryName(path);
+            dir = Utility.IO.GetRegularPath(dir).Replace("Assets/", "");
+            var isValid = AssetDatabase.IsValidFolder(dir);
+            if (!isValid)
+                AssetDatabase.CreateFolder("Assets", dir);
             var so = ScriptableObject.CreateInstance<T>();
             so.hideFlags = hideFlags;
             AssetDatabase.CreateAsset(so, path);

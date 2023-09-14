@@ -19,6 +19,9 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         bool isDatasetEmpty = false;
         Texture2D refreshIcon;
+        Texture2D createAddNewIcon;
+        Texture2D saveActiveIcon;
+
         [MenuItem("Window/Cosmos/Module/Resource/ResourceBuilder")]
         public static void OpenWindow()
         {
@@ -44,6 +47,8 @@ namespace Cosmos.Editor.Resource
             assetDatasetTab.OnEnable();
             ((AssetBundleTab)assetBundleTab).BuildDataset = ((AssetDatabaseTab)assetDatabaseTab).BuildDataset;
             refreshIcon = ResourceEditorUtility.GetAssetRefreshIcon();
+            createAddNewIcon = ResourceEditorUtility.GetCreateAddNewIcon();
+            saveActiveIcon = ResourceEditorUtility.GetSaveActiveIcon();
         }
         protected override void OnGUI()
         {
@@ -85,7 +90,7 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.BeginHorizontal();
             {
                 latestResourceDataset = (ResourceDataset)EditorGUILayout.ObjectField("ResourceDataset", latestResourceDataset, typeof(ResourceDataset), false);
-                if (GUILayout.Button(refreshIcon, GUILayout.MaxWidth(32)))
+                if (GUILayout.Button(refreshIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.TEXTURE_ICON_WIDTH)))
                 {
                     if (latestResourceDataset == null)
                         return;
@@ -101,6 +106,14 @@ namespace Cosmos.Editor.Resource
                             assetDatasetTab.OnDatasetRefresh();
                             break;
                     }
+                }
+                if (GUILayout.Button(createAddNewIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.TEXTURE_ICON_WIDTH)))
+                {
+
+                }
+                if (GUILayout.Button(saveActiveIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.TEXTURE_ICON_WIDTH)))
+                {
+
                 }
             }
             EditorGUILayout.EndHorizontal();
