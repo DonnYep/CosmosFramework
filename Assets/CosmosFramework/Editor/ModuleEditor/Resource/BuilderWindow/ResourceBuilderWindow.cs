@@ -109,11 +109,23 @@ namespace Cosmos.Editor.Resource
                 }
                 if (GUILayout.Button(createAddNewIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.TEXTURE_ICON_WIDTH)))
                 {
-
+                    var previouseDataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceBuilderWindowConstant.RESOURCE_NEW_DATASET_PATH);
+                    if (previouseDataset != null)
+                    {
+                        var canCreate = UnityEditor.EditorUtility.DisplayDialog("ResourceDataset exist", $"Path {ResourceBuilderWindowConstant.RESOURCE_NEW_DATASET_PATH} exists.Whether to continue to create and overwrite this file ?", "Create", "Cancel");
+                        if (canCreate)
+                        {
+                            latestResourceDataset = CreateResourceDataset();
+                        }
+                    }
+                    else
+                    {
+                        latestResourceDataset = CreateResourceDataset();
+                    }
                 }
                 if (GUILayout.Button(saveActiveIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.TEXTURE_ICON_WIDTH)))
                 {
-
+                    EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
                 }
             }
             EditorGUILayout.EndHorizontal();
@@ -135,17 +147,8 @@ namespace Cosmos.Editor.Resource
             }
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Create Dataset", GUILayout.MinWidth(128f)))
-            {
-                latestResourceDataset = CreateResourceDataset();
-            }
-            if (GUILayout.Button("Clear Dataset", GUILayout.MinWidth(128f)))
-            {
-                latestResourceDataset = null;
-                windowData.ResourceDatasetPath = string.Empty;
-            }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Space(8);
+            GUILayout.Space(16);
             switch (windowData.SelectedTabIndex)
             {
                 case 0:
@@ -167,7 +170,7 @@ namespace Cosmos.Editor.Resource
         }
         ResourceDataset CreateResourceDataset()
         {
-            var so = EditorUtil.CreateScriptableObject<ResourceDataset>("Assets/New ResourceDataset.asset", HideFlags.NotEditable);
+            var so = EditorUtil.CreateScriptableObject<ResourceDataset>(ResourceBuilderWindowConstant.RESOURCE_NEW_DATASET_PATH, HideFlags.NotEditable);
             so.ResourceAvailableExtenisonList.AddRange(ResourceBuilderWindowConstant.Extensions);
             EditorUtil.Debug.LogInfo("ResourceDataset created successfully");
             return so;

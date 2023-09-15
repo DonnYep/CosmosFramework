@@ -28,7 +28,16 @@
         public const float MAX_WIDTH = 0.618f;
         public const float MIN_WIDTH = 0.382f;
         public const string RESOURCE_BUILD_CACHE = "ResourceBuildCache.json";
-        public const string RESOURCE_BUILD_LOG= "ResourceBuildLog.json";
-        public const int TEXTURE_ICON_WIDTH= 28;
+        public const string RESOURCE_BUILD_LOG = "ResourceBuildLog.json";
+        public const int TEXTURE_ICON_WIDTH = 28;
+
+        /// <summary>
+        /// 资源寻址文件创建地址
+        /// </summary>
+        public const string RESOURCE_NEW_DATASET_PATH = "Assets/NewResourceDataset.asset";
+        /// <summary>
+        /// AssetBundle构建预设地址
+        /// </summary>
+        public const string RESOURCE_NEW_BUILD_PRESET_PATH = "Assets/Editor/NewAssetBundleBuildPreset.asset";
     }
 }
