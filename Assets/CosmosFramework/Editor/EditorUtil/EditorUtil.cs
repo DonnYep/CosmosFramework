@@ -203,10 +203,11 @@ namespace Cosmos.Editor
         public static T CreateScriptableObject<T>(string path, HideFlags hideFlags = HideFlags.None) where T : ScriptableObject
         {
             var dir = Path.GetDirectoryName(path);
-            dir = Utility.IO.GetRegularPath(dir).Replace("Assets/", "");
+            dir = Utility.IO.GetRegularPath(dir);
+            var folderName = dir.Replace("Assets/", "");
             var isValid = AssetDatabase.IsValidFolder(dir);
             if (!isValid)
-                AssetDatabase.CreateFolder("Assets", dir);
+                AssetDatabase.CreateFolder("Assets", folderName);
             var so = ScriptableObject.CreateInstance<T>();
             so.hideFlags = hideFlags;
             AssetDatabase.CreateAsset(so, path);

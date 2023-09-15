@@ -17,5 +17,9 @@ namespace Cosmos.Editor.Resource
             }
             set { assetBundleSettingsData = value; }
         }
+        public void Reset()
+        {
+            assetBundleSettingsData = new AssetBundleBuildPresetData();
+        }
     }
 }

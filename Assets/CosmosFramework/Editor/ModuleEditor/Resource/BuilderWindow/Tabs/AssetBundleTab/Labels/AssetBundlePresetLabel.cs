@@ -40,7 +40,19 @@ namespace Cosmos.Editor.Resource
                 buildSettings = (AssetBundleBuildPreset)EditorGUILayout.ObjectField("Build preset", buildSettings, typeof(AssetBundleBuildPreset), false);
                 if (GUILayout.Button(createAddNewIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.TEXTURE_ICON_WIDTH)))
                 {
-                    buildSettings = EditorUtil.CreateScriptableObject<AssetBundleBuildPreset>("Assets/Editor/NewAssetBundleBuildPreset.asset", HideFlags.NotEditable);
+                    var previousePreset = AssetDatabase.LoadAssetAtPath<AssetBundleBuildPreset>(ResourceBuilderWindowConstant.RESOURCE_NEW_BUILD_PRESET_PATH);
+                    if (previousePreset != null)
+                    {
+                        var canCreate = UnityEditor.EditorUtility.DisplayDialog("AssetBundleBuildPreset already exist", $"Path {ResourceBuilderWindowConstant.RESOURCE_NEW_BUILD_PRESET_PATH} exists.Whether to continue to create and overwrite this file ?", "Create", "Cancel");
+                        if (canCreate)
+                        {
+                            buildSettings = EditorUtil.CreateScriptableObject<AssetBundleBuildPreset>(ResourceBuilderWindowConstant.RESOURCE_NEW_BUILD_PRESET_PATH, HideFlags.NotEditable);
+                        }
+                    }
+                    else
+                    {
+                        buildSettings = EditorUtil.CreateScriptableObject<AssetBundleBuildPreset>(ResourceBuilderWindowConstant.RESOURCE_NEW_BUILD_PRESET_PATH, HideFlags.NotEditable);
+                    }
                 }
                 if (GUILayout.Button(saveActiveIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.TEXTURE_ICON_WIDTH)))
                 {
