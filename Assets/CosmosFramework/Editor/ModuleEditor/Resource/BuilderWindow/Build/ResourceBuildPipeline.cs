@@ -44,27 +44,27 @@ namespace Cosmos.Editor.Resource
         public static void BuildAssetBundle(BuildTarget buildTarget, bool nameByHash = true)
         {
             dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceDatasetPath);
-            var settingsData = new AssetBundleBuildPresetData();
+            var presetData = new AssetBundleBuildPresetData();
             BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
             options |= BuildAssetBundleOptions.ChunkBasedCompression;
             if (nameByHash)
-                settingsData.AssetBundleNameType = AssetBundleNameType.HashInstead;
+                presetData.AssetBundleNameType = AssetBundleNameType.HashInstead;
             else
-                settingsData.AssetBundleNameType = AssetBundleNameType.DefaultName;
+                presetData.AssetBundleNameType = AssetBundleNameType.DefaultName;
             var buildParams = new ResourceBuildParams()
             {
-                AssetBundleBuildPath = settingsData.AssetBundleBuildPath,
-                AssetBundleEncryption = settingsData.AssetBundleEncryption,
-                AssetBundleOffsetValue = settingsData.AssetBundleOffsetValue,
+                AssetBundleBuildPath = presetData.AssetBundleBuildPath,
+                AssetBundleEncryption = presetData.AssetBundleEncryption,
+                AssetBundleOffsetValue = presetData.AssetBundleOffsetValue,
                 BuildAssetBundleOptions = options,
-                AssetBundleNameType = settingsData.AssetBundleNameType,
-                EncryptManifest = settingsData.EncryptManifest,
-                ManifestEncryptionKey = settingsData.ManifestEncryptionKey,
+                AssetBundleNameType = presetData.AssetBundleNameType,
+                EncryptManifest = presetData.EncryptManifest,
+                ManifestEncryptionKey = presetData.ManifestEncryptionKey,
                 BuildTarget = buildTarget,
-                BuildVersion = $"{settingsData.BuildVersion}_{settingsData.InternalBuildVersion}",
-                CopyToStreamingAssets = settingsData.CopyToStreamingAssets,
-                UseStreamingAssetsRelativePath = settingsData.UseStreamingAssetsRelativePath,
-                StreamingAssetsRelativePath = settingsData.StreamingAssetsRelativePath,
+                BuildVersion = $"{presetData.BuildVersion}_{presetData.InternalBuildVersion}",
+                CopyToStreamingAssets = presetData.CopyToStreamingAssets,
+                UseStreamingAssetsRelativePath = presetData.UseStreamingAssetsRelativePath,
+                StreamingAssetsRelativePath = presetData.StreamingAssetsRelativePath,
                 ClearStreamingAssetsDestinationPath = true
             };
             ResourceBuildController.BuildAssetBundle(dataset, buildParams);

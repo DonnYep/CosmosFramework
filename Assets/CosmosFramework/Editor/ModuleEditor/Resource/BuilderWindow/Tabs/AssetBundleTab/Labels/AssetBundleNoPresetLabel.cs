@@ -18,7 +18,7 @@ namespace Cosmos.Editor.Resource
 
         string[] buildHandlers;
         public const string LabelDataName = "ResourceBuilderWindow_AsseBundleTabNoSettingsLabelData.json";
-        AssetBundleBuildPresetData settingsData;
+        AssetBundleBuildPresetData presetData;
 
         public void OnEnable(AssetBundleTab parent, string[] buildHandlers)
         {
@@ -49,28 +49,28 @@ namespace Cosmos.Editor.Resource
         }
         public ResourceBuildParams GetBuildParams()
         {
-            var buildAssetBundleOptions = ResourceEditorUtility.Builder.GetBuildAssetBundleOptions(settingsData.AssetBundleCompressType, settingsData.DisableWriteTypeTree,
-                settingsData.DeterministicAssetBundle, settingsData.ForceRebuildAssetBundle, settingsData.IgnoreTypeTreeChanges);
+            var buildAssetBundleOptions = ResourceEditorUtility.Builder.GetBuildAssetBundleOptions(presetData.AssetBundleCompressType, presetData.DisableWriteTypeTree,
+                presetData.DeterministicAssetBundle, presetData.ForceRebuildAssetBundle, presetData.IgnoreTypeTreeChanges);
             var buildParams = new ResourceBuildParams()
             {
-                AssetBundleBuildPath = settingsData.AssetBundleBuildPath,
-                AssetBundleEncryption = settingsData.AssetBundleEncryption,
-                AssetBundleOffsetValue = settingsData.AssetBundleOffsetValue,
+                AssetBundleBuildPath = presetData.AssetBundleBuildPath,
+                AssetBundleEncryption = presetData.AssetBundleEncryption,
+                AssetBundleOffsetValue = presetData.AssetBundleOffsetValue,
                 BuildAssetBundleOptions = buildAssetBundleOptions,
-                AssetBundleNameType = settingsData.AssetBundleNameType,
-                EncryptManifest = settingsData.EncryptManifest,
-                ManifestEncryptionKey = settingsData.ManifestEncryptionKey,
-                BuildTarget = settingsData.BuildTarget,
-                ResourceBuildType = settingsData.ResourceBuildType,
-                BuildVersion = settingsData.BuildVersion,
-                InternalBuildVersion = settingsData.InternalBuildVersion,
-                CopyToStreamingAssets = settingsData.CopyToStreamingAssets,
-                UseStreamingAssetsRelativePath = settingsData.UseStreamingAssetsRelativePath,
-                StreamingAssetsRelativePath = settingsData.StreamingAssetsRelativePath,
-                AssetBundleBuildDirectory = settingsData.AssetBundleBuildDirectory,
-                ClearStreamingAssetsDestinationPath = settingsData.ClearStreamingAssetsDestinationPath,
-                ForceRemoveAllAssetBundleNames = settingsData.ForceRemoveAllAssetBundleNames,
-                BuildHandlerName = settingsData.BuildHandlerName
+                AssetBundleNameType = presetData.AssetBundleNameType,
+                EncryptManifest = presetData.EncryptManifest,
+                ManifestEncryptionKey = presetData.ManifestEncryptionKey,
+                BuildTarget = presetData.BuildTarget,
+                ResourceBuildType = presetData.ResourceBuildType,
+                BuildVersion = presetData.BuildVersion,
+                InternalBuildVersion = presetData.InternalBuildVersion,
+                CopyToStreamingAssets = presetData.CopyToStreamingAssets,
+                UseStreamingAssetsRelativePath = presetData.UseStreamingAssetsRelativePath,
+                StreamingAssetsRelativePath = presetData.StreamingAssetsRelativePath,
+                AssetBundleBuildDirectory = presetData.AssetBundleBuildDirectory,
+                ClearStreamingAssetsDestinationPath = presetData.ClearStreamingAssetsDestinationPath,
+                ForceRemoveAllAssetBundleNames = presetData.ForceRemoveAllAssetBundleNames,
+                BuildHandlerName = presetData.BuildHandlerName
             };
             return buildParams;
         }
@@ -78,30 +78,30 @@ namespace Cosmos.Editor.Resource
         {
             try
             {
-                settingsData = EditorUtil.GetData<AssetBundleBuildPresetData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName);
+                presetData = EditorUtil.GetData<AssetBundleBuildPresetData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName);
                 var buildHandlerMaxIndex = buildHandlers.Length - 1;
-                if (settingsData.BuildHandlerIndex > buildHandlerMaxIndex)
+                if (presetData.BuildHandlerIndex > buildHandlerMaxIndex)
                 {
-                    settingsData.BuildHandlerIndex = buildHandlerMaxIndex;
+                    presetData.BuildHandlerIndex = buildHandlerMaxIndex;
                 }
             }
             catch
             {
-                settingsData = new AssetBundleBuildPresetData();
-                EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, settingsData);
+                presetData = new AssetBundleBuildPresetData();
+                EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, presetData);
             }
         }
         void SaveTabData()
         {
-            EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, settingsData);
+            EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, presetData);
         }
         void DrawPrebuildOptions()
         {
             EditorGUILayout.LabelField("Prebuild Options", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical();
             {
-                settingsData.ForceRemoveAllAssetBundleNames = EditorGUILayout.ToggleLeft("Force remove all assetBundle names", settingsData.ForceRemoveAllAssetBundleNames);
-                if (settingsData.ForceRemoveAllAssetBundleNames)
+                presetData.ForceRemoveAllAssetBundleNames = EditorGUILayout.ToggleLeft("Force remove all assetBundle names", presetData.ForceRemoveAllAssetBundleNames);
+                if (presetData.ForceRemoveAllAssetBundleNames)
                 {
                     EditorGUILayout.HelpBox("This operation will force remove all assetBundle names in this project", MessageType.Warning);
                 }
@@ -113,29 +113,29 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.LabelField("Build Options", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical();
             {
-                settingsData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("Build target", settingsData.BuildTarget);
-                settingsData.AssetBundleCompressType = (AssetBundleCompressType)EditorGUILayout.EnumPopup("Build compression type", settingsData.AssetBundleCompressType);
+                presetData.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("Build target", presetData.BuildTarget);
+                presetData.AssetBundleCompressType = (AssetBundleCompressType)EditorGUILayout.EnumPopup("Build compression type", presetData.AssetBundleCompressType);
 
-                settingsData.BuildHandlerIndex = EditorGUILayout.Popup("Build handler", settingsData.BuildHandlerIndex, buildHandlers);
-                if (settingsData.BuildHandlerIndex < buildHandlers.Length)
+                presetData.BuildHandlerIndex = EditorGUILayout.Popup("Build handler", presetData.BuildHandlerIndex, buildHandlers);
+                if (presetData.BuildHandlerIndex < buildHandlers.Length)
                 {
-                    settingsData.BuildHandlerName = buildHandlers[settingsData.BuildHandlerIndex];
+                    presetData.BuildHandlerName = buildHandlers[presetData.BuildHandlerIndex];
                 }
 
-                settingsData.ResourceBuildType = (ResourceBuildType)EditorGUILayout.EnumPopup("Build type", settingsData.ResourceBuildType);
+                presetData.ResourceBuildType = (ResourceBuildType)EditorGUILayout.EnumPopup("Build type", presetData.ResourceBuildType);
 
-                settingsData.ForceRebuildAssetBundle = EditorGUILayout.ToggleLeft("Force rebuild assetBundle", settingsData.ForceRebuildAssetBundle);
-                settingsData.DisableWriteTypeTree = EditorGUILayout.ToggleLeft("Disable write type tree", settingsData.DisableWriteTypeTree);
-                if (settingsData.DisableWriteTypeTree)
-                    settingsData.IgnoreTypeTreeChanges = false;
+                presetData.ForceRebuildAssetBundle = EditorGUILayout.ToggleLeft("Force rebuild assetBundle", presetData.ForceRebuildAssetBundle);
+                presetData.DisableWriteTypeTree = EditorGUILayout.ToggleLeft("Disable write type tree", presetData.DisableWriteTypeTree);
+                if (presetData.DisableWriteTypeTree)
+                    presetData.IgnoreTypeTreeChanges = false;
 
-                settingsData.DeterministicAssetBundle = EditorGUILayout.ToggleLeft("Deterministic assetBundle", settingsData.DeterministicAssetBundle);
-                settingsData.IgnoreTypeTreeChanges = EditorGUILayout.ToggleLeft("Ignore type tree changes", settingsData.IgnoreTypeTreeChanges);
-                if (settingsData.IgnoreTypeTreeChanges)
-                    settingsData.DisableWriteTypeTree = false;
+                presetData.DeterministicAssetBundle = EditorGUILayout.ToggleLeft("Deterministic assetBundle", presetData.DeterministicAssetBundle);
+                presetData.IgnoreTypeTreeChanges = EditorGUILayout.ToggleLeft("Ignore type tree changes", presetData.IgnoreTypeTreeChanges);
+                if (presetData.IgnoreTypeTreeChanges)
+                    presetData.DisableWriteTypeTree = false;
 
                 //打包输出的资源加密，如buildInfo，assetbundle 文件名加密
-                settingsData.AssetBundleNameType = (AssetBundleNameType)EditorGUILayout.EnumPopup("Build bundle name type ", settingsData.AssetBundleNameType);
+                presetData.AssetBundleNameType = (AssetBundleNameType)EditorGUILayout.EnumPopup("Build bundle name type ", presetData.AssetBundleNameType);
 
             }
             EditorGUILayout.EndVertical();
@@ -145,41 +145,41 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.LabelField("Path Options", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical();
             {
-                settingsData.BuildVersion = EditorGUILayout.TextField("Build version", settingsData.BuildVersion);
+                presetData.BuildVersion = EditorGUILayout.TextField("Build version", presetData.BuildVersion);
 
-                if (settingsData.ResourceBuildType == ResourceBuildType.Full)
+                if (presetData.ResourceBuildType == ResourceBuildType.Full)
                 {
-                    settingsData.InternalBuildVersion = EditorGUILayout.IntField("Internal build version", settingsData.InternalBuildVersion);
-                    if (settingsData.InternalBuildVersion < 0)
-                        settingsData.InternalBuildVersion = 0;
+                    presetData.InternalBuildVersion = EditorGUILayout.IntField("Internal build version", presetData.InternalBuildVersion);
+                    if (presetData.InternalBuildVersion < 0)
+                        presetData.InternalBuildVersion = 0;
                 }
 
                 EditorGUILayout.BeginHorizontal();
                 {
-                    settingsData.BuildPath = EditorGUILayout.TextField("Build path", settingsData.BuildPath.Trim());
+                    presetData.BuildPath = EditorGUILayout.TextField("Build path", presetData.BuildPath.Trim());
                     if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
                     {
-                        var newPath = EditorUtility.OpenFolderPanel("Bundle output path", settingsData.BuildPath, string.Empty);
+                        var newPath = EditorUtility.OpenFolderPanel("Bundle output path", presetData.BuildPath, string.Empty);
                         if (!string.IsNullOrEmpty(newPath))
                         {
-                            settingsData.BuildPath = newPath.Replace("\\", "/");
+                            presetData.BuildPath = newPath.Replace("\\", "/");
                         }
                     }
                 }
                 EditorGUILayout.EndHorizontal();
-                settingsData.AssetBundleBuildDirectory = Utility.IO.RegularPathCombine(settingsData.BuildPath, settingsData.BuildVersion, settingsData.BuildTarget.ToString());
-                if (!string.IsNullOrEmpty(settingsData.BuildVersion))
+                presetData.AssetBundleBuildDirectory = Utility.IO.RegularPathCombine(presetData.BuildPath, presetData.BuildVersion, presetData.BuildTarget.ToString());
+                if (!string.IsNullOrEmpty(presetData.BuildVersion))
                 {
-                    var assetBundleBuildPath = Utility.IO.RegularPathCombine(settingsData.BuildPath, settingsData.BuildVersion, settingsData.BuildTarget.ToString(), $"{settingsData.BuildVersion}");
-                    if (settingsData.ResourceBuildType == ResourceBuildType.Full)
+                    var assetBundleBuildPath = Utility.IO.RegularPathCombine(presetData.BuildPath, presetData.BuildVersion, presetData.BuildTarget.ToString(), $"{presetData.BuildVersion}");
+                    if (presetData.ResourceBuildType == ResourceBuildType.Full)
                     {
-                        assetBundleBuildPath += $"_{settingsData.InternalBuildVersion}";
+                        assetBundleBuildPath += $"_{presetData.InternalBuildVersion}";
                     }
-                    settingsData.AssetBundleBuildPath = assetBundleBuildPath;
+                    presetData.AssetBundleBuildPath = assetBundleBuildPath;
                 }
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
-                EditorGUILayout.LabelField("Bundle build path", settingsData.AssetBundleBuildPath);
+                EditorGUILayout.LabelField("Bundle build path", presetData.AssetBundleBuildPath);
             }
             EditorGUILayout.EndVertical();
         }
@@ -188,11 +188,11 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.LabelField("Encryption Options", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical();
             {
-                settingsData.EncryptManifest = EditorGUILayout.ToggleLeft("Build info encryption", settingsData.EncryptManifest);
-                if (settingsData.EncryptManifest)
+                presetData.EncryptManifest = EditorGUILayout.ToggleLeft("Build info encryption", presetData.EncryptManifest);
+                if (presetData.EncryptManifest)
                 {
-                    settingsData.ManifestEncryptionKey = EditorGUILayout.TextField("Build info encryption key", settingsData.ManifestEncryptionKey);
-                    var aesKeyStr = settingsData.ManifestEncryptionKey;
+                    presetData.ManifestEncryptionKey = EditorGUILayout.TextField("Build info encryption key", presetData.ManifestEncryptionKey);
+                    var aesKeyStr = presetData.ManifestEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
                     EditorGUILayout.LabelField($"Assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");
                     if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32 && aesKeyLength != 0)
@@ -209,13 +209,13 @@ namespace Cosmos.Editor.Resource
                 }
                 else
                     isAesKeyInvalid = true;
-                settingsData.AssetBundleEncryption = EditorGUILayout.ToggleLeft("AssetBundle encryption", settingsData.AssetBundleEncryption);
-                if (settingsData.AssetBundleEncryption)
+                presetData.AssetBundleEncryption = EditorGUILayout.ToggleLeft("AssetBundle encryption", presetData.AssetBundleEncryption);
+                if (presetData.AssetBundleEncryption)
                 {
                     EditorGUILayout.LabelField("AssetBundle encryption offset");
-                    settingsData.AssetBundleOffsetValue = EditorGUILayout.IntField("Encryption offset", settingsData.AssetBundleOffsetValue);
-                    if (settingsData.AssetBundleOffsetValue < 0)
-                        settingsData.AssetBundleOffsetValue = 0;
+                    presetData.AssetBundleOffsetValue = EditorGUILayout.IntField("Encryption offset", presetData.AssetBundleOffsetValue);
+                    if (presetData.AssetBundleOffsetValue < 0)
+                        presetData.AssetBundleOffsetValue = 0;
                 }
             }
             EditorGUILayout.EndVertical();
@@ -225,17 +225,17 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.LabelField("Build Done Options", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical();
             {
-                settingsData.CopyToStreamingAssets = EditorGUILayout.ToggleLeft("Copy to streaming assets", settingsData.CopyToStreamingAssets);
-                if (settingsData.CopyToStreamingAssets)
+                presetData.CopyToStreamingAssets = EditorGUILayout.ToggleLeft("Copy to streaming assets", presetData.CopyToStreamingAssets);
+                if (presetData.CopyToStreamingAssets)
                 {
-                    settingsData.ClearStreamingAssetsDestinationPath = EditorGUILayout.ToggleLeft("Clear streaming assets destination path", settingsData.ClearStreamingAssetsDestinationPath);
-                    settingsData.UseStreamingAssetsRelativePath = EditorGUILayout.ToggleLeft("Use streaming assets relative path", settingsData.UseStreamingAssetsRelativePath);
+                    presetData.ClearStreamingAssetsDestinationPath = EditorGUILayout.ToggleLeft("Clear streaming assets destination path", presetData.ClearStreamingAssetsDestinationPath);
+                    presetData.UseStreamingAssetsRelativePath = EditorGUILayout.ToggleLeft("Use streaming assets relative path", presetData.UseStreamingAssetsRelativePath);
                     string destinationPath = string.Empty;
-                    if (settingsData.UseStreamingAssetsRelativePath)
+                    if (presetData.UseStreamingAssetsRelativePath)
                     {
                         EditorGUILayout.LabelField("StreamingAssets  relative path");
-                        settingsData.StreamingAssetsRelativePath = EditorGUILayout.TextField("Relative path", settingsData.StreamingAssetsRelativePath);
-                        destinationPath = Utility.IO.RegularPathCombine(Application.streamingAssetsPath, settingsData.StreamingAssetsRelativePath);
+                        presetData.StreamingAssetsRelativePath = EditorGUILayout.TextField("Relative path", presetData.StreamingAssetsRelativePath);
+                        destinationPath = Utility.IO.RegularPathCombine(Application.streamingAssetsPath, presetData.StreamingAssetsRelativePath);
                     }
                     else
                     {

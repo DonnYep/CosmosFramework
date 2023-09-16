@@ -5,6 +5,6 @@ namespace Cosmos.Editor.Resource
     [Serializable]
     public class AssetBundlePresetLabelData
     {
-        public string SettingsPresetPath;
+        public string PresetPath;
     }
 }

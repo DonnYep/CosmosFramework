@@ -6,20 +6,20 @@ namespace Cosmos.Editor.Resource
         /// <summary>
         /// 打包数据
         /// </summary>
-        [SerializeField] AssetBundleBuildPresetData assetBundleSettingsData;
-        public AssetBundleBuildPresetData AssetBundleSettingsData
+        [SerializeField] AssetBundleBuildPresetData assetBundleBuildPresetData;
+        public AssetBundleBuildPresetData AssetBundleBuildPresetData
         {
             get
             {
-                if (assetBundleSettingsData == null)
-                    assetBundleSettingsData = new AssetBundleBuildPresetData();
-                return assetBundleSettingsData;
+                if (assetBundleBuildPresetData == null)
+                    assetBundleBuildPresetData = new AssetBundleBuildPresetData();
+                return assetBundleBuildPresetData;
             }
-            set { assetBundleSettingsData = value; }
+            set { assetBundleBuildPresetData = value; }
         }
         public void Reset()
         {
-            assetBundleSettingsData = new AssetBundleBuildPresetData();
+            assetBundleBuildPresetData = new AssetBundleBuildPresetData();
         }
     }
 }

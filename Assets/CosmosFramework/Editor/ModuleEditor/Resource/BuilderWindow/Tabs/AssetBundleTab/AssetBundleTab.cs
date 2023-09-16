@@ -24,7 +24,7 @@ namespace Cosmos.Editor.Resource
         public override void OnEnable()
         {
             GetTabData();
-            GetBuildHandlers();
+            buildHandlers = EditorUtil.GetDerivedTypeHandlers<IResourceBuildHandler>();
             noPresetLabel.OnEnable(this, buildHandlers);
             presetLabel.OnEnable(this, buildHandlers);
         }
@@ -110,13 +110,6 @@ namespace Cosmos.Editor.Resource
         void SaveTabData()
         {
             EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetBundleTabDataName, tabData);
-        }
-        void GetBuildHandlers()
-        {
-            var srcBuildHandlers = Utility.Assembly.GetDerivedTypeNames<IResourceBuildHandler>();
-            buildHandlers = new string[srcBuildHandlers.Length + 1];
-            buildHandlers[0] = Constants.NONE;
-            Array.Copy(srcBuildHandlers, 0, buildHandlers, 1, srcBuildHandlers.Length);
         }
         IEnumerator BuildAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset)
         {

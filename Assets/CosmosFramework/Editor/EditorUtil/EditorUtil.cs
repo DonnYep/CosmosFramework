@@ -234,5 +234,14 @@ namespace Cosmos.Editor
 #endif
             AssetDatabase.Refresh();
         }
+        public static string[] GetDerivedTypeHandlers<T>()
+            where T : class
+        {
+            var srcBuildHandlers = Utility.Assembly.GetDerivedTypeNames<T>();
+            var buildHandlers = new string[srcBuildHandlers.Length + 1];
+            buildHandlers[0] = Constants.NONE;
+            Array.Copy(srcBuildHandlers, 0, buildHandlers, 1, srcBuildHandlers.Length);
+            return buildHandlers;
+        }
     }
 }
