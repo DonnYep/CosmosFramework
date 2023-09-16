@@ -44,7 +44,7 @@ namespace Cosmos.Editor.Resource
         public static void BuildAssetBundle(BuildTarget buildTarget, bool nameByHash = true)
         {
             dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceDatasetPath);
-            var presetData = new AssetBundleBuildPresetData();
+            var presetData = new AssetBundleBuildProfileData();
             BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
             options |= BuildAssetBundleOptions.ChunkBasedCompression;
             if (nameByHash)
