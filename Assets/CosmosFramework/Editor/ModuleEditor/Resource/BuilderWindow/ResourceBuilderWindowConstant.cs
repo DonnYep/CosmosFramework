@@ -38,6 +38,6 @@
         /// <summary>
         /// AssetBundle构建预设地址
         /// </summary>
-        public const string RESOURCE_NEW_BUILD_PRESET_PATH = "Assets/Editor/NewAssetBundleBuildPreset.asset";
+        public const string RESOURCE_NEW_BUILD_PRESET_PATH = "Assets/Editor/NewAssetBundleBuildProfile.asset";
     }
 }

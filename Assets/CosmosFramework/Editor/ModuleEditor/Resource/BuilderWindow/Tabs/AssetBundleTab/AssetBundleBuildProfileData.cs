@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Cosmos.Editor.Resource
 {
     [Serializable]
-    public class AssetBundleBuildPresetData
+    public class AssetBundleBuildProfileData
     {
         /// <summary>
         /// AB打包到的平台
@@ -102,7 +102,7 @@ namespace Cosmos.Editor.Resource
         /// 清空拷贝到的StreamingAssets路径
         /// </summary>
         public bool ClearStreamingAssetsDestinationPath;
-        public AssetBundleBuildPresetData()
+        public AssetBundleBuildProfileData()
         {
             AssetBundleCompressType = AssetBundleCompressType.ChunkBasedCompression_LZ4;
             BuildTarget = BuildTarget.StandaloneWindows;

@@ -15,8 +15,8 @@ namespace Cosmos.Editor.Resource
         AssetBundleTabData tabData;
         Vector2 scrollPosition;
         string[] buildHandlers;
-        AssetBundleNoPresetLabel noPresetLabel = new AssetBundleNoPresetLabel();
-        AssetBundlePresetLabel presetLabel = new AssetBundlePresetLabel();
+        AssetBundleNoProfileLabel noProfileLabel = new AssetBundleNoProfileLabel();
+        AssetBundleProfileLabel profileLabel = new AssetBundleProfileLabel();
         public AssetBundleTab(EditorWindow parentWindow) : base(parentWindow)
         {
         }
@@ -25,27 +25,27 @@ namespace Cosmos.Editor.Resource
         {
             GetTabData();
             buildHandlers = EditorUtil.GetDerivedTypeHandlers<IResourceBuildHandler>();
-            noPresetLabel.OnEnable(this, buildHandlers);
-            presetLabel.OnEnable(this, buildHandlers);
+            noProfileLabel.OnEnable(this, buildHandlers);
+            profileLabel.OnEnable(this, buildHandlers);
         }
         public override void OnDisable()
         {
             SaveTabData();
-            noPresetLabel.OnDisable();
-            presetLabel.OnDisable();
+            noProfileLabel.OnDisable();
+            profileLabel.OnDisable();
         }
         public override void OnGUI(Rect rect)
         {
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            EditorGUILayout.LabelField("Build Preset Options", EditorStyles.boldLabel);
-            tabData.UseBuildPreset = EditorGUILayout.ToggleLeft("Use build preset", tabData.UseBuildPreset);
-            if (tabData.UseBuildPreset)
+            EditorGUILayout.LabelField("Build Profile Options", EditorStyles.boldLabel);
+            tabData.UseBuildProfile = EditorGUILayout.ToggleLeft("Use build profile", tabData.UseBuildProfile);
+            if (tabData.UseBuildProfile)
             {
-                presetLabel.OnGUI(rect);
+                profileLabel.OnGUI(rect);
             }
             else
             {
-                noPresetLabel.OnGUI(rect);
+                noProfileLabel.OnGUI(rect);
             }
             GUILayout.Space(16);
             DrawBuildButton();
@@ -66,15 +66,20 @@ namespace Cosmos.Editor.Resource
 
                     ResourceBuildParams buildParams = default;
                     bool isAesKeyInvalid = false;
-                    if (tabData.UseBuildPreset)
+                    if (tabData.UseBuildProfile)
                     {
-                        buildParams = presetLabel.GetBuildParams();
-                        isAesKeyInvalid = presetLabel.IsAesKeyInvalid;
+                        if (!profileLabel.HasProfile)
+                        {
+                            EditorUtil.Debug.LogError("AssetBundleBuildProfile is invalid !");
+                            return;
+                        }
+                        buildParams = profileLabel.GetBuildParams();
+                        isAesKeyInvalid = profileLabel.IsAesKeyInvalid;
                     }
                     else
                     {
-                        buildParams = noPresetLabel.GetBuildParams();
-                        isAesKeyInvalid = noPresetLabel.IsAesKeyInvalid;
+                        buildParams = noProfileLabel.GetBuildParams();
+                        isAesKeyInvalid = noProfileLabel.IsAesKeyInvalid;
                     }
 
                     if (!isAesKeyInvalid)

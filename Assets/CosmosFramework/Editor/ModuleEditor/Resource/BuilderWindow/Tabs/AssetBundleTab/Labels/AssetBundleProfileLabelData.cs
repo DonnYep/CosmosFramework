@@ -3,8 +3,8 @@
 namespace Cosmos.Editor.Resource
 {
     [Serializable]
-    public class AssetBundlePresetLabelData
+    public class AssetBundleProfileLabelData
     {
-        public string PresetPath;
+        public string ProfilePath;
     }
 }
