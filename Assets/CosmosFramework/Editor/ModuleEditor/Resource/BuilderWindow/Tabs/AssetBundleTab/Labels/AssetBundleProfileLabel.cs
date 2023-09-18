@@ -83,9 +83,9 @@ namespace Cosmos.Editor.Resource
         {
             SaveTabData();
         }
-        public void Clear()
+        public void Reset()
         {
-
+            buildProfile?.Reset();
         }
         public ResourceBuildParams GetBuildParams()
         {
