@@ -43,9 +43,9 @@ namespace Cosmos.Editor.Resource
         {
             SaveTabData();
         }
-        public void Clear()
+        public void Reset()
         {
-
+            profileData = new AssetBundleBuildProfileData();
         }
         public ResourceBuildParams GetBuildParams()
         {

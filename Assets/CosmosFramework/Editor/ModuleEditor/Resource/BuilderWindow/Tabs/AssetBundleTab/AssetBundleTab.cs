@@ -94,7 +94,10 @@ namespace Cosmos.Editor.Resource
                 }
                 if (GUILayout.Button("Reset options", GUILayout.MaxWidth(buttonWidth)))
                 {
-                    tabData = new AssetBundleTabData();
+                    if (tabData.UseBuildProfile)
+                        profileLabel.Reset();
+                    else
+                        noProfileLabel.Reset();
                     ParentWindow.Repaint();
                 }
             }
