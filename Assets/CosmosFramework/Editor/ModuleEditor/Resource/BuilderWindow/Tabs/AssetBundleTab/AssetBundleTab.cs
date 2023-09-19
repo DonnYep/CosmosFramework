@@ -13,6 +13,10 @@ namespace Cosmos.Editor.Resource
         public Func<Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine> BuildDataset;
         public const string AssetBundleTabDataName = "ResourceBuilderWindow_AsseBundleTabData.json";
         AssetBundleTabData tabData;
+        public AssetBundleTabData TabData
+        {
+            get { return tabData; }
+        }
         Vector2 scrollPosition;
         string[] buildHandlers;
         AssetBundleNoProfileLabel noProfileLabel = new AssetBundleNoProfileLabel();
@@ -30,9 +34,9 @@ namespace Cosmos.Editor.Resource
         }
         public override void OnDisable()
         {
-            SaveTabData();
             noProfileLabel.OnDisable();
             profileLabel.OnDisable();
+            SaveTabData();
         }
         public override void OnGUI(Rect rect)
         {

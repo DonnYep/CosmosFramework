@@ -22,9 +22,6 @@ namespace Cosmos.Editor.Resource
         string[] buildHandlers;
         AssetBundleBuildProfile buildProfile;
 
-        AssetBundleProfileLabelData labelData;
-        public const string LabelDataName = "ResourceBuilderWindow_AsseBundleTabProfileLabelData.json";
-
         Texture2D createAddNewIcon;
         Texture2D saveActiveIcon;
 
@@ -118,18 +115,10 @@ namespace Cosmos.Editor.Resource
         }
         void GetTabData()
         {
-            try
+            var profilePath = parent.TabData.ProfilePath;
+            if (!string.IsNullOrEmpty(profilePath))
             {
-                labelData = EditorUtil.GetData<AssetBundleProfileLabelData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName);
-            }
-            catch
-            {
-                labelData = new AssetBundleProfileLabelData();
-                EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, labelData);
-            }
-            if (!string.IsNullOrEmpty(labelData.ProfilePath))
-            {
-                buildProfile = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(labelData.ProfilePath);
+                buildProfile = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(profilePath);
                 if (buildProfile != null)
                 {
                     var buildHandlerMaxIndex = buildHandlers.Length - 1;
@@ -142,8 +131,7 @@ namespace Cosmos.Editor.Resource
         }
         void SaveTabData()
         {
-            labelData.ProfilePath = AssetDatabase.GetAssetPath(buildProfile);
-            EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, labelData);
+            parent.TabData.ProfilePath = AssetDatabase.GetAssetPath(buildProfile);
             EditorUtil.SaveScriptableObject(buildProfile);
         }
         void DrawPrebuildOptions()
