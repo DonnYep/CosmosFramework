@@ -76,5 +76,13 @@ namespace Cosmos.Resource
             }
             return key;
         }
+        public static bool CheckManifestKeyValidable(string aesKey)
+        {
+            var aesKeyLength = Encoding.UTF8.GetBytes(aesKey).Length;
+            if (aesKeyLength != 0 && aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32)
+                return false;
+            else
+                return true;
+        }
     }
 }
