@@ -30,7 +30,7 @@ namespace Cosmos.Editor.Resource
         {
             this.parent = parent;
             this.buildHandlers = buildHandlers;
-            GetTabData();
+            GetLabelData();
             createAddNewIcon = ResourceEditorUtility.GetCreateAddNewIcon();
             saveActiveIcon = ResourceEditorUtility.GetSaveActiveIcon();
         }
@@ -79,7 +79,7 @@ namespace Cosmos.Editor.Resource
         }
         public void OnDisable()
         {
-            SaveTabData();
+            SaveLabelData();
         }
         public void Reset()
         {
@@ -91,7 +91,7 @@ namespace Cosmos.Editor.Resource
                 return new ResourceBuildParams();
             return buildProfile.GetBuildParams();
         }
-        void GetTabData()
+        void GetLabelData()
         {
             var profilePath = parent.TabData.ProfilePath;
             if (!string.IsNullOrEmpty(profilePath))
@@ -107,7 +107,7 @@ namespace Cosmos.Editor.Resource
                 }
             }
         }
-        void SaveTabData()
+        void SaveLabelData()
         {
             parent.TabData.ProfilePath = AssetDatabase.GetAssetPath(buildProfile);
             EditorUtil.SaveScriptableObject(buildProfile);

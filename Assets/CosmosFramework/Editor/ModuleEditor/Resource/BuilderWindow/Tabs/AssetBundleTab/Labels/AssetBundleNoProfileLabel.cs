@@ -25,7 +25,7 @@ namespace Cosmos.Editor.Resource
         {
             this.parent = parent;
             this.buildHandlers = buildHandlers;
-            GetTabData();
+            GetLabelData();
         }
         public void OnGUI(Rect rect)
         {
@@ -42,7 +42,7 @@ namespace Cosmos.Editor.Resource
         }
         public void OnDisable()
         {
-            SaveTabData();
+            SaveLabelData();
         }
         public void Reset()
         {
@@ -78,7 +78,7 @@ namespace Cosmos.Editor.Resource
             };
             return buildParams;
         }
-        void GetTabData()
+        void GetLabelData()
         {
             try
             {
@@ -95,7 +95,7 @@ namespace Cosmos.Editor.Resource
                 EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, profileData);
             }
         }
-        void SaveTabData()
+        void SaveLabelData()
         {
             EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, profileData);
         }
