@@ -17,6 +17,36 @@ namespace Cosmos.Editor.Resource
             }
             set { assetBundleBuildProfileData = value; }
         }
+        public ResourceBuildParams GetBuildParams()
+        {
+            var buildAssetBundleOptions = ResourceEditorUtility.Builder.GetBuildAssetBundleOptions(AssetBundleBuildProfileData.AssetBundleCompressType,
+                AssetBundleBuildProfileData.DisableWriteTypeTree,
+                AssetBundleBuildProfileData.DeterministicAssetBundle,
+                AssetBundleBuildProfileData.ForceRebuildAssetBundle,
+                AssetBundleBuildProfileData.IgnoreTypeTreeChanges);
+            var buildParams = new ResourceBuildParams()
+            {
+                AssetBundleBuildPath = AssetBundleBuildProfileData.AssetBundleBuildPath,
+                AssetBundleEncryption = AssetBundleBuildProfileData.AssetBundleEncryption,
+                AssetBundleOffsetValue = AssetBundleBuildProfileData.AssetBundleOffsetValue,
+                BuildAssetBundleOptions = buildAssetBundleOptions,
+                AssetBundleNameType = AssetBundleBuildProfileData.AssetBundleNameType,
+                EncryptManifest = AssetBundleBuildProfileData.EncryptManifest,
+                ManifestEncryptionKey = AssetBundleBuildProfileData.ManifestEncryptionKey,
+                BuildTarget = AssetBundleBuildProfileData.BuildTarget,
+                ResourceBuildType = AssetBundleBuildProfileData.ResourceBuildType,
+                BuildVersion = AssetBundleBuildProfileData.BuildVersion,
+                InternalBuildVersion = AssetBundleBuildProfileData.InternalBuildVersion,
+                CopyToStreamingAssets = AssetBundleBuildProfileData.CopyToStreamingAssets,
+                UseStreamingAssetsRelativePath = AssetBundleBuildProfileData.UseStreamingAssetsRelativePath,
+                StreamingAssetsRelativePath = AssetBundleBuildProfileData.StreamingAssetsRelativePath,
+                AssetBundleBuildDirectory = AssetBundleBuildProfileData.AssetBundleBuildDirectory,
+                ClearStreamingAssetsDestinationPath = AssetBundleBuildProfileData.ClearStreamingAssetsDestinationPath,
+                ForceRemoveAllAssetBundleNames = AssetBundleBuildProfileData.ForceRemoveAllAssetBundleNames,
+                BuildHandlerName = AssetBundleBuildProfileData.BuildHandlerName
+            };
+            return buildParams;
+        }
         public void Reset()
         {
             assetBundleBuildProfileData = new AssetBundleBuildProfileData();

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Cosmos.Resource;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace Cosmos.Editor.Resource
         {
             this.parent = parent;
             this.buildHandlers = buildHandlers;
-            GetTabData();
+            GetLabelData();
             createAddNewIcon = ResourceEditorUtility.GetCreateAddNewIcon();
             saveActiveIcon = ResourceEditorUtility.GetSaveActiveIcon();
         }
@@ -78,7 +79,7 @@ namespace Cosmos.Editor.Resource
         }
         public void OnDisable()
         {
-            SaveTabData();
+            SaveLabelData();
         }
         public void Reset()
         {
@@ -88,32 +89,9 @@ namespace Cosmos.Editor.Resource
         {
             if (buildProfile == null)
                 return new ResourceBuildParams();
-            var buildAssetBundleOptions = ResourceEditorUtility.Builder.GetBuildAssetBundleOptions(buildProfile.AssetBundleBuildProfileData.AssetBundleCompressType, buildProfile.AssetBundleBuildProfileData.DisableWriteTypeTree,
-                buildProfile.AssetBundleBuildProfileData.DeterministicAssetBundle, buildProfile.AssetBundleBuildProfileData.ForceRebuildAssetBundle, buildProfile.AssetBundleBuildProfileData.IgnoreTypeTreeChanges);
-            var buildParams = new ResourceBuildParams()
-            {
-                AssetBundleBuildPath = buildProfile.AssetBundleBuildProfileData.AssetBundleBuildPath,
-                AssetBundleEncryption = buildProfile.AssetBundleBuildProfileData.AssetBundleEncryption,
-                AssetBundleOffsetValue = buildProfile.AssetBundleBuildProfileData.AssetBundleOffsetValue,
-                BuildAssetBundleOptions = buildAssetBundleOptions,
-                AssetBundleNameType = buildProfile.AssetBundleBuildProfileData.AssetBundleNameType,
-                EncryptManifest = buildProfile.AssetBundleBuildProfileData.EncryptManifest,
-                ManifestEncryptionKey = buildProfile.AssetBundleBuildProfileData.ManifestEncryptionKey,
-                BuildTarget = buildProfile.AssetBundleBuildProfileData.BuildTarget,
-                ResourceBuildType = buildProfile.AssetBundleBuildProfileData.ResourceBuildType,
-                BuildVersion = buildProfile.AssetBundleBuildProfileData.BuildVersion,
-                InternalBuildVersion = buildProfile.AssetBundleBuildProfileData.InternalBuildVersion,
-                CopyToStreamingAssets = buildProfile.AssetBundleBuildProfileData.CopyToStreamingAssets,
-                UseStreamingAssetsRelativePath = buildProfile.AssetBundleBuildProfileData.UseStreamingAssetsRelativePath,
-                StreamingAssetsRelativePath = buildProfile.AssetBundleBuildProfileData.StreamingAssetsRelativePath,
-                AssetBundleBuildDirectory = buildProfile.AssetBundleBuildProfileData.AssetBundleBuildDirectory,
-                ClearStreamingAssetsDestinationPath = buildProfile.AssetBundleBuildProfileData.ClearStreamingAssetsDestinationPath,
-                ForceRemoveAllAssetBundleNames = buildProfile.AssetBundleBuildProfileData.ForceRemoveAllAssetBundleNames,
-                BuildHandlerName = buildProfile.AssetBundleBuildProfileData.BuildHandlerName
-            };
-            return buildParams;
+            return buildProfile.GetBuildParams();
         }
-        void GetTabData()
+        void GetLabelData()
         {
             var profilePath = parent.TabData.ProfilePath;
             if (!string.IsNullOrEmpty(profilePath))
@@ -129,7 +107,7 @@ namespace Cosmos.Editor.Resource
                 }
             }
         }
-        void SaveTabData()
+        void SaveLabelData()
         {
             parent.TabData.ProfilePath = AssetDatabase.GetAssetPath(buildProfile);
             EditorUtil.SaveScriptableObject(buildProfile);
@@ -234,16 +212,11 @@ namespace Cosmos.Editor.Resource
                     var aesKeyStr = buildProfile.AssetBundleBuildProfileData.ManifestEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
                     EditorGUILayout.LabelField($"Assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");
-                    if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32 && aesKeyLength != 0)
+                    isAesKeyInvalid = ResourceUtility.CheckManifestKeyValidable(aesKeyStr);
+                    if (!isAesKeyInvalid)
                     {
                         EditorGUILayout.HelpBox("Encryption key should be 16,24 or 32 bytes long", MessageType.Error);
-                        isAesKeyInvalid = false;
                     }
-                    else
-                    {
-                        isAesKeyInvalid = true;
-                    }
-
                     GUILayout.Space(16);
                 }
                 else

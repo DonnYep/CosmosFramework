@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Cosmos.Resource;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace Cosmos.Editor.Resource
         {
             this.parent = parent;
             this.buildHandlers = buildHandlers;
-            GetTabData();
+            GetLabelData();
         }
         public void OnGUI(Rect rect)
         {
@@ -41,7 +42,7 @@ namespace Cosmos.Editor.Resource
         }
         public void OnDisable()
         {
-            SaveTabData();
+            SaveLabelData();
         }
         public void Reset()
         {
@@ -49,8 +50,11 @@ namespace Cosmos.Editor.Resource
         }
         public ResourceBuildParams GetBuildParams()
         {
-            var buildAssetBundleOptions = ResourceEditorUtility.Builder.GetBuildAssetBundleOptions(profileData.AssetBundleCompressType, profileData.DisableWriteTypeTree,
-                profileData.DeterministicAssetBundle, profileData.ForceRebuildAssetBundle, profileData.IgnoreTypeTreeChanges);
+            var buildAssetBundleOptions = ResourceEditorUtility.Builder.GetBuildAssetBundleOptions(profileData.AssetBundleCompressType,
+                profileData.DisableWriteTypeTree,
+                profileData.DeterministicAssetBundle,
+                profileData.ForceRebuildAssetBundle,
+                profileData.IgnoreTypeTreeChanges);
             var buildParams = new ResourceBuildParams()
             {
                 AssetBundleBuildPath = profileData.AssetBundleBuildPath,
@@ -74,7 +78,7 @@ namespace Cosmos.Editor.Resource
             };
             return buildParams;
         }
-        void GetTabData()
+        void GetLabelData()
         {
             try
             {
@@ -91,7 +95,7 @@ namespace Cosmos.Editor.Resource
                 EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, profileData);
             }
         }
-        void SaveTabData()
+        void SaveLabelData()
         {
             EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, profileData);
         }
@@ -195,16 +199,11 @@ namespace Cosmos.Editor.Resource
                     var aesKeyStr = profileData.ManifestEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
                     EditorGUILayout.LabelField($"Assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");
-                    if (aesKeyLength != 16 && aesKeyLength != 24 && aesKeyLength != 32 && aesKeyLength != 0)
+                    isAesKeyInvalid= ResourceUtility.CheckManifestKeyValidable(aesKeyStr);
+                    if (!isAesKeyInvalid)
                     {
                         EditorGUILayout.HelpBox("Encryption key should be 16,24 or 32 bytes long", MessageType.Error);
-                        isAesKeyInvalid = false;
                     }
-                    else
-                    {
-                        isAesKeyInvalid = true;
-                    }
-
                     GUILayout.Space(16);
                 }
                 else
