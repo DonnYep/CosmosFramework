@@ -13,19 +13,15 @@ namespace Cosmos.Editor.Resource
         {
             get { return buildProfile != null; }
         }
-        public bool IsAesKeyInvalid
-        {
-            get
-            {
-                return isAesKeyInvalid;
-            }
-        }
         string[] buildHandlers;
         AssetBundleBuildProfile buildProfile;
 
         Texture2D createAddNewIcon;
         Texture2D saveActiveIcon;
-
+        public bool IsAesKeyInvalid
+        {
+            get { return isAesKeyInvalid; }
+        }
         public void OnEnable(AssetBundleTab parent, string[] buildHandlers)
         {
             this.parent = parent;
