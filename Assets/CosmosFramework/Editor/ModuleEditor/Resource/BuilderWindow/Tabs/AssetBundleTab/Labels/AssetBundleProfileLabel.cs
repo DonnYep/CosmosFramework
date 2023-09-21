@@ -36,23 +36,23 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.BeginHorizontal();
             {
                 buildProfile = (AssetBundleBuildProfile)EditorGUILayout.ObjectField("Build profile", buildProfile, typeof(AssetBundleBuildProfile), false);
-                if (GUILayout.Button(createAddNewIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.TEXTURE_ICON_WIDTH)))
+                if (GUILayout.Button(createAddNewIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.ICON_WIDTH)))
                 {
-                    var previousePreset = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.RESOURCE_NEW_BUILD_PRESET_PATH);
+                    var previousePreset = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.NEW_BUILD_PROFILE_PATH);
                     if (previousePreset != null)
                     {
-                        var canCreate = UnityEditor.EditorUtility.DisplayDialog("AssetBundleBuildProfile already exist", $"Path {ResourceBuilderWindowConstant.RESOURCE_NEW_BUILD_PRESET_PATH} exists.Whether to continue to create and overwrite this file ?", "Create", "Cancel");
+                        var canCreate = UnityEditor.EditorUtility.DisplayDialog("AssetBundleBuildProfile already exist", $"Path {ResourceBuilderWindowConstant.NEW_BUILD_PROFILE_PATH} exists.Whether to continue to create and overwrite this file ?", "Create", "Cancel");
                         if (canCreate)
                         {
-                            buildProfile = EditorUtil.CreateScriptableObject<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.RESOURCE_NEW_BUILD_PRESET_PATH, HideFlags.NotEditable);
+                            buildProfile = EditorUtil.CreateScriptableObject<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.NEW_BUILD_PROFILE_PATH, HideFlags.NotEditable);
                         }
                     }
                     else
                     {
-                        buildProfile = EditorUtil.CreateScriptableObject<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.RESOURCE_NEW_BUILD_PRESET_PATH, HideFlags.NotEditable);
+                        buildProfile = EditorUtil.CreateScriptableObject<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.NEW_BUILD_PROFILE_PATH, HideFlags.NotEditable);
                     }
                 }
-                if (GUILayout.Button(saveActiveIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.TEXTURE_ICON_WIDTH)))
+                if (GUILayout.Button(saveActiveIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.ICON_WIDTH)))
                 {
                     EditorUtil.SaveScriptableObject(buildProfile);
                 }
