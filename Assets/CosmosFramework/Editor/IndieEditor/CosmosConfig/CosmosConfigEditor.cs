@@ -112,20 +112,10 @@ namespace Cosmos.Editor
         }
         private void OnEnable()
         {
-            var debugSrc = Utility.Assembly.GetDerivedTypeNames<Utility.Debug.IDebugHelper>();
-            debugHelpers = new string[debugSrc.Length + 1];
-            debugHelpers[0] = Constants.NONE;
-            Array.Copy(debugSrc, 0, debugHelpers, 1, debugSrc.Length);
-
-            var jsonSrc = Utility.Assembly.GetDerivedTypeNames<Utility.Json.IJsonHelper>();
-            jsonHelpers = new string[jsonSrc.Length + 1];
-            jsonHelpers[0] = Constants.NONE;
-            Array.Copy(jsonSrc, 0, jsonHelpers, 1, jsonSrc.Length);
-
-            var msgPackSrc = Utility.Assembly.GetDerivedTypeNames<Utility.MessagePack.IMessagePackHelper>();
-            messagePackHelpers = new string[msgPackSrc.Length + 1];
-            messagePackHelpers[0] = Constants.NONE;
-            Array.Copy(msgPackSrc, 0, messagePackHelpers, 1, msgPackSrc.Length);
+            debugHelpers = EditorUtil.GetDerivedTypeHandlers<Utility.Debug.IDebugHelper>();
+            jsonHelpers = EditorUtil.GetDerivedTypeHandlers<Utility.Json.IJsonHelper>();
+            messagePackHelpers = EditorUtil.GetDerivedTypeHandlers<Utility.MessagePack.IMessagePackHelper>();
+            InputHelperNames = EditorUtil.GetDerivedTypeHandlers<IInputHelper>();
 
             var srcLoaders = Utility.Assembly.GetDerivedTypeNames<IResourceLoadHelper>();
             var filteredLoader = resourceLoaders = srcLoaders.Where(l =>
@@ -137,11 +127,6 @@ namespace Cosmos.Editor
             resourceLoaders = new string[filteredLoader.Length + 1];
             resourceLoaders[0] = Constants.NONE;
             Array.Copy(srcLoaders, 0, resourceLoaders, 1, filteredLoader.Length);
-
-            var inputLoaders = Utility.Assembly.GetDerivedTypeNames<IInputHelper>();
-            InputHelperNames = new string[inputLoaders.Length + 1];
-            InputHelperNames[0] = Constants.NONE;
-            Array.Copy(inputLoaders, 0, InputHelperNames, 1, inputLoaders.Length);
 
             cosmosConfig = target as CosmosConfig;
             targetObject = new SerializedObject(cosmosConfig);

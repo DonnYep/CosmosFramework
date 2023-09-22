@@ -23,7 +23,7 @@ namespace Cosmos.Editor.Resource
             this.buildHandlers = buildHandlers;
             GetLabelData();
         }
-        public void OnGUI(Rect rect)
+        public void OnGUI()
         {
             GUILayout.Space(16);
             DrawPrebuildOptions();

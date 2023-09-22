@@ -30,7 +30,7 @@ namespace Cosmos.Editor.Resource
             createAddNewIcon = ResourceEditorUtility.GetCreateAddNewIcon();
             saveActiveIcon = ResourceEditorUtility.GetSaveActiveIcon();
         }
-        public void OnGUI(Rect rect)
+        public void OnGUI()
         {
             GUILayout.Space(16);
             EditorGUILayout.BeginHorizontal();
