@@ -9,18 +9,14 @@ namespace Cosmos.Editor.Resource
     {
         AssetBundleTab parent;
         bool isAesKeyInvalid = false;
-        public bool IsAesKeyInvalid
-        {
-            get
-            {
-                return isAesKeyInvalid;
-            }
-        }
 
         string[] buildHandlers;
         public const string LabelDataName = "ResourceBuilderWindow_AsseBundleTabNoProfileLabelData.json";
         AssetBundleBuildProfileData profileData;
-
+        public bool IsAesKeyInvalid
+        {
+            get { return isAesKeyInvalid; }
+        }
         public void OnEnable(AssetBundleTab parent, string[] buildHandlers)
         {
             this.parent = parent;
@@ -199,7 +195,7 @@ namespace Cosmos.Editor.Resource
                     var aesKeyStr = profileData.ManifestEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
                     EditorGUILayout.LabelField($"Assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");
-                    isAesKeyInvalid= ResourceUtility.CheckManifestKeyValidable(aesKeyStr);
+                    isAesKeyInvalid = ResourceUtility.CheckManifestKeyValidable(aesKeyStr);
                     if (!isAesKeyInvalid)
                     {
                         EditorGUILayout.HelpBox("Encryption key should be 16,24 or 32 bytes long", MessageType.Error);
