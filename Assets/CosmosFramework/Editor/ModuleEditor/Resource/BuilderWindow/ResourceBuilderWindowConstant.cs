@@ -19,16 +19,18 @@
         public const string VALID = "VALID";
         public const string INVALID = "INVALID";
         public const string UNKONM = "< UNKONW > ";
+        public const string SERACH = "Search";
         /// <summary>
         /// 理论上bundle不会有上万个，因此依赖区间使用万位扩充
         /// </summary>
         public const int MULTIPLE_VALUE = 10000;
         public const int SBU_MULTIPLE_VALUE = 4000;
-        public const string SERACH = "Search";
+
         public const float MAX_WIDTH = 0.618f;
         public const float MIN_WIDTH = 0.382f;
         public const string RESOURCE_BUILD_CACHE = "ResourceBuildCache.json";
         public const string RESOURCE_BUILD_LOG = "ResourceBuildLog.json";
+
         public const int ICON_WIDTH = 28;
         /// <summary>
         /// 资源寻址文件创建地址

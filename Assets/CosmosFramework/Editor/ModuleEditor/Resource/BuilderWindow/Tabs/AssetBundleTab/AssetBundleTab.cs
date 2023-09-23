@@ -45,11 +45,11 @@ namespace Cosmos.Editor.Resource
             tabData.UseBuildProfile = EditorGUILayout.ToggleLeft("Use build profile", tabData.UseBuildProfile);
             if (tabData.UseBuildProfile)
             {
-                profileLabel.OnGUI(rect);
+                profileLabel.OnGUI();
             }
             else
             {
-                noProfileLabel.OnGUI(rect);
+                noProfileLabel.OnGUI();
             }
             GUILayout.Space(16);
             DrawBuildButton();
