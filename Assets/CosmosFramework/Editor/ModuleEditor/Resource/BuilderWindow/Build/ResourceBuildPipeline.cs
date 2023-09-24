@@ -6,7 +6,6 @@ namespace Cosmos.Editor.Resource
     public class ResourceBuildPipeline
     {
         static ResourceDataset dataset;
-        static string ResourceDatasetPath = "Assets/ResourceDataset.asset";
         public static void BuildActivePlatformAssetBundleNameByDefault()
         {
             var buildTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -43,7 +42,7 @@ namespace Cosmos.Editor.Resource
         }
         public static void BuildAssetBundle(BuildTarget buildTarget, bool nameByHash = true)
         {
-            dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceDatasetPath);
+            dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceBuilderWindowConstant.DEFAULT_DATASET_PATH);
             var presetData = new AssetBundleBuildProfileData();
             BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
             options |= BuildAssetBundleOptions.ChunkBasedCompression;
