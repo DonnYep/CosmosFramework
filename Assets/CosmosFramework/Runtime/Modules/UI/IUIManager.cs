@@ -113,6 +113,16 @@ namespace Cosmos.UI
         /// </summary>
         bool PeekUIForm<T>(string uiFormName, out T uiForm) where T : class, IUIForm;
         /// <summary>
+        /// 获取激活状态下的UIForm
+        /// </summary>
+        /// <returns>激活的UIForms</returns>
+        IUIForm[] GetActiveUIForms();
+        /// <summary>
+        /// 获取失活状态下的UIForm
+        /// </summary>
+        /// <returns>失活的UIForms</returns>
+        IUIForm[] GetDeactiveUIForms();
+        /// <summary>
         /// 通过条件选择组中的UIForm；
         /// </summary>
         /// <param name="uiGroupName">UI组的名字</param>
@@ -150,21 +160,20 @@ namespace Cosmos.UI
         /// <returns>UIForm info</returns>
         UIFormInfo GetUIFormInfo(string uiFormName);
         /// <summary>
-        /// 获取打开的UI界面
+        /// 获取激活的UIFormInfo
         /// </summary>
         /// <returns>UIForm infos</returns>
-        UIFormInfo[] GetOpenedUIFormInfos();
+        UIFormInfo[] GetActiveUIFormInfos();
         /// <summary>
-        /// 获取关闭的UI界面
+        /// 获取失活的UIFormInfo
         /// </summary>
         /// <returns>UIForm infos</returns>
-        UIFormInfo[] GetClosedUIFormInfos();
+        UIFormInfo[] GetDeactiveUIFormInfos();
         /// <summary>
         /// 通过条件选择组中的UIFormInfo；
         /// </summary>
         /// <param name="condition">条件委托</param>
         /// <returns>符合条件的UIForm info</returns>
         UIFormInfo[] FindUIFormInfos(Predicate<IUIForm> condition);
-
     }
 }
