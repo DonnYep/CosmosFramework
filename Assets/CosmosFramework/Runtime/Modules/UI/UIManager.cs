@@ -58,6 +58,10 @@ namespace Cosmos.UI
         /// UIFormInfo用于过滤的缓存
         /// </summary>
         List<UIFormInfo> uiFormInfoFilterCache;
+        /// <summary>
+        /// UIForm的缓存
+        /// </summary>
+        List<IUIForm> uiFormFilterCache;
 
         Action<IUIForm> onUIFormActiveCallback;
         Action<IUIForm> onUIFormDeactiveCallback;
@@ -309,6 +313,34 @@ namespace Cosmos.UI
             return false;
         }
         /// <inheritdoc/>
+        public IUIForm[] GetActiveUIForms()
+        {
+            uiFormFilterCache.Clear();
+            foreach (var uiFormState in uiFormStateLoadedDict.Values)
+            {
+                if (!uiFormState.IsOpened)
+                    continue;
+                uiFormFilterCache.Add(uiFormState.UIForm);
+            }
+            var uiForms = uiFormFilterCache.ToArray();
+            uiFormFilterCache.Clear();
+            return uiForms;
+        }
+        /// <inheritdoc/>
+        public IUIForm[] GetDeactiveUIForms()
+        {
+            uiFormFilterCache.Clear();
+            foreach (var uiFormState in uiFormStateLoadedDict.Values)
+            {
+                if (uiFormState.IsOpened)
+                    continue;
+                uiFormFilterCache.Add(uiFormState.UIForm);
+            }
+            var uiForms = uiFormFilterCache.ToArray();
+            uiFormFilterCache.Clear();
+            return uiForms;
+        }
+        /// <inheritdoc/>
         public IUIForm[] FindUIForms(string uiGroupName, Predicate<IUIForm> condition)
         {
             Utility.Text.IsStringValid(uiGroupName, "UIGroupName is invalid !");
@@ -421,7 +453,7 @@ namespace Cosmos.UI
             return UIFormInfo.None;
         }
         /// <inheritdoc/>
-        public UIFormInfo[] GetOpenedUIFormInfos()
+        public UIFormInfo[] GetActiveUIFormInfos()
         {
             uiFormInfoFilterCache.Clear();
             foreach (var uiFormState in uiFormStateLoadedDict.Values)
@@ -436,7 +468,7 @@ namespace Cosmos.UI
             return infos;
         }
         /// <inheritdoc/>
-        public UIFormInfo[] GetClosedUIFormInfos()
+        public UIFormInfo[] GetDeactiveUIFormInfos()
         {
             uiFormInfoFilterCache.Clear();
             foreach (var uiFormState in uiFormStateLoadedDict.Values)
@@ -479,6 +511,7 @@ namespace Cosmos.UI
             activeUILnk = new LinkedList<UIFormState>();
             deactiveUILnk = new LinkedList<UIFormState>();
             uiFormInfoFilterCache = new List<UIFormInfo>();
+            uiFormFilterCache = new List<IUIForm>();
         }
         [TickRefresh]
         void TickRefresh()
