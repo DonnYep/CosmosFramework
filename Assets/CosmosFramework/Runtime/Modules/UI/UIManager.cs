@@ -516,10 +516,11 @@ namespace Cosmos.UI
         [TickRefresh]
         void TickRefresh()
         {
-            var length = uiFormStateCache.Count;
+            var uiFormStateArray = uiFormStateCache.ToArray();
+            var length = uiFormStateArray.Length;
             for (int i = 0; i < length; i++)
             {
-                var uiFormInfo = uiFormStateCache[i];
+                var uiFormInfo = uiFormStateArray[i];
                 var uiForm = uiFormInfo.UIForm;
                 if (uiForm.Active != uiFormInfo.IsOpened)
                 {
