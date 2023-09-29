@@ -6,43 +6,32 @@ namespace Cosmos.Editor.Resource
     public class ResourceBuildPipeline
     {
         static ResourceDataset dataset;
-        public static void BuildActivePlatformAssetBundleNameByDefault()
+        static AssetBundleBuildProfile buildProfile;
+        public static ResourceDataset DefaultResourceDataset
         {
-            var buildTarget = EditorUserBuildSettings.activeBuildTarget;
-            BuildAssetBundle(buildTarget, false);
+            get
+            {
+                if (dataset == null)
+                    dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceBuilderWindowConstant.DEFAULT_DATASET_PATH);
+                return dataset;
+            }
         }
-        public static void BuildActivePlatformAssetBundleNameByHash()
+        public static AssetBundleBuildProfile DefaultAssetBundleBuildProfile
         {
-            var buildTarget = EditorUserBuildSettings.activeBuildTarget;
-            BuildAssetBundle(buildTarget);
-        }
-        public static void BuildStandaloneWindowsAssetBundleNameByDefault()
-        {
-            BuildAssetBundle(BuildTarget.StandaloneWindows, false);
-        }
-        public static void BuildStandaloneWindowsAssetBundleNameByHash()
-        {
-            BuildAssetBundle(BuildTarget.StandaloneWindows);
-        }
-        public static void BuildAndroidAssetBundleNameByDefault()
-        {
-            BuildAssetBundle(BuildTarget.Android, false);
-        }
-        public static void BuildAndroidAssetBundleNamedByHash()
-        {
-            BuildAssetBundle(BuildTarget.Android);
-        }
-        public static void BuildIOSAssetBundleNameByDefault()
-        {
-            BuildAssetBundle(BuildTarget.iOS, false);
-        }
-        public static void BuildIOSAssetBundleNameByHash()
-        {
-            BuildAssetBundle(BuildTarget.iOS);
+            get
+            {
+                if (buildProfile == null)
+                    buildProfile = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.DEFAULT_BUILD_PROFILE_PATH);
+                return buildProfile;
+            }
         }
         public static void BuildAssetBundle(BuildTarget buildTarget, bool nameByHash = true)
         {
-            dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceBuilderWindowConstant.DEFAULT_DATASET_PATH);
+            if (DefaultResourceDataset == null)
+            {
+                EditorUtil.Debug.LogError($"ResourceDataset : {ResourceBuilderWindowConstant.DEFAULT_DATASET_PATH} not exist !");
+                return;
+            }
             var presetData = new AssetBundleBuildProfileData();
             BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
             options |= BuildAssetBundleOptions.ChunkBasedCompression;
@@ -66,6 +55,21 @@ namespace Cosmos.Editor.Resource
                 StreamingAssetsRelativePath = presetData.StreamingAssetsRelativePath,
                 ClearStreamingAssetsDestinationPath = true
             };
+            ResourceBuildController.BuildAssetBundle(dataset, buildParams);
+        }
+        public static void BuildAssetBundleByProfile()
+        {
+            if (DefaultResourceDataset == null)
+            {
+                EditorUtil.Debug.LogError($"ResourceDataset : {ResourceBuilderWindowConstant.DEFAULT_DATASET_PATH} not exist !");
+                return;
+            }
+            if (DefaultAssetBundleBuildProfile == null)
+            {
+                EditorUtil.Debug.LogError($"AssetBundleBuildProfile : {ResourceBuilderWindowConstant.DEFAULT_BUILD_PROFILE_PATH} not exist !");
+                return;
+            }
+            var buildParams = DefaultAssetBundleBuildProfile.GetBuildParams();
             ResourceBuildController.BuildAssetBundle(dataset, buildParams);
         }
     }

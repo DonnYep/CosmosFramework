@@ -44,5 +44,9 @@
         /// AssetBundle构建预设地址
         /// </summary>
         public const string NEW_BUILD_PROFILE_PATH = "Assets/Editor/NewAssetBundleBuildProfile.asset";
+        /// <summary>
+        /// 默认打包预设
+        /// </summary>
+        public const string DEFAULT_BUILD_PROFILE_PATH = "Assets/Editor/AssetBundleBuildProfile";
     }
 }
