@@ -76,19 +76,11 @@ namespace Cosmos.Editor.Resource
         }
         void GetLabelData()
         {
-            try
+            profileData = EditorUtil.SafeGetData<AssetBundleBuildProfileData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName);
+            var buildHandlerMaxIndex = buildHandlers.Length - 1;
+            if (profileData.BuildHandlerIndex > buildHandlerMaxIndex)
             {
-                profileData = EditorUtil.GetData<AssetBundleBuildProfileData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName);
-                var buildHandlerMaxIndex = buildHandlers.Length - 1;
-                if (profileData.BuildHandlerIndex > buildHandlerMaxIndex)
-                {
-                    profileData.BuildHandlerIndex = buildHandlerMaxIndex;
-                }
-            }
-            catch
-            {
-                profileData = new AssetBundleBuildProfileData();
-                EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, profileData);
+                profileData.BuildHandlerIndex = buildHandlerMaxIndex;
             }
         }
         void SaveLabelData()

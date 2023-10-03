@@ -60,7 +60,7 @@ namespace Cosmos.Editor
             Utility.IO.OverwriteTextFile(LibraryPath, fileName, json);
         }
         public static void SaveData<T>(string relativePath, string fileName, T editorData)
-    where T : class, new()
+            where T : class, new()
         {
             var json = EditorUtil.Json.ToJson(editorData, true);
             var path = Path.Combine(LibraryPath, relativePath);
@@ -75,12 +75,28 @@ namespace Cosmos.Editor
             return obj;
         }
         public static T GetData<T>(string relativePath, string fileName)
-    where T : class, new()
+            where T : class, new()
         {
             var filePath = Utility.IO.PathCombine(LibraryPath, relativePath, fileName);
             var json = Utility.IO.ReadTextFileContent(filePath);
             var obj = EditorUtil.Json.ToObject<T>(json);
             return obj;
+        }
+        public static T SafeGetData<T>(string relativePath, string fileName, bool saveIfNotExist = true)
+             where T : class, new()
+        {
+            T data = default;
+            try
+            {
+                data = EditorUtil.GetData<T>(relativePath, fileName);
+            }
+            catch
+            {
+                data = new T();
+                if (saveIfNotExist)
+                    EditorUtil.SaveData(relativePath, fileName, data);
+            }
+            return data;
         }
         public static void ClearData(string fileName)
         {

@@ -69,15 +69,7 @@ namespace Cosmos.Editor.Resource
         }
         protected override void GetWindowData()
         {
-            try
-            {
-                windowData = EditorUtil.GetData<ResourceBuilderWindowData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, windowDataName);
-            }
-            catch
-            {
-                windowData = new ResourceBuilderWindowData();
-                EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, windowDataName, windowData);
-            }
+            windowData = EditorUtil.SafeGetData<ResourceBuilderWindowData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, windowDataName);
         }
         protected override void SaveWindowData()
         {
