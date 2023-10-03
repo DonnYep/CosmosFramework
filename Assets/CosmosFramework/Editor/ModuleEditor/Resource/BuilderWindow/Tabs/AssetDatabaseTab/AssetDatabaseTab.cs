@@ -72,7 +72,7 @@ namespace Cosmos.Editor.Resource
             bundleLabel.OnMarkAsSplittable += OnMarkAsSplittable;
             bundleLabel.OnMarkAsUnsplittable += OnMarkAsUnsplittable;
             objectLabel.OnObjectInfoSelectionChanged += OnObjectInfoSelectionChanged;
-            GetTabData();
+            tabData = EditorUtil.SafeGetData<AssetDatabaseTabData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetDatabaseTabDataName);
             if (ResourceBuilderWindowDataProxy.ResourceDataset != null)
             {
                 bundleLabel.Clear();
@@ -379,18 +379,6 @@ namespace Cosmos.Editor.Resource
             for (int i = 0; i < length; i++)
             {
                 selectedObjectSize += selected[i].ObjectSize;
-            }
-        }
-        void GetTabData()
-        {
-            try
-            {
-                tabData = EditorUtil.GetData<AssetDatabaseTabData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetDatabaseTabDataName);
-            }
-            catch
-            {
-                tabData = new AssetDatabaseTabData();
-                EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetDatabaseTabDataName, tabData);
             }
         }
         void SaveTabData()

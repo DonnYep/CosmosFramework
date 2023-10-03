@@ -2,7 +2,7 @@
 
 namespace Cosmos.Editor.Resource
 {
-    public class ResourceAnalyzerWindow: ModuleWindowBase
+    public class ResourceAnalyzerWindow : ModuleWindowBase
     {
         readonly string windowDataName = "ResourceAnalyzerWindowData.json";
         ResourceAnalyzerWindowData windowData;
@@ -14,15 +14,7 @@ namespace Cosmos.Editor.Resource
         }
         protected override void GetWindowData()
         {
-            try
-            {
-                windowData = EditorUtil.GetData<ResourceAnalyzerWindowData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, windowDataName);
-            }
-            catch
-            {
-                windowData = new ResourceAnalyzerWindowData();
-                EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, windowDataName, windowData);
-            }
+            windowData = EditorUtil.SafeGetData<ResourceAnalyzerWindowData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, windowDataName);
         }
         protected override void SaveWindowData()
         {
