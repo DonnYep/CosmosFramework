@@ -27,7 +27,7 @@ namespace Cosmos.Editor.Resource
 
         public override void OnEnable()
         {
-            EditorUtil.SafeGetData<AssetBundleTabData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetBundleTabDataName);
+            tabData = EditorUtil.SafeGetData<AssetBundleTabData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetBundleTabDataName);
             buildHandlers = EditorUtil.GetDerivedTypeHandlers<IResourceBuildHandler>();
             noProfileLabel.OnEnable(this, buildHandlers);
             profileLabel.OnEnable(this, buildHandlers);

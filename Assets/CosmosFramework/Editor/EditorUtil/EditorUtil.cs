@@ -118,11 +118,6 @@ namespace Cosmos.Editor
             var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
             Selection.activeObject = obj;
         }
-        public static void SelectionActiveObject(string path)
-        {
-            var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
-            Selection.activeObject = obj;
-        }
         /// <summary>
         /// 添加单个宏；此宏不能由分号结尾；
         /// </summary>
