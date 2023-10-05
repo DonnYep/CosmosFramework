@@ -118,6 +118,11 @@ namespace Cosmos.Resource
         /// <returns>是否存在</returns>
         bool GetObjectState(string objectName, out ResourceObjectState objectState);
         /// <summary>
+        /// 获得已加载的bundle信息
+        /// </summary>
+        /// <returns>已加载的包体信息</returns>
+        ResourceBundleState[] GetLoadedBundleState();
+        /// <summary>
         /// Get version of resource.
         /// </summary>
         /// <returns>resource version</returns>

@@ -192,6 +192,11 @@ namespace Cosmos.Resource
             return currentLoadHelper.GetObjectState(objectName, out objectState);
         }
         /// <inheritdoc/>
+        public ResourceBundleState[] GetLoadedBundleState()
+        {
+            return currentLoadHelper.GetLoadedBundleState();
+        }
+        /// <inheritdoc/>
         public ResourceVersion GetResourceVersion()
         {
             return currentLoadHelper.GetResourceVersion();
