@@ -106,6 +106,11 @@ namespace Cosmos.Resource
             return false;
         }
         ///<inheritdoc/> 
+        public ResourceBundleState[] GetLoadedBundleState()
+        {
+            return new ResourceBundleState[0];
+        }
+        ///<inheritdoc/> 
         public ResourceVersion GetResourceVersion()
         {
             return new ResourceVersion("Built-in_Resources", "Unity Built-in Resources");

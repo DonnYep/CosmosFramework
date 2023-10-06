@@ -1,11 +1,9 @@
-﻿using System.Runtime.InteropServices;
-namespace Cosmos.Resource.State
+﻿namespace Cosmos.Resource.State
 {
     /// <summary>
     /// 资源包状态；
     /// 用于查询引用状态，加载信息等；
     /// </summary>
-    [StructLayout(LayoutKind.Auto)]
     public struct ResourceBundleState
     {
         /// <summary>

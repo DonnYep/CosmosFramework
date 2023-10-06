@@ -49,6 +49,7 @@ namespace Cosmos.Resource
         bool requestDone = false;
         bool abort = false;
         ResourceManifest resourceManifest;
+        readonly List<ResourceBundleState> bundleStateCache = new List<ResourceBundleState>();
         public AssetBundleLoader()
         {
             loadSceneList = new List<string>();
@@ -187,6 +188,22 @@ namespace Cosmos.Resource
                 ResourceReferenceCount = resourceObjectWarpper.ReferenceCount
             };
             return hasObject;
+        }
+        ///<inheritdoc/> 
+        public ResourceBundleState[] GetLoadedBundleState()
+        {
+            bundleStateCache.Clear();
+            foreach (var bundleWarpper in resourceBundleWarpperDict.Values)
+            {
+                var bundleState = new ResourceBundleState()
+                {
+                    ResourceBundleName = bundleWarpper.ResourceBundle.BundleName,
+                    ResourceBundleReferenceCount = bundleWarpper.ReferenceCount,
+                    ResourceObjectCount = bundleWarpper.ResourceBundle.ResourceObjectList.Count
+                };
+                bundleStateCache.Add(bundleState);
+            }
+            return bundleStateCache.ToArray();
         }
         ///<inheritdoc/> 
         public ResourceVersion GetResourceVersion()

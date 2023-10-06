@@ -163,7 +163,7 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="assetBundleName">资源包名</param>
         /// <param name="unloadAllLoadedObjects">是否同时卸载所有实体对象</param>
-        void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects );
+        void UnloadAssetBundle(string assetBundleName, bool unloadAllLoadedObjects);
         /// <summary>
         /// 获取bundle状态信息；
         /// </summary>
@@ -178,6 +178,11 @@ namespace Cosmos.Resource
         /// <param name="objectState">资源对象状态</param>
         /// <returns>是否存在</returns>
         bool GetObjectState(string objectName, out ResourceObjectState objectState);
+        /// <summary>
+        /// 获得已加载的bundle信息
+        /// </summary>
+        /// <returns>已加载的包体信息</returns>
+        ResourceBundleState[] GetLoadedBundleState();
         /// <summary>
         /// Get version of resource.
         /// </summary>
