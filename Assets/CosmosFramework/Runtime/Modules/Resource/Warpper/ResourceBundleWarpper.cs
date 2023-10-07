@@ -9,9 +9,20 @@ namespace Cosmos.Resource
     {
         int referenceCount;
         ResourceBundle resourceBundle;
+        string bundlePath;
+        public string BundlePath
+        {
+            get { return bundlePath; }
+            set { bundlePath = value; }
+        }
         public ResourceBundleWarpper(ResourceBundle resourceBundle)
         {
             this.resourceBundle = resourceBundle;
+        }
+        public ResourceBundleWarpper(ResourceBundle resourceBundle, string bundlePath)
+        {
+            this.resourceBundle = resourceBundle;
+            this.bundlePath = bundlePath;
         }
         public ResourceBundle ResourceBundle { get { return resourceBundle; } }
         public AssetBundle AssetBundle { get; set; }
