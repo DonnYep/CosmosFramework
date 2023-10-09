@@ -483,6 +483,19 @@ namespace Cosmos.UI
             return infos;
         }
         /// <inheritdoc/>
+        public UIFormInfo[] GetAllUIFormInfos()
+        {
+            uiFormInfoFilterCache.Clear();
+            foreach (var uiFormState in uiFormStateLoadedDict.Values)
+            {
+                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
+                uiFormInfoFilterCache.Add(uiFormInfo);
+            }
+            var infos = uiFormInfoFilterCache.ToArray();
+            uiFormInfoFilterCache.Clear();
+            return infos;
+        }
+        /// <inheritdoc/>
         public UIFormInfo[] FindUIFormInfos(Predicate<IUIForm> condition)
         {
             uiFormInfoFilterCache.Clear();
