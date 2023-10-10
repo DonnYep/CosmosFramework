@@ -170,6 +170,11 @@ namespace Cosmos.UI
         /// <returns>UIForm infos</returns>
         UIFormInfo[] GetDeactiveUIFormInfos();
         /// <summary>
+        /// 获取所有状态的UIFormInfo
+        /// </summary>
+        /// <returns>UIForm infos</returns>
+        UIFormInfo[] GetAllUIFormInfos();
+        /// <summary>
         /// 通过条件选择组中的UIFormInfo；
         /// </summary>
         /// <param name="condition">条件委托</param>
