@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace Cosmos.Editor.Resource
 {
@@ -482,6 +483,7 @@ namespace Cosmos.Editor.Resource
         {
             if (dataset == null)
                 return;
+            var startTime = DateTime.Now;
             BuildDataset(dataset);
             ResourceManifest resourceManifest = new ResourceManifest();
             var bundleInfos = dataset.GetResourceBundleInfos();
@@ -491,6 +493,9 @@ namespace Cosmos.Editor.Resource
             PorcessManifest(buildParams, ref resourceManifest);
             BuildDoneOption(buildParams);
             RevertAssetBundlesName(bundleInfos);
+            var endTime = DateTime.Now;
+            var elapsedTime = endTime - startTime;
+            EditorUtil.Debug.LogInfo($"Assetbundle build done , elapsed time {elapsedTime.Hours}h :{elapsedTime.Minutes}m :{elapsedTime.Seconds}s :{elapsedTime.Milliseconds}ms");
         }
     }
 }

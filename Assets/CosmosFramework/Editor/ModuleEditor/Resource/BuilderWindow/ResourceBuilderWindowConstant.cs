@@ -39,7 +39,7 @@
         /// <summary>
         /// 默认寻址文件
         /// </summary>
-        public const string DEFAULT_DATASET_PATH = "Assets/ResourceDataset";
+        public const string DEFAULT_DATASET_PATH = "Assets/ResourceDataset.asset";
         /// <summary>
         /// AssetBundle构建预设地址
         /// </summary>
@@ -47,6 +47,6 @@
         /// <summary>
         /// 默认打包预设
         /// </summary>
-        public const string DEFAULT_BUILD_PROFILE_PATH = "Assets/Editor/AssetBundleBuildProfile";
+        public const string DEFAULT_BUILD_PROFILE_PATH = "Assets/Editor/AssetBundleBuildProfile.asset";
     }
 }

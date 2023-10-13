@@ -57,6 +57,7 @@ namespace Cosmos.Editor.Resource
             };
             ResourceBuildController.BuildAssetBundle(dataset, buildParams);
         }
+        [MenuItem("Window/Cosmos/Build/Resource/BuildAssetBundleByProfile")]
         public static void BuildAssetBundleByProfile()
         {
             if (DefaultResourceDataset == null)

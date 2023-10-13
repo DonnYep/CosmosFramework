@@ -85,7 +85,7 @@ namespace LiteMVC
         public virtual void OnRegister() { }
         public virtual void OnDeregister() { }
         protected bool PeekMediator<T>(out T mediator)
-            where T : Mediator
+where T : Mediator
         {
             return MVC.PeekMediator<T>(out mediator);
         }
