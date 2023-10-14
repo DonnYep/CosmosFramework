@@ -3,7 +3,7 @@
     public class ResourceMergedBundleBuildInfo
     {
         /// <summary>
-        /// Path of the file on disk
+        /// Local path
         /// </summary>
         public string Path;
         /// <summary>

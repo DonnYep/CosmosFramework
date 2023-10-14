@@ -113,6 +113,8 @@ namespace Cosmos.Editor.Resource
         }
         IEnumerator BuildAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset)
         {
+            var startTime = DateTime.Now;
+
             yield return BuildDataset.Invoke();
             ResourceManifest resourceManifest = new ResourceManifest();
             switch (buildParams.ResourceBuildType)
@@ -124,6 +126,9 @@ namespace Cosmos.Editor.Resource
                     BuildIncrementalAssetBundle(buildParams, dataset, resourceManifest);
                     break;
             }
+            var endTime = DateTime.Now;
+            var elapsedTime = endTime - startTime;
+            EditorUtil.Debug.LogInfo($"Assetbundle build done , elapsed time {elapsedTime.Hours}h :{elapsedTime.Minutes}m :{elapsedTime.Seconds}s :{elapsedTime.Milliseconds}ms");
         }
         void BuildFullAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset, ResourceManifest resourceManifest)
         {

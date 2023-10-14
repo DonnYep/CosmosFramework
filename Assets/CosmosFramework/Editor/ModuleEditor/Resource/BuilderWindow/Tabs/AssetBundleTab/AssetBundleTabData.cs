@@ -13,5 +13,9 @@ namespace Cosmos.Editor.Resource
         /// 预设地址
         /// </summary>
         public string ProfilePath;
+
+        public string ProfileLabelAbsPath;
+
+        public string NoProfileLabelAbsPath;
     }
 }

@@ -5,7 +5,12 @@ namespace Cosmos.Resource
 {
     public class ResourceVersionController
     {
-        public static void ClearLocalDiscrepantBundles(string path, ResourceManifestCompareResult compareResult)
+        /// <summary>
+        /// clean local expired bundles by compare resut
+        /// </summary>
+        /// <param name="localPath">local path ,can not url</param>
+        /// <param name="compareResult">compare result of the manifest</param>
+        public static void CleanExpiredBundlesByCompareResult(string localPath, ResourceManifestCompareResult compareResult)
         {
             var changedInfos = compareResult.ChangedInfos;
             var expiredInfos = compareResult.ExpiredInfos;
@@ -20,7 +25,7 @@ namespace Cosmos.Resource
             {
                 fileNames.Add(expiredInfos[i].ResouceBundleKey);
             }
-            Utility.IO.DeleteDirectoryFiles(path, fileNames);
+            Utility.IO.DeleteDirectoryFiles(localPath, fileNames);
         }
     }
 }

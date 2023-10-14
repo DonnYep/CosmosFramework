@@ -5,7 +5,7 @@ namespace LiteMVC.Core
 {
     internal class Notification
     {
-        Dictionary<BindKey, INotificationBinder> binderDict = new Dictionary<BindKey, INotificationBinder>();
+        Dictionary<BindKey, IBinder> binderDict = new Dictionary<BindKey, IBinder>();
         public int BindTypeCount { get { return binderDict.Count; } }
         /// <summary>
         /// 多线程锁；
@@ -32,7 +32,7 @@ namespace LiteMVC.Core
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="eventName">事件名</param>
         /// <param name="action">绑定的函数</param>
-        public void Bind<T>(string eventName,Action<T> action)
+        public void Bind<T>(string eventName, Action<T> action)
         {
             var type = typeof(T);
             NotificationBinder<T> binder = default;
@@ -54,7 +54,7 @@ namespace LiteMVC.Core
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="eventName">事件名</param>
         /// <param name="action">解绑的函数</param>
-        public void Unbind<T>(string eventName,Action<T> action)
+        public void Unbind<T>(string eventName, Action<T> action)
         {
             var type = typeof(T);
             var key = new BindKey(type, eventName);
@@ -77,7 +77,7 @@ namespace LiteMVC.Core
         /// </summary>
         /// <param name="type">数据类型</param>
         /// <param name="eventName">事件名</param>
-        public void UnbindType(Type type,string eventName)
+        public void UnbindType(Type type, string eventName)
         {
             var key = new BindKey(type, eventName);
             lock (locker)
@@ -96,7 +96,7 @@ namespace LiteMVC.Core
         /// <param name="dataType">绑定的数据类型</param>
         /// <param name="eventName">事件名</param>
         /// <returns>绑定的数据量，若不存在则返回0</returns>
-        public int GetBindCount(Type dataType,string eventName)
+        public int GetBindCount(Type dataType, string eventName)
         {
             var key = new BindKey(dataType, eventName);
             lock (locker)
@@ -113,7 +113,7 @@ namespace LiteMVC.Core
         /// </summary>
         /// <param name="eventName">事件名</param>
         /// <param name="data">数据</param>
-        public void Dispatch(string eventName,object data)
+        public void Dispatch(string eventName, object data)
         {
             var type = data.GetType();
             var key = new BindKey(type, eventName);
