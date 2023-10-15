@@ -101,21 +101,12 @@ namespace Cosmos
         /// <summary>
         /// 清除一组实例
         /// </summary>
-        public static void KillObjects<T>(List<T> objs) where T : Object
-        {
-            for (int i = 0; i < objs.Count; i++)
-            {
-                GameObject.Destroy(objs[i]);
-            }
-            objs.Clear();
-        }
-        public static void KillObjects<T>(HashSet<T> objs) where T : Object
+        public static void KillObjects<T>(IEnumerable<T> objs) where T : Object
         {
             foreach (var obj in objs)
             {
                 GameObject.Destroy(obj);
             }
-            objs.Clear();
         }
         protected override void OnDestroy()
         {
