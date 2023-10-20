@@ -22,6 +22,17 @@ namespace Cosmos.Editor
                 return libraryPath;
             }
         }
+        /// <summary>
+        /// 项目工程地址，即Assets文件夹的上一层。
+        /// </summary>
+        public static string ProjectPath
+        {
+            get
+            {
+                var path = Directory.GetCurrentDirectory();
+                return Utility.IO.FormatURL(path);
+            }
+        }
         static string libraryPath;
         public static readonly Vector2 DevWinSize = new Vector2(512f, 384f);
         public static readonly Vector2 MaxWinSize = new Vector2(768f, 768f);
@@ -214,7 +225,7 @@ namespace Cosmos.Editor
         public static T CreateScriptableObject<T>(string path, HideFlags hideFlags = HideFlags.None) where T : ScriptableObject
         {
             var dir = Path.GetDirectoryName(path);
-            dir = Utility.IO.GetRegularPath(dir);
+            dir = Utility.IO.FormatURL(dir);
             var folderName = dir.Replace("Assets/", "");
             var isValid = AssetDatabase.IsValidFolder(dir);
             if (!isValid)
@@ -245,6 +256,12 @@ namespace Cosmos.Editor
 #endif
             AssetDatabase.Refresh();
         }
+        /// <summary>
+        ///  获取编辑渲染使用的hander数组。
+        ///  默认首个元素为<see cref="Constants.NONE"/>
+        /// </summary>
+        /// <typeparam name="T">基类</typeparam>
+        /// <returns>handler数组</returns>
         public static string[] GetDerivedTypeHandlers<T>()
             where T : class
         {
@@ -253,6 +270,27 @@ namespace Cosmos.Editor
             buildHandlers[0] = Constants.NONE;
             Array.Copy(srcBuildHandlers, 0, buildHandlers, 1, srcBuildHandlers.Length);
             return buildHandlers;
+        }
+        /// <summary>
+        /// 选择工程的相对路径
+        /// </summary>
+        /// <param name="relativePath">工程的相对路径</param>
+        /// <returns>选择的工程相对路径</returns>
+        public static string BrowseProjectReativeFolder(string relativePath)
+        {
+            var projectPath = ProjectPath;
+            var projectAbsolutePath = Path.Combine(projectPath, relativePath);
+            var selectedPath = EditorUtility.OpenFolderPanel("ProjectReativeFolder", projectAbsolutePath, string.Empty);
+            string selectedRelativePath = string.Empty;
+            if (!string.IsNullOrEmpty(selectedPath))
+            {
+                if (selectedPath.Contains(projectPath))
+                {
+                    var removeCount = projectPath.Length + 1;
+                    selectedRelativePath = selectedPath.Remove(0, removeCount);
+                }
+            }
+            return selectedRelativePath;
         }
     }
 }

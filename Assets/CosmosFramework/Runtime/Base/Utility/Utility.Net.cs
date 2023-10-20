@@ -79,7 +79,7 @@ namespace Cosmos
                                     var remoteUri = match.Groups["name"].ToString();
                                     if (!remoteUri.EndsWith("../"))
                                     {
-                                        var uriListPath = Utility.IO.RegularPathCombine(url, remoteUri);
+                                        var uriListPath = Utility.IO.CombineURL(url, remoteUri);
                                         if (remoteUri.EndsWith("/"))
                                         {
                                             PingUrlFileList(uriListPath,ref uris);

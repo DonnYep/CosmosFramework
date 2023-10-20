@@ -54,7 +54,7 @@ namespace Cosmos.Editor.Resource
                 else
                     icon = folderIcon;
                 var bundleItem = new TreeViewItem(i, 1, bundleInfo.BundleName) { icon = icon };
-                var formatBytesItem = new TreeViewItem((i + 1) * ResourceBuilderWindowConstant.MULTIPLE_VALUE, 2, $"FormatBytes: {bundleInfo.BundleFormatBytes}");
+                var formatBytesItem = new TreeViewItem((i + 1) * ResourceEditorConstants.MULTIPLE_VALUE, 2, $"FormatBytes: {bundleInfo.BundleFormatBytes}");
                 var dependentLen = bundleInfo.BundleDependencies.Count;
                 var dependentString = string.Empty;
                 if (dependentLen == 0)
@@ -62,7 +62,7 @@ namespace Cosmos.Editor.Resource
                 else
                     dependentString = "Count: " + dependentLen.ToString();
 
-                var dependentRootItem = new TreeViewItem((i + 1) * ResourceBuilderWindowConstant.MULTIPLE_VALUE + 1, 2, $"Dependencies: - {dependentString}") { icon = dependenciesIcon };
+                var dependentRootItem = new TreeViewItem((i + 1) * ResourceEditorConstants.MULTIPLE_VALUE + 1, 2, $"Dependencies: - {dependentString}") { icon = dependenciesIcon };
 
                 var subBundleLen = bundleInfo.ResourceSubBundleInfoList.Count;
                 var subBundleString = string.Empty;
@@ -77,7 +77,7 @@ namespace Cosmos.Editor.Resource
                     else
                         subBundleString = "Count: " + subBundleLen.ToString();
                 }
-                var subBundleRootItem = new TreeViewItem((i + 1) * ResourceBuilderWindowConstant.MULTIPLE_VALUE + 2, 2, $"SubBundles: - {subBundleString}") { icon = dependenciesIcon };
+                var subBundleRootItem = new TreeViewItem((i + 1) * ResourceEditorConstants.MULTIPLE_VALUE + 2, 2, $"SubBundles: - {subBundleString}") { icon = dependenciesIcon };
 
                 var subBundleItemList = new List<TreeViewItem>();
 
@@ -87,7 +87,7 @@ namespace Cosmos.Editor.Resource
                     for (int j = 0; j < subBundleLength; j++)
                     {
                         var subBundle = bundleInfo.ResourceSubBundleInfoList[j];
-                        int subBundleItemId = subBundleRootItem.id + j + 2 + ResourceBuilderWindowConstant.SBU_MULTIPLE_VALUE;//拆分子包区间数值
+                        int subBundleItemId = subBundleRootItem.id + j + 2 + ResourceEditorConstants.SBU_MULTIPLE_VALUE;//拆分子包区间数值
                         var subBundleItem = new TreeViewItem(subBundleItemId, 3, subBundle.BundleName)
                         {
                             icon = subBundleIcom

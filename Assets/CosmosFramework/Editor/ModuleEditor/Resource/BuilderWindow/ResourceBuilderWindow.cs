@@ -69,11 +69,11 @@ namespace Cosmos.Editor.Resource
         }
         protected override void GetWindowData()
         {
-            windowData = EditorUtil.SafeGetData<ResourceBuilderWindowData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, windowDataName);
+            windowData = EditorUtil.SafeGetData<ResourceBuilderWindowData>(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, windowDataName);
         }
         protected override void SaveWindowData()
         {
-            EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, windowDataName, windowData);
+            EditorUtil.SaveData(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, windowDataName, windowData);
         }
         void DrawLabels()
         {
@@ -82,7 +82,7 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.BeginHorizontal();
             {
                 latestResourceDataset = (ResourceDataset)EditorGUILayout.ObjectField("ResourceDataset", latestResourceDataset, typeof(ResourceDataset), false);
-                if (GUILayout.Button(refreshIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.ICON_WIDTH)))
+                if (GUILayout.Button(refreshIcon, GUILayout.MaxWidth(ResourceEditorConstants.ICON_WIDTH)))
                 {
                     if (latestResourceDataset == null)
                         return;
@@ -99,12 +99,12 @@ namespace Cosmos.Editor.Resource
                             break;
                     }
                 }
-                if (GUILayout.Button(createAddNewIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.ICON_WIDTH)))
+                if (GUILayout.Button(createAddNewIcon, GUILayout.MaxWidth(ResourceEditorConstants.ICON_WIDTH)))
                 {
-                    var previouseDataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceBuilderWindowConstant.NEW_DATASET_PATH);
+                    var previouseDataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceEditorConstants.NEW_DATASET_PATH);
                     if (previouseDataset != null)
                     {
-                        var canCreate = UnityEditor.EditorUtility.DisplayDialog("ResourceDataset exist", $"Path {ResourceBuilderWindowConstant.NEW_DATASET_PATH} exists.Whether to continue to create and overwrite this file ?", "Create", "Cancel");
+                        var canCreate = UnityEditor.EditorUtility.DisplayDialog("ResourceDataset exist", $"Path {ResourceEditorConstants.NEW_DATASET_PATH} exists.Whether to continue to create and overwrite this file ?", "Create", "Cancel");
                         if (canCreate)
                         {
                             latestResourceDataset = CreateResourceDataset();
@@ -115,7 +115,7 @@ namespace Cosmos.Editor.Resource
                         latestResourceDataset = CreateResourceDataset();
                     }
                 }
-                if (GUILayout.Button(saveActiveIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.ICON_WIDTH)))
+                if (GUILayout.Button(saveActiveIcon, GUILayout.MaxWidth(ResourceEditorConstants.ICON_WIDTH)))
                 {
                     EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
                 }
@@ -162,8 +162,8 @@ namespace Cosmos.Editor.Resource
         }
         ResourceDataset CreateResourceDataset()
         {
-            var so = EditorUtil.CreateScriptableObject<ResourceDataset>(ResourceBuilderWindowConstant.NEW_DATASET_PATH, HideFlags.NotEditable);
-            so.ResourceAvailableExtenisonList.AddRange(ResourceBuilderWindowConstant.Extensions);
+            var so = EditorUtil.CreateScriptableObject<ResourceDataset>(ResourceEditorConstants.NEW_DATASET_PATH, HideFlags.NotEditable);
+            so.ResourceAvailableExtenisonList.AddRange(ResourceEditorConstants.Extensions);
             EditorUtil.Debug.LogInfo("ResourceDataset created successfully");
             return so;
         }

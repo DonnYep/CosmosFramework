@@ -26,6 +26,8 @@ namespace Cosmos.Editor.Resource
                 AssetBundleBuildProfileData.IgnoreTypeTreeChanges);
             var buildParams = new ResourceBuildParams()
             {
+                UseProjectRelativeBuildPath = AssetBundleBuildProfileData.UseProjectRelativeBuildPath,
+                ProjectRelativeBuildPath = AssetBundleBuildProfileData.ProjectRelativeBuildPath,
                 AssetBundleBuildPath = AssetBundleBuildProfileData.AssetBundleBuildPath,
                 AssetBundleEncryption = AssetBundleBuildProfileData.AssetBundleEncryption,
                 AssetBundleOffsetValue = AssetBundleBuildProfileData.AssetBundleOffsetValue,

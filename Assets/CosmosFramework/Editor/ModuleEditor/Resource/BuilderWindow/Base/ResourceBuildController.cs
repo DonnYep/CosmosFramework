@@ -355,7 +355,7 @@ namespace Cosmos.Editor.Resource
             ResourceBuildCache buildCache = default;
             try
             {
-                var buildCacheWritePath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceBuilderWindowConstant.RESOURCE_BUILD_CACHE);
+                var buildCacheWritePath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceEditorConstants.RESOURCE_BUILD_CACHE);
                 var cacheJson = Utility.IO.ReadTextFileContent(buildCacheWritePath);
                 buildCache = EditorUtil.Json.ToObject<ResourceBuildCache>(cacheJson);
             }
@@ -459,11 +459,11 @@ namespace Cosmos.Editor.Resource
                 BundleCacheInfoList = cacheCompareResult.BundleCacheInfoList
             };
             var cacheJson = EditorUtil.Json.ToJson(newBuildCache);
-            var cachePath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceBuilderWindowConstant.RESOURCE_BUILD_CACHE);
+            var cachePath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceEditorConstants.RESOURCE_BUILD_CACHE);
             Utility.IO.OverwriteTextFile(cachePath, cacheJson);
 
             var logJson = EditorUtil.Json.ToJson(cacheCompareResult);
-            var logPath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceBuilderWindowConstant.RESOURCE_BUILD_LOG);
+            var logPath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceEditorConstants.RESOURCE_BUILD_LOG);
             Utility.IO.OverwriteTextFile(logPath, logJson);
         }
         public static void RevertAssetBundlesName(List<ResourceBundleInfo> bundleInfos)

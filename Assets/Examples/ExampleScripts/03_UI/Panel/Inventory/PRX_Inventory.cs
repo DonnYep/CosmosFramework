@@ -16,7 +16,7 @@ public class PRX_Inventory : Proxy
     {
         InventoryDataSet = await CosmosEntry.ResourceManager.LoadAssetAsync<UnityEngine.Object>(dataSetPath) as InventoryDataset;
         SlotAsset = await CosmosEntry.ResourceManager.LoadPrefabAsync("UI/Slot");
-        jsonFilePath = Utility.IO.RegularPathCombine(Application.persistentDataPath, "Inventory");
+        jsonFilePath = Utility.IO.CombineURL(Application.persistentDataPath, "Inventory");
     }
     public void SaveJson()
     {
@@ -37,7 +37,7 @@ public class PRX_Inventory : Proxy
         }
         catch (System.Exception)
         {
-            var path = Utility.IO.RegularPathCombine(jsonFilePath, "InventoryCache.json");
+            var path = Utility.IO.CombineURL(jsonFilePath, "InventoryCache.json");
             Utility.Debug.LogError($"{path} not exsit !");
         }
     }

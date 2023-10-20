@@ -146,35 +146,48 @@ namespace Cosmos
                 return resultPath;
             }
             /// <summary>
-            /// 合并路径；
-            /// 合并URL相对路径应使用此方法
-            /// web类型地址合并， 获得的路径将以 / 作为分割符；
             /// 返回结果示例：github.com/DonnYep/CosmosFramework
             /// </summary>
             /// <param name="paths">路径</param>
             /// <returns>合并的路径</returns>
-            public static string RegularPathCombine(params string[] paths)
+            public static string CombineURL(params string[] paths)
             {
                 var pathResult = Path.Combine(paths);
                 pathResult = pathResult.Replace("\\", "/");
                 return pathResult;
             }
-            public static string GetRegularPath(string path)
+            /// <summary>
+            /// 格式化URL
+            /// 返回结果示例：github.com/DonnYep/CosmosFramework
+            /// </summary>
+            /// <param name="path">需要格式化的地址</param>
+            /// <returns>格式化后的URL</returns>
+            public static string FormatURL(string path)
             {
-                path = path.Replace("\\", "/");
-                return path;
+                var fmtPath = path.Replace("\\", "/");
+                return fmtPath;
             }
             /// <summary>
-            /// https://learn.microsoft.com/en-us/dotnet/standard/io/file-path-formats#skip-normalization
-            /// IO本地文件应使用此方法
+            /// 合并UNC地址
+            /// https://learn.microsoft.com/zh-cn/dotnet/standard/io/file-path-formats#unc-paths
             /// </summary>
             /// <param name="paths">路径</param>
             /// <returns>合并的路径</returns>
-            public static string NormalizedCombinePath(params string[] paths)
+            public static string CombineUNCPath(params string[] paths)
             {
                 var resultPath = Path.Combine(paths);
                 resultPath = resultPath.Replace("/", "\\");
                 return resultPath;
+            }
+            /// <summary>
+            /// 格式化UNC地址
+            /// </summary>
+            /// <param name="path">需要格式化的地址</param>
+            /// <returns>格式化后的UNC地址</returns>
+            public static string FormatUNCPath(string path)
+            {
+                var fmtPath = path.Replace("/", "\\");
+                return fmtPath;
             }
             /// <summary>
             /// 删除文件夹下的所有文件以及文件夹

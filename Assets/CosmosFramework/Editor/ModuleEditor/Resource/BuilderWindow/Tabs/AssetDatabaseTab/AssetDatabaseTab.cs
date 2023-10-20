@@ -60,7 +60,7 @@ namespace Cosmos.Editor.Resource
         public override void OnEnable()
         {
             rectSplitterInited = false;
-            horizontalSplitterPercent = ResourceBuilderWindowConstant.MIN_WIDTH;
+            horizontalSplitterPercent = ResourceEditorConstants.MIN_WIDTH;
             bundleLabel.OnEnable();
             bundleDetailLabel.OnEnable();
             objectLabel.OnEnable();
@@ -72,7 +72,7 @@ namespace Cosmos.Editor.Resource
             bundleLabel.OnMarkAsSplittable += OnMarkAsSplittable;
             bundleLabel.OnMarkAsUnsplittable += OnMarkAsUnsplittable;
             objectLabel.OnObjectInfoSelectionChanged += OnObjectInfoSelectionChanged;
-            tabData = EditorUtil.SafeGetData<AssetDatabaseTabData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetDatabaseTabDataName);
+            tabData = EditorUtil.SafeGetData<AssetDatabaseTabData>(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, AssetDatabaseTabDataName);
             if (ResourceBuilderWindowDataProxy.ResourceDataset != null)
             {
                 bundleLabel.Clear();
@@ -383,7 +383,7 @@ namespace Cosmos.Editor.Resource
         }
         void SaveTabData()
         {
-            EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetDatabaseTabDataName, tabData);
+            EditorUtil.SaveData(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, AssetDatabaseTabDataName, tabData);
         }
         IEnumerator EnumBuildDataset()
         {

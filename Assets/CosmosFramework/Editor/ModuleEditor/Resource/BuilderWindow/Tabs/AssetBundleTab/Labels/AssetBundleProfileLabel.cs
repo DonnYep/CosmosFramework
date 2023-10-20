@@ -36,23 +36,23 @@ namespace Cosmos.Editor.Resource
             EditorGUILayout.BeginHorizontal();
             {
                 buildProfile = (AssetBundleBuildProfile)EditorGUILayout.ObjectField("Build profile", buildProfile, typeof(AssetBundleBuildProfile), false);
-                if (GUILayout.Button(createAddNewIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.ICON_WIDTH)))
+                if (GUILayout.Button(createAddNewIcon, GUILayout.MaxWidth(ResourceEditorConstants.ICON_WIDTH)))
                 {
-                    var previousePreset = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.NEW_BUILD_PROFILE_PATH);
+                    var previousePreset = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(ResourceEditorConstants.NEW_BUILD_PROFILE_PATH);
                     if (previousePreset != null)
                     {
-                        var canCreate = UnityEditor.EditorUtility.DisplayDialog("AssetBundleBuildProfile already exist", $"Path {ResourceBuilderWindowConstant.NEW_BUILD_PROFILE_PATH} exists.Whether to continue to create and overwrite this file ?", "Create", "Cancel");
+                        var canCreate = UnityEditor.EditorUtility.DisplayDialog("AssetBundleBuildProfile already exist", $"Path {ResourceEditorConstants.NEW_BUILD_PROFILE_PATH} exists.Whether to continue to create and overwrite this file ?", "Create", "Cancel");
                         if (canCreate)
                         {
-                            buildProfile = EditorUtil.CreateScriptableObject<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.NEW_BUILD_PROFILE_PATH, HideFlags.NotEditable);
+                            buildProfile = EditorUtil.CreateScriptableObject<AssetBundleBuildProfile>(ResourceEditorConstants.NEW_BUILD_PROFILE_PATH, HideFlags.NotEditable);
                         }
                     }
                     else
                     {
-                        buildProfile = EditorUtil.CreateScriptableObject<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.NEW_BUILD_PROFILE_PATH, HideFlags.NotEditable);
+                        buildProfile = EditorUtil.CreateScriptableObject<AssetBundleBuildProfile>(ResourceEditorConstants.NEW_BUILD_PROFILE_PATH, HideFlags.NotEditable);
                     }
                 }
-                if (GUILayout.Button(saveActiveIcon, GUILayout.MaxWidth(ResourceBuilderWindowConstant.ICON_WIDTH)))
+                if (GUILayout.Button(saveActiveIcon, GUILayout.MaxWidth(ResourceEditorConstants.ICON_WIDTH)))
                 {
                     EditorUtil.SaveScriptableObject(buildProfile);
                 }
@@ -167,32 +167,72 @@ namespace Cosmos.Editor.Resource
                         buildProfile.AssetBundleBuildProfileData.InternalBuildVersion = 0;
                 }
 
-                EditorGUILayout.BeginHorizontal();
+                buildProfile.AssetBundleBuildProfileData.UseProjectRelativeBuildPath = EditorGUILayout.ToggleLeft("Use project relative path", buildProfile.AssetBundleBuildProfileData.UseProjectRelativeBuildPath);
+                var useProjectRelativeBuildPath = buildProfile.AssetBundleBuildProfileData.UseProjectRelativeBuildPath;
+                if (useProjectRelativeBuildPath)
                 {
-                    buildProfile.AssetBundleBuildProfileData.BuildPath = EditorGUILayout.TextField("Build path", buildProfile.AssetBundleBuildProfileData.BuildPath.Trim());
-                    if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
+                    EditorGUILayout.BeginHorizontal();
                     {
-                        var newPath = EditorUtility.OpenFolderPanel("Bundle output path", buildProfile.AssetBundleBuildProfileData.BuildPath, string.Empty);
-                        if (!string.IsNullOrEmpty(newPath))
+                        buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath = EditorGUILayout.TextField("Project relative path", buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath.Trim());
+                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
                         {
-                            buildProfile.AssetBundleBuildProfileData.BuildPath = newPath.Replace("\\", "/");
+                            var relativeBuildPath = EditorUtil.BrowseProjectReativeFolder(buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath);
+                            if (!string.IsNullOrEmpty(relativeBuildPath))
+                            {
+                                buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath = relativeBuildPath;
+                            }
+                            else
+                            {
+                                buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath = ResourceEditorConstants.DEFAULT_PROJECT_RELATIVE_BUILD_PATH;
+                            }
                         }
                     }
+                    EditorGUILayout.EndHorizontal();
                 }
-                EditorGUILayout.EndHorizontal();
-                buildProfile.AssetBundleBuildProfileData.AssetBundleBuildDirectory = Utility.IO.RegularPathCombine(buildProfile.AssetBundleBuildProfileData.BuildPath, buildProfile.AssetBundleBuildProfileData.BuildVersion, buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString());
+                else
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        buildProfile.AssetBundleBuildProfileData.BuildPath = EditorGUILayout.TextField("Build path", buildProfile.AssetBundleBuildProfileData.BuildPath.Trim());
+                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
+                        {
+                            var newPath = EditorUtility.OpenFolderPanel("Bundle output path", buildProfile.AssetBundleBuildProfileData.BuildPath, string.Empty);
+                            if (!string.IsNullOrEmpty(newPath))
+                            {
+                                buildProfile.AssetBundleBuildProfileData.BuildPath = newPath.Replace("\\", "/");
+                            }
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+
+                buildProfile.AssetBundleBuildProfileData.AssetBundleBuildDirectory = Utility.IO.CombineURL(buildProfile.AssetBundleBuildProfileData.BuildPath, buildProfile.AssetBundleBuildProfileData.BuildVersion, buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString());
                 if (!string.IsNullOrEmpty(buildProfile.AssetBundleBuildProfileData.BuildVersion))
                 {
-                    var assetBundleBuildPath = Utility.IO.RegularPathCombine(buildProfile.AssetBundleBuildProfileData.BuildPath, buildProfile.AssetBundleBuildProfileData.BuildVersion, buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString(), $"{buildProfile.AssetBundleBuildProfileData.BuildVersion}");
+                    var assetBundleBuildPath = Utility.IO.CombineURL(buildProfile.AssetBundleBuildProfileData.BuildPath, buildProfile.AssetBundleBuildProfileData.BuildVersion, buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString(), $"{buildProfile.AssetBundleBuildProfileData.BuildVersion}");
+                    if (useProjectRelativeBuildPath)
+                    {
+                        parent.TabData.ProfileLabelAbsoluteBuildPath = Utility.IO.CombineURL(
+                            EditorUtil.ProjectPath,
+                            buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath,
+                            buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString(),
+                            buildProfile.AssetBundleBuildProfileData.BuildVersion);
+                    }
+                    else
+                    {
+                        parent.TabData.ProfileLabelAbsoluteBuildPath = assetBundleBuildPath;
+                    }
                     if (buildProfile.AssetBundleBuildProfileData.ResourceBuildType == ResourceBuildType.Full)
                     {
                         assetBundleBuildPath += $"_{buildProfile.AssetBundleBuildProfileData.InternalBuildVersion}";
+                        parent.TabData.ProfileLabelAbsoluteBuildPath += $"_{buildProfile.AssetBundleBuildProfileData.InternalBuildVersion}";
                     }
                     buildProfile.AssetBundleBuildProfileData.AssetBundleBuildPath = assetBundleBuildPath;
                 }
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
                 EditorGUILayout.LabelField("Bundle build path", buildProfile.AssetBundleBuildProfileData.AssetBundleBuildPath);
+                EditorGUILayout.LabelField("Bundle absolut build path", parent.TabData.ProfileLabelAbsoluteBuildPath);
             }
             EditorGUILayout.EndVertical();
         }
@@ -243,7 +283,7 @@ namespace Cosmos.Editor.Resource
                     {
                         EditorGUILayout.LabelField("StreamingAssets  relative path");
                         buildProfile.AssetBundleBuildProfileData.StreamingAssetsRelativePath = EditorGUILayout.TextField("Relative path", buildProfile.AssetBundleBuildProfileData.StreamingAssetsRelativePath);
-                        destinationPath = Utility.IO.RegularPathCombine(Application.streamingAssetsPath, buildProfile.AssetBundleBuildProfileData.StreamingAssetsRelativePath);
+                        destinationPath = Utility.IO.CombineURL(Application.streamingAssetsPath, buildProfile.AssetBundleBuildProfileData.StreamingAssetsRelativePath);
                     }
                     else
                     {

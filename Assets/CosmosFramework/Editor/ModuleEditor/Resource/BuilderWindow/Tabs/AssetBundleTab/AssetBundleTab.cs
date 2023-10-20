@@ -27,7 +27,7 @@ namespace Cosmos.Editor.Resource
 
         public override void OnEnable()
         {
-            tabData = EditorUtil.SafeGetData<AssetBundleTabData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetBundleTabDataName);
+            tabData = EditorUtil.SafeGetData<AssetBundleTabData>(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, AssetBundleTabDataName);
             buildHandlers = EditorUtil.GetDerivedTypeHandlers<IResourceBuildHandler>();
             noProfileLabel.OnEnable(this, buildHandlers);
             profileLabel.OnEnable(this, buildHandlers);
@@ -109,7 +109,7 @@ namespace Cosmos.Editor.Resource
         }
         void SaveTabData()
         {
-            EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, AssetBundleTabDataName, tabData);
+            EditorUtil.SaveData(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, AssetBundleTabDataName, tabData);
         }
         IEnumerator BuildAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset)
         {
