@@ -15,7 +15,7 @@ namespace Cosmos.Editor.Resource
 
         public ResourceBuilderWindowData()
         {
-            ResourceDatasetPath = ResourceBuilderWindowConstant.DEFAULT_DATASET_PATH;
+            ResourceDatasetPath = ResourceEditorConstants.DEFAULT_DATASET_PATH;
         }
     }
 }

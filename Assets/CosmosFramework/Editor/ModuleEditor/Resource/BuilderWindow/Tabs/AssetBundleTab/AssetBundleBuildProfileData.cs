@@ -51,6 +51,15 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public bool ForceRemoveAllAssetBundleNames;
         /// <summary>
+        /// 使用项目相对构建路径
+        /// </summary>
+        public bool UseProjectRelativeBuildPath;
+        /// <summary>
+        /// 工程项目的相对构建路径
+        /// <see cref="ResourceEditorConstants.DEFAULT_PROJECT_RELATIVE_BUILD_PATH"/>
+        /// </summary>
+        public string ProjectRelativeBuildPath;
+        /// <summary>
         /// AB打包输出的绝对路径；
         /// </summary>
         public string AssetBundleBuildPath;
@@ -108,10 +117,11 @@ namespace Cosmos.Editor.Resource
             BuildTarget = BuildTarget.StandaloneWindows;
             BuildHandlerName = Constants.NONE;
             BuildHandlerIndex = 0;
-            BuildPath = Utility.IO.RegularPathCombine(EditorUtil.ApplicationPath(), "AssetBundles"); AssetBundleEncryption = false;
-            AssetBundleOffsetValue = 16;
+            BuildPath = Utility.IO.CombineURL(EditorUtil.ApplicationPath(), "AssetBundles"); 
+            AssetBundleEncryption = false;
+            AssetBundleOffsetValue = ResourceEditorConstants.DEFAULT_ASSETBUNDLE_OFFSET_VALUE;
             EncryptManifest = false;
-            ManifestEncryptionKey = "CosmosBundlesKey";
+            ManifestEncryptionKey = ResourceEditorConstants.DEFAULT_MANIFEST_ENCRYPTION_KEY;
             AssetBundleNameType = AssetBundleNameType.HashInstead;
             BuildVersion = "0.0.1";
             InternalBuildVersion = 0;
@@ -120,7 +130,9 @@ namespace Cosmos.Editor.Resource
             DeterministicAssetBundle = false;
             IgnoreTypeTreeChanges = false;
             StreamingAssetsRelativePath = BuildVersion;
-            AssetBundleBuildPath = Utility.IO.RegularPathCombine(BuildPath, $"{BuildVersion}_{InternalBuildVersion}");
+            AssetBundleBuildPath = Utility.IO.CombineURL(BuildPath, $"{BuildVersion}_{InternalBuildVersion}");
+            UseProjectRelativeBuildPath = true;
+            ProjectRelativeBuildPath = ResourceEditorConstants.DEFAULT_PROJECT_RELATIVE_BUILD_PATH;
         }
     }
 }

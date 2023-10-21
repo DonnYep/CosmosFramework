@@ -12,7 +12,7 @@ namespace Cosmos.Editor.Resource
             get
             {
                 if (dataset == null)
-                    dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceBuilderWindowConstant.DEFAULT_DATASET_PATH);
+                    dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceEditorConstants.DEFAULT_DATASET_PATH);
                 return dataset;
             }
         }
@@ -21,7 +21,7 @@ namespace Cosmos.Editor.Resource
             get
             {
                 if (buildProfile == null)
-                    buildProfile = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(ResourceBuilderWindowConstant.DEFAULT_BUILD_PROFILE_PATH);
+                    buildProfile = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(ResourceEditorConstants.DEFAULT_BUILD_PROFILE_PATH);
                 return buildProfile;
             }
         }
@@ -29,7 +29,7 @@ namespace Cosmos.Editor.Resource
         {
             if (DefaultResourceDataset == null)
             {
-                EditorUtil.Debug.LogError($"ResourceDataset : {ResourceBuilderWindowConstant.DEFAULT_DATASET_PATH} not exist !");
+                EditorUtil.Debug.LogError($"ResourceDataset : {ResourceEditorConstants.DEFAULT_DATASET_PATH} not exist !");
                 return;
             }
             var presetData = new AssetBundleBuildProfileData();
@@ -57,17 +57,17 @@ namespace Cosmos.Editor.Resource
             };
             ResourceBuildController.BuildAssetBundle(dataset, buildParams);
         }
-        [MenuItem("Window/Cosmos/Build/Resource/BuildAssetBundleByProfile")]
+        [MenuItem("Window/Cosmos/Build/Resource/BuildAssetBundleByDefaultProfile")]
         public static void BuildAssetBundleByProfile()
         {
             if (DefaultResourceDataset == null)
             {
-                EditorUtil.Debug.LogError($"ResourceDataset : {ResourceBuilderWindowConstant.DEFAULT_DATASET_PATH} not exist !");
+                EditorUtil.Debug.LogError($"ResourceDataset : {ResourceEditorConstants.DEFAULT_DATASET_PATH} not exist !");
                 return;
             }
             if (DefaultAssetBundleBuildProfile == null)
             {
-                EditorUtil.Debug.LogError($"AssetBundleBuildProfile : {ResourceBuilderWindowConstant.DEFAULT_BUILD_PROFILE_PATH} not exist !");
+                EditorUtil.Debug.LogError($"AssetBundleBuildProfile : {ResourceEditorConstants.DEFAULT_BUILD_PROFILE_PATH} not exist !");
                 return;
             }
             var buildParams = DefaultAssetBundleBuildProfile.GetBuildParams();

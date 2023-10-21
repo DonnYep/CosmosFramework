@@ -51,7 +51,7 @@ namespace Cosmos.Editor.Resource
             {
                 GUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField(ResourceBuilderWindowConstant.SERACH, GUILayout.MaxWidth(48));
+                    EditorGUILayout.LabelField(ResourceEditorConstants.SERACH, GUILayout.MaxWidth(48));
                     treeView.searchString = searchField.OnToolbarGUI(treeView.searchString);
                 }
                 GUILayout.EndHorizontal();

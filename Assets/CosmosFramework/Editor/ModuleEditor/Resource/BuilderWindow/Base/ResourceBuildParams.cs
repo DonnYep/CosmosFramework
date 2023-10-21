@@ -20,6 +20,15 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public AssetBundleNameType AssetBundleNameType;
         /// <summary>
+        /// 使用项目相对构建路径
+        /// </summary>
+        public bool UseProjectRelativeBuildPath;
+        /// <summary>
+        /// 工程项目的相对构建路径
+        /// <see cref="ResourceEditorConstants.DEFAULT_PROJECT_RELATIVE_BUILD_PATH"/>
+        /// </summary>
+        public string ProjectRelativeBuildPath;
+        /// <summary>
         /// AB打包输出的绝对路径；
         /// </summary>
         public string AssetBundleBuildPath;

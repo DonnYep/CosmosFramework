@@ -83,13 +83,13 @@ namespace Cosmos.Editor.Resource
                     if (objectInfo.ObjectVaild)
                     {
                         objectIcon = AssetDatabase.GetCachedIcon(objectInfo.ObjectPath) as Texture2D;
-                        validState = ResourceBuilderWindowConstant.VALID;
+                        validState = ResourceEditorConstants.VALID;
                         objectValidIcon = validIcon;
                     }
                     else
                     {
                         objectIcon = EditorGUIUtility.FindTexture("DefaultAsset Icon");
-                        validState = ResourceBuilderWindowConstant.INVALID;
+                        validState = ResourceEditorConstants.INVALID;
                         objectValidIcon = invalidIcon;
                     }
                     var treeViewItem = new AssetDatabaseObjectTreeViewItem(i, 1, objectInfo.ObjectPath, objectIcon)

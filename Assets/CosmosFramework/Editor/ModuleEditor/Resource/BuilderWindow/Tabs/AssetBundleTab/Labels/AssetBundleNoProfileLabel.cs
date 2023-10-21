@@ -53,6 +53,8 @@ namespace Cosmos.Editor.Resource
                 profileData.IgnoreTypeTreeChanges);
             var buildParams = new ResourceBuildParams()
             {
+                UseProjectRelativeBuildPath = profileData.UseProjectRelativeBuildPath,
+                ProjectRelativeBuildPath = profileData.ProjectRelativeBuildPath,
                 AssetBundleBuildPath = profileData.AssetBundleBuildPath,
                 AssetBundleEncryption = profileData.AssetBundleEncryption,
                 AssetBundleOffsetValue = profileData.AssetBundleOffsetValue,
@@ -76,7 +78,7 @@ namespace Cosmos.Editor.Resource
         }
         void GetLabelData()
         {
-            profileData = EditorUtil.SafeGetData<AssetBundleBuildProfileData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName);
+            profileData = EditorUtil.SafeGetData<AssetBundleBuildProfileData>(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, LabelDataName);
             var buildHandlerMaxIndex = buildHandlers.Length - 1;
             if (profileData.BuildHandlerIndex > buildHandlerMaxIndex)
             {
@@ -85,7 +87,7 @@ namespace Cosmos.Editor.Resource
         }
         void SaveLabelData()
         {
-            EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, LabelDataName, profileData);
+            EditorUtil.SaveData(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, LabelDataName, profileData);
         }
         void DrawPrebuildOptions()
         {
@@ -159,10 +161,10 @@ namespace Cosmos.Editor.Resource
                     }
                 }
                 EditorGUILayout.EndHorizontal();
-                profileData.AssetBundleBuildDirectory = Utility.IO.RegularPathCombine(profileData.BuildPath, profileData.BuildVersion, profileData.BuildTarget.ToString());
+                profileData.AssetBundleBuildDirectory = Utility.IO.CombineURL(profileData.BuildPath, profileData.BuildVersion, profileData.BuildTarget.ToString());
                 if (!string.IsNullOrEmpty(profileData.BuildVersion))
                 {
-                    var assetBundleBuildPath = Utility.IO.RegularPathCombine(profileData.BuildPath, profileData.BuildVersion, profileData.BuildTarget.ToString(), $"{profileData.BuildVersion}");
+                    var assetBundleBuildPath = Utility.IO.CombineURL(profileData.BuildPath, profileData.BuildVersion, profileData.BuildTarget.ToString(), $"{profileData.BuildVersion}");
                     if (profileData.ResourceBuildType == ResourceBuildType.Full)
                     {
                         assetBundleBuildPath += $"_{profileData.InternalBuildVersion}";
@@ -222,7 +224,7 @@ namespace Cosmos.Editor.Resource
                     {
                         EditorGUILayout.LabelField("StreamingAssets  relative path");
                         profileData.StreamingAssetsRelativePath = EditorGUILayout.TextField("Relative path", profileData.StreamingAssetsRelativePath);
-                        destinationPath = Utility.IO.RegularPathCombine(Application.streamingAssetsPath, profileData.StreamingAssetsRelativePath);
+                        destinationPath = Utility.IO.CombineURL(Application.streamingAssetsPath, profileData.StreamingAssetsRelativePath);
                     }
                     else
                     {

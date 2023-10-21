@@ -14,11 +14,11 @@ namespace Cosmos.Editor.Resource
         }
         protected override void GetWindowData()
         {
-            windowData = EditorUtil.SafeGetData<ResourceAnalyzerWindowData>(ResourceEditorConstants.CACHE_RELATIVE_PATH, windowDataName);
+            windowData = EditorUtil.SafeGetData<ResourceAnalyzerWindowData>(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, windowDataName);
         }
         protected override void SaveWindowData()
         {
-            EditorUtil.SaveData(ResourceEditorConstants.CACHE_RELATIVE_PATH, windowDataName, windowData);
+            EditorUtil.SaveData(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, windowDataName, windowData);
         }
     }
 }

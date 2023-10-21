@@ -39,9 +39,9 @@ namespace Cosmos.Editor.Resource
                         return;
                     var datasetExtensionList = ResourceBuilderWindowDataProxy.ResourceDataset.ResourceAvailableExtenisonList;
                     extensionList.Clear();
-                    extensionList.AddRange(ResourceBuilderWindowConstant.Extensions);
+                    extensionList.AddRange(ResourceEditorConstants.Extensions);
                     datasetExtensionList.Clear();
-                    datasetExtensionList.AddRange(ResourceBuilderWindowConstant.Extensions);
+                    datasetExtensionList.AddRange(ResourceEditorConstants.Extensions);
                     EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
                 }
             }
