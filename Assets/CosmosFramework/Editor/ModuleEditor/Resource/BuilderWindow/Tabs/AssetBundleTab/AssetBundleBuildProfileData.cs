@@ -62,11 +62,12 @@ namespace Cosmos.Editor.Resource
         /// <summary>
         /// AB打包输出的绝对路径；
         /// </summary>
-        public string AssetBundleBuildPath;
+        public string AssetBundleAbsoluteBuildPath;
         /// <summary>
-        /// AB打包输出文件夹
+        /// 构建详情输出地址
+        /// {WORKSPACE}/{BuildTarget}/
         /// </summary>
-        public string AssetBundleBuildDirectory;
+        public string BuildDetailOutputPath;
         /// <summary>
         /// AB输出目录；
         /// </summary>
@@ -117,7 +118,7 @@ namespace Cosmos.Editor.Resource
             BuildTarget = BuildTarget.StandaloneWindows;
             BuildHandlerName = Constants.NONE;
             BuildHandlerIndex = 0;
-            BuildPath = Utility.IO.CombineURL(EditorUtil.ApplicationPath(), "AssetBundles"); 
+            BuildPath = Utility.IO.CombineURL(EditorUtil.ApplicationPath(), ResourceEditorConstants.DEFAULT_PROJECT_RELATIVE_BUILD_PATH); 
             AssetBundleEncryption = false;
             AssetBundleOffsetValue = ResourceEditorConstants.DEFAULT_ASSETBUNDLE_OFFSET_VALUE;
             EncryptManifest = false;
@@ -130,7 +131,6 @@ namespace Cosmos.Editor.Resource
             DeterministicAssetBundle = false;
             IgnoreTypeTreeChanges = false;
             StreamingAssetsRelativePath = BuildVersion;
-            AssetBundleBuildPath = Utility.IO.CombineURL(BuildPath, $"{BuildVersion}_{InternalBuildVersion}");
             UseProjectRelativeBuildPath = true;
             ProjectRelativeBuildPath = ResourceEditorConstants.DEFAULT_PROJECT_RELATIVE_BUILD_PATH;
         }

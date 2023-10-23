@@ -140,7 +140,7 @@ namespace Cosmos.Editor.Resource
             {
                 resourceBuildHandler.OnBuildPrepared(buildParams);
             }
-            var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
+            var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleAbsoluteBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
             ResourceBuildController.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
             ResourceBuildController.PorcessManifest(buildParams, ref resourceManifest);
             ResourceBuildController.BuildDoneOption(buildParams);
@@ -199,7 +199,7 @@ namespace Cosmos.Editor.Resource
                     }
                     abBuildList.Add(assetBundleBuild);
                 }
-                var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, abBuildList.ToArray(), buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
+                var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleAbsoluteBuildPath, abBuildList.ToArray(), buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
 
                 ResourceBuildController.ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
                 ResourceBuildController.PorcessManifest(buildParams, ref resourceManifest);

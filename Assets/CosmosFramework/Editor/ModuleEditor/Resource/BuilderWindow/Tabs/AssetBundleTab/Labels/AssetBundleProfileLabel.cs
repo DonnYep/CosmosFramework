@@ -85,7 +85,8 @@ namespace Cosmos.Editor.Resource
         {
             if (buildProfile == null)
                 return new ResourceBuildParams();
-            return buildProfile.GetBuildParams();
+            var buildParams = buildProfile.GetBuildParams();
+            return buildParams;
         }
         void GetLabelData()
         {
@@ -205,34 +206,46 @@ namespace Cosmos.Editor.Resource
                     }
                     EditorGUILayout.EndHorizontal();
                 }
-
-                buildProfile.AssetBundleBuildProfileData.AssetBundleBuildDirectory = Utility.IO.CombineURL(buildProfile.AssetBundleBuildProfileData.BuildPath, buildProfile.AssetBundleBuildProfileData.BuildVersion, buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString());
                 if (!string.IsNullOrEmpty(buildProfile.AssetBundleBuildProfileData.BuildVersion))
                 {
-                    var assetBundleBuildPath = Utility.IO.CombineURL(buildProfile.AssetBundleBuildProfileData.BuildPath, buildProfile.AssetBundleBuildProfileData.BuildVersion, buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString(), $"{buildProfile.AssetBundleBuildProfileData.BuildVersion}");
+                    var abAbsBuildPath = string.Empty;
+                    var buildDetailOutputPath = string.Empty;
+
                     if (useProjectRelativeBuildPath)
                     {
-                        parent.TabData.ProfileLabelAbsoluteBuildPath = Utility.IO.CombineURL(
+                        abAbsBuildPath = Utility.IO.CombineURL(
                             EditorUtil.ProjectPath,
                             buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath,
                             buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString(),
                             buildProfile.AssetBundleBuildProfileData.BuildVersion);
+
+                        buildDetailOutputPath = Utility.IO.CombineURL(
+                            EditorUtil.ProjectPath,
+                            buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath,
+                            buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString());
                     }
                     else
                     {
-                        parent.TabData.ProfileLabelAbsoluteBuildPath = assetBundleBuildPath;
+                        abAbsBuildPath = Utility.IO.CombineURL(
+                            buildProfile.AssetBundleBuildProfileData.BuildPath,
+                            buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString(),
+                            buildProfile.AssetBundleBuildProfileData.BuildVersion);
+
+                        buildDetailOutputPath = Utility.IO.CombineURL(
+                            buildProfile.AssetBundleBuildProfileData.BuildPath,
+                            buildProfile.AssetBundleBuildProfileData.BuildTarget.ToString());
                     }
+                    buildProfile.AssetBundleBuildProfileData.BuildDetailOutputPath = buildDetailOutputPath;
+
                     if (buildProfile.AssetBundleBuildProfileData.ResourceBuildType == ResourceBuildType.Full)
                     {
-                        assetBundleBuildPath += $"_{buildProfile.AssetBundleBuildProfileData.InternalBuildVersion}";
-                        parent.TabData.ProfileLabelAbsoluteBuildPath += $"_{buildProfile.AssetBundleBuildProfileData.InternalBuildVersion}";
+                        abAbsBuildPath += $"_{buildProfile.AssetBundleBuildProfileData.InternalBuildVersion}";
                     }
-                    buildProfile.AssetBundleBuildProfileData.AssetBundleBuildPath = assetBundleBuildPath;
+                    buildProfile.AssetBundleBuildProfileData.AssetBundleAbsoluteBuildPath = abAbsBuildPath;
                 }
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
-                EditorGUILayout.LabelField("Bundle build path", buildProfile.AssetBundleBuildProfileData.AssetBundleBuildPath);
-                EditorGUILayout.LabelField("Bundle absolut build path", parent.TabData.ProfileLabelAbsoluteBuildPath);
+                EditorGUILayout.LabelField("Bundle build path", buildProfile.AssetBundleBuildProfileData.AssetBundleAbsoluteBuildPath);
             }
             EditorGUILayout.EndVertical();
         }
