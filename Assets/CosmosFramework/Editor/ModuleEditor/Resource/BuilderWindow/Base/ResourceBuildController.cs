@@ -115,10 +115,10 @@ namespace Cosmos.Editor.Resource
             switch (buildParams.ResourceBuildType)
             {
                 case ResourceBuildType.Full:
-                    Utility.IO.EmptyFolder(buildParams.AssetBundleBuildPath);
+                    Utility.IO.EmptyFolder(buildParams.AssetBundleAbsoluteBuildPath);
                     break;
                 case ResourceBuildType.Incremental:
-                    Utility.IO.CreateFolder(buildParams.AssetBundleBuildPath);
+                    Utility.IO.CreateFolder(buildParams.AssetBundleAbsoluteBuildPath);
                     break;
             }
 
@@ -221,7 +221,7 @@ namespace Cosmos.Editor.Resource
             for (int i = 0; i < bundleKeyLength; i++)
             {
                 var bundleKey = bundleKeys[i];
-                var bundlePath = Path.Combine(buildParams.AssetBundleBuildPath, bundleKey);
+                var bundlePath = Path.Combine(buildParams.AssetBundleAbsoluteBuildPath, bundleKey);
                 long bundleSize = 0;
                 if (buildParams.AssetBundleEncryption)
                 {
@@ -311,17 +311,17 @@ namespace Cosmos.Editor.Resource
                 var key = ResourceUtility.GenerateBytesAESKey(encryptionKey);
                 manifestContext = Utility.Encryption.AESEncryptStringToString(manifestJson, key);
             }
-            Utility.IO.WriteTextFile(buildParams.AssetBundleBuildPath, ResourceConstants.RESOURCE_MANIFEST, manifestContext);
+            Utility.IO.WriteTextFile(buildParams.AssetBundleAbsoluteBuildPath, ResourceConstants.RESOURCE_MANIFEST, manifestContext);
 
             //删除生成文对应的主manifest文件
             string buildVersionPath = string.Empty;
             switch (buildParams.ResourceBuildType)
             {
                 case ResourceBuildType.Full:
-                    buildVersionPath = Path.Combine(buildParams.AssetBundleBuildPath, $"{buildParams.BuildVersion}_{buildParams.InternalBuildVersion}");
+                    buildVersionPath = Path.Combine(buildParams.AssetBundleAbsoluteBuildPath, $"{buildParams.BuildVersion}_{buildParams.InternalBuildVersion}");
                     break;
                 case ResourceBuildType.Incremental:
-                    buildVersionPath = Path.Combine(buildParams.AssetBundleBuildPath, buildParams.BuildVersion);
+                    buildVersionPath = Path.Combine(buildParams.AssetBundleAbsoluteBuildPath, buildParams.BuildVersion);
                     break;
             }
             var buildVersionManifestPath = Utility.Text.Append(buildVersionPath, ".manifest");
@@ -337,7 +337,7 @@ namespace Cosmos.Editor.Resource
                     streamingAssetPath = Path.Combine(Application.streamingAssetsPath, buildParams.StreamingAssetsRelativePath);
                 else
                     streamingAssetPath = Application.streamingAssetsPath;
-                var buildPath = buildParams.AssetBundleBuildPath;
+                var buildPath = buildParams.AssetBundleAbsoluteBuildPath;
                 if (buildParams.ClearStreamingAssetsDestinationPath)
                 {
                     Utility.IO.EmptyFolder(streamingAssetPath);
@@ -355,7 +355,7 @@ namespace Cosmos.Editor.Resource
             ResourceBuildCache buildCache = default;
             try
             {
-                var buildCacheWritePath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceEditorConstants.RESOURCE_BUILD_CACHE);
+                var buildCacheWritePath = Path.Combine(buildParams.BuildDetailOutputPath, ResourceEditorConstants.RESOURCE_BUILD_CACHE);
                 var cacheJson = Utility.IO.ReadTextFileContent(buildCacheWritePath);
                 buildCache = EditorUtil.Json.ToObject<ResourceBuildCache>(cacheJson);
             }
@@ -396,7 +396,7 @@ namespace Cosmos.Editor.Resource
             }
             var cmpCacheInfoDict = cmpBundleCacheInfoList.ToDictionary(b => b.BundlePath);
             var nameType = buildParams.AssetBundleNameType;
-            var abBuildPath = buildParams.AssetBundleBuildPath;
+            var abBuildPath = buildParams.AssetBundleAbsoluteBuildPath;
             foreach (var srcCacheInfo in srcBundleCacheInfoDict.Values)
             {
                 var filePath = string.Empty;
@@ -459,11 +459,11 @@ namespace Cosmos.Editor.Resource
                 BundleCacheInfoList = cacheCompareResult.BundleCacheInfoList
             };
             var cacheJson = EditorUtil.Json.ToJson(newBuildCache);
-            var cachePath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceEditorConstants.RESOURCE_BUILD_CACHE);
+            var cachePath = Path.Combine(buildParams.BuildDetailOutputPath, ResourceEditorConstants.RESOURCE_BUILD_CACHE);
             Utility.IO.OverwriteTextFile(cachePath, cacheJson);
 
             var logJson = EditorUtil.Json.ToJson(cacheCompareResult);
-            var logPath = Path.Combine(buildParams.AssetBundleBuildDirectory, ResourceEditorConstants.RESOURCE_BUILD_LOG);
+            var logPath = Path.Combine(buildParams.BuildDetailOutputPath, ResourceEditorConstants.RESOURCE_BUILD_LOG);
             Utility.IO.OverwriteTextFile(logPath, logJson);
         }
         public static void RevertAssetBundlesName(List<ResourceBundleInfo> bundleInfos)
@@ -488,7 +488,7 @@ namespace Cosmos.Editor.Resource
             ResourceManifest resourceManifest = new ResourceManifest();
             var bundleInfos = dataset.GetResourceBundleInfos();
             PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
-            var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
+            var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleAbsoluteBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
             ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
             PorcessManifest(buildParams, ref resourceManifest);
             BuildDoneOption(buildParams);

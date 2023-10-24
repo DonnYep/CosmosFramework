@@ -28,7 +28,7 @@ namespace Cosmos.Editor.Resource
             {
                 UseProjectRelativeBuildPath = AssetBundleBuildProfileData.UseProjectRelativeBuildPath,
                 ProjectRelativeBuildPath = AssetBundleBuildProfileData.ProjectRelativeBuildPath,
-                AssetBundleBuildPath = AssetBundleBuildProfileData.AssetBundleBuildPath,
+                AssetBundleAbsoluteBuildPath = AssetBundleBuildProfileData.AssetBundleAbsoluteBuildPath,
                 AssetBundleEncryption = AssetBundleBuildProfileData.AssetBundleEncryption,
                 AssetBundleOffsetValue = AssetBundleBuildProfileData.AssetBundleOffsetValue,
                 BuildAssetBundleOptions = buildAssetBundleOptions,
@@ -42,7 +42,7 @@ namespace Cosmos.Editor.Resource
                 CopyToStreamingAssets = AssetBundleBuildProfileData.CopyToStreamingAssets,
                 UseStreamingAssetsRelativePath = AssetBundleBuildProfileData.UseStreamingAssetsRelativePath,
                 StreamingAssetsRelativePath = AssetBundleBuildProfileData.StreamingAssetsRelativePath,
-                AssetBundleBuildDirectory = AssetBundleBuildProfileData.AssetBundleBuildDirectory,
+                BuildDetailOutputPath = AssetBundleBuildProfileData.BuildDetailOutputPath,
                 ClearStreamingAssetsDestinationPath = AssetBundleBuildProfileData.ClearStreamingAssetsDestinationPath,
                 ForceRemoveAllAssetBundleNames = AssetBundleBuildProfileData.ForceRemoveAllAssetBundleNames,
                 BuildHandlerName = AssetBundleBuildProfileData.BuildHandlerName

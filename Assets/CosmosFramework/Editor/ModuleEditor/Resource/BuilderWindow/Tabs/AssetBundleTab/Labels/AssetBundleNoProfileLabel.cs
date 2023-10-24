@@ -55,7 +55,7 @@ namespace Cosmos.Editor.Resource
             {
                 UseProjectRelativeBuildPath = profileData.UseProjectRelativeBuildPath,
                 ProjectRelativeBuildPath = profileData.ProjectRelativeBuildPath,
-                AssetBundleBuildPath = profileData.AssetBundleBuildPath,
+                AssetBundleAbsoluteBuildPath = profileData.AssetBundleAbsoluteBuildPath,
                 AssetBundleEncryption = profileData.AssetBundleEncryption,
                 AssetBundleOffsetValue = profileData.AssetBundleOffsetValue,
                 BuildAssetBundleOptions = buildAssetBundleOptions,
@@ -69,7 +69,7 @@ namespace Cosmos.Editor.Resource
                 CopyToStreamingAssets = profileData.CopyToStreamingAssets,
                 UseStreamingAssetsRelativePath = profileData.UseStreamingAssetsRelativePath,
                 StreamingAssetsRelativePath = profileData.StreamingAssetsRelativePath,
-                AssetBundleBuildDirectory = profileData.AssetBundleBuildDirectory,
+                BuildDetailOutputPath = profileData.BuildDetailOutputPath,
                 ClearStreamingAssetsDestinationPath = profileData.ClearStreamingAssetsDestinationPath,
                 ForceRemoveAllAssetBundleNames = profileData.ForceRemoveAllAssetBundleNames,
                 BuildHandlerName = profileData.BuildHandlerName
@@ -147,33 +147,85 @@ namespace Cosmos.Editor.Resource
                     if (profileData.InternalBuildVersion < 0)
                         profileData.InternalBuildVersion = 0;
                 }
-
-                EditorGUILayout.BeginHorizontal();
+                profileData.UseProjectRelativeBuildPath = EditorGUILayout.ToggleLeft("Use project relative path", profileData.UseProjectRelativeBuildPath);
+                var useProjectRelativeBuildPath = profileData.UseProjectRelativeBuildPath;
+                if (useProjectRelativeBuildPath)
                 {
-                    profileData.BuildPath = EditorGUILayout.TextField("Build path", profileData.BuildPath.Trim());
-                    if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
+                    EditorGUILayout.BeginHorizontal();
                     {
-                        var newPath = EditorUtility.OpenFolderPanel("Bundle output path", profileData.BuildPath, string.Empty);
-                        if (!string.IsNullOrEmpty(newPath))
+                        profileData.ProjectRelativeBuildPath = EditorGUILayout.TextField("Project relative path", profileData.ProjectRelativeBuildPath.Trim());
+                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
                         {
-                            profileData.BuildPath = newPath.Replace("\\", "/");
+                            var relativeBuildPath = EditorUtil.BrowseProjectReativeFolder(profileData.ProjectRelativeBuildPath);
+                            if (!string.IsNullOrEmpty(relativeBuildPath))
+                            {
+                                profileData.ProjectRelativeBuildPath = relativeBuildPath;
+                            }
+                            else
+                            {
+                                profileData.ProjectRelativeBuildPath = ResourceEditorConstants.DEFAULT_PROJECT_RELATIVE_BUILD_PATH;
+                            }
                         }
                     }
+                    EditorGUILayout.EndHorizontal();
                 }
-                EditorGUILayout.EndHorizontal();
-                profileData.AssetBundleBuildDirectory = Utility.IO.CombineURL(profileData.BuildPath, profileData.BuildVersion, profileData.BuildTarget.ToString());
+                else
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        profileData.BuildPath = EditorGUILayout.TextField("Build path", profileData.BuildPath.Trim());
+                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
+                        {
+                            var newPath = EditorUtility.OpenFolderPanel("Bundle output path", profileData.BuildPath, string.Empty);
+                            if (!string.IsNullOrEmpty(newPath))
+                            {
+                                profileData.BuildPath = newPath.Replace("\\", "/");
+                            }
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
                 if (!string.IsNullOrEmpty(profileData.BuildVersion))
                 {
-                    var assetBundleBuildPath = Utility.IO.CombineURL(profileData.BuildPath, profileData.BuildVersion, profileData.BuildTarget.ToString(), $"{profileData.BuildVersion}");
+                    var abAbsBuildPath = string.Empty;
+                    var buildDetailOutputPath = string.Empty;
+
+                    if (useProjectRelativeBuildPath)
+                    {
+                        abAbsBuildPath = Utility.IO.CombineURL(
+                             EditorUtil.ProjectPath,
+                             profileData.ProjectRelativeBuildPath,
+                             profileData.BuildTarget.ToString(),
+                             profileData.BuildVersion);
+
+                        buildDetailOutputPath = Utility.IO.CombineURL(
+                            EditorUtil.ProjectPath,
+                            profileData.ProjectRelativeBuildPath,
+                            profileData.BuildTarget.ToString());
+                    }
+                    else
+                    {
+                        abAbsBuildPath = Utility.IO.CombineURL(
+                            profileData.BuildPath,
+                            profileData.BuildTarget.ToString(),
+                            profileData.BuildVersion);
+
+                        buildDetailOutputPath = Utility.IO.CombineURL(
+                            profileData.BuildPath,
+                            profileData.BuildTarget.ToString());
+                    }
+
+                    profileData.BuildDetailOutputPath = buildDetailOutputPath;
+
                     if (profileData.ResourceBuildType == ResourceBuildType.Full)
                     {
-                        assetBundleBuildPath += $"_{profileData.InternalBuildVersion}";
+                        abAbsBuildPath += $"_{profileData.InternalBuildVersion}";
                     }
-                    profileData.AssetBundleBuildPath = assetBundleBuildPath;
+                    profileData.AssetBundleAbsoluteBuildPath = abAbsBuildPath;
                 }
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
-                EditorGUILayout.LabelField("Bundle build path", profileData.AssetBundleBuildPath);
+                EditorGUILayout.LabelField("Bundle build path", profileData.AssetBundleAbsoluteBuildPath);
             }
             EditorGUILayout.EndVertical();
         }

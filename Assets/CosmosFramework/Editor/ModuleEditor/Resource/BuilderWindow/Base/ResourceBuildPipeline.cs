@@ -41,7 +41,7 @@ namespace Cosmos.Editor.Resource
                 presetData.AssetBundleNameType = AssetBundleNameType.DefaultName;
             var buildParams = new ResourceBuildParams()
             {
-                AssetBundleBuildPath = presetData.AssetBundleBuildPath,
+                AssetBundleAbsoluteBuildPath = presetData.AssetBundleAbsoluteBuildPath,
                 AssetBundleEncryption = presetData.AssetBundleEncryption,
                 AssetBundleOffsetValue = presetData.AssetBundleOffsetValue,
                 BuildAssetBundleOptions = options,

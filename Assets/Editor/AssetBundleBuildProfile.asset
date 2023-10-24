@@ -15,8 +15,8 @@ MonoBehaviour:
   assetBundleBuildProfileData:
     BuildTarget: 5
     AssetBundleCompressType: 2
-    AssetBundleNameType: 1
-    ResourceBuildType: 0
+    AssetBundleNameType: 0
+    ResourceBuildType: 1
     BuildHandlerName: <NONE>
     BuildHandlerIndex: 0
     DisableWriteTypeTree: 0
@@ -24,12 +24,12 @@ MonoBehaviour:
     ForceRebuildAssetBundle: 0
     IgnoreTypeTreeChanges: 0
     ForceRemoveAllAssetBundleNames: 0
-    UseProjectRelativeBuildPath: 1
+    UseProjectRelativeBuildPath: 0
     ProjectRelativeBuildPath: AssetBundles/Resource
-    AssetBundleBuildPath: E:/DonnYep/CosmosFramework/AssetBundles/0.0.1/StandaloneWindows/0.0.1_0
-    AssetBundleBuildDirectory: E:/DonnYep/CosmosFramework/AssetBundles/0.0.1/StandaloneWindows
-    BuildPath: E:/DonnYep/CosmosFramework/AssetBundles
-    BuildVersion: 0.0.1
+    AssetBundleAbsoluteBuildPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource/StandaloneWindows/profile-no-relative
+    BuildDetailOutputPath: 
+    BuildPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource
+    BuildVersion: profile-no-relative
     InternalBuildVersion: 0
     AssetBundleEncryption: 0
     AssetBundleOffsetValue: 16

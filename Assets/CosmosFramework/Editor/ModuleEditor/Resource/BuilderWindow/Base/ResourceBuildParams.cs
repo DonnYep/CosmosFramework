@@ -31,11 +31,11 @@ namespace Cosmos.Editor.Resource
         /// <summary>
         /// AB打包输出的绝对路径；
         /// </summary>
-        public string AssetBundleBuildPath;
+        public string AssetBundleAbsoluteBuildPath;
         /// <summary>
-        /// AB打包输出文件夹
+        /// 构建详情输出地址
         /// </summary>
-        public string AssetBundleBuildDirectory;
+        public string BuildDetailOutputPath;
         /// <summary>
         /// 构建类型，增量或全量
         /// </summary>
