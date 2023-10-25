@@ -4,6 +4,6 @@ namespace Cosmos.Resource
 {
     public class ResourceIntegrityResult
     {
-        public IList<ResourceIntegrityInfo> ResourceIntegrityInfos;
+        public List<ResourceIntegrityInfo> ResourceIntegrityInfos;
     }
 }

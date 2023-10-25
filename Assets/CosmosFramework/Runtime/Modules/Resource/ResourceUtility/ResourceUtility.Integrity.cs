@@ -14,13 +14,12 @@ namespace Cosmos.Resource
             /// <param name="bundleBuildInfos">bundleBuildInfo in manifest</param>
             /// <param name="path">resource path</param>
             /// <param name="result">verify result</param>
-            public static void VerifyResourceIntegrity(IList<ResourceBundleBuildInfo> bundleBuildInfos, string path, out ResourceIntegrityResult result)
+            public static void VerifyResourceIntegrity(IEnumerable<ResourceBundleBuildInfo> bundleBuildInfos, string path, out ResourceIntegrityResult result)
             {
                 if (string.IsNullOrEmpty(path))
                     throw new ArgumentNullException("path is invalid !");
                 result = new ResourceIntegrityResult();
-                result.ResourceIntegrityInfos = new ResourceIntegrityInfo[bundleBuildInfos.Count];
-                int bundleIndex = 0;
+                result.ResourceIntegrityInfos = new List<ResourceIntegrityInfo>();
                 foreach (var bundleBuildInfo in bundleBuildInfos)
                 {
 
@@ -35,17 +34,21 @@ namespace Cosmos.Resource
                         dectededBundleSize = fileInfo.Length;
                     }
                     var integrityInfo = new ResourceIntegrityInfo(recordedBudleSize, dectededBundleSize, bundleKey, bundleName);
-                    result.ResourceIntegrityInfos[bundleIndex] = integrityInfo;
-                    bundleIndex++;
+                    result.ResourceIntegrityInfos.Add(integrityInfo);
                 }
             }
+            /// <summary>
+            /// verify resource bundle integrity 
+            /// </summary>
+            /// <param name="manifest">target manifest</param>
+            /// <param name="path">resource path</param>
+            /// <param name="result">verify result</param>
             public static void VerifyResourceIntegrity(ResourceManifest manifest, string path, out ResourceIntegrityResult result)
             {
                 if (string.IsNullOrEmpty(path))
                     throw new ArgumentNullException("path is invalid !");
                 result = new ResourceIntegrityResult();
-                result.ResourceIntegrityInfos = new ResourceIntegrityInfo[manifest.ResourceBundleBuildInfoDict.Count];
-                int bundleIndex = 0;
+                result.ResourceIntegrityInfos = new List<ResourceIntegrityInfo>();
                 foreach (var bundleBuildInfo in manifest.ResourceBundleBuildInfoDict.Values)
                 {
                     var bundleKey = bundleBuildInfo.ResourceBundle.BundleKey;
@@ -59,8 +62,7 @@ namespace Cosmos.Resource
                         dectededBundleSize = fileInfo.Length;
                     }
                     var integrityInfo = new ResourceIntegrityInfo(recordedBudleSize, dectededBundleSize, bundleKey, bundleName);
-                    result.ResourceIntegrityInfos[bundleIndex] = integrityInfo;
-                    bundleIndex++;
+                    result.ResourceIntegrityInfos.Add(integrityInfo);
                 }
             }
             public static void VerifyResourceIntegrity(ResourceMergedManifest mergedManifest, string path, out ResourceIntegrityResult result)
@@ -68,8 +70,7 @@ namespace Cosmos.Resource
                 if (string.IsNullOrEmpty(path))
                     throw new ArgumentNullException("path is invalid !");
                 result = new ResourceIntegrityResult();
-                result.ResourceIntegrityInfos = new ResourceIntegrityInfo[mergedManifest.MergedBundleBuildInfoList.Count];
-                int bundleIndex = 0;
+                result.ResourceIntegrityInfos = new List<ResourceIntegrityInfo>();
                 foreach (var bundleBuildInfo in mergedManifest.MergedBundleBuildInfoList)
                 {
                     var bundleKey = bundleBuildInfo.ResourceBundleBuildInfo.ResourceBundle.BundleKey;
@@ -83,8 +84,7 @@ namespace Cosmos.Resource
                         dectededBundleSize = fileInfo.Length;
                     }
                     var integrityInfo = new ResourceIntegrityInfo(recordedBudleSize, dectededBundleSize, bundleKey, bundleName);
-                    result.ResourceIntegrityInfos[bundleIndex] = integrityInfo;
-                    bundleIndex++;
+                    result.ResourceIntegrityInfos.Add(integrityInfo);
                 }
             }
         }

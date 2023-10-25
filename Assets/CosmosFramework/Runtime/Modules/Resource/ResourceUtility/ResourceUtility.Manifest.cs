@@ -89,10 +89,90 @@ namespace Cosmos.Resource
             #endregion
 
             #region Merge
-            public static void MergeManifest(ResourceManifest src, ResourceManifest diff, out ResourceMergedManifest mergedManifest)
+            /// <summary>
+            /// 合并文件清单，取并集
+            ///  <para>(src ⋃ diff) </para>
+            /// </summary>
+            /// <param name="src">源文件清单</param>
+            /// <param name="srcPath">源文件清单所在地址{SRC_PATH}/</param>
+            /// <param name="diff">差异文件清单</param>
+            /// <param name="diffPath">差异文件清单所在地址{DIFF_PATH}/</param>
+            /// <returns>合并的文件清单</returns>
+            public static ResourceMergedManifest MergeManifestByUnion(ResourceManifest src, string srcPath, ResourceManifest diff, string diffPath)
             {
-                //get union
-                mergedManifest = new ResourceMergedManifest();
+                //union
+                var mergedManifest = new ResourceMergedManifest();
+                var srcBundleBuildInfoDict = src.ResourceBundleBuildInfoDict.Values.ToDictionary(info => info.ResourceBundle.BundlePath);
+                var diffBundleBuildInfoDict = diff.ResourceBundleBuildInfoDict.Values.ToDictionary(info => info.ResourceBundle.BundlePath);
+                var mergedBundleList = new List<ResourceMergedBundleBuildInfo>();
+                foreach (var srcBundle in srcBundleBuildInfoDict.Values)
+                {
+                    var srcBundlePath = srcBundle.ResourceBundle.BundlePath;
+                    if (diffBundleBuildInfoDict.TryGetValue(srcBundlePath, out var diffBundle))
+                    {
+                        //在diff中存在，比较bundlekey
+                        var equal = diffBundle.BundleHash == srcBundle.BundleHash;
+                        var path = string.Empty;
+                        //hash相同表示diff存在且内容无变化，使用原始地址srcPath
+                        //hash不相同表示diff存在但内容发生变更，使用变更地址diffPath
+                        if (equal)
+                            path = srcPath;
+                        else
+                            path = diffPath;
+                        var mergeInfo = new ResourceMergedBundleBuildInfo
+                        {
+                            Path = path,
+                            ResourceBundleBuildInfo = diffBundle
+                        };
+                        mergedBundleList.Add(mergeInfo);
+                    }
+                    else
+                    {
+                        //diff不存在，则使用src的信息
+                        var mergeInfo = new ResourceMergedBundleBuildInfo
+                        {
+                            Path = srcPath,
+                            ResourceBundleBuildInfo = srcBundle
+                        };
+                        mergedBundleList.Add(mergeInfo);
+                    }
+                }
+                foreach (var diffBundle in diffBundleBuildInfoDict.Values)
+                {
+                    var diffBundlePath = diffBundle.ResourceBundle.BundlePath;
+                    if (!srcBundleBuildInfoDict.TryGetValue(diffBundlePath, out var srcBundle))
+                    {
+                        //src中不存在，diff中存在，表示新增，使用diffPath
+                        var mergeInfo = new ResourceMergedBundleBuildInfo
+                        {
+                            Path = diffPath,
+                            ResourceBundleBuildInfo = diffBundle
+                        };
+                        mergedBundleList.Add(mergeInfo);
+                    }
+                }
+                mergedManifest.BuildVersion = mergedManifest.BuildVersion;
+                mergedManifest.BuildHash = mergedManifest.BuildHash;
+                mergedManifest.MergedBundleBuildInfoList = mergedBundleList;
+                return mergedManifest;
+            }
+            /// <summary>
+            /// 合并文件清单 
+            /// <para> (src ⋂ diff) ⋃ (diff - (src ⋂ diff) )</para>
+            /// <para>src与diff中同时存在且hash相同，表示为未变更，bundle地址使用srcPath</para>
+            /// <para>src与diff中同时存在但hash不同，表示为变更，bundle地址使用diffPath</para>
+            /// <para>src中存在但diff中不存在，表示为过期，忽略bundle</para>
+            /// <para>src中不存在但diff中存在，表示为新增，bundle地址使用diffPath</para>
+            /// </summary>
+            /// <param name="src">源文件清单</param>
+            /// <param name="srcPath">源文件清单所在地址{SRC_PATH}/</param>
+            /// <param name="diff">差异文件清单</param>
+            /// <param name="diffPath">差异文件清单所在地址{DIFF_PATH}/</param>
+            /// <returns>合并的文件清单</returns>
+            public static ResourceMergedManifest MergeManifest(ResourceManifest src, string srcPath, ResourceManifest diff, string diffPath)
+            {
+                //intersection
+                var mergedManifest = new ResourceMergedManifest();
                 var srcBundleBuildInfoDict = src.ResourceBundleBuildInfoDict.Values.ToDictionary(info => info.ResourceBundle.BundlePath);
                 var diffBundleBuildInfoDict = diff.ResourceBundleBuildInfoDict.Values.ToDictionary(info => info.ResourceBundle.BundlePath);
                 var mergedBundleList = new List<ResourceMergedBundleBuildInfo>();
@@ -103,9 +183,16 @@ namespace Cosmos.Resource
                     {
                         //在diffmanifest中存在，比较bundlekey
                         var equal = diffBundle.BundleHash == srcBundle.BundleHash;
+                        var path = string.Empty;
+                        //hash相同表示diff存在且内容无变化，使用原始地址srcPath
+                        //hash不相同表示diff存在但内容发生变更，使用变更地址diffPath
+                        if (equal)
+                            path = srcPath;
+                        else
+                            path = diffPath;
                         var mergeInfo = new ResourceMergedBundleBuildInfo
                         {
-                            //IsIncremental = !equal,
+                            Path = path,
                             ResourceBundleBuildInfo = diffBundle
                         };
                         mergedBundleList.Add(mergeInfo);
@@ -116,10 +203,10 @@ namespace Cosmos.Resource
                     var diffBundlePath = diffBundle.ResourceBundle.BundlePath;
                     if (!srcBundleBuildInfoDict.TryGetValue(diffBundlePath, out var srcBundle))
                     {
-                        //src中不存在，diff中存在，则表示为新增的
+                        //src中不存在，diff中存在，表示新增，使用diffPath
                         var mergeInfo = new ResourceMergedBundleBuildInfo
                         {
-                            //IsIncremental = true,
+                            Path = diffPath,
                             ResourceBundleBuildInfo = diffBundle
                         };
                         mergedBundleList.Add(mergeInfo);
@@ -128,6 +215,7 @@ namespace Cosmos.Resource
                 mergedManifest.BuildVersion = mergedManifest.BuildVersion;
                 mergedManifest.BuildHash = mergedManifest.BuildHash;
                 mergedManifest.MergedBundleBuildInfoList = mergedBundleList;
+                return mergedManifest;
             }
             #endregion
 
@@ -251,7 +339,6 @@ namespace Cosmos.Resource
                 result.ExpiredInfos = expired.ToArray();
                 result.UnchangedInfos = unchanged.ToArray();
             }
-
         }
     }
 }
