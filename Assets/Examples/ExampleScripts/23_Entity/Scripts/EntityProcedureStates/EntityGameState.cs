@@ -12,10 +12,10 @@ public class EntityGameState : ProcedureNode
 
     EntityGameLoadingSlider loadingSlider;
 
-    public override void OnDestroy(ProcedureProcessor<IProcedureManager> fsm)
+    public override void OnDestroy(ProcedureProcessor processo)
     {
     }
-    public override void OnEnter(ProcedureProcessor<IProcedureManager> fsm)
+    public override void OnEnter(ProcedureProcessor processo)
     {
         isLoading = true;
         progressVar = 0;
@@ -24,18 +24,18 @@ public class EntityGameState : ProcedureNode
         loadingSlider.Active = true;
         CosmosEntry.SceneManager.LoadSceneAsync(new SceneAssetInfo("EntityGame"), ProgressProvider, OnSceneLoading, LoadDoneCodition, OnSceneLoaded);
     }
-    public override void OnExit(ProcedureProcessor<IProcedureManager> fsm)
+    public override void OnExit(ProcedureProcessor processo)
     {
         progressVar = 0;
         currentProgress = 0;
         durTime = 0;
         ;
     }
-    public override void OnInit(ProcedureProcessor<IProcedureManager> fsm)
+    public override void OnInit(ProcedureProcessor processo)
     {
 
     }
-    public override void OnUpdate(ProcedureProcessor<IProcedureManager> fsm)
+    public override void OnUpdate(ProcedureProcessor processo)
     {
         if (isLoading)
         {
