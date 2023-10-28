@@ -221,15 +221,15 @@ namespace Cosmos
             /// 将一个int数组转换为顺序的整数;
             /// 若数组中存在负值，则默认将负值取绝对值
             /// </summary>
-            /// <param name="intArray">传入的数组</param>
+            /// <param name="array">传入的数组</param>
             /// <returns>转换成整数后的int</returns>
-            public static int ConvertIntArrayToInt(int[] intArray)
+            public static int ConvertIntArrayToInt(int[] array)
             {
                 int result = 0;
-                int length = intArray.Length;
+                int length = array.Length;
                 for (int i = 0; i < length; i++)
                 {
-                    result += Convert.ToInt32((Math.Abs(intArray[i]) * Math.Pow(10, length - 1 - i)));
+                    result += Convert.ToInt32((Math.Abs(array[i]) * Math.Pow(10, length - 1 - i)));
                 }
                 return result;
             }
@@ -285,26 +285,26 @@ namespace Cosmos
             /// 交换两个值
             /// </summary>
             /// <typeparam name="T">传入的对象类型</typeparam>
-            /// <param name="t1">第一个需要交换的值</param>
-            /// <param name="t2">第二个需要交换的值</param>
-            public static void Swap<T>(ref T t1, ref T t2)
+            /// <param name="lhs">第一个需要交换的值</param>
+            /// <param name="rhs">第二个需要交换的值</param>
+            public static void Swap<T>(ref T lhs, ref T rhs)
             {
-                T t3 = t1;
-                t1 = t2;
-                t2 = t3;
+                T t3 = lhs;
+                lhs = rhs;
+                rhs = t3;
             }
             /// <summary>
             /// 交换数组中的两个元素
             /// </summary>
             /// <typeparam name="T">传入的对象类型</typeparam>
             /// <param name="array">传入的数组</param>
-            /// <param name="idxA">序号A</param>
-            /// <param name="idxB">序号B</param>
-            public static void Swap<T>(IList<T> array, int idxA, int idxB)
+            /// <param name="lhs">序号A</param>
+            /// <param name="rhs">序号B</param>
+            public static void Swap<T>(IList<T> array, int lhs, int rhs)
             {
-                T temp = array[idxA];
-                array[idxA] = array[idxB];
-                array[idxB] = temp;
+                T temp = array[lhs];
+                array[lhs] = array[rhs];
+                array[rhs] = temp;
             }
             /// <summary>
             /// 随机打乱数组
@@ -318,6 +318,29 @@ namespace Cosmos
                 for (int i = 0; i < array.Count; i++)
                 {
                     index = RandomRange(0, array.Count);
+                    if (index != i)
+                    {
+                        tmp = array[i];
+                        array[i] = array[index];
+                        array[index] = tmp;
+                    }
+                }
+            }
+            /// <summary>
+            /// 随机打乱数组
+            /// </summary>
+            /// <typeparam name="T">数组类型</typeparam>
+            /// <param name="array">数组</param>
+            /// <param name="startIndex">起始序号</param>
+            /// <param name="count">数量</param>
+            public static void Disrupt<T>(IList<T> array, int startIndex, int count)
+            {
+                int index = 0;
+                T tmp;
+                var endIndex = startIndex + count;
+                for (int i = startIndex; i < endIndex; i++)
+                {
+                    index = RandomRange(startIndex, count);
                     if (index != i)
                     {
                         tmp = array[i];
@@ -364,6 +387,14 @@ namespace Cosmos
                 return !Convert.ToBoolean(value & 0x1);
             }
             /// <summary>
+            /// 1或-1的随机值
+            /// </summary>
+            /// <returns> 1或-1</returns>
+            public static int OneOrMinusOne()
+            {
+                return random.Next(0, 2) * 2 - 1;
+            }
+            /// <summary>
             /// 数组去重；
             /// </summary>
             /// <typeparam name="T">可比数据类型</typeparam>
@@ -401,7 +432,7 @@ namespace Cosmos
             /// <param name="mean">均值</param>
             /// <param name="stdDev">方差</param>
             /// <returns>随机数</returns>
-            public static double NextGauss( double mean, double stdDev)
+            public static double NextGauss(double mean, double stdDev)
             {
                 double u1 = 1.0 - random.NextDouble();
                 double u2 = 1.0 - random.NextDouble();

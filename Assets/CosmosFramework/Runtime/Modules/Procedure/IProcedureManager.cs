@@ -20,7 +20,7 @@ namespace Cosmos.Procedure
      * 7、OnDestroy函数在ProcedureNode被从ProcedureManager移除时触发。
      */
     //================================================
-    public interface IProcedureManager: IModuleManager, IModuleInstance
+    public interface IProcedureManager : IModuleManager, IModuleInstance
     {
         /// <summary>
         /// 流程节点数量；
@@ -31,9 +31,17 @@ namespace Cosmos.Procedure
         /// </summary>
         ProcedureNode CurrentProcedureNode { get; }
         /// <summary>
-        /// Procedure state change event
+        /// Procedure node add event
         /// </summary>
-        event Action<ProcedureNodeChangedEventArgs> ProcedureNodeChanged;
+        event Action<ProcedureNodeAddedEventArgs> OnProcedureNodeAdd;
+        /// <summary>
+        /// Procedure node remove event
+        /// </summary>
+        event Action<PorcedureNodeRemovedEventArgs> OnProcedureNodeRemove;
+        /// <summary>
+        /// Procedure node change event
+        /// </summary>
+        event Action<ProcedureNodeChangedEventArgs> OnProcedureNodeChange;
         /// <summary>
         /// 添加多个流程；
         /// </summary>
@@ -74,7 +82,7 @@ namespace Cosmos.Procedure
         /// <typeparam name="T">流程节点类型</typeparam>
         /// <param name="node">获得的节点</param>
         /// <returns>获得结果</returns>
-        bool PeekProcedureNode<T>(out ProcedureNode node) where T : ProcedureNode;
+        bool PeekProcedureNode<T>(out T node) where T : ProcedureNode;
         /// <summary>
         /// 移除多个流程；
         /// </summary>

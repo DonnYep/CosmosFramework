@@ -22,26 +22,40 @@ namespace Cosmos.Procedure
     [Module]
     internal class ProcedureManager : Module, IProcedureManager
     {
-        ProcedureProcessor<IProcedureManager> procedureFsm;
+        ProcedureProcessor procedureProcessor;
         Type procedureNodeType = typeof(ProcedureNode);
-        Action<ProcedureNodeChangedEventArgs> procedureNodeChanged;
+        Action<ProcedureNodeAddedEventArgs> onProcedureNodeAdd;
+        Action<PorcedureNodeRemovedEventArgs> onProcedureNodeRemove;
+        Action<ProcedureNodeChangedEventArgs> onProcedureNodeChange;
         /// <inheritdoc/>
-        public int ProcedureNodeCount { get { return procedureFsm.NodeCount; } }
+        public int ProcedureNodeCount { get { return procedureProcessor.NodeCount; } }
         /// <inheritdoc/>
         public ProcedureNode CurrentProcedureNode
         {
-            get { return procedureFsm.CurrentNode as ProcedureNode; }
+            get { return procedureProcessor.CurrentNode; }
         }
         /// <inheritdoc/>
-        public event Action<ProcedureNodeChangedEventArgs> ProcedureNodeChanged
+        public event Action<ProcedureNodeAddedEventArgs> OnProcedureNodeAdd
         {
-            add { procedureNodeChanged += value; }
-            remove { procedureNodeChanged -= value; }
+            add { onProcedureNodeAdd += value; }
+            remove { onProcedureNodeAdd -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<PorcedureNodeRemovedEventArgs> OnProcedureNodeRemove
+        {
+            add { onProcedureNodeRemove += value; }
+            remove { onProcedureNodeRemove -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<ProcedureNodeChangedEventArgs> OnProcedureNodeChange
+        {
+            add { onProcedureNodeChange += value; }
+            remove { onProcedureNodeChange -= value; }
         }
         /// <inheritdoc/>
         public void AddProcedureNodes(params ProcedureNode[] nodes)
         {
-            procedureFsm.AddNodes(nodes);
+            procedureProcessor.AddNodes(nodes);
         }
         /// <inheritdoc/>
         public void RunProcedureNode<T>() where T : ProcedureNode
@@ -55,7 +69,7 @@ namespace Cosmos.Procedure
                 throw new ArgumentNullException("Type is invalid !");
             if (!procedureNodeType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
-            procedureFsm.ChangeNode(type);
+            procedureProcessor.ChangeNode(type);
         }
         /// <inheritdoc/>
         public bool HasProcedureNode<T>() where T : ProcedureNode
@@ -69,7 +83,7 @@ namespace Cosmos.Procedure
                 throw new ArgumentNullException("Type is invalid !");
             if (!procedureNodeType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
-            return procedureFsm.HasNode(type);
+            return procedureProcessor.HasNode(type);
         }
         /// <inheritdoc/>
         public bool PeekProcedureNode(Type type, out ProcedureNode node)
@@ -79,7 +93,7 @@ namespace Cosmos.Procedure
             if (!procedureNodeType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
             node = null;
-            var rst = procedureFsm.PeekNode(type, out var _node);
+            var rst = procedureProcessor.PeekNode(type, out var _node);
             if (rst)
             {
                 node = _node as ProcedureNode;
@@ -87,10 +101,14 @@ namespace Cosmos.Procedure
             return rst;
         }
         /// <inheritdoc/>
-        public bool PeekProcedureNode<T>(out ProcedureNode node) where T : ProcedureNode
+        public bool PeekProcedureNode<T>(out T node) where T : ProcedureNode
         {
+            node = default;
             var type = typeof(T);
-            return PeekProcedureNode(type, out node);
+            var hasNode = PeekProcedureNode(type, out var procedureNode);
+            if (hasNode)
+                node = (T)procedureNode;
+            return hasNode;
         }
         /// <inheritdoc/>
         public void RemoveProcedureNodes(params Type[] types)
@@ -113,28 +131,44 @@ namespace Cosmos.Procedure
                 throw new ArgumentNullException("Type is invalid !");
             if (!procedureNodeType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
-            return procedureFsm.RemoveNode(type);
+            return procedureProcessor.RemoveNode(type);
         }
         protected override void OnInitialization()
         {
-            procedureFsm = new ProcedureProcessor<IProcedureManager>(this);
-            procedureFsm.ProcedureNodeChanged += ProcedureNodeChangedCallback;
+            procedureProcessor = new ProcedureProcessor(this);
+            procedureProcessor.OnProcedureNodeAdd += ProcedureNodeAddCallback;
+            procedureProcessor.OnProcedureNodeRemove += ProcedureNodeRemoveCallback;
+            procedureProcessor.OnProcedureNodeChange += ProcedureNodeChangedCallback;
         }
         protected override void OnTermination()
         {
-            procedureFsm.ClearAllNode();
-            procedureFsm.ProcedureNodeChanged -= ProcedureNodeChangedCallback;
+            procedureProcessor.ClearAllNode();
+            procedureProcessor.OnProcedureNodeAdd -= ProcedureNodeAddCallback;
+            procedureProcessor.OnProcedureNodeRemove -= ProcedureNodeRemoveCallback;
+            procedureProcessor.OnProcedureNodeChange -= ProcedureNodeChangedCallback;
         }
         [TickRefresh]
         void TickRefresh()
         {
-            procedureFsm.Refresh();
+            procedureProcessor.Refresh();
+        }
+        void ProcedureNodeAddCallback(Type type)
+        {
+            var eventArgs = ProcedureNodeAddedEventArgs.Create(type);
+            onProcedureNodeAdd?.Invoke(eventArgs);
+            ProcedureNodeAddedEventArgs.Release(eventArgs);
+        }
+        void ProcedureNodeRemoveCallback(Type type)
+        {
+            var eventArgs = PorcedureNodeRemovedEventArgs.Create(type);
+            onProcedureNodeRemove?.Invoke(eventArgs);
+            PorcedureNodeRemovedEventArgs.Release(eventArgs);
         }
         void ProcedureNodeChangedCallback(Type exitedNodeType, Type enteredNodeType)
         {
-            var changedEventArgs = ProcedureNodeChangedEventArgs.Create(exitedNodeType, enteredNodeType);
-            procedureNodeChanged?.Invoke(changedEventArgs);
-            ProcedureNodeChangedEventArgs.Release(changedEventArgs);
+            var eventArgs = ProcedureNodeChangedEventArgs.Create(exitedNodeType, enteredNodeType);
+            onProcedureNodeChange?.Invoke(eventArgs);
+            ProcedureNodeChangedEventArgs.Release(eventArgs);
         }
     }
 }

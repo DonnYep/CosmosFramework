@@ -3,28 +3,40 @@ using System.Collections.Generic;
 
 namespace Cosmos.Procedure
 {
-    public class ProcedureProcessor<T> where T : class
+    public sealed class ProcedureProcessor
     {
-        ProcedureNodeBase<T> currentNode;
-        Dictionary<Type, ProcedureNodeBase<T>> typeNodeDict
-            = new Dictionary<Type, ProcedureNodeBase<T>>();
-        Action<Type, Type> procedureNodeChanged;
+        ProcedureNode currentNode;
+        Dictionary<Type, ProcedureNode> typeNodeDict
+            = new Dictionary<Type, ProcedureNode>();
+        Action<Type, Type> onProcedureNodeChange;
+        Action<Type> onProcedureNodeAdd;
+        Action<Type> onProcedureNodeRemove;
         /// <summary>
         /// ExitType===EnterType
         /// </summary>
-        public event Action<Type, Type> ProcedureNodeChanged
+        public event Action<Type, Type> OnProcedureNodeChange
         {
-            add { procedureNodeChanged += value; }
-            remove { procedureNodeChanged -= value; }
+            add { onProcedureNodeChange += value; }
+            remove { onProcedureNodeChange -= value; }
+        }
+        public event Action<Type> OnProcedureNodeAdd
+        {
+            add { onProcedureNodeAdd += value; }
+            remove { onProcedureNodeAdd -= value; }
+        }
+        public event Action<Type> OnProcedureNodeRemove
+        {
+            add { onProcedureNodeRemove += value; }
+            remove { onProcedureNodeRemove -= value; }
         }
         /// <summary>
         /// 当前状态；
         /// </summary>
-        public ProcedureNodeBase<T> CurrentNode{ get { return currentNode; } }
+        public ProcedureNode CurrentNode { get { return currentNode; } }
         /// <summary>
         /// 状态机持有者；
         /// </summary>
-        public T Handle { get; private set; }
+        public IProcedureManager Handle { get; private set; }
         /// <summary>
         /// 状态数量；
         /// </summary>
@@ -33,7 +45,7 @@ namespace Cosmos.Procedure
         /// 构造函数；
         /// </summary>
         /// <param name="handle">状态机持有者对象</param>
-        public ProcedureProcessor(T handle)
+        internal ProcedureProcessor(IProcedureManager handle)
         {
             Handle = handle;
         }
@@ -42,13 +54,14 @@ namespace Cosmos.Procedure
         /// </summary>
         /// <param name="node">状态</param>
         /// <returns>添加结果</returns>
-        public bool AddNode(ProcedureNodeBase<T> node)
+        public bool AddNode(ProcedureNode node)
         {
-            var type = node.GetType();
-            if (!typeNodeDict.ContainsKey(type))
+            var nodeType = node.GetType();
+            if (!typeNodeDict.ContainsKey(nodeType))
             {
-                typeNodeDict.Add(type, node);
+                typeNodeDict.Add(nodeType, node);
                 node?.OnInit(this);
+                onProcedureNodeAdd(nodeType);
                 return true;
             }
             return false;
@@ -57,7 +70,7 @@ namespace Cosmos.Procedure
         /// 添加一组状态；
         /// </summary>
         /// <param name="nodes">状态集合</param>
-        public void AddNodes(params ProcedureNodeBase<T>[] nodes)
+        public void AddNodes(params ProcedureNode[] nodes)
         {
             var length = nodes.Length;
             for (int i = 0; i < length; i++)
@@ -77,6 +90,7 @@ namespace Cosmos.Procedure
                 var state = typeNodeDict[nodeType];
                 typeNodeDict.Remove(nodeType);
                 state?.OnDestroy(this);
+                onProcedureNodeRemove(nodeType);
                 return true;
             }
             return false;
@@ -93,12 +107,12 @@ namespace Cosmos.Procedure
         /// <summary>
         /// 获取状态；
         /// </summary>
-        /// <param name="stateType">状态类型</param>
+        /// <param name="nodeType">状态类型</param>
         /// <param name="node">获取的状态</param>
         /// <returns>获取结果</returns>
-        public bool PeekNode(Type stateType, out ProcedureNodeBase<T> node)
+        public bool PeekNode(Type nodeType, out ProcedureNode node)
         {
-            return typeNodeDict.TryGetValue(stateType, out node);
+            return typeNodeDict.TryGetValue(nodeType, out node);
         }
         /// <summary>
         /// 轮询；
@@ -122,7 +136,7 @@ namespace Cosmos.Procedure
                     currentNode = state;
                     currentNode?.OnEnter(this);
                     var enteredNodeType = currentNode == null ? null : currentNode.GetType();
-                    procedureNodeChanged?.Invoke(exitedNodeType, enteredNodeType);
+                    onProcedureNodeChange?.Invoke(exitedNodeType, enteredNodeType);
                 }
             }
         }
