@@ -1,56 +1,49 @@
 ﻿using Cosmos.WebRequest;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Cosmos.Resource
 {
-    internal class ResourceManifestRequester
+    public class ResourceDownloader
     {
         readonly IWebRequestManager webRequestManager;
+       readonly Dictionary<long, ResourceDownloadTask> taskDict;
         readonly Action<string, ResourceManifest> onSuccess;
         readonly Action<string, string> onFailure;
-        /// <summary>
-        /// taskId===manifestEncryptionKey
-        /// </summary>
-        Dictionary<long, string> taskIdKeyDict;
-        public ResourceManifestRequester(IWebRequestManager webRequestManager, Action<string, ResourceManifest> onSuccess, Action<string, string> onFailure)
+        public ResourceDownloader(IWebRequestManager webRequestManager)
         {
-            taskIdKeyDict = new Dictionary<long, string>();
             this.webRequestManager = webRequestManager;
-            this.onSuccess = onSuccess;
-            this.onFailure = onFailure;
+            taskDict = new Dictionary<long, ResourceDownloadTask>();
         }
         public void OnInitialize()
         {
             webRequestManager.OnSuccessCallback += OnSuccessCallback;
             webRequestManager.OnFailureCallback += OnFailureCallback;
+            webRequestManager.OnUpdateCallback += OnUpdateCallback; 
         }
         public void OnTerminate()
         {
             webRequestManager.OnSuccessCallback -= OnSuccessCallback;
             webRequestManager.OnFailureCallback -= OnFailureCallback;
+            webRequestManager.OnUpdateCallback -= OnUpdateCallback;
         }
-        public void StartRequestManifest(string url, string manifestEncryptionKey)
+        public void AddDownloadTask(ResourceDownloadTask downloadTask)
         {
-            var taskId = webRequestManager.AddDownloadTextTask(url);
-            taskIdKeyDict.TryAdd(taskId, manifestEncryptionKey);
         }
-        public void StopRequestManifest()
+        public void RemoveTask(ResourceDownloadTask downloadTask)
         {
-            foreach (var tk in taskIdKeyDict)
-            {
-                webRequestManager.RemoveTask(tk.Key);
-            }
-            taskIdKeyDict.Clear();
+
         }
         void OnSuccessCallback(WebRequestSuccessEventArgs eventArgs)
         {
             var manifestContext = eventArgs.GetText();
             try
             {
-                taskIdKeyDict.Remove(eventArgs.TaskId, out var key);
-                var resourceManifest = ResourceUtility.Manifest.DeserializeManifest(manifestContext, key);
-                onSuccess?.Invoke(eventArgs.URL, resourceManifest);
+                taskDict.Remove(eventArgs.TaskId, out var key);
+
             }
             catch (Exception e)
             {
@@ -59,8 +52,12 @@ namespace Cosmos.Resource
         }
         void OnFailureCallback(WebRequestFailureEventArgs eventArgs)
         {
-            taskIdKeyDict.Remove(eventArgs.TaskId);
+            taskDict.Remove(eventArgs.TaskId);
             onFailure?.Invoke(eventArgs.URL, eventArgs.ErrorMessage);
+        }
+        private void OnUpdateCallback(WebRequestUpdateEventArgs eventArgs)
+        {
+
         }
     }
 }

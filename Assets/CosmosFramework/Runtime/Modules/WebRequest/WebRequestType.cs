@@ -1,6 +1,6 @@
 ﻿namespace Cosmos.WebRequest
 {
-    internal enum WebRequestType
+    internal enum WebRequestType:byte
     {
         None,
         DownLoad,

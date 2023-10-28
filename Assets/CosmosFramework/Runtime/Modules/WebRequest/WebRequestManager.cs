@@ -21,7 +21,8 @@ namespace Cosmos.WebRequest
     internal class WebRequestManager : Module, IWebRequestManager
     {
         WebRequester webRequester = new WebRequester();
-
+        ///<inheritdoc/>
+        public bool Running { get { return webRequester.Running;} }
         ///<inheritdoc/>
         public int TaskCount { get { return webRequester.TaskCount; } }
         ///<inheritdoc/>

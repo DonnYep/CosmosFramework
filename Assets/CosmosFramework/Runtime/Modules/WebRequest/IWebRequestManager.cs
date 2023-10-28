@@ -21,6 +21,10 @@ namespace Cosmos.WebRequest
         /// </summary>
         int TaskCount { get; }
         /// <summary>
+        /// 正在执行下载或上传的任意操作
+        /// </summary>
+        bool Running { get; }
+        /// <summary>
         /// 开始回调；
         /// </summary>
         event Action<WebRequestStartEventArgs> OnStartCallback;
@@ -122,7 +126,7 @@ namespace Cosmos.WebRequest
         /// </summary>
         void StartRequestTasks();
         /// <summary>
-        /// 停止但不清空任务；
+        /// 停止但不清空任务，效果与暂停相似；
         /// </summary>
         void StopRequestTasks();
         /// <summary>

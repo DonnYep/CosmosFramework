@@ -14,7 +14,10 @@ namespace Cosmos.WebRequest
         List<WebRequestTask> taskList = new List<WebRequestTask>();
         Dictionary<long, WebRequestTask> taskDict = new Dictionary<long, WebRequestTask>();
         public int TaskCount { get { return taskList.Count; } }
-        public bool InExecution { get; private set; }
+        /// <summary>
+        /// 是否开始任务
+        /// </summary>
+        public bool Running { get; private set; }
         /// <summary>
         /// 开始回调；
         /// </summary>
@@ -89,11 +92,11 @@ namespace Cosmos.WebRequest
         /// </summary>
         public void StartRequestTasks()
         {
-            if (!InExecution)
+            if (!Running)
                 Coroutine = Utility.Unity.StartCoroutine(MultipleRequest());
         }
         /// <summary>
-        /// 结束网络请求
+        /// 停止网络请求，相当于暂停
         /// </summary>
         public void StopRequestTasks()
         {
@@ -104,8 +107,11 @@ namespace Cosmos.WebRequest
             }
             catch { }
             CurrentWebRequest?.Abort();
-            InExecution = false;
+            Running = false;
         }
+        /// <summary>
+        /// 完全停止并清空任务
+        /// </summary>
         public void AbortRequestTasks()
         {
             StopRequestTasks();
@@ -114,7 +120,7 @@ namespace Cosmos.WebRequest
         }
         IEnumerator MultipleRequest()
         {
-            InExecution = true;
+            Running = true;
             while (taskList.Count > 0)
             {
                 var task = taskList[0];
@@ -131,7 +137,7 @@ namespace Cosmos.WebRequest
                 onAllTaskCompleteCallback?.Invoke(allTaskCompleteEventArgs);
                 WebRequestAllTaskCompleteEventArgs.Release(allTaskCompleteEventArgs);
             }
-            InExecution = false;
+            Running = false;
         }
         IEnumerator WebRequest(WebRequestTask webRequestTask)
         {
