@@ -88,7 +88,7 @@ namespace Cosmos.WebRequest
             return taskDict.ContainsKey(taskId);
         }
         /// <summary>
-        /// 开启网络请求；
+        /// 开始网络请求；
         /// </summary>
         public void StartRequestTasks()
         {
@@ -120,6 +120,7 @@ namespace Cosmos.WebRequest
         }
         IEnumerator MultipleRequest()
         {
+            var startTime = DateTime.Now;
             Running = true;
             while (taskList.Count > 0)
             {
@@ -132,15 +133,18 @@ namespace Cosmos.WebRequest
                 taskList.RemoveFirst();
                 taskDict.Remove(task.TaskId);
                 WebRequestTask.Release(task);
-
-                var allTaskCompleteEventArgs = WebRequestAllTaskCompleteEventArgs.Create();
-                onAllTaskCompleteCallback?.Invoke(allTaskCompleteEventArgs);
-                WebRequestAllTaskCompleteEventArgs.Release(allTaskCompleteEventArgs);
             }
+            var endTime = DateTime.Now;
+            var timeSpan = endTime - startTime;
+            var allTaskCompleteEventArgs = WebRequestAllTaskCompleteEventArgs.Create(timeSpan);
+            onAllTaskCompleteCallback?.Invoke(allTaskCompleteEventArgs);
+            WebRequestAllTaskCompleteEventArgs.Release(allTaskCompleteEventArgs);
             Running = false;
+
         }
         IEnumerator WebRequest(WebRequestTask webRequestTask)
         {
+            var startTime = DateTime.Now;
             var unityWebRequest = webRequestTask.UnityWebRequest;
             var taskId = webRequestTask.TaskId;
             var url = unityWebRequest.url;
@@ -153,20 +157,22 @@ namespace Cosmos.WebRequest
                 request.SendWebRequest();
                 while (!request.isDone)
                 {
+                    var updateTimeSpan = DateTime.Now - startTime;
                     WebRequestUpdateEventArgs updateEventArgs = null;
                     switch (webRequestTask.WebRequestType)
                     {
                         case WebRequestType.DownLoad:
-                            updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, request.downloadProgress, request);
+                            updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, request.downloadProgress, request, updateTimeSpan);
                             break;
                         case WebRequestType.Upload:
-                            updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, request.uploadProgress, request);
+                            updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, request.uploadProgress, request, updateTimeSpan);
                             break;
                     }
                     onUpdateCallback?.Invoke(updateEventArgs);
                     WebRequestUpdateEventArgs.Release(updateEventArgs);
                     yield return null;
                 }
+                var timeSpan = DateTime.Now - startTime;
 #if UNITY_2020_1_OR_NEWER
                 if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
 #elif UNITY_2018_1_OR_NEWER
@@ -175,17 +181,17 @@ namespace Cosmos.WebRequest
                 {
                     if (request.isDone)
                     {
-                        var updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, 1, request);
+                        var updateEventArgs = WebRequestUpdateEventArgs.Create(taskId, url, 1, request, timeSpan);
                         onUpdateCallback?.Invoke(updateEventArgs);
                         WebRequestUpdateEventArgs.Release(updateEventArgs);
-                        var successEventArgs = WebRequestSuccessEventArgs.Create(taskId, url, request.downloadHandler.data, request);
+                        var successEventArgs = WebRequestSuccessEventArgs.Create(taskId, url, request.downloadHandler.data, request, timeSpan);
                         onSuccessCallback?.Invoke(successEventArgs);
                         WebRequestSuccessEventArgs.Release(successEventArgs);
                     }
                 }
                 else
                 {
-                    var failureEventArgs = WebRequestFailureEventArgs.Create(taskId, url, request.error, request);
+                    var failureEventArgs = WebRequestFailureEventArgs.Create(taskId, url, request.error, request, timeSpan);
                     onFailureCallback?.Invoke(failureEventArgs);
                     WebRequestFailureEventArgs.Release(failureEventArgs);
                 }
@@ -194,23 +200,26 @@ namespace Cosmos.WebRequest
         }
         IEnumerator GetContentLengthRequest(WebRequestTask webRequestTask)
         {
+            var startTime = DateTime.Now;
             using (UnityWebRequest request = UnityWebRequest.Head(webRequestTask.URL))
             {
                 yield return request.SendWebRequest();
                 var size = request.GetRequestHeader("Content-Length");
+                var endTime = DateTime.Now;
+                var timeSpan = endTime - startTime;
 #if UNITY_2020_1_OR_NEWER
                 if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
 #elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
 #endif
                 {
-                    var eventArgs = WebRequestGetContentLengthSuccessEventArgs.Create(webRequestTask.TaskId, webRequestTask.URL, Convert.ToInt64(size));
+                    var eventArgs = WebRequestGetContentLengthSuccessEventArgs.Create(webRequestTask.TaskId, webRequestTask.URL, Convert.ToInt64(size), timeSpan);
                     onGetContentLengthSuccessCallback?.Invoke(eventArgs);
                     WebRequestGetContentLengthSuccessEventArgs.Release(eventArgs);
                 }
                 else
                 {
-                    var eventArgs = WebRequestGetContentLengthFailureEventArgs.Create(webRequestTask.TaskId, webRequestTask.URL, request.error);
+                    var eventArgs = WebRequestGetContentLengthFailureEventArgs.Create(webRequestTask.TaskId, webRequestTask.URL, request.error, timeSpan);
                     onGetContentLengthFailureCallback?.Invoke(eventArgs);
                     WebRequestGetContentLengthFailureEventArgs.Release(eventArgs);
                 }

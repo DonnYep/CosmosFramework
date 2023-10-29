@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Cosmos.WebRequest
@@ -9,6 +10,7 @@ namespace Cosmos.WebRequest
         public string URL { get; private set; }
         public byte[] Data { get; private set; }
         public UnityWebRequest WebRequest { get; private set; }
+        public TimeSpan TimeSpan { get; private set; }
         public AudioClip GetAudioClip()
         {
             if (WebRequest == null)
@@ -39,14 +41,16 @@ namespace Cosmos.WebRequest
             URL = string.Empty;
             Data = null;
             WebRequest = null;
+            TimeSpan = TimeSpan.Zero;
         }
-        internal static WebRequestSuccessEventArgs Create(long taskId, string url, byte[] data, UnityWebRequest webRequest)
+        internal static WebRequestSuccessEventArgs Create(long taskId, string url, byte[] data, UnityWebRequest webRequest, TimeSpan timeSpan)
         {
             var eventArgs = ReferencePool.Acquire<WebRequestSuccessEventArgs>();
             eventArgs.TaskId = taskId;
             eventArgs.URL = url;
             eventArgs.Data = data;
             eventArgs.WebRequest = webRequest;
+            eventArgs.TimeSpan = timeSpan;
             return eventArgs;
         }
         internal static void Release(WebRequestSuccessEventArgs eventArgs)
