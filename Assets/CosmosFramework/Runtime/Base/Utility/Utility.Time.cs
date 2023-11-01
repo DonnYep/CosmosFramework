@@ -241,11 +241,13 @@ namespace Cosmos
             /// <summary>
             /// 是否为闰年
             /// </summary>
-            public static bool IsLeapYear(int iYear)
+            /// <param name="year">e.g.2023,2024</param>
+            /// <returns>结果</returns>
+            public static bool IsLeapYear(int year)
             {
                 //形式参数为年份
                 //例如：2023
-                var n = iYear;
+                var n = year;
                 return n % 400 == 0 || n % 4 == 0 && n % 100 != 0;
             }
             /// <summary>
