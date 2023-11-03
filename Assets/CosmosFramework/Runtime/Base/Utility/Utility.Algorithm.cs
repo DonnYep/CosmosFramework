@@ -382,10 +382,6 @@ namespace Cosmos
                 } while (dScope > y);
                 return x;
             }
-            public static bool IsAdd(long value)
-            {
-                return !Convert.ToBoolean(value & 0x1);
-            }
             /// <summary>
             /// 1或-1的随机值
             /// </summary>

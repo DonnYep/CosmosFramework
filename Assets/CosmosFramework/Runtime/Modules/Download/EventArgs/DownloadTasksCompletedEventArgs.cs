@@ -17,6 +17,7 @@ namespace Cosmos.Download
             TimeSpan = TimeSpan.Zero;
             DownloadTaskCount = 0;
         }
+        // TODO 下载模块需要新增下载时间差异
         public static DownloadTasksCompletedEventArgs Create(DownloadInfo[] successedInfos, DownloadInfo[] failedInfos, TimeSpan timeSpan, int downloadedCount)
         {
             var eventArgs = ReferencePool.Acquire<DownloadTasksCompletedEventArgs>();
