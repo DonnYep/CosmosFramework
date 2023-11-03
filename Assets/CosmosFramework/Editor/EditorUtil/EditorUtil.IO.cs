@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine.Networking;
-using UnityEngine;
-using Cosmos.Unity.EditorCoroutines.Editor;
 
 namespace Cosmos.Editor
 {
