@@ -68,16 +68,16 @@ namespace Cosmos
             /// 时间戳转UTC DateTime
             /// </summary>
             /// <returns>UTC DateTime</returns>
-            public static DateTime TimestampToDateTime(long ts)
+            public static DateTime TimestampToDateTime(long timeStamp)
             {
-                int length = (int)Math.Floor(Math.Log10(ts));
+                int length = (int)Math.Floor(Math.Log10(timeStamp));
                 DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
                 if (length == 9)
-                    return dateTime.AddSeconds(ts);
+                    return dateTime.AddSeconds(timeStamp);
                 if (length == 12)
-                    return dateTime.AddMilliseconds(ts);
+                    return dateTime.AddMilliseconds(timeStamp);
                 if (length == 16)
-                    return dateTime.AddTicks(ts);
+                    return dateTime.AddTicks(timeStamp);
                 return DateTime.MinValue;
             }
             /// <summary>
@@ -241,12 +241,34 @@ namespace Cosmos
             /// <summary>
             /// 是否为闰年
             /// </summary>
-            public static bool IsLeapYear(int iYear)
+            /// <param name="year">e.g.2023,2024</param>
+            /// <returns>结果</returns>
+            public static bool IsLeapYear(int year)
             {
                 //形式参数为年份
                 //例如：2023
-                var n = iYear;
+                var n = year;
                 return n % 400 == 0 || n % 4 == 0 && n % 100 != 0;
+            }
+            /// <summary>
+            /// 获取第二天的午夜零时
+            /// </summary>
+            /// <returns>UTC午夜零时</returns>
+            public static DateTime GetTomorrowMidnightDateTime()
+            {
+                DateTime todayDate = DateTime.UtcNow.Date;
+                var nextDay = todayDate.AddDays(1);
+                return nextDay;
+            }
+            /// <summary>
+            /// 获取明日的午夜零时偏移量
+            /// <para>转换时间戳可使用方法：<see cref="DateTimeOffset.ToUnixTimeSeconds"/> </para> 
+            /// </summary>
+            /// <returns>日期偏移量</returns>
+            public static DateTimeOffset GetTomorrowMidnightDateTimeOffset()
+            {
+                var tomorrowDateTime = GetTomorrowMidnightDateTime();
+                return new DateTimeOffset(tomorrowDateTime);
             }
         }
     }
