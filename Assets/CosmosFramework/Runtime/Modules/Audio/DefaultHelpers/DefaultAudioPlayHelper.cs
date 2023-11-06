@@ -14,7 +14,6 @@ namespace Cosmos
         Dictionary<string, IAudioProxy> pauseDict;
         Pool<IAudioProxy> audioProxyPool;
         List<string> deactiveCache;
-        const string prefix = "SND-";
         long latestTime;
         bool mute;
         public bool Mute
@@ -55,7 +54,7 @@ namespace Cosmos
                 return;
             }
             var audioSource = pool.Spawn();
-            audioSource.name = prefix + audioObject.AudioName;
+            audioSource.name = AudioConstant.PREFIX + audioObject.AudioName;
             if (audioPlayInfo.BindObject == null)
             {
                 audioSource.transform.SetParent(CosmosEntry.AudioManager.Instance().transform);
@@ -162,7 +161,7 @@ namespace Cosmos
                 {
                     if (audioProxy != null)
                     {
-                        audioProxy.AudioSource.name = prefix;
+                        audioProxy.AudioSource.name = AudioConstant.PREFIX;
                         audioProxy.AudioSource.transform.SetParent(CosmosEntry.AudioManager.Instance().transform);
                         pool.Despawn(audioProxy.AudioSource);
                         audioProxyPool.Despawn(audioProxy);

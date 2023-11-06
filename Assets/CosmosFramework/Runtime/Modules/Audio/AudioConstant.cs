@@ -21,5 +21,11 @@
         /// 检查播放间隔，5秒；
         /// </summary>
         public const int CheckPlayingIntervalSecond = 5;
+
+        /// <summary>
+        /// 声音常量
+        /// </summary>
+        public const string PREFIX = "SND-";
+
     }
 }
