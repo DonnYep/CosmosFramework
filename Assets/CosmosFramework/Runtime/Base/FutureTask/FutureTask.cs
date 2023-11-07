@@ -30,7 +30,9 @@ namespace Cosmos
         public bool IsCompleted
         {
             get
-            { return isCompleted; }
+            {
+                return isCompleted;
+            }
             set
             {
                 isCompleted = value;
@@ -40,7 +42,10 @@ namespace Cosmos
                 }
             }
         }
-        public bool Available { get { return available; } }
+        public bool Available
+        {
+            get { return available; }
+        }
         public int FutureTaskId { get; private set; }
         public string Description { get; private set; }
         public float ElapsedTime { get; private set; }
@@ -55,31 +60,8 @@ namespace Cosmos
             Description = description;
             FutureTaskMonitor.Instance.AddFutureTask(this);
         }
-        public FutureTask(Func<bool> condition, Action<FutureTask> completed, string description = null)
-        {
-            FutureTaskId = FutureTaskIndex++;
-            Condition = condition;
-            available = true;
-            this.onCompleted = completed;
-            Description = description;
-            FutureTaskMonitor.Instance.AddFutureTask(this);
-        }
-        public FutureTask(Func<bool> condition, string description = null)
-        {
-            FutureTaskId = FutureTaskIndex++;
-            Condition = condition;
-            Description = description;
-            available = true;
-            FutureTaskMonitor.Instance.AddFutureTask(this);
-        }
-        public void Release()
-        {
-            Condition = null;
-            FutureTaskId = 0;
-            Description = string.Empty;
-            ElapsedTime = 0;
-            available = true;
-        }
+        public FutureTask(Func<bool> condition, Action<FutureTask> completed, string description = null) : this(condition, null, completed, description) { }
+        public FutureTask(Func<bool> condition, string description = null) : this(condition, null, null, description) { }
         /// <summary>
         /// 终止；
         /// </summary>
@@ -118,6 +100,14 @@ namespace Cosmos
             {
                 available = false;
             }
+        }
+        internal void Release()
+        {
+            Condition = null;
+            FutureTaskId = 0;
+            Description = string.Empty;
+            ElapsedTime = 0;
+            available = true;
         }
     }
 }
