@@ -216,6 +216,7 @@ namespace Cosmos.Download
 //                }
 //            }
             var fileDownloadStartTime = DateTime.Now;
+            var startTime = DateTime.Now;
             using (UnityWebRequest request = UnityWebRequest.Get(downloadUri))
             {
                 var append = DownloadDataProxy.DownloadAppend;
@@ -254,7 +255,7 @@ namespace Cosmos.Download
                     {
                         var timeSpan = DateTime.Now - fileDownloadStartTime;
                         var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, request.downloadedBytes, 1, timeSpan);
-                        var successEventArgs = DownloadSuccessEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount);
+                        var successEventArgs = DownloadSuccessEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount, timeSpan);
                         onDownloadSuccess?.Invoke(successEventArgs);
                         OnFileDownloading(downloadInfo);
                         DownloadSuccessEventArgs.Release(successEventArgs);
@@ -265,7 +266,7 @@ namespace Cosmos.Download
                 {
                     var timeSpan = DateTime.Now - fileDownloadStartTime;
                     var downloadInfo = new DownloadInfo(downloadTask.DownloadId, downloadUri, downloadPath, request.downloadedBytes, operation.progress, timeSpan);
-                    var failureEventArgs = DownloadFailureEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount, request.error);
+                    var failureEventArgs = DownloadFailureEventArgs.Create(downloadInfo, currentDownloadTaskIndex, downloadTaskCount, request.error, timeSpan);
                     onDownloadFailure?.Invoke(failureEventArgs);
                     DownloadFailureEventArgs.Release(failureEventArgs);
                     failedInfos.Add(downloadInfo);
@@ -279,7 +280,8 @@ namespace Cosmos.Download
         /// </summary>
         void OnFileDownloading(DownloadInfo info)
         {
-            var eventArgs = DonwloadUpdateEventArgs.Create(info, currentDownloadTaskIndex, downloadTaskCount);
+            var timeSpan = DateTime.Now - downloadStartTime;
+            var eventArgs = DonwloadUpdateEventArgs.Create(info, currentDownloadTaskIndex, downloadTaskCount, timeSpan);
             onDownloadOverall?.Invoke(eventArgs);
             DonwloadUpdateEventArgs.Release(eventArgs);
         }

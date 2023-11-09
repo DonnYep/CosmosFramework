@@ -30,6 +30,17 @@ namespace Cosmos
                 }
             }
 
+            /// <summary>
+            /// 退出。editor停止播放，runtime则退出游戏
+            /// </summary>
+            public static void Quit()
+            {
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+            }
             #region UnityComponent
             public static T ChildComponent<T>(Transform go, string name)
       where T : Component
@@ -867,7 +878,6 @@ where T : Component
                 return value;
             }
             #endregion
-
         }
     }
 }
