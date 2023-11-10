@@ -18,7 +18,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// bundle size on local path
         /// </summary>
-        public long LocalResourceSize { get; private set; }
+        public long LocalResourceSize { get; set; }
         /// <summary>
         /// bundle size in manifest
         /// </summary>

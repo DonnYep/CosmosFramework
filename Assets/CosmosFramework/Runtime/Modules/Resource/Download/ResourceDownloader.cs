@@ -6,10 +6,11 @@ using UnityEngine.Networking;
 namespace Cosmos.Resource
 {
     /// <summary>
-    /// 资源下载，WIP
+    /// 资源下载
     /// </summary>
     public class ResourceDownloader
     {
+        //UNDONE 资源下载器 
         readonly IWebRequestManager webRequestManager;
         readonly Action<string, ResourceManifest> onSuccess;
         readonly Action<string, string> onFailure;
@@ -64,6 +65,7 @@ namespace Cosmos.Resource
                 taskDict.Add(taskId, task);
                 long recordedResourceSize = 0;
 #if UNITY_2019_1_OR_NEWER
+                task.LocalResourceSize= Utility.IO.GetFileSize(task.ResourceDownloadPath);
                 recordedResourceSize = task.RecordedResourceSize - task.LocalResourceSize;
 #elif UNITY_2018_1_OR_NEWER
                 recordedResourceSize = task.RecordedResourceSize 
@@ -85,6 +87,7 @@ namespace Cosmos.Resource
                 taskDict.Remove(taskId);
                 webRequestManager.RemoveTask(taskId);
                 long recordedResourceSize = 0;
+                //task.LocalResourceSize = Utility.IO.GetFileSize(task.ResourceDownloadPath);
 #if UNITY_2019_1_OR_NEWER
                 recordedResourceSize = task.RecordedResourceSize - task.LocalResourceSize;
 #elif UNITY_2018_1_OR_NEWER
