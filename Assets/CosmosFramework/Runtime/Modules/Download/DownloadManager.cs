@@ -109,11 +109,11 @@ namespace Cosmos.Download
             this.downloadRequester = helper;
         }
         ///<inheritdoc/>
-        public int AddDownload(string downloadUri, string downloadPath)
+        public int AddDownload(string downloadUri, string downloadPath, long downloadByteOffset)
         {
             Utility.Text.IsStringValid(downloadUri, "URI is invalid !");
             Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
-            return downloader.AddDownload(downloadUri, downloadPath);
+            return downloader.AddDownload(downloadUri, downloadPath, downloadByteOffset);
         }
         ///<inheritdoc/>
         public bool RemoveDownload(int downloadId)

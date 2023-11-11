@@ -1,7 +1,6 @@
-﻿using Cosmos.WebRequest;
+﻿using Cosmos.Download;
 using System;
 using System.Collections.Generic;
-using UnityEngine.Networking;
 
 namespace Cosmos.Resource
 {
@@ -11,17 +10,15 @@ namespace Cosmos.Resource
     public class ResourceDownloader
     {
         //UNDONE 资源下载器 
-        readonly IWebRequestManager webRequestManager;
-        readonly Action<string, ResourceManifest> onSuccess;
-        readonly Action<string, string> onFailure;
+        readonly IDownloadManager downloadManager;
         /// <summary>
         /// taskId===downloadTask
         /// </summary>
-        readonly Dictionary<long, ResourceDownloadTask> taskDict;
+        readonly Dictionary<int, ResourceDownloadTask> taskDict;
         /// <summary>
-        /// downloadTask===taskId
+        /// taskId===downloadNode
         /// </summary>
-        readonly Dictionary<ResourceDownloadTask, long> reserveTaskDict;
+        readonly Dictionary<int, ResourceDownloadNode> nodeDict;
         /// <summary>
         /// 已经下载的长度
         /// </summary>
@@ -30,102 +27,176 @@ namespace Cosmos.Resource
         /// 总共需要下载的长度
         /// </summary>
         long totalRequiredDownloadSize;
-        public ResourceDownloader(IWebRequestManager webRequestManager)
+        /// <summary>
+        /// 下载成功的任务列表
+        /// </summary>
+        readonly List<ResourceDownloadTask> downloadSuccessTaskList;
+        /// <summary>
+        /// 下载失败的任务列表
+        /// </summary>
+        readonly List<ResourceDownloadTask> downloadFailureTaskList;
+
+        Action<ResourceDownloadSuccessEventArgs> onDownloadSuccess;
+        Action<ResourceDownloadFailureEventArgs> onDownloadFailure;
+        Action<ResourceDownloadUpdateEventArgs> onDownloadUpdate;
+        Action<ResourceDownloadCompeleteEventArgs> onDownloadComplete;
+        /// <summary>
+        /// 任务下载成功事件
+        /// </summary>
+        public event Action<ResourceDownloadSuccessEventArgs> OnDownloadSuccess
         {
-            this.webRequestManager = webRequestManager;
-            taskDict = new Dictionary<long, ResourceDownloadTask>();
-            reserveTaskDict = new Dictionary<ResourceDownloadTask, long>();
+            add { onDownloadSuccess += value; }
+            remove { onDownloadSuccess -= value; }
+        }
+        /// <summary>
+        /// 任务下载失败事件
+        /// </summary>
+        public event Action<ResourceDownloadFailureEventArgs> OnDownloadFailure
+        {
+            add { onDownloadFailure += value; }
+            remove { onDownloadFailure -= value; }
+        }
+        /// <summary>
+        /// 整体任务下载更新事件
+        /// </summary>
+        public event Action<ResourceDownloadUpdateEventArgs> OnDownloadUpdate
+        {
+            add { onDownloadUpdate += value; }
+            remove { onDownloadUpdate -= value; }
+        }
+        /// <summary>
+        /// 所有任务完成事件
+        /// </summary>
+        public event Action<ResourceDownloadCompeleteEventArgs> OnDownloadComplete
+        {
+            add { onDownloadComplete += value; }
+            remove { onDownloadComplete -= value; }
+        }
+        public ResourceDownloader(IDownloadManager downloadManager)
+        {
+            this.downloadManager = downloadManager;
+            taskDict = new Dictionary<int, ResourceDownloadTask>();
+            nodeDict = new Dictionary<int, ResourceDownloadNode>();
+            downloadSuccessTaskList = new List<ResourceDownloadTask>();
+            downloadFailureTaskList = new List<ResourceDownloadTask>();
         }
         public void OnInitialize()
         {
-            webRequestManager.OnSuccessCallback += OnSuccessCallback;
-            webRequestManager.OnFailureCallback += OnFailureCallback;
-            webRequestManager.OnUpdateCallback += OnUpdateCallback;
+            downloadManager.OnDownloadSuccess += OnDownloadSuccessHandler;
+            downloadManager.OnDownloadFailure += OnDownloadFailureHandler;
+            downloadManager.OnDownloadOverallProgress += OnDownloadUpdateHandler;
         }
         public void OnTerminate()
         {
-            webRequestManager.OnSuccessCallback -= OnSuccessCallback;
-            webRequestManager.OnFailureCallback -= OnFailureCallback;
-            webRequestManager.OnUpdateCallback -= OnUpdateCallback;
+            downloadManager.OnDownloadSuccess -= OnDownloadSuccessHandler;
+            downloadManager.OnDownloadFailure -= OnDownloadFailureHandler;
+            downloadManager.OnDownloadOverallProgress -= OnDownloadUpdateHandler;
         }
         /// <summary>
         /// 添加下载任务
         /// </summary>
         /// <param name="task">下载任务</param>
-        /// <returns>添加结果，失败或成功</returns>
-        public bool AddDownloadTask(ResourceDownloadTask task)
+        /// <returns>下载任务Id</returns>
+        public int AddDownloadTask(ResourceDownloadTask task)
         {
             var url = task.ResourceDownloadURL;
             var downloadPath = task.ResourceDownloadPath;
-            if (!reserveTaskDict.ContainsKey(task))
-            {
-                var request = GetWebRequest(url, downloadPath);
-                var taskId = webRequestManager.AddDownloadRequestTask(request);
-                reserveTaskDict.Add(task, taskId);
-                taskDict.Add(taskId, task);
-                long recordedResourceSize = 0;
+            var recordedSize = task.RecordedResourceSize;
+            long localSize = 0;
+            long recordedResourceSize = 0;
 #if UNITY_2019_1_OR_NEWER
-                task.LocalResourceSize= Utility.IO.GetFileSize(task.ResourceDownloadPath);
-                recordedResourceSize = task.RecordedResourceSize - task.LocalResourceSize;
+            localSize = Utility.IO.GetFileSize(task.ResourceDownloadPath);
+            recordedResourceSize = recordedSize - localSize;
 #elif UNITY_2018_1_OR_NEWER
-                recordedResourceSize = task.RecordedResourceSize 
+            recordedResourceSize = downloadNode.RecordedResourceSize 
 #endif
-                totalRequiredDownloadSize += recordedResourceSize;
-                return true;
-            }
-            return false;
+            totalRequiredDownloadSize += recordedResourceSize;
+            var taskId = downloadManager.AddDownload(url, downloadPath, localSize);
+            var downloadNode = new ResourceDownloadNode(taskId, url, downloadPath, recordedSize, localSize);
+            taskDict.Add(taskId, task);
+            return taskId;
         }
         /// <summary>
         /// 移除下载任务
         /// </summary>
-        /// <param name="task">下载任务</param>
+        /// <param name="taskId">下载任务</param>
         /// <returns>移除结果，失败或成功</returns>
-        public bool RemoveTask(ResourceDownloadTask task)
+        public void RemoveTask(int taskId)
         {
-            if (reserveTaskDict.Remove(task, out var taskId))
-            {
-                taskDict.Remove(taskId);
-                webRequestManager.RemoveTask(taskId);
-                long recordedResourceSize = 0;
-                //task.LocalResourceSize = Utility.IO.GetFileSize(task.ResourceDownloadPath);
+            nodeDict.Remove(taskId, out var downloadNode);
+            taskDict.Remove(taskId);
+            downloadManager.RemoveDownload(taskId);
+            long recordedResourceSize = 0;
 #if UNITY_2019_1_OR_NEWER
-                recordedResourceSize = task.RecordedResourceSize - task.LocalResourceSize;
+            recordedResourceSize = downloadNode.RecordedResourceSize - downloadNode.LocalResourceSize;
 #elif UNITY_2018_1_OR_NEWER
-                recordedResourceSize = task.RecordedResourceSize 
+            recordedResourceSize = downloadNode.RecordedResourceSize 
 #endif
-                totalRequiredDownloadSize -= recordedResourceSize;
-                return true;
-            }
-            return false;
+            totalRequiredDownloadSize -= recordedResourceSize;
         }
-        void OnSuccessCallback(WebRequestSuccessEventArgs eventArgs)
+        public void StartDowload()
         {
-            var taskId = eventArgs.TaskId;
+            if (!downloadManager.Downloading)
+                downloadManager.LaunchDownload();
+        }
+        public void StopDowload()
+        {
+            // TODO ResourceDownloader StopDowload
+        }
+        void OnDownloadSuccessHandler(DownloadSuccessEventArgs eventArgs)
+        {
+            var taskId = eventArgs.DownloadInfo.DownloadId;
             if (taskDict.Remove(taskId, out var task))
             {
-                reserveTaskDict.Remove(task);
+                nodeDict.Remove(taskId, out var downloadNode);
+                downloadSuccessTaskList.Add(task);
                 //todo下载的成功逻辑
-            }
-        }
-        void OnFailureCallback(WebRequestFailureEventArgs eventArgs)
-        {
-            taskDict.Remove(eventArgs.TaskId);
-            onFailure?.Invoke(eventArgs.URL, eventArgs.ErrorMessage);
-        }
-        void OnUpdateCallback(WebRequestUpdateEventArgs eventArgs)
-        {
-            var taskId = eventArgs.TaskId;
-            if (taskDict.ContainsKey(eventArgs.TaskId))
-            {
-                var downloadedSize = currentDownloadedSize + (long)eventArgs.WebRequest.downloadedBytes;
 
+                var successEventArgs = ResourceDownloadSuccessEventArgs.Create(task);
+                onDownloadSuccess?.Invoke(successEventArgs);
+                ResourceDownloadSuccessEventArgs.Release(successEventArgs);
+                currentDownloadedSize += (long)eventArgs.DownloadInfo.DownloadedLength;
+                if (taskDict.Count == 0)
+                {
+                    OnDownloadCompleteHandler();
+                }
             }
         }
-        UnityWebRequest GetWebRequest(string url, string downloadPath)
+        void OnDownloadFailureHandler(DownloadFailureEventArgs eventArgs)
         {
-            var request = UnityWebRequest.Get(url);
-            request.downloadHandler = new DownloadHandlerFile(downloadPath, true);
-            return request;
+            var taskId = eventArgs.DownloadInfo.DownloadId;
+            if (taskDict.Remove(taskId, out var task))
+            {
+
+                nodeDict.Remove(taskId, out var downloadNode);
+                downloadFailureTaskList.Add(task);
+                var failureEventArgs = ResourceDownloadFailureEventArgs.Create(task);
+                onDownloadFailure?.Invoke(failureEventArgs);
+                ResourceDownloadFailureEventArgs.Release(failureEventArgs);
+            }
+        }
+        void OnDownloadUpdateHandler(DonwloadUpdateEventArgs eventArgs)
+        {
+            var taskId = eventArgs.DownloadInfo.DownloadId;
+            if (taskDict.ContainsKey(taskId))
+            {
+                var downloadedSize = currentDownloadedSize + (long)eventArgs.DownloadInfo.DownloadedLength;
+                var updateEventArgs= ResourceDownloadUpdateEventArgs.Create(downloadedSize, totalRequiredDownloadSize);
+                onDownloadUpdate?.Invoke(updateEventArgs);
+                ResourceDownloadUpdateEventArgs.Release(updateEventArgs);
+            }
+        }
+        void OnDownloadCompleteHandler()
+        {
+            var successTasks = downloadSuccessTaskList.ToArray();
+            var failureTasks = downloadFailureTaskList.ToArray();
+            var eventArgs = ResourceDownloadCompeleteEventArgs.Create(successTasks, failureTasks);
+            onDownloadComplete?.Invoke(eventArgs);
+            ResourceDownloadCompeleteEventArgs.Release(eventArgs);
+            downloadSuccessTaskList.Clear();
+            downloadFailureTaskList.Clear();
+            currentDownloadedSize = 0;
+            totalRequiredDownloadSize = 0;
         }
     }
 }

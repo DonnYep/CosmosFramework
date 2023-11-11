@@ -8,14 +8,14 @@ namespace Cosmos.Download
         /// 下载数据的构造；
         /// </summary>
         /// <param name="downloadId"> 下载Id</param>
-        /// <param name="downloadUri"> 资源定位地址</param>
+        /// <param name="downloadUrl"> 资源定位地址</param>
         /// <param name="downloadPath">下载后存储的路径</param>c
         /// <param name="downloadedLength">length of downloaded file</param>
         /// <param name="timeSpan">download time</param>
-        public DownloadInfo(int downloadId,string downloadUri, string downloadPath, ulong downloadedLength,float downloadProgress, TimeSpan timeSpan)
+        public DownloadInfo(int downloadId,string downloadUrl, string downloadPath, ulong downloadedLength,float downloadProgress, TimeSpan timeSpan)
         {
             DownloadId= downloadId;
-            DownloadUri = downloadUri;
+            DownloadUrl = downloadUrl;
             DownloadPath = downloadPath;
             DownloadedLength = downloadedLength;
             DownloadProgress= downloadProgress;
@@ -25,7 +25,7 @@ namespace Cosmos.Download
         /// <summary>
         /// 资源定位地址；
         /// </summary>
-        public string DownloadUri { get; private set; }
+        public string DownloadUrl { get; private set; }
         /// <summary>
         /// 下载后存储的路径；
         /// </summary>
@@ -44,12 +44,12 @@ namespace Cosmos.Download
         public TimeSpan DownloadTimeSpan { get; private set; }
         public bool Equals(DownloadInfo other)
         {
-            return this.DownloadUri == other.DownloadUri &&
+            return this.DownloadUrl == other.DownloadUrl &&
                 this.DownloadPath == other.DownloadPath;
         }
         public override string ToString()
         {
-            return $"DownloadId:{DownloadId} ;URI: {DownloadUri}; DownloadPath: {DownloadPath}; DownloadedLength: {DownloadedLength};DownloadProgress: {DownloadProgress} ; DownloadTimeSpan: {DownloadTimeSpan}";
+            return $"DownloadId:{DownloadId} ;URL: {DownloadUrl}; DownloadPath: {DownloadPath}; DownloadedLength: {DownloadedLength};DownloadProgress: {DownloadProgress} ; DownloadTimeSpan: {DownloadTimeSpan}";
         }
     }
 }

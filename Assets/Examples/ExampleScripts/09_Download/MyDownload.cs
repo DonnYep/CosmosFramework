@@ -31,7 +31,7 @@ public class MyDownload : MonoBehaviour
     void OnDownloadStart(DownloadStartEventArgs eventArgs)
     {
         if (uriText != null)
-            uriText.text = eventArgs.DownloadInfo.DownloadUri;
+            uriText.text = eventArgs.DownloadInfo.DownloadUrl;
     }
     void OnDownloadOverall(DonwloadUpdateEventArgs eventArgs)
     {
@@ -49,12 +49,12 @@ public class MyDownload : MonoBehaviour
     void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
     {
         if (eventArgs.DownloadInfo.DownloadId == downloadTaskId)
-            Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.DownloadInfo.DownloadUri}");
+            Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.DownloadInfo.DownloadUrl}");
     }
     void OnDownloadFailure(DownloadFailureEventArgs eventArgs)
     {
         if (eventArgs.DownloadInfo.DownloadId == downloadTaskId)
-            Utility.Debug.LogError($"DownloadFailure {eventArgs.DownloadInfo.DownloadUri}\n{eventArgs.ErrorMessage}");
+            Utility.Debug.LogError($"DownloadFailure {eventArgs.DownloadInfo.DownloadUrl}\n{eventArgs.ErrorMessage}");
     }
     void OnDownloadFinish(DownloadTasksCompletedEventArgs eventArgs)
     {

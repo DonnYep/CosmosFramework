@@ -5,32 +5,40 @@ namespace Cosmos.Download
     {
         public int DownloadId { get; private set; }
         /// <summary>
-        /// URI绝对路径；
+        /// URL绝对路径；
         /// </summary>
-        public string DownloadUri { get; private set; }
+        public string DownloadUrl { get; private set; }
         /// <summary>
         /// 本地资源的绝对路径；
         /// </summary>
         public string DownloadPath { get; private set; }
         /// <summary>
+        /// 下载byte的偏移量，用于断点续传
+        /// </summary>
+        public long DownloadByteOffset { get; private set; }
+        /// <summary>
         /// 下载任务的构造函数；
         /// </summary>
-        /// <param name="downloadUri">URI绝对路径</param>
+        /// <param name="dwnloadId">下载Id</param>
+        /// <param name="downloadUrl">URL绝对路径</param>
         /// <param name="downloadPath">本地资源的绝对路径</param>
-        public DownloadTask(int dwnloadId, string downloadUri, string downloadPath)
+        /// <param name="downloadByteOffset">下载byte的偏移量，用于断点续传，全部重下则使用0</param>
+        public DownloadTask(int dwnloadId, string downloadUrl, string downloadPath, long downloadByteOffset)
         {
             DownloadId = dwnloadId;
-            DownloadUri = downloadUri;
+            DownloadUrl = downloadUrl;
             DownloadPath = downloadPath;
+            DownloadByteOffset = downloadByteOffset;
         }
         public bool Equals(DownloadTask other)
         {
             bool result = false;
             if (this.GetType() == other.GetType())
             {
-                result = this.DownloadUri == other.DownloadUri &&
+                result = this.DownloadUrl == other.DownloadUrl &&
                     this.DownloadPath == other.DownloadPath &&
-                    this.DownloadId == other.DownloadId;
+                    this.DownloadId == other.DownloadId &&
+                    this.DownloadByteOffset == other.DownloadByteOffset;
             }
             return result;
         }
