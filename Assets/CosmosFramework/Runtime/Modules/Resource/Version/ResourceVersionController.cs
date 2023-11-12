@@ -44,5 +44,40 @@ namespace Cosmos.Resource
             deleteNames.AddRange(expiredNames);
             Utility.IO.DeleteDirectoryFiles(path, deleteNames);
         }
+        /// <summary>
+        /// 通过合并的文件清单生成下载任务
+        /// </summary>
+        /// <param name="mergedManifest">合并的文件清单</param>
+        /// <param name="path">本地持久化地址</param>
+        /// <param name="url">资源所在地址，资源所在的父目录</param>
+        /// <returns>下载任务列表</returns>
+        public static List<ResourceDownloadTask> CompareAndGenerateDownloadTask(ResourceMergedManifest mergedManifest, string path, string url)
+        {
+            ResourceUtility.Integrity.VerifyResourceIntegrity(mergedManifest, path, out var integrityResult);
+            List<ResourceDownloadTask> downloadTasks = new List<ResourceDownloadTask>();
+            string formattedPath = path;
+            string formattedUrl = url;
+            if (!formattedPath.EndsWith("/"))
+            {
+                formattedPath += "/";
+            }
+            if (!formattedUrl.EndsWith("/"))
+            {
+                formattedUrl += "/";
+            }
+            var length = integrityResult.ResourceIntegrityInfos.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var info = integrityResult.ResourceIntegrityInfos[i];
+                if (info.RecordedBundleSize > info.DetectedBundleSize)
+                {
+                    var downloadPath = Utility.Text.Append(formattedPath, info.BundleKey);
+                    var downloadUrl = Utility.Text.Append(formattedUrl, info.BundleKey);
+                    var downloadTask = new ResourceDownloadTask(downloadUrl, downloadPath, info.RecordedBundleSize);
+                    downloadTasks.Add(downloadTask);
+                }
+            }
+            return downloadTasks;
+        }
     }
 }
