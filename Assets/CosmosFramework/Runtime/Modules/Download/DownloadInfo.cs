@@ -12,16 +12,16 @@ namespace Cosmos.Download
         /// <param name="downloadPath">下载后存储的路径</param>c
         /// <param name="downloadedLength">length of downloaded file</param>
         /// <param name="timeSpan">download time</param>
-        public DownloadInfo(int downloadId,string downloadUrl, string downloadPath, ulong downloadedLength,float downloadProgress, TimeSpan timeSpan)
+        public DownloadInfo(long downloadId, string downloadUrl, string downloadPath, ulong downloadedLength, float downloadProgress, TimeSpan timeSpan)
         {
-            DownloadId= downloadId;
+            DownloadId = downloadId;
             DownloadUrl = downloadUrl;
             DownloadPath = downloadPath;
             DownloadedLength = downloadedLength;
-            DownloadProgress= downloadProgress;
+            DownloadProgress = downloadProgress;
             DownloadTimeSpan = timeSpan;
         }
-        public int  DownloadId{ get; private set; }
+        public long DownloadId { get; private set; }
         /// <summary>
         /// 资源定位地址；
         /// </summary>

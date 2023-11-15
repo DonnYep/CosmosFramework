@@ -93,11 +93,7 @@ namespace Cosmos.Procedure
             if (!procedureNodeType.IsAssignableFrom(type))
                 throw new NotImplementedException($"Type:{type} is not inherit form ProcedureState");
             node = null;
-            var rst = procedureProcessor.PeekNode(type, out var _node);
-            if (rst)
-            {
-                node = _node as ProcedureNode;
-            }
+            var rst = procedureProcessor.PeekNode(type, out node);
             return rst;
         }
         /// <inheritdoc/>

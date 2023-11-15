@@ -14,11 +14,11 @@ namespace Cosmos.Resource
         /// <summary>
         /// taskId===downloadTask
         /// </summary>
-        readonly Dictionary<int, ResourceDownloadTask> taskDict;
+        readonly Dictionary<long, ResourceDownloadTask> taskDict;
         /// <summary>
         /// taskId===downloadNode
         /// </summary>
-        readonly Dictionary<int, ResourceDownloadNode> nodeDict;
+        readonly Dictionary<long, ResourceDownloadNode> nodeDict;
         /// <summary>
         /// 已经下载的长度
         /// </summary>
@@ -75,8 +75,8 @@ namespace Cosmos.Resource
         public ResourceDownloader(IDownloadManager downloadManager)
         {
             this.downloadManager = downloadManager;
-            taskDict = new Dictionary<int, ResourceDownloadTask>();
-            nodeDict = new Dictionary<int, ResourceDownloadNode>();
+            taskDict = new Dictionary<long, ResourceDownloadTask>();
+            nodeDict = new Dictionary<long, ResourceDownloadNode>();
             downloadSuccessTaskList = new List<ResourceDownloadTask>();
             downloadFailureTaskList = new List<ResourceDownloadTask>();
         }
@@ -97,7 +97,7 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="task">下载任务</param>
         /// <returns>下载任务Id</returns>
-        public int AddDownloadTask(ResourceDownloadTask task)
+        public long AddDownloadTask(ResourceDownloadTask task)
         {
             var url = task.ResourceDownloadURL;
             var downloadPath = task.ResourceDownloadPath;
@@ -121,7 +121,7 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="taskId">下载任务</param>
         /// <returns>移除结果，失败或成功</returns>
-        public void RemoveTask(int taskId)
+        public void RemoveTask(long taskId)
         {
             nodeDict.Remove(taskId, out var downloadNode);
             taskDict.Remove(taskId);
@@ -181,7 +181,7 @@ namespace Cosmos.Resource
             if (taskDict.ContainsKey(taskId))
             {
                 var downloadedSize = currentDownloadedSize + (long)eventArgs.DownloadInfo.DownloadedLength;
-                var updateEventArgs= ResourceDownloadUpdateEventArgs.Create(downloadedSize, totalRequiredDownloadSize);
+                var updateEventArgs = ResourceDownloadUpdateEventArgs.Create(downloadedSize, totalRequiredDownloadSize);
                 onDownloadUpdate?.Invoke(updateEventArgs);
                 ResourceDownloadUpdateEventArgs.Release(updateEventArgs);
             }

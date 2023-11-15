@@ -9,7 +9,7 @@ namespace Cosmos.Download
     /// </summary>
     public class Downloader : IDownloader
     {
-        static int downloadIndex = 0;
+        static long downloadId = 0;
         #region events
         Action<DownloadStartEventArgs> onDownloadStart;
         Action<DownloadSuccessEventArgs> onDownloadSuccess;
@@ -72,19 +72,19 @@ namespace Cosmos.Download
         /// <summary>
         /// 挂起的下载任务；
         /// </summary>
-        List<DownloadTask> pendingTasks = new List<DownloadTask>();
+        readonly List<DownloadTask> pendingTasks;
         /// <summary>
         /// 挂起的下载任务字典缓存；
         /// </summary>
-        Dictionary<int, DownloadTask> pendingTaskDict = new Dictionary<int, DownloadTask>();
+        readonly Dictionary<long, DownloadTask> pendingTaskDict;
         /// <summary>
         /// 下载成功的任务;
         /// </summary>
-        List<DownloadInfo> successedInfos = new List<DownloadInfo>();
+        readonly List<DownloadInfo> successedInfos;
         /// <summary>
         /// 下载失败的任务;
         /// </summary>
-        List<DownloadInfo> failedInfos = new List<DownloadInfo>();
+        readonly List<DownloadInfo> failedInfos;
         /// <summary>
         /// 下载开始时间；
         /// </summary>
@@ -114,17 +114,24 @@ namespace Cosmos.Download
         /// </summary>
         long completedDownloadLength;
 
-        /// <inheritdoc/>
-        public int AddDownload(string downloadUri, string downloadPath,long downloadByteOffset)
+        public Downloader()
         {
-            var downloadTask = new DownloadTask(downloadIndex++, downloadUri, downloadPath,downloadByteOffset);
+            pendingTasks = new List<DownloadTask>();
+            pendingTaskDict = new Dictionary<long, DownloadTask>();
+            successedInfos = new List<DownloadInfo>();
+            failedInfos = new List<DownloadInfo>();
+        }
+        /// <inheritdoc/>
+        public long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset)
+        {
+            var downloadTask = new DownloadTask(downloadId++, downloadUri, downloadPath, downloadByteOffset);
             pendingTaskDict.Add(downloadTask.DownloadId, downloadTask);
             pendingTasks.Add(downloadTask);
             downloadTaskCount++;
             return downloadTask.DownloadId;
         }
         /// <inheritdoc/>
-        public bool RemoveDownload(int downloadId)
+        public bool RemoveDownload(long downloadId)
         {
             if (pendingTaskDict.Remove(downloadId, out var downloadTask))
             {
@@ -186,7 +193,7 @@ namespace Cosmos.Download
             Downloading = false;
         }
         /// <summary>
-        /// 单文件下载迭代器方法；
+        /// 单文件下载迭代器方法
         /// </summary>
         /// <param name="downloadTask">下载任务对象</param>
         /// <returns>迭代器接口</returns>
@@ -194,27 +201,6 @@ namespace Cosmos.Download
         {
             var downloadUrl = downloadTask.DownloadUrl;
             var downloadPath = downloadTask.DownloadPath;
-            //            using (UnityWebRequest request = UnityWebRequest.Head(downloadUri))
-            //            {
-            //                //这部分通过header获取需要下载的文件大小
-            //                unityWebRequest = request;
-            //                request.timeout = DownloadDataProxy.DownloadTimeout;
-            //                request.redirectLimit = DownloadDataProxy.RedirectLimit;
-            //                yield return request.SendWebRequest();
-            //#if UNITY_2020_1_OR_NEWER
-            //                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError&& canDownload)
-            //#elif UNITY_2018_1_OR_NEWER
-            //                if (!request.isNetworkError && !request.isHttpError)
-            //#endif
-            //                {
-            //                    var fileLength = long.Parse(request.GetRequestHeader("Content-Length"));
-            //                    totalRequiredDownloadLength += fileLength;
-            //                }
-            //                else
-            //                {
-            //                    //yield break;
-            //                }
-            //            }
             var fileDownloadStartTime = DateTime.Now;
             var startTime = DateTime.Now;
             using (UnityWebRequest request = UnityWebRequest.Get(downloadUrl))
@@ -273,6 +259,36 @@ namespace Cosmos.Download
                     failedInfos.Add(downloadInfo);
                     OnFileDownloading(downloadInfo);
                     unityWebRequest = null;
+                }
+            }
+        }
+        /// <summary>
+        /// 请求header以获取文件大小
+        /// </summary>
+        /// <param name="downloadTask">下载任务对象</param>
+        /// <returns>迭代器接口</returns>
+        IEnumerator RunRequestHeader(DownloadTask downloadTask)
+        {
+            var downloadUrl = downloadTask.DownloadUrl;
+            using (UnityWebRequest request = UnityWebRequest.Head(downloadUrl))
+            {
+                //这部分通过header获取需要下载的文件大小
+                unityWebRequest = request;
+                request.timeout = DownloadDataProxy.DownloadTimeout;
+                request.redirectLimit = DownloadDataProxy.RedirectLimit;
+                yield return request.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError&& canDownload)
+#elif UNITY_2018_1_OR_NEWER
+                if (!request.isNetworkError && !request.isHttpError)
+#endif
+                {
+                    var fileLength = long.Parse(request.GetRequestHeader("Content-Length"));
+                    //totalRequiredDownloadLength += fileLength;
+                }
+                else
+                {
+                    //yield break;
                 }
             }
         }

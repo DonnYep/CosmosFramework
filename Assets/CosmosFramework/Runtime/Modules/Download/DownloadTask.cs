@@ -3,7 +3,7 @@ namespace Cosmos.Download
 {
     internal struct DownloadTask : IEquatable<DownloadTask>
     {
-        public int DownloadId { get; private set; }
+        public long DownloadId { get; private set; }
         /// <summary>
         /// URL绝对路径；
         /// </summary>
@@ -23,7 +23,7 @@ namespace Cosmos.Download
         /// <param name="downloadUrl">URL绝对路径</param>
         /// <param name="downloadPath">本地资源的绝对路径</param>
         /// <param name="downloadByteOffset">下载byte的偏移量，用于断点续传，全部重下则使用0</param>
-        public DownloadTask(int dwnloadId, string downloadUrl, string downloadPath, long downloadByteOffset)
+        public DownloadTask(long dwnloadId, string downloadUrl, string downloadPath, long downloadByteOffset)
         {
             DownloadId = dwnloadId;
             DownloadUrl = downloadUrl;

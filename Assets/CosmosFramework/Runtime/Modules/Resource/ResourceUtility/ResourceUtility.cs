@@ -76,6 +76,11 @@ namespace Cosmos.Resource
             }
             return key;
         }
+        /// <summary>
+        /// 检测文件清单的密钥key是否合法
+        /// </summary>
+        /// <param name="aesKey">密钥</param>
+        /// <returns>是否合法</returns>
         public static bool CheckManifestKeyValidable(string aesKey)
         {
             var aesKeyLength = Encoding.UTF8.GetBytes(aesKey).Length;

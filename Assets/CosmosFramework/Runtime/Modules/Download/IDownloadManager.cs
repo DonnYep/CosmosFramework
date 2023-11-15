@@ -82,18 +82,18 @@ namespace Cosmos.Download
         /// <param name="downloadPath">下载到地址的绝对路径</param>
         /// <param name="downloadByteOffset">下载byte的偏移量，用于断点续传</param>
         /// <returns>下载序号</returns>
-        int AddDownload(string downloadUri, string downloadPath, long downloadByteOffset=0);
+        long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset = 0);
         /// <summary>
         /// 移除URI下载；
         /// </summary>
         /// <param name="downloadId">下载序号</param>
         /// <returns>移除结果</returns>
-        bool RemoveDownload(int downloadId);
+        bool RemoveDownload(long downloadId);
         /// <summary>
         /// 移除多个URI下载；
         /// </summary>
         /// <param name="downloadIds">下载序号集合</param>
-        void RemoveDownloads(int[] downloadIds);
+        void RemoveDownloads(long[] downloadIds);
         /// <summary>
         /// 移除所有下载；
         /// </summary>

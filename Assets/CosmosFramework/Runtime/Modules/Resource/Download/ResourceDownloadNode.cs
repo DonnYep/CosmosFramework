@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace Cosmos.Resource
+﻿namespace Cosmos.Resource
 {
-    public struct ResourceDownloadNode 
+    public struct ResourceDownloadNode
     {
         /// <summary>
         /// download id
         /// </summary>
-        public int ResourceDownloadId { get; private set; }
+        public long ResourceDownloadId { get; private set; }
         /// <summary>
         /// DownloadUrl = url/bundle key
         /// </summary>
@@ -24,7 +22,7 @@ namespace Cosmos.Resource
         /// bundle size on local path
         /// </summary>
         public long LocalResourceSize { get; private set; }
-        public ResourceDownloadNode(int resourceDownloadId, string resourceDownloadURL, string resourceDownloadPath, long recordedResourceSize, long localResourceSize)
+        public ResourceDownloadNode(long resourceDownloadId, string resourceDownloadURL, string resourceDownloadPath, long recordedResourceSize, long localResourceSize)
         {
             ResourceDownloadId = resourceDownloadId;
             ResourceDownloadURL = resourceDownloadURL;

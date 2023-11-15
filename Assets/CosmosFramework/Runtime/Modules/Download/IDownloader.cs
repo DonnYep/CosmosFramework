@@ -29,11 +29,11 @@ namespace Cosmos.Download
         /// <summary>
         /// 是否正在下载；
         /// </summary>
-        bool Downloading { get;  }
+        bool Downloading { get; }
         /// <summary>
         /// 可下载的资源总数；
         /// </summary>
-        int DownloadingCount { get;  }
+        int DownloadingCount { get; }
         /// <summary>
         /// 添加URI下载；
         /// </summary>
@@ -41,13 +41,13 @@ namespace Cosmos.Download
         /// <param name="downloadPath">下载到地址的绝对路径</param>
         /// <param name="downloadByteOffset">下载byte的偏移量，用于断点续传</param>
         /// <returns>下载序列号</returns>
-        int AddDownload(string downloadUri, string downloadPath, long downloadByteOffset);
+        long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset);
         /// <summary>
         /// 移除URI下载；
         /// </summary>
         /// <param name="downloadId">下载序号</param>
         /// <returns>移除结果</returns>
-        bool RemoveDownload(int  downloadId);
+        bool RemoveDownload(long downloadId);
         /// <summary>
         /// 移除所有下载；
         /// </summary>

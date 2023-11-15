@@ -13,7 +13,7 @@ public class MyDownload : MonoBehaviour
     [SerializeField] Slider slider;
     [SerializeField] Text text;
     [SerializeField] Text uriText;
-    int downloadTaskId;
+    long downloadTaskId;
     void Start()
     {
         if (string.IsNullOrEmpty(srcUrl) || string.IsNullOrEmpty(downloadPath))
