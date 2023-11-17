@@ -313,18 +313,7 @@ namespace Cosmos
             /// <param name="array">数组</param>
             public static void Disrupt<T>(IList<T> array)
             {
-                int index = 0;
-                T tmp;
-                for (int i = 0; i < array.Count; i++)
-                {
-                    index = RandomRange(0, array.Count);
-                    if (index != i)
-                    {
-                        tmp = array[i];
-                        array[i] = array[index];
-                        array[index] = tmp;
-                    }
-                }
+                Disrupt(array, 0, array.Count);
             }
             /// <summary>
             /// 随机打乱数组
@@ -340,7 +329,7 @@ namespace Cosmos
                 var endIndex = startIndex + count;
                 for (int i = startIndex; i < endIndex; i++)
                 {
-                    index = RandomRange(startIndex, count);
+                    index = RandomRange(startIndex, endIndex);
                     if (index != i)
                     {
                         tmp = array[i];
