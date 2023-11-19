@@ -59,12 +59,6 @@ namespace Cosmos.Download
             set { DownloadDataProxy.DeleteFileOnAbort = value; }
         }
         ///<inheritdoc/>
-        public bool DownloadAppend
-        {
-            get { return DownloadDataProxy.DownloadAppend; }
-            set { DownloadDataProxy.DownloadAppend = value; }
-        }
-        ///<inheritdoc/>
         public int DownloadTimeout
         {
             get { return DownloadDataProxy.DownloadTimeout; }
@@ -109,11 +103,11 @@ namespace Cosmos.Download
             this.downloadRequester = helper;
         }
         ///<inheritdoc/>
-        public long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset)
+        public long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset, bool downloadAppend)
         {
             Utility.Text.IsStringValid(downloadUri, "URI is invalid !");
             Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
-            return downloader.AddDownload(downloadUri, downloadPath, downloadByteOffset);
+            return downloader.AddDownload(downloadUri, downloadPath, downloadByteOffset, downloadAppend);
         }
         ///<inheritdoc/>
         public bool RemoveDownload(long downloadId)

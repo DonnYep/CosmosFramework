@@ -9,17 +9,17 @@
         /// <summary>
         /// 总共需要下载的大小
         /// </summary>
-        public long TotalRequiredDownloadSize { get; private set; }
+        public long TotalRequirementDownloadSize { get; private set; }
         public override void Release()
         {
             DownloadedSize = 0;
-            TotalRequiredDownloadSize = 0;
+            TotalRequirementDownloadSize = 0;
         }
-        public static ResourceDownloadUpdateEventArgs Create(long downloadedSize, long totalRequiredDownloadSize)
+        public static ResourceDownloadUpdateEventArgs Create(long downloadedSize, long totalRequirementDownloadSize)
         {
             var eventArgs = ReferencePool.Acquire<ResourceDownloadUpdateEventArgs>();
             eventArgs.DownloadedSize = downloadedSize;
-            eventArgs.TotalRequiredDownloadSize = totalRequiredDownloadSize;
+            eventArgs.TotalRequirementDownloadSize = totalRequirementDownloadSize;
             return eventArgs;
         }
         public static void Release(ResourceDownloadUpdateEventArgs eventArgs)

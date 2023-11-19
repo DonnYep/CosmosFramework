@@ -108,7 +108,7 @@ namespace Cosmos.Download
         /// <summary>
         /// 总共需要下载的文件大小
         /// </summary>
-        long totalRequiredDownloadLength;
+        long totalRequirementDownloadLength;
         /// <summary>
         /// 已经下载的文件大小
         /// </summary>
@@ -122,9 +122,9 @@ namespace Cosmos.Download
             failedInfos = new List<DownloadInfo>();
         }
         /// <inheritdoc/>
-        public long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset)
+        public long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset, bool downloadAppend)
         {
-            var downloadTask = new DownloadTask(downloadId++, downloadUri, downloadPath, downloadByteOffset);
+            var downloadTask = new DownloadTask(downloadId++, downloadUri, downloadPath, downloadByteOffset, downloadAppend);
             pendingTaskDict.Add(downloadTask.DownloadId, downloadTask);
             pendingTasks.Add(downloadTask);
             downloadTaskCount++;
@@ -205,7 +205,7 @@ namespace Cosmos.Download
             var startTime = DateTime.Now;
             using (UnityWebRequest request = UnityWebRequest.Get(downloadUrl))
             {
-                var append = DownloadDataProxy.DownloadAppend;
+                var append = downloadTask.DownloadAppend;
                 var deleteFailureFile = DownloadDataProxy.DeleteFileOnAbort;
 #if UNITY_2019_1_OR_NEWER
                 var handler = new DownloadHandlerFile(downloadTask.DownloadPath, append) { removeFileOnAbort = deleteFailureFile };

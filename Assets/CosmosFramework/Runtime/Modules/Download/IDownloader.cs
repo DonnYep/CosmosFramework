@@ -40,8 +40,9 @@ namespace Cosmos.Download
         /// <param name="downloadUri">统一资源名称</param>
         /// <param name="downloadPath">下载到地址的绝对路径</param>
         /// <param name="downloadByteOffset">下载byte的偏移量，用于断点续传</param>
+        /// <param name="downloadAppend">当本地存在时，下载时追加写入</param>
         /// <returns>下载序列号</returns>
-        long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset);
+        long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset, bool downloadAppend);
         /// <summary>
         /// 移除URI下载；
         /// </summary>

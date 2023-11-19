@@ -44,10 +44,6 @@ namespace Cosmos.Download
         /// </summary>
         bool DeleteFileOnAbort { get; set; }
         /// <summary>
-        /// 下载时追加写入；
-        /// </summary>
-        bool DownloadAppend { get; set; }
-        /// <summary>
         /// 任务过期时间，以秒为单位；
         /// </summary>
         int DownloadTimeout { get; set; }
@@ -81,8 +77,9 @@ namespace Cosmos.Download
         /// <param name="downloadUri">统一资源名称</param>
         /// <param name="downloadPath">下载到地址的绝对路径</param>
         /// <param name="downloadByteOffset">下载byte的偏移量，用于断点续传</param>
+        /// <param name="downloadAppend">当本地存在时，下载时追加写入</param>
         /// <returns>下载序号</returns>
-        long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset = 0);
+        long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset = 0, bool downloadAppend = true);
         /// <summary>
         /// 移除URI下载；
         /// </summary>

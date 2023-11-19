@@ -26,7 +26,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 总共需要下载的长度
         /// </summary>
-        long totalRequiredDownloadSize;
+        long totalRequirementDownloadSize;
         /// <summary>
         /// 下载成功的任务列表
         /// </summary>
@@ -103,14 +103,14 @@ namespace Cosmos.Resource
             var downloadPath = task.ResourceDownloadPath;
             var recordedSize = task.RecordedResourceSize;
             long localSize = 0;
-            long recordedResourceSize = 0;
+            long requirementSize = 0;
 #if UNITY_2019_1_OR_NEWER
             localSize = Utility.IO.GetFileSize(task.ResourceDownloadPath);
-            recordedResourceSize = recordedSize - localSize;
+            requirementSize = recordedSize - localSize;
 #elif UNITY_2018_1_OR_NEWER
             recordedResourceSize = downloadNode.RecordedResourceSize 
 #endif
-            totalRequiredDownloadSize += recordedResourceSize;
+            totalRequirementDownloadSize += requirementSize;
             var taskId = downloadManager.AddDownload(url, downloadPath, localSize);
             var downloadNode = new ResourceDownloadNode(taskId, url, downloadPath, recordedSize, localSize);
             taskDict.Add(taskId, task);
@@ -132,7 +132,7 @@ namespace Cosmos.Resource
 #elif UNITY_2018_1_OR_NEWER
             recordedResourceSize = downloadNode.RecordedResourceSize 
 #endif
-            totalRequiredDownloadSize -= recordedResourceSize;
+            totalRequirementDownloadSize -= recordedResourceSize;
         }
         public void StartDowload()
         {
@@ -181,7 +181,7 @@ namespace Cosmos.Resource
             if (taskDict.ContainsKey(taskId))
             {
                 var downloadedSize = currentDownloadedSize + (long)eventArgs.DownloadInfo.DownloadedLength;
-                var updateEventArgs = ResourceDownloadUpdateEventArgs.Create(downloadedSize, totalRequiredDownloadSize);
+                var updateEventArgs = ResourceDownloadUpdateEventArgs.Create(downloadedSize, totalRequirementDownloadSize);
                 onDownloadUpdate?.Invoke(updateEventArgs);
                 ResourceDownloadUpdateEventArgs.Release(updateEventArgs);
             }
@@ -196,7 +196,7 @@ namespace Cosmos.Resource
             downloadSuccessTaskList.Clear();
             downloadFailureTaskList.Clear();
             currentDownloadedSize = 0;
-            totalRequiredDownloadSize = 0;
+            totalRequirementDownloadSize = 0;
         }
     }
 }
