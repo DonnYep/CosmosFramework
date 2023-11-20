@@ -409,7 +409,7 @@ where T : Component
             /// <param name="delay">延迟时间，delay>=0</param>
             /// <param name="action">触发的事件</param>
             /// <returns>任务Id</returns>
-            public static int AddDelayTask(float delay, Action action)
+            public static long AddDelayTask(float delay, Action action)
             {
                 return CoroutineHelper.AddDelayTask(delay, action);
             }
@@ -421,7 +421,7 @@ where T : Component
             /// 移除延迟任务，已触发的则自动移除
             /// </summary>
             /// <param name="taskId">任务Id</param>
-            public static void RemoveDelayTask(int taskId)
+            public static void RemoveDelayTask(long taskId)
             {
                 CoroutineHelper.RemoveDelayTask(taskId);
             }

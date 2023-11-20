@@ -10,7 +10,7 @@ namespace Cosmos
     {
         class DelayTask : IEquatable<DelayTask>, IReference
         {
-            public int TaskId;
+            public long TaskId;
             public float Delay;
             public float CurrentTime;
             public Action Action;
@@ -18,7 +18,6 @@ namespace Cosmos
             {
                 return other.TaskId == this.TaskId;
             }
-
             public void Release()
             {
                 TaskId = -1;
@@ -28,17 +27,17 @@ namespace Cosmos
             }
         }
         List<IEnumerator> routineList = new List<IEnumerator>();
-        static int taskIndex = 0;
-        Dictionary<int, DelayTask> taskDict = new Dictionary<int, DelayTask>();
-        List<DelayTask> taskList = new List<DelayTask>();
-        List<DelayTask> removeList = new List<DelayTask>();
+        static long taskIndex = 0;
+        readonly Dictionary<long, DelayTask> delayTaskDict = new Dictionary<long, DelayTask>();
+        readonly List<DelayTask> delayTaskList = new List<DelayTask>();
+        readonly List<DelayTask> removalDelayTaskList = new List<DelayTask>();
         /// <summary>
         /// 加入延迟任务
         /// </summary>
         /// <param name="delay">延迟时间，delay>=0</param>
         /// <param name="action">触发的事件</param>
         /// <returns>任务Id</returns>
-        public int AddDelayTask(float delay, Action action)
+        public long AddDelayTask(float delay, Action action)
         {
             if (delay < 0)
                 delay = 0;
@@ -48,8 +47,8 @@ namespace Cosmos
             delayTask.Delay = delay;
             delayTask.Action = action;
 
-            taskList.Add(delayTask);
-            taskDict.Add(delayTask.TaskId, delayTask);
+            delayTaskList.Add(delayTask);
+            delayTaskDict.Add(delayTask.TaskId, delayTask);
             if (taskIndex == int.MaxValue)
                 taskIndex = 0;
             else
@@ -61,18 +60,18 @@ namespace Cosmos
         /// 移除延迟任务，已触发的则自动移除
         /// </summary>
         /// <param name="taskId">任务Id</param>
-        public void RemoveDelayTask(int taskId)
+        public void RemoveDelayTask(long taskId)
         {
-            if (taskDict.TryRemove(taskId, out var delayTask))
+            if (delayTaskDict.TryRemove(taskId, out var delayTask))
             {
-                taskList.Remove(delayTask);
+                delayTaskList.Remove(delayTask);
                 ReferencePool.Release(delayTask);
             }
         }
         public void StopAllDelayTask()
         {
-            taskList.Clear();
-            taskDict.Clear();
+            delayTaskList.Clear();
+            delayTaskDict.Clear();
         }
         /// <summary>
         /// 条件协程；
@@ -134,32 +133,7 @@ namespace Cosmos
                 routineList.RemoveAt(0);
                 StartCoroutine(routine);
             }
-            removeList.Clear();
-            var taskArray = taskList.ToArray();
-            var taskCount = taskArray.Length;
-            for (int i = 0; i < taskCount; i++)
-            {
-                var task = taskArray[i];
-                task.CurrentTime += Time.deltaTime;
-                if (task.CurrentTime >= task.Delay)
-                {
-                    try
-                    {
-                        task.Action?.Invoke();
-                    }
-                    catch (Exception e)
-                    {
-                        Utility.Debug.LogError(e);
-                    }
-                    removeList.Add(task);
-                }
-            }
-            var removeCount = removeList.Count;
-            for (int i = 0; i < removeCount; i++)
-            {
-                var removeTask = removeList[i];
-                RemoveDelayTask(removeTask.TaskId);
-            }
+            RefreshDelayTask();
         }
         IEnumerator EnumDelay(float delay, Action callBack)
         {
@@ -195,6 +169,35 @@ namespace Cosmos
         {
             yield return new WaitUntil(predicateHandler);
             yield return StartCoroutine(EnumCoroutine(nestHandler));
+        }
+        void RefreshDelayTask()
+        {
+            removalDelayTaskList.Clear();
+            var taskArray = delayTaskList.ToArray();
+            var taskCount = taskArray.Length;
+            for (int i = 0; i < taskCount; i++)
+            {
+                var task = taskArray[i];
+                task.CurrentTime += Time.deltaTime;
+                if (task.CurrentTime >= task.Delay)
+                {
+                    try
+                    {
+                        task.Action?.Invoke();
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
+                    removalDelayTaskList.Add(task);
+                }
+            }
+            var removeCount = removalDelayTaskList.Count;
+            for (int i = 0; i < removeCount; i++)
+            {
+                var removeTask = removalDelayTaskList[i];
+                RemoveDelayTask(removeTask.TaskId);
+            }
         }
     }
 }
