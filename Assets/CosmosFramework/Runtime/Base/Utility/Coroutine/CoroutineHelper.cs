@@ -26,11 +26,37 @@ namespace Cosmos
                 Action = null;
             }
         }
+        class ConditionTask : IEquatable<ConditionTask>, IReference
+        {
+            public long TaskId;
+            public float Timeout;
+            public float CurrentTime;
+            public Func<bool> Condition;
+            public Action Action;
+            public bool Equals(ConditionTask other)
+            {
+                return other.TaskId == this.TaskId;
+            }
+            public void Release()
+            {
+                TaskId = -1;
+                Timeout = 0;
+                CurrentTime = 0;
+                Condition = null;
+                Action = null;
+            }
+        }
         List<IEnumerator> routineList = new List<IEnumerator>();
         static long taskIndex = 0;
         readonly Dictionary<long, DelayTask> delayTaskDict = new Dictionary<long, DelayTask>();
         readonly List<DelayTask> delayTaskList = new List<DelayTask>();
         readonly List<DelayTask> removalDelayTaskList = new List<DelayTask>();
+
+        readonly Dictionary<long, ConditionTask> conditionTaskDict = new Dictionary<long, ConditionTask>();
+        readonly List<ConditionTask> conditionTaskList = new List<ConditionTask>();
+        readonly List<ConditionTask> removalConditionTaskList = new List<ConditionTask>();
+
+
         /// <summary>
         /// 加入延迟任务
         /// </summary>
@@ -41,6 +67,10 @@ namespace Cosmos
         {
             if (delay < 0)
                 delay = 0;
+            if (taskIndex == long.MaxValue)
+                taskIndex = 0;
+            else
+                taskIndex++;
             var delayTask = ReferencePool.Acquire<DelayTask>();
             delayTask.TaskId = taskIndex;
             delayTask.CurrentTime = 0;
@@ -49,12 +79,33 @@ namespace Cosmos
 
             delayTaskList.Add(delayTask);
             delayTaskDict.Add(delayTask.TaskId, delayTask);
-            if (taskIndex == int.MaxValue)
+            return delayTask.TaskId;
+        }
+        /// <summary>
+        /// 添加条件任务。包含超时机制，超时自动抛弃任务，不触发。
+        /// </summary>
+        /// <param name="condition">触发条件，返回值为true时触发action</param>
+        /// <param name="action">执行回调函数</param>
+        /// <param name="timeout">超时时间，默认int.MaxValue，超时自动抛弃任务</param>
+        /// <returns>任务Id</returns>
+        public long AddConditionTask(Func<bool> condition, Action action, float timeout)
+        {
+            if (timeout <= 0)
+                timeout = 0;
+            if (taskIndex == long.MaxValue)
                 taskIndex = 0;
             else
                 taskIndex++;
+            var conditionTask = ReferencePool.Acquire<ConditionTask>();
+            conditionTask.TaskId = taskIndex;
+            conditionTask.Timeout = timeout;
+            conditionTask.CurrentTime = 0;
+            conditionTask.Condition = condition;
+            conditionTask.Action = action;
 
-            return delayTask.TaskId;
+            conditionTaskList.Add(conditionTask);
+            conditionTaskDict.Add(conditionTask.TaskId, conditionTask);
+            return conditionTask.TaskId;
         }
         /// <summary>
         /// 移除延迟任务，已触发的则自动移除
@@ -62,16 +113,45 @@ namespace Cosmos
         /// <param name="taskId">任务Id</param>
         public void RemoveDelayTask(long taskId)
         {
-            if (delayTaskDict.TryRemove(taskId, out var delayTask))
+            if (delayTaskDict.TryRemove(taskId, out var task))
             {
-                delayTaskList.Remove(delayTask);
-                ReferencePool.Release(delayTask);
+                delayTaskList.Remove(task);
+                ReferencePool.Release(task);
+            }
+        }
+        /// <summary>
+        /// 移除条件任务
+        /// </summary>
+        /// <param name="taskId">任务Id</param>
+        public void RemoveConditionTask(long taskId)
+        {
+            if (conditionTaskDict.TryRemove(taskId, out var task))
+            {
+                conditionTaskList.Remove(task);
+                ReferencePool.Release(task);
             }
         }
         public void StopAllDelayTask()
         {
+            var length = delayTaskList.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var task = delayTaskList[i];
+                ReferencePool.Release(task);
+            }
             delayTaskList.Clear();
             delayTaskDict.Clear();
+        }
+        public void StopAllConditionTask()
+        {
+            var length = conditionTaskList.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var task = conditionTaskList[i];
+                ReferencePool.Release(task);
+            }
+            conditionTaskList.Clear();
+            conditionTaskDict.Clear();
         }
         /// <summary>
         /// 条件协程；
@@ -134,6 +214,7 @@ namespace Cosmos
                 StartCoroutine(routine);
             }
             RefreshDelayTask();
+            RefreshConditionTask();
         }
         IEnumerator EnumDelay(float delay, Action callBack)
         {
@@ -173,8 +254,8 @@ namespace Cosmos
         void RefreshDelayTask()
         {
             removalDelayTaskList.Clear();
-            var taskArray = delayTaskList.ToArray();
-            var taskCount = taskArray.Length;
+            var taskArray = delayTaskList;
+            var taskCount = taskArray.Count;
             for (int i = 0; i < taskCount; i++)
             {
                 var task = taskArray[i];
@@ -197,6 +278,55 @@ namespace Cosmos
             {
                 var removeTask = removalDelayTaskList[i];
                 RemoveDelayTask(removeTask.TaskId);
+            }
+        }
+        void RefreshConditionTask()
+        {
+            removalConditionTaskList.Clear();
+            var taskArray = conditionTaskList;
+            var taskCount = taskArray.Count;
+            for (int i = 0; i < taskCount; i++)
+            {
+                var task = taskArray[i];
+                task.CurrentTime += Time.deltaTime;
+                if (task.CurrentTime >= task.Timeout)
+                {
+                    removalConditionTaskList.Add(task);
+                    continue;
+                }
+                bool triggered = false;
+                if (task.Condition == null)
+                    triggered = true;
+                else
+                {
+                    try
+                    {
+                        triggered = task.Condition.Invoke();
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                        triggered = true;
+                    }
+                }
+                if (triggered)
+                {
+                    try
+                    {
+                        task.Action?.Invoke();
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
+                    removalConditionTaskList.Add(task);
+                }
+            }
+            var removeCount = removalConditionTaskList.Count;
+            for (int i = 0; i < removeCount; i++)
+            {
+                var removeTask = removalConditionTaskList[i];
+                RemoveConditionTask(removeTask.TaskId);
             }
         }
     }

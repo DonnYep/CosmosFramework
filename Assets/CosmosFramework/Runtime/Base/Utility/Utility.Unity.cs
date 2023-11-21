@@ -413,9 +413,24 @@ where T : Component
             {
                 return CoroutineHelper.AddDelayTask(delay, action);
             }
+            /// <summary>
+            /// 添加条件任务。包含超时机制，超时自动抛弃任务，不触发。
+            /// </summary>
+            /// <param name="condition">触发条件，返回值为true时触发action</param>
+            /// <param name="action">执行回调函数</param>
+            /// <param name="timeout">超时时间，单位秒(second)，默认int.MaxValue，超时自动抛弃任务</param>
+            /// <returns>任务Id</returns>
+            public static long AddConditionTask(Func<bool> condition, Action action, float timeout = int.MaxValue)
+            {
+                return CoroutineHelper.AddConditionTask(condition, action, timeout);
+            }
             public static void StopAllDelayTask()
             {
                 CoroutineHelper.StopAllDelayTask();
+            }
+            public static void StopAllConditionTask()
+            {
+                CoroutineHelper.StopAllConditionTask();
             }
             /// <summary>
             /// 移除延迟任务，已触发的则自动移除
@@ -424,6 +439,10 @@ where T : Component
             public static void RemoveDelayTask(long taskId)
             {
                 CoroutineHelper.RemoveDelayTask(taskId);
+            }
+            public static void RemoveConditionTask(long taskId)
+            {
+                CoroutineHelper.RemoveConditionTask(taskId);
             }
             public static Coroutine StartCoroutine(Coroutine routine, Action callBack)
             {
