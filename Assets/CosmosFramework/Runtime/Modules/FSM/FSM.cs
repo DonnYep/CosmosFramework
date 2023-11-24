@@ -9,26 +9,80 @@ namespace Cosmos.FSM
         #region Properties
         Type stateBaseType = typeof(FSMState<T>);
         T owner;
-        public T Owner { get { return owner; } private set { owner = value; } }
         FSMState<T> currentState;
-        public FSMState<T> CurrentState { get { return currentState; } }
         bool isDestoryed;
-        public bool IsDestoryed { get { return isDestoryed; } private set { isDestoryed = value; } }
         FSMState<T> defaultState;
-        public FSMState<T> DefaultState { get { return defaultState; } set { defaultState = value; } }
+        Action<FSMState<T>, FSMState<T>> onStateChange;
+        public T Owner
+        {
+            get { return owner; }
+            private set { owner = value; }
+        }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public FSMState<T> CurrentState { get { return currentState; } }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public bool IsDestoryed
+        {
+            get
+            {
+                return isDestoryed;
+            }
+            private set
+            {
+                isDestoryed = value;
+            }
+        }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public FSMState<T> DefaultState
+        {
+            get { return defaultState; }
+            set { defaultState = value; }
+        }
         /// <summary>
         /// state存储的类型为派生类
         /// </summary>
-        Dictionary<Type, FSMState<T>> fsmStateDict = new Dictionary<Type, FSMState<T>>();
-        public override int FSMStateCount { get { return fsmStateDict.Count; } }
-        public override bool IsRunning { get { return currentState != null; } }
-        public override Type OwnerType { get { return typeof(T); } }
+        readonly Dictionary<Type, FSMState<T>> fsmStateDict = new Dictionary<Type, FSMState<T>>();
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public override int FSMStateCount
+        {
+            get { return fsmStateDict.Count; }
+        }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public override bool IsRunning
+        {
+            get { return currentState != null; }
+        }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public override Type OwnerType
+        {
+            get { return typeof(T); }
+        }
         public override string CurrentStateName
         {
             get
             {
                 return currentState != null ? currentState.GetType().FullName : Constants.NULL;
             }
+        }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public event Action<FSMState<T>, FSMState<T>> OnStateChange
+        {
+            add { onStateChange += value; }
+            remove { onStateChange -= value; }
         }
         #endregion
 
@@ -48,36 +102,22 @@ namespace Cosmos.FSM
             fsmStateDict.Clear();
             currentState = null;
         }
-        public void StartDefault()
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public void ChangeToDefaultState()
         {
-            if (IsRunning)
-                return;
             if (defaultState == null)
                 return;
             Type type = defaultState.GetType();
             if (!stateBaseType.IsAssignableFrom(type))
                 throw new ArgumentException($"State type {type.FullName} is invalid");
-            FSMState<T> state = GetState(type);
-            if (state == null)
+            var hasState = PeekState(type, out var state);
+            if (!hasState)
                 return;
             currentState = state;
             currentState.OnStateEnter(this);
-        }
-        /// <summary>
-        /// 进入状态
-        /// </summary>
-        public void Start(Type stateType)
-        {
-            if (IsRunning)
-                return;
-            ChangeState(stateType);
-        }
-        public void Start<TState>()
-            where TState : FSMState<T>
-        {
-            if (IsRunning)
-                return;
-            ChangeState<TState>();
+            ChangeStateHandler(null, currentState);
         }
         /// <summary>
         /// FSM轮询，由拥有者轮询调用
@@ -96,6 +136,9 @@ namespace Cosmos.FSM
         #endregion
 
         #region State
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public bool HasState(Type stateType)
         {
             if (stateType == null)
@@ -104,57 +147,80 @@ namespace Cosmos.FSM
                 throw new ArgumentException($"State type {stateType.FullName} is invalid !");
             return fsmStateDict.ContainsKey(stateType);
         }
-        public bool HasState(FSMState<T> state)
-        {
-            return HasState(state.GetType());
-        }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public bool HasState<TState>()
             where TState : FSMState<T>
         {
             return HasState(typeof(TState));
         }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public void ChangeState<TState>()
             where TState : FSMState<T>
         {
             ChangeState(typeof(TState));
         }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public void ChangeState(Type stateType)
         {
             FSMState<T> state = null;
             if (!stateBaseType.IsAssignableFrom(stateType))
                 throw new ArgumentException($"State type {stateType.FullName} is invalid");
-            state = GetState(stateType);
-            if (state == null)
-                throw new ArgumentNullException($"FSM {currentState} can not change state to {state} which is not exist");
+            var hasState = PeekState(stateType, out state);
+            if (!hasState)
+                return;
+            var previouseState = currentState;
+            var nextState = state;
+
             currentState?.OnStateExit(this);
             currentState = state;
             currentState?.OnStateEnter(this);
+
+            ChangeStateHandler(previouseState, nextState);
         }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public void GetAllState(out List<FSMState<T>> result)
         {
-            result = null;
+            result = new List<FSMState<T>>();
             foreach (var state in fsmStateDict)
             {
                 result.Add(state.Value);
             }
         }
-        public FSMState<T> GetState(Type stateType)
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public bool PeekState(Type stateType, out FSMState<T> state)
         {
             if (stateType == null)
                 throw new ArgumentNullException("State type is invaild !");
             if (!stateBaseType.IsAssignableFrom(stateType))
                 throw new ArgumentNullException($"State type {stateType.FullName} is invaild !");
-            FSMState<T> state = null;
+            state = null;
             if (fsmStateDict.TryGetValue(stateType, out state))
-                return state;
-            return null;
+                return true;
+            return false;
         }
-        public TState GetState<TState>() where TState : FSMState<T>
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public bool PeekState<TState>(out TState state) where TState : FSMState<T>
         {
-            FSMState<T> state = null;
-            if (fsmStateDict.TryGetValue(typeof(TState), out state))
-                return (TState)state;
-            return null;
+            state = null;
+            var type = typeof(TState);
+            if (fsmStateDict.TryGetValue(type, out var srcSate))
+            {
+                state = (TState)srcSate;
+                return true;
+            }
+            return false;
         }
         public FSMState<T>[] GetAllState()
         {
@@ -214,6 +280,11 @@ namespace Cosmos.FSM
                 }
             }
             return fsm;
+        }
+
+        void ChangeStateHandler(FSMState<T> previouseState, FSMState<T> currentState)
+        {
+            onStateChange?.Invoke(previouseState, currentState);
         }
     }
 }

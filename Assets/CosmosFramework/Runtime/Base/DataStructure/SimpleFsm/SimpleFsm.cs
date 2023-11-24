@@ -11,6 +11,15 @@ namespace Cosmos
         SimpleFsmState<T> currentState;
         Dictionary<Type, SimpleFsmState<T>> typeStateDict
             = new Dictionary<Type, SimpleFsmState<T>>();
+        Action<Type, Type> onStateChange;
+        /// <summary>
+        /// 状态切换事件，args=( previouseType , currentType )
+        /// </summary>
+        public event Action<Type, Type> OnStateChange
+        {
+            add { onStateChange += value; }
+            remove { onStateChange -= value; }
+        }
         /// <summary>
         /// 状态机名
         /// </summary>
@@ -184,9 +193,12 @@ namespace Cosmos
             {
                 if (state != null)
                 {
+                    var previousType = currentState?.GetType();
+                    var currentType = state?.GetType();
                     currentState?.OnExit(this);
                     currentState = state;
                     currentState?.OnEnter(this);
+                    StateChangeHandler(previousType, currentType);
                 }
             }
         }
@@ -201,6 +213,15 @@ namespace Cosmos
                 state?.OnDestroy(this);
             }
             typeStateDict.Clear();
+        }
+        /// <summary>
+        /// 状态切换处理函数
+        /// </summary>
+        /// <param name="previousType">先前的状态</param>
+        /// <param name="currentType">现在的状态</param>
+        void StateChangeHandler(Type previousType, Type currentType)
+        {
+            onStateChange?.Invoke(previousType, currentType);
         }
     }
 }

@@ -53,7 +53,7 @@ namespace Cosmos
             public static T ParentComponent<T>(Transform go, string name)
 where T : Component
             {
-                var parent = Parent(go, name);
+                var parent = FindParent(go, name);
                 if (parent == null)
                     return null;
                 return parent.GetComponent<T>();

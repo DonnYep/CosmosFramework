@@ -39,11 +39,11 @@ public class FSMTester : MonoSingleton<FSMTester>
 
         fsmA = fsmManager.CreateFSM("FSMTesterA", objectA, exitState, enterState);
         fsmA.DefaultState = exitState;
-        fsmA.StartDefault();
+        fsmA.ChangeToDefaultState();
 
         fsmB = fsmManager.CreateFSM("FSMTesterB", ObjectB, exitState, enterState);
         fsmB.DefaultState = enterState;
-        fsmB.StartDefault();
+        fsmB.ChangeToDefaultState();
 
         //fsmManager.SetFSMGroupRefreshInterval<Transform>((int)(refreshInterval * 1000));
     }
