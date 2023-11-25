@@ -37,26 +37,5 @@ namespace Cosmos
             resourceManager.UnloadAsset(uiForm.UIAssetInfo.AssetName);
             GameObject.Destroy(uiForm.Handle.CastTo<GameObject>());
         }
-        /// <summary>
-        /// 附加UIForm到一个UIForm上；
-        /// </summary>
-        /// <param name="src">挂载到其他对象</param>
-        /// <param name="dst">被其他对象挂载</param>
-        public void AttachTo(IUIForm src, IUIForm dst)
-        {
-            var srcTrans = src.Handle.CastTo<GameObject>().transform;
-            var dstTrans = dst.Handle.CastTo<GameObject>().transform;
-            srcTrans.SetParent(dstTrans);
-            (srcTrans as RectTransform).ResetRectTransform();
-        }
-        /// <summary>
-        /// 移除挂载；
-        /// </summary>
-        /// <param name="src">原本挂在其他form的对象</param>
-        /// <param name="dst">原本被其他对象挂着的form</param>
-        public void DetachFrom(IUIForm src, IUIForm dst)
-        {
-            dst.Handle.CastTo<GameObject>().transform.SetParent(null);
-        }
     }
 }

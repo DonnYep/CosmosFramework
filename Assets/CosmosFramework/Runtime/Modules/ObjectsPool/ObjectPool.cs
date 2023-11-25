@@ -56,7 +56,6 @@ namespace Cosmos.ObjectPool
         /// <summary>
         /// 生成的对象
         /// </summary>
-        /// 
         GameObject spawnAsset;
 
         Pool<GameObject> pool;

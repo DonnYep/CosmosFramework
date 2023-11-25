@@ -13,6 +13,9 @@ namespace Cosmos.FSM
         bool isDestoryed;
         FSMState<T> defaultState;
         Action<FSMState<T>, FSMState<T>> onStateChange;
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public T Owner
         {
             get { return owner; }
