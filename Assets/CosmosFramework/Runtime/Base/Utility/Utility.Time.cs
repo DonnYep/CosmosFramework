@@ -270,6 +270,33 @@ namespace Cosmos
                 var tomorrowDateTime = GetTomorrowMidnightDateTime();
                 return new DateTimeOffset(tomorrowDateTime);
             }
+            /// <summary>
+            /// 获取指定时间的秒时间戳
+            /// </summary>
+            /// <param name="dateTime">指定日期</param>
+            /// <returns>秒时间戳</returns>
+            public static long GetDateSecondTimeStamp(DateTime dateTime)
+            {
+                return (dateTime.Ticks - epochTicks) / secDivisor;
+            }
+            /// <summary>
+            /// 获取指定时间的毫秒间戳
+            /// </summary>
+            /// <param name="dateTime">指定日期</param>
+            /// <returns>毫秒时间戳</returns>
+            public static long GetDateMillisecondTimeStamp(DateTime dateTime)
+            {
+                return (dateTime.Ticks - epochTicks) / msecDivisor;
+            }
+            /// <summary>
+            /// 获取指定时间的微秒时间戳
+            /// </summary>
+            /// <param name="dateTime">指定日期</param>
+            /// <returns>微秒时间戳</returns>
+            public static long GetDateMicrosecondTimeStamp(DateTime dateTime)
+            {
+                return (dateTime.Ticks - epochTicks);
+            }
         }
     }
 }
