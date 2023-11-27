@@ -42,6 +42,14 @@ namespace Cosmos.UI
         /// <returns>协程对象</returns>
         Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback);
         /// <summary>
+        /// 通过UIAssetInfo预加载UI对象（异步），加载完毕后处于关闭状态
+        /// </summary>
+        /// <param name="assetInfo">传入的assetInfo对象</param>
+        /// <param name="uiType">目标组件的type类型</param>
+        /// <param name="callback">加载完成后的回调</param>
+        /// <returns>协程对象</returns>
+        Coroutine PreloadUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback);
+        /// <summary>
         /// 通过UIAssetInfo加载UI对象
         /// </summary>
         /// <typeparam name="T">目标UI组件</typeparam>

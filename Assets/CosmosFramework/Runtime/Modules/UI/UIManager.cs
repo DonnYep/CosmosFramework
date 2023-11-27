@@ -136,6 +136,37 @@ namespace Cosmos.UI
             }
         }
         /// <inheritdoc/>
+        public Coroutine PreloadUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback)
+        {
+            CheckUIAssetInfoValid(assetInfo, uiType);
+            var uiFormName = assetInfo.UIFormName;
+            if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
+            {
+                uiFormState.UIForm.Active = true;
+                return null;
+            }
+            else
+            {
+                var canLoad = loadingUIForms.Add(uiFormName);
+                if (!canLoad)//处于加载名单中
+                {
+                    if (uiFormsToRelease.Contains(uiFormName))
+                    {
+                        //若在释放名单中，则从释放名单中移除
+                        uiFormsToRelease.Remove(uiFormName);
+                    }
+                    return null;
+                }
+                else
+                {
+                    return uiFormAssetHelper.InstanceUIFormAsync(assetInfo, uiType, uiForm =>
+                    {
+                        OnUIFormLoad(assetInfo, uiForm, callback);
+                    });
+                }
+            }
+        }
+        /// <inheritdoc/>
         public Coroutine OpenUIFormAsync<T>(UIAssetInfo assetInfo, Action<T> callback)
             where T : class, IUIForm
         {
