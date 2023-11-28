@@ -10,12 +10,21 @@ namespace Cosmos.Event
             public int ListenerCount { get { return listenerCount; } }
             public event EventHandler<GameEventArgs> EventHandler
             {
-                add { eventHandler += value; listenerCount++; }
-                remove { eventHandler -= value; if (listenerCount > 0) listenerCount--; }
+                add
+                {
+                    eventHandler += value;
+                    listenerCount++;
+                }
+                remove
+                {
+                    eventHandler -= value;
+                    if (listenerCount > 0)
+                        listenerCount--;
+                }
             }
             public void DispatchEvent(object sender, GameEventArgs args)
             {
-                eventHandler.Invoke(sender, args);
+                eventHandler?.Invoke(sender, args);
             }
             public void Clear()
             {

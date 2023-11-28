@@ -10,8 +10,8 @@ namespace Cosmos.FSM
         {
             #region Properties
             string groupName;
-            Dictionary<TypeStringPair, FSMBase> fsmDict
-                = new Dictionary<TypeStringPair, FSMBase>();
+            readonly Dictionary<TypeStringPair, FSMBase> fsmDict
+                   = new Dictionary<TypeStringPair, FSMBase>();
             public Dictionary<TypeStringPair, FSMBase> FSMDict { get { return fsmDict; } }
             public string GroupName { get { return groupName; } set { groupName = value; } }
             public int FSMCount { get { return fsmDict.Count; } }
@@ -34,7 +34,7 @@ namespace Cosmos.FSM
             }
             internal void RemoveFSM(TypeStringPair fsmKey)
             {
-                fsmDict.Remove(fsmKey,out var fsm);
+                fsmDict.Remove(fsmKey, out var fsm);
                 fsm.GroupName = string.Empty;
             }
             internal void Clear()

@@ -102,6 +102,7 @@ namespace Cosmos.Resource
             var url = task.ResourceDownloadURL;
             var downloadPath = task.ResourceDownloadPath;
             var recordedSize = task.RecordedResourceSize;
+            var downloadAppend = task.DownloadAppend;
             long localSize = 0;
             long requirementSize = 0;
 #if UNITY_2019_1_OR_NEWER
@@ -111,7 +112,7 @@ namespace Cosmos.Resource
             recordedResourceSize = downloadNode.RecordedResourceSize 
 #endif
             totalRequirementDownloadSize += requirementSize;
-            var taskId = downloadManager.AddDownload(url, downloadPath, localSize);
+            var taskId = downloadManager.AddDownload(url, downloadPath, localSize, downloadAppend);
             var downloadNode = new ResourceDownloadNode(taskId, url, downloadPath, recordedSize, localSize);
             taskDict.Add(taskId, task);
             return taskId;
