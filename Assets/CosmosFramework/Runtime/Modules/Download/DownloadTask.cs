@@ -20,7 +20,7 @@ namespace Cosmos.Download
         /// 当本地存在时，下载时追加写入
         /// </summary>
         public bool DownloadAppend { get; private set; }
-        /// <summary>
+         /// <summary>
         /// 下载任务的构造函数；
         /// </summary>
         /// <param name="dwnloadId">下载Id</param>

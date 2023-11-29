@@ -35,11 +35,16 @@ namespace Cosmos.Resource
         /// 下载失败的任务列表
         /// </summary>
         readonly List<ResourceDownloadTask> downloadFailureTaskList;
+        /// <summary>
+        /// 取消下载的任务列表
+        /// </summary>
+        readonly List<ResourceDownloadTask> downloadCancelTaskList;
 
         Action<ResourceDownloadSuccessEventArgs> onDownloadSuccess;
         Action<ResourceDownloadFailureEventArgs> onDownloadFailure;
         Action<ResourceDownloadUpdateEventArgs> onDownloadUpdate;
         Action<ResourceDownloadCompeleteEventArgs> onDownloadComplete;
+        Action<ResourceDownloadTasksCancelEventArgs> onDownloadCancel;
         /// <summary>
         /// 任务下载成功事件
         /// </summary>
@@ -72,6 +77,14 @@ namespace Cosmos.Resource
             add { onDownloadComplete += value; }
             remove { onDownloadComplete -= value; }
         }
+        /// <summary>
+        /// 任务取消回调
+        /// </summary>
+        public event Action<ResourceDownloadTasksCancelEventArgs> OnDownloadCancel
+        {
+            add { onDownloadCancel += value; }
+            remove { onDownloadCancel -= value; }
+        }
         public ResourceDownloader(IDownloadManager downloadManager)
         {
             this.downloadManager = downloadManager;
@@ -79,6 +92,7 @@ namespace Cosmos.Resource
             nodeDict = new Dictionary<long, ResourceDownloadNode>();
             downloadSuccessTaskList = new List<ResourceDownloadTask>();
             downloadFailureTaskList = new List<ResourceDownloadTask>();
+            downloadCancelTaskList = new List<ResourceDownloadTask>();
         }
         public void OnInitialize()
         {
@@ -135,14 +149,36 @@ namespace Cosmos.Resource
 #endif
             totalRequirementDownloadSize -= recordedResourceSize;
         }
+        /// <summary>
+        /// 下载任务添加完毕后，开始下载
+        /// </summary>
         public void StartDowload()
         {
             if (!downloadManager.Downloading)
                 downloadManager.LaunchDownload();
         }
-        public void StopDowload()
+        /// <summary>
+        /// 取消下载，此操作会情况下载任务
+        /// </summary>
+        public void CancelDowload()
         {
-            // TODO ResourceDownloader StopDowload
+            downloadCancelTaskList.Clear();
+            foreach (var downloadNode in nodeDict.Values)
+            {
+                var taskId = downloadNode.ResourceDownloadId;
+                if (taskDict.TryGetValue(taskId, out var downloadTask))
+                {
+                    downloadCancelTaskList.Add(downloadTask);
+                }
+                downloadManager.RemoveDownload(taskId);
+            }
+            var eventArgs = ResourceDownloadTasksCancelEventArgs.Create(downloadCancelTaskList.ToArray());
+            onDownloadCancel?.Invoke(eventArgs);
+            ResourceDownloadTasksCancelEventArgs.Release(eventArgs);
+            nodeDict.Clear();
+            taskDict.Clear();
+            downloadCancelTaskList.Clear();
+            totalRequirementDownloadSize = 0;
         }
         void OnDownloadSuccessHandler(DownloadSuccessEventArgs eventArgs)
         {
