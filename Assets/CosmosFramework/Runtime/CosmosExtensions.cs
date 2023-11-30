@@ -79,5 +79,18 @@ namespace Cosmos.Extensions
             await @this.OpenUIFormAsync(assetInfo, uiType, pnl => uiForm = pnl);
             return uiForm;
         }
+        public static async Task<IUIForm> PreloadUIFormAsync(this IUIManager @this, UIAssetInfo assetInfo, Type uiType)
+        {
+            IUIForm uiForm = null;
+            await @this.PreloadUIFormAsync(assetInfo, uiType, pnl => uiForm = pnl);
+            return uiForm;
+        }
+        public static async Task<T> PreloadUIFormAsync<T>(this IUIManager @this, UIAssetInfo assetInfo)
+    where T : class, IUIForm
+        {
+            T uiForm = null;
+            await @this.PreloadUIFormAsync<T>(assetInfo, pnl => uiForm = pnl);
+            return uiForm;
+        }
     }
 }

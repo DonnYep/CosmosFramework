@@ -100,6 +100,52 @@ namespace Cosmos.UI
             this.uiFormAssetHelper = helper;
         }
         /// <inheritdoc/>
+        public Coroutine PreloadUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback)
+        {
+            CheckUIAssetInfoValid(assetInfo, uiType);
+            var uiFormName = assetInfo.UIFormName;
+            if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
+            {
+                uiFormState.UIForm.Active = true;
+                callback?.Invoke(uiFormState.UIForm);
+                return null;
+            }
+            else
+            {
+                var canLoad = loadingUIForms.Add(uiFormName);
+                if (!canLoad)//处于加载名单中
+                {
+                    if (uiFormsToRelease.Contains(uiFormName))
+                    {
+                        //若在释放名单中，则从释放名单中移除
+                        uiFormsToRelease.Remove(uiFormName);
+                    }
+                    return null;
+                }
+                else
+                {
+                    return uiFormAssetHelper.InstanceUIFormAsync(assetInfo, uiType, uiForm =>
+                    {
+                        OnUIFormLoad(assetInfo, uiForm, callback);
+                    });
+                }
+            }
+        }
+        /// <inheritdoc/>
+        public Coroutine PreloadUIFormAsync<T>(UIAssetInfo assetInfo, Action<T> callback)
+            where T : class, IUIForm
+        {
+            var type = typeof(T);
+            CheckUIAssetInfoValid(assetInfo, type);
+            if (uiFormStateLoadedDict.TryGetValue(assetInfo.UIFormName, out var uiFormState))
+            {
+                callback?.Invoke((T)uiFormState.UIForm);
+                return null;
+            }
+            else
+                return PreloadUIFormAsync(assetInfo, typeof(T), uiForm => { callback?.Invoke(uiForm as T); });
+        }
+        /// <inheritdoc/>
         public Coroutine OpenUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback)
         {
             CheckUIAssetInfoValid(assetInfo, uiType);
@@ -107,6 +153,7 @@ namespace Cosmos.UI
             if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
             {
                 uiFormState.UIForm.Active = true;
+                callback?.Invoke(uiFormState.UIForm);
                 return null;
             }
             else
@@ -136,37 +183,6 @@ namespace Cosmos.UI
             }
         }
         /// <inheritdoc/>
-        public Coroutine PreloadUIFormAsync(UIAssetInfo assetInfo, Type uiType, Action<IUIForm> callback)
-        {
-            CheckUIAssetInfoValid(assetInfo, uiType);
-            var uiFormName = assetInfo.UIFormName;
-            if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
-            {
-                uiFormState.UIForm.Active = true;
-                return null;
-            }
-            else
-            {
-                var canLoad = loadingUIForms.Add(uiFormName);
-                if (!canLoad)//处于加载名单中
-                {
-                    if (uiFormsToRelease.Contains(uiFormName))
-                    {
-                        //若在释放名单中，则从释放名单中移除
-                        uiFormsToRelease.Remove(uiFormName);
-                    }
-                    return null;
-                }
-                else
-                {
-                    return uiFormAssetHelper.InstanceUIFormAsync(assetInfo, uiType, uiForm =>
-                    {
-                        OnUIFormLoad(assetInfo, uiForm, callback);
-                    });
-                }
-            }
-        }
-        /// <inheritdoc/>
         public Coroutine OpenUIFormAsync<T>(UIAssetInfo assetInfo, Action<T> callback)
             where T : class, IUIForm
         {
@@ -175,6 +191,7 @@ namespace Cosmos.UI
             if (uiFormStateLoadedDict.TryGetValue(assetInfo.UIFormName, out var uiFormState))
             {
                 uiFormState.UIForm.Active = true;
+                callback?.Invoke((T)uiFormState.UIForm);
                 return null;
             }
             else
