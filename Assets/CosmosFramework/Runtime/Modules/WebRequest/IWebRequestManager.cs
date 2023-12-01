@@ -53,6 +53,18 @@ namespace Cosmos.WebRequest
         /// </summary>
         event Action<WebRequestAllTaskCompleteEventArgs> OnAllTaskCompleteCallback;
         /// <summary>
+        /// 获取html上的文件信息失败回调。
+        /// <para>当存在一个url指向下载服务器时，此回调能够获取此url目录下所有的文件信息 </para>
+        /// <para>配套方法请查看<see cref="AddUrlFileRequestTask"/></para>
+        /// </summary>
+        event Action<WebRequestGetHtmlFilesFailureEventArgs> OnGetHtmlFilesFailureCallback;
+        /// <summary>
+        /// 获取html上的文件信息成功回调。
+        /// <para>当存在一个url指向下载服务器时，此回调能够获取此url目录下所有的文件信息 </para>
+        /// <para>配套方法请查看<see cref="AddUrlFileRequestTask"/></para>
+        /// </summary>
+        event Action<WebRequestGetHtmlFilesSuccessEventArgs> OnGetHtmlFilesSuccessCallback;
+        /// <summary>
         /// 添加下载AssetBundle任务；
         /// </summary>
         /// <param name="url">地址</param>
@@ -110,11 +122,26 @@ namespace Cosmos.WebRequest
         /// <returns>任务id</returns>
         long AddGetContentLengthTask(string url);
         /// <summary>
+        /// 添加获取url目录下所有文件信息的任务
+        /// <para>获取文件信息成功回调请查看<see cref="OnGetHtmlFilesSuccessCallback"/></para>
+        /// <para>获取文件信息失败回调请查看<see cref="OnGetHtmlFilesFailureCallback"/></para>
+        /// </summary>
+        /// <param name="url">地址</param>
+        /// <returns>任务id</returns>
+        long AddUrlFileRequestTask(string url);
+        /// <summary>
         /// 移除任务；
         /// </summary>
         /// <param name="taskId">任务id</param>
         /// <returns>移除结果</returns>
         bool RemoveTask(long taskId);
+        /// <summary>
+        /// 移除获取url目录下所有文件信息的任务
+        /// <para>此操作不会触发回调</para>
+        /// </summary>
+        /// <param name="taskId">任务id</param>
+        /// <returns>移除结果</returns>
+        bool RemoveUrlFileRequestTask(long taskId);
         /// <summary>
         /// 是否存在任务；
         /// </summary>

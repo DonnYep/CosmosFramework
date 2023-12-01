@@ -13,8 +13,8 @@ namespace Cosmos
         public static class Net
         {
             /// <summary>
-            /// 远程资源尽量使用英文字母命名；
             /// 使用HttpWebRequest Ping获取url根目录的文件列表；
+            /// <para> 远程资源尽量使用拉丁字母，此方法对于中文文件名解析会产生异常！</para>
             /// </summary>
             /// <param name="url">资源定位地址</param>
             /// <returns>目录字符串数组</returns>
@@ -22,37 +22,22 @@ namespace Cosmos
             {
                 if (string.IsNullOrEmpty(url))
                     throw new ArgumentNullException("URL is invalid !");
-                List<string> uris = new List<string>();
+                List<string> files = new List<string>();
                 HttpWebRequest request = (HttpWebRequest)System.Net.WebRequest.Create(url);
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
                     using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                     {
                         string html = reader.ReadToEnd();
-                        Regex regex = new Regex("<a href=\".*\">(?<name>.*)</a>");
-                        MatchCollection matches = regex.Matches(html);
-                        if (matches.Count > 0)
-                        {
-                            foreach (Match match in matches)
-                            {
-                                if (match.Success)
-                                {
-                                    var remoteUri = match.Groups["name"].ToString();
-                                    if (!remoteUri.EndsWith("../"))
-                                    {
-                                        uris.Add(remoteUri);
-                                    }
-                                }
-                            }
-                        }
+                        GetUrlFiles(html, ref files);
                     }
                 }
-                return uris.ToArray();
+                return files.ToArray();
             }
             /// <summary>
             ///远程资源尽量使用英文字母命名；
-            ///返回时只带File地址，不包含Folder；
-            ///使用HttpWebRequest Ping并遍历url的文件列表；
+            ///<para> 返回时只带File地址，不包含Folder</para>
+            /// <para> 使用HttpWebRequest Ping并遍历url的文件列表 </para>
             /// </summary>
             /// <param name="url">资源定位地址</param>
             /// <param name="uris">返回的文件地址数组</param>
@@ -70,25 +55,27 @@ namespace Cosmos
                         string html = reader.ReadToEnd();
                         Regex regex = new Regex("<a href=\".*\">(?<name>.*)</a>");
                         MatchCollection matches = regex.Matches(html);
-                        if (matches.Count > 0)
+                        if (matches.Count <= 0)
                         {
-                            foreach (Match match in matches)
+                            return;
+                        }
+                        foreach (Match match in matches)
+                        {
+                            if (!match.Success)
                             {
-                                if (match.Success)
+                                continue;
+                            }
+                            var remoteUri = match.Groups["name"].ToString();
+                            if (!remoteUri.EndsWith("../"))
+                            {
+                                var uriListPath = Utility.IO.CombineURL(url, remoteUri);
+                                if (remoteUri.EndsWith("/"))
                                 {
-                                    var remoteUri = match.Groups["name"].ToString();
-                                    if (!remoteUri.EndsWith("../"))
-                                    {
-                                        var uriListPath = Utility.IO.CombineURL(url, remoteUri);
-                                        if (remoteUri.EndsWith("/"))
-                                        {
-                                            PingUrlFileList(uriListPath,ref uris);
-                                        }
-                                        else
-                                        {
-                                            uris.Add(uriListPath);
-                                        }
-                                    }
+                                    PingUrlFileList(uriListPath, ref uris);
+                                }
+                                else
+                                {
+                                    uris.Add(uriListPath);
                                 }
                             }
                         }
@@ -97,7 +84,7 @@ namespace Cosmos
             }
             /// <summary>
             /// Ping URL是否存在；
-            /// Ping的过程本身是阻塞的，谨慎使用！
+            /// <para> Ping的过程本身是阻塞的，谨慎使用！</para> 
             /// </summary>
             /// <param name="url">资源地址</param>
             /// <returns>是否存在</returns>
@@ -105,7 +92,7 @@ namespace Cosmos
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    var response =  client.GetAsync(url).Result;
+                    var response = client.GetAsync(url).Result;
                     return response.StatusCode == HttpStatusCode.OK;
                 }
             }
@@ -153,6 +140,31 @@ namespace Cosmos
                     }
                 }
                 throw new Exception("No network adapters with an IPv6 address in the system!");
+            }
+            /// <summary>
+            /// 从web页面信息解析根目录下的文件信息。
+            /// <para>若根目录下存在子目录，则子目录下的文件无法被解析</para>
+            /// </summary>
+            /// <param name="html">请求到的页面信息</param>
+            /// <param name="files">解析到的首层文件信息</param>
+            public static void GetUrlFiles(string html, ref List<string> files)
+            {
+                Regex regex = new Regex("<a href=\".*\">(?<name>.*)</a>");
+                MatchCollection matches = regex.Matches(html);
+                if (matches.Count <= 0)
+                {
+                    return;
+                }
+                foreach (Match match in matches)
+                {
+                    if (!match.Success)
+                        continue;
+                    var assetName = match.Groups["name"].ToString();
+                    if (!assetName.EndsWith("../"))
+                    {
+                        files.Add(assetName);
+                    }
+                }
             }
         }
     }

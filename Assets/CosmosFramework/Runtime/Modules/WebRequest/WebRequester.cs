@@ -64,7 +64,10 @@ namespace Cosmos.WebRequest
             {
                 if (CurrentTask.TaskId == taskId)
                 {
-                    CurrentWebRequest.Abort();
+                    if (Running)
+                        CurrentWebRequest?.Abort();
+                    else
+                        CurrentWebRequest?.Dispose();
                 }
                 else
                 {

@@ -185,7 +185,7 @@ namespace Cosmos.Download
             while (pendingTasks.Count > 0)
             {
                 var downloadTask = pendingTasks.RemoveFirst();
-                currentDownloadTaskIndex = downloadTaskCount - pendingTasks.Count - 1;
+                currentDownloadTaskIndex = downloadTaskCount - pendingTasks.Count;
                 yield return RunDownloadSingleFile(downloadTask);
                 pendingTaskDict.Remove(downloadTask.DownloadId);
             }
@@ -321,7 +321,10 @@ namespace Cosmos.Download
         }
         void OnCancelDownload()
         {
-            unityWebRequest?.Abort();
+            if (Downloading)
+                unityWebRequest?.Abort();
+            else
+                unityWebRequest.Dispose();
             //foreach (var task in pendingTasks)
             //{
             //    var completedInfo = new DownloadCompletedInfo(task.URI, task.DownloadPath, 0, TimeSpan.Zero);

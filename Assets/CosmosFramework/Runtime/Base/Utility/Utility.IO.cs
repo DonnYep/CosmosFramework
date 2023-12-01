@@ -93,6 +93,10 @@ namespace Cosmos
                     }
                 }
             }
+            /// <summary>
+            /// 创建文件夹
+            /// </summary>
+            /// <param name="path">文件夹地址</param>
             public static void CreateFolder(string path)
             {
                 if (!Directory.Exists(path))
@@ -100,6 +104,11 @@ namespace Cosmos
                     Directory.CreateDirectory(path);
                 }
             }
+            /// <summary>
+            /// 创建文件夹
+            /// </summary>
+            /// <param name="path">父文件夹</param>
+            /// <param name="folderName">子文件夹名称</param>
             public static void CreateFolder(string path, string folderName)
             {
                 var fullPath = Path.Combine(path, folderName);

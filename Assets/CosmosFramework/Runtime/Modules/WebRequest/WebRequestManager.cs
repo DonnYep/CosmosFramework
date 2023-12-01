@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -21,8 +22,11 @@ namespace Cosmos.WebRequest
     internal class WebRequestManager : Module, IWebRequestManager
     {
         WebRequester webRequester = new WebRequester();
+        Dictionary<long, WebUrlFileRequestTask> urlFileReqiestTaskDict = new Dictionary<long, WebUrlFileRequestTask>();
+        Action<WebRequestGetHtmlFilesFailureEventArgs> onGetHtmlFilesFailureCallback;
+        Action<WebRequestGetHtmlFilesSuccessEventArgs> onGetHtmlFilesSuccessCallback;
         ///<inheritdoc/>
-        public bool Running { get { return webRequester.Running;} }
+        public bool Running { get { return webRequester.Running; } }
         ///<inheritdoc/>
         public int TaskCount { get { return webRequester.TaskCount; } }
         ///<inheritdoc/>
@@ -53,12 +57,12 @@ namespace Cosmos.WebRequest
         public event Action<WebRequestGetContentLengthFailureEventArgs> OnGetContentLengthFailureCallback
         {
             add { webRequester.onGetContentLengthFailureCallback += value; }
-            remove { webRequester.onGetContentLengthFailureCallback -= value;}
+            remove { webRequester.onGetContentLengthFailureCallback -= value; }
         }
         ///<inheritdoc/>
         public event Action<WebRequestGetContentLengthSuccessEventArgs> OnGetContentLengthSuccessCallback
         {
-            add { webRequester.onGetContentLengthSuccessCallback+= value; }
+            add { webRequester.onGetContentLengthSuccessCallback += value; }
             remove { webRequester.onGetContentLengthSuccessCallback -= value; }
         }
         ///<inheritdoc/>
@@ -66,6 +70,18 @@ namespace Cosmos.WebRequest
         {
             add { webRequester.onAllTaskCompleteCallback += value; }
             remove { webRequester.onAllTaskCompleteCallback -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<WebRequestGetHtmlFilesFailureEventArgs> OnGetHtmlFilesFailureCallback
+        {
+            add { onGetHtmlFilesFailureCallback += value; }
+            remove { onGetHtmlFilesFailureCallback -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<WebRequestGetHtmlFilesSuccessEventArgs> OnGetHtmlFilesSuccessCallback
+        {
+            add { onGetHtmlFilesSuccessCallback += value; }
+            remove { onGetHtmlFilesSuccessCallback -= value; }
         }
         /// <inheritdoc/>
         public long AddDownloadAssetBundleTask(string url)
@@ -137,9 +153,28 @@ namespace Cosmos.WebRequest
             return task.TaskId;
         }
         /// <inheritdoc/>
+        public long AddUrlFileRequestTask(string url)
+        {
+            var urlFileRequestTask = ReferencePool.Acquire<WebUrlFileRequestTask>();
+            var task = WebRequestTask.Create(url, null, WebRequestType.None);
+            urlFileRequestTask.StartRequestUrl(task, OnUrlFileRequestTaskSuccess, OnUrlFileRequestTaskFailure);
+            urlFileReqiestTaskDict.Add(task.TaskId, urlFileRequestTask);
+            return task.TaskId;
+        }
+        /// <inheritdoc/>
         public bool RemoveTask(long taskId)
         {
             return webRequester.RemoveTask(taskId);
+        }
+        /// <inheritdoc/>
+        public bool RemoveUrlFileRequestTask(long taskId)
+        {
+            if (urlFileReqiestTaskDict.Remove(taskId, out var urlFileRequestTask))
+            {
+                ReferencePool.Release(urlFileRequestTask);
+                return true;
+            }
+            return false;
         }
         /// <inheritdoc/>
         public bool HasTask(long taskId)
@@ -164,6 +199,41 @@ namespace Cosmos.WebRequest
         protected override void OnTermination()
         {
             webRequester.StopRequestTasks();
+        }
+        /// <summary>
+        /// 请求url地址下的文件信息成功回调
+        /// </summary>
+        /// <param name="taskId">任务id</param>
+        void OnUrlFileRequestTaskSuccess(long taskId)
+        {
+            if (urlFileReqiestTaskDict.Remove(taskId, out var urlFileRequestTask))
+            {
+                var taskUrl = urlFileRequestTask.WebRequestTask.URL;
+                var urlFileInfos = urlFileRequestTask.UrlFileInfoList.ToArray();
+                var timeSpan = urlFileRequestTask.TimeSpan;
+                var eventArgs = WebRequestGetHtmlFilesSuccessEventArgs.Create(taskId, taskUrl, urlFileInfos, timeSpan);
+                onGetHtmlFilesSuccessCallback?.Invoke(eventArgs);
+                WebRequestGetHtmlFilesSuccessEventArgs.Release(eventArgs);
+                ReferencePool.Release(urlFileRequestTask);
+            }
+        }
+        /// <summary>
+        /// 请求url地址下的文件信息失败回调
+        /// </summary>
+        /// <param name="taskId">任务id</param>
+        void OnUrlFileRequestTaskFailure(long taskId)
+        {
+            if (urlFileReqiestTaskDict.Remove(taskId, out var urlFileRequestTask))
+            {
+                var taskUrl = urlFileRequestTask.WebRequestTask.URL;
+                var urlFileInfos = urlFileRequestTask.UrlFileInfoList.ToArray();
+                var timeSpan = urlFileRequestTask.TimeSpan;
+                var errorMessages= urlFileRequestTask.ErrorMessageList.ToArray();
+                var eventArgs = WebRequestGetHtmlFilesFailureEventArgs.Create(taskId, taskUrl, urlFileInfos, errorMessages,timeSpan);
+                onGetHtmlFilesFailureCallback?.Invoke(eventArgs);
+                WebRequestGetHtmlFilesFailureEventArgs.Release(eventArgs);
+                ReferencePool.Release(urlFileRequestTask);
+            }
         }
     }
 }

@@ -558,7 +558,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 100%
+  m_Text: 0%
 --- !u!222 &1067874192
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -985,6 +985,7 @@ MonoBehaviour:
   resourceLoadMode: 1
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
+  printLogWhenAssetNotExists: 0
   debugHelperIndex: 1
   jsonHelperIndex: 1
   messagePackHelperIndex: 0
@@ -1000,8 +1001,10 @@ MonoBehaviour:
   manifestEncrytion: 0
   manifestEncrytionKey: CosmosBundlesKey
   drawDebugWindow: 0
+  disableDebugLog: 0
   inputHelperIndex: 0
   inputHelperName: <NONE>
+  moduleConfigFoldout: 0
 --- !u!4 &1961765606
 Transform:
   m_ObjectHideFlags: 0
