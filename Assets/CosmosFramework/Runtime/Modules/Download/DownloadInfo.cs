@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Cosmos.Download
 {
+    [StructLayout(LayoutKind.Auto)]
     public struct DownloadInfo : IEquatable<DownloadInfo>
     {
         /// <summary>

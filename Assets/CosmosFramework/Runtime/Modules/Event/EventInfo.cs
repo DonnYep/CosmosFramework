@@ -1,5 +1,8 @@
-﻿namespace Cosmos.Event
+﻿using System.Runtime.InteropServices;
+
+namespace Cosmos.Event
 {
+    [StructLayout(LayoutKind.Auto)]
     public struct EventInfo
     {
         public string EventKey { get; private set; }

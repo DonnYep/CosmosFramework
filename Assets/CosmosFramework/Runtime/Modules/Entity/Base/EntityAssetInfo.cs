@@ -1,8 +1,11 @@
-﻿namespace Cosmos.Entity
+﻿using System.Runtime.InteropServices;
+
+namespace Cosmos.Entity
 {
     /// <summary>
     /// 实体资源信息；
     /// </summary>
+    [StructLayout(LayoutKind.Auto)]
     public struct EntityAssetInfo
     {
         public string AssetName { get; private set; }
