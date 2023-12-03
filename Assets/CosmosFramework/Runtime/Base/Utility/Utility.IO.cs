@@ -178,7 +178,8 @@ namespace Cosmos
             }
             /// <summary>
             /// 合并UNC地址
-            /// https://learn.microsoft.com/zh-cn/dotnet/standard/io/file-path-formats#unc-paths
+            /// 返回结果示例：D:\DonnYep\CosmosFramework\
+            /// <para>关于UNC的介绍：https://learn.microsoft.com/zh-cn/dotnet/standard/io/file-path-formats#unc-paths</para>
             /// </summary>
             /// <param name="paths">路径</param>
             /// <returns>合并的路径</returns>
@@ -190,6 +191,7 @@ namespace Cosmos
             }
             /// <summary>
             /// 格式化UNC地址
+            /// 返回结果示例：D:\DonnYep\CosmosFramework\
             /// </summary>
             /// <param name="path">需要格式化的地址</param>
             /// <returns>格式化后的UNC地址</returns>

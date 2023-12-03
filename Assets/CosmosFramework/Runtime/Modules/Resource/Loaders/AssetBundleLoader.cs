@@ -50,6 +50,7 @@ namespace Cosmos.Resource
         bool abort = false;
         ResourceManifest resourceManifest;
         readonly List<ResourceBundleState> bundleStateCache = new List<ResourceBundleState>();
+        public long TaskId { get; internal set; }
         public AssetBundleLoader()
         {
             loadSceneList = new List<string>();
@@ -595,7 +596,7 @@ namespace Cosmos.Resource
                 yield break; //若bundleWrapper信息为空，则终止；
             if (bundleWarpper.AssetBundle == null)
             {
-                var abPath = Path.Combine(ResourceDataProxy.BundlePath, bundleWarpper.ResourceBundle.BundleKey);
+                var abPath = Path.Combine(bundleWarpper.BundlePath, bundleWarpper.ResourceBundle.BundleKey);
                 if (abRequestDict.TryGetValue(abPath, out var abReq))
                 {
                     yield return new WaitUntil(() => abReq.isDone);
@@ -743,15 +744,19 @@ namespace Cosmos.Resource
                 Utility.Debug.LogError($"{assetName} not found!");
             }
         }
-        void RequestManifestSuccess(ResourceRequestManifestSuccessEventArgs args)
+        void RequestManifestSuccess(ResourceRequestManifestSuccessEventArgs eventArgs)
         {
+            var taskId = eventArgs.TaskId;
+            if (TaskId != taskId)
+                return;
             Reset();
-            resourceManifest = args.ResourceManifest;
+            resourceManifest = eventArgs.ResourceManifest;
             var bundleBuildInfoDict = resourceManifest.ResourceBundleBuildInfoDict;
+            var bundlePath = eventArgs.BundlePath;
             foreach (var bundleBuildInfo in bundleBuildInfoDict.Values)
             {
                 var resourceBundle = bundleBuildInfo.ResourceBundle;
-                resourceBundleWarpperDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle));
+                resourceBundleWarpperDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle, bundlePath));
                 resourceBundleKeyDict.TryAdd(resourceBundle.BundleKey, resourceBundle.BundleName);
                 var resourceObjectList = resourceBundle.ResourceObjectList;
                 var objectLength = resourceObjectList.Count;
@@ -765,8 +770,11 @@ namespace Cosmos.Resource
             manifestAcquired = true;
             requestDone = true;
         }
-        void RequestManifestFailure(ResourceRequestManifestFailureEventArgs args)
+        void RequestManifestFailure(ResourceRequestManifestFailureEventArgs eventArgs)
         {
+            var taskId = eventArgs.TaskId;
+            if (TaskId != taskId)
+                return;
             Utility.Debug.LogError("ResourceManifest deserialization failed , check your file !");
             manifestAcquired = false;
             requestDone = true;

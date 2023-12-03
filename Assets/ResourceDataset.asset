@@ -324,7 +324,15 @@ MonoBehaviour:
       objectFormatBytes: 74.9 KB
       extension: .prefab
       objectValid: 1
-    bundleDependencies: []
+    bundleDependencies:
+    - bundleKey: audio
+      bundleName: audio
+    - bundleKey: material
+      bundleName: material
+    - bundleKey: model
+      bundleName: model
+    - bundleKey: texture
+      bundleName: texture
     resourceSubBundleInfoList: []
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
@@ -346,7 +354,15 @@ MonoBehaviour:
       objectFormatBytes: 13.8 KB
       extension: .unity
       objectValid: 1
-    bundleDependencies: []
+    bundleDependencies:
+    - bundleKey: material
+      bundleName: material
+    - bundleKey: model
+      bundleName: model
+    - bundleKey: prefab
+      bundleName: prefab
+    - bundleKey: texture
+      bundleName: texture
     resourceSubBundleInfoList: []
   - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text
@@ -554,7 +570,13 @@ MonoBehaviour:
       objectFormatBytes: 25.0 KB
       extension: .unity
       objectValid: 1
-    bundleDependencies: []
+    bundleDependencies:
+    - bundleKey: material
+      bundleName: material
+    - bundleKey: model
+      bundleName: model
+    - bundleKey: prefab
+      bundleName: prefab
     resourceSubBundleInfoList: []
   resourceAvailableExtenisonList:
   - .3ds

@@ -60,11 +60,15 @@ namespace Cosmos.Resource
         /// <param name="loadHelper">加载帮助对象</param>
         void AddOrUpdateLoadHelper(ResourceLoadMode resourceLoadMode, IResourceLoadHelper loadHelper);
         /// <summary>
-        /// 请求文件清单；
+        /// 请求文件清单
+        /// <para>成功回调<see cref="ResourceRequestManifestSuccess"/></para>
+        /// <para>失败回调<see cref="ResourceRequestManifestFailure"/></para>
         /// </summary>
         /// <param name="manifestPath">文件清单地址</param>
         /// <param name="manifestEncryptionKey">文件解密密钥 [NULLABLE] </param>
-        void StartRequestManifest(string manifestPath, string manifestEncryptionKey);
+        /// <param name="bundlePath">ab资源所在根目录</param>
+        /// <returns>任务Id</returns>
+        long StartRequestManifest(string manifestPath, string manifestEncryptionKey, string bundlePath = "");
         /// <summary>
         /// 停止请求文件清单；
         /// </summary>

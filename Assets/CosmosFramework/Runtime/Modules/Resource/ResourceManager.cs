@@ -97,9 +97,9 @@ namespace Cosmos.Resource
                 currentLoadHelper = loadHelper;
         }
         /// <inheritdoc/>
-        public void StartRequestManifest(string manifestPath, string manifestEncryptionKey)
+        public long StartRequestManifest(string manifestPath, string manifestEncryptionKey, string bundlePath)
         {
-            resourceManifestRequester.StartRequestManifest(manifestPath, manifestEncryptionKey);
+            return resourceManifestRequester.StartRequestManifest(manifestPath,  manifestEncryptionKey, bundlePath);
         }
         /// <inheritdoc/>
         public void StopRequestManifest()
@@ -215,15 +215,15 @@ namespace Cosmos.Resource
         {
             resourceManifestRequester.OnTerminate();
         }
-        void OnRequestManifestSuccess(string manifestPath, ResourceManifest resourceManifest)
+        void OnRequestManifestSuccess(long taskId, string manifestPath, string bundlePath, ResourceManifest resourceManifest)
         {
-            var eventArgs = ResourceRequestManifestSuccessEventArgs.Create(manifestPath, ResourceLoadMode, ResourceDataProxy.ResourceBundlePathType, resourceManifest);
+            var eventArgs = ResourceRequestManifestSuccessEventArgs.Create(taskId, manifestPath, bundlePath, ResourceDataProxy.ResourceBundlePathType, resourceManifest);
             resourceRequestManifestSuccess?.Invoke(eventArgs);
             ResourceRequestManifestSuccessEventArgs.Release(eventArgs);
         }
-        void OnRequestManifestFailure(string manifestPath, string errorMessage)
+        void OnRequestManifestFailure(long taskId, string manifestPath, string errorMessage)
         {
-            var eventArgs = ResourceRequestManifestFailureEventArgs.Create(manifestPath, ResourceLoadMode, ResourceDataProxy.ResourceBundlePathType, errorMessage);
+            var eventArgs = ResourceRequestManifestFailureEventArgs.Create(taskId, manifestPath, ResourceLoadMode, ResourceDataProxy.ResourceBundlePathType, errorMessage);
             resourceRequestManifestFailure?.Invoke(eventArgs);
             ResourceRequestManifestFailureEventArgs.Release(eventArgs);
         }

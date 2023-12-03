@@ -65,15 +65,16 @@ namespace Cosmos
                                 break;
                         }
                         ResourceDataProxy.ResourceBundlePathType = resourceBundlePathType;
+                        string formattedBundlePath = string.Empty;
                         if (!string.IsNullOrEmpty(relativeBundlePath))
                         {
                             manifestPath = Path.Combine(bundlePath, relativeBundlePath, ResourceConstants.RESOURCE_MANIFEST);
-                            ResourceDataProxy.BundlePath = Path.Combine(bundlePath, relativeBundlePath);
+                            formattedBundlePath = Utility.IO.CombineURL(bundlePath, relativeBundlePath);
                         }
                         else
                         {
                             manifestPath = Path.Combine(bundlePath, ResourceConstants.RESOURCE_MANIFEST);
-                            ResourceDataProxy.BundlePath = bundlePath;
+                            formattedBundlePath = bundlePath;
                         }
                         manifestPath = prefix + manifestPath;
                         //webrequest需要加file://，System.IO不需要加。加载器使用的是unity原生的assetbundle.loadxxxx，属于IO，因此无需加前缀；
@@ -81,13 +82,16 @@ namespace Cosmos
                             ResourceDataProxy.BundleEncryptionOffset = assetBundleEncrytionOffset;
                         else
                             ResourceDataProxy.BundleEncryptionOffset = 0;
+                        string formattedManifestEncrytionKey = string.Empty;
                         if (manifestEncrytion)
-                            ResourceDataProxy.ManifestEncryptionKey = manifestEncrytionKey;
+                            formattedManifestEncrytionKey = manifestEncrytionKey;
                         else
-                            ResourceDataProxy.ManifestEncryptionKey = string.Empty;
+                            formattedManifestEncrytionKey = string.Empty;
                         var assetBundleLoader = new AssetBundleLoader();
+
                         CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
-                        CosmosEntry.ResourceManager.StartRequestManifest(manifestPath, ResourceDataProxy.ManifestEncryptionKey);
+                        var taskId = CosmosEntry.ResourceManager.StartRequestManifest(manifestPath, formattedManifestEncrytionKey, formattedBundlePath);
+                        assetBundleLoader.TaskId = taskId;
                     }
                     break;
                 case ResourceLoadMode.AssetDatabase:

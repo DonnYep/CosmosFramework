@@ -324,7 +324,7 @@ namespace Cosmos.Download
             if (Downloading)
                 unityWebRequest?.Abort();
             else
-                unityWebRequest.Dispose();
+                unityWebRequest?.Dispose();
             //foreach (var task in pendingTasks)
             //{
             //    var completedInfo = new DownloadCompletedInfo(task.URI, task.DownloadPath, 0, TimeSpan.Zero);

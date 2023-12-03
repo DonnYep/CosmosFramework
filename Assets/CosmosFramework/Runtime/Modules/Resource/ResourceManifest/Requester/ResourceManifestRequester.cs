@@ -6,16 +6,29 @@ namespace Cosmos.Resource
 {
     internal class ResourceManifestRequester
     {
-        readonly IWebRequestManager webRequestManager;
-        readonly Action<string, ResourceManifest> onSuccess;
-        readonly Action<string, string> onFailure;
-        /// <summary>
-        /// taskId===manifestEncryptionKey
-        /// </summary>
-        Dictionary<long, string> taskIdKeyDict;
-        public ResourceManifestRequester(IWebRequestManager webRequestManager, Action<string, ResourceManifest> onSuccess, Action<string, string> onFailure)
+        internal struct ManifestRequestInfo
         {
-            taskIdKeyDict = new Dictionary<long, string>();
+            public string ManifestEncryptionKey;
+            public string BundlePath;
+
+            public ManifestRequestInfo(string manifestEncryptionKey, string bundlePath)
+            {
+                ManifestEncryptionKey = manifestEncryptionKey;
+                BundlePath = bundlePath;
+            }
+        }
+
+        readonly IWebRequestManager webRequestManager;
+        readonly Action<long, string, string, ResourceManifest> onSuccess;
+        readonly Action<long, string, string> onFailure;
+        /// <summary>
+        /// taskId===ManifestRequestInfo
+        /// </summary>
+        readonly Dictionary<long, ManifestRequestInfo> taskIdKeyDict;
+        public ResourceManifestRequester(IWebRequestManager webRequestManager, Action<long, string, string, ResourceManifest> onSuccess, Action<long, string, string> onFailure)
+        {
+
+            taskIdKeyDict = new Dictionary<long, ManifestRequestInfo>();
             this.webRequestManager = webRequestManager;
             this.onSuccess = onSuccess;
             this.onFailure = onFailure;
@@ -30,10 +43,12 @@ namespace Cosmos.Resource
             webRequestManager.OnSuccessCallback -= OnSuccessCallback;
             webRequestManager.OnFailureCallback -= OnFailureCallback;
         }
-        public void StartRequestManifest(string url, string manifestEncryptionKey)
+        public long StartRequestManifest(string manifestUrl, string manifestEncryptionKey, string bundlePath)
         {
-            var taskId = webRequestManager.AddDownloadTextTask(url);
-            taskIdKeyDict.TryAdd(taskId, manifestEncryptionKey);
+            var taskId = webRequestManager.AddDownloadTextTask(manifestUrl);
+            var pair = new ManifestRequestInfo(manifestEncryptionKey, bundlePath);
+            taskIdKeyDict.TryAdd(taskId, pair);
+            return taskId;
         }
         public void StopRequestManifest()
         {
@@ -48,19 +63,21 @@ namespace Cosmos.Resource
             var manifestContext = eventArgs.GetText();
             try
             {
-                taskIdKeyDict.Remove(eventArgs.TaskId, out var key);
+                taskIdKeyDict.Remove(eventArgs.TaskId, out var pair);
+                var key = pair.ManifestEncryptionKey;
+                var bundlePath = pair.BundlePath;
                 var resourceManifest = ResourceUtility.Manifest.DeserializeManifest(manifestContext, key);
-                onSuccess?.Invoke(eventArgs.URL, resourceManifest);
+                onSuccess?.Invoke(eventArgs.TaskId, eventArgs.URL, bundlePath, resourceManifest);
             }
             catch (Exception e)
             {
-                onFailure?.Invoke(eventArgs.URL, e.ToString());
+                onFailure?.Invoke(eventArgs.TaskId, eventArgs.URL, e.ToString());
             }
         }
         void OnFailureCallback(WebRequestFailureEventArgs eventArgs)
         {
             taskIdKeyDict.Remove(eventArgs.TaskId);
-            onFailure?.Invoke(eventArgs.URL, eventArgs.ErrorMessage);
+            onFailure?.Invoke(eventArgs.TaskId, eventArgs.URL, eventArgs.ErrorMessage);
         }
     }
 }
