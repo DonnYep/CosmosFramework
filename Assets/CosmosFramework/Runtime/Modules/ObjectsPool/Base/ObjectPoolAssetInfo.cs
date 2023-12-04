@@ -1,6 +1,9 @@
-﻿namespace Cosmos
+﻿using System.Runtime.InteropServices;
+
+namespace Cosmos
 {
-    public struct ObjectPoolAssetInfo 
+    [StructLayout(LayoutKind.Auto)]
+    public struct ObjectPoolAssetInfo
     {
         public string AssetName { get; private set; }
         public string PoolName { get; private set; }
