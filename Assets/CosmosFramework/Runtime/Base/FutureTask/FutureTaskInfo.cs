@@ -1,5 +1,8 @@
-﻿namespace Cosmos
+﻿using System.Runtime.InteropServices;
+
+namespace Cosmos
 {
+    [StructLayout(LayoutKind.Auto)]
     public struct FutureTaskInfo
     {
         public int FutureTaskId { get; private  set; }
