@@ -94,12 +94,18 @@ namespace Cosmos.Resource
             downloadFailureTaskList = new List<ResourceDownloadTask>();
             downloadCancelTaskList = new List<ResourceDownloadTask>();
         }
+        /// <summary>
+        /// 初始化
+        /// </summary>
         public void OnInitialize()
         {
             downloadManager.OnDownloadSuccess += OnDownloadSuccessHandler;
             downloadManager.OnDownloadFailure += OnDownloadFailureHandler;
             downloadManager.OnDownloadOverallProgress += OnDownloadUpdateHandler;
         }
+        /// <summary>
+        /// 结束关闭
+        /// </summary>
         public void OnTerminate()
         {
             downloadManager.OnDownloadSuccess -= OnDownloadSuccessHandler;

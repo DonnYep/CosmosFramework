@@ -4,6 +4,7 @@ using System;
 using Object = UnityEngine.Object;
 using Cosmos.WebRequest;
 using Cosmos.Resource.State;
+using Cosmos.Download;
 
 namespace Cosmos.Resource
 {
@@ -26,7 +27,7 @@ namespace Cosmos.Resource
         Dictionary<ResourceLoadMode, ResourceLoadChannel> loadChannelDict;
         IResourceLoadHelper currentLoadHelper;
         ResourceManifestRequester resourceManifestRequester;
-
+        ResourceDownloader resourceDownloader;
         Action<ResourceRequestManifestSuccessEventArgs> resourceRequestManifestSuccess;
         Action<ResourceRequestManifestFailureEventArgs> resourceRequestManifestFailure;
         /// <inheritdoc/>
@@ -99,7 +100,7 @@ namespace Cosmos.Resource
         /// <inheritdoc/>
         public long StartRequestManifest(string manifestPath, string manifestEncryptionKey, string bundlePath)
         {
-            return resourceManifestRequester.StartRequestManifest(manifestPath,  manifestEncryptionKey, bundlePath);
+            return resourceManifestRequester.StartRequestManifest(manifestPath, manifestEncryptionKey, bundlePath);
         }
         /// <inheritdoc/>
         public void StopRequestManifest()
@@ -210,10 +211,14 @@ namespace Cosmos.Resource
             var webRequestManager = GameManager.GetModule<IWebRequestManager>();
             resourceManifestRequester = new ResourceManifestRequester(webRequestManager, OnRequestManifestSuccess, OnRequestManifestFailure);
             resourceManifestRequester.OnInitialize();
+            var downloadManager = GameManager.GetModule<IDownloadManager>();
+            resourceDownloader = new ResourceDownloader(downloadManager);
+            resourceDownloader.OnInitialize();
         }
         protected override void OnTermination()
         {
             resourceManifestRequester.OnTerminate();
+            resourceDownloader.OnTerminate();
         }
         void OnRequestManifestSuccess(long taskId, string manifestPath, string bundlePath, ResourceManifest resourceManifest)
         {
