@@ -43,6 +43,36 @@ namespace Cosmos.Resource
             remove { resourceRequestManifestFailure -= value; }
         }
         /// <inheritdoc/>
+        public event Action<ResourceDownloadSuccessEventArgs> OnDownloadSuccess
+        {
+            add { resourceDownloader.OnDownloadSuccess += value; }
+            remove { resourceDownloader.OnDownloadSuccess -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<ResourceDownloadFailureEventArgs> OnDownloadFailure
+        {
+            add { resourceDownloader.OnDownloadFailure += value; }
+            remove { resourceDownloader.OnDownloadFailure -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<ResourceDownloadUpdateEventArgs> OnDownloadUpdate
+        {
+            add { resourceDownloader.OnDownloadUpdate += value; }
+            remove { resourceDownloader.OnDownloadUpdate -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<ResourceDownloadCompeleteEventArgs> OnDownloadComplete
+        {
+            add { resourceDownloader.OnDownloadComplete += value; }
+            remove { resourceDownloader.OnDownloadComplete -= value; }
+        }
+        /// <inheritdoc/>
+        public event Action<ResourceDownloadTasksCancelEventArgs> OnDownloadCancel
+        {
+            add { resourceDownloader.OnDownloadCancel += value; }
+            remove { resourceDownloader.OnDownloadCancel -= value; }
+        }
+        /// <inheritdoc/>
         public ResourceLoadMode ResourceLoadMode { get { return ResourceDataProxy.ResourceLoadMode; } }
         /// <inheritdoc/>
         public bool UnloadAllLoadedObjectsWhenBundleUnload

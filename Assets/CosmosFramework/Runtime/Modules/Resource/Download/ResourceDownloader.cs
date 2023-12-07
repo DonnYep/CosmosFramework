@@ -78,7 +78,7 @@ namespace Cosmos.Resource
             remove { onDownloadComplete -= value; }
         }
         /// <summary>
-        /// 任务取消回调
+        /// 下载任务取消回调
         /// </summary>
         public event Action<ResourceDownloadTasksCancelEventArgs> OnDownloadCancel
         {
