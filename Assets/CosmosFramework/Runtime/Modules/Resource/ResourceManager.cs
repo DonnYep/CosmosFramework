@@ -138,6 +138,26 @@ namespace Cosmos.Resource
             resourceManifestRequester.StopRequestManifest();
         }
         /// <inheritdoc/>
+        public long AddDownloadTask(ResourceDownloadTask task)
+        {
+            return resourceDownloader.AddDownloadTask(task);
+        }
+        /// <inheritdoc/>
+        public void RemoveDownloadTask(long taskId)
+        {
+            resourceDownloader.RemoveDownloadTask(taskId);
+        }
+        /// <inheritdoc/>
+        public void StartResourceDowload()
+        {
+            resourceDownloader.StartResourceDowload();
+        }
+        /// <inheritdoc/>
+        public void CancelResourceDowload()
+        {
+            resourceDownloader.CancelResourceDowload();
+        }
+        /// <inheritdoc/>
         public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null)
             where T : Object
         {

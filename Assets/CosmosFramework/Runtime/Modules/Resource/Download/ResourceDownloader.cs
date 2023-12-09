@@ -142,7 +142,7 @@ namespace Cosmos.Resource
         /// </summary>
         /// <param name="taskId">下载任务</param>
         /// <returns>移除结果，失败或成功</returns>
-        public void RemoveTask(long taskId)
+        public void RemoveDownloadTask(long taskId)
         {
             nodeDict.Remove(taskId, out var downloadNode);
             taskDict.Remove(taskId);
@@ -158,7 +158,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 下载任务添加完毕后，开始下载
         /// </summary>
-        public void StartDowload()
+        public void StartResourceDowload()
         {
             if (!downloadManager.Downloading)
                 downloadManager.LaunchDownload();
@@ -166,7 +166,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 取消下载，此操作会情况下载任务
         /// </summary>
-        public void CancelDowload()
+        public void CancelResourceDowload()
         {
             downloadCancelTaskList.Clear();
             foreach (var downloadNode in nodeDict.Values)
