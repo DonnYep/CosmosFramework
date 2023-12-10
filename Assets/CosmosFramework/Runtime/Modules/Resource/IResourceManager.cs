@@ -36,6 +36,26 @@ namespace Cosmos.Resource
         /// 请求资源文件清单失败事件；
         /// </summary>
         event Action<ResourceRequestManifestFailureEventArgs> ResourceRequestManifestFailure;
+        /// <summary>
+        /// 任务下载成功事件
+        /// </summary>
+        event Action<ResourceDownloadSuccessEventArgs> OnDownloadSuccess;
+        /// <summary>
+        /// 任务下载失败事件
+        /// </summary>
+        event Action<ResourceDownloadFailureEventArgs> OnDownloadFailure;
+        /// <summary>
+        /// 整体任务下载更新事件
+        /// </summary>
+        event Action<ResourceDownloadUpdateEventArgs> OnDownloadUpdate;
+        /// <summary>
+        /// 所有任务完成事件
+        /// </summary>
+        event Action<ResourceDownloadCompeleteEventArgs> OnDownloadComplete;
+        /// <summary>
+        /// 下载任务取消回调
+        /// </summary>
+        event Action<ResourceDownloadTasksCancelEventArgs> OnDownloadCancel;
         #region Methods
         /// <summary>
         /// 设置默认的加载方式；
@@ -73,6 +93,31 @@ namespace Cosmos.Resource
         /// 停止请求文件清单；
         /// </summary>
         void StopRequestManifest();
+        /// <summary>
+        /// 添加下载任务
+        /// <see cref="OnDownloadSuccess"/>
+        /// <see cref="OnDownloadFailure"/>
+        /// <see cref="OnDownloadUpdate"/>
+        /// <see cref="OnDownloadComplete"/>
+        /// </summary>
+        /// <param name="task">下载任务</param>
+        /// <returns>下载任务Id</returns>
+        long AddResourceDownloadTask(ResourceDownloadTask task);
+        /// <summary>
+        /// 移除下载任务
+        /// </summary>
+        /// <param name="taskId">下载任务</param>
+        /// <returns>移除结果，失败或成功</returns>
+        void RemoveResourceDownloadTask(long taskId);
+        /// <summary>
+        /// 下载任务添加完毕后，开始下载
+        /// </summary>
+        void StartResourceDownload();
+        /// <summary>
+        /// 取消下载，此操作会情况下载任务
+        /// <see cref="OnDownloadCancel"/>
+        /// </summary>
+        void CancelResourceDownload();
         /// <summary>
         /// 加载资源（异步），增加一个引用计数；
         /// </summary>

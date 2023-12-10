@@ -158,7 +158,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 下载任务添加完毕后，开始下载
         /// </summary>
-        public void StartResourceDowload()
+        public void StartResourceDownload()
         {
             if (!downloadManager.Downloading)
                 downloadManager.LaunchDownload();
@@ -166,7 +166,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 取消下载，此操作会情况下载任务
         /// </summary>
-        public void CancelResourceDowload()
+        public void CancelResourceDownload()
         {
             downloadCancelTaskList.Clear();
             foreach (var downloadNode in nodeDict.Values)
