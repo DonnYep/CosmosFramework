@@ -9,7 +9,6 @@ namespace Cosmos.Resource
     /// </summary>
     public class ResourceDownloader
     {
-        //UNDONE 资源下载器 
         readonly IDownloadManager downloadManager;
         /// <summary>
         /// taskId===downloadTask
@@ -85,6 +84,13 @@ namespace Cosmos.Resource
             add { onDownloadCancel += value; }
             remove { onDownloadCancel -= value; }
         }
+        /// <summary>
+        /// 下载任务数量
+        /// </summary>
+        public int DownloadTaskCount
+        {
+            get { return taskDict.Count; }
+        }
         public ResourceDownloader(IDownloadManager downloadManager)
         {
             this.downloadManager = downloadManager;
@@ -125,11 +131,19 @@ namespace Cosmos.Resource
             var downloadAppend = task.DownloadAppend;
             long localSize = 0;
             long requirementSize = 0;
+
 #if UNITY_2019_1_OR_NEWER
-            localSize = Utility.IO.GetFileSize(task.ResourceDownloadPath);
-            requirementSize = recordedSize - localSize;
+            if (downloadAppend)
+            {
+                localSize = Utility.IO.GetFileSize(task.ResourceDownloadPath);
+                requirementSize = recordedSize - localSize;
+            }
+            else
+            {
+                requirementSize = recordedSize;
+            }
 #elif UNITY_2018_1_OR_NEWER
-            recordedResourceSize = downloadNode.RecordedResourceSize 
+            requirementSize= recordedSize;
 #endif
             totalRequirementDownloadSize += requirementSize;
             var taskId = downloadManager.AddDownload(url, downloadPath, localSize, downloadAppend);
@@ -158,7 +172,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 下载任务添加完毕后，开始下载
         /// </summary>
-        public void StartResourceDownload()
+        public void StartDownload()
         {
             if (!downloadManager.Downloading)
                 downloadManager.LaunchDownload();
@@ -166,7 +180,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 取消下载，此操作会情况下载任务
         /// </summary>
-        public void CancelResourceDownload()
+        public void CancelDownload()
         {
             downloadCancelTaskList.Clear();
             foreach (var downloadNode in nodeDict.Values)

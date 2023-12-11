@@ -56,6 +56,10 @@ namespace Cosmos.Resource
         /// 下载任务取消回调
         /// </summary>
         event Action<ResourceDownloadTasksCancelEventArgs> OnDownloadCancel;
+        /// <summary>
+        /// 资源下载任务数量
+        /// </summary>
+        int ResourceDownloadTaskCount { get; }
         #region Methods
         /// <summary>
         /// 设置默认的加载方式；
@@ -95,10 +99,10 @@ namespace Cosmos.Resource
         void StopRequestManifest();
         /// <summary>
         /// 添加下载任务
-        /// <see cref="OnDownloadSuccess"/>
-        /// <see cref="OnDownloadFailure"/>
-        /// <see cref="OnDownloadUpdate"/>
-        /// <see cref="OnDownloadComplete"/>
+        /// <para> <see cref="OnDownloadSuccess"/></para> 
+        /// <para> <see cref="OnDownloadFailure"/> </para> 
+        /// <para> <see cref="OnDownloadUpdate"/> </para> 
+        /// <para> <see cref="OnDownloadComplete"/> </para> 
         /// </summary>
         /// <param name="task">下载任务</param>
         /// <returns>下载任务Id</returns>
@@ -115,7 +119,7 @@ namespace Cosmos.Resource
         void StartResourceDownload();
         /// <summary>
         /// 取消下载，此操作会情况下载任务
-        /// <see cref="OnDownloadCancel"/>
+        /// <para> <see cref="OnDownloadCancel"/> </para> 
         /// </summary>
         void CancelResourceDownload();
         /// <summary>

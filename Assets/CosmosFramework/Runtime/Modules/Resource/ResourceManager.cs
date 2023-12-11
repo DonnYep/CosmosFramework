@@ -31,6 +31,11 @@ namespace Cosmos.Resource
         Action<ResourceRequestManifestSuccessEventArgs> resourceRequestManifestSuccess;
         Action<ResourceRequestManifestFailureEventArgs> resourceRequestManifestFailure;
         /// <inheritdoc/>
+        public ResourceLoadMode ResourceLoadMode
+        {
+            get { return ResourceDataProxy.ResourceLoadMode; }
+        }
+        /// <inheritdoc/>
         public event Action<ResourceRequestManifestSuccessEventArgs> ResourceRequestManifestSuccess
         {
             add { resourceRequestManifestSuccess += value; }
@@ -73,7 +78,10 @@ namespace Cosmos.Resource
             remove { resourceDownloader.OnDownloadCancel -= value; }
         }
         /// <inheritdoc/>
-        public ResourceLoadMode ResourceLoadMode { get { return ResourceDataProxy.ResourceLoadMode; } }
+        public int ResourceDownloadTaskCount
+        {
+            get { return resourceDownloader.DownloadTaskCount;}
+        }
         /// <inheritdoc/>
         public bool UnloadAllLoadedObjectsWhenBundleUnload
         {
@@ -150,12 +158,12 @@ namespace Cosmos.Resource
         /// <inheritdoc/>
         public void StartResourceDownload()
         {
-            resourceDownloader.StartResourceDownload();
+            resourceDownloader.StartDownload();
         }
         /// <inheritdoc/>
         public void CancelResourceDownload()
         {
-            resourceDownloader.CancelResourceDownload();
+            resourceDownloader.CancelDownload();
         }
         /// <inheritdoc/>
         public Coroutine LoadAssetAsync<T>(string assetName, Action<T> callback, Action<float> progress = null)
