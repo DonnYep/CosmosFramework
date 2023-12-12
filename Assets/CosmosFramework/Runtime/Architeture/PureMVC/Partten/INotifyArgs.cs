@@ -15,6 +15,5 @@
         /// 消息发送者；
         /// </summary>
         object NotifySender { get; }
-        string ToString();
     }
 }
