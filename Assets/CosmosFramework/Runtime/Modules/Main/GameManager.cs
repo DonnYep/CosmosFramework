@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Linq;
 namespace Cosmos
 {
     /// <summary>
@@ -43,47 +44,41 @@ namespace Cosmos
         static Action<float> elapseRefreshHandler;
         /// <summary>
         /// 模块字典；
-        /// key=>moduleType；value=>module
+        /// key=>moduleType；value===module
         /// </summary>
-        static Dictionary<Type, Module> moduleDict;
+        readonly static Dictionary<Type, Module> moduleDict = new Dictionary<Type, Module>();
         /// <summary>
         /// 接口-module字典；
-        /// key=>IModuleManager；value=>Module
+        /// key=>IModuleManager；value===Module
         /// </summary>
-        static Dictionary<Type, Type> interfaceModuleDict;
+        readonly static Dictionary<Type, Type> interfaceModuleDict = new Dictionary<Type, Type>();
         /// <summary>
         /// 轮询更新委托
         /// </summary>
-        internal static bool IsPause { get; private set; }
-        //当前注册的模块总数
-        static int moduleCount = 0;
-        internal static int ModuleCount { get { return moduleCount; } }
-        internal static bool PrintModulePreparatory { get; set; } = true;
-
+        internal static bool Pause { get; set; }
         /// <summary>
-        /// 模块轮询字典缓存；
-        /// key=>module object ; value=>Action ;
+        /// 注册的模块数
         /// </summary>
-        static Dictionary<object, Action> tickRefreshDict;
-        static Dictionary<object, Action> fixedRefreshDict;
-        static Dictionary<object, Action> lateRefreshDict;
-        static Dictionary<object, Action<float>> elapseRefreshDict;
-
+        internal static int ModuleCount
+        {
+            get { return moduleDict.Count; }
+        }
+        internal static bool PrintModulePreparatory { get; set; } = true;
         /// <summary>
         /// 模块初始化时的异常集合；
         /// </summary>
-        static List<Exception> moduleInitExceptionList;
+        readonly static List<Exception> moduleInitExceptionList = new List<Exception>();
         /// <summary>
         /// 模块终止时的异常集合；
         /// </summary>
-        static List<Exception> moduleTerminateExceptionList;
+        readonly static List<Exception> moduleTerminateExceptionList = new List<Exception>();
         #endregion
         #region Methods
         /// <summary>
-        /// 获取模块；
-        /// 若需要进行外部扩展，请继承自Module，需要实现接口 IModuleManager，并标记特性：ModuleAttribute
-        /// 如：public class TestManager:Module,ITestManager{}
-        /// ITestManager 需要包含所有外部可调用的方法；具体请参考Cosmos源码；
+        /// 获取模块
+        /// <para>若需要进行外部扩展，请继承自Module，需要实现接口 IModuleManager，并标记特性：ModuleAttribute</para>
+        /// <para>如：public class TestManager:Module,ITestManager{}</para>
+        /// <para>ITestManager 需要包含所有外部可调用的方法；具体请参考Cosmos源码</para> 
         /// </summary>
         /// <typeparam name="T">内置模块接口</typeparam>
         /// <returns>模板模块接口</returns>
@@ -96,39 +91,31 @@ namespace Cosmos
             moduleDict.TryGetValue(derivedType, out var module);
             return module as T;
         }
-        internal static void OnPause()
-        {
-            IsPause = true;
-        }
-        internal static void OnUnPause()
-        {
-            IsPause = false;
-        }
         internal static void OnRefresh()
         {
-            if (IsPause)
+            if (Pause)
                 return;
             tickRefreshHandler?.Invoke();
         }
         /// <summary>
-        /// 时间流逝轮询;
+        /// 时间流逝轮询
         /// </summary>
         /// <param name="realDeltaTime">物理世界的世界流逝单位时间</param>
         internal static void OnElapseRefresh(float realDeltaTime)
         {
-            if (IsPause)
+            if (Pause)
                 return;
             elapseRefreshHandler?.Invoke(realDeltaTime);
         }
         internal static void OnLateRefresh()
         {
-            if (IsPause)
+            if (Pause)
                 return;
             lateRefreshHandler?.Invoke();
         }
-        internal static void OnFixRefresh()
+        internal static void OnFixedRefresh()
         {
-            if (IsPause)
+            if (Pause)
                 return;
             fixedRefreshHandler?.Invoke();
         }
@@ -136,44 +123,15 @@ namespace Cosmos
         {
             return moduleDict.ContainsKey(type);
         }
-        internal static void Dispose()
-        {
-            OnDeactive();
-        }
-        static void ModuleTermination(Module module)
-        {
-            var type = module.GetType();
-            if (HasModule(type))
-            {
-                Utility.Assembly.InvokeMethod(module, ModuleConstant.OnDeactive);
-                var m = moduleDict[type];
-                if (tickRefreshDict.Remove(module, out var tickAction))
-                    TickRefreshHandler -= tickAction;
-                if (fixedRefreshDict.Remove(module, out var fixedAction))
-                    FixedRefreshHandler -= fixedAction;
-                if (lateRefreshDict.Remove(module, out var lateAction))
-                    LateRefreshHandler -= lateAction;
-                if (elapseRefreshDict.Remove(module, out var elapseAction))
-                    ElapseRefreshHandler -= elapseAction;
-                moduleDict.Remove(type);
-                moduleCount--;
-                Utility.Assembly.InvokeMethod(module, ModuleConstant.OnTermination);
-                Utility.Debug.LogInfo($"Module :{module} is OnTermination", DebugColor.olive);
-            }
-            else
-                throw new ArgumentException($"Module : {module} is not exist!");
-        }
-        internal static void InitAssemblyModule(System.Reflection.Assembly[] assemblies)
+        internal static void InitiateAssemblyModule(IEnumerable<System.Reflection.Assembly> assemblies)
         {
             if (assemblies == null)
                 throw new ArgumentNullException("InitAssemblyModule : assemblies is invalid");
-            Assemblies = assemblies;
-            InitDicts();
+            Assemblies = assemblies.ToArray();
             var ModuleManagerType = typeof(IModuleManager);
-            var assemblyLength = assemblies.Length;
-            for (int h = 0; h < assemblyLength; h++)
+            foreach (var asm in assemblies)
             {
-                var modules = Utility.Assembly.GetInstancesByAttribute<ModuleAttribute, Module>(assemblies[h]);
+                var modules = Utility.Assembly.GetInstancesByAttribute<ModuleAttribute, Module>(asm);
                 for (int i = 0; i < modules.Length; i++)
                 {
                     var type = modules[i].GetType();
@@ -198,8 +156,7 @@ namespace Cosmos
                                 {
                                     moduleDict.TryAdd(type, module);
                                     interfaceModuleDict.TryAdd(interfaceType, type);
-                                    Utility.Assembly.InvokeMethod(modules[i], ModuleConstant.OnInitialization);
-                                    moduleCount++;
+                                    Utility.Assembly.InvokeMethod(modules[i], ModuleConstant.INITIALIZATION);
                                 }
                             }
                             catch (Exception e)
@@ -214,11 +171,10 @@ namespace Cosmos
             }
             ActiveModule();
         }
-        internal static void InitAppDomainModule()
+        internal static void InitiateAppDomainModule()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             Assemblies = assemblies;
-            InitDicts();
             var ModuleManagerType = typeof(IModuleManager);
             var assemblyLength = assemblies.Length;
             for (int h = 0; h < assemblyLength; h++)
@@ -248,8 +204,7 @@ namespace Cosmos
                                 {
                                     moduleDict.TryAdd(type, module);
                                     interfaceModuleDict.TryAdd(interfaceType, type);
-                                    Utility.Assembly.InvokeMethod(modules[i], ModuleConstant.OnInitialization);
-                                    moduleCount++;
+                                    Utility.Assembly.InvokeMethod(modules[i], ModuleConstant.INITIALIZATION);
                                 }
                             }
                             catch (Exception e)
@@ -263,6 +218,10 @@ namespace Cosmos
                 }
             }
             ActiveModule();
+        }
+        internal static void TerminateModules()
+        {
+            RemoveRefreshListener();
         }
         static void ActiveModule()
         {
@@ -270,7 +229,7 @@ namespace Cosmos
             {
                 try
                 {
-                    Utility.Assembly.InvokeMethod((module as Module), ModuleConstant.OnActive);
+                    Utility.Assembly.InvokeMethod((module as Module), ModuleConstant.ACTIVE);
                 }
                 catch (Exception e)
                 {
@@ -285,7 +244,7 @@ namespace Cosmos
             {
                 try
                 {
-                    Utility.Assembly.InvokeMethod(module, ModuleConstant.OnPreparatory);
+                    Utility.Assembly.InvokeMethod(module, ModuleConstant.PREPARATORY);
                     if (PrintModulePreparatory)
                         Utility.Debug.LogInfo($"Module :{module} is OnPreparatory");
                 }
@@ -294,44 +253,23 @@ namespace Cosmos
                     moduleInitExceptionList.Add(e);
                 }
             }
-            AddRefreshListen();
+            AddRefreshListener();
         }
-        static void AddRefreshListen()
+        static void AddRefreshListener()
         {
             foreach (var module in moduleDict.Values)
             {
                 try
                 {
-                    TickRefreshAttribute.GetRefreshAction(module, true, out var tickAction);
-                    if (tickAction != null)
-                    {
-                        tickRefreshDict.Add(module, tickAction);
-                        TickRefreshHandler += tickAction;
-                    }
-                    LateRefreshAttribute.GetRefreshAction(module, true, out var lateAction);
-                    if (lateAction != null)
-                    {
-                        lateRefreshDict.Add(module, lateAction);
-                        LateRefreshHandler += lateAction;
-                    }
-                    FixedRefreshAttribute.GetRefreshAction(module, true, out var fixedAction);
-                    if (fixedAction != null)
-                    {
-                        fixedRefreshDict.Add(module, fixedAction);
-                        FixedRefreshHandler += fixedAction;
-                    }
-                    ElapseRefreshAttribute.GetRefreshAction(module, true, out var elapseAction);
-                    if (elapseAction != null)
-                    {
-                        elapseRefreshDict.Add(module, elapseAction);
-                        ElapseRefreshHandler += elapseAction;
-                    }
+                    TickRefreshHandler += module.Update;
+                    FixedRefreshHandler += module.FixedUpdate;
+                    LateRefreshHandler += module.LateUpdate;
+                    ElapseRefreshHandler += module.ElapseUpdate;
                 }
                 catch (Exception e)
                 {
                     moduleInitExceptionList.Add(e);
                 }
-
             }
             if (moduleInitExceptionList.Count > 0)
             {
@@ -340,13 +278,24 @@ namespace Cosmos
                 throw new AggregateException(arr);
             }
         }
+        static void RemoveRefreshListener()
+        {
+            foreach (var module in moduleDict?.Values)
+            {
+                TickRefreshHandler -= module.Update;
+                FixedRefreshHandler -= module.FixedUpdate;
+                LateRefreshHandler -= module.LateUpdate;
+                ElapseRefreshHandler -= module.ElapseUpdate;
+            }
+            OnDeactive();
+        }
         static void OnDeactive()
         {
             foreach (var module in moduleDict?.Values)
             {
                 try
                 {
-                    Utility.Assembly.InvokeMethod(module, ModuleConstant.OnDeactive);
+                    Utility.Assembly.InvokeMethod(module, ModuleConstant.DEACTIVE);
                 }
                 catch (Exception e)
                 {
@@ -361,7 +310,7 @@ namespace Cosmos
             {
                 try
                 {
-                    Utility.Assembly.InvokeMethod(module, ModuleConstant.OnTermination);
+                    Utility.Assembly.InvokeMethod(module, ModuleConstant.TERMINATION);
                 }
                 catch (Exception e)
                 {
@@ -373,33 +322,14 @@ namespace Cosmos
             GameManager.fixedRefreshHandler = null;
             GameManager.elapseRefreshHandler = null;
 
-            tickRefreshDict.Clear();
-            lateRefreshDict.Clear();
-            fixedRefreshDict.Clear();
-            elapseRefreshDict.Clear();
-
             if (moduleTerminateExceptionList.Count > 0)
             {
                 var arr = moduleTerminateExceptionList.ToArray();
                 moduleInitExceptionList.Clear();
                 throw new AggregateException(arr);
             }
-        }
-        static void InitDicts()
-        {
-            if (moduleDict == null)
-            {
-                moduleDict = new Dictionary<Type, Module>();
-                interfaceModuleDict = new Dictionary<Type, Type>();
-
-                moduleInitExceptionList = new List<Exception>();
-                moduleTerminateExceptionList = new List<Exception>();
-
-                tickRefreshDict = new Dictionary<object, Action>();
-                fixedRefreshDict = new Dictionary<object, Action>();
-                lateRefreshDict = new Dictionary<object, Action>();
-                elapseRefreshDict = new Dictionary<object, Action<float>>();
-            }
+            moduleDict.Clear();
+            interfaceModuleDict.Clear();
         }
         #endregion
     }

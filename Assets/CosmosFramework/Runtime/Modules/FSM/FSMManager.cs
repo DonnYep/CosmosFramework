@@ -254,21 +254,18 @@ namespace Cosmos.FSM
             fsmGroupPool.Clear();
         }
         #endregion
-        protected override void OnInitialization()
+        protected override void OnUpdate()
         {
-            fsmGroupDict = new Dictionary<string, FSMGroup>();
-            fsmDict = new Dictionary<TypeStringPair, FSMBase>();
-        }
-        [TickRefresh]
-        void OnRefresh()
-        {
-            if (IsPause)
-                return;
             if (fsmDict.Count > 0)
                 foreach (var fsm in fsmDict)
                 {
                     fsm.Value.OnRefresh();
                 }
+        }
+        protected override void OnInitialization()
+        {
+            fsmGroupDict = new Dictionary<string, FSMGroup>();
+            fsmDict = new Dictionary<TypeStringPair, FSMBase>();
         }
     }
 }

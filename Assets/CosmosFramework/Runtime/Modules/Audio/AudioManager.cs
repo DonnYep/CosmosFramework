@@ -300,9 +300,9 @@ namespace Cosmos.Audio
             audioGroupPool = new AudioGroupPool();
             audioAssetHelper = new DefaultAudioAssetHelper();
             audioPlayHelper = new DefaultAudioPlayHelper();
+
         }
-        [TickRefresh]
-        void TickRefresh()
+        protected override void OnUpdate()
         {
             audioPlayHelper?.TickRefresh();
         }

@@ -65,6 +65,12 @@ namespace Cosmos.Resource
                     result.ResourceIntegrityInfos.Add(integrityInfo);
                 }
             }
+            /// <summary>
+            /// verify resource bundle integrity 
+            /// </summary>
+            /// <param name="mergedManifest">merged manifest</param>
+            /// <param name="path">resource path</param>
+            /// <param name="result">verify result</param>
             public static void VerifyResourceIntegrity(ResourceMergedManifest mergedManifest, string path, out ResourceIntegrityResult result)
             {
                 if (string.IsNullOrEmpty(path))

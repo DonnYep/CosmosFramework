@@ -57,11 +57,12 @@ namespace Cosmos.ObjectPool
         /// 生成的对象
         /// </summary>
         GameObject spawnAsset;
-
         Pool<GameObject> pool;
-
         Action<GameObject> onObjectSpawn;
         Action<GameObject> onObjectDespawn;
+        int expireTime;
+        int capacity;
+        int releaseInterval = 5;
         public event Action<GameObject> OnObjectSpawn
         {
             add { onObjectSpawn += value; }
@@ -73,15 +74,14 @@ namespace Cosmos.ObjectPool
             remove { onObjectDespawn -= value; }
         }
 
-        int expireTime;
-        int capacity;
-        int releaseInterval = 5;
+
         private ObjectPool() { }
         public void OnElapseRefresh(float deltatime)
         {
             if (expireTime <= 0)
                 return;
         }
+        /// <inheritdoc/>
         public GameObject Spawn()
         {
             var go = pool.Spawn();
@@ -92,6 +92,7 @@ namespace Cosmos.ObjectPool
             onObjectSpawn?.Invoke(go);
             return go;
         }
+        /// <inheritdoc/>
         public void Despawn(GameObject go)
         {
             if (go == null)

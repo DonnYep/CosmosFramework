@@ -82,21 +82,21 @@ namespace Cosmos
             if (isLaunched)
                 return;
             MonoGameManager.Instance.ToString();
-            GameManager.InitAppDomainModule();
+            GameManager.InitiateAppDomainModule();
         }
         /// <summary>
-        /// 初始化目标程序集下的Module；
-        /// 注意：初始化尽量只执行一次！！！
+        /// 初始化目标程序集下的Module
+        /// <para> 注意：初始化尽量只执行一次！！！</para>
         /// </summary>
         /// <param name="assemblies">查询的目标程序集</param>
         public static void LaunchAssemblyModules(params System.Reflection.Assembly[] assemblies)
         {
             MonoGameManager.Instance.ToString();
-            GameManager.InitAssemblyModule(assemblies);
+            GameManager.InitiateAssemblyModule(assemblies);
         }
         public static void ReleaseLaunchedModules()
         {
-            GameManager.Dispose();
+            GameManager.TerminateModules();
         }
         public static T GetModule<T>() where T : class, IModuleManager
         {

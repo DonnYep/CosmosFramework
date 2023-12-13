@@ -80,8 +80,17 @@ namespace Cosmos.Network
         }
         protected override void OnInitialization()
         {
-            IsPause = false;
+            Pause = false;
             channelDict = new ConcurrentDictionary<string, INetworkChannel>();
+        }
+        protected override void OnUpdate()
+        {
+            //foreach 时不允许操作字典对象，则转换成数组进行操作；
+            var channelArr = channelDict.Values.ToArray();
+            foreach (var channel in channelArr)
+            {
+                channel.TickRefresh();
+            }
         }
         protected override void OnTermination()
         {
@@ -90,18 +99,6 @@ namespace Cosmos.Network
                 channel.Value.Close();
             }
             channelDict.Clear();
-        }
-        [TickRefresh]
-        void OnRefresh()
-        {
-            if (IsPause)
-                return;
-            //foreach 时不允许操作字典对象，则转换成数组进行操作；
-            var channelArr = channelDict.Values.ToArray();
-            foreach (var channel in channelArr)
-            {
-                channel.TickRefresh();
-            }
         }
     }
 }

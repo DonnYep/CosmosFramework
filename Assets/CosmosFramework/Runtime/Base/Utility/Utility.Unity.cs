@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
+using System.Collections.Generic;
 
 namespace Cosmos
 {
@@ -30,6 +32,7 @@ namespace Cosmos
                 }
             }
 
+            #region Application
             /// <summary>
             /// 退出。editor停止播放，runtime则退出游戏
             /// </summary>
@@ -41,6 +44,8 @@ namespace Cosmos
                 Application.Quit();
 #endif
             }
+            #endregion
+
             #region UnityComponent
             public static T ChildComponent<T>(Transform go, string name)
       where T : Component
@@ -180,31 +185,6 @@ where T : Component
                 return Algorithm.Find(par, p => p.gameObject.name == name);
             }
             #endregion
-
-            /// <summary>
-            /// 场景是否被加载；
-            /// </summary>
-            /// <param name="sceneName">场景名</param>
-            /// <returns>是否被加载</returns>
-            public static bool IsSceneLoaded(string sceneName)
-            {
-                var scene = SceneManager.GetSceneByName(sceneName);
-                if (scene != null)
-                {
-                    return scene.isLoaded;
-                }
-                return false;
-            }
-            /// <summary>
-            /// 判断是否是路径；
-            /// 需要注意根目录下的文件可能不带/或\符号！
-            /// </summary>
-            /// <param name="path">路径str</param>
-            /// <returns>是否是路径</returns>
-            public static bool IsPath(string path)
-            {
-                return path.Contains("\\") || path.Contains("/");
-            }
 
             #region Graphics
             /// <summary>
@@ -901,6 +881,62 @@ where T : Component
                 value.x = (float)Math.Round(value.x, decimals);
                 value.y = (float)Math.Round(value.y, decimals);
                 return value;
+            }
+            #endregion
+
+            #region GameObject
+            /// <summary>
+            /// 清除单个实例，默认延迟为0，仅在场景中删除对应对象
+            /// </summary>
+            public static void DestroyObject(Object obj, float delay = 0)
+            {
+                GameObject.Destroy(obj, delay);
+            }
+            /// <summary>
+            /// 立刻清理实例对象，会在内存中清理实例，Editor适用
+            /// </summary>
+            public static void DestroyObjectImmediate(Object obj)
+            {
+                GameObject.DestroyImmediate(obj);
+            }
+            /// <summary>
+            /// 清除一组实例
+            /// </summary>
+            /// <typeparam name="T">实例类型</typeparam>
+            /// <param name="objs">对象实例集合</param>
+            public static void DestroyObjects<T>(IEnumerable<T> objs) where T : Object
+            {
+                foreach (var obj in objs)
+                {
+                    GameObject.Destroy(obj);
+                }
+            }
+            #endregion
+
+            #region Other
+            /// <summary>
+            /// 场景是否被加载；
+            /// </summary>
+            /// <param name="sceneName">场景名</param>
+            /// <returns>是否被加载</returns>
+            public static bool IsSceneLoaded(string sceneName)
+            {
+                var scene = SceneManager.GetSceneByName(sceneName);
+                if (scene != null)
+                {
+                    return scene.isLoaded;
+                }
+                return false;
+            }
+            /// <summary>
+            /// 判断是否是路径；
+            /// 需要注意根目录下的文件可能不带/或\符号！
+            /// </summary>
+            /// <param name="path">路径str</param>
+            /// <returns>是否是路径</returns>
+            public static bool IsPath(string path)
+            {
+                return path.Contains("\\") || path.Contains("/");
             }
             #endregion
         }

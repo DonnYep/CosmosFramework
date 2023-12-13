@@ -57,7 +57,7 @@ namespace Cosmos.Controller
         public IController CreateController(string controllerName, string controllerGroupName, object handle)
         {
             Utility.Text.IsStringValid(controllerName, "ControllerName is invalid !");
-            if (!IsReferenceType(handle))
+            if (!Utility.Assembly.IsReferenceType(handle))
                 throw new ArgumentException($"{handle} is not reference type");
             var controller = Controller.Create(controllerName, controllerGroupName, handle);
             controllerIdDict.Add(controller.Id, controller);
@@ -262,6 +262,18 @@ namespace Cosmos.Controller
             lateActionDict = new Dictionary<int, Action>();
             fixedActionDict = new Dictionary<int, Action>();
         }
+        protected override void OnFixedUpdate()
+        {
+            fixedRefresh?.Invoke();
+        }
+        protected override void OnUpdate()
+        {
+            tickRefresh?.Invoke();
+        }
+        protected override void OnLateUpdate()
+        {
+            lateRefresh?.Invoke();
+        }
         void AddRefresh(IController controller)
         {
             TickRefreshAttribute.GetRefreshAction(controller, true, out var tickAction);
@@ -292,32 +304,6 @@ namespace Cosmos.Controller
             if (fixedActionDict.Remove(controllerId, out var fixedAction))
                 fixedRefresh += fixedAction;
         }
-        [TickRefresh]
-        void TickRefresh()
-        {
-            if (IsPause)
-                return;
-            tickRefresh?.Invoke();
-        }
-        [LateRefresh]
-        void LateRefresh()
-        {
-            if (IsPause)
-                return;
-            lateRefresh?.Invoke();
-        }
-        [FixedRefresh]
-        void FixedRefresh()
-        {
-            if (IsPause)
-                return;
-            fixedRefresh?.Invoke();
-        }
         #endregion
-        bool IsReferenceType(object handle)
-        {
-            var type = handle.GetType();
-            return type.IsClass || type.IsInterface;
-        }
     }
 }

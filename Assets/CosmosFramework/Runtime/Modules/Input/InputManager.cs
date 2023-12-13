@@ -140,17 +140,14 @@ namespace Cosmos.Input
         {
             inputVirtualDevice = new InputVirtualDevice();
         }
+        protected override void OnUpdate()
+        {
+            if (IsEnableInputDevice)
+                inputHelper?.OnRefresh();
+        }
         protected override void OnTermination()
         {
             inputHelper?.OnTermination();
-        }
-        [TickRefresh]
-        void OnRefresh()
-        {
-            if (IsPause)
-                return;
-            if (IsEnableInputDevice)
-                inputHelper?.OnRefresh();
         }
     }
 }

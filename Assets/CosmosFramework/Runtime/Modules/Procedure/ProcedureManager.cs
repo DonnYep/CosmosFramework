@@ -136,17 +136,16 @@ namespace Cosmos.Procedure
             procedureProcessor.OnProcedureNodeRemove += ProcedureNodeRemoveCallback;
             procedureProcessor.OnProcedureNodeChange += ProcedureNodeChangedCallback;
         }
+        protected override void OnUpdate()
+        {
+            procedureProcessor.Refresh();
+        }
         protected override void OnTermination()
         {
             procedureProcessor.ClearAllNode();
             procedureProcessor.OnProcedureNodeAdd -= ProcedureNodeAddCallback;
             procedureProcessor.OnProcedureNodeRemove -= ProcedureNodeRemoveCallback;
             procedureProcessor.OnProcedureNodeChange -= ProcedureNodeChangedCallback;
-        }
-        [TickRefresh]
-        void TickRefresh()
-        {
-            procedureProcessor.Refresh();
         }
         void ProcedureNodeAddCallback(Type type)
         {

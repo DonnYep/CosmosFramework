@@ -143,12 +143,9 @@ namespace Cosmos.ObjectPool
             objectPoolAssetHelper = new ObjectPoolAssetHelper();
             poolDict = new Dictionary<string, ObjectPool>();
         }
-        [ElapseRefresh]
-        void ElapseRefresh(float deltatime)
+        protected override void OnElapseUpdate(float realDeltaTime)
         {
-            if (IsPause)
-                return;
-            elapseRefreshHandler?.Invoke(deltatime);
+            elapseRefreshHandler?.Invoke(realDeltaTime);
         }
         void OnObjectPoolRegisterSuccess(string poolName, IObjectPool objectPool)
         {

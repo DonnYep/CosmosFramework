@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Object = UnityEngine.Object;
 namespace Cosmos
 {
     /// <summary>
     /// GameManager是静态的，因此由此类代理完成生命周期
     /// </summary>
     [DisallowMultipleComponent]
-    //[DefaultExecutionOrder(-1000)]
     public sealed class MonoGameManager : MonoSingleton<MonoGameManager>
     {
         DateTime previousTimeSinceStartup;
@@ -17,44 +15,32 @@ namespace Cosmos
         ///  key=>moduleType；value=>gameobject
         /// </summary>
         Dictionary<Type, GameObject> moduleMountDict;
-        public bool IsPause { get; private set; }
+        bool pause;
         public bool Pause
         {
-            get { return IsPause; }
+            get { return pause; }
             set
             {
-                if (IsPause == value)
+                if (pause == value)
                     return;
-                IsPause = value;
-                if (IsPause)
+                pause = value;
+                if (pause)
                 {
-                    OnPause();
+                    GameManager.Pause = true;
                 }
                 else
                 {
-                    OnUnPause();
+                    GameManager.Pause = true;
                 }
             }
         }
 
-        event Action ApplicationQuitHandler;
-        public void OnPause()
+        Action onApplicationQuitHandler;
+        public event Action OnApplicationQuitHandler
         {
-            GameManager.OnPause();
+            add { onApplicationQuitHandler += value; }
+            remove { onApplicationQuitHandler -= value; }
         }
-        public void OnUnPause()
-        {
-            GameManager.OnUnPause();
-        }
-        protected override void Awake()
-        {
-            base.Awake();
-            gameObject.name = "CosmosRoot";
-            DontDestroyOnLoad(this.gameObject);
-            previousTimeSinceStartup = DateTime.Now;
-            moduleMountDict = new Dictionary<Type, GameObject>();
-        }
-        public int ModuleCount { get { return GameManager.ModuleCount; } }
         public GameObject GetModuleGameObject(IModuleInstance module)
         {
             var type = module.GetType();
@@ -80,63 +66,43 @@ namespace Cosmos
             }
             return moduleMount;
         }
-        /// <summary>
-        /// 清除单个实例，有一个默认参数。
-        /// 默认延迟为0，表示立刻删除、
-        /// 仅在场景中删除对应对象
-        /// </summary>
-        public static void KillObject(Object obj, float delay = 0)
+        protected override void Awake()
         {
-            GameObject.Destroy(obj, delay);
-        }
-        /// <summary>
-        /// 立刻清理实例对象
-        /// 会在内存中清理实例
-        /// Editor适用
-        /// </summary>
-        public static void KillObjectImmediate(Object obj)
-        {
-            GameObject.DestroyImmediate(obj);
-        }
-        /// <summary>
-        /// 清除一组实例
-        /// </summary>
-        public static void KillObjects<T>(IEnumerable<T> objs) where T : Object
-        {
-            foreach (var obj in objs)
-            {
-                GameObject.Destroy(obj);
-            }
+            base.Awake();
+            gameObject.name = "CosmosRoot";
+            DontDestroyOnLoad(this.gameObject);
+            previousTimeSinceStartup = DateTime.Now;
+            moduleMountDict = new Dictionary<Type, GameObject>();
         }
         protected override void OnDestroy()
         {
-            GameManager.Dispose();
+            GameManager.TerminateModules();
         }
         private void FixedUpdate()
         {
-            if (IsPause)
+            if (pause)
                 return;
-            GameManager.OnFixRefresh();
+            GameManager.OnFixedRefresh();
         }
         private void Update()
         {
             float deltaTime = (float)(DateTime.Now.Subtract(previousTimeSinceStartup).TotalMilliseconds / 1000.0f);
             previousTimeSinceStartup = DateTime.Now;
 
-            if (IsPause)
+            if (pause)
                 return;
             GameManager.OnRefresh();
             GameManager.OnElapseRefresh(deltaTime);
         }
         private void LateUpdate()
         {
-            if (IsPause)
+            if (pause)
                 return;
             GameManager.OnLateRefresh();
         }
         private void OnApplicationQuit()
         {
-            ApplicationQuitHandler?.Invoke();
+            onApplicationQuitHandler?.Invoke();
         }
     }
 }

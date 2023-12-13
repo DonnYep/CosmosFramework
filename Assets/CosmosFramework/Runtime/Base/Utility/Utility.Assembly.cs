@@ -1110,6 +1110,15 @@ where K : class
                 var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
                 return properties.ToDictionary(f => f.Name, t => t.PropertyType);
             }
+            /// <summary>
+            /// 检测是否是引用类型
+            /// </summary>
+            /// <param name="obj">传入的对象</param>
+            /// <returns>是否是引用类型</returns>
+            public static bool IsReferenceType(object obj)
+            {
+                return !obj.GetType().IsValueType;
+            }
         }
     }
 }

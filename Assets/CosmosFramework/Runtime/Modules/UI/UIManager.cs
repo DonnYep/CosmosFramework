@@ -574,9 +574,9 @@ namespace Cosmos.UI
             uiFormInfoFilterCache = new List<UIFormInfo>();
             uiFormFilterCache = new List<IUIForm>();
         }
-        [TickRefresh]
-        void TickRefresh()
+        protected override void OnUpdate()
         {
+            base.OnUpdate();
             var uiFormStateArray = uiFormStateCache.ToArray();
             var length = uiFormStateArray.Length;
             for (int i = 0; i < length; i++)
