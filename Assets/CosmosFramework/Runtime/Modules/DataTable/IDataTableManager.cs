@@ -2,7 +2,7 @@
 
 namespace Cosmos.DataTable
 {
-    public interface IDataTableManager : IModuleManager, IModuleInstance
+    public interface IDataTableManager : IModuleManager
     {
         /// <summary>
         /// 数据表数量；

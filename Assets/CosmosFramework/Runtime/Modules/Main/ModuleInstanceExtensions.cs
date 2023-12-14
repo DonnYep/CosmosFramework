@@ -3,9 +3,9 @@ namespace Cosmos
 {
     public static class ModuleInstanceExtensions
     {
-        public static GameObject Instance(this IModuleInstance @this)
+        public static GameObject InstanceObject(this IModuleManager @this)
         {
-            return MonoGameManager.Instance.GetModuleGameObject(@this);
+            return MonoGameManager.Instance.GetModuleInstanceObject(@this);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Cosmos.Entity
      * 
      */
     //================================================
-    public interface IEntityManager : IModuleManager, IModuleInstance
+    public interface IEntityManager : IModuleManager
     {
         /// <summary>
         /// 实体数量；

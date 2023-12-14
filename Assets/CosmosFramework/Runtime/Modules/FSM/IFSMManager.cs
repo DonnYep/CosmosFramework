@@ -9,7 +9,7 @@ namespace Cosmos.FSM
      * 2、状态机组别设置是互斥的。一个状态机只允许拥有一个组别；
      */
     //================================================
-    public interface IFSMManager : IModuleManager, IModuleInstance
+    public interface IFSMManager : IModuleManager
     {
         /// <summary>
         /// 状态机数量；

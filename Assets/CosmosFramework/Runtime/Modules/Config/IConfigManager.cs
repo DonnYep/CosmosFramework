@@ -5,7 +5,7 @@
      * 1、配置模块，用户存储初始化需存放的全局数据；
     */
     //================================================
-    public interface IConfigManager: IModuleManager, IModuleInstance
+    public interface IConfigManager: IModuleManager
     {
         /// <summary>
         /// 添加一个配置数据；

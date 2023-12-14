@@ -11,7 +11,7 @@
     *    写法上使用何种分隔符并无区别。分隔符为 string[] { ".", "/", "\\" };
     */
     //================================================
-    public interface IDataNodeManager :IModuleManager, IModuleInstance
+    public interface IDataNodeManager :IModuleManager
     {
         /// <summary>
         /// 获取根数据结点；

@@ -9,7 +9,7 @@ namespace Cosmos
         IResourceManager resourceManager;
         Type uiFromBaseType;
         Transform uiRoot;
-        public UGUIAssetHelper() : this(CosmosEntry.UIManager.Instance().transform) { }
+        public UGUIAssetHelper() : this(CosmosEntry.UIManager.InstanceObject().transform) { }
         public UGUIAssetHelper(Transform uiRoot)
         {
             this.uiRoot = uiRoot;

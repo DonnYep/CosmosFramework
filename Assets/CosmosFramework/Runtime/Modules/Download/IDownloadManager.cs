@@ -17,7 +17,7 @@ namespace Cosmos.Download
     * 使用框架原生默认的下载器；
      */
     //================================================
-    public interface IDownloadManager : IModuleManager, IModuleInstance
+    public interface IDownloadManager : IModuleManager
     {
         /// <summary>
         /// 下载开始事件；

@@ -10,7 +10,7 @@ namespace Cosmos.Lockstep
         {
             var authorityConv = GameEntry.MultiplayManager.AuthorityConv;
             var localGo = MultiplayConfig.Instance.LocalPlayerPrefab;
-            var go = GameObject.Instantiate(localGo, GameEntry.MultiplayManager.Instance().transform);
+            var go = GameObject.Instantiate(localGo, GameEntry.MultiplayManager.InstanceObject().transform);
             var comp = go.AddComponent<MultiplayLogicComponent>();
             comp.Init(authorityConv, true);
             compDict.TryAdd(authorityConv, comp);
@@ -35,7 +35,7 @@ namespace Cosmos.Lockstep
         public void OnMulitplayPlayerEnter(int conv)
         {
             var remoteGo = MultiplayConfig.Instance.RemotePlayerPrefab;
-            var go = GameObject.Instantiate(remoteGo, GameEntry.MultiplayManager.Instance().transform);
+            var go = GameObject.Instantiate(remoteGo, GameEntry.MultiplayManager.InstanceObject().transform);
             var comp = go.AddComponent<MultiplayLogicComponent>();
             comp.Init(conv);
             compDict.TryAdd(conv, comp);

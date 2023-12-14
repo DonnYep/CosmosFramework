@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Cosmos.ObjectPool
 {
-    public interface IObjectPoolManager : IModuleManager, IModuleInstance
+    public interface IObjectPoolManager : IModuleManager
     {
         /// <summary>
         /// 对象池注册成功；

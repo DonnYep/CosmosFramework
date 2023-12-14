@@ -10,7 +10,7 @@ namespace Cosmos.UI
      * 参照UGUI的支持库写法即可。
      */
     //================================================
-    public interface IUIManager : IModuleManager, IModuleInstance
+    public interface IUIManager : IModuleManager
     {
         /// <summary>
         /// UIForm激活回调；

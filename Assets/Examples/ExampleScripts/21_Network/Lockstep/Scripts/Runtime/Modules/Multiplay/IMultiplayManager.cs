@@ -1,6 +1,6 @@
 ﻿namespace Cosmos.Lockstep
 {
-    public interface IMultiplayManager:IModuleManager, IModuleInstance
+    public interface IMultiplayManager:IModuleManager
     {
         int AuthorityConv { get;  }
         bool IsConnected { get; }

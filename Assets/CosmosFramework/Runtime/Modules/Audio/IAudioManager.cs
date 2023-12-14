@@ -15,7 +15,7 @@ namespace Cosmos.Audio
      * 注册成功后就可对声音进行播放，暂停，停止等操作。
      */
     //================================================
-    public interface IAudioManager : IModuleManager, IModuleInstance
+    public interface IAudioManager : IModuleManager
     {
         /// <summary>
         /// 声音注册失败事件；

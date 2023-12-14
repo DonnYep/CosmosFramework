@@ -11,11 +11,11 @@ namespace Cosmos
     {
         DateTime previousTimeSinceStartup;
         /// <summary>
-        /// 模块-mount字典；
-        ///  key=>moduleType；value=>gameobject
+        /// moduleType===gameobject
         /// </summary>
-        Dictionary<Type, GameObject> moduleMountDict;
+        readonly Dictionary<Type, GameObject> moduleInstanceObjectDict = new Dictionary<Type, GameObject>();
         bool pause;
+        Action onApplicationQuitHandler;
         public bool Pause
         {
             get { return pause; }
@@ -35,36 +35,35 @@ namespace Cosmos
             }
         }
 
-        Action onApplicationQuitHandler;
         public event Action OnApplicationQuitHandler
         {
             add { onApplicationQuitHandler += value; }
             remove { onApplicationQuitHandler -= value; }
         }
-        public GameObject GetModuleGameObject(IModuleInstance module)
+        public GameObject GetModuleInstanceObject(IModuleManager  moduleManager)
         {
-            var type = module.GetType();
+            var type = moduleManager.GetType();
             var hasType = GameManager.HasModule(type);
             if (!hasType)
                 return null;
-            GameObject moduleMount;
-            var hasMount = moduleMountDict.TryGetValue(type, out moduleMount);
+            GameObject instanceObject;
+            var hasMount = moduleInstanceObjectDict.TryGetValue(type, out instanceObject);
             if (!hasMount)
             {
-                moduleMount = new GameObject(type.Name + "-->>Instance");
-                moduleMount.transform.SetParent(transform);
-                moduleMountDict[type] = moduleMount;
+                instanceObject = new GameObject(type.Name + "-->>InstanceObject");
+                instanceObject.transform.SetParent(transform);
+                moduleInstanceObjectDict[type] = instanceObject;
             }
             else
             {
-                if (moduleMount == null)
+                if (instanceObject == null)
                 {
-                    moduleMount = new GameObject(type.Name + "-->>Instance");
-                    moduleMount.transform.SetParent(transform);
-                    moduleMountDict[type] = moduleMount;
+                    instanceObject = new GameObject(type.Name + "-->>InstanceObject");
+                    instanceObject.transform.SetParent(transform);
+                    moduleInstanceObjectDict[type] = instanceObject;
                 }
             }
-            return moduleMount;
+            return instanceObject;
         }
         protected override void Awake()
         {
@@ -72,7 +71,6 @@ namespace Cosmos
             gameObject.name = "CosmosRoot";
             DontDestroyOnLoad(this.gameObject);
             previousTimeSinceStartup = DateTime.Now;
-            moduleMountDict = new Dictionary<Type, GameObject>();
         }
         protected override void OnDestroy()
         {

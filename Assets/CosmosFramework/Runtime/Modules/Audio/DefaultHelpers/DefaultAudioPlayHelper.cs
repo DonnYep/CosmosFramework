@@ -57,7 +57,7 @@ namespace Cosmos
             audioSource.name = AudioConstant.PREFIX + audioObject.AudioName;
             if (audioPlayInfo.BindObject == null)
             {
-                audioSource.transform.SetParent(CosmosEntry.AudioManager.Instance().transform);
+                audioSource.transform.SetParent(CosmosEntry.AudioManager.InstanceObject().transform);
                 audioSource.transform.position = audioPlayInfo.WorldPosition;
             }
             else
@@ -162,7 +162,7 @@ namespace Cosmos
                     if (audioProxy != null)
                     {
                         audioProxy.AudioSource.name = AudioConstant.PREFIX;
-                        audioProxy.AudioSource.transform.SetParent(CosmosEntry.AudioManager.Instance().transform);
+                        audioProxy.AudioSource.transform.SetParent(CosmosEntry.AudioManager.InstanceObject().transform);
                         pool.Despawn(audioProxy.AudioSource);
                         audioProxyPool.Despawn(audioProxy);
                     }

@@ -2,7 +2,7 @@
 using UnityEngine;
 namespace Cosmos.Scene
 {
-    public interface ISceneManager : IModuleManager, IModuleInstance
+    public interface ISceneManager : IModuleManager
     {
         /// <summary>
         ///  异步加载场景；
