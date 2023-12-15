@@ -481,7 +481,7 @@ namespace Cosmos.UI
                     var uiFormName = uiForm.UIAssetInfo.UIFormName;
                     if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
                     {
-                        var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
+                        var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
                         uiFormInfoFilterCache.Add(uiFormInfo);
                     }
                 }
@@ -495,7 +495,7 @@ namespace Cosmos.UI
         {
             if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
             {
-                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
+                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
                 return uiFormInfo;
             }
             return UIFormInfo.None;
@@ -508,7 +508,7 @@ namespace Cosmos.UI
             {
                 if (!uiFormState.IsOpened)
                     continue;
-                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
+                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
                 uiFormInfoFilterCache.Add(uiFormInfo);
             }
             var infos = uiFormInfoFilterCache.ToArray();
@@ -523,7 +523,7 @@ namespace Cosmos.UI
             {
                 if (uiFormState.IsOpened)
                     continue;
-                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
+                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
                 uiFormInfoFilterCache.Add(uiFormInfo);
             }
             var infos = uiFormInfoFilterCache.ToArray();
@@ -536,7 +536,7 @@ namespace Cosmos.UI
             uiFormInfoFilterCache.Clear();
             foreach (var uiFormState in uiFormStateLoadedDict.Values)
             {
-                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
+                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
                 uiFormInfoFilterCache.Add(uiFormInfo);
             }
             var infos = uiFormInfoFilterCache.ToArray();
@@ -552,7 +552,7 @@ namespace Cosmos.UI
                 var uiForm = uiFormState.UIForm;
                 if (condition.Invoke(uiForm))
                 {
-                    var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order);
+                    var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
 
                     uiFormInfoFilterCache.Add(uiFormInfo);
                 }
