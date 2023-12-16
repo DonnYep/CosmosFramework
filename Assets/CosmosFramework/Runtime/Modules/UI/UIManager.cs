@@ -59,7 +59,7 @@ namespace Cosmos.UI
         /// </summary>
         List<UIFormInfo> uiFormInfoFilterCache;
         /// <summary>
-        /// UIForm的缓存
+        /// UIForm选取指定类型的缓存
         /// </summary>
         List<IUIForm> uiFormFilterCache;
 
@@ -274,15 +274,20 @@ namespace Cosmos.UI
             }
         }
         /// <inheritdoc/>
-        public void DeactiveUIGroup(string uiGroupName)
+        public void ReleaseAllUIForm()
         {
-            if (uiGroupDict.TryGetValue(uiGroupName, out var group))
+            foreach (var uiFormState in uiFormStateLoadedDict.Values)
             {
-                var uiForms = group.GetAllUIForm();
-                var length = uiForms.Length;
-                for (int i = 0; i < length; i++)
-                    uiForms[i].Active = false;
+                ReleaseUIForm(uiFormState.UIForm);
             }
+            loadingUIForms.Clear();
+            uiFormsToClose.Clear();
+            uiFormStateLoadedDict.Clear();
+            uiGroupDict.Clear();
+            uiFormStateCache.Clear();
+            activeUILnk.Clear();
+            deactiveUILnk.Clear();
+
         }
         /// <inheritdoc/>
         public void ActiveUIForm(string uiFormName)
@@ -331,6 +336,17 @@ namespace Cosmos.UI
                 var length = uiForms.Length;
                 for (int i = 0; i < length; i++)
                     uiForms[i].Active = true;
+            }
+        }
+        /// <inheritdoc/>
+        public void DeactiveUIGroup(string uiGroupName)
+        {
+            if (uiGroupDict.TryGetValue(uiGroupName, out var group))
+            {
+                var uiForms = group.GetAllUIForm();
+                var length = uiForms.Length;
+                for (int i = 0; i < length; i++)
+                    uiForms[i].Active = false;
             }
         }
         /// <inheritdoc/>

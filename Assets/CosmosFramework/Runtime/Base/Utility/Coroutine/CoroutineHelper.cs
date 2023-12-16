@@ -46,6 +46,20 @@ namespace Cosmos
                 Action = null;
             }
         }
+        class CoroutineActionTask : IReference
+        {
+            public Action Action;
+            public long TaskId;
+            public IEnumerator Task()
+            {
+                Action?.Invoke();
+                yield return null;
+            }
+            public void Release()
+            {
+                Action = null;
+            }
+        }
         List<IEnumerator> routineList = new List<IEnumerator>();
         static long taskIndex = 0;
         readonly Dictionary<long, DelayTask> delayTaskDict = new Dictionary<long, DelayTask>();
@@ -56,6 +70,9 @@ namespace Cosmos
         readonly List<ConditionTask> conditionTaskList = new List<ConditionTask>();
         readonly List<ConditionTask> removalConditionTaskList = new List<ConditionTask>();
 
+        readonly Dictionary<long, CoroutineActionTask> coroutineActionTaskDict = new Dictionary<long, CoroutineActionTask>();
+        readonly List<CoroutineActionTask> coroutineActionTaskList = new List<CoroutineActionTask>();
+        bool runningCoroutineTask;
 
         /// <summary>
         /// 加入延迟任务
@@ -67,12 +84,9 @@ namespace Cosmos
         {
             if (delay < 0)
                 delay = 0;
-            if (taskIndex == long.MaxValue)
-                taskIndex = 0;
-            else
-                taskIndex++;
+            var taskId = GenerateTaskId();
             var delayTask = ReferencePool.Acquire<DelayTask>();
-            delayTask.TaskId = taskIndex;
+            delayTask.TaskId = taskId;
             delayTask.CurrentTime = 0;
             delayTask.Delay = delay;
             delayTask.Action = action;
@@ -92,12 +106,9 @@ namespace Cosmos
         {
             if (timeout <= 0)
                 timeout = 0;
-            if (taskIndex == long.MaxValue)
-                taskIndex = 0;
-            else
-                taskIndex++;
+            var taskId = GenerateTaskId();
             var conditionTask = ReferencePool.Acquire<ConditionTask>();
-            conditionTask.TaskId = taskIndex;
+            conditionTask.TaskId = taskId;
             conditionTask.Timeout = timeout;
             conditionTask.CurrentTime = 0;
             conditionTask.Condition = condition;
@@ -154,6 +165,36 @@ namespace Cosmos
             conditionTaskDict.Clear();
         }
         /// <summary>
+        /// 添加协程任务，每个任务之间完成会相隔一帧
+        /// </summary>
+        /// <param name="action">事件</param>
+        /// <returns>任务Id</returns>
+        public long AddCoroutineActionTask(Action action)
+        {
+            var taskId = GenerateTaskId();
+            var coroutineTask = ReferencePool.Acquire<CoroutineActionTask>();
+            coroutineTask.Action = action;
+            coroutineTask.TaskId = taskId;
+            coroutineActionTaskDict.Add(taskId, coroutineTask);
+            if (!runningCoroutineTask)
+            {
+                StartCoroutine(RunCoroutineActionTask());
+                runningCoroutineTask = true;
+            }
+            return taskId;
+        }
+        /// <summary>
+        /// 移除任务
+        /// </summary>
+        /// <param name="taskId">任务Id</param>
+        public void RemoveCoroutineActionTask(long taskId)
+        {
+            if (coroutineActionTaskDict.Remove(taskId, out var coroutineTask))
+            {
+                coroutineActionTaskList.Remove(coroutineTask);
+            }
+        }
+        /// <summary>
         /// 条件协程；
         /// </summary>
         /// <param name="handler">目标条件</param>
@@ -207,12 +248,7 @@ namespace Cosmos
         }
         void Update()
         {
-            while (routineList.Count > 0)
-            {
-                var routine = routineList[0];
-                routineList.RemoveAt(0);
-                StartCoroutine(routine);
-            }
+            RefreshRoutineTask();
             RefreshDelayTask();
             RefreshConditionTask();
         }
@@ -250,6 +286,15 @@ namespace Cosmos
         {
             yield return new WaitUntil(predicateHandler);
             yield return StartCoroutine(EnumCoroutine(nestHandler));
+        }
+        void RefreshRoutineTask()
+        {
+            while (routineList.Count > 0)
+            {
+                var routine = routineList[0];
+                routineList.RemoveAt(0);
+                StartCoroutine(routine);
+            }
         }
         void RefreshDelayTask()
         {
@@ -328,6 +373,31 @@ namespace Cosmos
                 var removeTask = removalConditionTaskList[i];
                 RemoveConditionTask(removeTask.TaskId);
             }
+        }
+        IEnumerator RunCoroutineActionTask()
+        {
+            runningCoroutineTask = true;
+            while (coroutineActionTaskList.Count > 0)
+            {
+                var coroutineTask = coroutineActionTaskList[0];
+                coroutineActionTaskList.RemoveAt(0);
+                yield return coroutineTask.Task();
+                ReferencePool.Release(coroutineTask);
+            }
+            runningCoroutineTask = false;
+        }
+
+        /// <summary>
+        /// 生成任务Id
+        /// </summary>
+        /// <returns>任务Id</returns>
+        long GenerateTaskId()
+        {
+            if (taskIndex == long.MaxValue)
+                taskIndex = 0;
+            else
+                taskIndex++;
+            return taskIndex;
         }
     }
 }

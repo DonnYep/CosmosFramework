@@ -208,15 +208,14 @@ namespace Cosmos
         }
         public static Transform FindParent(this Transform @this, string name)
         {
-            var parentTransforms = @this.parent.GetComponentsInParent<Transform>();
-            Transform parent = null;
-            foreach (var tran in parentTransforms)
+            Transform parent = @this.parent;
+            while (parent != null)
             {
-                if (tran.name == name)
+                if (parent.name == name)
                 {
-                    parent = tran;
                     break;
                 }
+                parent = parent.parent;
             }
             return parent;
         }
