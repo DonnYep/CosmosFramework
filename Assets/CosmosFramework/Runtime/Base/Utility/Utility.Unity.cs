@@ -430,6 +430,23 @@ where T : Component
             {
                 CoroutineHelper.RemoveConditionTask(taskId);
             }
+            /// <summary>
+            /// 添加协程任务，每个任务之间完成会相隔一帧
+            /// </summary>
+            /// <param name="action">事件</param>
+            /// <returns>任务Id</returns>
+            public static long AddCoroutineActionTask(Action action)
+            {
+                return  CoroutineHelper.AddCoroutineActionTask(action);
+            }
+            /// <summary>
+            /// 移除任务
+            /// </summary>
+            /// <param name="taskId">任务Id</param>
+            public static void RemoveCoroutineActionTask(long taskId)
+            {
+                CoroutineHelper.RemoveCoroutineActionTask(taskId);
+            }
             public static Coroutine StartCoroutine(Coroutine routine, Action callBack)
             {
                 return CoroutineHelper.StartCoroutine(routine, callBack);
