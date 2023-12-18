@@ -73,6 +73,7 @@ namespace Cosmos
         readonly Dictionary<long, CoroutineActionTask> coroutineActionTaskDict = new Dictionary<long, CoroutineActionTask>();
         readonly List<CoroutineActionTask> coroutineActionTaskList = new List<CoroutineActionTask>();
         bool runningCoroutineTask;
+        Coroutine coroutineActionPtr;
 
         /// <summary>
         /// 加入延迟任务
@@ -192,6 +193,16 @@ namespace Cosmos
             if (coroutineActionTaskDict.Remove(taskId, out var coroutineTask))
             {
                 coroutineActionTaskList.Remove(coroutineTask);
+                ReferencePool.Release(coroutineTask);
+            }
+        }
+        public void StopAllCoroutineActionTask()
+        {
+            var length = coroutineActionTaskList.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var coroutineTask= coroutineActionTaskList[i];
+                ReferencePool.Release(coroutineTask);
             }
         }
         /// <summary>
@@ -278,7 +289,7 @@ namespace Cosmos
             callBack();
         }
         /// <summary>
-        /// 嵌套协程执行体；
+        /// 嵌套协程执行体
         /// </summary>
         /// <param name="predicateHandler">条件函数</param>
         /// <param name="nestHandler">条件成功后执行的嵌套协程</param>
