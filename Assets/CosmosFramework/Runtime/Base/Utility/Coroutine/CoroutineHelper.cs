@@ -196,14 +196,24 @@ namespace Cosmos
                 ReferencePool.Release(coroutineTask);
             }
         }
+        /// <summary>
+        /// 停止所有协程事件任务
+        /// </summary>
         public void StopAllCoroutineActionTask()
         {
+            if (coroutineActionPtr != null)
+            {
+                StopCoroutine(coroutineActionPtr);
+                runningCoroutineTask=false;
+            }
             var length = coroutineActionTaskList.Count;
             for (int i = 0; i < length; i++)
             {
                 var coroutineTask= coroutineActionTaskList[i];
                 ReferencePool.Release(coroutineTask);
             }
+            coroutineActionTaskDict.Clear();
+            coroutineActionTaskList.Clear();
         }
         /// <summary>
         /// 条件协程；
