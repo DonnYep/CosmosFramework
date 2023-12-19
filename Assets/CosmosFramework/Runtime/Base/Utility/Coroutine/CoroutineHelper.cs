@@ -57,6 +57,7 @@ namespace Cosmos
             }
             public void Release()
             {
+                TaskId = -1;
                 Action = null;
             }
         }
@@ -204,12 +205,12 @@ namespace Cosmos
             if (coroutineActionPtr != null)
             {
                 StopCoroutine(coroutineActionPtr);
-                runningCoroutineTask=false;
+                runningCoroutineTask = false;
             }
             var length = coroutineActionTaskList.Count;
             for (int i = 0; i < length; i++)
             {
-                var coroutineTask= coroutineActionTaskList[i];
+                var coroutineTask = coroutineActionTaskList[i];
                 ReferencePool.Release(coroutineTask);
             }
             coroutineActionTaskDict.Clear();

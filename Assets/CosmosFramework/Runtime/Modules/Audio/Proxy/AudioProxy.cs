@@ -28,11 +28,11 @@ namespace Cosmos.Audio
                 Utility.Unity.StopCoroutine(currentCoroutine);
             currentCoroutine = Utility.Unity.StartCoroutine(EnumFadeInPlay(fadeTime));
         }
-        public void OnUnPause(float fadeTime)
+        public void OnUnpause(float fadeTime)
         {
             if (currentCoroutine != null)
                 Utility.Unity.StopCoroutine(currentCoroutine);
-            currentCoroutine = Utility.Unity.StartCoroutine(EnumFadeInUnPause(fadeTime));
+            currentCoroutine = Utility.Unity.StartCoroutine(EnumFadeInUnpause(fadeTime));
         }
         public void OnPause(float fadeTime)
         {
@@ -73,7 +73,7 @@ namespace Cosmos.Audio
             AudioSource.volume = audioParams.Volume;
             IsFading = false;
         }
-        IEnumerator EnumFadeInUnPause(float fadeTime)
+        IEnumerator EnumFadeInUnpause(float fadeTime)
         {
             IsFading = true;
             if (fadeTime <= 0)

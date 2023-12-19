@@ -18,65 +18,66 @@ namespace Cosmos.Audio
     public interface IAudioManager : IModuleManager
     {
         /// <summary>
-        /// 声音注册失败事件；
-        /// 回调中参数为失败的资源名称；
+        /// 声音注册失败事件，参数为失败的资源名称
         /// </summary>
         event Action<AudioRegisterFailureEventArgs> AudioRegisterFailure;
         /// <summary>
-        /// 声音注册成功事件；
+        /// 声音注册成功事件
         /// </summary>
         event Action<AudioRegisterSuccessEventArgs> AudioRegisterSuccess;
         /// <summary>
-        /// 可播放的声音数量；
+        /// 可播放的声音数量
         /// </summary>
         int AudioCount { get; }
         /// <summary>
-        /// 静音；
+        /// 静音
         /// </summary>
         bool Mute { get; set; }
         /// <summary>
-        /// 设置声音资源帮助体；
+        /// 设置声音资源帮助体
         /// </summary>
         /// <param name="helper">自定义实现的声音帮助体</param>
         void SetAudioAssetHelper(IAudioAssetHelper helper);
         /// <summary>
-        /// 设置声音播放帮助体；
+        /// 设置声音播放帮助体
         /// </summary>
         /// <param name="helper">自定义实现的声音播放帮助体</param>
         void SetAudioPlayHelper(IAudioPlayHelper helper);
         /// <summary>
-        ///注册声音；
-        ///若声音原始存在，则更新，若不存在，则加载；
+        ///注册声音
+        ///<para>若声音原始存在，则更新，若不存在，则加载</para>
+        ///<para>注册成功回调<see cref="AudioRegisterSuccess"/></para>
+        ///<para>注册失败回调<see cref="AudioRegisterFailure"/></para>
         /// </summary>
         void RegisterAudioAsync(AudioAssetInfo audioAssetInfo);
         /// <summary>
-        /// 注销声音；
+        /// 注销声音
         /// </summary>
         /// <param name="audioName">声音名</param>
         void DeregisterAudio(string audioName);
 
         #region IndividualAudio
         /// <summary>
-        /// 播放声音；
+        /// 播放声音
         /// </summary>
         /// <param name="audioName">注册过的声音名</param>
         /// <param name="audioParams">声音具体参数</param>
         /// <param name="audioPlayInfo">声音播放时候的位置信息以及绑定对象等</param>
         void PlayAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo);
         /// <summary>
-        /// 暂停声音；
+        /// 暂停声音
         /// </summary>
         /// <param name="audioName">声音名</param>
         /// <param name="fadeTime">过渡时间</param>
         void PauseAudio(string audioName, float fadeTime = 0);
         /// <summary>
-        /// 恢复播放声音；
+        /// 恢复播放声音
         /// </summary>
         /// <param name="audioName">声音名</param>
         /// <param name="fadeTime">过渡时间</param>
-        void UnPauseAudio(string audioName, float fadeTime = 0);
+        void UnpauseAudio(string audioName, float fadeTime = 0);
         /// <summary>
-        /// 停止播放声音；
+        /// 停止播放声音
         /// </summary>
         /// <param name="audioName">声音名</param>
         /// <param name="fadeTime">过渡时间</param>
@@ -88,7 +89,7 @@ namespace Cosmos.Audio
         /// <returns>存在的结果</returns>
         bool HasAudio(string audioName);
         /// <summary>
-        /// 设置声音表现；
+        /// 设置声音表现
         /// </summary>
         /// <param name="audioName">注册过的声音名</param>
         /// <param name="audioParams">声音具体参数</param>
@@ -104,17 +105,17 @@ namespace Cosmos.Audio
         /// <returns>是否设置成功</returns>
         bool SetAuidoGroup(string audioName, string audioGroupName);
         /// <summary>
-        /// 暂停播放音效组；
+        /// 暂停播放音效组
         /// </summary>
         /// <param name="audioGroupName">声音组名</param>
         /// <param name="fadeTime">过渡时间</param>
         void PauseAudioGroup(string audioGroupName, float fadeTime = 0);
         /// <summary>
-        /// 恢复声音组播放；
+        /// 恢复声音组播放
         /// </summary>
         /// <param name="audioGroupName">声音组名</param>
         /// <param name="fadeTime">过渡时间</param>
-        void UnPauseAudioGroup(string audioGroupName, float fadeTime = 0);
+        void UnpauseAudioGroup(string audioGroupName, float fadeTime = 0);
         /// <summary>
         /// 停止播放声音组
         /// </summary>
@@ -122,14 +123,14 @@ namespace Cosmos.Audio
         /// <param name="fadeTime">过渡时间</param>
         void StopAudioGroup(string audioGroupName, float fadeTime = 0);
         /// <summary>
-        /// 是否存在音效组；
+        /// 是否存在音效组
         /// </summary>
         /// <param name="audioGroupName">声音组名</param>
         /// <returns>存在的结果</returns>
         bool HasAudioGroup(string audioGroupName);
         /// <summary>
-        /// 清空声音组；
-        /// 注意：这里的清空指的是对声音组别的置空，并不会影响到声音对象注册的状态；
+        /// 清空声音组
+        /// <para>注意：这里的清空指的是对声音组别的置空，并不会影响到声音对象注册的状态</para> 
         /// </summary>
         /// <param name="audioGroupName">声音组名</param>
         void ClearAudioGroup(string audioGroupName);
@@ -140,11 +141,11 @@ namespace Cosmos.Audio
         /// </summary>
         void PauseAllAudios();
         /// <summary>
-        /// 停止所有声音；
+        /// 停止所有声音
         /// </summary>
         void StopAllAudios();
         /// <summary>
-        /// 注销所有声音，并清空声音组池；
+        /// 注销所有声音，并清空声音组池
         /// </summary>
         void DeregisterAllAudios();
     }

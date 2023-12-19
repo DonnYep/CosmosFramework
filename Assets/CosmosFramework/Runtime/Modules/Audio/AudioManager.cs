@@ -136,12 +136,12 @@ namespace Cosmos.Audio
             }
         }
         ///<inheritdoc/>
-        public void UnPauseAudio(string audioName, float fadeTime = 0)
+        public void UnpauseAudio(string audioName, float fadeTime = 0)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
             if (audioObjectDict.TryGetValue(audioName, out var audioObject))
             {
-                audioPlayHelper.UnPauseAudio(audioObject, fadeTime);
+                audioPlayHelper.UnpauseAudio(audioObject, fadeTime);
             }
             else
             {
@@ -219,7 +219,7 @@ namespace Cosmos.Audio
             }
         }
         ///<inheritdoc/>
-        public void UnPauseAudioGroup(string audioGroupName, float fadeTime = 0)
+        public void UnpauseAudioGroup(string audioGroupName, float fadeTime = 0)
         {
             Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
             if (audioGroupDict.TryGetValue(audioGroupName, out var group))
@@ -227,7 +227,7 @@ namespace Cosmos.Audio
                 var dict = group.AudioDict;
                 foreach (var obj in dict)
                 {
-                    audioPlayHelper.UnPauseAudio(obj.Value, fadeTime);
+                    audioPlayHelper.UnpauseAudio(obj.Value, fadeTime);
                 }
             }
             else

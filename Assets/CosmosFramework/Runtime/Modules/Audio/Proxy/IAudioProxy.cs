@@ -7,7 +7,7 @@ namespace Cosmos.Audio
         AudioSource AudioSource { get; set; }
         bool IsFading { get; }
         void OnPlay(float fadeTime, AudioParams audioParams);
-        void OnUnPause(float fadeTime);
+        void OnUnpause(float fadeTime);
         void OnPause(float fadeTime);
         void OnStop(float fadeTime);
     }
