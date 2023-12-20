@@ -28,7 +28,7 @@ namespace Cosmos.Audio
                 Utility.Unity.StopCoroutine(currentCoroutine);
             currentCoroutine = Utility.Unity.StartCoroutine(EnumFadeInPlay(fadeTime));
         }
-        public void OnUnpause(float fadeTime)
+        public void OnResume(float fadeTime)
         {
             if (currentCoroutine != null)
                 Utility.Unity.StopCoroutine(currentCoroutine);

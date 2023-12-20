@@ -18,7 +18,7 @@
         public const float MaxDistance = 500;
 
         /// <summary>
-        /// 检查播放间隔，5秒；
+        /// 检查播放间隔，5秒
         /// </summary>
         public const int CheckPlayingIntervalSecond = 5;
 

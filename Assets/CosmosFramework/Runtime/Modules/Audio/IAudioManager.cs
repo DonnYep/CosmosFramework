@@ -49,6 +49,7 @@ namespace Cosmos.Audio
         ///<para>注册成功回调<see cref="AudioRegisterSuccess"/></para>
         ///<para>注册失败回调<see cref="AudioRegisterFailure"/></para>
         /// </summary>
+        /// <param name="audioAssetInfo">音效资产信息</param>
         void RegisterAudioAsync(AudioAssetInfo audioAssetInfo);
         /// <summary>
         /// 注销声音
@@ -75,7 +76,7 @@ namespace Cosmos.Audio
         /// </summary>
         /// <param name="audioName">声音名</param>
         /// <param name="fadeTime">过渡时间</param>
-        void UnpauseAudio(string audioName, float fadeTime = 0);
+        void ResumeAudio(string audioName, float fadeTime = 0);
         /// <summary>
         /// 停止播放声音
         /// </summary>

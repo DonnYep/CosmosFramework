@@ -77,12 +77,12 @@ namespace Cosmos
                 audioProxy.OnPause(fadeTime);
             }
         }
-        public void UnpauseAudio(AudioObject audioObject, float fadeTime)
+        public void ResumeAudio(AudioObject audioObject, float fadeTime)
         {
             if (pauseDict.Remove(audioObject.AudioName, out var audioProxy))
             {
                 playingDict.Add(audioObject.AudioName, audioProxy);
-                audioProxy.OnUnpause(fadeTime);
+                audioProxy.OnResume(fadeTime);
             }
         }
         public void StopAudio(AudioObject audioObject, float fadeTime)

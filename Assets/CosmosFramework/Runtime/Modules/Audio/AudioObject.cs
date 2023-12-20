@@ -3,7 +3,7 @@ using System;
 namespace Cosmos.Audio
 {
     /// <summary>
-    /// 声音对象；
+    /// 声音对象
     /// </summary>
     public class AudioObject : IEquatable<AudioObject>
     {

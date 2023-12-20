@@ -7,9 +7,9 @@ namespace Cosmos
     public class DefaultAudioAssetHelper : IAudioAssetHelper
     {
         IResourceManager ResourceManager { get { return CosmosEntry.ResourceManager; } }
-        public Coroutine LoadAudioAsync(AudioAssetInfo assetInfo, Action<AudioObject> loadSuccess, Action loadFailure)
+        public Coroutine LoadAudioAsync(string audioAssetName, Action<AudioObject> loadSuccess, Action loadFailure)
         {
-            return ResourceManager.LoadAssetAsync<AudioClip>(assetInfo.AssetName,clip=> 
+            return ResourceManager.LoadAssetAsync<AudioClip>(audioAssetName, clip=> 
             {
                 if (clip == null)
                 {
@@ -17,10 +17,14 @@ namespace Cosmos
                 }
                 else
                 {
-                    var audioObject = new AudioObject(assetInfo.AssetName, clip);
+                    var audioObject = new AudioObject(audioAssetName, clip);
                     loadSuccess?.Invoke(audioObject);
                 }
             });
+        }
+        public void UnloadAudio(string audioAssetName)
+        {
+            ResourceManager.UnloadAsset(audioAssetName);
         }
     }
 }

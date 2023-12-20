@@ -53,7 +53,7 @@ public class PlayAudioPanel : MonoBehaviour
     }
     void UnpauseAudio()
     {
-        CosmosEntry.AudioManager.UnpauseAudio("AudioTechHouse", fadeTime);
+        CosmosEntry.AudioManager.ResumeAudio("AudioTechHouse", fadeTime);
         Utility.Debug.LogInfo("UnpauseAudio");
     }
     void StopAudio()
