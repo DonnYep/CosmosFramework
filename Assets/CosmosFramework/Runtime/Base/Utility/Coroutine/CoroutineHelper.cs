@@ -61,7 +61,19 @@ namespace Cosmos
                 Action = null;
             }
         }
-        List<IEnumerator> routineList = new List<IEnumerator>();
+        class CoroutineTask : IReference
+        {
+            public IEnumerator Enumerator;
+            public Action<Coroutine> Callback;
+            public long TaskId;
+            public void Release()
+            {
+                TaskId = -1;
+                Enumerator = null;
+                Callback=null;
+            }
+        }
+        List<CoroutineTask> routineList = new List<CoroutineTask>();
         static long taskIndex = 0;
         readonly Dictionary<long, DelayTask> delayTaskDict = new Dictionary<long, DelayTask>();
         readonly List<DelayTask> delayTaskList = new List<DelayTask>();
@@ -264,9 +276,12 @@ namespace Cosmos
         {
             return StartCoroutine(EnumCoroutine(routine, callBack));
         }
-        public void AddCoroutine(IEnumerator routine)
+        public void AddCoroutine(IEnumerator routine, Action<Coroutine> callback)
         {
-            routineList.Add(routine);
+            var task = ReferencePool.Acquire<CoroutineTask>();
+            task.Enumerator = routine;
+            task.Callback = callback;
+            routineList.Add(task);
         }
         void Update()
         {
@@ -313,9 +328,11 @@ namespace Cosmos
         {
             while (routineList.Count > 0)
             {
-                var routine = routineList[0];
+                var task = routineList[0];
                 routineList.RemoveAt(0);
-                StartCoroutine(routine);
+                var coroutine = StartCoroutine(task.Enumerator);
+                task.Callback?.Invoke(coroutine);
+                ReferencePool.Release(task);
             }
         }
         void RefreshDelayTask()

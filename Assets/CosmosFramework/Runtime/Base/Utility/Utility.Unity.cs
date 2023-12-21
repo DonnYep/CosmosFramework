@@ -470,9 +470,9 @@ where T : Component
             {
                 return CoroutineHelper.StartCoroutine(handler, callback);
             }
-            public static void AddCoroutine(IEnumerator routine)
+            public static void AddCoroutine(IEnumerator routine,Action<Coroutine>callback)
             {
-                CoroutineHelper.AddCoroutine(routine);
+                CoroutineHelper.AddCoroutine(routine, callback);
             }
             /// <summary>
             /// 延时协程；

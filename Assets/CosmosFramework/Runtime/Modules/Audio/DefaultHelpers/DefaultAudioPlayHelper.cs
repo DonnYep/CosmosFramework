@@ -40,7 +40,7 @@ namespace Cosmos
             latestTime = Utility.Time.SecondNow();
             audioProxyPool = new Pool<IAudioProxy>(() => { return new AudioProxy(); }, audio => { audio.Dispose(); });
         }
-        public void PlayAudio(AudioObject audioObject, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
+        public void PlayAudio(AudioObject audioObject, AudioParams audioParams, AudioPositionParams audioPlayInfo)
         {
             if (playingDict.TryGetValue(audioObject.AudioName, out var playingProxy))
             {

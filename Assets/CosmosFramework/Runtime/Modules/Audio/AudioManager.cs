@@ -111,7 +111,7 @@ namespace Cosmos.Audio
 
         #region IndividualAudio
         ///<inheritdoc/>
-        public void PlayAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo)
+        public void PlayAudio(string audioName, AudioParams audioParams, AudioPositionParams audioPlayInfo)
         {
             Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
             if (audioObjectDict.TryGetValue(audioName, out var audioObject))

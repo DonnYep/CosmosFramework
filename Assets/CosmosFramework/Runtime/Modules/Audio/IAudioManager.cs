@@ -64,7 +64,7 @@ namespace Cosmos.Audio
         /// <param name="audioName">注册过的声音名</param>
         /// <param name="audioParams">声音具体参数</param>
         /// <param name="audioPlayInfo">声音播放时候的位置信息以及绑定对象等</param>
-        void PlayAudio(string audioName, AudioParams audioParams, AudioPlayInfo audioPlayInfo);
+        void PlayAudio(string audioName, AudioParams audioParams, AudioPositionParams audioPlayInfo);
         /// <summary>
         /// 暂停声音
         /// </summary>

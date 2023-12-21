@@ -6,7 +6,7 @@
     public interface IAudioPlayHelper
     {
         bool Mute { get; set; }
-        void PlayAudio(AudioObject audioObject,AudioParams audioParams, AudioPlayInfo audioPlayInfo);
+        void PlayAudio(AudioObject audioObject,AudioParams audioParams, AudioPositionParams audioPlayInfo);
         void StopAudio(AudioObject audioObject,float fadeTime);
         void PauseAudio(AudioObject audioObject, float fadeTime);
         void ResumeAudio(AudioObject audioObject, float fadeTime);
