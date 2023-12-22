@@ -7,6 +7,10 @@ namespace Cosmos.Audio
     /// </summary>
     public class AudioObject : IEquatable<AudioObject>
     {
+        /// <summary>
+        /// 音效实体
+        /// </summary>
+        public int AudioEntityId { get; set; }
         public string AudioName { get; private set; }
         public AudioClip AudioClip { get; private set; }
         public string AudioGroupName { get; private set; }

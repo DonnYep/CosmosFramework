@@ -7,10 +7,12 @@ using Cosmos.Audio;
 
 namespace Cosmos
 {
-    public class AudioPlayHelper 
+    public class AudioPlayHelper
     {
+        //音效播放帮助体应支持同一个音效资源多个实体播放
         AudioSourcePool audioSourcePool;
         readonly List<IAudioProxy> audioProxyList;
+        readonly Dictionary<int, IAudioProxy> audioProxyDict = new Dictionary<int, IAudioProxy>();
         Pool<IAudioProxy> audioProxyPool;
         long latestTime;
         bool mute;
