@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cosmos
@@ -218,6 +219,20 @@ namespace Cosmos
                 parent = parent.parent;
             }
             return parent;
+        }
+        public static Transform[] FindParents(this Transform @this, Predicate<Transform> condition)
+        {
+            List<Transform> transformList = new List<Transform>();
+            Transform parent = @this.parent;
+            while (parent != null)
+            {
+                if (condition(parent))
+                {
+                    transformList.Add(parent);
+                }
+                parent = parent.parent;
+            }
+            return transformList.ToArray();
         }
         /// <summary>
         /// 查找同级别下所有目标组件；
