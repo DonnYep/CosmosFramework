@@ -75,35 +75,6 @@ where T : Component
                 return scene.GetRootGameObjects().FirstOrDefault(condition);
             }
             /// <summary>
-            /// 查找同级别
-            /// </summary>
-            /// <param name="go">同级别当前对象</param>
-            /// <param name="name">同级别目标对象名称</param>
-            /// <returns>查找到的目标对象</returns>
-            public static Transform Peer(Transform go, string name)
-            {
-                Transform tran = go.parent.Find(name);
-                if (tran == null)
-                    return null;
-                return tran;
-            }
-            /// <summary>
-            /// 查找同级别其他对象；
-            /// </summary>
-            /// <param name="go">同级别当前对象</param>
-            /// <param name="includeSrc">是否包含本身</param>
-            /// <returns>当前级别下除此对象的其他同级的对象</returns>
-            public static Transform[] Peers(Transform go, bool includeSrc = false)
-            {
-                Transform parentTrans = go.parent;
-                var childTrans = parentTrans.GetComponentsInChildren<Transform>();
-                var length = childTrans.Length;
-                if (!includeSrc)
-                    return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != go);
-                else
-                    return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
-            }
-            /// <summary>
             /// 查找同级别下所有目标组件；
             /// 略耗性能；
             /// </summary>
