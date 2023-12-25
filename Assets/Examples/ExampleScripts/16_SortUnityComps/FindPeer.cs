@@ -6,7 +6,7 @@ namespace Cosmos.Test
         [SerializeField] Transform targetPeer;
         void Start()
         {
-            var childs = Utility.Unity.PeerComponets<PeerBase>(targetPeer,true);
+            var childs =targetPeer.PeerComponets<PeerBase>(true);
             Utility.Unity.SortCompsByAscending(childs, (pb) => pb.Index);
         }
     }

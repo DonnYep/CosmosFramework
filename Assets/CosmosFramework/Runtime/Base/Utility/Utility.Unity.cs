@@ -47,22 +47,6 @@ namespace Cosmos
             #endregion
 
             #region UnityComponent
-            public static T ChildComponent<T>(Transform go, string name)
-      where T : Component
-            {
-                var child = go.FindChildren(name);
-                if (child == null)
-                    return null;
-                return child.GetComponent<T>();
-            }
-            public static T ParentComponent<T>(Transform go, string name)
-where T : Component
-            {
-                var parent = FindParent(go, name);
-                if (parent == null)
-                    return null;
-                return parent.GetComponent<T>();
-            }
             /// <summary>
             /// 查找目标场景中的目标对象
             /// </summary>
@@ -73,40 +57,6 @@ where T : Component
             {
                 var scene = SceneManager.GetSceneByName(sceneName);
                 return scene.GetRootGameObjects().FirstOrDefault(condition);
-            }
-            /// <summary>
-            /// 查找同级别下所有目标组件；
-            /// 略耗性能；
-            /// </summary>
-            /// <typeparam name="T">目标组件</typeparam>
-            /// <param name="go">同级别当前对象</param>
-            /// <param name="includeSrc">包含当前对象</param>
-            /// <returns>同级别对象数组</returns>
-            public static T[] PeerComponets<T>(Transform go, bool includeSrc = false) where T : Component
-            {
-                Transform parentTrans = go.parent;
-                var childTrans = parentTrans.GetComponentsInChildren<Transform>();
-                var length = childTrans.Length;
-                Transform[] trans;
-                if (!includeSrc)
-                    trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
-                else
-                    trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != go);
-                var transLength = trans.Length;
-                T[] src = new T[transLength];
-                int idx = 0;
-                for (int i = 0; i < transLength; i++)
-                {
-                    var comp = trans[i].GetComponent<T>();
-                    if (comp != null)
-                    {
-                        src[idx] = comp;
-                        idx++;
-                    }
-                }
-                T[] dst = new T[idx];
-                Array.Copy(src, 0, dst, 0, idx);
-                return dst;
             }
             /// <summary>
             /// 对unity对象进行升序排序
