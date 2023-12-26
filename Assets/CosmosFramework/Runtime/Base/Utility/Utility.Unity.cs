@@ -94,17 +94,6 @@ namespace Cosmos
                     comps[i].transform.SetSiblingIndex(i);
                 }
             }
-            /// <summary>
-            /// 查找父服务器
-            /// </summary>
-            /// <param name="go">节点</param>
-            /// <param name="name">名称</param>
-            /// <returns>查找到对象</returns>
-            public static Transform FindParent(Transform go, string name)
-            {
-                var par = go.GetComponentsInParent<Transform>();
-                return Algorithm.Find(par, p => p.gameObject.name == name);
-            }
             #endregion
 
             #region Graphics
