@@ -8,8 +8,9 @@ public class PlayAudioPanel : MonoBehaviour
     Button btnPause;
     Button btnUnPause;
     Button btnStop;
-    [SerializeField] [Range(0,10)]float fadeTime;
-    [SerializeField] [Range(0, 1)] float volume=1;
+    [SerializeField] [Range(0, 10)] float fadeTime;
+    [SerializeField] [Range(0, 1)] float volume = 1;
+    int audioSerialId;
     void Awake()
     {
         btnPlay = gameObject.GetComponentInChildren<Button>("Play");
@@ -24,41 +25,49 @@ public class PlayAudioPanel : MonoBehaviour
     }
     void Start()
     {
-        CosmosEntry.AudioManager.AudioRegisterSuccess += AudioRegisterSuccess;
-        CosmosEntry.AudioManager.AudioRegisterFailure += AudioRegistFailure; ;
-        var audioAssetInfo = new AudioAssetInfo("AudioTechHouse", "AudioTechHouse");
-        CosmosEntry.AudioManager.RegisterAudioAsync(audioAssetInfo);
+        CosmosEntry.AudioManager.AudioAssetRegisterSuccess += AudioRegisterSuccess;
+        CosmosEntry.AudioManager.AudioAssetRegisterFailure += AudioRegistFailure; ;
+        CosmosEntry.AudioManager.RegisterAudioAsset("AudioTechHouse");
     }
     void AudioRegisterSuccess(AudioRegisterSuccessEventArgs eventArgs)
     {
-        Utility.Debug.LogInfo($" {eventArgs.AudioName} Register success", DebugColor.green);
+        Utility.Debug.LogInfo($" {eventArgs.AudioAssetName} Register success", DebugColor.green);
     }
     void AudioRegistFailure(AudioRegisterFailureEventArgs eventArgs)
     {
-        Utility.Debug.LogError($" {eventArgs.AudioName} Register Failure");
+        Utility.Debug.LogError($" {eventArgs.AudioAssetName} Register Failure");
     }
     void PlayAudio()
     {
         var ap = AudioParams.Default;
         ap.Loop = true;
-        ap.FadeInTime= fadeTime;
+        ap.FadeInSeconds = fadeTime;
         ap.Volume = volume;
-        CosmosEntry.AudioManager.PlayAudio("AudioTechHouse", ap, AudioPositionParams.Default);
+        var has = CosmosEntry.AudioManager.HasAudio(audioSerialId);
+        if (!has)
+        {
+
+            //CosmosEntry.AudioManager.PlayAudio(audioSerialId, ap, AudioPositionParams.Default);
+        }
+        else
+        {
+            audioSerialId = CosmosEntry.AudioManager.PlayAudio("AudioTechHouse", ap, AudioPositionParams.Default);
+        }
         Utility.Debug.LogInfo("PlayAudio");
     }
     void PauseAudio()
     {
-        CosmosEntry.AudioManager.PauseAudio("AudioTechHouse", fadeTime);
+        CosmosEntry.AudioManager.PauseAudio(audioSerialId, fadeTime);
         Utility.Debug.LogInfo("PuaseAudio");
     }
     void UnpauseAudio()
     {
-        CosmosEntry.AudioManager.ResumeAudio("AudioTechHouse", fadeTime);
+        CosmosEntry.AudioManager.ResumeAudio(audioSerialId, fadeTime);
         Utility.Debug.LogInfo("UnpauseAudio");
     }
     void StopAudio()
     {
-        CosmosEntry.AudioManager.StopAudio("AudioTechHouse", fadeTime);
+        CosmosEntry.AudioManager.StopAudio(audioSerialId, fadeTime);
         Utility.Debug.LogInfo("StopAudio");
     }
 }

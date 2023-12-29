@@ -29,5 +29,14 @@
         /// 默认音效组名
         /// </summary>
         public const string DEFAULT_AUDIO_GROUP = "<DEFAULT_AUDIO_GROUP>";
+
+        /// <summary>
+        /// 默认音效淡出时间，单位秒
+        /// </summary>
+        public const float DEFAULT_FADEOUT_SECONDS = 0;
+        /// <summary>
+        /// 默认音效淡入时间，单位秒
+        /// </summary>
+        public const float DEFAULT_FADEIN_SECONDS = 0;
     }
 }

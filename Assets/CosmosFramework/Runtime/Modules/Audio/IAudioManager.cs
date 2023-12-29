@@ -3,16 +3,15 @@ namespace Cosmos.Audio
 {
     //================================================
     /*
-     * 1、声音资源可设置组别，单体声音资源与组别的关系为一对多映射关系。
+     * 1、音效采用注册播放方式。若需要成功播放一个音效，须先注册音效资源。
      * 
-     * 2、注册的声音对象名都是唯一的，若重名，则覆写。命名时尽量安规则。
+     * 2、默认存在一个内置的音效组，不可移除。
      * 
-     * 3、播放声音时传入的AudioPlayInfo拥有两个公共属性字段。若BindObject
-     * 不为空，则有限绑定，否则是WorldPosition；
+     * 3、音效的播放、暂停、恢复、停止操作，都可传入过渡时间。
      * 
-     * 4、播放声音前需要先对声音资源进行注册，API为  RegistAudioAsync 。
-     * 通过监听AudioRegistFailure与AudioRegisterSuccess事件查看注册结果。
-     * 注册成功后就可对声音进行播放，暂停，停止等操作。
+     * 4、相同音效支持多个实体播放。
+     * 
+     * 5、所有播放声音所返回的serialId都大于等于1。
      */
     //================================================
     public interface IAudioManager : IModuleManager
@@ -20,134 +19,165 @@ namespace Cosmos.Audio
         /// <summary>
         /// 声音注册失败事件，参数为失败的资源名称
         /// </summary>
-        event Action<AudioRegisterFailureEventArgs> AudioRegisterFailure;
+        event Action<AudioRegisterFailureEventArgs> AudioAssetRegisterFailure;
         /// <summary>
         /// 声音注册成功事件
         /// </summary>
-        event Action<AudioRegisterSuccessEventArgs> AudioRegisterSuccess;
+        event Action<AudioRegisterSuccessEventArgs> AudioAssetRegisterSuccess;
         /// <summary>
-        /// 可播放的声音数量
+        /// 注册的声音资产数量
         /// </summary>
-        int AudioCount { get; }
+        int AudioAssetCount { get; }
         /// <summary>
         /// 静音
         /// </summary>
         bool Mute { get; set; }
         /// <summary>
-        /// 设置声音资源帮助体
+        /// 设置声音资源加载帮助体
         /// </summary>
-        /// <param name="helper">自定义实现的声音帮助体</param>
+        /// <param name="helper">声音资源加载帮助体</param>
         void SetAudioAssetHelper(IAudioAssetHelper helper);
         /// <summary>
-        /// 设置声音播放帮助体
+        ///注册声音资源
+        ///<para>注册成功回调：<see cref="AudioAssetRegisterSuccess"/></para>
+        ///<para>注册失败回调：<see cref="AudioAssetRegisterFailure"/></para>
         /// </summary>
-        /// <param name="helper">自定义实现的声音播放帮助体</param>
-        void SetAudioPlayHelper(IAudioPlayHelper helper);
+        /// <param name="audioAssetName">声音资源名称</param>
+        void RegisterAudioAsset(string audioAssetName);
         /// <summary>
-        ///注册声音
-        ///<para>若声音原始存在，则更新，若不存在，则加载</para>
-        ///<para>注册成功回调<see cref="AudioRegisterSuccess"/></para>
-        ///<para>注册失败回调<see cref="AudioRegisterFailure"/></para>
+        /// 注销声音资源，同时释放所有使用此资源名称的播放实体
         /// </summary>
-        /// <param name="audioAssetInfo">音效资产信息</param>
-        void RegisterAudioAsync(AudioAssetInfo audioAssetInfo);
-        /// <summary>
-        /// 注销声音
-        /// </summary>
-        /// <param name="audioName">声音名</param>
-        void DeregisterAudio(string audioName);
-
-        #region IndividualAudio
+        /// <param name="audioAssetName">声音资源名称</param>
+        void DeregisterAudioAsset(string audioAssetName);
         /// <summary>
         /// 播放声音
+        /// <para>未设置声音组，默认归入<see cref="AudioConstant.DEFAULT_AUDIO_GROUP"/></para>
         /// </summary>
-        /// <param name="audioName">注册过的声音名</param>
-        /// <param name="audioParams">声音具体参数</param>
-        /// <param name="audioPlayInfo">声音播放时候的位置信息以及绑定对象等</param>
-        void PlayAudio(string audioName, AudioParams audioParams, AudioPositionParams audioPlayInfo);
+        /// <param name="audioAssetName">声音资源名称</param>
+        /// <returns>播放序列号</returns>
+        int PlayAudio(string audioAssetName);
+        /// <summary>
+        /// 播放声音
+        /// <para>未设置声音组，默认归入<see cref="AudioConstant.DEFAULT_AUDIO_GROUP"/></para>
+        /// </summary>
+        /// <param name="audioAssetName">声音资源名称</param>
+        /// <param name="audioParams">声音播放参数</param>
+        /// <returns>播放序列号</returns>
+        int PlayAudio(string audioAssetName, AudioParams audioParams);
+        /// <summary>
+        /// 播放声音
+        /// <para>未设置声音组，默认归入<see cref="AudioConstant.DEFAULT_AUDIO_GROUP"/></para>
+        /// </summary>
+        /// <param name="audioAssetName">声音资源名称</param>
+        /// <param name="audioParams">声音播放参数</param>
+        /// <param name="audioPositionParams">声音播放位置信息</param>
+        /// <returns>播放序列号</returns>
+        int PlayAudio(string audioAssetName, AudioParams audioParams, AudioPositionParams audioPositionParams);
+        /// <summary>
+        /// 播放声音
+        /// <para>播放若需要声音组，则须先添加声音组</para>
+        /// <para>添加声音组方法：<see cref="AddAudioGroup"/></para>
+        /// </summary>
+        /// <param name="audioAssetName">声音资源名称</param>
+        /// <param name="audioGroupName">声音组名称</param>
+        /// <param name="audioParams">声音播放参数</param>
+        /// <param name="audioPositionParams">声音播放位置信息</param>
+        /// <returns>播放序列号</returns>
+        int PlayAudio(string audioAssetName, string audioGroupName, AudioParams audioParams, AudioPositionParams audioPositionParams);
         /// <summary>
         /// 暂停声音
         /// </summary>
-        /// <param name="audioName">声音名</param>
-        /// <param name="fadeTime">过渡时间</param>
-        void PauseAudio(string audioName, float fadeTime = 0);
+        /// <param name="serialId">播放序列号</param>
+        /// <param name="fadeOutSeconds">淡出时间，单位秒</param>
+        void PauseAudio(int serialId, float fadeOutSeconds);
+        /// <summary>
+        /// 暂停所有使用指定资源的声音实体
+        /// </summary>
+        /// <param name="audioAssetName">声音资源名称</param>
+        /// <param name="fadeOutSeconds">淡出时间，单位秒</param>
+        void PauseAudios(string audioAssetName, float fadeOutSeconds);
         /// <summary>
         /// 恢复播放声音
         /// </summary>
-        /// <param name="audioName">声音名</param>
-        /// <param name="fadeTime">过渡时间</param>
-        void ResumeAudio(string audioName, float fadeTime = 0);
+        /// <param name="serialId">播放序列号</param>
+        /// <param name="fadeInSeconds">淡入时间，单位秒</param>
+        void ResumeAudio(int serialId, float fadeInSeconds);
+        /// <summary>
+        /// 恢复播放所有使用指定资源的声音实体
+        /// </summary>
+        /// <param name="audioAssetName">声音资源名称</param>
+        /// <param name="fadeInSeconds">淡入时间，单位秒</param>
+        void ResumeAudios(string audioAssetName, float fadeInSeconds);
         /// <summary>
         /// 停止播放声音
         /// </summary>
-        /// <param name="audioName">声音名</param>
-        /// <param name="fadeTime">过渡时间</param>
-        void StopAudio(string audioName, float fadeTime = 0);
+        /// <param name="serialId">播放序列号</param>
+        /// <param name="fadeOutSeconds">淡出时间，单位秒</param>
+        void StopAudio(int serialId, float fadeOutSeconds);
         /// <summary>
-        /// 是否存在声音；
+        /// 停止播放所有使用指定资源的声音实体
         /// </summary>
-        /// <param name="audioName">声音名</param>
-        /// <returns>存在的结果</returns>
-        bool HasAudio(string audioName);
+        /// <param name="audioAssetName">声音资源名称</param>
+        /// <param name="fadeOutSeconds">淡出时间，单位秒</param>
+        void StopAudios(string audioAssetName, float fadeOutSeconds);
         /// <summary>
-        /// 设置声音表现
+        /// 是否存在声音
         /// </summary>
-        /// <param name="audioName">注册过的声音名</param>
-        /// <param name="audioParams">声音具体参数</param>
-        void SetAudioParam(string audioName, AudioParams audioParams);
-        #endregion
-
-        #region AudioGroup
+        /// <param name="serialId">播放序列号</param>
+        /// <returns>是否存在</returns>
+        bool HasAudio(int serialId);
         /// <summary>
-        /// 为音效设置组
+        /// 声音资源是否已注册
         /// </summary>
-        /// <param name="audioName">音效名</param>
-        /// <param name="audioGroupName">音效组</param>
-        /// <returns>是否设置成功</returns>
-        bool SetAuidoGroup(string audioName, string audioGroupName);
+        /// <param name="audioAssetName">声音资源名称</param>
+        /// <returns>是否注册</returns>
+        bool IsAudioAssetRegistered(string audioAssetName);
         /// <summary>
-        /// 暂停播放音效组
+        /// 设置声音播放参数
         /// </summary>
-        /// <param name="audioGroupName">声音组名</param>
-        /// <param name="fadeTime">过渡时间</param>
-        void PauseAudioGroup(string audioGroupName, float fadeTime = 0);
+        /// <param name="serialId">播放序列号</param>
+        /// <param name="audioParams">声音播放参数</param>
+        void SetAudioParams(int serialId, AudioParams audioParams);
         /// <summary>
-        /// 恢复声音组播放
+        /// 设置所有使用指定资源的声音实体播放参数
         /// </summary>
-        /// <param name="audioGroupName">声音组名</param>
-        /// <param name="fadeTime">过渡时间</param>
-        void UnpauseAudioGroup(string audioGroupName, float fadeTime = 0);
+        /// <param name="audioAssetName">声音资源名称</param>
+        /// <param name="audioParams">声音播放参数</param>
+        void SetAudiosParams(string audioAssetName, AudioParams audioParams);
         /// <summary>
-        /// 停止播放声音组
+        /// 是否存在声音组
         /// </summary>
-        /// <param name="audioGroupName">声音组名</param>
-        /// <param name="fadeTime">过渡时间</param>
-        void StopAudioGroup(string audioGroupName, float fadeTime = 0);
-        /// <summary>
-        /// 是否存在音效组
-        /// </summary>
-        /// <param name="audioGroupName">声音组名</param>
-        /// <returns>存在的结果</returns>
+        /// <param name="audioGroupName">声音组名称</param>
+        /// <returns>是否存在</returns>
         bool HasAudioGroup(string audioGroupName);
         /// <summary>
-        /// 清空声音组
-        /// <para>注意：这里的清空指的是对声音组别的置空，并不会影响到声音对象注册的状态</para> 
+        /// 移除声音组
+        /// <para>框架存在一个默认的声音组：<see cref="AudioConstant.DEFAULT_AUDIO_GROUP"/>，此声音组无法被移除</para>
         /// </summary>
-        /// <param name="audioGroupName">声音组名</param>
-        void ClearAudioGroup(string audioGroupName);
-        #endregion
-
+        /// <param name="audioGroupName">声音组名称</param>
+        void RemoveAudioGroup(string audioGroupName);
         /// <summary>
-        /// 暂停所有声音
+        /// 添加声音组
         /// </summary>
-        void PauseAllAudios();
+        /// <param name="audioGroupName">声音组名称</param>
+        /// <returns>声音组实体接口</returns>
+        IAudioGroup AddAudioGroup(string audioGroupName);
         /// <summary>
-        /// 停止所有声音
+        /// 获取声音组
         /// </summary>
-        void StopAllAudios();
+        /// <param name="audioGroupName">声音组名称</param>
+        /// <param name="group">声音组实体接口</param>
+        /// <returns>获取结果</returns>
+        bool PeekAudioGroup(string audioGroupName, out IAudioGroup group);
         /// <summary>
-        /// 注销所有声音，并清空声音组池
+        /// 暂停播放所有声音
         /// </summary>
-        void DeregisterAllAudios();
+        /// <param name="fadeOutSecounds">淡出时间，单位秒</param>
+        void PauseAllAudios(float fadeOutSecounds);
+        /// <summary>
+        /// 停止播放所有声音
+        /// </summary>
+        /// <param name="fadeOutSecounds">淡出时间，单位秒</param>
+        void StopAllAudios(float fadeOutSecounds);
     }
 }

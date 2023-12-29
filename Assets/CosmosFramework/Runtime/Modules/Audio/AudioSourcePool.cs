@@ -1,23 +1,22 @@
 ﻿using UnityEngine;
 namespace Cosmos.Audio
 {
-    public class AudioSourcePool
+    /// <summary>
+    /// AudioSource对象池
+    /// <para><see cref="UnityEngine.AudioSource"/>的对象池</para>
+    /// </summary>
+    public static class AudioSourcePool
     {
-        Pool<AudioSource> audioSourcePool;
-
-        public AudioSourcePool()
-        {
-            audioSourcePool = new Pool<AudioSource>(OnGenerate, OnSpawn,OnDespawn);
-        }
-        public void Despawn(AudioSource audioSource)
+        readonly static Pool<AudioSource> audioSourcePool= new Pool<AudioSource>(OnGenerate, OnSpawn, OnDespawn);
+        public static void Despawn(AudioSource audioSource)
         {
             audioSourcePool.Despawn(audioSource);
         }
-        public AudioSource Spawn()
+        public static AudioSource Spawn()
         {
             return audioSourcePool.Spawn();
         }
-        public void Clear()
+        public static void Clear()
         {
             foreach (var au in audioSourcePool)
             {
@@ -25,17 +24,17 @@ namespace Cosmos.Audio
             }
             audioSourcePool.Clear();
         }
-        AudioSource OnGenerate()
+        static AudioSource OnGenerate()
         {
             var go = new GameObject();
             go.transform.position = Vector3.zero;
             return go.AddComponent<AudioSource>();
         }
-        void OnSpawn(AudioSource audioSource)
+        static void OnSpawn(AudioSource audioSource)
         {
             audioSource.gameObject.SetActive(true);
         }
-        void OnDespawn(AudioSource audioSource)
+        static void OnDespawn(AudioSource audioSource)
         {
             audioSource.Reset();
             audioSource.transform.position = Vector3.zero;

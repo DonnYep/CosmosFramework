@@ -11,8 +11,8 @@ namespace Cosmos.Audio
     {
         /// <summary>
         /// 播放的世界位置
-        /// <para>注意，此参数与<see cref="BindObject"/>互斥</para>
-        /// <para>当此<see cref="BindObject"/>不为空时，优先使用绑定位置播放</para>
+        /// <para>注意，此参数与<see cref="BindParent"/>互斥</para>
+        /// <para>当此<see cref="BindParent"/>不为空时，优先使用绑定位置播放</para>
         /// </summary>
         public Vector3 WorldPosition { get; set; }
         /// <summary>
@@ -20,7 +20,7 @@ namespace Cosmos.Audio
         /// <para>注意，此参数与<see cref="WorldPosition"/>互斥</para>
         /// <para>当此参数不为空时，优先使用绑定位置播放</para>
         /// </summary>
-        public Transform BindObject { get; set; }
+        public Transform BindParent { get; set; }
         /// <summary>
         /// 默认参数
         /// </summary>

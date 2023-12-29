@@ -8,18 +8,17 @@ namespace Cosmos
     {
         IResourceManager ResourceManager { get { return CosmosEntry.ResourceManager; } }
         /// <inheritdoc/>
-        public Coroutine LoadAudioAsync(string audioAssetName, Action<AudioObject> loadSuccess, Action loadFailure)
+        public Coroutine LoadAudioAsync(string audioAssetName, Action<string, AudioClip> onSuccess, Action<string,string> onFailure)
         {
-            return ResourceManager.LoadAssetAsync<AudioClip>(audioAssetName, clip=> 
+            return ResourceManager.LoadAssetAsync<AudioClip>(audioAssetName, clip =>
             {
                 if (clip == null)
                 {
-                    loadFailure?.Invoke();
+                    onFailure?.Invoke(audioAssetName,$"AudioAsset : {audioAssetName} do not exist");
                 }
                 else
                 {
-                    var audioObject = new AudioObject(audioAssetName, clip);
-                    loadSuccess?.Invoke(audioObject);
+                    onSuccess?.Invoke(audioAssetName, clip);
                 }
             });
         }

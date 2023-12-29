@@ -69,16 +69,15 @@ namespace Cosmos
             var type = reference.GetType();
             GetReferencePool(type).Release(reference);
         }
-        public static void Release<T>(T[] references) where T : class, IReference, new()
+        public static void Release<T>(IEnumerable<T> references) where T : class, IReference, new()
         {
             if (references == null)
                 throw new ArgumentNullException("Reference array is invalid.");
             var type = typeof(T);
             var pool = GetReferencePool(type);
-            var length = references.Length;
-            for (int i = 0; i < length; i++)
+            foreach (var reference in references)
             {
-                pool.Release(references[i]);
+                pool.Release(reference);
             }
         }
         public static void Release(params IReference[] references)
@@ -132,7 +131,7 @@ namespace Cosmos
             ReferencePoolInfo[] pools = new ReferencePoolInfo[Count];
             foreach (var pool in referencePoolDict.Values)
             {
-                pools[index++] = new ReferencePoolInfo (pool.ReferenceType, pool.AcquireCount, pool.ReleaseCount, pool.PoolAcquireCount);
+                pools[index++] = new ReferencePoolInfo(pool.ReferenceType, pool.AcquireCount, pool.ReleaseCount, pool.PoolAcquireCount);
             }
             return pools;
         }

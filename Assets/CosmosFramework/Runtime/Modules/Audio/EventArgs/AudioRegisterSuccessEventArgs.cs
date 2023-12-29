@@ -3,20 +3,17 @@ namespace Cosmos.Audio
 {
     public class AudioRegisterSuccessEventArgs : GameEventArgs
     {
-        public string AudioName { get; private set; }
-        public string AudioGroupName { get; private set; }
+        public string AudioAssetName { get; private set; }
         public AudioClip AudioClip { get; private set; }
         public override void Release()
         {
-            AudioName = string.Empty;
-            AudioGroupName = string.Empty;
+            AudioAssetName = string.Empty;
             AudioClip = null;
         }
-        internal static AudioRegisterSuccessEventArgs Create(string audioName, string audioGroupName,AudioClip audioClip)
+        internal static AudioRegisterSuccessEventArgs Create(string audioAssetName, AudioClip audioClip)
         {
-            var eventArgs = ReferencePool.Acquire< AudioRegisterSuccessEventArgs>();
-            eventArgs.AudioName = audioName;
-            eventArgs.AudioGroupName = audioGroupName;
+            var eventArgs = ReferencePool.Acquire<AudioRegisterSuccessEventArgs>();
+            eventArgs.AudioAssetName = audioAssetName;
             eventArgs.AudioClip = audioClip;
             return eventArgs;
         }

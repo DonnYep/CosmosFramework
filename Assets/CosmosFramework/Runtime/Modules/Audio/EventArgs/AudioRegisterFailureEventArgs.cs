@@ -2,19 +2,18 @@
 {
     public class AudioRegisterFailureEventArgs : GameEventArgs
     {
-        public string AudioName { get; private set; }
-        public string AudioGroupName { get; private set; }
-        
+        public string AudioAssetName { get; private set; }
+        public string ErrorMessage { get; private set; }
         public override void Release()
         {
-            AudioName = string.Empty;
-            AudioGroupName = string.Empty;
+            AudioAssetName = string.Empty;
+            ErrorMessage = string.Empty;
         }
-        internal static AudioRegisterFailureEventArgs Create(string audioName,string audioGroupName)
+        internal static AudioRegisterFailureEventArgs Create(string audioAssetName, string errorMessage)
         {
             var eventArgs = ReferencePool.Acquire<AudioRegisterFailureEventArgs>();
-            eventArgs.AudioName = audioName;
-            eventArgs.AudioGroupName = audioGroupName;
+            eventArgs.AudioAssetName = audioAssetName;
+            eventArgs.ErrorMessage = errorMessage;
             return eventArgs;
         }
         internal static void Release(AudioRegisterFailureEventArgs eventArgs)

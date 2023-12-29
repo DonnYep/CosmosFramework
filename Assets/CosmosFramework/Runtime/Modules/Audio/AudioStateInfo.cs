@@ -11,7 +11,11 @@ namespace Cosmos.Audio
         /// <summary>
         /// 声音资源信息
         /// </summary>
-        public string AssetName { get; private set; }
+        public string AudipAssetName { get; private set; }
+        /// <summary>
+        /// 音效序播放列号
+        /// </summary>
+        public int SerialId { get; private set; }
         /// <summary>
         /// 声音组别；
         /// </summary>

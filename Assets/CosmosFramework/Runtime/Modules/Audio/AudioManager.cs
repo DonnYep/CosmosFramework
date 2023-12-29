@@ -1,19 +1,21 @@
 ﻿using System.Collections.Generic;
 using System;
+using UnityEngine;
+
 namespace Cosmos.Audio
 {
     //================================================
     /*
-     * 1、声音资源可设置组别，单体声音资源与组别的关系为一对多映射关系。
+     * 1、音效采用注册播放方式。若需要成功播放一个音效，须先注册音效资源。
      * 
-     * 2、注册的声音对象名都是唯一的，若重名，则覆写。命名时尽量安规则。
+     * 2、默认存在一个内置的音效组，不可移除。
      * 
-     * 3、播放声音时传入的AudioPlayInfo拥有两个公共属性字段。若BindObject
-     * 不为空，则有限绑定，否则是WorldPosition；
+     * 3、音效的播放、暂停、恢复、停止操作，都可传入过渡时间。
      * 
-     * 4、播放声音前需要先对声音资源进行注册，API为  RegistAudioAsync 。
-     * 通过监听AudioRegistFailure与AudioRegisterSuccess事件查看注册结果。
-     * 注册成功后就可对声音进行播放，暂停，停止等操作。
+     * 4、相同音效支持多个实体播放。
+     * 
+     * 5、所有播放声音所返回的serialId都大于等于1。
+     * 
      */
     //================================================
     [Module]
@@ -22,41 +24,62 @@ namespace Cosmos.Audio
         /// <summary>
         /// AduioGroupName===AudioGroup ;
         /// </summary>
-        Dictionary<string, IAudioGroup> audioGroupDict;
+        Dictionary<string, AudioGroup> audioGroupDict;
         /// <summary>
-        /// AudioName===AudioObject ;
+        /// audioAssetName===AudioAssetEntity
         /// </summary>
-        Dictionary<string, AudioObject> audioObjectDict;
+        Dictionary<string, AudioAssetEntity> audioAssetEntityDict;
         /// <summary>
-        /// 声音资源加载帮助体；
+        /// 声音资源加载帮助体
         /// </summary>
         IAudioAssetHelper audioAssetHelper;
         /// <summary>
-        /// 声音播放帮助体；
+        /// 音效资源加载成功事件
         /// </summary>
-        IAudioPlayHelper audioPlayHelper;
+        Action<AudioRegisterSuccessEventArgs> audioAssetRegisterSuccess;
         /// <summary>
-        /// 声音组池；
+        /// 音效资源加载失败事件
         /// </summary>
-        AudioGroupPool audioGroupPool;
-        Action<AudioRegisterSuccessEventArgs> audioRegisterSuccess;
-        Action<AudioRegisterFailureEventArgs> audioRegisterFailure;
+        Action<AudioRegisterFailureEventArgs> audioAssetRegisterFailure;
+        /// <summary>
+        /// 音效加载任务字典，audioAssetName===AudioAssetLoadTask
+        /// </summary>
+        Dictionary<string, AudioAssetLoadTask> audioAssetLoadTaskDict;
+        int serialIndex;
         ///<inheritdoc/>
-        public event Action<AudioRegisterFailureEventArgs> AudioRegisterFailure
+        public event Action<AudioRegisterFailureEventArgs> AudioAssetRegisterFailure
         {
-            add { audioRegisterFailure += value; }
-            remove { audioRegisterFailure -= value; }
+            add { audioAssetRegisterFailure += value; }
+            remove { audioAssetRegisterFailure -= value; }
         }
         ///<inheritdoc/>
-        public event Action<AudioRegisterSuccessEventArgs> AudioRegisterSuccess
+        public event Action<AudioRegisterSuccessEventArgs> AudioAssetRegisterSuccess
         {
-            add { audioRegisterSuccess += value; }
-            remove { audioRegisterSuccess -= value; }
+            add { audioAssetRegisterSuccess += value; }
+            remove { audioAssetRegisterSuccess -= value; }
         }
         ///<inheritdoc/>
-        public int AudioCount { get { return audioObjectDict.Count; } }
+        public int AudioAssetCount { get { return audioAssetEntityDict.Count; } }
+        /// <summary>
+        /// 静音
+        /// </summary>
+        bool mute;
         ///<inheritdoc/>
-        public bool Mute { get { return audioPlayHelper.Mute; } set { audioPlayHelper.Mute = value; } }
+        public bool Mute
+        {
+            get { return mute; }
+            set
+            {
+                if (mute != value)
+                {
+                    mute = value;
+                    foreach (var group in audioGroupDict.Values)
+                    {
+                        group.Mute = mute;
+                    }
+                }
+            }
+        }
         ///<inheritdoc/>
         public void SetAudioAssetHelper(IAudioAssetHelper helper)
         {
@@ -65,272 +88,238 @@ namespace Cosmos.Audio
             this.audioAssetHelper = helper;
         }
         ///<inheritdoc/>
-        public void SetAudioPlayHelper(IAudioPlayHelper helper)
+        public void RegisterAudioAsset(string audioAssetName)
         {
-            if (helper == null)
-                throw new NullReferenceException("IAudioPlayHelper  is invalid !");
-            this.audioPlayHelper = helper;
-        }
-        ///<inheritdoc/>
-        public void RegisterAudioAsync(AudioAssetInfo audioAssetInfo)
-        {
-            Utility.Text.IsStringValid(audioAssetInfo.AssetName, "AudioName is invalid !");
-            audioAssetHelper.LoadAudioAsync(audioAssetInfo.AssetName, audioObj =>
-            {
-                OnAudioRegisterSuccess(audioObj);
-            }, () =>
-            {
-                OnAudioRegisterFailure(audioAssetInfo.AssetName, audioAssetInfo.AudioGroupName);
-            });
-        }
-        ///<inheritdoc/>
-        public void DeregisterAudio(string audioName)
-        {
-            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
-            if (audioObjectDict.Remove(audioName, out var audioObject))
-            {
-                var audioGroupName = audioObject.AudioGroupName;
-                if (string.IsNullOrEmpty(audioGroupName))
-                    return;
-                if (audioGroupDict.TryGetValue(audioGroupName, out var group))
-                {
-                    group.RemoveAudio(audioName);
-                    if (group.AudioCount <= 0)
-                    {
-                        audioGroupDict.Remove(audioGroupName);
-                        audioGroupPool.Despawn(group);
-                    }
-                    audioAssetHelper.UnloadAudio(audioName);
-                }
-            }
-            else
-            {
-                throw new ArgumentNullException($"IAudioObject {audioName} is unregistered ");
-            }
-        }
+            Utility.Text.IsStringValid(audioAssetName, "audioAssetName is invalid !");
 
-        #region IndividualAudio
-        ///<inheritdoc/>
-        public void PlayAudio(string audioName, AudioParams audioParams, AudioPositionParams audioPlayInfo)
-        {
-            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
-            if (audioObjectDict.TryGetValue(audioName, out var audioObject))
+            if (!audioAssetLoadTaskDict.ContainsKey(audioAssetName))
             {
-                audioPlayHelper.PlayAudio(audioObject, audioParams, audioPlayInfo);
-            }
-            else
-            {
-                throw new ArgumentNullException($"Audio {audioName} is unregistered ");
+                var coroutine = audioAssetHelper.LoadAudioAsync(audioAssetName, OnRegisterAudioAssetSuccess, OnRegisterAudioAssetFailure);
+                var loadTask = AudioAssetLoadTask.Create(audioAssetName, coroutine);
+                audioAssetLoadTaskDict.Add(audioAssetName, loadTask);
             }
         }
         ///<inheritdoc/>
-        public void PauseAudio(string audioName, float fadeTime = 0)
+        public void DeregisterAudioAsset(string audioAssetName)
         {
-            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
-            if (audioObjectDict.TryGetValue(audioName, out var audioObject))
+            if (audioAssetLoadTaskDict.Remove(audioAssetName, out var loadTask))
             {
-                audioPlayHelper.PauseAudio(audioObject, fadeTime);
+                AudioAssetLoadTask.Release(loadTask);
             }
-            else
+            audioAssetEntityDict.Remove(audioAssetName);
+            OnDeregisterAudioAsset(audioAssetName);
+        }
+        ///<inheritdoc/>
+        public int PlayAudio(string audioAssetName)
+        {
+            return PlayAudio(audioAssetName, AudioConstant.DEFAULT_AUDIO_GROUP, AudioParams.Default, AudioPositionParams.Default);
+        }
+        ///<inheritdoc/>
+        public int PlayAudio(string audioAssetName, AudioParams audioParams)
+        {
+            return PlayAudio(audioAssetName, AudioConstant.DEFAULT_AUDIO_GROUP, audioParams, AudioPositionParams.Default);
+        }
+        ///<inheritdoc/>
+        public int PlayAudio(string audioAssetName, AudioParams audioParams, AudioPositionParams audioPositionParams)
+        {
+            return PlayAudio(audioAssetName, AudioConstant.DEFAULT_AUDIO_GROUP, audioParams, audioPositionParams);
+        }
+        ///<inheritdoc/>
+        public int PlayAudio(string audioAssetName, string audioGroupName, AudioParams audioParams, AudioPositionParams audioPositionParams)
+        {
+            Utility.Text.IsStringValid(audioAssetName, "audioAssetName is invalid !");
+            Utility.Text.IsStringValid(audioGroupName, "audioGroupName is invalid !");
+            if (!audioAssetEntityDict.TryGetValue(audioAssetName, out var audioAssetEntity))
+                return 0;
+            if (!audioGroupDict.TryGetValue(audioGroupName, out var audioGroup))
+                return 0;
+            var serialId = GetAudioSerialId();
+            audioGroup.PlayAudio(serialId, audioAssetEntity, audioParams, audioPositionParams);
+            return serialId;
+        }
+        ///<inheritdoc/>
+        public void PauseAudio(int serialId, float fadeOutSeconds)
+        {
+            foreach (var group in audioGroupDict.Values)
             {
-                throw new ArgumentNullException($"Audio {audioName} is unregistered ");
+                group.PauseAudio(serialId, fadeOutSeconds);
             }
         }
         ///<inheritdoc/>
-        public void ResumeAudio(string audioName, float fadeTime = 0)
+        public void PauseAudios(string audioAssetName, float fadeOutSeconds)
         {
-            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
-            if (audioObjectDict.TryGetValue(audioName, out var audioObject))
+            foreach (var group in audioGroupDict.Values)
             {
-                audioPlayHelper.ResumeAudio(audioObject, fadeTime);
-            }
-            else
-            {
-                throw new NullReferenceException("IAudioObject is unregistered ");
+                group.PauseAudios(audioAssetName, fadeOutSeconds);
             }
         }
         ///<inheritdoc/>
-        public void StopAudio(string audioName, float fadeTime = 0)
+        public void ResumeAudio(int serialId, float fadeInSeconds)
         {
-            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
-            if (audioObjectDict.TryGetValue(audioName, out var audioObject))
+            foreach (var group in audioGroupDict.Values)
             {
-                audioPlayHelper.StopAudio(audioObject, fadeTime);
-            }
-            else
-            {
-                throw new ArgumentNullException($"Audio {audioName} is unregistered ");
+                group.ResumeAudio(serialId, fadeInSeconds);
             }
         }
         ///<inheritdoc/>
-        public bool HasAudio(string audioName)
+        public void ResumeAudios(string audioAssetName, float fadeInSeconds)
         {
-            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
-            return audioObjectDict.ContainsKey(audioName);
-        }
-        ///<inheritdoc/>
-        public void SetAudioParam(string audioName, AudioParams audioParams)
-        {
-            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
-            if (audioObjectDict.TryGetValue(audioName, out var audioObject))
+            foreach (var group in audioGroupDict.Values)
             {
-                audioPlayHelper.SetAudioParam(audioObject, audioParams);
-            }
-            else
-            {
-                throw new ArgumentNullException($"Audio {audioName} is unregistered ");
+                group.ResumeAudios(audioAssetName, fadeInSeconds);
             }
         }
-        #endregion
-
-        #region AudioGroup
         ///<inheritdoc/>
-        public bool SetAuidoGroup(string audioName, string audioGroupName)
+        public void StopAudio(int serialId, float fadeOutSeconds)
         {
-            Utility.Text.IsStringValid(audioName, "AudioName is invalid !");
-            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
-            if (audioObjectDict.TryGetValue(audioName, out var audio))
+            foreach (var group in audioGroupDict.Values)
             {
-                if (!audioGroupDict.TryGetValue(audioGroupName, out var group))
+                group.StopAudio(serialId, fadeOutSeconds);
+            }
+        }
+        ///<inheritdoc/>
+        public void StopAudios(string audioAssetName, float fadeOutSeconds)
+        {
+            foreach (var group in audioGroupDict.Values)
+            {
+                group.StopAudios(audioAssetName, fadeOutSeconds);
+            }
+        }
+        ///<inheritdoc/>
+        public bool HasAudio(int serialId)
+        {
+            bool hasAudio = false;
+            foreach (var group in audioGroupDict.Values)
+            {
+                var has = group.HasAudio(serialId);
+                if (has)
                 {
-                    group = new AudioGroup();
-                    group.AudioGroupName = audioGroupName;
-                    audioGroupDict.Add(audioGroupName, group);
-                }
-                group.AddOrUpdateAudio(audioName, audio);
-                return true;
-            }
-            return false;
-        }
-        ///<inheritdoc/>
-        public void PauseAudioGroup(string audioGroupName, float fadeTime = 0)
-        {
-            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
-            if (audioGroupDict.TryGetValue(audioGroupName, out var group))
-            {
-                var dict = group.AudioDict;
-                foreach (var obj in dict)
-                {
-                    audioPlayHelper.PauseAudio(obj.Value, fadeTime);
-                }
-            }
-            else
-            {
-                throw new ArgumentNullException($"AudioGroup {audioGroupName} is unregistered ");
-            }
-        }
-        ///<inheritdoc/>
-        public void UnpauseAudioGroup(string audioGroupName, float fadeTime = 0)
-        {
-            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
-            if (audioGroupDict.TryGetValue(audioGroupName, out var group))
-            {
-                var dict = group.AudioDict;
-                foreach (var obj in dict)
-                {
-                    audioPlayHelper.ResumeAudio(obj.Value, fadeTime);
+                    hasAudio = has;
                 }
             }
-            else
+            return hasAudio;
+        }
+        ///<inheritdoc/>
+        public bool IsAudioAssetRegistered(string audioAssetName)
+        {
+            Utility.Text.IsStringValid(audioAssetName, "audioAssetName is invalid !");
+            return audioAssetEntityDict.ContainsKey(audioAssetName);
+        }
+        ///<inheritdoc/>
+        public void SetAudioParams(int serialId, AudioParams audioParams)
+        {
+            foreach (var group in audioGroupDict.Values)
             {
-                throw new ArgumentNullException($"AudioGroup {audioGroupName} is unregistered ");
+                group.SetAudioParams(serialId, audioParams);
             }
         }
         ///<inheritdoc/>
-        public void StopAudioGroup(string audioGroupName, float fadeTime = 0)
+        public void SetAudiosParams(string audioAssetName, AudioParams audioParams)
         {
-            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
-            if (audioGroupDict.TryGetValue(audioGroupName, out var group))
+            foreach (var group in audioGroupDict.Values)
             {
-                var dict = group.AudioDict;
-                foreach (var obj in dict)
-                {
-                    audioPlayHelper.StopAudio(obj.Value, fadeTime);
-                }
-            }
-            else
-            {
-                throw new ArgumentNullException($"AudioGroup {audioGroupName} is unregistered ");
+                group.SetAudiosParams(audioAssetName, audioParams);
             }
         }
         ///<inheritdoc/>
         public bool HasAudioGroup(string audioGroupName)
         {
-            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
+            Utility.Text.IsStringValid(audioGroupName, "audioGroupName is invalid !");
             return audioGroupDict.ContainsKey(audioGroupName);
         }
         ///<inheritdoc/>
-        public void ClearAudioGroup(string audioGroupName)
+        public void RemoveAudioGroup(string audioGroupName)
         {
-            Utility.Text.IsStringValid(audioGroupName, "AudioGroupName is invalid !");
-            if (audioGroupDict.TryGetValue(audioGroupName, out var group))
+            Utility.Text.IsStringValid(audioGroupName, "audioGroupName is invalid !");
+            if (audioGroupName == AudioConstant.DEFAULT_AUDIO_GROUP)
             {
-                group.RemoveAllAudios();
+                return;
             }
-        }
-        #endregion
-
-        ///<inheritdoc/>
-        public void PauseAllAudios()
-        {
-            foreach (var ao in audioObjectDict)
+            if (audioGroupDict.TryRemove(audioGroupName, out var group))
             {
-                audioPlayHelper.PauseAudio(ao.Value, 0);
+                AudioGroup.Release(group);
             }
         }
         ///<inheritdoc/>
-        public void StopAllAudios()
+        public IAudioGroup AddAudioGroup(string audioGroupName)
         {
-            foreach (var ao in audioObjectDict)
+            Utility.Text.IsStringValid(audioGroupName, "audioGroupName is invalid !");
+            if (!audioGroupDict.TryGetValue(audioGroupName, out var group))
             {
-                audioPlayHelper.StopAudio(ao.Value, 0);
+                group = AudioGroup.Create(audioGroupName);
+                audioGroupDict.Add(audioGroupName, group);
+            }
+            return group;
+        }
+        ///<inheritdoc/>
+        public bool PeekAudioGroup(string audioGroupName, out IAudioGroup group)
+        {
+            var hasGroup = audioGroupDict.TryGetValue(audioGroupName, out var audioGroup);
+            group = audioGroup;
+            return hasGroup;
+        }
+        ///<inheritdoc/>
+        public void PauseAllAudios(float fadeOutSecounds)
+        {
+            foreach (var audioGroup in audioGroupDict.Values)
+            {
+                audioGroup.PauseAllAudios(fadeOutSecounds);
             }
         }
         ///<inheritdoc/>
-        public void DeregisterAllAudios()
+        public void StopAllAudios(float fadeOutSecounds)
         {
-            audioObjectDict.Clear();
-            audioGroupDict.Clear();
-            audioGroupPool.Clear();
-            audioPlayHelper.ClearAllAudio();
+            foreach (var audioGroup in audioGroupDict.Values)
+            {
+                audioGroup.StopAllAudios(fadeOutSecounds);
+            }
         }
         protected override void OnInitialization()
         {
-            audioGroupDict = new Dictionary<string, IAudioGroup>();
-            audioObjectDict = new Dictionary<string, AudioObject>();
-            audioGroupPool = new AudioGroupPool();
+            audioGroupDict = new Dictionary<string, AudioGroup>();
+            audioAssetEntityDict = new Dictionary<string, AudioAssetEntity>();
+            audioAssetLoadTaskDict = new Dictionary<string, AudioAssetLoadTask>();
             audioAssetHelper = new DefaultAudioAssetHelper();
-            audioPlayHelper = new DefaultAudioPlayHelper();
-
+            serialIndex = 0;
+            var defaultGroup = AudioGroup.Create(AudioConstant.DEFAULT_AUDIO_GROUP);
+            audioGroupDict.Add(AudioConstant.DEFAULT_AUDIO_GROUP, defaultGroup);
         }
-        protected override void OnUpdate()
+        void OnRegisterAudioAssetSuccess(string audioAssetName, AudioClip audioClip)
         {
-            audioPlayHelper?.TickRefresh();
+            audioAssetLoadTaskDict.Remove(audioAssetName);
+            var currentAudioAssetEntity = AudioAssetEntity.Create(audioAssetName, audioClip);
+            if (audioAssetEntityDict.TryRemove(audioAssetName, out var previousAudioAssetEntity))
+            {
+                AudioAssetEntity.Release(previousAudioAssetEntity);
+                audioAssetEntityDict.Add(audioAssetName, currentAudioAssetEntity);
+            }
+            var eventArgs = AudioRegisterSuccessEventArgs.Create(audioAssetName, audioClip);
+            audioAssetRegisterSuccess?.Invoke(eventArgs);
+            AudioRegisterSuccessEventArgs.Release(eventArgs);
         }
-        void OnAudioRegisterFailure(string audioName, string audioGroupName)
+        void OnRegisterAudioAssetFailure(string audioAssetName, string errorMessage)
         {
-            var eventArgs = AudioRegisterFailureEventArgs.Create(audioName, audioGroupName);
-            audioRegisterFailure?.Invoke(eventArgs);
+            audioAssetLoadTaskDict.Remove(audioAssetName);
+            var eventArgs = AudioRegisterFailureEventArgs.Create(audioAssetName, errorMessage);
+            audioAssetRegisterFailure?.Invoke(eventArgs);
             AudioRegisterFailureEventArgs.Release(eventArgs);
         }
-        void OnAudioRegisterSuccess(AudioObject audioObject)
+        void OnDeregisterAudioAsset(string audioAssetName)
         {
-            var audioName = audioObject.AudioName;
-            var audioGroupName = audioObject.AudioGroupName;
-            audioObjectDict[audioName] = audioObject;
-            if (!string.IsNullOrEmpty(audioGroupName))
+            foreach (var group in audioGroupDict.Values)
             {
-                if (!audioGroupDict.TryGetValue(audioGroupName, out var group))
-                {
-                    group = audioGroupPool.Spawn();
-                    group.AudioGroupName = audioGroupName;
-                    audioGroupDict.Add(audioGroupName, group);
-                }
-                group.AddOrUpdateAudio(audioName, audioObject);
+                group.ReleaseAudios(audioAssetName);
             }
-            var eventArgs = AudioRegisterSuccessEventArgs.Create(audioName, audioGroupName, audioObject.AudioClip);
-            audioRegisterSuccess?.Invoke(eventArgs);
-            AudioRegisterSuccessEventArgs.Release(eventArgs);
+        }
+        /// <summary>
+        /// 获取音效播放Id，所得的serialId大于等于1
+        /// </summary>
+        /// <returns>播放Id</returns>
+        int GetAudioSerialId()
+        {
+            if (serialIndex == int.MaxValue)
+                serialIndex = 0;
+            return serialIndex++;
         }
     }
 }

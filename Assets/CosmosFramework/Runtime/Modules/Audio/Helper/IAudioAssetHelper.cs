@@ -11,14 +11,14 @@ namespace Cosmos.Audio
         /// 异步加载音效资产
         /// </summary>
         /// <param name="audioAssetName">音效资产名</param>
-        /// <param name="loadSuccess">成功回调</param>
-        /// <param name="loadFailure">失败回调</param>
+        /// <param name="onSuccess">成功回调，arg1=audioAssetName，arg2=AudioClip</param>
+        /// <param name="onFailure">失败回调，arg1=audioAssetName，arg2=errorMessage</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadAudioAsync(string audioAssetName , Action<AudioObject> loadSuccess, Action loadFailure);
+        Coroutine LoadAudioAsync(string audioAssetName, Action<string, AudioClip> onSuccess, Action<string, string> onFailure);
         /// <summary>
         /// 卸载音效
         /// </summary>
         /// <param name="audioAssetName">音效资产名</param>
-        void UnloadAudio(string  audioAssetName);
+        void UnloadAudio(string audioAssetName);
     }
 }
