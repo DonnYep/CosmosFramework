@@ -46,12 +46,11 @@ public class PlayAudioPanel : MonoBehaviour
         var has = CosmosEntry.AudioManager.HasAudio(audioSerialId);
         if (!has)
         {
-
-            //CosmosEntry.AudioManager.PlayAudio(audioSerialId, ap, AudioPositionParams.Default);
+            audioSerialId = CosmosEntry.AudioManager.PlayAudio("AudioTechHouse", ap);
         }
         else
         {
-            audioSerialId = CosmosEntry.AudioManager.PlayAudio("AudioTechHouse", ap, AudioPositionParams.Default);
+            CosmosEntry.AudioManager.ReplayAudio(audioSerialId, ap.FadeInSeconds);
         }
         Utility.Debug.LogInfo("PlayAudio");
     }

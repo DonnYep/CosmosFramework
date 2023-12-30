@@ -138,6 +138,14 @@ namespace Cosmos.Audio
             return serialId;
         }
         ///<inheritdoc/>
+        public void ReplayAudio(int serialId, float fadeInSeconds)
+        {
+            foreach (var group in audioGroupDict.Values)
+            {
+                group.ReplayAudio(serialId, fadeInSeconds);
+            }
+        }
+        ///<inheritdoc/>
         public void PauseAudio(int serialId, float fadeOutSeconds)
         {
             foreach (var group in audioGroupDict.Values)
@@ -291,8 +299,8 @@ namespace Cosmos.Audio
             if (audioAssetEntityDict.TryRemove(audioAssetName, out var previousAudioAssetEntity))
             {
                 AudioAssetEntity.Release(previousAudioAssetEntity);
-                audioAssetEntityDict.Add(audioAssetName, currentAudioAssetEntity);
             }
+            audioAssetEntityDict.Add(audioAssetName, currentAudioAssetEntity);
             var eventArgs = AudioRegisterSuccessEventArgs.Create(audioAssetName, audioClip);
             audioAssetRegisterSuccess?.Invoke(eventArgs);
             AudioRegisterSuccessEventArgs.Release(eventArgs);

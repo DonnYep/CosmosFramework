@@ -49,12 +49,17 @@ namespace Cosmos.Audio
         /// 播放参数缓存
         /// </summary>
         AudioParams audioParams;
+        /// <summary>
+        /// 声音播放位置参数
+        /// </summary>
+        AudioPositionParams audioPositionParams;
         public void OnPlay(AudioAssetEntity audioAssetEntity, AudioParams audioParams, AudioPositionParams audioPositionParams)
         {
             var audioClip = audioAssetEntity.AudioClip;
-            this.AudioSource = AudioSourcePool.Spawn();
-            AudioSource.clip = audioClip;
+            this.audioPositionParams= audioPositionParams;
             this.audioParams = audioParams;
+            AudioSource = AudioSourcePool.Spawn();
+            AudioSource.clip = audioClip;
             AudioSource.loop = audioParams.Loop;
             AudioSource.priority = audioParams.Priority;
             AudioSource.volume = audioParams.Volume;
@@ -79,6 +84,22 @@ namespace Cosmos.Audio
                 Utility.Unity.StopCoroutine(coroutine);
             coroutine = Utility.Unity.StartCoroutine(EnumPlay(audioParams.FadeInSeconds));
             IsPlaying = true;
+        }
+        public void OnReplay(float fadeInSecounds)
+        {
+            if (coroutine != null)
+                Utility.Unity.StopCoroutine(coroutine);
+            if (AudioSource == null)
+            {
+                //当AudioSource空引用时，可能作为某个物体的子物体被销毁了。
+                //这里直接标记为未播放状态，等待下一个播放音效进行回收。
+                IsPlaying = false;
+            }
+            else
+            {
+                AudioSource.time = 0;
+                coroutine = Utility.Unity.StartCoroutine(EnumPlay(fadeInSecounds));
+            }
         }
         public void OnStop(float fadeOutSecounds)
         {

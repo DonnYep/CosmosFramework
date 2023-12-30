@@ -85,6 +85,12 @@ namespace Cosmos.Audio
         /// <returns>播放序列号</returns>
         int PlayAudio(string audioAssetName, string audioGroupName, AudioParams audioParams, AudioPositionParams audioPositionParams);
         /// <summary>
+        /// 重播声音
+        /// </summary>
+        /// <param name="serialId">播放序列号</param>
+        /// <param name="fadeInSeconds">淡入时间，单位秒</param>
+        void ReplayAudio(int serialId, float fadeInSeconds);
+        /// <summary>
         /// 暂停声音
         /// </summary>
         /// <param name="serialId">播放序列号</param>

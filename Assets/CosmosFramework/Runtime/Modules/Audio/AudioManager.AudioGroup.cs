@@ -85,6 +85,13 @@ namespace Cosmos.Audio
                 audioPlayEntityDict.Add(serialId, newAudioPlayEntity);
                 audioPlayEntityCache.Add(newAudioPlayEntity);
             }
+            public void ReplayAudio(int serialId, float fadeInSecounds)
+            {
+                if (audioPlayEntityDict.TryGetValue(serialId, out var audioPlayEntity))
+                {
+                    audioPlayEntity.OnReplay(fadeInSecounds);
+                }
+            }
             public void PauseAudio(int serialId, float fadeOutSecounds)
             {
                 if (audioPlayEntityDict.TryGetValue(serialId, out var audioPlayEntity))
