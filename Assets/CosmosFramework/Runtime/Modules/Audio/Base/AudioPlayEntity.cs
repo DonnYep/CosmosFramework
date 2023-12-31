@@ -97,6 +97,15 @@ namespace Cosmos.Audio
             }
             else
             {
+                if (audioPositionParams.BindParent == null)
+                {
+                    AudioSource.transform.SetParent(CosmosEntry.AudioManager.InstanceObject().transform);
+                    AudioSource.transform.position = audioPositionParams.WorldPosition;
+                }
+                else
+                {
+                    AudioSource.transform.SetParent(audioPositionParams.BindParent);
+                }
                 AudioSource.time = 0;
                 coroutine = Utility.Unity.StartCoroutine(EnumPlay(fadeInSecounds));
             }
