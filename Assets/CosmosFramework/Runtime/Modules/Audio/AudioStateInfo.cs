@@ -17,10 +17,6 @@ namespace Cosmos.Audio
         /// </summary>
         public int SerialId { get; private set; }
         /// <summary>
-        /// 声音组别；
-        /// </summary>
-        public string AudioGroupName { get; private set; }
-        /// <summary>
         /// 播放状态
         /// </summary>
         public AudioPlayStatusType AudioPlayStatusType { get; private set; }

@@ -2,7 +2,7 @@
 
 namespace Cosmos.Audio
 {
-    public class AudioAssetLoadTask : IReference
+    internal class AudioAssetLoadTask : IReference
     {
         public string AudioAssetName { get; private set; }
         public Coroutine Coroutine { get; private set; }
