@@ -208,6 +208,20 @@ namespace Cosmos.Audio
             return hasAudio;
         }
         ///<inheritdoc/>
+        public bool GetAudioPlayInfo (int serialId, out AudioPlayInfo audioPlayInfo)
+        {
+            audioPlayInfo = AudioPlayInfo.Default;
+            foreach (var group in audioGroupDict.Values)
+            {
+                var has = group.GetAudioPlayInfo(serialId,out audioPlayInfo);
+                if (has)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        ///<inheritdoc/>
         public bool IsAudioAssetRegistered(string audioAssetName)
         {
             Utility.Text.IsStringValid(audioAssetName, "audioAssetName is invalid !");

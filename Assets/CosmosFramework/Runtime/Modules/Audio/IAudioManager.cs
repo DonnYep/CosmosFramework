@@ -133,6 +133,13 @@ namespace Cosmos.Audio
         /// <returns>是否存在</returns>
         bool HasAudio(int serialId);
         /// <summary>
+        /// 获取声音播放信息
+        /// </summary>
+        /// <param name="serialId">播放序列号</param>
+        /// <param name="audioPlayInfo">声音播放信息</param>
+        /// <returns>是否获取到</returns>
+        bool GetAudioPlayInfo(int serialId, out AudioPlayInfo audioPlayInfo);
+        /// <summary>
         /// 声音资源是否已注册
         /// </summary>
         /// <param name="audioAssetName">声音资源名称</param>

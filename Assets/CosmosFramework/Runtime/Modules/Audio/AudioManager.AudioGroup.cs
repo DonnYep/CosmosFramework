@@ -61,7 +61,9 @@ namespace Cosmos.Audio
                 for (int i = 0; i < length; i++)
                 {
                     var audioPlayEntity = audioPlayEntityCache[i];
-                    if (!audioPlayEntity.IsPlaying)
+                    var removalCondition = (byte)(AudioPlayStatusType.Stop | AudioPlayStatusType.None);
+                    var rst = (byte)audioPlayEntity.AudioPlayStatusType & removalCondition;
+                    if (rst != 0)
                     {
                         removalSerialIdCache.Add(audioPlayEntity.SerialId);
                     }
@@ -190,6 +192,17 @@ namespace Cosmos.Audio
             {
                 return audioPlayEntityDict.ContainsKey(serialId);
             }
+            public bool GetAudioPlayInfo(int serialId, out AudioPlayInfo audioPlayInfo)
+            {
+                audioPlayInfo = AudioPlayInfo.Default;
+                var has = audioPlayEntityDict.TryGetValue(serialId, out var audioPlayEntity);
+                if (has)
+                {
+                    audioPlayInfo = new AudioPlayInfo(audioPlayEntity.AudioAssetName, AudioGroupName, audioPlayEntity.SerialId, audioPlayEntity.AudioPlayStatusType);
+                    return true;
+                }
+                return false;
+            }
             public void ReleaseAudios(string audioAssetName)
             {
                 removalSerialIdCache.Clear();
@@ -197,7 +210,7 @@ namespace Cosmos.Audio
                 for (int i = 0; i < length; i++)
                 {
                     var audioPlayEntity = audioPlayEntityCache[i];
-                    if (audioPlayEntity.AudioAssetName==audioAssetName)
+                    if (audioPlayEntity.AudioAssetName == audioAssetName)
                     {
                         removalSerialIdCache.Add(audioPlayEntity.SerialId);
                     }

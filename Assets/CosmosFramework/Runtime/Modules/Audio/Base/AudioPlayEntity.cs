@@ -38,9 +38,9 @@ namespace Cosmos.Audio
             }
         }
         /// <summary>
-        /// 是否播放中。当且仅当非循环播放的完毕或手动停止才算false，暂停操作不进行false赋值。
+        /// 声音播放状态
         /// </summary>
-        public bool IsPlaying { get; set; }
+        public AudioPlayStatusType AudioPlayStatusType { get; set; }
         /// <summary>
         /// 协程对象
         /// </summary>
@@ -56,7 +56,7 @@ namespace Cosmos.Audio
         public void OnPlay(AudioAssetEntity audioAssetEntity, AudioParams audioParams, AudioPositionParams audioPositionParams)
         {
             var audioClip = audioAssetEntity.AudioClip;
-            this.audioPositionParams= audioPositionParams;
+            this.audioPositionParams = audioPositionParams;
             this.audioParams = audioParams;
             AudioSource = AudioSourcePool.Spawn();
             AudioSource.clip = audioClip;
@@ -83,7 +83,7 @@ namespace Cosmos.Audio
             if (coroutine != null)
                 Utility.Unity.StopCoroutine(coroutine);
             coroutine = Utility.Unity.StartCoroutine(EnumPlay(audioParams.FadeInSeconds));
-            IsPlaying = true;
+            AudioPlayStatusType = AudioPlayStatusType.Play;
         }
         public void OnReplay(float fadeInSecounds)
         {
@@ -92,8 +92,8 @@ namespace Cosmos.Audio
             if (AudioSource == null)
             {
                 //当AudioSource空引用时，可能作为某个物体的子物体被销毁了。
-                //这里直接标记为未播放状态，等待下一个播放音效进行回收。
-                IsPlaying = false;
+                //这里直接标记为停止状态，等待下一个播放音效进行回收。
+                AudioPlayStatusType = AudioPlayStatusType.Stop;
             }
             else
             {
@@ -117,8 +117,8 @@ namespace Cosmos.Audio
             if (AudioSource == null)
             {
                 //当AudioSource空引用时，可能作为某个物体的子物体被销毁了。
-                //这里直接标记为未播放状态，等待下一个播放音效进行回收。
-                IsPlaying = false;
+                //这里直接标记为停止状态，等待下一个播放音效进行回收。
+                AudioPlayStatusType = AudioPlayStatusType.Stop;
             }
             else
             {
@@ -131,7 +131,7 @@ namespace Cosmos.Audio
                 Utility.Unity.StopCoroutine(coroutine);
             if (AudioSource == null)
             {
-                IsPlaying = false;
+                AudioPlayStatusType = AudioPlayStatusType.Stop;
             }
             else
             {
@@ -144,7 +144,7 @@ namespace Cosmos.Audio
                 Utility.Unity.StopCoroutine(coroutine);
             if (AudioSource == null)
             {
-                IsPlaying = false;
+                AudioPlayStatusType = AudioPlayStatusType.Stop;
             }
             else
             {
@@ -173,7 +173,7 @@ namespace Cosmos.Audio
             AudioSource = null;
             audioParams = AudioParams.Default;
             SerialId = 0;
-            IsPlaying = false;
+            AudioPlayStatusType = AudioPlayStatusType.None;
             coroutine = null;
         }
         IEnumerator EnumPlay(float seconds)
@@ -194,7 +194,8 @@ namespace Cosmos.Audio
             if (!audioParams.Loop)
             {
                 yield return new WaitUntil(() => { return !AudioSource.isPlaying; });
-                IsPlaying = false;
+                AudioPlayStatusType = AudioPlayStatusType.Stop;
+
             }
         }
         IEnumerator EnumResume(float seconds)
@@ -212,6 +213,12 @@ namespace Cosmos.Audio
                 yield return null;
             }
             AudioSource.volume = audioParams.Volume;
+            AudioPlayStatusType = AudioPlayStatusType.Play;
+            if (!audioParams.Loop)
+            {
+                yield return new WaitUntil(() => { return !AudioSource.isPlaying; });
+                AudioPlayStatusType = AudioPlayStatusType.Stop;
+            }
         }
         IEnumerator EnumPause(float seconds)
         {
@@ -228,6 +235,7 @@ namespace Cosmos.Audio
             }
             AudioSource.Pause();
             AudioSource.volume = startVolume;
+            AudioPlayStatusType = AudioPlayStatusType.Pause;
         }
         IEnumerator EnumStop(float seconds)
         {
@@ -244,7 +252,7 @@ namespace Cosmos.Audio
             }
             AudioSource.Stop();
             AudioSource.volume = startVolume;
-            IsPlaying = false;
+            AudioPlayStatusType = AudioPlayStatusType.Stop;
         }
     }
 }

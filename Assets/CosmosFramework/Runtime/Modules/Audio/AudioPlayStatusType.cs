@@ -1,9 +1,10 @@
 ﻿namespace Cosmos.Audio
 {
-    public enum AudioPlayStatusType
+    public enum AudioPlayStatusType : byte
     {
-        Playing,
-        Stopped,
-        Pause
+        None=1,
+        Play=1<<1,
+        Stop=1<<2,
+        Pause=1 << 3
     }
 }
