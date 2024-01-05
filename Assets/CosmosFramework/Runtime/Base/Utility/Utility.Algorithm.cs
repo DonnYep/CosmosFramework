@@ -130,6 +130,50 @@ namespace Cosmos
                 }
             }
             /// <summary>
+            /// 冒泡排序：升序
+            /// </summary>
+            /// <typeparam name="T">数组类型</typeparam>
+            /// <typeparam name="K">比较类型</typeparam>
+            /// <param name="array">需要排序的数组对象</param>
+            /// <param name="comparison">排序条件</param>
+            public static void SortByAscend<T, K>(IList<T> array, Comparison<T> comparison)
+            {
+                for (int i = 0; i < array.Count; i++)
+                {
+                    for (int j = 0; j < array.Count; j++)
+                    {
+                        if (comparison(array[i], array[j]) < 0)
+                        {
+                            T temp = array[i];
+                            array[i] = array[j];
+                            array[j] = temp;
+                        }
+                    }
+                }
+            }
+            /// <summary>
+            /// 冒泡排序：降序
+            /// </summary>
+            /// <typeparam name="T">数组类型</typeparam>
+            /// <typeparam name="K">比较类型</typeparam>
+            /// <param name="array">需要排序的数组对象</param>
+            /// <param name="comparison">排序条件</param>
+            public static void SortByDescend<T, K>(IList<T> array, Comparison<T> comparison)
+            {
+                for (int i = 0; i < array.Count; i++)
+                {
+                    for (int j = 0; j < array.Count; j++)
+                    {
+                        if (comparison(array[i], array[j]) > 0)
+                        {
+                            T temp = array[i];
+                            array[i] = array[j];
+                            array[j] = temp;
+                        }
+                    }
+                }
+            }
+            /// <summary>
             ///  获取最小
             /// </summary>
             public static T Min<T, K>(IList<T> array, Func<T, K> handler)
