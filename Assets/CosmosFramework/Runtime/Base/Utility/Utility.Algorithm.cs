@@ -208,6 +208,38 @@ namespace Cosmos
                 return temp;
             }
             /// <summary>
+            ///  获取最小
+            /// </summary>
+            public static T Min<T, K>(IList<T> array, Comparison<T> comparison)
+            {
+                T temp = default(T);
+                temp = array[0];
+                foreach (var arr in array)
+                {
+                    if (comparison(temp, arr) > 0)
+                    {
+                        temp = arr;
+                    }
+                }
+                return temp;
+            }
+            /// <summary>
+            /// 获取最大值
+            /// </summary>
+            public static T Max<T, K>(IList<T> array, Comparison<T> comparison)
+            {
+                T temp = default(T);
+                temp = array[0];
+                foreach (var arr in array)
+                {
+                    if (comparison(temp, arr) < 0)
+                    {
+                        temp = arr;
+                    }
+                }
+                return temp;
+            }
+            /// <summary>
             /// 获得传入元素某个符合条件的所有对象
             /// </summary>
             public static T Find<T>(IList<T> array, Predicate<T> handler)
