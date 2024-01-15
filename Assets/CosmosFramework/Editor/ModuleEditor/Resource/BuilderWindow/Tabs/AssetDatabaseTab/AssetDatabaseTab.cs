@@ -165,13 +165,13 @@ namespace Cosmos.Editor.Resource
                     EditorGUILayout.LabelField("Resource Editor");
                 }
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Build Dataset", GUILayout.MinWidth(128)))
+                if (GUILayout.Button("Build Dataset", GUILayout.MinWidth(ResourceEditorConstants.BUTTON_WIDTH)))
                 {
                     bundleDetailLabel.Clear();
                     objectLabel.Clear();
                     BuildDataset();
                 }
-                if (GUILayout.Button("Clear Dataset", GUILayout.MinWidth(128)))
+                if (GUILayout.Button("Clear Dataset", GUILayout.MinWidth(ResourceEditorConstants.BUTTON_WIDTH)))
                 {
                     if (ResourceBuilderWindowDataProxy.ResourceDataset == null)
                         return;

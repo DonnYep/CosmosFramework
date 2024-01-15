@@ -26,7 +26,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="format">格式化类型</param>
             /// <returns>格式化后的GUID</returns>
-            public static string GUID(GUIDFormat format= GUIDFormat.N)
+            public static string GUID(GUIDFormat format = GUIDFormat.N)
             {
                 return Guid.NewGuid().ToString(format.ToString());
             }
@@ -67,7 +67,7 @@ namespace Cosmos
                 return stringBuilderCache.ToString();
             }
             /// <summary>
-            /// MD5加密 ；
+            /// MD5加密 
             /// </summary>
             /// <param name="context">需要加密的字符</param>
             /// <returns>加密后的结果</returns>
@@ -86,7 +86,7 @@ namespace Cosmos
             }
             /// <summary>
             /// 生成8位密钥；
-            /// 注意：此工具类中提供的对称加密需要为16，24，32位密钥；
+            /// 注意：此工具类中提供的对称加密需要为16，24，32位密钥
             /// </summary>
             /// <param name="key">原始密钥信息</param>
             /// <returns>加密后的值</returns>
@@ -112,7 +112,7 @@ namespace Cosmos
                 return dstBytes;
             }
             /// <summary>
-            /// 生成16位密钥；
+            /// 生成16位密钥
             /// </summary>
             /// <param name="key">原始密钥信息</param>
             /// <returns>加密后的值</returns>
@@ -138,7 +138,7 @@ namespace Cosmos
                 return dstBytes;
             }
             /// <summary>
-            /// 生成24位密钥；
+            /// 生成24位密钥
             /// </summary>
             /// <param name="key">原始密钥信息</param>
             /// <returns>加密后的值</returns>
@@ -164,7 +164,7 @@ namespace Cosmos
                 return dstBytes;
             }
             /// <summary>
-            /// 生成32位密钥；
+            /// 生成32位密钥
             /// </summary>
             /// <param name="key">原始密钥信息</param>
             /// <returns>加密后的值</returns>
@@ -220,7 +220,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 加密算法HMACSHA1，输出16位字符串；
+            /// 加密算法HMACSHA1，输出16位字符串
             /// </summary>
             /// <param name="context">被加密的数据</param>
             /// <param name="key">加密密码</param>
@@ -272,7 +272,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 加密算法HMACSHA256，输出16位字符串；
+            /// 加密算法HMACSHA256，输出16位字符串
             /// </summary>
             /// <param name="context">被加密的数据</param>
             /// <param name="key">加密密码</param>
@@ -294,8 +294,8 @@ namespace Cosmos
                 return encrpytedResult;
             }
             /// <summary>
-            /// AES对称加密byte类型内容;
-            /// 密钥的byte长度必须是16, 24, 32；
+            /// AES对称加密byte类型内容
+            /// <para>密钥的byte长度必须是16, 24, 32</para> 
             /// </summary>
             /// <param name="context">需要解密的数组</param>
             /// <param name="key">对称密码,</param>
@@ -325,8 +325,8 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// AES对称解密byte类型内容;
-            /// 密钥的byte长度必须是16, 24, 32；
+            /// AES对称解密byte类型内容
+            /// <para>密钥的byte长度必须是16, 24, 32</para> 
             /// </summary>
             /// <param name="context">需要解密的数组</param>
             /// <param name="key">对称密码,</param>
@@ -356,8 +356,8 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// AES对称加密byte类型内容;
-            /// 密钥的byte长度必须是16, 24, 32；
+            /// AES对称加密byte类型内容
+            /// <para>密钥的byte长度必须是16, 24, 32</para> 
             /// </summary>
             /// <param name="context">需要解密的数组</param>
             /// <param name="key">对称密码</param>
@@ -386,8 +386,8 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// AES对称解密byte类型内容;
-            /// 密钥的byte长度必须是16, 24, 32；
+            /// AES对称解密byte类型内容
+            /// <para>密钥的byte长度必须是16, 24, 32</para> 
             /// </summary>
             /// <param name="context">需要解密的数组</param>
             /// <param name="key">对称密码,</param>
@@ -416,8 +416,8 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// AES对称加密string类型内容;
-            /// 密钥的byte长度必须是16, 24, 32；
+            /// AES对称加密string类型内容
+            /// <para>密钥的byte长度必须是16, 24, 32</para> 
             /// </summary>
             /// <param name="context">需要加密的内容</param>
             /// <param name="key">密钥</param>
@@ -447,8 +447,8 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// AES对称解密string类型内容；
-            /// 密钥的byte长度必须是16, 24, 32；
+            /// AES对称解密string类型内容
+            /// <para>密钥的byte长度必须是16, 24, 32</para> 
             /// </summary>
             /// <param name="context">需要解密的内容</param>
             /// <param name="key">密钥</param>
@@ -477,8 +477,8 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// AES对称加密string类型内容;
-            /// 密钥的byte长度必须是16, 24, 32；
+            /// AES对称加密string类型内容
+            /// <para>密钥的byte长度必须是16, 24, 32</para> 
             /// </summary>
             /// <param name="context">需要加密的内容</param>
             /// <param name="key">密钥</param>
@@ -507,8 +507,8 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// AES对称解密string类型内容;
-            /// 密钥的byte长度必须是16, 24, 32；
+            /// AES对称解密string类型内容
+            /// <para>密钥的byte长度必须是16, 24, 32</para> 
             /// </summary>
             /// <param name="context">需要加密的内容</param>
             /// <param name="key">密钥</param>

@@ -154,7 +154,7 @@ namespace Cosmos.Editor.Resource
                     EditorGUILayout.BeginHorizontal();
                     {
                         profileData.ProjectRelativeBuildPath = EditorGUILayout.TextField("Project relative path", profileData.ProjectRelativeBuildPath.Trim());
-                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
+                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(ResourceEditorConstants.BUTTON_WIDTH)))
                         {
                             var relativeBuildPath = EditorUtil.BrowseProjectReativeFolder(profileData.ProjectRelativeBuildPath);
                             if (!string.IsNullOrEmpty(relativeBuildPath))
@@ -174,7 +174,7 @@ namespace Cosmos.Editor.Resource
                     EditorGUILayout.BeginHorizontal();
                     {
                         profileData.BuildPath = EditorGUILayout.TextField("Build path", profileData.BuildPath.Trim());
-                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
+                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(ResourceEditorConstants.BUTTON_WIDTH)))
                         {
                             var newPath = EditorUtility.OpenFolderPanel("Bundle output path", profileData.BuildPath, string.Empty);
                             if (!string.IsNullOrEmpty(newPath))
@@ -237,7 +237,16 @@ namespace Cosmos.Editor.Resource
                 profileData.EncryptManifest = EditorGUILayout.ToggleLeft("Build info encryption", profileData.EncryptManifest);
                 if (profileData.EncryptManifest)
                 {
-                    profileData.ManifestEncryptionKey = EditorGUILayout.TextField("Build info encryption key", profileData.ManifestEncryptionKey);
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        profileData.ManifestEncryptionKey = EditorGUILayout.TextField("Build info encryption key", profileData.ManifestEncryptionKey);
+                        if (GUILayout.Button("Generate aes key", GUILayout.MaxWidth(ResourceEditorConstants.BUTTON_WIDTH)))
+                        {
+                            profileData.ManifestEncryptionKey = Utility.Text.GenerateRandomString(16);
+                            parent.RepaintWindow();
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
                     var aesKeyStr = profileData.ManifestEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
                     EditorGUILayout.LabelField($"Assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");

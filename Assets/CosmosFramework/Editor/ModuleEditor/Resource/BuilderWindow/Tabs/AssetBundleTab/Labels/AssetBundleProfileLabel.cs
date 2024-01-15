@@ -175,7 +175,7 @@ namespace Cosmos.Editor.Resource
                     EditorGUILayout.BeginHorizontal();
                     {
                         buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath = EditorGUILayout.TextField("Project relative path", buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath.Trim());
-                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
+                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(ResourceEditorConstants.BUTTON_WIDTH)))
                         {
                             var relativeBuildPath = EditorUtil.BrowseProjectReativeFolder(buildProfile.AssetBundleBuildProfileData.ProjectRelativeBuildPath);
                             if (!string.IsNullOrEmpty(relativeBuildPath))
@@ -195,7 +195,7 @@ namespace Cosmos.Editor.Resource
                     EditorGUILayout.BeginHorizontal();
                     {
                         buildProfile.AssetBundleBuildProfileData.BuildPath = EditorGUILayout.TextField("Build path", buildProfile.AssetBundleBuildProfileData.BuildPath.Trim());
-                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(128)))
+                        if (GUILayout.Button("Browse", GUILayout.MaxWidth(ResourceEditorConstants.BUTTON_WIDTH)))
                         {
                             var newPath = EditorUtility.OpenFolderPanel("Bundle output path", buildProfile.AssetBundleBuildProfileData.BuildPath, string.Empty);
                             if (!string.IsNullOrEmpty(newPath))
@@ -257,7 +257,16 @@ namespace Cosmos.Editor.Resource
                 buildProfile.AssetBundleBuildProfileData.EncryptManifest = EditorGUILayout.ToggleLeft("Build info encryption", buildProfile.AssetBundleBuildProfileData.EncryptManifest);
                 if (buildProfile.AssetBundleBuildProfileData.EncryptManifest)
                 {
-                    buildProfile.AssetBundleBuildProfileData.ManifestEncryptionKey = EditorGUILayout.TextField("Build info encryption key", buildProfile.AssetBundleBuildProfileData.ManifestEncryptionKey);
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        buildProfile.AssetBundleBuildProfileData.ManifestEncryptionKey = EditorGUILayout.TextField("Build info encryption key", buildProfile.AssetBundleBuildProfileData.ManifestEncryptionKey);
+                        if (GUILayout.Button("Generate aes key", GUILayout.MaxWidth(ResourceEditorConstants.BUTTON_WIDTH)))
+                        {
+                            buildProfile.AssetBundleBuildProfileData.ManifestEncryptionKey = Utility.Text.GenerateRandomString(16);
+                            parent.RepaintWindow();
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
                     var aesKeyStr = buildProfile.AssetBundleBuildProfileData.ManifestEncryptionKey;
                     var aesKeyLength = Encoding.UTF8.GetBytes(aesKeyStr).Length;
                     EditorGUILayout.LabelField($"Assets AES encryption key, key should be 16,24 or 32 bytes long, current key length is : {aesKeyLength} ");

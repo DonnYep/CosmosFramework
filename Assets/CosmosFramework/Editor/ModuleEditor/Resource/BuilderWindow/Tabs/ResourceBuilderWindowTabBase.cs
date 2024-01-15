@@ -16,5 +16,12 @@ namespace Cosmos.Editor.Resource
         public virtual void OnDatasetAssign() { }
         public virtual void OnDatasetRefresh() { }
         public virtual void OnDatasetUnassign() { }
+        /// <summary>
+        /// 重新绘制渲染窗口
+        /// </summary>
+        public virtual void RepaintWindow()
+        {
+            ParentWindow.Repaint();
+        }
     }
 }

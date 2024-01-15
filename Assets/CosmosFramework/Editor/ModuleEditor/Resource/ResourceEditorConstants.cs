@@ -31,6 +31,10 @@
 
         public const int ICON_WIDTH = 28;
         /// <summary>
+        /// 窗口页面按钮的长度
+        /// </summary>
+        public const int BUTTON_WIDTH = 128;
+        /// <summary>
         /// 资源寻址文件创建地址
         /// </summary>
         public const string NEW_DATASET_PATH = "Assets/NewResourceDataset.asset";

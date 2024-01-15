@@ -27,14 +27,14 @@ MonoBehaviour:
     UseProjectRelativeBuildPath: 0
     ProjectRelativeBuildPath: AssetBundles/Resource
     AssetBundleAbsoluteBuildPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource/StandaloneWindows/profile-no-relative
-    BuildDetailOutputPath: 
+    BuildDetailOutputPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource/StandaloneWindows
     BuildPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource
     BuildVersion: profile-no-relative
     InternalBuildVersion: 0
     AssetBundleEncryption: 0
     AssetBundleOffsetValue: 16
-    EncryptManifest: 0
-    ManifestEncryptionKey: CosmosBundlesKey
+    EncryptManifest: 1
+    ManifestEncryptionKey: Sm3AboHKLYl70Oub
     CopyToStreamingAssets: 0
     UseStreamingAssetsRelativePath: 0
     StreamingAssetsRelativePath: 0.0.1
