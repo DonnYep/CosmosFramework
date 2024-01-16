@@ -597,6 +597,10 @@ namespace Cosmos.Resource
             if (bundleWarpper.AssetBundle == null)
             {
                 var abPath = Path.Combine(bundleWarpper.BundlePath, bundleWarpper.ResourceBundle.BundleKey);
+                if (!string.IsNullOrEmpty(bundleWarpper.BundleExtension))
+                {
+                    abPath = Utility.Text.Combine(abPath, ".", bundleWarpper.BundleExtension);
+                }
                 if (abRequestDict.TryGetValue(abPath, out var abReq))
                 {
                     yield return new WaitUntil(() => abReq.isDone);
@@ -756,7 +760,7 @@ namespace Cosmos.Resource
             foreach (var bundleBuildInfo in bundleBuildInfoDict.Values)
             {
                 var resourceBundle = bundleBuildInfo.ResourceBundle;
-                resourceBundleWarpperDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle, bundlePath));
+                resourceBundleWarpperDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle, bundlePath, bundleBuildInfo.BudleExtension));
                 resourceBundleKeyDict.TryAdd(resourceBundle.BundleKey, resourceBundle.BundleName);
                 var resourceObjectList = resourceBundle.ResourceObjectList;
                 var objectLength = resourceObjectList.Count;

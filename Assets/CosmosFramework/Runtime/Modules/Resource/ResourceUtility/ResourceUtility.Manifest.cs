@@ -116,9 +116,13 @@ namespace Cosmos.Resource
                         //hash相同表示diff存在且内容无变化，使用原始地址srcPath
                         //hash不相同表示diff存在但内容发生变更，使用变更地址diffPath
                         if (equal)
+                        {
                             path = srcPath;
+                        }
                         else
+                        {
                             path = diffPath;
+                        }
                         var mergeInfo = new ResourceMergedBundleBuildInfo
                         {
                             Path = path,

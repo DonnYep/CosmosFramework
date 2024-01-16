@@ -20,6 +20,10 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public AssetBundleNameType AssetBundleNameType;
         /// <summary>
+        /// AssetBundle后缀名
+        /// </summary>
+        public string AssetBundleExtension;
+        /// <summary>
         /// 使用项目相对构建路径
         /// </summary>
         public bool UseProjectRelativeBuildPath;
@@ -29,7 +33,7 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public string ProjectRelativeBuildPath;
         /// <summary>
-        /// AB打包输出的绝对路径；
+        /// AB打包输出的绝对路径
         /// </summary>
         public string AssetBundleAbsoluteBuildPath;
         /// <summary>
@@ -41,7 +45,7 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public ResourceBuildType ResourceBuildType;
         /// <summary>
-        /// 打包的版本；
+        /// 打包的版本
         /// </summary>
         public string BuildVersion;
         /// <summary>
@@ -53,27 +57,27 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public bool EncryptManifest;
         /// <summary>
-        /// Manifest加密密钥；
+        /// Manifest加密密钥
         /// </summary>
         public string ManifestEncryptionKey;
         /// <summary>
-        /// AB偏移加密；
+        /// AB偏移加密
         /// </summary>
         public bool AssetBundleEncryption;
         /// <summary>
-        /// AB偏移量；
+        /// AB偏移量
         /// </summary>
         public int AssetBundleOffsetValue;
         /// <summary>
-        /// 拷贝到streamingAsset文件；
+        /// 拷贝到streamingAsset文件
         /// </summary>
         public bool CopyToStreamingAssets;
         /// <summary>
-        /// 使用StreamingAsset相对路径；
+        /// 使用StreamingAsset相对路径
         /// </summary>
         public bool UseStreamingAssetsRelativePath;
         /// <summary>
-        /// 拷贝到的StreamingAssets相对路径；
+        /// 拷贝到的StreamingAssets相对路径
         /// </summary>
         public string StreamingAssetsRelativePath;
         /// <summary>

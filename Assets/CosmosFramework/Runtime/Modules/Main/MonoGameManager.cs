@@ -11,7 +11,7 @@ namespace Cosmos
     {
         DateTime previousTimeSinceStartup;
         /// <summary>
-        /// moduleType===gameobject
+        /// moduleType===gameObject
         /// </summary>
         readonly Dictionary<Type, GameObject> moduleInstanceObjectDict = new Dictionary<Type, GameObject>();
         bool pause;
@@ -74,6 +74,7 @@ namespace Cosmos
         }
         protected override void OnDestroy()
         {
+            moduleInstanceObjectDict.Clear();
             GameManager.TerminateModules();
         }
         private void FixedUpdate()

@@ -8,7 +8,7 @@ namespace Cosmos.Editor.Resource
     public partial class ResourceEditorUtility
     {
         /// <summary>
-        /// 检测资源与场景是否同处于一个AB包中；
+        /// 检测资源与场景是否同处于一个AB包中
         /// </summary>
         /// <param name="bundlePath">包地址</param>
         /// <returns>是否处于同一个包</returns>

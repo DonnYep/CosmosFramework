@@ -15,8 +15,10 @@ MonoBehaviour:
   assetBundleBuildProfileData:
     BuildTarget: 5
     AssetBundleCompressType: 2
-    AssetBundleNameType: 0
-    ResourceBuildType: 1
+    AssetBundleNameType: 1
+    UseAssetBundleExtension: 0
+    AssetBundleExtension: ab
+    ResourceBuildType: 0
     BuildHandlerName: <NONE>
     BuildHandlerIndex: 0
     DisableWriteTypeTree: 0
@@ -24,17 +26,17 @@ MonoBehaviour:
     ForceRebuildAssetBundle: 0
     IgnoreTypeTreeChanges: 0
     ForceRemoveAllAssetBundleNames: 0
-    UseProjectRelativeBuildPath: 0
+    UseProjectRelativeBuildPath: 1
     ProjectRelativeBuildPath: AssetBundles/Resource
-    AssetBundleAbsoluteBuildPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource/StandaloneWindows/profile-no-relative
+    AssetBundleAbsoluteBuildPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource/StandaloneWindows/0.0.1_0
     BuildDetailOutputPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource/StandaloneWindows
     BuildPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource
-    BuildVersion: profile-no-relative
+    BuildVersion: 0.0.1
     InternalBuildVersion: 0
     AssetBundleEncryption: 0
     AssetBundleOffsetValue: 16
-    EncryptManifest: 1
-    ManifestEncryptionKey: Sm3AboHKLYl70Oub
+    EncryptManifest: 0
+    ManifestEncryptionKey: CosmosBundlesKey
     CopyToStreamingAssets: 0
     UseStreamingAssetsRelativePath: 0
     StreamingAssetsRelativePath: 0.0.1

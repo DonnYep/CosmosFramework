@@ -17,6 +17,10 @@ namespace Cosmos.Resource
         /// </summary>
         public string BundleHash;
         /// <summary>
+        /// 资源包的后缀，可空 [Nullable]
+        /// </summary>
+        public string BudleExtension;
+        /// <summary>
         /// Resource bundle pack;
         /// </summary>
         public ResourceBundle ResourceBundle;

@@ -500,6 +500,22 @@ namespace Cosmos
                 double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
                 return mean + stdDev * randStdNormal;
             }
+            /// <summary>
+            /// Fisher–Yates shuffle 洗牌算法
+            /// </summary>
+            public static void Shuffle<T>(IList<T> array, int randomValue)
+            {
+                var random = new Random(randomValue);
+                for (int i = array.Count - 1; i > 0; i--)
+                {
+                    int randomIndex = random.Next(0, i + 1);
+
+                    // 交换元素位置
+                    T temp = array[i];
+                    array[i] = array[randomIndex];
+                    array[randomIndex] = temp;
+                }
+            }
         }
     }
 }

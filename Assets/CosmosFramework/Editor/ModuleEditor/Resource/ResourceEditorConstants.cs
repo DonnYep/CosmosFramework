@@ -29,6 +29,9 @@
         public const float MAX_WIDTH = 0.618f;
         public const float MIN_WIDTH = 0.382f;
 
+        /// <summary>
+        /// 使用unity原生icon渲染的宽度
+        /// </summary>
         public const int ICON_WIDTH = 28;
         /// <summary>
         /// 窗口页面按钮的长度
@@ -81,5 +84,9 @@
         /// </summary>
         public const int DEFAULT_ASSETBUNDLE_OFFSET_VALUE = 16;
         #endregion
+        /// <summary>
+        /// assetbundle 默认后缀
+        /// </summary>
+        public const string DEFAULT_AB_EXTENSION = "ab";
     }
 }

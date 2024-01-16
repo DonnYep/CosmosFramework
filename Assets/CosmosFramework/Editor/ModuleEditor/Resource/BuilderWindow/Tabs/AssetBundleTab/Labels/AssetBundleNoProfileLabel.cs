@@ -60,6 +60,7 @@ namespace Cosmos.Editor.Resource
                 AssetBundleOffsetValue = profileData.AssetBundleOffsetValue,
                 BuildAssetBundleOptions = buildAssetBundleOptions,
                 AssetBundleNameType = profileData.AssetBundleNameType,
+                AssetBundleExtension = profileData.AssetBundleExtension,
                 EncryptManifest = profileData.EncryptManifest,
                 ManifestEncryptionKey = profileData.ManifestEncryptionKey,
                 BuildTarget = profileData.BuildTarget,
@@ -130,6 +131,8 @@ namespace Cosmos.Editor.Resource
 
                 //打包输出的资源加密，如buildInfo，assetbundle 文件名加密
                 profileData.AssetBundleNameType = (AssetBundleNameType)EditorGUILayout.EnumPopup("Build bundle name type ", profileData.AssetBundleNameType);
+
+
 
             }
             EditorGUILayout.EndVertical();
@@ -226,6 +229,21 @@ namespace Cosmos.Editor.Resource
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
                 EditorGUILayout.LabelField("Bundle build path", profileData.AssetBundleAbsoluteBuildPath);
+
+                profileData.UseAssetBundleExtension = EditorGUILayout.ToggleLeft("Use assetBundle extension", profileData.UseAssetBundleExtension);
+                if (profileData.UseAssetBundleExtension)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        profileData.AssetBundleExtension = EditorGUILayout.TextField("AssetBundle extension", profileData.AssetBundleExtension?.Trim());
+                        if (GUILayout.Button("Reset extension",GUILayout.MaxWidth(ResourceEditorConstants.BUTTON_WIDTH)))
+                        {
+                            profileData.AssetBundleExtension = ResourceEditorConstants.DEFAULT_AB_EXTENSION;
+                            parent.RepaintWindow();
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
             }
             EditorGUILayout.EndVertical();
         }

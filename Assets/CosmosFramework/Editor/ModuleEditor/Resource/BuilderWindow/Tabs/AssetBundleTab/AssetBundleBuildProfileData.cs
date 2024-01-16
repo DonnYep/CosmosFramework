@@ -19,6 +19,14 @@ namespace Cosmos.Editor.Resource
         /// </summary>
         public AssetBundleNameType AssetBundleNameType;
         /// <summary>
+        /// 使用AssetBundle后缀名
+        /// </summary>
+        public bool UseAssetBundleExtension;
+        /// <summary>
+        /// AssetBundle后缀名
+        /// </summary>
+        public string AssetBundleExtension;
+        /// <summary>
         /// 构建类型，增量或全量
         /// </summary>
         public ResourceBuildType ResourceBuildType;
@@ -118,12 +126,14 @@ namespace Cosmos.Editor.Resource
             BuildTarget = BuildTarget.StandaloneWindows;
             BuildHandlerName = Constants.NONE;
             BuildHandlerIndex = 0;
-            BuildPath = Utility.IO.CombineURL(EditorUtil.ApplicationPath(), ResourceEditorConstants.DEFAULT_PROJECT_RELATIVE_BUILD_PATH); 
+            BuildPath = Utility.IO.CombineURL(EditorUtil.ApplicationPath(), ResourceEditorConstants.DEFAULT_PROJECT_RELATIVE_BUILD_PATH);
             AssetBundleEncryption = false;
             AssetBundleOffsetValue = ResourceEditorConstants.DEFAULT_ASSETBUNDLE_OFFSET_VALUE;
             EncryptManifest = false;
             ManifestEncryptionKey = ResourceEditorConstants.DEFAULT_MANIFEST_ENCRYPTION_KEY;
             AssetBundleNameType = AssetBundleNameType.HashInstead;
+            UseAssetBundleExtension = false;
+            AssetBundleExtension = ResourceEditorConstants.DEFAULT_AB_EXTENSION;
             BuildVersion = "0.0.1";
             InternalBuildVersion = 0;
             ForceRebuildAssetBundle = false;

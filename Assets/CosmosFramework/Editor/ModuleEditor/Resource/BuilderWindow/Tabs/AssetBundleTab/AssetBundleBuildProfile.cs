@@ -33,6 +33,7 @@ namespace Cosmos.Editor.Resource
                 AssetBundleOffsetValue = AssetBundleBuildProfileData.AssetBundleOffsetValue,
                 BuildAssetBundleOptions = buildAssetBundleOptions,
                 AssetBundleNameType = AssetBundleBuildProfileData.AssetBundleNameType,
+                AssetBundleExtension= AssetBundleBuildProfileData.AssetBundleExtension,
                 EncryptManifest = AssetBundleBuildProfileData.EncryptManifest,
                 ManifestEncryptionKey = AssetBundleBuildProfileData.ManifestEncryptionKey,
                 BuildTarget = AssetBundleBuildProfileData.BuildTarget,

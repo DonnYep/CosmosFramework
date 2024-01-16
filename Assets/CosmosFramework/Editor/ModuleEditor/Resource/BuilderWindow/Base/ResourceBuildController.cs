@@ -125,7 +125,7 @@ namespace Cosmos.Editor.Resource
             var assetBundleNameType = buildParams.AssetBundleNameType;
 
             var bundleInfoLength = bundleInfos.Count;
-
+            var useAssetBundleExtension = !string.IsNullOrEmpty(buildParams.AssetBundleExtension);
             for (int i = 0; i < bundleInfoLength; i++)
             {
                 var bundleInfo = bundleInfos[i];
@@ -153,6 +153,13 @@ namespace Cosmos.Editor.Resource
                         }
                         break;
                 }
+                string buildExtension = string.Empty;
+                if (useAssetBundleExtension)
+                {
+                    importer.assetBundleVariant = buildParams.AssetBundleExtension;
+                    buildExtension = buildParams.AssetBundleExtension;
+                }
+
                 var bundle = new ResourceBundle()
                 {
                     BundleKey = bundleKey,
@@ -177,7 +184,8 @@ namespace Cosmos.Editor.Resource
                 {
                     BundleHash = hash,
                     ResourceBundle = bundle,
-                    BundleSize = 0
+                    BundleSize = 0,
+                    BudleExtension = buildExtension
                 };
                 //这里存储hash与bundle，打包出来的包体长度在下一个流程处理
                 resourceManifest.ResourceBundleBuildInfoDict.Add(bundleInfo.BundleName, bundleBuildInfo);
@@ -303,7 +311,7 @@ namespace Cosmos.Editor.Resource
             var encryptionKey = buildParams.ManifestEncryptionKey;
             var encrypt = buildParams.EncryptManifest;
             resourceManifest.BuildVersion = buildParams.BuildVersion;
-            resourceManifest.BuildHash = System.Guid.NewGuid().ToString();
+            resourceManifest.BuildHash = Utility.Encryption.GUID();
             var manifestJson = EditorUtil.Json.ToJson(resourceManifest);
             var manifestContext = manifestJson;
             if (encrypt)

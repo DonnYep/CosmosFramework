@@ -246,6 +246,21 @@ namespace Cosmos.Editor.Resource
                 else
                     EditorGUILayout.HelpBox("BuildVersion is invalid !", MessageType.Error);
                 EditorGUILayout.LabelField("Bundle build path", buildProfile.AssetBundleBuildProfileData.AssetBundleAbsoluteBuildPath);
+
+                buildProfile.AssetBundleBuildProfileData.UseAssetBundleExtension = EditorGUILayout.ToggleLeft("Use assetBundle extension", buildProfile.AssetBundleBuildProfileData.UseAssetBundleExtension);
+                if (buildProfile.AssetBundleBuildProfileData.UseAssetBundleExtension)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        buildProfile.AssetBundleBuildProfileData.AssetBundleExtension = EditorGUILayout.TextField("AssetBundle extension", buildProfile.AssetBundleBuildProfileData.AssetBundleExtension?.Trim());
+                        if (GUILayout.Button("Reset extension", GUILayout.MaxWidth(ResourceEditorConstants.BUTTON_WIDTH)))
+                        {
+                            buildProfile.AssetBundleBuildProfileData.AssetBundleExtension = ResourceEditorConstants.DEFAULT_AB_EXTENSION;
+                            parent.RepaintWindow();
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
             }
             EditorGUILayout.EndVertical();
         }
