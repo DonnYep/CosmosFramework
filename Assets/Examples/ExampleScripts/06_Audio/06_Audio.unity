@@ -230,7 +230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchAppDomainModules: 1
   printModulePreparatory: 0
-  resourceLoadMode: 2
+  resourceLoadMode: 3
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
   printLogWhenAssetNotExists: 0
