@@ -15,13 +15,13 @@ namespace Cosmos.Resource
     {
         /// <summary>
         /// assetPath===resourceObjectWarpper
-        /// 理论上资源地址在unity中应该是唯一的。
-        /// 资源地址相同但文件bytes内容改变，打包时生成的hash也会与之不同。因此理论上应该是assetPath是唯一的。
+        /// <para>理论上资源地址在unity中应该是唯一的</para> 
+        /// <para>资源地址相同但文件bytes内容改变，打包时生成的hash也会与之不同。因此理论上应该是assetPath是唯一的</para>
         /// </summary>
         readonly Dictionary<string, ResourceObjectWarpper> resourceObjectWarpperDict;
         /// <summary>
         /// bundleName===resourceBundleWarpper
-        /// 从框架的角度出发，资源bundle设计上就是以文件夹做包体单位。且编辑器做了限制。因此在原生的模块中，理论上bundleName是唯一的。
+        /// <para>从框架的角度出发，资源bundle设计上就是以文件夹做包体单位。且编辑器做了限制。因此在原生的模块中，理论上bundleName是唯一的</para> 
         /// </summary>
         readonly Dictionary<string, ResourceBundleWarpper> resourceBundleWarpperDict;
         /// <summary>
@@ -33,16 +33,15 @@ namespace Cosmos.Resource
         /// </summary>
         readonly Dictionary<string, string> resourceBundleKeyDict;
         /// <summary>
-        /// 被加载的场景字典；
-        /// SceneName===Scene
+        /// 被加载的场景字典，SceneName===Scene
         /// </summary>
         readonly Dictionary<string, UnityEngine.SceneManagement.Scene> loadedSceneDict;
         /// <summary>
-        /// 资源寻址地址；
+        /// 资源寻址地址
         /// </summary>
         readonly ResourceAddress resourceAddress;
         /// <summary>
-        /// 主动加载的场景列表；
+        /// 主动加载的场景列表
         /// </summary>
         readonly List<string> loadSceneList;
         bool manifestAcquired = false;
@@ -574,7 +573,7 @@ namespace Cosmos.Resource
             //DONE
             var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
             if (!hasBundle)
-                yield break; //若bundleWrapper信息为空，则终止；
+                yield break; //若bundleWrapper信息为空，则终止
             yield return EnumLoadAssetBundleAsync(bundleName);
             var bundleDependencies = bundleWarpper.ResourceBundle.BundleDependencies;
             var bundleDependenciesLength = bundleDependencies.Count;
@@ -593,7 +592,7 @@ namespace Cosmos.Resource
         {
             var hasBundle = resourceBundleWarpperDict.TryGetValue(bundleName, out var bundleWarpper);
             if (!hasBundle)
-                yield break; //若bundleWrapper信息为空，则终止；
+                yield break; //若bundleWrapper信息为空，则终止
             if (bundleWarpper.AssetBundle == null)
             {
                 var abPath = Path.Combine(bundleWarpper.BundlePath, bundleWarpper.ResourceBundle.BundleKey);
@@ -624,7 +623,7 @@ namespace Cosmos.Resource
             yield return null;
         }
         /// <summary>
-        /// 递归减少包体引用计数；
+        /// 递归减少包体引用计数
         /// </summary>
         void UnloadDependenciesAssetBundle(ResourceBundleWarpper resourceBundleWarpper, int count, bool unloadAllLoadedObjects)
         {
@@ -671,7 +670,7 @@ namespace Cosmos.Resource
             return false;
         }
         /// <summary>
-        /// 当对象被释放；
+        /// 当对象被释放
         /// </summary>
         void OnResoucreObjectRelease(ResourceObjectWarpper objectWarpper)
         {
@@ -683,7 +682,7 @@ namespace Cosmos.Resource
             }
         }
         /// <summary>
-        /// 当场景被加载；
+        /// 当场景被加载
         /// </summary>
         void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode loadSceneMode)
         {
@@ -696,7 +695,7 @@ namespace Cosmos.Resource
             }
         }
         /// <summary>
-        /// 当场景被卸载；
+        /// 当场景被卸载
         /// </summary>
         void OnSceneUnloaded(UnityEngine.SceneManagement.Scene scene)
         {
@@ -715,7 +714,7 @@ namespace Cosmos.Resource
             resourceObjectWarpper.ReferenceCount++;
         }
         /// <summary>
-        /// 当资源包中的所有对象被加载；
+        /// 当资源包中的所有对象被加载
         /// </summary>
         void OnResourceBundleAllAssetLoad(string bundleName)
         {
@@ -728,7 +727,7 @@ namespace Cosmos.Resource
             }
         }
         /// <summary>
-        /// 当资源对象被卸载；
+        /// 当资源对象被卸载
         /// </summary>
         void OnResourceObjectUnload(string assetName)
         {
