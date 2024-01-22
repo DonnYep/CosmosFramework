@@ -93,7 +93,7 @@ namespace Cosmos.Editor
             DrawApplicationConfig();
             EditorGUILayout.Space(16);
 
-            moduleConfigFoldout = EditorGUILayout.Foldout(moduleConfigFoldout, "MoudleConfig", EditorStyles.foldoutHeader);
+            moduleConfigFoldout = EditorGUILayout.Foldout(moduleConfigFoldout, "ModuleConfig", EditorStyles.foldoutHeader);
             if (sp_ModuleConfigFoldout.boolValue != moduleConfigFoldout)
             {
                 sp_ModuleConfigFoldout.boolValue = moduleConfigFoldout;
