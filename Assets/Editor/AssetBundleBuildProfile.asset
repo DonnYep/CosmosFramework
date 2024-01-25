@@ -28,15 +28,15 @@ MonoBehaviour:
     ForceRemoveAllAssetBundleNames: 0
     UseProjectRelativeBuildPath: 1
     ProjectRelativeBuildPath: AssetBundles/Resource
-    AssetBundleAbsoluteBuildPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource/StandaloneWindows/0.0.1_0
+    AssetBundleAbsoluteBuildPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource/StandaloneWindows/0.0.1_10
     BuildDetailOutputPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource/StandaloneWindows
     BuildPath: E:/DonnYep/CosmosFramework/AssetBundles/Resource
     BuildVersion: 0.0.1
-    InternalBuildVersion: 0
+    InternalBuildVersion: 10
     AssetBundleEncryption: 0
     AssetBundleOffsetValue: 16
     EncryptManifest: 0
-    ManifestEncryptionKey: CosmosBundlesKey
+    ManifestEncryptionKey: 5NjVG9hbUYgAj7bA
     CopyToStreamingAssets: 0
     UseStreamingAssetsRelativePath: 0
     StreamingAssetsRelativePath: 0.0.1

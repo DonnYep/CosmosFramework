@@ -20,6 +20,10 @@ namespace Cosmos.Resource
         /// </summary>
         public string BuildHash { get; set; }
         /// <summary>
+        /// AssetBundle offset
+        /// </summary>
+        public ulong BundleOffset { get; set; }
+        /// <summary>
         /// BundleName===ResourceBundleBuildInfo
         /// </summary>
         public Dictionary<string, ResourceBundleBuildInfo> ResourceBundleBuildInfoDict

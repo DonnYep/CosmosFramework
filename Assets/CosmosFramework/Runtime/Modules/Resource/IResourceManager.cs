@@ -30,30 +30,44 @@ namespace Cosmos.Resource
         ResourceLoadMode ResourceLoadMode { get; }
         /// <summary>
         /// 请求资源文件清单成功事件
+        /// <para>开始请求<see cref="StartRequestManifest"/></para>
+        /// <para>结束请求<see cref="StopRequestManifest"/></para>
         /// </summary>
         event Action<ResourceRequestManifestSuccessEventArgs> ResourceRequestManifestSuccess;
         /// <summary>
         /// 请求资源文件清单失败事件
+        /// <para>开始请求<see cref="StartRequestManifest"/></para>
+        /// <para>结束请求<see cref="StopRequestManifest"/></para>
         /// </summary>
         event Action<ResourceRequestManifestFailureEventArgs> ResourceRequestManifestFailure;
         /// <summary>
         /// 任务下载成功事件
+        /// <para>添加下载任务<see cref="AddResourceDownloadTask"/></para>
+        /// <para>移除下载任务<see cref="RemoveResourceDownloadTask"/></para>
         /// </summary>
         event Action<ResourceDownloadSuccessEventArgs> OnDownloadSuccess;
         /// <summary>
         /// 任务下载失败事件
+        /// <para>添加下载任务<see cref="AddResourceDownloadTask"/></para>
+        /// <para>移除下载任务<see cref="RemoveResourceDownloadTask"/></para>
         /// </summary>
         event Action<ResourceDownloadFailureEventArgs> OnDownloadFailure;
         /// <summary>
         /// 整体任务下载更新事件
+        /// <para>添加下载任务<see cref="AddResourceDownloadTask"/></para>
+        /// <para>移除下载任务<see cref="RemoveResourceDownloadTask"/></para>
         /// </summary>
         event Action<ResourceDownloadUpdateEventArgs> OnDownloadUpdate;
         /// <summary>
         /// 所有任务完成事件
+        /// <para>添加下载任务<see cref="AddResourceDownloadTask"/></para>
+        /// <para>移除下载任务<see cref="RemoveResourceDownloadTask"/></para>
         /// </summary>
         event Action<ResourceDownloadCompeleteEventArgs> OnDownloadComplete;
         /// <summary>
         /// 下载任务取消回调
+        /// <para>添加下载任务<see cref="AddResourceDownloadTask"/></para>
+        /// <para>移除下载任务<see cref="RemoveResourceDownloadTask"/></para>
         /// </summary>
         event Action<ResourceDownloadTasksCancelEventArgs> OnDownloadCancel;
         /// <summary>

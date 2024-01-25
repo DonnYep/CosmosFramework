@@ -29,9 +29,6 @@ namespace Cosmos
         [SerializeField] ResourceBundlePathType resourceBundlePathType;
         [SerializeField] string relativeBundlePath;
 
-        [SerializeField] bool assetBundleEncrytion = false;
-        [SerializeField] ulong assetBundleEncrytionOffset = 16;
-
         [SerializeField] bool manifestEncrytion = false;
         [SerializeField] string manifestEncrytionKey = "CosmosBundlesKey";
 
@@ -78,10 +75,6 @@ namespace Cosmos
                         }
                         manifestPath = prefix + manifestPath;
                         //webrequest需要加file://，System.IO不需要加。加载器使用的是unity原生的assetbundle.loadxxxx，属于IO，因此无需加前缀；
-                        if (assetBundleEncrytion)
-                            ResourceDataProxy.BundleEncryptionOffset = assetBundleEncrytionOffset;
-                        else
-                            ResourceDataProxy.BundleEncryptionOffset = 0;
                         string formattedManifestEncrytionKey = string.Empty;
                         if (manifestEncrytion)
                             formattedManifestEncrytionKey = manifestEncrytionKey;

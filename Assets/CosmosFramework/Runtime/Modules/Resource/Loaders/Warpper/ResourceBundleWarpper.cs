@@ -11,6 +11,7 @@ namespace Cosmos.Resource
         ResourceBundle resourceBundle;
         string bundlePath;
         string bundleExtension;
+        ulong bundleOffset;
         /// <summary>
         /// 包体所在的根目录
         /// </summary>
@@ -25,18 +26,17 @@ namespace Cosmos.Resource
         {
             get { return bundleExtension; }
         }
-        public ResourceBundleWarpper(ResourceBundle resourceBundle)
+        /// <summary>
+        /// 包体的信息
+        /// </summary>
+        public ResourceBundle ResourceBundle
         {
-            this.resourceBundle = resourceBundle;
+            get { return resourceBundle; }
         }
-        public ResourceBundleWarpper(ResourceBundle resourceBundle, string bundlePath, string bundleExtension)
-        {
-            this.resourceBundle = resourceBundle;
-            this.bundlePath = bundlePath;
-            this.bundleExtension = bundleExtension;
-        }
-        public ResourceBundle ResourceBundle { get { return resourceBundle; } }
         public AssetBundle AssetBundle { get; set; }
+        /// <summary>
+        /// 包体的引用计数
+        /// </summary>
         public int ReferenceCount
         {
             get { return referenceCount; }
@@ -46,6 +46,25 @@ namespace Cosmos.Resource
                 if (referenceCount < 0)
                     referenceCount = 0;
             }
+        }
+        /// <summary>
+        /// 包体的偏移量
+        /// </summary>
+        public ulong BundleOffset
+        {
+            get { return bundleOffset; }
+        }
+
+        public ResourceBundleWarpper(ResourceBundle resourceBundle)
+        {
+            this.resourceBundle = resourceBundle;
+        }
+        public ResourceBundleWarpper(ResourceBundle resourceBundle, string bundlePath, string bundleExtension, ulong bundleOffset)
+        {
+            this.resourceBundle = resourceBundle;
+            this.bundlePath = bundlePath;
+            this.bundleExtension = bundleExtension;
+            this.bundleOffset = bundleOffset;
         }
     }
 }

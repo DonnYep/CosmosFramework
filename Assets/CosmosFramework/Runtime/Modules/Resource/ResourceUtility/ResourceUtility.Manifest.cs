@@ -126,7 +126,8 @@ namespace Cosmos.Resource
                         var mergeInfo = new ResourceMergedBundleBuildInfo
                         {
                             Path = path,
-                            ResourceBundleBuildInfo = diffBundle
+                            ResourceBundleBuildInfo = diffBundle,
+                            Offset = diff.BundleOffset
                         };
                         mergedBundleList.Add(mergeInfo);
                     }
@@ -136,7 +137,8 @@ namespace Cosmos.Resource
                         var mergeInfo = new ResourceMergedBundleBuildInfo
                         {
                             Path = srcPath,
-                            ResourceBundleBuildInfo = srcBundle
+                            ResourceBundleBuildInfo = srcBundle,
+                            Offset = src.BundleOffset
                         };
                         mergedBundleList.Add(mergeInfo);
                     }

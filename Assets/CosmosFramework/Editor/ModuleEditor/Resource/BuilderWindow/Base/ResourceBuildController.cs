@@ -312,6 +312,8 @@ namespace Cosmos.Editor.Resource
             var encrypt = buildParams.EncryptManifest;
             resourceManifest.BuildVersion = buildParams.BuildVersion;
             resourceManifest.BuildHash = Utility.Encryption.GUID();
+            if (buildParams.AssetBundleEncryption)
+                resourceManifest.BundleOffset = (ulong)buildParams.AssetBundleOffsetValue;
             var manifestJson = EditorUtil.Json.ToJson(resourceManifest);
             var manifestContext = manifestJson;
             if (encrypt)

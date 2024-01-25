@@ -606,7 +606,7 @@ namespace Cosmos.Resource
                 }
                 else
                 {
-                    abReq = AssetBundle.LoadFromFileAsync(abPath, 0, ResourceDataProxy.BundleEncryptionOffset);
+                    abReq = AssetBundle.LoadFromFileAsync(abPath, 0, bundleWarpper.BundleOffset);
                     abRequestDict.Add(abPath, abReq);
                     yield return abReq;
                 }
@@ -759,7 +759,8 @@ namespace Cosmos.Resource
             foreach (var bundleBuildInfo in bundleBuildInfoDict.Values)
             {
                 var resourceBundle = bundleBuildInfo.ResourceBundle;
-                resourceBundleWarpperDict.TryAdd(resourceBundle.BundleName, new ResourceBundleWarpper(resourceBundle, bundlePath, bundleBuildInfo.BudleExtension));
+                var resourceBundleWarpper = new ResourceBundleWarpper(resourceBundle, bundlePath, bundleBuildInfo.BudleExtension, resourceManifest.BundleOffset);
+                resourceBundleWarpperDict.TryAdd(resourceBundle.BundleName, resourceBundleWarpper);
                 resourceBundleKeyDict.TryAdd(resourceBundle.BundleKey, resourceBundle.BundleName);
                 var resourceObjectList = resourceBundle.ResourceObjectList;
                 var objectLength = resourceObjectList.Count;

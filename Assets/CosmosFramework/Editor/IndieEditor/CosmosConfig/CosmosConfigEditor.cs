@@ -22,8 +22,6 @@ namespace Cosmos.Editor
         SerializedProperty sp_RelativeBundlePath;
         SerializedProperty sp_PrintLogWhenAssetNotExists;
 
-        SerializedProperty sp_AssetBundleEncrytion;
-        SerializedProperty sp_AssetBundleEncrytionOffset;
         SerializedProperty sp_ManifestEncrytion;
         SerializedProperty sp_ManifestEncrytionKey;
 
@@ -54,7 +52,6 @@ namespace Cosmos.Editor
         int jsonHelperIndex;
         int messagePackHelperIndex;
 
-        bool assetBundleEncrytion;
         bool manifestEncrytion;
 
         bool launchAppDomainModules;
@@ -150,8 +147,6 @@ namespace Cosmos.Editor
             sp_RelativeBundlePath = targetObject.FindProperty("relativeBundlePath");
             sp_PrintLogWhenAssetNotExists = targetObject.FindProperty("printLogWhenAssetNotExists");
 
-            sp_AssetBundleEncrytion = targetObject.FindProperty("assetBundleEncrytion");
-            sp_AssetBundleEncrytionOffset = targetObject.FindProperty("assetBundleEncrytionOffset");
             sp_ManifestEncrytion = targetObject.FindProperty("manifestEncrytion");
             sp_ManifestEncrytionKey = targetObject.FindProperty("manifestEncrytionKey");
 
@@ -181,7 +176,6 @@ namespace Cosmos.Editor
             runInBackground = sp_RunInBackground.boolValue;
             resourceBundlePathTypeIndex = sp_ResourceBundlePathType.enumValueIndex;
 
-            assetBundleEncrytion = sp_AssetBundleEncrytion.boolValue;
             manifestEncrytion = sp_ManifestEncrytion.boolValue;
 
             inputHelperIndex = sp_InputHelperIndex.intValue;
@@ -275,15 +269,6 @@ namespace Cosmos.Editor
                             sp_ResourceBundlePathType.enumValueIndex = resourceBundlePathTypeIndex;
                         }
                         sp_RelativeBundlePath.stringValue = EditorGUILayout.TextField("RelativeBundlePath", sp_RelativeBundlePath.stringValue);
-                        assetBundleEncrytion = EditorGUILayout.ToggleLeft("AssetBundleEncrytion", assetBundleEncrytion);
-                        if (assetBundleEncrytion != sp_AssetBundleEncrytion.boolValue)
-                        {
-                            sp_AssetBundleEncrytion.boolValue = assetBundleEncrytion;
-                        }
-                        if (assetBundleEncrytion)
-                        {
-                            sp_AssetBundleEncrytionOffset.intValue = EditorGUILayout.IntField("Offset", sp_AssetBundleEncrytionOffset.intValue);
-                        }
 
                         manifestEncrytion = EditorGUILayout.ToggleLeft("ManifestEncrytion", manifestEncrytion);
                         if (manifestEncrytion != sp_ManifestEncrytion.boolValue)

@@ -48,7 +48,7 @@ namespace Cosmos.Resource
             }
         }
         /// <summary>
-        /// 生成对称加密的密钥；
+        /// 生成对称加密的密钥
         /// </summary>
         /// <param name="srcKey"></param>
         /// <returns>生成的密钥</returns>

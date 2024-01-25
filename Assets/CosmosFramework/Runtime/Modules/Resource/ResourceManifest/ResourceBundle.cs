@@ -4,8 +4,7 @@ using UnityEngine;
 namespace Cosmos.Resource
 {
     /// <summary>
-    /// 资源包，AssetBundle；
-    /// 存储AssetBundle信息；
+    /// 资源包，AssetBundle，存储AssetBundle信息
     /// </summary>
     [Serializable]
     public class ResourceBundle : IEquatable<ResourceBundle>
