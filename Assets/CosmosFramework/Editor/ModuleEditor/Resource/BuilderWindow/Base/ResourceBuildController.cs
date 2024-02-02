@@ -498,10 +498,19 @@ namespace Cosmos.Editor.Resource
             ResourceManifest resourceManifest = new ResourceManifest();
             var bundleInfos = dataset.GetResourceBundleInfos();
             PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(buildParams.BuildHandlerName);
+            if (resourceBuildHandler != null)
+            {
+                resourceBuildHandler.OnBuildPrepared(buildParams);
+            }
             var unityManifest = BuildPipeline.BuildAssetBundles(buildParams.AssetBundleAbsoluteBuildPath, buildParams.BuildAssetBundleOptions, buildParams.BuildTarget);
             ProcessAssetBundle(buildParams, bundleInfos, unityManifest, ref resourceManifest);
             PorcessManifest(buildParams, ref resourceManifest);
             BuildDoneOption(buildParams);
+            if (resourceBuildHandler != null)
+            {
+                resourceBuildHandler.OnBuildComplete(buildParams);
+            }
             RevertAssetBundlesName(bundleInfos);
             var endTime = DateTime.Now;
             var elapsedTime = endTime - startTime;

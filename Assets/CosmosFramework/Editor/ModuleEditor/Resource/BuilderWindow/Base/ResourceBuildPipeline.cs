@@ -5,60 +5,41 @@ namespace Cosmos.Editor.Resource
 {
     public class ResourceBuildPipeline
     {
-        static ResourceDataset dataset;
-        static AssetBundleBuildProfile buildProfile;
+        static ResourceDataset defaultResourceDataset;
+        static AssetBundleBuildProfile defaultAssetBundleBuildProfile;
+        /// <summary>
+        /// 默认ResourceDataset
+        /// <para><see cref="ResourceEditorConstants.DEFAULT_DATASET_PATH"/></para>
+        /// </summary>
         public static ResourceDataset DefaultResourceDataset
         {
             get
             {
-                if (dataset == null)
-                    dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceEditorConstants.DEFAULT_DATASET_PATH);
-                return dataset;
+                if (defaultResourceDataset == null)
+                    defaultResourceDataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceEditorConstants.DEFAULT_DATASET_PATH);
+                return defaultResourceDataset;
             }
         }
+        /// <summary>
+        /// 默认AssetBundleBuildProfile
+        /// <para><see cref="ResourceEditorConstants.DEFAULT_BUILD_PROFILE_PATH"/></para>
+        /// </summary>
         public static AssetBundleBuildProfile DefaultAssetBundleBuildProfile
         {
             get
             {
-                if (buildProfile == null)
-                    buildProfile = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(ResourceEditorConstants.DEFAULT_BUILD_PROFILE_PATH);
-                return buildProfile;
+                if (defaultAssetBundleBuildProfile == null)
+                    defaultAssetBundleBuildProfile = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(ResourceEditorConstants.DEFAULT_BUILD_PROFILE_PATH);
+                return defaultAssetBundleBuildProfile;
             }
         }
-        public static void BuildAssetBundle(BuildTarget buildTarget, bool nameByHash = true)
-        {
-            if (DefaultResourceDataset == null)
-            {
-                EditorUtil.Debug.LogError($"ResourceDataset : {ResourceEditorConstants.DEFAULT_DATASET_PATH} not exist !");
-                return;
-            }
-            var presetData = new AssetBundleBuildProfileData();
-            BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
-            options |= BuildAssetBundleOptions.ChunkBasedCompression;
-            if (nameByHash)
-                presetData.AssetBundleNameType = AssetBundleNameType.HashInstead;
-            else
-                presetData.AssetBundleNameType = AssetBundleNameType.DefaultName;
-            var buildParams = new ResourceBuildParams()
-            {
-                AssetBundleAbsoluteBuildPath = presetData.AssetBundleAbsoluteBuildPath,
-                AssetBundleEncryption = presetData.AssetBundleEncryption,
-                AssetBundleOffsetValue = presetData.AssetBundleOffsetValue,
-                BuildAssetBundleOptions = options,
-                AssetBundleNameType = presetData.AssetBundleNameType,
-                EncryptManifest = presetData.EncryptManifest,
-                ManifestEncryptionKey = presetData.ManifestEncryptionKey,
-                BuildTarget = buildTarget,
-                BuildVersion = $"{presetData.BuildVersion}_{presetData.InternalBuildVersion}",
-                CopyToStreamingAssets = presetData.CopyToStreamingAssets,
-                UseStreamingAssetsRelativePath = presetData.UseStreamingAssetsRelativePath,
-                StreamingAssetsRelativePath = presetData.StreamingAssetsRelativePath,
-                ClearStreamingAssetsDestinationPath = true
-            };
-            ResourceBuildController.BuildAssetBundle(dataset, buildParams);
-        }
+        /// <summary>
+        /// 通过默认预设构建资源
+        /// <para>默认ResourceDatase地址：<see cref="ResourceEditorConstants.DEFAULT_DATASET_PATH"/></para>
+        /// <para>默认AssetBundleBuildProfile地址：<see cref="ResourceEditorConstants.DEFAULT_BUILD_PROFILE_PATH"/></para>
+        /// </summary>
         [MenuItem("Window/Cosmos/Build/Resource/BuildAssetBundleByDefaultProfile")]
-        public static void BuildAssetBundleByProfile()
+        public static void BuildAssetBundleByDefaultProfile()
         {
             if (DefaultResourceDataset == null)
             {
@@ -71,6 +52,30 @@ namespace Cosmos.Editor.Resource
                 return;
             }
             var buildParams = DefaultAssetBundleBuildProfile.GetBuildParams();
+            ResourceBuildController.BuildAssetBundle(defaultResourceDataset, buildParams);
+        }
+        /// <summary>
+        /// 通过预设构建资源
+        /// <para>ResourceDatase参考地址：<see cref="ResourceEditorConstants.DEFAULT_DATASET_PATH"/></para>
+        /// <para>AssetBundleBuildProfile参考地址：<see cref="ResourceEditorConstants.DEFAULT_BUILD_PROFILE_PATH"/></para>
+        /// </summary>
+        /// <param name="datasetPath">ResourceDataset预设的地址</param>
+        /// <param name="buildProfilePath">AssetBundleBuildProfile预设的地址</param>
+        public static void BuildAssetBundleByProfile(string datasetPath, string buildProfilePath)
+        {
+            var dataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(datasetPath);
+            if (dataset == null)
+            {
+                EditorUtil.Debug.LogError($"ResourceDataset : {datasetPath} not exist !");
+                return;
+            }
+            var buildProfile = AssetDatabase.LoadAssetAtPath<AssetBundleBuildProfile>(buildProfilePath);
+            if (buildProfile == null)
+            {
+                EditorUtil.Debug.LogError($"AssetBundleBuildProfile : {buildProfilePath} not exist !");
+                return;
+            }
+            var buildParams = buildProfile.GetBuildParams();
             ResourceBuildController.BuildAssetBundle(dataset, buildParams);
         }
     }

@@ -104,14 +104,14 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAllAssetAsync(assetBundleName, progress, callback));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
+        public Coroutine LoadSceneAsync(SceneAssetInfo sceneAssetInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
         {
-            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info, progressProvider, progress, condition, callback));
+            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneAssetInfo, progressProvider, progress, condition, callback));
         }
         ///<inheritdoc/> 
-        public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+        public Coroutine UnloadSceneAsync(SceneAssetInfo sceneAssetInfo, Action<float> progress, Func<bool> condition, Action callback)
         {
-            return Utility.Unity.StartCoroutine(EnumUnloadSceneAsync(info, progress, condition, callback));
+            return Utility.Unity.StartCoroutine(EnumUnloadSceneAsync(sceneAssetInfo, progress, condition, callback));
         }
         ///<inheritdoc/> 
         public Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback)
@@ -411,7 +411,7 @@ namespace Cosmos.Resource
             }
             callback?.Invoke(assets);
         }
-        IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
+        IEnumerator EnumLoadSceneAsync(SceneAssetInfo sceneAssetInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
             yield return new WaitUntil(() => requestDone || abort);
             if (!manifestAcquired)
@@ -420,7 +420,7 @@ namespace Cosmos.Resource
                 callback?.Invoke();
                 yield break;
             }
-            var sceneName = info.SceneName;
+            var sceneName = sceneAssetInfo.SceneName;
             if (loadedSceneDict.TryGetValue(sceneName, out var loadedScene))
             {
                 progress?.Invoke(1);
@@ -446,8 +446,8 @@ namespace Cosmos.Resource
                 yield break;
             }
             yield return EnumLoadDependenciesAssetBundleAsync(bundleName);
-            LoadSceneMode loadSceneMode = info.Additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
-            var operation = SceneManager.LoadSceneAsync(info.SceneName, loadSceneMode);
+            LoadSceneMode loadSceneMode = sceneAssetInfo.Additive == true ? LoadSceneMode.Additive : LoadSceneMode.Single;
+            var operation = SceneManager.LoadSceneAsync(sceneAssetInfo.SceneName, loadSceneMode);
             if (operation == null)
             {
                 //为空表示场景不存在
@@ -456,7 +456,7 @@ namespace Cosmos.Resource
                 OnResourceObjectNotExists(sceneName);
                 yield break;
             }
-            loadSceneList.Add(info.SceneName);
+            loadSceneList.Add(sceneAssetInfo.SceneName);
             operation.allowSceneActivation = false;
             var hasProviderProgress = progressProvider != null;
             while (!operation.isDone)
@@ -487,7 +487,7 @@ namespace Cosmos.Resource
             yield return null;
             callback?.Invoke();
         }
-        IEnumerator EnumUnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+        IEnumerator EnumUnloadSceneAsync(SceneAssetInfo sceneAssetInfo, Action<float> progress, Func<bool> condition, Action callback)
         {
             yield return new WaitUntil(() => requestDone || abort);
             if (!manifestAcquired)
@@ -496,7 +496,7 @@ namespace Cosmos.Resource
                 callback?.Invoke();
                 yield break;
             }
-            var sceneName = info.SceneName;
+            var sceneName = sceneAssetInfo.SceneName;
             if (string.IsNullOrEmpty(sceneName))
             {
                 progress?.Invoke(1);
@@ -705,8 +705,8 @@ namespace Cosmos.Resource
             loadedSceneDict.Remove(sceneName);
         }
         /// <summary>
-        /// 只负责计算引用计数
-        /// </summary>ram>
+        /// 只负责计算资源对象的引用计数
+        /// </summary>
         void OnResourceObjectLoad(ResourceObject resourceObject)
         {
             if (!resourceObjectWarpperDict.TryGetValue(resourceObject.ObjectPath, out var resourceObjectWarpper))
@@ -721,10 +721,13 @@ namespace Cosmos.Resource
             if (!resourceBundleWarpperDict.TryGetValue(bundleName, out var resourceBundleWarpper))
                 return;
             var resourceObjectList = resourceBundleWarpper.ResourceBundle.ResourceObjectList;
-            foreach (var resourceObject in resourceObjectList)
+            var length = resourceObjectList.Count;
+            for (int i = 0; i < length; i++)
             {
+                var resourceObject = resourceObjectList[i];
                 OnResourceObjectLoad(resourceObject);
             }
+            resourceBundleWarpper.ReferenceCount += resourceObjectList.Count;
         }
         /// <summary>
         /// 当资源对象被卸载

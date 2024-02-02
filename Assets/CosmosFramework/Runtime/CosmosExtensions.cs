@@ -53,17 +53,17 @@ namespace Cosmos.Extensions
             await @this.LoadAllAssetAsync(assetPack, (a) => { assets = a; }, progress);
             return assets;
         }
-        public static async Task LoadSceneAsync(this IResourceManager @this, SceneAssetInfo info)
+        public static async Task LoadSceneAsync(this IResourceManager @this, SceneAssetInfo sceneAssetInfo)
         {
-            await @this.LoadSceneAsync(info, null, null, null, null);
+            await @this.LoadSceneAsync(sceneAssetInfo, null, null, null, null);
         }
-        public static async Task LoadSceneAsync(this IResourceManager @this, SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition)
+        public static async Task LoadSceneAsync(this IResourceManager @this, SceneAssetInfo sceneAssetInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition)
         {
-            await @this.LoadSceneAsync(info, progressProvider, progress, condition, null);
+            await @this.LoadSceneAsync(sceneAssetInfo, progressProvider, progress, condition, null);
         }
-        public static async Task UnloadSceneAsync(this IResourceManager @this, SceneAssetInfo info, Action<float> progress, Func<bool> condition)
+        public static async Task UnloadSceneAsync(this IResourceManager @this, SceneAssetInfo sceneAssetInfo, Action<float> progress, Func<bool> condition)
         {
-            await @this.UnloadSceneAsync(info, progress, condition, null);
+            await @this.UnloadSceneAsync(sceneAssetInfo, progress, condition, null);
         }
 
         public static async Task<T> OpenUIFormAsync<T>(this IUIManager @this, UIAssetInfo assetInfo)

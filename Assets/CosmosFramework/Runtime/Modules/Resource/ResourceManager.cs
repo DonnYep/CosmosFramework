@@ -208,14 +208,14 @@ namespace Cosmos.Resource
             return currentLoadHelper.LoadAllAssetAsync(assetPack, callback, progress);
         }
         /// <inheritdoc/>
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
+        public Coroutine LoadSceneAsync(SceneAssetInfo sceneAssetInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
         {
-            return currentLoadHelper.LoadSceneAsync(info, progressProvider, progress, condition, callback);
+            return currentLoadHelper.LoadSceneAsync(sceneAssetInfo, progressProvider, progress, condition, callback);
         }
         /// <inheritdoc/>
-        public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+        public Coroutine UnloadSceneAsync(SceneAssetInfo sceneAssetInfo, Action<float> progress, Func<bool> condition, Action callback)
         {
-            return currentLoadHelper.UnloadSceneAsync(info, progress, condition, callback);
+            return currentLoadHelper.UnloadSceneAsync(sceneAssetInfo, progress, condition, callback);
         }
         /// <inheritdoc/>
         public void UnloadAsset(string assetName)

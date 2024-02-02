@@ -66,14 +66,14 @@ namespace Cosmos.Resource
             return Utility.Unity.StartCoroutine(EnumLoadAllAssetAsync(assetBundleName, progress, callback));
         }
         ///<inheritdoc/> 
-        public Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
+        public Coroutine LoadSceneAsync(SceneAssetInfo sceneAssetInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback)
         {
-            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(info, progressProvider, progress, condition, callback));
+            return Utility.Unity.StartCoroutine(EnumLoadSceneAsync(sceneAssetInfo, progressProvider, progress, condition, callback));
         }
         ///<inheritdoc/> 
-        public Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback)
+        public Coroutine UnloadSceneAsync(SceneAssetInfo sceneAssetInfo, Action<float> progress, Func<bool> condition, Action callback)
         {
-            return Utility.Unity.StartCoroutine(EnumUnloadSceneAsync(info, progress, condition, callback));
+            return Utility.Unity.StartCoroutine(EnumUnloadSceneAsync(sceneAssetInfo, progress, condition, callback));
         }
         ///<inheritdoc/> 
         public Coroutine UnloadAllSceneAsync(Action<float> progress, Action callback)
@@ -155,9 +155,9 @@ namespace Cosmos.Resource
             progress?.Invoke(1);
             callback?.Invoke(assets);
         }
-        IEnumerator EnumLoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
+        IEnumerator EnumLoadSceneAsync(SceneAssetInfo sceneAssetInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback = null)
         {
-            var sceneName = info.SceneName;
+            var sceneName = sceneAssetInfo.SceneName;
             if (loadedSceneDict.TryGetValue(sceneName, out var loadedScene))
             {
                 progress?.Invoke(1);
@@ -165,7 +165,7 @@ namespace Cosmos.Resource
                 callback?.Invoke();
                 yield break;
             }
-            var operation = SceneManager.LoadSceneAsync(sceneName, (LoadSceneMode)Convert.ToByte(info.Additive));
+            var operation = SceneManager.LoadSceneAsync(sceneName, (LoadSceneMode)Convert.ToByte(sceneAssetInfo.Additive));
             if (operation == null)
             {
                 //为空表示场景不存在
@@ -173,7 +173,7 @@ namespace Cosmos.Resource
                 callback?.Invoke();
                 yield break;
             }
-            loadSceneList.Add(info.SceneName);
+            loadSceneList.Add(sceneAssetInfo.SceneName);
             operation.allowSceneActivation = false;
             var hasProviderProgress = progressProvider != null;
             while (!operation.isDone)
@@ -203,9 +203,9 @@ namespace Cosmos.Resource
             yield return null;
             callback?.Invoke();
         }
-        IEnumerator EnumUnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback = null)
+        IEnumerator EnumUnloadSceneAsync(SceneAssetInfo sceneAssetInfo, Action<float> progress, Func<bool> condition, Action callback = null)
         {
-            var sceneName = info.SceneName;
+            var sceneName = sceneAssetInfo.SceneName;
             if (string.IsNullOrEmpty(sceneName))
             {
                 progress?.Invoke(1);

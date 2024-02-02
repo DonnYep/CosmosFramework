@@ -59,22 +59,22 @@ namespace Cosmos.Resource
         /// <summary>
         /// 加载场景（异步）
         /// </summary>
-        /// <param name="info">资源信息</param>
+        /// <param name="sceneAssetInfo">资源信息</param>
         /// <param name="progressProvider">自定义的加载进度0-1</param>
         /// <param name="progress">加载场景进度回调</param>
         /// <param name="condition">场景加载完成的条件</param>
         /// <param name="callback">场景加载完毕回调</param>
         /// <returns>协程对象</returns>
-        Coroutine LoadSceneAsync(SceneAssetInfo info, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback);
+        Coroutine LoadSceneAsync(SceneAssetInfo sceneAssetInfo, Func<float> progressProvider, Action<float> progress, Func<bool> condition, Action callback);
         /// <summary>
         /// 卸载场景（异步）
         /// </summary>
-        /// <param name="info">资源信息</param>
+        /// <param name="sceneAssetInfo">资源信息</param>
         /// <param name="progress">卸载场景的进度</param>
         /// <param name="condition">卸载场景完成的条件</param>
         /// <param name="callback">场景卸载完毕后的回调<</param>
         /// <returns>协程对象</returns>
-        Coroutine UnloadSceneAsync(SceneAssetInfo info, Action<float> progress, Func<bool> condition, Action callback);
+        Coroutine UnloadSceneAsync(SceneAssetInfo sceneAssetInfo, Action<float> progress, Func<bool> condition, Action callback);
         /// <summary>
         /// 卸载全部场景（异步）
         /// </summary>
