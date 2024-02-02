@@ -610,7 +610,7 @@ namespace Cosmos.Resource
         /// <summary>
         /// 当资源包中的所有对象被加载
         /// </summary>
-        void OnResourceBundleAllAssetLoad(string bundleName)
+        void OnResourceBundleAllAssetLoad(string bundleName) 
         {
             if (!resourceBundleWarpperDict.TryGetValue(bundleName, out var resourceBundleWarpper))
                 return;
