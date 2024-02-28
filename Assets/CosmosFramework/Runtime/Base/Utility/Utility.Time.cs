@@ -297,6 +297,21 @@ namespace Cosmos
             {
                 return (dateTime.Ticks - epochTicks);
             }
+            /// <summary>
+            /// 判断是否是同一天
+            /// </summary>
+            /// <param name="lhs">起始时间</param>
+            /// <param name="rhs">终止时间</param>
+            /// <returns>是否是同一天</returns>
+            public static bool MatchDay(DateTime lhs, DateTime rhs)
+            {
+                var lhsDay = new DateTime(lhs.Year, lhs.Month, lhs.Day, 0, 0, 0);
+                var rhsDay = new DateTime(rhs.Year, rhs.Month, rhs.Day, 0, 0, 0);
+                var diff = rhsDay - lhsDay;
+                if (Math.Abs(diff.Days) >= 1)
+                    return false;
+                return true;
+            }
         }
     }
 }
