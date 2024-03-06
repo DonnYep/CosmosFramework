@@ -516,6 +516,24 @@ namespace Cosmos
                     array[randomIndex] = temp;
                 }
             }
+            /// <summary>
+            /// 是否是奇数
+            /// </summary>
+            /// <param name="value">检测的值</param>
+            /// <returns>是否是奇数</returns>
+            public static bool IsOdd(long value)
+            {
+                return !Convert.ToBoolean(value & 0x1);
+            }
+            /// <summary>
+            /// 是否是偶数
+            /// </summary>
+            /// <param name="value">检测的值</param>
+            /// <returns>是否是偶数</returns>
+            public static bool IsEven(long value)
+            {
+                return Convert.ToBoolean(value & 0x1);
+            }
         }
     }
 }
