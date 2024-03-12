@@ -56,63 +56,6 @@ MonoBehaviour:
       objectValid: 1
     bundleDependencies: []
     resourceSubBundleInfoList: []
-  - bundleName: material
-    bundlePath: Assets/Examples/AssetBundleTest/Material
-    bundleKey: material
-    bundleSize: 15070
-    bundleFormatBytes: 14.7 KB
-    resourceObjectInfoList:
-    - objectName: Alpha_Body_MAT
-      objectPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
-      bundleName: material
-      objectSize: 2134
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: BlueMat
-      objectPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
-      bundleName: material
-      objectSize: 2127
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: GreyMaterial.Default
-      objectPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
-      bundleName: material
-      objectSize: 2145
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: RedMat
-      objectPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
-      bundleName: material
-      objectSize: 2107
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: Mat_ObjectPool_Blue
-      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Blue.mat
-      bundleName: material
-      objectSize: 2295
-      objectFormatBytes: 2.2 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: Mat_ObjectPool_Green
-      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Green.mat
-      bundleName: material
-      objectSize: 2128
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    - objectName: Mat_ObjectPool_Red
-      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Red.mat
-      bundleName: material
-      objectSize: 2134
-      objectFormatBytes: 2.1 KB
-      extension: .mat
-      objectValid: 1
-    bundleDependencies: []
-    resourceSubBundleInfoList: []
   - bundleName: model
     bundlePath: Assets/Examples/AssetBundleTest/Model
     bundleKey: model
@@ -160,42 +103,6 @@ MonoBehaviour:
       objectSize: 2160160
       objectFormatBytes: 2.1 MB
       extension: .fbx
-      objectValid: 1
-    bundleDependencies: []
-    resourceSubBundleInfoList: []
-  - bundleName: photo
-    bundlePath: Assets/Examples/AssetBundleTest/Photo
-    bundleKey: photo
-    bundleSize: 21600736
-    bundleFormatBytes: 20.6 MB
-    resourceObjectInfoList:
-    - objectName: CB1024
-      objectPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
-      bundleName: photo
-      objectSize: 3145772
-      objectFormatBytes: 3.0 MB
-      extension: .tga
-      objectValid: 1
-    - objectName: CB2048
-      objectPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
-      bundleName: photo
-      objectSize: 12582956
-      objectFormatBytes: 12.0 MB
-      extension: .tga
-      objectValid: 1
-    - objectName: CheckBoard_2048
-      objectPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
-      bundleName: photo
-      objectSize: 1553908
-      objectFormatBytes: 1.5 MB
-      extension: .jpg
-      objectValid: 1
-    - objectName: Grid2048
-      objectPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
-      bundleName: photo
-      objectSize: 4318100
-      objectFormatBytes: 4.1 MB
-      extension: .psd
       objectValid: 1
     bundleDependencies: []
     resourceSubBundleInfoList: []
@@ -324,7 +231,15 @@ MonoBehaviour:
       objectFormatBytes: 74.9 KB
       extension: .prefab
       objectValid: 1
-    bundleDependencies: []
+    bundleDependencies:
+    - bundleKey: audio
+      bundleName: audio
+    - bundleKey: material
+      bundleName: material
+    - bundleKey: model
+      bundleName: model
+    - bundleKey: texture
+      bundleName: texture
     resourceSubBundleInfoList: []
   - bundleName: scene
     bundlePath: Assets/Examples/AssetBundleTest/Scene
@@ -346,7 +261,15 @@ MonoBehaviour:
       objectFormatBytes: 13.8 KB
       extension: .unity
       objectValid: 1
-    bundleDependencies: []
+    bundleDependencies:
+    - bundleKey: material
+      bundleName: material
+    - bundleKey: model
+      bundleName: model
+    - bundleKey: prefab
+      bundleName: prefab
+    - bundleKey: texture
+      bundleName: texture
     resourceSubBundleInfoList: []
   - bundleName: text
     bundlePath: Assets/Examples/AssetBundleTest/Text
@@ -469,90 +392,189 @@ MonoBehaviour:
       objectValid: 1
     bundleDependencies: []
     resourceSubBundleInfoList: []
-  - bundleName: assets_examples_examplescripts_23_entity_entityprefabs
-    bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
-    bundleKey: assets_examples_examplescripts_23_entity_entityprefabs
-    bundleSize: 198234
-    bundleFormatBytes: 193.6 KB
-    resourceObjectInfoList:
-    - objectName: EntityBullet
-      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityBullet.prefab
-      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
-      objectSize: 7773
-      objectFormatBytes: 7.6 KB
-      extension: .prefab
-      objectValid: 1
-    - objectName: EntityEnemy
-      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityEnemy.prefab
-      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
-      objectSize: 80280
-      objectFormatBytes: 78.4 KB
-      extension: .prefab
-      objectValid: 1
-    - objectName: EntityGameLauncherPanel
-      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLauncherPanel.prefab
-      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
-      objectSize: 11734
-      objectFormatBytes: 11.5 KB
-      extension: .prefab
-      objectValid: 1
-    - objectName: EntityGameLoadingSlider
-      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLoadingSlider.prefab
-      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
-      objectSize: 12140
-      objectFormatBytes: 11.9 KB
-      extension: .prefab
-      objectValid: 1
-    - objectName: EntityPlayer
-      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityPlayer.prefab
-      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
-      objectSize: 81367
-      objectFormatBytes: 79.5 KB
-      extension: .prefab
-      objectValid: 1
-    - objectName: UICanvas
-      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/UICanvas.prefab
-      bundleName: assets_examples_examplescripts_23_entity_entityprefabs
-      objectSize: 4940
-      objectFormatBytes: 4.8 KB
-      extension: .prefab
-      objectValid: 1
-    bundleDependencies: []
-    resourceSubBundleInfoList: []
-  - bundleName: assets_examples_examplescripts_23_entity_entityscenes
+  - bundleName: entityscenes
     bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
-    bundleKey: assets_examples_examplescripts_23_entity_entityscenes
+    bundleKey: entityscenes
     bundleSize: 30886
     bundleFormatBytes: 30.2 KB
     resourceObjectInfoList:
     - objectName: EntityGame
       objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes/EntityGame.unity
-      bundleName: assets_examples_examplescripts_23_entity_entityscenes
+      bundleName: entityscenes
       objectSize: 30886
       objectFormatBytes: 30.2 KB
       extension: .unity
       objectValid: 1
     bundleDependencies: []
     resourceSubBundleInfoList: []
-  - bundleName: assets_examples_examplescripts_24_procedure_procedurescenes
+  - bundleName: procedurescenes
     bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
-    bundleKey: assets_examples_examplescripts_24_procedure_procedurescenes
+    bundleKey: procedurescenes
     bundleSize: 57634
     bundleFormatBytes: 56.3 KB
     resourceObjectInfoList:
     - objectName: 24_Procedure_PloyState
       objectPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_PloyState.unity
-      bundleName: assets_examples_examplescripts_24_procedure_procedurescenes
+      bundleName: procedurescenes
       objectSize: 32004
       objectFormatBytes: 31.3 KB
       extension: .unity
       objectValid: 1
     - objectName: 24_Procedure_YBotState
       objectPath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes/24_Procedure_YBotState.unity
-      bundleName: assets_examples_examplescripts_24_procedure_procedurescenes
+      bundleName: procedurescenes
       objectSize: 25630
       objectFormatBytes: 25.0 KB
       extension: .unity
+      objectValid: 1
+    bundleDependencies:
+    - bundleKey: material
+      bundleName: material
+    - bundleKey: model
+      bundleName: model
+    - bundleKey: prefab
+      bundleName: prefab
+    resourceSubBundleInfoList: []
+  - bundleName: material
+    bundlePath: Assets/Examples/AssetBundleTest/Material
+    bundleKey: material
+    bundleSize: 15070
+    bundleFormatBytes: 14.7 KB
+    resourceObjectInfoList:
+    - objectName: Alpha_Body_MAT
+      objectPath: Assets/Examples/AssetBundleTest/Material/Alpha_Body_MAT.mat
+      bundleName: material
+      objectSize: 2134
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: BlueMat
+      objectPath: Assets/Examples/AssetBundleTest/Material/BlueMat.mat
+      bundleName: material
+      objectSize: 2127
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: GreyMaterial.Default
+      objectPath: Assets/Examples/AssetBundleTest/Material/GreyMaterial.Default.mat
+      bundleName: material
+      objectSize: 2145
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: RedMat
+      objectPath: Assets/Examples/AssetBundleTest/Material/RedMat.mat
+      bundleName: material
+      objectSize: 2107
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: Mat_ObjectPool_Blue
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Blue.mat
+      bundleName: material
+      objectSize: 2295
+      objectFormatBytes: 2.2 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: Mat_ObjectPool_Green
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Green.mat
+      bundleName: material
+      objectSize: 2128
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    - objectName: Mat_ObjectPool_Red
+      objectPath: Assets/Examples/AssetBundleTest/Material/ObjectPoolResMats/Mat_ObjectPool_Red.mat
+      bundleName: material
+      objectSize: 2134
+      objectFormatBytes: 2.1 KB
+      extension: .mat
+      objectValid: 1
+    bundleDependencies: []
+    resourceSubBundleInfoList: []
+  - bundleName: photo
+    bundlePath: Assets/Examples/AssetBundleTest/Photo
+    bundleKey: photo
+    bundleSize: 21600736
+    bundleFormatBytes: 20.6 MB
+    resourceObjectInfoList:
+    - objectName: CB1024
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CB1024.tga
+      bundleName: photo
+      objectSize: 3145772
+      objectFormatBytes: 3.0 MB
+      extension: .tga
+      objectValid: 1
+    - objectName: CB2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CB2048.tga
+      bundleName: photo
+      objectSize: 12582956
+      objectFormatBytes: 12.0 MB
+      extension: .tga
+      objectValid: 1
+    - objectName: CheckBoard_2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/CheckBoard_2048.jpg
+      bundleName: photo
+      objectSize: 1553908
+      objectFormatBytes: 1.5 MB
+      extension: .jpg
+      objectValid: 1
+    - objectName: Grid2048
+      objectPath: Assets/Examples/AssetBundleTest/Photo/Grid2048.psd
+      bundleName: photo
+      objectSize: 4318100
+      objectFormatBytes: 4.1 MB
+      extension: .psd
+      objectValid: 1
+    bundleDependencies: []
+    resourceSubBundleInfoList: []
+  - bundleName: entityprefabs
+    bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
+    bundleKey: entityprefabs
+    bundleSize: 198234
+    bundleFormatBytes: 193.6 KB
+    resourceObjectInfoList:
+    - objectName: EntityBullet
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityBullet.prefab
+      bundleName: entityprefabs
+      objectSize: 7773
+      objectFormatBytes: 7.6 KB
+      extension: .prefab
+      objectValid: 1
+    - objectName: EntityEnemy
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityEnemy.prefab
+      bundleName: entityprefabs
+      objectSize: 80280
+      objectFormatBytes: 78.4 KB
+      extension: .prefab
+      objectValid: 1
+    - objectName: EntityGameLauncherPanel
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLauncherPanel.prefab
+      bundleName: entityprefabs
+      objectSize: 11734
+      objectFormatBytes: 11.5 KB
+      extension: .prefab
+      objectValid: 1
+    - objectName: EntityGameLoadingSlider
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityGameLoadingSlider.prefab
+      bundleName: entityprefabs
+      objectSize: 12140
+      objectFormatBytes: 11.9 KB
+      extension: .prefab
+      objectValid: 1
+    - objectName: EntityPlayer
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/EntityPlayer.prefab
+      bundleName: entityprefabs
+      objectSize: 81367
+      objectFormatBytes: 79.5 KB
+      extension: .prefab
+      objectValid: 1
+    - objectName: UICanvas
+      objectPath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs/UICanvas.prefab
+      bundleName: entityprefabs
+      objectSize: 4940
+      objectFormatBytes: 4.8 KB
+      extension: .prefab
       objectValid: 1
     bundleDependencies: []
     resourceSubBundleInfoList: []

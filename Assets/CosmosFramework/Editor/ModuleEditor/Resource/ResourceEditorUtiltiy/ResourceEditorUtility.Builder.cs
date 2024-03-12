@@ -48,6 +48,18 @@ namespace Cosmos.Editor.Resource
                     },
                     new MultiColumnHeaderState.Column
                     {
+                        headerContent = new GUIContent("Extract"),
+                        headerTextAlignment = TextAlignment.Left,
+                        sortingArrowAlignment = TextAlignment.Left,
+                        sortedAscending = false,
+                        minWidth=48,
+                        width=64,
+                        maxWidth=80,
+                        autoResize = false,
+                        canSort=true
+                    },
+                    new MultiColumnHeaderState.Column
+                    {
                         headerContent = new GUIContent("Bundle"),
                         headerTextAlignment = TextAlignment.Left,
                         sortingArrowAlignment = TextAlignment.Left,

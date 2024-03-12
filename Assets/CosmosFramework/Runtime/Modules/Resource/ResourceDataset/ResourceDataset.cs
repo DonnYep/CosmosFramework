@@ -65,7 +65,7 @@ namespace Cosmos.Resource
             for (int i = 0; i < length; i++)
             {
                 var bundleInfo = ResourceBundleInfoList[i];
-                if (bundleInfo.Splittable)
+                if (bundleInfo.Split)
                 {
                     var subBundleInfoList = bundleInfo.ResourceSubBundleInfoList;
                     var subBundleLength = subBundleInfoList.Count;
@@ -82,6 +82,25 @@ namespace Cosmos.Resource
                         };
                         newBundleInfo.BundleDependencies.AddRange(subBundleInfo.BundleDependencies);
                         newBundleInfo.ResourceObjectInfoList.AddRange(subBundleInfo.ResourceObjectInfoList);
+                        infoList.Add(newBundleInfo);
+                    }
+                }
+                else if (bundleInfo.Extract)
+                {
+                    var objectInfoList = bundleInfo.ResourceObjectInfoList;
+                    var objectInfoLength = objectInfoList.Count;
+                    for (int j = 0; j < objectInfoLength; j++)
+                    {
+                        var objectInfo = objectInfoList[j];
+                        var newBundleInfo = new ResourceBundleInfo()
+                        {
+                            BundleName = objectInfo.ObjectPath,
+                            BundlePath = objectInfo.ObjectPath,
+                            BundleSize = objectInfo.ObjectSize,
+                            Extract = true
+                        };
+                        newBundleInfo.BundleKey = newBundleInfo.BundleName;
+                        newBundleInfo.ResourceObjectInfoList.Add(objectInfo);
                         infoList.Add(newBundleInfo);
                     }
                 }

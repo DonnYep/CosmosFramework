@@ -69,8 +69,10 @@ namespace Cosmos.Editor.Resource
             bundleLabel.OnSelectionChanged += OnSelectionChanged;
             bundleLabel.OnBundleRenamed += OnRenameBundle;
             bundleLabel.OnBundleSort += OnBundleSort;
-            bundleLabel.OnMarkAsSplittable += OnMarkAsSplittable;
-            bundleLabel.OnMarkAsUnsplittable += OnMarkAsUnsplittable;
+            bundleLabel.OnMarkAsSplit += OnMarkAsSplit;
+            bundleLabel.OnMarkAsNotSplit += OnMarkAsNotSplit;
+            bundleLabel.OnMarkAsExtract += OnMarkAsExtract;
+            bundleLabel.OnMarkAsNotExtract += OnMarkAsNotExtract;
             objectLabel.OnObjectInfoSelectionChanged += OnObjectInfoSelectionChanged;
             tabData = EditorUtil.SafeGetData<AssetDatabaseTabData>(ResourceEditorConstants.EDITOR_CACHE_RELATIVE_PATH, AssetDatabaseTabDataName);
             if (ResourceBuilderWindowDataProxy.ResourceDataset != null)
@@ -360,17 +362,22 @@ namespace Cosmos.Editor.Resource
             EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
             OnSelectionChanged(selectedIds);
         }
-        void OnMarkAsSplittable(IList<int> bundleIds)
+        void OnMarkAsSplit(IList<int> bundleIds)
         {
-            ResourceBuilderWindowDataProxy.ResourceDataset.IsChanged = true;
-            EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
-            hasChanged = true;
+            MarkChanged();
         }
-        void OnMarkAsUnsplittable(IList<int> bundleIds)
+        void OnMarkAsNotSplit(IList<int> bundleIds)
         {
-            ResourceBuilderWindowDataProxy.ResourceDataset.IsChanged = true;
-            EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
-            hasChanged = true;
+            MarkChanged();
+        }
+        void OnMarkAsNotExtract(IList<int> obj)
+        {
+            MarkChanged();
+
+        }
+        void OnMarkAsExtract(IList<int> obj)
+        {
+            MarkChanged();
         }
         void OnObjectInfoSelectionChanged(List<ResourceObjectInfo> selected)
         {
@@ -411,7 +418,7 @@ namespace Cosmos.Editor.Resource
                 }
                 bundleInfo.ResourceSubBundleInfoList.Clear();
 
-                if (bundleInfo.Splittable)
+                if (bundleInfo.Split)
                 {
                     BuildSplittableBundleInfo(ref bundleInfo, extensions);
                     bundleLabel.AddBundle(bundleInfo);
@@ -629,7 +636,7 @@ namespace Cosmos.Editor.Resource
         }
         void BuildBundleInfoDependent(ref ResourceBundleInfo bundleInfo)
         {
-            if (!bundleInfo.Splittable)
+            if (!bundleInfo.Split)
             {
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
                 bundleInfo.BundleDependencies.Clear();
@@ -672,7 +679,7 @@ namespace Cosmos.Editor.Resource
         }
         void ResetBundleInfo(ref ResourceBundleInfo bundleInfo)
         {
-            if (!bundleInfo.Splittable)
+            if (!bundleInfo.Split)
             {
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
                 importer.assetBundleName = string.Empty;
@@ -751,6 +758,12 @@ namespace Cosmos.Editor.Resource
         string GetSelectedObjectFormatSize()
         {
             return Utility.Converter.FormatBytes(selectedObjectSize);
+        }
+        void MarkChanged()
+        {
+            ResourceBuilderWindowDataProxy.ResourceDataset.IsChanged = true;
+            EditorUtil.SaveScriptableObject(ResourceBuilderWindowDataProxy.ResourceDataset);
+            hasChanged = true;
         }
     }
 }

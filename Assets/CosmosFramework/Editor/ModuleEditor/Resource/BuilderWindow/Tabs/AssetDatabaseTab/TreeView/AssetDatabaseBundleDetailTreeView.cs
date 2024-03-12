@@ -66,7 +66,7 @@ namespace Cosmos.Editor.Resource
 
                 var subBundleLen = bundleInfo.ResourceSubBundleInfoList.Count;
                 var subBundleString = string.Empty;
-                if (!bundleInfo.Splittable)
+                if (!bundleInfo.Split)
                 {
                     subBundleString = Constants.NONE;
                 }
@@ -81,7 +81,7 @@ namespace Cosmos.Editor.Resource
 
                 var subBundleItemList = new List<TreeViewItem>();
 
-                if (bundleInfo.Splittable)
+                if (bundleInfo.Split)
                 {
                     var subBundleLength = bundleInfo.ResourceSubBundleInfoList.Count;
                     for (int j = 0; j < subBundleLength; j++)

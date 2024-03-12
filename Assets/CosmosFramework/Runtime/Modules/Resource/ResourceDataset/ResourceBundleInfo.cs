@@ -23,7 +23,8 @@ namespace Cosmos.Resource
         List<ResourceBundleDependency> bundleDependencies = new List<ResourceBundleDependency>();
         [SerializeField]
         List<ResourceSubBundleInfo> resourceSubBundleInfoList = new List<ResourceSubBundleInfo>();
-        bool splittable;
+        bool split;
+        bool extract;
         /// <summary>
         /// 资源包的名称，AsseBundleName；
         /// </summary>
@@ -112,13 +113,32 @@ namespace Cosmos.Resource
             set { resourceSubBundleInfoList = value; }
         }
         /// <summary>
-        /// bundle splittable.If true ,bundle will generate subbunbdle.
+        /// split the directory into multiple subdirectories
         /// </summary>
-        public bool Splittable
+        public bool Split
         {
-            get { return splittable; }
-            set { splittable = value; }
+            get { return split; }
+            set
+            {
+                split = value;
+                if (split)
+                    extract = false;
+            }
         }
+        /// <summary>
+        /// extract all files from the folder as an individual assetbundle
+        /// </summary>
+        public bool Extract
+        {
+            get { return extract; }
+            set
+            {
+                extract = value;
+                if (extract)
+                    split = false;
+            }
+        }
+
         public bool Equals(ResourceBundleInfo other)
         {
             return other.BundleName == this.BundleName ||

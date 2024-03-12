@@ -60,7 +60,6 @@ namespace Cosmos.Editor.Resource
                 AssetBundleOffsetValue = profileData.AssetBundleOffsetValue,
                 BuildAssetBundleOptions = buildAssetBundleOptions,
                 AssetBundleNameType = profileData.AssetBundleNameType,
-                AssetBundleExtension = profileData.AssetBundleExtension,
                 EncryptManifest = profileData.EncryptManifest,
                 ManifestEncryptionKey = profileData.ManifestEncryptionKey,
                 BuildTarget = profileData.BuildTarget,
@@ -73,7 +72,8 @@ namespace Cosmos.Editor.Resource
                 BuildDetailOutputPath = profileData.BuildDetailOutputPath,
                 ClearStreamingAssetsDestinationPath = profileData.ClearStreamingAssetsDestinationPath,
                 ForceRemoveAllAssetBundleNames = profileData.ForceRemoveAllAssetBundleNames,
-                BuildHandlerName = profileData.BuildHandlerName
+                BuildHandlerName = profileData.BuildHandlerName,
+                AssetBundleExtension = profileData.UseAssetBundleExtension == true ? profileData.AssetBundleExtension : string.Empty
             };
             return buildParams;
         }
@@ -236,7 +236,7 @@ namespace Cosmos.Editor.Resource
                     EditorGUILayout.BeginHorizontal();
                     {
                         profileData.AssetBundleExtension = EditorGUILayout.TextField("AssetBundle extension", profileData.AssetBundleExtension?.Trim());
-                        if (GUILayout.Button("Reset extension",GUILayout.MaxWidth(ResourceEditorConstants.BUTTON_WIDTH)))
+                        if (GUILayout.Button("Reset extension", GUILayout.MaxWidth(ResourceEditorConstants.BUTTON_WIDTH)))
                         {
                             profileData.AssetBundleExtension = ResourceEditorConstants.DEFAULT_AB_EXTENSION;
                             parent.RepaintWindow();

@@ -27,27 +27,6 @@ namespace Cosmos.Resource
             return bundleName.Replace("\\", "_").Replace("/", "_").Replace(".", "_").Replace(",", "_").Replace(";", "_").ToLower();
         }
         /// <summary>
-        /// 生成文件夹的md5
-        /// </summary>
-        /// <param name="dirPath">文件夹路径</param>
-        /// <returns>hash</returns>
-        public static string CreateDirectoryMd5(string dirPath)
-        {
-            var filePaths = Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories).OrderBy(p => p).ToArray();
-
-            using (var ms = new MemoryStream())
-            {
-                foreach (var filePath in filePaths)
-                {
-                    using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                    {
-                        file.CopyTo(ms);
-                    }
-                }
-                return Utility.Encryption.GenerateMD5(ms.ToArray());
-            }
-        }
-        /// <summary>
         /// 生成对称加密的密钥
         /// </summary>
         /// <param name="srcKey"></param>

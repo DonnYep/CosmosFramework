@@ -13,6 +13,10 @@ namespace Cosmos.Editor.Resource
     /// </summary>
     public class ResourceBuildController
     {
+        /// <summary>
+        /// 构建资源寻址数据
+        /// </summary>
+        /// <param name="dataset">资源寻址数据</param>
         public static void BuildDataset(ResourceDataset dataset)
         {
             if (dataset == null)
@@ -110,7 +114,14 @@ namespace Cosmos.Editor.Resource
 #endif
             dataset.IsChanged = false;
         }
-        public static void PrepareBuildAssetBundle(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, ref ResourceManifest resourceManifest)
+        /// <summary>
+        /// 准备ab构建
+        /// </summary>
+        /// <param name="buildParams">构建参数</param>
+        /// <param name="bundleInfos">所有需要构建的包体信息</param>
+        /// <param name="extensions">识别的文件后缀名</param>
+        /// <param name="resourceManifest">框架的资源文件清单</param>
+        public static void PrepareBuildAssetBundle(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, IList<string> extensions, ref ResourceManifest resourceManifest)
         {
             switch (buildParams.ResourceBuildType)
             {
@@ -135,7 +146,15 @@ namespace Cosmos.Editor.Resource
                 var importer = AssetImporter.GetAtPath(bundleInfo.BundlePath);
                 //这里获取绝对ab绝对路径下，所有资源的bytes，生成唯一MD5 hash
                 var path = Path.Combine(EditorUtil.ApplicationPath(), bundleInfo.BundlePath);
-                var hash = ResourceUtility.CreateDirectoryMd5(path);
+                string hash = string.Empty;
+                if (bundleInfo.Extract)
+                {
+                    hash = Utility.IO.GenerateFileMD5(path);
+                }
+                else
+                {
+                    hash = Utility.IO.GenerateDirectoryMD5(path, extensions);
+                }
                 var bundleKey = string.Empty;
                 switch (assetBundleNameType)
                 {
@@ -220,6 +239,13 @@ namespace Cosmos.Editor.Resource
                 }
             }
         }
+        /// <summary>
+        /// 处理ab包
+        /// </summary>
+        /// <param name="buildParams">构建参数</param>
+        /// <param name="bundleInfos">所有需要构建的包体信息</param>
+        /// <param name="unityManifest">unity的资源文件清单</param>
+        /// <param name="resourceManifest">框架的资源文件清单</param>
         public static void ProcessAssetBundle(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, AssetBundleManifest unityManifest, ref ResourceManifest resourceManifest)
         {
             Dictionary<string, ResourceBundleInfo> bundleDict = null;
@@ -305,6 +331,11 @@ namespace Cosmos.Editor.Resource
             AssetDatabase.RemoveUnusedAssetBundleNames();
             System.GC.Collect();
         }
+        /// <summary>
+        /// 处理文件清单，如记录包体的信息，版本号等。
+        /// </summary>
+        /// <param name="buildParams">构建参数</param>
+        /// <param name="resourceManifest">框架的资源文件清单</param>
         public static void PorcessManifest(ResourceBuildParams buildParams, ref ResourceManifest resourceManifest)
         {
             //这段生成resourceManifest.json文件
@@ -338,6 +369,10 @@ namespace Cosmos.Editor.Resource
             Utility.IO.DeleteFile(buildVersionPath);
             Utility.IO.DeleteFile(buildVersionManifestPath);
         }
+        /// <summary>
+        /// 处理构建完成后的选项。例如将构建的资源拷贝到工程内等。
+        /// </summary>
+        /// <param name="buildParams">构建参数</param>
         public static void BuildDoneOption(ResourceBuildParams buildParams)
         {
             if (buildParams.CopyToStreamingAssets)
@@ -359,7 +394,14 @@ namespace Cosmos.Editor.Resource
             }
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
-        public static void CompareIncrementalBuildCache(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, out ResourceBuildCacheCompareResult cacheCompareResult)
+        /// <summary>
+        /// 比较增量构建的缓存，根据缓存信息生成比较结果。
+        /// </summary>
+        /// <param name="buildParams">构建参数</param>
+        /// <param name="bundleInfos">所有需要构建的包体信息</param>
+        /// <param name="extensions">识别的文件后缀名</param>
+        /// <param name="cacheCompareResult">缓存比较结果</param>
+        public static void CompareIncrementalBuildCache(ResourceBuildParams buildParams, List<ResourceBundleInfo> bundleInfos, IList<string> extensions, out ResourceBuildCacheCompareResult cacheCompareResult)
         {
             cacheCompareResult = new ResourceBuildCacheCompareResult();
             ResourceBuildCache buildCache = default;
@@ -393,7 +435,7 @@ namespace Cosmos.Editor.Resource
                 var bundlePath = bundleInfo.BundlePath;
                 var bundleName = bundleInfo.BundleName;
                 var path = Path.Combine(EditorUtil.ApplicationPath(), bundlePath);
-                var hash = ResourceUtility.CreateDirectoryMd5(path);
+                var hash = Utility.IO.GenerateDirectoryMD5(path, extensions);
                 var assetNames = bundleInfo.ResourceObjectInfoList.Select(obj => obj.ObjectPath).ToArray();
                 var cmpCacheInfo = new ResourceBundleCacheInfo()
                 {
@@ -460,6 +502,11 @@ namespace Cosmos.Editor.Resource
             cacheCompareResult.Unchanged = unchanged.ToArray();
             cacheCompareResult.BundleCacheInfoList = newBundleCacheInfoList;
         }
+        /// <summary>
+        /// 生成增量构建日子
+        /// </summary>
+        /// <param name="buildParams">构建参数</param>
+        /// <param name="cacheCompareResult">比较结果数据</param>
         public static void GenerateIncrementalBuildLog(ResourceBuildParams buildParams, ResourceBuildCacheCompareResult cacheCompareResult)
         {
             var newBuildCache = new ResourceBuildCache()
@@ -476,6 +523,10 @@ namespace Cosmos.Editor.Resource
             var logPath = Path.Combine(buildParams.BuildDetailOutputPath, ResourceEditorConstants.RESOURCE_BUILD_LOG);
             Utility.IO.OverwriteTextFile(logPath, logJson);
         }
+        /// <summary>
+        /// 还原ab的名称
+        /// </summary>
+        /// <param name="bundleInfos">所有需要构建的包体信息</param>
         public static void RevertAssetBundlesName(List<ResourceBundleInfo> bundleInfos)
         {
             var bundleInfoLength = bundleInfos.Count;
@@ -489,6 +540,11 @@ namespace Cosmos.Editor.Resource
             AssetDatabase.RemoveUnusedAssetBundleNames();
             System.GC.Collect();
         }
+        /// <summary>
+        /// 构建ab资源
+        /// </summary>
+        /// <param name="dataset">资源寻址数据</param>
+        /// <param name="buildParams">构建参数</param>
         public static void BuildAssetBundle(ResourceDataset dataset, ResourceBuildParams buildParams)
         {
             if (dataset == null)
@@ -497,7 +553,8 @@ namespace Cosmos.Editor.Resource
             BuildDataset(dataset);
             ResourceManifest resourceManifest = new ResourceManifest();
             var bundleInfos = dataset.GetResourceBundleInfos();
-            PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            var extensions = dataset.ResourceAvailableExtenisonList.ToArray();
+            PrepareBuildAssetBundle(buildParams, bundleInfos, extensions, ref resourceManifest);
             var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(buildParams.BuildHandlerName);
             if (resourceBuildHandler != null)
             {

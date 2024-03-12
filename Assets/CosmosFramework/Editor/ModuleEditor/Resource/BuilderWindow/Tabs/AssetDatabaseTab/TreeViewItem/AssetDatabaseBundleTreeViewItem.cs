@@ -34,7 +34,7 @@ namespace Cosmos.Editor.Resource
                     objectCount = 0;
             }
         }
-        public int SplittedBundleCount
+        public int SplitBundleCount
         {
             get { return splittedBundleCount; }
             set
@@ -44,8 +44,17 @@ namespace Cosmos.Editor.Resource
                     splittedBundleCount = 0;
             }
         }
-        public Texture2D SplittableIcon { get; set; }
-        public Texture2D UnsplittableIcon { get; set; }
-        public bool Splittable{ get; set; }
+        public Texture2D SplitIcon { get; set; }
+        public Texture2D NotSplitIcon { get; set; }
+        /// <summary>
+        /// split the directory into multiple subdirectories
+        /// </summary>
+        public bool Split{ get; set; }
+        public Texture2D ExtractIcon { get; set; }
+        public Texture2D NotExtractIcon { get; set; }
+        /// <summary>
+        /// extract all files from the folder as an individual assetbundle
+        /// </summary>
+        public bool Extract{ get; set; }
     }
 }

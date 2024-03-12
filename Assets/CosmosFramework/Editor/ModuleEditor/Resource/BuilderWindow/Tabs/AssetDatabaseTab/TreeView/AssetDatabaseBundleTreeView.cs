@@ -16,8 +16,10 @@ namespace Cosmos.Editor.Resource
         public Action onAllBundleDelete;
         public Action<int, string> onBundleRenamed;
         public Action<IList<string>, IList<int>> onBundleSort;
-        public Action<IList<int>> onMarkAsSplittable;
-        public Action<IList<int>> onMarkAsUnsplittable;
+        public Action<IList<int>> onMarkAsSplit;
+        public Action<IList<int>> onMarkAsNotSplit;
+        public Action<IList<int>> onMarkAsExtract;
+        public Action<IList<int>> onMarkAsNotExtract;
         /// <summary>
         /// 上一行的cellRect
         /// </summary>
@@ -74,8 +76,6 @@ namespace Cosmos.Editor.Resource
                 menu.AddItem(new GUIContent("Reset all bundle name"), false, ResetAllBundleName);
                 menu.AddItem(new GUIContent("Copy bundle name to clipboard"), false, CopyBundleNameToClipboard, id);
                 menu.AddItem(new GUIContent("Copy bundle path to clipboard"), false, CopyBundlePathToClipboard, id);
-                menu.AddItem(new GUIContent("Mark as splittable"), false, SplitBundles, selected);
-                menu.AddItem(new GUIContent("Mark as unsplittable"), false, MergeBundles, selected);
             }
             else if (selected.Count > 1)
             {
@@ -83,9 +83,12 @@ namespace Cosmos.Editor.Resource
                 menu.AddItem(new GUIContent("Delete all bundles"), false, DeleteAllBundles);
                 menu.AddItem(new GUIContent("Reset bundles name"), false, ResetBundlesName, selected);
                 menu.AddItem(new GUIContent("Reset the names of all bundles"), false, ResetAllBundleName);
-                menu.AddItem(new GUIContent("Mark as splittable"), false, SplitBundles, selected);
-                menu.AddItem(new GUIContent("Mark as unsplittable"), false, MergeBundles, selected);
             }
+            menu.AddItem(new GUIContent("Mark as splittable"), false, SplitBundles, selected);
+            menu.AddItem(new GUIContent("Mark as unsplittable"), false, MergeBundles, selected);
+
+            menu.AddItem(new GUIContent("Mark as extract"), false, MarkAsExtractBundles, selected);
+            menu.AddItem(new GUIContent("Mark as not extract"), false, MarkAsNotExtractBundles, selected);
             menu.ShowAsContext();
         }
         protected override void SingleClickedItem(int id)
@@ -154,8 +157,8 @@ namespace Cosmos.Editor.Resource
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
             var folderIcon = ResourceEditorUtility.GetFolderIcon();
             var folderEmptyIcon = ResourceEditorUtility.GetFolderEmptyIcon();
-            var splittableIcon = ResourceEditorUtility.GetValidIcon();
-            var unsplittableIcon = ResourceEditorUtility.GetIgnoredcon();
+            var vaildIcon = ResourceEditorUtility.GetValidIcon();
+            var ignoredIcon = ResourceEditorUtility.GetIgnoredcon();
             Texture2D icon = null;
             var treeItemList = new List<TreeViewItem>();
             {
@@ -170,10 +173,13 @@ namespace Cosmos.Editor.Resource
                     {
                         BundleFormatSize = bundleInfo.BundleFormatBytes,
                         ObjectCount = bundleInfo.ResourceObjectInfoList.Count,
-                        SplittedBundleCount = bundleInfo.ResourceSubBundleInfoList.Count,
-                        SplittableIcon = splittableIcon,
-                        UnsplittableIcon = unsplittableIcon,
-                        Splittable = bundleInfo.Splittable
+                        SplitBundleCount = bundleInfo.ResourceSubBundleInfoList.Count,
+                        SplitIcon = vaildIcon,
+                        NotSplitIcon = ignoredIcon,
+                        ExtractIcon = vaildIcon,
+                        NotExtractIcon = ignoredIcon,
+                        Split = bundleInfo.Split,
+                        Extract = bundleInfo.Extract
                     };
                     treeItemList.Add(item);
                 }
@@ -219,17 +225,33 @@ namespace Cosmos.Editor.Resource
                         ResourceBundleInfo[] orderedList;
                         if (ascending)
                         {
-                            orderedList = bundleInfoList.OrderBy((b) => b.Splittable).ThenBy((b) => { return b.ResourceSubBundleInfoList.Count; }).ToArray();
+                            orderedList = bundleInfoList.OrderBy((b) => b.Split).ThenBy((b) => { return b.ResourceSubBundleInfoList.Count; }).ToArray();
                         }
                         else
                         {
-                            orderedList = bundleInfoList.OrderByDescending((b) => b.Splittable).ThenByDescending((b) => { return b.ResourceSubBundleInfoList.Count; }).ToArray();
+                            orderedList = bundleInfoList.OrderByDescending((b) => b.Split).ThenByDescending((b) => { return b.ResourceSubBundleInfoList.Count; }).ToArray();
                         }
                         bundleInfoList.Clear();
                         bundleInfoList.AddRange(orderedList);
                     }
                     break;
                 case 3:
+                    {
+                        //Extract
+                        ResourceBundleInfo[] orderedList;
+                        if (ascending)
+                        {
+                            orderedList = bundleInfoList.OrderBy((b) => b.Extract).ToArray();
+                        }
+                        else
+                        {
+                            orderedList = bundleInfoList.OrderByDescending((b) => b.Extract).ToArray();
+                        }
+                        bundleInfoList.Clear();
+                        bundleInfoList.AddRange(orderedList);
+                    }
+                    break;
+                case 4:
                     {
                         //Bundle
                         if (ascending)
@@ -266,23 +288,41 @@ namespace Cosmos.Editor.Resource
                     break;
                 case 2:
                     {
-                        var splittable = treeView.Splittable;
+                        var split = treeView.Split;
                         var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
-                        if (splittable)
+                        if (split)
                         {
-                            if (treeView.SplittableIcon != null)
-                                GUI.DrawTexture(iconRect, treeView.SplittableIcon, ScaleMode.ScaleToFit);
+                            if (treeView.SplitIcon != null)
+                                GUI.DrawTexture(iconRect, treeView.SplitIcon, ScaleMode.ScaleToFit);
                             var labelCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
-                            DefaultGUI.Label(labelCellRect, treeView.SplittedBundleCount.ToString(), args.selected, args.focused);
+                            DefaultGUI.Label(labelCellRect, treeView.SplitBundleCount.ToString(), args.selected, args.focused);
                         }
                         else
                         {
-                            if (treeView.UnsplittableIcon != null)
-                                GUI.DrawTexture(iconRect, treeView.UnsplittableIcon, ScaleMode.ScaleToFit);
+                            if (treeView.NotSplitIcon != null)
+                                GUI.DrawTexture(iconRect, treeView.NotSplitIcon, ScaleMode.ScaleToFit);
                         }
                     }
                     break;
                 case 3:
+                    {
+                        var extract = treeView.Extract;
+                        var iconRect = new Rect(cellRect.x, cellRect.y, cellRect.height, cellRect.height);
+                        if (extract)
+                        {
+                            if (treeView.ExtractIcon != null)
+                                GUI.DrawTexture(iconRect, treeView.ExtractIcon, ScaleMode.ScaleToFit);
+                            //var labelCellRect = new Rect(cellRect.x + iconRect.width + 4, cellRect.y, cellRect.width - iconRect.width, cellRect.height);
+                            //DefaultGUI.Label(labelCellRect, treeView.SplitBundleCount.ToString(), args.selected, args.focused);
+                        }
+                        else
+                        {
+                            if (treeView.NotExtractIcon != null)
+                                GUI.DrawTexture(iconRect, treeView.NotExtractIcon, ScaleMode.ScaleToFit);
+                        }
+                    }
+                    break;
+                case 4:
                     {
                         var iconRect = new Rect(cellRect.x + 2, cellRect.y, cellRect.height, cellRect.height);
                         if (treeView.icon != null)
@@ -377,6 +417,7 @@ namespace Cosmos.Editor.Resource
         {
             try
             {
+                bool hasChanged = false;
                 var list = context as IList<int>;
                 var items = FindRows(list);
                 var length = items.Count;
@@ -387,11 +428,15 @@ namespace Cosmos.Editor.Resource
                     var has = bundleInfo != null;
                     if (has)
                     {
-                        bundleInfo.Splittable = true;
+                        if (!bundleInfo.Split)
+                        {
+                            hasChanged = true;
+                        }
+                        bundleInfo.Split = true;
                     }
                 }
-                if (length > 0)
-                    onMarkAsSplittable?.Invoke(list);
+                if (hasChanged)
+                    onMarkAsSplit?.Invoke(list);
                 Reload();
             }
             catch (Exception e)
@@ -403,6 +448,7 @@ namespace Cosmos.Editor.Resource
         {
             try
             {
+                bool hasChanged = false;
                 var list = context as IList<int>;
                 var items = FindRows(list);
                 var length = items.Count;
@@ -413,11 +459,77 @@ namespace Cosmos.Editor.Resource
                     var has = bundleInfo != null;
                     if (has)
                     {
-                        bundleInfo.Splittable = false;
+                        if (bundleInfo.Split)
+                        {
+                            hasChanged = true;
+                        }
+                        bundleInfo.Split = false;
                     }
                 }
-                if (length > 0)
-                    onMarkAsUnsplittable?.Invoke(list);
+                if (hasChanged)
+                    onMarkAsNotSplit?.Invoke(list);
+                Reload();
+            }
+            catch (Exception e)
+            {
+                EditorUtil.Debug.LogError(e);
+            }
+        }
+        void MarkAsExtractBundles(object context)
+        {
+            try
+            {
+                bool hasChanged = false;
+                var list = context as IList<int>;
+                var items = FindRows(list);
+                var length = items.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    var item = items[i];
+                    var bundleInfo = ResourceBuilderWindowDataProxy.ResourceDataset.ResourceBundleInfoList.Find((b) => b.BundleName == item.displayName);
+                    var has = bundleInfo != null;
+                    if (has)
+                    {
+                        if (!bundleInfo.Extract)
+                        {
+                            hasChanged = true;
+                        }
+                        bundleInfo.Extract = true;
+                    }
+                }
+                if (hasChanged)
+                    onMarkAsExtract?.Invoke(list);
+                Reload();
+            }
+            catch (Exception e)
+            {
+                EditorUtil.Debug.LogError(e);
+            }
+        }
+        void MarkAsNotExtractBundles(object context)
+        {
+            try
+            {
+                bool hasChanged = false;
+                var list = context as IList<int>;
+                var items = FindRows(list);
+                var length = items.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    var item = items[i];
+                    var bundleInfo = ResourceBuilderWindowDataProxy.ResourceDataset.ResourceBundleInfoList.Find((b) => b.BundleName == item.displayName);
+                    var has = bundleInfo != null;
+                    if (has)
+                    {
+                        if (bundleInfo.Extract)
+                        {
+                            hasChanged = true;
+                        }
+                        bundleInfo.Extract = false;
+                    }
+                }
+                if (hasChanged)
+                    onMarkAsNotExtract?.Invoke(list);
                 Reload();
             }
             catch (Exception e)

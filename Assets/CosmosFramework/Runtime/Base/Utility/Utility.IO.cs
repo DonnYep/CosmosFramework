@@ -3,6 +3,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Cosmos
 {
@@ -749,6 +750,45 @@ namespace Cosmos
             {
                 DeleteFolder(path);
                 CreateFolder(path);
+            }
+            /// <summary>
+            /// 生成文件的md5
+            /// </summary>
+            /// <param name="filePath">文件地址</param>
+            /// <returns>hash</returns>
+            public static string GenerateFileMD5(string filePath)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                    {
+                        file.CopyTo(ms);
+                    }
+                    return Utility.Encryption.GenerateMD5(ms.ToArray());
+                }
+            }
+            /// <summary>
+            /// 生成文件夹的md5
+            /// </summary>
+            /// <param name="dirPath">文件夹路径</param>
+            /// <returns>hash</returns>
+            public static string GenerateDirectoryMD5(string dirPath, IList<string> exts)
+            {
+                var filePaths = Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories).OrderBy(p => p).ToArray();
+                using (var ms = new MemoryStream())
+                {
+                    foreach (var filePath in filePaths)
+                    {
+                        string fileExt = Path.GetExtension(filePath).ToLower();
+                        if (!exts.Contains(fileExt))
+                            continue;
+                        using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                        {
+                            file.CopyTo(ms);
+                        }
+                    }
+                    return Utility.Encryption.GenerateMD5(ms.ToArray());
+                }
             }
         }
     }

@@ -33,7 +33,6 @@ namespace Cosmos.Editor.Resource
                 AssetBundleOffsetValue = AssetBundleBuildProfileData.AssetBundleOffsetValue,
                 BuildAssetBundleOptions = buildAssetBundleOptions,
                 AssetBundleNameType = AssetBundleBuildProfileData.AssetBundleNameType,
-                AssetBundleExtension= AssetBundleBuildProfileData.AssetBundleExtension,
                 EncryptManifest = AssetBundleBuildProfileData.EncryptManifest,
                 ManifestEncryptionKey = AssetBundleBuildProfileData.ManifestEncryptionKey,
                 BuildTarget = AssetBundleBuildProfileData.BuildTarget,
@@ -46,7 +45,8 @@ namespace Cosmos.Editor.Resource
                 BuildDetailOutputPath = AssetBundleBuildProfileData.BuildDetailOutputPath,
                 ClearStreamingAssetsDestinationPath = AssetBundleBuildProfileData.ClearStreamingAssetsDestinationPath,
                 ForceRemoveAllAssetBundleNames = AssetBundleBuildProfileData.ForceRemoveAllAssetBundleNames,
-                BuildHandlerName = AssetBundleBuildProfileData.BuildHandlerName
+                BuildHandlerName = AssetBundleBuildProfileData.BuildHandlerName,
+                AssetBundleExtension = AssetBundleBuildProfileData.UseAssetBundleExtension == true ? AssetBundleBuildProfileData.AssetBundleExtension : string.Empty
             };
             return buildParams;
         }

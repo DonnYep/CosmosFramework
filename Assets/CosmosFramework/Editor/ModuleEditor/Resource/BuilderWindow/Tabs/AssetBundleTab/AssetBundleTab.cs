@@ -132,7 +132,8 @@ namespace Cosmos.Editor.Resource
         void BuildFullAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset, ResourceManifest resourceManifest)
         {
             var bundleInfos = dataset.GetResourceBundleInfos();
-            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            var extensions = dataset.ResourceAvailableExtenisonList.ToArray();
+            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, extensions, ref resourceManifest);
             var buildHandlerName = buildParams.BuildHandlerName;
             var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(buildHandlerName);
             if (resourceBuildHandler != null)
@@ -152,9 +153,10 @@ namespace Cosmos.Editor.Resource
         void BuildIncrementalAssetBundle(ResourceBuildParams buildParams, ResourceDataset dataset, ResourceManifest resourceManifest)
         {
             var bundleInfos = dataset.GetResourceBundleInfos();
-            ResourceBuildController.CompareIncrementalBuildCache(buildParams, bundleInfos, out var cacheCompareResult);
+            var extensions = dataset.ResourceAvailableExtenisonList.ToArray();
+            ResourceBuildController.CompareIncrementalBuildCache(buildParams, bundleInfos, extensions, out var cacheCompareResult);
 
-            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, ref resourceManifest);
+            ResourceBuildController.PrepareBuildAssetBundle(buildParams, bundleInfos, extensions,ref resourceManifest);
             var buildHandlerName = buildParams.BuildHandlerName;
             var resourceBuildHandler = Utility.Assembly.GetTypeInstance<IResourceBuildHandler>(buildHandlerName);
             if (resourceBuildHandler != null)
