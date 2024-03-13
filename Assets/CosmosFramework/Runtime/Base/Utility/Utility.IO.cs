@@ -387,7 +387,7 @@ namespace Cosmos
                 {
                     using (StreamReader reader = new StreamReader(stream, utf8Encoding))
                     {
-                        result = Utility.Text.Append(reader.ReadToEnd());
+                        result = Utility.Text.Combine(reader.ReadToEnd());
                     }
                 }
                 return result;

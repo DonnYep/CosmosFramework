@@ -71,8 +71,8 @@ namespace Cosmos.Resource
                 var info = integrityResult.ResourceIntegrityInfos[i];
                 if (info.RecordedBundleSize > info.DetectedBundleSize)
                 {
-                    var downloadPath = Utility.Text.Append(formattedPath, info.BundleKey);
-                    var downloadUrl = Utility.Text.Append(formattedUrl, info.BundleKey);
+                    var downloadPath = Utility.Text.Combine(formattedPath, info.BundleKey);
+                    var downloadUrl = Utility.Text.Combine(formattedUrl, info.BundleKey);
                     var downloadTask = new ResourceDownloadTask(downloadUrl, downloadPath, info.RecordedBundleSize);
                     downloadTasks.Add(downloadTask);
                 }

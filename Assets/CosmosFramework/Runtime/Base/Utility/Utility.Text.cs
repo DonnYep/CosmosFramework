@@ -7,7 +7,10 @@ namespace Cosmos
     {
         public static class Text
         {
-            [ThreadStatic]//每个静态类型字段对于每一个线程都是唯一的
+            /// <summary>
+            /// 每个静态类型字段对于每一个线程都是唯一的
+            /// </summary>
+            [ThreadStatic]
             static StringBuilder stringBuilderCache = new StringBuilder(1024);
             static char[] stringConstant ={
             '0','1','2','3','4','5','6','7','8','9',
@@ -29,7 +32,12 @@ namespace Cosmos
                 }
                 return stringBuilderCache.ToString();
             }
-            public static string Append(params object[] args)
+            /// <summary>
+            /// 格式化合并
+            /// </summary>
+            /// <param name="args">格式化内容</param>
+            /// <returns>合并后的文本</returns>
+            public static string FormatCombine(params object[] args)
             {
                 if (args == null)
                 {
@@ -122,6 +130,12 @@ namespace Cosmos
                 stringArray = fullString.Split(separator, StringSplitOptions.None);
                 return stringArray;
             }
+            /// <summary>
+            /// 检测字段中指定类型的字符数量
+            /// </summary>
+            /// <param name="fullString">完整字段</param>
+            /// <param name="separator">符号</param>
+            /// <returns>数量</returns>
             public static int CharCount(string fullString, char separator)
             {
                 if (string.IsNullOrEmpty(fullString) || string.IsNullOrEmpty(separator.ToString()))
@@ -138,6 +152,11 @@ namespace Cosmos
                 }
                 return count;
             }
+            /// <summary>
+            /// 字段长度
+            /// </summary>
+            /// <param name="context">文本内容</param>
+            /// <returns>字段长度</returns>
             public static int StringLength(string context)
             {
                 if (string.IsNullOrEmpty(context))
@@ -171,19 +190,29 @@ namespace Cosmos
                 }
                 return false;
             }
+            /// <summary>
+            /// 是否为有效字段
+            /// </summary>
+            /// <param name="context">文本内容</param>
+            /// <returns>是否有效</returns>
             public static bool IsStringValid(string context)
             {
                 if (string.IsNullOrEmpty(context))
                     return false;
                 return true;
             }
+            /// <summary>
+            /// 是否为有效字段，若无效，抛出异常
+            /// </summary>
+            /// <param name="context">文本内容</param>
+            /// <param name="exceptionContext">抛出的异常文本</param>
             public static void IsStringValid(string context, string exceptionContext)
             {
                 if (string.IsNullOrEmpty(context))
                     throw new ArgumentNullException(exceptionContext);
             }
             /// <summary>
-            /// 多字符替换；
+            /// 多字符替换。
             /// </summary>
             /// <param name="context">需要修改的内容</param>
             /// <param name="oldContext">需要修改的内容</param>

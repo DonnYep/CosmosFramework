@@ -11,7 +11,7 @@ namespace Cosmos
             [ThreadStatic]//每个静态类型字段对于每一个线程都是唯一的
             static StringBuilder stringBuilderCache = new StringBuilder(1024);
             /// <summary>
-            /// 解码base64；
+            /// 解码base64。
             /// </summary>
             /// <param name="context">需要解码的内容</param>
             /// <returns>解码后的内容</returns>
@@ -20,7 +20,7 @@ namespace Cosmos
                 return Encoding.UTF8.GetString(Convert.FromBase64String(context));
             }
             /// <summary>
-            /// 编码base64；
+            /// 编码base64。
             /// </summary>
             /// <param name="context">需要编码的内容</param>
             /// <returns>编码后的内容</returns>
@@ -28,10 +28,15 @@ namespace Cosmos
             {
                 return Convert.ToBase64String(Encoding.UTF8.GetBytes(context));
             }
-            public static string ConvertToHexString( string srcData)
+            /// <summary>
+            /// 转换为16进制字符
+            /// </summary>
+            /// <param name="context">文本内容</param>
+            /// <returns>16进制字符串</returns>
+            public static string ConvertToHexString(string context)
             {
                 string hexString = string.Empty;
-                var bytes = Encoding.UTF8.GetBytes(srcData);
+                var bytes = Encoding.UTF8.GetBytes(context);
                 if (bytes != null)
                 {
                     foreach (byte b in bytes)
@@ -42,6 +47,11 @@ namespace Cosmos
                 }
                 return hexString;
             }
+            /// <summary>
+            /// 转换为16进制字符
+            /// </summary>
+            /// <param name="bytes">二进制内容</param>
+            /// <returns>16进制字符串</returns>
             public static string ConvertToHexString(byte[] bytes)
             {
                 string hexString = string.Empty;
@@ -56,12 +66,12 @@ namespace Cosmos
                 return hexString;
             }
             /// <summary>
-            /// 约束数值长度，少增多减；
-            /// 例如128约束5位等于12800，1024约束3位等于102；
+            /// 约束数值长度，少增多减
+            /// <para>例如128约束5位等于12800，1024约束3位等于102</para>
             /// </summary>
             /// <param name="srcValue">原始数值</param>
             /// <param name="length">需要保留的长度</param>
-            /// <returns>修改后的int数值</returns>
+            /// <returns>修改后的long数值</returns>
             public static long RetainInt64(long srcValue, ushort length)
             {
                 if (length == 0)
@@ -78,6 +88,13 @@ namespace Cosmos
                     return result;
                 }
             }
+            /// <summary>
+            /// 约束数值长度，少增多减
+            /// <para>例如128约束5位等于12800，1024约束3位等于102</para>
+            /// </summary>
+            /// <param name="srcValue">原始数值</param>
+            /// <param name="length">需要保留的长度</param>
+            /// <returns>修改后的int数值</returns>
             public static int RetainInt32(int srcValue, ushort length)
             {
                 if (length == 0)
@@ -95,7 +112,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 转换byte长度到对应单位；
+            /// 转换byte长度到对应单位。
             /// </summary>
             /// <param name="bytes">byte长度</param>
             /// <param name="decimals">保留的小数长度</param>
@@ -111,7 +128,7 @@ namespace Cosmos
                 return $"{Math.Round(dblSByte, decimals)}{suffix[i]}";
             }
             /// <summary>
-            /// object类型转换为bytes
+            /// object类型转换为bytes。
             /// </summary>
             /// <param name="obj">对象</param>
             /// <returns>byte数组</returns>
@@ -124,7 +141,12 @@ namespace Cosmos
                     return ms.GetBuffer();
                 }
             }
-            public static string Convert2String(byte[] bytes)
+            /// <summary>
+            /// byte转换为string字符
+            /// </summary>
+            /// <param name="bytes">byte内容</param>
+            /// <returns>转换后的字符</returns>
+            public static string ConvertToString(byte[] bytes)
             {
                 return Encoding.UTF8.GetString(bytes);
             }

@@ -288,7 +288,7 @@ namespace Cosmos.Editor.Resource
                     //这里存储打包出来的AB长度
                     resourceBundleBuildInfo.BundleSize = bundleSize;
                 }
-                var bundleManifestPath = Utility.Text.Append(bundlePath, ".manifest");
+                var bundleManifestPath = Utility.Text.Combine(bundlePath, ".manifest");
                 Utility.IO.DeleteFile(bundleManifestPath);
             }
 
@@ -365,7 +365,7 @@ namespace Cosmos.Editor.Resource
                     buildVersionPath = Path.Combine(buildParams.AssetBundleAbsoluteBuildPath, buildParams.BuildVersion);
                     break;
             }
-            var buildVersionManifestPath = Utility.Text.Append(buildVersionPath, ".manifest");
+            var buildVersionManifestPath = Utility.Text.Combine(buildVersionPath, ".manifest");
             Utility.IO.DeleteFile(buildVersionPath);
             Utility.IO.DeleteFile(buildVersionManifestPath);
         }

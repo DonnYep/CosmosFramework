@@ -120,7 +120,7 @@ namespace Cosmos.WebRequest
             switch (uploadType)
             {
                 case WebRequestUploadType.POST:
-                    webRequest = UnityWebRequest.Post(url, Utility.Converter.Convert2String(data));
+                    webRequest = UnityWebRequest.Post(url, Utility.Converter.ConvertToString(data));
                     break;
                 case WebRequestUploadType.PUT:
                     webRequest = UnityWebRequest.Put(url, data);

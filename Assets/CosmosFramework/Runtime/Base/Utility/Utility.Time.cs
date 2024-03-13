@@ -81,7 +81,7 @@ namespace Cosmos
                 return DateTime.MinValue;
             }
             /// <summary>
-            /// 获取该时间相对于纪元时间的秒数；
+            /// 获取该时间相对于纪元时间的秒数。
             /// </summary>
             /// <returns>秒数</returns>
             public static long GetTotalSeconds()
@@ -90,7 +90,7 @@ namespace Cosmos
                 return Convert.ToInt64(ts.TotalSeconds);
             }
             /// <summary>
-            /// 获取该时间相对于纪元时间的毫秒数；
+            /// 获取该时间相对于纪元时间的毫秒数。
             /// </summary>
             /// <returns>毫秒数</returns>
             public static long GetTotalMilliseconds()
@@ -99,7 +99,7 @@ namespace Cosmos
                 return Convert.ToInt64(ts.TotalMilliseconds);
             }
             /// <summary>
-            /// 获取该时间相对于纪元时间的微秒数；
+            /// 获取该时间相对于纪元时间的微秒数。
             /// </summary>
             /// <returns>微秒数</returns>
             public static long GetTotalMicroseconds()
