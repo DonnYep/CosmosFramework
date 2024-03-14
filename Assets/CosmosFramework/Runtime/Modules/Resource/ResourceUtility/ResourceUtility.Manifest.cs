@@ -16,7 +16,7 @@ namespace Cosmos.Resource
             }
             public static string SerializeManifest(ResourceManifest manifest, byte[] keyBytes)
             {
-                var json = LitJson.JsonMapper.ToJson(manifest);
+                var json = Cosmos.LitJson.JsonMapper.ToJson(manifest);
                 var hasKey = keyBytes != null && keyBytes.Length > 0;
                 string context = string.Empty;
                 if (hasKey)
@@ -41,7 +41,7 @@ namespace Cosmos.Resource
                     {
                         context = Utility.Encryption.AESDecryptStringToString(srcContext, keyBytes);
                     }
-                    manifest = LitJson.JsonMapper.ToObject<ResourceManifest>(context);
+                    manifest = Cosmos.LitJson.JsonMapper.ToObject<ResourceManifest>(context);
                 }
                 catch { }
                 return manifest;
@@ -56,7 +56,7 @@ namespace Cosmos.Resource
             }
             public static string SerializeMergedManifest(ResourceMergedManifest mergedManifest, byte[] keyBytes)
             {
-                var json = LitJson.JsonMapper.ToJson(mergedManifest);
+                var json = Cosmos.LitJson.JsonMapper.ToJson(mergedManifest);
                 var hasKey = keyBytes != null && keyBytes.Length > 0;
                 string context = string.Empty;
                 if (hasKey)
@@ -81,7 +81,7 @@ namespace Cosmos.Resource
                     {
                         context = Utility.Encryption.AESDecryptStringToString(srcContext, keyBytes);
                     }
-                    mergedManifest = LitJson.JsonMapper.ToObject<ResourceMergedManifest>(context);
+                    mergedManifest = Cosmos.LitJson.JsonMapper.ToObject<ResourceMergedManifest>(context);
                 }
                 catch { }
                 return mergedManifest;

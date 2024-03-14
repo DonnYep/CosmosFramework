@@ -633,5 +633,5 @@ MonoBehaviour:
   - .physicmaterial
   - .signal
   - .guiskin
-  - .dds
   - .otf
+  - .ttf

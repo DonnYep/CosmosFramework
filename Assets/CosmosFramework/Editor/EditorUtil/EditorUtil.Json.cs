@@ -13,7 +13,7 @@ namespace Cosmos.Editor
             /// <returns>序列化后的JSON字符串</returns>xxxx
             public static string ToJson(object obj, bool prettyPrint = false)
             {
-                return LitJson.JsonMapper.ToJson(obj);
+                return Cosmos.LitJson.JsonMapper.ToJson(obj);
             }
             /// <summary>
             /// 将对象序列化为JSON流
@@ -32,7 +32,7 @@ namespace Cosmos.Editor
             /// <returns>反序列化后的泛型对象</returns>
             public static T ToObject<T>(string json)
             {
-                return LitJson.JsonMapper.ToObject<T>(json);
+                return Cosmos.LitJson.JsonMapper.ToObject<T>(json);
             }
             /// <summary>
             /// 将JSON字符串反序列化对象
@@ -42,7 +42,7 @@ namespace Cosmos.Editor
             /// <returns>反序列化后的对象</returns>
             public static object ToObject(string json, Type objectType)
             {
-                return LitJson.JsonMapper.ToObject(json, objectType);
+                return Cosmos.LitJson.JsonMapper.ToObject(json, objectType);
             }
             /// <summary>
             /// 将JSON流转换为对象

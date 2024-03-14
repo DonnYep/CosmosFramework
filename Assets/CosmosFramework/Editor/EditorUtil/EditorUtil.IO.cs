@@ -41,6 +41,10 @@ namespace Cosmos.Editor
                     }
                 }
             }
+            /// <summary>
+            /// 遍历assets目录下的所有文件
+            /// </summary>
+            /// <param name="handler">遍历回调</param>
             public static void TraverseAllFolderFile(Action<UnityEngine.Object> handler)
             {
                 if (handler == null)
@@ -64,7 +68,7 @@ namespace Cosmos.Editor
                 }
             }
             /// <summary>
-            /// 获取所有Asset目录下，除文件夹、CS脚本以外的资源路径；
+            /// 获取所有Asset目录下，除文件夹、CS脚本以外的资源路径。
             /// </summary>
             public static string[] GetAllBundleableFilePath()
             {
@@ -83,6 +87,11 @@ namespace Cosmos.Editor
                 }
                 return pathList.ToArray();
             }
+            /// <summary>
+            /// 获取目录下，除文件夹、CS脚本以外的资源路径。
+            /// </summary>
+            /// <param name="folder">目录地址</param>
+            /// <returns>可以作为ab的文件地址</returns>
             public static string[] GetAllBundleableFilePath(string folder)
             {
                 List<string> pathList = new List<string>();
