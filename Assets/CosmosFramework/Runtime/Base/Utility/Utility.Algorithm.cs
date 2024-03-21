@@ -350,6 +350,25 @@ namespace Cosmos
                 return result;
             }
             /// <summary>
+            /// 随机在范围内生成一个long
+            /// </summary>
+            /// <param name="minValue">随机取值最小区间</param>
+            /// <param name="maxValue">随机取值最大区间</param>
+            /// <returns>生成的long</returns>
+            public static long RandomRange(long minValue, long maxValue)
+            {
+                if (minValue >= maxValue)
+                    throw new ArgumentNullException("RandomRange : minValue is greater than or equal to maxValue");
+                byte[] buf = new byte[8];
+                random.NextBytes(buf);
+                long longRand = BitConverter.ToInt64(buf, 0);
+                // 计算随机值范围
+                long range = maxValue - minValue + 1;
+                // 将随机值映射到指定范围内
+                long result = (long)Math.Floor(longRand / (double)long.MaxValue * range) + minValue;
+                return result;
+            }
+            /// <summary>
             /// 返回一个0.0~1.0之间的随机数
             /// </summary>
             /// <returns>随机数</returns>
