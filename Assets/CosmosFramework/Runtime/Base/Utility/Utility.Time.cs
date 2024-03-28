@@ -300,8 +300,8 @@ namespace Cosmos
             /// <summary>
             /// 判断是否是同一天
             /// </summary>
-            /// <param name="lhs">起始时间</param>
-            /// <param name="rhs">终止时间</param>
+            /// <param name="lhs">时间1</param>
+            /// <param name="rhs">时间2</param>
             /// <returns>是否是同一天</returns>
             public static bool MatchDay(DateTime lhs, DateTime rhs)
             {
@@ -311,6 +311,32 @@ namespace Cosmos
                 if (Math.Abs(diff.Days) >= 1)
                     return false;
                 return true;
+            }
+            /// <summary>
+            /// 检测两个日期是否在同一周
+            /// </summary>
+            /// <param name="lhs">时间1</param>
+            /// <param name="rhs">时间2</param>
+            /// <returns>是否在同一周</returns>
+            public static bool MatchWeek(DateTime lhs, DateTime rhs)
+            {
+                int lhsYear = lhs.Year;
+                int lhsWeek = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(lhs, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+                // 获取要检测日期的年、月、日和星期几
+                int rhsYear = rhs.Year;
+                int rhsWeek = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(rhs, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+                bool isSameWeek = lhsYear == rhsYear && lhsWeek == rhsWeek;
+                return isSameWeek;
+            }
+            /// <summary>
+            /// 检测两个日期是否在同一个月
+            /// </summary>
+            /// <param name="lhs">时间1</param>
+            /// <param name="rhs">时间2</param>
+            /// <returns>是否在同一个月</returns>
+            public static bool MatchMonth(DateTime lhs, DateTime rhs)
+            {
+                return lhs.Year == rhs.Year && lhs.Month == rhs.Month;
             }
         }
     }
