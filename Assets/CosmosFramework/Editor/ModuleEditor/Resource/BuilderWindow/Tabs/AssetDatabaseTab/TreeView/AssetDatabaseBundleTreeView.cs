@@ -87,8 +87,8 @@ namespace Cosmos.Editor.Resource
             menu.AddItem(new GUIContent("Mark as splittable"), false, SplitBundles, selected);
             menu.AddItem(new GUIContent("Mark as unsplittable"), false, MergeBundles, selected);
 
-            menu.AddItem(new GUIContent("Mark as extract"), false, MarkAsExtractBundles, selected);
-            menu.AddItem(new GUIContent("Mark as not extract"), false, MarkAsNotExtractBundles, selected);
+            menu.AddItem(new GUIContent("Mark as separately"), false, MarkAsSeparatelyBundles, selected);
+            menu.AddItem(new GUIContent("Mark as together"), false, MarkAsTogetherBundles, selected);
             menu.ShowAsContext();
         }
         protected override void SingleClickedItem(int id)
@@ -475,7 +475,7 @@ namespace Cosmos.Editor.Resource
                 EditorUtil.Debug.LogError(e);
             }
         }
-        void MarkAsExtractBundles(object context)
+        void MarkAsSeparatelyBundles(object context)
         {
             try
             {
@@ -506,7 +506,7 @@ namespace Cosmos.Editor.Resource
                 EditorUtil.Debug.LogError(e);
             }
         }
-        void MarkAsNotExtractBundles(object context)
+        void MarkAsTogetherBundles(object context)
         {
             try
             {

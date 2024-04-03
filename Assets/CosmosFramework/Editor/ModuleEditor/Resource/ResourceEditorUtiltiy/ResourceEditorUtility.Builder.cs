@@ -48,7 +48,7 @@ namespace Cosmos.Editor.Resource
                     },
                     new MultiColumnHeaderState.Column
                     {
-                        headerContent = new GUIContent("Extract"),
+                        headerContent = new GUIContent("Separately"),
                         headerTextAlignment = TextAlignment.Left,
                         sortingArrowAlignment = TextAlignment.Left,
                         sortedAscending = false,
