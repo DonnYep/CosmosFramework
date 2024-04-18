@@ -129,14 +129,14 @@ where T : Component
             }
             return null;
         }
-        public static T[] GetComponentsInPeer<T>(this Component @this, bool includeSrc = false)
+        public static T[] GetComponentsInPeer<T>(this Component @this, bool includeSelf = false)
 where T : Component
         {
             Transform parentTrans = @this.transform.parent;
             var childTrans = parentTrans.GetComponentsInChildren<Transform>();
             var length = childTrans.Length;
             Transform[] trans;
-            if (!includeSrc)
+            if (!includeSelf)
                 trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
             else
                 trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);

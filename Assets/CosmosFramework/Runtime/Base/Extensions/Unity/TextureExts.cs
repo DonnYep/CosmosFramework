@@ -164,5 +164,20 @@ namespace Cosmos
                 false, false,
                 @this.GetNativeTexturePtr());
         }
+        public static Texture2D ScaleTexture(this Texture2D @this, float targetWidth, float targetHeight)
+        {
+            Texture2D result = new Texture2D((int)targetWidth, (int)targetHeight, @this.format, false);
+
+            for (int i = 0; i < result.height; ++i)
+            {
+                for (int j = 0; j < result.width; ++j)
+                {
+                    Color newColor = @this.GetPixelBilinear((float)j / (float)result.width, (float)i / (float)result.height);
+                    result.SetPixel(j, i, newColor);
+                }
+            }
+            result.Apply();
+            return result;
+        }
     }
 }

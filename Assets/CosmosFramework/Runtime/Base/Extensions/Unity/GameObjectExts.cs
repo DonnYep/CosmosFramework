@@ -10,9 +10,9 @@ namespace Cosmos
         {
             GameObject.Destroy(@this);
         }
-        public static void DestroySelf(this GameObject @this, float t)
+        public static void DestroySelf(this GameObject @this, float delay)
         {
-            GameObject.Destroy(@this, t);
+            GameObject.Destroy(@this, delay);
         }
         public static void DestroyAllChilds(this GameObject @this)
         {
@@ -176,14 +176,21 @@ where T : Component
             }
             return null;
         }
-        public static T[] GetComponentsInPeer<T>(this GameObject @this, bool includeSrc = false)
+        /// <summary>
+        /// 获取同级对象的所有组件
+        /// </summary>
+        /// <typeparam name="T">组件类型</typeparam>
+        /// <param name="this">扩展</param>
+        /// <param name="includeSelf">是否包含自身的组件</param>
+        /// <returns>所有组件</returns>
+        public static T[] GetComponentsInPeer<T>(this GameObject @this, bool includeSelf = false)
 where T : Component
         {
             Transform parentTrans = @this.transform.parent;
             var childTrans = parentTrans.GetComponentsInChildren<Transform>();
             var length = childTrans.Length;
             Transform[] trans;
-            if (!includeSrc)
+            if (!includeSelf)
                 trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
             else
                 trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);
@@ -263,8 +270,7 @@ where T : Component
             return @this;
         }
         /// <summary>
-        /// 设置层级；
-        /// 此API会令对象下的所有子对象都被设置层级； 
+        /// 设置层级，此API会令对象下的所有子对象都被设置层级。
         /// </summary>
         public static GameObject SetLayer(this GameObject @this, string layerName)
         {
@@ -279,7 +285,6 @@ where T : Component
         /// <summary>
         /// 在本帧直接销毁
         /// </summary>
-        /// <param name="@this"></param>
         public static void DestroyNow(this GameObject @this)
         {
             GameObject.DestroyImmediate(@this);
@@ -287,7 +292,6 @@ where T : Component
         /// <summary>
         /// 获取或创建GameObject
         /// </summary>
-        /// <param name="@this"></param>
         public static GameObject FindOrCreateGameObject(this GameObject @this, string name)
         {
             var trans = @this.transform.Find(name);
@@ -304,7 +308,6 @@ where T : Component
         /// <summary>
         /// 获取或创建GameObject
         /// </summary>
-        /// <param name="@this"></param>
         public static GameObject FindOrCreateGo(this GameObject @this, string name)
         {
             return @this.FindOrCreateGameObject(name);
@@ -312,7 +315,6 @@ where T : Component
         /// <summary>
         /// 获取或创建GameObject
         /// </summary>
-        /// <param name="@this"></param>
         public static GameObject FindOrCreateGameObject(this GameObject @this, string name, params Type[] Components)
         {
             var trans = @this.transform.Find(name);
@@ -339,72 +341,9 @@ where T : Component
         /// <summary>
         /// 设置父级GameObject
         /// </summary>
-        /// <param name="@this">返回自身</param>
-        public static GameObject SetParent(this GameObject @this, GameObject parentGameObject)
+        public static GameObject SetParent(this GameObject @this, GameObject parent)
         {
-            @this.transform.SetParent(parentGameObject.transform);
-            return @this;
-        }
-        public static GameObject SetParent(this GameObject @this, Transform parent)
-        {
-            @this.transform.SetParent(parent);
-            return @this;
-        }
-        /// <summary>
-        /// 设置世界坐标
-        /// </summary>
-        /// <param name="@this"></param>
-        public static GameObject SetPosition(this GameObject @this, Vector3 position)
-        {
-            if (@this.transform != null)
-            {
-                @this.transform.position = position;
-            }
-            return @this;
-        }
-        /// <summary>
-        /// 设置本地坐标
-        /// </summary>
-        /// <param name="@this"></param>
-        public static GameObject SetLocalPosition(this GameObject @this, Vector3 localPosition)
-        {
-            if (@this.transform != null)
-            {
-                @this.transform.localPosition = localPosition;
-
-            }
-            return @this;
-        }
-        public static GameObject SetLocalScale(this GameObject @this, Vector3 scaleValue)
-        {
-            if (@this.transform != null)
-            {
-                @this.transform.localScale = scaleValue;
-            }
-            return @this;
-        }
-        public static GameObject SetRotation(this GameObject @this, Quaternion value)
-        {
-            if (@this.transform != null)
-            {
-                @this.transform.rotation = value;
-            }
-            return @this;
-        }
-        public static GameObject SetLocalRotation(this GameObject @this, Quaternion value)
-        {
-            if (@this.transform != null)
-            {
-                @this.transform.localRotation = value;
-            }
-            return @this;
-        }
-        public static GameObject SetEulerAngles(this GameObject @this, Vector3 value)
-        {
-            if (@this.transform != null)
-            {
-                @this.transform.eulerAngles = value;
-            }
+            @this.transform.SetParent(parent.transform);
             return @this;
         }
         /// <summary>
@@ -417,7 +356,7 @@ where T : Component
         /// <summary>
         /// 检查组件是否存在
         /// </summary>
-        /// <param name="@this">Game object</param>
+        /// <param name="this">Game object</param>
         /// <param name="type">组件类型</param>
         /// <returns>True when component is attached.</returns>
         public static bool HasComponent(this GameObject @this, string type)
@@ -427,7 +366,7 @@ where T : Component
         /// <summary>
         /// 检查组件是否存在
         /// </summary>
-        /// <param name="@this">Game object</param>
+        /// <param name="this">Game object</param>
         /// <param name="type">组件类型</param>
         /// <returns>True when component is attached.</returns>
         public static bool HasComponent(this GameObject @this, Type type)

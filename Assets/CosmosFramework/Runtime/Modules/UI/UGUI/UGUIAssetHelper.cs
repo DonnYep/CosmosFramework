@@ -26,7 +26,7 @@ namespace Cosmos
             return resourceManager.LoadPrefabAsync(assetInfo.AssetName, go =>
             {
                 go.transform.ResetLocalTransform();
-                go.transform.SetAlignParent(uiRoot);
+                go.transform.SetAndAlignParent(uiRoot);
                 var comp = go.GetOrAddComponent(uiType) as IUIForm;
                 doneCallback?.Invoke(comp);
             }, null, true);

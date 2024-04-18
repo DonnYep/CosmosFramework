@@ -154,5 +154,12 @@ namespace Cosmos
             }
             return new string(c);
         }
+        /// <summary>
+        /// 最后一个转换为string的char字符
+        /// </summary>
+        public static string LastChar(this string @this)
+        {
+            return @this.Last().ToString();
+        }
     }
 }

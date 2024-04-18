@@ -99,5 +99,19 @@ namespace Cosmos
                 @this.color = new Color(c.r, c.g, c.b, 0);
             }
         }
+        /// <summary> 
+        /// 在指定物体上添加指定图片 
+        /// </summary>
+        public static Image AddImage(this GameObject @this, Sprite sprite)
+        {
+            @this.SetActive(false);
+            Image image = @this.GetComponent<Image>();
+            if (!image)
+                image = @this.AddComponent<Image>();
+            image.sprite = sprite;
+            image.SetNativeSize();
+            @this.SetActive(true);
+            return image;
+        }
     }
 }

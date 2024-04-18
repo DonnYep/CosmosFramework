@@ -16,22 +16,22 @@ namespace Cosmos
 			size.y = height;
 			@this.sizeDelta = size;
 		}
-		public static void SetAnchoredPositionX(this RectTransform @this, float pos)
+		public static void SetAnchoredPositionX(this RectTransform @this, float x)
 		{
 			Vector3 temp = @this.anchoredPosition;
-			temp.x = pos;
+			temp.x = x;
 			@this.anchoredPosition = temp;
 		}
-		public static void SetAnchoredPositionY(this RectTransform @this, float pos)
+		public static void SetAnchoredPositionY(this RectTransform @this, float y)
 		{
 			Vector3 temp = @this.anchoredPosition;
-			temp.y = pos;
+			temp.y = y;
 			@this.anchoredPosition = temp;
 		}
-		public static void SetAnchoredPositionZ(this RectTransform @this, float pos)
+		public static void SetAnchoredPositionZ(this RectTransform @this, float z)
 		{
 			Vector3 temp = @this.anchoredPosition;
-			temp.z = pos;
+			temp.z = z;
 			@this.anchoredPosition = temp;
 		}
 	}

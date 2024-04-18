@@ -30,9 +30,9 @@ public class AStarManager : MonoBehaviour
         defaultTileRoot = new GameObject("DefaultTileRoot");
         highligntTileRoot = new GameObject("HighligntTileRoot");
         obstacleTileRoot = new GameObject("ObstacleTileRoot");
-        defaultTileRoot.transform.SetAlignParent(transform);
-        highligntTileRoot.transform.SetAlignParent(transform);
-        obstacleTileRoot.transform.SetAlignParent(transform);
+        defaultTileRoot.transform.SetAndAlignParent(transform);
+        highligntTileRoot.transform.SetAndAlignParent(transform);
+        obstacleTileRoot.transform.SetAndAlignParent(transform);
 
         switch (distanceType)
         {

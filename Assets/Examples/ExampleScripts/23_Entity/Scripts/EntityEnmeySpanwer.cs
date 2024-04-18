@@ -22,7 +22,7 @@ public class EntityEnmeySpanwer : MonoBehaviour
         for (int i = 0; i < length; i++)
         {
             entityManager.ShowEntity(EntityContants.EntityEnmey, out var entityObject);
-            entityObject.Handle.transform.SetAlignParent(spawnPoints[spawnPointIndex]);
+            entityObject.Handle.transform.SetAndAlignParent(spawnPoints[spawnPointIndex]);
             spawnPointIndex++;
             Utility.Debug.LogInfo($"ShowEntity==={entityObject.EntityName}={entityObject.EntityObjectId}");
             entityObject.As<EnmeyEntity>().onDeath = OnEnemyDeath;

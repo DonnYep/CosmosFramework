@@ -282,20 +282,6 @@ namespace Cosmos
 
                 return newImg;
             }
-            /// <summary> 
-            /// 在指定物体上添加指定图片 
-            /// </summary>
-            public static Image AddImage(GameObject target, Sprite sprite)
-            {
-                target.SetActive(false);
-                Image image = target.GetComponent<Image>();
-                if (!image)
-                    image = target.AddComponent<Image>();
-                image.sprite = sprite;
-                image.SetNativeSize();
-                target.SetActive(true);
-                return image;
-            }
             public static Texture2D ScaleTexture(Texture2D source, float targetWidth, float targetHeight)
             {
                 Texture2D result = new Texture2D((int)targetWidth, (int)targetHeight, source.format, false);

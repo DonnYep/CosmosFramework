@@ -150,52 +150,98 @@ namespace Cosmos
                 GameObject.Destroy(@this.GetChild(i).gameObject);
             }
         }
-        /// <summary>
-        /// 查找所有符合名称的子节点
-        /// </summary>
-        /// <param name="this">目标对象</param>
-        /// <param name="name">子级别目标对象名称</param>
-        /// <returns>名字符合的对象数组</returns>
-        public static Transform[] FindChildrens(this Transform @this, string name)
-        {
-            var trans = @this.GetComponentsInChildren<Transform>();
-            var length = trans.Length;
-            var dst = new Transform[length];
-            int idx = 0;
-            for (int i = 0; i < length; i++)
-            {
-                if (trans[i].name.Contains(name))
-                {
-                    dst[idx] = trans[i];
-                    idx++;
-                }
-            }
-            Array.Resize(ref dst, idx);
-            return dst;
-        }
         public static Transform FindChildren(this Transform @this, string name)
         {
-            var trans = @this.GetComponentsInChildren<Transform>();
-            var length = trans.Length;
-            for (int i = 1; i < length; i++)
+            int childCount = @this.childCount;
+            for (int i = 0; i < childCount; i++)
             {
-                if (trans[i].name.Equals(name))
-                    return trans[i];
+                Transform child = @this.GetChild(i);
+                if (child.name == name)
+                {
+                    return child;
+                }
+                Transform result = FindChildren(child, name);
+                if (result != null)
+                {
+                    return result;
+                }
             }
             return null;
         }
         /// <summary>
-        /// 查找同级别其他对象；
+        /// 查询所有包含指定名称的子物体以及孙物体
         /// </summary>
-        /// <param name="@this">同级别当前对象</param>
-        /// <param name="includeSrc">是否包含本身</param>
-        /// <returns>当前级别下除此对象的其他同级的对象</returns>
-        public static Transform[] FindPeers(this Transform @this, bool includeSrc = false)
+        /// <param name="this">父物体</param>
+        /// <param name="name">包含的名称</param>
+        /// <param name="findActiveObjectOnly">是否只查找active状态的对象</param>
+        /// <returns>查询到的子物体</returns>
+        public static List<Transform> FindChildrenContainsName(this Transform @this, string name, bool findActiveObjectOnly = false)
+        {
+            List<Transform> childList = new List<Transform>();
+            int childCount = @this.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                Transform child = @this.GetChild(i);
+                if (findActiveObjectOnly)
+                {
+                    if (!child.gameObject.activeSelf)
+                        continue;
+                    if (child.name.Contains(name))
+                    {
+                        childList.Add(child);
+                    }
+                }
+                else
+                {
+                    if (child.name.Contains(name))
+                    {
+                        childList.Add(child);
+                    }
+                }
+                childList.AddRange(FindChildrenContainsName(child, name));
+            }
+            return childList;
+        }
+        /// <summary>
+        /// 查找所有子物体孙物体等
+        /// </summary>
+        /// <param name="this">父物体</param>
+        /// <param name="findActiveObjectOnly">是否只查找active状态的对象</param>
+        /// <returns>查询到的子物体</returns>
+        public static List<Transform> FindAllChildren(this Transform @this, bool findActiveObjectOnly = false)
+        {
+            List<Transform> childList = new List<Transform>();
+            int childCount = @this.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                Transform child = @this.GetChild(i);
+                if (findActiveObjectOnly)
+                {
+                    if (child.gameObject.activeSelf)
+                    {
+                        childList.Add(child);
+                    }
+                }
+                else
+                {
+                    childList.Add(child);
+                }
+                childList.AddRange(FindAllChildren(child, findActiveObjectOnly));
+            }
+            return childList;
+        }
+        /// <summary>
+        /// 查找同级别其他对象
+        /// </summary>
+        /// <param name="this">同级别当前对象</param>
+        /// <param name="includeSelf">是否包含本身</param>
+        /// <returns>同级的对象</returns>
+        public static Transform[] FindPeers(this Transform @this, bool includeSelf = false)
         {
             Transform parentTrans = @this.parent;
             var childTrans = parentTrans.GetComponentsInChildren<Transform>();
             var length = childTrans.Length;
-            if (!includeSrc)
+            if (!includeSelf)
                 return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);
             else
                 return Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
@@ -235,20 +281,19 @@ namespace Cosmos
             return transformList.ToArray();
         }
         /// <summary>
-        /// 查找同级别下所有目标组件；
-        /// 略耗性能；
+        /// 查找同级别下所有目标组件，略耗性能
         /// </summary>
         /// <typeparam name="T">目标组件</typeparam>
         /// <param name="this">同级别当前对象</param>
-        /// <param name="includeSrc">包含当前对象</param>
+        /// <param name="includeSelf">是否包含当前对象</param>
         /// <returns>同级别对象数组</returns>
-        public static T[] PeerComponets<T>(this Transform @this, bool includeSrc = false) where T : Component
+        public static T[] PeerComponets<T>(this Transform @this, bool includeSelf = false) where T : Component
         {
             Transform parentTrans = @this.parent;
             var childTrans = parentTrans.GetComponentsInChildren<Transform>();
             var length = childTrans.Length;
             Transform[] trans;
-            if (!includeSrc)
+            if (!includeSelf)
                 trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
             else
                 trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);
@@ -311,19 +356,20 @@ namespace Cosmos
         /// <summary>
         /// 获取第一个子物体
         /// </summary>
-        /// <param name="findActiveObject">激活条件</param>
-        public static Transform GetFirstChild(this Transform @this, bool findActiveObject = true)
+        /// <param name="findActiveObjectOnly">是否只查找active状态的对象</param>
+        public static Transform GetFirstChild(this Transform @this, bool findActiveObjectOnly = false)
         {
             if (@this == null || @this.childCount == 0)
                 return null;
-
-            if (findActiveObject == false)
-                return @this.GetChild(0);
-
             for (int i = 0; i < @this.childCount; i++)
             {
                 Transform target = @this.GetChild(i);
-                if (target.gameObject.activeSelf)
+                if (findActiveObjectOnly)
+                {
+                    if (target.gameObject.activeSelf)
+                        return target;
+                }
+                else
                     return target;
             }
             return null;
@@ -331,42 +377,34 @@ namespace Cosmos
         /// <summary>
         /// 获取最后一个子物体
         /// </summary>
-        /// <param name="findActiveObject">激活条件</param>
-        public static Transform GetLastChild(this Transform @this, bool findActiveObject = true)
+        /// <param name="findActiveObjectOnly">是否只查找active状态的对象</param>
+        public static Transform GetLastChild(this Transform @this, bool findActiveObjectOnly = false)
         {
             if (@this == null || @this.childCount == 0)
                 return null;
-
-            if (findActiveObject == false)
-                return @this.GetChild(@this.childCount - 1);
-
             for (int i = @this.childCount - 1; i >= 0; i--)
             {
                 Transform target = @this.GetChild(i);
-                if (target.gameObject.activeSelf)
+                if (findActiveObjectOnly)
+                {
+                    if (target.gameObject.activeSelf)
+                        return target;
+                }
+                else
                     return target;
             }
             return null;
         }
         /// <summary>
-        /// 设置并对其到父对象；
+        /// 设置并对齐到父对象
         /// </summary>
-        public static void SetAlignParent(this Transform @this, Transform parent)
+        public static void SetAndAlignParent(this Transform @this, Transform parent)
         {
             @this.SetParent(parent);
             @this.localPosition = Vector3.zero;
             @this.localRotation = Quaternion.Euler(Vector3.zero);
             @this.localScale = Vector3.one;
         }
-        public static Transform SetParentChild(this Transform @this, Transform parent, string name)
-        {
-            var child = FindChildren(parent, name);
-            if (child != null)
-            {
-                @this.SetParent(child);
-                return @this;
-            }
-            return null;
-        }
+
     }
 }

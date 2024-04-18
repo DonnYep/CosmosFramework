@@ -18,7 +18,7 @@ public class EntityLauncherState : ProcedureNode
     public async override void OnInit(ProcedureProcessor processor)
     {
         var mainUICanvas = await CosmosEntry.ResourceManager.LoadPrefabAsync("UICanvas", true);
-        mainUICanvas.transform.SetAlignParent(CosmosEntry.UIManager.InstanceObject().transform);
+        mainUICanvas.transform.SetAndAlignParent(CosmosEntry.UIManager.InstanceObject().transform);
         //设置UGUI资源方案
         CosmosEntry.UIManager.SetUIFormAssetHelper(new UGUIAssetHelper(mainUICanvas.transform));
         var sld = await CosmosEntry.UIManager.OpenUIFormAsync<EntityGameLoadingSlider>(new UIAssetInfo("EntityGameLoadingSlider"));
