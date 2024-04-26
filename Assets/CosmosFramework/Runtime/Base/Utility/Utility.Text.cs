@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 namespace Cosmos
@@ -52,10 +53,10 @@ namespace Cosmos
                 return stringBuilderCache.ToString();
             }
             /// <summary>
-            /// 字段合并；
+            /// 字段合并
             /// </summary>
             /// <param name="strings">字段数组</param>
-            /// <returns></returns>
+            /// <returns>合并后的文本</returns>
             public static string Combine(params string[] strings)
             {
                 if (strings == null)
@@ -65,6 +66,22 @@ namespace Cosmos
                 for (int i = 0; i < length; i++)
                 {
                     stringBuilderCache.Append(strings[i]);
+                }
+                return stringBuilderCache.ToString();
+            }
+            /// <summary>
+            /// 字段合并
+            /// </summary>
+            /// <param name="strings">字段数组</param>
+            /// <returns>合并后的文本</returns>
+            public static string Combine(IEnumerable<string> strings)
+            {
+                if (strings == null)
+                    throw new ArgumentNullException("Combine is invalid.");
+                stringBuilderCache.Clear();
+                foreach (var str in strings)
+                {
+                    stringBuilderCache.Append(str);
                 }
                 return stringBuilderCache.ToString();
             }
