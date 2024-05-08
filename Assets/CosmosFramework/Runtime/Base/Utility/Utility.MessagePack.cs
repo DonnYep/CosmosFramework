@@ -76,7 +76,7 @@ namespace Cosmos
             }
 
             /// <summary>
-            /// 序列化对象到二进制；
+            /// 序列化对象到二进制。
             /// </summary>
             /// <typeparam name="T">mp标记的对象类型</typeparam>
             /// <param name="obj">mp对象</param>
@@ -97,7 +97,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 反序列化二进制到对象；
+            /// 反序列化二进制到对象。
             /// </summary>
             /// <typeparam name="T">mp标记的对象类型</typeparam>
             /// <param name="bytes">需要反序列化的数组</param>
@@ -118,7 +118,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 反序列化二进制到对象；
+            /// 反序列化二进制到对象。
             /// </summary>
             /// <param name="bytes">需要反序列化的数组</param>
             /// <param name="type">mp标记的对象类型</param>
@@ -139,7 +139,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// byte[]转json字符串；
+            /// byte[]转json字符串。
             /// </summary>
             /// <param name="jsonBytes">需要被转换成json的byte数组</param>
             /// <returns>转换后的json</returns>
@@ -159,7 +159,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// json字符串转byte[]；
+            /// json字符串转byte[]。
             /// </summary>
             /// <param name="json">需要被转换成bytes的json</param>
             /// <returns>转换后的bytes</returns>
@@ -179,7 +179,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// json字符串反序列化成对象；
+            /// json字符串反序列化成对象。
             /// </summary>
             /// <typeparam name="T">mp标记的对象类型</typeparam>
             /// <param name="json">需要被转换的json</param>
@@ -200,7 +200,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// json字符串反序列化成对象；
+            /// json字符串反序列化成对象。
             /// </summary>
             /// <param name="json">需要被转换的json</param>
             /// <param name="type">mp标记的对象类型</param>
@@ -221,7 +221,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 对象序列化成json字符串；
+            /// 对象序列化成json字符串。
             /// </summary>
             /// <typeparam name="T">mp标记的对象类型</typeparam>
             /// <param name="obj">mp对象</param>
@@ -242,7 +242,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 对象序列化成json的bytes；
+            /// 对象序列化成json的bytes。
             /// </summary>
             /// <typeparam name="T">mp标记的对象类型</typeparam>
             /// <param name="obj">mp对象</param>

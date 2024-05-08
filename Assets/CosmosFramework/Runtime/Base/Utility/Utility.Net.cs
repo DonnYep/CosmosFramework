@@ -13,7 +13,7 @@ namespace Cosmos
         public static class Net
         {
             /// <summary>
-            /// 使用HttpWebRequest Ping获取url根目录的文件列表；
+            /// 使用HttpWebRequest Ping获取url根目录的文件列表。
             /// <para> 远程资源尽量使用拉丁字母，此方法对于中文文件名解析会产生异常！</para>
             /// </summary>
             /// <param name="url">资源定位地址</param>
@@ -35,7 +35,7 @@ namespace Cosmos
                 return files.ToArray();
             }
             /// <summary>
-            ///远程资源尽量使用英文字母命名；
+            ///远程资源尽量使用英文字母命名。
             ///<para> 返回时只带File地址，不包含Folder</para>
             /// <para> 使用HttpWebRequest Ping并遍历url的文件列表 </para>
             /// </summary>
@@ -83,7 +83,7 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// Ping URL是否存在；
+            /// Ping URL是否存在。
             /// <para> Ping的过程本身是阻塞的，谨慎使用！</para> 
             /// </summary>
             /// <param name="url">资源地址</param>

@@ -13,7 +13,7 @@ namespace Cosmos
         public static class Compression
         {
             /// <summary>
-            /// 压缩文本；
+            /// 压缩文本
             /// </summary>
             /// <param name="context">文本内容</param>
             /// <returns>压缩后的文本</returns>
@@ -34,7 +34,7 @@ namespace Cosmos
                 return Convert.ToBase64String(gZipBuffer);
             }
             /// <summary>
-            /// 解压文本；
+            /// 解压文本
             /// </summary>
             /// <param name="compressedContext">压缩过的文本</param>
             /// <returns>解压后的文本</returns>
@@ -76,7 +76,7 @@ namespace Cosmos
                 return gZipBuffer;
             }
             /// <summary>
-            /// 解压bytes；
+            /// 解压bytes
             /// </summary>
             /// <param name="compressedBytes">压缩过的bytes</param>
             /// <returns>解压后的bytes</returns>
@@ -98,7 +98,7 @@ namespace Cosmos
             }
 #if NET_STANDARD_2_0
             /// <summary>
-            /// 创建一个与文件夹同级的压缩文件；
+            /// 创建一个与文件夹同级的压缩文件。
             /// </summary>
             /// <param name="sourceDirectoryName">文件夹名</param>
             /// <param name="includeBaseDirectory">包含基类文件夹</param>
@@ -112,7 +112,7 @@ namespace Cosmos
                 System.IO.Compression.ZipFile.CreateFromDirectory(sourceDirectoryName, archivePath, CompressionLevel.Fastest, includeBaseDirectory);
             }
             /// <summary>
-            /// 解压zip文件；
+            /// 解压zip文件。
             /// </summary>
             /// <param name="sourceArchiveFileName">zip文件地址</param>
             /// <param name="destinationDirectory">解压到的文件地址</param>

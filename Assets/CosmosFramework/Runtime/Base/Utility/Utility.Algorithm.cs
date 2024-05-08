@@ -451,9 +451,9 @@ namespace Cosmos
                 return 1.0 / (x * Math.Sqrt(2 * Math.PI) * sigma) * Math.Exp(-1 * (Math.Log(x) - miu) * (Math.Log(x) - miu) / (2 * sigma * sigma));
             }
             /// <summary>
-            /// 随机正态分布；
+            /// 随机正态分布随机数
             /// </summary>
-            public static double RandomNormalDistribution(double miu, double sigma, double min, double max)//产生正态分布随机数
+            public static double RandomNormalDistribution(double miu, double sigma, double min, double max)
             {
                 double x;
                 double dScope;

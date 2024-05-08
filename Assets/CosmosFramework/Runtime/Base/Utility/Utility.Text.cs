@@ -181,7 +181,7 @@ namespace Cosmos
                 return context.Length;
             }
             /// <summary>
-            /// 获取内容在UTF8编码下的字节长度；
+            /// 获取内容在UTF8编码下的字节长度。
             /// </summary>
             /// <param name="context">需要检测的内容</param>
             /// <returns>字节长度</returns>

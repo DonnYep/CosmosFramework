@@ -4,15 +4,14 @@ namespace Cosmos
     public static partial class Utility
     {
         /// <summary>
-        /// 断言处理工具;
+        /// 断言处理工具
         /// </summary>
         public static class Assert
         {
             /// <summary>
             /// 判断不为空
             /// </summary>
-            /// <typeparam name="T">泛型类型</typeparam>
-            /// <param name="arg">泛型对象</param>
+            /// <param name="obj">判断是否为空的对象</param>
             public static void NotNull(object obj)
             {
                 if (obj == null)
@@ -21,8 +20,7 @@ namespace Cosmos
             /// <summary>
             /// 判断不为空
             /// </summary>
-            /// <typeparam name="T">泛型类型</typeparam>
-            /// <param name="arg">泛型对象</param>
+            /// <param name="obj">判断是否为空的对象</param>
             /// <param name="message">自定义需要打印的信息</param>
             public static void NotNull(object obj, object message)
             {
@@ -33,9 +31,8 @@ namespace Cosmos
             /// 判断不为空
             /// 若不为空，则执行回调
             /// </summary>
-            /// <typeparam name="T">泛型类型</typeparam>
-            /// <param name="arg">泛型对象</param>
-            /// <param name="callBack">若不为空，则执行回调</param>
+            /// <param name="obj">判断是否为空的对象</param>
+            /// <param name="notNullCallBack">若不为空，则执行回调</param>
             public static void NotNull(object obj, Action notNullCallBack)
             {
                 if (obj == null)
@@ -46,7 +43,7 @@ namespace Cosmos
             /// <summary>
             /// 判断不为空
             /// </summary>
-            /// <param name="obj"></param>
+            /// <param name="obj">判断是否为空的对象</param>
             /// <param name="notNullCallBack">不为空的回调</param>
             /// <param name="nullCallBack">为空时候的回调</param>
             public static void NotNull(object obj, Action notNullCallBack, Action nullCallBack)
@@ -64,6 +61,11 @@ namespace Cosmos
             {
                 return System.Object.ReferenceEquals(obj, null);
             }
+            /// <summary>
+            /// 是否为空
+            /// </summary>
+            /// <param name="obj">判断是否为空的对象</param>
+            /// <param name="nullCallBack">为空时候的回调</param>
             public static void IsNull(object obj, Action nullCallBack)
             {
 
@@ -82,48 +84,6 @@ namespace Cosmos
                     nullCallBack?.Invoke();
                 else
                     notNullCallBack?.Invoke();
-            }
-            /// <summary>
-            /// 判断是否为继承关系
-            /// </summary>
-            /// <typeparam name="T1">父类</typeparam>
-            /// <typeparam name="T2">子类</typeparam>
-            /// <param name="callBack">符合继承时候的回调</param>
-            public static void IsAssignable<T1, T2>(T1 super, T2 sub, Action<T1, T2> callBack)
-            {
-                Type superType = typeof(T1);
-                Type subType = typeof(T2);
-                if (superType.IsAssignableFrom(superType))
-                    callBack?.Invoke(super, sub);
-                else
-                    throw new InvalidCastException("SuperType : " + subType.FullName + "unssignable from subType : " + subType.FullName);
-            }
-            /// <summary>
-            /// 是否为继承
-            /// </summary>
-            /// <typeparam name="T1">super</typeparam>
-            /// <typeparam name="T2">sub</typeparam>
-            /// <param name="callBack">若不为继承，则启用回调</param>
-            public static void IsAssignable<T1, T2>(Action callBack)
-            {
-                if (!typeof(T1).IsAssignableFrom(typeof(T2)))
-                    callBack?.Invoke();
-            }
-            /// <summary>
-            /// if assaignable ,run callBack method
-            /// </summary>
-            /// <typeparam name="T1">superType</typeparam>
-            /// <typeparam name="T2">subType</typeparam>
-            /// <param name="sub">subType arg</param>
-            /// <param name="callBack">若可执行，则回调，传入参数为sub对象</param>
-            public static void IsAssignable<T1, T2>(T2 sub, Action<T2> callBack)
-            {
-                Type superType = typeof(T1);
-                Type subType = typeof(T2);
-                if (superType.IsAssignableFrom(superType))
-                    callBack?.Invoke(sub);
-                else
-                    throw new InvalidCastException("SuperType : " + subType.FullName + "unssignable from subType : " + subType.FullName);
             }
             /// <summary>
             /// 状态检测
@@ -167,8 +127,7 @@ namespace Cosmos
                     callBack?.Invoke();
             }
             /// <summary>
-            /// 条件委托，
-            /// 若handler返回true，则run callBack
+            /// 条件委托。若handler返回true，则run callBack。
             /// </summary>
             /// <typeparam name="T">泛型对象</typeparam>
             /// <param name="arg">对象</param>

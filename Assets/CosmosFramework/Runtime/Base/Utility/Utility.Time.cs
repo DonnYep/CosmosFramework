@@ -124,7 +124,7 @@ namespace Cosmos
                 return Convert.ToInt64(ts.TotalHours);
             }
             /// <summary>
-            /// 获取该时间相对于纪元时间的天数
+            /// 获取该时间相对于纪元时间的天数。
             /// </summary>
             public static double GetTotalDays()
             {
@@ -132,7 +132,7 @@ namespace Cosmos
                 return Convert.ToInt64(ts.TotalHours);
             }
             /// <summary>
-            /// 获取某一年有多少周；
+            /// 获取某一年有多少周。
             /// </summary>
             /// <param name="year">年份</param>
             /// <returns>该年周数</returns>
@@ -143,11 +143,11 @@ namespace Cosmos
                 return gc.GetWeekOfYear(end, CalendarWeekRule.FirstDay, DayOfWeek.Monday); //该年星期数
             }
             /// <summary>
-            /// 得到一年中的某周的起始日和截止日；
-            /// 年 nYear
-            /// 周数 nNumWeek
-            /// 周始 out dtWeekStart
-            /// 周终 out dtWeekeEnd
+            /// 得到一年中的某周的起始日和截止日。
+            /// <para>年 nYear</para>
+            /// <para>周数 nNumWeek</para>
+            /// <para>周始 out dtWeekStart</para>
+            /// <para>周终 out dtWeekeEnd</para>
             /// </summary>
             /// <param name="_"></param>
             /// <param name="year">年份</param>
@@ -162,7 +162,7 @@ namespace Cosmos
                 dtWeekeEnd = dt.AddDays((int)DayOfWeek.Saturday - (int)dt.DayOfWeek + 1);
             }
             /// <summary>
-            /// 得到一年中的某周的起始日和截止日    周一到周五  工作日；
+            /// 得到一年中的某周的起始日和截止日    周一到周五  工作日。
             /// </summary>
             /// <param name="_"></param>
             /// <param name="year">年份</param>

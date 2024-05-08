@@ -85,8 +85,8 @@ namespace Cosmos
                 return stringBuilderCache.ToString();
             }
             /// <summary>
-            /// 生成8位密钥；
-            /// 注意：此工具类中提供的对称加密需要为16，24，32位密钥
+            /// 生成8位密钥
+            /// <para>注意：此工具类中提供的对称加密需要为16，24，32位密钥</para> 
             /// </summary>
             /// <param name="key">原始密钥信息</param>
             /// <returns>加密后的值</returns>

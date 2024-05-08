@@ -381,12 +381,12 @@ namespace Cosmos
             {
                 return CoroutineHelper.StartCoroutine(handler, callback);
             }
-            public static void AddCoroutine(IEnumerator routine,Action<Coroutine>callback)
+            public static void AddCoroutine(IEnumerator routine, Action<Coroutine> callback)
             {
                 CoroutineHelper.AddCoroutine(routine, callback);
             }
             /// <summary>
-            /// 延时协程；
+            /// 延时协程
             /// </summary>
             /// <param name="delay">延时的时间</param>
             /// <param name="callBack">延时后的回调函数</param>
@@ -396,7 +396,7 @@ namespace Cosmos
                 return CoroutineHelper.DelayCoroutine(delay, callBack);
             }
             /// <summary>
-            /// 条件协程；
+            /// 条件协程
             /// </summary>
             /// <param name="handler">目标条件</param>
             /// <param name="callBack">条件达成后执行的回调</param>
@@ -406,7 +406,7 @@ namespace Cosmos
                 return CoroutineHelper.PredicateCoroutine(handler, callBack);
             }
             /// <summary>
-            /// 嵌套协程；
+            /// 嵌套协程
             /// </summary>
             /// <param name="predicateHandler">条件函数</param>
             /// <param name="nestHandler">条件成功后执行的嵌套协程</param>
@@ -850,7 +850,7 @@ namespace Cosmos
 
             #region Other
             /// <summary>
-            /// 场景是否被加载；
+            /// 场景是否被加载
             /// </summary>
             /// <param name="sceneName">场景名</param>
             /// <returns>是否被加载</returns>
@@ -864,8 +864,8 @@ namespace Cosmos
                 return false;
             }
             /// <summary>
-            /// 判断是否是路径；
-            /// 需要注意根目录下的文件可能不带/或\符号！
+            /// 判断是否是路径
+            /// <para>需要注意根目录下的文件可能不带/或\符号！</para>
             /// </summary>
             /// <param name="path">路径str</param>
             /// <returns>是否是路径</returns>

@@ -19,7 +19,7 @@ namespace Cosmos
         public static class Program
         {
             /// <summary>
-            /// 通过cmd启动一个.netcore应用；
+            /// 通过cmd启动一个.netcore应用。
             /// </summary>
             /// <param name="workingDirectory">工作的文件夹地址，dll存放的文件夹路径</param>
             /// <param name="dllName">启动的dll名</param>
@@ -34,7 +34,7 @@ namespace Cosmos
                 return Process.Start(process);
             }
             /// <summary>
-            /// 启动一个进程；
+            /// 启动一个进程。
             /// </summary>
             /// <param name="filePath">文件地址</param>
             /// <returns>运行的Process对象</returns>
@@ -43,7 +43,7 @@ namespace Cosmos
                 return Process.Start(filePath);
             }
             /// <summary>
-            /// 获取当前应用的物理内存使用情况；
+            /// 获取当前应用的物理内存使用情况。
             /// </summary>
             /// <returns>byte长度</returns>
             public static long GetMemoryUsage()

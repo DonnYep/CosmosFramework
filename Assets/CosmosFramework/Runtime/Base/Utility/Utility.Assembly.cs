@@ -10,7 +10,7 @@ namespace Cosmos
         public static class Assembly
         {
             /// <summary>
-            /// 默认使用应用的程序集，若使用了Assembly.Load，则需要更新域程序集；
+            /// 默认使用应用的程序集，若使用了Assembly.Load，则需要更新域程序集。
             /// </summary>
             static System.Reflection.Assembly[] domainAssemblies;
             static Assembly()
@@ -26,7 +26,7 @@ namespace Cosmos
                 domainAssemblies = assemblies;
             }
             /// <summary>
-            /// 从域程序集中获取类；
+            /// 从域程序集中获取类。
             /// </summary>
             /// <param name="typeName">类型完全限定名</param>
             /// <returns>类型</returns>
@@ -42,7 +42,7 @@ namespace Cosmos
                 return type;
             }
             /// <summary>
-            /// 获取AppDomain中指定的程序集
+            /// 获取AppDomain中指定的程序集。
             /// </summary>
             /// <param name="assemblyName">程序集名</param>
             /// <returns>程序集</returns>
@@ -56,7 +56,7 @@ namespace Cosmos
                 return null;
             }
             /// <summary>
-            /// 反射工具，得到反射类的对象；
+            /// 反射工具，得到反射类的对象。
             /// </summary>
             /// <param name="type">类型</param>
             /// <param name="args">构造参数</param>
@@ -66,8 +66,8 @@ namespace Cosmos
                 return Activator.CreateInstance(type, args);
             }
             /// <summary>
-            /// 反射工具，得到反射类的对象；
-            /// 被反射对象必须是具有无参公共构造 
+            /// 反射工具，得到反射类的对象。
+            /// <para>被反射对象必须是具有无参公共构造。</para>
             /// </summary>
             /// <param name="typeName">类型名</param>
             /// <returns>实例化后的对象</returns>
@@ -86,7 +86,7 @@ namespace Cosmos
                 return inst;
             }
             /// <summary>
-            /// 反射工具，得到反射类的对象；
+            /// 反射工具，得到反射类的对象。
             /// </summary>
             /// <param name="typeName">类型名</param>
             /// <param name="args">构造参数</param>
@@ -106,8 +106,8 @@ namespace Cosmos
                 return inst;
             }
             /// <summary>
-            /// 反射工具，得到反射类的对象；
-            /// 被反射对象必须是具有无参公共构造 ，强转至泛型类型。
+            /// 反射工具，得到反射类的对象。
+            /// <para>被反射对象必须是具有无参公共构造 ，强转至泛型类型。</para>
             /// </summary>
             /// <typeparam name="T">类型</typeparam>
             /// <param name="typeName">类型名</param>
@@ -127,8 +127,8 @@ namespace Cosmos
                 return inst;
             }
             /// <summary>
-            /// 反射工具，得到反射类的对象；
-            /// 被反射对象必须是具有无参公共构造 
+            /// 反射工具，得到反射类的对象。
+            /// <para>被反射对象必须是具有无参公共构造。</para>
             /// </summary>
             /// <param name="typeName">类型名</param>
             /// <param name="assemblies">程序集集合</param>
@@ -148,7 +148,7 @@ namespace Cosmos
                 return inst;
             }
             /// <summary>
-            /// 反射工具，得到反射类的对象；
+            /// 反射工具，得到反射类的对象。
             /// </summary>
             /// <param name="typeName">类型名</param>
             /// <param name="args">构造参数</param>
@@ -169,7 +169,7 @@ namespace Cosmos
                 return inst;
             }
             /// <summary>
-            /// 获取所有派生类的实例对象
+            /// 获取所有派生类的实例对象。
             /// </summary>
             /// <typeparam name="T">目标类型</typeparam>
             /// <param name="assembly">需要检测的程序集</param>
@@ -190,7 +190,7 @@ namespace Cosmos
             }
             /// <returns></returns>
             /// <summary>
-            /// 获取目标类的派生对象；
+            /// 获取目标类的派生对象。
             /// </summary>
             /// <param name="type">基类</param>
             /// <param name="assembly">需要检测的程序集</param>
@@ -208,11 +208,11 @@ namespace Cosmos
                 return list.ToArray();
             }
             /// <summary>
-            /// 获取变量的名称；
-            /// 参考：
-            /// object dotNet=new object();
-            /// Utility.Assembly.GetValueTypeName(() =>dotNet);
-            /// 输出得 dotNet
+            /// 获取变量的名称。
+            /// <para>参考：</para>
+            /// <para>object dotNet=new object();</para>
+            /// <para>Utility.Assembly.GetValueTypeName(() =>dotNet);</para>
+            /// <para>输出得 dotNet</para>
             /// </summary>
             /// <typeparam name="T">任意类型的变量</typeparam>
             /// <param name="memberExperssion">变量的表达式</param>
@@ -223,7 +223,7 @@ namespace Cosmos
                 return me.Member.Name;
             }
             /// <summary>
-            /// 通过特性获取对象实体；
+            /// 通过特性获取对象实体。
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <param name="type">基类</param>
@@ -247,7 +247,7 @@ namespace Cosmos
                 return obj;
             }
             /// <summary>
-            /// 通过特性获取对象实体；
+            /// 通过特性获取对象实体。
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <typeparam name="K">基类，new()约束</typeparam>
@@ -272,8 +272,8 @@ namespace Cosmos
                 return obj;
             }
             /// <summary>
-            /// 通过特性获取对象实体数组；
-            /// 生成的对象必须是无参可构造；
+            /// 通过特性获取对象实体数组。
+            /// <para>生成的对象必须是无参可构造。</para>
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <typeparam name="K">基类，new()约束</typeparam>
@@ -286,8 +286,8 @@ namespace Cosmos
                 return GetInstancesByAttribute<T, K>(false, assembly);
             }
             /// <summary>
-            /// 通过特性获取对象实体数组；
-            /// 生成的对象必须是无参可构造；
+            /// 通过特性获取对象实体数组。
+            /// <para>生成的对象必须是无参可构造。</para>
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <typeparam name="K">基类，new()约束</typeparam>
@@ -311,8 +311,8 @@ namespace Cosmos
                 return set.ToArray();
             }
             /// <summary>
-            /// 通过特性获取对象实体数组；
-            /// 生成的对象必须是无参可构造；
+            /// 通过特性获取对象实体数组。
+            /// <para>生成的对象必须是无参可构造。</para>
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <param name="type">基类，new()约束</param>
@@ -324,8 +324,8 @@ namespace Cosmos
                 return GetInstancesByAttribute<T>(type, false, assembly);
             }
             /// <summary>
-            /// 通过特性获取对象实体数组；
-            /// 生成的对象必须是无参可构造；
+            /// 通过特性获取对象实体数组。
+            /// <para>生成的对象必须是无参可构造。</para>
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <param name="type">基类，new()约束</param>
@@ -348,7 +348,7 @@ namespace Cosmos
                 return set.ToArray();
             }
             /// <summary>
-            /// 通过特性获取目标派生类的所有可实例化类；
+            /// 通过特性获取目标派生类的所有可实例化类。
             /// </summary>
             /// <typeparam name="T">特性类型</typeparam>
             /// <typeparam name="K">派生的基类</typeparam>
@@ -361,7 +361,7 @@ namespace Cosmos
                 return GetDerivedTypesByAttribute<T, K>(false, assembly);
             }
             /// <summary>
-            /// 通过特性获取目标派生类的所有可实例化类；
+            /// 通过特性获取目标派生类的所有可实例化类。
             /// </summary>
             /// <typeparam name="T">特性类型</typeparam>
             /// <typeparam name="K">派生的基类</typeparam>
@@ -375,7 +375,7 @@ where K : class
                 return GetDerivedTypesByAttribute<T>(typeof(K), inherit, assembly);
             }
             /// <summary>
-            /// 通过特性获取目标派生类的所有可实例化类；
+            /// 通过特性获取目标派生类的所有可实例化类。
             /// </summary>
             /// <typeparam name="T">特性类型</typeparam>
             /// <param name="type">派生的基类</param>
@@ -387,7 +387,7 @@ where K : class
                 return GetDerivedTypesByAttribute<T>(type, false, assembly);
             }
             /// <summary>
-            /// 通过特性获取目标派生类的所有可实例化类；
+            /// 通过特性获取目标派生类的所有可实例化类。
             /// </summary>
             /// <typeparam name="T">特性类型</typeparam>
             /// <param name="type">派生的基类</param>
@@ -405,7 +405,7 @@ where K : class
                 }).ToArray();
             }
             /// <summary>
-            /// 获取某类型的第一个派生类；
+            /// 获取某类型的第一个派生类。
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
             /// <param name="assembly">查询的程序集</param>
@@ -416,7 +416,7 @@ where K : class
                 return GetDerivedType(typeof(T), assembly);
             }
             /// <summary>
-            ///  获取某类型的第一个派生类；
+            ///  获取某类型的第一个派生类。
             /// </summary>
             /// <param name="type">基类</param>
             /// <param name="assembly">查询的程序集</param>
@@ -434,7 +434,7 @@ where K : class
                 return rstType.FirstOrDefault();
             }
             /// <summary>
-            /// 获取某类型在指定程序集的所有派生类数组；
+            /// 获取某类型在指定程序集的所有派生类数组。
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
             /// <param name="assembly">查询的程序集</param>
@@ -451,7 +451,7 @@ where K : class
                 return types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).ToArray();
             }
             /// <summary>
-            /// 获取某类型在指定程序集的所有派生类数组；
+            /// 获取某类型在指定程序集的所有派生类数组。
             /// </summary>
             /// <param name="type">基类</param>
             /// <param name="assembly">查询的程序集</param>
@@ -466,7 +466,7 @@ where K : class
                 return types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).ToArray();
             }
             /// <summary>
-            /// 获取某类型在指定程序集的所有派生类数组；
+            /// 获取某类型在指定程序集的所有派生类数组。
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
             /// <param name="assemblies">查询的程序集</param>
@@ -477,7 +477,7 @@ where K : class
                 return GetDerivedTypes(typeof(T), assemblies);
             }
             /// <summary>
-            /// 获取某类型在指定程序集的所有派生类数组；
+            /// 获取某类型在指定程序集的所有派生类数组。
             /// </summary>
             /// <param name="type">基类</param>
             /// <param name="assemblies">查询的程序集集合</param>
@@ -499,7 +499,7 @@ where K : class
                 }
             }
             /// <summary>
-            /// 获取某类型的第一个派生类完全限定名；
+            /// 获取某类型的第一个派生类完全限定名。
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
             /// <param name="assembly">查询的程序集</param>
@@ -510,7 +510,7 @@ where K : class
                 return GetDerivedTypeName(typeof(T), assembly);
             }
             /// <summary>
-            ///  获取某类型的第一个派生类完全限定名；
+            ///  获取某类型的第一个派生类完全限定名。
             /// </summary>
             /// <param name="type">基类</param>
             /// <param name="assembly">查询的程序集</param>
@@ -528,7 +528,7 @@ where K : class
                 return rstType.FirstOrDefault().FullName;
             }
             /// <summary>
-            /// 获取某类型在指定程序集的所有派生类完全限定名数组；
+            /// 获取某类型在指定程序集的所有派生类完全限定名数组。
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
             /// <param name="assembly">查询的程序集</param>
@@ -545,7 +545,7 @@ where K : class
                 return types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).Select(t => t.FullName).ToArray();
             }
             /// <summary>
-            /// 获取某类型在指定程序集的所有派生类完全限定名数组；
+            /// 获取某类型在指定程序集的所有派生类完全限定名数组。
             /// </summary>
             /// <param name="type">基类</param>
             /// <param name="assembly">查询的程序集</param>
@@ -560,7 +560,7 @@ where K : class
                 return types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).Select(t => t.FullName).ToArray();
             }
             /// <summary>
-            /// 获取某类型在指定程序集的所有派生类完全限定名数组；
+            /// 获取某类型在指定程序集的所有派生类完全限定名数组。
             /// </summary>
             /// <param name="type">基类</param>
             /// <param name="assemblies">查询的程序集集合</param>
@@ -582,7 +582,7 @@ where K : class
                 return types.ToArray();
             }
             /// <summary>
-            /// 获取某类型在指定程序集的所有派生类完全限定名数组；
+            /// 获取某类型在指定程序集的所有派生类完全限定名数组。
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
             /// <param name="assemblies">查询的程序集集合</param>
@@ -593,7 +593,7 @@ where K : class
                 return GetDerivedTypeNames(typeof(T), assemblies);
             }
             /// <summary>
-            /// 获取某类型在指定程序集的所有派生类完全限定名数组；
+            /// 获取某类型在指定程序集的所有派生类完全限定名数组。
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
             /// <returns>非抽象派生类完全限定名</returns>
@@ -603,8 +603,8 @@ where K : class
                 return GetDerivedTypeNames(typeof(T), domainAssemblies);
             }
             /// <summary>
-            /// 将一个对象上的字段值赋予到另一个对象上名字相同的字段上；
-            /// 此方法可识别属性与字段，赋值时尽量将属性的索引字段也进行命名统一；
+            /// 将一个对象上的字段值赋予到另一个对象上名字相同的字段上。
+            /// <para>此方法可识别属性与字段，赋值时尽量将属性的索引字段也进行命名统一。</para>
             /// </summary>
             /// <typeparam name="T">需要赋值的源类型</typeparam>
             /// <typeparam name="K">目标类型</typeparam>
@@ -638,8 +638,8 @@ where K : class
                 return target;
             }
             /// <summary>
-            /// 遍历实例对象上的所有字段；
-            /// 此方法可识别属性与字段，打印属性时候需要特别注意过滤自动属性的额外字段；
+            /// 遍历实例对象上的所有字段。
+            /// <para>此方法可识别属性与字段，打印属性时候需要特别注意过滤自动属性的额外字段。</para>
             /// </summary>
             /// <typeparam name="T">实例对象类型</typeparam>
             /// <param name="obj">实例对象</param>
@@ -649,8 +649,8 @@ where K : class
                 TraverseInstanceAllFileds(typeof(T), obj, handler);
             }
             /// <summary>
-            /// 遍历实例对象上的所有字段；
-            /// 此方法可识别属性与字段，打印属性时候需要特别注意过滤自动属性的额外字段；
+            /// 遍历实例对象上的所有字段。
+            /// <para>此方法可识别属性与字段，打印属性时候需要特别注意过滤自动属性的额外字段。</para>
             /// </summary>
             /// <param name="type">实例对象类型</param>
             /// <param name="obj">实例对象</param>
@@ -670,7 +670,7 @@ where K : class
                 }
             }
             /// <summary>
-            /// 遍历实例对象上的所有属性；
+            /// 遍历实例对象上的所有属性。
             /// </summary>
             /// <param name="type">实例对象类型</param>
             /// <param name="obj">实例对象</param>
@@ -690,8 +690,7 @@ where K : class
                 }
             }
             /// <summary>
-            /// 遍历type类型上的非对象字段；
-            /// 包含静态、常量、属性等；
+            /// 遍历type类型上的非对象字段，包含静态、常量、属性等。
             /// </summary>
             /// <typeparam name="T">遍历的类型</typeparam>
             /// <param name="handler">遍历到一条字段执行的方法</param>
@@ -700,8 +699,7 @@ where K : class
                 TraverseTypeFileds(typeof(T), handler);
             }
             /// <summary>
-            /// 遍历type类型上的非对象字段；
-            /// 包含静态、常量、属性等；
+            /// 遍历type类型上的非对象字段，包含静态、常量、属性等。
             /// </summary>
             /// <param name="type">遍历的类型</param>
             /// <param name="handler">遍历到一条字段执行的方法</param>
@@ -718,7 +716,7 @@ where K : class
                 }
             }
             /// <summary>
-            /// 查询单个类型中存在的目标特性
+            /// 查询单个类型中存在的目标特性。
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <param name="type">目标类型</param>
@@ -731,7 +729,7 @@ where K : class
                 return attributes;
             }
             /// <summary>
-            /// 查询单个类型中存在的目标特性
+            /// 查询单个类型中存在的目标特性。
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <typeparam name="K">目标类型</typeparam>
@@ -744,7 +742,7 @@ where K : class
                 return GetAttributes<T>(typeof(K), inherit);
             }
             /// <summary>
-            /// 获取程序集中所有被挂载的特性数组
+            /// 获取程序集中所有被挂载的特性数组。
             /// </summary>
             /// <typeparam name="T">目标特性</typeparam>
             /// <param name="assembly">目标程序集</param>
@@ -764,7 +762,7 @@ where K : class
                 return attributes.ToArray();
             }
             /// <summary>
-            /// 通过特性获取类；
+            /// 通过特性获取类。
             /// </summary>
             /// <typeparam name="T">查找的指定类型</typeparam>
             /// <param name="assembly">目标程序集</param>
@@ -786,7 +784,7 @@ where K : class
                 return attributes.ToArray();
             }
             /// <summary>
-            /// 获取指定类型中，挂载了目标特性的方法信息；
+            /// 获取指定类型中，挂载了目标特性的方法信息。
             /// </summary>
             /// <typeparam name="T">查找的指定类型</typeparam>
             /// <typeparam name="K">特性类型</typeparam>
@@ -799,7 +797,7 @@ where K : class
                 return GetTypeMethodsByAttribute(typeof(T), typeof(K), inherit);
             }
             /// <summary>
-            ///  获取指定类型中，挂载了目标特性的方法信息；
+            ///  获取指定类型中，挂载了目标特性的方法信息。
             /// </summary>
             /// <param name="type">查找的指定类型</param>
             /// <param name="attributeType">特性类型</param>
@@ -817,7 +815,7 @@ where K : class
                     Where(m => m.GetCustomAttributes(attributeType, inherit).Length > 0).ToArray();
             }
             /// <summary>
-            /// 获取指定类型中，挂载了目标特性的方法信息；
+            /// 获取指定类型中，挂载了目标特性的方法信息。
             /// </summary>
             /// <typeparam name="T">特性类型</typeparam>
             /// <param name="type">查找的指定类型</param>
@@ -832,7 +830,7 @@ where K : class
                     Where(m => m.GetCustomAttributes<T>(inherit).Count() > 0).ToArray();
             }
             /// <summary>
-            /// 获取当前程序集下所有标记指定特效的方法信息；
+            /// 获取当前程序集下所有标记指定特效的方法信息。
             /// </summary>
             /// <typeparam name="T">特性类型</typeparam>
             /// <param name="assembly">目标程序集</param>
@@ -853,7 +851,7 @@ where K : class
                 return methodSet.ToArray();
             }
             /// <summary>
-            /// 执行方法；
+            /// 执行方法。
             /// </summary>
             /// <param name="obj">目标对象</param>
             /// <param name="methodName">方法名</param>
@@ -872,7 +870,7 @@ where K : class
                 return method.Invoke(obj, parameters);
             }
             /// <summary>
-            /// 执行方法；
+            /// 执行方法。
             /// </summary>
             /// <param name="type">方法所在的type</param>
             /// <param name="obj">目标对象</param>
@@ -893,7 +891,7 @@ where K : class
                 return method.Invoke(obj, parameters);
             }
             /// <summary>
-            /// 设置对象属性值；
+            /// 设置对象属性值。
             /// </summary>
             /// <param name="obj">目标对象</param>
             /// <param name="propertyName">属性名</param>
@@ -909,8 +907,8 @@ where K : class
                 prop.SetValue(obj, newValue, null);
             }
             /// <summary>
-            /// 设置对象属性值；
-            /// 使用此方法为对象属性进行赋值时,若Type类型赋予正确,则可赋值非public类型的属性值;
+            /// 设置对象属性值。
+            /// <para>使用此方法为对象属性进行赋值时,若Type类型赋予正确,则可赋值非public类型的属性值。</para>
             /// </summary>
             /// <param name="type">属性可写的类Type</param>
             /// <param name="obj">目标对象</param>
@@ -928,7 +926,7 @@ where K : class
                 prop.SetValue(obj, value, null);
             }
             /// <summary>
-            /// 设置对象字段值;
+            /// 设置对象字段值。
             /// </summary>
             /// <param name="type">字段可赋值所在类Type</param>
             /// <param name="obj">目标对象</param>
@@ -946,7 +944,7 @@ where K : class
                 field.SetValue(obj, value);
             }
             /// <summary>
-            /// 设置对象字段值;
+            /// 设置对象字段值。
             /// </summary>
             /// <param name="obj">目标对象</param>
             /// <param name="fieldName">字段名</param>
@@ -964,7 +962,7 @@ where K : class
                 field.SetValue(obj, value);
             }
             /// <summary>
-            /// 获取对象的属性值;
+            /// 获取对象的属性值。
             /// </summary>
             /// <param name="obj">目标对象</param>
             /// <param name="propertyName">属性名</param>
@@ -982,7 +980,7 @@ where K : class
                 return property.GetValue(obj);
             }
             /// <summary>
-            /// 获取非实例对象属性
+            /// 获取非实例对象属性。
             /// </summary>
             /// <param name="type">类型</param>
             /// <param name="propertyName">属性名</param>
@@ -993,7 +991,7 @@ where K : class
                 return property.GetValue(propertyName);
             }
             /// <summary>
-            /// 获取属性
+            /// 获取属性。
             /// </summary>
             /// <param name="type">类型</param>
             /// <param name="propertyName">属性名</param>
@@ -1006,7 +1004,7 @@ where K : class
                 return property;
             }
             /// <summary>
-            /// 获取对象字段值;
+            /// 获取对象字段值。
             /// </summary>
             /// <param name="obj">目标对象</param>
             /// <param name="fieldName">字段名</param>
@@ -1024,7 +1022,7 @@ where K : class
                 return field.GetValue(obj);
             }
             /// <summary>
-            /// 获取接口实现的最高级类型；
+            /// 获取接口实现的最高级类型。
             /// </summary>
             /// <param name="derivedType">派生类</param>
             /// <param name="interfaceType">接口基类</param>
@@ -1053,7 +1051,7 @@ where K : class
                 return type;
             }
             /// <summary>
-            /// 获取类Type类型中的所有字段名；
+            /// 获取类Type类型中的所有字段名。
             /// </summary>
             /// <typeparam name="T">type类型</typeparam>
             /// <returns>名称数组</returns>
@@ -1062,7 +1060,7 @@ where K : class
                 return GetTypeAllFields(typeof(T));
             }
             /// <summary>
-            /// 获取类Type类型中的所有字段名；
+            /// 获取类Type类型中的所有字段名。
             /// </summary>
             /// <param name="type">type类型</param>
             /// <returns>名称数组</returns>
@@ -1072,7 +1070,7 @@ where K : class
                 return fields.Select(f => f.Name).ToArray();
             }
             /// <summary>
-            /// 获取Type类型中所有属性字段名；
+            /// 获取Type类型中所有属性字段名。
             /// </summary>
             /// <typeparam name="T">type类型</typeparam>
             /// <returns>名称数组</returns>
@@ -1081,7 +1079,7 @@ where K : class
                 return GetTypeAllProperties(typeof(T));
             }
             /// <summary>
-            /// 获取Type类型中所有属性字段名；
+            /// 获取Type类型中所有属性字段名。
             /// </summary>
             /// <param name="type">type类型</param>
             /// <returns>名称数组</returns>
@@ -1091,7 +1089,7 @@ where K : class
                 return properties.Select(f => f.Name).ToArray();
             }
             /// <summary>
-            /// 获取Type类型中所有字段名称与字段类型的映射
+            /// 获取Type类型中所有字段名称与字段类型的映射。
             /// </summary>
             /// <param name="type">type类型</param>
             /// <returns>名称与类型的映射</returns>
@@ -1101,7 +1099,7 @@ where K : class
                 return fields.ToDictionary(f => f.Name, t => t.FieldType);
             }
             /// <summary>
-            /// 获取Type类型中所有属性名称与字段类型的映射
+            /// 获取Type类型中所有属性名称与字段类型的映射。
             /// </summary>
             /// <param name="type">type类型</param>
             /// <returns>名称与类型的映射</returns>
@@ -1111,7 +1109,7 @@ where K : class
                 return properties.ToDictionary(f => f.Name, t => t.PropertyType);
             }
             /// <summary>
-            /// 检测是否是引用类型
+            /// 检测是否是引用类型。
             /// </summary>
             /// <param name="obj">传入的对象</param>
             /// <returns>是否是引用类型</returns>
