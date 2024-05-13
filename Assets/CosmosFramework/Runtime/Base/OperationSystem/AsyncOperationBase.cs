@@ -59,9 +59,9 @@ namespace Cosmos
         void IEnumerator.Reset()
         {
         }
-        internal abstract void OnStart();
-        internal abstract void OnUpdate();
-        internal abstract void OnAbort();
+        public abstract void OnStart();
+        public abstract void OnUpdate();
+        public abstract void OnAbort();
         internal void SetStart()
         {
             Status = AsyncOperationStatus.Processing;
@@ -78,7 +78,7 @@ namespace Cosmos
             if (!IsDone)
             {
                 Status = AsyncOperationStatus.Failed;
-                Error = "abort";
+                Error = "user abort";
                 OnAbort();
             }
         }
