@@ -62,6 +62,7 @@ namespace Cosmos
         public abstract void OnStart();
         public abstract void OnUpdate();
         public abstract void OnAbort();
+        public abstract void OnFinish();
         internal void SetStart()
         {
             Status = AsyncOperationStatus.Processing;
@@ -72,6 +73,7 @@ namespace Cosmos
             IsFinish = true;
             Progress = 1f;
             completed?.Invoke(this);
+            OnFinish();
         }
         internal void SetAbort()
         {
@@ -80,6 +82,7 @@ namespace Cosmos
                 Status = AsyncOperationStatus.Failed;
                 Error = "user abort";
                 OnAbort();
+                OnFinish();
             }
         }
         protected void ClearCompleteCallback()
