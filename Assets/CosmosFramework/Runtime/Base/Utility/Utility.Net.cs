@@ -166,6 +166,15 @@ namespace Cosmos
                     }
                 }
             }
+            /// <summary>
+            /// 是否是remote地址
+            /// </summary>
+            /// <param name="path">被检查的地址</param>
+            /// <returns>是否是remote地址</returns>
+            public static bool IsPathRemote(string path)
+            {
+                return path != null && path.StartsWith("http", StringComparison.Ordinal);
+            }
         }
     }
 }
