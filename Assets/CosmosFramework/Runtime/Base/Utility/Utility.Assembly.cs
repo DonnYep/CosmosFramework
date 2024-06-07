@@ -891,6 +891,43 @@ where K : class
                 return method.Invoke(obj, parameters);
             }
             /// <summary>
+            /// 调用静态方法。
+            /// </summary>
+            /// <param name="className">类名</param>
+            /// <param name="methodName">方法名</param>
+            /// <param name="parameters">参数</param>
+            /// <returns>返回值</returns>
+            public static object InvokeStaticMethod(string className, string methodName, object[] parameters = null)
+            {
+                if (string.IsNullOrEmpty(className))
+                    throw new ArgumentNullException("ClassName is invalid !");
+                if (string.IsNullOrEmpty(methodName))
+                    throw new ArgumentNullException("MethodName is invalid !");
+                Type type = GetType(className);
+                var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
+                if (method == null)
+                    throw new NullReferenceException($"Type : {type} can not find method : {methodName} !");
+                return method.Invoke(null, parameters);
+            }
+            /// <summary>
+            /// 调用静态方法。
+            /// </summary>
+            /// <param name="type">方法所在的type</param>
+            /// <param name="methodName">方法名</param>
+            /// <param name="parameters">参数</param>
+            /// <returns>返回值</returns>
+            public static object InvokeStaticMethod(Type type , string methodName, object[] parameters = null)
+            {
+                if (type == null)
+                    throw new ArgumentNullException("Type is invalid !");
+                if (string.IsNullOrEmpty(methodName))
+                    throw new ArgumentNullException("MethodName is invalid !");
+                var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
+                if (method == null)
+                    throw new NullReferenceException($"Type : {type} can not find method : {methodName} !");
+                return method.Invoke(null, parameters);
+            }
+            /// <summary>
             /// 设置对象属性值。
             /// </summary>
             /// <param name="obj">目标对象</param>

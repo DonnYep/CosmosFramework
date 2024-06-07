@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 namespace Cosmos
@@ -249,6 +250,15 @@ namespace Cosmos
                     context = context.Replace(oldContext[i], newContext);
                 }
                 return context;
+            }
+            /// <summary>
+            /// 检测一段文本是否只为英文字母
+            /// </summary>
+            /// <param name="text">文本</param>
+            /// <returns>是否只为英文字母</returns>
+            public static bool IsLetterOnly(string text)
+            {
+                return text.All(char.IsLetter);
             }
         }
     }
