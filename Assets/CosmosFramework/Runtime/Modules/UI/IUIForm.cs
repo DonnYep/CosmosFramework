@@ -17,7 +17,7 @@
         /// <summary>
         /// UI渲染优先级；
         /// </summary>
-        int Order { get; set; }
+        int Priority { get; set; }
         /// <summary>
         /// 当UI被初始化；
         /// </summary>
@@ -30,7 +30,7 @@
         /// 顺序更改，当且仅当激活状态下会被触发；
         /// </summary>
         /// <param name="index">当前顺序id</param>
-        void OnOrderChange(int index);
+        void OnPriorityChange(int index);
         /// <summary>
         /// 当UI被关闭；
         /// </summary>

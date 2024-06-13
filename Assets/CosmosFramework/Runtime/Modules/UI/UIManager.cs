@@ -497,7 +497,7 @@ namespace Cosmos.UI
                     var uiFormName = uiForm.UIAssetInfo.UIFormName;
                     if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
                     {
-                        var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
+                        var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Priority, uiFormState.UIForm.GetType());
                         uiFormInfoFilterCache.Add(uiFormInfo);
                     }
                 }
@@ -511,7 +511,7 @@ namespace Cosmos.UI
         {
             if (uiFormStateLoadedDict.TryGetValue(uiFormName, out var uiFormState))
             {
-                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
+                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Priority, uiFormState.UIForm.GetType());
                 return uiFormInfo;
             }
             return UIFormInfo.None;
@@ -524,7 +524,7 @@ namespace Cosmos.UI
             {
                 if (!uiFormState.IsOpened)
                     continue;
-                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
+                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Priority, uiFormState.UIForm.GetType());
                 uiFormInfoFilterCache.Add(uiFormInfo);
             }
             var infos = uiFormInfoFilterCache.ToArray();
@@ -539,7 +539,7 @@ namespace Cosmos.UI
             {
                 if (uiFormState.IsOpened)
                     continue;
-                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
+                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Priority, uiFormState.UIForm.GetType());
                 uiFormInfoFilterCache.Add(uiFormInfo);
             }
             var infos = uiFormInfoFilterCache.ToArray();
@@ -552,7 +552,7 @@ namespace Cosmos.UI
             uiFormInfoFilterCache.Clear();
             foreach (var uiFormState in uiFormStateLoadedDict.Values)
             {
-                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
+                var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Priority, uiFormState.UIForm.GetType());
                 uiFormInfoFilterCache.Add(uiFormInfo);
             }
             var infos = uiFormInfoFilterCache.ToArray();
@@ -568,7 +568,7 @@ namespace Cosmos.UI
                 var uiForm = uiFormState.UIForm;
                 if (condition.Invoke(uiForm))
                 {
-                    var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Order, uiFormState.UIForm.GetType());
+                    var uiFormInfo = new UIFormInfo(uiFormState.UIForm.UIAssetInfo, uiFormState.IsOpened, uiFormState.Priority, uiFormState.UIForm.GetType());
 
                     uiFormInfoFilterCache.Add(uiFormInfo);
                 }
@@ -614,9 +614,9 @@ namespace Cosmos.UI
                         OnUIFormDeactive(uiFormInfo);
                     }
                 }
-                if (uiForm.Order != uiFormInfo.Order)
+                if (uiForm.Priority != uiFormInfo.Priority)
                 {
-                    uiFormInfo.Order = uiForm.Order;
+                    uiFormInfo.Priority = uiForm.Priority;
                     OnUIFormOrderChange(uiFormInfo);
                 }
             }
@@ -669,12 +669,12 @@ namespace Cosmos.UI
         }
         void OnUIFormActive(UIFormState uiFormInfo)
         {
-            uiFormInfo.Order = uiFormInfo.UIForm.Order;
+            uiFormInfo.Priority = uiFormInfo.UIForm.Priority;
             var current = activeUILnk.First;
             var added = false;
             while (current != null && current.Value != null)
             {
-                if (uiFormInfo.Order < current.Value.Order)
+                if (uiFormInfo.Priority < current.Value.Priority)
                 {
                     //若激活的uiFormInfo.Order<当前节点uiFormInfo.Order，则插入当前节点之前
                     //Order示例：0<1(current.Previous)=(1 插入到current.Previous之前)<2(current)
@@ -692,7 +692,7 @@ namespace Cosmos.UI
             var index = 0;
             foreach (var info in activeUILnk)
             {
-                info.UIForm.OnOrderChange(index);
+                info.UIForm.OnPriorityChange(index);
                 index++;
             }
             //触发激活回调。
@@ -719,7 +719,7 @@ namespace Cosmos.UI
             var added = false;
             while (current != null && current.Value != null)
             {
-                if (uiFormInfo.Order < current.Value.Order)
+                if (uiFormInfo.Priority < current.Value.Priority)
                 {
                     //若激活的uiFormInfo.Order<当前节点uiFormInfo.Order，则插入当前节点之前
                     //Order示例：0<1(current.Previous)=(1 插入到current.Previous之前)<2(current)

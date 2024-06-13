@@ -16,11 +16,11 @@ namespace Cosmos.Resource
         bool isChanged;
         Dictionary<string, ResourceBundleInfo> resourceBundleInfoDict;
         /// <summary>
-        /// 资源包数量；
+        /// 资源包数量
         /// </summary>
         public int ResourceBundleCount { get { return ResourceBundleInfoList.Count; } }
         /// <summary>
-        /// 资源包；
+        /// 资源包
         /// </summary>
         public List<ResourceBundleInfo> ResourceBundleInfoList
         {
@@ -32,7 +32,7 @@ namespace Cosmos.Resource
             }
         }
         /// <summary>
-        /// 可识别的资源后缀列表；
+        /// 可识别的资源后缀列表
         /// </summary>
         public List<string> ResourceAvailableExtenisonList
         {
@@ -65,27 +65,7 @@ namespace Cosmos.Resource
             for (int i = 0; i < length; i++)
             {
                 var bundleInfo = ResourceBundleInfoList[i];
-                if (bundleInfo.Split)
-                {
-                    var subBundleInfoList = bundleInfo.ResourceSubBundleInfoList;
-                    var subBundleLength = subBundleInfoList.Count;
-                    for (int j = 0; j < subBundleLength; j++)
-                    {
-                        var subBundleInfo = subBundleInfoList[j];
-                        var newBundleInfo = new ResourceBundleInfo()
-                        {
-                            BundleName = subBundleInfo.BundleKey,
-                            BundlePath = subBundleInfo.BundlePath,
-                            BundleKey = subBundleInfo.BundleKey,
-                            BundleSize = subBundleInfo.BundleSize,
-                            BundleFormatBytes = subBundleInfo.BundleFormatBytes,
-                        };
-                        newBundleInfo.BundleDependencies.AddRange(subBundleInfo.BundleDependencies);
-                        newBundleInfo.ResourceObjectInfoList.AddRange(subBundleInfo.ResourceObjectInfoList);
-                        infoList.Add(newBundleInfo);
-                    }
-                }
-                else if (bundleInfo.Extract)
+                if (bundleInfo.PackSeparately)
                 {
                     var objectInfoList = bundleInfo.ResourceObjectInfoList;
                     var objectInfoLength = objectInfoList.Count;
@@ -95,9 +75,8 @@ namespace Cosmos.Resource
                         var newBundleInfo = new ResourceBundleInfo()
                         {
                             BundleName = objectInfo.ObjectPath,
-                            BundlePath = objectInfo.ObjectPath,
                             BundleSize = objectInfo.ObjectSize,
-                            Extract = true
+                            PackSeparately = true
                         };
                         newBundleInfo.BundleKey = newBundleInfo.BundleName;
                         newBundleInfo.ResourceObjectInfoList.Add(objectInfo);
@@ -121,14 +100,14 @@ namespace Cosmos.Resource
             resourceBundleInfoDict = GetResourceBundleInfos().ToDictionary((b) => b.BundleName);
         }
         /// <summary>
-        /// 清空资源包与资源实体；
+        /// 清空资源包与资源实体
         /// </summary>
         public void Clear()
         {
             ResourceBundleInfoList.Clear();
         }
         /// <summary>
-        /// 释放当前dataset；
+        /// 释放当前dataset
         /// </summary>
         public void Dispose()
         {

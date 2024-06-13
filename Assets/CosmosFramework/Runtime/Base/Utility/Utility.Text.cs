@@ -260,6 +260,15 @@ namespace Cosmos
             {
                 return text.All(char.IsLetter);
             }
+            /// <summary>
+            /// 检测一段文本是否为英文字母与数字
+            /// </summary>
+            /// <param name="text">文本</param>
+            /// <returns>是否只为英文字母与数字</returns>
+            public static bool IsLetterOrDigit(string text)
+            {
+                return text.All(char.IsLetterOrDigit);
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Cosmos
                     continue;
 
                 if (operation.IsDone == false)
-                    operation.OnUpdate();
+                    operation.InternalOnUpdate();
 
                 if (operation.IsDone)
                     operation.SetFinish();

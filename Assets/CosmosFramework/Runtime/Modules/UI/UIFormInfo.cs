@@ -6,7 +6,7 @@ namespace Cosmos.UI
     {
         UIAssetInfo uiAssetInfo;
         bool isOpened;
-        int order;
+        int priority;
         Type uiType;
         public UIAssetInfo UIAssetInfo
         {
@@ -16,20 +16,20 @@ namespace Cosmos.UI
         {
             get { return isOpened; }
         }
-        public int Order
+        public int Priority
         {
-            get { return order; }
+            get { return priority; }
         }
         public Type UIType
         {
             get { return uiType;}
         }
         public readonly static UIFormInfo None = new UIFormInfo();
-        public UIFormInfo(UIAssetInfo uiAssetInfo, bool isOpened, int order,Type uiType)
+        public UIFormInfo(UIAssetInfo uiAssetInfo, bool isOpened, int priority, Type uiType)
         {
             this.uiAssetInfo = uiAssetInfo;
             this.isOpened = isOpened;
-            this.order = order;
+            this.priority = priority;
             this.uiType= uiType;
         }
     }

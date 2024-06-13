@@ -38,25 +38,16 @@ namespace Cosmos.Editor.Resource
             add { treeView.onBundleSort += value; }
             remove { treeView.onBundleSort -= value; }
         }
-        public event Action<IList<int>> OnMarkAsSplit
+
+        public event Action<IList<int>> OnMarkAsSeparately
         {
-            add { treeView.onMarkAsSplit += value; }
-            remove { treeView.onMarkAsSplit -= value; }
+            add { treeView.onMarkAsSeparately+= value; }
+            remove { treeView.onMarkAsSeparately -= value; }
         }
-        public event Action<IList<int>> OnMarkAsNotSplit
+        public event Action<IList<int>> OnMarkAsTogether
         {
-            add { treeView.onMarkAsNotSplit += value; }
-            remove { treeView.onMarkAsNotSplit -= value; }
-        }
-        public event Action<IList<int>> OnMarkAsExtract
-        {
-            add { treeView.onMarkAsExtract+= value; }
-            remove { treeView.onMarkAsExtract -= value; }
-        }
-        public event Action<IList<int>> OnMarkAsNotExtract
-        {
-            add { treeView.onMarkAsNotExtract += value; }
-            remove { treeView.onMarkAsNotExtract -= value; }
+            add { treeView.onMarkAsTogether += value; }
+            remove { treeView.onMarkAsTogether -= value; }
         }
         public Rect LabelTreeViewRect { get { return treeView.TreeViewRect; } }
         public void OnEnable()

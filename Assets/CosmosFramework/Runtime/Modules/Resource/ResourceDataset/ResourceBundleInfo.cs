@@ -10,8 +10,6 @@ namespace Cosmos.Resource
         [SerializeField]
         string bundleName;
         [SerializeField]
-        string bundlePath;
-        [SerializeField]
         string bundleKey;
         [SerializeField]
         long bundleSize;
@@ -23,10 +21,9 @@ namespace Cosmos.Resource
         List<ResourceBundleDependency> bundleDependencies = new List<ResourceBundleDependency>();
         [SerializeField]
         List<ResourceSubBundleInfo> resourceSubBundleInfoList = new List<ResourceSubBundleInfo>();
-        bool split;
-        bool extract;
+        bool packSeparately;
         /// <summary>
-        /// 资源包的名称，AsseBundleName；
+        /// 资源包的名称，AsseBundleName
         /// </summary>
         public string BundleName
         {
@@ -42,15 +39,7 @@ namespace Cosmos.Resource
             }
         }
         /// <summary>
-        /// AB包在Assets目录下的地址；
-        /// </summary>
-        public string BundlePath
-        {
-            get { return bundlePath; }
-            set { bundlePath = value; }
-        }
-        /// <summary>
-        /// AB加载时候使用的名称；
+        /// AB加载时候使用的名称
         /// </summary>
         public string BundleKey
         {
@@ -58,7 +47,7 @@ namespace Cosmos.Resource
             set { bundleKey = value; }
         }
         /// <summary>
-        /// Bundle尺寸；
+        /// Bundle尺寸
         /// </summary>
         public long BundleSize
         {
@@ -66,7 +55,7 @@ namespace Cosmos.Resource
             set { bundleSize = value; }
         }
         /// <summary>
-        /// Bundle比特文件大小；
+        /// Bundle比特文件大小
         /// </summary>
         public string BundleFormatBytes
         {
@@ -74,7 +63,7 @@ namespace Cosmos.Resource
             set { bundleFormatBytes = value; }
         }
         /// <summary>
-        /// 资源对象列表；
+        /// 资源对象列表
         /// </summary>
         public List<ResourceObjectInfo> ResourceObjectInfoList
         {
@@ -112,37 +101,19 @@ namespace Cosmos.Resource
             }
             set { resourceSubBundleInfoList = value; }
         }
-        /// <summary>
-        /// split the directory into multiple subdirectories
-        /// </summary>
-        public bool Split
-        {
-            get { return split; }
-            set
-            {
-                split = value;
-                if (split)
-                    extract = false;
-            }
-        }
+
         /// <summary>
         /// extract all files from the folder as an individual assetbundle
         /// </summary>
-        public bool Extract
+        public bool PackSeparately
         {
-            get { return extract; }
-            set
-            {
-                extract = value;
-                if (extract)
-                    split = false;
-            }
+            get { return packSeparately; }
+            set { packSeparately = value; }
         }
 
         public bool Equals(ResourceBundleInfo other)
         {
-            return other.BundleName == this.BundleName ||
-                other.BundlePath == this.BundlePath;
+            return other.BundleName == this.BundleName;
         }
     }
 }

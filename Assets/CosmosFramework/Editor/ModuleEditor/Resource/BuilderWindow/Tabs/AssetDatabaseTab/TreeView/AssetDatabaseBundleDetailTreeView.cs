@@ -66,36 +66,12 @@ namespace Cosmos.Editor.Resource
 
                 var subBundleLen = bundleInfo.ResourceSubBundleInfoList.Count;
                 var subBundleString = string.Empty;
-                if (!bundleInfo.Split)
-                {
-                    subBundleString = Constants.NONE;
-                }
-                else
-                {
-                    if (subBundleLen == 0)
-                        subBundleString = Constants.NONE;
-                    else
-                        subBundleString = "Count: " + subBundleLen.ToString();
-                }
+
+                subBundleString = Constants.NONE;
+
                 var subBundleRootItem = new TreeViewItem((i + 1) * ResourceEditorConstants.MULTIPLE_VALUE + 2, 2, $"SubBundles: - {subBundleString}") { icon = dependenciesIcon };
 
-                var subBundleItemList = new List<TreeViewItem>();
 
-                if (bundleInfo.Split)
-                {
-                    var subBundleLength = bundleInfo.ResourceSubBundleInfoList.Count;
-                    for (int j = 0; j < subBundleLength; j++)
-                    {
-                        var subBundle = bundleInfo.ResourceSubBundleInfoList[j];
-                        int subBundleItemId = subBundleRootItem.id + j + 2 + ResourceEditorConstants.SBU_MULTIPLE_VALUE;//拆分子包区间数值
-                        var subBundleItem = new TreeViewItem(subBundleItemId, 3, subBundle.BundleName)
-                        {
-                            icon = subBundleIcom
-                        };
-                        subBundleItemList.Add(subBundleItem);
-                        SetupParentsAndChildrenFromDepths(subBundleRootItem, subBundleItemList);
-                    }
-                }
                 var bundleSubItemList = new List<TreeViewItem>() { formatBytesItem, dependentRootItem, subBundleRootItem };
 
                 var dependentItemList = new List<TreeViewItem>();
@@ -116,30 +92,6 @@ namespace Cosmos.Editor.Resource
 
             SetupParentsAndChildrenFromDepths(root, bundleItemList);
             return root;
-        }
-        protected override void DoubleClickedItem(int id)
-        {
-            base.DoubleClickedItem(id);
-            var items = FindRows(new int[] { id });
-            var item = items[0];
-            var bundleInfo = ResourceBuilderWindowDataProxy.ResourceDataset.ResourceBundleInfoList.Find((b) => b.BundleName == item.displayName);
-            var has = bundleInfo != null;
-            if (has)
-            {
-                EditorUtil.PingAndActiveObject(bundleInfo.BundlePath);
-            }
-        }
-        protected override void SingleClickedItem(int id)
-        {
-            base.SingleClickedItem(id);
-            var items = FindRows(new int[] { id });
-            var item = items[0];
-            var bundleInfo = ResourceBuilderWindowDataProxy.ResourceDataset.ResourceBundleInfoList.Find((b) => b.BundleName == item.displayName);
-            var has = bundleInfo != null;
-            if (has)
-            {
-                EditorUtil.ActiveObject(bundleInfo.BundlePath);
-            }
         }
     }
 }

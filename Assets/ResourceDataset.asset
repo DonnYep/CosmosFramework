@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resourceBundleInfoList:
   - bundleName: audio
-    bundlePath: Assets/Examples/AssetBundleTest/Audio
     bundleKey: audio
     bundleSize: 6986559
     bundleFormatBytes: 6.7 MB
@@ -57,7 +56,6 @@ MonoBehaviour:
     bundleDependencies: []
     resourceSubBundleInfoList: []
   - bundleName: model
-    bundlePath: Assets/Examples/AssetBundleTest/Model
     bundleKey: model
     bundleSize: 6008044
     bundleFormatBytes: 5.7 MB
@@ -107,7 +105,6 @@ MonoBehaviour:
     bundleDependencies: []
     resourceSubBundleInfoList: []
   - bundleName: prefab
-    bundlePath: Assets/Examples/AssetBundleTest/Prefab
     bundleKey: prefab
     bundleSize: 353508
     bundleFormatBytes: 345.2 KB
@@ -242,7 +239,6 @@ MonoBehaviour:
       bundleName: texture
     resourceSubBundleInfoList: []
   - bundleName: scene
-    bundlePath: Assets/Examples/AssetBundleTest/Scene
     bundleKey: scene
     bundleSize: 324120
     bundleFormatBytes: 316.5 KB
@@ -272,7 +268,6 @@ MonoBehaviour:
       bundleName: texture
     resourceSubBundleInfoList: []
   - bundleName: text
-    bundlePath: Assets/Examples/AssetBundleTest/Text
     bundleKey: text
     bundleSize: 7565
     bundleFormatBytes: 7.4 KB
@@ -294,7 +289,6 @@ MonoBehaviour:
     bundleDependencies: []
     resourceSubBundleInfoList: []
   - bundleName: texture
-    bundlePath: Assets/Examples/AssetBundleTest/Texture
     bundleKey: texture
     bundleSize: 709776
     bundleFormatBytes: 0.7 MB
@@ -393,7 +387,6 @@ MonoBehaviour:
     bundleDependencies: []
     resourceSubBundleInfoList: []
   - bundleName: entityscenes
-    bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityScenes
     bundleKey: entityscenes
     bundleSize: 30886
     bundleFormatBytes: 30.2 KB
@@ -408,7 +401,6 @@ MonoBehaviour:
     bundleDependencies: []
     resourceSubBundleInfoList: []
   - bundleName: procedurescenes
-    bundlePath: Assets/Examples/ExampleScripts/24_Procedure/ProcedureScenes
     bundleKey: procedurescenes
     bundleSize: 57634
     bundleFormatBytes: 56.3 KB
@@ -436,7 +428,6 @@ MonoBehaviour:
       bundleName: prefab
     resourceSubBundleInfoList: []
   - bundleName: material
-    bundlePath: Assets/Examples/AssetBundleTest/Material
     bundleKey: material
     bundleSize: 15070
     bundleFormatBytes: 14.7 KB
@@ -493,7 +484,6 @@ MonoBehaviour:
     bundleDependencies: []
     resourceSubBundleInfoList: []
   - bundleName: photo
-    bundlePath: Assets/Examples/AssetBundleTest/Photo
     bundleKey: photo
     bundleSize: 21600736
     bundleFormatBytes: 20.6 MB
@@ -529,7 +519,6 @@ MonoBehaviour:
     bundleDependencies: []
     resourceSubBundleInfoList: []
   - bundleName: entityprefabs
-    bundlePath: Assets/Examples/ExampleScripts/23_Entity/EntityPrefabs
     bundleKey: entityprefabs
     bundleSize: 198234
     bundleFormatBytes: 193.6 KB

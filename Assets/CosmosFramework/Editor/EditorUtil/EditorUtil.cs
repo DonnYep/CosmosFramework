@@ -38,7 +38,7 @@ namespace Cosmos.Editor
         public static readonly Vector2 MaxWinSize = new Vector2(768f, 768f);
 
         /// <summary>
-        ///获取项目的目录，即Assets文件夹的上一层； 
+        ///获取项目的目录，即Assets文件夹的上一层。
         /// </summary>
         public static string ApplicationPath()
         {
@@ -61,8 +61,7 @@ namespace Cosmos.Editor
                       }).OfType<T>().ToArray();
         }
         /// <summary>
-        /// 写入方式为覆写；
-        /// 对象数据会被存储为json；
+        /// 写入方式为覆写，对象数据会被存储为json。
         /// </summary>
         public static void SaveData<T>(string fileName, T editorData)
             where T : class, new()
@@ -115,7 +114,7 @@ namespace Cosmos.Editor
             Utility.IO.DeleteFile(filePath);
         }
         /// <summary>
-        /// 定位目标路径在Assets下的位置；
+        /// 定位目标路径在Assets下的位置。
         /// </summary>
         /// <param name="path">目标路径</param>
         public static void PingAndActiveObject(string path)
@@ -130,7 +129,7 @@ namespace Cosmos.Editor
             Selection.activeObject = obj;
         }
         /// <summary>
-        /// 添加单个宏；此宏不能由分号结尾；
+        /// 添加单个宏，此宏不能由分号结尾。
         /// </summary>
         /// <param name="define">宏定义</param>
         /// <returns>是否添加成功</returns>
@@ -147,7 +146,7 @@ namespace Cosmos.Editor
             return true;
         }
         /// <summary>
-        /// 移除单个宏；此宏不能由分号结尾；
+        /// 移除单个宏，此宏不能由分号结尾。
         /// </summary>
         /// <param name="define">宏定义</param>
         /// <returns>是否移除成功</returns>
@@ -165,7 +164,7 @@ namespace Cosmos.Editor
             return true;
         }
         /// <summary>
-        /// 获取在build列表中场景的文件地址；
+        /// 获取在build列表中场景的文件地址
         /// </summary>
         /// <returns>场景文件的地址列表</returns>
         public static string[] GetScenesInBuildsPath()
@@ -174,7 +173,7 @@ namespace Cosmos.Editor
             return scenes.Select(s => s.path).ToArray();
         }
         /// <summary>
-        /// 过滤字段，过滤绝对路径到Assets目录下的相对路径；
+        /// 过滤字段，过滤绝对路径到Assets目录下的相对路径。
         /// </summary>
         /// <param name="src">绝对路径</param>
         /// <returns>过滤后的地址</returns>
@@ -198,7 +197,7 @@ namespace Cosmos.Editor
             return Utility.IO.GetFileSize(fullPath);
         }
         /// <summary>
-        /// 获取文件夹中文件的总体大小；
+        /// 获取文件夹中文件的总体大小
         /// </summary>
         /// <param name="path">路径</param>
         /// <param name="availableExtes">可识别的后缀名</param>
@@ -222,6 +221,13 @@ namespace Cosmos.Editor
             }
             return totalSize;
         }
+        /// <summary>
+        /// 生成一个ScriptableObject对象
+        /// </summary>
+        /// <typeparam name="T">ScriptableObject对象</typeparam>
+        /// <param name="path">Assets/下的地址，如: Assets/MyObject.asset</param>
+        /// <param name="hideFlags">状态类型</param>
+        /// <returns>生成的ScriptableObject</returns>
         public static T CreateScriptableObject<T>(string path, HideFlags hideFlags = HideFlags.None) where T : ScriptableObject
         {
             var dir = Path.GetDirectoryName(path);

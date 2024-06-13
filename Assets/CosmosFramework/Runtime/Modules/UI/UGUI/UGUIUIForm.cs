@@ -29,7 +29,7 @@ namespace Cosmos.UI
             set { active = value; }
         }
         /// <inheritdoc/>
-        public virtual int Order { get; set; }
+        public virtual int Priority { get; set; }
         /// <inheritdoc/>
         public object Handle { get { return gameObject; } }
         string uiFormName;
@@ -66,7 +66,7 @@ namespace Cosmos.UI
             gameObject.SetActive(true);
         }
         ///<inheritdoc/>
-        public virtual void OnOrderChange(int index)
+        public virtual void OnPriorityChange(int index)
         {
             transform.SetSiblingIndex(index);
         }

@@ -55,8 +55,7 @@ namespace Cosmos.Resource
                 var resourceBundle = new ResourceBundle()
                 {
                     BundleKey = resourceBundleInfo.BundleKey,
-                    BundleName = resourceBundleInfo.BundleName,
-                    BundlePath = resourceBundleInfo.BundlePath,
+                    BundleName = resourceBundleInfo.BundleName
                 };
                 resourceBundle.BundleDependencies.AddRange(resourceBundleInfo.BundleDependencies);
                 var resourceObjectInfoList = resourceBundleInfo.ResourceObjectInfoList;

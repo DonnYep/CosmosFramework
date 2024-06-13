@@ -5,7 +5,7 @@ public class StatusPanel : UGUIUIForm
     void Awake()
     {
         GetUILabel<Button>("BtnQuit").onClick.AddListener(QuitClick);
-        Order = 1;
+        Priority = 1;
     }
     void QuitClick()
     {

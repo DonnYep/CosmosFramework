@@ -36,18 +36,6 @@ namespace Cosmos.Editor.Resource
                     },
                     new MultiColumnHeaderState.Column
                     {
-                        headerContent = new GUIContent("Splittable"),
-                        headerTextAlignment = TextAlignment.Left,
-                        sortingArrowAlignment = TextAlignment.Left,
-                        sortedAscending = false,
-                        minWidth=48,
-                        width=64,
-                        maxWidth=80,
-                        autoResize = false,
-                        canSort=true
-                    },
-                    new MultiColumnHeaderState.Column
-                    {
                         headerContent = new GUIContent("Separately"),
                         headerTextAlignment = TextAlignment.Left,
                         sortingArrowAlignment = TextAlignment.Left,
