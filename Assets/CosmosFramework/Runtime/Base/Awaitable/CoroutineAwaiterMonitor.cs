@@ -9,13 +9,6 @@ namespace Cosmos.Awaitable
         ///  用于线程同步；多线程的数据发送到unity的主线程中；
         /// </summary>
         SynchronizationContext synchronizationContext;
-        protected override void Awake()
-        {
-            base.Awake();
-            gameObject.hideFlags = UnityEngine.HideFlags.HideInHierarchy;
-            DontDestroyOnLoad(gameObject);
-            synchronizationContext = SynchronizationContext.Current;
-        }
         public void PostToMainThread(Action<object> sendOrPostCallback)
         {
             synchronizationContext.Post(state => sendOrPostCallback.Invoke(state), null);
@@ -27,6 +20,11 @@ namespace Cosmos.Awaitable
         public void StopAwaitableCoroutine<T>(CoroutineAwaiter<T> awaiterCoroutine)
         {
             StopCoroutine(awaiterCoroutine.Coroutine);
+        }
+        void Awake()
+        {
+            gameObject.hideFlags = UnityEngine.HideFlags.HideInHierarchy;
+            synchronizationContext = SynchronizationContext.Current;
         }
     }
 }

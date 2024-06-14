@@ -17,11 +17,9 @@ namespace Cosmos
         float currentTime = 0;
         float rectWidth;
         float rectHeight;
-        protected override void Awake()
+        void Awake()
         {
-            base.Awake();
             gameObject.name = "CosmosDebugWindow";
-            DontDestroyOnLoad(this.gameObject);
         }
         private void OnGUI()
         {

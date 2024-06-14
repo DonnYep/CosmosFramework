@@ -9,13 +9,6 @@ namespace Cosmos
     public class UnityThreadSync : MonoSingleton<UnityThreadSync>
     {
         SynchronizationContext synchronizationContext;
-        protected override void Awake()
-        {
-            base.Awake();
-            gameObject.hideFlags = UnityEngine.HideFlags.HideInHierarchy;
-            DontDestroyOnLoad(gameObject);
-            synchronizationContext = SynchronizationContext.Current;
-        }
         public void PostToUnityThread(Action<object> postCallback)
         {
             synchronizationContext.Post(state => postCallback.Invoke(state), null);
@@ -23,6 +16,11 @@ namespace Cosmos
         public void SendToUnityThread(Action<object> postCallback)
         {
             synchronizationContext.Send(state => postCallback.Invoke(state), null);
+        }
+        void Awake()
+        {
+            gameObject.hideFlags = UnityEngine.HideFlags.HideInHierarchy;
+            synchronizationContext = SynchronizationContext.Current;
         }
     }
 }

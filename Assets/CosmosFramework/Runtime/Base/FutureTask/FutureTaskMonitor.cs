@@ -41,11 +41,9 @@ namespace Cosmos
                 return false;
 
         }
-        protected override void Awake()
+        void Awake()
         {
-            base.Awake();
             gameObject.hideFlags = UnityEngine.HideFlags.HideInHierarchy;
-            DontDestroyOnLoad(gameObject);
             previousTimeSinceStartup = DateTime.Now;
         }
         private void Update()

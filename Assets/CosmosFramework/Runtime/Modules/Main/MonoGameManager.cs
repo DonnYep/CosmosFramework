@@ -40,7 +40,7 @@ namespace Cosmos
             add { onApplicationQuitHandler += value; }
             remove { onApplicationQuitHandler -= value; }
         }
-        public GameObject GetModuleInstanceObject(IModuleManager  moduleManager)
+        public GameObject GetModuleInstanceObject(IModuleManager moduleManager)
         {
             var type = moduleManager.GetType();
             var hasType = GameManager.HasModule(type);
@@ -65,14 +65,12 @@ namespace Cosmos
             }
             return instanceObject;
         }
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
             gameObject.name = "CosmosRoot";
-            DontDestroyOnLoad(this.gameObject);
             previousTimeSinceStartup = DateTime.Now;
         }
-        protected override void OnDestroy()
+        private void OnDestroy()
         {
             moduleInstanceObjectDict.Clear();
             GameManager.TerminateModules();
