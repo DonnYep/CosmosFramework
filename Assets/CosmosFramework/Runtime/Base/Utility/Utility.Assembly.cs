@@ -602,6 +602,57 @@ where K : class
             {
                 return GetDerivedTypeNames(typeof(T), domainAssemblies);
             }
+
+            /// <summary>
+            /// 获取应用域内单个派生对象
+            /// </summary>
+            /// <typeparam name="T">基类</typeparam>
+            /// <returns>实例对象</returns>
+            public static T GetAppDomainDerivedTypeInstance<T>()
+                where T : class
+            {
+                Type type = typeof(T);
+                var assemblies = domainAssemblies;
+                var typeList = new List<Type>();
+                foreach (var asm in assemblies)
+                {
+                    var types = asm.GetTypes();
+                    var typeArray = types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).ToArray();
+                    typeList.AddRange(typeArray);
+                }
+                var firstType = typeList.First();
+                if (firstType == null)
+                {
+                    return default;
+                }
+                return GetTypeInstance(firstType) as T;
+            }
+            /// <summary>
+            /// 获取应用域内所有派生对象
+            /// </summary>
+            /// <typeparam name="T">基类</typeparam>
+            /// <returns>实例对象</returns>
+            public static IList<T> GetAppDomainDerivedTypeInstances<T>()
+                where T : class
+            {
+                Type type = typeof(T);
+                var assemblies = domainAssemblies;
+                var typeList = new List<Type>();
+                foreach (var asm in assemblies)
+                {
+                    var types = asm.GetTypes();
+                    var typeArray = types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).ToArray();
+                    typeList.AddRange(typeArray);
+                }
+                var instList = new List<T>();
+                var length = typeList.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    var inst = GetTypeInstance(typeList[i]) as T;
+                    instList.Add(inst);
+                }
+                return instList;
+            }
             /// <summary>
             /// 将一个对象上的字段值赋予到另一个对象上名字相同的字段上。
             /// <para>此方法可识别属性与字段，赋值时尽量将属性的索引字段也进行命名统一。</para>
@@ -916,7 +967,7 @@ where K : class
             /// <param name="methodName">方法名</param>
             /// <param name="parameters">参数</param>
             /// <returns>返回值</returns>
-            public static object InvokeStaticMethod(Type type , string methodName, object[] parameters = null)
+            public static object InvokeStaticMethod(Type type, string methodName, object[] parameters = null)
             {
                 if (type == null)
                     throw new ArgumentNullException("Type is invalid !");
