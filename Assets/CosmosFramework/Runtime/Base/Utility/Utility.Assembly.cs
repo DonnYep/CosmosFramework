@@ -610,9 +610,10 @@ where K : class
                     var length = types.Length;
                     for (int i = 0; i < length; i++)
                     {
-                        subType = types[i];
-                        if (type.IsAssignableFrom(subType) && subType.IsClass && !subType.IsAbstract)
+                        var tmpType = types[i];
+                        if (type.IsAssignableFrom(tmpType) && tmpType.IsClass && !tmpType.IsAbstract)
                         {
+                            subType = tmpType;
                             break;
                         }
                     }
