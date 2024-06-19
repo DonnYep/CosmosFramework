@@ -10,20 +10,11 @@ namespace Cosmos
         public static class Assembly
         {
             /// <summary>
-            /// 默认使用应用的程序集，若使用了Assembly.Load，则需要更新域程序集。
+            /// 使用应用的程序集域
             /// </summary>
-            static System.Reflection.Assembly[] domainAssemblies;
-            static Assembly()
+            public static System.Reflection.Assembly[] DomainAssemblies
             {
-                domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-            }
-            /// <summary>
-            /// 设置域程序集
-            /// </summary>
-            /// <param name="assemblies">程序集</param>
-            public static void SetDomainAssemblies(System.Reflection.Assembly[] assemblies)
-            {
-                domainAssemblies = assemblies;
+                get { return AppDomain.CurrentDomain.GetAssemblies(); }
             }
             /// <summary>
             /// 从域程序集中获取类。
@@ -33,7 +24,7 @@ namespace Cosmos
             public static Type GetType(string typeName)
             {
                 Type type = null;
-                foreach (var assembly in domainAssemblies)
+                foreach (var assembly in DomainAssemblies)
                 {
                     type = assembly.GetType(typeName);
                     if (type != null)
@@ -48,7 +39,7 @@ namespace Cosmos
             /// <returns>程序集</returns>
             public static System.Reflection.Assembly GetAssembly(string assemblyName)
             {
-                foreach (var assembly in domainAssemblies)
+                foreach (var assembly in DomainAssemblies)
                 {
                     if (assembly.GetName().Name == assemblyName)
                         return assembly;
@@ -74,7 +65,7 @@ namespace Cosmos
             public static object GetTypeInstance(string typeName)
             {
                 object inst = null;
-                foreach (var a in domainAssemblies)
+                foreach (var a in DomainAssemblies)
                 {
                     var dstType = a.GetType(typeName);
                     if (dstType != null)
@@ -94,7 +85,7 @@ namespace Cosmos
             public static object GetTypeInstance(string typeName, object[] args)
             {
                 object inst = null;
-                foreach (var a in domainAssemblies)
+                foreach (var a in DomainAssemblies)
                 {
                     var dstType = a.GetType(typeName);
                     if (dstType != null)
@@ -115,7 +106,7 @@ namespace Cosmos
             public static T GetTypeInstance<T>(string typeName)
             {
                 T inst = default;
-                foreach (var a in domainAssemblies)
+                foreach (var a in DomainAssemblies)
                 {
                     var dstType = a.GetType(typeName);
                     if (dstType != null)
@@ -600,32 +591,37 @@ where K : class
             public static string[] GetDerivedTypeNames<T>()
                 where T : class
             {
-                return GetDerivedTypeNames(typeof(T), domainAssemblies);
+                return GetDerivedTypeNames(typeof(T), DomainAssemblies);
             }
-
             /// <summary>
-            /// 获取应用域内单个派生对象
+            /// 获取应用域内任意一个符合的派生对象
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
             /// <returns>实例对象</returns>
-            public static T GetAppDomainDerivedTypeInstance<T>()
+            public static T GetAppDomainAnyDerivedTypeInstance<T>()
                 where T : class
             {
                 Type type = typeof(T);
-                var assemblies = domainAssemblies;
-                var typeList = new List<Type>();
+                var assemblies = DomainAssemblies;
+                Type subType = default;
                 foreach (var asm in assemblies)
                 {
                     var types = asm.GetTypes();
-                    var typeArray = types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).ToArray();
-                    typeList.AddRange(typeArray);
+                    var length = types.Length;
+                    for (int i = 0; i < length; i++)
+                    {
+                        subType = types[i];
+                        if (type.IsAssignableFrom(subType) && subType.IsClass && !subType.IsAbstract)
+                        {
+                            break;
+                        }
+                    }
                 }
-                var firstType = typeList.First();
-                if (firstType == null)
+                if (subType == null)
                 {
                     return default;
                 }
-                return GetTypeInstance(firstType) as T;
+                return GetTypeInstance(subType) as T;
             }
             /// <summary>
             /// 获取应用域内所有派生对象
@@ -636,7 +632,7 @@ where K : class
                 where T : class
             {
                 Type type = typeof(T);
-                var assemblies = domainAssemblies;
+                var assemblies = DomainAssemblies;
                 var typeList = new List<Type>();
                 foreach (var asm in assemblies)
                 {

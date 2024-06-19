@@ -34,7 +34,7 @@ namespace Cosmos
 
             #region Application
             /// <summary>
-            /// 退出。editor停止播放，runtime则退出游戏
+            /// 退出。editor停止播放，runtime退出游戏
             /// </summary>
             public static void Quit()
             {

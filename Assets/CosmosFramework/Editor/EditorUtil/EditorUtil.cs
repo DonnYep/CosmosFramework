@@ -167,10 +167,19 @@ namespace Cosmos.Editor
         /// 获取在build列表中场景的文件地址
         /// </summary>
         /// <returns>场景文件的地址列表</returns>
-        public static string[] GetScenesInBuildsPath()
+        public static string[] GetEditorScenesPath()
         {
             var scenes = EditorBuildSettings.scenes;
             return scenes.Select(s => s.path).ToArray();
+        }
+        /// <summary>
+        /// 获取在build列表中enable状态的场景的文件地址
+        /// </summary>
+        /// <returns>场景文件的地址列表</returns>
+        public static string[] GetEditorEnabledScenesPath()
+        {
+            var scenes = EditorBuildSettings.scenes;
+            return scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
         }
         /// <summary>
         /// 过滤字段，过滤绝对路径到Assets目录下的相对路径。
