@@ -594,6 +594,23 @@ where K : class
                 return GetDerivedTypeNames(typeof(T), DomainAssemblies);
             }
             /// <summary>
+            /// 获取应用域内所有可以被实例化的派生类
+            /// </summary>
+            /// <param name="type">基类</param>
+            /// <returns>所有可以被实例化的派生类</returns>
+            public static IList<Type> GetAppDomainAllInstantiableDerivedTypes(Type type)
+            {
+                var assemblies = DomainAssemblies;
+                var typeList = new List<Type>();
+                foreach (var asm in assemblies)
+                {
+                    var types = asm.GetTypes();
+                    var typeArray = types.Where(t => { return type.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract; }).ToArray();
+                    typeList.AddRange(typeArray);
+                }
+                return typeList;
+            }
+            /// <summary>
             /// 获取应用域内任意一个符合的派生对象
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
@@ -629,7 +646,7 @@ where K : class
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
             /// <returns>实例对象</returns>
-            public static IList<T> GetAppDomainDerivedTypeInstances<T>()
+            public static IList<T> GetAppDomainAllDerivedTypeInstances<T>()
                 where T : class
             {
                 Type type = typeof(T);
