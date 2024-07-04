@@ -16,7 +16,13 @@ namespace Cosmos.Editor.Resource
             get
             {
                 if (defaultResourceDataset == null)
-                    defaultResourceDataset = AssetDatabase.LoadAssetAtPath<ResourceDataset>(ResourceEditorConstants.DEFAULT_DATASET_PATH);
+                {
+                    var has = EditorBuildSettings.TryGetConfigObject(ResourceEditorConstants.DEFAULT_DATASET_NAME, out ResourceDataset resourceDataset);
+                    if (has)
+                    {
+                        defaultResourceDataset = resourceDataset;
+                    }
+                }
                 return defaultResourceDataset;
             }
         }
