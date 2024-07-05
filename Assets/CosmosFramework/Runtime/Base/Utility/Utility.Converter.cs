@@ -112,20 +112,24 @@ namespace Cosmos
                 }
             }
             /// <summary>
-            /// 转换byte长度到对应单位。
+            /// 转换byte长度到对应单位
             /// </summary>
             /// <param name="bytes">byte长度</param>
-            /// <param name="decimals">保留的小数长度</param>
+            /// <param name="decimalPlaces">保留的小数长度</param>
             /// <returns>格式化后的单位</returns>
-            public static string FormatBytes(long bytes, int decimals = 2)
+            public static string FormatBytes(double bytes, int decimalPlaces = 2)
             {
-                string[] suffix = { "Byte", "KB", "MB", "GB", "TB" };
-                int i = 0;
-                double dblSByte = bytes;
-                if (bytes > 1024)
-                    for (i = 0; (bytes / 1024) > 0; i++, bytes /= 1024)
-                        dblSByte = bytes / 1024.0;
-                return $"{Math.Round(dblSByte, decimals)}{suffix[i]}";
+                string[] sizeUnits = { "Byte", "KB", "MB", "GB", "TB", "PB", "EB" };
+                double size = bytes;
+                int unitIndex = 0;
+                while (size >= 1024 && unitIndex < sizeUnits.Length - 1)
+                {
+                    size /= 1024;
+                    unitIndex++;
+                }
+                string formatString = "0." + new string('0', decimalPlaces);
+
+                return $"{Math.Round(size, decimalPlaces).ToString(formatString)}{sizeUnits[unitIndex]}";
             }
             /// <summary>
             /// object类型转换为bytes。
