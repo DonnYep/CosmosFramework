@@ -25,13 +25,14 @@ namespace Cosmos
                 return Path.GetFullPath(".");
             }
             /// <summary>
-            /// 获取文件夹中的所有文件
+            /// 获取文件夹中的所有文件，默认查询所有文件。如果需要指定扩展名，比如cs脚本，searchPattern可传入："*.cs"。
             /// </summary>
             /// <param name="path">地址</param>
+            /// <param name="searchPattern">查询类型，默认是"."</param>
             /// <returns>文件地址</returns>
-            public static string[] GetAllFiles(string path)
+            public static string[] GetAllFiles(string path, string searchPattern = ".")
             {
-                return Directory.GetFiles(path, ".", SearchOption.AllDirectories);
+                return Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories);
             }
             /// <summary>
             /// 获取文件夹中的文件数量
