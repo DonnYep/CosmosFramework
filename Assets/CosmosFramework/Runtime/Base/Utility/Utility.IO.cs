@@ -35,6 +35,55 @@ namespace Cosmos
                 return Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories);
             }
             /// <summary>
+            /// 获取指定目录及其子目录下的所有文件，并可以排除指定后缀名的文件。
+            /// </summary>
+            /// <param name="folderPath">根目录</param>
+            /// <param name="excludedExtensions">要排除的文件后缀名列表</param>
+            /// <returns>文件路径列表</returns>
+            public static List<string> GetAllFilesExceptExtensions(string folderPath, params string[] excludedExtensions)
+            {
+                List<string> allFiles = new List<string>();
+                GetAllFilesRecursively(folderPath, excludedExtensions, allFiles);
+                return allFiles;
+            }
+            /// <summary>
+            /// 递归获取目录下所有的文件，并可以排除指定后缀名的文件。
+            /// </summary>
+            /// <param name="folderPath">根目录</param>
+            /// <param name="excludedExtensions">要排除的文件后缀名列表</param>
+            /// <param name="fileList">文件路径列表</param>
+            public static void GetAllFilesRecursively(string folderPath, string[] excludedExtensions, List<string> fileList)
+            {
+                try
+                {
+                    foreach (string file in Directory.GetFiles(folderPath))
+                    {
+                        bool shouldExcludeFile = false;
+                        foreach (string extension in excludedExtensions)
+                        {
+                            if (file.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
+                            {
+                                shouldExcludeFile = true;
+                                break;
+                            }
+                        }
+                        if (!shouldExcludeFile)
+                        {
+                            fileList.Add(file);
+                        }
+                    }
+
+                    foreach (string subDir in Directory.GetDirectories(folderPath))
+                    {
+                        GetAllFilesRecursively(subDir, excludedExtensions, fileList);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new IOException($"Error accessing directory {folderPath}: {ex.Message}");
+                }
+            }
+            /// <summary>
             /// 获取文件夹中的文件数量
             /// </summary>
             /// <param name="folderPath">文件夹路径</param>
