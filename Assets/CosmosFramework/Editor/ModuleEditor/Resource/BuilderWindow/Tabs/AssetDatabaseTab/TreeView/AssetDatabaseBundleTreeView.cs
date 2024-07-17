@@ -18,6 +18,9 @@ namespace Cosmos.Editor.Resource
         public Action<IList<string>, IList<int>> onBundleSort;
         public Action<IList<int>> onMarkAsSeparately;
         public Action<IList<int>> onMarkAsTogether;
+
+        List<TreeViewItem> treeItemList = new List<TreeViewItem>();
+
         /// <summary>
         /// 上一行的cellRect
         /// </summary>
@@ -141,31 +144,29 @@ namespace Cosmos.Editor.Resource
             var vaildIcon = ResourceEditorUtility.GetValidIcon();
             var ignoredIcon = ResourceEditorUtility.GetIgnoredcon();
             Texture2D icon = null;
-            var treeItemList = new List<TreeViewItem>();
+            treeItemList.Clear();
+            for (int i = 0; i < bundleInfoList.Count; i++)
             {
-                for (int i = 0; i < bundleInfoList.Count; i++)
+                var bundleInfo = bundleInfoList[i];
+                if (bundleInfo.ResourceObjectInfoList.Count == 0)
+                    icon = folderEmptyIcon;
+                else
+                    icon = folderIcon;
+                var item = new AssetDatabaseBundleTreeViewItem(i, 1, bundleInfo.BundleName, icon)
                 {
-                    var bundleInfo = bundleInfoList[i];
-                    if (bundleInfo.ResourceObjectInfoList.Count == 0)
-                        icon = folderEmptyIcon;
-                    else
-                        icon = folderIcon;
-                    var item = new AssetDatabaseBundleTreeViewItem(i, 1, bundleInfo.BundleName, icon)
-                    {
-                        BundleFormatSize = bundleInfo.BundleFormatBytes,
-                        ObjectCount = bundleInfo.ResourceObjectInfoList.Count,
-                        SplitBundleCount = bundleInfo.ResourceSubBundleInfoList.Count,
-                        SplitIcon = vaildIcon,
-                        NotSplitIcon = ignoredIcon,
-                        ExtractIcon = vaildIcon,
-                        NotExtractIcon = ignoredIcon,
-                        Extract = bundleInfo.PackSeparately
-                    };
-                    treeItemList.Add(item);
-                }
-                SetupParentsAndChildrenFromDepths(root, treeItemList);
-                return root;
+                    BundleFormatSize = bundleInfo.BundleFormatBytes,
+                    ObjectCount = bundleInfo.ResourceObjectInfoList.Count,
+                    SplitBundleCount = bundleInfo.ResourceSubBundleInfoList.Count,
+                    SplitIcon = vaildIcon,
+                    NotSplitIcon = ignoredIcon,
+                    ExtractIcon = vaildIcon,
+                    NotExtractIcon = ignoredIcon,
+                    Extract = bundleInfo.PackSeparately
+                };
+                treeItemList.Add(item);
             }
+            SetupParentsAndChildrenFromDepths(root, treeItemList);
+            return root;
         }
         protected override void SelectionChanged(IList<int> selectedIds)
         {

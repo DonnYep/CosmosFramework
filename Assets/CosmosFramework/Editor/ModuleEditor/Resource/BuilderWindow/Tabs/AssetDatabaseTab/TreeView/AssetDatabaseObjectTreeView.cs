@@ -15,6 +15,7 @@ namespace Cosmos.Editor.Resource
         public int ObjectCount { get { return objectInfoList.Count; } }
         public int SelectedCount { get { return selectedObjectInfos.Count; } }
         GUIStyle invalidStyle;
+        List<TreeViewItem> allItems = new List<TreeViewItem>();
         public AssetDatabaseObjectTreeView(TreeViewState state, MultiColumnHeader multiColumnHeader) : base(state, multiColumnHeader)
         {
             Reload();
@@ -70,43 +71,41 @@ namespace Cosmos.Editor.Resource
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = -1, depth = -1, displayName = "Root" };
-            var allItems = new List<TreeViewItem>();
+            allItems.Clear();
+            Texture2D validIcon = ResourceEditorUtility.GetValidIcon();
+            Texture2D invalidIcon = ResourceEditorUtility.GetInvalidIcon();
+            for (int i = 0; i < objectInfoList.Count; i++)
             {
-                Texture2D validIcon = ResourceEditorUtility.GetValidIcon();
-                Texture2D invalidIcon = ResourceEditorUtility.GetInvalidIcon();
-                for (int i = 0; i < objectInfoList.Count; i++)
+                var objectInfo = objectInfoList[i];
+                Texture2D objectIcon = null;
+                Texture2D objectValidIcon = null;
+                var validState = string.Empty;
+                if (objectInfo.ObjectVaild)
                 {
-                    var objectInfo = objectInfoList[i];
-                    Texture2D objectIcon = null;
-                    Texture2D objectValidIcon = null;
-                    var validState = string.Empty;
-                    if (objectInfo.ObjectVaild)
-                    {
-                        objectIcon = AssetDatabase.GetCachedIcon(objectInfo.ObjectPath) as Texture2D;
-                        validState = ResourceEditorConstants.VALID;
-                        objectValidIcon = validIcon;
-                    }
-                    else
-                    {
-                        objectIcon = EditorGUIUtility.FindTexture("DefaultAsset Icon");
-                        validState = ResourceEditorConstants.INVALID;
-                        objectValidIcon = invalidIcon;
-                    }
-                    var treeViewItem = new AssetDatabaseObjectTreeViewItem(i, 1, objectInfo.ObjectPath, objectIcon)
-                    {
-                        ObjectName = objectInfo.ObjectName,
-                        ObjectState = validState,
-                        ObjectSize = objectInfo.ObjectFormatBytes,
-                        ObjectBundleName = objectInfo.BundleName,
-                        ObjectExtension = objectInfo.Extension,
-                        ObjectValid = objectInfo.ObjectVaild,
-                        ObjectValidIcon = objectValidIcon
-                    };
-                    allItems.Add(treeViewItem);
+                    objectIcon = AssetDatabase.GetCachedIcon(objectInfo.ObjectPath) as Texture2D;
+                    validState = ResourceEditorConstants.VALID;
+                    objectValidIcon = validIcon;
                 }
-                SetupParentsAndChildrenFromDepths(root, allItems);
-                return root;
+                else
+                {
+                    objectIcon = EditorGUIUtility.FindTexture("DefaultAsset Icon");
+                    validState = ResourceEditorConstants.INVALID;
+                    objectValidIcon = invalidIcon;
+                }
+                var treeViewItem = new AssetDatabaseObjectTreeViewItem(i, 1, objectInfo.ObjectPath, objectIcon)
+                {
+                    ObjectName = objectInfo.ObjectName,
+                    ObjectState = validState,
+                    ObjectSize = objectInfo.ObjectFormatBytes,
+                    ObjectBundleName = objectInfo.BundleName,
+                    ObjectExtension = objectInfo.Extension,
+                    ObjectValid = objectInfo.ObjectVaild,
+                    ObjectValidIcon = objectValidIcon
+                };
+                allItems.Add(treeViewItem);
             }
+            SetupParentsAndChildrenFromDepths(root, allItems);
+            return root;
         }
         protected override void RowGUI(RowGUIArgs args)
         {

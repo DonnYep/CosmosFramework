@@ -108,6 +108,15 @@ namespace Cosmos.Editor
             }
             return data;
         }
+        public static void SaveText(string fileName, string content)
+        {
+            Utility.IO.OverwriteTextFile(LibraryPath, fileName, content);
+        }
+        public static string GetText(string fileName)
+        {
+            var filePath = Utility.IO.PathCombine(LibraryPath, fileName);
+            return Utility.IO.ReadTextFileContent(filePath);
+        }
         public static void ClearData(string fileName)
         {
             var filePath = Utility.IO.PathCombine(LibraryPath, fileName);

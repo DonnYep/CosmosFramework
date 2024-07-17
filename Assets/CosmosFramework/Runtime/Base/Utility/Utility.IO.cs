@@ -35,7 +35,7 @@ namespace Cosmos
                 return Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories);
             }
             /// <summary>
-            /// 获取指定目录及其子目录下的所有文件，并可以排除指定后缀名的文件。
+            /// 获取指定目录及其子目录下的所有文件，并可以排除指定后缀名的文件。传入后缀参考：".cs"，".dll"。
             /// </summary>
             /// <param name="folderPath">根目录</param>
             /// <param name="excludedExtensions">要排除的文件后缀名列表</param>

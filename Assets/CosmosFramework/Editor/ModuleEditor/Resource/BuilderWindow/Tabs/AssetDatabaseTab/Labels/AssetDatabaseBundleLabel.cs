@@ -60,9 +60,7 @@ namespace Cosmos.Editor.Resource
         }
         public void OnGUI(Rect rect)
         {
-            GUILayout.BeginVertical();
             DrawTreeView(rect);
-            GUILayout.EndVertical();
         }
         public void Clear()
         {
