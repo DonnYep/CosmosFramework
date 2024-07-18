@@ -10,8 +10,8 @@ namespace Cosmos.Editor
             /// 将对象序列化为JSON字段
             /// </summary>
             /// <param name="obj">需要被序列化的对象</param>
-            /// <returns>序列化后的JSON字符串</returns>xxxx
-            public static string ToJson(object obj, bool prettyPrint = false)
+            /// <returns>序列化后的JSON字符串</returns>
+            public static string ToJson(object obj)
             {
                 return Cosmos.LitJson.JsonMapper.ToJson(obj);
             }

@@ -22,7 +22,7 @@ public class EntityGameState : ProcedureNode
         CosmosEntry.UIManager.DeactiveUIForm("EntityGameLauncherPanel");
         CosmosEntry.UIManager.PeekUIForm<EntityGameLoadingSlider>("EntityGameLoadingSlider", out loadingSlider);
         loadingSlider.Active = true;
-        CosmosEntry.SceneManager.LoadSceneAsync(new SceneAssetInfo("EntityGame"), ProgressProvider, OnSceneLoading, LoadDoneCodition, OnSceneLoaded);
+        CosmosEntry.ResourceManager.LoadSceneAsync(new SceneAssetInfo("EntityGame"), ProgressProvider, OnSceneLoading, LoadDoneCodition, OnSceneLoaded);
     }
     public override void OnExit(ProcedureProcessor processo)
     {

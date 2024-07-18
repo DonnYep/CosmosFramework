@@ -93,7 +93,7 @@ namespace Cosmos.Editor.Resource
 
                     if (buildParams.ForceRemoveAllAssetBundleNames)
                         AssetBundleCommand.ForceRemoveAllAssetBundleNames();
-                    EditorUtil.Coroutine.StartCoroutine(BuildAssetBundle(buildParams, ResourceBuilderWindowDataProxy.ResourceDataset));
+                    EditorUtil.StartCoroutine(BuildAssetBundle(buildParams, ResourceBuilderWindowDataProxy.ResourceDataset));
                 }
                 if (GUILayout.Button("Reset options", GUILayout.MaxWidth(buttonWidth)))
                 {

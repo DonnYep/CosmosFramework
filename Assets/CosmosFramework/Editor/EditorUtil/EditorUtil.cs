@@ -4,6 +4,9 @@ using System.Linq;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
+using System.Collections;
+using System.Text;
+
 namespace Cosmos.Editor
 {
     public static partial class EditorUtil
@@ -66,13 +69,13 @@ namespace Cosmos.Editor
         public static void SaveData<T>(string fileName, T editorData)
             where T : class, new()
         {
-            var json = EditorUtil.Json.ToJson(editorData, true);
+            var json = EditorUtil.Json.ToJson(editorData);
             Utility.IO.OverwriteTextFile(LibraryPath, fileName, json);
         }
         public static void SaveData<T>(string relativePath, string fileName, T editorData)
             where T : class, new()
         {
-            var json = EditorUtil.Json.ToJson(editorData, true);
+            var json = EditorUtil.Json.ToJson(editorData);
             var path = Path.Combine(LibraryPath, relativePath);
             Utility.IO.OverwriteTextFile(path, fileName, json);
         }
@@ -191,30 +194,6 @@ namespace Cosmos.Editor
             return scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
         }
         /// <summary>
-        /// 过滤字段，过滤绝对路径到Assets目录下的相对路径。
-        /// </summary>
-        /// <param name="src">绝对路径</param>
-        /// <returns>过滤后的地址</returns>
-        public static string FilterApplicationDataPath(string src)
-        {
-            return src.Remove(0, Application.dataPath.Length - 6);
-        }
-        public static string GetAssetFileSize(string assetPath)
-        {
-            if (!assetPath.StartsWith("Assets"))
-                return Constants.NULL;
-            var fullPath = Path.Combine(ApplicationPath(), assetPath);
-            var len = Utility.IO.GetFileSize(fullPath);
-            return EditorUtility.FormatBytes(len);
-        }
-        public static long GetAssetFileSizeLength(string assetPath)
-        {
-            if (!assetPath.StartsWith("Assets"))
-                return 0;
-            var fullPath = Path.Combine(ApplicationPath(), assetPath);
-            return Utility.IO.GetFileSize(fullPath);
-        }
-        /// <summary>
         /// 获取文件夹中文件的总体大小
         /// </summary>
         /// <param name="path">路径</param>
@@ -316,5 +295,84 @@ namespace Cosmos.Editor
             }
             return selectedRelativePath;
         }
+
+        /// <summary>
+        /// 遍历文件夹下的文件。传入的文件夹名参考：Assets/Game。
+        /// </summary>
+        /// <param name="folder">文件夹名</param>
+        /// <param name="handler">处理方法</param>
+        public static void TraverseFolderFile(string folder, Action<UnityEngine.Object> handler)
+        {
+            if (string.IsNullOrEmpty(folder))
+                throw new ArgumentNullException("Folder Name is invalid !");
+            if (handler == null)
+                throw new ArgumentNullException("Handler is invalid !");
+            if (AssetDatabase.IsValidFolder(folder))
+            {
+                var assets = GetAllAssets<UnityEngine.Object>(folder);
+                if (assets != null)
+                {
+                    var length = assets.Length;
+                    for (int i = 0; i < length; i++)
+                    {
+                        handler.Invoke(assets[i]);
+                    }
+                }
+                var subFolders = AssetDatabase.GetSubFolders(folder);
+                if (subFolders != null)
+                {
+                    foreach (var subF in subFolders)
+                    {
+                        TraverseFolderFile(subF, handler);
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// 遍历assets目录下的所有文件
+        /// </summary>
+        /// <param name="handler">遍历回调</param>
+        public static void TraverseAllFolderFile(Action<UnityEngine.Object> handler)
+        {
+            if (handler == null)
+                throw new ArgumentNullException("Handler is invalid !");
+            var assets = GetAllAssets<UnityEngine.Object>("Assets");
+            if (assets != null)
+            {
+                var length = assets.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    handler.Invoke(assets[i]);
+                }
+            }
+            var subFolder = AssetDatabase.GetSubFolders("Assets");
+            if (subFolder != null)
+            {
+                foreach (var subF in subFolder)
+                {
+                    TraverseFolderFile(subF, handler);
+                }
+            }
+        }
+
+        #region EditorCoroutine
+        /// <summary>
+        /// EditorCoroutine 嵌套协程无法识别 yield return IEnumerator；
+        /// 嵌套协程尽量使用yield return EditorCoroutine；
+        /// </summary>
+        public static Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine StartCoroutine(IEnumerator coroutine)
+        {
+            return Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutineUtility.StartCoroutineOwnerless(coroutine);
+        }
+        public static void StopCoroutine(Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine coroutine)
+        {
+            Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutineUtility.StopCoroutine(coroutine);
+        }
+        public static void StopCoroutine(IEnumerator coroutine)
+        {
+            Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutineUtility.StartCoroutineOwnerless(coroutine);
+        }
+        #endregion
+
     }
 }

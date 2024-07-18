@@ -15,9 +15,7 @@ namespace Cosmos.Editor
         }
         public override void OnInspectorGUI()
         {
-            GUILayout.BeginVertical();
             OnGUI();
-            GUILayout.EndVertical();
             base.OnInspectorGUI();
         }
         /// <summary>

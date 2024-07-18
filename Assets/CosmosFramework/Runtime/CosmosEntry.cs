@@ -1,7 +1,5 @@
 ﻿using Cosmos.Audio;
-using Cosmos.Config;
 using Cosmos.Controller;
-using Cosmos.DataNode;
 using Cosmos.DataTable;
 using Cosmos.Download;
 using Cosmos.Entity;
@@ -11,7 +9,6 @@ using Cosmos.Input;
 using Cosmos.Network;
 using Cosmos.ObjectPool;
 using Cosmos.Resource;
-using Cosmos.Scene;
 using Cosmos.UI;
 using Cosmos.WebRequest;
 using Cosmos.Procedure;
@@ -61,15 +58,12 @@ namespace Cosmos
         public static IControllerManager ControllerManager { get { return GetModule<IControllerManager>(); } }
         public static IFSMManager FSMManager { get { return GetModule<IFSMManager>(); } }
         public static IObjectPoolManager ObjectPoolManager { get { return GetModule<IObjectPoolManager>(); } }
-        public static IConfigManager ConfigManager { get { return GetModule<IConfigManager>(); } }
         public static IInputManager InputManager { get { return GetModule<IInputManager>(); } }
         public static INetworkManager NetworkManager { get { return GetModule<INetworkManager>(); } }
         public static IResourceManager ResourceManager { get { return GetModule<IResourceManager>(); } }
         public static IUIManager UIManager { get { return GetModule<IUIManager>(); } }
-        public static IDataNodeManager DataNodeManager { get { return GetModule<IDataNodeManager>(); } }
         public static IEntityManager EntityManager { get { return GetModule<IEntityManager>(); } }
         public static IEventManager EventManager { get { return GetModule<IEventManager>(); } }
-        public static ISceneManager SceneManager { get { return GetModule<ISceneManager>(); } }
         public static IWebRequestManager WebRequestManager { get { return GetModule<IWebRequestManager>(); } }
         public static IDownloadManager DownloadManager { get { return GetModule<IDownloadManager>(); } }
         public static IDataTableManager DataTableManager { get { return GetModule<IDataTableManager>(); } }

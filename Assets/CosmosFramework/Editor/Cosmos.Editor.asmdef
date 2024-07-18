@@ -1,7 +1,7 @@
 {
-    "name": "CosmosEditor",
+    "name": "Cosmos.Editor",
     "references": [
-        "CosmosRuntime"
+        "Cosmos.Runtime"
     ],
     "includePlatforms": [
         "Editor"

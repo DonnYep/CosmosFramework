@@ -94,9 +94,9 @@ namespace Cosmos.Editor.Resource
         {
             SaveTabData();
             if (selectionCoroutine != null)
-                EditorUtil.Coroutine.StopCoroutine(selectionCoroutine);
+                EditorUtil.StopCoroutine(selectionCoroutine);
             if (buildDatasetCoroutine != null)
-                EditorUtil.Coroutine.StopCoroutine(buildDatasetCoroutine);
+                EditorUtil.StopCoroutine(buildDatasetCoroutine);
         }
         public override void OnGUI(Rect rect)
         {
@@ -215,8 +215,8 @@ namespace Cosmos.Editor.Resource
         public Cosmos.Unity.EditorCoroutines.Editor.EditorCoroutine BuildDataset()
         {
             if (buildDatasetCoroutine != null)
-                EditorUtil.Coroutine.StopCoroutine(buildDatasetCoroutine);
-            buildDatasetCoroutine = EditorUtil.Coroutine.StartCoroutine(EnumBuildDataset());
+                EditorUtil.StopCoroutine(buildDatasetCoroutine);
+            buildDatasetCoroutine = EditorUtil.StartCoroutine(EnumBuildDataset());
             return buildDatasetCoroutine;
         }
         void DrawDragRect()
@@ -299,7 +299,7 @@ namespace Cosmos.Editor.Resource
             if (ResourceBuilderWindowDataProxy.ResourceDataset == null)
                 return;
             if (selectionCoroutine != null)
-                EditorUtil.Coroutine.StopCoroutine(selectionCoroutine);
+                EditorUtil.StopCoroutine(selectionCoroutine);
             var bundleInfos = ResourceBuilderWindowDataProxy.ResourceDataset.ResourceBundleInfoList;
             var rmlen = bundleIds.Count;
             var rmbundleInfos = new ResourceBundleInfo[rmlen];
@@ -320,8 +320,8 @@ namespace Cosmos.Editor.Resource
         void OnSelectionChanged(IList<int> selectedIds)
         {
             if (selectionCoroutine != null)
-                EditorUtil.Coroutine.StopCoroutine(selectionCoroutine);
-            selectionCoroutine = EditorUtil.Coroutine.StartCoroutine(EnumSelectionChanged(selectedIds));
+                EditorUtil.StopCoroutine(selectionCoroutine);
+            selectionCoroutine = EditorUtil.StartCoroutine(EnumSelectionChanged(selectedIds));
         }
         void OnRenameBundle(int id, string newName)
         {

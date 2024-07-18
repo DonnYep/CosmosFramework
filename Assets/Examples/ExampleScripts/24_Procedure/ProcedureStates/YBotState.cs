@@ -9,7 +9,7 @@ public class YBotState : ProcedureNode
     public override void OnEnter(ProcedureProcessor processor)
     {
         Utility.Debug.LogInfo("Enter YBotState");
-        CosmosEntry.SceneManager.LoadSceneAsync(new SceneAssetInfo("24_Procedure_YBotState"));
+        CosmosEntry.ResourceManager.LoadSceneAsync(new SceneAssetInfo("24_Procedure_YBotState"), null, null, null, null);
     }
 
     public override void OnExit(ProcedureProcessor processor)

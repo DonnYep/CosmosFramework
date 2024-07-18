@@ -9,7 +9,7 @@ public class PloyState : ProcedureNode
     public override void OnEnter(ProcedureProcessor processor)
     {
         Utility.Debug.LogInfo("Enter PloyState");
-        CosmosEntry.SceneManager.LoadSceneAsync(new SceneAssetInfo("24_Procedure_PloyState"));
+        CosmosEntry.ResourceManager.LoadSceneAsync(new SceneAssetInfo("24_Procedure_PloyState"),null,null,null,null);
     }
 
     public override void OnExit(ProcedureProcessor processor)

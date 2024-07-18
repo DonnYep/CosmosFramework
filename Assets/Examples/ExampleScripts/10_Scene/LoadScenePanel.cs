@@ -29,7 +29,7 @@ public class LoadScenePanel : MonoBehaviour
     {
         loadingSlider.alpha = 1;
         btnLoad.gameObject.SetActive(false);
-        CosmosEntry.SceneManager.LoadSceneAsync(new SceneAssetInfo(targetLevel), ProgressProvider, OnSceneLoading, LoadDoneCodition, OnSceneLoadDone);
+        CosmosEntry.ResourceManager.LoadSceneAsync(new SceneAssetInfo(targetLevel), ProgressProvider, OnSceneLoading, LoadDoneCodition, OnSceneLoadDone);
         isLoading = true;
     }
     void Update()
