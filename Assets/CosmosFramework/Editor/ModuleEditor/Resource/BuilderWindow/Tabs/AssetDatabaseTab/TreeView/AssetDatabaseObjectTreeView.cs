@@ -49,12 +49,12 @@ namespace Cosmos.Editor.Resource
         protected override void DoubleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            EditorUtil.PingAndActiveObject(objectInfoList[id].ObjectPath);
+            EditorUtil.PingAndActiveObject(objectInfoList[id].ResourceObject.ObjectPath);
         }
         protected override void SingleClickedItem(int id)
         {
             base.SingleClickedItem(id);
-            EditorUtil.ActiveObject(objectInfoList[id].ObjectPath);
+            EditorUtil.ActiveObject(objectInfoList[id].ResourceObject.ObjectPath);
         }
         protected override void SelectionChanged(IList<int> selectedIds)
         {
@@ -82,7 +82,7 @@ namespace Cosmos.Editor.Resource
                 var validState = string.Empty;
                 if (objectInfo.ObjectVaild)
                 {
-                    objectIcon = AssetDatabase.GetCachedIcon(objectInfo.ObjectPath) as Texture2D;
+                    objectIcon = AssetDatabase.GetCachedIcon(objectInfo.ResourceObject.ObjectPath) as Texture2D;
                     validState = ResourceEditorConstants.VALID;
                     objectValidIcon = validIcon;
                 }
@@ -92,13 +92,13 @@ namespace Cosmos.Editor.Resource
                     validState = ResourceEditorConstants.INVALID;
                     objectValidIcon = invalidIcon;
                 }
-                var treeViewItem = new AssetDatabaseObjectTreeViewItem(i, 1, objectInfo.ObjectPath, objectIcon)
+                var treeViewItem = new AssetDatabaseObjectTreeViewItem(i, 1, objectInfo.ResourceObject.ObjectPath, objectIcon)
                 {
-                    ObjectName = objectInfo.ObjectName,
+                    ObjectName = objectInfo.ResourceObject.ObjectName,
                     ObjectState = validState,
                     ObjectSize = objectInfo.ObjectFormatBytes,
-                    ObjectBundleName = objectInfo.BundleName,
-                    ObjectExtension = objectInfo.Extension,
+                    ObjectBundleName = objectInfo.ResourceObject.BundleName,
+                    ObjectExtension = objectInfo.ResourceObject.Extension,
                     ObjectValid = objectInfo.ObjectVaild,
                     ObjectValidIcon = objectValidIcon
                 };
@@ -189,18 +189,18 @@ namespace Cosmos.Editor.Resource
                     {
                         //Name
                         if (ascending)
-                            objectInfoList.Sort((lhs, rhs) => lhs.ObjectName.CompareTo(rhs.ObjectName));
+                            objectInfoList.Sort((lhs, rhs) => lhs.ResourceObject.ObjectName.CompareTo(rhs.ResourceObject.ObjectName));
                         else
-                            objectInfoList.Sort((lhs, rhs) => rhs.ObjectName.CompareTo(lhs.ObjectName));
+                            objectInfoList.Sort((lhs, rhs) => rhs.ResourceObject.ObjectName.CompareTo(lhs.ResourceObject.ObjectName));
                     }
                     break;
                 case 2:
                     {
                         //Extension
                         if (ascending)
-                            objectInfoList.Sort((lhs, rhs) => lhs.Extension.CompareTo(rhs.Extension));
+                            objectInfoList.Sort((lhs, rhs) => lhs.ResourceObject.Extension.CompareTo(rhs.ResourceObject.Extension));
                         else
-                            objectInfoList.Sort((lhs, rhs) => rhs.Extension.CompareTo(lhs.Extension));
+                            objectInfoList.Sort((lhs, rhs) => rhs.ResourceObject.Extension.CompareTo(lhs.ResourceObject.Extension));
                     }
                     break;
                 case 3:
@@ -225,18 +225,18 @@ namespace Cosmos.Editor.Resource
                     {
                         //AssetBundle
                         if (ascending)
-                            objectInfoList.Sort((lhs, rhs) => lhs.BundleName.CompareTo(rhs.BundleName));
+                            objectInfoList.Sort((lhs, rhs) => lhs.ResourceObject.BundleName.CompareTo(rhs.ResourceObject.BundleName));
                         else
-                            objectInfoList.Sort((lhs, rhs) => rhs.BundleName.CompareTo(lhs.BundleName));
+                            objectInfoList.Sort((lhs, rhs) => rhs.ResourceObject.BundleName.CompareTo(lhs.ResourceObject.BundleName));
                     }
                     break;
                 case 6:
                     {
                         //AssetPath
                         if (ascending)
-                            objectInfoList.Sort((lhs, rhs) => lhs.ObjectPath.CompareTo(rhs.ObjectPath));
+                            objectInfoList.Sort((lhs, rhs) => lhs.ResourceObject.ObjectPath.CompareTo(rhs.ResourceObject.ObjectPath));
                         else
-                            objectInfoList.Sort((lhs, rhs) => rhs.ObjectPath.CompareTo(lhs.ObjectPath));
+                            objectInfoList.Sort((lhs, rhs) => rhs.ResourceObject.ObjectPath.CompareTo(lhs.ResourceObject.ObjectPath));
                     }
                     break;
             }
@@ -245,13 +245,13 @@ namespace Cosmos.Editor.Resource
         void CopyNameToClipboard(object context)
         {
             var id = System.Convert.ToInt32(context);
-            var path = objectInfoList[id].ObjectName;
+            var path = objectInfoList[id].ResourceObject.ObjectName;
             GUIUtility.systemCopyBuffer = path;
         }
         void CopyAssetPathToClipboard(object context)
         {
             var id = System.Convert.ToInt32(context);
-            var path = objectInfoList[id].ObjectPath;
+            var path = objectInfoList[id].ResourceObject.ObjectPath;
             GUIUtility.systemCopyBuffer = path;
         }
     }
