@@ -32,17 +32,6 @@ namespace Cosmos
             @this.SetActive(false);
             return @this;
         }
-        /// <summary>
-        /// 优化的设置SetActive方法，可以节约重复设置Active的开销
-        /// </summary>
-        public static GameObject SetActiveOptimize(this GameObject @this, bool isActive)
-        {
-            if (@this.activeSelf != isActive)
-            {
-                @this.SetActive(isActive);
-            }
-            return @this;
-        }
         public static GameObject SetName(this GameObject @this, string name)
         {
             @this.name = name;
