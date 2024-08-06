@@ -614,8 +614,9 @@ where K : class
             /// 获取应用域内任意一个符合的派生对象
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
+            /// <param name="includeSelf">是否包含自身</param>
             /// <returns>实例对象</returns>
-            public static T GetAppDomainAnyDerivedTypeInstance<T>()
+            public static T GetAppDomainAnyDerivedTypeInstance<T>(bool includeSelf = false)
                 where T : class
             {
                 Type type = typeof(T);
@@ -628,6 +629,11 @@ where K : class
                     for (int i = 0; i < length; i++)
                     {
                         var tmpType = types[i];
+                        if (tmpType == type)
+                        {
+                            if (!includeSelf)
+                                continue;
+                        }
                         if (type.IsAssignableFrom(tmpType) && tmpType.IsClass && !tmpType.IsAbstract)
                         {
                             subType = tmpType;
