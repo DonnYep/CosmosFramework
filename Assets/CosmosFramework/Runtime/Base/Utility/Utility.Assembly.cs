@@ -648,6 +648,35 @@ where K : class
                 return GetTypeInstance(subType) as T;
             }
             /// <summary>
+            /// 获取一个程序集内任意一个符合的派生对象
+            /// </summary>
+            /// <typeparam name="T">基类</typeparam>
+            /// <param name="assemblyName">程序集名称</param>
+            /// <returns>实例对象</returns>
+            public static T GetAssemblyAnyDerivedTypeInstance<T>(string assemblyName)
+                where T : class
+            {
+                Type type = typeof(T);
+                var asm = GetAssembly(assemblyName);
+                var types = asm.GetTypes();
+                var length = types.Length;
+                Type subType = default;
+                for (int i = 0; i < length; i++)
+                {
+                    var tmpType = types[i];
+                    if (type.IsAssignableFrom(tmpType) && tmpType.IsClass && !tmpType.IsAbstract)
+                    {
+                        subType = tmpType;
+                        break;
+                    }
+                }
+                if (subType == null)
+                {
+                    return default;
+                }
+                return GetTypeInstance(subType) as T;
+            }
+            /// <summary>
             /// 获取应用域内所有派生对象
             /// </summary>
             /// <typeparam name="T">基类</typeparam>
