@@ -65,14 +65,14 @@ namespace Cosmos
         public static void Release(IReference reference)
         {
             if (reference == null)
-                throw new ArgumentNullException("Reference is invalid.");
+                return;
             var type = reference.GetType();
             GetReferencePool(type).Release(reference);
         }
         public static void Release<T>(IEnumerable<T> references) where T : class, IReference, new()
         {
             if (references == null)
-                throw new ArgumentNullException("Reference array is invalid.");
+                return;
             var type = typeof(T);
             var pool = GetReferencePool(type);
             foreach (var reference in references)

@@ -5,9 +5,32 @@ using UnityEngine;
 
 namespace Cosmos
 {
+    public enum FrameType
+    {
+        Update,
+        FixedUpdate,
+    }
     [DisallowMultipleComponent]
     public class CoroutineHelper : MonoBehaviour
     {
+        class FrameTask : IEquatable<FrameTask>, IReference
+        {
+            public long TaskId;
+            public long CurrentFrame;
+            public long TargetFrame;
+            public Action Action;
+            public bool Equals(FrameTask other)
+            {
+                return other.TaskId == this.TaskId;
+            }
+            public void Release()
+            {
+                TaskId = -1;
+                CurrentFrame = 0;
+                TargetFrame = 0;
+                Action = null;
+            }
+        }
         class DelayTask : IEquatable<DelayTask>, IReference
         {
             public long TaskId;
@@ -70,11 +93,25 @@ namespace Cosmos
             {
                 TaskId = -1;
                 Enumerator = null;
-                Callback=null;
+                Callback = null;
             }
         }
         List<CoroutineTask> routineList = new List<CoroutineTask>();
         static long taskIndex = 0;
+
+        static long updateFrame = 0;
+        static long fixedUpdateFrame = 0;
+
+        readonly Dictionary<long, FrameTask> updateFrameTaskDict = new Dictionary<long, FrameTask>();
+        readonly List<FrameTask> updateFrameTaskList = new List<FrameTask>();
+        readonly List<FrameTask> removalUpdateFrameTaskList = new List<FrameTask>();
+
+        readonly Dictionary<long, FrameTask> fixedupdateFrameTaskDict = new Dictionary<long, FrameTask>();
+        readonly List<FrameTask> fixedupdateFrameTaskList = new List<FrameTask>();
+        readonly List<FrameTask> removalFixedUpdateFrameTaskList = new List<FrameTask>();
+
+        readonly Dictionary<long, FrameType> taskIdFrameTypeDict = new Dictionary<long, FrameType>();
+
         readonly Dictionary<long, DelayTask> delayTaskDict = new Dictionary<long, DelayTask>();
         readonly List<DelayTask> delayTaskList = new List<DelayTask>();
         readonly List<DelayTask> removalDelayTaskList = new List<DelayTask>();
@@ -142,6 +179,71 @@ namespace Cosmos
             {
                 delayTaskList.Remove(task);
                 ReferencePool.Release(task);
+            }
+        }
+        /// <summary>
+        /// 添加等待帧任务
+        /// </summary>
+        /// <param name="frameType">帧类型</param>
+        /// <param name="action">触发的事件</param>
+        /// <param name="frameCount">帧数</param>
+        /// <returns>任务Id</returns>
+        public long AddFrameTask(FrameType frameType, Action action, long frameCount = 1)
+        {
+            if (frameCount < 0)
+                frameCount = 1;
+            var taskId = GenerateTaskId();
+            var frameTask = ReferencePool.Acquire<FrameTask>();
+            frameTask.TaskId = taskId;
+            frameTask.Action = action;
+            switch (frameType)
+            {
+                case FrameType.Update:
+                    {
+                        frameTask.CurrentFrame = updateFrame;
+                        frameTask.TargetFrame = updateFrame + frameCount;
+                        updateFrameTaskList.Add(frameTask);
+                        updateFrameTaskDict.Add(frameTask.TaskId, frameTask);
+                    }
+                    break;
+                case FrameType.FixedUpdate:
+                    {
+                        frameTask.CurrentFrame = fixedUpdateFrame;
+                        frameTask.TargetFrame = fixedUpdateFrame + frameCount;
+                        fixedupdateFrameTaskList.Add(frameTask);
+                        fixedupdateFrameTaskDict.Add(frameTask.TaskId, frameTask);
+                    }
+                    break;
+            }
+            taskIdFrameTypeDict.Add(frameTask.TaskId, frameType);
+            return frameTask.TaskId;
+        }
+        /// <summary>
+        /// 移除等待帧数任务，能够通过taslId识别任务类型。
+        /// </summary>
+        /// <param name="taskId">任务Id</param>
+        public void RemoveFrameTask(long taskId)
+        {
+            var has = taskIdFrameTypeDict.TryRemove(taskId, out var type);
+            if (has)
+            {
+                FrameTask frameTask = default;
+                switch (type)
+                {
+                    case FrameType.Update:
+                        {
+                            updateFrameTaskDict.TryRemove(taskId, out frameTask);
+                            updateFrameTaskList.Remove(frameTask);
+                        }
+                        break;
+                    case FrameType.FixedUpdate:
+                        {
+                            fixedupdateFrameTaskDict.TryRemove(taskId, out frameTask);
+                            fixedupdateFrameTaskList.Remove(frameTask);
+                        }
+                        break;
+                }
+                ReferencePool.Release(frameTask);
             }
         }
         /// <summary>
@@ -229,7 +331,7 @@ namespace Cosmos
             coroutineActionTaskList.Clear();
         }
         /// <summary>
-        /// 条件协程；
+        /// 条件协程
         /// </summary>
         /// <param name="handler">目标条件</param>
         /// <param name="callBack">条件达成后执行的回调</param>
@@ -239,7 +341,7 @@ namespace Cosmos
             return StartCoroutine(EnumPredicateCoroutine(handler, callBack));
         }
         /// <summary>
-        /// 嵌套协程；
+        /// 嵌套协程
         /// </summary>
         /// <param name="predicateHandler">条件函数</param>
         /// <param name="nestHandler">条件成功后执行的嵌套协程</param>
@@ -249,7 +351,7 @@ namespace Cosmos
             return StartCoroutine(EnumPredicateNestCoroutine(predicateHandler, nestHandler));
         }
         /// <summary>
-        /// 延时协程；
+        /// 延时协程
         /// </summary>
         /// <param name="delay">延时的时间</param>
         /// <param name="callBack">延时后的回调函数</param>
@@ -288,6 +390,11 @@ namespace Cosmos
             RefreshRoutineTask();
             RefreshDelayTask();
             RefreshConditionTask();
+            RefreshUpdateFrameTask();
+        }
+        private void FixedUpdate()
+        {
+            RefreshFixedUpdateFrameTask();
         }
         IEnumerator EnumDelay(float delay, Action callBack)
         {
@@ -436,6 +543,66 @@ namespace Cosmos
             else
                 taskIndex++;
             return taskIndex;
+        }
+        void RefreshUpdateFrameTask()
+        {
+            updateFrame++;
+            removalUpdateFrameTaskList.Clear();
+            var taskArray = updateFrameTaskList;
+            var taskCount = taskArray.Count;
+            for (int i = 0; i < taskCount; i++)
+            {
+                var task = taskArray[i];
+                task.CurrentFrame++;
+                if (task.CurrentFrame >= task.TargetFrame)
+                {
+                    try
+                    {
+                        task.Action?.Invoke();
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
+                    removalUpdateFrameTaskList.Add(task);
+                }
+            }
+            var removeCount = removalUpdateFrameTaskList.Count;
+            for (int i = 0; i < removeCount; i++)
+            {
+                var removeTask = removalUpdateFrameTaskList[i];
+                RemoveFrameTask(removeTask.TaskId);
+            }
+        }
+        void RefreshFixedUpdateFrameTask()
+        {
+            fixedUpdateFrame++;
+            removalFixedUpdateFrameTaskList.Clear();
+            var taskArray = fixedupdateFrameTaskList;
+            var taskCount = taskArray.Count;
+            for (int i = 0; i < taskCount; i++)
+            {
+                var task = taskArray[i];
+                task.CurrentFrame++;
+                if (task.CurrentFrame >= task.TargetFrame)
+                {
+                    try
+                    {
+                        task.Action?.Invoke();
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.Debug.LogError(e);
+                    }
+                    removalFixedUpdateFrameTaskList.Add(task);
+                }
+            }
+            var removeCount = removalFixedUpdateFrameTaskList.Count;
+            for (int i = 0; i < removeCount; i++)
+            {
+                var removeTask = removalFixedUpdateFrameTaskList[i];
+                RemoveFrameTask(removeTask.TaskId);
+            }
         }
     }
 }

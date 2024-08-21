@@ -342,6 +342,25 @@ namespace Cosmos
                 CoroutineHelper.RemoveConditionTask(taskId);
             }
             /// <summary>
+            /// 添加等待帧任务
+            /// </summary>
+            /// <param name="frameType">帧类型</param>
+            /// <param name="action">触发的事件</param>
+            /// <param name="frameCount">帧数</param>
+            /// <returns>任务Id</returns>
+            public static long AddFrameTask(FrameType frameType, Action action, long frameCount = 1)
+            {
+                return CoroutineHelper.AddFrameTask(frameType, action, frameCount);
+            }
+            /// <summary>
+            /// 移除等待帧数任务，能够通过taslId识别任务类型。
+            /// </summary>
+            /// <param name="taskId">任务Id</param>
+            public static void RemoveFrameTask(long taskId)
+            {
+                CoroutineHelper.RemoveFrameTask(taskId);
+            }
+            /// <summary>
             /// 添加协程事件任务，每个任务之间完成会相隔一帧
             /// </summary>
             /// <param name="action">事件</param>
