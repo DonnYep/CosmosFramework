@@ -20,32 +20,25 @@ namespace Cosmos
             /// <param name="handler">排序条件</param>
             /// <param name="start">起始位</param>
             /// <param name="end">结束位</param>
-            public static void SortByDescend<T, K>(IList<T> array, Func<T, K> handler, int start, int end)
+            public static void SortByDescending<T, K>(IList<T> array, Func<T, K> handler, int start, int end)
                 where K : IComparable<K>
             {
-                if (array == null)
-                    throw new ArgumentNullException("SortByDescend : array is null");
-                if (handler == null)
-                    throw new ArgumentNullException("SortByDescend : handler is null");
                 if (start < 0 || end < 0 || start >= end)
                 {
                     return;
                 }
-                int pivort = start;
-                T pivortValue = array[pivort];
-                Swap(array, end, pivort);
-                int storeIndex = start;
-                for (int i = start; i <= end - 1; i++)
+                List<T> sublist = new List<T>();
+                for (int i = start; i <= end; i++)
                 {
-                    if (handler(array[i]).CompareTo(handler(pivortValue)) > 0)
-                    {
-                        Swap(array, i, storeIndex);
-                        storeIndex++;
-                    }
+                    sublist.Add(array[i]);
                 }
-                Swap(array, storeIndex, end);
-                SortByDescend(array, handler, start, storeIndex - 1);
-                SortByDescend(array, handler, storeIndex + 1, end);
+                // 使用自定义规则进行排序
+                sublist.Sort((lhs, rhs) => handler(rhs).CompareTo(handler(lhs)));
+                // 将排序后的子列表写回到原来的 IList
+                for (int i = start; i <= end; i++)
+                {
+                    array[i] = sublist[i - start];
+                }
             }
             /// <summary>
             /// 快速排序：升序
@@ -56,77 +49,24 @@ namespace Cosmos
             /// <param name="handler">排序条件</param>
             /// <param name="start">起始位</param>
             /// <param name="end">结束位</param>
-            public static void SortByAscend<T, K>(IList<T> array, Func<T, K> handler, int start, int end)
+            public static void SortByAscending<T, K>(IList<T> array, Func<T, K> handler, int start, int end)
                 where K : IComparable<K>
             {
-                if (array == null)
-                    throw new ArgumentNullException("QuickSortByAscend : array is null");
-                if (handler == null)
-                    throw new ArgumentNullException("QuickSortByAscend : handler is null");
                 if (start < 0 || end < 0 || start >= end)
                 {
                     return;
                 }
-                int pivort = start;
-                T pivortValue = array[pivort];
-                Swap(array, end, pivort);
-                int storeIndex = start;
-                for (int i = start; i <= end - 1; i++)
+                List<T> sublist = new List<T>();
+                for (int i = start; i <= end; i++)
                 {
-                    if (handler(array[i]).CompareTo(handler(pivortValue)) < 0)
-                    {
-                        Swap(array, i, storeIndex);
-                        storeIndex++;
-                    }
+                    sublist.Add(array[i]);
                 }
-                Swap(array, storeIndex, end);
-                SortByAscend(array, handler, start, storeIndex - 1);
-                SortByAscend(array, handler, storeIndex + 1, end);
-            }
-            /// <summary>
-            /// 冒泡排序：升序
-            /// </summary>
-            /// <typeparam name="T">数组类型</typeparam>
-            /// <typeparam name="K">比较类型</typeparam>
-            /// <param name="array">需要排序的数组对象</param>
-            /// <param name="handler">排序条件</param>
-            public static void SortByAscend<T, K>(IList<T> array, Func<T, K> handler)
-                where K : IComparable<K>
-            {
-                for (int i = 0; i < array.Count; i++)
+                // 使用自定义规则进行排序
+                sublist.Sort((lhs, rhs) => handler(lhs).CompareTo(handler(rhs)));
+                // 将排序后的子列表写回到原来的 IList
+                for (int i = start; i <= end; i++)
                 {
-                    for (int j = 0; j < array.Count; j++)
-                    {
-                        if (handler(array[i]).CompareTo(handler(array[j])) < 0)
-                        {
-                            T temp = array[i];
-                            array[i] = array[j];
-                            array[j] = temp;
-                        }
-                    }
-                }
-            }
-            /// <summary>
-            /// 冒泡排序：降序
-            /// </summary>
-            /// <typeparam name="T">数组类型</typeparam>
-            /// <typeparam name="K">比较类型</typeparam>
-            /// <param name="array">需要排序的数组对象</param>
-            /// <param name="handler">排序条件</param>
-            public static void SortByDescend<T, K>(IList<T> array, Func<T, K> handler)
-                where K : IComparable<K>
-            {
-                for (int i = 0; i < array.Count; i++)
-                {
-                    for (int j = 0; j < array.Count; j++)
-                    {
-                        if (handler(array[i]).CompareTo(handler(array[j])) > 0)
-                        {
-                            T temp = array[i];
-                            array[i] = array[j];
-                            array[j] = temp;
-                        }
-                    }
+                    array[i] = sublist[i - start];
                 }
             }
             /// <summary>
@@ -135,21 +75,13 @@ namespace Cosmos
             /// <typeparam name="T">数组类型</typeparam>
             /// <typeparam name="K">比较类型</typeparam>
             /// <param name="array">需要排序的数组对象</param>
-            /// <param name="comparison">排序条件</param>
-            public static void SortByAscend<T, K>(IList<T> array, Comparison<T> comparison)
+            /// <param name="handler">排序条件</param>
+            public static void SortByAscending<T, K>(IList<T> array, Func<T, K> handler)
+                where K : IComparable<K>
             {
-                for (int i = 0; i < array.Count; i++)
-                {
-                    for (int j = 0; j < array.Count; j++)
-                    {
-                        if (comparison(array[i], array[j]) < 0)
-                        {
-                            T temp = array[i];
-                            array[i] = array[j];
-                            array[j] = temp;
-                        }
-                    }
-                }
+                List<T> sublist = new List<T>();
+                sublist.AddRange(array);
+                sublist.Sort((lhs, rhs) => handler(lhs).CompareTo(handler(rhs)));
             }
             /// <summary>
             /// 冒泡排序：降序
@@ -157,20 +89,48 @@ namespace Cosmos
             /// <typeparam name="T">数组类型</typeparam>
             /// <typeparam name="K">比较类型</typeparam>
             /// <param name="array">需要排序的数组对象</param>
-            /// <param name="comparison">排序条件</param>
-            public static void SortByDescend<T, K>(IList<T> array, Comparison<T> comparison)
+            /// <param name="handler">排序条件</param>
+            public static void SortByDescending<T, K>(IList<T> array, Func<T, K> handler)
+                where K : IComparable<K>
             {
-                for (int i = 0; i < array.Count; i++)
+                List<T> sublist = new List<T>();
+                sublist.AddRange(array);
+                sublist.Sort((lhs, rhs) => handler(rhs).CompareTo(handler(lhs)));
+            }
+            /// <summary>
+            /// 根据自定义的规则进行排序
+            /// </summary>
+            /// <typeparam name="T">数组类型</typeparam>
+            /// <param name="array">需要排序的数组对象</param>
+            /// <param name="comparison">排序条件</param>
+            public static void SortByRule<T>(IList<T> array, Comparison<T> comparison)
+            {
+                List<T> sublist = new List<T>();
+                sublist.AddRange(array);
+                sublist.Sort(comparison);
+            }
+            /// <summary>
+            /// 根据自定义的规则进行排序
+            /// </summary>
+            /// <typeparam name="T">数组类型</typeparam>
+            /// <param name="array">需要排序的数组对象</param>
+            /// <param name="comparison">排序条件</param>
+            /// <param name="start">起始位</param>
+            /// <param name="end">结束位</param>
+            public static void SortByRule<T>(IList<T> array, Comparison<T> comparison, int start, int end)
+            {
+                // 创建一个局部列表，只包含需要排序的部分
+                List<T> sublist = new List<T>();
+                for (int i = start; i <= end; i++)
                 {
-                    for (int j = 0; j < array.Count; j++)
-                    {
-                        if (comparison(array[i], array[j]) > 0)
-                        {
-                            T temp = array[i];
-                            array[i] = array[j];
-                            array[j] = temp;
-                        }
-                    }
+                    sublist.Add(array[i]);
+                }
+                // 使用 List<T>.Sort 方法并应用自定义的 Comparison<T> 规则
+                sublist.Sort(comparison);
+                // 将排序后的子列表写回到原来的 IList 中
+                for (int i = start; i <= end; i++)
+                {
+                    array[i] = sublist[i - start];
                 }
             }
             /// <summary>

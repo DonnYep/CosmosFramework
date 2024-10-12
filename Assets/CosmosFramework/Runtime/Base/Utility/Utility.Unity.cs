@@ -69,7 +69,7 @@ namespace Cosmos
                 where K : IComparable<K>
                 where T : Component
             {
-                Utility.Algorithm.SortByAscend(comps, handler);
+                Utility.Algorithm.SortByAscending(comps, handler);
                 var length = comps.Length;
                 for (int i = 0; i < length; i++)
                 {
@@ -87,7 +87,7 @@ namespace Cosmos
         where K : IComparable<K>
         where T : Component
             {
-                Utility.Algorithm.SortByDescend(comps, handler);
+                Utility.Algorithm.SortByDescending(comps, handler);
                 var length = comps.Length;
                 for (int i = 0; i < length; i++)
                 {
