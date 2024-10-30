@@ -223,5 +223,19 @@ namespace Cosmos
         {
             return first.Where(f => second.Any(s => condition(f, s)));
         }
+        /// <summary>
+        /// 根据字段进行去重
+        /// </summary>
+        public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (T element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
     }
 }
