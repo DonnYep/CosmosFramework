@@ -199,6 +199,19 @@ where T : Component
             Array.Copy(src, 0, dst, 0, idx);
             return dst;
         }
+        /// <summary>
+        /// 获取子对象
+        /// </summary>
+        /// <param name="path">相对路径，如 DisplayPanel/btnClose</param>
+        /// <returns>获取到的对象</returns>
+        public static GameObject GetGameObject(this GameObject @this, string path = null)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return @this;
+            }
+            return @this?.transform.Find(path)?.gameObject;
+        }
         public static GameObject TryRemoveComponent<T>(this GameObject @this) where T : Component
         {
             var t = @this.GetComponent<T>();
