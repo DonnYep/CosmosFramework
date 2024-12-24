@@ -320,13 +320,11 @@ namespace Cosmos
             /// <returns>是否在同一周</returns>
             public static bool MatchWeek(DateTime lhs, DateTime rhs)
             {
-                int lhsYear = lhs.Year;
-                int lhsWeek = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(lhs, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-                // 获取要检测日期的年、月、日和星期几
-                int rhsYear = rhs.Year;
-                int rhsWeek = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(rhs, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-                bool isSameWeek = lhsYear == rhsYear && lhsWeek == rhsWeek;
-                return isSameWeek;
+                // 计算每个日期周的开始日期（以周一为第一天）
+                DateTime startOfWeek1 = lhs.AddDays(-(int)lhs.DayOfWeek + (int)DayOfWeek.Monday);
+                DateTime startOfWeek2 = rhs.AddDays(-(int)rhs.DayOfWeek + (int)DayOfWeek.Monday);
+                // 比较两者的周开始日期
+                return startOfWeek1.Date == startOfWeek2.Date;
             }
             /// <summary>
             /// 检测两个日期是否在同一个月
