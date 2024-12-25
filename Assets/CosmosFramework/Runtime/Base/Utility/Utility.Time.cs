@@ -313,7 +313,8 @@ namespace Cosmos
                 return true;
             }
             /// <summary>
-            /// 检测两个日期是否在同一周
+            /// 检测两个日期是否在同一周。
+            /// <para>定义周日是每周的第一天</para>
             /// </summary>
             /// <param name="lhs">时间1</param>
             /// <param name="rhs">时间2</param>
@@ -323,6 +324,21 @@ namespace Cosmos
                 // 计算每个日期周的开始日期（以周一为第一天）
                 DateTime startOfWeek1 = lhs.AddDays(-(int)lhs.DayOfWeek + (int)DayOfWeek.Monday);
                 DateTime startOfWeek2 = rhs.AddDays(-(int)rhs.DayOfWeek + (int)DayOfWeek.Monday);
+                // 比较两者的周开始日期
+                return startOfWeek1.Date == startOfWeek2.Date;
+            }
+            /// <summary>
+            /// 检测两个日期是否在同一周。
+            /// <para>ISO标准，定义周一是每周的第一天</para>
+            /// </summary>
+            /// <param name="lhs">时间1</param>
+            /// <param name="rhs">时间2</param>
+            /// <returns>是否在同一周</returns>
+            public static bool MatchISOWeek(DateTime lhs, DateTime rhs)
+            {
+                // 计算每个日期周的开始日期（以周一为第一天）
+                DateTime startOfWeek1 = lhs.AddDays(-(lhs.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)lhs.DayOfWeek) + (int)DayOfWeek.Monday);
+                DateTime startOfWeek2 = rhs.AddDays(-(rhs.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)rhs.DayOfWeek) + (int)DayOfWeek.Monday);
                 // 比较两者的周开始日期
                 return startOfWeek1.Date == startOfWeek2.Date;
             }
