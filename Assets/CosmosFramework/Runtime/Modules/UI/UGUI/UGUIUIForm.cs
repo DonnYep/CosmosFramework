@@ -71,6 +71,10 @@ namespace Cosmos.UI
             transform.SetSiblingIndex(index);
         }
         ///<inheritdoc/>
+        public virtual void OnFocusGained() { }
+        ///<inheritdoc/>
+        public virtual void OnFocusLost() { }
+        ///<inheritdoc/>
         public virtual void OnClose()
         {
             gameObject.SetActive(false);
@@ -131,5 +135,7 @@ namespace Cosmos.UI
             }
             return comp;
         }
+
+
     }
 }
