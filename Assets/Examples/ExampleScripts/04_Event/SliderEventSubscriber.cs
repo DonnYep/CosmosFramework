@@ -3,30 +3,31 @@ using UnityEngine.UI;
 using Cosmos;
 public class SliderEventSubscriber : MonoBehaviour
 {
-    [SerializeField]
-    string eventKey = "defaultEventKey";
-    public string EventKey { get { return eventKey; } }
-    LogicEventArgs<Slider> uch;
-    public void RegisterEvent()
-    {
-        CosmosEntry.EventManager.AddListener(eventKey, Handler);
-    }
+    string startText;
     Slider slider;
     Text text;
+
     private void Start()
     {
         slider = GetComponentInChildren<Slider>();
         text = GetComponentInChildren<Text>();
         startText = text.text;
+        var btnDeregister = gameObject.GetComponentInChildren<Button>("Btn_Deregister");
+        var btnRegister = gameObject.GetComponentInChildren<Button>("Btn_Register");
+        btnDeregister.onClick.AddListener(RemoveEvent);
+        btnRegister.onClick.AddListener(AddEvent);
     }
-    string startText;
-    void Handler(object sender, GameEventArgs arg)
+    void AddEvent()
     {
-        uch = arg as LogicEventArgs<Slider>;
-        var data = uch.GetData();
-        slider.maxValue = data.maxValue;
-        slider.value = data.value;
-        
+        CosmosEntry.EventManager.AddEvent<SliderEvent>(SliderEventHandler);
     }
-
+    void RemoveEvent()
+    {
+        CosmosEntry.EventManager.RemoveEvent<SliderEvent>(SliderEventHandler);
+    }
+    void SliderEventHandler(SliderEvent arg)
+    {
+        slider.maxValue = arg.MaxValue;
+        slider.value = arg.Value;
+    }
 }

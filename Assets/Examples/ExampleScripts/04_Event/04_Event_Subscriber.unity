@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -316,18 +316,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 86355607}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 319293735}
-        m_MethodName: DeregisterEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &86355607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -549,18 +538,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 233804670}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1410858918}
-        m_MethodName: RegisterEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &233804670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -952,7 +930,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fed26f11e5e7684480ac2b3b0045620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventKey: Slider
 --- !u!114 &319293736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1044,7 +1021,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fed26f11e5e7684480ac2b3b0045620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventKey: Slider
 --- !u!114 &357489794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2113,18 +2089,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 979425796}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 319293735}
-        m_MethodName: RegisterEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &979425796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2342,7 +2307,7 @@ RectTransform:
   m_Children:
   - {fileID: 1427425501}
   m_Father: {fileID: 1080463699}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2391,18 +2356,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1050675045}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1080463700}
-        m_MethodName: RegisterEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1050675045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2472,8 +2426,8 @@ RectTransform:
   m_Children:
   - {fileID: 926576983}
   - {fileID: 1391119439}
-  - {fileID: 1050675043}
   - {fileID: 1193777329}
+  - {fileID: 1050675043}
   m_Father: {fileID: 92300130}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2494,7 +2448,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fed26f11e5e7684480ac2b3b0045620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventKey: Slider
 --- !u!114 &1080463701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2731,7 +2684,7 @@ RectTransform:
   m_Children:
   - {fileID: 2108843131}
   m_Father: {fileID: 1080463699}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2780,18 +2733,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1193777331}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1080463700}
-        m_MethodName: DeregisterEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1193777331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3109,18 +3051,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1307936289}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1410858918}
-        m_MethodName: DeregisterEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1307936289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3521,7 +3452,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fed26f11e5e7684480ac2b3b0045620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventKey: Slider
 --- !u!114 &1410858919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4224,18 +4154,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1720239931}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 357489793}
-        m_MethodName: RegisterEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1720239931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4381,6 +4300,7 @@ MonoBehaviour:
   resourceLoadMode: 0
   resourceLoaderName: Cosmos.Test.QuarkLoader
   resourceLoaderIndex: 0
+  printLogWhenAssetNotExists: 0
   debugHelperIndex: 1
   jsonHelperIndex: 1
   messagePackHelperIndex: 0
@@ -4391,13 +4311,13 @@ MonoBehaviour:
   resourceDataset: {fileID: 0}
   resourceBundlePathType: 0
   relativeBundlePath: 
-  assetBundleEncrytion: 0
-  assetBundleEncrytionOffset: 16
   manifestEncrytion: 0
   manifestEncrytionKey: CosmosBundlesKey
   drawDebugWindow: 0
+  disableDebugLog: 0
   inputHelperIndex: 0
   inputHelperName: <NONE>
+  moduleConfigFoldout: 0
 --- !u!4 &1865920171
 Transform:
   m_ObjectHideFlags: 0
@@ -4715,18 +4635,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1984190313}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 357489793}
-        m_MethodName: DeregisterEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1984190313
 MonoBehaviour:
   m_ObjectHideFlags: 0

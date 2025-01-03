@@ -7,7 +7,7 @@ namespace Cosmos
     public abstract class GameEventArgs : EventArgs, IReference
     {
         /// <summary>
-        /// 释放EventArgs；
+        /// 释放EventArgs
         /// </summary>
         public abstract void Release();
     }

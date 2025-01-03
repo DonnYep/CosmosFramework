@@ -4,37 +4,37 @@ namespace Cosmos.Event
 {
     //================================================
     /*
-     * 1、事件中心；
+     * 1、事件中心。使用数据作为事件的key。
      */
     //================================================
     [Module]
     internal sealed partial class EventManager : Module, IEventManager
     {
-        Dictionary<string, EventNode> eventDict;
+        readonly Dictionary<string, EventNodeBase> eventDict = new Dictionary<string, EventNodeBase>();
         ///<inheritdoc/>
         public int EventCount { get { return eventDict.Count; } }
-        ///<inheritdoc/>
-        public void AddListener(string eventKey, EventHandler<GameEventArgs> handler)
+        public void AddEvent<T>(Action<T> handler)
+            where T : GameEventArgs
         {
-            if (string.IsNullOrEmpty(eventKey))
-                throw new ArgumentNullException("EventKey is invalid !");
-            if (eventDict.ContainsKey(eventKey))
+            var eventKey = typeof(T).FullName;
+            EventNode<T> node = default;
+            if (!eventDict.TryGetValue(eventKey, out var nodeBase))
             {
-                eventDict[eventKey].EventHandler += handler;
+                node = new EventNode<T>();
+                nodeBase = node;
+                eventDict.TryAdd(eventKey, nodeBase);
             }
-            else
-            {
-                eventDict.TryAdd(eventKey, new EventNode());
-                eventDict[eventKey].EventHandler += handler;
-            }
+            node = nodeBase as EventNode<T>;
+            node.EventHandler += handler;
         }
         ///<inheritdoc/>
-        public void RemoveListener(string eventKey, EventHandler<GameEventArgs> handler)
+        public void RemoveEvent<T>(Action<T> handler)
+            where T : GameEventArgs
         {
-            if (string.IsNullOrEmpty(eventKey))
-                throw new ArgumentNullException("EventKey is invalid !");
-            if (eventDict.TryGetValue(eventKey, out var node))
+            var eventKey = typeof(T).FullName;
+            if (eventDict.TryGetValue(eventKey, out var nodeBase))
             {
+                var node = nodeBase as EventNode<T>;
                 node.EventHandler -= handler;
                 if (node.ListenerCount <= 0)
                 {
@@ -43,44 +43,17 @@ namespace Cosmos.Event
             }
         }
         ///<inheritdoc/>
-        public void DispatchEvent(string eventKey, object sender, GameEventArgs args)
+        public void RemoveAllEvents<T>()
+            where T : GameEventArgs
         {
-            if (string.IsNullOrEmpty(eventKey))
-                throw new ArgumentNullException("EventKey is invalid !");
-            if (eventDict.TryGetValue(eventKey, out var node))
+            var eventKey = typeof(T).FullName;
+            if (eventDict.TryRemove(eventKey, out var nodeBase))
             {
-                eventDict[eventKey].DispatchEvent(sender, args);
+                nodeBase.Clear();
             }
         }
         ///<inheritdoc/>
-        public bool DeregisterEvent(string eventKey)
-        {
-            if (string.IsNullOrEmpty(eventKey))
-                throw new ArgumentNullException("EventKey is invalid !");
-            return eventDict.Remove(eventKey);
-        }
-        ///<inheritdoc/>
-        public void RegisterEvent(string eventKey)
-        {
-            if (string.IsNullOrEmpty(eventKey))
-                throw new ArgumentNullException("EventKey is invalid !");
-            if (!eventDict.ContainsKey(eventKey))
-            {
-                eventDict.TryAdd(eventKey, new EventNode());
-            }
-        }
-        ///<inheritdoc/>
-        public void ClearEvent(string eventKey)
-        {
-            if (string.IsNullOrEmpty(eventKey))
-                throw new ArgumentNullException("EventKey is invalid !");
-            if (eventDict.TryGetValue(eventKey, out var node))
-            {
-                node.Clear();
-            }
-        }
-        ///<inheritdoc/>
-        public void ClearAllEvent()
+        public void RemoveAllEvents()
         {
             foreach (var node in eventDict)
             {
@@ -89,26 +62,33 @@ namespace Cosmos.Event
             eventDict.Clear();
         }
         ///<inheritdoc/>
-        public bool HasEvent(string eventKey)
+        public void Dispatch<T>(T args)
+            where T : GameEventArgs
         {
-            if (string.IsNullOrEmpty(eventKey))
-                throw new ArgumentNullException("EventKey is invalid !");
+            var eventKey = typeof(T).FullName;
+            if (eventDict.TryGetValue(eventKey, out var nodeBase))
+            {
+                var node = nodeBase as EventNode<T>;
+                node.Dispatch(args);
+            }
+        }
+        ///<inheritdoc/>
+        public bool HasEvent<T>()
+            where T : GameEventArgs
+        {
+            var eventKey = typeof(T).FullName;
             return eventDict.ContainsKey(eventKey);
         }
         ///<inheritdoc/>
-        public EventInfo GetEventInfo(string eventKey)
+        public EventInfo GetEventInfo<T>()
+            where T : GameEventArgs
         {
-            if (string.IsNullOrEmpty(eventKey))
-                throw new ArgumentNullException("EventKey is invalid !");
+            var eventKey = typeof(T).FullName;
             if (eventDict.TryGetValue(eventKey, out var node))
             {
                 return EventInfo.Create(eventKey, node.ListenerCount);
             }
             return EventInfo.Default;
-        }
-        protected override void OnInitialization()
-        {
-            eventDict = new Dictionary<string, EventNode>();
         }
     }
 }

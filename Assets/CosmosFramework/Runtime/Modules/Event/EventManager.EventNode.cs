@@ -1,14 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 namespace Cosmos.Event
 {
     internal sealed partial class EventManager
     {
-        private class EventNode
+        private abstract class EventNodeBase
+        {
+            public abstract int ListenerCount { get; }
+            public abstract void Clear();
+        }
+        private class EventNode<T> : EventNodeBase
+            where T : GameEventArgs
         {
             int listenerCount = 0;
-            EventHandler<GameEventArgs> eventHandler;
-            public int ListenerCount { get { return listenerCount; } }
-            public event EventHandler<GameEventArgs> EventHandler
+            Action<T> eventHandler;
+            public override int ListenerCount
+            {
+                get { return listenerCount; }
+            }
+            public event Action<T> EventHandler
             {
                 add
                 {
@@ -22,11 +32,11 @@ namespace Cosmos.Event
                         listenerCount--;
                 }
             }
-            public void DispatchEvent(object sender, GameEventArgs args)
+            public void Dispatch(T args)
             {
-                eventHandler?.Invoke(sender, args);
+                eventHandler?.Invoke(args);
             }
-            public void Clear()
+            public override void Clear()
             {
                 eventHandler = null;
                 listenerCount = 0;
