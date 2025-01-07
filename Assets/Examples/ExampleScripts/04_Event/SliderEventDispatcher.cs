@@ -2,11 +2,8 @@
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.Event;
-using static UnityEngine.UI.Slider;
 public class SliderEventDispatcher : MonoBehaviour
 {
-    [SerializeField]
-    string eventKey = "defaultEventKey";
     SliderEvent sliderEvent;
     IEventManager eventManager;
     Slider slider;

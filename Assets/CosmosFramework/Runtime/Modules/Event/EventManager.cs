@@ -4,7 +4,7 @@ namespace Cosmos.Event
 {
     //================================================
     /*
-     * 1、事件中心。使用数据作为事件的key。
+     * 1、事件中心。使用数据类型作为事件的key。
      */
     //================================================
     [Module]
@@ -86,7 +86,7 @@ namespace Cosmos.Event
             var eventKey = typeof(T).FullName;
             if (eventDict.TryGetValue(eventKey, out var node))
             {
-                return EventInfo.Create(eventKey, node.ListenerCount);
+                return EventInfo.Create(typeof(T), node.ListenerCount);
             }
             return EventInfo.Default;
         }
