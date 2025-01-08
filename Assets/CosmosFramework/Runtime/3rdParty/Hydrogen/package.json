@@ -1,0 +1,11 @@
+{
+    "name": "com.hydrogen",
+    "displayName": "Hydrogen",
+    "version": "0.0.1",
+    "unity": "2020.3",
+    "description": "可自定义header的tcp库",
+    "dependencies": {},
+    "keywords": [
+        "tcp"
+    ]
+}
