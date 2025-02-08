@@ -21,7 +21,6 @@ namespace Cosmos
 
         [SerializeField] string debugHelperName;
         [SerializeField] string jsonHelperName;
-        [SerializeField] string messagePackHelperName;
 
         [SerializeField] bool runInBackground;
 
@@ -131,12 +130,6 @@ namespace Cosmos
                 var jsonHelper = Utility.Assembly.GetTypeInstance(jsonHelperName);
                 if (jsonHelper != null)
                     Utility.Json.SetHelper((Utility.Json.IJsonHelper)jsonHelper);
-            }
-            if (!string.IsNullOrEmpty(messagePackHelperName) && messagePackHelperName != Constants.NONE)
-            {
-                var messagePackHelper = Utility.Assembly.GetTypeInstance(messagePackHelperName);
-                if (messagePackHelper != null)
-                    Utility.MessagePack.SetHelper((Utility.MessagePack.IMessagePackHelper)messagePackHelper);
             }
         }
         void SetInputHelper()

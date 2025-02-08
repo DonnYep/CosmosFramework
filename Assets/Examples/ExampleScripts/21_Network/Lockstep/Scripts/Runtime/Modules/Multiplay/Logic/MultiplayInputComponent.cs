@@ -1,7 +1,8 @@
 ﻿using Cosmos.Input;
 using UnityEngine;
 using Protocol;
-
+using MessagePack;
+using MessagePack.Resolvers;
 namespace Cosmos.Lockstep
 {
     /// <summary>
@@ -41,7 +42,7 @@ namespace Cosmos.Lockstep
             {
                 opInput.MouseLeftDown = true;
                 opInput.Conv = multiplayManager.AuthorityConv;
-                var bytes = Utility.MessagePack.Serialize(opInput);
+                var bytes = MessagePackSerializer.Serialize(opInput);
                 multiplayManager.SendInputData(bytes);
             }
 
@@ -54,7 +55,7 @@ namespace Cosmos.Lockstep
             {
                 latestTime = now + sendInterval;
                 opInput.Conv = multiplayManager.AuthorityConv;
-                var bytes = Utility.MessagePack.Serialize(opInput);
+                var bytes = MessagePackSerializer.Serialize(opInput);
                 multiplayManager.SendInputData(bytes);
             }
         }

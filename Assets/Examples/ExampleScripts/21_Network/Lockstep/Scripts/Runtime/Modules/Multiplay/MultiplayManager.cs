@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Text;
+using MessagePack;
 namespace Cosmos.Lockstep
 {
     //================================================
@@ -52,7 +53,7 @@ namespace Cosmos.Lockstep
             {
                 case MultiplayOperationCode.SYN:
                     {
-                        var messageDict = Utility.MessagePack.Deserialize<Dictionary<byte, object>>(opData.DataContract);
+                        var messageDict = MessagePackSerializer.Deserialize<Dictionary<byte, object>>(opData.DataContract);
                         var authorityConv = messageDict.GetValue((byte)MultiplayParameterCode.AuthorityConv);
                         var serverSyncInterval = messageDict.GetValue((byte)MultiplayParameterCode.ServerSyncInterval);
                         AuthorityConv = Convert.ToInt32(authorityConv);
@@ -87,7 +88,7 @@ namespace Cosmos.Lockstep
                     break;
                 case MultiplayOperationCode.PlayerInput:
                     {
-                        var fixTransports = Utility.MessagePack.Deserialize<Dictionary<int, List<byte[]>>>(opData.DataContract);
+                        var fixTransports = MessagePackSerializer.Deserialize<Dictionary<int, List<byte[]>>>(opData.DataContract);
                         if (fixTransports != null)
                         {
                             multiplayEntitiesAgent.OnMultiplayInput(fixTransports);

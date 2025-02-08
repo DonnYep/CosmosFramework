@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MessagePack;
 using Protocol;
 using UnityEngine;
 namespace Cosmos.Lockstep
@@ -28,7 +29,7 @@ namespace Cosmos.Lockstep
                 var length = ipt.Value.Count;
                 for (int i = 0; i < length; i++)
                 {
-                    comp.OnTickInput(Utility.MessagePack.Deserialize<OpInput>(ipt.Value[i]));
+                    comp.OnTickInput(MessagePackSerializer.Deserialize<OpInput>(ipt.Value[i]));
                 }
             }
         }

@@ -1,25 +1,24 @@
 ﻿using System;
-using Newtonsoft.Json;
 namespace Cosmos.Test
 {
     [Implementer]
-    public class NewtonjsonHelper : Utility.Json.IJsonHelper
+    public class LitJsonHelper : Utility.Json.IJsonHelper
     {
         public string ToJson(object obj)
         {
-            return JsonConvert.SerializeObject(obj);
+            return LitJson.JsonMapper.ToJson(obj);
         }
         public string ToJson(object obj, bool prettyPrint)
         {
-            return JsonConvert.SerializeObject(obj,Formatting.Indented);
+            return LitJson.JsonMapper.ToJson(obj);
         }
         public T ToObject<T>(string json)
         {
-            return JsonConvert.DeserializeObject<T>(json);
+            return LitJson.JsonMapper.ToObject< T>(json);
         }
         public object ToObject(string json, Type objectType)
         {
-            return JsonConvert.DeserializeObject(json, objectType);
+            return LitJson.JsonMapper.ToObject(json, objectType);
         }
     }
 }

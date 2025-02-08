@@ -32,7 +32,6 @@ namespace Cosmos.Editor
 
         SerializedProperty sp_DebugHelperName;
         SerializedProperty sp_JsonHelperName;
-        SerializedProperty sp_MessagePackHelperName;
 
         SerializedProperty sp_RunInBackground;
 
@@ -46,7 +45,6 @@ namespace Cosmos.Editor
 
         string[] debugHelpers;
         string[] jsonHelpers;
-        string[] messagePackHelpers;
 
         int debugHelperIndex;
         int jsonHelperIndex;
@@ -111,7 +109,6 @@ namespace Cosmos.Editor
         {
             debugHelpers = EditorUtil.GetDerivedTypeHandlers<Utility.Debug.IDebugHelper>();
             jsonHelpers = EditorUtil.GetDerivedTypeHandlers<Utility.Json.IJsonHelper>();
-            messagePackHelpers = EditorUtil.GetDerivedTypeHandlers<Utility.MessagePack.IMessagePackHelper>();
             InputHelperNames = EditorUtil.GetDerivedTypeHandlers<IInputHelper>();
 
             var srcLoaders = Utility.Assembly.GetDerivedTypeNames<IResourceLoadHelper>();
@@ -140,7 +137,6 @@ namespace Cosmos.Editor
 
             sp_DebugHelperName = targetObject.FindProperty("debugHelperName");
             sp_JsonHelperName = targetObject.FindProperty("jsonHelperName");
-            sp_MessagePackHelperName = targetObject.FindProperty("messagePackHelperName");
             sp_RunInBackground = targetObject.FindProperty("runInBackground");
             sp_ResourceDataset = targetObject.FindProperty("resourceDataset");
             sp_ResourceBundlePathType = targetObject.FindProperty("resourceBundlePathType");
@@ -171,7 +167,6 @@ namespace Cosmos.Editor
             resourceLoaderIndex = sp_ResourceLoaderIndex.intValue;
             sp_DebugHelperName.stringValue = debugHelpers[sp_DebugHelperIndex.intValue];
             sp_JsonHelperName.stringValue = jsonHelpers[sp_JsonHelperIndex.intValue];
-            sp_MessagePackHelperName.stringValue = messagePackHelpers[sp_MessagePackHelperIndex.intValue];
             sp_ResourceLoaderName.stringValue = sp_ResourceLoaderName.stringValue;
             runInBackground = sp_RunInBackground.boolValue;
             resourceBundlePathTypeIndex = sp_ResourceBundlePathType.enumValueIndex;
@@ -203,13 +198,6 @@ namespace Cosmos.Editor
             {
                 sp_JsonHelperIndex.intValue = jsonHelperIndex;
                 sp_JsonHelperName.stringValue = jsonHelpers[sp_JsonHelperIndex.intValue];
-            }
-
-            messagePackHelperIndex = EditorGUILayout.Popup("MessagePackHelper", messagePackHelperIndex, messagePackHelpers);
-            if (messagePackHelperIndex != sp_MessagePackHelperIndex.intValue)
-            {
-                sp_MessagePackHelperIndex.intValue = messagePackHelperIndex;
-                sp_MessagePackHelperName.stringValue = messagePackHelpers[sp_MessagePackHelperIndex.intValue];
             }
         }
         void DrawModuleLaunchConfig()
