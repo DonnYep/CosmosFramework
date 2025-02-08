@@ -1,6 +1,6 @@
 ﻿namespace Cosmos
 {
-    public enum AsyncOperationStatus
+    public enum OperationStatus
     {
         None,
         Processing,

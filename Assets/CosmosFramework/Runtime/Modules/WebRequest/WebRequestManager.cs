@@ -8,10 +8,10 @@ namespace Cosmos.WebRequest
     //================================================
     /*
      * 1、WebRequest用于加载AssetBundle资源。资源状态可以是Remote的，
-    *  也可以是Local下persistentDataPath的；
+    *  也可以是Local下persistentDataPath的。
      * 
-     * 2、内置已经实现了一个默认的WebRequest帮助类对象；模块初始化时会
-    * 自动加载并将默认的helper设置为此模块的默认加载helper；
+     * 2、内置已经实现了一个默认的WebRequest帮助类对象。模块初始化时会
+    * 自动加载并将默认的helper设置为此模块的默认加载helper。
     * 
     * 3、请求以队列形式存在。
     * 

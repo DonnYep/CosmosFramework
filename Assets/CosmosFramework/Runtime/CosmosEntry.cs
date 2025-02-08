@@ -19,11 +19,11 @@ namespace Cosmos
     {
         static bool isLaunched = false;
         /// <summary>
-        /// 当前模块数量；
+        /// 当前模块数量。
         /// </summary>
         public static int ModuleCount { get { return GameManager.ModuleCount; } }
         /// <summary>
-        /// 在初始化时是否打印Module的debug信息；
+        /// 在初始化时是否打印Module的debug信息。
         /// </summary>
         public static bool PrintModulePreparatory
         {
@@ -46,7 +46,7 @@ namespace Cosmos
             remove { GameManager.TickRefreshHandler -= value; }
         }
         /// <summary>
-        /// 时间流逝轮询委托；
+        /// 时间流逝轮询委托。
         /// </summary>
         public static event Action<float> ElapseRefreshHandler
         {
@@ -68,8 +68,8 @@ namespace Cosmos
         public static IDownloadManager DownloadManager { get { return GetModule<IDownloadManager>(); } }
         public static IDataTableManager DataTableManager { get { return GetModule<IDataTableManager>(); } }
         /// <summary>
-        /// 初始化当前AppDomain下的Module；
-        /// 注意：初始化尽量只执行一次！！！
+        /// 初始化当前AppDomain下的Module。
+        /// <para>注意：初始化尽量只执行一次！！！</para>
         /// </summary>
         public static void LaunchAppDomainModules()
         {
@@ -79,7 +79,7 @@ namespace Cosmos
             GameManager.InitiateAppDomainModule();
         }
         /// <summary>
-        /// 初始化目标程序集下的Module
+        /// 初始化目标程序集下的Module。
         /// <para> 注意：初始化尽量只执行一次！！！</para>
         /// </summary>
         /// <param name="assemblies">查询的目标程序集</param>

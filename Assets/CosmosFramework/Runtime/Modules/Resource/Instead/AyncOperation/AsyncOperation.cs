@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Cosmos.Operation;
 namespace Cosmos.Resource
 {
-    public class AsssetOperation<T> : AsyncOperationBase
+    public class AsssetOperation<T> : OperationBase
         where T : UnityEngine.Object
     {
         T assetObject;

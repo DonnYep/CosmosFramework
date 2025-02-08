@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-namespace Cosmos
+namespace Cosmos.Operation
 {
-    public class AsyncOperationDriver:MonoBehaviour
+    public class OperationDriver:MonoBehaviour
     {
         private void Update()
         {

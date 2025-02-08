@@ -5,7 +5,7 @@ namespace Cosmos.UI
     internal sealed partial class UIManager
     {
         /// <summary>
-        /// 记录UIForm状态；
+        /// 记录UIForm状态。
         /// </summary>
         internal class UIFormState : IEquatable<UIFormState>
         {

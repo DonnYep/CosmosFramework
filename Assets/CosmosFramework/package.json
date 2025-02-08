@@ -1,8 +1,8 @@
 {
   "name": "com.cosmosframework",
   "displayName": "CosmosFramework",
-  "version": "2.0.0",
-  "unity": "2019.3",
+  "version": "2.0.1",
+  "unity": "2021.3",
   "description": "Lightweight plug-in Unity development framework.",
   "licensesUrl": "https://github.com/DonnYep/CosmosFramework/blob/v1.3/LICENSE",
   "dependencies": {

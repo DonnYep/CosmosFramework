@@ -7,8 +7,7 @@
         /// </summary>
         void OnInitialization();
         /// <summary>
-        /// 模块准备工作，在OnInitialization()函数之后执行
-        /// Start方法中被调用
+        /// 模块准备工作，在OnInitialization()函数之后执行。
         /// </summary>
         void OnPreparatory();
         /// <summary>
@@ -24,7 +23,7 @@
         /// </summary>
         void OnUnPause();
         /// <summary>
-        /// 时间流逝轮询;
+        /// 时间流逝轮询
         /// </summary>
         /// <param name="msNow">utc毫秒当前时间</param>
         void OnElapseRefresh(long msNow);

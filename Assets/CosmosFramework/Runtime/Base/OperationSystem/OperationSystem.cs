@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cosmos
+namespace Cosmos.Operation
 {
     internal class OperationSystem
     {
-        private static readonly List<AsyncOperationBase> operationList = new List<AsyncOperationBase>(1000);
-        private static readonly List<AsyncOperationBase> newList = new List<AsyncOperationBase>(1000);
-        static AsyncOperationDriver asyncOperationDriver;
+        private static readonly List<OperationBase> operationList = new List<OperationBase>(1000);
+        private static readonly List<OperationBase> newList = new List<OperationBase>(1000);
+        /// <summary>
+        /// 异步刷新驱动
+        /// </summary>
+        static OperationDriver asyncOperationDriver;
         public static void Update()
         {
             // 添加新增的异步操作
@@ -63,7 +66,7 @@ namespace Cosmos
         /// <summary>
         /// 开始处理异步操作类
         /// </summary>
-        public static void StartOperation(AsyncOperationBase operation)
+        public static void StartOperation(OperationBase operation)
         {
             CheckAsyncOperationDriver();
             newList.Add(operation);
@@ -77,7 +80,7 @@ namespace Cosmos
                 var go = new GameObject("AsyncOperationDriver ");
                 go.hideFlags = HideFlags.HideInHierarchy;
                 GameObject.DontDestroyOnLoad(go);
-                asyncOperationDriver = go.AddComponent<AsyncOperationDriver>();
+                asyncOperationDriver = go.AddComponent<OperationDriver>();
             }
         }
     }
