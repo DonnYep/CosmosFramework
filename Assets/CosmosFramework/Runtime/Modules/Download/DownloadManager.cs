@@ -4,17 +4,17 @@ namespace Cosmos.Download
     //================================================
     /*
      * 1、下载模块提供一键式资源下载、本地写入功能。通过监听开放的接口可
-    * 以检测下载进度；
+    * 以检测下载进度。
     * 
     * 2、载模块支持localhost文件下载与http地址文件的下载。模块下载到本
     *后，增量写入，以防下载错误导致的整体文件丢失。
     *
     *3、载模块支持断点续下。
     *
-    *4、支持动态添加、移除、暂停、恢复下载任务；
+    *4、支持动态添加、移除、暂停、恢复下载任务。
     *
     *5、若不自定义设置下载器，(调用SetOrUpdateDownloadHelper方法)，则
-    * 使用框架原生默认的下载器；
+    * 使用框架原生默认的下载器。
      */
     //================================================
     [Module]
@@ -69,16 +69,16 @@ namespace Cosmos.Download
         ///<inheritdoc/>
         public int DownloadingCount { get { return downloader.DownloadingCount; } }
         /// <summary>
-        /// 下载器；
+        /// 下载器。
         /// </summary>
         IDownloader downloader;
         /// <summary>
-        /// 下载请求器，专门用于获取文件大小；
+        /// 下载请求器，专门用于获取文件大小。
         /// </summary>
         IDownloadRequester downloadRequester;
         /// <summary>
-        /// 下载资源地址帮助体；用于解析URL中的文件列表；
-        /// 支持localhost地址与http地址；
+        /// 下载资源地址帮助体。用于解析URL中的文件列表。
+        /// 支持localhost地址与http地址。
         /// </summary>
         IDownloadUrlHelper downloadUrlHelper;
 

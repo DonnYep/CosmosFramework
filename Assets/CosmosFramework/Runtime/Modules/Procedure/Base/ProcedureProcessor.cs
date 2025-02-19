@@ -30,19 +30,19 @@ namespace Cosmos.Procedure
             remove { onProcedureNodeRemove -= value; }
         }
         /// <summary>
-        /// 当前状态；
+        /// 当前状态。
         /// </summary>
         public ProcedureNode CurrentNode { get { return currentNode; } }
         /// <summary>
-        /// 状态机持有者；
+        /// 状态机持有者。
         /// </summary>
         public IProcedureManager Handle { get; private set; }
         /// <summary>
-        /// 状态数量；
+        /// 状态数量。
         /// </summary>
         public int NodeCount { get { return typeNodeDict.Count; } }
         /// <summary>
-        /// 构造函数；
+        /// 构造函数。
         /// </summary>
         /// <param name="handle">状态机持有者对象</param>
         internal ProcedureProcessor(IProcedureManager handle)
@@ -50,7 +50,7 @@ namespace Cosmos.Procedure
             Handle = handle;
         }
         /// <summary>
-        /// 添加一个状态；
+        /// 添加一个状态。
         /// </summary>
         /// <param name="node">状态</param>
         /// <returns>添加结果</returns>
@@ -67,7 +67,7 @@ namespace Cosmos.Procedure
             return false;
         }
         /// <summary>
-        /// 添加一组状态；
+        /// 添加一组状态。
         /// </summary>
         /// <param name="nodes">状态集合</param>
         public void AddNodes(params ProcedureNode[] nodes)
@@ -79,7 +79,7 @@ namespace Cosmos.Procedure
             }
         }
         /// <summary>
-        /// 移除一个状态；
+        /// 移除一个状态。
         /// </summary>
         /// <param name="nodeType">状态类型</param>
         /// <returns>移除结果</returns>
@@ -96,7 +96,7 @@ namespace Cosmos.Procedure
             return false;
         }
         /// <summary>
-        /// 是否存在状态；
+        /// 是否存在状态。
         /// </summary>
         /// <param name="nodeType">状态类型</param>
         /// <returns>存在结果</returns>
@@ -105,7 +105,7 @@ namespace Cosmos.Procedure
             return typeNodeDict.ContainsKey(nodeType);
         }
         /// <summary>
-        /// 获取状态；
+        /// 获取状态。
         /// </summary>
         /// <param name="nodeType">状态类型</param>
         /// <param name="node">获取的状态</param>
@@ -115,14 +115,14 @@ namespace Cosmos.Procedure
             return typeNodeDict.TryGetValue(nodeType, out node);
         }
         /// <summary>
-        /// 轮询；
+        /// 轮询。
         /// </summary>
         public void Refresh()
         {
             currentNode?.OnUpdate(this);
         }
         /// <summary>
-        /// 切换状态；
+        /// 切换状态。
         /// </summary>
         /// <param name="nodeType">状态类型</param>
         public void ChangeNode(Type nodeType)
@@ -141,7 +141,7 @@ namespace Cosmos.Procedure
             }
         }
         /// <summary>
-        /// 清理所有状态；
+        /// 清理所有状态。
         /// </summary>
         public void ClearAllNode()
         {

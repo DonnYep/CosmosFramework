@@ -7,7 +7,7 @@ namespace Cosmos.Download
     public struct DownloadInfo : IEquatable<DownloadInfo>
     {
         /// <summary>
-        /// 下载数据的构造；
+        /// 下载数据的构造。
         /// </summary>
         /// <param name="downloadId"> 下载Id</param>
         /// <param name="downloadUrl"> 资源定位地址</param>
@@ -25,11 +25,11 @@ namespace Cosmos.Download
         }
         public long DownloadId { get; private set; }
         /// <summary>
-        /// 资源定位地址；
+        /// 资源定位地址。
         /// </summary>
         public string DownloadUrl { get; private set; }
         /// <summary>
-        /// 下载后存储的路径；
+        /// 下载后存储的路径。
         /// </summary>
         public string DownloadPath { get; private set; }
         /// <summary>

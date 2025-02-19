@@ -4,20 +4,20 @@ using System.IO;
 namespace Cosmos
 {
     /// <summary>
-    ///若URL根目录为http://127.0.0.1:80/res/，文件地址为http://127.0.0.1:80/res/test.txt； 则test.txt即为FileList中的地址；
+    ///如果URL根目录为http://127.0.0.1:80/res/，并且文件的绝对路径为http://127.0.0.1:80/res/test.txt。，那么test.txt即为FileList中的地址。
     /// </summary>
     public class DefaultDownloadUrlHelper : IDownloadUrlHelper
     {
         /// <summary>
-        /// URI的相对路径；
+        /// URI的相对路径。
         /// </summary>
         List<string> relativeUris = new List<string>();
         /// <summary>
-        /// URI的绝对路径；
+        /// URI的绝对路径。
         /// </summary>
         List<string> absoluteUris = new List<string>();
         /// <summary>
-        /// 解析资源地址，并返回ping到的文件相对地址数组；
+        /// 解析资源地址，并返回ping到的文件相对地址数组。
         /// </summary>
         /// <param name="url">资源地址</param>
         /// <returns>Ping到的相对于url的地址</returns>
@@ -55,7 +55,7 @@ namespace Cosmos
             return relUriArray;
         }
         /// <summary>
-        /// 解析资源地址，并返回ping到的文件绝对地址数组；
+        /// 解析资源地址，并返回ping到的文件绝对地址数组。
         /// </summary>
         /// <param name="url">统一资源定位符</param>
         /// <returns>Ping到uri的绝对地址</returns>

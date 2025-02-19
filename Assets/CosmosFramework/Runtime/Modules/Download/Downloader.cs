@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 namespace Cosmos.Download
 {
     /// <summary>
-    /// 文件下载器；
+    /// 文件下载器。
     /// </summary>
     public class Downloader : IDownloader
     {
@@ -17,7 +17,7 @@ namespace Cosmos.Download
         Action<DonwloadUpdateEventArgs> onDownloadOverall;
         Action<DownloadTasksCompletedEventArgs> onAllDownloadTaskCompleted;
         /// <summary>
-        /// 下载开始事件；
+        /// 下载开始事件。
         /// </summary>
         public event Action<DownloadStartEventArgs> OnDownloadStart
         {
@@ -25,7 +25,7 @@ namespace Cosmos.Download
             remove { onDownloadStart -= value; }
         }
         /// <summary>
-        /// 单个资源下载成功事件；
+        /// 单个资源下载成功事件。
         /// </summary>
         public event Action<DownloadSuccessEventArgs> OnDownloadSuccess
         {
@@ -33,7 +33,7 @@ namespace Cosmos.Download
             remove { onDownloadSuccess -= value; }
         }
         /// <summary>
-        /// 单个资源下载失败事件；
+        /// 单个资源下载失败事件。
         /// </summary>
         public event Action<DownloadFailureEventArgs> OnDownloadFailure
         {
@@ -41,7 +41,7 @@ namespace Cosmos.Download
             remove { onDownloadFailure -= value; }
         }
         /// <summary>
-        /// 下载整体进度事件；
+        /// 下载整体进度事件。
         /// </summary>
         public event Action<DonwloadUpdateEventArgs> OnDownloadOverallProgress
         {
@@ -58,23 +58,23 @@ namespace Cosmos.Download
         }
         #endregion
         /// <summary>
-        /// 是否正在下载；
+        /// 是否正在下载。
         /// </summary>
         public bool Downloading { get; private set; }
         /// <summary>
-        /// 下载中的资源总数；
+        /// 下载中的资源总数。
         /// </summary>
         public int DownloadingCount { get { return pendingTasks.Count; } }
         /// <summary>
-        /// 下载任务数量；
+        /// 下载任务数量。
         /// </summary>
         int downloadTaskCount = 0;
         /// <summary>
-        /// 挂起的下载任务；
+        /// 挂起的下载任务。
         /// </summary>
         readonly List<DownloadTask> pendingTasks;
         /// <summary>
-        /// 挂起的下载任务字典缓存；
+        /// 挂起的下载任务字典缓存。
         /// </summary>
         readonly Dictionary<long, DownloadTask> pendingTaskDict;
         /// <summary>
@@ -86,11 +86,11 @@ namespace Cosmos.Download
         /// </summary>
         readonly List<DownloadInfo> failedInfos;
         /// <summary>
-        /// 下载开始时间；
+        /// 下载开始时间。
         /// </summary>
         DateTime downloadStartTime;
         /// <summary>
-        /// 下载结束时间；
+        /// 下载结束时间。
         /// </summary>
         DateTime downloadEndTime;
         /// <summary>
@@ -98,11 +98,11 @@ namespace Cosmos.Download
         /// </summary>
         UnityWebRequest unityWebRequest;
         /// <summary>
-        /// 当前下载的序号；
+        /// 当前下载的序号。
         /// </summary>
         int currentDownloadTaskIndex = 0;
         /// <summary>
-        /// 当前是否可下载；
+        /// 当前是否可下载。
         /// </summary>
         bool canDownload;
         /// <summary>
@@ -176,7 +176,7 @@ namespace Cosmos.Download
             downloadTaskCount = 0;
         }
         /// <summary>
-        /// 多文件下载迭代器方法；
+        /// 多文件下载迭代器方法。
         /// </summary>
         /// <returns>迭代器接口</returns>
         IEnumerator RunDownloadMultipleFiles()
@@ -293,7 +293,7 @@ namespace Cosmos.Download
             }
         }
         /// <summary>
-        /// 处理整体进度；
+        /// 处理整体进度。
         /// </summary>
         void OnFileDownloading(DownloadInfo info)
         {
@@ -303,7 +303,7 @@ namespace Cosmos.Download
             DonwloadUpdateEventArgs.Release(eventArgs);
         }
         /// <summary>
-        /// 当Pending uri的文件全部下载完成；
+        /// 当Pending uri的文件全部下载完成。
         /// </summary>
         void OnPendingTasksCompleted()
         {
@@ -312,7 +312,7 @@ namespace Cosmos.Download
             var eventArgs = DownloadTasksCompletedEventArgs.Create(successedInfos.ToArray(), failedInfos.ToArray(), downloadEndTime - downloadStartTime, downloadTaskCount);
             onAllDownloadTaskCompleted?.Invoke(eventArgs);
             DownloadTasksCompletedEventArgs.Release(eventArgs);
-            //清理下载配置缓存；
+            //清理下载配置缓存。
             failedInfos.Clear();
             successedInfos.Clear();
             pendingTasks.Clear();

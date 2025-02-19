@@ -5,11 +5,11 @@ namespace Cosmos.Download
     {
         public long DownloadId { get; private set; }
         /// <summary>
-        /// URL绝对路径；
+        /// URL绝对路径。
         /// </summary>
         public string DownloadUrl { get; private set; }
         /// <summary>
-        /// 本地资源的绝对路径；
+        /// 本地资源的绝对路径。
         /// </summary>
         public string DownloadPath { get; private set; }
         /// <summary>
@@ -21,7 +21,7 @@ namespace Cosmos.Download
         /// </summary>
         public bool DownloadAppend { get; private set; }
          /// <summary>
-        /// 下载任务的构造函数；
+        /// 下载任务的构造函数。
         /// </summary>
         /// <param name="dwnloadId">下载Id</param>
         /// <param name="downloadUrl">URL绝对路径</param>

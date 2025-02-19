@@ -7,8 +7,8 @@ namespace Cosmos
     public class DefaultDownloadRequester : IDownloadRequester
     {
         /// <summary>
-        /// 获取URI单个文件的大小；
-        /// 若获取到，则回调传入正确的数值，否则就传入-1；
+        /// 获取URI单个文件的大小。
+        /// <para>若获取到，回调传入正确的数值，否则就传入-1。</para> 
         /// </summary>
         /// <param name="uri">统一资源名称</param>
         /// <param name="callback">回调</param>
@@ -17,10 +17,10 @@ namespace Cosmos
             Utility.Unity.StartCoroutine(EnumGetFileSize(uri, callback));
         }
         /// <summary>
-        /// 获取多个URL地址下的所有文件的总和大小；
-        /// 若获取到，则回调传入正确的数值，否则就传入-1；
+        /// 获取多个URL地址下的所有文件的总和大小。
+        /// <para>若获取到，回调传入正确的数值，否则就传入-1。</para> 
         /// </summary>
-        /// <param name="url">统一资源定位符</param>
+        /// <param name="uris">统一资源定位符</param>
         /// <param name="callback">回调</param>
         public void GetUriFilesSizeAsync(string[] uris, Action<long> callback)
         {
