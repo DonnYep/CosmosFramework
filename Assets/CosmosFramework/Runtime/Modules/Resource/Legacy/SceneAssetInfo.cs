@@ -3,7 +3,7 @@
 namespace Cosmos
 {
     /// <summary>
-    /// AB包中场景资源的信息；
+    /// AB包中场景资源的信息。
     /// </summary>
     [StructLayout(LayoutKind.Auto)]
     public struct SceneAssetInfo
