@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Cosmos.UI
 {
     /// <summary>
-    /// UI资源信息；
+    /// UI资源信息。
     /// </summary>
     [StructLayout(LayoutKind.Auto)]
     public struct UIAssetInfo : IEquatable<UIAssetInfo>

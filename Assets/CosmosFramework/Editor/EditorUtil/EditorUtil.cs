@@ -220,9 +220,10 @@ namespace Cosmos.Editor
         }
         /// <summary>
         /// 生成一个ScriptableObject对象
+        /// <para>path地址应传入Assets/MyObject.asset。如果传入的是Assets/MyObject，此方法会自动补全.asset的文件后缀</para>
         /// </summary>
         /// <typeparam name="T">ScriptableObject对象</typeparam>
-        /// <param name="path">Assets/下的地址，如: Assets/MyObject.asset</param>
+        /// <param name="path">Assets/下的地址，如: Assets/MyObject.asset。传入Assets/MyObject也可，函数会自动补全.asset后缀名</param>
         /// <param name="hideFlags">状态类型</param>
         /// <returns>生成的ScriptableObject</returns>
         public static T CreateScriptableObject<T>(string path, HideFlags hideFlags = HideFlags.None) where T : ScriptableObject
@@ -235,6 +236,8 @@ namespace Cosmos.Editor
                 AssetDatabase.CreateFolder("Assets", folderName);
             var so = ScriptableObject.CreateInstance<T>();
             so.hideFlags = hideFlags;
+            if (!path.EndsWith(".asset"))
+                path = path + ".asset";
             AssetDatabase.CreateAsset(so, path);
             EditorUtility.SetDirty(so);
             EditorUtility.FocusProjectWindow();

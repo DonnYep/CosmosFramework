@@ -10,6 +10,6 @@ namespace Cosmos.Resource
     {
         public string Guid;
         public string AssetPath;
-        public PackageBundleSO Parent;
+        //public PackageBundleSO Parent;
     }
 }

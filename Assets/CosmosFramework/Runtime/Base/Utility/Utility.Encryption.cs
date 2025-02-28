@@ -2,6 +2,7 @@
 using System.Text;
 using System.Security.Cryptography;
 using System.IO;
+using System.Runtime.Remoting.Contexts;
 namespace Cosmos
 {
     public static partial class Utility
@@ -615,6 +616,28 @@ namespace Cosmos
 #endif
                 {
                     byte[] data = hash.ComputeHash(context);
+                    var sBuilder = new StringBuilder();
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        sBuilder.Append(data[i].ToString("x2"));
+                    }
+                    return sBuilder.ToString();
+                }
+            }
+            /// <summary>
+            /// 生成16进制的md5
+            /// </summary>
+            /// <param name="stream">传入的流数据</param>
+            /// <returns>16进制的md5</returns>
+            public static string GenerateHexMD5(Stream stream)
+            {
+#if NET_STANDARD_2_0
+                using (var hash = MD5.Create())
+#elif NET_4_6
+                using (var hash = MD5Cng.Create())
+#endif
+                {
+                    byte[] data = hash.ComputeHash(stream);
                     var sBuilder = new StringBuilder();
                     for (int i = 0; i < data.Length; i++)
                     {

@@ -44,6 +44,7 @@
         AssetInfo GetAssetInfo(string asset)
         {
             //如何获得寻址资源
+            //这里应该判断资产是否在寻址配置文件内。
             return default;
 
         }

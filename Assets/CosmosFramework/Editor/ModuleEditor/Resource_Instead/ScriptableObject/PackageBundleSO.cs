@@ -54,7 +54,7 @@ namespace Cosmos.Resource
             {
                 try
                 {
-                    assetEntry.Parent = this;
+                    //assetEntry.Parent = this;
                     assetEntryDict.Add(assetEntry.Guid, assetEntry);
                 }
                 catch (Exception e)
