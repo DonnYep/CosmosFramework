@@ -71,7 +71,6 @@ namespace Cosmos.Operation
             CheckAsyncOperationDriver();
             newList.Add(operation);
             operation.SetStart();
-
         }
         static void CheckAsyncOperationDriver()
         {

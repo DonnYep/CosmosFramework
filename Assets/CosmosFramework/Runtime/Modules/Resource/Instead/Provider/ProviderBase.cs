@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Cosmos.Resource
 {
@@ -28,6 +29,10 @@ namespace Cosmos.Resource
         /// 资源信息
         /// </summary>
         public AssetInfo MainAssetInfo { get; protected set; }
+        /// <summary>
+        /// 加载的资源类型
+        /// </summary>
+        public Type AssetType { get; protected set; }
         /// <summary>
         /// 获取的资源对象
         /// </summary>
@@ -59,15 +64,10 @@ namespace Cosmos.Resource
         protected bool IsWaitForAsyncComplete { get; private set; } = false;
 
         private readonly List<HandleBase> handles = new List<HandleBase>();
-        public T CreateHandle<T, K>() where T : HandleBase
-            where K : UnityEngine.Object
+        public void AddHandle(HandleBase handle)
         {
             RefCount++;
-            HandleBase handle = default;
-            if (typeof(T) == typeof(AssetHandle<>))
-                handle = new AssetHandle<K>(this);
             handles.Add(handle);
-            return handle as T;
         }
         public void ReleaseHandle(HandleBase handle)
         {
@@ -77,7 +77,7 @@ namespace Cosmos.Resource
             // 引用计数减少
             RefCount--;
         }
-        internal abstract void WaitForCompletion();
+        internal abstract void WaitForCompletion(); 
         /// <summary>
         /// 结束流程
         /// </summary>

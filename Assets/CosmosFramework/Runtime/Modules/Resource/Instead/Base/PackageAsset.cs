@@ -9,9 +9,17 @@ namespace Cosmos.Resource
     internal class PackageAsset : IEquatable<PackageAsset>
     {
         /// <summary>
+        /// 资源名称
+        /// </summary>
+        public string Name;
+        /// <summary>
         /// 资源路径
         /// </summary>
         public string AssetPath;
+        /// <summary>
+        /// 文件扩展名
+        /// </summary>
+        public string Extension;
         /// <summary>
         /// 资源GUID
         /// </summary>

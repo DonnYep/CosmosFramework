@@ -2,7 +2,7 @@
 {
     public static class CFResources
     {
-        public static CFResourceLoadMode ResourceLoadMode;
+        public static CFResourcePlayMode ResourcePlayMode;
         public static void Init()
         {
 

@@ -27,10 +27,10 @@ namespace Cosmos.Resource
                 }
                 else
                 {
-                    completd += value;
+                    completed += value;
                 }
             }
-            remove { completd -= value; }
+            remove { completed -= value; }
         }
 
         public T WaitForCompletion()
@@ -40,13 +40,14 @@ namespace Cosmos.Resource
             Provider.WaitForCompletion();
             return (T)Provider.AssetObject;
         }
-        Action<AssetHandle<T>> completd;
+        Action<AssetHandle<T>> completed;
         internal AssetHandle(ProviderBase provider) : base(provider)
         {
+            provider.AddHandle(this);
         }
         internal override void InvokeCallback()
         {
-            completd?.Invoke(this);
+            completed?.Invoke(this);
         }
     }
 }

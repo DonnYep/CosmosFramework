@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cosmos.Resource
+namespace Cosmos.Editor.Resource
 {
+    /// <summary>
+    /// Editor模式运行时资产组，包含被加载的资产信息
+    /// </summary>
     [CreateAssetMenu(fileName = "PackageBundleSO_new", menuName = "Cosmos/PackageBundleSO")]
     public class PackageBundleSO : ScriptableObject, ISerializationCallbackReceiver
     {
@@ -16,7 +19,7 @@ namespace Cosmos.Resource
         Dictionary<string, AssetEntry> assetEntryDict = new Dictionary<string, AssetEntry>();
         bool packSeparately;
         /// <summary>
-        /// extract all files from the folder as an individual assetbundle.
+        /// 每个资产是否拆分为独立ab包
         /// </summary>
         public bool PackSeparately
         {
@@ -37,7 +40,7 @@ namespace Cosmos.Resource
             if (AssetEntries == null)
             {
                 AssetEntries = new List<AssetEntry>();
-                foreach (AssetEntry entry in AssetEntries)
+                foreach (AssetEntry entry in assetEntries)
                 {
                     AssetEntries.Add(entry);
                 }
@@ -52,15 +55,7 @@ namespace Cosmos.Resource
             assetEntryDict.Clear();
             foreach (var assetEntry in AssetEntries)
             {
-                try
-                {
-                    //assetEntry.Parent = this;
-                    assetEntryDict.Add(assetEntry.Guid, assetEntry);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                }
+                assetEntryDict[assetEntry.Guid] = assetEntry;
             }
         }
         internal void AddAssetEntry(AssetEntry entry)
@@ -75,6 +70,10 @@ namespace Cosmos.Resource
         public void RemoveAssetEntry(AssetEntry entry)
         {
             assetEntryDict.Remove(entry.Guid);
+        }
+        public void RemoveAssetEntry(string guid)
+        {
+            assetEntryDict.Remove(guid);
         }
     }
 }

@@ -1,16 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Cosmos.Resource
 {
     /// <summary>
-    /// editor资源加载器
+    /// editor资源加载器，这里需要统一进行释放处理
     /// </summary>
     internal class DatabaseAssetProvider : ProviderBase
     {
-        internal DatabaseAssetProvider(AssetInfo assetInfo)
+        internal DatabaseAssetProvider(AssetInfo assetInfo,Type assetType)
         {
             this.MainAssetInfo = assetInfo;
+            this.AssetType = assetType;
         }
+
         internal override void InternalOnStart()
         {
         }
@@ -44,10 +47,10 @@ namespace Cosmos.Resource
 
             if (currentStep == ProviderStep.Loading)
             {
-                if (MainAssetInfo.AssetType == null)
+                if (AssetType == null)
                     AssetObject = UnityEditor.AssetDatabase.LoadMainAssetAtPath(MainAssetInfo.AssetPath);
                 else
-                    AssetObject = UnityEditor.AssetDatabase.LoadAssetAtPath(MainAssetInfo.AssetPath, MainAssetInfo.AssetType);
+                    AssetObject = UnityEditor.AssetDatabase.LoadAssetAtPath(MainAssetInfo.AssetPath, AssetType);
                 currentStep = ProviderStep.Checking;
             }
 
@@ -56,10 +59,10 @@ namespace Cosmos.Resource
                 if (AssetObject == null)
                 {
                     string error;
-                    if (MainAssetInfo.AssetType == null)
+                    if (AssetType == null)
                         error = $"Failed to load asset object : {MainAssetInfo.AssetPath} AssetType : null";
                     else
-                        error = $"Failed to load asset object : {MainAssetInfo.AssetPath} AssetType : {MainAssetInfo.AssetType}";
+                        error = $"Failed to load asset object : {MainAssetInfo.AssetPath} AssetType : {AssetType}";
                     InvokeCompletion(error, OperationStatus.Failed);
                 }
                 else

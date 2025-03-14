@@ -5,7 +5,7 @@ namespace Cosmos.Resource
     public abstract class HandleBase : IEnumerator
     {
         private readonly AssetInfo assetInfo;
-        internal ProviderBase Provider { private set; get; }
+        internal ProviderBase Provider { get; private set; }
         /// <summary>
         /// 加载进度
         /// </summary>
@@ -74,6 +74,15 @@ namespace Cosmos.Resource
         {
             return assetInfo;
         }
+        /// <summary>
+        /// 释放
+        /// </summary>
+        public void Release()
+        {
+            Provider.ReleaseHandle(this);
+            OnRelease();
+        }
+        protected virtual void OnRelease() { }
         #region 协程
         bool IEnumerator.MoveNext()
         {
