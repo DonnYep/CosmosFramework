@@ -81,6 +81,28 @@ namespace Cosmos
                 return DateTime.MinValue;
             }
             /// <summary>
+            /// 获取一天的起始时间。
+            /// </summary>
+            /// <param name="dateTime">需要转换的时间</param>
+            /// <para>需要转换的时间2022-2-22-12:22:22，转换后为2022-2-22-00:00:00</para>
+            /// <returns>转换后的时间</returns>
+            public static DateTime GetStartOfDay(DateTime dateTime)
+            {
+                DateTime day = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0);
+                return day;
+            }
+            /// <summary>
+            /// 获取一天的结束时间。
+            /// <para>需要转换的时间2022-2-22-12:22:22，转换后为2022-2-22-23:59:59</para>
+            /// </summary>
+            /// <param name="dateTime">需要转换的时间</param>
+            /// <returns>转换后的时间</returns>
+            public static DateTime GetEndOfDay(DateTime dateTime)
+            {
+                DateTime day = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 23, 59, 59);
+                return day;
+            }
+            /// <summary>
             /// 获取该时间相对于纪元时间的秒数。
             /// </summary>
             /// <returns>秒数</returns>
