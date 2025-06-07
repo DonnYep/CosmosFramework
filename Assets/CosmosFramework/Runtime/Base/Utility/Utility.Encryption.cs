@@ -646,6 +646,58 @@ namespace Cosmos
                     return sBuilder.ToString();
                 }
             }
+            /// <summary>
+            /// AES加密
+            /// </summary>
+            /// <param name="context">原始字节流</param>
+            /// <param name="key">加密的密码</param>
+            /// <param name="iv">密钥</param>
+            /// <returns>加密后的数据</returns>
+            public static byte[] AESEncrypt(byte[] context, string key, string iv)
+            {
+                RijndaelManaged rijndaelCipher = new RijndaelManaged();
+                rijndaelCipher.Mode = CipherMode.CBC;
+                rijndaelCipher.Padding = PaddingMode.PKCS7;
+                rijndaelCipher.KeySize = 128;
+                rijndaelCipher.BlockSize = 128;
+
+                byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+                rijndaelCipher.Key = keyBytes;
+
+                byte[] ivBytes = Encoding.UTF8.GetBytes(iv);
+                rijndaelCipher.IV = ivBytes;
+
+                ICryptoTransform transform = rijndaelCipher.CreateEncryptor();
+                byte[] cipherBytes = transform.TransformFinalBlock(context, 0, context.Length);
+
+                return cipherBytes;
+            }
+            /// <summary>
+            /// AES解密
+            /// </summary>
+            /// <param name="context">原始字节流</param>
+            /// <param name="key">加密的密码</param>
+            /// <param name="iv">密钥</param>
+            /// <returns>解密后的数据</returns>
+            public static byte[] AESDecrypt(byte[] context, string key, string iv)
+            {
+                RijndaelManaged rijndaelCipher = new RijndaelManaged();
+                rijndaelCipher.Mode = CipherMode.CBC;
+                rijndaelCipher.Padding = PaddingMode.PKCS7;
+                rijndaelCipher.KeySize = 128;
+                rijndaelCipher.BlockSize = 128;
+
+                byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+                rijndaelCipher.Key = keyBytes;
+
+                byte[] ivBytes = Encoding.UTF8.GetBytes(iv);
+                rijndaelCipher.IV = ivBytes;
+
+                ICryptoTransform transform = rijndaelCipher.CreateDecryptor();
+                byte[] plainText = transform.TransformFinalBlock(context, 0, context.Length);
+
+                return plainText;
+            }
         }
     }
 }
