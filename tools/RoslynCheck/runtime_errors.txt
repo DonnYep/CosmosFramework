@@ -1,0 +1,4 @@
+== Cosmos.Runtime : 3 errors ==
+CS0117 Utility.Unity.cs(709,49) : “Random”未包含“insideUnitCircle”的定义
+CS0117 Utility.Unity.cs(727,49) : “Random”未包含“insideUnitCircle”的定义
+CS0314 UGUIUIForm.cs(93,27) : 类型“T”不能用作泛型类型或方法“Component.GetComponent<T>()”中的类型参数“T”。没有从“T”到“UnityEngine.Component”的装箱转换或类型参数转换。

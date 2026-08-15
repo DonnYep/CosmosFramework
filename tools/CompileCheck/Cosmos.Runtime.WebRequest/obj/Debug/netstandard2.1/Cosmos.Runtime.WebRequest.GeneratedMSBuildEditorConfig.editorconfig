@@ -1,0 +1,5 @@
+is_global = true
+build_property.RootNamespace = Cosmos.Runtime.WebRequest
+build_property.ProjectDir = E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 

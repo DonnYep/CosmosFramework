@@ -1,0 +1,7 @@
+== Cosmos.Editor : 6 errors ==
+CS7036 AutocompleteSearchField.cs(172,27) : 未提供与“GUIStyle.Draw(Rect, GUIContent, bool, bool, bool, bool)”的所需参数“hasKeyboardFocus”对应的参数
+CS1503 AssetDatabaseBundleDetailLabel.cs(59,80) : 参数 2: 无法从“UnityEngine.GUILayoutOption”转换为“string”
+CS1503 AssetDatabaseBundleLabel.cs(87,80) : 参数 2: 无法从“UnityEngine.GUILayoutOption”转换为“UnityEngine.GUIStyle”
+CS1503 AssetDatabaseBundleLabel.cs(87,103) : 参数 3: 无法从“UnityEngine.GUILayoutOption”转换为“params UnityEngine.GUILayoutOption[]”
+CS1503 AssetDatabaseObjectLabel.cs(52,80) : 参数 2: 无法从“UnityEngine.GUILayoutOption”转换为“string”
+CS1503 AssetDatasetTab.cs(57,54) : 参数 2: 无法从“UnityEngine.GUILayoutOption”转换为“string”

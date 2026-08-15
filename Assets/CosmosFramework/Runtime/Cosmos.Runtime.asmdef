@@ -1,6 +1,8 @@
 {
     "name": "Cosmos.Runtime",
-    "references": [],
+    "references": [
+        "Cosmos.Resource.Core"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

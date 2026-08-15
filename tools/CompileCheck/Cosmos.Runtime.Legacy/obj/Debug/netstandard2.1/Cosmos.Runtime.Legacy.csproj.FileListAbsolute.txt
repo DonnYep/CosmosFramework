@@ -1,0 +1,10 @@
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\obj\Debug\netstandard2.1\Cosmos.Runtime.Legacy.GeneratedMSBuildEditorConfig.editorconfig
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\obj\Debug\netstandard2.1\Cosmos.Runtime.Legacy.AssemblyInfoInputs.cache
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\obj\Debug\netstandard2.1\Cosmos.Runtime.Legacy.AssemblyInfo.cs
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\obj\Debug\netstandard2.1\Cosmos.Runtime.Legacy.csproj.CoreCompileInputs.cache
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\obj\Debug\netstandard2.1\Cosmos.Runtime.Legacy.sourcelink.json
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\bin\Debug\netstandard2.1\Cosmos.Runtime.Legacy.deps.json
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\bin\Debug\netstandard2.1\Cosmos.Runtime.Legacy.dll
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\bin\Debug\netstandard2.1\Cosmos.Runtime.Legacy.pdb
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\obj\Debug\netstandard2.1\Cosmos.Runtime.Legacy.dll
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\obj\Debug\netstandard2.1\Cosmos.Runtime.Legacy.pdb

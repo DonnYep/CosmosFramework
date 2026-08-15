@@ -1,4 +1,4 @@
-﻿using UnityEngine.Networking;
+using UnityEngine.Networking;
 
 namespace Cosmos.WebRequest
 {
@@ -33,7 +33,7 @@ namespace Cosmos.WebRequest
         {
             ReferencePool.Release(requestTask);
         }
-        static long GetTaskId()
+        internal static long GetTaskId()
         {
             taskIndex++;
             if (taskIndex > long.MaxValue)

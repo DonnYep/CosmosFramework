@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Cosmos.Resource
 {
-    public static partial class ResourceUtility
+    public static partial class ResourceLegacyUtility
     {
         public static class Integrity
         {

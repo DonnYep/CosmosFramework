@@ -1,0 +1,10 @@
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Resource.Core\obj\Debug\netstandard2.1\Cosmos.Resource.Core.GeneratedMSBuildEditorConfig.editorconfig
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Resource.Core\obj\Debug\netstandard2.1\Cosmos.Resource.Core.AssemblyInfoInputs.cache
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Resource.Core\obj\Debug\netstandard2.1\Cosmos.Resource.Core.AssemblyInfo.cs
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Resource.Core\obj\Debug\netstandard2.1\Cosmos.Resource.Core.csproj.CoreCompileInputs.cache
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Resource.Core\obj\Debug\netstandard2.1\Cosmos.Resource.Core.sourcelink.json
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Resource.Core\bin\Debug\netstandard2.1\Cosmos.Resource.Core.deps.json
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Resource.Core\bin\Debug\netstandard2.1\Cosmos.Resource.Core.dll
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Resource.Core\bin\Debug\netstandard2.1\Cosmos.Resource.Core.pdb
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Resource.Core\obj\Debug\netstandard2.1\Cosmos.Resource.Core.dll
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Resource.Core\obj\Debug\netstandard2.1\Cosmos.Resource.Core.pdb

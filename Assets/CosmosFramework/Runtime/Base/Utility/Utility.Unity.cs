@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -876,7 +876,7 @@ namespace Cosmos
             public static bool IsSceneLoaded(string sceneName)
             {
                 var scene = SceneManager.GetSceneByName(sceneName);
-                if (scene != null)
+                if (scene.IsValid())
                 {
                     return scene.isLoaded;
                 }

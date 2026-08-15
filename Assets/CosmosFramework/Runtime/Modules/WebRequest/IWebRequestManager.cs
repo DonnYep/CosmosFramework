@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -129,6 +129,58 @@ namespace Cosmos.WebRequest
         /// <param name="url">地址</param>
         /// <returns>任务id</returns>
         long AddUrlFileRequestTask(string url);
+
+        #region 新API：句柄式异步请求
+        /// <summary>
+        /// 最大并发请求数量
+        /// </summary>
+        int MaxConcurrentRequests { get; set; }
+        /// <summary>
+        /// 正在执行的请求数量
+        /// </summary>
+        int ActiveRequestCount { get; }
+        /// <summary>
+        /// 排队等待的请求数量
+        /// </summary>
+        int WaitingRequestCount { get; }
+        /// <summary>
+        /// 异步下载文本
+        /// </summary>
+        WebRequestHandle<string> AddDownloadTextTaskAsync(string url, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0);
+        /// <summary>
+        /// 异步下载二进制数据
+        /// </summary>
+        WebRequestHandle<byte[]> AddDownloadBytesTaskAsync(string url, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0);
+        /// <summary>
+        /// 异步下载贴图
+        /// </summary>
+        WebRequestHandle<Texture2D> AddDownloadTextureTaskAsync(string url, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0);
+        /// <summary>
+        /// 异步下载音频
+        /// </summary>
+        WebRequestHandle<AudioClip> AddDownloadAudioTaskAsync(string url, AudioType audioType, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0);
+        /// <summary>
+        /// 异步下载AssetBundle
+        /// </summary>
+        WebRequestHandle<AssetBundle> AddDownloadAssetBundleTaskAsync(string url, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0);
+        /// <summary>
+        /// 异步获取文件长度
+        /// </summary>
+        WebRequestHandle<long> AddGetContentLengthTaskAsync(string url, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0);
+        /// <summary>
+        /// 异步上传数据
+        /// </summary>
+        WebRequestHandle<byte[]> AddUploadTaskAsync(string url, byte[] data, WebRequestUploadType uploadType, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0);
+        /// <summary>
+        /// 异步下载文件到本地路径
+        /// </summary>
+        WebRequestHandle<bool> AddDownloadFileTaskAsync(string url, string savePath, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0);
+        /// <summary>
+        /// 取消全部请求（进行中与排队中的均取消）
+        /// </summary>
+        void CancelAllRequests();
+        #endregion
+
         /// <summary>
         /// 移除任务。
         /// </summary>

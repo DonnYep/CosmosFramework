@@ -1,11 +1,39 @@
-﻿using Cosmos.Resource.Compare;
+using Cosmos.Resource.Compare;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Cosmos.Resource
 {
-    public static partial class ResourceUtility
+    public static partial class ResourceLegacyUtility
     {
+        /// <summary>
+        /// 包名过滤（Legacy自包含实现）
+        /// </summary>
+        public static string FilterName(string bundleName)
+        {
+            if (string.IsNullOrEmpty(bundleName))
+                return bundleName;
+            return bundleName.Replace("\\", "_").Replace("/", "_").Replace(".", "_").Replace(",", "_").Replace(";", "_").ToLower();
+        }
+        /// <summary>
+        /// 生成对称加密的密钥（Legacy自包含实现）
+        /// </summary>
+        static byte[] GenerateBytesAESKey(string srcKey)
+        {
+            byte[] key = new byte[0];
+            if (string.IsNullOrEmpty(srcKey))
+                return key;
+            var keyLength = System.Text.Encoding.UTF8.GetBytes(srcKey).Length;
+            if (keyLength == 8)
+                key = Utility.Encryption.Generate8BytesAESKey(srcKey);
+            else if (keyLength == 16)
+                key = Utility.Encryption.Generate16BytesAESKey(srcKey);
+            else if (keyLength == 24)
+                key = Utility.Encryption.Generate24BytesAESKey(srcKey);
+            else if (keyLength == 32)
+                key = Utility.Encryption.Generate32BytesAESKey(srcKey);
+            return key;
+        }
         public static class Manifest
         {
             #region ResourceManifest

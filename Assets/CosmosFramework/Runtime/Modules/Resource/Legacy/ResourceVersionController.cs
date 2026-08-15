@@ -1,4 +1,4 @@
-﻿using Cosmos.Resource.Compare;
+using Cosmos.Resource.Compare;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -36,7 +36,7 @@ namespace Cosmos.Resource
         /// <param name="path">本地持久化地址</param>
         public static void CompareAndCleanInvalidAssets(ResourceManifest src, ResourceManifest diff, string path)
         {
-            ResourceUtility.Manifest.CompareManifestByBundleName(src, diff, out var result);
+            ResourceLegacyUtility.Manifest.CompareManifestByBundleName(src, diff, out var result);
             List<string> deleteNames = new List<string>();
             var changedNames = result.ChangedInfos.Select(r => r.ResouceBundleKey);
             var expiredNames = result.ExpiredInfos.Select(r => r.ResouceBundleKey);
@@ -53,7 +53,7 @@ namespace Cosmos.Resource
         /// <returns>下载任务列表</returns>
         public static List<ResourceDownloadTask> CompareAndGenerateDownloadTask(ResourceMergedManifest mergedManifest, string path, string url)
         {
-            ResourceUtility.Integrity.VerifyResourceIntegrity(mergedManifest, path, out var integrityResult);
+            ResourceLegacyUtility.Integrity.VerifyResourceIntegrity(mergedManifest, path, out var integrityResult);
             List<ResourceDownloadTask> downloadTasks = new List<ResourceDownloadTask>();
             string formattedPath = path;
             string formattedUrl = url;

@@ -1,0 +1,5 @@
+is_global = true
+build_property.RootNamespace = Cosmos.Runtime.Legacy
+build_property.ProjectDir = E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.Legacy\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 

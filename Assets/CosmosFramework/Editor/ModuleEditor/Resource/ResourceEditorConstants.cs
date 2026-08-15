@@ -92,5 +92,28 @@
         /// assetbundle 默认后缀
         /// </summary>
         public const string DEFAULT_AB_EXTENSION = "ab";
+
+        #region NewResourcePipeline
+        /// <summary>
+        /// 新资源管线文件清单名称
+        /// </summary>
+        public const string PACKAGE_MANIFEST_FILE_NAME = "PackageManifest.json";
+        /// <summary>
+        /// 默认新资源构建输出相对路径
+        /// </summary>
+        public const string DEFAULT_PACKAGE_OUTPUT_PATH = "AssetBundles/Resource";
+        /// <summary>
+        /// 默认拷贝到StreamingAssets的相对路径
+        /// </summary>
+        public const string DEFAULT_PACKAGE_STREAMING_ASSETS_PATH = "CosmosResources";
+        /// <summary>
+        /// 新ResourcePackageSO的创建路径
+        /// </summary>
+        public const string NEW_PACKAGE_PATH = "Assets/Editor/NewResourcePackage.asset";
+        /// <summary>
+        /// 共享依赖包名前缀
+        /// </summary>
+        public const string SHARED_DEPENDENCY_BUNDLE_PREFIX = "~shared_";
+        #endregion
     }
 }

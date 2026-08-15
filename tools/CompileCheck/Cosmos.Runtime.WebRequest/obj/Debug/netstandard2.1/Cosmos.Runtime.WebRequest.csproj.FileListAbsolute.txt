@@ -1,0 +1,10 @@
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\obj\Debug\netstandard2.1\Cosmos.Runtime.WebRequest.GeneratedMSBuildEditorConfig.editorconfig
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\obj\Debug\netstandard2.1\Cosmos.Runtime.WebRequest.AssemblyInfoInputs.cache
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\obj\Debug\netstandard2.1\Cosmos.Runtime.WebRequest.AssemblyInfo.cs
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\obj\Debug\netstandard2.1\Cosmos.Runtime.WebRequest.csproj.CoreCompileInputs.cache
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\obj\Debug\netstandard2.1\Cosmos.Runtime.WebRequest.sourcelink.json
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\bin\Debug\netstandard2.1\Cosmos.Runtime.WebRequest.deps.json
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\bin\Debug\netstandard2.1\Cosmos.Runtime.WebRequest.dll
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\bin\Debug\netstandard2.1\Cosmos.Runtime.WebRequest.pdb
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\obj\Debug\netstandard2.1\Cosmos.Runtime.WebRequest.dll
+E:\Development\Donn\CosmosFramework\tools\CompileCheck\Cosmos.Runtime.WebRequest\obj\Debug\netstandard2.1\Cosmos.Runtime.WebRequest.pdb

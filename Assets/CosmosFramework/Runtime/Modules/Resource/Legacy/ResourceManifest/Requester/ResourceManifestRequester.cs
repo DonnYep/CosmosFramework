@@ -1,4 +1,4 @@
-﻿using Cosmos.WebRequest;
+using Cosmos.WebRequest;
 using System;
 using System.Collections.Generic;
 
@@ -66,7 +66,7 @@ namespace Cosmos.Resource
                 taskIdKeyDict.Remove(eventArgs.TaskId, out var pair);
                 var key = pair.ManifestEncryptionKey;
                 var bundlePath = pair.BundlePath;
-                var resourceManifest = ResourceUtility.Manifest.DeserializeManifest(manifestContext, key);
+                var resourceManifest = ResourceLegacyUtility.Manifest.DeserializeManifest(manifestContext, key);
                 onSuccess?.Invoke(eventArgs.TaskId, eventArgs.URL, bundlePath, resourceManifest);
             }
             catch (Exception e)

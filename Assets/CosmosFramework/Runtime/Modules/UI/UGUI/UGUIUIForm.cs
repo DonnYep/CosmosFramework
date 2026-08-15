@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 namespace Cosmos.UI
 {
     /// <summary>
@@ -85,6 +86,7 @@ namespace Cosmos.UI
             Utility.Debug.LogInfo($"{UIFormName} OnRelease");
         }
         protected bool HasLabel<T>(string lableName)
+            where T : Component
         {
             if (uiLabelDict.ContainsKey(lableName))
                 return true;

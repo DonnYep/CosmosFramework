@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -32,7 +32,7 @@ namespace Cosmos.Resource
                 var srcValue = value;
                 if (!string.IsNullOrEmpty(srcValue))
                 {
-                    srcValue = ResourceUtility.FilterName(srcValue);
+                    srcValue = ResourceLegacyUtility.FilterName(srcValue);
                 }
                 bundleName = srcValue;
             }

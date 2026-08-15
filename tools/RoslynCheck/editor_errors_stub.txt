@@ -1,0 +1,3 @@
+== UnityEngine.Stub : 2 errors ==
+CS0843 UnityStubs.cs(1183,16) : 必须先完全分配自动实现的属性'Bounds.center'，然后才能将控件返回到调用方。请考虑更新到语言版本'11.0'以自动默认属性。
+CS0843 UnityStubs.cs(1183,16) : 必须先完全分配自动实现的属性'Bounds.size'，然后才能将控件返回到调用方。请考虑更新到语言版本'11.0'以自动默认属性。
