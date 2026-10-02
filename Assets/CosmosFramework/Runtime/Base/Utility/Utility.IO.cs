@@ -463,7 +463,7 @@ namespace Cosmos
             {
                 if (!Directory.Exists(filePath))
                     Directory.CreateDirectory(filePath);
-                using (FileStream stream = File.Open(Path.Combine(filePath, fileName), append ? FileMode.OpenOrCreate : FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (FileStream stream = File.Open(Path.Combine(filePath, fileName), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     if (append)
                         stream.Position = stream.Length;
@@ -488,7 +488,7 @@ namespace Cosmos
                 var folderPath = Path.GetDirectoryName(fileFullPath);
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);
-                using (FileStream stream = File.Open(fileFullPath, append ? FileMode.OpenOrCreate : FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (FileStream stream = File.Open(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     if (append)
                         stream.Position = stream.Length;
