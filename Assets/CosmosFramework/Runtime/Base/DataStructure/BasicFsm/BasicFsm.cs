@@ -69,15 +69,16 @@ namespace Cosmos
         }
         public void ChangeState(Type stateType)
         {
-            BasicFsmState<T> state = null;
+            if (stateType == null)
+                throw new ArgumentNullException(nameof(stateType));
             if (!stateBaseType.IsAssignableFrom(stateType))
-                throw new ArgumentException("State type is invalid" + stateType.FullName);
-            state = GetState(stateType);
+                throw new ArgumentException("State type " + stateType.FullName + " is invalid", nameof(stateType));
+            var state = GetState(stateType);
             if (state == null)
-                throw new ArgumentNullException($"FSM{currentState} can not change state to {state} which is not exist");
-            currentState?.OnLogic(this);
+                throw new ArgumentException("State type " + stateType.FullName + " has not been added to this FSM", nameof(stateType));
+            currentState?.OnExit(this);
             currentState = state;
-            currentState?.OnLogic(this);
+            currentState.OnEnter(this);
         }
         public TState GetState<TState>() where TState : BasicFsmState<T>
         {
