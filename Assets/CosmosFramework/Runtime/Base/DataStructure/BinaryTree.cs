@@ -74,6 +74,8 @@ namespace Cosmos
         /// </summary>
         public void LevelTraversal(ref Queue<T> queueData)
         {
+            if (root == null)
+                return;
             Queue<Node> queue = new Queue<Node>();
             queue.Enqueue(root);
             while (queue.Count != 0)
