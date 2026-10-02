@@ -133,7 +133,8 @@ namespace Cosmos.WebRequest
                     yield return GetContentLengthRequest(task);
                 else
                     yield return WebRequest(task);
-                taskList.RemoveFirst();
+                if (taskList.Count > 0 && taskList[0] == task)
+                    taskList.RemoveAt(0);
                 taskDict.Remove(task.TaskId);
                 WebRequestTask.Release(task);
             }
