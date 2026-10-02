@@ -76,6 +76,7 @@ namespace Cosmos
                 byte[] md5Bytes = Encoding.UTF8.GetBytes(context);
                 MD5 md5 = MD5.Create();
                 byte[] cryptBytes = md5.ComputeHash(md5Bytes);
+                stringBuilderCache.Clear();
                 int length = cryptBytes.Length;
                 for (int i = 0; i < length; i++)
                 {
