@@ -39,7 +39,7 @@ namespace Cosmos
         }
         public override int GetHashCode()
         {
-            return type.GetHashCode() ^ _string.GetHashCode();
+            return (type == null ? 0 : type.GetHashCode()) ^ (_string == null ? 0 : _string.GetHashCode());
         }
         public override string ToString()
         {

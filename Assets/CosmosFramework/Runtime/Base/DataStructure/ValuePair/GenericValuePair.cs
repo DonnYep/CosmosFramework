@@ -37,7 +37,8 @@ namespace Cosmos
         }
         public override int GetHashCode()
         {
-            return value1.GetHashCode() ^ value2.GetHashCode();
+            return System.Collections.Generic.EqualityComparer<TValue1>.Default.GetHashCode(value1) ^
+                   System.Collections.Generic.EqualityComparer<TValue2>.Default.GetHashCode(value2);
         }
         public override string ToString()
         {
@@ -52,12 +53,8 @@ namespace Cosmos
         /// </summary>
         public bool Equals(GenericValuePair<TValue1, TValue2> other)
         {
-            bool result = false;
-            if (this.GetType() == other.GetType())
-            {
-                result = this.value1.Equals(other.value1) && this.value2.Equals(other.value2);
-            }
-            return result;
+            return System.Collections.Generic.EqualityComparer<TValue1>.Default.Equals(value1, other.value1) &&
+                   System.Collections.Generic.EqualityComparer<TValue2>.Default.Equals(value2, other.value2);
         }
     }
 }
