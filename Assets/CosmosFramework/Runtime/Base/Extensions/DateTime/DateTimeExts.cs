@@ -40,21 +40,24 @@ namespace Cosmos
         /// </summary>
         public static double GetTotalMinutes(this in DateTime @this) 
         {
-            return new DateTimeOffset(@this).Offset.TotalMinutes; 
+            var epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+            return (new DateTimeOffset(@this).UtcDateTime - epoch.UtcDateTime).TotalMinutes;
         }
         /// <summary>
         /// 获取该时间相对于纪元时间的小时数
         /// </summary>
         public static double GetTotalHours(this in DateTime @this)
         {
-            return new DateTimeOffset(@this).Offset.TotalHours;
+            var epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+            return (new DateTimeOffset(@this).UtcDateTime - epoch.UtcDateTime).TotalHours;
         }
         /// <summary>
         /// 获取该时间相对于纪元时间的天数
         /// </summary>
         public static double GetTotalDays(this in DateTime @this) 
         {
-            return new DateTimeOffset(@this).Offset.TotalDays; 
+            var epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+            return (new DateTimeOffset(@this).UtcDateTime - epoch.UtcDateTime).TotalDays;
         }
     }
 }
