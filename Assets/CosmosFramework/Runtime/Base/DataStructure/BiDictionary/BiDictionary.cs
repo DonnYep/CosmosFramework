@@ -51,21 +51,13 @@ namespace Cosmos
         public TSecond this[TFirst key]
         {
             get { return _firstToSecond[key]; }
-            set
-            {
-                _firstToSecond[key] = value;
-                _secondToFirst[value] = key;
-            }
+            set { SetMapping(key, value); }
         }
 
         object IDictionary.this[object key]
         {
             get { return ((IDictionary)_firstToSecond)[key]; }
-            set
-            {
-                ((IDictionary)_firstToSecond)[key] = value;
-                ((IDictionary)_secondToFirst)[value] = key;
-            }
+            set { SetMapping((TFirst)key, (TSecond)value); }
         }
 
         public ICollection<TFirst> Keys
@@ -118,6 +110,26 @@ namespace Cosmos
             _firstToSecond.Add(key, value);
             _secondToFirst.Add(value, key);
         }
+        private void SetMapping(TFirst key, TSecond value)
+        {
+            TSecond oldValue;
+            if (_firstToSecond.TryGetValue(key, out oldValue))
+            {
+                _firstToSecond.Remove(key);
+                _secondToFirst.Remove(oldValue);
+            }
+
+            TFirst oldKey;
+            if (_secondToFirst.TryGetValue(value, out oldKey))
+            {
+                _secondToFirst.Remove(value);
+                _firstToSecond.Remove(oldKey);
+            }
+
+            _firstToSecond[key] = value;
+            _secondToFirst[value] = key;
+        }
+
         public bool TryAdd(TFirst key, TSecond value)
         {
             if (_firstToSecond.ContainsKey(key) || _secondToFirst.ContainsKey(value))
@@ -128,12 +140,7 @@ namespace Cosmos
         }
         public void AddOrUpdate(TFirst key, TSecond value)
         {
-            if (_firstToSecond.ContainsKey(key))
-                _firstToSecond.Remove(key);
-            if (_secondToFirst.ContainsKey(value))
-                _secondToFirst.Remove(value);
-            _firstToSecond.Add(key, value);
-            _secondToFirst.Add(value, key);
+            SetMapping(key, value);
         }
         void IDictionary.Add(object key, object value)
         {
@@ -263,21 +270,13 @@ namespace Cosmos
             public TFirst this[TSecond key]
             {
                 get { return _owner._secondToFirst[key]; }
-                set
-                {
-                    _owner._secondToFirst[key] = value;
-                    _owner._firstToSecond[value] = key;
-                }
+                set { _owner.SetMapping(value, key); }
             }
 
             object IDictionary.this[object key]
             {
                 get { return ((IDictionary)_owner._secondToFirst)[key]; }
-                set
-                {
-                    ((IDictionary)_owner._secondToFirst)[key] = value;
-                    ((IDictionary)_owner._firstToSecond)[value] = key;
-                }
+                set { _owner.SetMapping((TFirst)value, (TSecond)key); }
             }
             public ICollection<TSecond> Keys
             {
