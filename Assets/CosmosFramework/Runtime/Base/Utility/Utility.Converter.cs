@@ -138,7 +138,7 @@ namespace Cosmos
                 {
                     var formatter = new BinaryFormatter();
                     formatter.Serialize(ms, obj);
-                    return ms.GetBuffer();
+                    return ms.ToArray();
                 }
             }
             /// <summary>
