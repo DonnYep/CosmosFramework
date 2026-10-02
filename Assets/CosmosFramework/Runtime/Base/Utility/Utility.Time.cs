@@ -129,7 +129,7 @@ namespace Cosmos
             public static double GetTotalDays()
             {
                 TimeSpan ts = DateTime.UtcNow - epoch;
-                return Convert.ToInt64(ts.TotalHours);
+                return Convert.ToInt64(ts.TotalDays);
             }
             /// <summary>
             /// 获取某一年有多少周。
