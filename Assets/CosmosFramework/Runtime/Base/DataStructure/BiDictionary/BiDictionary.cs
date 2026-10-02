@@ -9,9 +9,9 @@ namespace Cosmos
     {
         private readonly IDictionary<TFirst, TSecond> _firstToSecond = new Dictionary<TFirst, TSecond>();
         [NonSerialized]
-        private readonly IDictionary<TSecond, TFirst> _secondToFirst = new Dictionary<TSecond, TFirst>();
+        private IDictionary<TSecond, TFirst> _secondToFirst = new Dictionary<TSecond, TFirst>();
         [NonSerialized]
-        private readonly ReverseDictionary _reverseDictionary;
+        private ReverseDictionary _reverseDictionary;
 
         public BiDictionary()
         {
@@ -218,6 +218,8 @@ namespace Cosmos
         [OnDeserialized]
         internal void OnDeserialized(StreamingContext context)
         {
+            _secondToFirst = new Dictionary<TSecond, TFirst>();
+            _reverseDictionary = new ReverseDictionary(this);
             _secondToFirst.Clear();
             foreach (var item in _firstToSecond)
                 _secondToFirst.Add(item.Value, item.Key);

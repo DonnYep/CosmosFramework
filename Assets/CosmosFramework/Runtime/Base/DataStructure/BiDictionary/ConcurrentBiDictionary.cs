@@ -11,9 +11,9 @@ namespace Cosmos
     {
         private readonly IDictionary<TFirst, TSecond> _firstToSecond = new ConcurrentDictionary<TFirst, TSecond>();
         [NonSerialized]
-        private readonly IDictionary<TSecond, TFirst> _secondToFirst = new ConcurrentDictionary<TSecond, TFirst>();
+        private IDictionary<TSecond, TFirst> _secondToFirst = new ConcurrentDictionary<TSecond, TFirst>();
         [NonSerialized]
-        private readonly ReverseDictionary _reverseDictionary;
+        private ReverseDictionary _reverseDictionary;
 
         public ConcurrentBiDictionary()
         {
@@ -220,6 +220,8 @@ namespace Cosmos
         [OnDeserialized]
         internal void OnDeserialized(StreamingContext context)
         {
+            _secondToFirst = new ConcurrentDictionary<TSecond, TFirst>();
+            _reverseDictionary = new ReverseDictionary(this);
             _secondToFirst.Clear();
             foreach (var item in _firstToSecond)
                 _secondToFirst.Add(item.Value, item.Key);
