@@ -109,7 +109,7 @@ where T : Component
             var comp = parentTrans.GetComponent<T>();
             if (comp == null)
             {
-                comp = @this.gameObject.AddComponent<T>();
+                comp = parentTrans.gameObject.AddComponent<T>();
             }
             return comp;
         }
@@ -171,7 +171,7 @@ where T : Component
             {
                 var comp = tran.GetComponent<T>();
                 if (comp == null)
-                    @this.gameObject.AddComponent<T>();
+                    comp = tran.gameObject.AddComponent<T>();
                 return comp;
             }
             return null;
@@ -187,13 +187,10 @@ where T : Component
 where T : Component
         {
             Transform parentTrans = @this.transform.parent;
+            if (parentTrans == null)
+                return new T[0];
             var childTrans = parentTrans.GetComponentsInChildren<Transform>();
-            var length = childTrans.Length;
-            Transform[] trans;
-            if (!includeSelf)
-                trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
-            else
-                trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);
+            Transform[] trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && (includeSelf || t != @this.transform));
             var transLength = trans.Length;
             T[] src = new T[transLength];
             int idx = 0;
