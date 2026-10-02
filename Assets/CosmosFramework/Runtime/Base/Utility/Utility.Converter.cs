@@ -10,6 +10,12 @@ namespace Cosmos
         {
             [ThreadStatic]//每个静态类型字段对于每一个线程都是唯一的
             static StringBuilder stringBuilderCache = new StringBuilder(1024);
+            static StringBuilder GetStringBuilderCache()
+            {
+                if (stringBuilderCache == null)
+                    stringBuilderCache = new StringBuilder(1024);
+                return stringBuilderCache;
+            }
             /// <summary>
             /// 解码base64。
             /// </summary>
@@ -35,15 +41,17 @@ namespace Cosmos
             /// <returns>16进制字符串</returns>
             public static string ConvertToHexString(string context)
             {
+                var builder = GetStringBuilderCache();
+                builder.Clear();
                 string hexString = string.Empty;
                 var bytes = Encoding.UTF8.GetBytes(context);
                 if (bytes != null)
                 {
                     foreach (byte b in bytes)
                     {
-                        stringBuilderCache.AppendFormat("{0:x2}", b);
+                        builder.AppendFormat("{0:x2}", b);
                     }
-                    hexString = stringBuilderCache.ToString();
+                    hexString = builder.ToString();
                 }
                 return hexString;
             }
@@ -54,14 +62,16 @@ namespace Cosmos
             /// <returns>16进制字符串</returns>
             public static string ConvertToHexString(byte[] bytes)
             {
+                var builder = GetStringBuilderCache();
+                builder.Clear();
                 string hexString = string.Empty;
                 if (bytes != null)
                 {
                     foreach (byte b in bytes)
                     {
-                        stringBuilderCache.AppendFormat("{0:x2}", b);
+                        builder.AppendFormat("{0:x2}", b);
                     }
-                    hexString = stringBuilderCache.ToString();
+                    hexString = builder.ToString();
                 }
                 return hexString;
             }

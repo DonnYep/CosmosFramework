@@ -13,6 +13,12 @@ namespace Cosmos
             /// </summary>
             [ThreadStatic]
             static StringBuilder stringBuilderCache = new StringBuilder(1024);
+            static StringBuilder GetStringBuilderCache()
+            {
+                if (stringBuilderCache == null)
+                    stringBuilderCache = new StringBuilder(1024);
+                return stringBuilderCache;
+            }
             static char[] stringConstant ={
             '0','1','2','3','4','5','6','7','8','9',
             'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
@@ -25,13 +31,14 @@ namespace Cosmos
             /// <returns>生成的随机字符串</returns>
             public static string GenerateRandomString(int length)
             {
-                stringBuilderCache.Clear();
+                var builder = GetStringBuilderCache();
+                builder.Clear();
                 Random rd = new Random();
                 for (int i = 0; i < length; i++)
                 {
-                    stringBuilderCache.Append(stringConstant[rd.Next(62)]);
+                    builder.Append(stringConstant[rd.Next(62)]);
                 }
-                return stringBuilderCache.ToString();
+                return builder.ToString();
             }
             /// <summary>
             /// 格式化合并
@@ -44,13 +51,14 @@ namespace Cosmos
                 {
                     throw new ArgumentNullException("Append is invalid.");
                 }
-                stringBuilderCache.Clear();
+                var builder = GetStringBuilderCache();
+                builder.Clear();
                 int length = args.Length;
                 for (int i = 0; i < length; i++)
                 {
-                    stringBuilderCache.Append(args[i]);
+                    builder.Append(args[i]);
                 }
-                return stringBuilderCache.ToString();
+                return builder.ToString();
             }
             /// <summary>
             /// 字段合并
@@ -61,13 +69,14 @@ namespace Cosmos
             {
                 if (strings == null)
                     throw new ArgumentNullException("Combine is invalid.");
-                stringBuilderCache.Length = 0;
+                var builder = GetStringBuilderCache();
+                builder.Length = 0;
                 int length = strings.Length;
                 for (int i = 0; i < length; i++)
                 {
-                    stringBuilderCache.Append(strings[i]);
+                    builder.Append(strings[i]);
                 }
-                return stringBuilderCache.ToString();
+                return builder.ToString();
             }
             /// <summary>
             /// 字段合并
@@ -78,12 +87,13 @@ namespace Cosmos
             {
                 if (strings == null)
                     throw new ArgumentNullException("Combine is invalid.");
-                stringBuilderCache.Clear();
+                var builder = GetStringBuilderCache();
+                builder.Clear();
                 foreach (var str in strings)
                 {
-                    stringBuilderCache.Append(str);
+                    builder.Append(str);
                 }
-                return stringBuilderCache.ToString();
+                return builder.ToString();
             }
             /// <summary>
             /// 是否是一串数字类型的string
