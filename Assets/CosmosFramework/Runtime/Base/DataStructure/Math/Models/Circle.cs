@@ -47,7 +47,10 @@ namespace Cosmos
         public bool IsIntersectWith(Circle other)
         {
             var dis = Math.Sqrt(Math.Pow(other.Center.X - Center.X, 2) + Math.Pow(other.Center.Y - Center.Y, 2));
-            return Math.Abs(other.Radius - Radius - dis) < 1e-7 || Math.Abs(dis - (other.Radius + Radius)) < 1e-7;
+            var radiusDifference = Math.Abs(other.Radius - Radius);
+            var isInternalTangent = radiusDifference > 1e-7 && Math.Abs(dis - radiusDifference) < 1e-7;
+            var isExternalTangent = Math.Abs(dis - (other.Radius + Radius)) < 1e-7;
+            return isInternalTangent || isExternalTangent;
         }
 
         /// <summary>
