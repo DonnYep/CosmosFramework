@@ -539,8 +539,8 @@ namespace Cosmos
             }
             public static void DrawEllipseXY(Vector3 center, float xScale, float yScale, int ellipseSegment)
             {
-                if (ellipseSegment < 0)
-                    ellipseSegment = 0;
+                if (ellipseSegment <= 0)
+                    return;
                 if (xScale < 0)
                     xScale = 0;
                 if (yScale < 0)
@@ -562,8 +562,8 @@ namespace Cosmos
             }
             public static void DrawEllipseXZ(Vector3 center, float xScale, float yScale, int ellipseSegment)
             {
-                if (ellipseSegment < 0)
-                    ellipseSegment = 0;
+                if (ellipseSegment <= 0)
+                    return;
                 if (xScale < 0)
                     xScale = 0;
                 if (yScale < 0)
@@ -586,8 +586,8 @@ namespace Cosmos
             }
             public static void DrawEllipseYZ(Vector3 center, float xScale, float yScale, int ellipseSegment)
             {
-                if (ellipseSegment < 0)
-                    ellipseSegment = 0;
+                if (ellipseSegment <= 0)
+                    return;
                 if (xScale < 0)
                     xScale = 0;
                 if (yScale < 0)
