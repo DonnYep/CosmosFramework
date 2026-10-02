@@ -30,9 +30,8 @@ namespace Cosmos
         public ConcurrentPool(Func<T> objectGenerator) : this(0, objectGenerator, null, null, null) { }
         public T Spawn()
         {
-            if (objects.Count > 0)
+            if (objects.TryDequeue(out var obj))
             {
-                objects.TryDequeue(out var obj);
                 objectSpawn?.Invoke(obj);
                 return obj;
             }
