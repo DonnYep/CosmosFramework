@@ -105,6 +105,11 @@ namespace Cosmos
             if (typeStateDict.ContainsKey(stateType))
             {
                 var state = typeStateDict[stateType];
+                if (ReferenceEquals(currentState, state))
+                {
+                    currentState.OnExit(this);
+                    currentState = null;
+                }
                 typeStateDict.Remove(stateType);
                 state?.OnDestroy(this);
                 return true;
@@ -208,6 +213,7 @@ namespace Cosmos
         public void ClearAllState()
         {
             currentState?.OnExit(this);
+            currentState = null;
             foreach (var state in typeStateDict.Values)
             {
                 state?.OnDestroy(this);
