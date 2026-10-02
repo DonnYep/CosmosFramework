@@ -20,19 +20,34 @@ namespace Cosmos
         public static Texture2D CameraScreenshotAsTexture(this Camera @this, TextureFormat textureFormat)
         {
             var oldRenderTexture = @this.targetTexture;
+            var oldActiveRenderTexture = RenderTexture.active;
             var width = @this.pixelWidth;
             var height = @this.pixelHeight;
-            RenderTexture renderTexture;
-            renderTexture = new RenderTexture(width, height, 24);
-            @this.targetTexture = renderTexture;
-            @this.Render();
-            Texture2D texture2D = new Texture2D(width, height, textureFormat, false);
-            RenderTexture.active = renderTexture;
-            texture2D.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-            texture2D.Apply();
-            RenderTexture.active = null;
-            @this.targetTexture = oldRenderTexture;
-            return texture2D;
+            var renderTexture = new RenderTexture(width, height, 24);
+            Texture2D texture2D = null;
+            try
+            {
+                @this.targetTexture = renderTexture;
+                @this.Render();
+                texture2D = new Texture2D(width, height, textureFormat, false);
+                RenderTexture.active = renderTexture;
+                texture2D.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+                texture2D.Apply();
+                return texture2D;
+            }
+            catch
+            {
+                if (texture2D != null)
+                    Object.Destroy(texture2D);
+                throw;
+            }
+            finally
+            {
+                RenderTexture.active = oldActiveRenderTexture;
+                @this.targetTexture = oldRenderTexture;
+                renderTexture.Release();
+                Object.Destroy(renderTexture);
+            }
         }
         /// <summary>
         /// 通过相机截取屏幕并转换为Sprite
