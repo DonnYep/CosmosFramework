@@ -341,7 +341,7 @@ namespace Cosmos.Audio
         {
             if (serialIndex == int.MaxValue)
                 serialIndex = 0;
-            return serialIndex++;
+            return ++serialIndex;
         }
     }
 }
