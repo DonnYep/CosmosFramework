@@ -31,7 +31,7 @@ namespace Cosmos
             /// <returns>文件地址</returns>
             public static string[] GetAllFiles(string path)
             {
-                return Directory.GetFiles(path, ".", SearchOption.AllDirectories);
+                return Directory.GetFiles(path, "*", SearchOption.AllDirectories);
             }
             /// <summary>
             /// 获取文件夹中的文件数量
