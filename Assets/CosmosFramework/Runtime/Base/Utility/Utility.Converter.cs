@@ -122,7 +122,7 @@ namespace Cosmos
                 string[] suffix = { "Byte", "KB", "MB", "GB", "TB" };
                 int i = 0;
                 double dblSByte = bytes;
-                if (bytes > 1024)
+                if (bytes >= 1024)
                     for (i = 0; (bytes / 1024) > 0; i++, bytes /= 1024)
                         dblSByte = bytes / 1024.0;
                 return $"{Math.Round(dblSByte, decimals)}{suffix[i]}";
