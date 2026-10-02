@@ -193,7 +193,10 @@ namespace Cosmos
 
         bool ICollection<KeyValuePair<TFirst, TSecond>>.Remove(KeyValuePair<TFirst, TSecond> item)
         {
-            return _firstToSecond.Remove(item);
+            if (!((ICollection<KeyValuePair<TFirst, TSecond>>)_firstToSecond).Remove(item))
+                return false;
+            ((ICollection<KeyValuePair<TSecond, TFirst>>)_secondToFirst).Remove(new KeyValuePair<TSecond, TFirst>(item.Value, item.Key));
+            return true;
         }
 
         bool IDictionary.Contains(object key)
@@ -381,7 +384,10 @@ namespace Cosmos
 
             bool ICollection<KeyValuePair<TSecond, TFirst>>.Remove(KeyValuePair<TSecond, TFirst> item)
             {
-                return _owner._secondToFirst.Remove(item);
+                if (!((ICollection<KeyValuePair<TSecond, TFirst>>)_owner._secondToFirst).Remove(item))
+                    return false;
+                ((ICollection<KeyValuePair<TFirst, TSecond>>)_owner._firstToSecond).Remove(new KeyValuePair<TFirst, TSecond>(item.Value, item.Key));
+                return true;
             }
 
             bool IDictionary.Contains(object key)
