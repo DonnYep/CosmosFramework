@@ -300,9 +300,9 @@ namespace Cosmos.Controller
             if (tickActionDict.Remove(controllerId, out var tickAction))
                 tickRefresh -= tickAction;
             if (lateActionDict.Remove(controllerId, out var lateAction))
-                lateRefresh += lateAction;
+                lateRefresh -= lateAction;
             if (fixedActionDict.Remove(controllerId, out var fixedAction))
-                fixedRefresh += fixedAction;
+                fixedRefresh -= fixedAction;
         }
         #endregion
     }
