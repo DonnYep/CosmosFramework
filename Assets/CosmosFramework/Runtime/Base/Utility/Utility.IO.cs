@@ -232,7 +232,7 @@ namespace Cosmos
             {
                 if (File.Exists(sourceFileName))
                 {
-                    var fileName = Path.GetDirectoryName(sourceFileName);
+                    var fileName = Path.GetFileName(sourceFileName);
                     if (!Directory.Exists(folderPath))
                     {
                         Directory.CreateDirectory(folderPath);
