@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -15,7 +16,16 @@ namespace Cosmos
         {
             @this.Position = 0;
             byte[] bytes = new byte[@this.Length];
-            @this.Read(bytes, 0, bytes.Length);
+            int totalRead = 0;
+            while (totalRead < bytes.Length)
+            {
+                int read = @this.Read(bytes, totalRead, bytes.Length - totalRead);
+                if (read == 0)
+                    break;
+                totalRead += read;
+            }
+            if (totalRead != bytes.Length)
+                Array.Resize(ref bytes, totalRead);
             // 设置当前流的位置为流的开始
             @this.Seek(0, SeekOrigin.Begin);
             return bytes;

@@ -187,7 +187,16 @@ namespace Cosmos
 
             int iLen = (int)st.Length;
             byte[] bytes = new byte[iLen];
-            st.Read(bytes, 0, iLen);
+            int totalRead = 0;
+            while (totalRead < iLen)
+            {
+                int read = st.Read(bytes, totalRead, iLen - totalRead);
+                if (read == 0)
+                    break;
+                totalRead += read;
+            }
+            if (totalRead != bytes.Length)
+                Array.Resize(ref bytes, totalRead);
             return Encoding.GetEncoding(charset).GetString(bytes);
         }
 
