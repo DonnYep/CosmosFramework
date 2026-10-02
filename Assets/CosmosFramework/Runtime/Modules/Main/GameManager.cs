@@ -322,14 +322,15 @@ namespace Cosmos
             GameManager.fixedRefreshHandler = null;
             GameManager.elapseRefreshHandler = null;
 
+            moduleDict.Clear();
+            interfaceModuleDict.Clear();
+
             if (moduleTerminateExceptionList.Count > 0)
             {
                 var arr = moduleTerminateExceptionList.ToArray();
-                moduleInitExceptionList.Clear();
+                moduleTerminateExceptionList.Clear();
                 throw new AggregateException(arr);
             }
-            moduleDict.Clear();
-            interfaceModuleDict.Clear();
         }
         #endregion
     }
