@@ -724,7 +724,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="path">路径</param>
             /// <returns>文件夹大小</returns>
-            public static long GetDirectorySize(string path, string searchPattern = ".")
+            public static long GetDirectorySize(string path, string searchPattern = "*")
             {
                 if (!Directory.Exists(path))
                     return 0;
