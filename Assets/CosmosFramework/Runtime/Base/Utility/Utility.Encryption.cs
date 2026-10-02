@@ -526,13 +526,15 @@ namespace Cosmos
                     {
                         var iv = new byte[16];
                         ms.Read(iv, 0, 16);
-                        using (var cryptStream = new CryptoStream(ms, aes.CreateDecryptor(key, iv), CryptoStreamMode.Read))
+                        using (MemoryStream output = new MemoryStream())
+                        using (var cryptStream = new CryptoStream(output, aes.CreateDecryptor(key, iv), CryptoStreamMode.Write))
                         {
-                            using (StreamReader reader = new StreamReader(cryptStream))
+                            using (BinaryWriter writer = new BinaryWriter(cryptStream))
                             {
-                                var data = reader.ReadToEnd();
-                                return Convert.FromBase64String(data);
+                                writer.Write(bytes, iv.Length, bytes.Length - iv.Length);
+                                cryptStream.FlushFinalBlock();
                             }
+                            return output.ToArray();
                         }
                     }
                 }
