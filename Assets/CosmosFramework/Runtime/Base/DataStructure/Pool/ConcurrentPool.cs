@@ -17,6 +17,9 @@ namespace Cosmos
         readonly Action<T> objectOverflow;
         readonly Action<T> objectSpawn;
         readonly int capacity = 0;
+        readonly object capacityLock = new object();
+        int retainedCount;
+        int pendingCount;
         public ConcurrentPool(int capacity, Func<T> objectGenerator, Action<T> objectSpawn, Action<T> objectDesapwn, Action<T> objectOverflow)
         {
             this.objectGenerator = objectGenerator;
@@ -30,7 +33,16 @@ namespace Cosmos
         public ConcurrentPool(Func<T> objectGenerator) : this(0, objectGenerator, null, null, null) { }
         public T Spawn()
         {
-            if (objects.TryDequeue(out var obj))
+            T obj;
+            bool hasObject;
+            lock (capacityLock)
+            {
+                hasObject = objects.TryDequeue(out obj);
+                if (hasObject && capacity > 0)
+                    retainedCount--;
+            }
+
+            if (hasObject)
             {
                 objectSpawn?.Invoke(obj);
                 return obj;
@@ -44,19 +56,59 @@ namespace Cosmos
         }
         public void Despawn(T obj)
         {
-            if (capacity == 0 || objects.Count < capacity)
+            if (capacity == 0)
             {
                 objectDespawn?.Invoke(obj);
-                objects.Enqueue(obj);
+                lock (capacityLock)
+                {
+                    objects.Enqueue(obj);
+                }
+                return;
             }
-            else
+
+            bool hasCapacity;
+            lock (capacityLock)
+            {
+                hasCapacity = retainedCount < capacity;
+                if (hasCapacity)
+                {
+                    retainedCount++;
+                    pendingCount++;
+                }
+            }
+
+            if (!hasCapacity)
             {
                 objectOverflow?.Invoke(obj);
+                return;
+            }
+
+            try
+            {
+                objectDespawn?.Invoke(obj);
+                lock (capacityLock)
+                {
+                    pendingCount--;
+                    objects.Enqueue(obj);
+                }
+            }
+            catch
+            {
+                lock (capacityLock)
+                {
+                    pendingCount--;
+                    retainedCount--;
+                }
+                throw;
             }
         }
         public void Clear()
         {
-            objects.Clear();
+            lock (capacityLock)
+            {
+                objects.Clear();
+                retainedCount = pendingCount;
+            }
         }
         public IEnumerator<T> GetEnumerator()
         {
