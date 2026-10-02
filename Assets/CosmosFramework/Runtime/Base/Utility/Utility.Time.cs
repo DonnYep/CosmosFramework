@@ -38,7 +38,7 @@ namespace Cosmos
             /// <returns>微秒级别UTC时间戳</returns>
             public static long MicrosecondTimeStamp()
             {
-                return DateTime.UtcNow.Ticks - epochTicks;
+                return (DateTime.UtcNow.Ticks - epochTicks) / 10;
             }
             /// <summary>
             ///秒级别UTC时间
@@ -62,7 +62,7 @@ namespace Cosmos
             /// <returns>long时间</returns>
             public static long MicrosecondNow()
             {
-                return DateTime.UtcNow.Ticks;
+                return DateTime.UtcNow.Ticks / 10;
             }
             /// <summary>
             /// 时间戳转UTC DateTime
@@ -76,8 +76,8 @@ namespace Cosmos
                     return dateTime.AddSeconds(timeStamp);
                 if (length == 12)
                     return dateTime.AddMilliseconds(timeStamp);
-                if (length == 16)
-                    return dateTime.AddTicks(timeStamp);
+                if (length == 15)
+                    return dateTime.AddTicks(timeStamp * 10);
                 return DateTime.MinValue;
             }
             /// <summary>
@@ -105,7 +105,7 @@ namespace Cosmos
             public static long GetTotalMicroseconds()
             {
                 TimeSpan ts = DateTime.UtcNow - epoch;
-                return Convert.ToInt64(ts.TotalMilliseconds) / 10;
+                return ts.Ticks / 10;
             }
             /// <summary>
             /// 获取该时间相对于纪元时间的分钟数
@@ -295,7 +295,7 @@ namespace Cosmos
             /// <returns>微秒时间戳</returns>
             public static long GetDateMicrosecondTimeStamp(DateTime dateTime)
             {
-                return (dateTime.Ticks - epochTicks);
+                return (dateTime.Ticks - epochTicks) / 10;
             }
             /// <summary>
             /// 判断是否是同一天
