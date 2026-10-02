@@ -12,6 +12,17 @@ namespace Cosmos
         /// </summary>
         public static class Compression
         {
+            static void ReadFully(Stream source, byte[] buffer)
+            {
+                int offset = 0;
+                while (offset < buffer.Length)
+                {
+                    int read = source.Read(buffer, offset, buffer.Length - offset);
+                    if (read == 0)
+                        throw new EndOfStreamException();
+                    offset += read;
+                }
+            }
             /// <summary>
             /// 压缩文本
             /// </summary>
@@ -49,7 +60,7 @@ namespace Cosmos
                     memoryStream.Position = 0;
                     using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
                     {
-                        gZipStream.Read(buffer, 0, buffer.Length);
+                        ReadFully(gZipStream, buffer);
                     }
                     return Encoding.UTF8.GetString(buffer);
                 }
@@ -91,7 +102,7 @@ namespace Cosmos
                     memoryStream.Position = 0;
                     using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
                     {
-                        gZipStream.Read(buffer, 0, buffer.Length);
+                        ReadFully(gZipStream, buffer);
                     }
                     return buffer;
                 }
