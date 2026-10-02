@@ -283,7 +283,7 @@ namespace Cosmos.Download
                 if (!request.isNetworkError && !request.isHttpError)
 #endif
                 {
-                    var fileLength = long.Parse(request.GetRequestHeader("Content-Length"));
+                    var fileLength = long.Parse(request.GetResponseHeader("Content-Length"));
                     //totalRequiredDownloadLength += fileLength;
                 }
                 else

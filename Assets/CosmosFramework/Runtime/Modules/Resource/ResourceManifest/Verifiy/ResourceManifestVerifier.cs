@@ -93,20 +93,22 @@ namespace Cosmos.Resource.Verify
             using (UnityWebRequest request = UnityWebRequest.Head(task.Url))
             {
                 yield return request.SendWebRequest();
-                var size = request.GetRequestHeader("Content-Length");
+                var size = request.GetResponseHeader("Content-Length");
 #if UNITY_2020_1_OR_NEWER
                 if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
 #elif UNITY_2018_1_OR_NEWER
                 if (!request.isNetworkError && !request.isHttpError)
 #endif
                 {
-                    var bundleLength = Convert.ToInt64(size);
-                    bool bundleLengthMatched = false;
-                    if (task.ResourceBundleSize == bundleLength)
+                    if (long.TryParse(size, out var bundleLength))
                     {
-                        bundleLengthMatched = true;
+                        bool bundleLengthMatched = task.ResourceBundleSize == bundleLength;
+                        verificationSuccessInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, bundleLengthMatched, bundleLength));
                     }
-                    verificationSuccessInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, bundleLengthMatched, bundleLength));
+                    else
+                    {
+                        verificationFailureInfos.Add(new ResourceManifestVerifyInfo(task.Url, task.ResourceBundleName, false, 0));
+                    }
                 }
                 else
                 {

@@ -207,7 +207,7 @@ namespace Cosmos.WebRequest
             using (UnityWebRequest request = UnityWebRequest.Head(webRequestTask.URL))
             {
                 yield return request.SendWebRequest();
-                var size = request.GetRequestHeader("Content-Length");
+                var size = request.GetResponseHeader("Content-Length");
                 var endTime = DateTime.Now;
                 var timeSpan = endTime - startTime;
 #if UNITY_2020_1_OR_NEWER
@@ -216,9 +216,18 @@ namespace Cosmos.WebRequest
                 if (!request.isNetworkError && !request.isHttpError)
 #endif
                 {
-                    var eventArgs = WebRequestGetContentLengthSuccessEventArgs.Create(webRequestTask.TaskId, webRequestTask.URL, Convert.ToInt64(size), timeSpan);
-                    onGetContentLengthSuccessCallback?.Invoke(eventArgs);
-                    WebRequestGetContentLengthSuccessEventArgs.Release(eventArgs);
+                    if (long.TryParse(size, out var contentLength))
+                    {
+                        var eventArgs = WebRequestGetContentLengthSuccessEventArgs.Create(webRequestTask.TaskId, webRequestTask.URL, contentLength, timeSpan);
+                        onGetContentLengthSuccessCallback?.Invoke(eventArgs);
+                        WebRequestGetContentLengthSuccessEventArgs.Release(eventArgs);
+                    }
+                    else
+                    {
+                        var eventArgs = WebRequestGetContentLengthFailureEventArgs.Create(webRequestTask.TaskId, webRequestTask.URL, "Invalid or missing Content-Length response header.", timeSpan);
+                        onGetContentLengthFailureCallback?.Invoke(eventArgs);
+                        WebRequestGetContentLengthFailureEventArgs.Release(eventArgs);
+                    }
                 }
                 else
                 {
