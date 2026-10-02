@@ -691,15 +691,11 @@ namespace Cosmos
             /// <returns>文件long类型的长度</returns>
             public static long GetFileSize(string filePath)
             {
-                if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+                if (!File.Exists(filePath))
                 {
                     return 0;
                 }
-                else if (File.Exists(filePath))
-                {
-                    return new FileInfo(filePath).Length;
-                }
-                return 0;
+                return new FileInfo(filePath).Length;
             }
             /// <summary>
             /// 判断是否是二级路径
