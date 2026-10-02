@@ -150,7 +150,7 @@ namespace Cosmos
         }
         public bool Remove(SkipListNode<T> valueNode)
         {
-            if (valueNode == null)
+            if (valueNode == null || !ContainsNode(valueNode))
             {
                 return false;
             }
@@ -297,6 +297,15 @@ namespace Cosmos
                         break;
                 }
             }
+        }
+        bool ContainsNode(SkipListNode<T> valueNode)
+        {
+            var bottomNode = FindLowest(FindHighest(valueNode));
+            if (bottomNode == null || bottomNode.IsHeader() || bottomNode.IsFooter())
+                return false;
+            while (bottomNode.Previous != null)
+                bottomNode = bottomNode.Previous;
+            return ReferenceEquals(bottomNode, bottomLeft);
         }
         SkipListNode<T> AcquireEmptyLevel()
         {
