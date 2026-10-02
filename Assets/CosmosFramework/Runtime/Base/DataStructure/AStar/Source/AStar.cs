@@ -355,7 +355,7 @@ namespace Cosmos
             if (neighbourLeft == null || neighbourLeft.IsObstacle)
             {
                 neighbourNodeList.Remove(neighbourUpperLeft);
-                neighbourNodeList.Remove(neighbourUpperLeft);
+                neighbourNodeList.Remove(neighbourLowerLeft);
             }
             if (neighbourUpper == null || neighbourUpper.IsObstacle)
             {
