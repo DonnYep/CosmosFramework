@@ -24,14 +24,7 @@ namespace Cosmos
                 if (pause == value)
                     return;
                 pause = value;
-                if (pause)
-                {
-                    GameManager.Pause = true;
-                }
-                else
-                {
-                    GameManager.Pause = true;
-                }
+                GameManager.Pause = pause;
             }
         }
 
