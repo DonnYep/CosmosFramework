@@ -547,7 +547,7 @@ namespace Cosmos
                     Directory.CreateDirectory(folderPath);
                 using (BinaryWriter writer = new BinaryWriter(File.Open(fileFullPath, FileMode.OpenOrCreate)))
                 {
-                    writer.Write(context, startPosition, context.Length);
+                    writer.Write(context, startPosition, context.Length - startPosition);
                 }
             }
             /// <summary>
