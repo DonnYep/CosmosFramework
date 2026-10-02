@@ -136,41 +136,43 @@ namespace Cosmos
         public void Add(Key key, Value value)
         {
             locker.EnterWriteLock();
-            bool exist = dictionary.ContainsKey(key);
-            if (!exist)
+            Value overflowValue = default(Value);
+            bool didOverflow = false;
+            try
             {
-                try
+                if (dictionary.ContainsKey(key))
+                    return;
+
+                linkedList.AddFirst(key);
+                dictionary.Add(key, value);
+                if (linkedList.Count > capacity)
                 {
-                    linkedList.AddFirst(key);
-                    dictionary.Add(key, value);
-                    if (linkedList.Count > capacity)
-                    {
-                        //Key lastkey = linkedList.Last.Value;
-                        Value lastValue = dictionary[linkedList.Last.Value];
-                        dictionary.Remove(linkedList.Last.Value);
-                        linkedList.RemoveLast();
-                        overflow?.Invoke(lastValue);
-                    }
+                    Key lastKey = linkedList.Last.Value;
+                    overflowValue = dictionary[lastKey];
+                    dictionary.Remove(lastKey);
+                    linkedList.RemoveLast();
+                    didOverflow = true;
                 }
-                finally { locker.ExitWriteLock(); }
             }
+            finally { locker.ExitWriteLock(); }
+
+            if (didOverflow)
+                overflow?.Invoke(overflowValue);
         }
         public Value Remove(Key key)
         {
             locker.EnterWriteLock();
-            bool exist = dictionary.ContainsKey(key);
-            Value value = default(Value);
-            if (exist)
+            try
             {
-                try
+                if (dictionary.TryGetValue(key, out Value value))
                 {
-                    value = dictionary[key];
                     dictionary.Remove(key);
                     linkedList.Remove(key);
+                    return value;
                 }
-                finally { locker.ExitWriteLock(); }
+                return default(Value);
             }
-            return value;
+            finally { locker.ExitWriteLock(); }
         }
         public bool TryGetValue(Key key, out Value value)
         {
@@ -239,6 +241,7 @@ namespace Cosmos
                             capacity = value;
                             while (linkedList.Count > capacity)
                             {
+                                dictionary.Remove(linkedList.Last.Value);
                                 linkedList.RemoveLast();
                             }
                         }
