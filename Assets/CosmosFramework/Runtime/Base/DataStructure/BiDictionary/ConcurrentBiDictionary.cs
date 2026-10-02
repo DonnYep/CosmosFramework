@@ -109,15 +109,27 @@ namespace Cosmos
 
         public void Add(TFirst key, TSecond value)
         {
-            _firstToSecond.Add(key, value);
-            _secondToFirst.Add(value, key);
+            AddMapping(key, value);
         }
 
         void IDictionary.Add(object key, object value)
         {
-            ((IDictionary)_firstToSecond).Add(key, value);
-            ((IDictionary)_secondToFirst).Add(value, key);
+            AddMapping((TFirst)key, (TSecond)value);
         }
+        private void AddMapping(TFirst key, TSecond value)
+        {
+            _firstToSecond.Add(key, value);
+            try
+            {
+                _secondToFirst.Add(value, key);
+            }
+            catch
+            {
+                ((ICollection<KeyValuePair<TFirst, TSecond>>)_firstToSecond).Remove(new KeyValuePair<TFirst, TSecond>(key, value));
+                throw;
+            }
+        }
+
         private void SetMapping(TFirst key, TSecond value)
         {
             TSecond oldValue;
@@ -142,9 +154,15 @@ namespace Cosmos
         {
             if (_firstToSecond.ContainsKey(key) || _secondToFirst.ContainsKey(value))
                 return false;
-            _firstToSecond.Add(key, value);
-            _secondToFirst.Add(value, key);
-            return true;
+            try
+            {
+                AddMapping(key, value);
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
         }
         public void AddOrUpdate(TFirst key, TSecond value)
         {
@@ -152,8 +170,7 @@ namespace Cosmos
         }
         void ICollection<KeyValuePair<TFirst, TSecond>>.Add(KeyValuePair<TFirst, TSecond> item)
         {
-            _firstToSecond.Add(item);
-            _secondToFirst.Add(new KeyValuePair<TSecond, TFirst>(item.Value, item.Key));
+            AddMapping(item.Key, item.Value);
         }
 
         public bool ContainsKey(TFirst key)
@@ -327,20 +344,17 @@ namespace Cosmos
 
             public void Add(TSecond key, TFirst value)
             {
-                _owner._secondToFirst.Add(key, value);
-                _owner._firstToSecond.Add(value, key);
+                _owner.AddMapping(value, key);
             }
 
             void IDictionary.Add(object key, object value)
             {
-                ((IDictionary)_owner._secondToFirst).Add(key, value);
-                ((IDictionary)_owner._firstToSecond).Add(value, key);
+                _owner.AddMapping((TFirst)value, (TSecond)key);
             }
 
             void ICollection<KeyValuePair<TSecond, TFirst>>.Add(KeyValuePair<TSecond, TFirst> item)
             {
-                _owner._secondToFirst.Add(item);
-                _owner._firstToSecond.Add(new KeyValuePair<TFirst, TSecond>(item.Value, item.Key));
+                _owner.AddMapping(item.Value, item.Key);
             }
 
             public bool ContainsKey(TSecond key)
