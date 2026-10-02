@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 namespace Cosmos
 {
@@ -318,21 +317,25 @@ namespace Cosmos
             /// <returns>生成的int整数</returns>
             public static int RandomRange(int length, int minValue, int maxValue)
             {
-                if (minValue >= maxValue)
-                    throw new ArgumentNullException("RandomRange : minValue is greater than or equal to maxValue");
-                string buffer = "0123456789";// 随机字符中也可以为汉字（任何）
-                StringBuilder strbuilder = new StringBuilder();
-                int range = buffer.Length;
-                int resultValue = 0;
-                do
-                {
-                    for (int i = 0; i < length; i++)
-                    {
-                        strbuilder.Append(buffer.Substring(random.Next(range), 1));
-                    }
-                    resultValue = Int32.Parse(strbuilder.ToString());
-                } while (resultValue > maxValue || resultValue < minValue);
-                return resultValue;
+                if (length <= 0 || length > 10)
+                    throw new ArgumentOutOfRangeException(nameof(length));
+                if (minValue > maxValue)
+                    throw new ArgumentOutOfRangeException(nameof(minValue));
+
+                long maxForLength = 0;
+                for (int i = 0; i < length; i++)
+                    maxForLength = maxForLength * 10 + 9;
+
+                long lower = Math.Max(0L, minValue);
+                long upper = Math.Min(Math.Min((long)maxValue, maxForLength), int.MaxValue);
+                if (lower > upper)
+                    throw new ArgumentOutOfRangeException(nameof(maxValue), "The requested bounds contain no nonnegative value with the specified length.");
+
+                if (upper < int.MaxValue)
+                    return random.Next((int)lower, (int)upper + 1);
+
+                long range = upper - lower + 1;
+                return (int)(lower + random.NextDouble() * range);
             }
             /// <summary>
             /// 随机在范围内生成一个int
@@ -542,7 +545,7 @@ namespace Cosmos
             /// <returns>是否是奇数</returns>
             public static bool IsOdd(long value)
             {
-                return !Convert.ToBoolean(value & 0x1);
+                return Convert.ToBoolean(value & 0x1);
             }
             /// <summary>
             /// 是否是偶数
@@ -551,7 +554,7 @@ namespace Cosmos
             /// <returns>是否是偶数</returns>
             public static bool IsEven(long value)
             {
-                return Convert.ToBoolean(value & 0x1);
+                return !Convert.ToBoolean(value & 0x1);
             }
         }
     }
