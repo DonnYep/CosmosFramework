@@ -1,4 +1,5 @@
 ﻿using System;
+using System;
 using System.Collections.Generic;
 namespace Cosmos
 {
@@ -141,7 +142,7 @@ namespace Cosmos
                 return null;
             var col = (posX - GridOffsetX) / NodeSideLength;
             var row = (posY - GridOffsetY) / NodeSideLength;
-            return nodeArray[(int)col, (int)row];
+            return nodeArray[Math.Min((int)col, GridSizeX - 1), Math.Min((int)row, GridSizeY - 1)];
         }
         public IList<Node> FindPath(float srcPosX, float srcPosY, float dstPosX, float dstPosY)
         {
