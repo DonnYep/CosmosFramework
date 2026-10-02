@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 namespace Cosmos
 {
     public static partial class Utility
@@ -93,7 +93,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw exception;
+                    throw;
                 }
             }
             /// <summary>
@@ -114,7 +114,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw exception;
+                    throw;
                 }
             }
             /// <summary>
@@ -135,7 +135,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw exception;
+                    throw;
                 }
             }
             /// <summary>
@@ -155,7 +155,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw exception;
+                    throw;
                 }
             }
             /// <summary>
@@ -175,7 +175,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw exception;
+                    throw;
                 }
             }
             /// <summary>
@@ -196,7 +196,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw exception;
+                    throw;
                 }
             }
             /// <summary>
@@ -217,7 +217,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw exception;
+                    throw;
                 }
             }
             /// <summary>
@@ -238,7 +238,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw exception;
+                    throw;
                 }
             }
             /// <summary>
@@ -259,7 +259,7 @@ namespace Cosmos
                 }
                 catch (Exception exception)
                 {
-                    throw exception;
+                    throw;
                 }
             }
         }
