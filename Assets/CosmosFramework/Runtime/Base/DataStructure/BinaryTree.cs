@@ -51,7 +51,7 @@ namespace Cosmos
             if (data.CompareTo(node.Data) < 0)
                 node.Left = AddNode(node.Left, data);
             else if (data.CompareTo(node.Data) > 0)
-                node.Left = AddNode(node.Right, data);
+                node.Right = AddNode(node.Right, data);
             return node;
         }
         public bool Contains(T data)
@@ -100,8 +100,8 @@ namespace Cosmos
             if (node == null)
                 return;
             queueData.Enqueue(node.Data);
-            PreorderTraversal(node.Left, ref queueData);
-            PreorderTraversal(node.Right, ref queueData);
+            PostorderTraversal(node.Left, ref queueData);
+            PostorderTraversal(node.Right, ref queueData);
         }
         /// <summary>
         ///中序遍历 
