@@ -20,12 +20,12 @@ namespace Cosmos
             get { return limitCount; }
             set
             {
-                limitCount = value;
-                if (limitCount < 0)
-                    limitCount = 0;
+                limitCount = Math.Max(0, value);
+                while (Count > limitCount)
+                    Dequeue();
             }
         }
-        public LimitedQueue(int limit) : base(limit)
+        public LimitedQueue(int limit) : base(Math.Max(0, limit))
         {
             LimitCount = limit;
         }
@@ -35,6 +35,8 @@ namespace Cosmos
         /// <param name="item">入队对象</param>
         public new void Enqueue(T item)
         {
+            if (LimitCount == 0)
+                return;
             if (Count >= LimitCount)
             {
                 Dequeue();
