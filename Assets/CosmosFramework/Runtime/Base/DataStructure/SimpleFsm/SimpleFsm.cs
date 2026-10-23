@@ -102,10 +102,15 @@ namespace Cosmos
         /// <returns>移除结果</returns>
         public bool RemoveState(Type stateType)
         {
-            if (typeStateDict.ContainsKey(stateType))
+            if (typeStateDict.TryGetValue(stateType, out var state))
             {
-                var state = typeStateDict[stateType];
                 typeStateDict.Remove(stateType);
+                if (currentState == state)
+                {
+                    //被移除的是当前状态，先退出并清空引用，避免 Refresh 继续更新已销毁的状态
+                    currentState.OnExit(this);
+                    currentState = null;
+                }
                 state?.OnDestroy(this);
                 return true;
             }
@@ -208,6 +213,7 @@ namespace Cosmos
         public void ClearAllState()
         {
             currentState?.OnExit(this);
+            currentState = null;
             foreach (var state in typeStateDict.Values)
             {
                 state?.OnDestroy(this);

@@ -101,6 +101,63 @@ public class CFResourceExample : MonoBehaviour
     }
 
     /// <summary>
+    /// 用法5：批量加载（Addressables 的 LoadAssetsAsync 语义）
+    /// <para>一批请求里同一资产复用 Provider、同一包体只加载一次，全部完成后只回调一次。</para>
+    /// </summary>
+    void LoadBatch()
+    {
+        var handle = CFResources.LoadAssetsAsync<GameObject>(new[]
+        {
+            "Prefabs/ResCube",
+            "Prefabs/ResSphere",
+        });
+        handle.Completed += h =>
+        {
+            Debug.Log($"batch done : {h.SucceededCount}/{h.Count} , failed : {h.FailedCount}");
+            if (h.Assets != null)
+            {
+                for (int i = 0; i < h.Assets.Length; i++)
+                {
+                    if (h.Assets[i] != null)
+                        Instantiate(h.Assets[i], new Vector3(8 + i, 0, 0), Quaternion.identity);
+                }
+            }
+            // 批量句柄统一释放
+            h.Release();
+        };
+    }
+
+    /// <summary>
+    /// 用法6：分包（每个包裹独立清单、独立目录、可整体卸载）
+    /// </summary>
+    void LoadSubPackage()
+    {
+        var uiInit = CFResources.LoadPackageAsync(new ResourceInitParameters()
+        {
+            PackageName = "UI",
+            PlayMode = CFResourcePlayMode.AssetBundle,
+            ManifestPath = "CosmosResources/UI/PackageManifest.json",
+            BundleDirectory = "CosmosResources/UI",
+        });
+        uiInit.AddCompletedCallback(op =>
+        {
+            if (op.Status != OperationStatus.Succeeded)
+            {
+                Debug.LogError($"UI package initialize failed : {op.Error}");
+                return;
+            }
+            var handle = CFResources.LoadAssetAsync<GameObject>("UI", "Prefabs/UIRoot");
+            handle.Completed += h =>
+            {
+                Instantiate(h.Asset);
+                h.Release();
+                // 整个分包一次性卸载（包内资源与包体一起释放）
+                // CFResources.UnloadPackage("UI");
+            };
+        });
+    }
+
+    /// <summary>
     /// 场景加载与卸载
     /// </summary>
     void LoadScene()

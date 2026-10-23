@@ -15,7 +15,7 @@ namespace Cosmos
         /// <param name="bufferSize">缓冲区大小，默认8MB</param>
         public static void CopyToFile(this Stream @this, string dest, int bufferSize = 1024 * 8 * 1024)
         {
-            using (var fsWrite = new FileStream(dest, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            using (var fsWrite = new FileStream(dest, FileMode.Create, FileAccess.ReadWrite))
             {
                 byte[] buf = new byte[bufferSize];
                 int len;
@@ -33,7 +33,7 @@ namespace Cosmos
         /// <param name="bufferSize">缓冲区大小，默认8MB</param>
         public static async Task CopyToFileAsync(this Stream @this, string dest, int bufferSize = 1024 * 1024 * 8)
         {
-            using (var fsWrite = new FileStream(dest, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            using (var fsWrite = new FileStream(dest, FileMode.Create, FileAccess.ReadWrite))
             {
                 byte[] buf = new byte[bufferSize];
                 int len;

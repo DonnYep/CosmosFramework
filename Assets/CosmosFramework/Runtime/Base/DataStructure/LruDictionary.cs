@@ -135,42 +135,41 @@ namespace Cosmos
         }
         public void Add(Key key, Value value)
         {
+            Value evictedValue = default(Value);
+            bool hasEvicted = false;
             locker.EnterWriteLock();
-            bool exist = dictionary.ContainsKey(key);
-            if (!exist)
+            try
             {
-                try
+                if (dictionary.ContainsKey(key))
+                    return;
+                linkedList.AddFirst(key);
+                dictionary.Add(key, value);
+                if (linkedList.Count > capacity)
                 {
-                    linkedList.AddFirst(key);
-                    dictionary.Add(key, value);
-                    if (linkedList.Count > capacity)
-                    {
-                        //Key lastkey = linkedList.Last.Value;
-                        Value lastValue = dictionary[linkedList.Last.Value];
-                        dictionary.Remove(linkedList.Last.Value);
-                        linkedList.RemoveLast();
-                        overflow?.Invoke(lastValue);
-                    }
+                    //Key lastkey = linkedList.Last.Value;
+                    evictedValue = dictionary[linkedList.Last.Value];
+                    hasEvicted = true;
+                    dictionary.Remove(linkedList.Last.Value);
+                    linkedList.RemoveLast();
                 }
-                finally { locker.ExitWriteLock(); }
             }
+            finally { locker.ExitWriteLock(); }
+            //回调在写锁释放后触发，避免回调内部再次访问本字典造成死锁
+            if (hasEvicted)
+                overflow?.Invoke(evictedValue);
         }
         public Value Remove(Key key)
         {
             locker.EnterWriteLock();
-            bool exist = dictionary.ContainsKey(key);
-            Value value = default(Value);
-            if (exist)
+            try
             {
-                try
-                {
-                    value = dictionary[key];
-                    dictionary.Remove(key);
-                    linkedList.Remove(key);
-                }
-                finally { locker.ExitWriteLock(); }
+                if (!dictionary.TryGetValue(key, out Value value))
+                    return default(Value);
+                dictionary.Remove(key);
+                linkedList.Remove(key);
+                return value;
             }
-            return value;
+            finally { locker.ExitWriteLock(); }
         }
         public bool TryGetValue(Key key, out Value value)
         {
@@ -237,9 +236,12 @@ namespace Cosmos
                         try
                         {
                             capacity = value;
-                            while (linkedList.Count > capacity)
+                            //裁剪时两个结构必须同步移除，否则被淘汰的键仍可读到
+                            while (linkedList.Count > 0 && dictionary.Count > capacity)
                             {
+                                Key lastKey = linkedList.Last.Value;
                                 linkedList.RemoveLast();
+                                dictionary.Remove(lastKey);
                             }
                         }
                         finally { locker.ExitWriteLock(); }

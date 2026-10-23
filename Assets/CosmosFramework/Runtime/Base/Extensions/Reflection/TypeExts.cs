@@ -187,8 +187,16 @@ namespace Cosmos
 
             int iLen = (int)st.Length;
             byte[] bytes = new byte[iLen];
-            st.Read(bytes, 0, iLen);
-            return Encoding.GetEncoding(charset).GetString(bytes);
+            //Stream.Read 允许在到达流末尾前返回少于请求的字节数，必须循环读取
+            int offset = 0;
+            while (offset < iLen)
+            {
+                int count = st.Read(bytes, offset, iLen - offset);
+                if (count <= 0)
+                    break;
+                offset += count;
+            }
+            return Encoding.GetEncoding(charset).GetString(bytes, 0, offset);
         }
 
         #endregion 资源获取

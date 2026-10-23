@@ -203,7 +203,7 @@ namespace Cosmos
                 firstSource = first.ToList();
             var secondSource = second as ICollection<T2>;
             if (secondSource == null)
-                second.ToList();
+                secondSource = second.ToList();
             var add = firstSource.ExceptBy(secondSource, condition).ToList();
             var remove = secondSource.ExceptBy(firstSource, (s, f) => condition(f, s)).ToList();
             var update = firstSource.IntersectBy(secondSource, condition).ToList();

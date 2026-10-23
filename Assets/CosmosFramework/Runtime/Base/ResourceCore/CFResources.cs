@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -6,13 +7,17 @@ namespace Cosmos.Resource
 {
     /// <summary>
     /// 资源系统静态门面。
-    /// <para>提供与Addressables类似的handle式资源加载API。</para>
+    /// <para>提供与Addressables类似的handle式资源加载API，并支持多资源包裹（分包）。</para>
     /// <code>
-    /// // 初始化
+    /// // 初始化（默认包）
     /// var initHandle = CFResources.InitializeAsync(new ResourceInitParameters() { PlayMode = ..., ManifestPath = ..., BundleDirectory = ... });
+    /// // 分包：再加载一个可独立下载/卸载的包
+    /// var uiInit = CFResources.LoadPackageAsync(new ResourceInitParameters() { PackageName = "ui", ManifestPath = ..., BundleDirectory = ... });
     /// // 异步加载资产
     /// var handle = CFResources.LoadAssetAsync&lt;GameObject&gt;("Assets/Prefabs/Cube.prefab");
     /// handle.Completed += h =&gt; { var go = h.Asset; };
+    /// // 批量加载（同一包体只加载一次）
+    /// var batch = CFResources.LoadAssetsAsync&lt;GameObject&gt;(new[] { "Prefabs/A", "Prefabs/B" });
     /// // 或协程等待 / await
     /// yield return handle;
     /// var cube = await CFResources.LoadAssetAsync&lt;GameObject&gt;("Cube").Task;
@@ -20,8 +25,8 @@ namespace Cosmos.Resource
     /// </summary>
     public static class CFResources
     {
+        static readonly Dictionary<string, ResourcePackage> packages = new Dictionary<string, ResourcePackage>();
         static ResourcePackage defaultPackage;
-        static ResourceInitParameters initParameters;
 
         /// <summary>
         /// 当前默认的资源包裹
@@ -31,26 +36,34 @@ namespace Cosmos.Resource
             get { return defaultPackage; }
         }
         /// <summary>
-        /// 初始化参数
+        /// 已注册的全部资源包裹（分包）
+        /// </summary>
+        public static IReadOnlyDictionary<string, ResourcePackage> Packages
+        {
+            get { return packages; }
+        }
+        /// <summary>
+        /// 默认包裹的初始化参数
         /// </summary>
         public static ResourceInitParameters InitParameters
         {
-            get { return initParameters; }
+            get { return defaultPackage != null ? defaultPackage.GetInitParameters() : null; }
         }
         /// <summary>
-        /// 当前运行模式
+        /// 当前运行模式（默认包裹）
         /// </summary>
         public static CFResourcePlayMode ResourcePlayMode
         {
             get
             {
-                if (initParameters == null)
+                var parameters = InitParameters;
+                if (parameters == null)
                     return CFResourcePlayMode.None;
-                return initParameters.PlayMode;
+                return parameters.PlayMode;
             }
         }
         /// <summary>
-        /// 是否初始化完成
+        /// 默认包裹是否初始化完成
         /// </summary>
         public static bool IsInitialized
         {
@@ -58,27 +71,100 @@ namespace Cosmos.Resource
         }
 
         /// <summary>
-        /// 异步初始化资源系统
+        /// 异步初始化资源系统（同时把该包裹设为默认包裹）。
+        /// <para>重复调用同名包裹会先重置再重新初始化。</para>
         /// </summary>
         public static InitializationHandle InitializeAsync(ResourceInitParameters parameters)
         {
-            if (parameters == null)
-                throw new ArgumentNullException("ResourceInitParameters is invalid !");
-            initParameters = parameters;
-            if (defaultPackage != null)
-                defaultPackage.Reset();
-            defaultPackage = new ResourcePackage(parameters.PackageName);
-            return defaultPackage.InitializeAsync(parameters);
+            var handle = LoadPackageAsync(parameters);
+            defaultPackage = packages[parameters.PackageName];
+            return handle;
         }
 
+        /// <summary>
+        /// 异步加载一个资源包裹（分包）。
+        /// <para>每个包裹是独立单元：独立清单、独立包体目录、独立卸载；第一次加载的包裹会成为默认包裹。</para>
+        /// </summary>
+        public static InitializationHandle LoadPackageAsync(ResourceInitParameters parameters)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException("ResourceInitParameters is invalid !");
+            if (string.IsNullOrEmpty(parameters.PackageName))
+                parameters.PackageName = CFResourceConstants.DEFAULT_PACKAGE_NAME;
+            ResourcePackage package;
+            if (packages.TryGetValue(parameters.PackageName, out package))
+            {
+                package.Reset();
+            }
+            else
+            {
+                package = new ResourcePackage(parameters.PackageName);
+                packages.Add(parameters.PackageName, package);
+            }
+            // 包体加载预算按最新参数生效
+            ResourceLoadBudget.MaxConcurrentBundleLoads = parameters.MaxConcurrentBundleLoads;
+            ResourceLoadBudget.Reset();
+            if (defaultPackage == null)
+                defaultPackage = package;
+            return package.InitializeAsync(parameters);
+        }
+
+        /// <summary>
+        /// 获取已注册的资源包裹
+        /// </summary>
+        public static ResourcePackage GetPackage(string packageName)
+        {
+            if (string.IsNullOrEmpty(packageName))
+                return null;
+            packages.TryGetValue(packageName, out var package);
+            return package;
+        }
+        /// <summary>
+        /// 尝试获取已注册的资源包裹
+        /// </summary>
+        public static bool TryGetPackage(string packageName, out ResourcePackage package)
+        {
+            package = null;
+            if (string.IsNullOrEmpty(packageName))
+                return false;
+            return packages.TryGetValue(packageName, out package);
+        }
+        /// <summary>
+        /// 卸载并移除一个资源包裹（会先释放该包内全部资产与包体）
+        /// </summary>
+        public static void UnloadPackage(string packageName)
+        {
+            if (string.IsNullOrEmpty(packageName))
+                return;
+            if (!packages.TryGetValue(packageName, out var package))
+                return;
+            packages.Remove(packageName);
+            if (defaultPackage == package)
+                defaultPackage = null;
+            package.Reset();
+        }
+        /// <summary>
+        /// 卸载全部资源包裹
+        /// </summary>
+        public static void UnloadAllPackages()
+        {
+            var names = new List<string>(packages.Keys);
+            for (int i = 0; i < names.Count; i++)
+            {
+                UnloadPackage(names[i]);
+            }
+            packages.Clear();
+            defaultPackage = null;
+        }
+
+        #region 加载（默认包裹）
         /// <summary>
         /// 异步加载资产
         /// </summary>
         public static AssetHandle<T> LoadAssetAsync<T>(string assetKey)
             where T : Object
         {
-            CheckInitialized();
-            return defaultPackage.LoadAssetAsync<T>(assetKey);
+            return ResolvePackage(null).LoadAssetAsync<T>(assetKey);
         }
         /// <summary>
         /// 异步加载资产及其子资产
@@ -86,8 +172,7 @@ namespace Cosmos.Resource
         public static SubAssetsHandle<T> LoadSubAssetsAsync<T>(string assetKey)
             where T : Object
         {
-            CheckInitialized();
-            return defaultPackage.LoadSubAssetsAsync<T>(assetKey);
+            return ResolvePackage(null).LoadSubAssetsAsync<T>(assetKey);
         }
         /// <summary>
         /// 异步加载资源包内全部资产
@@ -95,17 +180,83 @@ namespace Cosmos.Resource
         public static AllAssetsHandle<T> LoadAllAssetsAsync<T>(string bundleName)
             where T : Object
         {
-            CheckInitialized();
-            return defaultPackage.LoadAllAssetsAsync<T>(bundleName);
+            return ResolvePackage(null).LoadAllAssetsAsync<T>(bundleName);
         }
         /// <summary>
         /// 异步加载场景
         /// </summary>
         public static SceneHandle LoadSceneAsync(string sceneKey, bool additive = true, bool activateOnLoad = true)
         {
-            CheckInitialized();
-            return defaultPackage.LoadSceneAsync(sceneKey, additive, activateOnLoad);
+            return ResolvePackage(null).LoadSceneAsync(sceneKey, additive, activateOnLoad);
         }
+        /// <summary>
+        /// 批量异步加载资产（同一包体只加载一次）
+        /// </summary>
+        public static AssetsHandle<T> LoadAssetsAsync<T>(IEnumerable<string> assetKeys)
+            where T : Object
+        {
+            return ResolvePackage(null).LoadAssetsAsync<T>(assetKeys);
+        }
+        /// <summary>
+        /// 通过分类标签异步加载资产集合
+        /// </summary>
+        public static AssetsHandle<T> LoadAssetsByTagAsync<T>(string tag)
+            where T : Object
+        {
+            return ResolvePackage(null).LoadAssetsByTagAsync<T>(tag);
+        }
+        #endregion
+
+        #region 加载（指定包裹）
+        /// <summary>
+        /// 从指定包裹异步加载资产
+        /// </summary>
+        public static AssetHandle<T> LoadAssetAsync<T>(string packageName, string assetKey)
+            where T : Object
+        {
+            return ResolvePackage(packageName).LoadAssetAsync<T>(assetKey);
+        }
+        /// <summary>
+        /// 从指定包裹异步加载资产及其子资产
+        /// </summary>
+        public static SubAssetsHandle<T> LoadSubAssetsAsync<T>(string packageName, string assetKey)
+            where T : Object
+        {
+            return ResolvePackage(packageName).LoadSubAssetsAsync<T>(assetKey);
+        }
+        /// <summary>
+        /// 从指定包裹异步加载全部资产
+        /// </summary>
+        public static AllAssetsHandle<T> LoadAllAssetsAsync<T>(string packageName, string bundleName)
+            where T : Object
+        {
+            return ResolvePackage(packageName).LoadAllAssetsAsync<T>(bundleName);
+        }
+        /// <summary>
+        /// 从指定包裹异步加载场景
+        /// </summary>
+        public static SceneHandle LoadSceneAsync(string packageName, string sceneKey, bool additive = true, bool activateOnLoad = true)
+        {
+            return ResolvePackage(packageName).LoadSceneAsync(sceneKey, additive, activateOnLoad);
+        }
+        /// <summary>
+        /// 从指定包裹批量异步加载资产
+        /// </summary>
+        public static AssetsHandle<T> LoadAssetsAsync<T>(string packageName, IEnumerable<string> assetKeys)
+            where T : Object
+        {
+            return ResolvePackage(packageName).LoadAssetsAsync<T>(assetKeys);
+        }
+        /// <summary>
+        /// 从指定包裹按分类标签异步加载资产集合
+        /// </summary>
+        public static AssetsHandle<T> LoadAssetsByTagAsync<T>(string packageName, string tag)
+            where T : Object
+        {
+            return ResolvePackage(packageName).LoadAssetsByTagAsync<T>(tag);
+        }
+        #endregion
+
         /// <summary>
         /// 卸载场景
         /// </summary>
@@ -121,7 +272,15 @@ namespace Cosmos.Resource
             handle?.Release();
         }
         /// <summary>
-        /// 释放全部资产与包体
+        /// 释放批量句柄（等同于 handle.Release()）
+        /// </summary>
+        public static void UnloadAssets<T>(AssetsHandle<T> handle)
+            where T : Object
+        {
+            handle?.Release();
+        }
+        /// <summary>
+        /// 释放默认包裹的全部资产与包体
         /// </summary>
         public static void UnloadAllAssets()
         {
@@ -130,30 +289,33 @@ namespace Cosmos.Resource
             defaultPackage.UnloadAllAssets();
         }
         /// <summary>
-        /// 获取资产信息
+        /// 获取资产信息（默认包裹）
         /// </summary>
         public static AssetInfo GetAssetInfo(string assetKey)
         {
-            CheckInitialized();
-            return defaultPackage.GetAssetInfo(assetKey);
+            return ResolvePackage(null).GetAssetInfo(assetKey);
         }
         /// <summary>
-        /// 通过分类标签获取资产信息集合
+        /// 通过分类标签获取资产信息集合（默认包裹）
         /// </summary>
         public static AssetInfo[] GetAssetInfosByTag(string tag)
         {
-            CheckInitialized();
-            return defaultPackage.GetAssetInfosByTag(tag);
+            return ResolvePackage(null).GetAssetInfosByTag(tag);
         }
-        /// <summary>
-        /// 通过分类标签异步加载资产集合（Addressables Label 风格）。
-        /// <para>同一标签下的资产会逐个异步加载，全部完成后句柄完成；单个失败不影响其余资产。</para>
-        /// </summary>
-        public static TagAssetsHandle<T> LoadAssetsByTagAsync<T>(string tag)
-            where T : Object
+
+        static ResourcePackage ResolvePackage(string packageName)
         {
-            CheckInitialized();
-            return defaultPackage.LoadAssetsByTagAsync<T>(tag);
+            if (string.IsNullOrEmpty(packageName))
+            {
+                if (defaultPackage == null || !defaultPackage.IsInitialized)
+                    throw new InvalidOperationException("CFResources is not initialized, call InitializeAsync first !");
+                return defaultPackage;
+            }
+            if (!packages.TryGetValue(packageName, out var package))
+                throw new InvalidOperationException($"Resource package not found : {packageName} !");
+            if (!package.IsInitialized)
+                throw new InvalidOperationException($"Resource package is not initialized : {packageName} !");
+            return package;
         }
 
         #region Diagnostics
@@ -261,11 +423,5 @@ namespace Cosmos.Resource
             return ResourceDiagnostics.GenerateReport();
         }
         #endregion
-
-        static void CheckInitialized()
-        {
-            if (!IsInitialized)
-                throw new InvalidOperationException("CFResources is not initialized, call InitializeAsync first !");
-        }
     }
 }

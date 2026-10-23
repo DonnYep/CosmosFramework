@@ -98,6 +98,9 @@ namespace Cosmos.Resource
             }
             if (createRequest == null)
             {
+                // 每帧限制发起数量，避免瞬时大量 IO 造成卡顿
+                if (!ResourceLoadBudget.TryAcquire())
+                    return;
                 createRequest = AssetBundle.LoadFromFileAsync(bundleFilePath);
                 if (createRequest == null)
                 {

@@ -179,7 +179,16 @@ namespace Cosmos.WebRequest
             if (!request.isNetworkError && !request.isHttpError)
 #endif
             {
-                OnRequestSucceeded(request);
+                try
+                {
+                    OnRequestSucceeded(request);
+                }
+                catch (Exception e)
+                {
+                    //结果解析失败（例如响应头缺失/非法）按请求失败处理，避免异常抛到更新循环
+                    OnRequestFailed($"Failed to convert request result : {e.Message}");
+                    return;
+                }
                 Finish(true, null);
             }
             else

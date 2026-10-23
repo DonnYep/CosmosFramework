@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cosmos
 {
@@ -37,7 +38,12 @@ namespace Cosmos
         }
         public override int GetHashCode()
         {
-            return value1.GetHashCode() ^ value2.GetHashCode();
+            //使用默认比较器，兼容 null 字段与默认结构体
+            unchecked
+            {
+                return (EqualityComparer<TValue1>.Default.GetHashCode(value1) * 397)
+                    ^ EqualityComparer<TValue2>.Default.GetHashCode(value2);
+            }
         }
         public override string ToString()
         {
@@ -52,12 +58,9 @@ namespace Cosmos
         /// </summary>
         public bool Equals(GenericValuePair<TValue1, TValue2> other)
         {
-            bool result = false;
-            if (this.GetType() == other.GetType())
-            {
-                result = this.value1.Equals(other.value1) && this.value2.Equals(other.value2);
-            }
-            return result;
+            //使用默认比较器，避免 null 字段直接调用实例方法
+            return EqualityComparer<TValue1>.Default.Equals(value1, other.value1)
+                && EqualityComparer<TValue2>.Default.Equals(value2, other.value2);
         }
     }
 }

@@ -280,19 +280,20 @@ namespace Cosmos
             {
                 if (minValue >= maxValue)
                     throw new ArgumentNullException("RandomRange : minValue is greater than or equal to maxValue");
-                string buffer = "0123456789";// 随机字符中也可以为汉字（任何）
-                StringBuilder strbuilder = new StringBuilder();
-                int range = buffer.Length;
-                int resultValue = 0;
-                do
-                {
-                    for (int i = 0; i < length; i++)
-                    {
-                        strbuilder.Append(buffer.Substring(random.Next(range), 1));
-                    }
-                    resultValue = Int32.Parse(strbuilder.ToString());
-                } while (resultValue > maxValue || resultValue < minValue);
-                return resultValue;
+                if (length <= 0 || length > 10)
+                    throw new ArgumentOutOfRangeException(nameof(length), "RandomRange : length must be between 1 and 10 ! ");
+                //该位数可以表示的数值区间
+                long minLengthValue = 1;
+                for (int i = 1; i < length; i++)
+                    minLengthValue *= 10;
+                long maxLengthValue = minLengthValue * 10 - 1;
+                //与调用方要求的区间取交集，交集为空则无法生成
+                long lowerBound = Math.Max(minValue, minLengthValue);
+                long upperBound = Math.Min(maxValue, maxLengthValue);
+                if (lowerBound > upperBound)
+                    throw new ArgumentOutOfRangeException(nameof(minValue), "RandomRange : no value with the requested length is within [minValue, maxValue] ! ");
+                long range = upperBound - lowerBound + 1;
+                return (int)(lowerBound + (long)(random.NextDouble() * range));
             }
             /// <summary>
             /// 随机在范围内生成一个int
@@ -502,7 +503,7 @@ namespace Cosmos
             /// <returns>是否是奇数</returns>
             public static bool IsOdd(long value)
             {
-                return !Convert.ToBoolean(value & 0x1);
+                return Convert.ToBoolean(value & 0x1);
             }
             /// <summary>
             /// 是否是偶数
@@ -511,7 +512,7 @@ namespace Cosmos
             /// <returns>是否是偶数</returns>
             public static bool IsEven(long value)
             {
-                return Convert.ToBoolean(value & 0x1);
+                return !Convert.ToBoolean(value & 0x1);
             }
         }
     }

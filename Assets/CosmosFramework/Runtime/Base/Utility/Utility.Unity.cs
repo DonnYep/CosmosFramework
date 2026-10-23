@@ -113,19 +113,34 @@ namespace Cosmos
             public static Texture2D CameraScreenshotAsTexture(Camera camera, TextureFormat textureFormat)
             {
                 var oldRenderTexture = camera.targetTexture;
+                var oldActiveRenderTexture = RenderTexture.active;
                 var width = camera.pixelWidth;
                 var height = camera.pixelHeight;
-                RenderTexture renderTexture;
-                renderTexture = new RenderTexture(width, height, 24);
-                camera.targetTexture = renderTexture;
-                camera.Render();
-                Texture2D texture2D = new Texture2D(width, height, textureFormat, false);
-                RenderTexture.active = renderTexture;
-                texture2D.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-                texture2D.Apply();
-                RenderTexture.active = null;
-                camera.targetTexture = oldRenderTexture;
-                return texture2D;
+                RenderTexture renderTexture = new RenderTexture(width, height, 24);
+                Texture2D texture2D = null;
+                try
+                {
+                    camera.targetTexture = renderTexture;
+                    camera.Render();
+                    texture2D = new Texture2D(width, height, textureFormat, false);
+                    RenderTexture.active = renderTexture;
+                    texture2D.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+                    texture2D.Apply();
+                    return texture2D;
+                }
+                catch
+                {
+                    if (texture2D != null)
+                        UnityEngine.Object.Destroy(texture2D);
+                    throw;
+                }
+                finally
+                {
+                    RenderTexture.active = oldActiveRenderTexture;
+                    camera.targetTexture = oldRenderTexture;
+                    renderTexture.Release();
+                    UnityEngine.Object.Destroy(renderTexture);
+                }
             }
             /// <summary>
             /// 通过相机截取屏幕并转换为Sprite
@@ -558,8 +573,8 @@ namespace Cosmos
             }
             public static void DrawEllipseXY(Vector3 center, float xScale, float yScale, int ellipseSegment)
             {
-                if (ellipseSegment < 0)
-                    ellipseSegment = 0;
+                if (ellipseSegment <= 0)
+                    return;
                 if (xScale < 0)
                     xScale = 0;
                 if (yScale < 0)
@@ -581,8 +596,8 @@ namespace Cosmos
             }
             public static void DrawEllipseXZ(Vector3 center, float xScale, float yScale, int ellipseSegment)
             {
-                if (ellipseSegment < 0)
-                    ellipseSegment = 0;
+                if (ellipseSegment <= 0)
+                    return;
                 if (xScale < 0)
                     xScale = 0;
                 if (yScale < 0)
@@ -605,8 +620,8 @@ namespace Cosmos
             }
             public static void DrawEllipseYZ(Vector3 center, float xScale, float yScale, int ellipseSegment)
             {
-                if (ellipseSegment < 0)
-                    ellipseSegment = 0;
+                if (ellipseSegment <= 0)
+                    return;
                 if (xScale < 0)
                     xScale = 0;
                 if (yScale < 0)

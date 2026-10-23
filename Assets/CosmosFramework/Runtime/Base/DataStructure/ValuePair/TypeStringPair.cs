@@ -39,7 +39,8 @@ namespace Cosmos
         }
         public override int GetHashCode()
         {
-            return type.GetHashCode() ^ _string.GetHashCode();
+            //默认结构体的 type / _string 为 null，需按 0 处理
+            return (type == null ? 0 : type.GetHashCode()) ^ (_string == null ? 0 : _string.GetHashCode());
         }
         public override string ToString()
         {

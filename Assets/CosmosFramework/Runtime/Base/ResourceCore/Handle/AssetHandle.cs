@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 
 namespace Cosmos.Resource
@@ -37,7 +37,7 @@ namespace Cosmos.Resource
         {
             add
             {
-                if (Provider != null && Provider.IsDone)
+                if (Provider == null || Provider.IsDone)
                 {
                     value?.Invoke(this);
                 }

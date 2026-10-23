@@ -12,7 +12,9 @@ namespace Cosmos.Resource
         /// </summary>
         public static ProviderBase CreateProvider(ResourcePackage package, AssetInfo assetInfo, Type assetType, AssetLoadMode loadMode)
         {
-            var playMode = CFResources.ResourcePlayMode;
+            // 多包裹场景下必须按包裹自身的运行模式创建Provider，不能取全局默认包的
+            var parameters = package.GetInitParameters();
+            var playMode = parameters != null ? parameters.PlayMode : CFResourcePlayMode.None;
             switch (playMode)
             {
                 case CFResourcePlayMode.AssetDatabase:

@@ -198,7 +198,7 @@ namespace Cosmos
                         childList.Add(child);
                     }
                 }
-                childList.AddRange(FindChildrenContainsName(child, name));
+                childList.AddRange(FindChildrenContainsName(child, name, findActiveObjectOnly));
             }
             return childList;
         }
@@ -290,10 +290,12 @@ namespace Cosmos
         public static T[] PeerComponets<T>(this Transform @this, bool includeSelf = false) where T : Component
         {
             Transform parentTrans = @this.parent;
+            if (parentTrans == null)
+                return new T[0];
             var childTrans = parentTrans.GetComponentsInChildren<Transform>();
             var length = childTrans.Length;
             Transform[] trans;
-            if (!includeSelf)
+            if (includeSelf)
                 trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
             else
                 trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);

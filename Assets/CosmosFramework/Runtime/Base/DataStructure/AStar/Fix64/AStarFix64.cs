@@ -137,9 +137,14 @@ namespace Cosmos
         {
             if (!IsOverlapping(posX, posY))
                 return null;
-            var col = (posX - GridOffsetX) / NodeSideLength;
-            var row = (posY - GridOffsetY) / NodeSideLength;
-            return nodeArray[(int)col, (int)row];
+            int col = (int)((posX - GridOffsetX) / NodeSideLength);
+            int row = (int)((posY - GridOffsetY) / NodeSideLength);
+            //重叠判定为闭区间，右/上边界会算到数组外，需夹到最后一个格子
+            if (col < 0) col = 0;
+            else if (col >= GridSizeX) col = GridSizeX - 1;
+            if (row < 0) row = 0;
+            else if (row >= GridSizeY) row = GridSizeY - 1;
+            return nodeArray[col, row];
         }
         public IList<Node> FindPath(Fix64 srcPosX, Fix64 srcPosY, Fix64 dstPosX, Fix64 dstPosY)
         {

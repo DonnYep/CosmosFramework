@@ -28,9 +28,9 @@ namespace Cosmos
             /// 获取文件夹中的所有文件，默认查询所有文件。如果需要指定扩展名，比如cs脚本，searchPattern可传入："*.cs"。
             /// </summary>
             /// <param name="path">地址</param>
-            /// <param name="searchPattern">查询类型，默认是"."</param>
+            /// <param name="searchPattern">查询类型，默认是"*"（所有文件）</param>
             /// <returns>文件地址</returns>
-            public static string[] GetAllFiles(string path, string searchPattern = ".")
+            public static string[] GetAllFiles(string path, string searchPattern = "*")
             {
                 return Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories);
             }
@@ -514,7 +514,7 @@ namespace Cosmos
             {
                 if (!Directory.Exists(filePath))
                     Directory.CreateDirectory(filePath);
-                using (FileStream stream = File.Open(Path.Combine(filePath, fileName), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (FileStream stream = File.Open(Path.Combine(filePath, fileName), append ? FileMode.OpenOrCreate : FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     if (append)
                         stream.Position = stream.Length;
@@ -539,7 +539,7 @@ namespace Cosmos
                 var folderPath = Path.GetDirectoryName(fileFullPath);
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);
-                using (FileStream stream = File.Open(fileFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (FileStream stream = File.Open(fileFullPath, append ? FileMode.OpenOrCreate : FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     if (append)
                         stream.Position = stream.Length;
@@ -593,12 +593,16 @@ namespace Cosmos
             /// <param name="startPosition">追加写入的起始位置</param>
             public static void WriteFile(byte[] context, string fileFullPath, int startPosition)
             {
+                if (context == null)
+                    throw new ArgumentNullException(nameof(context));
+                if (startPosition < 0 || startPosition > context.Length)
+                    throw new ArgumentOutOfRangeException(nameof(startPosition));
                 var folderPath = Path.GetDirectoryName(fileFullPath);
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);
                 using (BinaryWriter writer = new BinaryWriter(File.Open(fileFullPath, FileMode.OpenOrCreate)))
                 {
-                    writer.Write(context, startPosition, context.Length);
+                    writer.Write(context, startPosition, context.Length - startPosition);
                 }
             }
             /// <summary>
@@ -742,11 +746,7 @@ namespace Cosmos
             /// <returns>文件long类型的长度</returns>
             public static long GetFileSize(string filePath)
             {
-                if (!Directory.Exists(Path.GetDirectoryName(filePath)))
-                {
-                    return 0;
-                }
-                else if (File.Exists(filePath))
+                if (File.Exists(filePath))
                 {
                     return new FileInfo(filePath).Length;
                 }
@@ -779,7 +779,7 @@ namespace Cosmos
             /// </summary>
             /// <param name="path">路径</param>
             /// <returns>文件夹大小</returns>
-            public static long GetDirectorySize(string path, string searchPattern = ".")
+            public static long GetDirectorySize(string path, string searchPattern = "*")
             {
                 if (!Directory.Exists(path))
                     return 0;

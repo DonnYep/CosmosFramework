@@ -98,7 +98,7 @@ where T : Component
             var comp = parentTrans.GetComponent<T>();
             if (comp == null)
             {
-                comp = @this.gameObject.AddComponent<T>();
+                comp = parentTrans.gameObject.AddComponent<T>();
             }
             return comp;
         }
@@ -145,7 +145,10 @@ where T : Component
         public static T GetComponentInPeer<T>(this GameObject @this, string name)
 where T : Component
         {
-            Transform tran = @this.transform.parent.Find(name);
+            Transform parentTrans = @this.transform.parent;
+            if (parentTrans == null)
+                return null;
+            Transform tran = parentTrans.Find(name);
             if (tran != null)
             {
                 return tran.GetComponent<T>();
@@ -155,12 +158,15 @@ where T : Component
         public static T GetOrAddComponentInPeer<T>(this GameObject @this, string name)
 where T : Component
         {
-            Transform tran = @this.transform.parent.Find(name);
+            Transform parentTrans = @this.transform.parent;
+            if (parentTrans == null)
+                return null;
+            Transform tran = parentTrans.Find(name);
             if (tran != null)
             {
                 var comp = tran.GetComponent<T>();
                 if (comp == null)
-                    @this.gameObject.AddComponent<T>();
+                    comp = tran.gameObject.AddComponent<T>();
                 return comp;
             }
             return null;
@@ -176,13 +182,15 @@ where T : Component
 where T : Component
         {
             Transform parentTrans = @this.transform.parent;
+            if (parentTrans == null)
+                return new T[0];
             var childTrans = parentTrans.GetComponentsInChildren<Transform>();
             var length = childTrans.Length;
             Transform[] trans;
-            if (!includeSelf)
+            if (includeSelf)
                 trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans);
             else
-                trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this);
+                trans = Utility.Algorithm.FindAll(childTrans, t => t.parent == parentTrans && t != @this.transform);
             var transLength = trans.Length;
             T[] src = new T[transLength];
             int idx = 0;

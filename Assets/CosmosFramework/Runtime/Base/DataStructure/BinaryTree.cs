@@ -51,7 +51,7 @@ namespace Cosmos
             if (data.CompareTo(node.Data) < 0)
                 node.Left = AddNode(node.Left, data);
             else if (data.CompareTo(node.Data) > 0)
-                node.Left = AddNode(node.Right, data);
+                node.Right = AddNode(node.Right, data);
             return node;
         }
         public bool Contains(T data)
@@ -74,6 +74,8 @@ namespace Cosmos
         /// </summary>
         public void LevelTraversal(ref Queue<T> queueData)
         {
+            if (root == null)
+                return;
             Queue<Node> queue = new Queue<Node>();
             queue.Enqueue(root);
             while (queue.Count != 0)
@@ -116,9 +118,9 @@ namespace Cosmos
         {
             if (node == null)
                 return;
-            PreorderTraversal(node.Left, ref queueData);
+            InorderTraversal(node.Left, ref queueData);
             queueData.Enqueue(node.Data);
-            PreorderTraversal(node.Right, ref queueData);
+            InorderTraversal(node.Right, ref queueData);
         }
         /// <summary>
         ///后续遍历 
@@ -133,8 +135,8 @@ namespace Cosmos
         {
             if (node == null)
                 return;
-            PreorderTraversal(node.Left, ref queueData);
-            PreorderTraversal(node.Right, ref queueData);
+            PostorderTraversal(node.Left, ref queueData);
+            PostorderTraversal(node.Right, ref queueData);
             queueData.Enqueue(node.Data);
         }
         public T MaxData()

@@ -129,12 +129,13 @@ namespace Cosmos.ObjectPool
         /// <inheritdoc/>
         public void DeregisterAllObjectPool()
         {
-            foreach (var pool in poolDict)
+            //逐个走与单个注销相同的清理路径，确保解绑回调并回收池包装对象
+            var pools = new List<ObjectPool>(poolDict.Values);
+            foreach (var pool in pools)
             {
-                pool.Value.ClearPool();
-                var assetInfo = pool.Value.ObjectPoolAssetInfo;
-                if (!string.IsNullOrEmpty(assetInfo.PoolName))
-                    objectPoolAssetHelper.UnloadObjectAsset(assetInfo);
+                if (pool == null)
+                    continue;
+                DeregisterObjectPool(pool.ObjectPoolName);
             }
             poolDict.Clear();
         }

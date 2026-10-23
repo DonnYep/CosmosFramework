@@ -108,7 +108,7 @@ namespace Cosmos.DataTable
                 return dataTableBase;
             if (dataType == null)
                 throw new ArgumentNullException($"dataType is invalid");
-            if (typeof(IDataRow).IsAssignableFrom(dataType))
+            if (!typeof(IDataRow).IsAssignableFrom(dataType))
                 throw new Exception($"{dataType} is not inherit from IDataRow");
             Type dataTableType = typeof(DataTable<>).MakeGenericType(dataType);
             var dataTable = (DataTableBase)Activator.CreateInstance(dataTableType, name);

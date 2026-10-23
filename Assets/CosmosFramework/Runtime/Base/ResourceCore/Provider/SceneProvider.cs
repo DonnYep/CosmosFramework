@@ -29,7 +29,8 @@ namespace Cosmos.Resource
         protected override void OnStart()
         {
 #if UNITY_EDITOR
-            if (CFResources.ResourcePlayMode == CFResourcePlayMode.AssetDatabase)
+            var initParameters = package.GetInitParameters();
+            if (initParameters != null && initParameters.PlayMode == CFResourcePlayMode.AssetDatabase)
             {
                 var loadParameters = new LoadSceneParameters(additive ? LoadSceneMode.Additive : LoadSceneMode.Single);
                 var scene = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneInPlayMode(MainAssetInfo.AssetPath, loadParameters);

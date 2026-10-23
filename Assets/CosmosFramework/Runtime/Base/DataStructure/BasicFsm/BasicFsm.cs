@@ -69,15 +69,19 @@ namespace Cosmos
         }
         public void ChangeState(Type stateType)
         {
-            BasicFsmState<T> state = null;
+            if (stateType == null)
+                throw new ArgumentNullException("State type is invalid !");
             if (!stateBaseType.IsAssignableFrom(stateType))
-                throw new ArgumentException("State type is invalid" + stateType.FullName);
-            state = GetState(stateType);
+                throw new ArgumentException("State type is invalid : " + stateType.FullName);
+            BasicFsmState<T> state = GetState(stateType);
             if (state == null)
-                throw new ArgumentNullException($"FSM{currentState} can not change state to {state} which is not exist");
-            currentState?.OnLogic(this);
+                throw new ArgumentException($"FSM can not change state to {stateType.FullName} which is not exist");
+            if (currentState == state)
+                return;
+            //状态切换只触发退出/进入钩子，逐帧逻辑由 Update 驱动
+            currentState?.OnExit(this);
             currentState = state;
-            currentState?.OnLogic(this);
+            currentState.OnEnter(this);
         }
         public TState GetState<TState>() where TState : BasicFsmState<T>
         {

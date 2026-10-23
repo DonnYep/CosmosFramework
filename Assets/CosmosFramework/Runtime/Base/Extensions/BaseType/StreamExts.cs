@@ -15,10 +15,22 @@ namespace Cosmos
         {
             @this.Position = 0;
             byte[] bytes = new byte[@this.Length];
-            @this.Read(bytes, 0, bytes.Length);
+            //Stream.Read 允许在到达流末尾前返回少于请求的字节数，必须循环读取
+            int offset = 0;
+            while (offset < bytes.Length)
+            {
+                int count = @this.Read(bytes, offset, bytes.Length - offset);
+                if (count <= 0)
+                    break;
+                offset += count;
+            }
             // 设置当前流的位置为流的开始
             @this.Seek(0, SeekOrigin.Begin);
-            return bytes;
+            if (offset == bytes.Length)
+                return bytes;
+            var result = new byte[offset];
+            System.Array.Copy(bytes, result, offset);
+            return result;
         }
         /// <summary>
         ///  读取所有内容行；

@@ -388,6 +388,8 @@ where K : class
             public static Type[] GetDerivedTypesByAttribute<T>(Type type, bool inherit, System.Reflection.Assembly assembly = null)
     where T : Attribute
             {
+                if (assembly == null)
+                    assembly = type.Assembly;
                 Type[] types = assembly.GetTypes();
                 return types.Where(t =>
                 {

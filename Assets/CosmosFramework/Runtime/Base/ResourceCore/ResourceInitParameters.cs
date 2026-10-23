@@ -34,5 +34,10 @@ namespace Cosmos.Resource
         /// 自动释放未被引用的资源
         /// </summary>
         public bool AutoUnloadUnusedAssets = true;
+        /// <summary>
+        /// 单帧最多发起的包体异步加载数量。
+        /// <para>用于削平批量加载时的 IO 尖峰；小于等于 0 表示不限制。</para>
+        /// </summary>
+        public int MaxConcurrentBundleLoads = 8;
     }
 }

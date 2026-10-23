@@ -282,9 +282,10 @@ namespace Cosmos.WebRequest
                 url => UnityWebRequest.Head(url),
                 request =>
                 {
-                    var size = request.GetRequestHeader("Content-Length");
-                    long length = 0;
-                    long.TryParse(size, out length);
+                    var size = request.GetResponseHeader("Content-Length");
+                    long length;
+                    if (!long.TryParse(size, out length))
+                        throw new InvalidOperationException($"Content-Length is missing or invalid : {size}");
                     return length;
                 });
             handle.TaskId = task.TaskId;

@@ -154,21 +154,54 @@ namespace Cosmos.Resource
         }
 
         /// <summary>
-        /// 通过分类标签异步加载资产集合（Addressables Label 风格）。
-        /// <para>同一标签下的资产会逐个异步加载，全部完成后句柄完成；单个失败不影响其余资产。</para>
+        /// 批量异步加载资产（Addressables 的 LoadAssetsAsync 语义）。
+        /// <para>一次请求多个资产：同一资产复用 Provider、同一包体复用 BundleLoader，</para>
+        /// <para>因此同一批请求里每个包体只会发起一次加载。全部完成后触发一次 Completed。</para>
         /// </summary>
-        public TagAssetsHandle<T> LoadAssetsByTagAsync<T>(string tag)
+        /// <param name="assetKeys">资产标识集合（assetName / assetName.ext / assetPath）</param>
+        public AssetsHandle<T> LoadAssetsAsync<T>(IEnumerable<string> assetKeys)
+            where T : Object
+        {
+            if (assetKeys == null)
+                return new AssetsHandle<T>(new AssetHandle<T>[0], null);
+            var handles = new List<AssetHandle<T>>();
+            var keys = new List<string>();
+            foreach (var assetKey in assetKeys)
+            {
+                keys.Add(assetKey);
+                handles.Add(LoadAssetAsync<T>(assetKey));
+            }
+            return new AssetsHandle<T>(handles.ToArray(), keys.ToArray());
+        }
+
+        /// <summary>
+        /// 批量异步加载资产（按资产信息集合）
+        /// </summary>
+        public AssetsHandle<T> LoadAssetsAsync<T>(IEnumerable<AssetInfo> assetInfos)
+            where T : Object
+        {
+            if (assetInfos == null)
+                return new AssetsHandle<T>(new AssetHandle<T>[0], null);
+            var handles = new List<AssetHandle<T>>();
+            foreach (var assetInfo in assetInfos)
+            {
+                if (assetInfo == null || assetInfo.Invalid)
+                    handles.Add(ResourceHelper.CreateFailedHandle<T>(this, string.Empty, "Asset info is invalid !"));
+                else
+                    handles.Add(LoadAssetAsync<T>(assetInfo));
+            }
+            return new AssetsHandle<T>(handles.ToArray(), null);
+        }
+
+        /// <summary>
+        /// 通过分类标签异步加载资产集合（Addressables Label 风格）。
+        /// <para>等价于把该标签下的资产一次性批量加载，全部完成后句柄完成；单个失败不影响其余资产。</para>
+        /// </summary>
+        public AssetsHandle<T> LoadAssetsByTagAsync<T>(string tag)
             where T : Object
         {
             var assets = GetAssetInfosByTag(tag);
-            if (assets == null || assets.Length == 0)
-                return new TagAssetsHandle<T>(new AssetHandle<T>[0]);
-            var handles = new AssetHandle<T>[assets.Length];
-            for (int i = 0; i < assets.Length; i++)
-            {
-                handles[i] = LoadAssetAsync<T>(assets[i]);
-            }
-            return new TagAssetsHandle<T>(handles);
+            return LoadAssetsAsync<T>(assets);
         }
 
         /// <summary>

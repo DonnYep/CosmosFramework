@@ -16,6 +16,8 @@ namespace Cosmos
             readonly static long epochTicks = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).Ticks;
             readonly static long secDivisor = (long)Math.Pow(10, 7);
             readonly static long msecDivisor = (long)Math.Pow(10, 4);
+            //1ticks=100ns=0.1us，即1us=10ticks
+            readonly static long usecDivisor = 10;
             /// <summary>
             /// 获取秒级别UTC时间戳
             /// </summary>
@@ -38,7 +40,7 @@ namespace Cosmos
             /// <returns>微秒级别UTC时间戳</returns>
             public static long MicrosecondTimeStamp()
             {
-                return DateTime.UtcNow.Ticks - epochTicks;
+                return (DateTime.UtcNow.Ticks - epochTicks) / usecDivisor;
             }
             /// <summary>
             ///秒级别UTC时间
@@ -62,7 +64,7 @@ namespace Cosmos
             /// <returns>long时间</returns>
             public static long MicrosecondNow()
             {
-                return DateTime.UtcNow.Ticks;
+                return DateTime.UtcNow.Ticks / usecDivisor;
             }
             /// <summary>
             /// 时间戳转UTC DateTime
@@ -76,8 +78,8 @@ namespace Cosmos
                     return dateTime.AddSeconds(timeStamp);
                 if (length == 12)
                     return dateTime.AddMilliseconds(timeStamp);
-                if (length == 16)
-                    return dateTime.AddTicks(timeStamp);
+                if (length == 15)
+                    return dateTime.AddTicks(timeStamp * usecDivisor);
                 return DateTime.MinValue;
             }
             /// <summary>
@@ -127,7 +129,7 @@ namespace Cosmos
             public static long GetTotalMicroseconds()
             {
                 TimeSpan ts = DateTime.UtcNow - epoch;
-                return Convert.ToInt64(ts.TotalMilliseconds) / 10;
+                return ts.Ticks / usecDivisor;
             }
             /// <summary>
             /// 获取该时间相对于纪元时间的分钟数
@@ -151,7 +153,7 @@ namespace Cosmos
             public static double GetTotalDays()
             {
                 TimeSpan ts = DateTime.UtcNow - epoch;
-                return Convert.ToInt64(ts.TotalHours);
+                return Convert.ToInt64(ts.TotalDays);
             }
             /// <summary>
             /// 获取某一年有多少周。
@@ -317,7 +319,7 @@ namespace Cosmos
             /// <returns>微秒时间戳</returns>
             public static long GetDateMicrosecondTimeStamp(DateTime dateTime)
             {
-                return (dateTime.Ticks - epochTicks);
+                return (dateTime.Ticks - epochTicks) / usecDivisor;
             }
             /// <summary>
             /// 判断是否是同一天

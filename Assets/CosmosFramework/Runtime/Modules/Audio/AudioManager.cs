@@ -339,9 +339,10 @@ namespace Cosmos.Audio
         /// <returns>播放Id</returns>
         int GetAudioSerialId()
         {
-            if (serialIndex == int.MaxValue)
+            if (serialIndex >= int.MaxValue)
                 serialIndex = 0;
-            return serialIndex++;
+            //先自增再返回，保证播放Id从1开始且回绕后仍非0
+            return ++serialIndex;
         }
     }
 }

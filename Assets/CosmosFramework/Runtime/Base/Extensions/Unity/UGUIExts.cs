@@ -74,7 +74,9 @@ namespace Cosmos
         }
         public static UIBehaviour RemoveEventListener(this UIBehaviour @this, EventTriggerType triggerType, UnityAction<BaseEventData> handle)
         {
-            var eventTrigger = @this.gameObject.GetOrAddComponent<EventTrigger>();
+            var eventTrigger = @this.GetComponent<EventTrigger>();
+            if (eventTrigger == null)
+                return @this;
             EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
             entry?.callback.RemoveListener(handle);
             return @this;
@@ -82,6 +84,8 @@ namespace Cosmos
         public static UIBehaviour RemoveAllEventListeners(this UIBehaviour @this, EventTriggerType triggerType)
         {
             var eventTrigger = @this.GetComponent<EventTrigger>();
+            if (eventTrigger == null)
+                return @this;
             EventTrigger.Entry entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
             entry?.callback.RemoveAllListeners();
             return @this;

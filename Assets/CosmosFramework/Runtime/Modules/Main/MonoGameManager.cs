@@ -24,14 +24,8 @@ namespace Cosmos
                 if (pause == value)
                     return;
                 pause = value;
-                if (pause)
-                {
-                    GameManager.Pause = true;
-                }
-                else
-                {
-                    GameManager.Pause = true;
-                }
+                //同步全局暂停标记，取消暂停时模块刷新才能恢复
+                GameManager.Pause = value;
             }
         }
 

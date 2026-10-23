@@ -20,7 +20,8 @@ namespace Cosmos
         public NullObject(T item) : this(item, item == null) { }
         public static NullObject<T> Null()
         {
-            return new NullObject<T>();
+            //默认结构体的 isNull 为 false，必须显式构造空状态
+            return new NullObject<T>(default(T), true);
         }
         /// <summary>
         /// 是否是null
@@ -77,11 +78,11 @@ namespace Cosmos
                 return IsNull();
             }
             var type = obj.GetType();
-            var nullObject = (NullObject<T>)obj;
             if (type != typeof(NullObject<T>))
             {
                 return false;
             }
+            var nullObject = (NullObject<T>)obj;
             if (IsNull())
             {
                 return nullObject.IsNull();

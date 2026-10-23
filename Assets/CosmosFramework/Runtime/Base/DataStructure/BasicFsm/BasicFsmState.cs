@@ -10,9 +10,14 @@ namespace Cosmos
             = new Dictionary<BasicFsmTransition<T>, Type>();
         public void AddTransition(BasicFsmTransition<T> transition, Type stateType)
         {
+            if (transition == null)
+                throw new ArgumentNullException(nameof(transition));
+            if (stateType == null)
+                throw new ArgumentNullException(nameof(stateType));
             if (transitionStateDict.ContainsKey(transition))
                 return;
-            if (!this.GetType().IsAssignableFrom(stateType))
+            //目标状态只需是 BasicFsmState<T> 的派生类，允许平级状态之间过渡
+            if (!typeof(BasicFsmState<T>).IsAssignableFrom(stateType))
                 throw new ArgumentException($"State type {stateType.FullName} is invalid !");
             transitionStateDict.Add(transition, stateType);
             transitionList.Add(transition);

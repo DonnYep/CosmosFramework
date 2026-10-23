@@ -49,7 +49,7 @@ namespace Cosmos
                     memoryStream.Position = 0;
                     using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
                     {
-                        gZipStream.Read(buffer, 0, buffer.Length);
+                        ReadAllBytes(gZipStream, buffer);
                     }
                     return Encoding.UTF8.GetString(buffer);
                 }
@@ -91,9 +91,26 @@ namespace Cosmos
                     memoryStream.Position = 0;
                     using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
                     {
-                        gZipStream.Read(buffer, 0, buffer.Length);
+                        ReadAllBytes(gZipStream, buffer);
                     }
                     return buffer;
+                }
+            }
+            /// <summary>
+            /// 循环读取，直到填满目标缓冲区或数据流结束
+            /// <para>Stream.Read 允许在到达流末尾前返回少于请求的字节数，不能只读一次</para>
+            /// </summary>
+            /// <param name="stream">数据流</param>
+            /// <param name="buffer">目标缓冲区</param>
+            static void ReadAllBytes(Stream stream, byte[] buffer)
+            {
+                int offset = 0;
+                while (offset < buffer.Length)
+                {
+                    int count = stream.Read(buffer, offset, buffer.Length - offset);
+                    if (count <= 0)
+                        throw new EndOfStreamException($"Decompressed data is shorter than the declared length {buffer.Length} ! ");
+                    offset += count;
                 }
             }
 #if NET_STANDARD_2_0

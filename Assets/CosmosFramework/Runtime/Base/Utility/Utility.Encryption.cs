@@ -78,6 +78,7 @@ namespace Cosmos
                 MD5 md5 = MD5.Create();
                 byte[] cryptBytes = md5.ComputeHash(md5Bytes);
                 int length = cryptBytes.Length;
+                stringBuilderCache.Clear();
                 for (int i = 0; i < length; i++)
                 {
                     //X大写的16进制，x小写
@@ -521,19 +522,26 @@ namespace Cosmos
                 if (key == null)
                     throw new ArgumentNullException("key is invalid ! ");
                 var bytes = Convert.FromBase64String(context);
+                if (bytes.Length <= 16)
+                    throw new ArgumentException("context is too short ! ", nameof(context));
                 using (var aes = new AesCryptoServiceProvider())
                 {
                     using (MemoryStream ms = new MemoryStream(bytes))
                     {
                         var iv = new byte[16];
-                        ms.Read(iv, 0, 16);
-                        using (var cryptStream = new CryptoStream(ms, aes.CreateDecryptor(key, iv), CryptoStreamMode.Read))
+                        var read = 0;
+                        while (read < iv.Length)
                         {
-                            using (StreamReader reader = new StreamReader(cryptStream))
-                            {
-                                var data = reader.ReadToEnd();
-                                return Convert.FromBase64String(data);
-                            }
+                            var count = ms.Read(iv, read, iv.Length - read);
+                            if (count <= 0)
+                                throw new EndOfStreamException("context is too short ! ");
+                            read += count;
+                        }
+                        using (var cryptStream = new CryptoStream(ms, aes.CreateDecryptor(key, iv), CryptoStreamMode.Read))
+                        using (var output = new MemoryStream())
+                        {
+                            cryptStream.CopyTo(output);
+                            return output.ToArray();
                         }
                     }
                 }

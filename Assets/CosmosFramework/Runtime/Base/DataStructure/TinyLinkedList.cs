@@ -70,7 +70,7 @@ namespace Cosmos
             Node current = head;
             while (current != null)
             {
-                if (current.Data.Equals(node))
+                if (EqualityComparer<T>.Default.Equals(current.Data, node))
                     return true;
                 current = current.Next;
             }
@@ -78,10 +78,10 @@ namespace Cosmos
         }
         public T Get(int index)
         {
-            if (index < 0 || index > count)
+            if (index < 0 || index >= count)
                 throw new ArgumentOutOfRangeException("TinyLinkedList : 非法索引");
             Node current = head;
-            for (int i = 0; i < index - 1; i++)
+            for (int i = 0; i < index; i++)
                 current = current.Next;
             return current.Data;
         }
@@ -95,7 +95,7 @@ namespace Cosmos
         }
         public void Set(T node, int index)
         {
-            if (index < 0 || index > count)
+            if (index < 0 || index >= count)
                 throw new ArgumentOutOfRangeException("TinyLinkedList : 非法索引");
             Node current = head;
             for (int i = 0; i < index; i++)
@@ -104,7 +104,7 @@ namespace Cosmos
         }
         public T RemoveAt(int index)
         {
-            if (index < 0 || index > count)
+            if (index < 0 || index >= count)
                 throw new ArgumentOutOfRangeException("TinyLinkedList : 非法索引");
             if (index == 0)
             {
@@ -137,7 +137,7 @@ namespace Cosmos
         {
             if (head == null)
                 return;
-            if (head.Equals(node))
+            if (EqualityComparer<T>.Default.Equals(head.Data, node))
             {
                 head = head.Next;
                 count--;
@@ -148,7 +148,7 @@ namespace Cosmos
                 Node preview = null;
                 while (current != null)
                 {
-                    if (current.Data.Equals(node))
+                    if (EqualityComparer<T>.Default.Equals(current.Data, node))
                         break;
                     preview = current;
                     current = current.Next;

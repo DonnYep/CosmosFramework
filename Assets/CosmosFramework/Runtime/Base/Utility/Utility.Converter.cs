@@ -9,7 +9,19 @@ namespace Cosmos
         public static class Converter
         {
             [ThreadStatic]//每个静态类型字段对于每一个线程都是唯一的
-            static StringBuilder stringBuilderCache = new StringBuilder(1024);
+            static StringBuilder stringBuilderCache;
+            /// <summary>
+            /// 当前线程的缓存。<para>[ThreadStatic] 的字段初始值只在首个线程上执行，其它线程首次使用需自行创建</para>
+            /// </summary>
+            static StringBuilder StringBuilderCache
+            {
+                get
+                {
+                    if (stringBuilderCache == null)
+                        stringBuilderCache = new StringBuilder(1024);
+                    return stringBuilderCache;
+                }
+            }
             /// <summary>
             /// 解码base64。
             /// </summary>
@@ -39,11 +51,13 @@ namespace Cosmos
                 var bytes = Encoding.UTF8.GetBytes(context);
                 if (bytes != null)
                 {
+                    var builder = StringBuilderCache;
+                    builder.Clear();
                     foreach (byte b in bytes)
                     {
-                        stringBuilderCache.AppendFormat("{0:x2}", b);
+                        builder.AppendFormat("{0:x2}", b);
                     }
-                    hexString = stringBuilderCache.ToString();
+                    hexString = builder.ToString();
                 }
                 return hexString;
             }
@@ -57,11 +71,13 @@ namespace Cosmos
                 string hexString = string.Empty;
                 if (bytes != null)
                 {
+                    var builder = StringBuilderCache;
+                    builder.Clear();
                     foreach (byte b in bytes)
                     {
-                        stringBuilderCache.AppendFormat("{0:x2}", b);
+                        builder.AppendFormat("{0:x2}", b);
                     }
-                    hexString = stringBuilderCache.ToString();
+                    hexString = builder.ToString();
                 }
                 return hexString;
             }
@@ -142,7 +158,7 @@ namespace Cosmos
                 {
                     var formatter = new BinaryFormatter();
                     formatter.Serialize(ms, obj);
-                    return ms.GetBuffer();
+                    return ms.ToArray();
                 }
             }
             /// <summary>

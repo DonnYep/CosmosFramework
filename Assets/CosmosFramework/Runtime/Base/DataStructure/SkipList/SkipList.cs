@@ -59,7 +59,8 @@ namespace Cosmos
             //3. 分配查询层级节点
 
             int valueLevel = CoinFlipLevel();
-            int newLevelCount = valueLevel - level;
+            //valueLevel 是最高层索引（0 基），因此需要的层数是 valueLevel + 1
+            int newLevelCount = valueLevel + 1 - level;
             while (newLevelCount > 0)
             {
                 //补全TopLeft节点
@@ -150,7 +151,8 @@ namespace Cosmos
         }
         public bool Remove(SkipListNode<T> valueNode)
         {
-            if (valueNode == null)
+            //只允许移除属于本跳表的节点，避免误删其它跳表或游离节点
+            if (!IsNodeBelongs(valueNode))
             {
                 return false;
             }
@@ -179,6 +181,28 @@ namespace Cosmos
                 ClearEmptyLevels();
                 return true;
             }
+        }
+        /// <summary>
+        /// 判断节点是否属于本跳表；
+        /// 沿最底层节点向左回溯到表头，与 bottomLeft 比较
+        /// </summary>
+        /// <param name="node">待判断的节点</param>
+        /// <returns>是否属于本跳表</returns>
+        bool IsNodeBelongs(SkipListNode<T> node)
+        {
+            if (node == null || node.IsHeader() || node.IsFooter())
+                return false;
+            var lowestNode = FindLowest(node);
+            if (lowestNode == null)
+                return false;
+            var current = lowestNode;
+            while (current.Previous != null)
+            {
+                current = current.Previous;
+                if (current.IsHeader())
+                    return ReferenceEquals(current, bottomLeft);
+            }
+            return false;
         }
         public SkipListNode<T> Find(T value)
         {
@@ -269,12 +293,14 @@ namespace Cosmos
         /// <returns>coin value</returns>
         int CoinFlipLevel()
         {
-            int level = 0;
-            while (random.Next(0, 2) == 1 && level < this.level)//投掷硬币为1时增加一层
+            int valueLevel = 0;
+            //最高层索引可以比当前层数多一层（用于新增顶层），但不得超过 MaxLevels
+            int maxLevelIndex = Math.Min(level, maxLevels - 1);
+            while (valueLevel < maxLevelIndex && random.Next(0, 2) == 1)//投掷硬币为1时增加一层
             {
-                level++;
+                valueLevel++;
             }
-            return level;
+            return valueLevel;
         }
         void ClearEmptyLevels()
         {

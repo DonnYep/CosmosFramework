@@ -8,10 +8,11 @@ namespace Cosmos
     public class BiDictionary<TFirst, TSecond> : IDictionary<TFirst, TSecond>, IReadOnlyDictionary<TFirst, TSecond>, IDictionary
     {
         private readonly IDictionary<TFirst, TSecond> _firstToSecond = new Dictionary<TFirst, TSecond>();
+        //反查表参与序列化：反序列化回调（[OnDeserialized]/IDeserializationCallback）触发时
+        //正查字段字典尚未填充，无法据此重建反查表，只能随对象一起还原
+        private IDictionary<TSecond, TFirst> _secondToFirst = new Dictionary<TSecond, TFirst>();
         [NonSerialized]
-        private readonly IDictionary<TSecond, TFirst> _secondToFirst = new Dictionary<TSecond, TFirst>();
-        [NonSerialized]
-        private readonly ReverseDictionary _reverseDictionary;
+        private ReverseDictionary _reverseDictionary;
 
         public BiDictionary()
         {
@@ -20,7 +21,12 @@ namespace Cosmos
 
         public IDictionary<TSecond, TFirst> Reverse
         {
-            get { return _reverseDictionary; }
+            get
+            {
+                if (_reverseDictionary == null)
+                    _reverseDictionary = new ReverseDictionary(this);
+                return _reverseDictionary;
+            }
         }
 
         public int Count
@@ -53,19 +59,28 @@ namespace Cosmos
             get { return _firstToSecond[key]; }
             set
             {
-                _firstToSecond[key] = value;
-                _secondToFirst[value] = key;
+                //先解除两个方向上与新映射冲突的旧映射，保证一对一关系
+                TSecond previousSecond;
+                if (_firstToSecond.TryGetValue(key, out previousSecond))
+                {
+                    _firstToSecond.Remove(key);
+                    _secondToFirst.Remove(previousSecond);
+                }
+                TFirst previousFirst;
+                if (_secondToFirst.TryGetValue(value, out previousFirst))
+                {
+                    _secondToFirst.Remove(value);
+                    _firstToSecond.Remove(previousFirst);
+                }
+                _firstToSecond.Add(key, value);
+                _secondToFirst.Add(value, key);
             }
         }
 
         object IDictionary.this[object key]
         {
             get { return ((IDictionary)_firstToSecond)[key]; }
-            set
-            {
-                ((IDictionary)_firstToSecond)[key] = value;
-                ((IDictionary)_secondToFirst)[value] = key;
-            }
+            set { this[(TFirst)key] = (TSecond)value; }
         }
 
         public ICollection<TFirst> Keys
@@ -115,36 +130,50 @@ namespace Cosmos
 
         public void Add(TFirst key, TSecond value)
         {
+            if (_firstToSecond.ContainsKey(key))
+                throw new ArgumentException("An item with the same key has already been added.", nameof(key));
+            if (_secondToFirst.ContainsKey(value))
+                throw new ArgumentException("An item with the same value has already been added.", nameof(value));
             _firstToSecond.Add(key, value);
-            _secondToFirst.Add(value, key);
+            try
+            {
+                _secondToFirst.Add(value, key);
+            }
+            catch
+            {
+                //反向写入失败时回滚，避免留下半个映射
+                _firstToSecond.Remove(key);
+                throw;
+            }
         }
         public bool TryAdd(TFirst key, TSecond value)
         {
             if (_firstToSecond.ContainsKey(key) || _secondToFirst.ContainsKey(value))
                 return false;
             _firstToSecond.Add(key, value);
-            _secondToFirst.Add(value, key);
+            try
+            {
+                _secondToFirst.Add(value, key);
+            }
+            catch
+            {
+                _firstToSecond.Remove(key);
+                return false;
+            }
             return true;
         }
         public void AddOrUpdate(TFirst key, TSecond value)
         {
-            if (_firstToSecond.ContainsKey(key))
-                _firstToSecond.Remove(key);
-            if (_secondToFirst.ContainsKey(value))
-                _secondToFirst.Remove(value);
-            _firstToSecond.Add(key, value);
-            _secondToFirst.Add(value, key);
+            this[key] = value;
         }
         void IDictionary.Add(object key, object value)
         {
-            ((IDictionary)_firstToSecond).Add(key, value);
-            ((IDictionary)_secondToFirst).Add(value, key);
+            Add((TFirst)key, (TSecond)value);
         }
 
         void ICollection<KeyValuePair<TFirst, TSecond>>.Add(KeyValuePair<TFirst, TSecond> item)
         {
-            _firstToSecond.Add(item);
-            _secondToFirst.Add(new KeyValuePair<TSecond, TFirst>(item.Value, item.Key));
+            Add(item.Key, item.Value);
         }
 
         public bool ContainsKey(TFirst key)
@@ -159,39 +188,33 @@ namespace Cosmos
 
         public bool TryGetValue(TFirst key, out TSecond value)
         {
-            return _firstToSecond.TryGetValue(key, out value) && _secondToFirst.ContainsKey(value);
+            return _firstToSecond.TryGetValue(key, out value);
         }
 
         public bool Remove(TFirst key)
         {
             TSecond value;
-            if (_firstToSecond.TryGetValue(key, out value))
-            {
-                if (_secondToFirst.ContainsKey(value))
-                {
-                    _firstToSecond.Remove(key);
-                    _secondToFirst.Remove(value);
-                    return true;
-                }
+            if (!_firstToSecond.TryGetValue(key, out value))
                 return false;
-            }
-            else
-                return false;
+            _firstToSecond.Remove(key);
+            _secondToFirst.Remove(value);
+            return true;
         }
 
         void IDictionary.Remove(object key)
         {
-            var firstToSecond = (IDictionary)_firstToSecond;
-            if (!firstToSecond.Contains(key))
-                return;
-            var value = firstToSecond[key];
-            firstToSecond.Remove(key);
-            ((IDictionary)_secondToFirst).Remove(value);
+            Remove((TFirst)key);
         }
 
         bool ICollection<KeyValuePair<TFirst, TSecond>>.Remove(KeyValuePair<TFirst, TSecond> item)
         {
-            return _firstToSecond.Remove(item);
+            TSecond value;
+            if (!_firstToSecond.TryGetValue(item.Key, out value)
+                || !EqualityComparer<TSecond>.Default.Equals(value, item.Value))
+                return false;
+            _firstToSecond.Remove(item.Key);
+            _secondToFirst.Remove(value);
+            return true;
         }
 
         bool IDictionary.Contains(object key)
@@ -213,14 +236,6 @@ namespace Cosmos
         void ICollection.CopyTo(Array array, int index)
         {
             ((IDictionary)_firstToSecond).CopyTo(array, index);
-        }
-
-        [OnDeserialized]
-        internal void OnDeserialized(StreamingContext context)
-        {
-            _secondToFirst.Clear();
-            foreach (var item in _firstToSecond)
-                _secondToFirst.Add(item.Value, item.Key);
         }
 
         private class ReverseDictionary : IDictionary<TSecond, TFirst>, IReadOnlyDictionary<TSecond, TFirst>, IDictionary
@@ -262,19 +277,27 @@ namespace Cosmos
                 get { return _owner._secondToFirst[key]; }
                 set
                 {
-                    _owner._secondToFirst[key] = value;
-                    _owner._firstToSecond[value] = key;
+                    TFirst previousFirst;
+                    if (_owner._secondToFirst.TryGetValue(key, out previousFirst))
+                    {
+                        _owner._secondToFirst.Remove(key);
+                        _owner._firstToSecond.Remove(previousFirst);
+                    }
+                    TSecond previousSecond;
+                    if (_owner._firstToSecond.TryGetValue(value, out previousSecond))
+                    {
+                        _owner._firstToSecond.Remove(value);
+                        _owner._secondToFirst.Remove(previousSecond);
+                    }
+                    _owner._secondToFirst.Add(key, value);
+                    _owner._firstToSecond.Add(value, key);
                 }
             }
 
             object IDictionary.this[object key]
             {
                 get { return ((IDictionary)_owner._secondToFirst)[key]; }
-                set
-                {
-                    ((IDictionary)_owner._secondToFirst)[key] = value;
-                    ((IDictionary)_owner._firstToSecond)[value] = key;
-                }
+                set { this[(TSecond)key] = (TFirst)value; }
             }
             public ICollection<TSecond> Keys
             {
@@ -323,20 +346,30 @@ namespace Cosmos
 
             public void Add(TSecond key, TFirst value)
             {
+                if (_owner._secondToFirst.ContainsKey(key))
+                    throw new ArgumentException("An item with the same key has already been added.", nameof(key));
+                if (_owner._firstToSecond.ContainsKey(value))
+                    throw new ArgumentException("An item with the same value has already been added.", nameof(value));
                 _owner._secondToFirst.Add(key, value);
-                _owner._firstToSecond.Add(value, key);
+                try
+                {
+                    _owner._firstToSecond.Add(value, key);
+                }
+                catch
+                {
+                    _owner._secondToFirst.Remove(key);
+                    throw;
+                }
             }
 
             void IDictionary.Add(object key, object value)
             {
-                ((IDictionary)_owner._secondToFirst).Add(key, value);
-                ((IDictionary)_owner._firstToSecond).Add(value, key);
+                Add((TSecond)key, (TFirst)value);
             }
 
             void ICollection<KeyValuePair<TSecond, TFirst>>.Add(KeyValuePair<TSecond, TFirst> item)
             {
-                _owner._secondToFirst.Add(item);
-                _owner._firstToSecond.Add(new KeyValuePair<TFirst, TSecond>(item.Value, item.Key));
+                Add(item.Key, item.Value);
             }
 
             public bool ContainsKey(TSecond key)
@@ -357,29 +390,27 @@ namespace Cosmos
             public bool Remove(TSecond key)
             {
                 TFirst value;
-                if (_owner._secondToFirst.TryGetValue(key, out value))
-                {
-                    _owner._secondToFirst.Remove(key);
-                    _owner._firstToSecond.Remove(value);
-                    return true;
-                }
-                else
+                if (!_owner._secondToFirst.TryGetValue(key, out value))
                     return false;
+                _owner._secondToFirst.Remove(key);
+                _owner._firstToSecond.Remove(value);
+                return true;
             }
 
             void IDictionary.Remove(object key)
             {
-                var firstToSecond = (IDictionary)_owner._secondToFirst;
-                if (!firstToSecond.Contains(key))
-                    return;
-                var value = firstToSecond[key];
-                firstToSecond.Remove(key);
-                ((IDictionary)_owner._firstToSecond).Remove(value);
+                Remove((TSecond)key);
             }
 
             bool ICollection<KeyValuePair<TSecond, TFirst>>.Remove(KeyValuePair<TSecond, TFirst> item)
             {
-                return _owner._secondToFirst.Remove(item);
+                TFirst value;
+                if (!_owner._secondToFirst.TryGetValue(item.Key, out value)
+                    || !EqualityComparer<TFirst>.Default.Equals(value, item.Value))
+                    return false;
+                _owner._secondToFirst.Remove(item.Key);
+                _owner._firstToSecond.Remove(value);
+                return true;
             }
 
             bool IDictionary.Contains(object key)

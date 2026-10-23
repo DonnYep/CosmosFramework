@@ -322,14 +322,16 @@ namespace Cosmos
             GameManager.fixedRefreshHandler = null;
             GameManager.elapseRefreshHandler = null;
 
+            //先清空注册表再抛异常，避免终止后的模块仍可被访问、或重复执行销毁回调
+            moduleDict.Clear();
+            interfaceModuleDict.Clear();
+
             if (moduleTerminateExceptionList.Count > 0)
             {
                 var arr = moduleTerminateExceptionList.ToArray();
-                moduleInitExceptionList.Clear();
+                moduleTerminateExceptionList.Clear();
                 throw new AggregateException(arr);
             }
-            moduleDict.Clear();
-            interfaceModuleDict.Clear();
         }
         #endregion
     }
