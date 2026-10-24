@@ -7,8 +7,12 @@
 
 # CosmosFramework
 
-CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的Unity方法扩展以及工具链。async/await语法支持，多网络通道支持，完整的资源打包流水线。支持自动化部署。框架遵循unityPackage规范，建议通过UPM导入使用。
+CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的Unity方法扩展以及工具链，async/await语法支持，多网络通道支持，以及**可插拔的资源加载方案**（Addressables / YooAsset / QuarkAsset，编辑器内置 AssetDatabase 兜底）。框架遵循unityPackage规范，建议通过UPM导入使用。
 * [CosmosFramework Wiki](https://github.com/DonnYep/CosmosFramework/wiki)<br/>
+
+> **本版重点：资源层重构为「可插拔 Provider 桥」。**
+> 框架不再内置资源管理方案与打包流水线，改为通过 Provider 接入 Addressables / YooAsset / QuarkAsset；
+> UI、Entity、Audio、Scene、DataTable、ObjectsPool 等模块的公开 API 与调用方式保持不变。详见 [设计核心](#设计核心)。
 
 <a name="导航"></a>
 
@@ -18,6 +22,7 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 - [导航](#导航)
   - [环境](#环境)
   - [启动框架](#启动框架)
+  - [设计核心](#设计核心)
   - [模块简介](#模块简介)
   - [内置数据结构、工具](#内置数据结构工具)
   - [内置架构 PureMVC](#内置架构-puremvc)
@@ -26,7 +31,7 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
   - [其他](#其他)
   - [Library link](#library-link)
 
-- [ResourceEditor文档](Docs/RESOURCE_EDITOR.md)
+- [资源模块文档](Docs/RESOURCE.md)
 
 <a name="环境"></a>
 
@@ -40,6 +45,83 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 
 ![CosmosConfig](Docs/Images/Common/CosmosConfig.png)
 - 在游戏入口处添加CosmosConfig组件，添加后即可启动框架。
+
+<a name="设计核心"></a>
+
+## 设计核心
+
+> **资源加载方案是可插拔的；框架内所有模块的资源生命周期，统一建立在 Resource 模块之上；而 Resource 模块本身，建立在可插拔的资源管理方案之上。**
+
+这是一条依赖倒置链：业务模块不认识任何资源库，只认识一个契约；框架也不实现资源管理，只实现"桥"。
+
+```text
+UI · Audio · Entity · Scene · DataTable · ObjectsPool
+        │  只依赖 IResourceManager，不引用任何资源库
+        ▼
+Resource 模块（桥）   Provider 选择 · 引用计数 · 名称索引 · 场景登记 · 诊断
+        │  IResourceProvider（4 个方法）
+        ▼
+Addressables   │   YooAsset   │   QuarkAsset   │   AssetDatabase（编辑器）
+```
+
+### 一、资源加载方案可插拔
+
+框架自身不实现资源管理方案：没有自己的 AB 构建流水线、没有清单格式、没有版本校验。
+它只定义一层很窄的 Provider 契约——初始化、创建一次加载操作、卸载未用资源、销毁——
+再由适配器把不同方案映射到同一套契约上。
+
+| 方案 | 对应实现 | 说明 |
+| --- | --- | --- |
+| Addressables | `Cosmos.Resource.Addressables` | 映射最完整，含 `InstantiateAsync` 对象池 |
+| YooAsset | `Cosmos.Resource.YooAsset` | `ResourcePackage` + `*OperationHandle` 体系 |
+| QuarkAsset | `Cosmos.Resource.QuarkAsset` | 原生 name-keyed 引用计数，与桥的兼容层天然对应 |
+| AssetDatabase | `Cosmos.Resource.EditorFallback` | 仅编辑器，零构建产物，示例开箱即跑 |
+
+切换方案只需改 `CosmosConfig` 上的一个 Provider 名字。适配器通过 `versionDefines` + `defineConstraints`
+自动启停——没有安装对应的资源库时，该程序集根本不参与编译。
+
+### 二、模块的生命周期建立在 Resource 模块之上
+
+UI、音效、实体、场景、数据表、对象池都不自己加载资源，而是向 Resource 模块"借"：
+
+| 模块 | 通过资源桥获取 | 归还时机 |
+| --- | --- | --- |
+| UI | 面板预制体 | 面板关闭时 `UnloadAsset` |
+| Audio | `AudioClip` | 音效卸载时 `UnloadAsset` |
+| DataTable | 表文件 `TextAsset` | 表卸载时 `UnloadAsset` |
+| ObjectsPool | 池对象预制体 | 池卸载时 `UnloadAsset` |
+| Entity | 实体预制体 | 实体资源注册后常驻，框架终止时统一回收 |
+| Scene | 场景 | `UnloadSceneAsync`，或由桥统一回收 |
+
+带来的直接结果：
+
+- 模块代码里没有 `AssetBundle`、没有 `Addressables`、没有 `Resources.Load`，**换方案时模块一行都不用改**；
+- 引用计数、重复加载合并、场景登记、统一回收只在一个地方实现，模块不必各自维护缓存与释放逻辑；
+- 模块的公开 API 保持稳定——`LoadPrefabAsync(name, callback, progress, instantiate)` 这套写法在重构前后完全一致。
+
+### 三、Resource 模块建立在可插拔方案之上
+
+桥不知道 AB 包、不知道 catalog、不知道 package，它只处理两件事：**key 到句柄**、**句柄到引用计数**。
+
+方案特有的概念（包名、清单、下载、版本、加密）留在 Provider 内部；
+方案之间能力的差异（子资源、全部资源、实例化、优先级）用能力位显式声明，
+桥在调用前检查并给出明确错误，而不是让某个方案"假装支持"。
+
+```csharp
+// 对任意 Provider 都成立
+var handle = CosmosEntry.ResourceManager.LoadAssetHandle<GameObject>("Prefabs/Cube");
+handle.Completed += h => Instantiate(h.Asset);
+yield return handle;          // 协程
+var cube = await handle.Task; // async/await
+handle.Release();             // 引用归零即卸载底层资源
+```
+
+### 四、没有第三方方案也能跑
+
+编辑器内置 `AssetDatabase` 兜底 Provider：直接按资源名 / 路径加载，不需要任何构建产物。
+因此示例工程和编辑器内的日常开发不依赖任何资源库；真机再切到 Addressables / YooAsset / QuarkAsset。
+
+> 契约细节、能力位、诊断、以及如何自己写一个 Provider，见 [资源模块文档](Docs/RESOURCE.md)。
 
 <a name="模块简介"></a>
 
@@ -73,7 +155,7 @@ CosmosFramework是一款中轻量级的Unity开发框架。框架拥有丰富的
 
 - **Procedure**:流程节点模块。方便管理运行时执行的逻辑节点，如热游戏启动节点，资源校验节点，下载资源节点，进入游戏节点等。将每个操作封装为节点，则大大有利于项目维护。
 
-- **Resource**:资源加载模块。内置提供AssetDatabase、AssetBundle以及Resource三种加载模式。AssetDatabase与AssetBundle模式支持引用计数，资源包会根据引用计数自动管理包体的加载或卸载。Runtime加载器可自定义加载方案。支持自动化流水线，如Jenkins构建部署等。资源模块对应的编辑器位于Window>Cosmos>Module>Resource。开发阶段阶段使用AssetDatabase模式，构建app时使用AssetBundle模式。若需要使用Unity Resource作为加载方案，则切换为Resource模式。
+- **Resource**:资源模块。框架的资源中枢：向上为 UI、Entity、Audio、Scene、DataTable、ObjectsPool 提供统一的加载与释放（引用计数、场景登记、加载诊断），向下通过 `IResourceProvider` 接入任意资源方案（Addressables / YooAsset / QuarkAsset / 编辑器 AssetDatabase）。设计思路见 [设计核心](#设计核心)，接口与扩展方式见 [资源模块文档](Docs/RESOURCE.md)。
 
 - **Scene**:场景加载模块。提供常用的异步、同步加载嵌入的场景功能。支持自定义实现加载方式。
 

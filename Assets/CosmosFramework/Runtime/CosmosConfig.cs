@@ -1,19 +1,26 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Cosmos.Resource;
-using System.IO;
-using System;
 
 namespace Cosmos
 {
+    /// <summary>
+    /// 框架启动配置。
+    /// <para>资源方案是可插拔的：这里只需要填写 Provider 名称（如 Addressables / YooAsset / QuarkAsset / AssetDatabase）与参数，</para>
+    /// <para>框架不依赖任何具体资源库，UI / Entity / Audio / Scene / DataTable 等模块通过资源桥统一访问。</para>
+    /// </summary>
     [DisallowMultipleComponent]
     public class CosmosConfig : MonoBehaviour
     {
         [SerializeField] bool launchAppDomainModules = true;
         [SerializeField] bool printModulePreparatory = false;
-        [SerializeField] ResourceLoadMode resourceLoadMode;
-        [SerializeField] string resourceLoaderName;
-        [SerializeField] int resourceLoaderIndex;
-        [SerializeField] bool printLogWhenAssetNotExists;
+
+        [Header("Resource")]
+        [Tooltip("资源方案名称：Addressables / YooAsset / QuarkAsset / AssetDatabase（编辑器兜底）")]
+        [SerializeField] string resourceProviderName = "AssetDatabase";
+        [Tooltip("Provider 参数，形如 key=value;key2=value2")]
+        [SerializeField] string resourceProviderSettings = string.Empty;
+        [Tooltip("是否记录资源加载诊断（编辑器默认开启）")]
+        [SerializeField] bool resourceDiagnostics = true;
 
         [SerializeField] int debugHelperIndex;
         [SerializeField] int jsonHelperIndex;
@@ -24,13 +31,6 @@ namespace Cosmos
 
         [SerializeField] bool runInBackground;
 
-        [SerializeField] ResourceDataset resourceDataset;
-        [SerializeField] ResourceBundlePathType resourceBundlePathType;
-        [SerializeField] string relativeBundlePath;
-
-        [SerializeField] bool manifestEncrytion = false;
-        [SerializeField] string manifestEncrytionKey = "CosmosBundlesKey";
-
         [SerializeField] bool drawDebugWindow;
         [SerializeField] bool disableDebugLog = false;
 
@@ -38,72 +38,22 @@ namespace Cosmos
         [SerializeField] string inputHelperName;
 
         [SerializeField] bool moduleConfigFoldout;
+
+        /// <summary>
+        /// 按配置选择并初始化资源 Provider。
+        /// </summary>
         public void LoadResource()
         {
-            ResourceDataProxy.PrintLogWhenAssetNotExists = printLogWhenAssetNotExists;
-            switch (resourceLoadMode)
+            var resourceManager = CosmosEntry.ResourceManager;
+            if (resourceManager == null)
             {
-                case ResourceLoadMode.Resource:
-                    CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, new ResourcesLoader());
-                    break;
-                case ResourceLoadMode.AssetBundle:
-                    {
-                        string manifestPath = string.Empty;
-                        string bundlePath = string.Empty;
-                        string prefix = ResourceUtility.Prefix;
-                        switch (resourceBundlePathType)
-                        {
-                            case ResourceBundlePathType.StreamingAssets:
-                                bundlePath = Application.streamingAssetsPath;
-                                break;
-                            case ResourceBundlePathType.PersistentDataPath:
-                                bundlePath = Application.persistentDataPath;
-                                break;
-                        }
-                        ResourceDataProxy.ResourceBundlePathType = resourceBundlePathType;
-                        string formattedBundlePath = string.Empty;
-                        if (!string.IsNullOrEmpty(relativeBundlePath))
-                        {
-                            manifestPath = Path.Combine(bundlePath, relativeBundlePath, ResourceConstants.RESOURCE_MANIFEST);
-                            formattedBundlePath = Utility.IO.CombineURL(bundlePath, relativeBundlePath);
-                        }
-                        else
-                        {
-                            manifestPath = Path.Combine(bundlePath, ResourceConstants.RESOURCE_MANIFEST);
-                            formattedBundlePath = bundlePath;
-                        }
-                        manifestPath = prefix + manifestPath;
-                        //webrequest需要加file://，System.IO不需要加。加载器使用的是unity原生的assetbundle.loadxxxx，属于IO，因此无需加前缀。
-                        string formattedManifestEncrytionKey = string.Empty;
-                        if (manifestEncrytion)
-                            formattedManifestEncrytionKey = manifestEncrytionKey;
-                        else
-                            formattedManifestEncrytionKey = string.Empty;
-                        var assetBundleLoader = new AssetBundleLoader();
-
-                        CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetBundleLoader);
-                        var taskId = CosmosEntry.ResourceManager.StartRequestManifest(manifestPath, formattedManifestEncrytionKey, formattedBundlePath);
-                        assetBundleLoader.TaskId = taskId;
-                    }
-                    break;
-                case ResourceLoadMode.AssetDatabase:
-                    var assetDatabaseLoader = new AssetDatabaseLoader();
-                    assetDatabaseLoader.SetResourceDataset(resourceDataset);
-                    CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, assetDatabaseLoader);
-                    break;
-                case ResourceLoadMode.CustomLoader:
-                    {
-                        if (string.IsNullOrEmpty(resourceLoaderName) || resourceLoaderName == Constants.NONE)
-                        {
-                            throw new Exception("CustomLoader is invalid !");
-                        }
-                        var loadHelper = Utility.Assembly.GetTypeInstance(resourceLoaderName);
-                        if (loadHelper != null)
-                            CosmosEntry.ResourceManager.SetDefaultLoadHeper(resourceLoadMode, (IResourceLoadHelper)loadHelper);
-                    }
-                    break;
+                Debug.LogError("[CosmosConfig] resource module is missing, check launchAppDomainModules !");
+                return;
             }
+            resourceManager.DiagnosticsEnabled = resourceDiagnostics;
+            resourceManager.SetProvider(resourceProviderName, resourceProviderSettings);
         }
+
         protected virtual void Awake()
         {
             LoadHelpers();

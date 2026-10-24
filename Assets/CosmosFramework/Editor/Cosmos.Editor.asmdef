@@ -2,7 +2,7 @@
     "name": "Cosmos.Editor",
     "references": [
         "Cosmos.Runtime",
-        "Cosmos.Resource.Core"
+        "Cosmos.Resource.Abstractions"
     ],
     "includePlatforms": [
         "Editor"

@@ -7,8 +7,12 @@
 
 # CosmosFramework
 
-CosmosFramework is a lightweight Unity development framework . Has a rich Unity method extensions and toolchain. async/await syntax support, multi-network channel support,complete packaging pipeline. Support for automated deployment.The framework follows the unityPackage specification and is recommended to be imported for use through UPM.
+CosmosFramework is a lightweight Unity development framework. It provides rich Unity method extensions and toolchain, async/await syntax support, multi-network channel support, and **pluggable resource loading** (Addressables / YooAsset / QuarkAsset, with an editor-only AssetDatabase fallback). The framework follows the unityPackage specification and is recommended to be imported through UPM.
 * [CosmosFramework Wiki](https://github.com/DonnYep/CosmosFramework/wiki)<br/>
+
+> **This version: the resource layer is rebuilt as a pluggable provider bridge.**
+> The framework no longer ships its own resource management or packaging pipeline; solutions are plugged in through providers.
+> Public APIs and call sites of UI, Entity, Audio, Scene, DataTable and ObjectsPool stay unchanged. See [Design Core](#design-core).
 
 <a name="Navigation"></a>
 
@@ -18,6 +22,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 - [Navigation](#navigation)
   - [Environment](#environment)
   - [Launch CosmosFramework](#Launch-CosmosFramework)
+  - [Design Core](#design-core)
   - [Module Introduction](#module-introduction)
   - [Built-in data structures,tools](#built-in-data-structurestools)
   - [Built-in Architecture PureMVC](#built-in-architecture-puremvc)
@@ -26,7 +31,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
   - [Other](#other)
   - [Library link](#library-link)
 
-- [ResourceEditorDocumentation](Docs/RESOURCE_EDITOR_EN.md)
+- [ResourceModuleDocumentation](Docs/RESOURCE_EN.md)
 
 <a name="Environment"></a>
 
@@ -40,6 +45,89 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 ![CosmosConfig](Docs/Images/Common/CosmosConfig.png)
 - Add the CosmosConfig component to the game entry and add it to start the framework.
+
+<a name="design-core"></a>
+
+## Design Core
+
+> **Resource loading is pluggable; every module's resource lifecycle is built on top of the Resource module; and the Resource module itself is built on top of a pluggable resource-management solution.**
+
+That is one dependency-inversion chain: business modules know no resource library, only a contract; and the framework implements no resource management, only the bridge.
+
+```text
+┌───────────────────────────────────────────────────────────────────┐
+│  UI · Audio · Entity · Scene · DataTable · ObjectsPool             │
+│  depends on IResourceManager only, never on a resource library     │
+└────────────────────────────────┬──────────────────────────────────┘
+                                 │  key / handle / reference count
+┌────────────────────────────────▼──────────────────────────────────┐
+│  Resource module (bridge)                                          │
+│  provider selection · ref counting · name index · scene registry   │
+└────────────────────────────────┬──────────────────────────────────┘
+                                 │  IResourceProvider (4 methods)
+┌────────────────────────────────▼──────────────────────────────────┐
+│  Addressables  │  YooAsset  │  QuarkAsset  │  AssetDatabase(Editor) │
+└───────────────────────────────────────────────────────────────────┘
+```
+
+### 1. Pluggable loading solutions
+
+The framework ships no resource management of its own — no AB build pipeline, no manifest format, no version verification.
+It defines only a narrow provider contract (initialize, create one load operation, unload unused assets, destroy),
+and adapters map each solution onto it.
+
+| Solution | Assembly | Note |
+| --- | --- | --- |
+| Addressables | `Cosmos.Resource.Addressables` | most complete mapping, including `InstantiateAsync` pooling |
+| YooAsset | `Cosmos.Resource.YooAsset` | `ResourcePackage` + `*OperationHandle` |
+| QuarkAsset | `Cosmos.Resource.QuarkAsset` | natively name-keyed reference counting |
+| AssetDatabase | `Cosmos.Resource.EditorFallback` | editor only, no build step, samples run out of the box |
+
+Switching is a single provider name on `CosmosConfig`. Adapters use `versionDefines` + `defineConstraints`,
+so an adapter assembly is simply not compiled when the corresponding package is absent.
+
+### 2. Module lifecycles are built on the Resource module
+
+UI, audio, entity, scene, data table and object pool never load assets themselves:
+
+| Module | Loaded through the bridge | Released when |
+| --- | --- | --- |
+| UI | panel prefab | panel closes → `UnloadAsset` |
+| Audio | `AudioClip` | audio unloaded → `UnloadAsset` |
+| DataTable | table `TextAsset` | table unloaded → `UnloadAsset` |
+| ObjectsPool | pool prefab | pool unloaded → `UnloadAsset` |
+| Entity | entity prefab | stays resident, reclaimed on framework shutdown |
+| Scene | scene | `UnloadSceneAsync`, or reclaimed by the bridge |
+
+As a result: module code contains no `AssetBundle`, no `Addressables`, no `Resources.Load`, so
+**switching solutions requires zero module changes**; reference counting, request coalescing,
+scene registration and global cleanup live in exactly one place; and each module's public API
+(`LoadPrefabAsync(name, callback, progress, instantiate)` etc.) stayed the same across the refactor.
+
+### 3. The bridge is built on the pluggable solution
+
+The bridge knows nothing about bundles, catalogs or packages. It handles two things only:
+**key → handle** and **handle → reference count**. Solution-specific concepts (package name, manifest,
+download, version, encryption) stay inside the provider; capability differences (sub assets, all assets,
+instantiation, priority) are declared with capability flags, and the bridge reports a clear error instead
+of letting a provider pretend to support something it does not.
+
+```csharp
+// Works with any provider
+var handle = CosmosEntry.ResourceManager.LoadAssetHandle<GameObject>("Prefabs/Cube");
+handle.Completed += h => Instantiate(h.Asset);
+yield return handle;          // coroutine
+var cube = await handle.Task; // async/await
+handle.Release();             // reference count reaches zero → underlying asset unloaded
+```
+
+### 4. Runs without any third-party solution
+
+An editor-only `AssetDatabase` fallback provider loads directly by asset name / path with no build step,
+so samples and day-to-day editor work depend on no resource library at all; switch to
+Addressables / YooAsset / QuarkAsset for device builds.
+
+> Contract details, capability flags, diagnostics and how to write your own provider: [Resource module documentation](Docs/RESOURCE_EN.md).
 
 <a name="Module-Introduction"></a>
 
@@ -73,7 +161,7 @@ CosmosFramework is a lightweight Unity development framework . Has a rich Unity 
 
 - **Procedure**:Procedure node module. It is convenient to manage the logical nodes executed at runtime, such as hot game start node, resource check node, download resource node, enter game node, etc. Encapsulating each operation into a node greatly facilitates project maintenance.
 
-- **Resource** : Resource module.Three built-in loading modes: AssetDatabase, AssetBundle and Resource. AssetDatabase and AssetBundle modes support reference counting, and resource bundles  automatically manage the loading or unloading of package bodies based on reference counts. the Runtime loader can be customized with loading schemes. Support for automated pipelines, such as Jenkins build deployments, etc. The editor corresponding to the resource module is located at Window>Cosmos>Module>Resource.Use the AssetDatabase mode during the development phase and the AssetBundle mode when building the app. If you need to use Unity Resource as the loading scheme, switch to Resource mode.[ResourceEditorDoc](Docs/RESOURCE_EDITOR_EN.md).
+- **Resource** : Resource module, the resource hub of the framework. Upwards it gives UI, Entity, Audio, Scene, DataTable and ObjectsPool one uniform way to load and release assets (reference counting, scene registry, diagnostics); downwards it plugs into any solution through `IResourceProvider` (Addressables / YooAsset / QuarkAsset / editor AssetDatabase). See [Design Core](#design-core) for the rationale and [Resource module documentation](Docs/RESOURCE_EN.md) for the contract.
 
 - **Scene** : Scene module. Provide common asynchronous and synchronous loading of embedded scenes. Support custom implementation of loading methods.
 

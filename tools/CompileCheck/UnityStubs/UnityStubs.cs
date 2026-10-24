@@ -15,6 +15,15 @@ namespace UnityEngine
         public static void DestroyImmediate(Object obj) { }
         public static void DestroyImmediate(Object obj, bool allowDestroyingAssets) { }
         public static void DontDestroyOnLoad(Object target) { }
+        public static Object Instantiate(Object original) { return original; }
+        public static Object Instantiate(Object original, Transform parent) { return original; }
+        public static Object Instantiate(Object original, Transform parent, bool instantiateInWorldSpace) { return original; }
+        public static Object Instantiate(Object original, Vector3 position, Quaternion rotation) { return original; }
+        public static Object Instantiate(Object original, Vector3 position, Quaternion rotation, Transform parent) { return original; }
+        public static T Instantiate<T>(T original) where T : Object { return original; }
+        public static T Instantiate<T>(T original, Transform parent) where T : Object { return original; }
+        public static T Instantiate<T>(T original, Vector3 position, Quaternion rotation) where T : Object { return original; }
+        public static T Instantiate<T>(T original, Vector3 position, Quaternion rotation, Transform parent) where T : Object { return original; }
         public static T FindObjectOfType<T>() where T : Object { return null; }
         public static Object FindObjectOfType(Type type) { return null; }
         public static T[] FindObjectsOfType<T>() where T : Object { return null; }
@@ -24,6 +33,61 @@ namespace UnityEngine
         public static implicit operator bool(Object exists) { return exists != null; }
         public override bool Equals(object other) { return ReferenceEquals(this, other); }
         public override int GetHashCode() { return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this); }
+    }
+
+    public static class GUILayout
+    {
+        public static bool Button(string text, params GUILayoutOption[] options) { return false; }
+        public static bool Button(string text, GUIStyle style, params GUILayoutOption[] options) { return false; }
+        public static bool Button(GUIContent content, params GUILayoutOption[] options) { return false; }
+        public static bool Button(GUIContent content, GUIStyle style, params GUILayoutOption[] options) { return false; }
+        public static bool Button(Texture image, params GUILayoutOption[] options) { return false; }
+        public static bool Button(Texture image, GUIStyle style, params GUILayoutOption[] options) { return false; }
+        public static void Label(string text, params GUILayoutOption[] options) { }
+        public static void Label(GUIContent content, params GUILayoutOption[] options) { }
+        public static void Label(string text, GUIStyle style, params GUILayoutOption[] options) { }
+        public static void Label(GUIContent content, GUIStyle style, params GUILayoutOption[] options) { }
+        public static void Space(float pixels) { }
+        public static void FlexibleSpace() { }
+        public static void BeginHorizontal(params GUILayoutOption[] options) { }
+        public static void BeginHorizontal(GUIStyle style, params GUILayoutOption[] options) { }
+        public static void EndHorizontal() { }
+        public static void BeginVertical(params GUILayoutOption[] options) { }
+        public static void BeginVertical(GUIStyle style, params GUILayoutOption[] options) { }
+        public static void EndVertical() { }
+        public static void Box(string text, params GUILayoutOption[] options) { }
+        public static void Box(GUIContent content, params GUILayoutOption[] options) { }
+        public static string TextField(string text, params GUILayoutOption[] options) { return text; }
+        public static bool Toggle(bool value, params GUILayoutOption[] options) { return value; }
+        public static int Toolbar(int selected, string[] texts, params GUILayoutOption[] options) { return selected; }
+        public static int Toolbar(int selected, string[] texts, GUIStyle style, params GUILayoutOption[] options) { return selected; }
+        public static int Toolbar(int selected, GUIContent[] contents, params GUILayoutOption[] options) { return selected; }
+        public static int Toolbar(int selected, GUIContent[] contents, GUIStyle style, params GUILayoutOption[] options) { return selected; }
+        public static int SelectionGrid(int selected, string[] texts, int xCount, params GUILayoutOption[] options) { return selected; }
+        public static GUILayoutOption Width(float width) { return null; }
+        public static GUILayoutOption Height(float height) { return null; }
+        public static GUILayoutOption MinWidth(float minWidth) { return null; }
+        public static GUILayoutOption MaxWidth(float maxWidth) { return null; }
+        public static GUILayoutOption ExpandWidth(bool expand) { return null; }
+        public static GUILayoutOption ExpandHeight(bool expand) { return null; }
+        public static GUILayoutOption MinHeight(float minHeight) { return null; }
+        public static GUILayoutOption MaxHeight(float maxHeight) { return null; }
+    }
+
+    public enum RuntimeInitializeLoadType
+    {
+        AfterSceneLoad = 0,
+        BeforeSceneLoad = 1,
+        AfterAssembliesLoaded = 2,
+        BeforeSplashScreen = 3,
+        SubsystemRegistration = 4,
+    }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class RuntimeInitializeOnLoadMethodAttribute : Attribute
+    {
+        public RuntimeInitializeOnLoadMethodAttribute() { }
+        public RuntimeInitializeOnLoadMethodAttribute(RuntimeInitializeLoadType loadType) { }
     }
 
     public class Component : Object
@@ -98,6 +162,8 @@ namespace UnityEngine
         public Quaternion rotation { get; set; }
         public Quaternion localRotation { get; set; }
         public Vector3 localScale { get; set; }
+        public Vector3 eulerAngles { get; set; }
+        public Vector3 localEulerAngles { get; set; }
         public Transform parent { get; set; }
         public int childCount { get; set; }
         public Vector3 forward { get { return Vector3.zero; } }
@@ -157,6 +223,15 @@ namespace UnityEngine
     {
         public float GetFloat(string name) { return 0; }
         public void SetFloat(string name, float value) { }
+        public static int StringToHash(string name) { return 0; }
+        public float GetFloat(int id) { return 0; }
+        public void SetFloat(int id, float value) { }
+        public bool GetBool(int id) { return false; }
+        public void SetBool(int id, bool value) { }
+        public int GetInteger(int id) { return 0; }
+        public void SetInteger(int id, int value) { }
+        public void SetTrigger(int id) { }
+        public void CrossFade(int stateHashName, float normalizedTransitionDuration) { }
         public bool GetBool(string name) { return false; }
         public void SetBool(string name, bool value) { }
         public int GetInteger(string name) { return 0; }
@@ -315,6 +390,7 @@ namespace UnityEngine
         public static Vector3 operator *(Quaternion rotation, Vector3 point) { return point; }
         public static float Angle(Quaternion a, Quaternion b) { return 0; }
         public static Quaternion Slerp(Quaternion a, Quaternion b, float t) { return a; }
+        public static Quaternion Lerp(Quaternion a, Quaternion b, float t) { return a; }
         public override string ToString() { return string.Empty; }
     }
 
@@ -1049,6 +1125,15 @@ namespace UnityEngine
         public Texture mainTexture { get; set; }
         public void SetColor(string name, Color value) { }
         public void SetFloat(string name, float value) { }
+        public static int StringToHash(string name) { return 0; }
+        public float GetFloat(int id) { return 0; }
+        public void SetFloat(int id, float value) { }
+        public bool GetBool(int id) { return false; }
+        public void SetBool(int id, bool value) { }
+        public int GetInteger(int id) { return 0; }
+        public void SetInteger(int id, int value) { }
+        public void SetTrigger(int id) { }
+        public void CrossFade(int stateHashName, float normalizedTransitionDuration) { }
         public void SetInt(string name, int value) { }
         public void SetTexture(string name, Texture value) { }
         public void SetVector(string name, Vector4 value) { }
@@ -1078,6 +1163,15 @@ namespace UnityEngine
     {
         public void SetColor(string name, Color value) { }
         public void SetFloat(string name, float value) { }
+        public static int StringToHash(string name) { return 0; }
+        public float GetFloat(int id) { return 0; }
+        public void SetFloat(int id, float value) { }
+        public bool GetBool(int id) { return false; }
+        public void SetBool(int id, bool value) { }
+        public int GetInteger(int id) { return 0; }
+        public void SetInteger(int id, int value) { }
+        public void SetTrigger(int id) { }
+        public void CrossFade(int stateHashName, float normalizedTransitionDuration) { }
         public void SetTexture(string name, Texture value) { }
     }
 
@@ -1902,44 +1996,7 @@ namespace UnityEditor
 
     public enum MessageType { None, Info, Warning, Error }
 
-    public static class GUILayout
-    {
-        public static bool Button(string text, params GUILayoutOption[] options) { return false; }
-        public static bool Button(string text, GUIStyle style, params GUILayoutOption[] options) { return false; }
-        public static bool Button(GUIContent content, params GUILayoutOption[] options) { return false; }
-        public static bool Button(GUIContent content, GUIStyle style, params GUILayoutOption[] options) { return false; }
-        public static bool Button(Texture image, params GUILayoutOption[] options) { return false; }
-        public static bool Button(Texture image, GUIStyle style, params GUILayoutOption[] options) { return false; }
-        public static void Label(string text, params GUILayoutOption[] options) { }
-        public static void Label(GUIContent content, params GUILayoutOption[] options) { }
-        public static void Label(string text, GUIStyle style, params GUILayoutOption[] options) { }
-        public static void Label(GUIContent content, GUIStyle style, params GUILayoutOption[] options) { }
-        public static void Space(float pixels) { }
-        public static void FlexibleSpace() { }
-        public static void BeginHorizontal(params GUILayoutOption[] options) { }
-        public static void BeginHorizontal(GUIStyle style, params GUILayoutOption[] options) { }
-        public static void EndHorizontal() { }
-        public static void BeginVertical(params GUILayoutOption[] options) { }
-        public static void BeginVertical(GUIStyle style, params GUILayoutOption[] options) { }
-        public static void EndVertical() { }
-        public static void Box(string text, params GUILayoutOption[] options) { }
-        public static void Box(GUIContent content, params GUILayoutOption[] options) { }
-        public static string TextField(string text, params GUILayoutOption[] options) { return text; }
-        public static bool Toggle(bool value, params GUILayoutOption[] options) { return value; }
-        public static int Toolbar(int selected, string[] texts, params GUILayoutOption[] options) { return selected; }
-        public static int Toolbar(int selected, string[] texts, GUIStyle style, params GUILayoutOption[] options) { return selected; }
-        public static int Toolbar(int selected, GUIContent[] contents, params GUILayoutOption[] options) { return selected; }
-        public static int Toolbar(int selected, GUIContent[] contents, GUIStyle style, params GUILayoutOption[] options) { return selected; }
-        public static int SelectionGrid(int selected, string[] texts, int xCount, params GUILayoutOption[] options) { return selected; }
-        public static GUILayoutOption Width(float width) { return null; }
-        public static GUILayoutOption Height(float height) { return null; }
-        public static GUILayoutOption MinWidth(float minWidth) { return null; }
-        public static GUILayoutOption MaxWidth(float maxWidth) { return null; }
-        public static GUILayoutOption ExpandWidth(bool expand) { return null; }
-        public static GUILayoutOption ExpandHeight(bool expand) { return null; }
-        public static GUILayoutOption MinHeight(float minHeight) { return null; }
-        public static GUILayoutOption MaxHeight(float maxHeight) { return null; }
-    }
+
 
     public static class EditorApplication
     {

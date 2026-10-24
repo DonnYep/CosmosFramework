@@ -1,0 +1,25 @@
+{
+    "name": "Cosmos.Resource.QuarkAsset",
+    "rootNamespace": "Cosmos.Resource.QuarkAsset",
+    "references": [
+        "Cosmos.Resource.Abstractions",
+        "QuarkRuntime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "CF_QUARKASSET"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.quarkasset",
+            "expression": "0.2.0",
+            "define": "CF_QUARKASSET"
+        }
+    ],
+    "noEngineReferences": false
+}

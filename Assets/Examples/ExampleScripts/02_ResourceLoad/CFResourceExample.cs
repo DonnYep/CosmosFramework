@@ -1,53 +1,50 @@
+using System.Collections;
 using Cosmos;
 using Cosmos.Resource;
 using UnityEngine;
 
 /// <summary>
-/// 新资源加载API示例（CFResources handle式加载）。
-/// <para>支持四种用法：事件回调、协程等待、async/await、同步等待。</para>
+/// 资源桥（IResourceManager）示例。
+/// <para>Provider 由 CosmosConfig 配置：编辑器默认使用 AssetDatabase 兜底，接入 Addressables / YooAsset / QuarkAsset 后换成对应名称即可。</para>
+/// <para>下面所有写法对任意 Provider 都成立——业务代码不依赖具体资源方案。</para>
 /// </summary>
 public class CFResourceExample : MonoBehaviour
 {
     void Start()
     {
-        // 1、初始化资源系统（使用编辑器模拟模式时，先在 Window/Cosmos/Module/Resource/ResourceBuild 中导出清单）
-        var initHandle = CFResources.InitializeAsync(new ResourceInitParameters()
+        var manager = CosmosEntry.ResourceManager;
+        if (manager == null)
         {
-            PackageName = "DefaultPackage",
-#if UNITY_EDITOR
-            PlayMode = CFResourcePlayMode.AssetDatabase,
-#else
-            PlayMode = CFResourcePlayMode.AssetBundle,
-#endif
-            ManifestPath = "CosmosResources/DefaultPackage/PackageManifest.json",
-            BundleDirectory = "CosmosResources/DefaultPackage",
-            ManifestEncryptionKey = "CosmosBundlesKey",
-        });
-        initHandle.AddCompletedCallback(op =>
-        {
-            if (op.Status == OperationStatus.Succeeded)
-            {
-                Debug.Log($"CFResources initialized , version : {initHandle.Version}");
-                LoadWithEventCallback();
-            }
-            else
-            {
-                Debug.LogError($"CFResources initialize failed : {op.Error}");
-            }
-        });
+            Debug.LogError("resource module is missing !");
+            return;
+        }
+        Debug.Log($"resource provider : {manager.ProviderName} , initialized : {manager.IsInitialized}");
+
+        LoadWithEventCallback();
+        StartCoroutine(LoadWithCoroutine());
+        LoadWithAwait();
+        LoadBatch();
+        LoadWithLegacyApi();
     }
 
     /// <summary>
-    /// 用法1：事件回调
+    /// 用法1：句柄 + 事件回调
     /// </summary>
     void LoadWithEventCallback()
     {
-        var handle = CFResources.LoadAssetAsync<GameObject>("Prefabs/ResCube");
+        var handle = CosmosEntry.ResourceManager.LoadAssetHandle<GameObject>("Prefabs/ResCube");
+        if (handle == null)
+            return;
         handle.Completed += h =>
         {
+            if (h.Asset == null)
+            {
+                Debug.LogError($"load failed : {h.Error}");
+                return;
+            }
             var go = Instantiate(h.Asset);
             go.transform.position = Vector3.zero;
-            // 使用完毕后释放
+            // 使用完毕后释放引用
             h.Release();
         };
     }
@@ -55,12 +52,17 @@ public class CFResourceExample : MonoBehaviour
     /// <summary>
     /// 用法2：协程等待
     /// </summary>
-    System.Collections.IEnumerator LoadWithCoroutine()
+    IEnumerator LoadWithCoroutine()
     {
-        var handle = CFResources.LoadAssetAsync<GameObject>("Prefabs/ResCube");
+        var handle = CosmosEntry.ResourceManager.LoadAssetHandle<GameObject>("Prefabs/ResCube");
+        if (handle == null)
+            yield break;
         yield return handle;
-        var go = Instantiate(handle.Asset);
-        go.transform.position = new Vector3(2, 0, 0);
+        if (handle.Asset != null)
+        {
+            var go = Instantiate(handle.Asset);
+            go.transform.position = new Vector3(2, 0, 0);
+        }
         handle.Release();
     }
 
@@ -69,44 +71,38 @@ public class CFResourceExample : MonoBehaviour
     /// </summary>
     async void LoadWithAwait()
     {
-        var cube = await CFResources.LoadAssetAsync<GameObject>("Prefabs/ResCube").Task;
+        var handle = CosmosEntry.ResourceManager.LoadAssetHandle<GameObject>("Prefabs/ResCube");
+        if (handle == null)
+            return;
+        var cube = await handle.Task;
         if (cube != null)
         {
             var go = Instantiate(cube);
             go.transform.position = new Vector3(4, 0, 0);
         }
-        // 也可直接await初始化句柄
-        var initHandle = CFResources.InitializeAsync(new ResourceInitParameters()
-        {
-            PackageName = "DefaultPackage",
-            PlayMode = CFResourcePlayMode.AssetDatabase,
-            ManifestPath = "CosmosResources/DefaultPackage/PackageManifest.json",
-            BundleDirectory = "CosmosResources/DefaultPackage",
-        });
-        await initHandle.Task;
-    }
-
-    /// <summary>
-    /// 用法4：同步等待（注意会阻塞主线程，仅建议用于非频繁调用场景）
-    /// </summary>
-    void LoadWithWaitForCompletion()
-    {
-        var handle = CFResources.LoadAssetAsync<GameObject>("Prefabs/ResCube");
-        var go = handle.WaitForCompletion();
-        if (go != null)
-        {
-            Instantiate(go, new Vector3(6, 0, 0), Quaternion.identity);
-        }
         handle.Release();
     }
 
     /// <summary>
-    /// 用法5：批量加载（Addressables 的 LoadAssetsAsync 语义）
-    /// <para>一批请求里同一资产复用 Provider、同一包体只加载一次，全部完成后只回调一次。</para>
+    /// 用法4：同步等待（会阻塞主线程，仅建议非频繁调用）
+    /// </summary>
+    void LoadWithWaitForCompletion()
+    {
+        var handle = CosmosEntry.ResourceManager.LoadAssetHandle<GameObject>("Prefabs/ResCube");
+        if (handle == null)
+            return;
+        var go = handle.WaitForCompletion();
+        if (go != null)
+            Instantiate(go, new Vector3(6, 0, 0), Quaternion.identity);
+        handle.Release();
+    }
+
+    /// <summary>
+    /// 用法5：批量加载（同一标识只发起一次底层请求）
     /// </summary>
     void LoadBatch()
     {
-        var handle = CFResources.LoadAssetsAsync<GameObject>(new[]
+        var handle = CosmosEntry.ResourceManager.LoadAssetsHandle<GameObject>(new[]
         {
             "Prefabs/ResCube",
             "Prefabs/ResSphere",
@@ -122,39 +118,27 @@ public class CFResourceExample : MonoBehaviour
                         Instantiate(h.Assets[i], new Vector3(8 + i, 0, 0), Quaternion.identity);
                 }
             }
-            // 批量句柄统一释放
             h.Release();
         };
     }
 
     /// <summary>
-    /// 用法6：分包（每个包裹独立清单、独立目录、可整体卸载）
+    /// 用法6：模块兼容写法（资源名 + 回调 + 配对卸载）
+    /// <para>UI / Entity / Audio / DataTable 等模块内部使用同一套接口。</para>
     /// </summary>
-    void LoadSubPackage()
+    void LoadWithLegacyApi()
     {
-        var uiInit = CFResources.LoadPackageAsync(new ResourceInitParameters()
+        CosmosEntry.ResourceManager.LoadPrefabAsync("Prefabs/ResCube", go =>
         {
-            PackageName = "UI",
-            PlayMode = CFResourcePlayMode.AssetBundle,
-            ManifestPath = "CosmosResources/UI/PackageManifest.json",
-            BundleDirectory = "CosmosResources/UI",
-        });
-        uiInit.AddCompletedCallback(op =>
-        {
-            if (op.Status != OperationStatus.Succeeded)
+            if (go == null)
             {
-                Debug.LogError($"UI package initialize failed : {op.Error}");
+                Debug.LogError("load failed : Prefabs/ResCube");
                 return;
             }
-            var handle = CFResources.LoadAssetAsync<GameObject>("UI", "Prefabs/UIRoot");
-            handle.Completed += h =>
-            {
-                Instantiate(h.Asset);
-                h.Release();
-                // 整个分包一次性卸载（包内资源与包体一起释放）
-                // CFResources.UnloadPackage("UI");
-            };
-        });
+            go.transform.position = new Vector3(10, 0, 0);
+            // 与加载配对的释放：每调用一次 UnloadAsset 减少一个引用计数
+            CosmosEntry.ResourceManager.UnloadAsset("Prefabs/ResCube");
+        }, null, true);
     }
 
     /// <summary>
@@ -162,12 +146,23 @@ public class CFResourceExample : MonoBehaviour
     /// </summary>
     void LoadScene()
     {
-        var sceneHandle = CFResources.LoadSceneAsync("Assets/Scenes/MyScene.unity", additive: true);
-        sceneHandle.Completed += h =>
+        CosmosEntry.ResourceManager.LoadSceneAsync(new SceneAssetInfo("SceneTarget"), null, progress =>
         {
-            Debug.Log($"Scene loaded : {h.SceneName}");
-        };
-        // 卸载
-        // var unloadOp = sceneHandle.UnloadAsync();
+            Debug.Log($"scene loading : {progress:F2}");
+        }, null, () =>
+        {
+            Debug.Log("scene loaded");
+        });
+        // CosmosEntry.ResourceManager.UnloadSceneAsync(new SceneAssetInfo("SceneTarget"), null, null, null);
+    }
+
+    /// <summary>
+    /// 诊断信息
+    /// </summary>
+    void PrintDiagnostics()
+    {
+        var manager = CosmosEntry.ResourceManager;
+        Debug.Log(manager.GetRuntimeInfo());
+        Debug.Log(manager.GenerateDiagnosticsReport());
     }
 }

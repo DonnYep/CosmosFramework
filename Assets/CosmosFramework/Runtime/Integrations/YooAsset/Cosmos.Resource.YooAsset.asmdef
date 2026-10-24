@@ -1,0 +1,25 @@
+{
+    "name": "Cosmos.Resource.YooAsset",
+    "rootNamespace": "Cosmos.Resource.YooAsset",
+    "references": [
+        "Cosmos.Resource.Abstractions",
+        "YooAsset"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "CF_YOOASSET"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.tuyoogame.yooasset",
+            "expression": "1.5.0",
+            "define": "CF_YOOASSET"
+        }
+    ],
+    "noEngineReferences": false
+}

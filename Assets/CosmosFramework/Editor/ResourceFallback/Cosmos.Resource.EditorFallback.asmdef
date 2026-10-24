@@ -1,0 +1,18 @@
+{
+    "name": "Cosmos.Resource.EditorFallback",
+    "rootNamespace": "Cosmos.Resource.EditorFallback",
+    "references": [
+        "Cosmos.Resource.Abstractions"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

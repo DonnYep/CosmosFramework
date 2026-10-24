@@ -11,10 +11,12 @@ namespace RoslynCheck
 {
     /// <summary>
     /// 使用 Roslyn (Microsoft.CodeAnalysis.CSharp) 按 Unity asmdef 边界编译 CosmosFramework 程序集。
-    /// <para>用法：dotnet run --project tools/RoslynCheck -- [core|runtime|editor]</para>
-    /// <para>core    —— 仅 Cosmos.Resource.Core（独立核心库）</para>
-    /// <para>runtime —— Cosmos.Resource.Core + Cosmos.Runtime（全量运行时，含全部模块）</para>
-    /// <para>editor  —— 上述两者 + Cosmos.Editor（全量编辑器）</para>
+    /// <para>用法：dotnet run --project tools/RoslynCheck -- [core|runtime|editor|adapters|examples]</para>
+    /// <para>core     —— 仅 Cosmos.Resource.Abstractions（契约 + 通用异步底座）</para>
+    /// <para>runtime  —— Cosmos.Resource.Abstractions + Cosmos.Runtime（全量运行时，含全部模块）</para>
+    /// <para>editor   —— 上述两者 + Cosmos.Editor（全量编辑器）</para>
+    /// <para>adapters —— 三个可选资源适配器（Addressables / YooAsset / QuarkAsset），使用第三方 API 桩单独编译</para>
+    /// <para>examples —— 与资源桥相关的示例脚本（含 Entity 示例目录），验证示例代码与框架 API 一致</para>
     /// </summary>
     public static class Program
     {
@@ -70,14 +72,24 @@ namespace RoslynCheck
             var coreReferences = new List<MetadataReference>(references);
             coreReferences.Add(stubCompilation.ToMetadataReference());
             var coreCompilation = CSharpCompilation.Create(
-                "Cosmos.Resource.Core",
+                "Cosmos.Resource.Abstractions",
                 coreTrees,
                 coreReferences,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-            errors += Report("Cosmos.Resource.Core", coreCompilation, dumpPath);
+            errors += Report("Cosmos.Resource.Abstractions", coreCompilation, dumpPath);
 
             if (mode == "core")
                 return errors == 0 ? 0 : 1;
+
+            // 可选适配器（Addressables / YooAsset / QuarkAsset）：用第三方 API 桩单独编译。
+            if (mode == "adapters")
+            {
+                errors += CheckAdapters(references, stubCompilation, coreCompilation);
+                Console.WriteLine(errors == 0
+                    ? "=== ADAPTERS COMPILED SUCCESSFULLY ==="
+                    : $"=== ADAPTERS COMPILE FAILED : {errors} errors ===");
+                return errors == 0 ? 0 : 1;
+            }
 
             // Cosmos.Runtime —— 全量运行时（引用 Core）
             var runtimeTrees = LoadFiles(GetRuntimeFiles(), parseOptions);
@@ -95,6 +107,16 @@ namespace RoslynCheck
 
             if (mode == "runtime")
                 return errors == 0 ? 0 : 1;
+
+            // 资源相关示例（验证示例代码与资源桥 API 一致）
+            if (mode == "examples")
+            {
+                errors += CheckExamples(parseOptions, runtimeReferences, runtimeCompilation);
+                Console.WriteLine(errors == 0
+                    ? "=== EXAMPLES COMPILED SUCCESSFULLY ==="
+                    : $"=== EXAMPLES COMPILE FAILED : {errors} errors ===");
+                return errors == 0 ? 0 : 1;
+            }
 
             // Cosmos.Editor —— 全量编辑器（引用 Core + Runtime）
             var editorTrees = LoadFiles(GetEditorFiles(), parseOptions);
@@ -189,6 +211,102 @@ namespace RoslynCheck
             return trees;
         }
 
+        /// <summary>
+        /// 编译与资源桥相关的示例脚本：这些示例直接调用 IResourceManager / 句柄 API，
+        /// 用它们验证示例与框架 API 保持一致（示例目录不参与 Unity 程序集编译检查）。
+        /// </summary>
+        static int CheckExamples(CSharpParseOptions parseOptions, List<MetadataReference> runtimeReferences, CSharpCompilation runtimeCompilation)
+        {
+            var exampleRoot = Path.Combine(Root, "Assets", "Examples", "ExampleScripts");
+            var relativePaths = new[]
+            {
+                "02_ResourceLoad/CFResourceExample.cs",
+                "02_ResourceLoad/MyResourceLoader.cs",
+                "10_Scene/LoadScenePanel.cs",
+                "24_Procedure/ProcedureStates/PloyState.cs",
+                "24_Procedure/ProcedureStates/YBotState.cs",
+            };
+            var optionalDirectories = new[]
+            {
+                // Entity 示例内部互相引用，整目录一起编译
+                "23_Entity",
+                // 自定义异步操作示例（GameAsyncOperation）
+                "27_AsyncOp",
+            };
+            var files = relativePaths
+                .Select(p => Path.Combine(exampleRoot, p.Replace('/', Path.DirectorySeparatorChar)))
+                .Where(File.Exists)
+                .OrderBy(f => f)
+                .ToList();
+            foreach (var directory in optionalDirectories)
+            {
+                var path = Path.Combine(exampleRoot, directory.Replace('/', Path.DirectorySeparatorChar));
+                if (Directory.Exists(path))
+                    files.AddRange(Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories).OrderBy(f => f));
+            }
+            if (files.Count == 0)
+            {
+                Console.WriteLine("[SKIP] Examples.Resource : no example file found");
+                return 0;
+            }
+            var trees = LoadFiles(files, parseOptions);
+            var references = new List<MetadataReference>(runtimeReferences);
+            references.Add(runtimeCompilation.ToMetadataReference());
+            var compilation = CSharpCompilation.Create(
+                "Examples.Resource",
+                trees,
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            return Report("Examples.Resource", compilation);
+        }
+
+        /// <summary>
+        /// 编译可选适配器程序集：每个适配器单独编译，并引用第三方 API 桩。
+        /// </summary>
+        static int CheckAdapters(List<MetadataReference> references, CSharpCompilation stubCompilation, CSharpCompilation coreCompilation)
+        {
+            var errors = 0;
+            var thirdPartyParse = new CSharpParseOptions(LanguageVersion.CSharp9, DocumentationMode.None, SourceCodeKind.Regular, Defines);
+            var thirdPartyTrees = LoadFiles(new[] { Path.Combine(StubsPath, "ThirdPartyStubs.cs") }, thirdPartyParse);
+            var thirdPartyReferences = new List<MetadataReference>(references);
+            thirdPartyReferences.Add(stubCompilation.ToMetadataReference());
+            var thirdPartyCompilation = CSharpCompilation.Create(
+                "ThirdParty.Stub",
+                thirdPartyTrees,
+                thirdPartyReferences,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            errors += Report("ThirdParty.Stub", thirdPartyCompilation);
+            if (errors != 0)
+                return errors;
+
+            var adapters = new[]
+            {
+                new { Directory = "Addressables", Define = "CF_ADDRESSABLES", Assembly = "Cosmos.Resource.Addressables" },
+                new { Directory = "YooAsset", Define = "CF_YOOASSET", Assembly = "Cosmos.Resource.YooAsset" },
+                new { Directory = "QuarkAsset", Define = "CF_QUARKASSET", Assembly = "Cosmos.Resource.QuarkAsset" },
+            };
+            foreach (var adapter in adapters)
+            {
+                var directory = Path.Combine(AssetsPath, "Runtime", "Integrations", adapter.Directory);
+                if (!Directory.Exists(directory))
+                    continue;
+                var defines = Defines.Concat(new[] { adapter.Define }).ToArray();
+                var adapterParseOptions = new CSharpParseOptions(LanguageVersion.CSharp9, DocumentationMode.None, SourceCodeKind.Regular, defines);
+                var trees = LoadFiles(Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories).OrderBy(f => f), adapterParseOptions);
+                var adapterReferences = new List<MetadataReference>(references);
+                adapterReferences.Add(stubCompilation.ToMetadataReference());
+                adapterReferences.Add(coreCompilation.ToMetadataReference());
+                adapterReferences.Add(thirdPartyCompilation.ToMetadataReference());
+                var compilation = CSharpCompilation.Create(
+                    adapter.Assembly,
+                    trees,
+                    adapterReferences,
+                    new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+                errors += Report(adapter.Assembly, compilation);
+            }
+            return errors;
+        }
+
         #region 文件集合
 
         static IEnumerable<string> GetStubFiles()
@@ -209,7 +327,7 @@ namespace RoslynCheck
 
         static IEnumerable<string> GetCoreFiles()
         {
-            return Directory.GetFiles(Path.Combine(AssetsPath, "Runtime", "Base", "ResourceCore"), "*.cs", SearchOption.AllDirectories)
+            return Directory.GetFiles(Path.Combine(AssetsPath, "Runtime", "Base", "ResourceAbstractions"), "*.cs", SearchOption.AllDirectories)
                 .OrderBy(f => f);
         }
 
@@ -218,7 +336,7 @@ namespace RoslynCheck
             var runtimeRoot = Path.Combine(AssetsPath, "Runtime");
             var excludes = new[]
             {
-                Path.Combine(runtimeRoot, "Base", "ResourceCore"),
+                Path.Combine(runtimeRoot, "Base", "ResourceAbstractions"),
                 Path.Combine(runtimeRoot, "3rdParty", "Hydrogen"),
                 Path.Combine(runtimeRoot, "Architeture", "LiteMVC"),
                 Path.Combine(runtimeRoot, "Architeture", "PureMVC"),
@@ -226,6 +344,7 @@ namespace RoslynCheck
                 Path.Combine(runtimeRoot, "Modules", "Network", "RUDP"),
                 Path.Combine(runtimeRoot, "Modules", "Network", "SUDP"),
                 Path.Combine(runtimeRoot, "Modules", "Network", "Telepathy"),
+                Path.Combine(runtimeRoot, "Integrations"),
             };
             var files = Directory.GetFiles(runtimeRoot, "*.cs", SearchOption.AllDirectories)
                 .Where(f => !excludes.Any(e => f.StartsWith(e + Path.DirectorySeparatorChar) || f.StartsWith(e + "/")))
