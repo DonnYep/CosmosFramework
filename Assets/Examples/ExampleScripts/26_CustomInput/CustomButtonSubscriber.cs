@@ -8,7 +8,8 @@ public class CustomButtonSubscriber : MonoBehaviour
     void Start()
     {
         inputManager = CosmosEntry.InputManager;
-        //inputManager.SetInputHelper(new CustomInputHelper());
+        //演示：替换为自定义绑定表（Space/W/A/S/D → 同名虚拟按键）
+        inputManager.SetInputHelper(new CustomInputHelper());
     }
     void Update()
     {

@@ -1,11 +1,27 @@
 {
-    "name": "com.hydrogen",
-    "displayName": "Hydrogen",
-    "version": "0.0.1",
-    "unity": "2020.3",
-    "description": "可自定义header的tcp库",
-    "dependencies": {},
-    "keywords": [
-        "tcp"
-    ]
+  "name": "com.donnyep.hydrogen",
+  "displayName": "Hydrogen",
+  "version": "0.1.0",
+  "unity": "2020.3",
+  "description": "Lightweight TCP client with a pluggable framing header. 轻量 TCP 客户端：帧头可插拔，粘包/半包自动处理，回调可切回主线程。",
+  "keywords": [
+    "tcp",
+    "socket",
+    "network",
+    "networking",
+    "client",
+    "nagle"
+  ],
+  "author": {
+    "name": "DonnYep",
+    "url": "https://github.com/DonnYep"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DonnYep/Hydrogen.git"
+  },
+  "documentationUrl": "https://github.com/DonnYep/Hydrogen#readme",
+  "changelogUrl": "https://github.com/DonnYep/Hydrogen/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/DonnYep/Hydrogen/blob/main/LICENSE.md",
+  "dependencies": {}
 }

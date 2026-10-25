@@ -12,6 +12,12 @@ namespace Cosmos.Audio
      * 4、相同音效支持多个实体播放。
      * 
      * 5、所有播放声音所返回的serialId都大于等于1。
+     * 
+     * 6、状态机语义（由管理器每帧推进，不使用协程）：
+     *    · 所有命令同步生效，不存在"要等下一帧协程才响应"；
+     *    · 过渡可被后到的命令打断，总是从当前音量继续，不会出现两套过渡互相覆盖；
+     *    · 恢复播放只在暂停/暂停过渡中生效，正在播放时是幂等空操作；
+     *    · 播放结束（自然播完、停止完成）在同一帧内被回收，随后 HasAudio 返回 false。
      */
     //================================================
     public interface IAudioManager : IModuleManager
@@ -82,16 +88,18 @@ namespace Cosmos.Audio
         /// <param name="audioGroupName">声音组名称</param>
         /// <param name="audioParams">声音播放参数</param>
         /// <param name="audioPositionParams">声音播放位置信息</param>
-        /// <returns>播放序列号</returns>
+        /// <returns>播放序列号；资源未注册、声音组不存在，或组内并发上限已满且本音效优先级不足时返回0</returns>
         int PlayAudio(string audioAssetName, string audioGroupName, AudioParams audioParams, AudioPositionParams audioPositionParams);
         /// <summary>
         /// 重播声音
+        /// <para>停止→回到<see cref="AudioParams.PlayTime"/>→播放→淡入；可用于正在停止过渡中的实体（会直接打断停止过渡）</para>
         /// </summary>
         /// <param name="serialId">播放序列号</param>
         /// <param name="fadeInSeconds">淡入时间，单位秒</param>
         void ReplayAudio(int serialId, float fadeInSeconds);
         /// <summary>
         /// 暂停声音
+        /// <para>已在暂停或暂停过渡中时幂等</para>
         /// </summary>
         /// <param name="serialId">播放序列号</param>
         /// <param name="fadeOutSeconds">淡出时间，单位秒</param>
@@ -104,6 +112,7 @@ namespace Cosmos.Audio
         void PauseAudios(string audioAssetName, float fadeOutSeconds);
         /// <summary>
         /// 恢复播放声音
+        /// <para>只在已暂停或暂停过渡中生效；正在播放时是幂等空操作（不会把正在播放的声音压到0再拉起）</para>
         /// </summary>
         /// <param name="serialId">播放序列号</param>
         /// <param name="fadeInSeconds">淡入时间，单位秒</param>
@@ -116,6 +125,7 @@ namespace Cosmos.Audio
         void ResumeAudios(string audioAssetName, float fadeInSeconds);
         /// <summary>
         /// 停止播放声音
+        /// <para>已在停止过渡中时按新的时长重新计时</para>
         /// </summary>
         /// <param name="serialId">播放序列号</param>
         /// <param name="fadeOutSeconds">淡出时间，单位秒</param>
@@ -128,12 +138,14 @@ namespace Cosmos.Audio
         void StopAudios(string audioAssetName, float fadeOutSeconds);
         /// <summary>
         /// 是否存在声音
+        /// <para>停止完成的那一帧即被回收，之后返回false</para>
         /// </summary>
         /// <param name="serialId">播放序列号</param>
         /// <returns>是否存在</returns>
         bool HasAudio(int serialId);
         /// <summary>
         /// 获取声音播放信息
+        /// <para>包含状态、当前实际音量与播放位置，可用于进度条与调试面板</para>
         /// </summary>
         /// <param name="serialId">播放序列号</param>
         /// <param name="audioPlayInfo">声音播放信息</param>
@@ -166,11 +178,13 @@ namespace Cosmos.Audio
         /// <summary>
         /// 移除声音组
         /// <para>框架存在一个默认的声音组：<see cref="AudioConstant.DEFAULT_AUDIO_GROUP"/>，此声音组无法被移除</para>
+        /// <para>移除时组内仍在播放的声音会被立即释放并归还播放器</para>
         /// </summary>
         /// <param name="audioGroupName">声音组名称</param>
         void RemoveAudioGroup(string audioGroupName);
         /// <summary>
         /// 添加声音组
+        /// <para>返回的声音组可设置组音量、静音与并发上限（<see cref="IAudioGroup"/>）</para>
         /// </summary>
         /// <param name="audioGroupName">声音组名称</param>
         /// <returns>声音组实体接口</returns>

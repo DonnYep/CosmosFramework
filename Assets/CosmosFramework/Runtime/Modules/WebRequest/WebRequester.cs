@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -282,10 +282,9 @@ namespace Cosmos.WebRequest
                 url => UnityWebRequest.Head(url),
                 request =>
                 {
-                    var size = request.GetResponseHeader("Content-Length");
-                    long length;
-                    if (!long.TryParse(size, out length))
-                        throw new InvalidOperationException($"Content-Length is missing or invalid : {size}");
+                    var length = Utility.Net.GetContentLength(request);
+                    if (length < 0L)
+                        throw new InvalidOperationException($"Content-Length is missing or invalid : {request.GetResponseHeader("Content-Length")}");
                     return length;
                 });
             handle.TaskId = task.TaskId;

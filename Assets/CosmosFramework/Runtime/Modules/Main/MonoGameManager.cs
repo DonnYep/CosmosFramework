@@ -5,8 +5,11 @@ namespace Cosmos
 {
     /// <summary>
     /// GameManager是静态的，因此由此类代理完成生命周期
+    /// <para>执行顺序提前到所有默认脚本之前：模块的 OnUpdate（输入采样、音频过渡、下载推进）
+    /// 先于业务脚本执行，因此业务脚本在 Update 里就能读到"本帧刚按下"的按键，不会晚一帧。</para>
     /// </summary>
     [DisallowMultipleComponent]
+    [DefaultExecutionOrder(-20000)]
     public sealed class MonoGameManager : MonoSingleton<MonoGameManager>
     {
         DateTime previousTimeSinceStartup;

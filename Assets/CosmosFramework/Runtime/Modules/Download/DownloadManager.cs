@@ -1,166 +1,260 @@
 ﻿using System;
+using UnityEngine;
+
 namespace Cosmos.Download
 {
     //================================================
     /*
-     * 1、下载模块提供一键式资源下载、本地写入功能。通过监听开放的接口可
-    * 以检测下载进度。
-    * 
-    * 2、载模块支持localhost文件下载与http地址文件的下载。模块下载到本
-    *后，增量写入，以防下载错误导致的整体文件丢失。
-    *
-    *3、载模块支持断点续下。
-    *
-    *4、支持动态添加、移除、暂停、恢复下载任务。
-    *
-    *5、若不自定义设置下载器，(调用SetOrUpdateDownloadHelper方法)，则
-    * 使用框架原生默认的下载器。
+     * 1、下载模块与其它内置模块同级：Runtime/Modules/Download，同一程序集，
+     *    因此可以直接使用 Utility.* / CosmosEntry / ReferencePool 等框架工具。
+     *    不需要时：删除本目录 + BuiltinModuleRegistry 中的一行（其它核心模块不依赖它）。
+     *
+     * 2、调度与传输分离：DownloadScheduler（纯 C#，可单测）+ IDownloadTransport（默认 UnityWebRequest）。
+     *
+     * 3、本类只做三件事：把配置与公开 API 转发给调度器、把调度事件转成 EventArgs、
+     *    在 OnUpdate 里用 unscaledTime 推进调度器（暂停菜单 timeScale=0 时下载不中断）。
      */
     //================================================
     [Module]
-    internal class DownloadManager : Module, IDownloadManager
+    internal sealed class DownloadManager : Module, IDownloadManager
     {
         #region events
+        Action<DownloadStartEventArgs> onDownloadStart;
+        Action<DownloadSuccessEventArgs> onDownloadSuccess;
+        Action<DownloadFailureEventArgs> onDownloadFailure;
+        Action<DonwloadUpdateEventArgs> onDownloadOverallProgress;
+        Action<DownloadTasksCompletedEventArgs> onAllDownloadTaskCompleted;
         ///<inheritdoc/>
         public event Action<DownloadStartEventArgs> OnDownloadStart
         {
-            add { downloader.OnDownloadStart += value; }
-            remove { downloader.OnDownloadStart -= value; }
+            add { onDownloadStart += value; }
+            remove { onDownloadStart -= value; }
         }
         ///<inheritdoc/>
         public event Action<DownloadSuccessEventArgs> OnDownloadSuccess
         {
-            add { downloader.OnDownloadSuccess += value; }
-            remove { downloader.OnDownloadSuccess -= value; }
+            add { onDownloadSuccess += value; }
+            remove { onDownloadSuccess -= value; }
         }
         ///<inheritdoc/>
         public event Action<DownloadFailureEventArgs> OnDownloadFailure
         {
-            add { downloader.OnDownloadFailure += value; }
-            remove { downloader.OnDownloadFailure -= value; }
+            add { onDownloadFailure += value; }
+            remove { onDownloadFailure -= value; }
         }
         ///<inheritdoc/>
         public event Action<DonwloadUpdateEventArgs> OnDownloadOverallProgress
         {
-            add { downloader.OnDownloadOverallProgress += value; }
-            remove { downloader.OnDownloadOverallProgress -= value; }
+            add { onDownloadOverallProgress += value; }
+            remove { onDownloadOverallProgress -= value; }
         }
         ///<inheritdoc/>
         public event Action<DownloadTasksCompletedEventArgs> OnAllDownloadTaskCompleted
         {
-            add { downloader.OnAllDownloadTaskCompleted += value; }
-            remove { downloader.OnAllDownloadTaskCompleted -= value; }
+            add { onAllDownloadTaskCompleted += value; }
+            remove { onAllDownloadTaskCompleted -= value; }
         }
         #endregion
+        DownloadSettings settings;
+        DownloadScheduler scheduler;
+        /// <summary>
+        /// 上一次推进的 unscaledTime
+        /// </summary>
+        float lastTickUnscaledTime;
+        ///<inheritdoc/>
+        public DownloadSettings Settings { get { return settings; } }
         ///<inheritdoc/>
         public bool DeleteFileOnAbort
         {
-            get { return DownloadDataProxy.DeleteFileOnAbort; }
-            set { DownloadDataProxy.DeleteFileOnAbort = value; }
+            get { return scheduler.DeleteFileOnAbort; }
+            set { scheduler.DeleteFileOnAbort = value; }
         }
         ///<inheritdoc/>
         public int DownloadTimeout
         {
-            get { return DownloadDataProxy.DownloadTimeout; }
-            set { DownloadDataProxy.DownloadTimeout = value; }
+            get { return (int)settings.TimeoutSeconds; }
+            set { settings.TimeoutSeconds = value; }
         }
         ///<inheritdoc/>
-        public bool Downloading { get { return downloader.Downloading; } }
-        ///<inheritdoc/>
-        public int DownloadingCount { get { return downloader.DownloadingCount; } }
-        /// <summary>
-        /// 下载器。
-        /// </summary>
-        IDownloader downloader;
-        /// <summary>
-        /// 下载请求器，专门用于获取文件大小。
-        /// </summary>
-        IDownloadRequester downloadRequester;
-        /// <summary>
-        /// 下载资源地址帮助体。用于解析URL中的文件列表。
-        /// 支持localhost地址与http地址。
-        /// </summary>
-        IDownloadUrlHelper downloadUrlHelper;
-
-        ///<inheritdoc/>
-        public void SetOrUpdateDownloadHelper(IDownloader newDownloader)
+        public int MaxConcurrentDownload
         {
-            if (this.downloader != null)
-            {
-                this.downloader.CancelDownload();
-                this.downloader.Release();
-                this.downloader = newDownloader;
-            }
+            get { return settings.MaxConcurrent; }
+            set { settings.MaxConcurrent = value; }
         }
         ///<inheritdoc/>
-        public void SetUrlHelper(IDownloadUrlHelper helper)
+        public bool Downloading { get { return scheduler.Running; } }
+        ///<inheritdoc/>
+        public int DownloadingCount { get { return scheduler.PendingCount; } }
+        ///<inheritdoc/>
+        public void SetTransport(IDownloadTransport transport)
         {
-            this.downloadUrlHelper = helper;
+            scheduler.SetTransport(transport);
         }
         ///<inheritdoc/>
-        public void SetRequesterHelper(IDownloadRequester helper)
+        public long AddDownload(string downloadUrl, string downloadPath)
         {
-            this.downloadRequester = helper;
+            return AddDownload(downloadUrl, downloadPath, DownloadOptions.Default);
         }
         ///<inheritdoc/>
-        public long AddDownload(string downloadUri, string downloadPath, long downloadByteOffset, bool downloadAppend)
+        public long AddDownload(string downloadUrl, string downloadPath, DownloadMode mode)
         {
-            Utility.Text.IsStringValid(downloadUri, "URI is invalid !");
-            Utility.Text.IsStringValid(downloadPath, "DownloadPath is invalid !");
-            return downloader.AddDownload(downloadUri, downloadPath, downloadByteOffset, downloadAppend);
+            var options = DownloadOptions.Default;
+            options.Mode = mode;
+            return AddDownload(downloadUrl, downloadPath, options);
+        }
+        ///<inheritdoc/>
+        public long AddDownload(string downloadUrl, string downloadPath, DownloadOptions options)
+        {
+            Utility.Text.IsStringValid(downloadUrl, "downloadUrl is invalid !");
+            Utility.Text.IsStringValid(downloadPath, "downloadPath is invalid !");
+            return scheduler.Add(downloadUrl, downloadPath, options);
         }
         ///<inheritdoc/>
         public bool RemoveDownload(long downloadId)
         {
-            return downloader.RemoveDownload(downloadId);
+            return scheduler.Remove(downloadId);
         }
         ///<inheritdoc/>
         public void RemoveDownloads(long[] downloadIds)
         {
-            var length = downloadIds.Length;
-            for (int i = 0; i < length; i++)
-                RemoveDownload(downloadIds[i]);
+            if (downloadIds == null)
+                return;
+            for (int i = 0; i < downloadIds.Length; i++)
+                scheduler.Remove(downloadIds[i]);
         }
         ///<inheritdoc/>
         public void RemoveAllDownload()
         {
-            downloader.RemoveAllDownload();
-        }
-        ///<inheritdoc/>
-        public void GetUriFileSizeAsync(string downloadUri, Action<long> callback)
-        {
-            Utility.Text.IsStringValid(downloadUri, "URI is invalid !");
-            if (callback == null)
-                throw new ArgumentNullException("Callback is invalid !");
-            downloadRequester.GetUriFileSizeAsync(downloadUri, callback);
-        }
-        ///<inheritdoc/>
-        public void GetUrlFilesSizeAsync(string downloadUrl, Action<long> callback)
-        {
-            Utility.Text.IsStringValid(downloadUrl, "URL is invalid !");
-            var relUris = downloadUrlHelper.ParseUrlToRelativeUris(downloadUrl);
-            downloadRequester.GetUriFilesSizeAsync(relUris, callback);
+            scheduler.RemoveAll();
         }
         ///<inheritdoc/>
         public void LaunchDownload()
         {
-            downloader.LaunchDownload();
+            scheduler.Launch();
+        }
+        ///<inheritdoc/>
+        public void PauseDownload()
+        {
+            scheduler.Pause();
+        }
+        ///<inheritdoc/>
+        public void ResumeDownload()
+        {
+            scheduler.Resume();
         }
         ///<inheritdoc/>
         public void CancelDownload()
         {
-            downloader.CancelDownload();
+            scheduler.RemoveAll();
+        }
+        ///<inheritdoc/>
+        public bool GetDownloadInfo(long downloadId, out DownloadInfo downloadInfo)
+        {
+            downloadInfo = default;
+            if (!scheduler.TryGetTask(downloadId, out var task))
+                return false;
+            downloadInfo = task.ToInfo();
+            return true;
+        }
+        ///<inheritdoc/>
+        public int GetDownloadTaskCount()
+        {
+            return scheduler.TaskCount;
         }
         protected override void OnInitialization()
         {
-            var unityWebDownloader = new Downloader();
-            downloader = unityWebDownloader;
-            downloadUrlHelper = new DefaultDownloadUrlHelper();
-            downloadRequester = new DefaultDownloadRequester();
+            settings = new DownloadSettings();
+            scheduler = new DownloadScheduler(new UnityWebRequestDownloadTransport(), settings);
+            scheduler.TaskStarted += HandleTaskStarted;
+            scheduler.TaskProgress += HandleTaskProgress;
+            scheduler.TaskCompleted += HandleTaskCompleted;
+            scheduler.TaskFailed += HandleTaskFailed;
+            scheduler.BatchCompleted += HandleBatchCompleted;
+            lastTickUnscaledTime = Time.unscaledTime;
+        }
+        /// <summary>
+        /// 用 unscaledTime 差值推进：timeScale=0 的暂停菜单下下载仍会继续
+        /// </summary>
+        protected override void OnUpdate()
+        {
+            //没有任务时不做任何事（空队列不产生每帧开销）
+            if (scheduler.TaskCount == 0)
+                return;
+            var currentUnscaledTime = Time.unscaledTime;
+            var deltaTime = currentUnscaledTime - lastTickUnscaledTime;
+            lastTickUnscaledTime = currentUnscaledTime;
+            if (deltaTime <= 0f)
+                return;
+            scheduler.Tick(deltaTime);
         }
         protected override void OnTermination()
         {
-            downloader.CancelDownload();
+            if (scheduler == null)
+                return;
+            scheduler.TaskStarted -= HandleTaskStarted;
+            scheduler.TaskProgress -= HandleTaskProgress;
+            scheduler.TaskCompleted -= HandleTaskCompleted;
+            scheduler.TaskFailed -= HandleTaskFailed;
+            scheduler.BatchCompleted -= HandleBatchCompleted;
+            scheduler.RemoveAll();
+        }
+        /// <summary>
+        /// 当前任务序号（从1开始）：已完成数 + 1，用于给事件提供"第几个"
+        /// </summary>
+        /// <returns>序号</returns>
+        int GetCurrentTaskIndex()
+        {
+            var taskCount = scheduler.TaskCount;
+            var pending = scheduler.PendingCount;
+            var index = taskCount - pending + 1;
+            return index < 1 ? 1 : index;
+        }
+        void HandleTaskStarted(DownloadTask task)
+        {
+            if (onDownloadStart == null)
+                return;
+            var eventArgs = DownloadStartEventArgs.Create(task.ToInfo(), GetCurrentTaskIndex(), scheduler.TaskCount);
+            onDownloadStart.Invoke(eventArgs);
+            DownloadStartEventArgs.Release(eventArgs);
+        }
+        void HandleTaskProgress(DownloadTask task)
+        {
+            if (onDownloadOverallProgress == null)
+                return;
+            var eventArgs = DonwloadUpdateEventArgs.Create(task.ToInfo(), GetCurrentTaskIndex(), scheduler.TaskCount, TimeSpan.FromSeconds(0d),
+                scheduler.OverallProgress, scheduler.TotalDownloadedBytes, scheduler.TotalExpectedBytes);
+            onDownloadOverallProgress.Invoke(eventArgs);
+            DonwloadUpdateEventArgs.Release(eventArgs);
+        }
+        void HandleTaskCompleted(DownloadTask task)
+        {
+            if (onDownloadSuccess == null)
+                return;
+            var eventArgs = DownloadSuccessEventArgs.Create(task.ToInfo(), GetCurrentTaskIndex(), scheduler.TaskCount, TimeSpan.Zero);
+            onDownloadSuccess.Invoke(eventArgs);
+            DownloadSuccessEventArgs.Release(eventArgs);
+        }
+        void HandleTaskFailed(DownloadTask task)
+        {
+            if (onDownloadFailure == null)
+                return;
+            var eventArgs = DownloadFailureEventArgs.Create(task.ToInfo(), GetCurrentTaskIndex(), scheduler.TaskCount, task.Error, TimeSpan.Zero);
+            onDownloadFailure.Invoke(eventArgs);
+            DownloadFailureEventArgs.Release(eventArgs);
+        }
+        void HandleBatchCompleted(System.Collections.Generic.List<DownloadTask> successed, System.Collections.Generic.List<DownloadTask> failed, float elapsedSeconds)
+        {
+            if (onAllDownloadTaskCompleted == null)
+                return;
+            var successedInfos = new DownloadInfo[successed.Count];
+            for (int i = 0; i < successed.Count; i++)
+                successedInfos[i] = successed[i].ToInfo();
+            var failedInfos = new DownloadInfo[failed.Count];
+            for (int i = 0; i < failed.Count; i++)
+                failedInfos[i] = failed[i].ToInfo();
+            var eventArgs = DownloadTasksCompletedEventArgs.Create(successedInfos, failedInfos, TimeSpan.FromSeconds(elapsedSeconds), successed.Count + failed.Count);
+            onAllDownloadTaskCompleted.Invoke(eventArgs);
+            DownloadTasksCompletedEventArgs.Release(eventArgs);
         }
     }
 }

@@ -1,7 +1,8 @@
 {
     "name": "Cosmos.Runtime",
     "references": [
-        "Cosmos.Resource.Abstractions"
+        "Cosmos.Resource.Abstractions",
+        "Cosmos.Async"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

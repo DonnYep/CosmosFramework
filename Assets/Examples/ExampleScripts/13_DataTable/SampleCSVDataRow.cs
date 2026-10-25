@@ -1,73 +1,68 @@
 ﻿using Cosmos.DataTable;
-using Cosmos;
-using System.Text;
-using System;
+using System.Collections.Generic;
 
-public class SampleCSVDataRow : IDataRow
+/// <summary>
+/// 数据表行示例。
+/// <para>实现 <see cref="IRawDataRow"/>：按**列名**取值并赋值，全程零反射
+/// （生产环境推荐用代码生成器产出这类代码；只想省事也可以不实现此接口，
+/// 由默认解析器按字段名反射绑定，反射只发生在读表头时）。</para>
+/// </summary>
+public class SampleCSVDataRow : IDataRow, IRawDataRow
 {
-    SampleCSV sampleCSV = new SampleCSV();
-    public int Id { get { return sampleCSV.Id; } }
-    public SampleCSV SampleCSV { get { return sampleCSV; } }
-    public bool ParseData(byte[] dataBytes)
+    readonly SampleCSV sample = new SampleCSV();
+    /// <summary>
+    /// 行主键
+    /// </summary>
+    public int Id { get { return sample.Id; } }
+    /// <summary>
+    /// 业务数据
+    /// </summary>
+    public SampleCSV SampleCSV { get { return sample; } }
+    /// <summary>
+    /// 按列名解析一行
+    /// </summary>
+    public bool ParseFields(string[] fields, IReadOnlyDictionary<string, int> headerIndex)
     {
-        if (dataBytes != null)
-        {
-            var dataString = Encoding.UTF8.GetString(dataBytes);
-            return ParseData(dataString);
-        }
-        else
+        if (fields == null || headerIndex == null)
             return false;
+        int id;
+        int jobNumber;
+        float amountOfSales;
+        if (!TryGetInt(fields, headerIndex, "Id", out id))
+            return false;
+        if (!TryGetInt(fields, headerIndex, "JobNumber", out jobNumber))
+            return false;
+        if (!TryGetFloat(fields, headerIndex, "AmountOfSales", out amountOfSales))
+            return false;
+        sample.Id = id;
+        sample.JobNumber = jobNumber;
+        sample.AmountOfSales = amountOfSales;
+        sample.Desc = GetString(fields, headerIndex, "Desc");
+        sample.Name = GetString(fields, headerIndex, "Name");
+        sample.CompanyName = GetString(fields, headerIndex, "CompanyName");
+        return true;
     }
-    public bool ParseData(string dataString)
+    static string GetString(string[] fields, IReadOnlyDictionary<string, int> headerIndex, string column)
     {
-        try
-        {
-            var strArr = dataString.Split(',');
-            var type = typeof(SampleCSV);
-            var map = Utility.Assembly.GetTypeFieldsNameAndTypeMapping(type);
-            int idx = 0;
-            foreach (var e in map)
-            {
-                if (ParseStringToBaseType(strArr[idx], out var rst))
-                {
-                    Utility.Assembly.SetFieldValue(type, sampleCSV, e.Key, rst);
-                }
-                else
-                {
-                    Utility.Assembly.SetFieldValue(type, sampleCSV, e.Key, strArr[idx]);
-                }
-                idx++;
-            }
-            return true;
-        }
-        catch (Exception e)
-        {
-            throw e;
-        }
+        int index;
+        if (!headerIndex.TryGetValue(column, out index) || index < 0 || index >= fields.Length)
+            return string.Empty;
+        return fields[index] ?? string.Empty;
     }
-    bool ParseStringToBaseType(string str, out object rst)
+    static bool TryGetInt(string[] fields, IReadOnlyDictionary<string, int> headerIndex, string column, out int value)
     {
-        rst = null;
-        if (bool.TryParse(str, out var boolRst))
-        {
-            rst = boolRst;
-            return true; ;
-        }
-        if (int.TryParse(str, out var longRst))
-        {
-            rst = longRst;
+        value = 0;
+        var text = GetString(fields, headerIndex, column);
+        if (string.IsNullOrEmpty(text))
             return true;
-        }
-        if (float.TryParse(str, out var floatRst))
-        {
-            rst = floatRst;
-            return true;
-        }
-        return false;
+        return int.TryParse(text, out value);
     }
-
-    public void Dispose()
+    static bool TryGetFloat(string[] fields, IReadOnlyDictionary<string, int> headerIndex, string column, out float value)
     {
-        sampleCSV.Reset();
+        value = 0f;
+        var text = GetString(fields, headerIndex, column);
+        if (string.IsNullOrEmpty(text))
+            return true;
+        return float.TryParse(text, out value);
     }
 }

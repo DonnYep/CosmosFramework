@@ -23,40 +23,44 @@ public class ReadDataTablePanel : MonoBehaviour
         btnReadDataTable.onClick.AddListener(OnReadDataTableClick);
         btnReadRow.onClick.AddListener(OnReadRowClick);
         drpdPopup.onValueChanged.AddListener(OnPopup);
-
     }
     void OnReadDataTableClick()
     {
-        if (CosmosEntry.DataTableManager.HasDataTable(dataTableName))
-            return;
-        dataTable = CosmosEntry.DataTableManager.CreateDataTable<SampleCSVDataRow>(dataTableName);
-        var dataTableBase = (DataTableBase)dataTable;
-        dataTableBase.OnReadSuccess += OnDataTableReadSuccess;
-        dataTableBase.OnReadFailure += OnDataTableReadFailure;
-        CosmosEntry.DataTableManager.ReadDataTableAssetAsync(new DataTableAssetInfo(dataTableName), dataTableBase);
+        var manager = CosmosEntry.DataTableManager;
+        //表只创建一次，重复点击复用同一份共享数据
+        dataTable = manager.HasDataTable(dataTableName)
+            ? manager.GetDataTable<SampleCSVDataRow>(dataTableName)
+            : manager.CreateDataTable<SampleCSVDataRow>(dataTableName);
+        //幂等加载：已在加载中会忽略；已加载会立即回调
+        manager.ReadDataTableAssetAsync(new DataTableAssetInfo(dataTableName), dataTable, OnDataTableReadCompleted);
     }
     void OnReadRowClick()
     {
         if (!canReadRow)
             return;
-        //这里+1是因为SampleCSV这个表本身是从1开始的
-        txtContent.text = this.dataTable[currentPopupIndex + 1].SampleCSV.ToString();
+        //这里+1是因为SampleCSV这个表本身是从1开始的；行不存在时索引器返回 null
+        var row = dataTable[currentPopupIndex + 1];
+        txtContent.text = row == null ? "row not found" : row.SampleCSV.ToString();
     }
     void OnPopup(int index)
     {
         currentPopupIndex = index;
     }
-    void OnDataTableReadSuccess(DataTableBase dataTable)
+    void OnDataTableReadCompleted(DataTableBase table)
     {
-        Utility.Debug.LogInfo($"{dataTable.Name} ReadSuccess");
-        var rowDatas = this.dataTable.GetAllRowDatas();
-        drpdPopup.AddOptions(rowDatas.Select(r => (r.Id.ToString() + " Row")).ToList());
+        if (table.State == DataTableState.Failed)
+        {
+            //失败原因不再丢失：表上带 Error
+            txtContent.text = table.Error;
+            Utility.Debug.LogError($"{table.Name} ReadFailure : {table.Error}");
+            canReadRow = false;
+            return;
+        }
+        Utility.Debug.LogInfo($"{table.Name} ReadSuccess , rows : {table.RowCount}");
+        drpdPopup.ClearOptions();
+        drpdPopup.AddOptions(dataTable.Rows.Select(r => (r.Id.ToString() + " Row")).ToList());
         canReadRow = true;
         drpdPopup.interactable = true;
         btnReadRow.interactable = true;
-    }
-    void OnDataTableReadFailure(DataTableBase dataTable)
-    {
-        Utility.Debug.LogInfo($"{dataTable.Name} ReadFailure", DebugColor.red); ;
     }
 }

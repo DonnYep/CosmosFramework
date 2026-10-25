@@ -1,4 +1,4 @@
-// Minimal UnityEngine stubs for compile-checking Cosmos code outside the Unity Editor.
+﻿// Minimal UnityEngine stubs for compile-checking Cosmos code outside the Unity Editor.
 // Only the API surface used by the checked code is declared.
 using System;
 using System.Collections.Generic;
@@ -124,7 +124,7 @@ namespace UnityEngine
         public bool IsInvoking(string methodName) { return false; }
     }
 
-    public class Coroutine { }
+    public class Coroutine : YieldInstruction { }
 
     public class GameObject : Object
     {
@@ -296,6 +296,19 @@ namespace UnityEngine
         public void PlayOneShot(AudioClip clip) { }
         public void PlayOneShot(AudioClip clip, float volumeScale) { }
         public void SetScheduledStartTime(double time) { }
+    }
+
+    public class AudioListener : Behaviour
+    {
+        public static bool pause { get; set; }
+        public static float volume { get; set; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class DefaultExecutionOrder : Attribute
+    {
+        public DefaultExecutionOrder(int order) { this.order = order; }
+        public int order { get; private set; }
     }
 
     [Flags]
@@ -557,6 +570,8 @@ namespace UnityEngine
         public static float fixedDeltaTime { get { return 0; } }
         public static float time { get { return 0; } }
         public static float unscaledTime { get { return 0; } }
+        public static float unscaledDeltaTime { get { return 0; } }
+        public static float timeSinceLevelLoad { get { return 0; } }
         public static float realtimeSinceStartup { get { return 0; } }
         public static float timeScale { get; set; }
         public static int frameCount { get { return 0; } }
@@ -1574,6 +1589,25 @@ namespace UnityEngine
             public float value { get; set; }
             public SliderEvent onValueChanged { get; set; }
             public class SliderEvent : UnityEngine.Events.UnityEvent<float> { }
+        }
+
+        public class Dropdown : Selectable
+        {
+            public OptionData option { get; set; }
+            public System.Collections.Generic.List<OptionData> options { get; set; }
+            public int value { get; set; }
+            public DropdownEvent onValueChanged { get; set; }
+            public void ClearOptions() { }
+            public void AddOptions(System.Collections.Generic.List<OptionData> options) { }
+            public void AddOptions(System.Collections.Generic.List<string> options) { }
+            public void RefreshShownValue() { }
+            public class OptionData
+            {
+                public OptionData() { }
+                public OptionData(string text) { this.text = text; }
+                public string text { get; set; }
+            }
+            public class DropdownEvent : UnityEngine.Events.UnityEvent<int> { }
         }
 
         public class RawImage : MaskableGraphic

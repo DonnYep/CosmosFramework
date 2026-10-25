@@ -1,4 +1,4 @@
-﻿using Cosmos.Audio;
+using Cosmos.Audio;
 using Cosmos.Controller;
 using Cosmos.DataTable;
 using Cosmos.Download;
@@ -15,7 +15,7 @@ using Cosmos.Procedure;
 using System;
 namespace Cosmos
 {
-    public class CosmosEntry
+    public partial class CosmosEntry
     {
         static bool isLaunched = false;
         /// <summary>
@@ -69,28 +69,58 @@ namespace Cosmos
         public static IDataTableManager DataTableManager { get { return GetModule<IDataTableManager>(); } }
         /// <summary>
         /// 初始化当前AppDomain下的Module。
+        /// <para>内置模块由 <see cref="BuiltinModuleRegistry"/> 显式注册（零反射）；</para>
+        /// <para>外部模块只从"引用了框架程序集"的程序集里按 [Module] 特性发现，不再全量扫描 AppDomain。</para>
         /// <para>注意：初始化尽量只执行一次！！！</para>
         /// </summary>
         public static void LaunchAppDomainModules()
         {
-            if (isLaunched)
-                return;
-            MonoGameManager.Instance.ToString();
-            GameManager.InitiateAppDomainModule();
+            Launch(() => GameManager.InitiateAppDomainModule());
         }
         /// <summary>
-        /// 初始化目标程序集下的Module。
-        /// <para> 注意：初始化尽量只执行一次！！！</para>
+        /// 初始化内置模块 + 目标程序集下的Module。
+        /// <para>注意：初始化尽量只执行一次！！！</para>
         /// </summary>
         /// <param name="assemblies">查询的目标程序集</param>
         public static void LaunchAssemblyModules(params System.Reflection.Assembly[] assemblies)
         {
-            MonoGameManager.Instance.ToString();
-            GameManager.InitiateAssemblyModule(assemblies);
+            Launch(() => GameManager.InitiateAssemblyModule(assemblies));
+        }
+        /// <summary>
+        /// 只注册传入的模块（不做任何程序集扫描，内置模块也不会被注册）。
+        /// <para>适用于完全显式控制模块集合的场景；自定义模块需自行 new 出来。</para>
+        /// <para>注意：初始化尽量只执行一次！！！</para>
+        /// </summary>
+        /// <param name="modules">自定义模块集合</param>
+        public static void LaunchModules(params Module[] modules)
+        {
+            Launch(() => GameManager.InitiateModules(modules));
+        }
+        /// <summary>
+        /// 启动守卫：防止重复启动；启动失败时回滚标记，允许修复后重试
+        /// </summary>
+        /// <param name="launchAction">真实的启动动作</param>
+        static void Launch(Action launchAction)
+        {
+            if (isLaunched)
+                return;
+            isLaunched = true;
+            try
+            {
+                MonoGameManager.Instance.ToString();
+                launchAction();
+            }
+            catch (Exception)
+            {
+                //启动失败（例如某个模块 OnInitialization 抛异常）：允许下一次重试
+                isLaunched = false;
+                throw;
+            }
         }
         public static void ReleaseLaunchedModules()
         {
             GameManager.TerminateModules();
+            isLaunched = false;
         }
         public static T GetModule<T>() where T : class, IModuleManager
         {

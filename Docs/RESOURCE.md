@@ -54,7 +54,8 @@ Addressables   │   YooAsset   │   QuarkAsset   │   AssetDatabase（编辑�
 
 | 程序集 | 位置 | 说明 |
 | --- | --- | --- |
-| `Cosmos.Resource.Abstractions` | `Runtime/Base/ResourceAbstractions` | 契约 + 通用异步底座（OperationSystem / 句柄 / Provider 基类），不依赖任何三方库 |
+| `Cosmos.Async` | `Runtime/Base/Async` | **通用异步底座**（`OperationBase` / `OperationSystem` / `OperationDriver` / `GameAsyncOperation`），只依赖 UnityEngine |
+| `Cosmos.Resource.Abstractions` | `Runtime/Base/ResourceAbstractions` | 资源契约（句柄 / Provider 基类 / `ResourceProviderOperation`），不依赖任何三方库；引用 `Cosmos.Async` |
 | `Cosmos.Runtime` | `Runtime/Modules/Resource` | 资源桥 `IResourceManager` 实现 |
 | `Cosmos.Resource.EditorFallback` | `Editor/ResourceFallback` | 编辑器兜底 Provider（仅 Editor） |
 | `Cosmos.Resource.Addressables` | `Runtime/Integrations/Addressables` | Addressables 适配器（可选） |
@@ -169,7 +170,7 @@ Debug.Log(manager.GenerateDiagnosticsReport());   // 最慢、失败、疑似泄
 
 ## 7. 自行扩展一个 Provider
 
-1. 新建程序集，引用 `Cosmos.Resource.Abstractions`（以及你的资源库）；
+1. 新建程序集，引用 `Cosmos.Resource.Abstractions`、`Cosmos.Async`（以及你的资源库）；
 2. 实现 `IResourceProvider`：`InitializeAsync` 里启动初始化操作，`CreateOperation` 里按 `LoadMode` 返回对应的 `ResourceProviderOperation`；
 3. 实现操作：`OnStartLoad` 发起请求，异步方案在回调里 `SetAsset` + `Finish`，轮询式方案在 `OnUpdateLoad` 里判断完成；`OnRelease` 释放底层句柄；
 4. 注册（`[RuntimeInitializeOnLoadMethod]` 里一行即可），随后 `CosmosConfig` 里填名字就能用：

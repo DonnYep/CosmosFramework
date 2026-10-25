@@ -2,10 +2,19 @@
 using UnityEngine;
 namespace Cosmos.Input
 {
+    /// <summary>
+    /// 虚拟输入设备：按键/轴线的真实状态容器。
+    /// <para>查询未注册的名称不再“静默自动注册”（那是拼写错误的温床），
+    /// 而是报一次错并按中性值返回，方便尽早发现写错的按键名。</para>
+    /// </summary>
     internal sealed class InputVirtualDevice
     {
-        Dictionary<string, InputVirtualAxis> virtualAxisDict = new Dictionary<string, InputVirtualAxis>();
-        Dictionary<string, InputVirtualButton> virtualButtonDict = new Dictionary<string, InputVirtualButton>();
+        readonly Dictionary<string, InputVirtualAxis> virtualAxisDict = new Dictionary<string, InputVirtualAxis>();
+        readonly Dictionary<string, InputVirtualButton> virtualButtonDict = new Dictionary<string, InputVirtualButton>();
+        /// <summary>
+        /// 已经报过错的名称，避免每帧刷日志
+        /// </summary>
+        readonly HashSet<string> reportedMissingNames = new HashSet<string>();
         Vector3 virtualMousePosition;
         public Vector3 MousePosition 
         { 
@@ -53,63 +62,88 @@ namespace Cosmos.Input
         }
         public bool GetButton(string name)
         {
-            if (!IsExistVirtualButton(name))
-                RegisterVirtualButton(name);
-            return virtualButtonDict[name].GetButton;
+            if (!virtualButtonDict.TryGetValue(name, out var button))
+            {
+                ReportMissingButton(name);
+                return false;
+            }
+            return button.GetButton;
         }
         public bool GetButtonDown(string name)
         {
-            if (!IsExistVirtualButton(name))
-                RegisterVirtualButton(name);
-            return virtualButtonDict[name].GetButtonDown;
+            if (!virtualButtonDict.TryGetValue(name, out var button))
+            {
+                ReportMissingButton(name);
+                return false;
+            }
+            return button.GetButtonDown;
         }
         public bool GetButtonUp(string name)
         {
-            if (!IsExistVirtualButton(name))
-                RegisterVirtualButton(name);
-            return virtualButtonDict[name].GetButtonUp;
+            if (!virtualButtonDict.TryGetValue(name, out var button))
+            {
+                ReportMissingButton(name);
+                return false;
+            }
+            return button.GetButtonUp;
         }
         public float GetAxis(string name, bool raw)
         {
-            if (!IsExistVirtualAxis(name))
-                RegisterVirtualAxis(name);
-            return raw ? virtualAxisDict[name].GetValueYaw : virtualAxisDict[name].GetValue;
+            if (!virtualAxisDict.TryGetValue(name, out var axis))
+            {
+                ReportMissingAxis(name);
+                return 0f;
+            }
+            return raw ? axis.GetValueYaw : axis.GetValue;
+        }
+        public void SetButtonPressed(string name, bool pressed)
+        {
+            if (!virtualButtonDict.TryGetValue(name, out var button))
+            {
+                //写入端仍然自动注册：帮助体可能先写后注册，这里不能因为顺序问题丢状态
+                button = new InputVirtualButton(name);
+                virtualButtonDict.Add(name, button);
+            }
+            button.SetPressed(pressed);
         }
         public void SetButtonDown(string name)
         {
-            if (!IsExistVirtualButton(name))
-                RegisterVirtualButton(name);
-            virtualButtonDict[name].Pressed();
+            if (!virtualButtonDict.TryGetValue(name, out var button))
+            {
+                button = new InputVirtualButton(name);
+                virtualButtonDict.Add(name, button);
+            }
+            button.Pressed();
         }
         public void SetButtonUp(string name)
         {
-            if (!IsExistVirtualButton(name))
-                RegisterVirtualButton(name);
-            virtualButtonDict[name].Released();
+            if (!virtualButtonDict.TryGetValue(name, out var button))
+            {
+                button = new InputVirtualButton(name);
+                virtualButtonDict.Add(name, button);
+            }
+            button.Released();
         }
         public void SetAxisPositive(string name)
         {
-            if (!IsExistVirtualAxis(name))
-                RegisterVirtualAxis(name);
-            virtualAxisDict[name].Update(1);
+            SetAxis(name, 1f);
         }
         public void SetAxisNegative(string name)
         {
-            if (!IsExistVirtualAxis(name))
-                RegisterVirtualAxis(name);
-            virtualAxisDict[name].Update(-1);
+            SetAxis(name, -1f);
         }
         public void SetAxisZero(string name)
         {
-            if (!IsExistVirtualAxis(name))
-                RegisterVirtualAxis(name);
-            virtualAxisDict[name].Update(0);
+            SetAxis(name, 0f);
         }
         public void SetAxis(string name, float value)
         {
-            if (!IsExistVirtualAxis(name))
-                RegisterVirtualAxis(name);
-            virtualAxisDict[name].Update(value);
+            if (!virtualAxisDict.TryGetValue(name, out var axis))
+            {
+                axis = new InputVirtualAxis(name);
+                virtualAxisDict.Add(name, axis);
+            }
+            axis.Update(value);
         }
         public void SetVirtualMousePosition(float x, float y, float z)
         {
@@ -118,6 +152,27 @@ namespace Cosmos.Input
         public void SetVirtualMousePosition(Vector3 value)
         {
             virtualMousePosition = value;
+        }
+        /// <summary>
+        /// 清空所有按键与轴线的值（保留注册）
+        /// </summary>
+        public void ResetAll()
+        {
+            foreach (var button in virtualButtonDict.Values)
+                button.Reset();
+            foreach (var axis in virtualAxisDict.Values)
+                axis.Reset();
+            virtualMousePosition = Vector3.zero;
+        }
+        void ReportMissingButton(string name)
+        {
+            if (reportedMissingNames.Add("B:" + name))
+                Utility.Debug.LogError($"virtual button is not registered : {name}（先用 RegisterVirtualButton 注册，或检查名称拼写）");
+        }
+        void ReportMissingAxis(string name)
+        {
+            if (reportedMissingNames.Add("A:" + name))
+                Utility.Debug.LogError($"virtual axis is not registered : {name}（先用 RegisterVirtualAxis 注册，或检查名称拼写）");
         }
     }
 }

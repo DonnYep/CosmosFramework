@@ -175,6 +175,113 @@ namespace Cosmos
             {
                 return path != null && path.StartsWith("http", StringComparison.Ordinal);
             }
+
+            #region UnityWebRequest 公共判定（WebRequest / Download 共用）
+
+            /// <summary>
+            /// 请求是否成功（兼容 Unity 2020 前后两套 API）。
+            /// <para>2020+ 用 <c>result == Success</c>：除了连接/协议错误，数据解析失败也算失败。</para>
+            /// </summary>
+            /// <param name="request">请求对象</param>
+            /// <returns>是否成功</returns>
+            public static bool IsRequestSucceeded(UnityEngine.Networking.UnityWebRequest request)
+            {
+                if (request == null)
+                    return false;
+#if UNITY_2020_1_OR_NEWER
+                return request.result == UnityEngine.Networking.UnityWebRequest.Result.Success;
+#else
+                return !request.isNetworkError && !request.isHttpError;
+#endif
+            }
+            /// <summary>
+            /// 读取响应头 Content-Length。
+            /// </summary>
+            /// <param name="request">请求对象</param>
+            /// <returns>字节数，缺失或非法返回 -1</returns>
+            public static long GetContentLength(UnityEngine.Networking.UnityWebRequest request)
+            {
+                if (request == null)
+                    return -1L;
+                long length;
+                return TryParseContentLength(request.GetResponseHeader("Content-Length"), out length) ? length : -1L;
+            }
+            /// <summary>
+            /// 解析 Content-Length 头。
+            /// </summary>
+            /// <param name="header">头部值</param>
+            /// <param name="length">字节数</param>
+            /// <returns>是否解析成功</returns>
+            public static bool TryParseContentLength(string header, out long length)
+            {
+                length = -1L;
+                if (string.IsNullOrEmpty(header))
+                    return false;
+                long parsed;
+                if (!long.TryParse(header.Trim(), out parsed) || parsed < 0L)
+                    return false;
+                length = parsed;
+                return true;
+            }
+            /// <summary>
+            /// 解析 Content-Range 头，形如 <c>bytes 100-999/1000</c>（总长可能是 <c>*</c>）。
+            /// </summary>
+            /// <param name="header">头部值</param>
+            /// <param name="start">起始字节</param>
+            /// <param name="end">结束字节</param>
+            /// <param name="total">文件总长，未知为 -1</param>
+            /// <returns>是否解析成功</returns>
+            public static bool TryParseContentRange(string header, out long start, out long end, out long total)
+            {
+                start = -1L;
+                end = -1L;
+                total = -1L;
+                if (string.IsNullOrEmpty(header))
+                    return false;
+                var text = header.Trim();
+                if (text.StartsWith("bytes", StringComparison.OrdinalIgnoreCase))
+                    text = text.Substring("bytes".Length).Trim();
+                else
+                    return false;
+                var slashIndex = text.IndexOf('/');
+                var rangePart = slashIndex >= 0 ? text.Substring(0, slashIndex) : text;
+                if (slashIndex >= 0)
+                {
+                    var totalText = text.Substring(slashIndex + 1).Trim();
+                    if (totalText != "*" && !(long.TryParse(totalText, out total) && total >= 0L))
+                        total = -1L;
+                }
+                var dashIndex = rangePart.IndexOf('-');
+                if (dashIndex < 0)
+                    return false;
+                if (!long.TryParse(rangePart.Substring(0, dashIndex).Trim(), out start) || start < 0L)
+                {
+                    start = -1L;
+                    return false;
+                }
+                if (!long.TryParse(rangePart.Substring(dashIndex + 1).Trim(), out end) || end < start)
+                {
+                    end = -1L;
+                    return false;
+                }
+                return true;
+            }
+            /// <summary>
+            /// 本次响应体字节数：优先 Content-Length；缺失时用 Content-Range 推导（206 分段响应）。
+            /// </summary>
+            /// <param name="request">请求对象</param>
+            /// <returns>字节数，未知返回 -1</returns>
+            public static long GetTransferLength(UnityEngine.Networking.UnityWebRequest request)
+            {
+                var length = GetContentLength(request);
+                if (length >= 0L)
+                    return length;
+                long start, end, total;
+                if (request != null && TryParseContentRange(request.GetResponseHeader("Content-Range"), out start, out end, out total))
+                    return end - start + 1L;
+                return -1L;
+            }
+            #endregion
         }
     }
 }

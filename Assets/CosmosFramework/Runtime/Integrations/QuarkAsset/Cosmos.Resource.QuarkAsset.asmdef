@@ -3,6 +3,7 @@
     "rootNamespace": "Cosmos.Resource.QuarkAsset",
     "references": [
         "Cosmos.Resource.Abstractions",
+        "Cosmos.Async",
         "QuarkRuntime"
     ],
     "includePlatforms": [],

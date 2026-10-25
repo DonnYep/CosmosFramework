@@ -22,6 +22,22 @@
         /// </summary>
         internal const int CheckPlayingIntervalSecond = 5;
         /// <summary>
+        /// 播放速度下限；pitch小于等于0时播放位置不会推进，会出现"永久在播却静音"的幽灵音效
+        /// </summary>
+        internal const float MIN_PITCH = 0.01f;
+        /// <summary>
+        /// 声音组默认音量
+        /// </summary>
+        internal const float DEFAULT_AUDIO_GROUP_VOLUME = 1f;
+        /// <summary>
+        /// 声音组默认最大同时播放数，0表示不限制
+        /// </summary>
+        internal const int DEFAULT_MAX_CONCURRENT_AUDIOS = 0;
+        /// <summary>
+        /// 单帧最大推进时间；用于卡顿、断点、长时间挂起后避免过渡在一帧内跳完
+        /// </summary>
+        internal const float MAX_TICK_DELTA_TIME = 0.1f;
+        /// <summary>
         /// 声音常量
         /// </summary>
         internal const string PREFIX = "SND-";

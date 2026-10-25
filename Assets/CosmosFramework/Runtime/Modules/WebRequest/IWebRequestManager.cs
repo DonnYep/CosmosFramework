@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -6,13 +6,14 @@ namespace Cosmos.WebRequest
 {
     //================================================
     /*
-     * 1、WebRequest用于加载AssetBundle资源。资源状态可以是Remote的，
-    *  也可以是Local下persistentDataPath的。
-     * 
-     * 2、内置已经实现了一个默认的WebRequest帮助类对象。模块初始化时会
-    * 自动加载并将默认的helper设置为此模块的默认加载helper。
-    * 
-    */
+     * WebRequest：一次请求 → 一份“内存里的结果”（文本 / 字节 / 贴图 / 音频 / AB / 上传 / Content-Length）。
+     * 典型用途：网关版本号、配置、公告、排行榜、头像贴图等小体量数据。
+     *
+     * 与 Download 模块的分工（不要再往这里加“落盘”能力）：
+     *   · 结果留在内存、用完即弃                             → WebRequest
+     *   · 要写到磁盘、要断点续传 / 长度校验 / 原子提交        → Download 模块（DownloadManager）
+     * 两个模块互不依赖；共用的 HTTP 判定（成功 / Content-Length / Content-Range）在 Utility.Net 里。
+     */
     //================================================
     public interface IWebRequestManager : IModuleManager
     {
@@ -171,10 +172,6 @@ namespace Cosmos.WebRequest
         /// 异步上传数据
         /// </summary>
         WebRequestHandle<byte[]> AddUploadTaskAsync(string url, byte[] data, WebRequestUploadType uploadType, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0);
-        /// <summary>
-        /// 异步下载文件到本地路径
-        /// </summary>
-        WebRequestHandle<bool> AddDownloadFileTaskAsync(string url, string savePath, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0);
         /// <summary>
         /// 取消全部请求（进行中与排队中的均取消）
         /// </summary>

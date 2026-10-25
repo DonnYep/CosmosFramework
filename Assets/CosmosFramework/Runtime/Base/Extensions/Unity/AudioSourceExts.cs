@@ -3,8 +3,16 @@ namespace Cosmos
 {
     public static class AudioSourceExts
     {
+        /// <summary>
+        /// 复位为默认状态；归还对象池前必须调用，停止播放也在这里完成，
+        /// 否则失活的播放器仍可能继续出声。
+        /// </summary>
+        /// <param name="this">播放器</param>
         public static void Reset(this AudioSource @this)
         {
+            if (@this == null)
+                return;
+            @this.Stop();
             @this.clip = null;
             @this.mute = false;
             @this.playOnAwake = true;

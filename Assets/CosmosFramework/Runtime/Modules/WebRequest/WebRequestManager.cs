@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -138,10 +138,9 @@ namespace Cosmos.WebRequest
                 UnityWebRequest.Head,
                 request =>
                 {
-                    var size = request.GetResponseHeader("Content-Length");
-                    long length;
-                    if (!long.TryParse(size, out length))
-                        throw new InvalidOperationException($"Content-Length is missing or invalid : {size}");
+                    var length = Utility.Net.GetContentLength(request);
+                    if (length < 0L)
+                        throw new InvalidOperationException($"Content-Length is missing or invalid : {request.GetResponseHeader("Content-Length")}");
                     return length;
                 });
         }
@@ -164,18 +163,6 @@ namespace Cosmos.WebRequest
                     return request;
                 },
                 request => request.downloadHandler != null ? request.downloadHandler.data : null);
-        }
-        /// <inheritdoc/>
-        public WebRequestHandle<bool> AddDownloadFileTaskAsync(string url, string savePath, float timeoutSeconds = 30, int retryCount = 0, uint priority = 0)
-        {
-            return CreateHandle(url, timeoutSeconds, retryCount, priority,
-                u =>
-                {
-                    var request = new UnityWebRequest(u, UnityWebRequest.kHttpVerbGET);
-                    request.downloadHandler = new DownloadHandlerFile(savePath);
-                    return request;
-                },
-                request => request.downloadHandler != null && request.isDone);
         }
         /// <summary>
         /// 创建句柄并注册执行

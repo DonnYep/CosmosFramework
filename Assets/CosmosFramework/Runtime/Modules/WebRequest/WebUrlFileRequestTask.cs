@@ -57,11 +57,7 @@ namespace Cosmos.WebRequest
         {
             UnityWebRequest request = UnityWebRequest.Get(dstUrl);
             yield return request.SendWebRequest();
-#if UNITY_2020_1_OR_NEWER
-                if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
-#elif UNITY_2018_1_OR_NEWER
-            if (!request.isNetworkError && !request.isHttpError)
-#endif
+            if (Utility.Net.IsRequestSucceeded(request))
             {
                 var html = request.downloadHandler.text;
                 Regex regex = new Regex("<a href=\".*\">(?<name>.*)</a>");

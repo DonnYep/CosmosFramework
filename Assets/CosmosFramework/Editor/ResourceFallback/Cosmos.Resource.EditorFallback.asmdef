@@ -2,7 +2,8 @@
     "name": "Cosmos.Resource.EditorFallback",
     "rootNamespace": "Cosmos.Resource.EditorFallback",
     "references": [
-        "Cosmos.Resource.Abstractions"
+        "Cosmos.Resource.Abstractions",
+        "Cosmos.Async"
     ],
     "includePlatforms": [
         "Editor"

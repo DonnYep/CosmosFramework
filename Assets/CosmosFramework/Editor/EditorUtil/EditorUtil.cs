@@ -265,18 +265,26 @@ namespace Cosmos.Editor
         /// <summary>
         ///  获取编辑渲染使用的hander数组。
         ///  默认首个元素为<see cref="Constants.NONE"/>
+        ///  <para>结果按类型缓存：反射扫描整个 AppDomain 很贵，而 Inspector 每次选中都会调用；
+        ///  脚本重编译会触发域重载，静态缓存随之清空，因此不会脏。</para>
         /// </summary>
         /// <typeparam name="T">基类</typeparam>
+        /// <param name="reload">是否强制重新扫描</param>
         /// <returns>handler数组</returns>
-        public static string[] GetDerivedTypeHandlers<T>()
+        public static string[] GetDerivedTypeHandlers<T>(bool reload = false)
             where T : class
         {
+            var type = typeof(T);
+            if (!reload && derivedTypeHandlerCache.TryGetValue(type, out var cached))
+                return cached;
             var srcBuildHandlers = Utility.Assembly.GetDerivedTypeNames<T>();
             var buildHandlers = new string[srcBuildHandlers.Length + 1];
             buildHandlers[0] = Constants.NONE;
             Array.Copy(srcBuildHandlers, 0, buildHandlers, 1, srcBuildHandlers.Length);
+            derivedTypeHandlerCache[type] = buildHandlers;
             return buildHandlers;
         }
+        static readonly Dictionary<Type, string[]> derivedTypeHandlerCache = new Dictionary<Type, string[]>();
         /// <summary>
         /// 选择工程的相对路径
         /// </summary>

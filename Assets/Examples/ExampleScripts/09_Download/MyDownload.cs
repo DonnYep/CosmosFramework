@@ -14,16 +14,33 @@ public class MyDownload : MonoBehaviour
     [SerializeField] Text text;
     [SerializeField] Text uriText;
     long downloadTaskId;
+    Cosmos.Download.IDownloadManager downloadManager;
     void Start()
     {
-        CosmosEntry.DownloadManager.OnDownloadSuccess += OnDownloadSucess;
-        CosmosEntry.DownloadManager.OnDownloadFailure += OnDownloadFailure;
-        CosmosEntry.DownloadManager.OnDownloadStart += OnDownloadStart;
-        CosmosEntry.DownloadManager.OnDownloadOverallProgress += OnDownloadOverall;
-        CosmosEntry.DownloadManager.OnAllDownloadTaskCompleted += OnDownloadFinish;
+        downloadManager = CosmosEntry.DownloadManager;
+        if (downloadManager == null)
+        {
+            Utility.Debug.LogError("Download module is missing : check BuiltinModuleRegistry !");
+            return;
+        }
+        downloadManager.OnDownloadSuccess += OnDownloadSucess;
+        downloadManager.OnDownloadFailure += OnDownloadFailure;
+        downloadManager.OnDownloadStart += OnDownloadStart;
+        downloadManager.OnDownloadOverallProgress += OnDownloadOverall;
+        downloadManager.OnAllDownloadTaskCompleted += OnDownloadFinish;
         CosmosEntry.WebRequestManager.OnGetHtmlFilesFailureCallback += OnGetHtmlFilesFailureCallback;
         CosmosEntry.WebRequestManager.OnGetHtmlFilesSuccessCallback += OnGetHtmlFilesSuccessCallback;
         StartDownload();
+    }
+    void OnDestroy()
+    {
+        if (downloadManager == null)
+            return;
+        downloadManager.OnDownloadSuccess -= OnDownloadSucess;
+        downloadManager.OnDownloadFailure -= OnDownloadFailure;
+        downloadManager.OnDownloadStart -= OnDownloadStart;
+        downloadManager.OnDownloadOverallProgress -= OnDownloadOverall;
+        downloadManager.OnAllDownloadTaskCompleted -= OnDownloadFinish;
     }
     void StartDownload()
     {
@@ -39,21 +56,16 @@ public class MyDownload : MonoBehaviour
     }
     void OnDownloadOverall(DonwloadUpdateEventArgs eventArgs)
     {
-        //Download模块支撑了cosmosframework的整个资源下载。Resource模块的assetbundle下载，其他模块的下载都依赖此模块。
-        //部分下载任务本身仅知道下载连接，无法获取需要下载的二进制长度，因此无法获取总下载长度。所以，无法使用 【已经下载的长度 / 需要下载的长度】计算公式。
-        var progress = eventArgs.CurrentDownloadTaskIndex / (float)eventArgs.DownloadTaskCount;
-        var overallProgress = (float)Math.Round(progress, 1) * 100;
-        Utility.Debug.LogInfo(overallProgress);
+        //整体进度按字节加权（DownloadInfo.ExpectedLength 未知时才退化为按任务完成数估算）
+        var overallProgress = eventArgs.TotalExpectedBytes > 0
+            ? eventArgs.OverallProgress
+            : (eventArgs.CurrentDownloadTaskIndex / (float)eventArgs.DownloadTaskCount);
+        var percent = (float)Math.Round(overallProgress * 100f, 1);
         if (text != null)
-        {
-            text.text = overallProgress + "%";
-        }
+            text.text = percent + "%";
         if (slider != null)
-        {
             slider.value = overallProgress;
-        }
-    }
-    void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
+    }    void OnDownloadSucess(DownloadSuccessEventArgs eventArgs)
     {
         Utility.Debug.LogInfo($"DownloadSuccess {eventArgs.DownloadInfo.DownloadUrl}");
     }
@@ -64,10 +76,8 @@ public class MyDownload : MonoBehaviour
     void OnDownloadFinish(DownloadTasksCompletedEventArgs eventArgs)
     {
         if (text != null)
-        {
             text.text = "100%   Done";
-        }
-        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.TimeSpan}", DebugColor.green);
+        Utility.Debug.LogInfo($"DownloadFinish {eventArgs.TimeSpan} , success {eventArgs.SuccessedInfos.Length} , failed {eventArgs.FailedInfos.Length}", DebugColor.green);
     }
     private void OnGetHtmlFilesSuccessCallback(Cosmos.WebRequest.WebRequestGetHtmlFilesSuccessEventArgs eventArgs)
     {
@@ -76,9 +86,10 @@ public class MyDownload : MonoBehaviour
         {
             var fileDownloadPath = Utility.Text.Combine(downloadPath, fileInfo.RelativeUrl, fileInfo.FileName);
             Utility.Debug.LogInfo(fileDownloadPath);
-            CosmosEntry.DownloadManager.AddDownload(fileInfo.URL, fileDownloadPath);
+            //重复点击时会自动从已下载的临时文件长度处续传
+            downloadTaskId = downloadManager.AddDownload(fileInfo.URL, fileDownloadPath, DownloadMode.ResumeIfPossible);
         }
-        CosmosEntry.DownloadManager.LaunchDownload();
+        downloadManager.LaunchDownload();
     }
     private void OnGetHtmlFilesFailureCallback(Cosmos.WebRequest.WebRequestGetHtmlFilesFailureEventArgs eventArgs)
     {

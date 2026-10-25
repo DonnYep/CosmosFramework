@@ -18,11 +18,16 @@ namespace Cosmos
             }
             /// <summary>
             /// 从域程序集中获取类。
+            /// <para>命中过的类型会被缓存（==命中才会缓存，未命中不缓存，避免程序集延迟加载时缓存到错误结果）。</para>
             /// </summary>
             /// <param name="typeName">类型完全限定名</param>
             /// <returns>类型</returns>
             public static Type GetType(string typeName)
             {
+                if (string.IsNullOrEmpty(typeName))
+                    return null;
+                if (typeCache.TryGetValue(typeName, out var cachedType))
+                    return cachedType;
                 Type type = null;
                 foreach (var assembly in DomainAssemblies)
                 {
@@ -30,8 +35,18 @@ namespace Cosmos
                     if (type != null)
                         break;
                 }
+                if (type != null)
+                    typeCache.Add(typeName, type);
                 return type;
             }
+            /// <summary>
+            /// 清空类型名缓存（动态加载程序集后需要重新解析时调用）
+            /// </summary>
+            public static void ClearTypeCache()
+            {
+                typeCache.Clear();
+            }
+            readonly static Dictionary<string, Type> typeCache = new Dictionary<string, Type>();
             /// <summary>
             /// 获取AppDomain中指定的程序集。
             /// </summary>

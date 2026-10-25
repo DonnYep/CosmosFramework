@@ -1,4 +1,4 @@
-using Cosmos.Operation;
+﻿using Cosmos.Operation;
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -173,11 +173,7 @@ namespace Cosmos.WebRequest
             OnProgressInternal?.Invoke(this, Progress);
             if (!request.isDone)
                 return;
-#if UNITY_2020_1_OR_NEWER
-            if (request.result != UnityWebRequest.Result.ConnectionError && request.result != UnityWebRequest.Result.ProtocolError)
-#elif UNITY_2018_1_OR_NEWER
-            if (!request.isNetworkError && !request.isHttpError)
-#endif
+            if (Utility.Net.IsRequestSucceeded(request))
             {
                 try
                 {

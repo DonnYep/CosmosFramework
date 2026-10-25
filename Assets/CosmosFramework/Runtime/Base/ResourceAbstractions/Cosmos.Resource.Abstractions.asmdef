@@ -1,7 +1,9 @@
 {
     "name": "Cosmos.Resource.Abstractions",
     "rootNamespace": "Cosmos.Resource",
-    "references": [],
+    "references": [
+        "Cosmos.Async"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

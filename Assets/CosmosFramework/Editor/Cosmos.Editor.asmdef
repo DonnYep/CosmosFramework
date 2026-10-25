@@ -2,7 +2,8 @@
     "name": "Cosmos.Editor",
     "references": [
         "Cosmos.Runtime",
-        "Cosmos.Resource.Abstractions"
+        "Cosmos.Resource.Abstractions",
+        "Cosmos.Async"
     ],
     "includePlatforms": [
         "Editor"

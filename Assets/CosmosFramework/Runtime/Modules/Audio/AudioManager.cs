@@ -16,6 +16,8 @@ namespace Cosmos.Audio
      * 
      * 5、所有播放声音所返回的serialId都大于等于1。
      * 
+     * 6、播放状态由"显式状态机 + 每帧Tick"驱动，不使用协程：
+     *    命令同步生效；过渡在管理器每帧推进，推进完成的同一帧内完成状态迁移与回收。
      */
     //================================================
     [Module]
@@ -45,6 +47,10 @@ namespace Cosmos.Audio
         /// 音效加载任务字典，audioAssetName===AudioAssetLoadTask
         /// </summary>
         Dictionary<string, AudioAssetLoadTask> audioAssetLoadTaskDict;
+        /// <summary>
+        /// 上一次Tick的unscaledTime，用于计算不受timeScale影响的推进时间
+        /// </summary>
+        float lastTickUnscaledTime;
         int serialIndex;
         ///<inheritdoc/>
         public event Action<AudioRegisterFailureEventArgs> AudioAssetRegisterFailure
@@ -106,8 +112,12 @@ namespace Cosmos.Audio
             {
                 AudioAssetLoadTask.Release(loadTask);
             }
-            audioAssetEntityDict.Remove(audioAssetName);
+            //先释放仍在使用此资源的播放实体（它们持有 AudioClip），再注销并卸载资源
             OnDeregisterAudioAsset(audioAssetName);
+            if (audioAssetEntityDict.Remove(audioAssetName))
+            {
+                audioAssetHelper?.UnloadAudio(audioAssetName);
+            }
         }
         ///<inheritdoc/>
         public int PlayAudio(string audioAssetName)
@@ -134,7 +144,9 @@ namespace Cosmos.Audio
             if (!audioGroupDict.TryGetValue(audioGroupName, out var audioGroup))
                 return 0;
             var serialId = GetAudioSerialId();
-            audioGroup.PlayAudio(serialId, audioAssetEntity, audioParams, audioPositionParams);
+            //并发上限已满且新音效优先级不足时，组会拒绝本次播放
+            if (!audioGroup.PlayAudio(serialId, audioAssetEntity, audioParams, audioPositionParams))
+                return 0;
             return serialId;
         }
         ///<inheritdoc/>
@@ -196,16 +208,12 @@ namespace Cosmos.Audio
         ///<inheritdoc/>
         public bool HasAudio(int serialId)
         {
-            bool hasAudio = false;
             foreach (var group in audioGroupDict.Values)
             {
-                var has = group.HasAudio(serialId);
-                if (has)
-                {
-                    hasAudio = has;
-                }
+                if (group.HasAudio(serialId))
+                    return true;
             }
-            return hasAudio;
+            return false;
         }
         ///<inheritdoc/>
         public bool GetAudioPlayInfo (int serialId, out AudioPlayInfo audioPlayInfo)
@@ -213,11 +221,8 @@ namespace Cosmos.Audio
             audioPlayInfo = AudioPlayInfo.Default;
             foreach (var group in audioGroupDict.Values)
             {
-                var has = group.GetAudioPlayInfo(serialId,out audioPlayInfo);
-                if (has)
-                {
+                if (group.GetAudioPlayInfo(serialId, out audioPlayInfo))
                     return true;
-                }
             }
             return false;
         }
@@ -269,6 +274,8 @@ namespace Cosmos.Audio
             if (!audioGroupDict.TryGetValue(audioGroupName, out var group))
             {
                 group = AudioGroup.Create(audioGroupName);
+                //后创建的组也要继承管理器当前的静音状态
+                group.Mute = mute;
                 audioGroupDict.Add(audioGroupName, group);
             }
             return group;
@@ -285,7 +292,7 @@ namespace Cosmos.Audio
         {
             foreach (var audioGroup in audioGroupDict.Values)
             {
-                audioGroup.PauseAllAudios(fadeOutSecounds);
+                audioGroup.PauseAudios(fadeOutSecounds);
             }
         }
         ///<inheritdoc/>
@@ -293,7 +300,7 @@ namespace Cosmos.Audio
         {
             foreach (var audioGroup in audioGroupDict.Values)
             {
-                audioGroup.StopAllAudios(fadeOutSecounds);
+                audioGroup.StopAudios(fadeOutSecounds);
             }
         }
         protected override void OnInitialization()
@@ -303,8 +310,51 @@ namespace Cosmos.Audio
             audioAssetLoadTaskDict = new Dictionary<string, AudioAssetLoadTask>();
             audioAssetHelper = new DefaultAudioAssetHelper();
             serialIndex = 0;
+            lastTickUnscaledTime = Time.unscaledTime;
             var defaultGroup = AudioGroup.Create(AudioConstant.DEFAULT_AUDIO_GROUP);
             audioGroupDict.Add(AudioConstant.DEFAULT_AUDIO_GROUP, defaultGroup);
+        }
+        /// <summary>
+        /// 每帧推进所有音效组的过渡与终止判定。
+        /// <para>用 unscaledTime 的差值作为推进时间：Time.timeScale=0（常见的暂停手法）时过渡照常完成，
+        /// 不会出现"淡出永远走不完、声音停不掉"。</para>
+        /// <para>单帧推进量有上限，避免卡顿/断点后过渡在一帧内跳完。</para>
+        /// </summary>
+        protected override void OnUpdate()
+        {
+            var currentUnscaledTime = Time.unscaledTime;
+            var deltaTime = currentUnscaledTime - lastTickUnscaledTime;
+            lastTickUnscaledTime = currentUnscaledTime;
+            if (deltaTime <= 0f)
+                return;
+            if (deltaTime > AudioConstant.MAX_TICK_DELTA_TIME)
+                deltaTime = AudioConstant.MAX_TICK_DELTA_TIME;
+            foreach (var group in audioGroupDict.Values)
+            {
+                group.Tick(deltaTime);
+            }
+        }
+        protected override void OnTermination()
+        {
+            if (audioGroupDict != null)
+            {
+                foreach (var group in audioGroupDict.Values)
+                {
+                    AudioGroup.Release(group);
+                }
+                audioGroupDict.Clear();
+            }
+            if (audioAssetLoadTaskDict != null)
+            {
+                foreach (var loadTask in audioAssetLoadTaskDict.Values)
+                {
+                    AudioAssetLoadTask.Release(loadTask);
+                }
+                audioAssetLoadTaskDict.Clear();
+            }
+            audioAssetEntityDict?.Clear();
+            audioAssetHelper = null;
+            AudioSourcePool.Clear();
         }
         void OnRegisterAudioAssetSuccess(string audioAssetName, AudioClip audioClip)
         {

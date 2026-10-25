@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using Basic.Reference.Assemblies;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -53,6 +54,11 @@ namespace RoslynCheck
             var references = NetStandard21.References.All.Cast<MetadataReference>().ToList();
             var errors = 0;
 
+            // asmdef 引用一致性（Unity 按 asmdef 划分程序集，引用缺失只有 Unity 才会报，这里提前拦）
+            errors += CheckAsmdefReferences();
+            if (errors != 0)
+                return 1;
+
             // 模拟 UnityEngine 预编译程序集：Unity 桩
             var stubTrees = LoadFiles(GetStubFiles(), parseOptions);
             var stubCompilation = CSharpCompilation.Create(
@@ -67,10 +73,43 @@ namespace RoslynCheck
             // 可选：导出全部诊断到文件（用于补桩分析）
             var dumpPath = GetArgValue(args, "dump");
 
-            // Cosmos.Resource.Core —— 独立核心库
+            // Hydrogen —— 第三方 TCP 库（独立 asmdef，不参与 Cosmos.Runtime 编译）
+            var hydrogenTrees = LoadFiles(GetHydrogenFiles(), parseOptions);
+            if (hydrogenTrees.Count > 0)
+            {
+                var hydrogenReferences = new List<MetadataReference>(references);
+                hydrogenReferences.Add(stubCompilation.ToMetadataReference());
+                var hydrogenCompilation = CSharpCompilation.Create(
+                    "Hydrogen",
+                    hydrogenTrees,
+                    hydrogenReferences,
+                    new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+                errors += Report("Hydrogen", hydrogenCompilation, dumpPath);
+            }
+
+            if (mode == "hydrogen")
+                return errors == 0 ? 0 : 1;
+
+            // Cosmos.Async —— 通用异步底座（不依赖任何模块：
+            // OperationBase / OperationSystem / OperationDriver / GameAsyncOperation / OperationStatus）
+            var asyncTrees = LoadFiles(GetAsyncFiles(), parseOptions);
+            var asyncReferences = new List<MetadataReference>(references);
+            asyncReferences.Add(stubCompilation.ToMetadataReference());
+            var asyncCompilation = CSharpCompilation.Create(
+                "Cosmos.Async",
+                asyncTrees,
+                asyncReferences,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            errors += Report("Cosmos.Async", asyncCompilation, dumpPath);
+
+            if (mode == "async")
+                return errors == 0 ? 0 : 1;
+
+            // Cosmos.Resource.Core —— 资源契约库（引用异步底座）
             var coreTrees = LoadFiles(GetCoreFiles(), parseOptions);
             var coreReferences = new List<MetadataReference>(references);
             coreReferences.Add(stubCompilation.ToMetadataReference());
+            coreReferences.Add(asyncCompilation.ToMetadataReference());
             var coreCompilation = CSharpCompilation.Create(
                 "Cosmos.Resource.Abstractions",
                 coreTrees,
@@ -84,7 +123,7 @@ namespace RoslynCheck
             // 可选适配器（Addressables / YooAsset / QuarkAsset）：用第三方 API 桩单独编译。
             if (mode == "adapters")
             {
-                errors += CheckAdapters(references, stubCompilation, coreCompilation);
+                errors += CheckAdapters(references, stubCompilation, coreCompilation, asyncCompilation);
                 Console.WriteLine(errors == 0
                     ? "=== ADAPTERS COMPILED SUCCESSFULLY ==="
                     : $"=== ADAPTERS COMPILE FAILED : {errors} errors ===");
@@ -97,6 +136,7 @@ namespace RoslynCheck
             runtimeTrees.AddRange(LoadFiles(GetFrameworkStubFiles(), parseOptions));
             var runtimeReferences = new List<MetadataReference>(references);
             runtimeReferences.Add(stubCompilation.ToMetadataReference());
+            runtimeReferences.Add(asyncCompilation.ToMetadataReference());
             runtimeReferences.Add(coreCompilation.ToMetadataReference());
             var runtimeCompilation = CSharpCompilation.Create(
                 "Cosmos.Runtime",
@@ -111,17 +151,31 @@ namespace RoslynCheck
             // 资源相关示例（验证示例代码与资源桥 API 一致）
             if (mode == "examples")
             {
-                errors += CheckExamples(parseOptions, runtimeReferences, runtimeCompilation);
+                errors += CheckExamples(parseOptions, runtimeReferences, runtimeCompilation, asyncCompilation);
                 Console.WriteLine(errors == 0
                     ? "=== EXAMPLES COMPILED SUCCESSFULLY ==="
                     : $"=== EXAMPLES COMPILE FAILED : {errors} errors ===");
                 return errors == 0 ? 0 : 1;
             }
 
-            // Cosmos.Editor —— 全量编辑器（引用 Core + Runtime）
+            // Cosmos.Resource.EditorFallback —— 编辑器兜底 Provider（asmdef 独立程序集）
+            var fallbackTrees = LoadFiles(GetEditorFallbackFiles(), parseOptions);
+            var fallbackReferences = new List<MetadataReference>(runtimeReferences);
+            fallbackReferences.Add(asyncCompilation.ToMetadataReference());
+            fallbackReferences.Add(coreCompilation.ToMetadataReference());
+            var fallbackCompilation = CSharpCompilation.Create(
+                "Cosmos.Resource.EditorFallback",
+                fallbackTrees,
+                fallbackReferences,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            errors += Report("Cosmos.Resource.EditorFallback", fallbackCompilation, dumpPath);
+
+            // Cosmos.Editor —— 编辑器工具（引用 Core + Async + Runtime + EditorFallback）
             var editorTrees = LoadFiles(GetEditorFiles(), parseOptions);
             var editorReferences = new List<MetadataReference>(runtimeReferences);
+            editorReferences.Add(asyncCompilation.ToMetadataReference());
             editorReferences.Add(runtimeCompilation.ToMetadataReference());
+            editorReferences.Add(fallbackCompilation.ToMetadataReference());
             var editorCompilation = CSharpCompilation.Create(
                 "Cosmos.Editor",
                 editorTrees,
@@ -133,6 +187,69 @@ namespace RoslynCheck
                 ? "=== ALL ASSEMBLIES COMPILED SUCCESSFULLY ==="
                 : $"=== COMPILE FAILED : {errors} errors ===");
             return errors == 0 ? 0 : 1;
+        }
+
+        /// <summary>
+        /// 校验 asmdef 引用一致性。
+        /// <para>规则：引用 <c>Cosmos.Resource.Abstractions</c> 或 <c>Cosmos.Runtime</c> 的程序集必须同时引用
+        /// <c>Cosmos.Async</c>——它们的公开/受保护 API 暴露了 <c>OperationBase</c> 等异步类型，
+        /// 缺失时会得到 Unity 才报的 CS0012（本工具按目录编译，天然看不到）。</para>
+        /// <para>同时校验 <c>Cosmos.*</c> 引用是否存在（拼写错误）。</para>
+        /// </summary>
+        /// <returns>错误数</returns>
+        static int CheckAsmdefReferences()
+        {
+            var assetsRoot = Path.Combine(Root, "Assets");
+            if (!Directory.Exists(assetsRoot))
+                return 0;
+            var names = new HashSet<string>(StringComparer.Ordinal);
+            var entries = new List<Tuple<string, string, List<string>>>();
+            foreach (var file in Directory.GetFiles(assetsRoot, "*.asmdef", SearchOption.AllDirectories).OrderBy(f => f))
+            {
+                using (var document = JsonDocument.Parse(File.ReadAllText(file)))
+                {
+                    var root = document.RootElement;
+                    var name = root.TryGetProperty("name", out var nameElement) ? nameElement.GetString() : Path.GetFileNameWithoutExtension(file);
+                    var referencesOfAsmdef = new List<string>();
+                    if (root.TryGetProperty("references", out var referencesElement))
+                    {
+                        foreach (var reference in referencesElement.EnumerateArray())
+                        {
+                            var value = reference.GetString();
+                            if (!string.IsNullOrEmpty(value))
+                                referencesOfAsmdef.Add(value);
+                        }
+                    }
+                    names.Add(name);
+                    entries.Add(new Tuple<string, string, List<string>>(name, file, referencesOfAsmdef));
+                }
+            }
+            var errors = 0;
+            foreach (var entry in entries)
+            {
+                var name = entry.Item1;
+                var referencesOfAsmdef = entry.Item3;
+                var needsAsync = referencesOfAsmdef.Contains("Cosmos.Resource.Abstractions") || referencesOfAsmdef.Contains("Cosmos.Runtime");
+                if (needsAsync && !referencesOfAsmdef.Contains("Cosmos.Async"))
+                {
+                    Console.WriteLine($"[FAIL] asmdef {name} : 缺少 Cosmos.Async 引用（{entry.Item2}）");
+                    errors++;
+                }
+                foreach (var reference in referencesOfAsmdef)
+                {
+                    if (reference.StartsWith("GUID:", StringComparison.Ordinal))
+                        continue;
+                    if (reference.StartsWith("Cosmos.", StringComparison.Ordinal) && !names.Contains(reference))
+                    {
+                        Console.WriteLine($"[FAIL] asmdef {name} : 引用了不存在的程序集 {reference}（{entry.Item2}）");
+                        errors++;
+                    }
+                }
+            }
+            Console.WriteLine(errors == 0
+                ? $"[OK] asmdef references : {entries.Count} asmdef(s)"
+                : $"[FAIL] asmdef references : {errors} error(s)");
+            return errors;
         }
 
         static string GetArgValue(string[] args, string key)
@@ -215,7 +332,7 @@ namespace RoslynCheck
         /// 编译与资源桥相关的示例脚本：这些示例直接调用 IResourceManager / 句柄 API，
         /// 用它们验证示例与框架 API 保持一致（示例目录不参与 Unity 程序集编译检查）。
         /// </summary>
-        static int CheckExamples(CSharpParseOptions parseOptions, List<MetadataReference> runtimeReferences, CSharpCompilation runtimeCompilation)
+        static int CheckExamples(CSharpParseOptions parseOptions, List<MetadataReference> runtimeReferences, CSharpCompilation runtimeCompilation, CSharpCompilation asyncCompilation)
         {
             var exampleRoot = Path.Combine(Root, "Assets", "Examples", "ExampleScripts");
             var relativePaths = new[]
@@ -225,11 +342,20 @@ namespace RoslynCheck
                 "10_Scene/LoadScenePanel.cs",
                 "24_Procedure/ProcedureStates/PloyState.cs",
                 "24_Procedure/ProcedureStates/YBotState.cs",
+                // 可选下载插件（Cosmos.Download）的示例
+                "09_Download/MyDownload.cs",
             };
             var optionalDirectories = new[]
             {
                 // Entity 示例内部互相引用，整目录一起编译
                 "23_Entity",
+                // 输入模块：自定义绑定示例（CustomButtonName + Helper + Subscriber）
+                "26_CustomInput",
+                // 数据表模块：自定义行解析 + 面板用法
+                "13_DataTable",
+                // 统一异步方案：条件等待/定时/协程/Task（原 Awaitable + FutureTask 示例）
+                "11_Awaitable",
+                "22_FutureTask",
                 // 自定义异步操作示例（GameAsyncOperation）
                 "27_AsyncOp",
             };
@@ -251,6 +377,7 @@ namespace RoslynCheck
             }
             var trees = LoadFiles(files, parseOptions);
             var references = new List<MetadataReference>(runtimeReferences);
+            references.Add(asyncCompilation.ToMetadataReference());
             references.Add(runtimeCompilation.ToMetadataReference());
             var compilation = CSharpCompilation.Create(
                 "Examples.Resource",
@@ -263,7 +390,7 @@ namespace RoslynCheck
         /// <summary>
         /// 编译可选适配器程序集：每个适配器单独编译，并引用第三方 API 桩。
         /// </summary>
-        static int CheckAdapters(List<MetadataReference> references, CSharpCompilation stubCompilation, CSharpCompilation coreCompilation)
+        static int CheckAdapters(List<MetadataReference> references, CSharpCompilation stubCompilation, CSharpCompilation coreCompilation, CSharpCompilation asyncCompilation)
         {
             var errors = 0;
             var thirdPartyParse = new CSharpParseOptions(LanguageVersion.CSharp9, DocumentationMode.None, SourceCodeKind.Regular, Defines);
@@ -295,6 +422,7 @@ namespace RoslynCheck
                 var trees = LoadFiles(Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories).OrderBy(f => f), adapterParseOptions);
                 var adapterReferences = new List<MetadataReference>(references);
                 adapterReferences.Add(stubCompilation.ToMetadataReference());
+                adapterReferences.Add(asyncCompilation.ToMetadataReference());
                 adapterReferences.Add(coreCompilation.ToMetadataReference());
                 adapterReferences.Add(thirdPartyCompilation.ToMetadataReference());
                 var compilation = CSharpCompilation.Create(
@@ -325,6 +453,22 @@ namespace RoslynCheck
             };
         }
 
+        static IEnumerable<string> GetHydrogenFiles()
+        {
+            // 第三方 TCP 库（独立 asmdef）
+            var hydrogenRoot = Path.Combine(AssetsPath, "Runtime", "3rdParty", "Hydrogen");
+            if (!Directory.Exists(hydrogenRoot))
+                return new string[0];
+            return Directory.GetFiles(hydrogenRoot, "*.cs", SearchOption.AllDirectories).OrderBy(f => f);
+        }
+
+        static IEnumerable<string> GetAsyncFiles()
+        {
+            // 通用异步底座：不依赖资源/任何模块
+            return Directory.GetFiles(Path.Combine(AssetsPath, "Runtime", "Base", "Async"), "*.cs", SearchOption.AllDirectories)
+                .OrderBy(f => f);
+        }
+
         static IEnumerable<string> GetCoreFiles()
         {
             return Directory.GetFiles(Path.Combine(AssetsPath, "Runtime", "Base", "ResourceAbstractions"), "*.cs", SearchOption.AllDirectories)
@@ -336,6 +480,7 @@ namespace RoslynCheck
             var runtimeRoot = Path.Combine(AssetsPath, "Runtime");
             var excludes = new[]
             {
+                Path.Combine(runtimeRoot, "Base", "Async"),
                 Path.Combine(runtimeRoot, "Base", "ResourceAbstractions"),
                 Path.Combine(runtimeRoot, "3rdParty", "Hydrogen"),
                 Path.Combine(runtimeRoot, "Architeture", "LiteMVC"),
@@ -353,10 +498,21 @@ namespace RoslynCheck
             return files;
         }
 
+        static IEnumerable<string> GetEditorFallbackFiles()
+        {
+            var fallbackRoot = Path.Combine(AssetsPath, "Editor", "ResourceFallback");
+            if (!Directory.Exists(fallbackRoot))
+                return new string[0];
+            return Directory.GetFiles(fallbackRoot, "*.cs", SearchOption.AllDirectories).OrderBy(f => f);
+        }
+
         static IEnumerable<string> GetEditorFiles()
         {
             var editorRoot = Path.Combine(AssetsPath, "Editor");
+            // ResourceFallback 有自己的 asmdef（Cosmos.Resource.EditorFallback），单独编译
+            var fallbackRoot = Path.Combine(editorRoot, "ResourceFallback");
             return Directory.GetFiles(editorRoot, "*.cs", SearchOption.AllDirectories)
+                .Where(f => !f.StartsWith(fallbackRoot + Path.DirectorySeparatorChar) && !f.StartsWith(fallbackRoot + "/"))
                 .OrderBy(f => f);
         }
 

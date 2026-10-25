@@ -3,6 +3,7 @@
     "rootNamespace": "Cosmos.Resource.YooAsset",
     "references": [
         "Cosmos.Resource.Abstractions",
+        "Cosmos.Async",
         "YooAsset"
     ],
     "includePlatforms": [],

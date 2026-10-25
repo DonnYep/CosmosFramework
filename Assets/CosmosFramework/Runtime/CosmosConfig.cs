@@ -1,3 +1,5 @@
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Cosmos.Resource;
 
@@ -5,10 +7,12 @@ namespace Cosmos
 {
     /// <summary>
     /// 框架启动配置。
+    /// <para>启动流程只做三件事：设置静态配置 → 启动模块（内置零反射 + 外部程序集按需发现）→ 初始化资源与输入帮助体。</para>
     /// <para>资源方案是可插拔的：这里只需要填写 Provider 名称（如 Addressables / YooAsset / QuarkAsset / AssetDatabase）与参数，</para>
     /// <para>框架不依赖任何具体资源库，UI / Entity / Audio / Scene / DataTable 等模块通过资源桥统一访问。</para>
     /// </summary>
     [DisallowMultipleComponent]
+    [DefaultExecutionOrder(-10000)]
     public class CosmosConfig : MonoBehaviour
     {
         [SerializeField] bool launchAppDomainModules = true;
@@ -24,7 +28,6 @@ namespace Cosmos
 
         [SerializeField] int debugHelperIndex;
         [SerializeField] int jsonHelperIndex;
-        [SerializeField] int messagePackHelperIndex;
 
         [SerializeField] string debugHelperName;
         [SerializeField] string jsonHelperName;
@@ -47,7 +50,7 @@ namespace Cosmos
             var resourceManager = CosmosEntry.ResourceManager;
             if (resourceManager == null)
             {
-                Debug.LogError("[CosmosConfig] resource module is missing, check launchAppDomainModules !");
+                Debug.LogError($"[CosmosConfig] resource module is missing; keep launchAppDomainModules = true (or pass ResourceManager to CosmosEntry.LaunchModules).");
                 return;
             }
             resourceManager.DiagnosticsEnabled = resourceDiagnostics;
@@ -56,10 +59,9 @@ namespace Cosmos
 
         protected virtual void Awake()
         {
+            //静态配置先落地：模块初始化阶段就可能用到 Debug / Json 帮助体
+            ApplyStaticConfig();
             LoadHelpers();
-            CosmosEntry.PrintModulePreparatory = printModulePreparatory;
-            Application.runInBackground = runInBackground;
-            Utility.Debug.DisableDebugLog = disableDebugLog;
             if (launchAppDomainModules)
             {
                 CosmosEntry.LaunchAppDomainModules();
@@ -67,29 +69,69 @@ namespace Cosmos
                 SetInputHelper();
             }
         }
+        /// <summary>
+        /// 应用与模块无关的静态配置
+        /// </summary>
+        void ApplyStaticConfig()
+        {
+            CosmosEntry.PrintModulePreparatory = printModulePreparatory;
+            Application.runInBackground = runInBackground;
+            Utility.Debug.DisableDebugLog = disableDebugLog;
+        }
+        /// <summary>
+        /// 按配置装配 Debug / Json 帮助体。
+        /// <para>只在这里解析一次类型名，并且解析失败会明确告警（旧实现是静默忽略）。</para>
+        /// </summary>
         void LoadHelpers()
         {
-            if (!string.IsNullOrEmpty(debugHelperName) && debugHelperName != Constants.NONE)
+            if (TryResolveHelper<Utility.Debug.IDebugHelper>(debugHelperName, out var debugHelper))
             {
-                var debugHelper = Utility.Assembly.GetTypeInstance(debugHelperName);
-                if (debugHelper != null)
-                    Utility.Debug.SetHelper((Utility.Debug.IDebugHelper)debugHelper);
+                Utility.Debug.SetHelper(debugHelper);
             }
-            if (!string.IsNullOrEmpty(jsonHelperName) && jsonHelperName != Constants.NONE)
+            if (TryResolveHelper<Utility.Json.IJsonHelper>(jsonHelperName, out var jsonHelper))
             {
-                var jsonHelper = Utility.Assembly.GetTypeInstance(jsonHelperName);
-                if (jsonHelper != null)
-                    Utility.Json.SetHelper((Utility.Json.IJsonHelper)jsonHelper);
+                Utility.Json.SetHelper(jsonHelper);
             }
         }
         void SetInputHelper()
         {
-            if (!string.IsNullOrEmpty(inputHelperName) && inputHelperName != Constants.NONE)
+            var inputManager = CosmosEntry.InputManager;
+            if (inputManager == null)
             {
-                var inputHelper = Utility.Assembly.GetTypeInstance<Cosmos.Input.IInputHelper>(inputHelperName);
-                if (inputHelper != null)
-                    CosmosEntry.InputManager.SetInputHelper(inputHelper);
+                Debug.LogError("[CosmosConfig] input module is missing, input helper is not applied !");
+                return;
             }
+            if (TryResolveHelper<Cosmos.Input.IInputHelper>(inputHelperName, out var inputHelper))
+            {
+                inputManager.SetInputHelper(inputHelper);
+            }
+        }
+        /// <summary>
+        /// 解析帮助体类型并实例化
+        /// </summary>
+        /// <typeparam name="T">帮助体接口</typeparam>
+        /// <param name="typeName">类型完全限定名</param>
+        /// <param name="helper">帮助体实例</param>
+        /// <returns>是否解析成功</returns>
+        static bool TryResolveHelper<T>(string typeName, out T helper)
+            where T : class
+        {
+            helper = null;
+            if (string.IsNullOrEmpty(typeName) || typeName == Constants.NONE)
+                return false;
+            var type = Utility.Assembly.GetType(typeName);
+            if (type == null)
+            {
+                Debug.LogWarning($"[CosmosConfig] helper type is not found : {typeName} (expected interface {typeof(T).Name})");
+                return false;
+            }
+            if (!typeof(T).IsAssignableFrom(type) || type.IsAbstract || type.GetConstructor(Type.EmptyTypes) == null)
+            {
+                Debug.LogWarning($"[CosmosConfig] helper type is invalid : {typeName} (must implement {typeof(T).Name} and have a parameterless constructor)");
+                return false;
+            }
+            helper = (T)Activator.CreateInstance(type);
+            return true;
         }
     }
 }
