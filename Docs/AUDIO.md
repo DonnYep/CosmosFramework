@@ -163,16 +163,16 @@ music.StopAudios(1f);      // 整组淡出停止（换 BGM 时"中断播放"用�
 
 仓库内没有该模块的自动化测试工程。本次重构的验证是一个 **18 用例 / 84 断言的临时工程**
 （把模块真实源码编译进控制台程序，配一套可运行的 `UnityEngine` 模拟实现，逐帧驱动）：
-`E:\DeekSeekSetting\_dshcache\cosmos-audio\harness`，**位于仓库之外，可整体删除**。
+`E:\DeekSeekSetting\_dshcache\20-projects\cosmos\audio\harness`，**位于仓库之外，可整体删除**。
 
 ```powershell
-dotnet run --project E:\DeekSeekSetting\_dshcache\cosmos-audio\harness\AudioHarness.csproj
+dotnet run --project E:\DeekSeekSetting\_dshcache\20-projects\cosmos\audio\harness\AudioHarness.csproj
 # 断言：84 通过 / 0 失败  === ALL-PASS ===
 ```
 
 另外用**变异测试**验证了这些用例不是空转：把"旧实现的缺陷"重新注入源码副本，
 7 个变异（终端状态不迁移、静音写旧值、不做播完判定、永不回收、恢复不校验、暂停已播完音效、
-静音不继承）**全部被检出**。脚本：`E:\DeekSeekSetting\_dshcache\cosmos-audio\mutate.ps1`。
+静音不继承）**全部被检出**。脚本：`E:\DeekSeekSetting\_dshcache\20-projects\cosmos\audio\mutate.ps1`。
 
 ## 10. 边界与已知限制
 

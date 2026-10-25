@@ -148,10 +148,10 @@ op.Abort();                       // 立即完成：WasAborted=true、Completed/
 
 **20 用例 / 72 断言**的临时工程：把 `Cosmos.Async` 的**真实源码**编进控制台程序，
 用最小 UnityEngine 替身（含可推进时间与可泵协程）手动驱动 `OperationSystem.Update()`。
-位置：`E:\DeekSeekSetting\_dshcache\cosmos-async\harness`（仓库外，可删）。
+位置：`E:\DeekSeekSetting\_dshcache\20-projects\cosmos\async\harness`（仓库外，可删）。
 
 ```powershell
-dotnet run --project E:\DeekSeekSetting\_dshcache\cosmos-async\harness\AsyncHarness.csproj
+dotnet run --project E:\DeekSeekSetting\_dshcache\20-projects\cosmos\async\harness\AsyncHarness.csproj
 # 断言：72 通过 / 0 失败  === ALL-PASS ===
 ```
 

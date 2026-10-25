@@ -127,10 +127,10 @@ manager.ReleaseAllDataTables();
 
 **14 用例 / 55 断言**的临时工程：把 `DataTable<T>` / `DataTableBase` / `DataTableManager` /
 `CsvDataRowParser<T>` / `DataRowBinder<T>` 的**真实源码**编进控制台程序，用假帮助体控制加载时机。
-位置：`E:\DeekSeekSetting\_dshcache\cosmos-datatable\harness`（仓库外，可删）。
+位置：`E:\DeekSeekSetting\_dshcache\20-projects\cosmos\datatable\harness`（仓库外，可删）。
 
 ```powershell
-dotnet run --project E:\DeekSeekSetting\_dshcache\cosmos-datatable\harness\DataTableHarness.csproj
+dotnet run --project E:\DeekSeekSetting\_dshcache\20-projects\cosmos\datatable\harness\DataTableHarness.csproj
 # 断言：55 通过 / 0 失败  === ALL-PASS ===
 ```
 

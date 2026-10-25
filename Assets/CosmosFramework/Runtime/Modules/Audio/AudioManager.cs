@@ -20,7 +20,7 @@ namespace Cosmos.Audio
      *    命令同步生效；过渡在管理器每帧推进，推进完成的同一帧内完成状态迁移与回收。
      */
     //================================================
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_AUDIO)]
     internal sealed partial class AudioManager : Module, IAudioManager
     {
         /// <summary>

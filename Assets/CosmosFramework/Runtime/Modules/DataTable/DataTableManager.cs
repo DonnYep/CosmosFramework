@@ -7,7 +7,7 @@ namespace Cosmos.DataTable
     /// <para>加载流程：ReadDataTableAssetAsync → 状态置 Loading → 帮助体加载资源
     /// → OnReadSuccess/OnReadFailure → 解析（失败原因写到表的 Error）→ 状态置 Loaded/Failed。</para>
     /// </summary>
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_DATA_TABLE)]
     internal sealed partial class DataTableManager : Module, IDataTableManager
     {
         Dictionary<string, DataTableBase> dataTableDict;

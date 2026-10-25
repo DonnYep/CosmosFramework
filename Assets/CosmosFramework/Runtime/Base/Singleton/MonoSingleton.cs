@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 namespace Cosmos
 {
     /// <summary>
@@ -21,8 +21,10 @@ namespace Cosmos
                     if (instance == null)//假如还是空，则生成一个
                     {
                         instance = new GameObject(type.ToString()).AddComponent<TDerived>();
-                        instance.OnInitialize();
                     }
+                    //无论"找到"还是"新建"，首次获取都要走一次初始化：
+                    //否则场景里预置的实例会漏掉 DontDestroyOnLoad 等初始化动作
+                    instance.OnInitialize();
                 }
                 return instance;
             }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using System;
 namespace Cosmos
@@ -39,33 +39,54 @@ namespace Cosmos
         }
         public GameObject GetModuleInstanceObject(IModuleManager moduleManager)
         {
+            if (moduleManager == null)
+                throw new ArgumentNullException("Module manager is invalid !");
             var type = moduleManager.GetType();
-            var hasType = GameManager.HasModule(type);
-            if (!hasType)
-                return null;
-            GameObject instanceObject;
-            var hasMount = moduleInstanceObjectDict.TryGetValue(type, out instanceObject);
-            if (!hasMount)
-            {
-                instanceObject = new GameObject(type.Name + "-->>InstanceObject");
-                instanceObject.transform.SetParent(transform);
-                moduleInstanceObjectDict[type] = instanceObject;
-            }
-            else
+            if (!GameManager.HasModule(type))
+                throw new InvalidOperationException($"Module : {type} is not registered, instance object is unavailable.");
+            //假 null（节点被外部销毁）也走重建路径
+            if (moduleInstanceObjectDict.TryGetValue(type, out var instanceObject) && instanceObject != null)
+                return instanceObject;
+
+            instanceObject = new GameObject($"{type.Name} (ModuleInstance)");
+            //不继承父节点世界坐标，避免 CosmosRoot 偏移（浮动原点等）时挂载点带上额外位移
+            instanceObject.transform.SetParent(transform, false);
+            instanceObject.transform.localPosition = Vector3.zero;
+            instanceObject.transform.localRotation = Quaternion.identity;
+            instanceObject.transform.localScale = Vector3.one;
+            moduleInstanceObjectDict[type] = instanceObject;
+            return instanceObject;
+        }
+        /// <summary>
+        /// 清理所有模块挂载点；
+        /// <para>由 <see cref="GameManager.TerminateModules"/> 调用，保证挂载点生命周期与模块注册表一致。</para>
+        /// </summary>
+        internal static void ClearModuleInstanceObjects()
+        {
+            //只查不建：终止流程里不能把管理器又实例化出来
+            if (instance == null)
+                return;
+            instance.ClearModuleInstanceObjectsInternal();
+        }
+        void ClearModuleInstanceObjectsInternal()
+        {
+            foreach (var instanceObject in moduleInstanceObjectDict.Values)
             {
                 if (instanceObject == null)
-                {
-                    instanceObject = new GameObject(type.Name + "-->>InstanceObject");
-                    instanceObject.transform.SetParent(transform);
-                    moduleInstanceObjectDict[type] = instanceObject;
-                }
+                    continue;
+                if (Application.isPlaying)
+                    Destroy(instanceObject);
+                else
+                    DestroyImmediate(instanceObject);
             }
-            return instanceObject;
+            moduleInstanceObjectDict.Clear();
         }
         private void Awake()
         {
             gameObject.name = "CosmosRoot";
             previousTimeSinceStartup = DateTime.Now;
+            //记录主线程 ID：后台线程投递的网络事件等回调据此判断是否需要切换线程
+            UnityMainThread.Initialize();
         }
         private void OnDestroy()
         {
@@ -87,6 +108,8 @@ namespace Cosmos
                 return;
             GameManager.OnRefresh();
             GameManager.OnElapseRefresh(deltaTime);
+            //模块刷新之后统一执行后台线程投递的回调（网络通道的 await 续体等）
+            UnityMainThread.Drain();
         }
         private void LateUpdate()
         {

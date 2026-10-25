@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Cosmos.Input;
 using Cosmos.Resource;
 
 namespace Cosmos
@@ -47,8 +48,7 @@ namespace Cosmos
         /// </summary>
         public void LoadResource()
         {
-            var resourceManager = CosmosEntry.ResourceManager;
-            if (resourceManager == null)
+            if (!GameManager.TryGetModule<IResourceManager>(out var resourceManager))
             {
                 Debug.LogError($"[CosmosConfig] resource module is missing; keep launchAppDomainModules = true (or pass ResourceManager to CosmosEntry.LaunchModules).");
                 return;
@@ -95,8 +95,7 @@ namespace Cosmos
         }
         void SetInputHelper()
         {
-            var inputManager = CosmosEntry.InputManager;
-            if (inputManager == null)
+            if (!GameManager.TryGetModule<IInputManager>(out var inputManager))
             {
                 Debug.LogError("[CosmosConfig] input module is missing, input helper is not applied !");
                 return;

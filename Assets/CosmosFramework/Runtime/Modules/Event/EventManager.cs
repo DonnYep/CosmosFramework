@@ -7,7 +7,7 @@ namespace Cosmos.Event
      * 1、事件中心。使用数据类型作为事件的key。
      */
     //================================================
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_EVENT)]
     internal sealed partial class EventManager : Module, IEventManager
     {
         readonly Dictionary<string, EventNodeBase> eventDict = new Dictionary<string, EventNodeBase>();

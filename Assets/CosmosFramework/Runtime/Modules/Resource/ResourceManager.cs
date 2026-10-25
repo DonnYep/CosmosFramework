@@ -16,7 +16,7 @@ namespace Cosmos.Resource
     /// <para>· 场景句柄的登记与卸载；</para>
     /// <para>· 诊断记录。</para>
     /// </summary>
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_RESOURCE)]
     internal sealed class ResourceManager : Module, IResourceManager
     {
         /// <summary>

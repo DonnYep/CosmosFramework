@@ -19,7 +19,7 @@ namespace Cosmos.WebRequest
     * 事件回调/协程等待/async-await/同步等待/取消/超时/重试。
      */
     //================================================
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_WEB_REQUEST)]
     internal class WebRequestManager : Module, IWebRequestManager
     {
         WebRequester webRequester = new WebRequester();

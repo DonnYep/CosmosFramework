@@ -12,7 +12,7 @@ namespace Cosmos.ObjectPool
      * 2、对象池名不可重复。
      */
     //================================================
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_OBJECT_POOL)]
     internal sealed class ObjectPoolManager : Module, IObjectPoolManager
     {
         #region Properties

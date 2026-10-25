@@ -1,8 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 namespace Cosmos.Lockstep
 {
     public class LockstepCamera : MonoBehaviour
     {
+        /// <summary>
+        /// 当前场景中的相机实例；由 Awake 注册、OnDestroy 注销，供多人同步层取用。
+        /// </summary>
+        public static LockstepCamera Instance { get; private set; }
+
         [SerializeField] float moveSpeed = 5;
         [SerializeField] Transform targetTransform;
 
@@ -11,7 +16,6 @@ namespace Cosmos.Lockstep
 
         Vector3 startPosition;
         Vector3 startRotation;
-        IController cameraController;
         public void SetTransformTarget(Transform target)
         {
             targetTransform = target;
@@ -22,9 +26,12 @@ namespace Cosmos.Lockstep
             transform.position = startPosition;
             transform.eulerAngles = startRotation;
         }
+        void Awake()
+        {
+            Instance = this;
+        }
         void Start()
         {
-            cameraController = GameEntry.ControllerManager.CreateController("LockstepCamera", this);
             startPosition = transform.position;
             startRotation = transform.eulerAngles;
         }
@@ -43,7 +50,8 @@ namespace Cosmos.Lockstep
         }
         void OnDestroy()
         {
-            GameEntry.ControllerManager.ReleaseController(cameraController);
+            if (Instance == this)
+                Instance = null;
         }
     }
 }

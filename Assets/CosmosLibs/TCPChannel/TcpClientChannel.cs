@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Telepathy;
 namespace Cosmos.Network
 {
@@ -39,6 +39,8 @@ namespace Cosmos.Network
         {
             this.ChannelName = channelName;
             client = new Client(TcpConstants.MaxMessageSize);
+            //接收回调必须早于 Connect 绑定，否则极快建立连接时可能漏掉首批数据
+            client.OnData = OnReceiveDataHandler;
             Log.Info = (s) => Utility.Debug.LogInfo(s);
             Log.Warning = (s) => Utility.Debug.LogWarning(s);
             Log.Error = (s) => Utility.Debug.LogError(s);
@@ -49,7 +51,6 @@ namespace Cosmos.Network
             this.Host = host;
             this.Port = port;
             client.Connect(Host, Port);
-            client.OnData = OnReceiveDataHandler;
         }
         ///<inheritdoc/>
         public void TickRefresh()
@@ -65,9 +66,8 @@ namespace Cosmos.Network
         ///<inheritdoc/>
         public void Disconnect()
         {
+            //只断开连接，不清订阅：通道允许重连，清空订阅会让后续监听静默失效
             client.Disconnect();
-            client.OnData = null;
-            onDataReceived = null;
         }
         ///<inheritdoc/>
         public void Close()
@@ -77,7 +77,13 @@ namespace Cosmos.Network
         }
         void OnReceiveDataHandler(ArraySegment<byte> arrSeg)
         {
-            onDataReceived?.Invoke(arrSeg.Array);
+            var length = arrSeg.Count;
+            if (length <= 0)
+                return;
+            //必须按 Offset/Count 拷贝：arrSeg.Array 是底层整块缓冲，直接传出去长度是错的
+            var data = new byte[length];
+            Array.Copy(arrSeg.Array, arrSeg.Offset, data, 0, length);
+            onDataReceived?.Invoke(data);
         }
     }
 }

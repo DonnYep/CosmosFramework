@@ -1,4 +1,5 @@
-﻿using Cosmos.DataTable;
+using Cosmos.DataTable;
+using Cosmos.Resource;
 using System;
 using UnityEngine;
 namespace Cosmos
@@ -20,11 +21,11 @@ namespace Cosmos
         }
         public void LoadDataTableAsync(DataTableAssetInfo assetInfo, DataTableBase dataTable)
         {
-            CosmosEntry.ResourceManager.LoadAssetAsync<TextAsset>(assetInfo.AssetName, (asset) => { OnLoadDone(asset, dataTable); });
+            GameManager.GetModule<IResourceManager>().LoadAssetAsync<TextAsset>(assetInfo.AssetName, (asset) => { OnLoadDone(asset, dataTable); });
         }
         public void UnLoadDataTable(DataTableAssetInfo assetInfo)
         {
-            CosmosEntry.ResourceManager.UnloadAsset(assetInfo.AssetName);
+            GameManager.GetModule<IResourceManager>().UnloadAsset(assetInfo.AssetName);
         }
         void OnLoadDone(TextAsset asset, DataTableBase dataTable)
         {

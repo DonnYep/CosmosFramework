@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using kcp2k;
 
 namespace Cosmos.Network
@@ -118,10 +118,8 @@ namespace Cosmos.Network
         }
         void OnDisconnectHandler()
         {
+            //不能在这里清空订阅：通道支持重连，清空会让重连后的监听（含 await 等待器）静默失效
             onDisconnected?.Invoke();
-            onConnected = null;
-            onDisconnected = null;
-            onDataReceived = null;
         }
         void OnConnectHandler()
         {

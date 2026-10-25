@@ -112,10 +112,10 @@ input.SetInputHelper(new LegacyBindingInputHelper(
 仓库内没有该模块的单测工程。本轮验证是 **9 用例 / 53 断言的临时工程**：
 把 `InputManager`/`InputVirtualDevice`/`InputVirtualButton`/`LegacyBindingInputHelper` 的**真实源码**
 编进控制台程序，配可编程的 `UnityEngine.Input` 替身（可模拟按键、缺失轴、帧推进）。
-位置：`E:\DeekSeekSetting\_dshcache\cosmos-input\harness`（仓库外，可删）。
+位置：`E:\DeekSeekSetting\_dshcache\20-projects\cosmos\input\harness`（仓库外，可删）。
 
 ```powershell
-dotnet run --project E:\DeekSeekSetting\_dshcache\cosmos-input\harness\InputHarness.csproj
+dotnet run --project E:\DeekSeekSetting\_dshcache\20-projects\cosmos\input\harness\InputHarness.csproj
 # 断言：53 通过 / 0 失败  === ALL-PASS ===
 ```
 

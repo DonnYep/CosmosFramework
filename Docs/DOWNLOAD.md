@@ -117,15 +117,15 @@ dl.DeleteFileOnAbort = false;           // 默认 false：保留断点
 仓库没有该模块的单测工程。本次重写的验证是一个 **16 用例 / 53 断言的临时工程**：
 把 `DownloadScheduler` / `DownloadTask` / `DownloadStorage` 的**真实源码**编进控制台程序，
 用可编程的假传输（可模拟"忽略 Range / 断流截断 / 网络失败 / 限速"）逐帧驱动。
-位置：`E:\DeekSeekSetting\_dshcache\cosmos-download\harness`（仓库外，可删）。
+位置：`E:\DeekSeekSetting\_dshcache\20-projects\cosmos\download\harness`（仓库外，可删）。
 
 ```powershell
-dotnet run --project E:\DeekSeekSetting\_dshcache\cosmos-download\harness\DownloadHarness.csproj
+dotnet run --project E:\DeekSeekSetting\_dshcache\20-projects\cosmos\download\harness\DownloadHarness.csproj
 # 断言：53 通过 / 0 失败  === ALL-PASS ===
 ```
 
 并用**变异测试**验证用例有效：重新注入 6 个缺陷（不校验 Range、不校验长度、忽略断点、
-不重试、并发上限失效、优先级失效）**全部被检出**。脚本：`E:\DeekSeekSetting\_dshcache\cosmos-download\mutate.ps1`。
+不重试、并发上限失效、优先级失效）**全部被检出**。脚本：`E:\DeekSeekSetting\_dshcache\20-projects\cosmos\download\mutate.ps1`。
 
 ## 8. 与 WebRequest 模块的分工
 

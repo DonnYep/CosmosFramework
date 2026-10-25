@@ -478,6 +478,13 @@ namespace RoslynCheck
         static IEnumerable<string> GetRuntimeFiles()
         {
             var runtimeRoot = Path.Combine(AssetsPath, "Runtime");
+            //以下目录不是 Cosmos.Runtime 程序集的一部分：
+            //- Base/Async、Base/ResourceAbstractions：各自有 asmdef，单独编译；
+            //- 3rdParty/Hydrogen：有 asmdef，本工具用 GetHydrogenFiles 单独编译；
+            //- Architeture/LiteMVC、Architeture/PureMVC：各自有 asmdef；
+            //- Integrations：资源适配器，各自有 asmdef，由 adapters 模式单独编译。
+            //注意：KCP / RUDP / SUDP / Telepathy 等第三方网络库已移出 Runtime（现在位于 Assets/CosmosLibs），
+            //不参与本程序集编译，因此这里不再需要为它们保留排除项。
             var excludes = new[]
             {
                 Path.Combine(runtimeRoot, "Base", "Async"),
@@ -485,10 +492,6 @@ namespace RoslynCheck
                 Path.Combine(runtimeRoot, "3rdParty", "Hydrogen"),
                 Path.Combine(runtimeRoot, "Architeture", "LiteMVC"),
                 Path.Combine(runtimeRoot, "Architeture", "PureMVC"),
-                Path.Combine(runtimeRoot, "Modules", "Network", "KCP"),
-                Path.Combine(runtimeRoot, "Modules", "Network", "RUDP"),
-                Path.Combine(runtimeRoot, "Modules", "Network", "SUDP"),
-                Path.Combine(runtimeRoot, "Modules", "Network", "Telepathy"),
                 Path.Combine(runtimeRoot, "Integrations"),
             };
             var files = Directory.GetFiles(runtimeRoot, "*.cs", SearchOption.AllDirectories)

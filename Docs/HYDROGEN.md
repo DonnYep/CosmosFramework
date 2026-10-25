@@ -82,17 +82,17 @@ client.Dispose();               // 或 client.Disconnect() 后复用（重连）
 ## 6. 验证
 
 **14 用例 / 51 断言**的临时工程：把库的**真实源码**编进控制台程序，用 `TcpListener` 在 127.0.0.1 跑真实 socket。
-位置：`E:\DeekSeekSetting\_dshcache\cosmos-hydrogen\harness`（仓库外，可删）。
+位置：`E:\DeekSeekSetting\_dshcache\20-projects\cosmos\hydrogen\harness`（仓库外，可删）。
 
 ```powershell
-dotnet run --project E:\DeekSeekSetting\_dshcache\cosmos-hydrogen\harness\HydrogenHarness.csproj -- --exclude=T09   # 48 断言
-dotnet run --project E:\DeekSeekSetting\_dshcache\cosmos-hydrogen\harness\HydrogenHarness.csproj -- --only=T09       # 3 断言（独立进程）
+dotnet run --project E:\DeekSeekSetting\_dshcache\20-projects\cosmos\hydrogen\harness\HydrogenHarness.csproj -- --exclude=T09   # 48 断言
+dotnet run --project E:\DeekSeekSetting\_dshcache\20-projects\cosmos\hydrogen\harness\HydrogenHarness.csproj -- --only=T09       # 3 断言（独立进程）
 ```
 
 覆盖：基本收发/顺序、粘包、半包（故意延迟切分）、8192/60000/70000 字节边界、重连、并发发送（小包 200 条 + 8KB 大包 80 条）、
 连接被拒（不崩溃 + 报"connect failed"）、对端关闭、未连接时发送、未连接时发送报错、**200 条随机长度随机切片的模糊测试**。
 
-修复前的基线（留存于 `_cache\cosmos-hydrogen\baseline.txt`）：**33 通过 / 7 失败**，其中
+修复前的基线（留存于 `_dshcache\20-projects\cosmos\hydrogen\baseline.txt`）：**33 通过 / 7 失败**，其中
 连接被拒那一条直接把进程打崩（`Unhandled exception`），70000 字节那条切出 3 个垃圾帧。
 
 并用变异测试验证用例有效（`mutate.ps1`）：把 4 个缺陷重新注入——

@@ -15,7 +15,7 @@ namespace Cosmos.Download
      *    在 OnUpdate 里用 unscaledTime 推进调度器（暂停菜单 timeScale=0 时下载不中断）。
      */
     //================================================
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_DOWNLOAD)]
     internal sealed class DownloadManager : Module, IDownloadManager
     {
         #region events

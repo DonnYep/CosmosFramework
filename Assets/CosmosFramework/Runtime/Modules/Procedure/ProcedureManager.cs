@@ -19,7 +19,7 @@ namespace Cosmos.Procedure
      * 7、OnDestroy函数在ProcedureNode被从ProcedureManager移除时触发。
      */
     //================================================
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_PROCEDURE)]
     internal class ProcedureManager : Module, IProcedureManager
     {
         ProcedureProcessor procedureProcessor;

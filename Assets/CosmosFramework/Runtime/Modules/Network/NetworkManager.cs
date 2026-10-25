@@ -12,7 +12,7 @@ namespace Cosmos.Network
     *3、网络模块只维护通道，具体操作需要根据通道本身作处理；
     */
     //================================================
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_NETWORK)]
     internal sealed class NetworkManager : Module, INetworkManager
     {
         /// <summary>

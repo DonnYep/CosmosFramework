@@ -1,154 +1,122 @@
-# 模块启动（CosmosConfig / 模块注册）
+# 启动与模块注册
 
-> 重构目标：**启动路径上不再有"全量 AppDomain 扫描 + 每次生命周期反射 Invoke"**，
-> 同时保留"用户自定义模块自动发现"这个便利。
+> 适用范围：`Assets/CosmosFramework/Runtime/Modules/Main`
+> 相关文档：[自定义模块](MODULE.md)、[使用手册 §2](MANUAL.md)
 
 ## 1. 启动链
 
-```text
-CosmosConfig.Awake        （[DefaultExecutionOrder(-10000)]，先于业务脚本）
-  ├─ 静态配置：PrintModulePreparatory / runInBackground / DisableDebugLog
-  ├─ LoadHelpers()         Debug / Json 帮助体（类型名解析 + 校验）
-  └─ LaunchAppDomainModules()
-        │
-        ▼
-CosmosEntry.LaunchAppDomainModules()
-        │
-        ▼
-GameManager.InitiateAppDomainModule()
-  ├─ 内置模块：BuiltinModuleRegistry.CreateModules()   ← 直接 new，零反射
-  └─ 外部模块：DiscoverModules(assemblies)             ← 只扫"引用了框架程序集"的程序集
-        │
-        ▼
-Launch()：注册 → OnActive → OnPreparatory → 挂 Tick/Fixed/Late/Elapse 委托
+```
+CosmosConfig.Awake
+ └→ CosmosEntry.LaunchAppDomainModules()
+     └→ GameManager.InitiateAppDomainModule()
+         ├─ 取 AppDomain 程序集列表
+         ├─ BuiltinModuleRegistry.CreateModules()      // 内置模块（显式 new）
+         ├─ DiscoverModules(assemblies)                // 外部 [Module]（按需反射）
+         ├─ ModuleOrdering.Sort(...)                   // 统一优先级排序
+         └─ Launch(modules)
+             ├─ RegisterModule × n                     // OnInitialization
+             ├─ ActiveModule()                         // OnActive
+             ├─ PrepareModule()                        // OnPreparatory + 挂载轮询
+             └─ ThrowModuleInitException()             // 聚合异常
 ```
 
-## 2. 旧实现的开销在哪
+驱动层：`MonoGameManager`（`MonoSingleton`，`[DefaultExecutionOrder(-20000)]`）
+每帧调用 `GameManager.OnRefresh / OnElapseRefresh / OnLateRefresh / OnFixedRefresh`，
+并 `UnityMainThread.Drain()`。
 
-| 位置 | 问题 |
-| --- | --- |
-| `InitiateAppDomainModule` | 对 **AppDomain 里每一个程序集** 调 `GetTypes()`（mscorlib/System.*/UnityEngine.* 全部展开），然后 LINQ `Where` 过滤——启动期一次性的大块分配与 GC 峰值 |
-| `GetInstancesByAttribute<T,K>` | 每个候选类型再调 `GetCustomAttributes<T>()`（分配特性数组），命中后 `Activator.CreateInstance` |
-| 生命周期 | `Utility.Assembly.InvokeMethod(module, "OnInitialization")` 等：**每个模块每个阶段**都做一次 `type.BaseType.GetMethod(...)` + `MethodInfo.Invoke` |
-| 模块接口 | `type.GetInterfaces()` + 字符串 `Contains` 每次都重算 |
-| `CosmosConfig` | 帮助体类型名走 `AppDomain` 逐个 `assembly.GetType`；解析失败**静默忽略** |
-| `CosmosConfigEditor.OnEnable` | `GetDerivedTypeHandlers<T>()` 每次选中 Inspector 都全量扫描一次（编辑器侧卡顿） |
+## 2. 启动 API
 
-> 注意：这些都属于**启动期一次性开销**，不影响每帧性能。但对"启动时间敏感"
-> 的项目（移动端首包、Play 模式频繁重进）值得优化，而且顺手能去掉一堆反射失败的风险。
-
-## 3. 新方案
-
-### 3.1 内置模块：显式注册表（零反射）
-
-`Runtime/Modules/Main/BuiltinModuleRegistry.cs`：
-
-```csharp
-internal static Module[] CreateModules()
-{
-    return new Module[]
-    {
-        new EventManager(), new ResourceManager(), new WebRequestManager(),
-        new DataTableManager(), new ObjectPoolManager(), new EntityManager(),
-        new UIManager(), new AudioManager(), new InputManager(),
-        new ControllerManager(), new FSMManager(), new ProcedureManager(),
-        new NetworkManager(), new DownloadManager(),
-    };
-}
-```
-
-- 顺序即初始化顺序（事件 → 资源 → 网络请求 → 其它），可读、可调、每次启动一致。
-- 没有 `GetTypes`、没有 `Activator`、没有特性反射。
-- 新增内置模块：加一行；删除：删一行。
-
-### 3.2 外部模块：按"程序集引用"过滤后再扫
-
-```csharp
-static bool MayContainModules(Assembly assembly)   // 只做元数据读取，不展开类型
-{
-    foreach (var reference in assembly.GetReferencedAssemblies())
-        if (reference.Name == frameworkAssemblyName) return true;   // 模块必然引用 Cosmos.Runtime
-    return false;
-}
-```
-
-- 典型工程里绝大多数程序集（mscorlib / System.* / UnityEngine.* / 第三方库）**根本不引用框架程序集**，
-  在 `GetTypes()` 之前就被过滤掉；
-- 剩下的程序集按 `[Module]` 优先级 + 类型全名排序后实例化，顺序稳定；
-- `GetTypes()` 用 `ReflectionTypeLoadException` 兜底（部分类型加载失败不会让整个启动崩掉）。
-
-### 3.3 生命周期：直接调用，不再反射
-
-`Module` 增加了 internal 直调入口（虚分派语义不变）：
-
-```csharp
-internal void InvokeInitialization() { OnInitialization(); }
-internal void InvokeActive() { OnActive(); }
-internal void InvokePreparatory() { OnPreparatory(); }
-internal void InvokeDeactive() { OnDeactive(); }
-internal void InvokeTermination() { OnTermination(); }
-```
-
-`GameManager` 因此可以 `module.InvokeTermination()`，删掉全部 `Utility.Assembly.InvokeMethod` 调用。
-（旧实现还有一个隐患：`InvokeMethod` 取的是 `type.BaseType` 上的方法，靠虚分派才落到子类；
-现在没有这层间接了。）
-
-### 3.4 启动可观测
-
-`printModulePreparatory = true` 时会打印：
-
-```text
-[Cosmos] modules : 14 , registration & preparation elapsed 0 ms
-```
-
-用 `System.Diagnostics.Stopwatch` 统计，方便在真实工程里对比优化前后。
-
-### 3.5 CosmosConfig 的调整
-
-| 项 | 旧 | 新 |
+| API | 模块集合 | 扫描 |
 | --- | --- | --- |
-| 执行顺序 | `Awake` 与业务脚本同级 | `[DefaultExecutionOrder(-10000)]` |
-| 帮助体解析 | 类型名找不到时静默跳过 | `TryResolveHelper<T>`：校验接口/无参构造，失败 `Debug.LogWarning` |
-| 帮助体缓存 | 每次 `AppDomain` 逐个 `GetType` | `Utility.Assembly.GetType` 带**命中缓存**（未命中不缓存，避免程序集延迟加载时缓存错误结果） |
-| 死字段 | `messagePackHelperIndex`（声明后从未使用） | 删除 |
-| 重复启动 | 可能重复注册 | `CosmosEntry` + `GameManager` 双重 `Launched` 守卫，重复调用会告警并忽略 |
+| `LaunchAppDomainModules()` | 内置 + 扫描到的外部模块 | 全部 AppDomain 程序集 |
+| `LaunchAssemblyModules(params Assembly[])` | 内置 + 指定程序集里的外部模块 | 仅指定程序集 |
+| `LaunchModules(params Module[])` | 仅传入的模块 | 无；不排序、不校验 |
+| `ReleaseLaunchedModules()` | — | 终止全部模块 |
 
-### 3.6 编辑器侧
+- 启动有 `Launched` 守卫，重复调用会被忽略并告警；
+- 启动失败会回滚守卫，允许修复后重试。
 
-`EditorUtil.GetDerivedTypeHandlers<T>()` 增加按类型的静态缓存（域重载即失效，不会脏），
-`GetDerivedTypeHandlers<T>(reload: true)` 可强制重扫。Inspector 反复选中不再重复扫描 AppDomain。
+## 3. 内置模块注册表
 
-## 4. 启动 API
-
-```csharp
-CosmosEntry.LaunchAppDomainModules();                    // 内置 + 自动发现（推荐，保底行为）
-CosmosEntry.LaunchAssemblyModules(asmA, asmB);           // 内置 + 只扫这两个程序集
-CosmosEntry.LaunchModules(new MyModule(), new Other());  // 只注册传入模块（完全显式控制）
-```
-
-自定义模块两种写法：
+`BuiltinModuleRegistry.CreateModules()` 只决定"有哪些内置模块"，**不决定顺序**：
 
 ```csharp
-// A. 自动发现：程序集引用 Cosmos.Runtime 且类型带 [Module]
-[Module]                                  // Priority 越小越先初始化（默认 100）
-public class MyManager : Module, IMyManager { protected override void OnInitialization() { } }
-
-// B. 显式注册
-CosmosEntry.LaunchModules(BuildinAndMine());
-
-static Module[] BuildinAndMine()
-{
-    var modules = new List<Module> { new MyModule() };   // 内置模块可自行 new
-    return modules.ToArray();
-}
+new EventManager(), new ResourceManager(), new WebRequestManager(),
+new DataTableManager(), new ObjectPoolManager(), new EntityManager(),
+new UIManager(), new AudioManager(), new InputManager(),
+new FSMManager(), new ProcedureManager(), new NetworkManager(), new DownloadManager(),
 ```
 
-## 5. 迁移注意
+新增 / 删除内置模块时，需要同步在 `ModuleConstant` 里分配或移除一个未占用的优先级。
 
-| 变更 | 说明 |
+## 4. 优先级与排序
+
+- 优先级来自 `[Module(Priority = n)]`，未标注时取 `ModuleAttribute.DefaultPriority`（10000）；
+- 内置模块占 `100~1300`（`ModuleConstant`，步长 100，留出插队空隙）；
+- 排序用稳定排序：同优先级保持传入顺序（内置模块先放入 → 内置优先）；
+- 启动前校验内置模块：必须标注、优先级唯一、且小于 10000，否则直接抛异常。
+
+```csharp
+[Module]                 // 10000：排在全部内置模块之后
+[Module(Priority = 50)]  // 全部内置模块之前
+[Module(Priority = 150)] // Event(100) 与 Resource(200) 之间
+```
+
+## 5. 外部模块发现
+
+`DiscoverModules(assemblies)`：
+
+1. 跳过框架自身程序集、动态程序集，以及**没有直接引用框架程序集**的程序集（`MayContainModules`）；
+2. `GetTypes()` 用 `ReflectionTypeLoadException` 兜底（部分类型加载失败不影响启动）；
+3. 过滤：非抽象类、实现 `Module`、标注 `[Module]`；
+4. 按 `Priority` + 类型全名排序后 `Activator.CreateInstance` 实例化（需要无参构造）。
+
+实例化失败会进入启动异常集合，不会中断其它模块。
+
+## 6. 契约解析与重复注册
+
+`ModuleContractResolver` 只考虑 `IModuleManager` 派生接口，按以下顺序解析：
+
+1. 精确名 `I{类名}`（`UIManager` → `IUIManager`）；
+2. 接口名以类名结尾（`AudioManager` → `ICoreAudioManager`）；
+3. 只有一个候选时直接采用；
+4. 仍歧义 → 抛异常（列出候选）。
+
+同一契约只能由一个模块提供，重复注册会抛 `ArgumentException` 并进入启动异常集合。
+要替换内置实现：从 `BuiltinModuleRegistry` 移除该项，或用 `CosmosEntry.LaunchModules` 自行组织集合。
+
+## 7. 生命周期调用
+
+注册阶段只调 `OnInitialization`；随后统一走：
+
+```
+InvokeActive → InvokePreparatory → （每帧）Update / FixedUpdate / LateUpdate / ElapseUpdate
+→ InvokeDeactive → InvokeTermination
+```
+
+`Module` 基类暴露的是 `internal` 直调入口，框架侧不做 `MethodInfo.Invoke`。
+`OnInitialization` 期间只有更早（优先级更小）的模块可用；跨模块依赖请放 `OnPreparatory`。
+
+## 8. 轮询挂载与终止
+
+- `AddRefreshListener()` 把每个模块的 `Update / FixedUpdate / LateUpdate / ElapseUpdate` 挂到
+  `GameManager` 的四个委托上；
+- `TerminateModules()` → `RemoveRefreshListener()` → `OnDeactive` → `OnTermination`
+  → 清空模块表、契约缓存与模块挂载点（`MonoGameManager.ClearModuleInstanceObjects()`）。
+
+## 9. 可观测与错误处理
+
+| 项 | 说明 |
 | --- | --- |
-| `LaunchAssemblyModules` | **现在也会注册内置模块**（旧版只注册目标程序集里的，等于没有 `ResourceManager`/`AudioManager`，基本不可用） |
-| 重复 `Launch*` | 第二次起被忽略并告警（旧版会重复注册/重复挂委托） |
-| 没有匹配接口的模块 | 启动时告警并跳过（旧版静默跳过） |
-| `ModuleAttribute.Priority` | 现在真正生效（旧版字段存在但从未使用） |
-| `Module` 基类 | 新增 internal 直调入口；自定义模块无感知 |
+| `CosmosEntry.PrintModulePreparatory` | 是否打印模块准备日志与注册耗时 |
+| `ModuleCount` | 已注册模块数量 |
+| 启动异常 | 初始化 / 激活 / 准备阶段的异常收集后统一抛 `AggregateException` |
+| 终止异常 | 失活 / 终止阶段的异常同样聚合抛出 |
+
+常见启动报错见 [MODULE.md §6](MODULE.md)。
+
+## 10. CosmosConfig 中的启动
+
+`CosmosConfig.Awake` 依次执行：应用静态配置 → 装配 Debug / Json 帮助体 →
+（`launchAppDomainModules` 为真时）启动模块 → 按配置设置资源 Provider 与输入帮助体。
+关闭自动启动时，需要自行调用上表的 `Launch*`，并在之后设置 Provider / 输入帮助体。

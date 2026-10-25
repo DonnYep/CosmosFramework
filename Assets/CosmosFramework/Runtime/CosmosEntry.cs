@@ -1,5 +1,4 @@
 using Cosmos.Audio;
-using Cosmos.Controller;
 using Cosmos.DataTable;
 using Cosmos.Download;
 using Cosmos.Entity;
@@ -53,9 +52,15 @@ namespace Cosmos
             add { GameManager.ElapseRefreshHandler += value; }
             remove { GameManager.ElapseRefreshHandler -= value; }
         }
+        //================================================
+        // 内置模块的强类型入口：
+        // 下面每个属性都等价于 GetModule<IXxxManager>()（一行糖），解析方式与自定义模块完全一致，
+        // 因此把内置实现替换成自定义实现后，这里取到的仍然是替换后的实例。
+        // 未注册时抛 InvalidOperationException（不再静默返回 null）。
+        // 自定义模块没有对应属性：直接用 CosmosEntry.GetModule<T>() / CosmosEntry.TryGetModule<T>()。
+        //================================================
         public static IAudioManager AudioManager { get { return GetModule<IAudioManager>(); } }
         public static IProcedureManager ProcedureManager { get { return GetModule<IProcedureManager>(); } }
-        public static IControllerManager ControllerManager { get { return GetModule<IControllerManager>(); } }
         public static IFSMManager FSMManager { get { return GetModule<IFSMManager>(); } }
         public static IObjectPoolManager ObjectPoolManager { get { return GetModule<IObjectPoolManager>(); } }
         public static IInputManager InputManager { get { return GetModule<IInputManager>(); } }
@@ -122,9 +127,26 @@ namespace Cosmos
             GameManager.TerminateModules();
             isLaunched = false;
         }
+        /// <summary>
+        /// 获取模块（契约接口）；
+        /// <para>未注册时抛 <see cref="InvalidOperationException"/>，不会返回 null。</para>
+        /// </summary>
+        /// <typeparam name="T">模块契约接口（IModuleManager 派生）</typeparam>
+        /// <returns>模块实例</returns>
         public static T GetModule<T>() where T : class, IModuleManager
         {
             return GameManager.GetModule<T>();
+        }
+        /// <summary>
+        /// 尝试获取模块（契约接口）；未注册时返回 false，不抛异常。
+        /// <para>仅用于"模块可选"的场景；必需模块请直接用 <see cref="GetModule{T}"/>。</para>
+        /// </summary>
+        /// <typeparam name="T">模块契约接口（IModuleManager 派生）</typeparam>
+        /// <param name="module">模块实例；失败时为 null</param>
+        /// <returns>是否获取成功</returns>
+        public static bool TryGetModule<T>(out T module) where T : class, IModuleManager
+        {
+            return GameManager.TryGetModule<T>(out module);
         }
     }
 }

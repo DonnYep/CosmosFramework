@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using UnityEngine;
 using Cosmos;
 using Cosmos.Entity;
-public class BulletEntity: EntityObject
+public class BulletEntity: EntityObject, IEntityTickable
 {
     float moveDuration;
     float speed;
@@ -28,10 +28,14 @@ public class BulletEntity: EntityObject
         bulletTrigger = gameObject.GetOrAddComponentInChildren<EntityBulletTrigger>("BulletTrigger");
         bulletTrigger.onTriggerHit = onHit;
     }
-    private void Update()
+    /// <summary>
+    /// 由 EntityManager 集中派发（不再使用 MonoBehaviour.Update）：
+    /// 子弹被隐藏、所在组被冻结时都会自动停止推进。
+    /// </summary>
+    public void OnEntityTick(float deltaTime)
     {
-        transform.position += transform.forward * Time.deltaTime * Speed;
-        currentTime += Time.deltaTime;
+        transform.position += transform.forward * deltaTime * Speed;
+        currentTime += deltaTime;
         if (currentTime >= moveDuration)
         {
             onHit?.Invoke(null);

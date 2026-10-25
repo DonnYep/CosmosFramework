@@ -1,5 +1,4 @@
-﻿using Cosmos.Audio;
-using Cosmos.Controller;
+using Cosmos.Audio;
 using Cosmos.DataTable;
 using Cosmos.Download;
 using Cosmos.Entity;
@@ -18,9 +17,10 @@ namespace Cosmos
     /// <summary>
     /// 内置模块注册表。
     /// <para>框架自带的模块在这里显式 new 出来：不再依赖"扫描 AppDomain + 反射实例化"，
-    /// 因此内置模块的注册顺序是确定的、可读的，也不会有类型扫描的开销。</para>
-    /// <para>顺序即初始化顺序：被其它模块在 OnInitialization 阶段依赖的模块排在前面
-    /// （事件 → 资源 → 网络请求 → 其它）。</para>
+    /// 因此内置模块的集合是确定的、可读的，也不会有类型扫描的开销。</para>
+    /// <para>数组只决定"有哪些内置模块"；初始化顺序不再由数组顺序决定，而是与用户模块一起
+    /// 按 <see cref="ModuleAttribute.Priority"/> 统一排序（内置模块占 100~1300，见 <see cref="ModuleConstant"/>；
+    /// 用户模块默认 <see cref="ModuleAttribute.DefaultPriority"/> = 10000，即排在全部内置模块之后）。</para>
     /// </summary>
     internal static class BuiltinModuleRegistry
     {
@@ -41,7 +41,6 @@ namespace Cosmos
                 new UIManager(),
                 new AudioManager(),
                 new InputManager(),
-                new ControllerManager(),
                 new FSMManager(),
                 new ProcedureManager(),
                 new NetworkManager(),

@@ -9,11 +9,11 @@ namespace Cosmos
         IResourceManager resourceManager;
         Type uiFromBaseType;
         Transform uiRoot;
-        public UGUIAssetHelper() : this(CosmosEntry.UIManager.InstanceObject().transform) { }
+        public UGUIAssetHelper() : this(GameManager.GetModule<IUIManager>().InstanceObject().transform) { }
         public UGUIAssetHelper(Transform uiRoot)
         {
             this.uiRoot = uiRoot;
-            resourceManager = CosmosEntry.ResourceManager;
+            resourceManager = GameManager.GetModule<IResourceManager>();
             uiFromBaseType = typeof(IUIForm);
         }
         ///<inheritdoc/>

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -9,9 +9,11 @@ namespace Cosmos
     /// 管理器对象都会通过这个对象的实例来调用，避免复杂化
     /// 可以理解为是一个Facade
     /// <para>模块注册有两条路径：</para>
-    /// <para>1、内置模块：<see cref="BuiltinModuleRegistry"/> 显式 new，顺序确定、零反射；</para>
+    /// <para>1、内置模块：<see cref="BuiltinModuleRegistry"/> 显式 new，零反射；</para>
     /// <para>2、外部模块：仅扫描"引用了框架程序集"的程序集，再按 [Module] 特性实例化
     /// （不再全量扫描 AppDomain 下所有程序集，也不再逐次反射调用生命周期方法）。</para>
+    /// <para>两条路径最终合并成同一份模块表，按 <see cref="ModuleAttribute.Priority"/> 统一排序：
+    /// 用户模块可以显式声明更小的优先级插到内置模块之前 / 之间，未声明时排在全部内置模块之后。</para>
     /// </summary>
     internal static class GameManager
     {
@@ -58,10 +60,6 @@ namespace Cosmos
         /// </summary>
         readonly static Dictionary<Type, Type> interfaceModuleDict = new Dictionary<Type, Type>();
         /// <summary>
-        /// 模块类型=>接口类型的解析缓存，避免重复 GetInterfaces 与字符串匹配
-        /// </summary>
-        readonly static Dictionary<Type, Type> moduleInterfaceCache = new Dictionary<Type, Type>();
-        /// <summary>
         /// 框架程序集（用于判断其它程序集是否可能含有模块）
         /// </summary>
         static readonly System.Reflection.Assembly frameworkAssembly = typeof(Module).Assembly;
@@ -96,21 +94,37 @@ namespace Cosmos
         #endregion
         #region Methods
         /// <summary>
-        /// 获取模块
-        /// <para>若需要进行外部扩展，请继承自Module，需要实现接口 IModuleManager，并标记特性：ModuleAttribute</para>
-        /// <para>如：public class TestManager:Module,ITestManager{}</para>
-        /// <para>ITestManager 需要包含所有外部可调用的方法；具体请参考Cosmos源码</para> 
+        /// 获取模块（契约接口）；
+        /// <para>模块未注册时抛 <see cref="InvalidOperationException"/>，而不是返回 null ——
+        /// 模块缺失属于启动配置错误，应在第一次访问就暴露，而不是拖到业务深处变成 NRE。</para>
         /// </summary>
-        /// <typeparam name="T">内置模块接口</typeparam>
-        /// <returns>模板模块接口</returns>
+        /// <typeparam name="T">模块契约接口（IModuleManager 派生）</typeparam>
+        /// <returns>模块实例</returns>
         internal static T GetModule<T>() where T : class, IModuleManager
         {
-            Type interfaceType = typeof(T);
-            var hasType = interfaceModuleDict.TryGetValue(interfaceType, out var derivedType);
-            if (!hasType)
-                return null;
-            moduleDict.TryGetValue(derivedType, out var module);
-            return module as T;
+            if (TryGetModule<T>(out var module))
+                return module;
+            throw new InvalidOperationException(
+                $"Module contract : {typeof(T)} is not registered. " +
+                "Make sure the module which provides it is launched (CosmosEntry.LaunchAppDomainModules / LaunchAssemblyModules), " +
+                "or check that another module has not taken the same contract.");
+        }
+        /// <summary>
+        /// 尝试获取模块（契约接口）；未注册时返回 false，不抛异常。
+        /// <para>仅用于"模块可选"的场景；必需模块请直接用 <see cref="GetModule{T}"/>。</para>
+        /// </summary>
+        /// <typeparam name="T">模块契约接口（IModuleManager 派生）</typeparam>
+        /// <param name="module">模块实例；失败时为 null</param>
+        /// <returns>是否获取成功</returns>
+        internal static bool TryGetModule<T>(out T module) where T : class, IModuleManager
+        {
+            module = null;
+            if (!interfaceModuleDict.TryGetValue(typeof(T), out var derivedType))
+                return false;
+            if (!moduleDict.TryGetValue(derivedType, out var registeredModule))
+                return false;
+            module = registeredModule as T;
+            return module != null;
         }
         internal static void OnRefresh()
         {
@@ -151,9 +165,7 @@ namespace Cosmos
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             Assemblies = assemblies;
-            var modules = new List<Module>(BuiltinModuleRegistry.CreateModules());
-            modules.AddRange(DiscoverModules(assemblies));
-            Launch(modules);
+            Launch(MergeModules(assemblies));
         }
         /// <summary>
         /// 启动：内置模块 + 扫描指定程序集
@@ -164,9 +176,7 @@ namespace Cosmos
             if (assemblies == null)
                 throw new ArgumentNullException("InitiateAssemblyModule : assemblies is invalid");
             Assemblies = assemblies.ToArray();
-            var modules = new List<Module>(BuiltinModuleRegistry.CreateModules());
-            modules.AddRange(DiscoverModules(Assemblies));
-            Launch(modules);
+            Launch(MergeModules(Assemblies));
         }
         /// <summary>
         /// 启动：只注册传入的模块（不做任何扫描）
@@ -181,6 +191,21 @@ namespace Cosmos
         internal static void TerminateModules()
         {
             RemoveRefreshListener();
+        }
+        /// <summary>
+        /// 合并内置模块与扫描到的用户模块，并按统一优先级排序；
+        /// <para>内置模块先放入，稳定排序保证"同优先级时内置优先"。</para>
+        /// </summary>
+        /// <param name="assemblies">待扫描的程序集</param>
+        static List<Module> MergeModules(IEnumerable<System.Reflection.Assembly> assemblies)
+        {
+            var builtinModules = new List<Module>(BuiltinModuleRegistry.CreateModules());
+            //内置模块必须显式声明唯一且靠前的优先级，否则用户模块的默认优先级就没有意义
+            ModuleOrdering.ValidateBuiltinPriorities(builtinModules);
+            var modules = new List<Module>(builtinModules.Count);
+            modules.AddRange(builtinModules);
+            modules.AddRange(DiscoverModules(assemblies));
+            return ModuleOrdering.Sort(modules);
         }
         /// <summary>
         /// 启动流程：注册 → 激活 → 准备 → 挂载轮询
@@ -232,38 +257,23 @@ namespace Cosmos
                 moduleInitExceptionList.Add(new ArgumentException($"Module : {type} is already exist!"));
                 return;
             }
-            var interfaceType = ResolveModuleInterface(type);
+            var interfaceType = ModuleContractResolver.Resolve(type);
             if (interfaceType == null)
             {
-                Utility.Debug.LogWarning($"Module : {type} does not implement a matching IXxxManager interface, skipped.");
+                Utility.Debug.LogWarning($"Module : {type} does not implement a contract derived from {typeof(IModuleManager).Name}, skipped.");
+                return;
+            }
+            //同一契约只能由一个模块提供；旧实现是静默覆盖，会让内置模块继续运行、GetModule 却返回新模块
+            if (interfaceModuleDict.TryGetValue(interfaceType, out var registeredType))
+            {
+                moduleInitExceptionList.Add(new ArgumentException(
+                    $"Module : {type} can not be registered, the contract {interfaceType} is already provided by {registeredType}. " +
+                    "Remove one of them, or register an explicit module set via CosmosEntry.LaunchModules."));
                 return;
             }
             moduleDict.Add(type, module);
             interfaceModuleDict[interfaceType] = type;
             module.InvokeInitialization();
-        }
-        /// <summary>
-        /// 解析模块实现的接口：约定为接口名包含模块类型名（AudioManager => IAudioManager），结果会被缓存
-        /// </summary>
-        /// <param name="moduleType">模块类型</param>
-        /// <returns>接口类型，找不到返回null</returns>
-        static Type ResolveModuleInterface(Type moduleType)
-        {
-            if (moduleInterfaceCache.TryGetValue(moduleType, out var cachedInterface))
-                return cachedInterface;
-            Type interfaceType = null;
-            var interfaces = moduleType.GetInterfaces();
-            var moduleTypeName = moduleType.Name;
-            for (int i = 0; i < interfaces.Length; i++)
-            {
-                if (interfaces[i].Name.Contains(moduleTypeName))
-                {
-                    interfaceType = interfaces[i];
-                    break;
-                }
-            }
-            moduleInterfaceCache.Add(moduleType, interfaceType);
-            return interfaceType;
         }
         static void ActiveModule()
         {
@@ -358,10 +368,13 @@ namespace Cosmos
             GameManager.fixedRefreshHandler = null;
             GameManager.elapseRefreshHandler = null;
 
+            //模块表与模块挂载点必须同生共死，否则重新启动会复用上一轮的挂载点与子物体
+            MonoGameManager.ClearModuleInstanceObjects();
+
             //先清空注册表再抛异常，避免终止后的模块仍可被访问、或重复执行销毁回调
             moduleDict.Clear();
             interfaceModuleDict.Clear();
-            moduleInterfaceCache.Clear();
+            ModuleContractResolver.Clear();
             Launched = false;
 
             if (moduleTerminateExceptionList.Count > 0)

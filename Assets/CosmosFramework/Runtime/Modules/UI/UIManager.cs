@@ -12,7 +12,7 @@ namespace Cosmos.UI
      * 参照UGUI的支持库写法即可。
      */
     //================================================
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_UI)]
     internal sealed partial class UIManager : Module, IUIManager
     {
         #region Properties

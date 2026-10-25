@@ -88,7 +88,7 @@ bool parsed  = Utility.Net.TryParseContentRange("bytes 100-999/1000", out var st
 - 音频（84）、输入（53）回归全过。
 
 ```powershell
-dotnet run --project E:\DeekSeekSetting\_dshcache\cosmos-download\harness\DownloadHarness.csproj
+dotnet run --project E:\DeekSeekSetting\_dshcache\20-projects\cosmos\download\harness\DownloadHarness.csproj
 ```
 
 ## 6. 不做的事（以及为什么）

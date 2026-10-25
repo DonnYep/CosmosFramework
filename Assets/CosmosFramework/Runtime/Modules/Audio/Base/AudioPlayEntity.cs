@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Cosmos.Audio
 {
@@ -384,8 +384,7 @@ namespace Cosmos.Audio
                 audioSource.transform.SetParent(bindParent);
                 return;
             }
-            var audioManager = CosmosEntry.AudioManager;
-            if (audioManager == null)
+            if (!GameManager.TryGetModule<IAudioManager>(out var audioManager))
                 return;
             var instanceObject = audioManager.InstanceObject();
             if (instanceObject == null)

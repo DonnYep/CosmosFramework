@@ -6,7 +6,7 @@ namespace Cosmos
 {
     public class DefaultAudioAssetHelper : IAudioAssetHelper
     {
-        IResourceManager ResourceManager { get { return CosmosEntry.ResourceManager; } }
+        IResourceManager ResourceManager { get { return GameManager.GetModule<IResourceManager>(); } }
         /// <inheritdoc/>
         public Coroutine LoadAudioAsync(string audioAssetName, Action<string, AudioClip> onSuccess, Action<string,string> onFailure)
         {

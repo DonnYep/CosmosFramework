@@ -18,8 +18,7 @@ public class EntityAblilty : MonoBehaviour
     }
     private void SpawnBullet()
     {
-        entityManager.ShowEntity(EntityContants.EntityBullet, out var entityObject);
-        var bullet = entityObject as BulletEntity;
+        var bullet = entityManager.ShowEntity<BulletEntity>(EntityContants.EntityBullet);
         bullet.onHit = (hit) => { entityManager.HideEntityObject(bullet); OnBulletHit(hit); };
         bullet.transform.position = transform.position + transform.forward * 0.5f + new Vector3(0, 1.5f, 0);
         bullet.transform.eulerAngles = transform.eulerAngles;

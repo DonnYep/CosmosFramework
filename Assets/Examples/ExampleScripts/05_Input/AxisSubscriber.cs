@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Cosmos.Input;
 using UnityEngine.UI;
 using Cosmos;
@@ -16,17 +16,14 @@ public class AxisSubscriber : MonoBehaviour
     Slider slider;
     Text text;
     IInputManager inputManager;
-    IController controller;
 
     void Start()
     {
         slider = GetComponentInChildren<Slider>();
         text = GetComponentsInChildren<Text>()[1];
         inputManager = CosmosEntry.InputManager;
-        controller = CosmosEntry.ControllerManager.CreateController("AxisSubscriber", this);
     }
-    [TickRefresh]
-    void TickRefresh()
+    void Update()
     {
         switch (key)
         {
@@ -39,15 +36,5 @@ public class AxisSubscriber : MonoBehaviour
         }
         float textValue = slider.value - SliderOffset;
         text.text = ((int)textValue).ToString();
-    }
-    private void OnEnable()
-    {
-        if (controller != null)
-            controller.Pause = false;
-    }
-    private void OnDisable()
-    {
-        if (controller != null)
-            controller.Pause = true;
     }
 }

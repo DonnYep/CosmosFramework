@@ -13,7 +13,7 @@ namespace Cosmos.Input
      *    屏蔽期间查询返回中性值，但帮助体仍在刷新原始状态，因此解除屏蔽后按住的键依然是按住。
      */
     //================================================
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_INPUT)]
     internal sealed class InputManager : Module, IInputManager
     {
         bool isEnableInputDevice = true;

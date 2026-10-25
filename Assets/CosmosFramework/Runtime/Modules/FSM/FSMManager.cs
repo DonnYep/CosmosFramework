@@ -10,7 +10,7 @@ namespace Cosmos.FSM
      * 2、状态机组别设置是互斥的。一个状态机只允许拥有一个组别。
      */
     //================================================
-    [Module]
+    [Module(Priority = ModuleConstant.PRIORITY_FSM)]
     internal sealed partial class FSMManager : Module, IFSMManager
     {
         #region Properties
