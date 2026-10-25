@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 namespace Cosmos
@@ -54,21 +54,26 @@ namespace Cosmos
             /// </summary>
             public T[] GetObjectsByRect(Rectangle objBound)
             {
+                if (!IsRectOverlapping(objBound))
+                    return new T[0];
+                var result = new List<T>();
+                CollectObjectsByRect(objBound, result);
+                return result.ToArray();
+            }
+            void CollectObjectsByRect(Rectangle objBound, List<T> result)
+            {
+                if (!IsRectOverlapping(objBound))
+                    return;
                 if (!HasChild)
                 {
-                    if (!IsRectOverlapping(objBound))
-                        return new T[0];
-                    else
-                        return Objects();
+                    result.AddRange(Objects());
+                    return;
                 }
-                else
-                {
-                    if (TreeTRNode.IsRectOverlapping(objBound)) return TreeTRNode.GetObjectsByRect(objBound);
-                    if (TreeTLNode.IsRectOverlapping(objBound)) return TreeTRNode.GetObjectsByRect(objBound);
-                    if (TreeBLNode.IsRectOverlapping(objBound)) return TreeTRNode.GetObjectsByRect(objBound);
-                    if (TreeBRNode.IsRectOverlapping(objBound)) return TreeTRNode.GetObjectsByRect(objBound);
-                    return new T[0];
-                }
+                //四个象限都可能命中，必须全部收集（原实现只递归 TR 且提前 return）
+                TreeTRNode.CollectObjectsByRect(objBound, result);
+                TreeTLNode.CollectObjectsByRect(objBound, result);
+                TreeBLNode.CollectObjectsByRect(objBound, result);
+                TreeBRNode.CollectObjectsByRect(objBound, result);
             }
             public bool Contains(T obj)
             {

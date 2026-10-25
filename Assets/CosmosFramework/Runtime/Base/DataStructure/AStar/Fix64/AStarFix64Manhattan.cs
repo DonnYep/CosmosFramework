@@ -1,4 +1,4 @@
-﻿using FixMath.NET;
+using FixMath.NET;
 using System;
 using System.Collections.Generic;
 namespace Cosmos
@@ -9,25 +9,30 @@ namespace Cosmos
             : base(gridCenterX, gridCenterY, xCount, yCount, nodeSideLength) { }
         public override IList<Node> GetNeighboringNodes(Node node)
         {
-            Node[] srcNodes = new Node[4];
+            var nodeList = SpawnNodeList();
+            FillNeighboringNodes(node, nodeList);
+            var dstNodes = nodeList.ToArray();
+            DespawnNodeList(nodeList);
+            return dstNodes;
+        }
+        /// <summary>
+        /// 十字邻域直接填入复用缓冲，展开节点时零分配；
+        /// </summary>
+        protected override void FillNeighboringNodes(Node node, List<Node> buffer)
+        {
+            buffer.Clear();
+            if (node == null)
+                return;
             var x = node.IndexX;
             var y = node.IndexY;
-            var leftX = x - 1;
-            var rightX = x + 1;
-            var upY = y + 1;
-            var downY = y - 1;
-            int idx = 0;
-            if (leftX >= 0)
-                srcNodes[idx++] = nodeArray[leftX, y];
-            if (rightX <= GridSizeX - 1)
-                srcNodes[idx++] = nodeArray[rightX, y];
-            if (upY <= GridSizeY - 1)
-                srcNodes[idx++] = nodeArray[x, upY];
-            if (downY >= 0)
-                srcNodes[idx++] = nodeArray[x, downY];
-            var dstNodes = new Node[idx];
-            Array.Copy(srcNodes, 0, dstNodes, 0, idx);
-            return dstNodes;
+            if (x - 1 >= 0)
+                buffer.Add(nodeArray[x - 1, y]);
+            if (x + 1 <= GridSizeX - 1)
+                buffer.Add(nodeArray[x + 1, y]);
+            if (y + 1 <= GridSizeY - 1)
+                buffer.Add(nodeArray[x, y + 1]);
+            if (y - 1 >= 0)
+                buffer.Add(nodeArray[x, y - 1]);
         }
         protected override int GetDistance(Node a, Node b)
         {

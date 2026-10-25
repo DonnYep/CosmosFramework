@@ -15,6 +15,7 @@
 > - **Module system**: `[Module]` defaults to priority `10000`, built-ins occupy `100~1300`, duplicate contracts fail;
 > - **Module access**: `GetModule<T>()` throws when missing; use `TryGetModule<T>()` for optional modules;
 > - **Network**: old awaiter types removed; use `ConnectAsync` / `ReceiveDataAsync` / `WaitDisconnectedAsync`.
+> - **Event is reactive now**: `AddEvent` / `RemoveEvent` / `Dispatch` removed; use `Subscribe` (returns `IDisposable`) / `Publish` / `Observe`.
 
 ## 1. Layout and layers
 
@@ -29,10 +30,11 @@ Assets/CosmosFramework
 │  │  ├─ Behaviour              ILifecycle contract
 │  │  ├─ Constants              Global constants
 │  │  ├─ Dataset                Dataset base class
-│  │  ├─ DataStructure          Pools, trees, skip lists, quadtree, A*, AOI, Fix64, geometry
+│  │  ├─ DataStructure          Pools, trees, skip lists, quadtree, grids, A*, AOI, Fix64, geometry
 │  │  ├─ EventCore              Event core
 │  │  ├─ Extensions             Extension methods (primitives/collections/Unity/reflection/IO)
 │  │  ├─ ReferencePool          Reference pool
+│  │  ├─ Reactive               Reactive foundation (Observable / Subject / ReactiveProperty)
 │  │  ├─ ResourceAbstractions   Resource contracts (Provider / Handle / Operation)
 │  │  ├─ Singleton              Singleton / ConcurrentSingleton / MonoSingleton
 │  │  ├─ Timer                  TickTimer
@@ -164,10 +166,11 @@ CosmosEntry.ElapseRefreshHandler += OnElapse;   // real frame delta
 > Contracts live in `Modules/<Name>/I<Name>Manager.cs`; implementations are `internal sealed class <Name>Manager`.
 > Only common APIs are listed below — see the interface files for full signatures.
 
-### 3.1 Event
+### 3.1 Event (reactive event hub)
 
 - Contract: `IEventManager`; payload types must derive from `GameEventArgs`.
-- Main thread; adding/removing listeners during dispatch is safe.
+- `Subscribe` returns `IDisposable` (dispose to unsubscribe); `Observe<T>()` exposes the stream for operators.
+- Main thread; subscribing/unsubscribing during dispatch is safe.
 
 ```csharp
 public class LoginEventArgs : GameEventArgs
@@ -176,12 +179,17 @@ public class LoginEventArgs : GameEventArgs
     public override void Release() { Account = null; }
 }
 
-CosmosEntry.EventManager.AddEvent<LoginEventArgs>(OnLogin);
-CosmosEntry.EventManager.Dispatch(new LoginEventArgs { Account = "a" });
-CosmosEntry.EventManager.RemoveEvent<LoginEventArgs>(OnLogin);
+var subscription = CosmosEntry.EventManager.Subscribe<LoginEventArgs>(OnLogin);
+CosmosEntry.EventManager.Publish(new LoginEventArgs { Account = "a" });
+subscription.Dispose();
+
+CosmosEntry.EventManager.Observe<LoginEventArgs>()
+    .Where(args => !string.IsNullOrEmpty(args.Account))
+    .Subscribe(OnLogin);
 ```
 
-API: `AddEvent<T>` / `RemoveEvent<T>` / `RemoveAllEvents<T>` / `Dispatch<T>` / `HasEvent<T>` / `GetEventInfo<T>` / `EventCount`.
+API: `Subscribe<T>` / `Publish<T>` / `Observe<T>` / `HasEvent<T>` / `GetEventInfo<T>` / `RemoveAllEvents<T>` / `RemoveAllEvents` / `EventCount`.
+Reactive foundation (`Subject` / `ReactiveProperty` / operators / composite disposal): [REACTIVE.md](REACTIVE.md).
 
 ### 3.2 Resource
 
@@ -421,7 +429,7 @@ var text = Utility.Text.FormatCombine("player/", id, "/avatar");
 | Pools | `Pool<T>` (queue based), `ConcurrentPool<T>` |
 | Dictionaries / queues | `BiDictionary` / `ConcurrentBiDictionary`, `LruDictionary`, `LimitedQueue`, `TinyLinkedList`, `LinkedNodeList` |
 | Trees / skip lists | `BinaryTree`, `SkipList`, `SkipNodeList`, `AOISkipList` |
-| Spatial | `QuadTree` / `QuadTreeFix64`, `RectangleGrid` / `SquareGrid`, `AOIZone` / `AOIZoneFix64` |
+| Spatial | `QuadTree` / `QuadTreeFix64`, `RectangleGrid` / `RectangleGridFix64`, `SquareGrid` / `SquareGridFix64`, `AOIZone` / `AOIZoneFix64` |
 | Pathfinding | `AStar` with `Diagonal` / `Manhattan` / `Euclidean` variants, all with Fix64 versions |
 | Fixed point | `Fix64` (with sin/cos LUTs) for deterministic logic |
 | Geometry | `Rectangle` / `Square` / `Circle` / `Point2D` / `Vector2D` (Fix64 counterparts) |
@@ -430,6 +438,11 @@ var text = Utility.Text.FormatCombine("player/", id, "/avatar");
 
 > The Fix64 variants of `AStar` / `QuadTree` / `AOI` are deterministic implementations for lockstep/server use,
 > with APIs mirroring their floating-point versions.
+>
+> - **AOI**: inserts and removals go through the axis nodes each entity owns, so entities sharing an X coordinate or a position never delete each other; `AOISkipList.Add` returns the lowest node for O(1) removal.
+> - **A\***: open/closed membership is O(1) and neighbor lists are reused across expansions; override `GetNeighborNodes` for a custom neighborhood, or `FillNeighborNodes` (`FillNeighboringNodes` on `AStarFix64`) to avoid even the temporary collection.
+> - **Quadtree**: `NodeObjectCapacity` is a split threshold, not a hard limit — a leaf at max depth keeps accumulating objects instead of dropping them.
+> - **Fix64**: `(long)Fix64` truncates toward zero (use `Fix64.Floor` first when you need floor); `(Fix64)` saturates out-of-range input and maps `NaN` to 0.
 
 ### 5.2 Async (`Base/Async`)
 
@@ -447,7 +460,8 @@ A lightweight frame/second timer; call `TickRefresh()` yourself (see example `25
 
 ### 5.4 Pools
 
-- `Pool<T>`: object pool (`Spawn` / `Despawn` / `Clear`);
+- `Pool<T>`: object pool (`Spawn` / `Despawn` / `Clear`); `Clear()` only drops references — use `Clear(release)` when pooled items own resources;
+- `ConcurrentPool<T>`: thread-safe variant; `Count` is pooled items, `TotalCount` includes in-flight reservations;
 - `ReferencePool`: `Acquire<T>()` / `Release(IReference)`; `IReference.Release()` clears state.
 
 ### 5.5 Singletons
@@ -472,7 +486,8 @@ Unity (`GameObjectExts` / `TransformExts` / `ComponentExts` / `RectTransformExts
   OnElapseRefresh / OnDeactive / OnRecycle / OnRenewal / OnTermination`;
 - `EventCore`: the event core behind `EventManager`;
 - `DatasetBase`: dataset base class (paired with `DatasetBaseEditor`);
-- `Constants`: global constants.
+- `Constants`: global constants;
+- `Reactive`: `Observable<T>` / `Subject<T>` / `ReactiveProperty<T>` / `CompositeDisposable` plus `Where` / `Select` / `DistinctUntilChanged`; the Event module is built on it (see [REACTIVE.md](REACTIVE.md)).
 
 ## 6. Architecture templates (`Architeture`)
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 
 namespace Cosmos
@@ -55,27 +55,31 @@ namespace Cosmos
         {
             if (value is NullObject<T> nullObject)
             {
-                if (nullObject.Item is IComparable c)
-                {
-                    return ((IComparable)Item).CompareTo(c);
-                }
-                return Item.ToString().CompareTo(nullObject.Item.ToString());
+                if (ReferenceEquals(Item, null))
+                    return ReferenceEquals(nullObject.Item, null) ? 0 : -1;
+                if (ReferenceEquals(nullObject.Item, null))
+                    return 1;
+                if (Item is IComparable comparable)
+                    return comparable.CompareTo(nullObject.Item);
+                return string.CompareOrdinal(Item.ToString(), nullObject.Item.ToString());
             }
             return 1;
         }
         public int CompareTo(T other)
         {
-            if (other is IComparable c)
-            {
-                return ((IComparable)Item).CompareTo(c);
-            }
-            return Item.ToString().CompareTo(other.ToString());
+            if (ReferenceEquals(Item, null))
+                return ReferenceEquals(other, null) ? 0 : -1;
+            if (ReferenceEquals(other, null))
+                return 1;
+            if (Item is IComparable comparable)
+                return comparable.CompareTo(other);
+            return string.CompareOrdinal(Item.ToString(), other.ToString());
         }
         public override bool Equals(object obj)
         {
             if (obj == null)
             {
-                return IsNull();
+                return IsNull() || ReferenceEquals(Item, null);
             }
             var type = obj.GetType();
             if (type != typeof(NullObject<T>))
@@ -83,11 +87,11 @@ namespace Cosmos
                 return false;
             }
             var nullObject = (NullObject<T>)obj;
-            if (IsNull())
+            if (IsNull() || ReferenceEquals(Item, null))
             {
-                return nullObject.IsNull();
+                return nullObject.IsNull() || ReferenceEquals(nullObject.Item, null);
             }
-            if (nullObject.IsNull())
+            if (nullObject.IsNull() || ReferenceEquals(nullObject.Item, null))
             {
                 return false;
             }
@@ -95,7 +99,7 @@ namespace Cosmos
         }
         public override int GetHashCode()
         {
-            if (isNull)
+            if (isNull || ReferenceEquals(Item, null))
             {
                 return 0;
             }

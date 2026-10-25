@@ -21,6 +21,7 @@ CosmosFramework 是一款中轻量级的 Unity 开发框架：统一模块生命
 > - **模块系统**：`[Module]` 默认优先级改为 `10000`（内置模块占 `100~1300`），同一契约重复注册会启动报错，契约解析改为确定性规则。
 > - **取模块语义**：`GetModule<T>()` 未注册时抛 `InvalidOperationException`（新增 `TryGetModule<T>()`）。
 > - **网络**：删除 `WaitConnectedAwaiter` / `WaitReceiveDataAwaiter` / `WaitForChannelExts`；改用 `ConnectAsync` / `ReceiveDataAsync` / `WaitDisconnectedAsync`（同名扩展保留，新增取消与超时参数）。
+> - **Event 改为 reactive**：`Subscribe` 返回 `IDisposable`，`Observe<T>()` 支持 `Where` / `Select` / `DistinctUntilChanged`；`AddEvent` / `RemoveEvent` / `Dispatch` 删除，新增 `Runtime/Base/Reactive` 响应式基座。
 > - **MonoSingleton**：首次获取（含场景预置）都会调用 `OnInitialize`，即 `DontDestroyOnLoad`。
 
 <a name="导航"></a>
@@ -54,11 +55,19 @@ CosmosFramework 是一款中轻量级的 Unity 开发框架：统一模块生命
 | Controller 模块删除 | 旧 `[TickRefresh]` 轮询不再生效 | 实体实现 `IEntityTickable` / `IEntityFixedTickable` / `IEntityLateTickable`；普通 MonoBehaviour 直接用 `Update` |
 | `CosmosEntry.ControllerManager` 删除 | 编译失败 | 用 `CosmosEntry.EntityManager`：`Paused` 个体暂停、`PauseEntityGroup` 组冻结 |
 | `ShowEntity(string, out EntityObject)` 删除 | 编译失败 | 改为 `ShowEntity<T>(entityName)` |
+| Event API 改为 reactive | `AddEvent` / `RemoveEvent` / `Dispatch` 删除 | 改用 `Subscribe`（返回 `IDisposable`）/ `Publish` / `Observe` |
+| `LimitedQueue<T>` 改为组合实现 | 不再是 `Queue<T>` 子类，按 `Queue<T>` 传递会编译失败 | 改用自身的 `Enqueue` / `Dequeue` / `TryDequeue` / `Peek` / `Clear` |
 | 模块优先级语义统一 | 显式声明小 `Priority` 的自定义模块会提前初始化 | 默认不写即排在全部内置模块之后；需要插队再用 `[Module(Priority = n)]` |
 | 重复契约报错 | 与内置模块同契约的自定义模块无法启动 | 删其一，或 `BuiltinModuleRegistry` 移除内置项 / 用 `CosmosEntry.LaunchModules` 自定义集合 |
 | `GetModule<T>()` 抛异常 | 依赖 null 判断的代码会抛 | 可选模块改用 `TryGetModule<T>()` |
 | 网络 awaiter 重写 | 旧 awaiter 类型引用编译失败 | 使用同名扩展 `ConnectAsync` / `ReceiveDataAsync`，或新增的 `WaitDisconnectedAsync` |
 | `MonoSingleton` 初始化时机 | 场景预置实例也会 `DontDestroyOnLoad` | 无需处理，行为更一致 |
+| `(long)Fix64` 改为向零截断 | 负值结果变化（`(long)(Fix64)(-1.5)` 由 `-2` 变 `-1`） | 需要向下取整时先 `Fix64.Floor` 再转 `long` |
+| `(Fix64)` 数值转换越界饱和 | 超界不再回绕（`(Fix64)long.MaxValue` 不再得到 `-1`）；`NaN` 归一为 `0`，`±Infinity` / 超界值饱和到 `MaxValue` / `MinValue` | 无需处理；依赖回绕结果的写法属未定义用法 |
+| `AStarFix64.Clear()` 清空网格 | `Clear()` 后 `GetNode` 返回 `null`（与 `AStar` 一致） | 只想清缓冲用 `ClearNodeCache()` |
+| `QuadTree` 满叶不再丢对象 | 到达最大深度的满叶会继续累积（可超过 `NodeObjectCapacity`），`Insert` 不再返回 `false` | 无需处理；容量是分裂阈值而非硬上限 |
+| AOI 按节点身份增删 | 同 X 坐标 / 同坐标的多个实体不再互相误删；`AOISkipList.Add` 返回最底层节点，可用于 O(1) 删除 | 无需处理 |
+| `Circle` 关系判定修正 | 同心、包含不再被判为「相离」或「相交」 | 无需处理 |
 
 <a name="环境"></a>
 
@@ -127,10 +136,11 @@ Assets/CosmosFramework
 │  │  ├─ Behaviour              ILifecycle 生命周期契约
 │  │  ├─ Constants              全局常量
 │  │  ├─ Dataset                数据集基类
-│  │  ├─ DataStructure          池、树、跳表、四叉树、A*、AOI、Fix64、几何
+│  │  ├─ DataStructure          池、树、跳表、四叉树、网格、A*、AOI、Fix64、几何
 │  │  ├─ EventCore              事件内核
 │  │  ├─ Extensions             扩展方法
 │  │  ├─ ReferencePool          引用池
+│  │  ├─ Reactive               响应式基座（Observable / Subject / ReactiveProperty）
 │  │  ├─ ResourceAbstractions   资源契约（Provider / Handle / Operation）
 │  │  ├─ Singleton              Singleton / ConcurrentSingleton / MonoSingleton
 │  │  ├─ Timer                  TickTimer
@@ -181,7 +191,7 @@ Assets/CosmosFramework
 
 | 模块 | 契约 | 职责 |
 | --- | --- | --- |
-| Event | `IEventManager` | 事件中心：注册 / 派发（参数继承 `GameEventArgs`） |
+| Event | `IEventManager` | 响应式事件中心：`Subscribe` 返回 `IDisposable`，`Observe<T>()` 可接操作符 |
 | Resource | `IResourceManager` | 可插拔资源桥：句柄与协程 API、引用计数、加载诊断 |
 | WebRequest | `IWebRequestManager` | HTTP 请求：句柄 + 超时 / 重试 / 优先级 / 取消 |
 | DataTable | `IDataTableManager` | 只读共享行 + 主键索引，状态机加载、可重载 |
@@ -222,10 +232,11 @@ Assets/CosmosFramework
 
 ## 基础底座
 
-- **数据结构**：`Pool<T>` / `ConcurrentPool<T>`、`BiDictionary`、`LruDictionary`、`LimitedQueue`、`SkipList` / `AOISkipList`、`QuadTree`、`AStar`（含 Diagonal / Manhattan / Euclidean）、`AOIZone`、`Fix64`（确定性定点数）、`BasicFsm` / `SimpleFsm`、几何体（均含 Fix64 版本）。
+- **数据结构**：`Pool<T>` / `ConcurrentPool<T>`、`BiDictionary`、`LruDictionary`、`LimitedQueue`、`SkipList` / `AOISkipList`、`QuadTree`、`RectangleGrid` / `SquareGrid`、`AStar`（含 Diagonal / Manhattan / Euclidean）、`AOIZone`、`Fix64`（确定性定点数）、`BasicFsm` / `SimpleFsm`、几何体（均含 Fix64 版本）。
 - **异步**：`OperationBase` / `OperationSystem` / `Async.WaitUntil` / `WaitForSeconds` / `NextFrame` / `WaitForTask`；协程可 `await`。
 - **池**：`Pool<T>` 对象池、`ReferencePool` 引用池。
 - **单例**：`Singleton<T>` / `ConcurrentSingleton<T>` / `MonoSingleton<T>`。
+- **响应式**：`Observable<T>` / `Subject<T>` / `ReactiveProperty<T>` / `CompositeDisposable`，Event 模块建立在其上。
 - **扩展方法**：基础类型、集合、Unity 组件、反射、文件等分组。
 - **生命周期**：`ILifecycle` 统一契约；`EventCore` 事件内核；`DatasetBase` 数据集基类。
 
@@ -267,6 +278,7 @@ Assets/CosmosFramework
 | [自定义模块](Docs/MODULE.md) | 契约命名、优先级、生命周期、报错对照 |
 | [启动与模块注册](Docs/BOOTSTRAP.md) | 启动链、注册表、扫描与排序 |
 | [实体](Docs/ENTITY.md) | 两种载体、集中刷新、分组冻结 |
+| [响应式](Docs/REACTIVE.md) | Subject / ReactiveProperty / 操作符 / 组合释放 |
 | [资源](Docs/RESOURCE.md) | Provider 契约、句柄 API、诊断 |
 | [异步](Docs/ASYNC.md) | 统一异步方案 |
 | [音频](Docs/AUDIO.md) / [数据表](Docs/DATATABLE.md) / [输入](Docs/INPUT.md) / [下载](Docs/DOWNLOAD.md) | 对应模块细节 |
@@ -281,6 +293,8 @@ Assets/CosmosFramework
 - 网络通道必须被 `TickRefresh` 驱动（注册到 `NetworkManager` 或自行调用），否则 await 只会超时。
 - 模块取用必须在启动之后；`GetModule<T>()` 未注册会抛异常。
 - 实体刷新中允许隐藏实例，但不允许注册 / 注销实体。
+- `AStar` 的开集是线性选点（每次展开 O(开集大小)），未使用堆；大面积不可达地图的开销集中在展开阶段（100×100 约 20 ms）。
+- AOI 移除实体时不会把它从其它实体的 `ViewEntities` 里摘除（实例会被池复用），消费侧应以 `Exited` / `Entered` 为准，不要长期持有实体引用。
 
 <a name="UPM"></a>
 
@@ -304,6 +318,7 @@ Assets/CosmosFramework
 
 ## Library link
 
+- Hydrogen: https://github.com/DonnYep/Hydrogen
 - HybridCLR: https://github.com/focus-creative-games/hybridclr
 - CosmosEngine: https://github.com/DonnYep/CosmosEngine
 - QuarkAsset: https://github.com/DonnYep/QuarkAsset

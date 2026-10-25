@@ -1,4 +1,4 @@
-﻿using FixMath.NET;
+using FixMath.NET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,12 +30,7 @@ namespace Cosmos
             public Fix64 ViewDistance
             {
                 get { return viewDistance; }
-                set
-                {
-                    if (value.RawValue < 0)
-                        viewDistance = Fix64.Zero;
-                    viewDistance = value;
-                }
+                set { viewDistance = value < Fix64.Zero ? Fix64.Zero : value; }
             }
             public long EntityKey { get { return entityKey; } set { entityKey = value; } }
             public Fix64 PositionX { get { return positionX; } set { positionX = value; } }
@@ -80,6 +75,12 @@ namespace Cosmos
                 ViewEntities.Clear();
                 viewEntitiesBak.Clear();
                 entityKey = 0;
+                handle = default(T);
+                positionX = Fix64.Zero;
+                positionY = Fix64.Zero;
+                viewDistance = Fix64.Zero;
+                XNode = null;
+                YNode = null;
             }
         }
     }

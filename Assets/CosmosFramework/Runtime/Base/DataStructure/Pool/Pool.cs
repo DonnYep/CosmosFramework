@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 namespace Cosmos
@@ -41,6 +41,8 @@ namespace Cosmos
         }
         public void Despawn(T obj)
         {
+            if (obj == null)
+                return;
             if (capacity == 0 || objects.Count < capacity)
             {
                 objectDespawn?.Invoke(obj);
@@ -54,6 +56,21 @@ namespace Cosmos
         public void Clear()
         {
             objects.Clear();
+        }
+        /// <summary>
+        /// 清空池并对池内对象执行释放委托（池里若是需要销毁的 Unity 对象，请用此重载，否则会泄漏）。
+        /// <para>释放委托与 <c>objectDespawn</c> 语义不同：后者在"对象入池"时调用，前者只在清空/销毁时调用一次。</para>
+        /// </summary>
+        /// <param name="release">逐个释放池内对象</param>
+        public void Clear(Action<T> release)
+        {
+            if (release == null)
+            {
+                objects.Clear();
+                return;
+            }
+            while (objects.Count > 0)
+                release(objects.Dequeue());
         }
         public IEnumerator<T> GetEnumerator()
         {

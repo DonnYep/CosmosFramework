@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,12 +29,7 @@ namespace Cosmos
             public float ViewDistance
             {
                 get { return viewDistance; }
-                set
-                {
-                    if (value < 0)
-                        viewDistance = 0;
-                    viewDistance = value;
-                }
+                set { viewDistance = value < 0 ? 0 : value; }
             }
             public long EntityKey { get { return entityKey; } set { entityKey = value; } }
             public float PositionX { get { return positionX; } set { positionX = value; } }
@@ -79,6 +74,12 @@ namespace Cosmos
                 ViewEntities.Clear();
                 viewEntitiesBak.Clear();
                 entityKey = 0;
+                handle = default(T);
+                positionX = 0;
+                positionY = 0;
+                viewDistance = 0;
+                XNode = null;
+                YNode = null;
             }
 
         }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Threading;
@@ -79,34 +79,14 @@ namespace Cosmos
         {
             get
             {
-                bool exist = dictionary.ContainsKey(key);
-                Value value = default(Value);
-                if (exist)
-                {
-                    locker.EnterReadLock();
-                    try
-                    {
-                        value= dictionary[key];
-                    }
-                    finally {locker.ExitReadLock();}
-                }
+                //读取即视为使用：与 TryGetValue 一致，命中后提升为最近使用
+                TryGetValue(key, out var value);
                 return value;
             }
             set
             {
-                bool exist = dictionary.ContainsKey(key);
-                if (exist)
-                {
-                    locker.EnterWriteLock();
-                    try
-                    {
-                        dictionary[key] = value;
-                    }
-                    finally
-                    {
-                        locker.ExitWriteLock();
-                    }
-                }
+                //索引器赋值与 Set 语义一致：键不存在时插入（必要时淘汰），而不是静默丢弃
+                Set(key, value);
             }
         }
         public LruDictionary() : this(DEFAULT_CAPACITY) { }
@@ -250,6 +230,9 @@ namespace Cosmos
                 finally { locker.ExitUpgradeableReadLock(); }
             }
         }
+        /// <summary>
+        /// 键快照；返回副本，避免调用方在锁外枚举活集合。
+        /// </summary>
         public ICollection<Key> Keys
         {
             get
@@ -257,11 +240,16 @@ namespace Cosmos
                 locker.EnterReadLock();
                 try
                 {
-                    return dictionary.Keys;
+                    var keys = new Key[dictionary.Count];
+                    dictionary.Keys.CopyTo(keys, 0);
+                    return keys;
                 }
                 finally { locker.ExitReadLock(); }
             }
         }
+        /// <summary>
+        /// 值快照；返回副本。
+        /// </summary>
         public ICollection<Value> Values
         {
             get
@@ -269,7 +257,9 @@ namespace Cosmos
                 locker.EnterReadLock();
                 try
                 {
-                    return dictionary.Values;
+                    var values = new Value[dictionary.Count];
+                    dictionary.Values.CopyTo(values, 0);
+                    return values;
                 }
                 finally { locker.ExitReadLock(); }
             }
@@ -278,21 +268,30 @@ namespace Cosmos
         #region IEnumerable
         public IEnumerator<Value> GetEnumerator()
         {
-            return new LruEnumerator<Value>(dictionary.Values);
+            //枚举器在构造时快照，读锁只覆盖快照过程，避免释放锁后遍历到正在被修改的字典
+            locker.EnterReadLock();
+            try
+            {
+                return new LruEnumerator<Value>(dictionary.Values);
+            }
+            finally
+            {
+                locker.ExitReadLock();
+            }
         }
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
         #endregion
-        //TODO 重新设置数组长度，多的部分需要清理，未实现
         /// <summary>
-        /// 重置数组长度；当前重置长度，除非数值比原先大，否则使用原有容量
+        /// 重置数组长度；新长度不大于当前容量时保持原容量。
         /// </summary>
         /// <param name="capacity">新的数组长度</param>
-        public void ResetCapacity(uint capacity )
+        public void ResetCapacity(uint capacity)
         {
-            this.capacity = capacity >this.capacity  ? capacity : this.capacity;
+            if (capacity > Capacity)
+                Capacity = capacity;
         }
     }
 }

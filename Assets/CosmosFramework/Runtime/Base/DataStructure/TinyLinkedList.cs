@@ -1,11 +1,12 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace Cosmos
 {
     /// <summary>
-    /// 单向链表,双向链表建议使用.NET的LinkedList
+    /// 单向链表；双向链表建议使用 .NET 的 <see cref="LinkedList{T}"/>。
+    /// <para>枚举器直接遍历节点（零分配），并在枚举期间检测结构修改。</para>
     /// </summary>
     public class TinyLinkedList<T> : IEnumerable<T>
     {
@@ -34,6 +35,7 @@ namespace Cosmos
             }
         }
         int count;
+        int version;
         public int Count { get { return count; } }
         Node head;
         public TinyLinkedList()
@@ -47,7 +49,9 @@ namespace Cosmos
             if (index < 0 || index > count)
                 throw new ArgumentOutOfRangeException("TinyLinkedList : 非法索引");
             if (index == 0)
+            {
                 head = new Node(node, head);
+            }
             else
             {
                 Node preview = head;
@@ -56,6 +60,7 @@ namespace Cosmos
                 preview.Next = new Node(node, preview.Next);
             }
             count++;
+            version++;
         }
         public void AddFirst(T node)
         {
@@ -111,6 +116,7 @@ namespace Cosmos
                 Node delNode = head;
                 head = head.Next;
                 count--;
+                version++;
                 return delNode.Data;
             }
             else
@@ -121,6 +127,7 @@ namespace Cosmos
                 Node delNode = preview.Next;
                 preview.Next = delNode.Next;
                 count--;
+                version++;
                 return delNode.Data;
             }
 
@@ -141,6 +148,7 @@ namespace Cosmos
             {
                 head = head.Next;
                 count--;
+                version++;
             }
             else
             {
@@ -157,58 +165,59 @@ namespace Cosmos
                 {
                     preview.Next = preview.Next.Next;
                     count--;
+                    version++;
                 }
             }
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            return new Enumerator(head, count);
+            return new Enumerator(this);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
+        /// <summary>
+        /// 节点遍历枚举器：不拷贝整表，枚举期间链表被修改时抛出异常。
+        /// </summary>
         struct Enumerator : IEnumerator<T>
         {
-            T current;
-            public T Current { get { return current; } }
+            readonly TinyLinkedList<T> list;
+            readonly int version;
+            Node current;
+            T currentValue;
+            public Enumerator(TinyLinkedList<T> list)
+            {
+                this.list = list;
+                this.version = list.version;
+                current = list.head;
+                currentValue = default(T);
+            }
+            public T Current { get { return currentValue; } }
             object IEnumerator.Current { get { return Current; } }
-            T[] list;
-            int count;
-            int index;
-            public Enumerator(Node head, int count)
-            {
-                current = default(T);
-                list = new T[count];
-                this.count = count;
-                index = -1;
-                int tmpIndex = -1;
-                Node currentNode = head;
-                while (currentNode != null)
-                {
-                    list[++tmpIndex] = currentNode.Data;
-                    currentNode = currentNode.Next;
-                }
-            }
-            public void Dispose()
-            {
-                index = -1;
-                current = default(T);
-                list = null;
-            }
             public bool MoveNext()
             {
-                if (++index >= count)
+                if (version != list.version)
+                    throw new InvalidOperationException("TinyLinkedList : 枚举期间集合被修改。");
+                if (current == null)
                     return false;
-                else
-                    current = list[index];
+                currentValue = current.Data;
+                current = current.Next;
                 return true;
             }
             public void Reset()
             {
-                index = -1;
+                if (version != list.version)
+                    throw new InvalidOperationException("TinyLinkedList : 枚举期间集合被修改。");
+                current = list.head;
+                currentValue = default(T);
+            }
+            public void Dispose()
+            {
+                current = null;
+                currentValue = default(T);
             }
         }
     }

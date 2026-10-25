@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using FixMath.NET;
 
 namespace Cosmos
@@ -47,7 +47,7 @@ namespace Cosmos
             var height = cellHeight * (Fix64)columnCount;
             CellHeight = cellHeight;
             CellWidth = cellWidth;
-            rectangle2d = new RectangleFix64[rowCount, columnCount];
+            rectangle2d = new RectangleFix64[columnCount, rowCount];
             WidthBufferZoneRange = widthBufferRange >= Fix64.Zero ? widthBufferRange : Fix64.Zero;
             HeightBufferZoneRange = heightBufferRange >= Fix64.Zero ? heightBufferRange : Fix64.Zero;
             GridArea = new RectangleFix64(centerX, centerY, width, height);
@@ -63,9 +63,9 @@ namespace Cosmos
                 for (int x = 0; x < rowCount; x++)
                 {
                     var xCenter = (Fix64)x * CellWidth + centerOffsetX;
-                    var yCenter = (Fix64)y * CellWidth + centerOffsetY;
+                    var yCenter = (Fix64)y * CellHeight + centerOffsetY;
                     rectangle2d[y, x] = new RectangleFix64(xCenter, yCenter, CellWidth, CellHeight);
-                    rectangle1d[y * ColumnCount + x] = rectangle2d[y, x];
+                    rectangle1d[y * (int)rowCount + x] = rectangle2d[y, x];
                 }
             }
         }
@@ -77,10 +77,17 @@ namespace Cosmos
         /// <returns>位置所在的块</returns>
         public RectangleFix64 GetRectangle(Fix64 posX, Fix64 posY)
         {
+            if (RowCount == 0 || ColumnCount == 0)
+                return RectangleFix64.Zero;
             if (!IsOverlapping(posX, posY))
                 return RectangleFix64.Zero;
             var row = (int)((posX - OffsetX) / CellWidth);
             var col = (int)((posY - OffsetY) / CellHeight);
+            //重叠判定为闭区间，右/上边界会算出 Count，需夹到最后一个格子
+            if (row < 0) row = 0;
+            else if (row > (int)RowCount - 1) row = (int)RowCount - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)ColumnCount - 1) col = (int)ColumnCount - 1;
             return rectangle2d[col, row];
         }
         /// <summary>
@@ -91,12 +98,18 @@ namespace Cosmos
         /// <returns>缓冲所属的块</returns>
         public RectangleFix64[] GetRectangles(Fix64 posX, Fix64 posY)
         {
+            if (RowCount == 0 || ColumnCount == 0)
+                return new RectangleFix64[0];
             if (!IsOverlappingBufferZone(posX, posY))
                 return new RectangleFix64[0];
             if (!IsOverlapping(posX, posY))
                 return new RectangleFix64[0];
             var row = (int)((posX - OffsetX) / CellWidth);
             var col = (int)((posY - OffsetY) / CellHeight);
+            if (row < 0) row = 0;
+            else if (row > (int)RowCount - 1) row = (int)RowCount - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)ColumnCount - 1) col = (int)ColumnCount - 1;
             RectangleFix64[] neighborSquares = new RectangleFix64[9];
             int idx = 0;
             for (int x = -1; x <= 1; x++)
@@ -138,12 +151,18 @@ namespace Cosmos
         /// <returns>获取到的临近地块</returns>
         public RectangleFix64[] GetNearbyRectangles(Fix64 posX, Fix64 posY, int level = 0)
         {
+            if (RowCount == 0 || ColumnCount == 0)
+                return new RectangleFix64[0];
             if (!IsOverlappingBufferZone(posX, posY))
                 return new RectangleFix64[0];
             if (!IsOverlapping(posX, posY))
                 return new RectangleFix64[0];
             var row = (int)((posX - OffsetX) / CellWidth);
             var col = (int)((posY - OffsetY) / CellHeight);
+            if (row < 0) row = 0;
+            else if (row > (int)RowCount - 1) row = (int)RowCount - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)ColumnCount - 1) col = (int)ColumnCount - 1;
             level = level >= 0 ? level : 0;
             if (level == 0)
                 return new RectangleFix64[] { rectangle2d[col, row] };
@@ -157,7 +176,7 @@ namespace Cosmos
                 {
                     int idxX = row + x;
                     int idxY = col + y;
-                    if (idxX < RowCount - 1 && idxX >= 0 && idxY < ColumnCount - 1 && idxY >= 0)
+                    if (idxX <= RowCount - 1 && idxX >= 0 && idxY <= ColumnCount - 1 && idxY >= 0)
                     {
                         neabySquares[idx] = rectangle2d[idxY, idxX];
                         idx++;

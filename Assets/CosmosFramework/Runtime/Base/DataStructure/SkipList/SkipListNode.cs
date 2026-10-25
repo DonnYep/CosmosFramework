@@ -35,7 +35,7 @@ namespace Cosmos
             next = null;
             previous = null;
             above = null;
-            previous = null;
+            below = null;
         }
     }
     public class SkipListNodeHeader<T> : SkipListNode<T>

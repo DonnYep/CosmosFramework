@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
+using System;
 public class SliderEventSubscriber : MonoBehaviour
 {
     string startText;
     Slider slider;
     Text text;
+    IDisposable subscription;
 
     private void Start()
     {
@@ -19,11 +21,18 @@ public class SliderEventSubscriber : MonoBehaviour
     }
     void AddEvent()
     {
-        CosmosEntry.EventManager.AddEvent<SliderEvent>(SliderEventHandler);
+        //订阅返回句柄，重复点击不会重复注册
+        if (subscription == null)
+            subscription = CosmosEntry.EventManager.Subscribe<SliderEvent>(SliderEventHandler);
     }
     void RemoveEvent()
     {
-        CosmosEntry.EventManager.RemoveEvent<SliderEvent>(SliderEventHandler);
+        subscription?.Dispose();
+        subscription = null;
+    }
+    private void OnDestroy()
+    {
+        RemoveEvent();
     }
     void SliderEventHandler(SliderEvent arg)
     {

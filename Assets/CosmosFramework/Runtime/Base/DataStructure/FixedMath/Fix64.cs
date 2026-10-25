@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -100,7 +100,7 @@ namespace FixMath.NET
         public static Fix64 Ceiling(Fix64 value)
         {
             var hasFractionalPart = (value.m_rawValue & 0x00000000FFFFFFFF) != 0;
-            return hasFractionalPart ? Floor(value) + One : value;
+            return hasFractionalPart ? IncrementSaturating(Floor(value)) : value;
         }
 
         /// <summary>
@@ -117,13 +117,23 @@ namespace FixMath.NET
             }
             if (fractionalPart > 0x80000000)
             {
-                return integralPart + One;
+                return IncrementSaturating(integralPart);
             }
             // if number is halfway between two values, round to the nearest even number
             // this is the method used by System.Math.Round().
             return (integralPart.m_rawValue & ONE) == 0
                        ? integralPart
-                       : integralPart + One;
+                       : IncrementSaturating(integralPart);
+        }
+
+        /// <summary>
+        /// 整数部分加一；越过 MaxValue 时饱和。
+        /// </summary>
+        static Fix64 IncrementSaturating(Fix64 integralPart)
+        {
+            return integralPart.m_rawValue >= MAX_VALUE - ONE
+                ? MaxValue
+                : new Fix64(integralPart.m_rawValue + ONE);
         }
 
         /// <summary>
@@ -920,23 +930,43 @@ namespace FixMath.NET
 
         public static explicit operator Fix64(long value)
         {
+            //定点值域为 [-2^31, 2^31-1]，超出时饱和，避免 value * ONE 回绕
+            if (value > MAX_VALUE / ONE)
+                return MaxValue;
+            if (value < MIN_VALUE / ONE)
+                return MinValue;
             return new Fix64(value * ONE);
         }
         public static explicit operator long(Fix64 value)
         {
-            return value.m_rawValue >> FRACTIONAL_PLACES;
+            //向零截断（与 C# 默认的 float/double 取整一致），而不是算术右移的向下取整
+            var raw = value.m_rawValue;
+            if (raw >= 0)
+                return raw >> FRACTIONAL_PLACES;
+            var floor = raw >> FRACTIONAL_PLACES;
+            //低 32 位非零说明还有小数部分，截断需要向零补 1
+            return (raw & 0x00000000FFFFFFFFL) == 0 ? floor : floor + 1;
         }
         public static explicit operator Fix64(float value)
         {
-            return new Fix64((long)(value * ONE));
+            //float 直接乘 ONE 只有 24 位有效位，先转 double 再走带范围检查的转换
+            return (Fix64)(double)value;
         }
         public static explicit operator float(Fix64 value)
         {
-            return (float)value.m_rawValue / ONE;
+            return (float)((double)value.m_rawValue / ONE);
         }
         public static explicit operator Fix64(double value)
         {
-            return new Fix64((long)(value * ONE));
+            //NaN 归一为 0；越界饱和，避免 (long) 转换的未定义行为
+            if (double.IsNaN(value))
+                return Zero;
+            var scaled = value * ONE;
+            if (scaled >= (double)MAX_VALUE)
+                return MaxValue;
+            if (scaled <= (double)MIN_VALUE)
+                return MinValue;
+            return new Fix64((long)scaled);
         }
         public static explicit operator double(Fix64 value)
         {
@@ -944,7 +974,15 @@ namespace FixMath.NET
         }
         public static explicit operator Fix64(decimal value)
         {
-            return new Fix64((long)(value * ONE));
+            //decimal 可表示到 ±7.9e28，先按定点值域饱和，避免 decimal 乘法溢出与 (long) 越界
+            if (value >= 2147483648M)
+                return MaxValue;
+            if (value <= -2147483648M)
+                return MinValue;
+            var scaled = value * ONE;
+            if (scaled >= MAX_VALUE)
+                return MaxValue;
+            return new Fix64((long)scaled);
         }
         public static explicit operator decimal(Fix64 value)
         {

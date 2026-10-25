@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Collections;
@@ -58,6 +58,8 @@ namespace Cosmos
         }
         public void Despawn(T obj)
         {
+            if (obj == null)
+                return;
             if (capacity <= 0)
             {
                 objectDespawn?.Invoke(obj);
@@ -108,7 +110,19 @@ namespace Cosmos
         }
         public void Clear()
         {
-            objects.Clear();
+            Clear(null);
+        }
+        /// <summary>
+        /// 清空池；
+        /// </summary>
+        /// <param name="release">逐个释放池内对象；传 null 表示只丢弃引用</param>
+        public void Clear(Action<T> release)
+        {
+            T obj;
+            while (objects.TryDequeue(out obj))
+            {
+                release?.Invoke(obj);
+            }
             if (capacity > 0)
             {
                 lock (countLock)
@@ -116,6 +130,20 @@ namespace Cosmos
                     //保留仍在途的占位，池内对象已清空
                     totalCount = reservedCount;
                 }
+            }
+        }
+        /// <summary>
+        /// 池内对象数 + 在途占位数（容量语义的总量）；
+        /// <para><see cref="Count"/> 只表示池内可复用对象数。</para>
+        /// </summary>
+        public int TotalCount
+        {
+            get
+            {
+                if (capacity <= 0)
+                    return objects.Count;
+                lock (countLock)
+                    return totalCount;
             }
         }
         public IEnumerator<T> GetEnumerator()

@@ -21,6 +21,7 @@ CosmosFramework is a medium-lightweight Unity framework: a unified module lifecy
 > - **Module system**: `[Module]` default priority is now `10000` (built-ins occupy `100~1300`); duplicate contracts fail at startup; contract resolution is deterministic.
 > - **Module access**: `GetModule<T>()` throws `InvalidOperationException` when missing (`TryGetModule<T>()` added).
 > - **Network**: `WaitConnectedAwaiter` / `WaitReceiveDataAwaiter` / `WaitForChannelExts` are deleted; use `ConnectAsync` / `ReceiveDataAsync` / `WaitDisconnectedAsync` (same names, new cancellation/timeout parameters).
+> - **Event is reactive now**: `Subscribe` returns `IDisposable`, `Observe<T>()` supports `Where` / `Select` / `DistinctUntilChanged`; `AddEvent` / `RemoveEvent` / `Dispatch` are removed, and `Runtime/Base/Reactive` is added as the reactive foundation.
 > - **MonoSingleton**: the first access (including pre-placed instances) now calls `OnInitialize`, i.e. `DontDestroyOnLoad`.
 
 <a name="navigation"></a>
@@ -54,11 +55,19 @@ CosmosFramework is a medium-lightweight Unity framework: a unified module lifecy
 | Controller module removed | `[TickRefresh]` polling no longer works | Implement `IEntityTickable` / `IEntityFixedTickable` / `IEntityLateTickable`; plain MonoBehaviours can use `Update` |
 | `CosmosEntry.ControllerManager` removed | Compile error | Use `CosmosEntry.EntityManager`: `Paused` for per-instance pause, `PauseEntityGroup` for group freeze |
 | `ShowEntity(string, out EntityObject)` removed | Compile error | Use `ShowEntity<T>(entityName)` |
+| Event API is reactive | `AddEvent` / `RemoveEvent` / `Dispatch` removed | Use `Subscribe` (returns `IDisposable`) / `Publish` / `Observe` |
+| `LimitedQueue<T>` is composition-based | No longer a `Queue<T>` subclass; passing it as `Queue<T>` breaks | Use its own `Enqueue` / `Dequeue` / `TryDequeue` / `Peek` / `Clear` |
 | Unified module priority | Custom modules with a small explicit `Priority` initialize earlier | Omit priority to stay after every built-in; opt in with `[Module(Priority = n)]` |
 | Duplicate contracts rejected | A custom module sharing a built-in contract will not start | Remove one, drop the built-in from `BuiltinModuleRegistry`, or use `CosmosEntry.LaunchModules` |
 | `GetModule<T>()` throws | Code relying on a null return now throws | Use `TryGetModule<T>()` for optional modules |
 | Network awaiters rewritten | References to old awaiter types break | Use the same-named extensions `ConnectAsync` / `ReceiveDataAsync`, plus `WaitDisconnectedAsync` |
 | `MonoSingleton` init timing | Pre-placed instances also become `DontDestroyOnLoad` | No action needed |
+| `(long)Fix64` truncates toward zero | Negative results change (`(long)(Fix64)(-1.5)` is `-1` instead of `-2`) | Use `Fix64.Floor` before converting when you need floor semantics |
+| `(Fix64)` overloads saturate out-of-range values | No more wraparound (`(Fix64)long.MaxValue` no longer yields `-1`); `NaN` maps to `0`, `±Infinity` / out-of-range saturates to `MaxValue` / `MinValue` | No action needed; relying on wraparound was undefined usage |
+| `AStarFix64.Clear()` clears the grid | `GetNode` returns `null` after `Clear()` (same as `AStar`) | Use `ClearNodeCache()` to drop pooled buffers only |
+| `QuadTree` leaves no longer drop objects | A full leaf at max depth keeps accumulating (may exceed `NodeObjectCapacity`); `Insert` no longer returns `false` | No action needed; capacity is a split threshold, not a hard limit |
+| AOI inserts/removes by node identity | Entities sharing an X coordinate or a position no longer delete each other; `AOISkipList.Add` returns the lowest node for O(1) removal | No action needed |
+| `Circle` relation fixes | Concentric or contained circles are no longer reported as separate / crossing | No action needed |
 
 <a name="environment"></a>
 
@@ -127,10 +136,11 @@ Assets/CosmosFramework
 │  │  ├─ Behaviour              ILifecycle contract
 │  │  ├─ Constants              Global constants
 │  │  ├─ Dataset                Dataset base class
-│  │  ├─ DataStructure          Pools, trees, skip lists, quadtree, A*, AOI, Fix64, geometry
+│  │  ├─ DataStructure          Pools, trees, skip lists, quadtree, grids, A*, AOI, Fix64, geometry
 │  │  ├─ EventCore              Event core
 │  │  ├─ Extensions             Extension methods
 │  │  ├─ ReferencePool          Reference pool
+│  │  ├─ Reactive               Reactive foundation (Observable / Subject / ReactiveProperty)
 │  │  ├─ ResourceAbstractions   Resource contracts (Provider / Handle / Operation)
 │  │  ├─ Singleton              Singleton / ConcurrentSingleton / MonoSingleton
 │  │  ├─ Timer                  TickTimer
@@ -181,7 +191,7 @@ Register(OnInitialization) → Active(OnActive) → Preparatory(OnPreparatory)
 
 | Module | Contract | Responsibility |
 | --- | --- | --- |
-| Event | `IEventManager` | Event hub: add / dispatch (payloads derive from `GameEventArgs`) |
+| Event | `IEventManager` | Reactive event hub: `Subscribe` returns `IDisposable`, `Observe<T>()` supports operators |
 | Resource | `IResourceManager` | Pluggable resource bridge: handles and coroutines, ref counting, diagnostics |
 | WebRequest | `IWebRequestManager` | HTTP: handles with timeout / retry / priority / cancellation |
 | DataTable | `IDataTableManager` | Read-only shared rows + key index; state-machine loading, reloadable |
@@ -222,10 +232,11 @@ See [manual §4](Docs/MANUAL_EN.md) for common APIs and samples.
 
 ## Foundation
 
-- **Data structures**: `Pool<T>` / `ConcurrentPool<T>`, `BiDictionary`, `LruDictionary`, `LimitedQueue`, `SkipList` / `AOISkipList`, `QuadTree`, `AStar` (Diagonal / Manhattan / Euclidean), `AOIZone`, `Fix64` (deterministic fixed point), `BasicFsm` / `SimpleFsm`, geometry (with Fix64 variants).
+- **Data structures**: `Pool<T>` / `ConcurrentPool<T>`, `BiDictionary`, `LruDictionary`, `LimitedQueue`, `SkipList` / `AOISkipList`, `QuadTree`, `RectangleGrid` / `SquareGrid`, `AStar` (Diagonal / Manhattan / Euclidean), `AOIZone`, `Fix64` (deterministic fixed point), `BasicFsm` / `SimpleFsm`, geometry (with Fix64 variants).
 - **Async**: `OperationBase` / `OperationSystem` / `Async.WaitUntil` / `WaitForSeconds` / `NextFrame` / `WaitForTask`; coroutines are awaitable.
 - **Pools**: `Pool<T>` object pool, `ReferencePool` reference pool.
 - **Singletons**: `Singleton<T>` / `ConcurrentSingleton<T>` / `MonoSingleton<T>`.
+- **Reactive**: `Observable<T>` / `Subject<T>` / `ReactiveProperty<T>` / `CompositeDisposable`; the Event module is built on it.
 - **Extensions**: primitives, collections, Unity components, reflection, files.
 - **Lifecycle**: `ILifecycle`; `EventCore`; `DatasetBase`.
 
@@ -267,6 +278,7 @@ Wire up through `IResourceProvider`; `SetProvider(name, settings)` or `RegisterP
 | [Custom modules](Docs/MODULE.md) | Contract naming, priority, lifecycle, error reference |
 | [Bootstrap and module registration](Docs/BOOTSTRAP.md) | Launch chain, registry, scanning and ordering |
 | [Entity](Docs/ENTITY.md) | Two carriers, centralized ticking, group freeze |
+| [Reactive](Docs/REACTIVE.md) | Subject / ReactiveProperty / operators / composite disposal |
 | [Resource](Docs/RESOURCE_EN.md) | Provider contracts, handle API, diagnostics |
 | [Async](Docs/ASYNC.md) | Unified async |
 | [Audio](Docs/AUDIO.md) / [DataTable](Docs/DATATABLE.md) / [Input](Docs/INPUT.md) / [Download](Docs/DOWNLOAD.md) | Module details |
@@ -281,6 +293,8 @@ Wire up through `IResourceProvider`; `SetProvider(name, settings)` or `RegisterP
 - Channels must be driven by `TickRefresh` (registered with `NetworkManager` or called manually), otherwise awaits only time out.
 - Module access requires a completed launch; `GetModule<T>()` throws when missing.
 - Hiding entities during a tick is allowed; registering/deregistering entities is not.
+- The `AStar` open set is scanned linearly (O(open-set size) per expansion, no heap); on a large unreachable map the cost sits in the expansion phase (~20 ms for 100×100).
+- Removing an AOI entity does not strip it from other entities' `ViewEntities` (instances are pooled), so consumers should drive off `Exited` / `Entered` instead of holding entity references.
 
 <a name="upm"></a>
 
@@ -304,6 +318,7 @@ Wire up through `IResourceProvider`; `SetProvider(name, settings)` or `RegisterP
 
 ## Library link
 
+- Hydrogen: https://github.com/DonnYep/Hydrogen
 - HybridCLR: https://github.com/focus-creative-games/hybridclr
 - CosmosEngine: https://github.com/DonnYep/CosmosEngine
 - QuarkAsset: https://github.com/DonnYep/QuarkAsset

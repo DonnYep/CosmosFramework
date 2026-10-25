@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Cosmos
 {
@@ -38,7 +38,8 @@ namespace Cosmos
         public bool IsCrossWith(Circle other)
         {
             var dis = Math.Sqrt(Math.Pow(other.Center.X - Center.X, 2) + Math.Pow(other.Center.Y - Center.Y, 2));
-            return other.Radius - Radius < dis && dis < other.Radius + Radius;
+            //圆心距必须大于半径差（否则是包含/同心），且小于半径和（否则是相离/外切）
+            return Math.Abs(other.Radius - Radius) < dis && dis < other.Radius + Radius;
         }
 
         /// <summary>
@@ -58,7 +59,9 @@ namespace Cosmos
         /// </summary>
         public bool IsSeparateWith(Circle other)
         {
-            return !IsCrossWith(other) && !IsIntersectWith(other);
+            var dis = Math.Sqrt(Math.Pow(other.Center.X - Center.X, 2) + Math.Pow(other.Center.Y - Center.Y, 2));
+            //同心、包含、相交、相切都不算相离
+            return dis > other.Radius + Radius;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using Cosmos;
 using Cosmos.Event;
@@ -21,7 +21,7 @@ public class SliderEventDispatcher : MonoBehaviour
     {
         sliderEvent.MaxValue = slider.maxValue;
         sliderEvent.Value = value;
-        eventManager.Dispatch(sliderEvent);
+        eventManager.Publish(sliderEvent);
     }
     void DeregisterEvent()
     {

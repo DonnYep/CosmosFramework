@@ -12,6 +12,7 @@
 > - **模块系统**：`[Module]` 默认优先级 `10000`，内置占 `100~1300`，重复契约启动报错；
 > - **取模块**：`GetModule<T>()` 未注册抛异常，可选模块用 `TryGetModule<T>()`；
 > - **网络**：旧 awaiter 类型删除，改用 `ConnectAsync` / `ReceiveDataAsync` / `WaitDisconnectedAsync`。
+> - **Event 改为 reactive**：`AddEvent` / `RemoveEvent` / `Dispatch` 删除，改用 `Subscribe`（返回 `IDisposable`）/ `Publish` / `Observe`。
 
 ## 1. 目录与分层
 
@@ -26,10 +27,11 @@ Assets/CosmosFramework
 │  │  ├─ Behaviour              ILifecycle 生命周期契约
 │  │  ├─ Constants              全局常量
 │  │  ├─ Dataset                数据集基类
-│  │  ├─ DataStructure          数据结构：池、树、跳表、四叉树、A*、AOI、Fix64、几何
+│  │  ├─ DataStructure          数据结构：池、树、跳表、四叉树、网格、A*、AOI、Fix64、几何
 │  │  ├─ EventCore              事件内核
 │  │  ├─ Extensions             扩展方法（基础类型/集合/Unity/反射/IO…）
 │  │  ├─ ReferencePool          引用池
+│  │  ├─ Reactive               响应式基座（Observable / Subject / ReactiveProperty）
 │  │  ├─ ResourceAbstractions   资源契约（Provider / Handle / Operation）
 │  │  ├─ Singleton              Singleton / ConcurrentSingleton / MonoSingleton
 │  │  ├─ Timer                  TickTimer
@@ -161,10 +163,11 @@ CosmosEntry.ElapseRefreshHandler += OnElapse;   // 真实帧间隔
 > 契约在 `Modules/<Name>/I<Name>Manager.cs`，实现是 `internal sealed class <Name>Manager`。
 > 下面只列常用 API，完整签名看接口文件。
 
-### 3.1 Event（事件中心）
+### 3.1 Event（响应式事件中心）
 
 - 契约：`IEventManager`；参数类型必须继承 `GameEventArgs`。
-- 线程：主线程派发；派发过程中增删监听是安全的。
+- `Subscribe` 返回 `IDisposable`，释放即退订；`Observe<T>()` 返回事件流，可接操作符。
+- 线程：主线程派发；派发过程中订阅 / 退订都是安全的。
 
 ```csharp
 public class LoginEventArgs : GameEventArgs
@@ -173,12 +176,19 @@ public class LoginEventArgs : GameEventArgs
     public override void Release() { Account = null; }
 }
 
-CosmosEntry.EventManager.AddEvent<LoginEventArgs>(OnLogin);
-CosmosEntry.EventManager.Dispatch(new LoginEventArgs { Account = "a" });
-CosmosEntry.EventManager.RemoveEvent<LoginEventArgs>(OnLogin);
+// 订阅（记得在销毁时 dispose）
+var subscription = CosmosEntry.EventManager.Subscribe<LoginEventArgs>(OnLogin);
+CosmosEntry.EventManager.Publish(new LoginEventArgs { Account = "a" });
+subscription.Dispose();
+
+// 事件流 + 操作符
+CosmosEntry.EventManager.Observe<LoginEventArgs>()
+    .Where(args => !string.IsNullOrEmpty(args.Account))
+    .Subscribe(OnLogin);
 ```
 
-API：`AddEvent<T>` / `RemoveEvent<T>` / `RemoveAllEvents<T>` / `Dispatch<T>` / `HasEvent<T>` / `GetEventInfo<T>` / `EventCount`。
+API：`Subscribe<T>` / `Publish<T>` / `Observe<T>` / `HasEvent<T>` / `GetEventInfo<T>` / `RemoveAllEvents<T>` / `RemoveAllEvents` / `EventCount`。
+Rx 基座（`Subject` / `ReactiveProperty` / 操作符 / 组合释放）见 [REACTIVE.md](REACTIVE.md)。
 
 ### 3.2 Resource（资源）
 
@@ -419,7 +429,7 @@ var text = Utility.Text.FormatCombine("player/", id, "/avatar");
 | 池 | `Pool<T>`（队列式）、`ConcurrentPool<T>` |
 | 字典/队列 | `BiDictionary` / `ConcurrentBiDictionary`（双向）、`LruDictionary`、`LimitedQueue`、`TinyLinkedList`、`LinkedNodeList` |
 | 树/跳表 | `BinaryTree` / `SkipList` / `SkipNodeList` / `AOISkipList`（AOI 用） |
-| 空间 | `QuadTree` / `QuadTreeFix64`、`RectangleGrid` / `SquareGrid`、`AOIZone` / `AOIZoneFix64` |
+| 空间 | `QuadTree` / `QuadTreeFix64`、`RectangleGrid` / `RectangleGridFix64`、`SquareGrid` / `SquareGridFix64`、`AOIZone` / `AOIZoneFix64` |
 | 寻路 | `AStar` 及 `Diagonal` / `Manhattan` / `Euclidean` 变体，均有 Fix64 版本 |
 | 定点数 | `Fix64`（含 sin/cos LUT），用于确定性逻辑 |
 | 几何 | `Rectangle` / `Square` / `Circle` / `Point2D` / `Vector2D`（各含 Fix64 版） |
@@ -427,6 +437,11 @@ var text = Utility.Text.FormatCombine("player/", id, "/avatar");
 | 并发 | `AsyncLock` |
 
 > 说明：`AStar` / `QuadTree` / `AOI` 的 Fix64 版本是为帧同步/服务器准备的确定性实现，与浮点版本 API 对称。
+>
+> - **AOI**：增删按实体自持的轴节点身份进行，同 X 坐标 / 同坐标的多个实体互不影响；`AOISkipList.Add` 返回最底层节点，可直接用于 O(1) 删除。
+> - **A\***：开 / 闭集为 O(1) 判定，邻居列表在展开时复用；自定义邻域重写 `GetNeighborNodes` 即可，想连临时集合都省掉再重写 `FillNeighborNodes`（`AStarFix64` 对应 `FillNeighboringNodes`）。
+> - **四叉树**：`NodeObjectCapacity` 是分裂阈值而非硬上限，到达最大深度的叶子会继续累积对象（不会丢）。
+> - **Fix64**：`(long)Fix64` 向零截断（需要向下取整先 `Fix64.Floor`）；`(Fix64)` 越界饱和、`NaN` 归一为 0。
 
 ### 5.2 异步（`Base/Async`）
 
@@ -444,7 +459,8 @@ var text = Utility.Text.FormatCombine("player/", id, "/avatar");
 
 ### 5.4 池
 
-- `Pool<T>`：对象池（`Spawn` / `Despawn` / `Clear`）；
+- `Pool<T>`：对象池（`Spawn` / `Despawn` / `Clear`）；`Clear()` 只丢弃引用，池内若是需要销毁的资源请用 `Clear(release)`；
+- `ConcurrentPool<T>`：线程安全版本，`Count` 为池内数量、`TotalCount` 含在途占位；
 - `ReferencePool`：`Acquire<T>()` / `Release(IReference)`，`IReference.Release()` 负责清空状态。
 
 ### 5.5 单例
@@ -464,7 +480,8 @@ var text = Utility.Text.FormatCombine("player/", id, "/avatar");
 - `ILifecycle`：`OnInitialization / OnPreparatory / OnActive / OnPause / OnUnPause / OnRefresh / OnElapseRefresh / OnDeactive / OnRecycle / OnRenewal / OnTermination` 的统一契约；
 - `EventCore`：事件内核（`EventManager` 的底座）；
 - `DatasetBase`：数据集基类（配合编辑器 `DatasetBaseEditor`）；
-- `Constants`：全局常量。
+- `Constants`：全局常量；
+- `Reactive`：`Observable<T>` / `Subject<T>` / `ReactiveProperty<T>` / `CompositeDisposable` 与 `Where` / `Select` / `DistinctUntilChanged`，Event 模块即建立在其上（见 [REACTIVE.md](REACTIVE.md)）。
 
 ## 6. 架构模板（`Architeture`）
 

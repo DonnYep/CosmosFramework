@@ -1,48 +1,52 @@
-﻿using System;
+using System;
 namespace Cosmos.Event
 {
+    //================================================
+    /*
+     * 1、事件中心（reactive）。使用数据类型作为事件的 key。
+     * 2、订阅返回 IDisposable，退订即释放；Observe<T>() 可接 Where / Select / DistinctUntilChanged 等操作符。
+     * 3、线程约定：主线程派发。
+     */
+    //================================================
     public interface IEventManager : IModuleManager
     {
         /// <summary>
-        /// 当前注册的事件类型总数。
+        /// 已有订阅者的事件类型数量。
         /// </summary>
         int EventCount { get; }
         /// <summary>
-        /// 添加事件。
+        /// 订阅事件；返回的句柄释放即退订。
         /// </summary>
-        /// <typeparam name="T">事件数据类型</typeparam>
-        /// <param name="handler">事件监听函数</param>
-        void AddEvent<T>(Action<T> handler) where T : GameEventArgs;
+        /// <typeparam name="T">事件参数类型</typeparam>
+        /// <param name="handler">处理函数</param>
+        /// <returns>退订句柄</returns>
+        IDisposable Subscribe<T>(Action<T> handler) where T : GameEventArgs;
         /// <summary>
-        /// 移除事件。假如此类型的事件监听数量为零，自动移除此事件。
+        /// 发布事件。
         /// </summary>
-        /// <typeparam name="T">事件数据类型</typeparam>
-        /// <param name="handler">事件监听函数</param>
-        void RemoveEvent<T>(Action<T> handler) where T : GameEventArgs;
+        /// <typeparam name="T">事件参数类型</typeparam>
+        /// <param name="args">事件参数</param>
+        void Publish<T>(T args) where T : GameEventArgs;
         /// <summary>
-        /// 移除一个类型的所有事件。
+        /// 获取事件流；可接操作符做过滤 / 映射 / 去重。
         /// </summary>
-        /// <typeparam name="T">事件数据类型</typeparam>
-        void RemoveAllEvents<T>() where T : GameEventArgs;
+        /// <typeparam name="T">事件参数类型</typeparam>
+        IObservable<T> Observe<T>() where T : GameEventArgs;
         /// <summary>
-        /// 清空所有的事件监听。
+        /// 是否存在该事件类型的订阅者。
         /// </summary>
-        void RemoveAllEvents();
-        /// <summary>
-        /// 事件分发。
-        /// </summary>
-        /// <typeparam name="T">事件数据类型</typeparam>
-        /// <param name="args">事件数据</param>
-        void Dispatch<T>(T args) where T : GameEventArgs;
-        /// <summary>
-        /// 判断事件类似是否存在。
-        /// </summary>
-        /// <typeparam name="T">事件数据类型</typeparam>
         bool HasEvent<T>() where T : GameEventArgs;
         /// <summary>
-        /// 获取事件的信息。
+        /// 获取事件信息（订阅者数量等）。
         /// </summary>
-        /// <typeparam name="T">事件数据类型</typeparam>
         EventInfo GetEventInfo<T>() where T : GameEventArgs;
+        /// <summary>
+        /// 移除指定事件类型的全部订阅者。
+        /// </summary>
+        void RemoveAllEvents<T>() where T : GameEventArgs;
+        /// <summary>
+        /// 移除所有事件的订阅者。
+        /// </summary>
+        void RemoveAllEvents();
     }
 }

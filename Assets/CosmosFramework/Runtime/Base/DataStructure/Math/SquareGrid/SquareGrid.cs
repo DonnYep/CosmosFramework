@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 namespace Cosmos
 {
     /// <summary>
@@ -25,8 +25,8 @@ namespace Cosmos
         public SquareGrid(float cellSideLength, uint cellSection, float centerX, float centerY) : this(cellSideLength, cellSection, centerX, centerY, 0) { }
         public SquareGrid(float cellSideLength, uint cellSection, float centerX, float centerY, float bufferRange)
         {
-            if (cellSideLength < 0)
-                throw new OverflowException("cellSideLength can not less than zero !");
+            if (cellSideLength <= 0)
+                throw new OverflowException("cellSideLength can not less or equal than zero !");
             CellSection = cellSection;
             var squareSideLength = cellSideLength * cellSection;
             CellSideLength = cellSideLength;
@@ -56,10 +56,17 @@ namespace Cosmos
         /// <returns>位置所在的块</returns>
         public Square GetSquare(float posX, float posY)
         {
+            if (CellSection == 0)
+                return Square.Zero;
             if (!IsOverlapping(posX, posY))
                 return Square.Zero;
             var row = (int)((posX - OffsetX) / CellSideLength);
             var col = (int)((posY - OffsetY) / CellSideLength);
+            //重叠判定为闭区间，右/上边界会算出 Section，需夹到最后一个格子
+            if (row < 0) row = 0;
+            else if (row > (int)CellSection - 1) row = (int)CellSection - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)CellSection - 1) col = (int)CellSection - 1;
             return square2d[col, row];
         }
         /// <summary>
@@ -70,12 +77,18 @@ namespace Cosmos
         /// <returns>缓冲所属的块</returns>
         public Square[] GetSquares(float posX, float posY)
         {
+            if (CellSection == 0)
+                return new Square[0];
             if (!IsOverlappingBufferZone(posX, posY))
                 return new Square[0];
             if (!IsOverlapping(posX, posY))
                 return new Square[0];
             var row = (int)((posX - OffsetX) / CellSideLength);
             var col = (int)((posY - OffsetY) / CellSideLength);
+            if (row < 0) row = 0;
+            else if (row > (int)CellSection - 1) row = (int)CellSection - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)CellSection - 1) col = (int)CellSection - 1;
             Square[] neighborSquares = new Square[9];
             int idx = 0;
             for (int x = -1; x <= 1; x++)
@@ -101,6 +114,7 @@ namespace Cosmos
                 }
             }
             var dstSquares = new Square[dstIdx + 1];
+            dstSquares[0] = square2d[col, row];
             Array.Copy(srcSquares, 0, dstSquares, 1, dstIdx);
             return dstSquares;
         }
@@ -114,12 +128,18 @@ namespace Cosmos
         /// <returns>获取到的临近地块</returns>
         public Square[] GetNearbySquares(float posX, float posY, int level = 0)
         {
+            if (CellSection == 0)
+                return new Square[0];
             if (!IsOverlappingBufferZone(posX, posY))
                 return new Square[0];
             if (!IsOverlapping(posX, posY))
                 return new Square[0];
             var row = (int)((posX - OffsetX) / CellSideLength);
             var col = (int)((posY - OffsetY) / CellSideLength);
+            if (row < 0) row = 0;
+            else if (row > (int)CellSection - 1) row = (int)CellSection - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)CellSection - 1) col = (int)CellSection - 1;
             level = level >= 0 ? level : 0;
             if (level == 0)
                 return new Square[] { square2d[col, row] };

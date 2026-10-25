@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 namespace Cosmos
 {
     /// <summary>
@@ -74,10 +74,17 @@ namespace Cosmos
         /// <returns>位置所在的块</returns>
         public Rectangle GetRectangle(float posX, float posY)
         {
+            if (RowCount == 0 || ColumnCount == 0)
+                return Rectangle.Zero;
             if (!IsOverlapping(posX, posY))
                 return Rectangle.Zero;
             var row = (int)((posX - OffsetX) / CellWidth);
             var col = (int)((posY - OffsetY) / CellHeight);
+            //重叠判定为闭区间，右/上边界会算出 Count，需夹到最后一个格子
+            if (row < 0) row = 0;
+            else if (row > (int)RowCount - 1) row = (int)RowCount - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)ColumnCount - 1) col = (int)ColumnCount - 1;
             return rectangle2d[col, row];
         }
         /// <summary>
@@ -88,12 +95,18 @@ namespace Cosmos
         /// <returns>缓冲所属的块</returns>
         public Rectangle[] GetRectangles(float posX, float posY)
         {
+            if (RowCount == 0 || ColumnCount == 0)
+                return new Rectangle[0];
             if (!IsOverlappingBufferZone(posX, posY))
                 return new Rectangle[0];
             if (!IsOverlapping(posX, posY))
                 return new Rectangle[0];
             var row = (int)((posX - OffsetX) / CellWidth);
             var col = (int)((posY - OffsetY) / CellHeight);
+            if (row < 0) row = 0;
+            else if (row > (int)RowCount - 1) row = (int)RowCount - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)ColumnCount - 1) col = (int)ColumnCount - 1;
             Rectangle[] neighborSquares = new Rectangle[9];
             int idx = 0;
             for (int x = -1; x <= 1; x++)
@@ -135,12 +148,18 @@ namespace Cosmos
         /// <returns>获取到的临近地块</returns>
         public Rectangle[] GetNearbyRectangles(float posX, float posY, int level = 0)
         {
+            if (RowCount == 0 || ColumnCount == 0)
+                return new Rectangle[0];
             if (!IsOverlappingBufferZone(posX, posY))
                 return new Rectangle[0];
             if (!IsOverlapping(posX, posY))
                 return new Rectangle[0];
             var row = (int)((posX - OffsetX) / CellWidth);
             var col = (int)((posY - OffsetY) / CellHeight);
+            if (row < 0) row = 0;
+            else if (row > (int)RowCount - 1) row = (int)RowCount - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)ColumnCount - 1) col = (int)ColumnCount - 1;
             level = level >= 0 ? level : 0;
             if (level == 0)
                 return new Rectangle[] { rectangle2d[col, row] };

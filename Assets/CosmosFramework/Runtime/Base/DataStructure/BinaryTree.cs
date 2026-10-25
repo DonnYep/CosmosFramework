@@ -1,11 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Cosmos
 {
-    //TODO继承.NET对应的接口
     /// <summary>
-    /// 二叉树数据
+    /// 二叉搜索树（不自动平衡）。
+    /// <para>全部操作使用迭代实现，避免已排序数据插入后退化为链表时递归过深导致栈溢出。</para>
+    /// <para>注意：顺序插入会退化为 O(n)，适合查找为主的中小规模数据；需要有序动态集合请用跳表或平衡树。</para>
     /// </summary>
     public class BinaryTree<T>
          where T : IComparable<T>
@@ -39,48 +40,66 @@ namespace Cosmos
         public bool IsEmpty { get { return count == 0; } }
         public void AddNode(T data)
         {
-            root = AddNode(root, data);
-        }
-        Node AddNode(Node node, T data)
-        {
-            if (node == null)
+            if (root == null)
             {
+                root = new Node(data);
                 count++;
-                return new Node(data);
+                return;
             }
-            if (data.CompareTo(node.Data) < 0)
-                node.Left = AddNode(node.Left, data);
-            else if (data.CompareTo(node.Data) > 0)
-                node.Right = AddNode(node.Right, data);
-            return node;
+            var current = root;
+            while (true)
+            {
+                var compare = data.CompareTo(current.Data);
+                if (compare == 0)
+                    return;//重复值忽略
+                if (compare < 0)
+                {
+                    if (current.Left == null)
+                    {
+                        current.Left = new Node(data);
+                        count++;
+                        return;
+                    }
+                    current = current.Left;
+                }
+                else
+                {
+                    if (current.Right == null)
+                    {
+                        current.Right = new Node(data);
+                        count++;
+                        return;
+                    }
+                    current = current.Right;
+                }
+            }
         }
         public bool Contains(T data)
         {
-            return Contains(root, data);
-        }
-        bool Contains(Node node, T data)
-        {
-            if (node == null)
-                return false;
-            if (data.CompareTo(node.Data) == 0)
-                return true;
-            else if (data.CompareTo(node.Data) < 0)
-                return Contains(node.Left, data);
-            else
-                return Contains(node.Right, data);
+            var current = root;
+            while (current != null)
+            {
+                var compare = data.CompareTo(current.Data);
+                if (compare == 0)
+                    return true;
+                current = compare < 0 ? current.Left : current.Right;
+            }
+            return false;
         }
         /// <summary>
-        ///层级遍历 
+        /// 层级遍历
         /// </summary>
         public void LevelTraversal(ref Queue<T> queueData)
         {
             if (root == null)
                 return;
-            Queue<Node> queue = new Queue<Node>();
+            if (queueData == null)
+                queueData = new Queue<T>();
+            var queue = new Queue<Node>();
             queue.Enqueue(root);
             while (queue.Count != 0)
             {
-                Node current = queue.Dequeue();
+                var current = queue.Dequeue();
                 queueData.Enqueue(current.Data);
                 if (current.Left != null)
                     queue.Enqueue(current.Left);
@@ -93,137 +112,172 @@ namespace Cosmos
         /// </summary>
         public Queue<T> PreorderTraversal()
         {
-            Queue<T> queueData = new Queue<T>();
-            PreorderTraversal(root, ref queueData);
+            var queueData = new Queue<T>();
+            if (root == null)
+                return queueData;
+            var stack = new Stack<Node>();
+            stack.Push(root);
+            while (stack.Count > 0)
+            {
+                var current = stack.Pop();
+                queueData.Enqueue(current.Data);
+                if (current.Right != null)
+                    stack.Push(current.Right);
+                if (current.Left != null)
+                    stack.Push(current.Left);
+            }
             return queueData;
         }
-        void PreorderTraversal(Node node, ref Queue<T> queueData)
-        {
-            if (node == null)
-                return;
-            queueData.Enqueue(node.Data);
-            PreorderTraversal(node.Left, ref queueData);
-            PreorderTraversal(node.Right, ref queueData);
-        }
         /// <summary>
-        ///中序遍历 
+        /// 中序遍历
         /// </summary>
         public Queue<T> InorderTraversal()
         {
-            Queue<T> queueData = new Queue<T>();
-            InorderTraversal(root, ref queueData);
+            var queueData = new Queue<T>();
+            var stack = new Stack<Node>();
+            var current = root;
+            while (current != null || stack.Count > 0)
+            {
+                while (current != null)
+                {
+                    stack.Push(current);
+                    current = current.Left;
+                }
+                current = stack.Pop();
+                queueData.Enqueue(current.Data);
+                current = current.Right;
+            }
             return queueData;
         }
-        void InorderTraversal(Node node, ref Queue<T> queueData)
-        {
-            if (node == null)
-                return;
-            InorderTraversal(node.Left, ref queueData);
-            queueData.Enqueue(node.Data);
-            InorderTraversal(node.Right, ref queueData);
-        }
         /// <summary>
-        ///后续遍历 
+        /// 后续遍历
         /// </summary>
         public Queue<T> PostorderTraversal()
         {
-            Queue<T> queueData = new Queue<T>();
-            PostorderTraversal(root, ref queueData);
+            var queueData = new Queue<T>();
+            if (root == null)
+                return queueData;
+            var stack = new Stack<Node>();
+            var reversed = new Stack<T>();
+            stack.Push(root);
+            while (stack.Count > 0)
+            {
+                var current = stack.Pop();
+                reversed.Push(current.Data);
+                //先左后右入栈，出栈顺序为根-右-左，反转后即后序
+                if (current.Left != null)
+                    stack.Push(current.Left);
+                if (current.Right != null)
+                    stack.Push(current.Right);
+            }
+            while (reversed.Count > 0)
+                queueData.Enqueue(reversed.Pop());
             return queueData;
-        }
-        void PostorderTraversal(Node node, ref Queue<T> queueData)
-        {
-            if (node == null)
-                return;
-            PostorderTraversal(node.Left, ref queueData);
-            PostorderTraversal(node.Right, ref queueData);
-            queueData.Enqueue(node.Data);
         }
         public T MaxData()
         {
             if (IsEmpty)
                 throw new ArgumentNullException("Empty tree!");
-            return MaxNode(root).Data;
-        }
-        Node MaxNode(Node node)
-        {
-            if (node.Right == null)
-                return node;
-            return MaxNode(node.Right);
+            var current = root;
+            while (current.Right != null)
+                current = current.Right;
+            return current.Data;
         }
         public T MinData()
         {
             if (IsEmpty)
                 throw new ArgumentNullException("Empty tree!");
-            return MinNode(root).Data;
-        }
-        Node MinNode(Node node)
-        {
-            if (node.Left == null)
-                return node;
-            return MinNode(node.Left);
+            var current = root;
+            while (current.Left != null)
+                current = current.Left;
+            return current.Data;
         }
         public T RemoveMinData()
         {
-            T removeSet = MinData();
-            root = RemoveMinNode(root);
-            return removeSet;
-        }
-        Node RemoveMinNode(Node node)
-        {
-            if (node.Left == null)
+            if (IsEmpty)
+                throw new ArgumentNullException("Empty tree!");
+            Node parent = null;
+            var current = root;
+            while (current.Left != null)
             {
-                count--;
-                return node.Right;
+                parent = current;
+                current = current.Left;
             }
-            node.Left = RemoveMinNode(node.Left);
-            return node;
+            var removed = current.Data;
+            if (parent == null)
+                root = current.Right;
+            else
+                parent.Left = current.Right;
+            count--;
+            return removed;
         }
         public void RemoveData(T data)
         {
-            root = RemoveNode(root, data);
-        }
-        Node RemoveNode(Node node,T data)
-        {
-            if (node == null) return null;
-            if (data.CompareTo(node.Data) < 0)
+            Node parent = null;
+            var current = root;
+            while (current != null)
             {
-                node.Left = RemoveNode(node.Left, data);
-                return node;
-            }else if (data.CompareTo(node.Data) > 0)
-            {
-                node.Right = RemoveNode(node.Right, data);
-                return node;
+                var compare = data.CompareTo(current.Data);
+                if (compare == 0)
+                    break;
+                parent = current;
+                current = compare < 0 ? current.Left : current.Right;
             }
+            if (current == null)
+                return;
+
+            if (current.Left != null && current.Right != null)
+            {
+                //用右子树最小节点替换当前值，再摘除该最小节点（其无左孩子）
+                Node successorParent = current;
+                var successor = current.Right;
+                while (successor.Left != null)
+                {
+                    successorParent = successor;
+                    successor = successor.Left;
+                }
+                current.Data = successor.Data;
+                if (successorParent == current)
+                    successorParent.Right = successor.Right;
+                else
+                    successorParent.Left = successor.Right;
+                count--;
+                return;
+            }
+
+            var child = current.Left ?? current.Right;
+            if (parent == null)
+                root = child;
+            else if (parent.Left == current)
+                parent.Left = child;
             else
-            {
-                if (node.Right == null)
-                {
-                    count--;
-                    return node.Left;
-                }
-                if (node.Left == null)
-                {
-                    count--;
-                    return node.Right;
-                }
-                Node n = MinNode(node.Right);
-                n.Right = RemoveMinNode(node.Right);
-                n.Left = node.Left;
-                return n;
-            }
+                parent.Right = child;
+            count--;
         }
         /// <summary>
-        ///二叉树的最高高度 
+        /// 二叉树的最高高度
         /// </summary>
         public int MaxHeight()
         {
-            return MaxHeight(root);
-        }
-        int MaxHeight(Node node)
-        {
-            if (node == null) return 0;
-            return Math.Max(MaxHeight(node.Left), MaxHeight(node.Right)) + 1;
+            if (root == null)
+                return 0;
+            var queue = new Queue<Node>();
+            queue.Enqueue(root);
+            var height = 0;
+            while (queue.Count > 0)
+            {
+                var levelCount = queue.Count;
+                for (int i = 0; i < levelCount; i++)
+                {
+                    var current = queue.Dequeue();
+                    if (current.Left != null)
+                        queue.Enqueue(current.Left);
+                    if (current.Right != null)
+                        queue.Enqueue(current.Right);
+                }
+                height++;
+            }
+            return height;
         }
     }
 }

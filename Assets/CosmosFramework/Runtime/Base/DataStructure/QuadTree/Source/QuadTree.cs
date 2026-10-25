@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 namespace Cosmos
 {
@@ -141,40 +141,29 @@ namespace Cosmos
         }
         bool InsertObject(Node node, Rectangle objBound, T obj)
         {
-            if (node.IsRectOverlapping(objBound))
-            {
-                if (!node.HasChild)
-                {
-                    if (node.ObjectCount() < NodeObjectCapacity)//小于刚好可满足插入最大元素数量
-                    {
-                        return node.Insert(objBound, obj);
-                    }
-                    else//若大于，则四等分节点
-                    {
-                        if (CurrentDepth < TreeMaxDepth)
-                        {
-                            Split(node);
-                            return node.Insert(objBound, obj);
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    if (InsertObject(node.TreeTRNode, objBound, obj)) return true;
-                    if (InsertObject(node.TreeTLNode, objBound, obj)) return true;
-                    if (InsertObject(node.TreeBLNode, objBound, obj)) return true; ;
-                    if (InsertObject(node.TreeBRNode, objBound, obj)) return true;
-                    return false;
-                }
-            }
-            else
-            {
+            if (!node.IsRectOverlapping(objBound))
                 return false;
+            if (node.HasChild)
+            {
+                if (InsertObject(node.TreeTRNode, objBound, obj)) return true;
+                if (InsertObject(node.TreeTLNode, objBound, obj)) return true;
+                if (InsertObject(node.TreeBLNode, objBound, obj)) return true;
+                if (InsertObject(node.TreeBRNode, objBound, obj)) return true;
+                //四个象限覆盖父节点，理论上必然有子节点可放；兜底留在本节点，绝不丢对象
+                return node.Insert(objBound, obj);
             }
+            if (node.ObjectCount() < NodeObjectCapacity)//小于刚好可满足插入最大元素数量
+                return node.Insert(objBound, obj);
+            //按"当前节点深度"判断能否继续分裂：用树级 CurrentDepth 会让全树提前停止分裂（丢对象）
+            if (node.NodeDepth < TreeMaxDepth)
+            {
+                Split(node);
+                if (InsertObject(node, objBound, obj))
+                    return true;
+                return node.Insert(objBound, obj);
+            }
+            //到达最大深度仍超出容量：留在本节点（叶子可超额），不能静默丢对象
+            return node.Insert(objBound, obj);
         }
         /// <summary>
         /// 检测此节点所在的区块是否可以合并；
@@ -215,11 +204,13 @@ namespace Cosmos
             node.TreeBRNode = CreateNode(area.CenterX + area.HalfWidth * 0.5f, area.CenterY - area.HalfHeight * 0.5f, area.HalfWidth, area.HalfHeight, node, nextNodeDepth);
             var objects = node.Objects();
             node.HasChild = true;
+            //先把父节点集合清空，再直接插入子节点：
+            //避免"从根重新插入"时再次走回本节点造成重复/丢失
+            node.OnSplit();
             foreach (var obj in objects)
             {
-                Insert(obj);
+                InsertObject(node, GetObjectBound(obj), obj);
             }
-            node.OnSplit();
         }
         bool PeekObjectNode(T obj, out Node node)
         {

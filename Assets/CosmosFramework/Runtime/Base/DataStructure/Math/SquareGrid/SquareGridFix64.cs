@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using FixMath.NET;
 namespace Cosmos
 {
@@ -26,8 +26,8 @@ namespace Cosmos
         public SquareGridFix64(Fix64 cellSideLength, uint cellSection, Fix64 centerX, Fix64 centerY) : this(cellSideLength, cellSection, centerX, centerY, Fix64.Zero) { }
         public SquareGridFix64(Fix64 cellSideLength, uint cellSection, Fix64 centerX, Fix64 centerY, Fix64 bufferRange)
         {
-            if (cellSideLength < Fix64.Zero)
-                throw new OverflowException("cellSideLength can not less than zero !");
+            if (cellSideLength <= Fix64.Zero)
+                throw new OverflowException("cellSideLength can not less or equal than zero !");
             CellSection = cellSection;
             var squareSideLength = cellSideLength * (Fix64)cellSection;
             CellSideLength = cellSideLength;
@@ -57,10 +57,17 @@ namespace Cosmos
         /// <returns>位置所在的块</returns>
         public SquareFix64 GetSquare(Fix64 posX, Fix64 posY)
         {
+            if (CellSection == 0)
+                return SquareFix64.Zero;
             if (!IsOverlapping(posX, posY))
                 return SquareFix64.Zero;
             var row = (int)((posX - OffsetX) / CellSideLength);
             var col = (int)((posY - OffsetY) / CellSideLength);
+            //重叠判定为闭区间，右/上边界会算出 Section，需夹到最后一个格子
+            if (row < 0) row = 0;
+            else if (row > (int)CellSection - 1) row = (int)CellSection - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)CellSection - 1) col = (int)CellSection - 1;
             return square2d[col, row];
         }
         /// <summary>
@@ -71,12 +78,18 @@ namespace Cosmos
         /// <returns>缓冲所属的块</returns>
         public SquareFix64[] GetSquares(Fix64 posX, Fix64 posY)
         {
+            if (CellSection == 0)
+                return new SquareFix64[0];
             if (!IsOverlappingBufferZone(posX, posY))
                 return new SquareFix64[0];
             if (!IsOverlapping(posX, posY))
                 return new SquareFix64[0];
             var row = (int)((posX - OffsetX) / CellSideLength);
             var col = (int)((posY - OffsetY) / CellSideLength);
+            if (row < 0) row = 0;
+            else if (row > (int)CellSection - 1) row = (int)CellSection - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)CellSection - 1) col = (int)CellSection - 1;
             SquareFix64[] neighborSquares = new SquareFix64[9];
             int idx = 0;
             for (int x = -1; x <= 1; x++)
@@ -102,6 +115,7 @@ namespace Cosmos
                 }
             }
             var dstSquares = new SquareFix64[dstIdx + 1];
+            dstSquares[0] = square2d[col, row];
             Array.Copy(srcSquares, 0, dstSquares, 1, dstIdx);
             return dstSquares;
         }
@@ -115,12 +129,18 @@ namespace Cosmos
         /// <returns>获取到的临近地块</returns>
         public SquareFix64[] GetNearbySquares(Fix64 posX, Fix64 posY, int level = 0)
         {
+            if (CellSection == 0)
+                return new SquareFix64[0];
             if (!IsOverlappingBufferZone(posX, posY))
                 return new SquareFix64[0];
             if (!IsOverlapping(posX, posY))
                 return new SquareFix64[0];
             var row = (int)((posX - OffsetX) / CellSideLength);
             var col = (int)((posY - OffsetY) / CellSideLength);
+            if (row < 0) row = 0;
+            else if (row > (int)CellSection - 1) row = (int)CellSection - 1;
+            if (col < 0) col = 0;
+            else if (col > (int)CellSection - 1) col = (int)CellSection - 1;
             level = level >= 0 ? level : 0;
             if (level == 0)
                 return new SquareFix64[] { square2d[col, row] };

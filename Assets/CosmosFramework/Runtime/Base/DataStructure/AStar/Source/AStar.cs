@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 namespace Cosmos
 {
@@ -65,6 +65,11 @@ namespace Cosmos
             }
         }
         readonly Queue<List<Node>> nodeListQueue = new Queue<List<Node>>();
+        /// <summary>
+        /// 开/闭集缓冲队列；
+        /// 用 HashSet 做 O(1) 的归属判定，避免 List.Contains 的全表线性查找。
+        /// </summary>
+        readonly Queue<HashSet<Node>> nodeSetQueue = new Queue<HashSet<Node>>();
         /// <summary>
         /// 二维节点数组；
         /// </summary>
@@ -137,6 +142,9 @@ namespace Cosmos
         }
         public Node GetNode(float posX, float posY)
         {
+            //空网格 / 已 Clear：直接判空，避免夹取后索引空数组
+            if (GridSizeX <= 0 || GridSizeY <= 0)
+                return null;
             if (!IsOverlapping(posX, posY))
                 return null;
             var col = (int)((posX - GridOffsetX) / NodeSideLength);
@@ -154,57 +162,73 @@ namespace Cosmos
             var dstNode = GetNode(dstPosX, dstPosY);
             if (srcNode == null || dstNode == null)
                 return null;
-            List<Node> openList = SpawnNodeList();
-            List<Node> closedList = SpawnNodeList();
-            openList.Add(srcNode);
-            while (openList.Count > 0)
+            var openList = SpawnNodeList();
+            //邻居列表实例级复用：每次展开 Clear 后重填，不再 ToArray
+            var neighborBuffer = SpawnNodeList();
+            //openSet/closedSet 只做 O(1) 归属判定，遍历顺序仍由 openList 决定，保证选点行为不变
+            var openSet = SpawnNodeSet();
+            var closedSet = SpawnNodeSet();
+            try
             {
-                var currentNode = openList[0];
-                var openLength = openList.Count;
-                for (int i = 0; i < openLength; i++)
+                openList.Add(srcNode);
+                openSet.Add(srcNode);
+                while (openList.Count > 0)
                 {
-                    var openNode = openList[i];
-                    if (openNode.FCost <= currentNode.FCost && openNode.HCost < currentNode.HCost)
+                    int bestIndex = 0;
+                    var currentNode = openList[0];
+                    for (int i = 1; i < openList.Count; i++)
                     {
-                        currentNode = openNode;
-                    }
-                }
-                openList.Remove(currentNode);
-                closedList.Add(currentNode);
-
-                if (currentNode == null || currentNode == dstNode)
-                {
-                    var finalPath = GetFinalPath(srcNode, dstNode);
-                    DespawnNodeList(openList);
-                    DespawnNodeList(closedList);
-                    return finalPath;
-                }
-                var nodeNeighbors = GetNeighborNodes(currentNode);
-                foreach (var neighborNode in nodeNeighbors)
-                {
-                    if (closedList.Contains(neighborNode))
-                        continue;
-                    if (neighborNode.IsObstacle)
-                    {
-                        closedList.Add(neighborNode);
-                        continue;
-                    }
-                    int moveCost = currentNode.GCost + GetDistance(currentNode, neighborNode);
-                    if (moveCost < neighborNode.GCost || !openList.Contains(neighborNode))
-                    {
-                        neighborNode.GCost = moveCost;
-                        neighborNode.HCost = GetDistance(neighborNode, dstNode);
-                        neighborNode.ParentNode = currentNode;
-                        if (!openList.Contains(neighborNode))
+                        var openNode = openList[i];
+                        //取 F 最小；F 相同再取 H 更小（原条件会跳过 F 更小但 H 更大的节点，导致非最短路）
+                        if (openNode.FCost < currentNode.FCost
+                            || (openNode.FCost == currentNode.FCost && openNode.HCost < currentNode.HCost))
                         {
-                            openList.Add(neighborNode);
+                            currentNode = openNode;
+                            bestIndex = i;
+                        }
+                    }
+                    openList.RemoveAt(bestIndex);
+                    openSet.Remove(currentNode);
+                    closedSet.Add(currentNode);
+
+                    if (currentNode == dstNode)
+                        return GetFinalPath(srcNode, dstNode);
+
+                    FillNeighborNodes(currentNode, neighborBuffer);
+                    for (int i = 0; i < neighborBuffer.Count; i++)
+                    {
+                        var neighborNode = neighborBuffer[i];
+                        if (neighborNode == null || closedSet.Contains(neighborNode))
+                            continue;
+                        if (neighborNode.IsObstacle)
+                        {
+                            closedSet.Add(neighborNode);
+                            continue;
+                        }
+                        int moveCost = currentNode.GCost + GetDistance(currentNode, neighborNode);
+                        bool isInOpen = openSet.Contains(neighborNode);
+                        if (moveCost < neighborNode.GCost || !isInOpen)
+                        {
+                            neighborNode.GCost = moveCost;
+                            neighborNode.HCost = GetDistance(neighborNode, dstNode);
+                            neighborNode.ParentNode = currentNode;
+                            if (!isInOpen)
+                            {
+                                openList.Add(neighborNode);
+                                openSet.Add(neighborNode);
+                            }
                         }
                     }
                 }
+                return null;
             }
-            DespawnNodeList(openList);
-            DespawnNodeList(closedList);
-            return null;
+            finally
+            {
+                DespawnNodeList(openList);
+                DespawnNodeList(neighborBuffer);
+                DespawnNodeSet(openSet);
+                DespawnNodeSet(closedSet);
+            }
         }
         public IList<Node> GetAllNodes()
         {
@@ -229,12 +253,36 @@ namespace Cosmos
         /// <returns>目标节点数组</returns>
         public virtual IList<Node> GetNeighborNodes(Node node)
         {
+            if (node == null)
+                return Array.Empty<Node>();
             return GetSquareNeighborNodesWithoutObstacle(node);
+        }
+        /// <summary>
+        /// 把临近节点填入复用缓冲，供 FindPath 使用（避免每次展开都分配新集合）。
+        /// 默认实现走虚方法 GetNeighborNodes，因此只重写 GetNeighborNodes 的子类依然会生效；
+        /// 希望做到零分配的子类可以重写本方法直接填充 buffer。
+        /// </summary>
+        /// <param name="node">被查找的节点</param>
+        /// <param name="buffer">复用缓冲，方法内会先 Clear</param>
+        protected virtual void FillNeighborNodes(Node node, List<Node> buffer)
+        {
+            buffer.Clear();
+            if (node == null)
+                return;
+            var neighbors = GetNeighborNodes(node);
+            if (neighbors == null)
+                return;
+            for (int i = 0; i < neighbors.Count; i++)
+                buffer.Add(neighbors[i]);
         }
         public virtual void Clear()
         {
             nodeArray = new Node[0, 0];
+            //网格尺寸必须一起清零：否则 GetNode 仍能通过 IsOverlapping 并索引空数组
+            GridSizeX = 0;
+            GridSizeY = 0;
             nodeListQueue.Clear();
+            nodeSetQueue.Clear();
         }
         public bool Equals(AStar other)
         {
@@ -271,31 +319,40 @@ namespace Cosmos
         /// </summary>
         protected IList<Node> GetCrossNeighborNodes(Node node)
         {
-            Node[] srcNodes = new Node[4];
+            var nodeList = SpawnNodeList();
+            FillCrossNeighborNodes(node, nodeList);
+            var dstNodes = nodeList.ToArray();
+            DespawnNodeList(nodeList);
+            return dstNodes;
+        }
+        /// <summary>
+        /// 把十字形临近节点填入复用缓冲，不产生分配；
+        /// </summary>
+        /// <param name="node">被查找的节点</param>
+        /// <param name="buffer">复用缓冲，方法内会先 Clear</param>
+        protected void FillCrossNeighborNodes(Node node, List<Node> buffer)
+        {
+            buffer.Clear();
+            if (node == null)
+                return;
             var x = node.IndexX;
             var y = node.IndexY;
-            var leftX = x - 1;
-            var rightX = x + 1;
-            var upY = y + 1;
-            var downY = y - 1;
-            int idx = 0;
-            if (leftX >= 0)
-                srcNodes[idx++] = nodeArray[leftX, y];
-            if (rightX <= GridSizeX - 1)
-                srcNodes[idx++] = nodeArray[rightX, y];
-            if (upY <= GridSizeY - 1)
-                srcNodes[idx++] = nodeArray[x, upY];
-            if (downY >= 0)
-                srcNodes[idx++] = nodeArray[x, downY];
-            var dstNodes = new Node[idx];
-            Array.Copy(srcNodes, 0, dstNodes, 0, idx);
-            return dstNodes;
+            if (x - 1 >= 0)
+                buffer.Add(nodeArray[x - 1, y]);
+            if (x + 1 <= GridSizeX - 1)
+                buffer.Add(nodeArray[x + 1, y]);
+            if (y + 1 <= GridSizeY - 1)
+                buffer.Add(nodeArray[x, y + 1]);
+            if (y - 1 >= 0)
+                buffer.Add(nodeArray[x, y - 1]);
         }
         /// <summary>
         /// 九宫格临近节点，过滤obstacle
         /// </summary>
         protected virtual IList<Node> GetSquareNeighborNodesWithoutObstacle(Node node)
         {
+            if (node == null)
+                return Array.Empty<Node>();
             var neighbourNodeList = SpawnNodeList();
             Node neighbourUpperLeft = null;
             Node neighbourUpper = null;
@@ -458,6 +515,25 @@ namespace Cosmos
                 return;
             lst.Clear();
             nodeListQueue.Enqueue(lst);
+        }
+        /// <summary>
+        /// 取一个开/闭集缓冲；
+        /// </summary>
+        protected HashSet<Node> SpawnNodeSet()
+        {
+            if (nodeSetQueue.Count > 0)
+                return nodeSetQueue.Dequeue();
+            return new HashSet<Node>();
+        }
+        /// <summary>
+        /// 归还开/闭集缓冲；
+        /// </summary>
+        protected void DespawnNodeSet(HashSet<Node> set)
+        {
+            if (set == null)
+                return;
+            set.Clear();
+            nodeSetQueue.Enqueue(set);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Cosmos
                 next = null;
                 previous = null;
                 above = null;
-                previous = null;
+                below = null;
             }
             public virtual bool IsHeader()
             {
