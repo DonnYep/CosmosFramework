@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>Cosmos.Runtime.WebRequest</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>CS0649;CS0414;SYSLIB0011</NoWarn>
+    <DefineConstants>UNITY_EDITOR;UNITY_2020_1_OR_NEWER;UNITY_2018_1_OR_NEWER</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 核心库 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\ResourceCore\**\*.cs" />
+    <!-- 网络请求模块 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\WebRequest\**\*.cs" />
+    <!-- 框架依赖 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\Main\Module.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\Main\Attribute\ModuleAttribute.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\Main\IModuleManager.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\Event\Base\GameEventArgs.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\ReferencePool\IReference.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\ReferencePool\ReferencePool.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\ReferencePool\ReferencePoolInfo.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\DataStructure\Pool\Pool.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.Text.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.Converter.cs" />
+    <!-- Stubs -->
+    <Compile Include="..\UnityStubs\UnityStubs.cs" />
+    <Compile Include="..\UnityStubs\Utility.Unity.Stub.cs" />
+  </ItemGroup>
+
+</Project>

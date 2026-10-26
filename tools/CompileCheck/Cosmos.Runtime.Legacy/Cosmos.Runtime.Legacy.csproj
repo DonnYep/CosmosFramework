@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>Cosmos.Runtime.Legacy</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>CS0649;CS0414;SYSLIB0011</NoWarn>
+    <DefineConstants>UNITY_EDITOR;UNITY_2018_1_OR_NEWER;UNITY_2019_1_OR_NEWER;UNITY_2020_1_OR_NEWER</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 核心库 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\ResourceCore\**\*.cs" />
+    <!-- 网络请求模块 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\WebRequest\**\*.cs" />
+    <!-- 下载模块 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\Download\**\*.cs" />
+    <!-- 旧版资源模块 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\Resource\Legacy\**\*.cs" />
+    <!-- 框架依赖 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\Main\Module.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\Main\Attribute\ModuleAttribute.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\Main\IModuleManager.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Modules\Event\Base\GameEventArgs.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\ReferencePool\IReference.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\ReferencePool\ReferencePool.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\ReferencePool\ReferencePoolInfo.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\DataStructure\Pool\Pool.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.IO.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.Debug.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.Text.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.Converter.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.Net.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.Assert.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Constants\Constants.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Extensions\Collections\ListExts.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Extensions\Collections\IDictionaryExts.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\3rdParty\LitJson\*.cs" />
+    <!-- Stubs -->
+    <Compile Include="..\UnityStubs\UnityStubs.cs" />
+    <Compile Include="..\UnityStubs\Utility.Unity.Stub.cs" />
+    <Compile Include="..\UnityStubs\Utility.Encryption.Stub.cs" />
+    <Compile Include="..\UnityStubs\CosmosEntry.Stub.cs" />
+    <Compile Include="..\UnityStubs\CompatShims.cs" />
+  </ItemGroup>
+
+</Project>

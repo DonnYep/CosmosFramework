@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>Cosmos.Editor.Resource</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>CS0649;CS0414;SYSLIB0011</NoWarn>
+    <DefineConstants>UNITY_EDITOR;UNITY_2020_1_OR_NEWER;UNITY_2018_1_OR_NEWER</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 核心库 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\ResourceCore\**\*.cs" />
+    <!-- 编辑器：新资源管线工具 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Editor\ModuleEditor\Resource_Instead\**\*.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Editor\ModuleEditor\Resource\ResourceEditorConstants.cs" />
+    <!-- 编辑器工具类 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Editor\EditorUtil\EditorUtil.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Editor\EditorUtil\EditorUtil.Debug.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Editor\EditorUtil\EditorUtil.Json.cs" />
+    <!-- 运行时工具 -->
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.IO.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.Debug.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.Text.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Utility\Utility.Assembly.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\Base\Constants\Constants.cs" />
+    <Compile Include="..\..\..\Assets\CosmosFramework\Runtime\3rdParty\LitJson\*.cs" />
+    <!-- Stubs -->
+    <Compile Include="..\UnityStubs\UnityStubs.cs" />
+    <Compile Include="..\UnityStubs\Utility.Encryption.Stub.cs" />
+    <Compile Include="..\UnityStubs\CompatShims.cs" />
+  </ItemGroup>
+
+</Project>
