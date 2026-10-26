@@ -313,6 +313,8 @@ CosmosFramework follows the Unity Package convention; the package root is `Asset
 - Without a Git URL: copy the whole `Assets/CosmosFramework` folder into your project's `Packages` folder (Unity treats it as a local package).
 
 > `?path=` requires Unity 2019.3+; Unity 2021.3 LTS is recommended. See [CHANGELOG](CHANGELOG.md) for version history.
+>
+> The old `#v1.3_upm` / `#upm` branch URLs no longer exist (`upm` is archived as the tag `archive/upm-v1.3.2`). If your `manifest.json` still uses one, switch to the `?path=` form above.
 
 <a name="other"></a>
 

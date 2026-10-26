@@ -315,6 +315,8 @@ CosmosFramework 遵循 Unity Package 规范，包根为 `Assets/CosmosFramework`
 - 不用 Git URL 时：把 `Assets/CosmosFramework` 整个目录拷进工程的 `Packages` 目录（Unity 视为本地包）。
 
 > `?path=` 需要 Unity 2019.3 及以上；推荐 Unity 2021.3 LTS。版本变更见 [CHANGELOG](CHANGELOG.md)。
+>
+> 旧版 README 里的 `#v1.3_upm` / `#upm` 分支地址已不存在（`upm` 分支归档为 tag `archive/upm-v1.3.2`）。若 `manifest.json` 里还留着，请换成上面的 `?path=` 写法。
 
 <a name="其他"></a>
 
