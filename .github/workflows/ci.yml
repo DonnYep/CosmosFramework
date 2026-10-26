@@ -28,7 +28,17 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Compile Runtime + Editor against Unity stubs
-        run: dotnet run --project tools/RoslynCheck -- editor
+        shell: bash
+        run: |
+          set +e
+          dotnet run --project tools/RoslynCheck -- editor 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ]; then
+            echo "::error::RoslynCheck exited with code $status"
+            tail -n 40 build.log | sed 's/^/::error::/'
+            exit "$status"
+          fi
 
   package:
     name: Package consistency
