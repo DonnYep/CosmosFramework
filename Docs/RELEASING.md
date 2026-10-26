@@ -69,21 +69,25 @@ git tag -a vX.Y.(Z+1) -m "vX.Y.(Z+1)" && git push origin main vX.Y.(Z+1)
 git switch dev && git merge --no-ff hotfix/xxx   # 别让修复只活在 main 上
 ```
 
-## 仓库设置（GitHub 网页，一次性）
+## 仓库设置（2026-10-26 已配置）
 
-- **Settings → General → Default branch**：保持 `main`。
-- **Settings → Branches → Branch protection rules**：
-  - `main`：禁止 force push、禁止删除；要求状态检查 `Roslyn asmdef compile check` 通过。
-  - `dev`：至少禁止 force push（单人开发也建议开，一次误操作能丢掉整条开发线）。
-- **Settings → General → Releases**：无需特殊设置，工作流用 `GITHUB_TOKEN` 创建。
+- **默认分支**：`main`。
+- **分支保护**（Settings → Branches，classic branch protection）：
+  - `main`、`dev` 各一条规则，匹配同名分支。
+  - 两条规则均**不允许 force push、不允许删除**，并勾选 **Do not allow bypassing the above settings**（管理员同样受约束）。
+  - **未启用**「Require status checks to pass」：单人直推时它会把自己挡在门外；等改成 PR 流程再开。
+  - 确实需要强推时（极少见）：到 Settings → Branches 临时取消 bypass 勾选，做完立刻恢复。
+- **Releases**：无需特殊设置，工作流用 `GITHUB_TOKEN` 创建。
+
+## 已处理（2026-10-26）
+
+- UPM 安装地址改用 `?path=/Assets/CosmosFramework` 并固定 tag（原来的 `#v1.3_upm` 分支并不存在）。
+- `.gitignore` 的 `*.csproj` / `*.sln` 锚定到根目录（`/*.csproj`），`tools/` 下 5 个工具链工程文件已入库——这正是 CI 报 "Couldn't find a project to run" 的原因。
+- 取消跟踪 `tools/**/bin`、`tools/**/obj`（117 个构建产物）；被跟踪的 `obj/project.assets.json` 里写死过 Windows 绝对包路径。
+- 取消跟踪 `tools/RoslynCheck` 的 3 个诊断输出 txt。
+- 首个发布：tag `v2.0.1` + GitHub Release，正文由 CHANGELOG 自动生成。
 
 ## 待清理项（与分支模型无关，但影响可维护性）
-
-- `tools/CompileCheck/**/bin`、`**/obj` 曾被提交进仓库（`.gitignore` 已补规则）。取消跟踪：
-
-  ```bash
-  git rm -r --cached tools/CompileCheck/*/bin tools/CompileCheck/*/obj
-  ```
 
 - `tools/CompileCheck` 是 1.3 时代的 stub 编译工程，当前编不过（缺 `Operation`、`ModuleConstant` 等）。CI 已改用 `tools/RoslynCheck`；这一套要么修好，要么整个删掉，别留着当陷阱。
 - 远端 `v1.3.8` 分支与 tag `v1.3.8` 同名且多一个提交（塞了 `Packages/manifest.json`）。建议改名 `v1.3.8-project` 或删除。
