@@ -65,3 +65,14 @@ sysinfo.txt
 crashlytics-build.properties
 
 UserSettings
+
+# .NET tooling outputs (tools/RoslynCheck, tools/CompileCheck)
+**/bin/
+**/obj/
+
+# CI generated release notes
+RELEASE_NOTES.md
+
+# Python
+__pycache__/
+*.pyc

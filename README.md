@@ -284,6 +284,8 @@ Assets/CosmosFramework
 | [音频](Docs/AUDIO.md) / [数据表](Docs/DATATABLE.md) / [输入](Docs/INPUT.md) / [下载](Docs/DOWNLOAD.md) | 对应模块细节 |
 | [网络通道异步](Docs/NETWORK_ASYNC.md) | 通道 await、超时、取消、线程兜底 |
 | [WebRequest 与 Download 分工](Docs/NETWORKING.md) | 选型规则 |
+| [CHANGELOG](CHANGELOG.md) | 版本变更记录 |
+| [分支与发布](Docs/RELEASING.md) | 分支约定、发版清单、仓库设置 |
 
 <a name="已知边界"></a>
 
@@ -300,9 +302,19 @@ Assets/CosmosFramework
 
 ## UPM
 
-- CosmosFramework 遵循 unityPackage 规范，可将整个库放置于 `Packages` 目录。
-- 本地导入：把 `Assets/CosmosFramework` 拷贝到工程的 `Packages` 目录。
-- Git 导入：`https://github.com/DonnYep/CosmosFramework.git#v1.3_upm`
+CosmosFramework 遵循 Unity Package 规范，包根为 `Assets/CosmosFramework`（版本号见其中的 `package.json`）。
+
+**发行版（推荐）** —— 固定到 tag，不受后续提交影响。在 `Packages/manifest.json` 的 `dependencies` 中加入：
+
+```json
+"com.cosmosframework": "https://github.com/DonnYep/CosmosFramework.git?path=/Assets/CosmosFramework#v2.0.1"
+```
+
+- 把 `#v2.0.1` 换成 `#main`：跟随稳定线的最新发布版。
+- 把 `#v2.0.1` 换成 `#dev`：尝鲜开发线，可能含未发布改动，**不保证可编译**，仅建议试用与反馈。
+- 不用 Git URL 时：把 `Assets/CosmosFramework` 整个目录拷进工程的 `Packages` 目录（Unity 视为本地包）。
+
+> `?path=` 需要 Unity 2019.3 及以上；推荐 Unity 2021.3 LTS。版本变更见 [CHANGELOG](CHANGELOG.md)。
 
 <a name="其他"></a>
 

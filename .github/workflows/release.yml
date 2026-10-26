@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    name: Verify tag, package and sources
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Compile Runtime + Editor against Unity stubs
+        run: dotnet run --project tools/RoslynCheck -- editor
+
+      - name: Tag must match package.json version and CHANGELOG entry
+        run: python3 tools/ci/release.py verify --tag "${GITHUB_REF_NAME}"
+
+  publish:
+    name: Create GitHub Release
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate release notes from CHANGELOG.md
+        run: python3 tools/ci/release.py notes --tag "${GITHUB_REF_NAME}" --output RELEASE_NOTES.md
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file RELEASE_NOTES.md \
+            --verify-tag

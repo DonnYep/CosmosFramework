@@ -300,9 +300,19 @@ Wire up through `IResourceProvider`; `SetProvider(name, settings)` or `RegisterP
 
 ## UPM
 
-- CosmosFramework follows the unityPackage convention; the whole library can live under `Packages`.
-- Local import: copy `Assets/CosmosFramework` into your project's `Packages` folder.
-- Git import: `https://github.com/DonnYep/CosmosFramework.git#v1.3_upm`
+CosmosFramework follows the Unity Package convention; the package root is `Assets/CosmosFramework` (the version lives in its `package.json`).
+
+**Release build (recommended)** — pinned to a tag, immune to later commits. Add this to `dependencies` in `Packages/manifest.json`:
+
+```json
+"com.cosmosframework": "https://github.com/DonnYep/CosmosFramework.git?path=/Assets/CosmosFramework#v2.0.1"
+```
+
+- Replace `#v2.0.1` with `#main` to follow the latest release on the stable line.
+- Replace `#v2.0.1` with `#dev` to try the development line — it may contain unreleased (and possibly non-compiling) changes; use it for feedback only.
+- Without a Git URL: copy the whole `Assets/CosmosFramework` folder into your project's `Packages` folder (Unity treats it as a local package).
+
+> `?path=` requires Unity 2019.3+; Unity 2021.3 LTS is recommended. See [CHANGELOG](CHANGELOG.md) for version history.
 
 <a name="other"></a>
 

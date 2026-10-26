@@ -4,7 +4,9 @@
   "version": "2.0.1",
   "unity": "2021.3",
   "description": "Lightweight plug-in Unity development framework.",
-  "licensesUrl": "https://github.com/DonnYep/CosmosFramework/blob/v1.3/LICENSE",
+  "licensesUrl": "https://github.com/DonnYep/CosmosFramework/blob/main/LICENSE",
+  "changelogUrl": "https://github.com/DonnYep/CosmosFramework/blob/main/CHANGELOG.md",
+  "documentationUrl": "https://github.com/DonnYep/CosmosFramework/blob/main/Docs/MANUAL.md",
   "dependencies": {
   },
   "repository": {
