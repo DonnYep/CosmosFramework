@@ -45,7 +45,7 @@ namespace RoslynCheck
         }
 
         static string AssetsPath { get { return Path.Combine(Root, "Assets", "CosmosFramework"); } }
-        static string StubsPath { get { return Path.Combine(Root, "tools", "CompileCheck", "UnityStubs"); } }
+        static string StubsPath { get { return Path.Combine(Root, "tools", "UnityStubs"); } }
 
         public static int Main(string[] args)
         {
