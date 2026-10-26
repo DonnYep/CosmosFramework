@@ -85,11 +85,20 @@ git switch dev && git merge --no-ff hotfix/xxx   # 别让修复只活在 main �
 - `.gitignore` 的 `*.csproj` / `*.sln` 锚定到根目录（`/*.csproj`），`tools/` 下 5 个工具链工程文件已入库——这正是 CI 报 "Couldn't find a project to run" 的原因。
 - 取消跟踪 `tools/**/bin`、`tools/**/obj`（117 个构建产物）；被跟踪的 `obj/project.assets.json` 里写死过 Windows 绝对包路径。
 - 取消跟踪 `tools/RoslynCheck` 的 3 个诊断输出 txt。
+- 删除 1.3 时代的 4 个 `tools/CompileCheck/*` stub 工程（引用了已删除的 `Operation` / `ModuleConstant`，编不过且与 RoslynCheck 重复）；共用的 `UnityStubs` 移到 `tools/UnityStubs`。
 - 首个发布：tag `v2.0.1` + GitHub Release，正文由 CHANGELOG 自动生成。
 
-## 待清理项（与分支模型无关，但影响可维护性）
+## 历史分支与归档
 
-- `tools/CompileCheck` 是 1.3 时代的 stub 编译工程，当前编不过（缺 `Operation`、`ModuleConstant` 等）。CI 已改用 `tools/RoslynCheck`；这一套要么修好，要么整个删掉，别留着当陷阱。
-- 远端 `v1.3.8` 分支与 tag `v1.3.8` 同名且多一个提交（塞了 `Packages/manifest.json`）。建议改名 `v1.3.8-project` 或删除。
-- 远端 `v0.1`、`v1.0-archive`、`v1.1-archive`、`v1.2-archive` 都是 2022-12-04 的单提交快照，若无人依赖，转成 tag 后删除分支。
-- 已废弃的 `upm` 分支（停在 1.3.2）：安装地址已改用 `?path=/Assets/CosmosFramework`，可删除，避免“分支列表里有个看起来是最新的 upm”误导。
+2026-10-26 之后远端只保留 3 个分支：`main`、`dev`、`v1.3.8-project`。旧内容全部以 tag 形式保留：
+
+| 原分支 | 归档 tag | 内容 |
+| --- | --- | --- |
+| `v0.1` | `archive/v0.1` | 2022-12-04 的单提交快照 |
+| `v1.0-archive` | `archive/v1.0` | 同上 |
+| `v1.1-archive` | `archive/v1.1` | 同上 |
+| `v1.2-archive` | `archive/v1.2` | 同上 |
+| `upm` | `archive/upm-v1.3.2` | 旧 UPM 包根导出（1.3.2 时代） |
+| `v1.3.8` | — | 改名 `v1.3.8-project`（比 tag `v1.3.8` 多一个 `Packages/manifest.json` 提交） |
+
+注意：归档 tag 以 `archive/` 开头，**不会**触发 Release 工作流（该工作流只匹配 `v*`）；`v1.3.8-project` 是普通分支，也不参与发布。
